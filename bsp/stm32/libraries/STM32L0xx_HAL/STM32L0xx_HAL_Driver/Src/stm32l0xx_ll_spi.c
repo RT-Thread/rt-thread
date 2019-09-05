@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -370,10 +354,10 @@ ErrorStatus LL_I2S_DeInit(SPI_TypeDef *SPIx)
   */
 ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
 {
-  uint16_t i2sdiv = 2U, i2sodd = 0U, packetlength = 1U;
-  uint32_t tmp = 0U;
+  uint32_t i2sdiv = 2U, i2sodd = 0U, packetlength = 1U;
+  uint32_t tmp;
   LL_RCC_ClocksTypeDef rcc_clocks;
-  uint32_t sourceclock = 0U;
+  uint32_t sourceclock;
   ErrorStatus status = ERROR;
 
   /* Check the I2S parameters */
@@ -432,25 +416,25 @@ ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)
       if (I2S_InitStruct->MCLKOutput == LL_I2S_MCLK_OUTPUT_ENABLE)
       {
         /* MCLK output is enabled */
-        tmp = (uint16_t)(((((sourceclock / 256U) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+        tmp = (((((sourceclock / 256U) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
       }
       else
       {
         /* MCLK output is disabled */
-        tmp = (uint16_t)(((((sourceclock / (32U * packetlength)) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
+        tmp = (((((sourceclock / (32U * packetlength)) * 10U) / I2S_InitStruct->AudioFreq)) + 5U);
       }
 
       /* Remove the floating point */
       tmp = tmp / 10U;
 
       /* Check the parity of the divider */
-      i2sodd = (uint16_t)(tmp & (uint16_t)0x0001U);
+      i2sodd = (tmp & (uint16_t)0x0001U);
 
       /* Compute the i2sdiv prescaler */
-      i2sdiv = (uint16_t)((tmp - i2sodd) / 2U);
+      i2sdiv = ((tmp - i2sodd) / 2U);
 
       /* Get the Mask for the Odd bit (SPI_I2SPR[8]) register */
-      i2sodd = (uint16_t)(i2sodd << 8U);
+      i2sodd = (i2sodd << 8U);
     }
 
     /* Test if the divider is 1 or 0 or greater than 0xFF */
@@ -491,7 +475,7 @@ void LL_I2S_StructInit(LL_I2S_InitTypeDef *I2S_InitStruct)
   * @note   To calculate value of PrescalerLinear(I2SDIV[7:0] bits) and PrescalerParity(ODD bit)\n
   *         Check Audio frequency table and formulas inside Reference Manual (SPI/I2S).
   * @param  SPIx SPI Instance
-  * @param  PrescalerLinear value: Min_Data=0x02 and Max_Data=0xFF.
+  * @param  PrescalerLinear value Min_Data=0x02 and Max_Data=0xFF.
   * @param  PrescalerParity This parameter can be one of the following values:
   *         @arg @ref LL_I2S_PRESCALER_PARITY_EVEN
   *         @arg @ref LL_I2S_PRESCALER_PARITY_ODD

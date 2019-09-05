@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -131,11 +115,11 @@ typedef struct
                                        This parameter can be set to ENABLE or DISABLE.
                                        Note: If enabled, this feature also turns off the ADC dedicated 14 MHz RC oscillator (HSI14) */
 
-  uint32_t ContinuousConvMode;    /*!< Specify whether the conversion is performed in single mode (one conversion) or continuous mode for ADC group regular,
+  FunctionalState ContinuousConvMode; /*!< Specify whether the conversion is performed in single mode (one conversion) or continuous mode for ADC group regular,
                                        after the first ADC conversion start trigger occurred (software start or external trigger).
                                        This parameter can be set to ENABLE or DISABLE. */
 
-  uint32_t DiscontinuousConvMode; /*!< Specify whether the conversions sequence of ADC group regular is performed in Complete-sequence/Discontinuous-sequence
+  FunctionalState DiscontinuousConvMode; /*!< Specify whether the conversions sequence of ADC group regular is performed in Complete-sequence/Discontinuous-sequence
                                        (main sequence subdivided in successive parts).
                                        Discontinuous mode is used only if sequencer is enabled (parameter 'ScanConvMode'). If sequencer is disabled, this parameter is discarded.
                                        Discontinuous mode can be enabled only if continuous mode is disabled. If continuous mode is enabled, this parameter setting is discarded.
@@ -151,7 +135,7 @@ typedef struct
                                        If trigger source is set to ADC_SOFTWARE_START, this parameter is discarded.
                                        This parameter can be a value of @ref ADC_regular_external_trigger_edge */
 
-  uint32_t DMAContinuousRequests; /*!< Specify whether the DMA requests are performed in one shot mode (DMA transfer stops when number of conversions is reached)
+  FunctionalState DMAContinuousRequests; /*!< Specify whether the DMA requests are performed in one shot mode (DMA transfer stops when number of conversions is reached)
                                        or in continuous mode (DMA transfer unlimited, whatever number of conversions).
                                        This parameter can be set to ENABLE or DISABLE.
                                        Note: In continuous mode, DMA must be configured in circular mode. Otherwise an overrun will be triggered when DMA buffer maximum pointer is reached. */
@@ -223,7 +207,7 @@ typedef struct
                                    This parameter has an effect only if watchdog mode is configured on single channel (parameter WatchdogMode)
                                    This parameter can be a value of @ref ADC_channels */
 
-  uint32_t ITMode;            /*!< Specify whether the analog watchdog is configured in interrupt or polling mode.
+  FunctionalState ITMode;     /*!< Specify whether the analog watchdog is configured in interrupt or polling mode.
                                    This parameter can be set to ENABLE or DISABLE */
   uint32_t HighThreshold;     /*!< Configures the ADC analog watchdog High threshold value.
                                    Depending of ADC resolution selected (12, 10, 8 or 6 bits),
@@ -279,7 +263,7 @@ typedef struct
 /** 
   * @brief  ADC handle Structure definition
   */
-typedef struct
+typedef struct __ADC_HandleTypeDef
 {
   ADC_TypeDef                   *Instance;              /*!< Register base address */
 
@@ -292,7 +276,40 @@ typedef struct
   __IO uint32_t                 State;                  /*!< ADC communication state (bitmap of ADC states) */
 
   __IO uint32_t                 ErrorCode;              /*!< ADC Error code */
+
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+  void (* ConvCpltCallback)(struct __ADC_HandleTypeDef *hadc);              /*!< ADC conversion complete callback */
+  void (* ConvHalfCpltCallback)(struct __ADC_HandleTypeDef *hadc);          /*!< ADC conversion DMA half-transfer callback */
+  void (* LevelOutOfWindowCallback)(struct __ADC_HandleTypeDef *hadc);      /*!< ADC analog watchdog 1 callback */
+  void (* ErrorCallback)(struct __ADC_HandleTypeDef *hadc);                 /*!< ADC error callback */
+  void (* MspInitCallback)(struct __ADC_HandleTypeDef *hadc);               /*!< ADC Msp Init callback */
+  void (* MspDeInitCallback)(struct __ADC_HandleTypeDef *hadc);             /*!< ADC Msp DeInit callback */
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 }ADC_HandleTypeDef;
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL ADC Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_ADC_CONVERSION_COMPLETE_CB_ID     = 0x00U,  /*!< ADC conversion complete callback ID */
+  HAL_ADC_CONVERSION_HALF_CB_ID         = 0x01U,  /*!< ADC conversion DMA half-transfer callback ID */
+  HAL_ADC_LEVEL_OUT_OF_WINDOW_1_CB_ID   = 0x02U,  /*!< ADC analog watchdog 1 callback ID */
+  HAL_ADC_ERROR_CB_ID                   = 0x03U,  /*!< ADC error callback ID */
+  HAL_ADC_INJ_CONVERSION_COMPLETE_CB_ID = 0x04U,  /*!< ADC group injected conversion complete callback ID */
+  HAL_ADC_MSPINIT_CB_ID                 = 0x09U,  /*!< ADC Msp Init callback ID          */
+  HAL_ADC_MSPDEINIT_CB_ID               = 0x0AU   /*!< ADC Msp DeInit callback ID        */
+} HAL_ADC_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL ADC Callback pointer definition
+  */
+typedef  void (*pADC_CallbackTypeDef)(ADC_HandleTypeDef *hadc); /*!< pointer to a ADC callback function */
+
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
+
 /**
   * @}
   */
@@ -308,10 +325,14 @@ typedef struct
   * @{
   */
 #define HAL_ADC_ERROR_NONE        ((uint32_t)0x00U)   /*!< No error                                    */
-#define HAL_ADC_ERROR_INTERNAL    ((uint32_t)0x01U)   /*!< ADC IP internal error (problem of clocking,
+#define HAL_ADC_ERROR_INTERNAL    ((uint32_t)0x01U)   /*!< ADC peripheral internal error (problem of clocking,
                                                           enable/disable, erroneous state, ...)        */
 #define HAL_ADC_ERROR_OVR         ((uint32_t)0x02U)   /*!< Overrun error                               */
 #define HAL_ADC_ERROR_DMA         ((uint32_t)0x04U)   /*!< DMA transfer error                          */
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+#define HAL_ADC_ERROR_INVALID_CALLBACK  (0x10U)   /*!< Invalid Callback error */
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -399,7 +420,6 @@ typedef struct
   */ 
 #define ADC_EOC_SINGLE_CONV         ((uint32_t) ADC_ISR_EOC)
 #define ADC_EOC_SEQ_CONV            ((uint32_t) ADC_ISR_EOS)
-#define ADC_EOC_SINGLE_SEQ_CONV     ((uint32_t)(ADC_ISR_EOC | ADC_ISR_EOS))  /*!< reserved for future use */
 /**
   * @}
   */ 
@@ -454,7 +474,9 @@ typedef struct
 #define ADC_CHANNEL_VLCD         ADC_CHANNEL_16    
 #endif
 #define ADC_CHANNEL_VREFINT      ADC_CHANNEL_17
-#define ADC_CHANNEL_TEMPSENSOR   ADC_CHANNEL_18    
+#if defined(ADC_CCR_TSEN)
+#define ADC_CHANNEL_TEMPSENSOR   ADC_CHANNEL_18
+#endif
 /**
   * @}
   */
@@ -616,21 +638,30 @@ typedef struct
   * @{
   */
 /** @brief Reset ADC handle state
-  * @param  __HANDLE__: ADC handle
+  * @param  __HANDLE__ ADC handle
   * @retval None
   */
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+#define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__)                               \
+  do{                                                                          \
+     (__HANDLE__)->State = HAL_ADC_STATE_RESET;                               \
+     (__HANDLE__)->MspInitCallback = NULL;                                     \
+     (__HANDLE__)->MspDeInitCallback = NULL;                                   \
+    } while(0)
+#else
 #define __HAL_ADC_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_ADC_STATE_RESET)
+#endif
 
 /**
   * @brief Enable the ADC peripheral
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval None
   */
 #define __HAL_ADC_ENABLE(__HANDLE__) ((__HANDLE__)->Instance->CR |= ADC_CR_ADEN)
 
 /**
   * @brief Verification of hardware constraints before ADC can be enabled
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval SET (ADC can be enabled) or RESET (ADC cannot be enabled)
   */
 #define ADC_ENABLING_CONDITIONS(__HANDLE__)           \
@@ -642,7 +673,7 @@ typedef struct
 
 /**
   * @brief Disable the ADC peripheral
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval None
   */
 #define __HAL_ADC_DISABLE(__HANDLE__)                                          \
@@ -653,7 +684,7 @@ typedef struct
     
 /**
   * @brief Verification of hardware constraints before ADC can be disabled
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval SET (ADC can be disabled) or RESET (ADC cannot be disabled)
   */
 #define ADC_DISABLING_CONDITIONS(__HANDLE__)                             \
@@ -663,7 +694,7 @@ typedef struct
          
 /**
   * @brief Verification of ADC state: enabled or disabled
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval SET (ADC enabled) or RESET (ADC disabled)
   */
 #define ADC_IS_ENABLE(__HANDLE__)                                                    \
@@ -673,14 +704,14 @@ typedef struct
          
 /**
   * @brief Returns resolution bits in CFGR register: RES[1:0]. Return value among parameter to @ref ADC_Resolution.
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval None
   */
 #define ADC_GET_RESOLUTION(__HANDLE__) (((__HANDLE__)->Instance->CFGR1) & ADC_CFGR1_RES)
 /**
   * @brief Test if conversion trigger of regular group is software start
   *        or external trigger.
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval SET (software start) or RESET (external trigger)
   */
 #define ADC_IS_SOFTWARE_START_REGULAR(__HANDLE__)                              \
@@ -690,7 +721,7 @@ typedef struct
 
 /**
   * @brief Check if no conversion on going on regular group
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval SET (conversion is on going) or RESET (no conversion is on going)
   */
 #define ADC_IS_CONVERSION_ONGOING_REGULAR(__HANDLE__)                          \
@@ -699,14 +730,14 @@ typedef struct
 
 /**
   * @brief Enable ADC continuous conversion mode.
-  * @param _CONTINUOUS_MODE_: Continuous mode.
+  * @param _CONTINUOUS_MODE_ Continuous mode.
   * @retval None
   */
 #define ADC_CONTINUOUS(_CONTINUOUS_MODE_) ((_CONTINUOUS_MODE_) << 13U)
 
 /**
   * @brief Enable ADC scan mode to convert multiple ranks with sequencer.
-  * @param _SCAN_MODE_: Scan conversion mode.
+  * @param _SCAN_MODE_ Scan conversion mode.
   * @retval None
   */
 #define ADC_SCANDIR(_SCAN_MODE_)                                   \
@@ -716,42 +747,42 @@ typedef struct
 
 /**
   * @brief Configures the number of discontinuous conversions for the regular group channels.
-  * @param _NBR_DISCONTINUOUS_CONV_: Number of discontinuous conversions.
+  * @param _NBR_DISCONTINUOUS_CONV_ Number of discontinuous conversions.
   * @retval None
   */
 #define __HAL_ADC_CFGR1_DISCONTINUOUS_NUM(_NBR_DISCONTINUOUS_CONV_) (((_NBR_DISCONTINUOUS_CONV_) - 1U) << 17U)
 
 /**
   * @brief Enable the ADC DMA continuous request.
-  * @param _DMAContReq_MODE_: DMA continuous request mode.
+  * @param _DMAContReq_MODE_ DMA continuous request mode.
   * @retval None
   */
 #define ADC_DMACONTREQ(_DMAContReq_MODE_) ((_DMAContReq_MODE_) << 1U)
 
 /**
   * @brief Enable the ADC Auto Delay.
-  * @param _AutoDelay_: Auto delay bit enable or disable.
+  * @param _AutoDelay_ Auto delay bit enable or disable.
   * @retval None
   */
 #define __HAL_ADC_CFGR1_AutoDelay(_AutoDelay_) ((_AutoDelay_) << 14U)
 
 /**
   * @brief Enable the ADC LowPowerAutoPowerOff.
-  * @param _AUTOFF_: AutoOff bit enable or disable.
+  * @param _AUTOFF_ AutoOff bit enable or disable.
   * @retval None
   */
 #define __HAL_ADC_CFGR1_AUTOFF(_AUTOFF_) ((_AUTOFF_) << 15U)
 
 /**
   * @brief Configure the analog watchdog high threshold into registers TR1, TR2 or TR3.
-  * @param _Threshold_: Threshold value
+  * @param _Threshold_ Threshold value
   * @retval None
   */
 #define ADC_TRX_HIGHTHRESHOLD(_Threshold_) ((_Threshold_) << 16U)
 
 /**
   * @brief Enable the ADC Low Frequency mode.
-  * @param _LOW_FREQUENCY_MODE_: Low Frequency mode.
+  * @param _LOW_FREQUENCY_MODE_ Low Frequency mode.
   * @retval None
   */
 #define __HAL_ADC_CCR_LOWFREQUENCY(_LOW_FREQUENCY_MODE_) ((_LOW_FREQUENCY_MODE_) << 25U)
@@ -764,8 +795,8 @@ typedef struct
   *        If resolution 8 bits, shift of 4 ranks on the right.
   *        If resolution 6 bits, shift of 6 ranks on the right.
   *        therefore, shift = (12 - resolution) = 12 - (12- (((RES[1:0]) >> 3)*2))
-  * @param __HANDLE__: ADC handle.
-  * @param _Offset_: Value to be shifted
+  * @param __HANDLE__ ADC handle.
+  * @param _Offset_ Value to be shifted
   * @retval None
   */
 #define ADC_OFFSET_SHIFT_RESOLUTION(__HANDLE__, _Offset_) \
@@ -779,8 +810,8 @@ typedef struct
   *        If resolution 8 bits, shift of 4 ranks on the right.
   *        If resolution 6 bits, shift of 6 ranks on the right.
   *        therefore, shift = (12 - resolution) = 12 - (12- (((RES[1:0]) >> 3)*2))
-  * @param __HANDLE__: ADC handle.
-  * @param _Threshold_: Value to be shifted
+  * @param __HANDLE__ ADC handle.
+  * @param _Threshold_ Value to be shifted
   * @retval None
   */
 #define ADC_AWD1THRESHOLD_SHIFT_RESOLUTION(__HANDLE__, _Threshold_) \
@@ -788,8 +819,8 @@ typedef struct
 
 /**
   * @brief Shift the value on the left, less significant are set to 0. 
-  * @param _Value_: Value to be shifted
-  * @param _Shift_: Number of shift to be done
+  * @param _Value_ Value to be shifted
+  * @param _Shift_ Number of shift to be done
   * @retval None
   */
 #define __HAL_ADC_Value_Shift_left(_Value_, _Shift_) ((_Value_) << (_Shift_))
@@ -797,8 +828,8 @@ typedef struct
 
 /**
   * @brief Enable the ADC end of conversion interrupt.
-  * @param __HANDLE__: ADC handle.
-  * @param __INTERRUPT__: ADC Interrupt.
+  * @param __HANDLE__ ADC handle.
+  * @param __INTERRUPT__ ADC Interrupt.
   * @retval None
   */
 #define __HAL_ADC_ENABLE_IT(__HANDLE__, __INTERRUPT__)  \
@@ -806,16 +837,16 @@ typedef struct
 
 /**
   * @brief Disable the ADC end of conversion interrupt.
-  * @param __HANDLE__: ADC handle.
-  * @param __INTERRUPT__: ADC interrupt.
+  * @param __HANDLE__ ADC handle.
+  * @param __INTERRUPT__ ADC interrupt.
   * @retval None
   */
 #define __HAL_ADC_DISABLE_IT(__HANDLE__, __INTERRUPT__) \
   (((__HANDLE__)->Instance->IER) &= ~(__INTERRUPT__))
 
 /** @brief  Checks if the specified ADC interrupt source is enabled or disabled.
-  * @param __HANDLE__: ADC handle
-  * @param __INTERRUPT__: ADC interrupt source to check
+  * @param __HANDLE__ ADC handle
+  * @param __INTERRUPT__ ADC interrupt source to check
   *            @arg ...
   *            @arg ...
   * @retval State of interruption (TRUE or FALSE)
@@ -825,8 +856,8 @@ typedef struct
 
 /**
   * @brief Clear the ADC's pending flags
-  * @param __HANDLE__: ADC handle.
-  * @param __FLAG__: ADC flag.
+  * @param __HANDLE__ ADC handle.
+  * @param __FLAG__ ADC flag.
   * @retval None
   */
 /* Note: bit cleared bit by writing 1 */
@@ -835,8 +866,8 @@ typedef struct
 
 /**
   * @brief Get the selected ADC's flag status.
-  * @param __HANDLE__: ADC handle.
-  * @param __FLAG__: ADC flag.
+  * @param __HANDLE__ ADC handle.
+  * @param __FLAG__ ADC flag.
   * @retval None
   */
 #define __HAL_ADC_GET_FLAG(__HANDLE__, __FLAG__) \
@@ -854,7 +885,7 @@ typedef struct
 
 /**
   * @brief Clear ADC error code (set it to error code: "no error")
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval None
   */
 #define ADC_CLEAR_ERRORCODE(__HANDLE__)                                        \
@@ -863,7 +894,7 @@ typedef struct
 
 /**
   * @brief Configuration of ADC clock & prescaler: clock source PCLK or Asynchronous with selectable prescaler
-  * @param __HANDLE__: ADC handle
+  * @param __HANDLE__ ADC handle
   * @retval None
   */
 
@@ -920,8 +951,7 @@ typedef struct
                                    ((EDGE) == ADC_EXTERNALTRIGCONVEDGE_RISINGFALLING))
 
 #define IS_ADC_EOC_SELECTION(EOC_SELECTION) (((EOC_SELECTION) == ADC_EOC_SINGLE_CONV)   || \
-                                             ((EOC_SELECTION) == ADC_EOC_SEQ_CONV)      || \
-                                             ((EOC_SELECTION) == ADC_EOC_SINGLE_SEQ_CONV))
+                                             ((EOC_SELECTION) == ADC_EOC_SEQ_CONV))
 
 #define IS_ADC_OVERRUN(OVR) (((OVR) == ADC_OVR_DATA_PRESERVED) || \
                              ((OVR) == ADC_OVR_DATA_OVERWRITTEN))
@@ -929,7 +959,7 @@ typedef struct
 #define IS_ADC_RANK(WATCHDOG) (((WATCHDOG) == ADC_RANK_CHANNEL_NUMBER) || \
                                ((WATCHDOG) == ADC_RANK_NONE))
 
-#if defined (STM32L053xx) || defined (STM32L063xx) || defined (STM32L073xx) || defined (STM32L083xx)
+#if defined (ADC_CHANNEL_VLCD)
 #define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) == ADC_CHANNEL_0)           || \
                                  ((CHANNEL) == ADC_CHANNEL_1)           || \
                                  ((CHANNEL) == ADC_CHANNEL_2)           || \
@@ -949,7 +979,7 @@ typedef struct
                                  ((CHANNEL) == ADC_CHANNEL_TEMPSENSOR)  || \
                                  ((CHANNEL) == ADC_CHANNEL_VREFINT)     || \
                                  ((CHANNEL) == ADC_CHANNEL_VLCD))
-#else
+#elif defined (ADC_CHANNEL_TEMPSENSOR)
 #define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) == ADC_CHANNEL_0)           || \
                                  ((CHANNEL) == ADC_CHANNEL_1)           || \
                                  ((CHANNEL) == ADC_CHANNEL_2)           || \
@@ -967,6 +997,24 @@ typedef struct
                                  ((CHANNEL) == ADC_CHANNEL_14)          || \
                                  ((CHANNEL) == ADC_CHANNEL_15)          || \
                                  ((CHANNEL) == ADC_CHANNEL_TEMPSENSOR)  || \
+                                 ((CHANNEL) == ADC_CHANNEL_VREFINT))
+#else
+#define IS_ADC_CHANNEL(CHANNEL) (((CHANNEL) == ADC_CHANNEL_0)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_1)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_2)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_3)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_4)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_5)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_6)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_7)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_8)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_9)           || \
+                                 ((CHANNEL) == ADC_CHANNEL_10)          || \
+                                 ((CHANNEL) == ADC_CHANNEL_11)          || \
+                                 ((CHANNEL) == ADC_CHANNEL_12)          || \
+                                 ((CHANNEL) == ADC_CHANNEL_13)          || \
+                                 ((CHANNEL) == ADC_CHANNEL_14)          || \
+                                 ((CHANNEL) == ADC_CHANNEL_15)          || \
                                  ((CHANNEL) == ADC_CHANNEL_VREFINT))
 #endif
 
@@ -1056,6 +1104,13 @@ HAL_StatusTypeDef    HAL_ADC_Init(ADC_HandleTypeDef* hadc);
 HAL_StatusTypeDef    HAL_ADC_DeInit(ADC_HandleTypeDef *hadc);
 void                 HAL_ADC_MspInit(ADC_HandleTypeDef* hadc);
 void                 HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc);
+
+#if (USE_HAL_ADC_REGISTER_CALLBACKS == 1)
+/* Callbacks Register/UnRegister functions  ***********************************/
+HAL_StatusTypeDef HAL_ADC_RegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_CallbackIDTypeDef CallbackID, pADC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_ADC_UnRegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_ADC_REGISTER_CALLBACKS */
+
 /**
   * @}
   */

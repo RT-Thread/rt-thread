@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -299,68 +283,7 @@
 /**
  *  IS_GPIO_AF macro definition
  */
-#define IS_GPIO_AF(__AF__) (((__AF__) == GPIO_AF0_EVENTOUT) || ((__AF__) == GPIO_AF1_LCD)      || \
-                            ((__AF__) == GPIO_AF0_SPI1)     || ((__AF__) == GPIO_AF1_I2C1)     || \
-                            ((__AF__) == GPIO_AF0_TIM21)    || ((__AF__) == GPIO_AF1_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_MCO)      || ((__AF__) == GPIO_AF1_TIM21)    || \
-                            ((__AF__) == GPIO_AF0_SWDIO)    || ((__AF__) == GPIO_AF2_TIM2)     || \
-                            ((__AF__) == GPIO_AF0_SWCLK)    || ((__AF__) == GPIO_AF2_TIM3)     || \
-                            ((__AF__) == GPIO_AF0_USART1)   || ((__AF__) == GPIO_AF2_USB)      || \
-                            ((__AF__) == GPIO_AF0_SPI2)     || ((__AF__) == GPIO_AF2_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF0_LPTIM1)   || ((__AF__) == GPIO_AF2_LPTIM1)   || \
-                            ((__AF__) == GPIO_AF0_TIM2)     || ((__AF__) == GPIO_AF2_LPUART1)  || \
-                            ((__AF__) == GPIO_AF0_LPUART1)  || ((__AF__) == GPIO_AF2_MCO)      || \
-                            ((__AF__) == GPIO_AF0_USART2)   || ((__AF__) == GPIO_AF2_RTC)      || \
-                            ((__AF__) == GPIO_AF0_USB)      || ((__AF__) == GPIO_AF2_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_TIM2)     || ((__AF__) == GPIO_AF2_USART5)   || \
-                            ((__AF__) == GPIO_AF3_TSC)      || ((__AF__) == GPIO_AF2_SPI1)     || \
-                            ((__AF__) == GPIO_AF3_EVENTOUT) || ((__AF__) == GPIO_AF4_USART2)   || \
-                            ((__AF__) == GPIO_AF3_I2C1)     || ((__AF__) == GPIO_AF4_LPUART1)  || \
-                            ((__AF__) == GPIO_AF5_TIM21)    || ((__AF__) == GPIO_AF4_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF5_TIM2)     || ((__AF__) == GPIO_AF4_USART1)   || \
-                            ((__AF__) == GPIO_AF5_USART1)   || ((__AF__) == GPIO_AF4_TIM22)    || \
-                            ((__AF__) == GPIO_AF5_TIM22)    || ((__AF__) == GPIO_AF4_TIM3)     || \
-                            ((__AF__) == GPIO_AF5_SPI2)     || ((__AF__) == GPIO_AF4_I2C1)     || \
-                            ((__AF__) == GPIO_AF5_I2C2)     || ((__AF__) == GPIO_AF6_USART4)   || \
-                            ((__AF__) == GPIO_AF7_COMP2)    || ((__AF__) == GPIO_AF6_LPUART1)  || \
-                            ((__AF__) == GPIO_AF7_COMP1)    || ((__AF__) == GPIO_AF6_I2C1)     || \
-                            ((__AF__) == GPIO_AF7_I2C3)     || ((__AF__) == GPIO_AF6_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF7_LPUART1)  || ((__AF__) == GPIO_AF6_I2C2)     || \
-                            ((__AF__) == GPIO_AF6_USART5)   || ((__AF__) == GPIO_AF6_TIM21))
-
-
-#define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_I2C3)))    ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF5_I2C2)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_LPUART1))) ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_LPTIM1)    ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_I2C3)))    ||   \
-         (((__INSTANCE__) == GPIOD) && (((__AF__) ==  GPIO_AF0_LPUART1)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART5)))  ||   \
-         (((__INSTANCE__) == GPIOE) && (((__AF__) ==  GPIO_AF0_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)))  ||   \
-         (((__INSTANCE__) == GPIOH) && (((__AF__) ==  GPIO_AF0_USB))))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
  /**
   * @}
@@ -602,64 +525,7 @@
 /**
  * @brief IS_GPIO_AF macro definition
  */
-#define IS_GPIO_AF(__AF__) (((__AF__) == GPIO_AF0_EVENTOUT)  || ((__AF__) == GPIO_AF6_TIM21)    || \
-                            ((__AF__) == GPIO_AF0_SPI1)      || ((__AF__) == GPIO_AF1_I2C1)     || \
-                            ((__AF__) == GPIO_AF0_TIM21)     || ((__AF__) == GPIO_AF1_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_MCO)       || ((__AF__) == GPIO_AF1_TIM21)    || \
-                            ((__AF__) == GPIO_AF0_SWDIO)     || ((__AF__) == GPIO_AF2_TIM2)     || \
-                            ((__AF__) == GPIO_AF0_SWCLK)     || ((__AF__) == GPIO_AF2_TIM3)     || \
-                            ((__AF__) == GPIO_AF0_USART1)    || ((__AF__) == GPIO_AF2_USB)      || \
-                            ((__AF__) == GPIO_AF0_SPI2)      || ((__AF__) == GPIO_AF2_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF0_LPTIM1)    || ((__AF__) == GPIO_AF2_LPTIM1)   || \
-                            ((__AF__) == GPIO_AF0_TIM2)      || ((__AF__) == GPIO_AF2_LPUART1)  || \
-                            ((__AF__) == GPIO_AF0_LPUART1)   || ((__AF__) == GPIO_AF2_MCO)      || \
-                            ((__AF__) == GPIO_AF0_USART2)    || ((__AF__) == GPIO_AF2_RTC)      || \
-                            ((__AF__) == GPIO_AF0_USB)       || ((__AF__) == GPIO_AF2_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_TIM2)      || ((__AF__) == GPIO_AF2_USART5)   || \
-                            ((__AF__) == GPIO_AF3_TSC)       || ((__AF__) == GPIO_AF2_SPI1)     || \
-                            ((__AF__) == GPIO_AF3_EVENTOUT)  || ((__AF__) == GPIO_AF4_USART2)   || \
-                            ((__AF__) == GPIO_AF3_I2C1)      || ((__AF__) == GPIO_AF4_LPUART1)  || \
-                            ((__AF__) == GPIO_AF5_TIM21)     || ((__AF__) == GPIO_AF4_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF5_TIM2)      || ((__AF__) == GPIO_AF4_USART1)   || \
-                            ((__AF__) == GPIO_AF5_USART1)    || ((__AF__) == GPIO_AF4_TIM22)    || \
-                            ((__AF__) == GPIO_AF5_TIM22)     || ((__AF__) == GPIO_AF4_TIM3)     || \
-                            ((__AF__) == GPIO_AF5_SPI2)      || ((__AF__) == GPIO_AF4_I2C1)     || \
-                            ((__AF__) == GPIO_AF5_I2C2)      || ((__AF__) == GPIO_AF6_USART4)   || \
-                            ((__AF__) == GPIO_AF7_COMP2)     || ((__AF__) == GPIO_AF6_LPUART1)  || \
-                            ((__AF__) == GPIO_AF7_COMP1)     || ((__AF__) == GPIO_AF6_I2C1)     || \
-                            ((__AF__) == GPIO_AF7_I2C3)      || ((__AF__) == GPIO_AF6_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF7_LPUART1)   || ((__AF__) == GPIO_AF6_I2C2)     || \
-                            ((__AF__) == GPIO_AF6_USART5))
-
-#define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP1)))   ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_I2C1)      ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF5_I2C2)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_LPUART1))) ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_I2C3)))    ||   \
-         (((__INSTANCE__) == GPIOD) && (((__AF__) ==  GPIO_AF0_TIM21)     ||   \
-                                        ((__AF__) ==  GPIO_AF1_TIM21)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART5)))  ||   \
-         (((__INSTANCE__) == GPIOE) && (((__AF__) ==  GPIO_AF0_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)))  ||   \
-         (((__INSTANCE__) == GPIOH) && (((__AF__) ==  GPIO_AF0_USB))))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
  /**
   * @}
@@ -909,61 +775,7 @@
  /**
  * IS_GPIO_AF macro definition
  */
-#define IS_GPIO_AF(__AF__) (((__AF__) == GPIO_AF0_EVENTOUT) || ((__AF__) == GPIO_AF7_LPUART1)  || \
-                            ((__AF__) == GPIO_AF0_SPI1)     || ((__AF__) == GPIO_AF1_I2C1)     || \
-                            ((__AF__) == GPIO_AF0_TIM21)    || ((__AF__) == GPIO_AF1_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_MCO)      || ((__AF__) == GPIO_AF1_TIM21)    || \
-                            ((__AF__) == GPIO_AF0_SWDIO)    || ((__AF__) == GPIO_AF2_TIM2)     || \
-                            ((__AF__) == GPIO_AF0_SWCLK)    || ((__AF__) == GPIO_AF2_TIM3)     || \
-                            ((__AF__) == GPIO_AF0_USART1)   || ((__AF__) == GPIO_AF6_TIM21)    || \
-                            ((__AF__) == GPIO_AF0_SPI2)     || ((__AF__) == GPIO_AF2_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF0_LPTIM1)   || ((__AF__) == GPIO_AF2_LPTIM1)   || \
-                            ((__AF__) == GPIO_AF0_TIM2)     || ((__AF__) == GPIO_AF2_LPUART1)  || \
-                            ((__AF__) == GPIO_AF0_LPUART1)  || ((__AF__) == GPIO_AF2_MCO)      || \
-                            ((__AF__) == GPIO_AF0_USART2)   || ((__AF__) == GPIO_AF2_RTC)      || \
-                            ((__AF__) == GPIO_AF2_SPI2)     || ((__AF__) == GPIO_AF6_USART5)   || \
-                            ((__AF__) == GPIO_AF0_TIM2)     || ((__AF__) == GPIO_AF2_USART5)   || \
-                            ((__AF__) == GPIO_AF2_SPI1)     || ((__AF__) == GPIO_AF6_I2C2)     || \
-                            ((__AF__) == GPIO_AF3_EVENTOUT) || ((__AF__) == GPIO_AF4_USART2)   || \
-                            ((__AF__) == GPIO_AF3_I2C1)     || ((__AF__) == GPIO_AF4_LPUART1)  || \
-                            ((__AF__) == GPIO_AF5_TIM21)    || ((__AF__) == GPIO_AF4_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF5_TIM2)     || ((__AF__) == GPIO_AF4_USART1)   || \
-                            ((__AF__) == GPIO_AF5_USART1)   || ((__AF__) == GPIO_AF4_TIM22)    || \
-                            ((__AF__) == GPIO_AF5_TIM22)    || ((__AF__) == GPIO_AF4_TIM3)     || \
-                            ((__AF__) == GPIO_AF5_SPI2)     || ((__AF__) == GPIO_AF4_I2C1)     || \
-                            ((__AF__) == GPIO_AF5_I2C2)     || ((__AF__) == GPIO_AF6_USART4)   || \
-                            ((__AF__) == GPIO_AF7_COMP2)    || ((__AF__) == GPIO_AF6_LPUART1)  || \
-                            ((__AF__) == GPIO_AF7_COMP1)    || ((__AF__) == GPIO_AF6_I2C1)     || \
-                            ((__AF__) == GPIO_AF7_I2C3)     || ((__AF__) == GPIO_AF6_EVENTOUT))
-
-
-#define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP1)))   ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_I2C1)      ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_I2C1)      ||   \
-                                        ((__AF__) ==  GPIO_AF4_I2C1)      ||   \
-                                        ((__AF__) ==  GPIO_AF5_I2C2)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_LPUART1))) ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_LPUART1)   ||   \
-                                        ((__AF__) ==  GPIO_AF7_I2C3)))    ||   \
-         (((__INSTANCE__) == GPIOD) && (((__AF__) ==  GPIO_AF0_LPUART1)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_SPI2)      ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART5)))  ||   \
-         (((__INSTANCE__) == GPIOE) && (((__AF__) ==  GPIO_AF0_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM3)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_USART4))))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
  /**
   * @}
@@ -1159,54 +971,7 @@
  * @brief  IS_GPIO_AF macro definition
  */
 
-#define IS_GPIO_AF(__AF__) (((__AF__) == GPIO_AF0_SPI1)     || ((__AF__) == GPIO_AF2_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_SPI2)     || ((__AF__) == GPIO_AF2_LPUART1)  || \
-                            ((__AF__) == GPIO_AF0_USART1)   || ((__AF__) == GPIO_AF2_USB)      || \
-                            ((__AF__) == GPIO_AF0_USART2)   || ((__AF__) == GPIO_AF2_LPTIM1)   || \
-                            ((__AF__) == GPIO_AF0_LPUART1)  || ((__AF__) == GPIO_AF2_TIM2)     || \
-                            ((__AF__) == GPIO_AF0_USB)      || ((__AF__) == GPIO_AF3_TSC)      || \
-                            ((__AF__) == GPIO_AF0_LPTIM1)   || ((__AF__) == GPIO_AF2_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF0_TSC)      || ((__AF__) == GPIO_AF2_RTC) || \
-                            ((__AF__) == GPIO_AF3_I2C1)     || ((__AF__) == GPIO_AF7_COMP2)    || \
-                            ((__AF__) == GPIO_AF0_TIM22)    || ((__AF__) == GPIO_AF3_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF0_EVENTOUT) || ((__AF__) == GPIO_AF4_I2C1)     || \
-                            ((__AF__) == GPIO_AF0_MCO)      || ((__AF__) == GPIO_AF4_USART1)   || \
-                            ((__AF__) == GPIO_AF0_SWDIO)    || ((__AF__) == GPIO_AF0_SWCLK)    || \
-                            ((__AF__) == GPIO_AF1_SPI1)     || ((__AF__) == GPIO_AF4_USART2)   || \
-                            ((__AF__) == GPIO_AF1_SPI2)     || ((__AF__) == GPIO_AF4_LPUART1)  || \
-                            ((__AF__) == GPIO_AF7_COMP2)    || ((__AF__) == GPIO_AF4_TIM22)    || \
-                            ((__AF__) == GPIO_AF1_I2C1)     || ((__AF__) == GPIO_AF4_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF1_LCD)      || ((__AF__) == GPIO_AF5_SPI2)     || \
-                            ((__AF__) == GPIO_AF5_I2C2)     || ((__AF__) == GPIO_AF5_TIM2)     || \
-                            ((__AF__) == GPIO_AF5_TIM21)    || ((__AF__) == GPIO_AF5_TIM22)    || \
-                            ((__AF__) == GPIO_AF6_I2C2)     || ((__AF__) == GPIO_AF6_TIM21)    || \
-                            ((__AF__) == GPIO_AF6_EVENTOUT) || ((__AF__) == GPIO_AF7_COMP1))
-
-
-
-#define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP1)))   ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF5_I2C2)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_TIM21)))   ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)))     ||   \
-         (((__INSTANCE__) == GPIOD) && (((__AF__) ==  GPIO_AF0_LPUART1)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_LCD)))     ||   \
-         (((__INSTANCE__) == GPIOH) && (((__AF__) ==  GPIO_AF0_USB))))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
 /**
   * @}
@@ -1403,52 +1168,9 @@
  * @brief  IS_GPIO_AF macro definition
  */
 
-#define IS_GPIO_AF(__AF__) (((__AF__) == GPIO_AF0_SPI1)     || ((__AF__) == GPIO_AF2_SPI2)        || \
-                            ((__AF__) == GPIO_AF0_SPI2)     || ((__AF__) == GPIO_AF2_LPUART1)     || \
-                            ((__AF__) == GPIO_AF0_USART1)   || ((__AF__) == GPIO_AF2_USB)         || \
-                            ((__AF__) == GPIO_AF0_USART2)   || ((__AF__) == GPIO_AF2_LPTIM1)      || \
-                            ((__AF__) == GPIO_AF0_LPUART1)  || ((__AF__) == GPIO_AF2_TIM2)        || \
-                            ((__AF__) == GPIO_AF0_USB)      || ((__AF__) == GPIO_AF4_TIM22)       || \
-                            ((__AF__) == GPIO_AF0_LPTIM1)   || ((__AF__) == GPIO_AF2_EVENTOUT)    || \
-                            ((__AF__) == GPIO_AF0_TSC)      || ((__AF__) == GPIO_AF2_RTC)    || \
-                            ((__AF__) == GPIO_AF0_TIM2)     || ((__AF__) == GPIO_AF3_I2C1)        || \
-                            ((__AF__) == GPIO_AF0_TIM21)    || ((__AF__) == GPIO_AF3_TSC)         || \
-                            ((__AF__) == GPIO_AF0_TIM22)    || ((__AF__) == GPIO_AF3_EVENTOUT)    || \
-                            ((__AF__) == GPIO_AF0_EVENTOUT) || ((__AF__) == GPIO_AF4_I2C1)        || \
-                            ((__AF__) == GPIO_AF0_MCO)      || ((__AF__) == GPIO_AF4_USART1)      || \
-                            ((__AF__) == GPIO_AF0_SWDIO)    || ((__AF__) == GPIO_AF0_SWCLK)       || \
-                            ((__AF__) == GPIO_AF1_SPI1)     || ((__AF__) == GPIO_AF4_USART2)      || \
-                            ((__AF__) == GPIO_AF1_SPI2)     || ((__AF__) == GPIO_AF4_LPUART1)     || \
-                            ((__AF__) == GPIO_AF1_I2C1)     || ((__AF__) == GPIO_AF4_EVENTOUT)    || \
-                            ((__AF__) == GPIO_AF6_EVENTOUT) || ((__AF__) == GPIO_AF5_SPI2)        || \
-                            ((__AF__) == GPIO_AF5_I2C2)     || ((__AF__) == GPIO_AF5_TIM2)        || \
-                            ((__AF__) == GPIO_AF5_TIM21)    || ((__AF__) == GPIO_AF5_TIM22)       || \
-                            ((__AF__) == GPIO_AF6_I2C2)     || ((__AF__) == GPIO_AF6_TIM21)       || \
-                            ((__AF__) == GPIO_AF7_COMP2)    || ((__AF__) == GPIO_AF7_COMP1))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
-
-#define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)        ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)     ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP1)))    ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_I2C1)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)        ||   \
-                                        ((__AF__) ==  GPIO_AF4_LPUART1)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_I2C2)       ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT))) ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF2_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF3_TSC)))      ||   \
-         (((__INSTANCE__) == GPIOD) && (((__AF__) ==  GPIO_AF0_LPUART1)))  ||   \
-         (((__INSTANCE__) == GPIOH) && (((__AF__) ==  GPIO_AF0_USB))))
-
- /**
+/**
   * @}
   */
 #endif /* STM32L052xx || STM32L062xx */
@@ -1638,49 +1360,9 @@
 /**
  * @brief  IS_GPIO_AF macro definition
  */
-#define IS_GPIO_AF(__AF__) (((__AF__) == GPIO_AF0_SPI1)     || ((__AF__) == GPIO_AF2_SPI2)     || \
-                            ((__AF__) == GPIO_AF0_SPI2)     || ((__AF__) == GPIO_AF2_LPUART1)  || \
-                            ((__AF__) == GPIO_AF0_USART1)   || ((__AF__) == GPIO_AF7_COMP1)    || \
-                            ((__AF__) == GPIO_AF0_USART2)   || ((__AF__) == GPIO_AF2_LPTIM1)   || \
-                            ((__AF__) == GPIO_AF0_LPUART1)  || ((__AF__) == GPIO_AF2_TIM2)     || \
-                            ((__AF__) == GPIO_AF0_LPTIM1)   || ((__AF__) == GPIO_AF2_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF2_RTC) || ((__AF__) == GPIO_AF4_TIM22)    || \
-                            ((__AF__) == GPIO_AF0_TIM2)     || ((__AF__) == GPIO_AF3_I2C1)     || \
-                            ((__AF__) == GPIO_AF0_TIM21)    || ((__AF__) == GPIO_AF7_COMP2)    || \
-                            ((__AF__) == GPIO_AF0_TIM22)    || ((__AF__) == GPIO_AF3_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF0_EVENTOUT) || ((__AF__) == GPIO_AF4_I2C1)     || \
-                            ((__AF__) == GPIO_AF0_MCO)      || ((__AF__) == GPIO_AF4_USART1)   || \
-                            ((__AF__) == GPIO_AF0_SWDIO)    || ((__AF__) == GPIO_AF0_SWCLK)    || \
-                            ((__AF__) == GPIO_AF1_SPI1)     || ((__AF__) == GPIO_AF4_USART2)   || \
-                            ((__AF__) == GPIO_AF1_SPI2)     || ((__AF__) == GPIO_AF4_LPUART1)  || \
-                            ((__AF__) == GPIO_AF1_I2C1)     || ((__AF__) == GPIO_AF4_EVENTOUT) || \
-                            ((__AF__) == GPIO_AF6_EVENTOUT) || ((__AF__) == GPIO_AF5_SPI2)     || \
-                            ((__AF__) == GPIO_AF5_I2C2)     || ((__AF__) == GPIO_AF5_TIM2)     || \
-                            ((__AF__) == GPIO_AF5_TIM21)    || ((__AF__) == GPIO_AF5_TIM22)    || \
-                            ((__AF__) == GPIO_AF6_I2C2)     || ((__AF__) == GPIO_AF6_TIM21))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
-                         
-
-   #define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)     ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP2)))   ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF1_I2C1)      ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)      ||   \
-                                        ((__AF__) ==  GPIO_AF3_I2C1)      ||   \
-                                        ((__AF__) ==  GPIO_AF4_LPUART1)   ||   \
-                                        ((__AF__) ==  GPIO_AF5_I2C2)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_TIM21)))   ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_EVENTOUT)  ||   \
-                                        ((__AF__) ==  GPIO_AF2_LPUART1))) ||   \
-         (((__INSTANCE__) == GPIOD) && (((__AF__) ==  GPIO_AF0_LPUART1))))
-
- /**
+/**
   * @}
   */
 #endif /* STM32L051xx/STM32L061xx*/
@@ -1845,57 +1527,7 @@
  * @brief  IS_GPIO_AF macro definition
  */
 
-#define IS_GPIO_AF(__AF__)   (((__AF__) == GPIO_AF0_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF0_TIM21     ) || \
-                              ((__AF__) == GPIO_AF0_SPI1      ) || \
-                              ((__AF__) == GPIO_AF0_USART2    ) || \
-                              ((__AF__) == GPIO_AF0_LPTIM1    ) || \
-                              ((__AF__) == GPIO_AF0_MCO       ) || \
-                              ((__AF__) == GPIO_AF0_SWDIO     ) || \
-                              ((__AF__) == GPIO_AF0_SWCLK     ) || \
-                              ((__AF__) == GPIO_AF1_SPI1      ) || \
-                              ((__AF__) == GPIO_AF1_I2C1      ) || \
-                              ((__AF__) == GPIO_AF1_LPTIM1    ) || \
-                              ((__AF__) == GPIO_AF2_LPTIM1    ) || \
-                              ((__AF__) == GPIO_AF2_TIM2      ) || \
-                              ((__AF__) == GPIO_AF2_MCO       ) || \
-                              ((__AF__) == GPIO_AF2_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF2_RTC       ) || \
-                              ((__AF__) == GPIO_AF3_I2C1      ) || \
-                              ((__AF__) == GPIO_AF3_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF4_I2C1      ) || \
-                              ((__AF__) == GPIO_AF4_USART2    ) || \
-                              ((__AF__) == GPIO_AF4_LPUART1   ) || \
-                              ((__AF__) == GPIO_AF4_TIM22     ) || \
-                              ((__AF__) == GPIO_AF4_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF5_TIM2      ) || \
-                              ((__AF__) == GPIO_AF5_TIM21     ) || \
-                              ((__AF__) == GPIO_AF5_TIM22     ) || \
-                              ((__AF__) == GPIO_AF6_LPUART1   ) || \
-                              ((__AF__) == GPIO_AF6_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF7_COMP1     ) || \
-                              ((__AF__) == GPIO_AF7_COMP2     ))
-                                      
-
- #define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_LPTIM1)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF3_I2C1)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)     ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM22)      ||   \
-                                        ((__AF__) ==  GPIO_AF6_LPUART1)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP2)))    ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_SPI1)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_LPTIM1)     ||   \
-                                        ((__AF__) ==  GPIO_AF3_I2C1)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_LPUART1)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT))) ||   \
-         (((__INSTANCE__) == GPIOC) && (((__AF__) ==  GPIO_AF0_LPTIM1)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF6_LPUART1))))
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
 /**
   * @}
@@ -2049,63 +1681,654 @@
  *  IS_GPIO_AF macro definition
  */
 
-#define IS_GPIO_AF(__AF__)   (((__AF__) == GPIO_AF0_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF0_TIM21     ) || \
-                              ((__AF__) == GPIO_AF0_SPI1      ) || \
-                              ((__AF__) == GPIO_AF0_USART2    ) || \
-                              ((__AF__) == GPIO_AF0_MCO       ) || \
-                              ((__AF__) == GPIO_AF0_SWDIO     ) || \
-                              ((__AF__) == GPIO_AF0_SWCLK     ) || \
-                              ((__AF__) == GPIO_AF1_SPI1      ) || \
-                              ((__AF__) == GPIO_AF1_I2C1      ) || \
-                              ((__AF__) == GPIO_AF1_LPTIM1    ) || \
-                              ((__AF__) == GPIO_AF2_LPTIM1    ) || \
-                              ((__AF__) == GPIO_AF2_TIM2      ) || \
-                              ((__AF__) == GPIO_AF2_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF2_RTC       ) || \
-                              ((__AF__) == GPIO_AF3_I2C1      ) || \
-                              ((__AF__) == GPIO_AF3_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF4_I2C1      ) || \
-                              ((__AF__) == GPIO_AF4_USART2    ) || \
-                              ((__AF__) == GPIO_AF4_LPUART1   ) || \
-                              ((__AF__) == GPIO_AF4_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF5_TIM2      ) || \
-                              ((__AF__) == GPIO_AF5_TIM21     ) || \
-                              ((__AF__) == GPIO_AF5_SPI1      ) || \
-                              ((__AF__) == GPIO_AF6_LPUART1   ) || \
-                              ((__AF__) == GPIO_AF6_EVENTOUT  ) || \
-                              ((__AF__) == GPIO_AF7_COMP1     ) || \
-                              ((__AF__) == GPIO_AF7_COMP2     ))
-                                      
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
 
- #define IS_GPIO_AF_AVAILABLE(__INSTANCE__,__AF__)  \
-        ((((__INSTANCE__) == GPIOA) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_LPTIM1)     ||   \
-                                        ((__AF__) ==  GPIO_AF2_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF3_I2C1)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_USART2)     ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF6_LPUART1)    ||   \
-                                        ((__AF__) ==  GPIO_AF7_COMP2)))    ||   \
-         (((__INSTANCE__) == GPIOB) && (((__AF__) ==  GPIO_AF0_EVENTOUT)   ||   \
-                                        ((__AF__) ==  GPIO_AF1_SPI1)       ||   \
-                                        ((__AF__) ==  GPIO_AF2_LPTIM1)     ||   \
-                                        ((__AF__) ==  GPIO_AF3_I2C1)       ||   \
-                                        ((__AF__) ==  GPIO_AF4_LPUART1)    ||   \
-                                        ((__AF__) ==  GPIO_AF5_TIM2)       ||   \
-                                        ((__AF__) ==  GPIO_AF6_EVENTOUT))))
-
- /**
+/**
   * @}
   */
 
 #endif /* STM32L011xx/STM32L021xx*/
-/*------------------------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*/
+/*----------------------------- STM32L010xB ----------------------------------*/
+/*----------------------------------------------------------------------------*/
+#if defined (STM32L010xB)
+/* The table below gives an overview of the different alternate functions per port.
+ * For more details refer yourself to the product data sheet.
+ *
+ */
+/*     |   AF0     |   AF1    |   AF2     |   AF3   |   AF4     |   AF5   |   AF6     |   AF7    |
+ *_______________________________________________________________________________________________|
+ * PA0 |           |          |TIM2_CH1   |         |USART2_CTS |TIM2_ETR |           |          |
+ * PA1 |EVENTOUT   |          |TIM2_CH2   |         |USART2_RTS |TIM21_ETR|           |          |
+ * PA2 |TIM21_CH1  |          |TIM2_CH3   |         |USART2_TX  |         |LPUART1_TX |          |
+ * PA3 |TIM21_CH2  |          |TIM2_CH4   |         |USART2_RX  |         |LPUART1_RX |          |
+ * PA4 |SPI1_NSS   |          |           |         |USART2_CK  |TIM22_ETR|           |          |
+ * PA5 |SPI1_SCK   |          |TIM2_ETR   |         |           |TIM2_CH1 |           |          |
+ * PA6 |SPI1_MISO  |          |           |         |LPUART1_CTS|TIM22_CH1|EVENTOUT   |          |
+ * PA7 |SPI1_MOSI  |          |           |         |           |TIM22_CH2|EVENTOUT   |          |
+ * PA8 |MCO        |          |           |EVENTOUT |           |         |           |          |
+ * PA9 |MCO        |          |           |         |           |         |I2C1_SCL   |          |
+ * PA10|           |          |           |         |           |         |I2C1_SDA   |          |
+ * PA11|SPI1_MISO  |          |EVENTOUT   |         |           |         |           |          |
+ * PA12|SPI1_MOSI  |          |EVENTOUT   |         |           |         |           |          |
+ * PA13|SWDIO      |          |           |         |           |         |LPUART1_RX |          |
+ * PA14|SWCLK      |          |           |         |USART2_TX  |         |LPUART1_TX |          |
+ * PA15|SPI1_NSS   |          |TIM2_ETR   |EVENTOUT |USART2_RX  |TIM2_CH1 |           |          |
+ *_______________________________________________________________________________________________|
+ * PB0 |EVENTOUT   |          |           |         |           |         |           |          |
+ * PB1 |           |          |           |         |LPUART1_RTS|         |           |          |
+ * PB2 |           |          |LPTIM1_OUT |         |           |         |           |          |
+ * PB3 |SPI1_SCK   |          |TIM2_CH2   |         |EVENTOUT   |         |           |          |
+ * PB4 |SPI1_MISO  |          |           |         |TIM22_CH1  |         |           |          |
+ * PB5 |SPI1_MOSI  |          |LPTIM1_IN1 |I2C1_SMBA|TIM22_CH2  |         |           |          |
+ * PB6 |           |I2C1_SCL  |LPTIM1_ETR |         |           |         |           |          |
+ * PB7 |           |I2C1_SDA  |LPTIM1_IN2 |         |           |         |           |          |
+ * PB8 |           |          |           |         |I2C1_SCL   |         |           |          |
+ * PB9 |           |          |EVENTOUT   |         |I2C1_SDA   |         |           |          |
+ * PB10|           |          |TIM2_CH3   |         |LPUART1_TX |         |           |LPUART1_RX|
+ * PB11|EVENTOUT   |          |TIM2_CH4   |         |LPUART1_RX |         |           |LPUART1_TX|
+ * PB12|           |          |LPUART1_RTS|         |           |         |EVENTOUT   |          |
+ * PB13|           |          |MCO        |         |LPUART1_CTS|         |TIM21_CH1  |          |
+ * PB14|           |          |RTC_OUT    |         |LPUART1_RTS|         |TIM21_CH2  |          |
+ * PB15|           |          |RTC_REFIN  |         |           |         |           |          |
+ *_______________________________________________________________________________________________|
+ * PC0 |LPTIM1_IN1 |          |EVENTOUT   |         |           |         |LPUART1_RX |          |
+ * PC1 |LPTIM1_OUT |          |EVENTOUT   |         |           |         |LPUART1_TX |          |
+ * PC2 |LPTIM1_IN2 |          |           |         |           |         |           |          |
+ * PC3 |LPTIM1_ETR |          |           |         |           |         |           |          |
+ * PC4 |EVENTOUT   |          |LPUART1_TX |         |           |         |           |          |
+ * PC5 |           |          |LPUART1_RX |         |           |         |           |          |
+ * PC6 |TIM22_CH1  |          |           |         |           |         |           |          |
+ * PC7 |TIM22_CH2  |          |           |         |           |         |           |          |
+ * PC8 |TIM22_ETR  |          |           |         |           |         |           |          |
+ * PC9 |TIM21_ETR  |          |           |         |           |         |           |          |
+ * PC10|LPUART1_TX |          |           |         |           |         |           |          |
+ * PC11|LPUART1_RX |          |           |         |           |         |           |          |
+ *_______________________________________________________________________________________________|
+ * PD2 |LPUART1_RTS|          |           |         |           |         |           |          |
+ *_______________________________________________________________________________________________|
+ */                                      
+
+/** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
+ * @{
+ */
+
+/*
+ * Alternate function AF0
+ *
+ */
+#define GPIO_AF0_EVENTOUT      ((uint8_t)0x00U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF0_TIM21         ((uint8_t)0x00U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF0_SPI1          ((uint8_t)0x00U)  /* SPI1 Alternate Function mapping     */
+#define GPIO_AF0_MCO           ((uint8_t)0x00U)  /* MCO Alternate Function mapping      */
+#define GPIO_AF0_SWDIO         ((uint8_t)0x00U)  /* SWDIO Alternate Function mapping    */
+#define GPIO_AF0_SWCLK         ((uint8_t)0x00U)  /* SWCLK Alternate Function mapping    */
+#define GPIO_AF0_LPTIM1        ((uint8_t)0x00U)  /* LPTIM1 Alternate Function mapping   */
+#define GPIO_AF0_TIM22         ((uint8_t)0x00U)  /* TIM22 Alternate Function mapping    */
+#define GPIO_AF0_LPUART1       ((uint8_t)0x00U)  /* LPUART1 Alternate Function mapping  */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF1
+ *
+ */
+#define GPIO_AF1_I2C1          ((uint8_t)0x01U)  /* I2C1 Alternate Function mapping  */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF2
+ *
+ */
+#define GPIO_AF2_TIM2          ((uint8_t)0x02U)  /* TIM2 Alternate Function mapping     */
+#define GPIO_AF2_EVENTOUT      ((uint8_t)0x02U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF2_LPTIM1        ((uint8_t)0x02U)  /* LPTIM1 Alternate Function mapping   */
+#define GPIO_AF2_LPUART1       ((uint8_t)0x02U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF2_MCO           ((uint8_t)0x02U)  /* MCO Alternate Function mapping      */
+#define GPIO_AF2_RTC           ((uint8_t)0x02U)  /* RTC Alternate Function mapping      */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF3
+ * @{
+ */
+#define GPIO_AF3_EVENTOUT      ((uint8_t)0x03U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF3_I2C1          ((uint8_t)0x03U)  /* I2C1 Alternate Function mapping     */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF4
+ *
+ */
+#define GPIO_AF4_USART2          ((uint8_t)0x04U)  /* USART2 Alternate Function mapping   */
+#define GPIO_AF4_LPUART1         ((uint8_t)0x04U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF4_EVENTOUT        ((uint8_t)0x04U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF4_TIM22           ((uint8_t)0x04U)  /* TIM22 Alternate Function mapping    */
+#define GPIO_AF4_I2C1            ((uint8_t)0x04U)  /* I2C1 Alternate Function mapping    */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF5
+ *
+ */
+#define GPIO_AF5_TIM2          ((uint8_t)0x05U)  /* TIM2 Alternate Function mapping     */
+#define GPIO_AF5_TIM21         ((uint8_t)0x05U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF5_TIM22         ((uint8_t)0x05U)  /* TIM22 Alternate Function mapping    */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF6
+ *
+ */
+#define GPIO_AF6_LPUART1       ((uint8_t)0x06U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF6_EVENTOUT      ((uint8_t)0x06U)  /* EVENTOUT Alternate Function mapping  */
+#define GPIO_AF6_I2C1          ((uint8_t)0x06U)  /* I2C1 Alternate Function mapping  */
+#define GPIO_AF6_TIM21         ((uint8_t)0x06U)  /* TIM21 Alternate Function mapping    */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF7
+ *
+ */
+#define GPIO_AF7_LPUART1      ((uint8_t)0x07U)  /* LPUART1 Alternate Function mapping     */
+/**
+  *
+  */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/** @defgroup GPIOEx_Private  GPIOEx Private
+ * @{
+ */
+
+ /**
+ * IS_GPIO_AF macro definition
+ */
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x07)
+
+/**
+  * @}
+  */
+
+#endif /* STM32L010xB */
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- STM32L010x8 --------------------------------------*/
+/*----------------------------------------------------------------------------*/
+#if defined (STM32L010x8)
+/* The table below gives an overview of the different alternate functions per port.
+ * For more details refer yourself to the product data sheet.
+ *
+ */
+/*      |   AF0       |   AF1      |   AF2       |   AF3    |   AF4      |   AF5      |   AF6     |
+ *________________________________________________________________________________________________|
+ * PA0  |             |            | TIM2_CH1    |          | USART2_CTS  | TIM2_ETR  |           |
+ * PA1  | EVENTOUT    |            | TIM2_CH2    |          | USART2_RTS  | TIM21_ETR |           |
+ * PA2  | TIM21_CH1   |            | TIM2_CH3    |          | USART2_TX   |           |           |
+ * PA3  | TIM21_CH2   |            | TIM2_CH4    |          | USART2_RX   |           |           |
+ * PA4  | SPI1_NSS    |            |             |          | USART2_CK   |           |           |
+ * PA5  | SPI1_SCK    |            | TIM2_ETR    |          |             | TIM2_CH1  |           |
+ * PA6  | SPI1_MISO   |            |             |          | LPUART1_CTS |           | EVENTOUT  |
+ * PA7  | SPI1_MOSI   |            |             |          |             |           | EVENTOUT  |
+ * PA8  | MCO         |            |             | EVENTOUT |             |           |           |
+ * PA9  | MCO         |            |             |          |             |           |           |
+ * PA10 |             |            |             |          |             |           |           |
+ * PA11 | SPI1_MISO   |            | EVENTOUT    |          |             |           |           |
+ * PA12 | SPI1_MOSI   |            | EVENTOUT    |          |             |           |           |
+ * PA13 | SWDIO       |            |             |          |             |           |           |
+ * PA14 | SWCLK       |            |             |          | USART2_TX   |           |           |
+ * PA15 | SPI1_NSS    |            | TIM2_ETR    | EVENTOUT | USART2_RX   | TIM2_CH1  |           |
+ *________________________________________________________________________________________________|
+ * PB0  | EVENTOUT    |            |             |          |             |           |           |
+ * PB1  |             |            |             |          | LPUART1_RTS |           |           |
+ * PB2  |             |            | LPTIM1_OUT  |          |             |           |           |
+ * PB3  | SPI1_SCK    |            | TIM2_CH2    |          | EVENTOUT    |           |           |
+ * PB4  | SPI1_MISO   | EVENTOUT   |             |          |             |           |           |
+ * PB5  | SPI1_MOSI   | LPTIM1_IN1 | I2C1_SMBA   |          |             |           |           |
+ * PB6  |             | I2C1_SCL   | LPTIM1_ETR  |          |             |           |           |
+ * PB7  |             | I2C1_SDA   | LPTIM1_IN2  |          |             |           |           |
+ * PB8  |             |            |             |          | I2C1_SCL    |           |           |
+ * PB9  |             |            | EVENTOUT    |          | I2C1_SDA    |           |           |
+ * PB10 |             |            | TIM2_CH3    |          | LPUART1_TX  |           |           |
+ * PB11 | EVENTOUT    |            | TIM2_CH4    |          | LPUART1_RX  |           |           |
+ * PB12 |             |            | LPUART1_RTS |          |             | EVENTOUT  |           |
+ * PB13 |             |            |             |          | LPUART1_CTS |           | TIM21_CH1 |
+ * PB14 |             |            | RTC_OUT     |          | LPUART1_RTS |           | TIM21_CH2 |
+ * PB15 |             |            | RTC_REFIN   |          |             |           |           |
+ *________________________________________________________________________________________________|
+ * PC0  | LPTIM1_IN1  |            | EVENTOUT    |          |             |           |           |
+ * PC1  | LPTIM1_OUT  |            | EVENTOUT    |          |             |           |           |
+ * PC2  | LPTIM1_IN2  |            |             |          |             |           |           |
+ * PC3  | LPTIM1_ETR  |            |             |          |             |           |           |
+ * PC4  | EVENTOUT    |            | LPUART1_TX  |          |             |           |           |
+ * PC5  |             |            | LPUART1_RX  |          |             |           |           |
+ * PC9  | TIM21_ETR   |            |             |          |             |           |           |
+ * PC10 | LPUART1_TX  |            |             |          |             |           |           |
+ * PC11 | LPUART1_RX  |            |             |          |             |           |           |
+ * PD2  | LPUART1_RTS |            |             |          |             |           |           |
+ *________________________________________________________________________________________________|
+ */
+
+/** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
+ * @{
+ */
+
+/*
+ * Alternate function AF0
+ */
+#define GPIO_AF0_EVENTOUT      ((uint8_t)0x00U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF0_TIM21         ((uint8_t)0x00U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF0_SPI1          ((uint8_t)0x00U)  /* SPI1 Alternate Function mapping     */
+#define GPIO_AF0_MCO           ((uint8_t)0x00U)  /* MCO Alternate Function mapping      */
+#define GPIO_AF0_SWDIO         ((uint8_t)0x00U)  /* SWDIO Alternate Function mapping    */
+#define GPIO_AF0_SWCLK         ((uint8_t)0x00U)  /* SWCLK Alternate Function mapping    */
+#define GPIO_AF0_LPTIM1        ((uint8_t)0x00U)  /* LPTIM1 Alternate Function mapping   */
+#define GPIO_AF0_LPUART1       ((uint8_t)0x00U)  /* LPUART1 Alternate Function mapping  */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF1
+ */
+#define GPIO_AF1_I2C1          ((uint8_t)0x01U)  /* I2C1 Alternate Function mapping  */
+/**
+  *
+  */
+
+ /*
+  * Alternate function AF2
+ */
+#define GPIO_AF2_TIM2          ((uint8_t)0x02U)  /* TIM2 Alternate Function mapping       */
+#define GPIO_AF2_EVENTOUT      ((uint8_t)0x02U)  /* EVENTOUT Alternate Function mapping   */
+#define GPIO_AF2_LPTIM1        ((uint8_t)0x02U)  /* LPTIM1 Alternate Function mapping     */
+#define GPIO_AF2_LPUART1       ((uint8_t)0x02U)  /* LPUART1 Alternate Function mapping    */
+#define GPIO_AF2_RTC           ((uint8_t)0x02U)  /* RTC Alternate Function mapping        */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF3
+ */
+#define GPIO_AF3_I2C1          ((uint8_t)0x03U)  /* I2C1 Alternate Function mapping     */
+#define GPIO_AF3_EVENTOUT      ((uint8_t)0x03U)  /* EVENTOUT Alternate Function mapping */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF4
+ */
+#define GPIO_AF4_USART2          ((uint8_t)0x04U)  /* USART2 Alternate Function mapping   */
+#define GPIO_AF4_LPUART1         ((uint8_t)0x04U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF4_I2C1            ((uint8_t)0x04U)  /* I2C1 Alternate Function mapping     */
+#define GPIO_AF4_EVENTOUT        ((uint8_t)0x04U)  /* EVENTOUT Alternate Function mapping */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF5
+ */
+#define GPIO_AF5_TIM2          ((uint8_t)0x05U)  /* TIM2 Alternate Function mapping     */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF6
+ */
+#define GPIO_AF6_TIM21         ((uint8_t)0x06U)  /* TIM21 Alternate Function mapping     */
+#define GPIO_AF6_EVENTOUT      ((uint8_t)0x06U)  /* EVENTOUT Alternate Function mapping  */
+/**
+  *
+  */
 
 
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/** @defgroup GPIOEx_Private  GPIOEx Private
+ * @{
+ */
+
+/**
+ * @brief  IS_GPIO_AF macro definition
+ */
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x06)
+
+/**
+  * @}
+  */
+#endif /* STM32L010x8 */
+
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- STM32L010x6 --------------------------------------*/
+/*----------------------------------------------------------------------------*/
+#if defined (STM32L010x6)
+/* The table below gives an overview of the different alternate functions per port.
+ * For more details refer yourself to the product data sheet.
+ *
+ */
+/*      |   AF0      |   AF1      |   AF2      |     AF3     |   AF4       |   AF5     |   AF6      |
+ *__________________________________________________________________________________________________|
+ * PA1  | EVENTOUT   | LPTIM1_IN2 | TIM2_CH2   | I2C1_SMBA   | USART2_RTS  | TIM21_ETR |            |
+ * PA2  | TIM21_CH1  |            | TIM2_CH3   |             | USART2_TX   |           | LPUART1_TX |
+ * PA3  | TIM21_CH2  |            | TIM2_CH4   |             | USART2_RX   |           | LPUART1_RX |
+ * PA4  | SPI1_NSS   | LPTIM1_IN1 |            |             | USART2_CK   |           |            |
+ * PA5  | SPI1_SCK   | LPTIM1_IN2 | TIM2_ETR   |             |             | TIM2_CH1  |            |
+ * PA6  | SPI1_MISO  | LPTIM1_ETR |            |             | LPUART1_CTS |           | EVENTOUT   |
+ * PA7  | SPI1_MOSI  | LPTIM1_OUT |            |             | USART2_CTS  |           | EVENTOUT   |
+ * PA8  | MCO        |            | LPTIM1_IN1 | EVENTOUT    | USART2_CK   | TIM2_CH1  |            |
+ * PA9  | MCO        | I2C1_SCL   |            |             | USART2_TX   |           |            |
+ * PA10 |            | I2C1_SDA   |            |             | USART2_RX   |           |            |
+ * PA11 | SPI1_MISO  |            | EVENTOUT   |             | USART2_CTS  | TIM21_CH2 |            |
+ * PA12 | SPI1_MOSI  |            | EVENTOUT   |             | USART2_RTS  |           |            |
+ * PA13 | SWDIO      | LPTIM1_ETR |            |             |             |           | LPUART1_RX |
+ * PA14 | SWCLK      | LPTIM1_OUT |            | I2C1_SMBA   | USART2_TX   |           | LPUART1_TX |
+ * PA15 | SPI1_NSS   |            | TIM2_ETR   | EVENTOUT    | USART2_RX   | TIM2_CH1  |            |
+ *__________________________________________________________________________________________________|
+ * PB0  | EVENTOUT   | SPI1_MISO  |            |             | USART2_RTS  | TIM2_CH3  |            |
+ * PB1  | USART2_CK  | SPI1_MOSI  |            |             | LPUART1_RTS | TIM2_CH4  |            |
+ * PB2  |            |            | LPTIM1_OUT |             |             |           |            |
+ * PB3  | SPI1_SCK   |            | TIM2_CH2   |             | EVENTOUT    |           |            |
+ * PB4  | SPI1_MISO  |            | EVENTOUT   |             |             |           |            |
+ * PB5  | SPI1_MOSI  | LPTIM1_IN1 | I2C1_SMBA  |             |             |           |            |
+ * PB6  | USART2_TX  | I2C1_SCL   | LPTIM1_ETR |             |             | TIM21_CH1 |            |
+ * PB7  | USART2_RX  | I2C1_SDA   | LPTIM1_IN2 |             |             |           |            |
+ * PB8  |            |            |            |             | I2C1_SCL    |           |            |
+ * PB9  |            |            | EVENTOUT   |             | I2C1_SDA    |           |            |
+ * PB10 |            |            | TIM2_CH3   |             |             |           | LPUART1_TX |
+ * PB11 | EVENTOUT   |            | TIM2_CH4   |             |             |           | LPUART1_RX |
+ * PB12 | SPI1_NSS   |            |            |             |             |           | EVENTOUT   |
+ * PB13 | SPI1_SCK   |            | MCO        |             |             | TIM21_CH1 | LPUART1_CTS|
+ * PB14 | SPI1_MISO  |            | RTC_OUT    |             |             | TIM21_CH2 | LPUART1_RTS|
+ * PB15 | SPI1_MOSI  |            | RTC_REFIN  |             |             |           |            |
+ *__________________________________________________________________________________________________|
+ * PC0  | LPTIM1_IN1 |            | EVENTOUT   |             |             |           | LPUART1_RX |
+ *__________________________________________________________________________________________________|
+*/
+/** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
+ * @{
+ */
+
+/*
+ * Alternate function AF0
+ */
+#define GPIO_AF0_EVENTOUT      ((uint8_t)0x00U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF0_TIM21         ((uint8_t)0x00U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF0_SPI1          ((uint8_t)0x00U)  /* SPI1 Alternate Function mapping     */
+#define GPIO_AF0_MCO           ((uint8_t)0x00U)  /* MCO Alternate Function mapping      */
+#define GPIO_AF0_SWDIO         ((uint8_t)0x00U)  /* SWDIO Alternate Function mapping    */
+#define GPIO_AF0_SWCLK         ((uint8_t)0x00U)  /* SWCLK Alternate Function mapping    */
+#define GPIO_AF0_USART2        ((uint8_t)0x00U)  /* USART2 Alternate Function mapping   */
+#define GPIO_AF0_LPTIM1        ((uint8_t)0x00U)  /* LPTIM1 Alternate Function mapping   */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF1
+ */
+#define GPIO_AF1_I2C1          ((uint8_t)0x01U)  /* I2C1 Alternate Function mapping   */
+#define GPIO_AF1_LPTIM1        ((uint8_t)0x01U)  /* LPTIM1 Alternate Function mapping */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF2
+ */
+#define GPIO_AF2_LPTIM1        ((uint8_t)0x02U)  /* LPTIM1 Alternate Function mapping     */
+#define GPIO_AF2_TIM2          ((uint8_t)0x02U)  /* TIM2 Alternate Function mapping       */
+#define GPIO_AF2_MCO           ((uint8_t)0x02U)  /* MCO Alternate Function mapping        */
+#define GPIO_AF2_I2C1          ((uint8_t)0x02U)  /* I2C1 Alternate Function mapping       */
+#define GPIO_AF2_EVENTOUT      ((uint8_t)0x02U)  /* EVENTOUT Alternate Function mapping   */
+#define GPIO_AF2_RTC           ((uint8_t)0x02U)  /* RTC Alternate Function mapping        */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF3
+ */
+#define GPIO_AF3_I2C1          ((uint8_t)0x03U)  /* I2C1 Alternate Function mapping     */
+#define GPIO_AF3_EVENTOUT      ((uint8_t)0x03U)  /* EVENTOUT Alternate Function mapping  */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF4
+ */
+#define GPIO_AF4_USART2        ((uint8_t)0x04U)  /* USART2 Alternate Function mapping   */
+#define GPIO_AF4_LPUART1       ((uint8_t)0x04U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF4_I2C1          ((uint8_t)0x04U)  /* I2C1 Alternate Function mapping     */
+#define GPIO_AF4_EVENTOUT      ((uint8_t)0x04U)  /* EVENTOUT Alternate Function mapping  */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF5
+ */
+#define GPIO_AF5_TIM2          ((uint8_t)0x05U)  /* TIM2 Alternate Function mapping     */
+#define GPIO_AF5_TIM21         ((uint8_t)0x05U)  /* TIM21 Alternate Function mapping    */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF6
+ */
+#define GPIO_AF6_LPUART1       ((uint8_t)0x06U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF6_EVENTOUT      ((uint8_t)0x06U)  /* EVENTOUT Alternate Function mapping  */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF7
+ */
+#define GPIO_AF7_COMP1         ((uint8_t)0x07U)  /* COMP1 Alternate Function mapping     */
+#define GPIO_AF7_COMP2         ((uint8_t)0x07U)  /* COMP2 Alternate Function mapping     */
+/**
+  *
+  */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/** @defgroup GPIOEx_Private  GPIOEx Private
+ * @{
+ */
+/**
+ * @brief  IS_GPIO_AF macro definition
+ */
+
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x06)
+
+/**
+  * @}
+  */
+
+#endif /* STM32L010x6 */
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- STM32L010x4 --------------------------------------*/
+/*----------------------------------------------------------------------------*/
+#if defined (STM32L010x4)
+/* The table below gives an overview of the different alternate functions per port.
+ * For more details refer yourself to the product data sheet.
+ *
+ */
+/*      |   AF0     |   AF1      |   AF2      |     AF3     |   AF4       |   AF5     |   AF6      |
+ *_______________________________________________________________________ _________________________|
+ * PA0  | USART2_RX | LPTIM1_IN1 | TIM2_CH1   |             | USART2_CTS  | TIM2_ETR  | LPUART1_RX |
+ * PA1  | EVENTOUT  | LPTIM1_IN2 | TIM2_CH2   | I2C1_SMBA   | USART2_RTS  | TIM21_ETR | LPUART1_TX |
+ * PA2  | TIM21_CH1 |            | TIM2_CH3   |             | USART2_TX   |           | LPUART1_TX |
+ * PA3  | TIM21_CH2 |            | TIM2_CH4   |             | USART2_RX   |           | LPUART1_RX |
+ * PA4  | SPI1_NSS  | LPTIM1_IN1 | LPTIM1_ETR | I2C1_SCL    | USART2_CK   | TIM2_ETR  | LPUART1_TX |
+ * PA5  | SPI1_SCK  | LPTIM1_IN2 | TIM2_ETR   |             |             | TIM2_CH1  |            |
+ * PA6  | SPI1_MISO | LPTIM1_ETR |            | LPUART1_CTS |             | EVENTOUT  |            |
+ * PA7  | SPI1_MOSI | LPTIM1_OUT |            | USART2_CTS  | TIM21_ETR   | EVENTOUT  |            |
+ * PA8  | MCO       |            | LPTIM1_IN1 | EVENTOUT    | USART2_CK   | TIM2_CH1  |            |
+ * PA9  | MCO       | I2C1_SCL   | LPTIM1_OUT |             | USART2_TX   | TIM21_CH2 |            |
+ * PA10 | TIM21_CH1 | I2C1_SDA   | RTC_REFIN  |             | USART2_RX   | TIM2_CH3  |            |
+ * PA11 | SPI1_MISO | LPTIM1_OUT | EVENTOUT   |             | USART2_CTS  | TIM21_CH2 |            |
+ * PA12 | SPI1_MOSI |            | EVENTOUT   |             | USART2_RTS  |           |            |
+ * PA13 | SWDIO     | LPTIM1_ETR |            | I2C1_SDA    |             | SPI1_SCK  | LPUART1_RX |
+ * PA14 | SWCLK     | LPTIM1_OUT |            | I2C1_SMBA   | USART2_TX   | SPI1_MISO | LPUART1_TX |
+ * PA15 | SPI1_NSS  |            | TIM2_ETR   | EVENTOUT    | USART2_RX   | TIM2_CH1  |            |
+ *_________________________________________________________________________________________________|
+ * PB0  | EVENTOUT  | SPI1_MISO  | TIM2_CH2   |             | USART2_RTS  | TIM2_CH3  |            |
+ * PB1  | USART2_CK | SPI1_MOSI  | LPTIM1_IN1 |             | LPUART1_RTS | TIM2_CH4  |            |
+ * PB3  | SPI1_SCK  |            | TIM2_CH2   |             | EVENTOUT    |           |            |
+ * PB4  | SPI1_MISO |            | EVENTOUT   |             |             |           |            |
+ * PB5  | SPI1_MOSI |            | LPTIM1_IN1 | I2C1_SMBA   |             | TIM21_CH1 |            |
+ * PB6  | USART2_TX | I2C1_SCL   | LPTIM1_ETR |             |             | TIM2_CH3  | LPUART1_TX |
+ * PB7  | USART2_RX | I2C1_SDA   | LPTIM1_IN2 |             |             | TIM2_CH4  | LPUART1_RX |
+ *_________________________________________________________________________________________________|
+*/
+
+/** @defgroup GPIOEx_Alternate_function_selection Alternate function selection
+ * @{
+ */
+
+/*
+ * Alternate function AF0
+ */
+#define GPIO_AF0_USART2        ((uint8_t)0x00U)  /* USART2 Alternate Function mapping   */
+#define GPIO_AF0_EVENTOUT      ((uint8_t)0x00U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF0_TIM21         ((uint8_t)0x00U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF0_SPI1          ((uint8_t)0x00U)  /* SPI1 Alternate Function mapping     */
+#define GPIO_AF0_MCO           ((uint8_t)0x00U)  /* MCO Alternate Function mapping      */
+#define GPIO_AF0_SWDIO         ((uint8_t)0x00U)  /* SWDIO Alternate Function mapping    */
+#define GPIO_AF0_SWCLK         ((uint8_t)0x00U)  /* SWCLK Alternate Function mapping    */
+/**
+  *
+  */
+
+/*
+ *  Alternate function AF1
+ */
+#define GPIO_AF1_SPI1          ((uint8_t)0x01U)  /* SPI1 Alternate Function mapping   */
+#define GPIO_AF1_I2C1          ((uint8_t)0x01U)  /* I2C1 Alternate Function mapping   */
+#define GPIO_AF1_LPTIM1        ((uint8_t)0x01U)  /* LPTIM1 Alternate Function mapping */
+/**
+  *
+  */
+
+/*  Alternate function AF2
+ *
+ */
+#define GPIO_AF2_LPTIM1        ((uint8_t)0x02U)  /* LPTIM1 Alternate Function mapping     */
+#define GPIO_AF2_TIM2          ((uint8_t)0x02U)  /* TIM2 Alternate Function mapping       */
+#define GPIO_AF2_RTC           ((uint8_t)0x02U)  /* RTC Alternate Function mapping        */
+#define GPIO_AF2_EVENTOUT      ((uint8_t)0x02U)  /* EVENTOUT Alternate Function mapping   */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF3
+ */
+#define GPIO_AF3_I2C1          ((uint8_t)0x03U)  /* I2C1 Alternate Function mapping     */
+#define GPIO_AF3_EVENTOUT      ((uint8_t)0x03U)  /* EVENTOUT Alternate Function mapping */
+#define GPIO_AF3_LPUART1       ((uint8_t)0x03U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF3_USART2        ((uint8_t)0x03U)  /* USART2 Alternate Function mapping   */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF4
+ */
+#define GPIO_AF4_USART2        ((uint8_t)0x04U)  /* USART2 Alternate Function mapping   */
+#define GPIO_AF4_TIM21         ((uint8_t)0x04U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF4_LPUART1       ((uint8_t)0x04U)  /* LPUART1 Alternate Function mapping  */
+#define GPIO_AF4_EVENTOUT      ((uint8_t)0x04U)  /* EVENTOUT Alternate Function mapping */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF5
+ */
+#define GPIO_AF5_TIM2          ((uint8_t)0x05U)  /* TIM2 Alternate Function mapping     */
+#define GPIO_AF5_TIM21         ((uint8_t)0x05U)  /* TIM21 Alternate Function mapping    */
+#define GPIO_AF5_SPI1          ((uint8_t)0x05U)  /* SPI1 Alternate Function mapping     */
+#define GPIO_AF5_EVENTOUT      ((uint8_t)0x05U)  /* EVENTOUT Alternate Function mapping */
+/**
+  *
+  */
+
+/*
+ * Alternate function AF6
+ */
+#define GPIO_AF6_LPUART1       ((uint8_t)0x06U)  /* LPUART1 Alternate Function mapping  */
+/**
+  *
+  */
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/** @defgroup GPIOEx_Private  GPIOEx Private
+ * @{
+ */
+/**
+ *  IS_GPIO_AF macro definition
+ */
+
+#define IS_GPIO_AF(AF)         ((AF) <= (uint8_t)0x06)
+
+/**
+  * @}
+  */
+
+#endif /* STM32L010x4*/
 
 #if defined (STM32L083xx) || defined (STM32L082xx) || defined (STM32L081xx) || \
-    defined (STM32L073xx) || defined (STM32L072xx) || defined (STM32L071xx)
+    defined (STM32L073xx) || defined (STM32L072xx) || defined (STM32L071xx) || \
+    defined (STM32L010xB)
 
  /** @addtogroup GPIOEx_Exported_Constants
  * @{
@@ -2146,7 +2369,7 @@
 /**
   * @}
   */
-#elif defined (STM32L031xx) || defined (STM32L041xx)
+#elif defined (STM32L031xx) || defined (STM32L041xx) || defined (STM32L010x6)
 
 /** @addtogroup GPIOEx_Exported_Constants
  * @{
@@ -2185,7 +2408,7 @@
   * @}
   */
 
-#elif defined (STM32L011xx) || defined (STM32L021xx)
+#elif defined (STM32L011xx) || defined (STM32L021xx) || defined (STM32L010x4)
 
 /** @addtogroup GPIOEx_Exported_Constants
  * @{
@@ -2223,7 +2446,8 @@
   */
 
 #elif defined (STM32L063xx) || defined (STM32L062xx) || defined (STM32L061xx) || \
-      defined (STM32L053xx) || defined (STM32L052xx) || defined (STM32L051xx)
+      defined (STM32L053xx) || defined (STM32L052xx) || defined (STM32L051xx) || \
+      defined (STM32L010x8)
 
 /** @addtogroup GPIOEx_Exported_Constants
  * @{

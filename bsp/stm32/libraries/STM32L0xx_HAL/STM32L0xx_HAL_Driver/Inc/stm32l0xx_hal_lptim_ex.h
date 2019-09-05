@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -59,24 +43,22 @@
   */
 
 
-/** @defgroup LPTIM_Trigger_Source Trigger source
+/** @defgroup LPTIMEx_Trigger_Source LPTIMEx Trigger source
   * @{
   */
-#define LPTIM_TRIGSOURCE_SOFTWARE               ((uint32_t)0x0000FFFFU)
-#define LPTIM_TRIGSOURCE_0                      ((uint32_t)0x00000000U)
-#define LPTIM_TRIGSOURCE_1                      ((uint32_t)LPTIM_CFGR_TRIGSEL_0)
-#define LPTIM_TRIGSOURCE_2                      LPTIM_CFGR_TRIGSEL_1
-#define LPTIM_TRIGSOURCE_3                      ((uint32_t)LPTIM_CFGR_TRIGSEL_0 | LPTIM_CFGR_TRIGSEL_1)
-#define LPTIM_TRIGSOURCE_4                      LPTIM_CFGR_TRIGSEL_2
-
-#if defined (STM32L083xx) || defined (STM32L082xx) || defined (STM32L081xx) || \
-    defined (STM32L073xx) || defined (STM32L072xx) || defined (STM32L071xx) || \
-    defined (STM32L031xx) || defined (STM32L041xx)
-#define LPTIM_TRIGSOURCE_5                      ((uint32_t)LPTIM_CFGR_TRIGSEL_0 | LPTIM_CFGR_TRIGSEL_2)
-#endif
-
-#define LPTIM_TRIGSOURCE_6                      ((uint32_t)LPTIM_CFGR_TRIGSEL_1 | LPTIM_CFGR_TRIGSEL_2)
-#define LPTIM_TRIGSOURCE_7                      LPTIM_CFGR_TRIGSEL
+#define LPTIM_TRIGSOURCE_SOFTWARE               0x0000FFFFU                                    /*!< LPTIM counter triggered by software*/
+#define LPTIM_TRIGSOURCE_0                      0x00000000U                                    /*!< LPTIM counter triggered by GPIO (alternate function LPTIM_ETR) */
+#define LPTIM_TRIGSOURCE_1                      LPTIM_CFGR_TRIGSEL_0                           /*!< LPTIM counter triggered by RTC alarm A */
+#define LPTIM_TRIGSOURCE_2                      LPTIM_CFGR_TRIGSEL_1                           /*!< LPTIM counter triggered by RTC alarm B */
+#define LPTIM_TRIGSOURCE_3                      (LPTIM_CFGR_TRIGSEL_0 | LPTIM_CFGR_TRIGSEL_1)  /*!< LPTIM counter triggered by RTC_TAMP1 input detection */
+#define LPTIM_TRIGSOURCE_4                      LPTIM_CFGR_TRIGSEL_2                           /*!< LPTIM counter triggered by RTC_TAMP2 input detection */
+#if defined(RTC_TAMPER3_SUPPORT)
+#define LPTIM_TRIGSOURCE_5                      (LPTIM_CFGR_TRIGSEL_0 | LPTIM_CFGR_TRIGSEL_2)  /*!< LPTIM counter triggered by RTC_TAMP3 input detection */
+#endif /* RTC_TAMPER3_SUPPORT */
+#if defined(COMP1) && defined(COMP2)
+#define LPTIM_TRIGSOURCE_6                      (LPTIM_CFGR_TRIGSEL_1 | LPTIM_CFGR_TRIGSEL_2)  /*!< LPTIM counter triggered by COMP1_OUT */
+#define LPTIM_TRIGSOURCE_7                      LPTIM_CFGR_TRIGSEL                             /*!< LPTIM counter triggered by COMP2_OUT */
+#endif /* COMP1 && COMP2 */
 /**
   * @}
   */
@@ -88,10 +70,7 @@
    /** @addtogroup LPTIMEx_Private
   * @{
   */
-#if defined (STM32L083xx) || defined (STM32L082xx) || defined (STM32L081xx) || \
-  defined (STM32L073xx) || defined (STM32L072xx) || defined (STM32L071xx) || \
-  defined (STM32L031xx) || defined (STM32L041xx)
-
+#if defined(RTC_TAMPER3_SUPPORT) && defined(COMP1) && defined(COMP2)
 #define IS_LPTIM_TRG_SOURCE(__TRIG__)           (((__TRIG__) == LPTIM_TRIGSOURCE_SOFTWARE) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_0) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_1) || \
@@ -101,6 +80,14 @@
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_5) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_6) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_7))
+#elif defined(RTC_TAMPER3_SUPPORT)
+#define IS_LPTIM_TRG_SOURCE(__TRIG__)           (((__TRIG__) == LPTIM_TRIGSOURCE_SOFTWARE) || \
+                                                 ((__TRIG__) == LPTIM_TRIGSOURCE_0) || \
+                                                 ((__TRIG__) == LPTIM_TRIGSOURCE_1) || \
+                                                 ((__TRIG__) == LPTIM_TRIGSOURCE_2) || \
+                                                 ((__TRIG__) == LPTIM_TRIGSOURCE_3) || \
+                                                 ((__TRIG__) == LPTIM_TRIGSOURCE_4) || \
+                                                 ((__TRIG__) == LPTIM_TRIGSOURCE_5))
 #else
 #define IS_LPTIM_TRG_SOURCE(__TRIG__)           (((__TRIG__) == LPTIM_TRIGSOURCE_SOFTWARE) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_0) || \
@@ -110,7 +97,7 @@
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_4) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_6) || \
                                                  ((__TRIG__) == LPTIM_TRIGSOURCE_7))
-#endif
+#endif /* RTC_TAMPER3_SUPPORT && COMP1 && COMP2 */
 /**
   * @}
   */

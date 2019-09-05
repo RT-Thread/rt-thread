@@ -1,8 +1,6 @@
 ;******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
 ;* File Name          : startup_stm32l011xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.7.1
-;* Date               : 25-November-2016
 ;* Description        : STM32l011xx Devices vector table for MDK-ARM toolchain.
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -44,7 +42,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x400;
+Stack_Size      EQU     0x400
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -55,7 +53,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size      EQU     0x200;
+Heap_Size      EQU     0x200
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -101,7 +99,7 @@ __Vectors       DCD     __initial_sp              ; Top of Stack
                 DCD     0                              ; Reserved
                 DCD     DMA1_Channel1_IRQHandler       ; DMA1 Channel 1
                 DCD     DMA1_Channel2_3_IRQHandler     ; DMA1 Channel 2 and Channel 3
-                DCD     DMA1_Channel4_5_6_7_IRQHandler ; DMA1 Channel 4, Channel 5, Channel 6 and Channel 7
+                DCD     DMA1_Channel4_5_IRQHandler     ; DMA1 Channel 4 and Channel 5
                 DCD     ADC1_COMP_IRQHandler           ; ADC1, COMP1
                 DCD     LPTIM1_IRQHandler              ; LPTIM1
                 DCD     0                              ; Reserved
@@ -203,7 +201,7 @@ Default_Handler PROC
                 EXPORT  EXTI4_15_IRQHandler            [WEAK]
                 EXPORT  DMA1_Channel1_IRQHandler       [WEAK]
                 EXPORT  DMA1_Channel2_3_IRQHandler     [WEAK]
-                EXPORT  DMA1_Channel4_5_6_7_IRQHandler [WEAK]
+                EXPORT  DMA1_Channel4_5_IRQHandler     [WEAK]
                 EXPORT  ADC1_COMP_IRQHandler           [WEAK]
                 EXPORT  LPTIM1_IRQHandler              [WEAK]
                 EXPORT  TIM2_IRQHandler                [WEAK]
@@ -223,7 +221,7 @@ EXTI2_3_IRQHandler
 EXTI4_15_IRQHandler
 DMA1_Channel1_IRQHandler
 DMA1_Channel2_3_IRQHandler
-DMA1_Channel4_5_6_7_IRQHandler
+DMA1_Channel4_5_IRQHandler
 ADC1_COMP_IRQHandler 
 LPTIM1_IRQHandler
 TIM2_IRQHandler
