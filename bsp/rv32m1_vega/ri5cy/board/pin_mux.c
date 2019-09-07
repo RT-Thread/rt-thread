@@ -39,6 +39,8 @@ void BOARD_InitBootPins(void) {
 #define PIN22_IDX                       22u   /*!< Pin number for pin 22 in a port */
 #define PIN23_IDX                       23u   /*!< Pin number for pin 23 in a port */
 #define PIN24_IDX                       24u   /*!< Pin number for pin 24 in a port */
+#define PIN25_IDX                       25u   /*!< Pin number for pin 25 in a port */
+#define PIN26_IDX                       26u   /*!< Pin number for pin 26 in a port */
 #define PIN27_IDX                       27u   /*!< Pin number for pin 27 in a port */
 
 /*
@@ -48,6 +50,8 @@ BOARD_InitPins:
 - pin_list:
   - {pin_num: N2, peripheral: LPUART0, signal: RX, pin_signal: LPCMP0_IN0/PTC7/LLWU_P15/LPSPI0_PCS3/LPUART0_RX/LPI2C1_HREQ/TPM0_CH0/LPTMR1_ALT1}
   - {pin_num: P3, peripheral: LPUART0, signal: TX, pin_signal: LPCMP0_IN1/PTC8/LPSPI0_SCK/LPUART0_TX/LPI2C0_HREQ/TPM0_CH1}
+  - {pin_num: B5, peripheral: LPUART1, signal: RX, pin_signal: PTA25/LPUART1_RX/LPSPI3_SOUT/LPI2C2_SDAS/FB_AD31}
+  - {pin_num: A5, peripheral: LPUART1, signal: TX, pin_signal: PTA26/LPUART1_TX/LPSPI3_PCS2/LPI2C2_SCLS/FB_AD30}
   - {pin_num: U11, peripheral: SDHC0, signal: CMD, pin_signal: ADC0_SE12/PTD9/SDHC0_CMD/LPSPI2_SIN/LPI2C1_SCLS/TRACE_DATA0/TPM2_CH2/FXIO0_D29, slew_rate: fast, open_drain: disable,
     drive_strength: low, pull_select: up, pull_enable: enable}
   - {pin_num: P10, peripheral: SDHC0, signal: 'DATA, 0', pin_signal: ADC0_SE10/PTD7/SDHC0_D0/LPSPI2_SOUT/EMVSIM0_PD/TRACE_DATA2/TPM2_CH4/FXIO0_D27, slew_rate: fast,
@@ -87,6 +91,7 @@ void BOARD_InitPins(void) {
   PORT_SetPinConfig(PORTC, PIN27_IDX, &portc27_pinP6_config); /* PORTC27 (pin P6) is configured as PTC27 */
   PORT_SetPinMux(PORTC, PIN7_IDX, kPORT_MuxAlt3);            /* PORTC7 (pin N2) is configured as LPUART0_RX */
   PORT_SetPinMux(PORTC, PIN8_IDX, kPORT_MuxAlt3);            /* PORTC8 (pin P3) is configured as LPUART0_TX */
+
   const port_pin_config_t portd10_pinP11_config = {
     kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
     kPORT_FastSlewRate,                                      /* Fast slew rate is configured */
@@ -151,6 +156,8 @@ void BOARD_InitPins(void) {
   PORT_SetPinMux(PORTA, PIN22_IDX, kPORT_MuxAsGpio);         /* PORTA22 (pin D6) is configured as PTA24 */
   PORT_SetPinMux(PORTA, PIN23_IDX, kPORT_MuxAsGpio);         /* PORTA23 (pin D6) is configured as PTA24 */
   PORT_SetPinMux(PORTA, PIN24_IDX, kPORT_MuxAsGpio);         /* PORTA24 (pin D6) is configured as PTA24 */
+  PORT_SetPinMux(PORTA, PIN25_IDX, kPORT_MuxAlt2);            /* PORTA25 (pin B5) is configured as LPUART1_RX */
+  PORT_SetPinMux(PORTA, PIN26_IDX, kPORT_MuxAlt2);            /* PORTA26 (pin A5) is configured as LPUART1_TX */
 }
 
 /*******************************************************************************
