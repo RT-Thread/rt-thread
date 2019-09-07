@@ -119,6 +119,7 @@ rt_err_t rt_spi_device_occupy_bus(struct rt_spi_device *device)
             result = -RT_EIO;
         }
     }
+    return result;
 }
 
 rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
