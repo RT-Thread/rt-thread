@@ -54,7 +54,6 @@ static rt_slist_t _socket_list = RT_SLIST_OBJECT_INIT(_socket_list);
 struct at_socket *at_get_socket(int socket)
 {
     rt_base_t level;
-    size_t list_num = 0;
     rt_slist_t *node = RT_NULL;
     struct at_socket *at_sock = RT_NULL;
 
@@ -62,9 +61,9 @@ struct at_socket *at_get_socket(int socket)
 
     rt_slist_for_each(node, &_socket_list)
     {
-        if (socket == (list_num++))
+        at_sock = rt_slist_entry(node, struct at_socket, list);
+        if (socket == at_sock->socket)
         {
-            at_sock = rt_slist_entry(node, struct at_socket, list);
             if (at_sock && at_sock->magic == AT_SOCKET_MAGIC)
             {
                 rt_hw_interrupt_enable(level);
@@ -275,6 +274,34 @@ static void at_do_event_clean(struct at_socket *sock, at_event_t event)
     }
 }
 
+static int alloc_empty_socket(rt_slist_t *l)
+{
+    rt_base_t level;
+    rt_slist_t *node = RT_NULL;
+    rt_slist_t *pre_node = &_socket_list;
+    struct at_socket *at_sock = RT_NULL;
+    int idx = 0;
+
+    level = rt_hw_interrupt_disable();
+
+    rt_slist_init(l);
+
+    rt_slist_for_each(node, &_socket_list)
+    {
+        at_sock = rt_slist_entry(node, struct at_socket, list);
+        if(at_sock->socket != idx)  
+            break;
+        idx++;
+        pre_node = node;
+    }
+
+    rt_slist_insert(pre_node, l);
+
+    rt_hw_interrupt_enable(level);
+
+    return idx;
+}
+
 static struct at_socket *alloc_socket_by_device(struct at_device *device)
 {
     static rt_mutex_t at_slock = RT_NULL;
@@ -304,21 +331,9 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device)
         goto __err;
     }
 
-    /* add device socket to global socket list */
-    {
-        rt_base_t level;
-
-        level = rt_hw_interrupt_disable();
-
-        rt_slist_init(&(device->sockets[idx].list));
-        rt_slist_append(&_socket_list, &(device->sockets[idx].list));
-
-        rt_hw_interrupt_enable(level);
-    }
-
     sock = &(device->sockets[idx]);
     /* the socket descriptor is the number of sockte lists */
-    sock->socket = rt_slist_len(&_socket_list) - 1;
+    sock->socket = alloc_empty_socket(&(sock->list));
     /* the socket operations is the specify operations of the device */
     sock->ops = device->class->socket_ops;
     /* the user-data is the at device socket descriptor */
@@ -446,7 +461,6 @@ static int free_socket(struct at_socket *sock)
     /* delect socket from socket list */
     {
         rt_base_t level;
-        int list_num = 0;
         rt_slist_t *node = RT_NULL;
         struct at_socket *at_sock = RT_NULL;
 
@@ -454,10 +468,10 @@ static int free_socket(struct at_socket *sock)
 
         rt_slist_for_each(node, &_socket_list)
         {
-            if (sock->socket == (list_num++))
+            at_sock = rt_slist_entry(node, struct at_socket, list);
+            if (sock->socket == at_sock->socket)
             {
-                at_sock = rt_slist_entry(node, struct at_socket, list);
-                if (at_sock)
+                if (at_sock && at_sock->magic == AT_SOCKET_MAGIC)
                 {
                     rt_slist_remove(&_socket_list, &at_sock->list);
                     break;
