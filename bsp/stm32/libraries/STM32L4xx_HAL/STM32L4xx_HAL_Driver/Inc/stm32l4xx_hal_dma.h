@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -98,7 +82,7 @@ typedef enum
   HAL_DMA_STATE_RESET             = 0x00U,  /*!< DMA not yet initialized or disabled    */
   HAL_DMA_STATE_READY             = 0x01U,  /*!< DMA initialized and ready for use      */
   HAL_DMA_STATE_BUSY              = 0x02U,  /*!< DMA process is ongoing                 */
-  HAL_DMA_STATE_TIMEOUT           = 0x03U,  /*!< DMA timeout state                     */
+  HAL_DMA_STATE_TIMEOUT           = 0x03U,  /*!< DMA timeout state                      */
 }HAL_DMA_StateTypeDef;
 
 /**
@@ -128,47 +112,46 @@ typedef enum
   */
 typedef struct __DMA_HandleTypeDef
 {
-  DMA_Channel_TypeDef    *Instance;                                                  /*!< Register base address                */
+  DMA_Channel_TypeDef    *Instance;                                                     /*!< Register base address                */
 
-  DMA_InitTypeDef       Init;                                                        /*!< DMA communication parameters         */
+  DMA_InitTypeDef       Init;                                                           /*!< DMA communication parameters         */
 
-  HAL_LockTypeDef       Lock;                                                        /*!< DMA locking object                   */
+  HAL_LockTypeDef       Lock;                                                           /*!< DMA locking object                   */
 
-  __IO HAL_DMA_StateTypeDef  State;                                                  /*!< DMA transfer state                   */
+  __IO HAL_DMA_StateTypeDef  State;                                                     /*!< DMA transfer state                   */
 
-  void                  *Parent;                                                     /*!< Parent object state                  */
+  void                  *Parent;                                                        /*!< Parent object state                  */
 
-  void                  (* XferCpltCallback)(struct __DMA_HandleTypeDef * hdma);     /*!< DMA transfer complete callback       */
+  void                  (* XferCpltCallback)(struct __DMA_HandleTypeDef * hdma);        /*!< DMA transfer complete callback       */
 
-  void                  (* XferHalfCpltCallback)(struct __DMA_HandleTypeDef * hdma); /*!< DMA Half transfer complete callback  */
+  void                  (* XferHalfCpltCallback)(struct __DMA_HandleTypeDef * hdma);    /*!< DMA Half transfer complete callback  */
 
-  void                  (* XferErrorCallback)(struct __DMA_HandleTypeDef * hdma);    /*!< DMA transfer error callback          */
+  void                  (* XferErrorCallback)(struct __DMA_HandleTypeDef * hdma);       /*!< DMA transfer error callback          */
 
-  void                  (* XferAbortCallback)( struct __DMA_HandleTypeDef * hdma);   /*!< DMA transfer abort callback          */
+  void                  (* XferAbortCallback)(struct __DMA_HandleTypeDef * hdma);       /*!< DMA transfer abort callback          */
 
-  __IO uint32_t          ErrorCode;                                                  /*!< DMA Error code                       */
+  __IO uint32_t         ErrorCode;                                                      /*!< DMA Error code                       */
 
-  DMA_TypeDef            *DmaBaseAddress;                                            /*!< DMA Channel Base Address             */
+  DMA_TypeDef           *DmaBaseAddress;                                                /*!< DMA Channel Base Address             */
 
-  uint32_t               ChannelIndex;                                               /*!< DMA Channel Index                    */
+  uint32_t              ChannelIndex;                                                   /*!< DMA Channel Index                    */
 
 #if defined(DMAMUX1)
-  DMAMUX_Channel_TypeDef           *DMAmuxChannel;                                   /*!< Register base address                */
+  DMAMUX_Channel_TypeDef           *DMAmuxChannel;                                      /*!< Register base address                */
 
-  DMAMUX_ChannelStatus_TypeDef     *DMAmuxChannelStatus;                             /*!< DMAMUX Channels Status Base Address  */
+  DMAMUX_ChannelStatus_TypeDef     *DMAmuxChannelStatus;                                /*!< DMAMUX Channels Status Base Address  */
 
-  uint32_t                         DMAmuxChannelStatusMask;                          /*!< DMAMUX Channel Status Mask           */
+  uint32_t                         DMAmuxChannelStatusMask;                             /*!< DMAMUX Channel Status Mask           */
 
-  DMAMUX_RequestGen_TypeDef        *DMAmuxRequestGen;                                /*!< DMAMUX request generator Base Address */
+  DMAMUX_RequestGen_TypeDef        *DMAmuxRequestGen;                                   /*!< DMAMUX request generator Base Address */
 
-  DMAMUX_RequestGenStatus_TypeDef  *DMAmuxRequestGenStatus;                          /*!< DMAMUX request generator Address     */
+  DMAMUX_RequestGenStatus_TypeDef  *DMAmuxRequestGenStatus;                             /*!< DMAMUX request generator Address     */
 
-  uint32_t                         DMAmuxRequestGenStatusMask;                       /*!< DMAMUX request generator Status mask */
+  uint32_t                         DMAmuxRequestGenStatusMask;                          /*!< DMAMUX request generator Status mask */
 
 #endif /* DMAMUX1 */
 
 }DMA_HandleTypeDef;
-
 /**
   * @}
   */
@@ -367,9 +350,9 @@ typedef struct __DMA_HandleTypeDef
 /** @defgroup DMA_Peripheral_data_size DMA Peripheral data size
   * @{
   */
-#define DMA_PDATAALIGN_BYTE          0x00000000U     /*!< Peripheral data alignment : Byte     */
-#define DMA_PDATAALIGN_HALFWORD      DMA_CCR_PSIZE_0 /*!< Peripheral data alignment : HalfWord */
-#define DMA_PDATAALIGN_WORD          DMA_CCR_PSIZE_1 /*!< Peripheral data alignment : Word     */
+#define DMA_PDATAALIGN_BYTE          0x00000000U       /*!< Peripheral data alignment : Byte     */
+#define DMA_PDATAALIGN_HALFWORD      DMA_CCR_PSIZE_0   /*!< Peripheral data alignment : HalfWord */
+#define DMA_PDATAALIGN_WORD          DMA_CCR_PSIZE_1   /*!< Peripheral data alignment : Word     */
 /**
   * @}
   */
@@ -377,9 +360,9 @@ typedef struct __DMA_HandleTypeDef
 /** @defgroup DMA_Memory_data_size DMA Memory data size
   * @{
   */
-#define DMA_MDATAALIGN_BYTE          0x00000000U     /*!< Memory data alignment : Byte     */
-#define DMA_MDATAALIGN_HALFWORD      DMA_CCR_MSIZE_0 /*!< Memory data alignment : HalfWord */
-#define DMA_MDATAALIGN_WORD          DMA_CCR_MSIZE_1 /*!< Memory data alignment : Word     */
+#define DMA_MDATAALIGN_BYTE          0x00000000U       /*!< Memory data alignment : Byte     */
+#define DMA_MDATAALIGN_HALFWORD      DMA_CCR_MSIZE_0   /*!< Memory data alignment : HalfWord */
+#define DMA_MDATAALIGN_WORD          DMA_CCR_MSIZE_1   /*!< Memory data alignment : Word     */
 /**
   * @}
   */
@@ -396,10 +379,10 @@ typedef struct __DMA_HandleTypeDef
 /** @defgroup DMA_Priority_level DMA Priority level
   * @{
   */
-#define DMA_PRIORITY_LOW             0x00000000U      /*!< Priority level : Low       */
-#define DMA_PRIORITY_MEDIUM          DMA_CCR_PL_0     /*!< Priority level : Medium    */
-#define DMA_PRIORITY_HIGH            DMA_CCR_PL_1     /*!< Priority level : High      */
-#define DMA_PRIORITY_VERY_HIGH       DMA_CCR_PL       /*!< Priority level : Very_High */
+#define DMA_PRIORITY_LOW             0x00000000U     /*!< Priority level : Low       */
+#define DMA_PRIORITY_MEDIUM          DMA_CCR_PL_0    /*!< Priority level : Medium    */
+#define DMA_PRIORITY_HIGH            DMA_CCR_PL_1    /*!< Priority level : High      */
+#define DMA_PRIORITY_VERY_HIGH       DMA_CCR_PL      /*!< Priority level : Very_High */
 /**
   * @}
   */
@@ -460,21 +443,21 @@ typedef struct __DMA_HandleTypeDef
   */
 
 /** @brief  Reset DMA handle state.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval None
   */
 #define __HAL_DMA_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_DMA_STATE_RESET)
 
 /**
   * @brief  Enable the specified DMA Channel.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval None
   */
 #define __HAL_DMA_ENABLE(__HANDLE__)        ((__HANDLE__)->Instance->CCR |=  DMA_CCR_EN)
 
 /**
   * @brief  Disable the specified DMA Channel.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval None
   */
 #define __HAL_DMA_DISABLE(__HANDLE__)       ((__HANDLE__)->Instance->CCR &=  ~DMA_CCR_EN)
@@ -484,7 +467,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Return the current DMA Channel transfer complete flag.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The specified transfer complete flag index.
   */
 
@@ -505,7 +488,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Return the current DMA Channel half transfer complete flag.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The specified half transfer complete flag index.
   */
 #define __HAL_DMA_GET_HT_FLAG_INDEX(__HANDLE__)\
@@ -525,7 +508,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Return the current DMA Channel transfer error flag.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The specified transfer error flag index.
   */
 #define __HAL_DMA_GET_TE_FLAG_INDEX(__HANDLE__)\
@@ -545,7 +528,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Return the current DMA Channel Global interrupt flag.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The specified transfer error flag index.
   */
 #define __HAL_DMA_GET_GI_FLAG_INDEX(__HANDLE__)\
@@ -565,8 +548,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Get the DMA Channel pending flags.
-  * @param  __HANDLE__: DMA handle
-  * @param  __FLAG__: Get the specified flag.
+  * @param  __HANDLE__ DMA handle
+  * @param  __FLAG__ Get the specified flag.
   *          This parameter can be any combination of the following values:
   *            @arg DMA_FLAG_TCx:  Transfer complete flag
   *            @arg DMA_FLAG_HTx:  Half transfer complete flag
@@ -580,8 +563,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Clear the DMA Channel pending flags.
-  * @param  __HANDLE__: DMA handle
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ DMA handle
+  * @param  __FLAG__ specifies the flag to clear.
   *          This parameter can be any combination of the following values:
   *            @arg DMA_FLAG_TCx:  Transfer complete flag
   *            @arg DMA_FLAG_HTx:  Half transfer complete flag
@@ -595,8 +578,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Enable the specified DMA Channel interrupts.
-  * @param  __HANDLE__: DMA handle
-  * @param __INTERRUPT__: specifies the DMA interrupt sources to be enabled or disabled.
+  * @param  __HANDLE__ DMA handle
+  * @param __INTERRUPT__ specifies the DMA interrupt sources to be enabled or disabled.
   *          This parameter can be any combination of the following values:
   *            @arg DMA_IT_TC:  Transfer complete interrupt mask
   *            @arg DMA_IT_HT:  Half transfer complete interrupt mask
@@ -607,8 +590,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Disable the specified DMA Channel interrupts.
-  * @param  __HANDLE__: DMA handle
-  * @param __INTERRUPT__: specifies the DMA interrupt sources to be enabled or disabled.
+  * @param  __HANDLE__ DMA handle
+  * @param  __INTERRUPT__ specifies the DMA interrupt sources to be enabled or disabled.
   *          This parameter can be any combination of the following values:
   *            @arg DMA_IT_TC:  Transfer complete interrupt mask
   *            @arg DMA_IT_HT:  Half transfer complete interrupt mask
@@ -619,8 +602,8 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Check whether the specified DMA Channel interrupt is enabled or not.
-  * @param  __HANDLE__: DMA handle
-  * @param  __INTERRUPT__: specifies the DMA interrupt source to check.
+  * @param  __HANDLE__ DMA handle
+  * @param  __INTERRUPT__ specifies the DMA interrupt source to check.
   *          This parameter can be one of the following values:
   *            @arg DMA_IT_TC:  Transfer complete interrupt mask
   *            @arg DMA_IT_HT:  Half transfer complete interrupt mask
@@ -631,7 +614,7 @@ typedef struct __DMA_HandleTypeDef
 
 /**
   * @brief  Return the number of remaining data units in the current DMA Channel transfer.
-  * @param  __HANDLE__: DMA handle
+  * @param  __HANDLE__ DMA handle
   * @retval The number of remaining data units in the current DMA Channel transfer.
   */
 #define __HAL_DMA_GET_COUNTER(__HANDLE__) ((__HANDLE__)->Instance->CNDTR)

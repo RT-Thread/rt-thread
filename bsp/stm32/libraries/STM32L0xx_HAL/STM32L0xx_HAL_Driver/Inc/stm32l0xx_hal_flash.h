@@ -6,31 +6,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -43,7 +27,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal_def.h"
-   
+
 /** @addtogroup STM32L0xx_HAL_Driver
   * @{
   */
@@ -51,7 +35,7 @@
 /** @addtogroup FLASH
   * @{
   */
-  
+
 /** @addtogroup FLASH_Private_Constants
   * @{
   */
@@ -72,30 +56,30 @@
 
 /**
   * @}
-  */  
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup FLASH_Exported_Types FLASH Exported Types
   * @{
-  */  
+  */
 
 /**
   * @brief  FLASH Procedure structure definition
   */
-typedef enum 
+typedef enum
 {
-  FLASH_PROC_NONE              = 0, 
+  FLASH_PROC_NONE              = 0,
   FLASH_PROC_PAGEERASE         = 1,
   FLASH_PROC_PROGRAM           = 2,
 } FLASH_ProcedureTypeDef;
 
-/** 
-  * @brief  FLASH handle Structure definition  
+/**
+  * @brief  FLASH handle Structure definition
   */
 typedef struct
 {
   __IO FLASH_ProcedureTypeDef ProcedureOnGoing; /*!< Internal variable to indicate which procedure is ongoing or not in IT context */
-  
+
   __IO uint32_t               NbPagesToErase;   /*!< Internal variable to save the remaining sectors to erase in IT context*/
 
   __IO uint32_t               Address;          /*!< Internal variable to save address selected for program or erase */
@@ -104,7 +88,7 @@ typedef struct
 
   HAL_LockTypeDef             Lock;             /*!< FLASH locking object                */
 
-  __IO uint32_t               ErrorCode;        /*!< FLASH error code                    
+  __IO uint32_t               ErrorCode;        /*!< FLASH error code
                                                      This parameter can be a value of @ref FLASH_Error_Codes  */
 } FLASH_ProcessTypeDef;
 
@@ -115,7 +99,7 @@ typedef struct
 /* Exported constants --------------------------------------------------------*/
 /** @defgroup FLASH_Exported_Constants FLASH Exported Constants
   * @{
-  */  
+  */
 
 /** @defgroup FLASH_Error_Codes FLASH Error Codes
   * @{
@@ -136,10 +120,18 @@ typedef struct
 
 /** @defgroup FLASH_Page_Size FLASH size information
   * @{
-  */ 
+  */
 
 #define FLASH_SIZE                (uint32_t)((*((uint32_t *)FLASHSIZE_BASE)&0xFFFF) * 1024U)
 #define FLASH_PAGE_SIZE           ((uint32_t)128U)  /*!< FLASH Page Size in bytes */
+
+#define FLASH_END                 (FLASH_BASE + FLASH_SIZE - 1)    /*!< FLASH end address in the alias region */
+
+#if defined (STM32L071xx) || defined (STM32L072xx) || defined (STM32L073xx) || defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx)
+#define FLASH_BANK2_BASE          (FLASH_BASE + (FLASH_SIZE >> 1)) /*!< FLASH BANK2 base address in the alias region */
+#define FLASH_BANK1_END           (FLASH_BANK2_BASE - 1)           /*!< Program end FLASH BANK1 address */
+#define FLASH_BANK2_END           (FLASH_END)                      /*!< Program end FLASH BANK2 address */
+#endif
 
 /**
   * @}
@@ -147,7 +139,7 @@ typedef struct
 
 /** @defgroup FLASH_Type_Program FLASH Type Program
   * @{
-  */ 
+  */
 #define FLASH_TYPEPROGRAM_WORD       ((uint32_t)0x02U)  /*!<Program a word (32-bit) at a specified address.*/
 
 /**
@@ -156,7 +148,7 @@ typedef struct
 
 /** @defgroup FLASH_Latency FLASH Latency
   * @{
-  */ 
+  */
 #define FLASH_LATENCY_0            ((uint32_t)0x00000000U)    /*!< FLASH Zero Latency cycle */
 #define FLASH_LATENCY_1            FLASH_ACR_LATENCY         /*!< FLASH One Latency cycle */
 
@@ -164,7 +156,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup FLASH_Interrupts FLASH Interrupts 
+/** @defgroup FLASH_Interrupts FLASH Interrupts
   * @{
   */
 
@@ -172,11 +164,11 @@ typedef struct
 #define FLASH_IT_ERR               FLASH_PECR_ERRIE  /*!< Error interrupt source */
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup FLASH_Flags FLASH Flags 
+/** @defgroup FLASH_Flags FLASH Flags
   * @{
-  */ 
+  */
 
 #define FLASH_FLAG_BSY             FLASH_SR_BSY        /*!< FLASH Busy flag */
 #define FLASH_FLAG_EOP             FLASH_SR_EOP        /*!< FLASH End of Programming flag */
@@ -192,14 +184,14 @@ typedef struct
 
 /**
   * @}
-  */ 
+  */
 
-/** @defgroup FLASH_Keys FLASH Keys 
+/** @defgroup FLASH_Keys FLASH Keys
   * @{
-  */ 
+  */
 
 #define FLASH_PDKEY1               ((uint32_t)0x04152637U) /*!< Flash power down key1 */
-#define FLASH_PDKEY2               ((uint32_t)0xFAFBFCFDU) /*!< Flash power down key2: used with FLASH_PDKEY1 
+#define FLASH_PDKEY2               ((uint32_t)0xFAFBFCFDU) /*!< Flash power down key2: used with FLASH_PDKEY1
                                                               to unlock the RUN_PD bit in FLASH_ACR */
 
 #define FLASH_PEKEY1               ((uint32_t)0x89ABCDEFU) /*!< Flash program erase key1 */
@@ -218,64 +210,64 @@ typedef struct
   * @}
   */
 
-/* CMSIS_Legacy */ 
-  
+/* CMSIS_Legacy */
+
 #if defined ( __ICCARM__ )
 #define InterruptType_ACTLR_DISMCYCINT_Msk         IntType_ACTLR_DISMCYCINT_Msk
 #endif
 
 /**
   * @}
-  */  
-  
+  */
+
 /* Exported macro ------------------------------------------------------------*/
 
 /** @defgroup FLASH_Exported_Macros FLASH Exported Macros
- *  @brief macros to control FLASH features 
+ *  @brief macros to control FLASH features
  *  @{
  */
- 
+
 
 /** @defgroup FLASH_Interrupt FLASH Interrupts
  *  @brief macros to handle FLASH interrupts
  * @{
- */ 
+ */
 
 /**
   * @brief  Enable the specified FLASH interrupt.
-  * @param  __INTERRUPT__  FLASH interrupt 
+  * @param  __INTERRUPT__  FLASH interrupt
   *         This parameter can be any combination of the following values:
   *     @arg @ref FLASH_IT_EOP End of FLASH Operation Interrupt
-  *     @arg @ref FLASH_IT_ERR Error Interrupt    
+  *     @arg @ref FLASH_IT_ERR Error Interrupt
   * @retval none
-  */  
+  */
 #define __HAL_FLASH_ENABLE_IT(__INTERRUPT__)  SET_BIT((FLASH->PECR), (__INTERRUPT__))
 
 /**
   * @brief  Disable the specified FLASH interrupt.
-  * @param  __INTERRUPT__  FLASH interrupt 
+  * @param  __INTERRUPT__  FLASH interrupt
   *         This parameter can be any combination of the following values:
   *     @arg @ref FLASH_IT_EOP End of FLASH Operation Interrupt
-  *     @arg @ref FLASH_IT_ERR Error Interrupt    
+  *     @arg @ref FLASH_IT_ERR Error Interrupt
   * @retval none
-  */  
+  */
 #define __HAL_FLASH_DISABLE_IT(__INTERRUPT__)  CLEAR_BIT((FLASH->PECR), (uint32_t)(__INTERRUPT__))
 
 /**
-  * @brief  Get the specified FLASH flag status. 
+  * @brief  Get the specified FLASH flag status.
   * @param  __FLAG__ specifies the FLASH flag to check.
   *          This parameter can be one of the following values:
   *            @arg @ref FLASH_FLAG_BSY         FLASH Busy flag
-  *            @arg @ref FLASH_FLAG_EOP         FLASH End of Operation flag 
+  *            @arg @ref FLASH_FLAG_EOP         FLASH End of Operation flag
   *            @arg @ref FLASH_FLAG_ENDHV       FLASH End of High Voltage flag
   *            @arg @ref FLASH_FLAG_READY       FLASH Ready flag after low power mode
   *            @arg @ref FLASH_FLAG_PGAERR      FLASH Programming Alignment error flag
   *            @arg @ref FLASH_FLAG_SIZERR      FLASH Size error flag
   *            @arg @ref FLASH_FLAG_OPTVERR     FLASH Option validity error flag (not valid with STM32L031xx/STM32L041xx)
   *            @arg @ref FLASH_FLAG_RDERR       FLASH Read protected error flag
-  *            @arg @ref FLASH_FLAG_WRPERR      FLASH Write protected error flag 
+  *            @arg @ref FLASH_FLAG_WRPERR      FLASH Write protected error flag
   *            @arg @ref FLASH_FLAG_FWWERR      FLASH Fetch While Write Error flag
-  *            @arg @ref FLASH_FLAG_NOTZEROERR  Not Zero area error flag  
+  *            @arg @ref FLASH_FLAG_NOTZEROERR  Not Zero area error flag
   * @retval The new state of __FLAG__ (SET or RESET).
   */
 #define __HAL_FLASH_GET_FLAG(__FLAG__)   (((FLASH->SR) & (__FLAG__)) == (__FLAG__))
@@ -284,35 +276,35 @@ typedef struct
   * @brief  Clear the specified FLASH flag.
   * @param  __FLAG__ specifies the FLASH flags to clear.
   *          This parameter can be any combination of the following values:
-  *            @arg @ref FLASH_FLAG_EOP         FLASH End of Operation flag 
+  *            @arg @ref FLASH_FLAG_EOP         FLASH End of Operation flag
   *            @arg @ref FLASH_FLAG_PGAERR      FLASH Programming Alignment error flag
   *            @arg @ref FLASH_FLAG_SIZERR      FLASH Size error flag
   *            @arg @ref FLASH_FLAG_OPTVERR     FLASH Option validity error flag (not valid with STM32L031xx/STM32L041xx)
   *            @arg @ref FLASH_FLAG_RDERR       FLASH Read protected error flag
-  *            @arg @ref FLASH_FLAG_WRPERR      FLASH Write protected error flag 
+  *            @arg @ref FLASH_FLAG_WRPERR      FLASH Write protected error flag
   *            @arg @ref FLASH_FLAG_FWWERR      FLASH Fetch While Write Error flag
-  *            @arg @ref FLASH_FLAG_NOTZEROERR  Not Zero area error flag  
+  *            @arg @ref FLASH_FLAG_NOTZEROERR  Not Zero area error flag
   * @retval none
   */
 #define __HAL_FLASH_CLEAR_FLAG(__FLAG__)   ((FLASH->SR) = (__FLAG__))
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
+  */
 
 /* Include FLASH HAL Extended module */
-#include "stm32l0xx_hal_flash_ex.h"  
-#include "stm32l0xx_hal_flash_ramfunc.h"  
+#include "stm32l0xx_hal_flash_ex.h"
+#include "stm32l0xx_hal_flash_ramfunc.h"
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup FLASH_Exported_Functions
   * @{
   */
-  
+
 /** @addtogroup FLASH_Exported_Functions_Group1
   * @{
   */
@@ -322,7 +314,7 @@ HAL_StatusTypeDef HAL_FLASH_Program_IT(uint32_t TypeProgram, uint32_t Address, u
 
 /* FLASH IRQ handler function */
 void       HAL_FLASH_IRQHandler(void);
-/* Callbacks in non blocking modes */ 
+/* Callbacks in non blocking modes */
 void       HAL_FLASH_EndOfOperationCallback(uint32_t ReturnValue);
 void       HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue);
 

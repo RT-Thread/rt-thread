@@ -99,8 +99,8 @@ extern "C" {
 /** @defgroup PWR_LL_EC_MODE_PWR MODE PWR
   * @{
   */
-#define LL_PWR_MODE_STOP0                  (PWR_CR1_LPMS_0)
-#define LL_PWR_MODE_STOP1                  (PWR_CR1_LPMS_1)
+#define LL_PWR_MODE_STOP0                  (0x00000000UL)
+#define LL_PWR_MODE_STOP1                  (PWR_CR1_LPMS_0)
 #define LL_PWR_MODE_STANDBY                (PWR_CR1_LPMS_1|PWR_CR1_LPMS_0)
 #if defined (PWR_CR1_LPMS_2)
 #define LL_PWR_MODE_SHUTDOWN               (PWR_CR1_LPMS_2)
@@ -164,6 +164,9 @@ extern "C" {
 #define LL_PWR_GPIO_B                      ((uint32_t)(&(PWR->PUCRB)))
 #define LL_PWR_GPIO_C                      ((uint32_t)(&(PWR->PUCRC)))
 #define LL_PWR_GPIO_D                      ((uint32_t)(&(PWR->PUCRD)))
+#if defined(GPIOE)
+#define LL_PWR_GPIO_E                      ((uint32_t)(&(PWR->PUCRE)))
+#endif
 #define LL_PWR_GPIO_F                      ((uint32_t)(&(PWR->PUCRF)))
 /**
   * @}
@@ -896,7 +899,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsWakeUpPinPolarityLow(uint32_t WakeUpPin)
   */
 __STATIC_INLINE void LL_PWR_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
 {
-  SET_BIT(*((uint32_t *)GPIO), GPIONumber);
+  SET_BIT(*((__IO uint32_t *)GPIO), GPIONumber);
 }
 
 /**
@@ -933,7 +936,7 @@ __STATIC_INLINE void LL_PWR_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
   */
 __STATIC_INLINE void LL_PWR_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
 {
-  CLEAR_BIT(*((uint32_t *)GPIO), GPIONumber);
+  CLEAR_BIT(*((__IO uint32_t *)GPIO), GPIONumber);
 }
 
 /**
@@ -970,7 +973,7 @@ __STATIC_INLINE void LL_PWR_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
 {
-  return ((READ_BIT(*((uint32_t *)(GPIO)), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
+  return ((READ_BIT(*((__IO uint32_t *)GPIO), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
 }
 
 /**
@@ -1007,8 +1010,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullUp(uint32_t GPIO, uint32_t GPIO
   */
 __STATIC_INLINE void LL_PWR_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  register uint32_t temp = (uint32_t)(GPIO) + 4U;
-  SET_BIT(*((uint32_t *)(temp)), GPIONumber);
+  SET_BIT(*((__IO uint32_t *)(GPIO + 4U)), GPIONumber);
 }
 
 /**
@@ -1045,8 +1047,7 @@ __STATIC_INLINE void LL_PWR_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
   */
 __STATIC_INLINE void LL_PWR_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  register uint32_t temp = (uint32_t)(GPIO) + 4U;
-  CLEAR_BIT(*((uint32_t *)(temp)), GPIONumber);
+  CLEAR_BIT(*((__IO uint32_t *)(GPIO + 4U)), GPIONumber);
 }
 
 /**
@@ -1083,8 +1084,7 @@ __STATIC_INLINE void LL_PWR_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumb
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  register uint32_t temp = (uint32_t)(GPIO) + 4UL;
-  return ((READ_BIT(*((uint32_t *)(temp)), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
+  return ((READ_BIT(*((__IO uint32_t *)(GPIO + 4U)), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
 }
 
 /**

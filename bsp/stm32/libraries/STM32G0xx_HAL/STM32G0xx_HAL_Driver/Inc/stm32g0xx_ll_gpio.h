@@ -32,7 +32,7 @@ extern "C" {
   * @{
   */
 
-#if defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOF)
+#if defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOE) || defined (GPIOF)
 
 /** @defgroup GPIO_LL GPIO
   * @{
@@ -681,6 +681,7 @@ __STATIC_INLINE void LL_GPIO_LockPin(GPIO_TypeDef *GPIOx, uint32_t PinMask)
   WRITE_REG(GPIOx->LCKR, GPIO_LCKR_LCKK | PinMask);
   WRITE_REG(GPIOx->LCKR, PinMask);
   WRITE_REG(GPIOx->LCKR, GPIO_LCKR_LCKK | PinMask);
+  /* Read LCKK register. This read is mandatory to complete key lock sequence */
   temp = READ_REG(GPIOx->LCKR);
   (void) temp;
 }
@@ -938,7 +939,7 @@ void        LL_GPIO_StructInit(LL_GPIO_InitTypeDef *GPIO_InitStruct);
   * @}
   */
 
-#endif /* defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOF) */
+#endif /* defined (GPIOA) || defined (GPIOB) || defined (GPIOC) || defined (GPIOD) || defined (GPIOE) || defined (GPIOF) */
 /**
   * @}
   */

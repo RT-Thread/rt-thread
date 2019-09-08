@@ -18,29 +18,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************  
   */ 
@@ -75,28 +59,33 @@
    application 
   */
 
-#if !defined (STM32L011xx) && !defined (STM32L021xx) && \
+#if !defined (STM32L010x4) && !defined (STM32L010x6) && !defined (STM32L010x8) && !defined (STM32L010xB) && \
+    !defined (STM32L011xx) && !defined (STM32L021xx) && \
     !defined (STM32L031xx) && !defined (STM32L041xx) && \
     !defined (STM32L051xx) && !defined (STM32L052xx) && !defined (STM32L053xx) && \
     !defined (STM32L061xx) && !defined (STM32L062xx) && !defined (STM32L063xx) && \
     !defined (STM32L071xx) && !defined (STM32L072xx) && !defined (STM32L073xx) && \
-    !defined (STM32L081xx) && !defined (STM32L082xx) && !defined (STM32L083xx) \
-  /* #define STM32L011xx */
-  /* #define STM32L021xx */
-  /* #define STM32L031xx */   /*!< STM32L031C6, STM32L031E6, STM32L031F6, STM32L031G6, STM32L031K6 Devices */
-  /* #define STM32L041xx */   /*!< STM32L041C6, STM32L041E6, STM32L041F6, STM32L041G6, STM32L041K6 Devices */
-  /* #define STM32L051xx */   /*!< STM32L051K8, STM32L051C6, STM32L051C8, STM32L051R6, STM32L051R8 Devices */
-  /* #define STM32L052xx */   /*!< STM32L052K6, STM32L052K8, STM32L052C6, STM32L052C8, STM32L052R6, STM32L052R8 Devices */
-  /* #define STM32L053xx */   /*!< STM32L053C6, STM32L053C8, STM32L053R6, STM32L053R8 Devices */
+    !defined (STM32L081xx) && !defined (STM32L082xx) && !defined (STM32L083xx)
+  /* #define STM32L010x4 */   /*!< STM32L010K4, STM32L010F4 Devices                                                                                                                      */
+  /* #define STM32L010x6 */   /*!< STM32L010C6 Devices                                                                                                                                   */
+  /* #define STM32L010x8 */   /*!< STM32L010K8, STM32L010R8 Devices                                                                                                                      */
+  /* #define STM32L010xB */   /*!< STM32L010RB Devices                                                                                                                                   */
+  /* #define STM32L011xx */   /*!< STM32L031C6, STM32L031E6, STM32L031F6, STM32L031G6, STM32L031K6 Devices                                                                               */
+  /* #define STM32L021xx */   /*!< STM32L021D4, STM32L021F4, STM32L021G4, STM32L021K4 Devices                                                                                            */
+  /* #define STM32L031xx */   /*!< STM32L031C6, STM32L031E6, STM32L031F6, STM32L031G6, STM32L031K6 Devices                                                                               */
+  /* #define STM32L041xx */   /*!< STM32L041C6, STM32L041K6, STM32L041G6, STM32L041F6, STM32L041E6 Devices                                                                               */
+  /* #define STM32L051xx */   /*!< STM32L051K8, STM32L051C6, STM32L051C8, STM32L051R6, STM32L051R8, STM32L051K6, STM32L051T6, STM32L051T8 Devices                                        */
+  /* #define STM32L052xx */   /*!< STM32L052K6, STM32L052K8, STM32L052C6, STM32L052C8, STM32L052R6, STM32L052R8, STM32L052T6, STM32L052T8 Devices                                        */
+  /* #define STM32L053xx */   /*!< STM32L053C6, STM32L053C8, STM32L053R6, STM32L053R8 Devices                                                                                            */
   /* #define STM32L061xx */   /*!< */
-  /* #define STM32L062xx */   /*!< STM32L062K8 */
-  /* #define STM32L063xx */   /*!< STM32L063C8, STM32L063R8 */ 
-  /* #define STM32L071xx */   /*!< */
-  /* #define STM32L072xx */   /*!< */
-  /* #define STM32L073xx */   /*!< STM32L073V8, STM32L073VB, STM32L073RB, STM32L073VZ, STM32L073RZ Devices */
-  /* #define STM32L081xx */   /*!< */
-  /* #define STM32L082xx */   /*!< */
-  /* #define STM32L083xx */   /*!< */ 
+  /* #define STM32L062xx */   /*!< STM32L062K8 Devices                                                                                                                                   */
+  /* #define STM32L063xx */   /*!< STM32L063C8, STM32L063R8 Devices                                                                                                                      */
+  /* #define STM32L071xx */   /*!< STM32L071V8, STM32L071K8, STM32L071VB, STM32L071RB, STM32L071CB, STM32L071KB, STM32L071VZ, STM32L071RZ, STM32L071CZ, STM32L071KZ, STM32L071C8 Devices */
+  /* #define STM32L072xx */   /*!< STM32L072V8, STM32L072VB, STM32L072RB, STM32L072CB, STM32L072VZ, STM32L072RZ, STM32L072CZ, STM32L072KB, STM32L072KZ Devices                           */
+  /* #define STM32L073xx */   /*!< STM32L073V8, STM32L073VB, STM32L073RB, STM32L073VZ, STM32L073RZ, STM32L073CB, STM32L073CZ Devices                                                     */
+  /* #define STM32L081xx */   /*!< STM32L081CB, STM32L081CZ, STM32L081KZ Devices                                                                                                         */
+  /* #define STM32L082xx */   /*!< STM32L082KB, STM32L082KZ, STM32L082CZ Devices                                                                                                         */
+  /* #define STM32L083xx */   /*!< STM32L083V8, STM32L083VB, STM32L083RB, STM32L083VZ, STM32L083RZ, STM32L083CB, STM32L083CZ Devices                                                     */
 #endif
    
 /*  Tip: To avoid modifying this file each time you need to switch between these
@@ -112,11 +101,11 @@
 #endif /* USE_HAL_DRIVER */
 
 /**
-  * @brief CMSIS Device version number V1.7.1
+  * @brief CMSIS Device version number
   */
 #define __STM32L0xx_CMSIS_VERSION_MAIN   (0x01) /*!< [31:24] main version */
-#define __STM32L0xx_CMSIS_VERSION_SUB1   (0x07) /*!< [23:16] sub1 version */
-#define __STM32L0xx_CMSIS_VERSION_SUB2   (0x02) /*!< [15:8]  sub2 version */
+#define __STM32L0xx_CMSIS_VERSION_SUB1   (0x09) /*!< [23:16] sub1 version */
+#define __STM32L0xx_CMSIS_VERSION_SUB2   (0x00) /*!< [15:8]  sub2 version */
 #define __STM32L0xx_CMSIS_VERSION_RC     (0x00) /*!< [7:0]  release candidate */
 #define __STM32L0xx_CMSIS_VERSION        ((__STM32L0xx_CMSIS_VERSION_MAIN     << 24)\
                                          |(__STM32L0xx_CMSIS_VERSION_SUB1 << 16)\
@@ -130,7 +119,15 @@
 /** @addtogroup Device_Included
   * @{
   */
-#if defined(STM32L011xx)
+#if defined(STM32L010xB)
+  #include "stm32l010xb.h"
+#elif defined(STM32L010x8)
+  #include "stm32l010x8.h"
+#elif defined(STM32L010x6)
+  #include "stm32l010x6.h"
+#elif defined(STM32L010x4)
+  #include "stm32l010x4.h"
+#elif defined(STM32L011xx)
   #include "stm32l011xx.h"
 #elif defined(STM32L021xx)
   #include "stm32l021xx.h"
@@ -188,8 +185,8 @@ typedef enum
 
 typedef enum 
 {
-  ERROR = 0, 
-  SUCCESS = !ERROR
+  SUCCESS = 0,
+  ERROR = !SUCCESS
 } ErrorStatus;
 
 /**

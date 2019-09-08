@@ -67,7 +67,7 @@
 
   The table below gives the allowed values of the pre-emption priority and subpriority according
   to the Priority Grouping configuration performed by HAL_NVIC_SetPriorityGrouping() function.
-  
+
     ==========================================================================================================================
       NVIC_PriorityGroup   | NVIC_IRQChannelPreemptionPriority | NVIC_IRQChannelSubPriority  |       Description
     ==========================================================================================================================
@@ -76,43 +76,27 @@
     --------------------------------------------------------------------------------------------------------------------------
      NVIC_PRIORITYGROUP_1  |                0-1                |            0-7              | 1 bit for pre-emption priority
                            |                                   |                             | 3 bits for subpriority
-    --------------------------------------------------------------------------------------------------------------------------    
+    --------------------------------------------------------------------------------------------------------------------------
      NVIC_PRIORITYGROUP_2  |                0-3                |            0-3              | 2 bits for pre-emption priority
                            |                                   |                             | 2 bits for subpriority
-    --------------------------------------------------------------------------------------------------------------------------    
+    --------------------------------------------------------------------------------------------------------------------------
      NVIC_PRIORITYGROUP_3  |                0-7                |            0-1              | 3 bits for pre-emption priority
                            |                                   |                             | 1 bit for subpriority
-    --------------------------------------------------------------------------------------------------------------------------    
+    --------------------------------------------------------------------------------------------------------------------------
      NVIC_PRIORITYGROUP_4  |                0-15               |            0                | 4 bits for pre-emption priority
-                           |                                   |                             | 0 bit for subpriority                       
+                           |                                   |                             | 0 bit for subpriority
     ==========================================================================================================================
 
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -225,7 +209,7 @@ void HAL_NVIC_EnableIRQ(IRQn_Type IRQn)
 {
   /* Check the parameters */
   assert_param(IS_NVIC_DEVICE_IRQ(IRQn));
-  
+
   /* Enable interrupt */
   NVIC_EnableIRQ(IRQn);
 }
@@ -241,7 +225,7 @@ void HAL_NVIC_DisableIRQ(IRQn_Type IRQn)
 {
   /* Check the parameters */
   assert_param(IS_NVIC_DEVICE_IRQ(IRQn));
-  
+
   /* Disable interrupt */
   NVIC_DisableIRQ(IRQn);
 }
@@ -257,7 +241,7 @@ void HAL_NVIC_SystemReset(void)
 }
 
 /**
-  * @brief  Initialize the System Timer with interrupt enabled and start the System Tick Timer (SysTick): 
+  * @brief  Initialize the System Timer with interrupt enabled and start the System Tick Timer (SysTick):
   *         Counter is in free running mode to generate periodic interrupts.
   * @param  TicksNumb: Specifies the ticks Number of ticks between two interrupts.
   * @retval status:  - 0  Function succeeded.
@@ -444,15 +428,15 @@ void HAL_MPU_Disable(void)
 
   /* Disable fault exceptions */
   SCB->SHCSR &= ~SCB_SHCSR_MEMFAULTENA_Msk;
-  
+
   /* Disable the MPU and clear the control register*/
   MPU->CTRL = 0U;
 }
 
 /**
   * @brief  Enable the MPU.
-  * @param  MPU_Control: Specifies the control mode of the MPU during hard fault, 
-  *          NMI, FAULTMASK and privileged accessto the default memory 
+  * @param  MPU_Control: Specifies the control mode of the MPU during hard fault,
+  *          NMI, FAULTMASK and privileged accessto the default memory
   *          This parameter can be one of the following values:
   *            @arg MPU_HFNMI_PRIVDEF_NONE
   *            @arg MPU_HARDFAULT_NMI
@@ -464,10 +448,10 @@ void HAL_MPU_Enable(uint32_t MPU_Control)
 {
   /* Enable the MPU */
   MPU->CTRL = MPU_Control | MPU_CTRL_ENABLE_Msk;
-  
+
   /* Enable fault exceptions */
   SCB->SHCSR |= SCB_SHCSR_MEMFAULTENA_Msk;
-  
+
   /* Ensure MPU settings take effects */
   __DSB();
   __ISB();

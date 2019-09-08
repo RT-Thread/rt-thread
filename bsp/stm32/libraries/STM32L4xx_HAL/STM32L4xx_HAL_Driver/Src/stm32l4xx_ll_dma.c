@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -178,8 +162,8 @@
   */
 ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
 {
-  DMA_Channel_TypeDef *tmp = (DMA_Channel_TypeDef *)DMA1_Channel1;
   ErrorStatus status = SUCCESS;
+  DMA_Channel_TypeDef *tmp;
 
   /* Check the DMA Instance DMAx and Channel parameters*/
   assert_param(IS_LL_DMA_ALL_CHANNEL_INSTANCE(DMAx, Channel) || (Channel == LL_DMA_CHANNEL_ALL));
@@ -217,16 +201,16 @@ ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
     CLEAR_BIT(tmp->CCR, DMA_CCR_EN);
 
     /* Reset DMAx_Channely control register */
-    LL_DMA_WriteReg(tmp, CCR, 0U);
+    WRITE_REG(tmp->CCR, 0U);
 
     /* Reset DMAx_Channely remaining bytes register */
-    LL_DMA_WriteReg(tmp, CNDTR, 0U);
+    WRITE_REG(tmp->CNDTR, 0U);
 
     /* Reset DMAx_Channely peripheral address register */
-    LL_DMA_WriteReg(tmp, CPAR, 0U);
+    WRITE_REG(tmp->CPAR, 0U);
 
-    /* Reset DMAx_Channely memory address register */
-    LL_DMA_WriteReg(tmp, CMAR, 0U);
+    /* Reset DMAx_Channely memory 0 address register */
+    WRITE_REG(tmp->CMAR, 0U);
 
 #if defined(DMAMUX1)
     /* Reset Request register field for DMAx Channel */

@@ -1,254 +1,531 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>
-<script><endnote><head>
-<script><endnote><head>
-<script><endnote><head>
-<script><endnote><head>
-<script></script>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<link rel="File-List" href="Release_Notes_files/filelist.xml">
-<link rel="Edit-Time-Data" href="Release_Notes_files/editdata.mso"><title>Release Notes for STM32L4xx CMSIS</title>
-
-<style>
-div.Section1 {
-page: Section1;
-font-family: Arial,Helvetica,sans-serif;
-}
-h1 {
-font-size: 24pt;
-font-weight: bold;
-font-family: Arial,Helvetica,sans-serif;
-text-align: center;
-color: #3366ff;
-}
-h2 {
-margin: 12pt 0in 3pt;
-page-break-after: avoid;
-font-weight: bold;
-font-family: Arial,Helvetica,sans-serif;
-background-color: #3366ff;
-color: white;
-padding-left: 5px;
-font-size: 16pt;
-}
-h3 {
-margin-left: 0in;
-font-weight: bold;
-font-family: Arial,Helvetica,sans-serif;
-background-color: #3366ff;
-width: 200px;
-margin-right: 500pt;
-color: white;
-padding-left: 5px;
-padding-top: 2px;
-padding-bottom: 2px;
-font-size: 12pt;
-}
-h4 {
-font-family: Arial,Helvetica,sans-serif;
-font-weight: bold;
-text-decoration: underline;
-font-size: 12pt;
-}
-p {
-margin: 0px 0px 0px 0in;
-font-family: Arial,Helvetica,sans-serif;
-padding-top: 3px;
-padding-bottom: 3px;
-font-size: 12pt;
-}
-ul {
-font-family: Arial,Helvetica,sans-serif;
-margin-top: 3px;
-margin-bottom: 3px;
-font-size: 10pt;
-}
-caption {
-margin-top: 10px;
-font-family: Arial,Helvetica,sans-serif;
-font-size: 11pt;
-}
-hr {
-width: 100%;
-}
-.guidance {
-background-color: #e5b8b7;
-font-style: italic;
-font-family: Arial,Helvetica,sans-serif;
-padding-top: 3px;
-padding-bottom: 3px;
-margin-top: 3px;
-margin-bottom: 3px;
-font-size: 10pt;
-}
-.guidance_title {
-font-style: normal;
-font-weight: bold;
-text-decoration: underline;
-font-family: Arial,Helvetica,sans-serif;
-font-size: 10pt;
-}
-.tickets {
-border: 1pt solid #9cc2e5;
-font-family: Arial,Helvetica,sans-serif;
-margin-bottom: 3px;
-margin-top: 3px;
-font-size: 10pt;
-}
-.tickets th {
-border: 1pt solid #9cc2e5;
-font-size: 12pt;
-background-color: #39a9dc;
-color: white;
-text-align: center;
-}
-.tickets td {
-border: 1pt solid #9cc2e5;
-min-height: 32px;
-}
-tr:nth-child(even) {background-color: #cee2f2;}
-tr:nth-child(even) {background-color: #e8f1f9;}
-.topic1 {
-margin-top: 3px;
-margin-bottom: 3px;
-margin-left: 40px;
-}
-.topic2 {
-margin-top: 3px;
-margin-bottom: 3px;
-}
-.topic3 {
-margin-top: 3px;
-margin-bottom: 3px;
-margin-left: 20px;
-}
-#purpose {
-margin-top: 3px;
-margin-bottom: 3px;
-}
-#identification {
-margin-top: 3px;
-margin-bottom: 3px;
-}
-</style><!--[if !mso]> <style> v\:* {behavior:url(#default#VML);} o\:* {behavior:url(#default#VML);} w\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style> <![endif]--><!--[if gte mso 9]><xml> <o:DocumentProperties> <o:Author>STMicroelectronics</o:Author> <o:LastAuthor>Raouf Hosni</o:LastAuthor> <o:Revision>69</o:Revision> <o:TotalTime>153</o:TotalTime> <o:Created>2009-02-27T19:26:00Z</o:Created> <o:LastSaved>2009-07-21T16:16:00Z</o:LastSaved> <o:Pages>1</o:Pages> <o:Words>410</o:Words> <o:Characters>2339</o:Characters> <o:Company>STMicroelectronics</o:Company> <o:Lines>19</o:Lines> <o:Paragraphs>5</o:Paragraphs> <o:CharactersWithSpaces>2744</o:CharactersWithSpaces> <o:Version>11.8132</o:Version> </o:DocumentProperties> </xml><![endif]--><!--[if gte mso 9]><xml> <w:WordDocument> <w:Zoom>110</w:Zoom> <w:SpellingState>Clean</w:SpellingState> <w:GrammarState>Clean</w:GrammarState> <w:ValidateAgainstSchemas/> <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid> <w:IgnoreMixedContent>false</w:IgnoreMixedContent> <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText> <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> </w:WordDocument> </xml><![endif]--><!--[if gte mso 9]><xml> <w:LatentStyles DefLockedState="false" LatentStyleCount="156"> </w:LatentStyles> </xml><![endif]--><!--[if gte mso 10]> <style> /* Style Definitions */ table.MsoNormalTable {mso-style-name:"Table Normal"; mso-tstyle-rowband-size:0; mso-tstyle-colband-size:0; mso-style-noshow:yes; mso-style-parent:""; mso-padding-alt:0in 5.4pt 0in 5.4pt; mso-para-margin:0in; mso-para-margin-bottom:.0001pt; mso-pagination:widow-orphan; font-size:10.0pt; font-family:"Times New Roman"; mso-ansi-language:#0400; mso-fareast-language:#0400; mso-bidi-language:#0400;} </style> <![endif]--><!--[if gte mso 9]><xml> <o:shapedefaults v:ext="edit" spidmax="6146"/> </xml><![endif]--><!--[if gte mso 9]><xml> <o:shapelayout v:ext="edit"> <o:idmap v:ext="edit" data="1"/> </o:shapelayout></xml><![endif]--></head>
-<body link="blue" vlink="blue">
-<script type="text/javascript">
-var toggle_hist_disp = true;
-function toggle_history()
-{
-if (toggle_hist_disp)
-{
-toggle_hist_disp = false;
-var filter_off_text = document.createTextNode("Hide History");
-document.getElementById('filter_hist').innerHTML = "";
-document.getElementById('filter_hist').appendChild(filter_off_text);
-document.getElementById("history").hidden = false;
-}
-else
-{
-toggle_hist_disp = true;
-var filter_on_text = document.createTextNode("Show History");
-document.getElementById('filter_hist').innerHTML = "";
-document.getElementById('filter_hist').appendChild(filter_on_text);
-document.getElementById("history").hidden = true;
-}
-}</script>
-<div style="width: 1034px;" class="Section1"><span style="font-size: 8pt; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;; color: blue;"></span><small><a href="../../../../../Release_Notes.html">Back to Release page</a></small>
-<div id="header">
-<h1 style="margin-bottom: 18pt; text-align: center;" align="center">Release
-Notes for&nbsp;<span style="font-size: 20pt; font-family: Verdana; color: rgb(51, 102, 255);">STM32L4xx
-CMSIS</span></h1>
-<p style="text-align: center;">Copyright 2017
-STMicroelectronics</p>
-<p style="text-align: center;"><span style="font-size: 10pt; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;; color: black;"><img style="border: 0px solid ; width: 112px; height: 83px;" alt="" id="_x0000_i1026" src="../../../../../_htmresc/st_logo.png"></span></p>
-</div>
-<div id="license" class="topic1">
-<h2>License</h2>
-This software component is licensed by ST under BSD 3-Clause
-license, the "License"; You may not use this component except in
-compliance with
-the License. You may obtain a copy of the License at:
-<p style="text-align: center;"><a href="https://opensource.org/licenses/BSD-3-Clause" target="_blank">https://opensource.org/licenses/BSD-3-Clause</a></p>
-</div>
-<br>
-<div id="release_container" class="topic1">
-<div class="topic2" id="identification">
-<h3>V1.5.0 / 27-July-2018</h3>
-</div>
-<div class="topic3" id="changes">
-<h4><b><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span><u><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span></u></b><b><u><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;">Main
-Changes</span></u></b><o:p></o:p></h4><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;,&quot;serif&quot;;"></span>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif; color: rgb(0, 32, 96);" lang="EN-US"></span><span style="font-size: 11pt; font-family: &quot;Calibri&quot;,sans-serif; color: rgb(0, 32, 96);" lang="EN-US"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Add the support of&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L412xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L422x</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"> devices</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l412xx.h and <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l422xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> device description files</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add startup files </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;">stm32l412xx.s</span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l422xx.s</span><span style="font-size: 10pt; font-family: Verdana;"> for EWARM, MDK-ARM and SW4STM32 toolchains</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;">EWARM </span><span style="font-size: 10pt; font-family: Verdana;">associated linker files&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">for execution from internal RAM or internal FLASH&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L412xx" for all STM32L412xx devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L422xx" for all STM32L422xx devices</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, stm32l4r7xx.h,
-stm32l4r9xx.h,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h, stm32l4s7xx.h and
-stm32l4s9xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Update SDMMC mask register</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Correct </span><span style="font-size: 10pt; font-family: Verdana;">SDMMC </span><span style="font-size: 10pt; font-family: Verdana;">DPSMACT and CPSMACT bits definition</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">All&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device&nbsp;description files except&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4rXxx.h and&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4sXxx.h</span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Correct Misra C:2012 Rule10.3 warning in replacing 0xFFUL by 0xFFU when CRC IDR register is 8-bit long only</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">All iar/linker/stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4XXxx_flash.icf and </span><span style="font-size: 10pt; font-family: Verdana;">iar/linker/stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4XXxx_sram.icf</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Remove SRAM1 and SRAM2 (and SRAM3&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">for&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4rXxx_flash.icf</span><span style="font-size: 10pt; font-family: Verdana;">, </span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4sXxx_flash.icf</span><span style="font-size: 10pt; font-family: Verdana;">, </span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4rXxx_sram.icf</span><span style="font-size: 10pt; font-family: Verdana;"> and </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4sXxx_sram.icf</span><span style="font-size: 10pt; font-family: Verdana;">) start and end addresses from ICF editor section</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Define RAM section as covering whole SRAM1 plus SRAM2 (and SRAM3 when applicable</span><span style="font-size: 10pt; font-family: Verdana;">) when the SRAM regions are contiguous</span></li></ul></ul>
-</div>
-<br>
-</div>
-<div style="margin-left: 40px;"><button id="filter_hist" onclick="toggle_history()">Show
-History</button><br>
-</div>
-<div id="history" class="topic1" hidden="">
-<h2>Update History</h2>
-<b><u><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span></u></b><br><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-style: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.4.3 / 30-April-2018</span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; font-size: medium; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;"><b><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main Changes<o:p></o:p></span></u></b></p><ul style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">all&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device&nbsp;description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix DFSDM_FLTICR_CLRSCDF definition</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Cleanup USB Host &amp; Device bit definitions</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">[MISRAC2012-Rule-10.6] Use 'UL' postfix for _Msk definitions and memory/peripheral base addresses<br></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> devices description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix SDMMC_STA_DPSMACT and </span><span style="font-size: 10pt; font-family: Verdana;">SDMMC_STA_</span><span style="font-size: 10pt; font-family: Verdana;">CPSMACT definitions (V1.4.1 update was incorrect)</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">all&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device&nbsp;description files except&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Add missing USART_CR3_UCESM bit definition</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-style: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.4.2 / 22-December-2017</span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; font-size: medium; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;"><b><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main Changes<o:p></o:p></span></u></b></p><ul style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">SPI_TypeDef cleanup of Reserved fields.</span></li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-style: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.4.1 / 6-October-2017</span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; font-size: medium; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;"><b><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main Changes<o:p></o:p></span></u></b></p><ul style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove LTDC peripheral definitions </span><span style="font-size: 10pt; font-family: Verdana;">as LTDC not available on </span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S5xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-style: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.4.0 / 25-August-2017</span></h3><p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; font-size: medium; font-family: &quot;Times New Roman&quot;; color: rgb(0, 0, 0); font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;"><b><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main Changes<o:p></o:p></span></u></b></p><ul style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the support of&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R7xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R9xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S7xx/STM32L4S9xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> device description files</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add startup files </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.s, </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.s,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">&nbsp;startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.s,<span class="Apple-converted-space"> &nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.s,<span class="Apple-converted-space"> &nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.s<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space">&nbsp;</span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.s</span><span style="font-size: 10pt; font-family: Verdana;"> for EWARM, MDK-ARM and SW4STM32 toolchains</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;">EWARM </span><span style="font-size: 10pt; font-family: Verdana;">associated linker files&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">for execution from internal RAM or internal FLASH&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4R5xx" for all STM32L4R5xx devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4R7xx" for all STM32L4R7xx devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4R9xx" for all STM32L4R9xx devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4S5xx" for all STM32L4S5xx devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4S7xx" for all STM32L4S7xx devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4S9xx" for all STM32L4S9xx devices</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">all </span><span style="font-size: 10pt; font-family: Verdana;">adequate stm32l4XXxx.h device&nbsp;description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">PWR: Rename PWR_CR3_EIWF to PWR_CR3_EIWUL</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;,serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">TIM: </span><span style="font-size: 10pt; font-family: Verdana;">Add missing TIM8 check in debug macro IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE()&nbsp;devices</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">USB: Fix USB_EP0R...USB_EP7R definitions</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.c</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix MISRA C 2004 rule 10.6 : a 'U' suffix shall be applied to all constants of 'unsigned' type</span></li></ul></ul><span style="font-size: 10pt; font-family: Verdana;"></span><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.3.2
-/ 16-June-2017</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.h, stm32l452xx.h,
-stm32l462xx.h description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Remove EXTI_IMR2_IM34 and EXTI_EMR2_IM34 bits (no SWPMI EXTI line)</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx.h, stm32l442xx.h, stm32l452xx.h,
-stm32l462xx.h description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove EXTI_IMR2_IM36 and EXTI_EMR2_IM36 bits from STM32L4x2x devices (no PVM2 EXTI line)</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l431xx.h,
-stm32l432xx.h, stm32l442xx.h, stm32l451xx.h, stm32l452xx.h,
-stm32l462xx.h, stm32l471xx.h, stm32l475xx.h, stm32l485xx.h&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">description files</span></li><ul><li><span style="font-size: 10pt; font-family: Verdana;">Remove
-EXTI_IMR2_IM39 and EXTI_EMR2_IM39 bits </span><span style="font-size: 10pt; font-family: Verdana;">from </span><span style="font-size: 10pt; font-family: Verdana;">STM32L4x1x, </span><span style="font-size: 10pt; font-family: Verdana;">STM32L4x2x and&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">STM32L4x5x</span><span style="font-size: 10pt; font-family: Verdana;"> devices</span><span style="font-size: 10pt; font-family: Verdana;"> (</span><span style="font-size: 10pt; font-family: Verdana;">no LCD EXTI line)</span></li></ul></ul><ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">all&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device&nbsp;description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove erroneous SRAM2_BB_BASE definition</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add missing EXTI_EMR2_EM constants</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add missing TIM8 check in debug macro IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE()&nbsp;devices where TIM8 is present<br></span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.3.1
-/ 21-April-2017</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx.h </span><span style="font-size: 10pt; font-family: Verdana;">and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4a6xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;">device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">FIREWALL</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix FW_VDSSA_ADD_Msk and FW_VDSL_LENG_Msk definitions</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">TIM16</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix TIM16_OR1_TI1_RMP_Msk definition</span></li></ul></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.3.0
-/ 17-February-2017</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the support of&nbsp;<span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L496xx/STM32L4A6xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4a6xx.h device description files</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add startup files </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx.s and </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4a6xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add linker files&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4a6xx_flash.icf and&nbsp; </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4a6xx_sram.icf </span><span style="font-size: 10pt; font-family: Verdana;">used within EWARM workspaces</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L496xx" for all STM32L496xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4A6xx" for all STM32L4A6xx devices</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">all&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device&nbsp;description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix RCC_CRRCR_HSI48CAL_Pos and RCC_CRRCR_HSI48CAL values</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.2.0
-/ 28-October-2016</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the support of&nbsp;<span style="font-weight: bold;">STM32L451xx/STM32L452xx/STM32L462xx</span> devices</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l452xx.h </span><span style="font-size: 10pt; font-family: Verdana;">and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l462xx.h device description files</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_</span><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.s, </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l452xx.s </span><span style="font-size: 10pt; font-family: Verdana;">and </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l462xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add linker files stm32l451xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l452xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l452xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l462xx_flash.icf and&nbsp; </span><span style="font-size: 10pt; font-family: Verdana;">stm32l462xx_sram.icf </span><span style="font-size: 10pt; font-family: Verdana;">used within EWARM workspaces</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L451xx" for all STM32L451xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L452xx" for all STM32L452xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L462xx" for all STM32L462xx devices</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">all&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device&nbsp;description files</span><span style="font-size: 10pt; font-family: Verdana;"> except </span><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l452xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l462xx.h</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add DAC_CHANNEL2_SUPPORT definition as </span><span style="font-size: 10pt; font-family: Verdana;">DAC channel 2 is present on these devices</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx.h </span><span style="font-size: 10pt; font-family: Verdana;">and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l442xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;">device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove PWR_CR2_PVME1 and PWR_SR2_PVMO1 as VDDUSB is internally connected to VDD </span><span style="font-size: 10pt; font-family: Verdana;">on these devices </span><span style="font-size: 10pt; font-family: Verdana;">thus no PVM1</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l476xx.h,</span><span style="font-size: 10pt; font-family: Verdana;"> stm32l485xx.h </span><span style="font-size: 10pt; font-family: Verdana;">and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l486xx.h</span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;">device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Remove USB OTG Core Id version definitions USB_OTG_CORE_ID_310A and USB_OTG_CORE_ID_320A as reserved for internal usage</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.2
-/ 12-September-2016</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix DAC_SR_BWST1 bit definition</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix SDMMC_DCTRL_DBLOCKSIZE_2 and SDMMC_DCTRL_DBLOCKSIZE_3 bits definition</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">USB OTG FS</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add GSNPSID, GHWCFG1 and GHWCFG2 register mapping</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add USB OTG Core Id version definitions: USB_OTG_CORE_ID_310A and USB_OTG_CORE_ID_320A<br></span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.1
-/ 29-April-2016</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">All
-device register description files enriched with _Pos and _Msk defines
-to be used with _VAL2FLD(field, value) and _FLD2VAL(field, value) from
-CMSIS Core (previous defines are kept for compatibility)</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l476xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l485xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l486xx.h device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Update DFSDM peripheral instance and register definitions (named DFSDM1 peripheral from now instead of DFSDM)</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM<span style="font-style: italic;">x</span>_IRQn to DFSDM1_FLT<span style="font-style: italic;">x</span>_IRQn for <span style="font-style: italic;">x</span>=0,1,2 and 3 &nbsp;(filters)</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM channels and filters to refer to DFSDM1 peripheral instance with DFSDM1 prefix</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Channel0, DFSDM1_Channel1, ... DFSDM1_Channel7</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Filter0, </span><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Filter1, ...,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Filter3</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename registers in DFSDM_Filter_TypeDef to use FLT prefix for filter</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">FLTCR1, FLTCR2, FLTISR, FLTICR, FLTJCHGR, FLTFCR, FLTJDATAR, FLTRDATAR, FLTAWHTR,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">FLTAWLTR, FLTAWSR, FLTAWCFR, FLTEXMAX, FLTEXMIN, FLTCNVTIMR</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename register in DFSDM_Filter_TypeDef to use CH prefix for&nbsp;channel</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">CHAWSCDR<br></span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Update RCC definitions for DFSDM1</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_APB2RSTR_DFSDMRST to RCC_APB2RSTR_DFSDM1RST</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_APB2ENR_DFSDMEN to RCC_APB2ENR_DFSDM1EN</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_APB2SMENR_DFSDMSMEN to RCC_APB2SMENR_DFSDM1SMEN</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_CCIPR_DFSDMSEL to RCC_CCIPR_DFSDM1SEL</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Update TIM definitions for DFSDM1</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM1_OR2_BKDFBK0E to TIM1_OR2_BKDF1BK0E</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM1_OR3_BK2DFBK1E to TIM1_OR3_BK2DF1BK1E</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM8_OR2_BKDFBK2E to TIM8_OR2_BKDF1BK2E</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM8_OR3_BK2DFBK3E to TIM8_OR3_BK2DF1BK3E</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM15_OR2_BKDFBK0E to TIM15_OR2_BKDF1BK0E</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM16_OR2_BKDFBK1E to TIM16_OR2_BKDF1BK1E</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename TIM17_OR2_BKDFBK2E to TIM17_OR2_BKDF1BK2E</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">FMC</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add FMC_BWTRx_BUSTURN register bit definition</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">startup_stm32l471xx.s, </span><span style="font-size: 10pt; font-family: Verdana;">startup_stm32l475xx.s,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">startup_stm32l476xx.s,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">startup_stm32l485xx.s and </span><span style="font-size: 10pt; font-family: Verdana;">startup_stm32l486xx.s</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename </span><span style="font-size: 10pt; font-family: Verdana;">DFSDM<span style="font-style: italic;">x</span>_IRQHandler function entry points to DFSDM1_FLT<span style="font-style: italic;">x</span>_IRQHandler for <span style="font-style: italic;">x</span>=0,1,2 and 3 &nbsp;(filters)</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.1.0
-/ 26-February-2016</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;">STM32L431xx/STM32L432xx/STM32L433xx/STM32L442xx/STM32L443xx</span> devices</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l431xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l433xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l442xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l443xx.h device description files</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_</span><span style="font-size: 10pt; font-family: Verdana;">stm32l431xx.s, </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx.s, </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l433xx.s, </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l442xx.s and </span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l443xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add linker files stm32l431xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l431xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l433xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l433xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l442xx_flash.icf,&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">stm32l442xx_sram.icf, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l443xx_flash.icf and&nbsp; </span><span style="font-size: 10pt; font-family: Verdana;">stm32l443xx_sram.icf </span><span style="font-size: 10pt; font-family: Verdana;">used within EWARM workspaces</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L431xx" for all STM32L431xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L432xx" for all STM32L432xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L433xx" for all STM32L433xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L442xx" for all STM32L442xx devices</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L443xx" for all STM32L443xx devices</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l476xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l485xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l486xx.h device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">DFSDM - alignment with registers &amp; bits naming used in documentation</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM_AWSCDR_WDATA to DFSDM_CHWDATR_WDATA</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM_AWSCDR_INDAT0 to DFSDM_CHDATINR_INDAT0</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM_AWSCDR_INDAT0 to DFSDM_CHDATINR_INDAT0</span></li></ul></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.3
-/ 29-January-2016</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l476xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l485xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l486xx.h device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Apply MISRA C 2004 rule 10.6 ('U' suffix added)</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add PACKAGE_BASE, UID_BASE and FLASHSIZE_BASE base address definitions<br></span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">ADC</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Update ADC_CSR register bit definition</span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">LPUART</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add IS_LPUART_INSTANCE() to check USART instance with low power capatibility</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.h/.c</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Add declaration of APB Prescaler table values (const uint8_t&nbsp; APBPrescTable[8])</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.2
-/ 25-November-2015</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l476xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l485xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l486xx.h device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">GPIO</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Align GPIO register bit definitions with RM0351 (legacy definitions preserved for compatibility)</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">FMC</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Remove FMC_BCR1_WFDIS bit definition (write fifo feature not available)</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">PWR</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Stop 0 mode introduction</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">PWR_CR1_LPMS_STOP1MR renamed to PWR_CR1_LPMS_STOP0</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">PWR_CR1_LPMS_STOP1LPR renamed to </span><span style="font-size: 10pt; font-family: Verdana;">PWR_CR1_LPMS_STOP1</span></li></ul></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">RCC</span><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Align RCC register bit definitions with RM0351 (legacy definitions preserved for compatibility)</span></li></ul><span style="font-size: 10pt; font-family: Verdana;"></span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">TIM</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE() to check timer instance capability for hall sensor interface</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.c</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix PLLCFGR default value in SystemInit()</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.1
-/ 16-September-2015</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l476xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l485xx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l486xx.h device description files</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">DBGMCU</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix DBGMCU_IDCODE_DEV_ID mask definition</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">FLASH</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add FLASH_OPTR_nRST_SHDW bit definition</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">I2C</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix naming I2C_CR1_DNF instead of I2C_CR1_DFN</span></li></ul></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">TIM</span></li></ul><ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add TIM16_OR2_BKDFBK1E bit definition</span></li></ul><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Add TIM17_OR2_BKDFBK2E bit definition</span></li></ul></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.c</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">SystemCoreClockUpdate() corrected for SystemCoreClock computation when PLL is enabled</span></li></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 200px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V1.0.0
-/ 26-June-2015</span></h3>
-<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
-Changes<o:p></o:p></span></u></b></p>
-<ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: 'Times New Roman',serif; color: black;"><span style="font-size: 10pt; font-family: Verdana;">First official release for&nbsp;</span><span style="font-size: 10pt; font-family: Verdana; font-style: italic; font-weight: bold;">STM32L471xx, STM32L475xx, </span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;">STM32L476xx, STM32L485xx and STM32L486xx</span> devices</span></li></ul><br>
-</div>
-<div id="product_doc" class="topic1">
-<hr>
-<p style="text-align: center;">For complete
-documentation on STM32 Microcontrollers<span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"><span style="color: black;"></span></span>,
-visit:&nbsp;<a href="http://www.st.com/STM32" target="_blank">www.st.com/STM32</a></p>
-<br>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32L4xx CMSIS</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../../../_htmresc/mini-st.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-stm32l4xx-cmsis"><small>Release Notes for</small> <mark>STM32L4xx CMSIS</mark></h1>
+<p>Copyright © 2017 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="../../../../../_htmresc/st_logo.png" alt="ST logo" /></a>
+</center>
 </div>
 </div>
-</body></html>
+<h1 id="license">License</h1>
+<p>Licensed by ST under Apache-2.0 license (the "License"). You may not use this package except in compliance with the License. You may obtain a copy of the License at:</p>
+<p><a href="../../../LICENSE.txt">Apache License v2.0</a></p>
+<h1 id="purpose">Purpose</h1>
+<p>This driver provides the CMSIS device for the stm32l4xx products. This covers</p>
+<ul>
+<li>STM32L412xx/STM32L422x devices</li>
+<li>STM32L431xx/STM32L432xx/STM32L433xx/STM32L442xx/STM32L443xx devices</li>
+<li>STM32L451xx/STM32L452xx/STM32L462xx devices</li>
+<li>STM32L471xx/STM32L475xx/STM32L476xx/STM32L485xx/STM32L486xx devices</li>
+<li>STM32L496xx/STM32L4A6xx devices</li>
+<li>STM32L4R5xx/STM32L4R7xx/STM32L4R9xx/STM32L4S5xx/STM32L4S7xx and STM32L4S9xx devices</li>
+</ul>
+<p>This driver is composed of the descriptions of the registers under “Include” directory.</p>
+<p>Various template file are provided to easily build an application. They can be adapted to fit applications requirements.</p>
+<ul>
+<li>Templates/system_stm32l4xx.c contains the initialization code referred as SystemInit.</li>
+<li>Startup files are provided as example for IAR©, KEIL© and SW4STM32©.</li>
+<li>Linker files are provided as example for IAR©, KEIL© and SW4STM32©.</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section20" checked aria-hidden="true"> <label for="collapse-section20" aria-hidden="true">V1.5.1 / 03-April-2019</label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>stm32l412xx.h, stm32l422xx.h, stm32l431xx.h, stm32l432xx.h, stm32l433xx.h, stm32l442xx.h, stm32l443xx.h, stm32l451xx.h, stm32l452xx.h, stm32l462xx.h and stm32l471xx.h
+<ul>
+<li>Correct comment related to PVD_PVM_IRQn definition</li>
+</ul></li>
+<li>stm32l412xx.h and stm32l422xx.h
+<ul>
+<li>Add missing definitions of QUADSPI DFM, FSEL and DHHC bits</li>
+<li>Add missing definition of ADC_SMPR1_SMPPLUS bit</li>
+<li>Correct PWR_CR3 bit name EN_ULP into ENULP</li>
+</ul></li>
+<li>stm32l412xx.h, stm32l422xx.h, stm32l431xx.h, stm32l432xx.h, stm32l433xx.h, stm32l442xx.h, stm32l443xx.h, stm32l451xx.h, stm32l452xx.h and stm32l462xx.h
+<ul>
+<li>Correct FLASH_PCROP1SR and FLASH_PCROP1ER registers definition
+<ul>
+<li>Correct size of PCROP fields : 16 bits for STM32L45xx/L46xx and 15 bits for STM32L43xx/L44xx</li>
+<li>Correct size of page number field : 7 bits for STM32L43xx/L44xx and 6 bits STM32L41xx/L42xx</li>
+<li>Correct size of WRP fields : 7 bits for STM32L43xx/L44xx</li>
+</ul></li>
+</ul></li>
+<li>stm32l432xx.h and stm32l442xx.h
+<ul>
+<li>Add PWR_CR2_PVME1 definition</li>
+</ul></li>
+<li>stm32l4r5xx.h, stm32l4r7xx.h, stm32l4r9xx.h, stm32l4s5xx.h, stm32l4s7xx.h and stm32l4s9xx.h
+<ul>
+<li>Correct SDMMC_POWER bits definition</li>
+<li>Correct comments related to SDMMC_CLKCR_WIDBUS definition</li>
+<li>Correct EXTI_IMR1_IM mask definition</li>
+</ul></li>
+<li>stm32l4xx.h
+<ul>
+<li>Correct ErrorStatus typedef</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section19" aria-hidden="true"> <label for="collapse-section19" aria-hidden="true">V1.5.0 / 27-July-2018</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l412xx.h and <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l422xx.h</span><span style="font-size: 10pt; font-family: Verdana;">device description files</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files</span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;">stm32l412xx.s</span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l422xx.s</span><span style="font-size: 10pt; font-family: Verdana;">for EWARM, MDK-ARM and SW4STM32 toolchains</span></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add EWARM associated linker files </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">for execution from internal RAM or internal FLASH </span><span style="font-size: 10pt; font-family: Verdana;"></span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L412xx" for all STM32L412xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L422xx" for all STM32L422xx devices</span></li>
+</ul></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, stm32l4r7xx.h, stm32l4r9xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h, stm32l4s7xx.h and stm32l4s9xx.h</span><span style="font-size: 10pt; font-family: Verdana;">description files</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Update SDMMC mask register</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Correct</span><span style="font-size: 10pt; font-family: Verdana;">SDMMC</span><span style="font-size: 10pt; font-family: Verdana;">DPSMACT and CPSMACT bits definition</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files except </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4rXxx.h and </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4sXxx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Correct Misra C:2012 Rule10.3 warning in replacing 0xFFUL by 0xFFU when CRC IDR register is 8-bit long only</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All iar/linker/stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4XXxx_flash.icf and</span><span style="font-size: 10pt; font-family: Verdana;">iar/linker/stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4XXxx_sram.icf</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Remove SRAM1 and SRAM2 (and SRAM3 </span><span style="font-size: 10pt; font-family: Verdana;">for </span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4rXxx_flash.icf</span><span style="font-size: 10pt; font-family: Verdana;">,</span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4sXxx_flash.icf</span><span style="font-size: 10pt; font-family: Verdana;">,</span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4rXxx_sram.icf</span><span style="font-size: 10pt; font-family: Verdana;">and</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32</span><span style="font-size: 10pt; font-family: Verdana;">l4sXxx_sram.icf</span><span style="font-size: 10pt; font-family: Verdana;">) start and end addresses from ICF editor section</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Define RAM section as covering whole SRAM1 plus SRAM2 (and SRAM3 when applicable</span><span style="font-size: 10pt; font-family: Verdana;">) when the SRAM regions are contiguous</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.4.3 / 30-April-2018</label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Fix DFSDM_FLTICR_CLRSCDF definition</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Cleanup USB Host &amp; Device bit definitions</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">[MISRAC2012-Rule-10.6] Use 'UL' postfix for _Msk definitions and memory/peripheral base addresses<br />
+</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h devices description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix SDMMC_STA_DPSMACT and</span><span style="font-size: 10pt; font-family: Verdana;">SDMMC_STA_</span><span style="font-size: 10pt; font-family: Verdana;">CPSMACT definitions (V1.4.1 update was incorrect)</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files except </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Add missing USART_CR3_UCESM bit definition</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.4.2 / 22-December-2017</label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">SPI_TypeDef cleanup of Reserved fields.</span></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.4.1 / 6-October-2017</label>
+<div>
+<h2 id="main-changes-4">Main Changes</h2>
+<p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h and stm32l4s5xx.h description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove LTDC peripheral definitions as LTDC not available on STM32L4R5xx/STM32L4S5xx devices</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.4.0 / 25-August-2017</label>
+<div>
+<h2 id="main-changes-5">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of </span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R7xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4R9xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S5xx/</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L4S7xx/STM32L4S9xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r5xx.h, <span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r7xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4r9xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s5xx.h,<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s7xx.h<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">and<span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">stm32l4s9xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_stm32l4r5xx.s, startup_stm32l4r7xx.s, startup_stm32l4r9xx.s, startup_stm32l4s5xx.s, startup_stm32l4s7xx.s and stm32l4s9xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"></span></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><span class="Apple-converted-space"> </span></span><span style="font-size: 10pt; font-family: Verdana;">startup_</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><br />
+</span></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add EWARM associated linker files for execution from internal RAM or internal FLASH</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span></p></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4R5xx" for all STM32L4R5xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4R7xx" for all STM32L4R7xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4R9xx" for all STM32L4R9xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4S5xx" for all STM32L4S5xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4S7xx" for all STM32L4S7xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4S9xx" for all STM32L4S9xx devices</span></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All adequate stm32l4XXxx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">PWR: Rename PWR_CR3_EIWF to PWR_CR3_EIWUL</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">TIM: Add missing TIM8 check in debug macro IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE() devices</span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">USB: Fix USB_EP0R...USB_EP7R definitions</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.c</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Fix MISRA C 2004 rule 10.6 : a 'U' suffix shall be applied to all constants of 'unsigned' type</span></li>
+</ul></li>
+</ul>
+<p><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.3.2 / 16-June-2017</label>
+<div>
+<h2 id="main-changes-6">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.h, stm32l452xx.h, stm32l462xx.h description files</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Remove EXTI_IMR2_IM34 and EXTI_EMR2_IM34 bits (no SWPMI EXTI line)</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx.h, stm32l442xx.h, stm32l452xx.h, stm32l462xx.h description files</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove EXTI_IMR2_IM36 and EXTI_EMR2_IM36 bits from STM32L4x2x devices (no PVM2 EXTI line)</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l431xx.h, stm32l432xx.h, stm32l442xx.h, stm32l451xx.h, stm32l452xx.h, stm32l462xx.h, stm32l471xx.h, stm32l475xx.h, stm32l485xx.h </span><span style="font-size: 10pt; font-family: Verdana;">description files</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Remove EXTI_IMR2_IM39 and EXTI_EMR2_IM39 bits</span><span style="font-size: 10pt; font-family: Verdana;">from</span><span style="font-size: 10pt; font-family: Verdana;">STM32L4x1x,</span><span style="font-size: 10pt; font-family: Verdana;">STM32L4x2x and </span><span style="font-size: 10pt; font-family: Verdana;">STM32L4x5x</span><span style="font-size: 10pt; font-family: Verdana;">devices</span><span style="font-size: 10pt; font-family: Verdana;">(</span><span style="font-size: 10pt; font-family: Verdana;">no LCD EXTI line)</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove erroneous SRAM2_BB_BASE definition</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add missing EXTI_EMR2_EM constants</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add missing TIM8 check in debug macro IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE() devices where TIM8 is present<br />
+</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.3.1 / 21-April-2017</label>
+<div>
+<h2 id="main-changes-7">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx.h and stm32l4a6xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">FIREWALL</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Fix FW_VDSSA_ADD_Msk and FW_VDSL_LENG_Msk definitions</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">TIM16</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Fix TIM16_OR1_TI1_RMP_Msk definition</span></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.3.0 / 17-February-2017</label>
+<div>
+<h2 id="main-changes-8">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;"></span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">STM32L496xx/STM32L4A6xx</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;"></span> devices</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx.h and stm32l4a6xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"><br />
+</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_stm32l496xx.s and startup_stm32l4a6xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add linker files </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">stm32l496xx_flash.icf, stm32l496xx_sram.icf, stm32l4a6xx_flash.icf and stm32l4a6xx_sram.icf used within EWARM workspaces</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></p>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L496xx" for all STM32L496xx devices</span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L4A6xx" for all STM32L4A6xx devices</span></p></li>
+</ul></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix RCC_CRRCR_HSI48CAL_Pos and RCC_CRRCR_HSI48CAL values</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.2.0 / 28-October-2016</label>
+<div>
+<h2 id="main-changes-9">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;">STM32L451xx/STM32L452xx/STM32L462xx</span> devices</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;">stm32l451xx.h, stm32l452xx.h and stm32l462xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_stm32l451xx.s, startup_stm32l452xx.s and startup_stm32l462xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><br />
+</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add linker files stm32l451xx_flash.icf, stm32l451xx_sram.icf, stm32l452xx_flash.icf, stm32l452xx_sram.icf, stm32l462xx_flash.icf and stm32l462xx_sram.icf used within EWARM workspaces  </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L451xx" for all STM32L451xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L452xx" for all STM32L452xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L462xx" for all STM32L462xx devices</span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">All </span><span style="font-size: 10pt; font-family: Verdana;">stm32l4XXxx.h device description files except stm32l451xx.h, stm32l452xx.h and stm32l462xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add DAC_CHANNEL2_SUPPORT definition as DAC channel 2 is present on these devices</span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l432xx.h and stm32l442xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Remove PWR_CR2_PVME1 and PWR_SR2_PVMO1 as VDDUSB is internally connected to VDD on these devices thus no PVM1</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Remove USB OTG Core Id version definitions USB_OTG_CORE_ID_310A and USB_OTG_CORE_ID_320A as reserved for internal usage</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.1.2 / 12-September-2016</label>
+<div>
+<h2 id="main-changes-10">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix DAC_SR_BWST1 bit definition</span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Fix SDMMC_DCTRL_DBLOCKSIZE_2 and SDMMC_DCTRL_DBLOCKSIZE_3 bits definition</span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">USB OTG FS</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add GSNPSID, GHWCFG1 and GHWCFG2 register mapping</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add USB OTG Core Id version definitions: USB_OTG_CORE_ID_310A and USB_OTG_CORE_ID_320A<br />
+</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true">V1.1.1 / 29-April-2016</label>
+<div>
+<h2 id="main-changes-11">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">All device register description files enriched with _Pos and _Msk defines to be used with _VAL2FLD(field, value) and _FLD2VAL(field, value) from CMSIS Core (previous defines are kept for compatibility)</span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Update DFSDM peripheral instance and register definitions (named DFSDM1 peripheral from now instead of DFSDM)</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM<span style="font-style: italic;">x</span>_IRQn to DFSDM1_FLT<span style="font-style: italic;">x</span>_IRQn for <span style="font-style: italic;">x</span>=0,1,2 and 3  (filters)</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM channels and filters to refer to DFSDM1 peripheral instance with DFSDM1 prefix</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Channel0, DFSDM1_Channel1, ... DFSDM1_Channel7</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Filter0,</span><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Filter1, ..., </span><span style="font-size: 10pt; font-family: Verdana;">DFSDM1_Filter3</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename registers in DFSDM_Filter_TypeDef to use FLT prefix for filter</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">FLTCR1, FLTCR2, FLTISR, FLTICR, FLTJCHGR, FLTFCR, FLTJDATAR, FLTRDATAR, FLTAWHTR, </span><span style="font-size: 10pt; font-family: Verdana;">FLTAWLTR, FLTAWSR, FLTAWCFR, FLTEXMAX, FLTEXMIN, FLTCNVTIMR</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename register in DFSDM_Filter_TypeDef to use CH prefix for channel</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">CHAWSCDR<br />
+</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Update RCC definitions for DFSDM1</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_APB2RSTR_DFSDMRST to RCC_APB2RSTR_DFSDM1RST</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_APB2ENR_DFSDMEN to RCC_APB2ENR_DFSDM1EN</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_APB2SMENR_DFSDMSMEN to RCC_APB2SMENR_DFSDM1SMEN</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename RCC_CCIPR_DFSDMSEL to RCC_CCIPR_DFSDM1SEL</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Update TIM definitions for DFSDM1</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM1_OR2_BKDFBK0E to TIM1_OR2_BKDF1BK0E</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM1_OR3_BK2DFBK1E to TIM1_OR3_BK2DF1BK1E</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM8_OR2_BKDFBK2E to TIM8_OR2_BKDF1BK2E</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM8_OR3_BK2DFBK3E to TIM8_OR3_BK2DF1BK3E</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM15_OR2_BKDFBK0E to TIM15_OR2_BKDF1BK0E</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM16_OR2_BKDFBK1E to TIM16_OR2_BKDF1BK1E</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename TIM17_OR2_BKDFBK2E to TIM17_OR2_BKDF1BK2E</span></li>
+</ul></li>
+</ul></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">FMC</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add FMC_BWTRx_BUSTURN register bit definition</span></li>
+</ul></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">startup_stm32l471xx.s, startup_stm32l475xx.s, startup_stm32l476xx.s, startup_stm32l485xx.s and startup_stm32l486xx.s</span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM<span style="font-style: italic;">x</span>_IRQHandler function entry points to DFSDM1_FLT<span style="font-style: italic;">x</span>_IRQHandler for <span style="font-style: italic;">x</span>=0,1,2 and 3 (filters)</span><span style="font-size: 10pt; font-family: Verdana;"><br />
+ </span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.1.0 / 26-February-2016</label>
+<div>
+<h2 id="main-changes-12">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add the support of <span style="font-weight: bold;">STM32L431xx/STM32L432xx/STM32L433xx/STM32L442xx/STM32L443xx</span> devices</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add </span><span style="font-size: 10pt; font-family: Verdana;">stm32l431xx.h, stm32l432xx.h, stm32l433xx.h, stm32l442xx.h and stm32l443xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><br />
+</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add startup files startup_stm32l431xx.s, startup_stm32l432xx.s, startup_stm32l433xx.s, startup_stm32l442xx.s and startup_stm32l443xx.s for EWARM, MDK-ARM and SW4STM32 toolchains</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"><br />
+</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add linker files stm32l431xx_flash.icf, stm32l431xx_sram.icf, stm32l432xx_flash.icf, stm32l432xx_sram.icf, stm32l433xx_flash.icf, stm32l433xx_sram.icf, stm32l442xx_flash.icf, stm32l442xx_sram.icf, stm32l443xx_flash.icf and stm32l443xx_sram.icf used within EWARM workspaces  </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"> </span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">stm32l4xx.h</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add the following device defines:</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L431xx" for all STM32L431xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L432xx" for all STM32L432xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L433xx" for all STM32L433xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L442xx" for all STM32L442xx devices</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">"#define STM32L443xx" for all STM32L443xx devices</span></li>
+</ul></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">DFSDM - alignment with registers &amp; bits naming used in documentation</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM_AWSCDR_WDATA to DFSDM_CHWDATR_WDATA</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM_AWSCDR_INDAT0 to DFSDM_CHDATINR_INDAT0</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Rename DFSDM_AWSCDR_INDAT0 to DFSDM_CHDATINR_INDAT0</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.0.3 / 29-January-2016</label>
+<div>
+<h2 id="main-changes-13">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Apply MISRA C 2004 rule 10.6 ('U' suffix added)</span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add PACKAGE_BASE, UID_BASE and FLASHSIZE_BASE base address definitions<br />
+</span></p></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">ADC</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Update ADC_CSR register bit definition</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">LPUART</span></li>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">Add IS_LPUART_INSTANCE() to check USART instance with low power capatibility</span></p></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.h/.c</span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Add declaration of APB Prescaler table values (const uint8_t  APBPrescTable[8])</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="true">V1.0.2 / 25-November-2015</label>
+<div>
+<h2 id="main-changes-14">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device description files</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">GPIO</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Align GPIO register bit definitions with RM0351 (legacy definitions preserved for compatibility)</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">FMC</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Remove FMC_BCR1_WFDIS bit definition (write fifo feature not available)</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">PWR</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Stop 0 mode introduction</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">PWR_CR1_LPMS_STOP1MR renamed to PWR_CR1_LPMS_STOP0</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">PWR_CR1_LPMS_STOP1LPR renamed to</span><span style="font-size: 10pt; font-family: Verdana;">PWR_CR1_LPMS_STOP1</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">RCC</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Align RCC register bit definitions with RM0351 (legacy definitions preserved for compatibility)</span> <span style="font-size: 10pt; font-family: Verdana;"></span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">TIM</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE() to check timer instance capability for hall sensor interface</span></li>
+</ul></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.c</span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Fix PLLCFGR default value in SystemInit()</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="true">V1.0.1 / 16-September-2015</label>
+<div>
+<h2 id="main-changes-15">Main Changes</h2>
+<ul>
+<li><p><span style="font-size: 10pt; font-family: Verdana;">stm32l471xx.h, stm32l475xx.h, stm32l476xx.h, stm32l485xx.h and stm32l486xx.h device</span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">description files</span></p>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">DBGMCU</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Fix DBGMCU_IDCODE_DEV_ID mask definition</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">FLASH</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add FLASH_OPTR_nRST_SHDW bit definition</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">I2C</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Fix naming I2C_CR1_DNF instead of I2C_CR1_DFN</span></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">TIM</span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add TIM16_OR2_BKDFBK1E bit definition</span></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">Add TIM17_OR2_BKDFBK2E bit definition</span></li>
+</ul></li>
+</ul></li>
+<li><span style="font-size: 10pt; font-family: Verdana;">system_stm32l4xx.c</span><span style="font-size: 10pt; font-family: Verdana;"></span>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">SystemCoreClockUpdate() corrected for SystemCoreClock computation when PLL is enabled</span></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section18" aria-hidden="true"> <label for="collapse-section18" aria-hidden="true">V1.0.0 / 26-June-2015</label>
+<div>
+<h2 id="main-changes-16">Main Changes</h2>
+<ul>
+<li><span style="font-size: 10pt; font-family: Verdana;">First official release for </span><span style="font-size: 10pt; font-family: Verdana; font-style: italic; font-weight: bold;">STM32L471xx, STM32L475xx, STM32L476xx, STM32L485xx and STM32L486xx devices</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic; font-weight: bold;"><br />
+</span></span></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+For complete documentation on <mark>STM32 Microcontrollers</mark> , visit: <a href="http://www.st.com/STM32">http://www.st.com/STM32</a>
+</footer>
+</body>
+</html>

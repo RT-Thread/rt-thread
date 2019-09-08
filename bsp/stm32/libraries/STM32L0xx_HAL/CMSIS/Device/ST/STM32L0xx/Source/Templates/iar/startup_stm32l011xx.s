@@ -1,8 +1,6 @@
 ;/******************** (C) COPYRIGHT 2016 STMicroelectronics ********************
 ;* File Name          : startup_stm32l011xx.s
 ;* Author             : MCD Application Team
-;* Version            : V1.7.1
-;* Date               : 25-November-2016
 ;* Description        : STM32L011xx Ultra Low Power Devices vector 
 ;*                      This module performs:
 ;*                      - Set the initial SP
@@ -99,7 +97,7 @@ __vector_table
                 DCD     0                              ; Reserved
                 DCD     DMA1_Channel1_IRQHandler       ; DMA1 Channel 1
                 DCD     DMA1_Channel2_3_IRQHandler     ; DMA1 Channel 2 and Channel 3
-                DCD     DMA1_Channel4_5_6_7_IRQHandler ; DMA1 Channel 4, Channel 5, Channel 6 and Channel 7
+                DCD     DMA1_Channel4_5_IRQHandler     ; DMA1 Channel 4 and Channel 5
                 DCD     ADC1_COMP_IRQHandler           ; ADC1, COMP1
                 DCD     LPTIM1_IRQHandler              ; LPTIM1
                 DCD     0                              ; Reserved
@@ -243,10 +241,10 @@ DMA1_Channel2_3_IRQHandler
         B DMA1_Channel2_3_IRQHandler
         
                 
-        PUBWEAK DMA1_Channel4_5_6_7_IRQHandler
+        PUBWEAK DMA1_Channel4_5_IRQHandler
         SECTION .text:CODE:NOROOT:REORDER(1)
-DMA1_Channel4_5_6_7_IRQHandler
-        B DMA1_Channel4_5_6_7_IRQHandler
+DMA1_Channel4_5_IRQHandler
+        B DMA1_Channel4_5_IRQHandler
         
                 
         PUBWEAK ADC1_COMP_IRQHandler

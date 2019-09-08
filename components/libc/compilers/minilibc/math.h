@@ -14,4 +14,7 @@
 double sin(double x);
 double cos(double x);
 
+typedef float float_t;
+typedef double double_t;
+
 #endif

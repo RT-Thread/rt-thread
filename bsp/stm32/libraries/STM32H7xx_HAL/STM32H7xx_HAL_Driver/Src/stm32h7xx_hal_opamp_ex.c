@@ -13,29 +13,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -96,10 +80,10 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
 {
   HAL_StatusTypeDef status = HAL_OK;
 
-  uint32_t trimmingvaluen1 = 0;
-  uint32_t trimmingvaluep1 = 0;
-  uint32_t trimmingvaluen2 = 0;
-  uint32_t trimmingvaluep2 = 0;
+  uint32_t trimmingvaluen1;
+  uint32_t trimmingvaluep1;
+  uint32_t trimmingvaluen2;
+  uint32_t trimmingvaluep2;
 
 /* Selection of register of trimming depending on power mode: OTR or HSOTR */
   __IO uint32_t* tmp_opamp1_reg_trimming;   
@@ -109,16 +93,21 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
   uint32_t opampmode1;
   uint32_t opampmode2;
   
-  if((hopamp1 == NULL) || (hopamp1->State == HAL_OPAMP_STATE_BUSYLOCKED) || \
-     (hopamp2 == NULL) || (hopamp2->State == HAL_OPAMP_STATE_BUSYLOCKED)) 
+  if((hopamp1 == NULL) || (hopamp2 == NULL)) 
+  {
+    status = HAL_ERROR;
+  }
+  /* Check if OPAMP in calibration mode and calibration not yet enable */
+  else if(hopamp1->State !=  HAL_OPAMP_STATE_READY)
+  {
+    status = HAL_ERROR;
+  }
+  else if(hopamp2->State != HAL_OPAMP_STATE_READY)
   {
     status = HAL_ERROR;
   }
   else
   {
-    /* Check if OPAMP in calibration mode and calibration not yet enable */
-    if((hopamp1->State ==  HAL_OPAMP_STATE_READY) && (hopamp2->State ==  HAL_OPAMP_STATE_READY))
-    {
       /* Check the parameter */
       assert_param(IS_OPAMP_ALL_INSTANCE(hopamp1->Instance));
       assert_param(IS_OPAMP_ALL_INSTANCE(hopamp2->Instance));
@@ -177,11 +166,11 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       
       /* Init trimming counter */    
       /* Medium value */
-      trimmingvaluen1 = 16; 
-      trimmingvaluen2 = 16; 
-      delta = 8; 
+      trimmingvaluen1 = 16U; 
+      trimmingvaluen2 = 16U; 
+      delta = 8U; 
 
-      while (delta != 0)
+      while (delta != 0U)
       {
         /* Set candidate trimming */
         /* OPAMP_POWERMODE_NORMAL */
@@ -193,7 +182,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         /* two steps to have 1 mV accuracy */
         HAL_Delay(OPAMP_TRIMMING_DELAY);
 
-        if (READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)!= RESET)
+        if (READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)!= 0U)
         { 
           /* OPAMP_CSR_CALOUT is Low try higher trimming */
           trimmingvaluen1 += delta;
@@ -204,7 +193,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           trimmingvaluen1 -= delta;
         }
 
-        if (READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)!= RESET) 
+        if (READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)!= 0U) 
         { 
           /* OPAMP_CSR_CALOUT is Low try higher trimming */
           trimmingvaluen2 += delta;
@@ -215,7 +204,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           trimmingvaluen2 -= delta;
         }
         /* Divide range by 2 to continue dichotomy sweep */
-        delta >>= 1;
+        delta >>= 1U;
       }
 
       /* Still need to check if right calibration is current value or one step below */
@@ -229,14 +218,14 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       /* two steps to have 1 mV accuracy */
       HAL_Delay(OPAMP_TRIMMING_DELAY);
       
-      if ((READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)) != 0)
+      if ((READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)) != 0U)
       {
         /* Trimming value is actually one value more */
         trimmingvaluen1++;
         MODIFY_REG(*tmp_opamp1_reg_trimming, OPAMP_OTR_TRIMOFFSETN, trimmingvaluen1);
       }
        
-      if ((READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)) != 0)
+      if ((READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)) != 0U)
       {
         /* Trimming value is actually one value more */
         trimmingvaluen2++;
@@ -250,11 +239,11 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
      
       /* Init trimming counter */    
       /* Medium value */
-      trimmingvaluep1 = 16; 
-      trimmingvaluep2 = 16; 
-      delta = 8; 
+      trimmingvaluep1 = 16U; 
+      trimmingvaluep2 = 16U; 
+      delta = 8U; 
       
-      while (delta != 0)
+      while (delta != 0U)
       {
         /* Set candidate trimming */
         /* OPAMP_POWERMODE_NORMAL */
@@ -266,7 +255,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
         /* two steps to have 1 mV accuracy */
         HAL_Delay(OPAMP_TRIMMING_DELAY);
 
-        if (READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)!= RESET) 
+        if (READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)!= 0U) 
         { 
           /* OPAMP_CSR_CALOUT is Low try higher trimming */
           trimmingvaluep1 += delta;
@@ -277,7 +266,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           trimmingvaluep1 -= delta;
         }
 
-        if (READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)!= RESET) 
+        if (READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)!= 0U) 
         { 
           /* OPAMP_CSR_CALOUT is Low try higher trimming */
           trimmingvaluep2 += delta;
@@ -288,7 +277,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
           trimmingvaluep2 -= delta;
         }
         /* Divide range by 2 to continue dichotomy sweep */
-        delta >>= 1;
+        delta >>= 1U;
       }
       
       /* Still need to check if right calibration is current value or one step below */
@@ -302,14 +291,14 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       /* two steps to have 1 mV accuracy */
       HAL_Delay(OPAMP_TRIMMING_DELAY);
       
-      if (READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)!= RESET)
+      if (READ_BIT(hopamp1->Instance->CSR, OPAMP_CSR_CALOUT)!= 0U)
       {
         /* Trimming value is actually one value more */
         trimmingvaluep1++;
         MODIFY_REG(*tmp_opamp1_reg_trimming, OPAMP_OTR_TRIMOFFSETP, (trimmingvaluep1<<OPAMP_INPUT_NONINVERTING));
       }
       
-      if (READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)!= RESET)
+      if (READ_BIT(hopamp2->Instance->CSR, OPAMP_CSR_CALOUT)!= 0U)
       {
         /* Trimming value is actually one value more */
         trimmingvaluep2++;
@@ -370,12 +359,7 @@ HAL_StatusTypeDef HAL_OPAMPEx_SelfCalibrateAll(OPAMP_HandleTypeDef *hopamp1, OPA
       MODIFY_REG(hopamp1->Instance->CSR, OPAMP_CSR_VMSEL, opampmode1);
       MODIFY_REG(hopamp2->Instance->CSR, OPAMP_CSR_VMSEL, opampmode2);
   }
-    else
-    {
-      /* At least one OPAMP can not be calibrated */ 
-      status = HAL_ERROR;
-    }   
-  }
+  
   return status;
 }
 
@@ -409,15 +393,13 @@ HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef* hopamp)
 
   /* Check the OPAMP handle allocation */
   /* Check if OPAMP locked */
-  if((hopamp == NULL) || (hopamp->State == HAL_OPAMP_STATE_RESET)
-                      || (hopamp->State == HAL_OPAMP_STATE_READY)
-                      || (hopamp->State == HAL_OPAMP_STATE_CALIBBUSY)
-                      || (hopamp->State == HAL_OPAMP_STATE_BUSY))
-  
+  if(hopamp == NULL)
   {
     status = HAL_ERROR;
-  }
-  else
+  }    
+  /* Check the OPAMP handle allocation */
+  /* Check if OPAMP locked */
+  else if(hopamp->State == HAL_OPAMP_STATE_BUSYLOCKED)
   {
     /* Check the parameter */
     assert_param(IS_OPAMP_ALL_INSTANCE(hopamp->Instance));
@@ -425,6 +407,11 @@ HAL_StatusTypeDef HAL_OPAMPEx_Unlock(OPAMP_HandleTypeDef* hopamp)
    /* OPAMP state changed to locked */
     hopamp->State = HAL_OPAMP_STATE_BUSY;
   }
+  else
+  {
+    status = HAL_ERROR;
+  }
+      
   return status; 
 }
 

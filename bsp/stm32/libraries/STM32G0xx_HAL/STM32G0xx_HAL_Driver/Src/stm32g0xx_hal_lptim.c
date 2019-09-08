@@ -92,19 +92,19 @@
 
     *** Callback registration ***
   =============================================
-
+  [..]
   The compilation define  USE_HAL_LPTIM_REGISTER_CALLBACKS when set to 1
   allows the user to configure dynamically the driver callbacks.
-
+  [..]
   Use Function @ref HAL_LPTIM_RegisterCallback() to register a callback.
   @ref HAL_LPTIM_RegisterCallback() takes as parameters the HAL peripheral handle,
   the Callback ID and a pointer to the user callback function.
-
+  [..]
   Use function @ref HAL_LPTIM_UnRegisterCallback() to reset a callback to the
   default weak function.
   @ref HAL_LPTIM_UnRegisterCallback takes as parameters the HAL peripheral handle,
   and the Callback ID.
-
+  [..]
   These functions allow to register/unregister following callbacks:
 
     (+) MspInitCallback         : LPTIM Base Msp Init Callback.
@@ -117,15 +117,18 @@
     (+) DirectionUpCallback     : Up-counting direction change Callback.
     (+) DirectionDownCallback   : Down-counting direction change Callback.
 
+  [..]
   By default, after the Init and when the state is HAL_LPTIM_STATE_RESET
   all interrupt callbacks are set to the corresponding weak functions:
   examples @ref HAL_LPTIM_TriggerCallback(), @ref HAL_LPTIM_CompareMatchCallback().
 
+  [..]
   Exception done for MspInit and MspDeInit functions that are reset to the legacy weak
   functionalities in the Init/DeInit only when these callbacks are null
   (not registered beforehand). If not, MspInit or MspDeInit are not null, the Init/DeInit
   keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
 
+  [..]
   Callbacks can be registered/unregistered in HAL_LPTIM_STATE_READY state only.
   Exception done MspInit/MspDeInit that can be registered/unregistered
   in HAL_LPTIM_STATE_READY or HAL_LPTIM_STATE_RESET state,
@@ -133,6 +136,7 @@
   In that case first register the MspInit/MspDeInit user callbacks
   using @ref HAL_LPTIM_RegisterCallback() before calling DeInit or Init function.
 
+  [..]
   When The compilation define USE_HAL_LPTIM_REGISTER_CALLBACKS is set to 0 or
   not defined, the callback registration feature is not available and all callbacks
   are set to the corresponding weak functions.
@@ -148,8 +152,7 @@
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/

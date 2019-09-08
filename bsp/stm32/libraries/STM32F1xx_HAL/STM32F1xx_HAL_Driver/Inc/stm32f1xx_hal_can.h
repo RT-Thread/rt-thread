@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -233,8 +217,58 @@ typedef struct __CAN_HandleTypeDef
   __IO uint32_t               ErrorCode;                 /*!< CAN Error code.
                                                               This parameter can be a value of @ref CAN_Error_Code */
 
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+  void (* TxMailbox0CompleteCallback)(struct __CAN_HandleTypeDef *hcan);/*!< CAN Tx Mailbox 0 complete callback    */
+  void (* TxMailbox1CompleteCallback)(struct __CAN_HandleTypeDef *hcan);/*!< CAN Tx Mailbox 1 complete callback    */
+  void (* TxMailbox2CompleteCallback)(struct __CAN_HandleTypeDef *hcan);/*!< CAN Tx Mailbox 2 complete callback    */
+  void (* TxMailbox0AbortCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Tx Mailbox 0 abort callback       */
+  void (* TxMailbox1AbortCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Tx Mailbox 1 abort callback       */
+  void (* TxMailbox2AbortCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Tx Mailbox 2 abort callback       */
+  void (* RxFifo0MsgPendingCallback)(struct __CAN_HandleTypeDef *hcan); /*!< CAN Rx FIFO 0 msg pending callback    */
+  void (* RxFifo0FullCallback)(struct __CAN_HandleTypeDef *hcan);       /*!< CAN Rx FIFO 0 full callback           */
+  void (* RxFifo1MsgPendingCallback)(struct __CAN_HandleTypeDef *hcan); /*!< CAN Rx FIFO 1 msg pending callback    */
+  void (* RxFifo1FullCallback)(struct __CAN_HandleTypeDef *hcan);       /*!< CAN Rx FIFO 1 full callback           */
+  void (* SleepCallback)(struct __CAN_HandleTypeDef *hcan);             /*!< CAN Sleep callback                    */
+  void (* WakeUpFromRxMsgCallback)(struct __CAN_HandleTypeDef *hcan);   /*!< CAN Wake Up from Rx msg callback      */
+  void (* ErrorCallback)(struct __CAN_HandleTypeDef *hcan);             /*!< CAN Error callback                    */
+
+  void (* MspInitCallback)(struct __CAN_HandleTypeDef *hcan);           /*!< CAN Msp Init callback                 */
+  void (* MspDeInitCallback)(struct __CAN_HandleTypeDef *hcan);         /*!< CAN Msp DeInit callback               */
+
+#endif /* (USE_HAL_CAN_REGISTER_CALLBACKS) */
 } CAN_HandleTypeDef;
 
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+/**
+  * @brief  HAL CAN common Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_CAN_TX_MAILBOX0_COMPLETE_CB_ID       = 0x00U,    /*!< CAN Tx Mailbox 0 complete callback ID         */
+  HAL_CAN_TX_MAILBOX1_COMPLETE_CB_ID       = 0x01U,    /*!< CAN Tx Mailbox 1 complete callback ID         */
+  HAL_CAN_TX_MAILBOX2_COMPLETE_CB_ID       = 0x02U,    /*!< CAN Tx Mailbox 2 complete callback ID         */
+  HAL_CAN_TX_MAILBOX0_ABORT_CB_ID          = 0x03U,    /*!< CAN Tx Mailbox 0 abort callback ID            */
+  HAL_CAN_TX_MAILBOX1_ABORT_CB_ID          = 0x04U,    /*!< CAN Tx Mailbox 1 abort callback ID            */
+  HAL_CAN_TX_MAILBOX2_ABORT_CB_ID          = 0x05U,    /*!< CAN Tx Mailbox 2 abort callback ID            */
+  HAL_CAN_RX_FIFO0_MSG_PENDING_CB_ID       = 0x06U,    /*!< CAN Rx FIFO 0 message pending callback ID     */
+  HAL_CAN_RX_FIFO0_FULL_CB_ID              = 0x07U,    /*!< CAN Rx FIFO 0 full callback ID                */
+  HAL_CAN_RX_FIFO1_MSG_PENDING_CB_ID       = 0x08U,    /*!< CAN Rx FIFO 1 message pending callback ID     */
+  HAL_CAN_RX_FIFO1_FULL_CB_ID              = 0x09U,    /*!< CAN Rx FIFO 1 full callback ID                */
+  HAL_CAN_SLEEP_CB_ID                      = 0x0AU,    /*!< CAN Sleep callback ID                         */
+  HAL_CAN_WAKEUP_FROM_RX_MSG_CB_ID         = 0x0BU,    /*!< CAN Wake Up fropm Rx msg callback ID          */
+  HAL_CAN_ERROR_CB_ID                      = 0x0CU,    /*!< CAN Error callback ID                         */
+
+  HAL_CAN_MSPINIT_CB_ID                    = 0x0DU,    /*!< CAN MspInit callback ID                       */
+  HAL_CAN_MSPDEINIT_CB_ID                  = 0x0EU,    /*!< CAN MspDeInit callback ID                     */
+
+} HAL_CAN_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL CAN Callback pointer definition
+  */
+typedef  void (*pCAN_CallbackTypeDef)(CAN_HandleTypeDef *hcan); /*!< pointer to a CAN callback function   */
+
+#endif /* USE_HAL_CAN_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -272,6 +306,9 @@ typedef struct __CAN_HandleTypeDef
 #define HAL_CAN_ERROR_NOT_STARTED     (0x00100000U)  /*!< Peripheral not started                               */
 #define HAL_CAN_ERROR_PARAM           (0x00200000U)  /*!< Parameter error                                      */
 
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+#define HAL_CAN_ERROR_INVALID_CALLBACK (0x00400000U) /*!< Invalid Callback error                               */
+#endif /* USE_HAL_CAN_REGISTER_CALLBACKS */
 #define HAL_CAN_ERROR_INTERNAL        (0x00800000U)  /*!< Internal error                                       */
 
 /**
@@ -507,7 +544,15 @@ typedef struct __CAN_HandleTypeDef
   * @param  __HANDLE__ CAN handle.
   * @retval None
   */
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+#define __HAL_CAN_RESET_HANDLE_STATE(__HANDLE__) do{                                              \
+                                                     (__HANDLE__)->State = HAL_CAN_STATE_RESET;   \
+                                                     (__HANDLE__)->MspInitCallback = NULL;        \
+                                                     (__HANDLE__)->MspDeInitCallback = NULL;      \
+                                                   } while(0)
+#else
 #define __HAL_CAN_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_CAN_STATE_RESET)
+#endif /*USE_HAL_CAN_REGISTER_CALLBACKS */
 
 /**
   * @brief  Enable the specified CAN interrupts.
@@ -598,6 +643,12 @@ HAL_StatusTypeDef HAL_CAN_DeInit(CAN_HandleTypeDef *hcan);
 void HAL_CAN_MspInit(CAN_HandleTypeDef *hcan);
 void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan);
 
+#if USE_HAL_CAN_REGISTER_CALLBACKS == 1
+/* Callbacks Register/UnRegister functions  ***********************************/
+HAL_StatusTypeDef HAL_CAN_RegisterCallback(CAN_HandleTypeDef *hcan, HAL_CAN_CallbackIDTypeDef CallbackID, void (* pCallback)(CAN_HandleTypeDef *_hcan));
+HAL_StatusTypeDef HAL_CAN_UnRegisterCallback(CAN_HandleTypeDef *hcan, HAL_CAN_CallbackIDTypeDef CallbackID);
+
+#endif /* (USE_HAL_CAN_REGISTER_CALLBACKS) */
 /**
  * @}
  */
