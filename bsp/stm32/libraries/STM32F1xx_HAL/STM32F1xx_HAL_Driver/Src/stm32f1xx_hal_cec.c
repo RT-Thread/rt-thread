@@ -40,34 +40,68 @@
   [..]        
     (@) This API (HAL_CEC_Init()) configures also the low level Hardware (GPIO, CLOCK, CORTEX...etc)
         by calling the customed HAL_CEC_MspInit() API.
+  *** Callback registration ***
+  =============================================
+  The compilation define  USE_HAL_CEC_REGISTER_CALLBACKS when set to 1
+  allows the user to configure dynamically the driver callbacks.
+  Use Functions @ref HAL_CEC_RegisterCallback() or HAL_CEC_RegisterXXXCallback()
+  to register an interrupt callback.
 
+  Function @ref HAL_CEC_RegisterCallback() allows to register following callbacks:
+    (+) TxCpltCallback     : Tx Transfer completed callback.
+    (+) ErrorCallback      : callback for error detection.
+    (+) MspInitCallback    : CEC MspInit.
+    (+) MspDeInitCallback  : CEC MspDeInit.
+  This function takes as parameters the HAL peripheral handle, the Callback ID
+  and a pointer to the user callback function.
+
+  For specific callback HAL_CEC_RxCpltCallback use dedicated register callbacks 
+  @ref HAL_CEC_RegisterRxCpltCallback().
+
+  Use function @ref HAL_CEC_UnRegisterCallback() to reset a callback to the default
+  weak function.
+  @ref HAL_CEC_UnRegisterCallback() takes as parameters the HAL peripheral handle,
+  and the Callback ID.
+  This function allows to reset following callbacks:
+    (+) TxCpltCallback     : Tx Transfer completed callback.
+    (+) ErrorCallback      : callback for error detection.
+    (+) MspInitCallback    : CEC MspInit.
+    (+) MspDeInitCallback  : CEC MspDeInit.
+
+  For callback HAL_CEC_RxCpltCallback use dedicated unregister callback : 
+  @ref HAL_CEC_UnRegisterRxCpltCallback().
+
+  By default, after the @ref HAL_CEC_Init() and when the state is HAL_CEC_STATE_RESET
+  all callbacks are set to the corresponding weak functions :
+  examples @ref HAL_CEC_TxCpltCallback() , @ref HAL_CEC_RxCpltCallback().
+  Exception done for MspInit and MspDeInit functions that are
+  reset to the legacy weak function in the @ref HAL_CEC_Init()/ @ref HAL_CEC_DeInit() only when
+  these callbacks are null (not registered beforehand).
+  if not, MspInit or MspDeInit are not null, the @ref HAL_CEC_Init() / @ref HAL_CEC_DeInit()
+  keep and use the user MspInit/MspDeInit functions (registered beforehand)
+
+  Callbacks can be registered/unregistered in HAL_CEC_STATE_READY state only.
+  Exception done MspInit/MspDeInit callbacks that can be registered/unregistered
+  in HAL_CEC_STATE_READY or HAL_CEC_STATE_RESET state,
+  thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
+  In that case first register the MspInit/MspDeInit user callbacks
+  using @ref HAL_CEC_RegisterCallback() before calling @ref HAL_CEC_DeInit()
+  or @ref HAL_CEC_Init() function.
+
+  When the compilation define USE_HAL_CEC_REGISTER_CALLBACKS is set to 0 or
+  not defined, the callback registration feature is not available and all callbacks
+  are set to the corresponding weak functions.
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************  
   */
@@ -77,7 +111,7 @@
 
 #ifdef HAL_CEC_MODULE_ENABLED
 
-#if defined(STM32F100xB) || defined(STM32F100xE)
+#if defined (CEC)
 
 /** @addtogroup STM32F1xx_HAL_Driver
   * @{
@@ -157,7 +191,25 @@ HAL_StatusTypeDef HAL_CEC_Init(CEC_HandleTypeDef *hcec)
   assert_param(IS_CEC_BIT_TIMING_ERROR_MODE(hcec->Init.TimingErrorFree));
   assert_param(IS_CEC_BIT_PERIOD_ERROR_MODE(hcec->Init.PeriodErrorFree));
   assert_param(IS_CEC_ADDRESS(hcec->Init.OwnAddress));
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+  if(hcec->gState == HAL_CEC_STATE_RESET)
+  {
+    /* Allocate lock resource and initialize it */
+    hcec->Lock = HAL_UNLOCKED;
 
+    hcec->TxCpltCallback  = HAL_CEC_TxCpltCallback;  /* Legacy weak TxCpltCallback  */
+    hcec->RxCpltCallback = HAL_CEC_RxCpltCallback;   /* Legacy weak RxCpltCallback */
+    hcec->ErrorCallback = HAL_CEC_ErrorCallback;     /* Legacy weak ErrorCallback */
+
+    if(hcec->MspInitCallback == NULL)
+    {
+      hcec->MspInitCallback = HAL_CEC_MspInit; /* Legacy weak MspInit  */
+    }
+
+    /* Init the low level hardware */
+    hcec->MspInitCallback(hcec);
+  }
+#else
   if(hcec->gState == HAL_CEC_STATE_RESET)
   {
     /* Allocate lock resource and initialize it */
@@ -165,6 +217,8 @@ HAL_StatusTypeDef HAL_CEC_Init(CEC_HandleTypeDef *hcec)
     /* Init the low level hardware : GPIO, CLOCK */
     HAL_CEC_MspInit(hcec);
   }
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+
   hcec->gState = HAL_CEC_STATE_BUSY;
   
   /* Disable the Peripheral */
@@ -210,9 +264,20 @@ HAL_StatusTypeDef HAL_CEC_DeInit(CEC_HandleTypeDef *hcec)
 
   hcec->gState = HAL_CEC_STATE_BUSY;
 
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+  if(hcec->MspDeInitCallback == NULL)
+  {
+    hcec->MspDeInitCallback = HAL_CEC_MspDeInit; /* Legacy weak MspDeInit  */
+  }
+
+  /* DeInit the low level hardware */
+  hcec->MspDeInitCallback(hcec);
+
+#else
   /* DeInit the low level hardware */
   HAL_CEC_MspDeInit(hcec);
-  
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
+
   __HAL_RCC_CEC_FORCE_RESET();
   __HAL_RCC_CEC_RELEASE_RESET();
   
@@ -300,6 +365,244 @@ HAL_StatusTypeDef HAL_CEC_SetDeviceAddress(CEC_HandleTypeDef *hcec, uint16_t CEC
             the HAL_CEC_MspDeInit can be implemented in the user file
    */ 
 }
+
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  Register a User CEC Callback
+  *         To be used instead of the weak predefined callback
+  * @param  hcec CEC handle
+  * @param  CallbackID ID of the callback to be registered
+  *         This parameter can be one of the following values:
+  *          @arg @ref HAL_CEC_TX_CPLT_CB_ID Tx Complete callback ID
+  *          @arg @ref HAL_CEC_ERROR_CB_ID Error callback ID
+  *          @arg @ref HAL_CEC_MSPINIT_CB_ID MspInit callback ID
+  *          @arg @ref HAL_CEC_MSPDEINIT_CB_ID MspDeInit callback ID
+  * @param  pCallback pointer to the Callback function
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_CEC_RegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID, pCEC_CallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if(pCallback == NULL)
+  {
+    /* Update the error code */
+    hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+    return HAL_ERROR;
+  }
+    /* Process locked */
+  __HAL_LOCK(hcec);
+
+  if(hcec->gState == HAL_CEC_STATE_READY)
+  {
+    switch (CallbackID)
+    {
+    case HAL_CEC_TX_CPLT_CB_ID :
+      hcec->TxCpltCallback = pCallback;
+      break;
+
+    case HAL_CEC_ERROR_CB_ID :
+      hcec->ErrorCallback = pCallback;
+      break;
+
+    case HAL_CEC_MSPINIT_CB_ID :
+      hcec->MspInitCallback = pCallback;
+      break;
+
+   case HAL_CEC_MSPDEINIT_CB_ID :
+      hcec->MspDeInitCallback = pCallback;
+      break;
+
+    default :
+      /* Update the error code */
+      hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+      /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if(hcec->gState == HAL_CEC_STATE_RESET)
+  {
+    switch (CallbackID)
+    {
+    case HAL_CEC_MSPINIT_CB_ID :
+      hcec->MspInitCallback = pCallback;
+      break;
+
+   case HAL_CEC_MSPDEINIT_CB_ID :
+      hcec->MspDeInitCallback = pCallback;
+      break;
+
+    default :
+      /* Update the error code */
+      hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+     /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* Update the error code */
+    hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+    /* Return error status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hcec);
+
+  return status;
+}
+
+/**
+  * @brief  Unregister an CEC Callback
+  *         CEC callabck is redirected to the weak predefined callback
+  * @param hcec uart handle
+  * @param CallbackID ID of the callback to be unregistered
+  *         This parameter can be one of the following values:
+  *          @arg @ref HAL_CEC_TX_CPLT_CB_ID Tx Complete callback IDD
+  *          @arg @ref HAL_CEC_ERROR_CB_ID Error callback ID
+  *          @arg @ref HAL_CEC_MSPINIT_CB_ID MspInit callback ID
+  *          @arg @ref HAL_CEC_MSPDEINIT_CB_ID MspDeInit callback ID
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_CEC_UnRegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  /* Process locked */
+  __HAL_LOCK(hcec);
+
+  if(hcec->gState == HAL_CEC_STATE_READY)
+  {
+    switch (CallbackID)
+    {
+    case HAL_CEC_TX_CPLT_CB_ID :
+      hcec->TxCpltCallback = HAL_CEC_TxCpltCallback;  /* Legacy weak  TxCpltCallback */
+      break;
+
+    case HAL_CEC_ERROR_CB_ID :
+      hcec->ErrorCallback = HAL_CEC_ErrorCallback;  /* Legacy weak ErrorCallback   */
+      break;
+
+    case HAL_CEC_MSPINIT_CB_ID :
+      hcec->MspInitCallback = HAL_CEC_MspInit;
+      break;
+
+   case HAL_CEC_MSPDEINIT_CB_ID :
+      hcec->MspDeInitCallback = HAL_CEC_MspDeInit;
+      break;
+
+    default :
+      /* Update the error code */
+      hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+     /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if(hcec->gState == HAL_CEC_STATE_RESET)
+  {
+    switch (CallbackID)
+    {
+    case HAL_CEC_MSPINIT_CB_ID :
+      hcec->MspInitCallback = HAL_CEC_MspInit;
+      break;
+
+   case HAL_CEC_MSPDEINIT_CB_ID :
+      hcec->MspDeInitCallback = HAL_CEC_MspDeInit;
+      break;
+
+    default :
+      /* Update the error code */
+      hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+     /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* Update the error code */
+    hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+    /* Return error status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hcec);
+
+  return status;
+}
+
+/**
+  * @brief  Register CEC RX complete Callback
+  *         To be used instead of the weak HAL_CEC_RxCpltCallback() predefined callback
+  * @param  hcec CEC handle
+  * @param  pCallback pointer to the Rx transfer compelete Callback function
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_CEC_RegisterRxCpltCallback(CEC_HandleTypeDef *hcec, pCEC_RxCallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if(pCallback == NULL)
+  {
+    /* Update the error code */
+    hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+    return HAL_ERROR;
+  }
+  /* Process locked */
+  __HAL_LOCK(hcec);
+
+  if(HAL_CEC_STATE_READY == hcec->RxState)
+  {
+    hcec->RxCpltCallback = pCallback;
+  }
+  else
+  {
+    /* Update the error code */
+    hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+    /* Return error status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hcec);
+  return status;
+}
+
+/**
+  * @brief  UnRegister CEC RX complete Callback
+  *         CEC RX complete Callback is redirected to the weak HAL_CEC_RxCpltCallback() predefined callback
+  * @param  hcec CEC handle
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_CEC_UnRegisterRxCpltCallback(CEC_HandleTypeDef *hcec)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  /* Process locked */
+  __HAL_LOCK(hcec);
+
+  if(HAL_CEC_STATE_READY == hcec->RxState)
+  {
+    hcec->RxCpltCallback = HAL_CEC_RxCpltCallback; /* Legacy weak  CEC RxCpltCallback  */
+  }
+  else
+  {
+    /* Update the error code */
+    hcec->ErrorCode |= HAL_CEC_ERROR_INVALID_CALLBACK;
+    /* Return error status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hcec);
+  return status;
+}
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 
 /**
   * @}
@@ -456,7 +759,11 @@ void HAL_CEC_IRQHandler(CEC_HandleTypeDef *hcec)
   if((hcec->ErrorCode & CEC_ESR_ALL_ERROR) != 0U)
   {
     /* Error  Call Back */
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+    hcec->ErrorCallback(hcec);
+#else    
     HAL_CEC_ErrorCallback(hcec);
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
   }
   
   /* Transmit byte request or block transfer finished */
@@ -597,8 +904,11 @@ static HAL_StatusTypeDef CEC_Transmit_IT(CEC_HandleTypeDef *hcec)
       MODIFY_REG(hcec->Instance->CSR, CEC_FLAG_TRANSMIT_MASK, 0x00U);
 
       hcec->gState = HAL_CEC_STATE_READY;
-      
-      HAL_CEC_TxCpltCallback(hcec);
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+     hcec->TxCpltCallback(hcec);
+#else
+     HAL_CEC_TxCpltCallback(hcec);
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */     
       
       return HAL_OK;
     }
@@ -658,8 +968,11 @@ static HAL_StatusTypeDef CEC_Receive_IT(CEC_HandleTypeDef *hcec)
     {
       /* Interrupts are not disabled due to transmission still ongoing */
       hcec->RxState = HAL_CEC_STATE_READY;
-      
-      HAL_CEC_RxCpltCallback(hcec, hcec->RxXferSize);
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+    hcec->RxCpltCallback(hcec, hcec->RxXferSize);
+#else
+    HAL_CEC_RxCpltCallback(hcec, hcec->RxXferSize); 
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */      
       
       return HAL_OK;
     }
@@ -682,7 +995,7 @@ static HAL_StatusTypeDef CEC_Receive_IT(CEC_HandleTypeDef *hcec)
   * @}
   */
 
-#endif /* defined(STM32F100xB) || defined(STM32F100xE) */
+#endif /* CEC */
 
 #endif /* HAL_CEC_MODULE_ENABLED */
 /**

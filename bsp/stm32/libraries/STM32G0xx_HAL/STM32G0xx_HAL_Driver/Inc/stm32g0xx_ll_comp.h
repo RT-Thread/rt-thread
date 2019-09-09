@@ -81,7 +81,7 @@ extern "C" {
   * @retval Pointer to register address
   */
 #define __COMP_PTR_REG_OFFSET(__REG__, __REG_OFFFSET__)                        \
- ((uint32_t *)((uint32_t) ((uint32_t)(&(__REG__)) + ((__REG_OFFFSET__) << 2UL))))
+  ((__IO uint32_t *)((uint32_t) ((uint32_t)(&(__REG__)) + ((__REG_OFFFSET__) << 2UL))))
 
 /**
   * @}
@@ -100,32 +100,32 @@ typedef struct
 {
   uint32_t PowerMode;                   /*!< Set comparator operating mode to adjust power and speed.
                                              This parameter can be a value of @ref COMP_LL_EC_POWERMODE
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetPowerMode(). */
 
   uint32_t InputPlus;                   /*!< Set comparator input plus (non-inverting input).
                                              This parameter can be a value of @ref COMP_LL_EC_INPUT_PLUS
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetInputPlus(). */
 
   uint32_t InputMinus;                  /*!< Set comparator input minus (inverting input).
                                              This parameter can be a value of @ref COMP_LL_EC_INPUT_MINUS
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetInputMinus(). */
 
   uint32_t InputHysteresis;             /*!< Set comparator hysteresis mode of the input minus.
                                              This parameter can be a value of @ref COMP_LL_EC_INPUT_HYSTERESIS
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetInputHysteresis(). */
 
   uint32_t OutputPolarity;              /*!< Set comparator output polarity.
                                              This parameter can be a value of @ref COMP_LL_EC_OUTPUT_POLARITY
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetOutputPolarity(). */
 
   uint32_t OutputBlankingSource;        /*!< Set comparator blanking source.
                                              This parameter can be a value of @ref COMP_LL_EC_OUTPUT_BLANKING_SOURCE
-                                             
+
                                              This feature can be modified afterwards using unitary function @ref LL_COMP_SetOutputBlankingSource(). */
 
 } LL_COMP_InitTypeDef;
@@ -240,7 +240,7 @@ typedef struct
   */
 
 /** @defgroup COMP_LL_EC_HW_DELAYS  Definitions of COMP hardware constraints delays
-  * @note   Only COMP IP HW delays are defined in COMP LL driver driver,
+  * @note   Only COMP peripheral HW delays are defined in COMP LL driver driver,
   *         not timeout values.
   *         For details on delays values, refer to descriptions in source code
   *         above each literal definition.
@@ -347,14 +347,14 @@ __STATIC_INLINE void LL_COMP_SetCommonWindowMode(COMP_Common_TypeDef *COMPxy_COM
 {
   /* Note: On this STM32 serie, window mode can be set from one of the pair   */
   /*       of COMP instances: COMP1 or COMP2.                                 */
-  register uint32_t *preg = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (WindowMode & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK));
-  
+  register __IO uint32_t *preg = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (WindowMode & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK));
+
   /* Clear the potential previous setting of window mode */
-  register uint32_t *preg_clear = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (~(WindowMode & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK) & 0x1UL));
+  register __IO uint32_t *preg_clear = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (~(WindowMode & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK) & 0x1UL));
   CLEAR_BIT(*preg_clear,
             COMP_CSR_WINMODE
            );
-  
+
   /* Set window mode */
   MODIFY_REG(*preg,
              COMP_CSR_WINMODE,
@@ -377,10 +377,10 @@ __STATIC_INLINE uint32_t LL_COMP_GetCommonWindowMode(COMP_Common_TypeDef *COMPxy
 {
   /* Note: On this STM32 serie, window mode can be set from one of the pair   */
   /*       of COMP instances: COMP1 or COMP2.                                 */
-  register uint32_t window_mode_comp_odd = READ_BIT(COMPxy_COMMON->CSR_ODD, COMP_CSR_WINMODE);
-  register uint32_t window_mode_comp_even = READ_BIT(COMPxy_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
-  
-  return (uint32_t)(  window_mode_comp_odd
+  register const uint32_t window_mode_comp_odd = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_ODD, COMP_CSR_WINMODE);
+  register const uint32_t window_mode_comp_even = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_EVEN, COMP_CSR_WINMODE);
+
+  return (uint32_t)(window_mode_comp_odd
                     | window_mode_comp_even
                     | ((window_mode_comp_even >> LL_COMP_WINDOWMODE_BITOFFSET_POS) * LL_COMP_WINDOWMODE_COMP_EVEN_REGOFFSET_MASK));
 }
@@ -400,16 +400,16 @@ __STATIC_INLINE uint32_t LL_COMP_GetCommonWindowMode(COMP_Common_TypeDef *COMPxy
   */
 __STATIC_INLINE void LL_COMP_SetCommonWindowOutput(COMP_Common_TypeDef *COMPxy_COMMON, uint32_t WindowOutput)
 {
-  register uint32_t *preg = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (WindowOutput & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK));
-  
+  register __IO uint32_t *preg = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (WindowOutput & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK));
+
   /* Clear the potential previous setting of window output on the relevant comparator instance */
   /* (clear bit of window output unless specific case of setting of comparator both output selected) */
-  register uint32_t *preg_clear = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (~(WindowOutput & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK) & 0x1UL));
+  register __IO uint32_t *preg_clear = __COMP_PTR_REG_OFFSET(COMPxy_COMMON->CSR_ODD, (~(WindowOutput & LL_COMP_WINDOWMODE_COMPX_REGOFFSET_MASK) & 0x1UL));
   MODIFY_REG(*preg_clear,
              COMP_CSR_WINOUT,
              ((WindowOutput & LL_COMP_WINDOWOUTPUT_BOTH_SETTING_MASK) >> LL_COMP_WINDOWOUTPUT_BOTH_POS_VS_WINDOW)
             );
-            
+
   /* Set window output */
   MODIFY_REG(*preg,
              COMP_CSR_WINOUT,
@@ -431,11 +431,11 @@ __STATIC_INLINE void LL_COMP_SetCommonWindowOutput(COMP_Common_TypeDef *COMPxy_C
   */
 __STATIC_INLINE uint32_t LL_COMP_GetCommonWindowOutput(COMP_Common_TypeDef *COMPxy_COMMON)
 {
-  register uint32_t window_output_comp_odd = READ_BIT(COMPxy_COMMON->CSR_ODD, COMP_CSR_WINOUT);
-  register uint32_t window_output_comp_even = READ_BIT(COMPxy_COMMON->CSR_EVEN, COMP_CSR_WINOUT);
-  
+  register const uint32_t window_output_comp_odd = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_ODD, COMP_CSR_WINOUT);
+  register const uint32_t window_output_comp_even = (uint32_t)READ_BIT(COMPxy_COMMON->CSR_EVEN, COMP_CSR_WINOUT);
+
   /* Construct value corresponding to LL_COMP_WINDOWOUTPUT_xxx */
-  return (uint32_t)(  window_output_comp_odd
+  return (uint32_t)(window_output_comp_odd
                     | window_output_comp_even
                     | ((window_output_comp_even >> COMP_CSR_WINOUT_Pos) * LL_COMP_WINDOWMODE_COMP_EVEN_REGOFFSET_MASK)
                     | (window_output_comp_odd + window_output_comp_even));
@@ -493,10 +493,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetPowerMode(COMP_TypeDef *COMPx)
   *         when COMP input is based on VrefInt (VrefInt or subdivision
   *         of VrefInt):
   *         Voltage scaler requires a delay for voltage stabilization.
-  *         Refer to device datasheet, parameter "xxxx".
-*/
-//#warning "Specify parameter name in STM32G0 datasheet"
-/*
+  *         Refer to device datasheet, parameter "tSTART_SCALER".
   * @rmtoll CSR      INMSEL         LL_COMP_ConfigInputs\n
   *         CSR      INPSEL         LL_COMP_ConfigInputs\n
   * @param  COMPx Comparator instance
@@ -567,10 +564,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetInputPlus(COMP_TypeDef *COMPx)
   *         when COMP input is based on VrefInt (VrefInt or subdivision
   *         of VrefInt):
   *         Voltage scaler requires a delay for voltage stabilization.
-  *         Refer to device datasheet, parameter "xxxx".
-*/
-//#warning "Specify parameter name in STM32G0 datasheet"
-/*
+  *         Refer to device datasheet, parameter "tSTART_SCALER".
   * @rmtoll CSR      INMSEL         LL_COMP_SetInputMinus
   * @param  COMPx Comparator instance
   * @param  InputMinus This parameter can be one of the following values:
@@ -694,7 +688,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetOutputPolarity(COMP_TypeDef *COMPx)
   *         @arg @ref LL_COMP_BLANKINGSRC_TIM2_OC3  (1)
   *         @arg @ref LL_COMP_BLANKINGSRC_TIM3_OC3  (1)
   *         @arg @ref LL_COMP_BLANKINGSRC_TIM15_OC2 (1)
-  *         
+  *
   *         (1) Parameter availability depending on timer availability
   *             on the selected device.
   * @retval None
@@ -719,7 +713,7 @@ __STATIC_INLINE void LL_COMP_SetOutputBlankingSource(COMP_TypeDef *COMPx, uint32
   *         @arg @ref LL_COMP_BLANKINGSRC_TIM2_OC3  (1)
   *         @arg @ref LL_COMP_BLANKINGSRC_TIM3_OC3  (1)
   *         @arg @ref LL_COMP_BLANKINGSRC_TIM15_OC2 (1)
-  *         
+  *
   *         (1) Parameter availability depending on timer availability
   *             on the selected device.
   */
@@ -740,9 +734,7 @@ __STATIC_INLINE uint32_t LL_COMP_GetOutputBlankingSource(COMP_TypeDef *COMPx)
   * @brief  Enable comparator instance.
   * @note   After enable from off state, comparator requires a delay
   *         to reach reach propagation delay specification.
-*/
-//#warning "Specify startup time naming in datasheet for the selected IP"
-/*
+  *         Refer to device datasheet, parameter "tSTART".
   * @rmtoll CSR      EN             LL_COMP_Enable
   * @param  COMPx Comparator instance
   * @retval None

@@ -5,16 +5,6 @@
   * @brief   HAL MSP module.
   *          This file template is located in the HAL folder and should be copied
   *          to the user folder.
-  *
-  @verbatim
- ===============================================================================
-                     ##### How to use this driver #####
- ===============================================================================
-    [..]
-    This file is generated automatically by STM32CubeMX and eventually modified
-    by the user
-
-  @endverbatim
   ******************************************************************************
   * @attention
   *

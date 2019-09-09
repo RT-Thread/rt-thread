@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2017 ARM Limited. All rights reserved.
+ * Copyright (c) 2013-2018 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,12 +17,23 @@
  *
  * ----------------------------------------------------------------------
  *
- * $Date:        10. January 2017
- * $Revision:    V2.1.0
+ * $Date:        18. June 2018
+ * $Revision:    V2.1.3
  *
  * Project:      CMSIS-RTOS2 API
  * Title:        cmsis_os2.h header file
  *
+ * Version 2.1.3
+ *    Additional functions allowed to be called from Interrupt Service Routines:
+ *    - osThreadGetId
+ * Version 2.1.2
+ *    Additional functions allowed to be called from Interrupt Service Routines:
+ *    - osKernelGetInfo, osKernelGetState
+ * Version 2.1.1
+ *    Additional functions allowed to be called from Interrupt Service Routines:
+ *    - osKernelGetTickCount, osKernelGetTickFreq
+ *    Changed Kernel Tick type to uint32_t:
+ *    - updated: osKernelGetTickCount, osDelayUntil
  * Version 2.1.0
  *    Support for critical and uncritical sections (nesting safe):
  *    - updated: osKernelLock, osKernelUnlock
@@ -40,9 +51,9 @@
 #if   defined(__CC_ARM)
 #define __NO_RETURN __declspec(noreturn)
 #elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#define __NO_RETURN __attribute__((noreturn))
+#define __NO_RETURN __attribute__((__noreturn__))
 #elif defined(__GNUC__)
-#define __NO_RETURN __attribute__((noreturn))
+#define __NO_RETURN __attribute__((__noreturn__))
 #elif defined(__ICCARM__)
 #define __NO_RETURN __noreturn
 #else
@@ -149,7 +160,7 @@ typedef enum {
 /// Entry point of a thread.
 typedef void (*osThreadFunc_t) (void *argument);
  
-/// Entry point of a timer call back function.
+/// Timer callback function.
 typedef void (*osTimerFunc_t) (void *argument);
  
 /// Timer type.
@@ -158,15 +169,15 @@ typedef enum {
   osTimerPeriodic           = 1           ///< Repeating timer.
 } osTimerType_t;
  
-/// Timeout value.
+// Timeout value.
 #define osWaitForever         0xFFFFFFFFU ///< Wait forever timeout value.
  
-/// Flags options (\ref osThreadFlagsWait and \ref osEventFlagsWait).
+// Flags options (\ref osThreadFlagsWait and \ref osEventFlagsWait).
 #define osFlagsWaitAny        0x00000000U ///< Wait for any flag (default).
 #define osFlagsWaitAll        0x00000001U ///< Wait for all flags.
 #define osFlagsNoClear        0x00000002U ///< Do not clear flags which have been specified to wait for.
  
-/// Flags errors (returned by osThreadFlagsXxxx and osEventFlagsXxxx).
+// Flags errors (returned by osThreadFlagsXxxx and osEventFlagsXxxx).
 #define osFlagsError          0x80000000U ///< Error indicator.
 #define osFlagsErrorUnknown   0xFFFFFFFFU ///< osError (-1).
 #define osFlagsErrorTimeout   0xFFFFFFFEU ///< osErrorTimeout (-2).
@@ -174,11 +185,11 @@ typedef enum {
 #define osFlagsErrorParameter 0xFFFFFFFCU ///< osErrorParameter (-4).
 #define osFlagsErrorISR       0xFFFFFFFAU ///< osErrorISR (-6).
  
-/// Thread attributes (attr_bits in \ref osThreadAttr_t).
-#define osThreadDetached      0x00000000U ///< Thread created in detached state (default)
-#define osThreadJoinable      0x00000001U ///< Thread created in joinable state
+// Thread attributes (attr_bits in \ref osThreadAttr_t).
+#define osThreadDetached      0x00000000U ///< Thread created in detached mode (default)
+#define osThreadJoinable      0x00000001U ///< Thread created in joinable mode
  
-/// Mutex attributes (attr_bits in \ref osMutexAttr_t).
+// Mutex attributes (attr_bits in \ref osMutexAttr_t).
 #define osMutexRecursive      0x00000001U ///< Recursive mutex.
 #define osMutexPrioInherit    0x00000002U ///< Priority inherit protocol.
 #define osMutexRobust         0x00000008U ///< Robust mutex.
@@ -335,10 +346,10 @@ void osKernelResume (uint32_t sleep_ticks);
  
 /// Get the RTOS kernel tick count.
 /// \return RTOS kernel current tick count.
-uint64_t osKernelGetTickCount (void);
+uint32_t osKernelGetTickCount (void);
  
 /// Get the RTOS kernel tick frequency.
-/// \return frequency of the kernel tick.
+/// \return frequency of the kernel tick in hertz, i.e. kernel ticks per second.
 uint32_t osKernelGetTickFreq (void);
  
 /// Get the RTOS kernel system timer count.
@@ -346,7 +357,7 @@ uint32_t osKernelGetTickFreq (void);
 uint32_t osKernelGetSysTimerCount (void);
  
 /// Get the RTOS kernel system timer frequency.
-/// \return frequency of the system timer.
+/// \return frequency of the system timer in hertz, i.e. timer ticks per second.
 uint32_t osKernelGetSysTimerFreq (void);
  
  
@@ -361,7 +372,7 @@ osThreadId_t osThreadNew (osThreadFunc_t func, void *argument, const osThreadAtt
  
 /// Get name of a thread.
 /// \param[in]     thread_id     thread ID obtained by \ref osThreadNew or \ref osThreadGetId.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osThreadGetName (osThreadId_t thread_id);
  
 /// Return the thread ID of the current running thread.
@@ -472,22 +483,22 @@ osStatus_t osDelay (uint32_t ticks);
 /// Wait until specified time.
 /// \param[in]     ticks         absolute time in ticks
 /// \return status code that indicates the execution status of the function.
-osStatus_t osDelayUntil (uint64_t ticks);
+osStatus_t osDelayUntil (uint32_t ticks);
  
  
 //  ==== Timer Management Functions ====
  
 /// Create and Initialize a timer.
-/// \param[in]     func          start address of a timer call back function.
-/// \param[in]     type          osTimerOnce for one-shot or osTimerPeriodic for periodic behavior.
-/// \param[in]     argument      argument to the timer call back function.
+/// \param[in]     func          function pointer to callback function.
+/// \param[in]     type          \ref osTimerOnce for one-shot or \ref osTimerPeriodic for periodic behavior.
+/// \param[in]     argument      argument to the timer callback function.
 /// \param[in]     attr          timer attributes; NULL: default values.
 /// \return timer ID for reference by other functions or NULL in case of error.
 osTimerId_t osTimerNew (osTimerFunc_t func, osTimerType_t type, void *argument, const osTimerAttr_t *attr);
  
 /// Get name of a timer.
 /// \param[in]     timer_id      timer ID obtained by \ref osTimerNew.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osTimerGetName (osTimerId_t timer_id);
  
 /// Start or restart a timer.
@@ -521,7 +532,7 @@ osEventFlagsId_t osEventFlagsNew (const osEventFlagsAttr_t *attr);
  
 /// Get name of an Event Flags object.
 /// \param[in]     ef_id         event flags ID obtained by \ref osEventFlagsNew.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osEventFlagsGetName (osEventFlagsId_t ef_id);
  
 /// Set the specified Event Flags.
@@ -564,7 +575,7 @@ osMutexId_t osMutexNew (const osMutexAttr_t *attr);
  
 /// Get name of a Mutex object.
 /// \param[in]     mutex_id      mutex ID obtained by \ref osMutexNew.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osMutexGetName (osMutexId_t mutex_id);
  
 /// Acquire a Mutex or timeout if it is locked.
@@ -600,7 +611,7 @@ osSemaphoreId_t osSemaphoreNew (uint32_t max_count, uint32_t initial_count, cons
  
 /// Get name of a Semaphore object.
 /// \param[in]     semaphore_id  semaphore ID obtained by \ref osSemaphoreNew.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osSemaphoreGetName (osSemaphoreId_t semaphore_id);
  
 /// Acquire a Semaphore token or timeout if no tokens are available.
@@ -609,7 +620,7 @@ const char *osSemaphoreGetName (osSemaphoreId_t semaphore_id);
 /// \return status code that indicates the execution status of the function.
 osStatus_t osSemaphoreAcquire (osSemaphoreId_t semaphore_id, uint32_t timeout);
  
-/// Release a Semaphore token that was acquired by \ref osSemaphoreAcquire.
+/// Release a Semaphore token up to the initial maximum count.
 /// \param[in]     semaphore_id  semaphore ID obtained by \ref osSemaphoreNew.
 /// \return status code that indicates the execution status of the function.
 osStatus_t osSemaphoreRelease (osSemaphoreId_t semaphore_id);
@@ -636,7 +647,7 @@ osMemoryPoolId_t osMemoryPoolNew (uint32_t block_count, uint32_t block_size, con
  
 /// Get name of a Memory Pool object.
 /// \param[in]     mp_id         memory pool ID obtained by \ref osMemoryPoolNew.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osMemoryPoolGetName (osMemoryPoolId_t mp_id);
  
 /// Allocate a memory block from a Memory Pool.
@@ -688,7 +699,7 @@ osMessageQueueId_t osMessageQueueNew (uint32_t msg_count, uint32_t msg_size, con
  
 /// Get name of a Message Queue object.
 /// \param[in]     mq_id         message queue ID obtained by \ref osMessageQueueNew.
-/// \return name as NULL terminated string.
+/// \return name as null-terminated string.
 const char *osMessageQueueGetName (osMessageQueueId_t mq_id);
  
 /// Put a Message into a Queue or timeout if Queue is full.

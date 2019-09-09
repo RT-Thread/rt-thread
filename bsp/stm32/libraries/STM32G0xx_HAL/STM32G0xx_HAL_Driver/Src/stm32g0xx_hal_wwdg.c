@@ -33,16 +33,18 @@
         (++) max time (mS) = 1000 * (Counter - 0x40) / WWDG clock
     (+) Typical values:
         (++) Counter min (T[5;0] = 0x00) @56 MHz(PCLK1) with zero prescaler:
-             max timeout before reset: ~73.14 µs
+             max timeout before reset: approximately 73.14 microseconds
         (++) Counter max (T[5;0] = 0x3F) @56 MHz(PCLK1) with prescaler dividing by 128:
-             max timeout before reset: ~599.18 ms
+             max timeout before reset: approximately 599.18 milliseconds
 
   ==============================================================================
                      ##### How to use this driver #####
   ==============================================================================
-  [..]
+
     *** Common driver usage ***
     ===========================
+
+  [..]
     (+) Enable WWDG APB1 clock using __HAL_RCC_WWDG_CLK_ENABLE().
     (+) Set the WWDG prescaler, refresh window and counter value
         using HAL_WWDG_Init() function.
@@ -59,9 +61,10 @@
         HAL_WWDG_Refresh() function. This operation must occur only when
         the counter is lower than the refresh window value already programmed.
 
-  [..]
     *** Callback registration ***
     =============================
+
+  [..]
     The compilation define  USE_HAL_WWDG_REGISTER_CALLBACKS when set to 1 allows
     the user to configure dynamically the driver callbacks. Use Functions
     @ref HAL_WWDG_RegisterCallback() to register a user callback.
@@ -79,12 +82,14 @@
     This function allows to reset following callbacks:
         (++) EwiCallback : callback for  Early WakeUp Interrupt.
         (++) MspInitCallback : WWDG MspInit.
-
+  
+    [..]
     When calling @ref HAL_WWDG_Init function, callbacks are reset to the
     corresponding legacy weak (surcharged) functions: 
     @ref HAL_WWDG_EarlyWakeupCallback() and HAL_WWDG_MspInit() only if they have
     not been registered before.
 
+    [..]
     When compilation define USE_HAL_WWDG_REGISTER_CALLBACKS is set to 0 or
     not defined, the callback registering feature is not available 
     and weak (surcharged) callbacks are used.

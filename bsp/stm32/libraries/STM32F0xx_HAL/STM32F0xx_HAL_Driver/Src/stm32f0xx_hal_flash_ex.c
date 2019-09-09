@@ -919,22 +919,22 @@ static uint32_t FLASH_OB_GetWRP(void)
   */
 static uint32_t FLASH_OB_GetRDP(void)
 {
-  uint32_t tmp_reg = 0U;
+  uint32_t tmp_reg;
   
   /* Read RDP level bits */
   tmp_reg = READ_BIT(FLASH->OBR, (FLASH_OBR_RDPRT1 | FLASH_OBR_RDPRT2));
 
-  if (tmp_reg == FLASH_OBR_RDPRT1)
+  if (tmp_reg == 0U)
   {
-    return OB_RDP_LEVEL_1;
+    return OB_RDP_LEVEL_0;
   }
-  else if (tmp_reg == FLASH_OBR_RDPRT2)
+  else if ((tmp_reg & FLASH_OBR_RDPRT2) == FLASH_OBR_RDPRT2)
   {
     return OB_RDP_LEVEL_2;
   }
   else 
   {
-    return OB_RDP_LEVEL_0;
+    return OB_RDP_LEVEL_1;
   }
 }
 

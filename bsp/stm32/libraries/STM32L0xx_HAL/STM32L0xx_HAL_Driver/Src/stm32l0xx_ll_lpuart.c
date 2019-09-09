@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -81,6 +65,12 @@
 /*              Baudrate specified by the user should belong to [8, 10600000].*/
 #define IS_LL_LPUART_BAUDRATE(__BAUDRATE__) (((__BAUDRATE__) <= 10600000U) && ((__BAUDRATE__) >= 8U))
 
+/* __VALUE__ BRR content must be greater than or equal to 0x300. */
+#define IS_LL_LPUART_BRR_MIN(__VALUE__)   ((__VALUE__) >= 0x300U)
+
+/* __VALUE__ BRR content must be lower than or equal to 0xFFFFF. */
+#define IS_LL_LPUART_BRR_MAX(__VALUE__)   ((__VALUE__) <= 0x000FFFFFU)
+
 #define IS_LL_LPUART_DIRECTION(__VALUE__) (((__VALUE__) == LL_LPUART_DIRECTION_NONE) \
                                         || ((__VALUE__) == LL_LPUART_DIRECTION_RX) \
                                         || ((__VALUE__) == LL_LPUART_DIRECTION_TX) \
@@ -131,11 +121,18 @@ ErrorStatus LL_LPUART_DeInit(USART_TypeDef *LPUARTx)
   /* Check the parameters */
   assert_param(IS_LPUART_INSTANCE(LPUARTx));
 
-  /* Force reset of LPUART peripheral */
-  LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_LPUART1);
+  if (LPUARTx == LPUART1)
+  {
+    /* Force reset of LPUART peripheral */
+    LL_APB1_GRP1_ForceReset(LL_APB1_GRP1_PERIPH_LPUART1);
 
-  /* Release reset of LPUART peripheral */
-  LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPUART1);
+    /* Release reset of LPUART peripheral */
+    LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_LPUART1);
+  }
+  else
+  {
+    status = ERROR;
+  }
 
   return (status);
 }
@@ -144,7 +141,7 @@ ErrorStatus LL_LPUART_DeInit(USART_TypeDef *LPUARTx)
   * @brief  Initialize LPUART registers according to the specified
   *         parameters in LPUART_InitStruct.
   * @note   As some bits in LPUART configuration registers can only be written when the LPUART is disabled (USART_CR1_UE bit =0),
-  *         LPUART IP should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
+  *         LPUART Peripheral should be in disabled state prior calling this function. Otherwise, ERROR result will be returned.
   * @note   Baud rate value stored in LPUART_InitStruct BaudRate field, should be valid (different from 0).
   * @param  LPUARTx LPUART Instance
   * @param  LPUART_InitStruct pointer to a @ref LL_LPUART_InitTypeDef structure
@@ -209,7 +206,14 @@ ErrorStatus LL_LPUART_Init(USART_TypeDef *LPUARTx, LL_LPUART_InitTypeDef *LPUART
       LL_LPUART_SetBaudRate(LPUARTx,
                             periphclk,
                             LPUART_InitStruct->BaudRate);
+
+      /* Check BRR is greater than or equal to 0x300 */
+      assert_param(IS_LL_LPUART_BRR_MIN(LPUARTx->BRR));
+
+      /* Check BRR is lower than or equal to 0xFFFFF */
+      assert_param(IS_LL_LPUART_BRR_MAX(LPUARTx->BRR));
     }
+
   }
 
   return (status);

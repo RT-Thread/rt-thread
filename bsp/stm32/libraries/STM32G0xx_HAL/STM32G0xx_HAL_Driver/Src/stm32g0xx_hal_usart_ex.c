@@ -54,11 +54,17 @@
 #ifdef HAL_USART_MODULE_ENABLED
 
 /* Private typedef -----------------------------------------------------------*/
+/** @defgroup USARTEx_Private_Constants USARTEx Private Constants
+  * @{
+  */
 /* UART RX FIFO depth */
 #define RX_FIFO_DEPTH 8U
 
 /* UART TX FIFO depth */
 #define TX_FIFO_DEPTH 8U
+/**
+  * @}
+  */
 
 /* Private define ------------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/

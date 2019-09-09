@@ -90,29 +90,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -136,25 +120,25 @@
 /** @addtogroup GPIO_Private_Constants GPIO Private Constants
   * @{
   */
-#define GPIO_MODE             0x00000003U
-#define EXTI_MODE             0x10000000U
-#define GPIO_MODE_IT          0x00010000U
-#define GPIO_MODE_EVT         0x00020000U
-#define RISING_EDGE           0x00100000U
-#define FALLING_EDGE          0x00200000U
-#define GPIO_OUTPUT_TYPE      0x00000010U
+#define GPIO_MODE             0x00000003u
+#define EXTI_MODE             0x10000000u
+#define GPIO_MODE_IT          0x00010000u
+#define GPIO_MODE_EVT         0x00020000u
+#define RISING_EDGE           0x00100000u
+#define FALLING_EDGE          0x00200000u
+#define GPIO_OUTPUT_TYPE      0x00000010u
 
-#define GPIO_NUMBER           16U
+#define GPIO_NUMBER           16u
 
 /* Definitions for bit manipulation of CRL and CRH register */
-#define  GPIO_CR_MODE_INPUT         0x00000000U /*!< 00: Input mode (reset state)  */
-#define  GPIO_CR_CNF_ANALOG         0x00000000U /*!< 00: Analog mode  */
-#define  GPIO_CR_CNF_INPUT_FLOATING 0x00000004U /*!< 01: Floating input (reset state)  */
-#define  GPIO_CR_CNF_INPUT_PU_PD    0x00000008U /*!< 10: Input with pull-up / pull-down  */
-#define  GPIO_CR_CNF_GP_OUTPUT_PP   0x00000000U /*!< 00: General purpose output push-pull  */
-#define  GPIO_CR_CNF_GP_OUTPUT_OD   0x00000004U /*!< 01: General purpose output Open-drain  */
-#define  GPIO_CR_CNF_AF_OUTPUT_PP   0x00000008U /*!< 10: Alternate function output Push-pull  */
-#define  GPIO_CR_CNF_AF_OUTPUT_OD   0x0000000CU /*!< 11: Alternate function output Open-drain  */
+#define  GPIO_CR_MODE_INPUT         0x00000000u /*!< 00: Input mode (reset state)  */
+#define  GPIO_CR_CNF_ANALOG         0x00000000u /*!< 00: Analog mode  */
+#define  GPIO_CR_CNF_INPUT_FLOATING 0x00000004u /*!< 01: Floating input (reset state)  */
+#define  GPIO_CR_CNF_INPUT_PU_PD    0x00000008u /*!< 10: Input with pull-up / pull-down  */
+#define  GPIO_CR_CNF_GP_OUTPUT_PP   0x00000000u /*!< 00: General purpose output push-pull  */
+#define  GPIO_CR_CNF_GP_OUTPUT_OD   0x00000004u /*!< 01: General purpose output Open-drain  */
+#define  GPIO_CR_CNF_AF_OUTPUT_PP   0x00000008u /*!< 10: Alternate function output Push-pull  */
+#define  GPIO_CR_CNF_AF_OUTPUT_OD   0x0000000Cu /*!< 11: Alternate function output Open-drain  */
 
 /**
   * @}
@@ -193,13 +177,13 @@
   */
 void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 {
-  uint32_t position;
-  uint32_t ioposition = 0x00U;
-  uint32_t iocurrent = 0x00U;
-  uint32_t temp = 0x00U;
-  uint32_t config = 0x00U;
+  uint32_t position = 0x00u;
+  uint32_t ioposition;
+  uint32_t iocurrent;
+  uint32_t temp;
+  uint32_t config = 0x00u;
   __IO uint32_t *configregister; /* Store the address of CRL or CRH register based on pin number */
-  uint32_t registeroffset = 0U; /* offset used during computation of CNF and MODE bits placement inside CRL or CRH register */
+  uint32_t registeroffset;       /* offset used during computation of CNF and MODE bits placement inside CRL or CRH register */
 
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
@@ -207,10 +191,10 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
   assert_param(IS_GPIO_MODE(GPIO_Init->Mode));
 
   /* Configure the port pins */
-  for (position = 0U; position < GPIO_NUMBER; position++)
+  while (((GPIO_Init->Pin) >> position) != 0x00u)
   {
     /* Get the IO position */
-    ioposition = (0x01U << position);
+    ioposition = (0x01uL << position);
 
     /* Get the current IO position */
     iocurrent = (uint32_t)(GPIO_Init->Pin) & ioposition;
@@ -294,7 +278,7 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
       /* Check if the current bit belongs to first half or last half of the pin count number
        in order to address CRH or CRL register*/
       configregister = (iocurrent < GPIO_PIN_8) ? &GPIOx->CRL     : &GPIOx->CRH;
-      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2U) : ((position - 8U) << 2U);
+      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2u) : ((position - 8u) << 2u);
 
       /* Apply the new configuration of the pin to the register */
       MODIFY_REG((*configregister), ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset), (config << registeroffset));
@@ -305,10 +289,10 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
       {
         /* Enable AFIO Clock */
         __HAL_RCC_AFIO_CLK_ENABLE();
-        temp = AFIO->EXTICR[position >> 2U];
-        CLEAR_BIT(temp, (0x0FU) << (4U * (position & 0x03U)));
-        SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4U * (position & 0x03U)));
-        AFIO->EXTICR[position >> 2U] = temp;
+        temp = AFIO->EXTICR[position >> 2u];
+        CLEAR_BIT(temp, (0x0Fu) << (4u * (position & 0x03u)));
+        SET_BIT(temp, (GPIO_GET_INDEX(GPIOx)) << (4u * (position & 0x03u)));
+        AFIO->EXTICR[position >> 2u] = temp;
 
 
         /* Configure the interrupt mask */
@@ -352,6 +336,8 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         }
       }
     }
+
+	position++;
   }
 }
 
@@ -364,45 +350,33 @@ void HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
   */
 void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
 {
-  uint32_t position = 0x00U;
-  uint32_t iocurrent = 0x00U;
-  uint32_t tmp = 0x00U;
+  uint32_t position = 0x00u;
+  uint32_t iocurrent;
+  uint32_t tmp;
   __IO uint32_t *configregister; /* Store the address of CRL or CRH register based on pin number */
-  uint32_t registeroffset = 0U;
+  uint32_t registeroffset;
 
   /* Check the parameters */
   assert_param(IS_GPIO_ALL_INSTANCE(GPIOx));
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
   /* Configure the port pins */
-  while ((GPIO_Pin >> position) != 0U)
+  while ((GPIO_Pin >> position) != 0u)
   {
     /* Get current io position */
-    iocurrent = (GPIO_Pin) & (1U << position);
+    iocurrent = (GPIO_Pin) & (1uL << position);
 
     if (iocurrent)
     {
-      /*------------------------- GPIO Mode Configuration --------------------*/
-      /* Check if the current bit belongs to first half or last half of the pin count number
-       in order to address CRH or CRL register */
-      configregister = (iocurrent < GPIO_PIN_8) ? &GPIOx->CRL     : &GPIOx->CRH;
-      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2U) : ((position - 8U) << 2U);
-
-      /* CRL/CRH default value is floating input(0x04) shifted to correct position */
-      MODIFY_REG(*configregister, ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset), GPIO_CRL_CNF0_0 << registeroffset);
-
-      /* ODR default value is 0 */
-      CLEAR_BIT(GPIOx->ODR, iocurrent);
-
       /*------------------------- EXTI Mode Configuration --------------------*/
       /* Clear the External Interrupt or Event for the current IO */
 
-      tmp = AFIO->EXTICR[position >> 2U];
-      tmp &= 0x0FU << (4U * (position & 0x03U));
-      if (tmp == (GPIO_GET_INDEX(GPIOx) << (4U * (position & 0x03U))))
+      tmp = AFIO->EXTICR[position >> 2u];
+      tmp &= 0x0FuL << (4u * (position & 0x03u));
+      if (tmp == (GPIO_GET_INDEX(GPIOx) << (4u * (position & 0x03u))))
       {
-        tmp = 0x0FU << (4U * (position & 0x03U));
-        CLEAR_BIT(AFIO->EXTICR[position >> 2U], tmp);
+        tmp = 0x0FuL << (4u * (position & 0x03u));
+        CLEAR_BIT(AFIO->EXTICR[position >> 2u], tmp);
 
         /* Clear EXTI line configuration */
         CLEAR_BIT(EXTI->IMR, (uint32_t)iocurrent);
@@ -412,6 +386,17 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
         CLEAR_BIT(EXTI->RTSR, (uint32_t)iocurrent);
         CLEAR_BIT(EXTI->FTSR, (uint32_t)iocurrent);
       }
+      /*------------------------- GPIO Mode Configuration --------------------*/
+      /* Check if the current bit belongs to first half or last half of the pin count number
+       in order to address CRH or CRL register */
+      configregister = (iocurrent < GPIO_PIN_8) ? &GPIOx->CRL     : &GPIOx->CRH;
+      registeroffset = (iocurrent < GPIO_PIN_8) ? (position << 2u) : ((position - 8u) << 2u);
+
+      /* CRL/CRH default value is floating input(0x04) shifted to correct position */
+      MODIFY_REG(*configregister, ((GPIO_CRL_MODE0 | GPIO_CRL_CNF0) << registeroffset), GPIO_CRL_CNF0_0 << registeroffset);
+
+      /* ODR default value is 0 */
+      CLEAR_BIT(GPIOx->ODR, iocurrent);
     }
 
     position++;
@@ -489,7 +474,7 @@ void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState Pin
   }
   else
   {
-    GPIOx->BSRR = (uint32_t)GPIO_Pin << 16U;
+    GPIOx->BSRR = (uint32_t)GPIO_Pin << 16u;
   }
 }
 
@@ -504,7 +489,14 @@ void HAL_GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
   /* Check the parameters */
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
-  GPIOx->ODR ^= GPIO_Pin;
+  if ((GPIOx->ODR & GPIO_Pin) != 0x00u)
+  {
+    GPIOx->BRR = (uint32_t)GPIO_Pin;
+  }
+  else
+  {
+    GPIOx->BSRR = (uint32_t)GPIO_Pin;
+  }
 }
 
 /**
@@ -533,9 +525,10 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
   GPIOx->LCKR = GPIO_Pin;
   /* Set LCKx bit(s): LCKK='1' + LCK[15-0] */
   GPIOx->LCKR = tmp;
-  /* Read LCKK bit*/
+  /* Read LCKK register. This read is mandatory to complete key lock sequence */
   tmp = GPIOx->LCKR;
 
+  /* read again in order to confirm lock is active */
   if ((uint32_t)(GPIOx->LCKR & GPIO_LCKR_LCKK))
   {
     return HAL_OK;
@@ -554,7 +547,7 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 void HAL_GPIO_EXTI_IRQHandler(uint16_t GPIO_Pin)
 {
   /* EXTI line interrupt detected */
-  if (__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != RESET)
+  if (__HAL_GPIO_EXTI_GET_IT(GPIO_Pin) != 0x00u)
   {
     __HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
     HAL_GPIO_EXTI_Callback(GPIO_Pin);

@@ -58,18 +58,18 @@ typedef struct
                                      This feature can be modified afterwards using unitary function @ref LL_UCPD_SetPSCClk().*/
 
   uint32_t transwin;            /*!< Specifies the number of cycles (minus 1) of the half bit clock (see HBITCLKDIV) to achieve a legal
-                                    tTransitionWindow (set according to IP clock to define an interval of between 12 and 20 us).
-                                    This parameter can be a value between 0x1 and 0x3FF
+                                    tTransitionWindow (set according to peripheral clock to define an interval of between 12 and 20 us).
+                                    This parameter can be a value between Min_Data=0x1 and Max_Data=0x1F
                                     This value can be modified afterwards using unitary function @ref LL_UCPD_SetTransWin().*/
 
   uint32_t IfrGap;              /*!< Specifies the definition of the clock divider (minus 1) in order to generate tInterframeGap
-                                    from the IP clock.
-                                    This parameter can be a value between 0x1 and 0x3FF
+                                    from the peripheral clock.
+                                    This parameter can be a value between Min_Data=0x1 and Max_Data=0x1F
                                     This feature can be modified afterwards using unitary function @ref LL_UCPD_SetIfrGap().*/
 
-  uint32_t HbitClockDiv;        /*!< Specifies  the number of cycles (minus one) at the IP for a half bit clock e.g. program 3
-                                     for a bit clock that takes 8 cycles of the IP clock "UCPD1_CLK"..
-                                     This parameter can be a value between 0x0 and 0x1F.
+  uint32_t HbitClockDiv;        /*!< Specifies  the number of cycles (minus one) at UCPD peripheral for a half bit clock e.g. program 3
+                                     for a bit clock that takes 8 cycles of the peripheral clock "UCPD1_CLK"..
+                                     This parameter can be a value between Min_Data=0x0 and Max_Data=0x3F.
                                      This feature can be modified afterwards using unitary function @ref LL_UCPD_SetHbitClockDiv().*/
 
 } LL_UCPD_InitTypeDef;
@@ -370,7 +370,7 @@ __STATIC_INLINE uint32_t LL_UCPD_IsEnabled(UCPD_TypeDef const * const UCPDx)
   * @brief  Set the receiver ordered set detection enable
   * @rmtoll CFG1          RXORDSETEN          LL_UCPD_SetRxOrderSet
   * @param  UCPDx UCPD Instance
-  * @param  OrderSet This parameter can be combinaison of the following values:
+  * @param  OrderSet This parameter can be combination of the following values:
   *         @arg @ref LL_UCPD_ORDERSET_SOP
   *         @arg @ref LL_UCPD_ORDERSET_SOP1
   *         @arg @ref LL_UCPD_ORDERSET_SOP2
@@ -408,7 +408,7 @@ __STATIC_INLINE void LL_UCPD_SetPSCClk(UCPD_TypeDef *UCPDx, uint32_t Psc)
   * @brief  Set the number of cycles (minus 1) of the half bit clock
   * @rmtoll CFG1          TRANSWIN          LL_UCPD_SetTransWin
   * @param  UCPDx UCPD Instance
-  * @param  TransWin a value between 1 and 0x3FF
+  * @param  TransWin a value between Min_Data=0x1 and Max_Data=0x1F
   * @retval None
   */
 __STATIC_INLINE void LL_UCPD_SetTransWin(UCPD_TypeDef *UCPDx, uint32_t TransWin)
@@ -420,7 +420,7 @@ __STATIC_INLINE void LL_UCPD_SetTransWin(UCPD_TypeDef *UCPDx, uint32_t TransWin)
   * @brief  Set the clock divider value to generate an interframe gap
   * @rmtoll CFG1          IFRGAP          LL_UCPD_SetIfrGap
   * @param  UCPDx UCPD Instance
-  * @param  IfrGap a value between 1 and 0x3FF
+  * @param  IfrGap a value between Min_Data=0x1 and Max_Data=0x1F
   * @retval None
   */
 __STATIC_INLINE void LL_UCPD_SetIfrGap(UCPD_TypeDef *UCPDx, uint32_t IfrGap)
@@ -432,7 +432,7 @@ __STATIC_INLINE void LL_UCPD_SetIfrGap(UCPD_TypeDef *UCPDx, uint32_t IfrGap)
   * @brief  Set the clock divider value to generate an interframe gap
   * @rmtoll CFG1          HBITCLKDIV          LL_UCPD_SetHbitClockDiv
   * @param  UCPDx UCPD Instance
-  * @param  HbitClock a value between 0 and 31
+  * @param  HbitClock a value between Min_Data=0x0 and Max_Data=0x3F
   * @retval None
   */
 __STATIC_INLINE void LL_UCPD_SetHbitClockDiv(UCPD_TypeDef *UCPDx, uint32_t HbitClock)
