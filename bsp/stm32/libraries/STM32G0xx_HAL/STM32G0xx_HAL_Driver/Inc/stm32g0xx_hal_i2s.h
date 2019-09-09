@@ -83,7 +83,11 @@ typedef enum
 /**
   * @brief I2S handle Structure definition
   */
+#if (USE_HAL_I2S_REGISTER_CALLBACKS == 1)
 typedef struct __I2S_HandleTypeDef
+#else
+typedef struct
+#endif
 {
   SPI_TypeDef                *Instance;    /*!< I2S registers base address */
 
@@ -265,6 +269,8 @@ typedef  void (*pI2S_CallbackTypeDef)(I2S_HandleTypeDef *hi2s); /*!< pointer to 
 
 #define I2S_FLAG_CHSIDE                  SPI_SR_CHSIDE
 #define I2S_FLAG_BSY                     SPI_SR_BSY
+
+#define I2S_FLAG_MASK                   (SPI_SR_RXNE | SPI_SR_TXE | SPI_SR_UDR | SPI_SR_OVR | SPI_SR_FRE | SPI_SR_CHSIDE | SPI_SR_BSY)
 /**
   * @}
   */
@@ -459,29 +465,65 @@ uint32_t HAL_I2S_GetError(I2S_HandleTypeDef *hi2s);
 /** @defgroup I2S_Private_Macros I2S Private Macros
   * @{
   */
-#define IS_I2S_MODE(MODE) (((MODE) == I2S_MODE_SLAVE_TX)  || \
-                           ((MODE) == I2S_MODE_SLAVE_RX)  || \
-                           ((MODE) == I2S_MODE_MASTER_TX) || \
-                           ((MODE) == I2S_MODE_MASTER_RX))
 
-#define IS_I2S_STANDARD(STANDARD) (((STANDARD) == I2S_STANDARD_PHILIPS)   || \
-                                   ((STANDARD) == I2S_STANDARD_MSB)       || \
-                                   ((STANDARD) == I2S_STANDARD_LSB)       || \
-                                   ((STANDARD) == I2S_STANDARD_PCM_SHORT) || \
-                                   ((STANDARD) == I2S_STANDARD_PCM_LONG))
+/** @brief  Check whether the specified SPI flag is set or not.
+  * @param  __SR__  copy of I2S SR regsiter.
+  * @param  __FLAG__ specifies the flag to check.
+  *         This parameter can be one of the following values:
+  *            @arg I2S_FLAG_RXNE: Receive buffer not empty flag
+  *            @arg I2S_FLAG_TXE: Transmit buffer empty flag
+  *            @arg I2S_FLAG_UDR: Underrun error flag
+  *            @arg I2S_FLAG_OVR: Overrun flag
+  *            @arg I2S_FLAG_CHSIDE: Channel side flag
+  *            @arg I2S_FLAG_BSY: Busy flag
+  * @retval SET or RESET.
+  */
+#define I2S_CHECK_FLAG(__SR__, __FLAG__)         ((((__SR__) & ((__FLAG__) & I2S_FLAG_MASK)) == ((__FLAG__) & I2S_FLAG_MASK)) ? SET : RESET)
 
-#define IS_I2S_DATA_FORMAT(FORMAT) (((FORMAT) == I2S_DATAFORMAT_16B)          || \
-                                    ((FORMAT) == I2S_DATAFORMAT_16B_EXTENDED) || \
-                                    ((FORMAT) == I2S_DATAFORMAT_24B)          || \
-                                    ((FORMAT) == I2S_DATAFORMAT_32B))
+/** @brief  Check whether the specified SPI Interrupt is set or not.
+  * @param  __CR2__  copy of I2S CR2 regsiter.
+  * @param  __INTERRUPT__ specifies the SPI interrupt source to check.
+  *         This parameter can be one of the following values:
+  *            @arg I2S_IT_TXE: Tx buffer empty interrupt enable
+  *            @arg I2S_IT_RXNE: RX buffer not empty interrupt enable
+  *            @arg I2S_IT_ERR: Error interrupt enable
+  * @retval SET or RESET.
+  */
+#define I2S_CHECK_IT_SOURCE(__CR2__, __INTERRUPT__)      ((((__CR2__) & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
-#define IS_I2S_MCLK_OUTPUT(OUTPUT) (((OUTPUT) == I2S_MCLKOUTPUT_ENABLE) || \
-                                    ((OUTPUT) == I2S_MCLKOUTPUT_DISABLE))
+/** @brief  Checks if I2S Mode parameter is in allowed range.
+  * @param  __MODE__ specifies the I2S Mode.
+  *         This parameter can be a value of @ref I2S_Mode
+  * @retval None
+  */
+#define IS_I2S_MODE(__MODE__) (((__MODE__) == I2S_MODE_SLAVE_TX)  || \
+                               ((__MODE__) == I2S_MODE_SLAVE_RX)  || \
+                               ((__MODE__) == I2S_MODE_MASTER_TX) || \
+                               ((__MODE__) == I2S_MODE_MASTER_RX))
 
-#define IS_I2S_AUDIO_FREQ(FREQ) ((((FREQ) >= I2S_AUDIOFREQ_8K)    && \
-                                  ((FREQ) <= I2S_AUDIOFREQ_192K)) || \
-                                  ((FREQ) == I2S_AUDIOFREQ_DEFAULT))
+#define IS_I2S_STANDARD(__STANDARD__) (((__STANDARD__) == I2S_STANDARD_PHILIPS)   || \
+                                       ((__STANDARD__) == I2S_STANDARD_MSB)       || \
+                                       ((__STANDARD__) == I2S_STANDARD_LSB)       || \
+                                       ((__STANDARD__) == I2S_STANDARD_PCM_SHORT) || \
+                                       ((__STANDARD__) == I2S_STANDARD_PCM_LONG))
 
+#define IS_I2S_DATA_FORMAT(__FORMAT__) (((__FORMAT__) == I2S_DATAFORMAT_16B)          || \
+                                        ((__FORMAT__) == I2S_DATAFORMAT_16B_EXTENDED) || \
+                                        ((__FORMAT__) == I2S_DATAFORMAT_24B)          || \
+                                        ((__FORMAT__) == I2S_DATAFORMAT_32B))
+
+#define IS_I2S_MCLK_OUTPUT(__OUTPUT__) (((__OUTPUT__) == I2S_MCLKOUTPUT_ENABLE) || \
+                                        ((__OUTPUT__) == I2S_MCLKOUTPUT_DISABLE))
+
+#define IS_I2S_AUDIO_FREQ(__FREQ__) ((((__FREQ__) >= I2S_AUDIOFREQ_8K)    && \
+                                      ((__FREQ__) <= I2S_AUDIOFREQ_192K)) || \
+                                      ((__FREQ__) == I2S_AUDIOFREQ_DEFAULT))
+
+/** @brief  Checks if I2S Serial clock steady state parameter is in allowed range.
+  * @param  __CPOL__ specifies the I2S serial clock steady state.
+  *         This parameter can be a value of @ref I2S_Clock_Polarity
+  * @retval None
+  */
 #define IS_I2S_CPOL(CPOL) (((CPOL) == I2S_CPOL_LOW) || \
                            ((CPOL) == I2S_CPOL_HIGH))
 

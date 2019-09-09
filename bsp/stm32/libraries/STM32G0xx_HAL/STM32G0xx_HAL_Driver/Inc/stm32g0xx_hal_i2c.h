@@ -86,17 +86,17 @@ typedef struct
   *             01 : Abort (Abort user request on going)\n
   *             10 : Timeout\n
   *             11 : Error\n
-  *          b5     IP initilisation status\n
-  *             0  : Reset (IP not initialized)\n
-  *             1  : Init done (IP initialized and ready to use. HAL I2C Init function called)\n
+  *          b5     Peripheral initialization status\n
+  *             0  : Reset (peripheral not initialized)\n
+  *             1  : Init done (peripheral initialized and ready to use. HAL I2C Init function called)\n
   *          b4     (not used)\n
   *             x  : Should be set to 0\n
   *          b3\n
   *             0  : Ready or Busy (No Listen mode ongoing)\n
-  *             1  : Listen (IP in Address Listen Mode)\n
+  *             1  : Listen (peripheral in Address Listen Mode)\n
   *          b2     Intrinsic process state\n
   *             0  : Ready\n
-  *             1  : Busy (IP busy with some configuration or internal operations)\n
+  *             1  : Busy (peripheral busy with some configuration or internal operations)\n
   *          b1     Rx state\n
   *             0  : Ready (no Rx operation ongoing)\n
   *             1  : Busy (Rx operation ongoing)\n

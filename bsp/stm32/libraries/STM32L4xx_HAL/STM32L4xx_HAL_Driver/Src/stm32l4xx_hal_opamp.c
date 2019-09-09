@@ -195,29 +195,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -1045,8 +1029,8 @@ HAL_OPAMP_StateTypeDef HAL_OPAMP_GetState(OPAMP_HandleTypeDef *hopamp)
   * @param hopamp : OPAMP handle
   * @param CallbackID : ID of the callback to be registered
   *        This parameter can be one of the following values:
-  *          @arg @ref HAL_OPAMP_MSP_INIT_CB_ID       OPAMP MspInit callback ID
-  *          @arg @ref HAL_OPAMP_MSP_DEINIT_CB_ID     OPAMP MspDeInit callback ID
+  *          @arg @ref HAL_OPAMP_MSPINIT_CB_ID       OPAMP MspInit callback ID
+  *          @arg @ref HAL_OPAMP_MSPDEINIT_CB_ID     OPAMP MspDeInit callback ID
   * @param pCallback : pointer to the Callback function
   * @retval status
   */
@@ -1066,10 +1050,10 @@ HAL_StatusTypeDef HAL_OPAMP_RegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL_O
   {
     switch (CallbackID)
     {
-    case HAL_OPAMP_MSP_INIT_CB_ID :
+    case HAL_OPAMP_MSPINIT_CB_ID :
       hopamp->MspInitCallback = pCallback;
       break;
-    case HAL_OPAMP_MSP_DEINIT_CB_ID :
+    case HAL_OPAMP_MSPDEINIT_CB_ID :
       hopamp->MspDeInitCallback = pCallback;
       break;
     default :
@@ -1082,10 +1066,10 @@ HAL_StatusTypeDef HAL_OPAMP_RegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL_O
   {
     switch (CallbackID)
     {
-    case HAL_OPAMP_MSP_INIT_CB_ID :
+    case HAL_OPAMP_MSPINIT_CB_ID :
       hopamp->MspInitCallback = pCallback;
       break;
-    case HAL_OPAMP_MSP_DEINIT_CB_ID :
+    case HAL_OPAMP_MSPDEINIT_CB_ID :
       hopamp->MspDeInitCallback = pCallback;
       break;
     default :
@@ -1111,8 +1095,8 @@ HAL_StatusTypeDef HAL_OPAMP_RegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL_O
   * @param hopamp : OPAMP handle
   * @param CallbackID : ID of the callback to be unregistered
   *        This parameter can be one of the following values:
-  *          @arg @ref HAL_OPAMP_MSP_INIT_CB_ID              OPAMP MSP Init Callback ID
-  *          @arg @ref HAL_OPAMP_MSP_DEINIT_CB_ID            OPAMP MSP DeInit Callback ID
+  *          @arg @ref HAL_OPAMP_MSPINIT_CB_ID              OPAMP MSP Init Callback ID
+  *          @arg @ref HAL_OPAMP_MSPDEINIT_CB_ID            OPAMP MSP DeInit Callback ID
   *          @arg @ref HAL_OPAMP_ALL_CB_ID                   OPAMP All Callbacks
   * @retval status
   */
@@ -1128,10 +1112,10 @@ HAL_StatusTypeDef HAL_OPAMP_UnRegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL
   {
     switch (CallbackID)
     {
-      case HAL_OPAMP_MSP_INIT_CB_ID :
+      case HAL_OPAMP_MSPINIT_CB_ID :
       hopamp->MspInitCallback = HAL_OPAMP_MspInit;
       break;
-    case HAL_OPAMP_MSP_DEINIT_CB_ID :
+    case HAL_OPAMP_MSPDEINIT_CB_ID :
       hopamp->MspDeInitCallback = HAL_OPAMP_MspDeInit;
       break;
     case HAL_OPAMP_ALL_CB_ID :
@@ -1148,10 +1132,10 @@ HAL_StatusTypeDef HAL_OPAMP_UnRegisterCallback (OPAMP_HandleTypeDef *hopamp, HAL
   {
     switch (CallbackID)
     {
-    case HAL_OPAMP_MSP_INIT_CB_ID :
+    case HAL_OPAMP_MSPINIT_CB_ID :
       hopamp->MspInitCallback = HAL_OPAMP_MspInit;
       break;
-    case HAL_OPAMP_MSP_DEINIT_CB_ID :
+    case HAL_OPAMP_MSPDEINIT_CB_ID :
       hopamp->MspDeInitCallback = HAL_OPAMP_MspDeInit;
       break;
     default :

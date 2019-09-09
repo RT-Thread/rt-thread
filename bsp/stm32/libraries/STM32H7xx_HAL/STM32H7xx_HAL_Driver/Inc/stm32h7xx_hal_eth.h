@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -54,11 +38,11 @@
 
 /* Exported types ------------------------------------------------------------*/
 #ifndef ETH_TX_DESC_CNT
- #define ETH_TX_DESC_CNT         4 
+ #define ETH_TX_DESC_CNT         4U
 #endif
 	 
 #ifndef ETH_RX_DESC_CNT
- #define ETH_RX_DESC_CNT         4 
+ #define ETH_RX_DESC_CNT         4U
 #endif
 
 /*********************** Descriptors struct def section ************************/
@@ -69,18 +53,14 @@
 /** 
   * @brief  ETH DMA Descriptor structure definition
   */
-#if defined ( __GNUC__ )
-typedef struct __attribute__((packed))
-#else 
-typedef __packed struct
-#endif
+typedef struct
 {
-  uint32_t DESC0;
-  uint32_t DESC1;
-  uint32_t DESC2;
-  uint32_t DESC3;
-  uint32_t BackupAddr0; /* used to store rx buffer 1 address */
-  uint32_t BackupAddr1; /* used to store rx buffer 2 address */
+  __IO uint32_t DESC0;
+  __IO uint32_t DESC1;
+  __IO uint32_t DESC2;
+  __IO uint32_t DESC3;
+  __IO uint32_t BackupAddr0; /* used to store rx buffer 1 address */
+  __IO uint32_t BackupAddr1; /* used to store rx buffer 2 address */
 }ETH_DMADescTypeDef;
 /** 
   * 
@@ -375,8 +355,8 @@ typedef struct
   */ 
 typedef enum
 {
-  HAL_ETH_MII_MODE             = 0x00,   /*!<  Media Independent Interface               */
-  HAL_ETH_RMII_MODE            = 0x01    /*!<   Reduced Media Independent Interface       */
+  HAL_ETH_MII_MODE             = 0x00U,   /*!<  Media Independent Interface               */
+  HAL_ETH_RMII_MODE            = 0x01U    /*!<   Reduced Media Independent Interface       */
 }ETH_MediaInterfaceTypeDef;
 /** 
   * 
@@ -406,15 +386,7 @@ typedef struct
 /** 
   * @brief  HAL State structures definition  
   */ 
-typedef enum
-{
-  HAL_ETH_STATE_RESET             = 0x00,    /*!< Peripheral not yet Initialized or disabled         */
-  HAL_ETH_STATE_READY             = 0x10,    /*!< Peripheral Communication started                   */
-  HAL_ETH_STATE_BUSY              = 0x23,    /*!< an internal process is ongoing                     */
-  HAL_ETH_STATE_BUSY_TX           = 0x21,    /*!< Transmission process is ongoing                    */
-  HAL_ETH_STATE_BUSY_RX           = 0x22,    /*!< Reception process is ongoing                       */
-  HAL_ETH_STATE_ERROR             = 0xE0     /*!< Error State                                        */
-}HAL_ETH_StateTypeDef;
+typedef uint32_t HAL_ETH_StateTypeDef;
 /** 
   * 
   */
@@ -422,7 +394,11 @@ typedef enum
 /** 
   * @brief  ETH Handle Structure definition  
   */
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+typedef struct __ETH_HandleTypeDef
+#else
 typedef struct
+#endif
 {
   ETH_TypeDef                *Instance;                 /*!< Register base address       */
   
@@ -457,11 +433,53 @@ typedef struct
     
   __IO uint32_t              MACLPIEvent;               /*!< Holds the LPI event when the an LPI status interrupt occurs.
                                                              This parameter can be a value of @ref ETHEx_LPI_Event */
+                                                             
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+
+  void    (* TxCpltCallback)     ( struct __ETH_HandleTypeDef * heth);   /*!< ETH Tx Complete Callback */
+  void    (* RxCpltCallback)     ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Rx  Complete Callback     */
+  void    (* DMAErrorCallback)   ( struct __ETH_HandleTypeDef * heth);  /*!< ETH DMA Error Callback   */
+  void    (* MACErrorCallback)   ( struct __ETH_HandleTypeDef * heth);  /*!< ETH MAC Error Callback     */
+  void    (* PMTCallback)        ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Power Management Callback            */
+  void    (* EEECallback)        ( struct __ETH_HandleTypeDef * heth);  /*!< ETH EEE Callback   */
+  void    (* WakeUpCallback)     ( struct __ETH_HandleTypeDef * heth);  /*!< ETH Wake UP Callback   */
+
+  void    (* MspInitCallback)    ( struct __ETH_HandleTypeDef * heth);    /*!< ETH Msp Init callback              */
+  void    (* MspDeInitCallback)  ( struct __ETH_HandleTypeDef * heth);    /*!< ETH Msp DeInit callback            */
+
+#endif  /* USE_HAL_ETH_REGISTER_CALLBACKS */                                                             
 
 } ETH_HandleTypeDef;
 /** 
   * 
   */
+  
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL ETH Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_ETH_MSPINIT_CB_ID            = 0x00U,    /*!< ETH MspInit callback ID           */
+  HAL_ETH_MSPDEINIT_CB_ID          = 0x01U,    /*!< ETH MspDeInit callback ID         */
+	
+  HAL_ETH_TX_COMPLETE_CB_ID        = 0x02U,    /*!< ETH Tx Complete Callback ID       */
+  HAL_ETH_RX_COMPLETE_CB_ID        = 0x03U,    /*!< ETH Rx Complete Callback ID       */
+  HAL_ETH_DMA_ERROR_CB_ID          = 0x04U,    /*!< ETH DMA Error Callback ID         */
+  HAL_ETH_MAC_ERROR_CB_ID          = 0x05U,    /*!< ETH MAC Error Callback ID         */
+  HAL_ETH_PMT_CB_ID                = 0x06U,     /*!< ETH Power Management Callback ID  */
+  HAL_ETH_EEE_CB_ID                = 0x07U,     /*!< ETH EEE Callback ID               */
+  HAL_ETH_WAKEUP_CB_ID             = 0x08U     /*!< ETH Wake UP Callback ID           */
+
+
+}HAL_ETH_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL ETH Callback pointer definition
+  */
+typedef  void (*pETH_CallbackTypeDef)(ETH_HandleTypeDef * heth); /*!< pointer to an ETH callback function */
+
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 
 /** 
   * @brief  ETH MAC filter structure definition
@@ -540,54 +558,54 @@ typedef struct{
 /** 
   * @brief  Bit definition of TDES0 RF register
   */ 
-#define ETH_DMATXNDESCRF_B1AP  ((uint32_t)0xFFFFFFFF)  /*!< Transmit Packet Timestamp Low */
+#define ETH_DMATXNDESCRF_B1AP  ((uint32_t)0xFFFFFFFFU)  /*!< Transmit Packet Timestamp Low */
 
 /** 
   * @brief  Bit definition of TDES1 RF register
   */ 
-#define ETH_DMATXNDESCRF_B2AP  ((uint32_t)0xFFFFFFFF)  /*!< Transmit Packet Timestamp High */
+#define ETH_DMATXNDESCRF_B2AP  ((uint32_t)0xFFFFFFFFU)  /*!< Transmit Packet Timestamp High */
 
 /** 
   * @brief  Bit definition of TDES2 RF register
   */ 
-#define ETH_DMATXNDESCRF_IOC          ((uint32_t)0x80000000)  /*!< Interrupt on Completion */
-#define ETH_DMATXNDESCRF_TTSE         ((uint32_t)0x40000000)  /*!< Transmit Timestamp Enable */
-#define ETH_DMATXNDESCRF_B2L          ((uint32_t)0x3FFF0000)  /*!< Buffer 2 Length */
-#define ETH_DMATXNDESCRF_VTIR         ((uint32_t)0x0000C000)  /*!< VLAN Tag Insertion or Replacement mask */
-#define ETH_DMATXNDESCRF_VTIR_DISABLE ((uint32_t)0x00000000)  /*!< Do not add a VLAN tag. */
-#define ETH_DMATXNDESCRF_VTIR_REMOVE  ((uint32_t)0x00004000)  /*!< Remove the VLAN tag from the packets before transmission. */
-#define ETH_DMATXNDESCRF_VTIR_INSERT  ((uint32_t)0x00008000)  /*!< Insert a VLAN tag. */
-#define ETH_DMATXNDESCRF_VTIR_REPLACE ((uint32_t)0x0000C000)  /*!< Replace the VLAN tag. */
-#define ETH_DMATXNDESCRF_B1L          ((uint32_t)0x00003FFF)  /*!< Buffer 1 Length */
-#define ETH_DMATXNDESCRF_HL           ((uint32_t)0x000003FF)  /*!< Header Length */
+#define ETH_DMATXNDESCRF_IOC          ((uint32_t)0x80000000U)  /*!< Interrupt on Completion */
+#define ETH_DMATXNDESCRF_TTSE         ((uint32_t)0x40000000U)  /*!< Transmit Timestamp Enable */
+#define ETH_DMATXNDESCRF_B2L          ((uint32_t)0x3FFF0000U)  /*!< Buffer 2 Length */
+#define ETH_DMATXNDESCRF_VTIR         ((uint32_t)0x0000C000U)  /*!< VLAN Tag Insertion or Replacement mask */
+#define ETH_DMATXNDESCRF_VTIR_DISABLE ((uint32_t)0x00000000U)  /*!< Do not add a VLAN tag. */
+#define ETH_DMATXNDESCRF_VTIR_REMOVE  ((uint32_t)0x00004000U)  /*!< Remove the VLAN tag from the packets before transmission. */
+#define ETH_DMATXNDESCRF_VTIR_INSERT  ((uint32_t)0x00008000U)  /*!< Insert a VLAN tag. */
+#define ETH_DMATXNDESCRF_VTIR_REPLACE ((uint32_t)0x0000C000U)  /*!< Replace the VLAN tag. */
+#define ETH_DMATXNDESCRF_B1L          ((uint32_t)0x00003FFFU)  /*!< Buffer 1 Length */
+#define ETH_DMATXNDESCRF_HL           ((uint32_t)0x000003FFU)  /*!< Header Length */
 
 /** 
   * @brief  Bit definition of TDES3 RF register
   */ 
-#define ETH_DMATXNDESCRF_OWN                                 ((uint32_t)0x80000000)  /*!< OWN bit: descriptor is owned by DMA engine */
-#define ETH_DMATXNDESCRF_CTXT                                ((uint32_t)0x40000000)  /*!< Context Type */
-#define ETH_DMATXNDESCRF_FD                                  ((uint32_t)0x20000000)  /*!< First Descriptor */
-#define ETH_DMATXNDESCRF_LD                                  ((uint32_t)0x10000000)  /*!< Last Descriptor */
-#define ETH_DMATXNDESCRF_CPC                                 ((uint32_t)0x0C000000)  /*!< CRC Pad Control mask */
-#define ETH_DMATXNDESCRF_CPC_CRCPAD_INSERT                   ((uint32_t)0x00000000)  /*!< CRC Pad Control: CRC and Pad Insertion */
-#define ETH_DMATXNDESCRF_CPC_CRC_INSERT                      ((uint32_t)0x04000000)  /*!< CRC Pad Control: CRC Insertion (Disable Pad Insertion) */
-#define ETH_DMATXNDESCRF_CPC_DISABLE                         ((uint32_t)0x08000000)  /*!< CRC Pad Control: Disable CRC Insertion */
-#define ETH_DMATXNDESCRF_CPC_CRC_REPLACE                     ((uint32_t)0x0C000000)  /*!< CRC Pad Control: CRC Replacement */
-#define ETH_DMATXNDESCRF_SAIC                                ((uint32_t)0x03800000)  /*!< SA Insertion Control mask*/
-#define ETH_DMATXNDESCRF_SAIC_DISABLE                        ((uint32_t)0x00000000)  /*!< SA Insertion Control: Do not include the source address */
-#define ETH_DMATXNDESCRF_SAIC_INSERT                         ((uint32_t)0x00800000)  /*!< SA Insertion Control: Include or insert the source address */
-#define ETH_DMATXNDESCRF_SAIC_REPLACE                        ((uint32_t)0x01000000)  /*!< SA Insertion Control: Replace the source address */
-#define ETH_DMATXNDESCRF_THL                                 ((uint32_t)0x00780000)  /*!< TCP Header Length */
-#define ETH_DMATXNDESCRF_TSE                                 ((uint32_t)0x00040000)  /*!< TCP segmentation enable */
-#define ETH_DMATXNDESCRF_CIC                                 ((uint32_t)0x00030000)  /*!< Checksum Insertion Control: 4 cases */ 
-#define ETH_DMATXNDESCRF_CIC_DISABLE                         ((uint32_t)0x00000000)  /*!< Do Nothing: Checksum Engine is disabled */ 
-#define ETH_DMATXNDESCRF_CIC_IPHDR_INSERT                    ((uint32_t)0x00010000)  /*!< Only IP header checksum calculation and insertion are enabled. */ 
-#define ETH_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT            ((uint32_t)0x00020000)  /*!< IP header checksum and payload checksum calculation and insertion are
+#define ETH_DMATXNDESCRF_OWN                                 ((uint32_t)0x80000000U)  /*!< OWN bit: descriptor is owned by DMA engine */
+#define ETH_DMATXNDESCRF_CTXT                                ((uint32_t)0x40000000U)  /*!< Context Type */
+#define ETH_DMATXNDESCRF_FD                                  ((uint32_t)0x20000000U)  /*!< First Descriptor */
+#define ETH_DMATXNDESCRF_LD                                  ((uint32_t)0x10000000U)  /*!< Last Descriptor */
+#define ETH_DMATXNDESCRF_CPC                                 ((uint32_t)0x0C000000U)  /*!< CRC Pad Control mask */
+#define ETH_DMATXNDESCRF_CPC_CRCPAD_INSERT                   ((uint32_t)0x00000000U)  /*!< CRC Pad Control: CRC and Pad Insertion */
+#define ETH_DMATXNDESCRF_CPC_CRC_INSERT                      ((uint32_t)0x04000000U)  /*!< CRC Pad Control: CRC Insertion (Disable Pad Insertion) */
+#define ETH_DMATXNDESCRF_CPC_DISABLE                         ((uint32_t)0x08000000U)  /*!< CRC Pad Control: Disable CRC Insertion */
+#define ETH_DMATXNDESCRF_CPC_CRC_REPLACE                     ((uint32_t)0x0C000000U)  /*!< CRC Pad Control: CRC Replacement */
+#define ETH_DMATXNDESCRF_SAIC                                ((uint32_t)0x03800000U)  /*!< SA Insertion Control mask*/
+#define ETH_DMATXNDESCRF_SAIC_DISABLE                        ((uint32_t)0x00000000U)  /*!< SA Insertion Control: Do not include the source address */
+#define ETH_DMATXNDESCRF_SAIC_INSERT                         ((uint32_t)0x00800000U)  /*!< SA Insertion Control: Include or insert the source address */
+#define ETH_DMATXNDESCRF_SAIC_REPLACE                        ((uint32_t)0x01000000U)  /*!< SA Insertion Control: Replace the source address */
+#define ETH_DMATXNDESCRF_THL                                 ((uint32_t)0x00780000U)  /*!< TCP Header Length */
+#define ETH_DMATXNDESCRF_TSE                                 ((uint32_t)0x00040000U)  /*!< TCP segmentation enable */
+#define ETH_DMATXNDESCRF_CIC                                 ((uint32_t)0x00030000U)  /*!< Checksum Insertion Control: 4 cases */ 
+#define ETH_DMATXNDESCRF_CIC_DISABLE                         ((uint32_t)0x00000000U)  /*!< Do Nothing: Checksum Engine is disabled */ 
+#define ETH_DMATXNDESCRF_CIC_IPHDR_INSERT                    ((uint32_t)0x00010000U)  /*!< Only IP header checksum calculation and insertion are enabled. */ 
+#define ETH_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT            ((uint32_t)0x00020000U)  /*!< IP header checksum and payload checksum calculation and insertion are
                                                                                           enabled, but pseudo header checksum is not calculated in hardware */ 
-#define ETH_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT_PHDR_CALC  ((uint32_t)0x00030000)  /*!< IP Header checksum and payload checksum calculation and insertion are
+#define ETH_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT_PHDR_CALC  ((uint32_t)0x00030000U)  /*!< IP Header checksum and payload checksum calculation and insertion are
                                                                                           enabled, and pseudo header checksum is calculated in hardware. */ 
-#define ETH_DMATXNDESCRF_TPL                                 ((uint32_t)0x0003FFFF)  /*!< TCP Payload Length */
-#define ETH_DMATXNDESCRF_FL                                  ((uint32_t)0x00007FFF)  /*!< Transmit End of Ring */
+#define ETH_DMATXNDESCRF_TPL                                 ((uint32_t)0x0003FFFFU)  /*!< TCP Payload Length */
+#define ETH_DMATXNDESCRF_FL                                  ((uint32_t)0x00007FFFU)  /*!< Transmit End of Ring */
 
 /*
    DMA Tx Normal Descriptor Write Back Format
@@ -605,36 +623,36 @@ typedef struct{
 /** 
   * @brief  Bit definition of TDES0 WBF register
   */ 
-#define ETH_DMATXNDESCWBF_TTSL  ((uint32_t)0xFFFFFFFF)  /*!< Buffer1 Address Pointer or TSO Header Address Pointer */
+#define ETH_DMATXNDESCWBF_TTSL  ((uint32_t)0xFFFFFFFFU)  /*!< Buffer1 Address Pointer or TSO Header Address Pointer */
 
 /** 
   * @brief  Bit definition of TDES1 WBF register
   */ 
-#define ETH_DMATXNDESCWBF_TTSH  ((uint32_t)0xFFFFFFFF)  /*!< Buffer2 Address Pointer */
+#define ETH_DMATXNDESCWBF_TTSH  ((uint32_t)0xFFFFFFFFU)  /*!< Buffer2 Address Pointer */
 
 /** 
   * @brief  Bit definition of TDES3 WBF register
   */ 
-#define ETH_DMATXNDESCWBF_OWN                     ((uint32_t)0x80000000)  /*!< OWN bit: descriptor is owned by DMA engine */
-#define ETH_DMATXNDESCWBF_CTXT                    ((uint32_t)0x40000000)  /*!< Context Type */
-#define ETH_DMATXNDESCWBF_FD                      ((uint32_t)0x20000000)  /*!< First Descriptor */
-#define ETH_DMATXNDESCWBF_LD                      ((uint32_t)0x10000000)  /*!< Last Descriptor */
-#define ETH_DMATXNDESCWBF_TTSS                    ((uint32_t)0x00020000)  /*!< Tx Timestamp Status */
-#define ETH_DMATXNDESCWBF_DP                      ((uint32_t)0x04000000)  /*!< Disable Padding */
-#define ETH_DMATXNDESCWBF_TTSE                    ((uint32_t)0x02000000)  /*!< Transmit Timestamp Enable */
-#define ETH_DMATXNDESCWBF_ES                      ((uint32_t)0x00008000)  /*!< Error summary: OR of the following bits: IHE || UF || ED || EC || LCO || PCE || NC || LCA || FF || JT */
-#define ETH_DMATXNDESCWBF_JT                      ((uint32_t)0x00004000)  /*!< Jabber Timeout */
-#define ETH_DMATXNDESCWBF_FF                      ((uint32_t)0x00002000)  /*!< Packet Flushed: DMA/MTL flushed the packet due to SW flush */
-#define ETH_DMATXNDESCWBF_PCE                     ((uint32_t)0x00001000)  /*!< Payload Checksum Error */
-#define ETH_DMATXNDESCWBF_LCA                     ((uint32_t)0x00000800)  /*!< Loss of Carrier: carrier lost during transmission */
-#define ETH_DMATXNDESCWBF_NC                      ((uint32_t)0x00000400)  /*!< No Carrier: no carrier signal from the transceiver */
-#define ETH_DMATXNDESCWBF_LCO                     ((uint32_t)0x00000200)  /*!< Late Collision: transmission aborted due to collision */
-#define ETH_DMATXNDESCWBF_EC                      ((uint32_t)0x00000100)  /*!< Excessive Collision: transmission aborted after 16 collisions */
-#define ETH_DMATXNDESCWBF_CC                      ((uint32_t)0x000000F0)  /*!< Collision Count */
-#define ETH_DMATXNDESCWBF_ED                      ((uint32_t)0x00000008)  /*!< Excessive Deferral */
-#define ETH_DMATXNDESCWBF_UF                      ((uint32_t)0x00000004)  /*!< Underflow Error: late data arrival from the memory */
-#define ETH_DMATXNDESCWBF_DB                      ((uint32_t)0x00000002)  /*!< Deferred Bit */
-#define ETH_DMATXNDESCWBF_IHE                     ((uint32_t)0x00000004)  /*!< IP Header Error */
+#define ETH_DMATXNDESCWBF_OWN                     ((uint32_t)0x80000000U)  /*!< OWN bit: descriptor is owned by DMA engine */
+#define ETH_DMATXNDESCWBF_CTXT                    ((uint32_t)0x40000000U)  /*!< Context Type */
+#define ETH_DMATXNDESCWBF_FD                      ((uint32_t)0x20000000U)  /*!< First Descriptor */
+#define ETH_DMATXNDESCWBF_LD                      ((uint32_t)0x10000000U)  /*!< Last Descriptor */
+#define ETH_DMATXNDESCWBF_TTSS                    ((uint32_t)0x00020000U)  /*!< Tx Timestamp Status */
+#define ETH_DMATXNDESCWBF_DP                      ((uint32_t)0x04000000U)  /*!< Disable Padding */
+#define ETH_DMATXNDESCWBF_TTSE                    ((uint32_t)0x02000000U)  /*!< Transmit Timestamp Enable */
+#define ETH_DMATXNDESCWBF_ES                      ((uint32_t)0x00008000U)  /*!< Error summary: OR of the following bits: IHE || UF || ED || EC || LCO || PCE || NC || LCA || FF || JT */
+#define ETH_DMATXNDESCWBF_JT                      ((uint32_t)0x00004000U)  /*!< Jabber Timeout */
+#define ETH_DMATXNDESCWBF_FF                      ((uint32_t)0x00002000U)  /*!< Packet Flushed: DMA/MTL flushed the packet due to SW flush */
+#define ETH_DMATXNDESCWBF_PCE                     ((uint32_t)0x00001000U)  /*!< Payload Checksum Error */
+#define ETH_DMATXNDESCWBF_LCA                     ((uint32_t)0x00000800U)  /*!< Loss of Carrier: carrier lost during transmission */
+#define ETH_DMATXNDESCWBF_NC                      ((uint32_t)0x00000400U)  /*!< No Carrier: no carrier signal from the transceiver */
+#define ETH_DMATXNDESCWBF_LCO                     ((uint32_t)0x00000200U)  /*!< Late Collision: transmission aborted due to collision */
+#define ETH_DMATXNDESCWBF_EC                      ((uint32_t)0x00000100U)  /*!< Excessive Collision: transmission aborted after 16 collisions */
+#define ETH_DMATXNDESCWBF_CC                      ((uint32_t)0x000000F0U)  /*!< Collision Count */
+#define ETH_DMATXNDESCWBF_ED                      ((uint32_t)0x00000008U)  /*!< Excessive Deferral */
+#define ETH_DMATXNDESCWBF_UF                      ((uint32_t)0x00000004U)  /*!< Underflow Error: late data arrival from the memory */
+#define ETH_DMATXNDESCWBF_DB                      ((uint32_t)0x00000002U)  /*!< Deferred Bit */
+#define ETH_DMATXNDESCWBF_IHE                     ((uint32_t)0x00000004U)  /*!< IP Header Error */
 
 
 /*
@@ -653,35 +671,35 @@ typedef struct{
 /** 
   * @brief  Bit definition of Tx context descriptor register 0
   */ 
-#define ETH_DMATXCDESC_TTSL  ((uint32_t)0xFFFFFFFF)  /*!< Transmit Packet Timestamp Low */
+#define ETH_DMATXCDESC_TTSL  ((uint32_t)0xFFFFFFFFU)  /*!< Transmit Packet Timestamp Low */
 
 /** 
   * @brief  Bit definition of Tx context descriptor register 1
   */ 
-#define ETH_DMATXCDESC_TTSH  ((uint32_t)0xFFFFFFFF)  /*!< Transmit Packet Timestamp High */
+#define ETH_DMATXCDESC_TTSH  ((uint32_t)0xFFFFFFFFU)  /*!< Transmit Packet Timestamp High */
 
 /** 
   * @brief  Bit definition of Tx context descriptor register 2
   */ 
-#define ETH_DMATXCDESC_IVT   ((uint32_t)0xFFFF0000)  /*!< Inner VLAN Tag */
-#define ETH_DMATXCDESC_MSS   ((uint32_t)0x00003FFF)  /*!< Maximum Segment Size */
+#define ETH_DMATXCDESC_IVT   ((uint32_t)0xFFFF0000U)  /*!< Inner VLAN Tag */
+#define ETH_DMATXCDESC_MSS   ((uint32_t)0x00003FFFU)  /*!< Maximum Segment Size */
 
 /** 
   * @brief  Bit definition of Tx context descriptor register 3
   */
-#define ETH_DMATXCDESC_OWN                     ((uint32_t)0x80000000)     /*!< OWN bit: descriptor is owned by DMA engine */
-#define ETH_DMATXCDESC_CTXT                    ((uint32_t)0x40000000)     /*!< Context Type */
-#define ETH_DMATXCDESC_OSTC                    ((uint32_t)0x08000000)     /*!< One-Step Timestamp Correction Enable */
-#define ETH_DMATXCDESC_TCMSSV                  ((uint32_t)0x04000000)     /*!< One-Step Timestamp Correction Input or MSS Valid */
-#define ETH_DMATXCDESC_CDE                     ((uint32_t)0x00800000)     /*!< Context Descriptor Error */
-#define ETH_DMATXCDESC_IVTIR                   ((uint32_t)0x000C0000)     /*!< Inner VLAN Tag Insert or Replace Mask */
-#define ETH_DMATXCDESC_IVTIR_DISABLE           ((uint32_t)0x00000000)     /*!< Do not add the inner VLAN tag. */
-#define ETH_DMATXCDESC_IVTIR_REMOVE            ((uint32_t)0x00040000)     /*!< Remove the inner VLAN tag from the packets before transmission. */
-#define ETH_DMATXCDESC_IVTIR_INSERT            ((uint32_t)0x00080000)     /*!< Insert the inner VLAN tag. */
-#define ETH_DMATXCDESC_IVTIR_REPLACE           ((uint32_t)0x000C0000)     /*!< Replace the inner VLAN tag. */
-#define ETH_DMATXCDESC_IVLTV                   ((uint32_t)0x00020000)     /*!< Inner VLAN Tag Valid */
-#define ETH_DMATXCDESC_VLTV                    ((uint32_t)0x00010000)     /*!< VLAN Tag Valid */
-#define ETH_DMATXCDESC_VT                      ((uint32_t)0x0000FFFF)     /*!< VLAN Tag */
+#define ETH_DMATXCDESC_OWN                     ((uint32_t)0x80000000U)     /*!< OWN bit: descriptor is owned by DMA engine */
+#define ETH_DMATXCDESC_CTXT                    ((uint32_t)0x40000000U)     /*!< Context Type */
+#define ETH_DMATXCDESC_OSTC                    ((uint32_t)0x08000000U)     /*!< One-Step Timestamp Correction Enable */
+#define ETH_DMATXCDESC_TCMSSV                  ((uint32_t)0x04000000U)     /*!< One-Step Timestamp Correction Input or MSS Valid */
+#define ETH_DMATXCDESC_CDE                     ((uint32_t)0x00800000U)     /*!< Context Descriptor Error */
+#define ETH_DMATXCDESC_IVTIR                   ((uint32_t)0x000C0000U)     /*!< Inner VLAN Tag Insert or Replace Mask */
+#define ETH_DMATXCDESC_IVTIR_DISABLE           ((uint32_t)0x00000000U)     /*!< Do not add the inner VLAN tag. */
+#define ETH_DMATXCDESC_IVTIR_REMOVE            ((uint32_t)0x00040000U)     /*!< Remove the inner VLAN tag from the packets before transmission. */
+#define ETH_DMATXCDESC_IVTIR_INSERT            ((uint32_t)0x00080000U)     /*!< Insert the inner VLAN tag. */
+#define ETH_DMATXCDESC_IVTIR_REPLACE           ((uint32_t)0x000C0000U)     /*!< Replace the inner VLAN tag. */
+#define ETH_DMATXCDESC_IVLTV                   ((uint32_t)0x00020000U)     /*!< Inner VLAN Tag Valid */
+#define ETH_DMATXCDESC_VLTV                    ((uint32_t)0x00010000U)     /*!< VLAN Tag Valid */
+#define ETH_DMATXCDESC_VT                      ((uint32_t)0x0000FFFFU)     /*!< VLAN Tag */
 
 /**
   * @}
@@ -708,20 +726,20 @@ typedef struct{
 /** 
   * @brief  Bit definition of Rx normal descriptor register 0 read format
   */
-#define ETH_DMARXNDESCRF_BUF1AP        ((uint32_t)0xFFFFFFFF)  /*!< Header or Buffer 1 Address Pointer  */
+#define ETH_DMARXNDESCRF_BUF1AP        ((uint32_t)0xFFFFFFFFU)  /*!< Header or Buffer 1 Address Pointer  */
 
 /** 
   * @brief  Bit definition of Rx normal descriptor register 2 read format
   */
-#define ETH_DMARXNDESCRF_BUF2AP        ((uint32_t)0xFFFFFFFF)  /*!< Buffer 2 Address Pointer  */
+#define ETH_DMARXNDESCRF_BUF2AP        ((uint32_t)0xFFFFFFFFU)  /*!< Buffer 2 Address Pointer  */
 
 /** 
   * @brief  Bit definition of Rx normal descriptor register 3 read format
   */
-#define ETH_DMARXNDESCRF_OWN         ((uint32_t)0x80000000)  /*!< OWN bit: descriptor is owned by DMA engine  */
-#define ETH_DMARXNDESCRF_IOC         ((uint32_t)0x40000000)  /*!< Interrupt Enabled on Completion  */
-#define ETH_DMARXNDESCRF_BUF2V       ((uint32_t)0x02000000)  /*!< Buffer 2 Address Valid */
-#define ETH_DMARXNDESCRF_BUF1V       ((uint32_t)0x01000000)  /*!< Buffer 1 Address Valid */
+#define ETH_DMARXNDESCRF_OWN         ((uint32_t)0x80000000U)  /*!< OWN bit: descriptor is owned by DMA engine  */
+#define ETH_DMARXNDESCRF_IOC         ((uint32_t)0x40000000U)  /*!< Interrupt Enabled on Completion  */
+#define ETH_DMARXNDESCRF_BUF2V       ((uint32_t)0x02000000U)  /*!< Buffer 2 Address Valid */
+#define ETH_DMARXNDESCRF_BUF1V       ((uint32_t)0x01000000U)  /*!< Buffer 1 Address Valid */
 
 /*
   DMA Rx Normal Descriptor write back format
@@ -739,80 +757,80 @@ typedef struct{
 /** 
   * @brief  Bit definition of Rx normal descriptor register 0 write back format
   */
-#define ETH_DMARXNDESCWBF_IVT        ((uint32_t)0xFFFF0000)  /*!< Inner VLAN Tag  */
-#define ETH_DMARXNDESCWBF_OVT        ((uint32_t)0x0000FFFF)  /*!< Outer VLAN Tag  */
+#define ETH_DMARXNDESCWBF_IVT        ((uint32_t)0xFFFF0000U)  /*!< Inner VLAN Tag  */
+#define ETH_DMARXNDESCWBF_OVT        ((uint32_t)0x0000FFFFU)  /*!< Outer VLAN Tag  */
 
 /** 
   * @brief  Bit definition of Rx normal descriptor register 1 write back format
   */
-#define ETH_DMARXNDESCWBF_OPC             ((uint32_t)0xFFFF0000)  /*!< OAM Sub-Type Code, or MAC Control Packet opcode  */
-#define ETH_DMARXNDESCWBF_TD              ((uint32_t)0x00008000)  /*!< Timestamp Dropped  */
-#define ETH_DMARXNDESCWBF_TSA             ((uint32_t)0x00004000)  /*!< Timestamp Available  */
-#define ETH_DMARXNDESCWBF_PV              ((uint32_t)0x00002000)  /*!< PTP Version  */
-#define ETH_DMARXNDESCWBF_PFT             ((uint32_t)0x00001000)  /*!< PTP Packet Type  */
-#define ETH_DMARXNDESCWBF_PMT_NO          ((uint32_t)0x00000000)  /*!< PTP Message Type: No PTP message received  */
-#define ETH_DMARXNDESCWBF_PMT_SYNC        ((uint32_t)0x00000100)  /*!< PTP Message Type: SYNC (all clock types)  */
-#define ETH_DMARXNDESCWBF_PMT_FUP         ((uint32_t)0x00000200)  /*!< PTP Message Type: Follow_Up (all clock types)  */
-#define ETH_DMARXNDESCWBF_PMT_DREQ        ((uint32_t)0x00000300)  /*!< PTP Message Type: Delay_Req (all clock types)  */
-#define ETH_DMARXNDESCWBF_PMT_DRESP       ((uint32_t)0x00000400)  /*!< PTP Message Type: Delay_Resp (all clock types)  */
-#define ETH_DMARXNDESCWBF_PMT_PDREQ       ((uint32_t)0x00000500)  /*!< PTP Message Type: Pdelay_Req (in peer-to-peer transparent clock)  */
-#define ETH_DMARXNDESCWBF_PMT_PDRESP      ((uint32_t)0x00000600)  /*!< PTP Message Type: Pdelay_Resp (in peer-to-peer transparent clock)  */
-#define ETH_DMARXNDESCWBF_PMT_PDRESPFUP   ((uint32_t)0x00000700)  /*!< PTP Message Type: Pdelay_Resp_Follow_Up (in peer-to-peer transparent clock)  */
-#define ETH_DMARXNDESCWBF_PMT_ANNOUNCE    ((uint32_t)0x00000800)  /*!< PTP Message Type: Announce  */
-#define ETH_DMARXNDESCWBF_PMT_MANAG       ((uint32_t)0x00000900)  /*!< PTP Message Type: Management  */
-#define ETH_DMARXNDESCWBF_PMT_SIGN        ((uint32_t)0x00000A00)  /*!< PTP Message Type: Signaling  */
-#define ETH_DMARXNDESCWBF_PMT_RESERVED    ((uint32_t)0x00000F00)  /*!< PTP Message Type: PTP packet with Reserved message type  */
-#define ETH_DMARXNDESCWBF_IPCE            ((uint32_t)0x00000080)  /*!< IP Payload Error */
-#define ETH_DMARXNDESCWBF_IPCB            ((uint32_t)0x00000040)  /*!< IP Checksum Bypassed */
-#define ETH_DMARXNDESCWBF_IPV6            ((uint32_t)0x00000020)  /*!< IPv6 header Present */
-#define ETH_DMARXNDESCWBF_IPV4            ((uint32_t)0x00000010)  /*!< IPv4 header Present */
-#define ETH_DMARXNDESCWBF_IPHE            ((uint32_t)0x00000008)  /*!< IP Header Error */
-#define ETH_DMARXNDESCWBF_PT              ((uint32_t)0x00000003)  /*!< Payload Type mask */
-#define ETH_DMARXNDESCWBF_PT_UNKNOWN      ((uint32_t)0x00000000)  /*!< Payload Type: Unknown type or IP/AV payload not processed */
-#define ETH_DMARXNDESCWBF_PT_UDP          ((uint32_t)0x00000001)  /*!< Payload Type: UDP */
-#define ETH_DMARXNDESCWBF_PT_TCP          ((uint32_t)0x00000002)  /*!< Payload Type: TCP  */
-#define ETH_DMARXNDESCWBF_PT_ICMP         ((uint32_t)0x00000003)  /*!< Payload Type: ICMP */
+#define ETH_DMARXNDESCWBF_OPC             ((uint32_t)0xFFFF0000U)  /*!< OAM Sub-Type Code, or MAC Control Packet opcode  */
+#define ETH_DMARXNDESCWBF_TD              ((uint32_t)0x00008000U)  /*!< Timestamp Dropped  */
+#define ETH_DMARXNDESCWBF_TSA             ((uint32_t)0x00004000U)  /*!< Timestamp Available  */
+#define ETH_DMARXNDESCWBF_PV              ((uint32_t)0x00002000U)  /*!< PTP Version  */
+#define ETH_DMARXNDESCWBF_PFT             ((uint32_t)0x00001000U)  /*!< PTP Packet Type  */
+#define ETH_DMARXNDESCWBF_PMT_NO          ((uint32_t)0x00000000U)  /*!< PTP Message Type: No PTP message received  */
+#define ETH_DMARXNDESCWBF_PMT_SYNC        ((uint32_t)0x00000100U)  /*!< PTP Message Type: SYNC (all clock types)  */
+#define ETH_DMARXNDESCWBF_PMT_FUP         ((uint32_t)0x00000200U)  /*!< PTP Message Type: Follow_Up (all clock types)  */
+#define ETH_DMARXNDESCWBF_PMT_DREQ        ((uint32_t)0x00000300U)  /*!< PTP Message Type: Delay_Req (all clock types)  */
+#define ETH_DMARXNDESCWBF_PMT_DRESP       ((uint32_t)0x00000400U)  /*!< PTP Message Type: Delay_Resp (all clock types)  */
+#define ETH_DMARXNDESCWBF_PMT_PDREQ       ((uint32_t)0x00000500U)  /*!< PTP Message Type: Pdelay_Req (in peer-to-peer transparent clock)  */
+#define ETH_DMARXNDESCWBF_PMT_PDRESP      ((uint32_t)0x00000600U)  /*!< PTP Message Type: Pdelay_Resp (in peer-to-peer transparent clock)  */
+#define ETH_DMARXNDESCWBF_PMT_PDRESPFUP   ((uint32_t)0x00000700U)  /*!< PTP Message Type: Pdelay_Resp_Follow_Up (in peer-to-peer transparent clock)  */
+#define ETH_DMARXNDESCWBF_PMT_ANNOUNCE    ((uint32_t)0x00000800U)  /*!< PTP Message Type: Announce  */
+#define ETH_DMARXNDESCWBF_PMT_MANAG       ((uint32_t)0x00000900U)  /*!< PTP Message Type: Management  */
+#define ETH_DMARXNDESCWBF_PMT_SIGN        ((uint32_t)0x00000A00U)  /*!< PTP Message Type: Signaling  */
+#define ETH_DMARXNDESCWBF_PMT_RESERVED    ((uint32_t)0x00000F00U)  /*!< PTP Message Type: PTP packet with Reserved message type  */
+#define ETH_DMARXNDESCWBF_IPCE            ((uint32_t)0x00000080U)  /*!< IP Payload Error */
+#define ETH_DMARXNDESCWBF_IPCB            ((uint32_t)0x00000040U)  /*!< IP Checksum Bypassed */
+#define ETH_DMARXNDESCWBF_IPV6            ((uint32_t)0x00000020U)  /*!< IPv6 header Present */
+#define ETH_DMARXNDESCWBF_IPV4            ((uint32_t)0x00000010U)  /*!< IPv4 header Present */
+#define ETH_DMARXNDESCWBF_IPHE            ((uint32_t)0x00000008U)  /*!< IP Header Error */
+#define ETH_DMARXNDESCWBF_PT              ((uint32_t)0x00000003U)  /*!< Payload Type mask */
+#define ETH_DMARXNDESCWBF_PT_UNKNOWN      ((uint32_t)0x00000000U)  /*!< Payload Type: Unknown type or IP/AV payload not processed */
+#define ETH_DMARXNDESCWBF_PT_UDP          ((uint32_t)0x00000001U)  /*!< Payload Type: UDP */
+#define ETH_DMARXNDESCWBF_PT_TCP          ((uint32_t)0x00000002U)  /*!< Payload Type: TCP  */
+#define ETH_DMARXNDESCWBF_PT_ICMP         ((uint32_t)0x00000003U)  /*!< Payload Type: ICMP */
 
 /** 
   * @brief  Bit definition of Rx normal descriptor register 2 write back format
   */
-#define ETH_DMARXNDESCWBF_L3L4FM          ((uint32_t)0x20000000)  /*!< L3 and L4 Filter Number Matched: if reset filter 0 is matched , if set filter 1 is matched */
-#define ETH_DMARXNDESCWBF_L4FM            ((uint32_t)0x10000000)  /*!< Layer 4 Filter Match                  */
-#define ETH_DMARXNDESCWBF_L3FM            ((uint32_t)0x08000000)  /*!< Layer 3 Filter Match                  */
-#define ETH_DMARXNDESCWBF_MADRM           ((uint32_t)0x07F80000)  /*!< MAC Address Match or Hash Value       */
-#define ETH_DMARXNDESCWBF_HF              ((uint32_t)0x00040000)  /*!< Hash Filter Status                    */
-#define ETH_DMARXNDESCWBF_DAF             ((uint32_t)0x00020000)  /*!< Destination Address Filter Fail       */
-#define ETH_DMARXNDESCWBF_SAF             ((uint32_t)0x00010000)  /*!< SA Address Filter Fail                */
-#define ETH_DMARXNDESCWBF_VF              ((uint32_t)0x00008000)  /*!< VLAN Filter Status                    */
-#define ETH_DMARXNDESCWBF_ARPNR           ((uint32_t)0x00000400)  /*!< ARP Reply Not Generated               */
+#define ETH_DMARXNDESCWBF_L3L4FM          ((uint32_t)0x20000000U)  /*!< L3 and L4 Filter Number Matched: if reset filter 0 is matched , if set filter 1 is matched */
+#define ETH_DMARXNDESCWBF_L4FM            ((uint32_t)0x10000000U)  /*!< Layer 4 Filter Match                  */
+#define ETH_DMARXNDESCWBF_L3FM            ((uint32_t)0x08000000U)  /*!< Layer 3 Filter Match                  */
+#define ETH_DMARXNDESCWBF_MADRM           ((uint32_t)0x07F80000U)  /*!< MAC Address Match or Hash Value       */
+#define ETH_DMARXNDESCWBF_HF              ((uint32_t)0x00040000U)  /*!< Hash Filter Status                    */
+#define ETH_DMARXNDESCWBF_DAF             ((uint32_t)0x00020000U)  /*!< Destination Address Filter Fail       */
+#define ETH_DMARXNDESCWBF_SAF             ((uint32_t)0x00010000U)  /*!< SA Address Filter Fail                */
+#define ETH_DMARXNDESCWBF_VF              ((uint32_t)0x00008000U)  /*!< VLAN Filter Status                    */
+#define ETH_DMARXNDESCWBF_ARPNR           ((uint32_t)0x00000400U)  /*!< ARP Reply Not Generated               */
 
 
 /** 
   * @brief  Bit definition of Rx normal descriptor register 3 write back format
   */
-#define ETH_DMARXNDESCWBF_OWN        ((uint32_t)0x80000000)  /*!< Own Bit */
-#define ETH_DMARXNDESCWBF_CTXT       ((uint32_t)0x40000000)  /*!< Receive Context Descriptor */
-#define ETH_DMARXNDESCWBF_FD         ((uint32_t)0x20000000)  /*!< First Descriptor */
-#define ETH_DMARXNDESCWBF_LD         ((uint32_t)0x10000000)  /*!< Last Descriptor */
-#define ETH_DMARXNDESCWBF_RS2V       ((uint32_t)0x08000000)  /*!< Receive Status RDES2 Valid */
-#define ETH_DMARXNDESCWBF_RS1V       ((uint32_t)0x04000000)  /*!< Receive Status RDES1 Valid */
-#define ETH_DMARXNDESCWBF_RS0V       ((uint32_t)0x02000000)  /*!< Receive Status RDES0 Valid */
-#define ETH_DMARXNDESCWBF_CE         ((uint32_t)0x01000000)  /*!< CRC Error */
-#define ETH_DMARXNDESCWBF_GP         ((uint32_t)0x00800000)  /*!< Giant Packet */
-#define ETH_DMARXNDESCWBF_RWT        ((uint32_t)0x00400000)  /*!< Receive Watchdog Timeout */
-#define ETH_DMARXNDESCWBF_OE         ((uint32_t)0x00200000)  /*!< Overflow Error */
-#define ETH_DMARXNDESCWBF_RE         ((uint32_t)0x00100000)  /*!< Receive Error */
-#define ETH_DMARXNDESCWBF_DE         ((uint32_t)0x00080000)  /*!< Dribble Bit Error */
-#define ETH_DMARXNDESCWBF_LT         ((uint32_t)0x00070000)  /*!< Length/Type Field */
-#define ETH_DMARXNDESCWBF_LT_LP      ((uint32_t)0x00000000)  /*!< The packet is a length packet */
-#define ETH_DMARXNDESCWBF_LT_TP      ((uint32_t)0x00010000)  /*!< The packet is a type packet */
-#define ETH_DMARXNDESCWBF_LT_ARP     ((uint32_t)0x00030000)  /*!< The packet is a ARP Request packet type */
-#define ETH_DMARXNDESCWBF_LT_VLAN    ((uint32_t)0x00040000)  /*!< The packet is a type packet with VLAN Tag */
-#define ETH_DMARXNDESCWBF_LT_DVLAN   ((uint32_t)0x00050000)  /*!< The packet is a type packet with Double VLAN Tag */
-#define ETH_DMARXNDESCWBF_LT_MAC     ((uint32_t)0x00060000)  /*!< The packet is a MAC Control packet type */
-#define ETH_DMARXNDESCWBF_LT_OAM     ((uint32_t)0x00070000)  /*!< The packet is a OAM packet type */
-#define ETH_DMARXNDESCWBF_ES         ((uint32_t)0x00008000)  /*!< Error Summary */
-#define ETH_DMARXNDESCWBF_PL         ((uint32_t)0x00007FFF)  /*!< Packet Length */
+#define ETH_DMARXNDESCWBF_OWN        ((uint32_t)0x80000000U)  /*!< Own Bit */
+#define ETH_DMARXNDESCWBF_CTXT       ((uint32_t)0x40000000U)  /*!< Receive Context Descriptor */
+#define ETH_DMARXNDESCWBF_FD         ((uint32_t)0x20000000U)  /*!< First Descriptor */
+#define ETH_DMARXNDESCWBF_LD         ((uint32_t)0x10000000U)  /*!< Last Descriptor */
+#define ETH_DMARXNDESCWBF_RS2V       ((uint32_t)0x08000000U)  /*!< Receive Status RDES2 Valid */
+#define ETH_DMARXNDESCWBF_RS1V       ((uint32_t)0x04000000U)  /*!< Receive Status RDES1 Valid */
+#define ETH_DMARXNDESCWBF_RS0V       ((uint32_t)0x02000000U)  /*!< Receive Status RDES0 Valid */
+#define ETH_DMARXNDESCWBF_CE         ((uint32_t)0x01000000U)  /*!< CRC Error */
+#define ETH_DMARXNDESCWBF_GP         ((uint32_t)0x00800000U)  /*!< Giant Packet */
+#define ETH_DMARXNDESCWBF_RWT        ((uint32_t)0x00400000U)  /*!< Receive Watchdog Timeout */
+#define ETH_DMARXNDESCWBF_OE         ((uint32_t)0x00200000U)  /*!< Overflow Error */
+#define ETH_DMARXNDESCWBF_RE         ((uint32_t)0x00100000U)  /*!< Receive Error */
+#define ETH_DMARXNDESCWBF_DE         ((uint32_t)0x00080000U)  /*!< Dribble Bit Error */
+#define ETH_DMARXNDESCWBF_LT         ((uint32_t)0x00070000U)  /*!< Length/Type Field */
+#define ETH_DMARXNDESCWBF_LT_LP      ((uint32_t)0x00000000U)  /*!< The packet is a length packet */
+#define ETH_DMARXNDESCWBF_LT_TP      ((uint32_t)0x00010000U)  /*!< The packet is a type packet */
+#define ETH_DMARXNDESCWBF_LT_ARP     ((uint32_t)0x00030000U)  /*!< The packet is a ARP Request packet type */
+#define ETH_DMARXNDESCWBF_LT_VLAN    ((uint32_t)0x00040000U)  /*!< The packet is a type packet with VLAN Tag */
+#define ETH_DMARXNDESCWBF_LT_DVLAN   ((uint32_t)0x00050000U)  /*!< The packet is a type packet with Double VLAN Tag */
+#define ETH_DMARXNDESCWBF_LT_MAC     ((uint32_t)0x00060000U)  /*!< The packet is a MAC Control packet type */
+#define ETH_DMARXNDESCWBF_LT_OAM     ((uint32_t)0x00070000U)  /*!< The packet is a OAM packet type */
+#define ETH_DMARXNDESCWBF_ES         ((uint32_t)0x00008000U)  /*!< Error Summary */
+#define ETH_DMARXNDESCWBF_PL         ((uint32_t)0x00007FFFU)  /*!< Packet Length */
 
 /*
   DMA Rx context Descriptor
@@ -830,18 +848,18 @@ typedef struct{
 /** 
   * @brief  Bit definition of Rx context descriptor register 0 
   */
-#define ETH_DMARXCDESC_RTSL        ((uint32_t)0xFFFFFFFF)  /*!< Receive Packet Timestamp Low  */
+#define ETH_DMARXCDESC_RTSL        ((uint32_t)0xFFFFFFFFU)  /*!< Receive Packet Timestamp Low  */
 
 /** 
   * @brief  Bit definition of Rx context descriptor register 1
   */
-#define ETH_DMARXCDESC_RTSH        ((uint32_t)0xFFFFFFFF)  /*!< Receive Packet Timestamp High  */
+#define ETH_DMARXCDESC_RTSH        ((uint32_t)0xFFFFFFFFU)  /*!< Receive Packet Timestamp High  */
 
 /** 
   * @brief  Bit definition of Rx context descriptor register 3
   */
-#define ETH_DMARXCDESC_OWN        ((uint32_t)0x80000000)  /*!< Own Bit  */
-#define ETH_DMARXCDESC_CTXT       ((uint32_t)0x40000000)  /*!< Receive Context Descriptor  */
+#define ETH_DMARXCDESC_OWN        ((uint32_t)0x80000000U)  /*!< Own Bit  */
+#define ETH_DMARXCDESC_CTXT       ((uint32_t)0x40000000U)  /*!< Receive Context Descriptor  */
 
 /**
   * @}
@@ -850,13 +868,13 @@ typedef struct{
 /** @defgroup ETH_Frame_settings ETH frame settings
   * @{
   */ 
-#define ETH_MAX_PACKET_SIZE      ((uint32_t)1528)    /*!< ETH_HEADER + 2*VLAN_TAG + MAX_ETH_PAYLOAD + ETH_CRC */
-#define ETH_HEADER               ((uint32_t)14)    /*!< 6 byte Dest addr, 6 byte Src addr, 2 byte length/type */
-#define ETH_CRC                  ((uint32_t)4)    /*!< Ethernet CRC */
-#define ETH_VLAN_TAG             ((uint32_t)4)    /*!< optional 802.1q VLAN Tag */
-#define ETH_MIN_PAYLOAD          ((uint32_t)46)    /*!< Minimum Ethernet payload size */
-#define ETH_MAX_PAYLOAD          ((uint32_t)1500)    /*!< Maximum Ethernet payload size */
-#define ETH_JUMBO_FRAME_PAYLOAD  ((uint32_t)9000)    /*!< Jumbo frame payload size */
+#define ETH_MAX_PACKET_SIZE      ((uint32_t)1528U)    /*!< ETH_HEADER + 2*VLAN_TAG + MAX_ETH_PAYLOAD + ETH_CRC */
+#define ETH_HEADER               ((uint32_t)14U)    /*!< 6 byte Dest addr, 6 byte Src addr, 2 byte length/type */
+#define ETH_CRC                  ((uint32_t)4U)    /*!< Ethernet CRC */
+#define ETH_VLAN_TAG             ((uint32_t)4U)    /*!< optional 802.1q VLAN Tag */
+#define ETH_MIN_PAYLOAD          ((uint32_t)46U)    /*!< Minimum Ethernet payload size */
+#define ETH_MAX_PAYLOAD          ((uint32_t)1500U)    /*!< Maximum Ethernet payload size */
+#define ETH_JUMBO_FRAME_PAYLOAD  ((uint32_t)9000U)    /*!< Jumbo frame payload size */
 /**
   * @}
   */
@@ -870,6 +888,9 @@ typedef struct{
 #define HAL_ETH_ERROR_TIMEOUT      ((uint32_t)0x00000004U)   /*!< Timeout error       */
 #define HAL_ETH_ERROR_DMA          ((uint32_t)0x00000008U)   /*!< DMA transfer error  */
 #define HAL_ETH_ERROR_MAC          ((uint32_t)0x00000010U)   /*!< MAC transfer error  */
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+#define HAL_ETH_ERROR_INVALID_CALLBACK ((uint32_t)0x00000020U)    /*!< Invalid Callback error  */
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -877,12 +898,12 @@ typedef struct{
 /** @defgroup ETH_Tx_Packet_Attributes ETH Tx Packet Attributes
   * @{
   */
-#define ETH_TX_PACKETS_FEATURES_CSUM          ((uint32_t)0x00000001)
-#define ETH_TX_PACKETS_FEATURES_SAIC          ((uint32_t)0x00000002)
-#define ETH_TX_PACKETS_FEATURES_VLANTAG       ((uint32_t)0x00000004)
-#define ETH_TX_PACKETS_FEATURES_INNERVLANTAG  ((uint32_t)0x00000008)
-#define ETH_TX_PACKETS_FEATURES_TSO           ((uint32_t)0x00000010)
-#define ETH_TX_PACKETS_FEATURES_CRCPAD        ((uint32_t)0x00000020)
+#define ETH_TX_PACKETS_FEATURES_CSUM          ((uint32_t)0x00000001U)
+#define ETH_TX_PACKETS_FEATURES_SAIC          ((uint32_t)0x00000002U)
+#define ETH_TX_PACKETS_FEATURES_VLANTAG       ((uint32_t)0x00000004U)
+#define ETH_TX_PACKETS_FEATURES_INNERVLANTAG  ((uint32_t)0x00000008U)
+#define ETH_TX_PACKETS_FEATURES_TSO           ((uint32_t)0x00000010U)
+#define ETH_TX_PACKETS_FEATURES_CRCPAD        ((uint32_t)0x00000020U)
 /**
   * @}
   */
@@ -1017,7 +1038,7 @@ typedef struct{
   * @{
   */ 
 #define ETH_DMAARBITRATION_RX        ETH_DMAMR_DA
-#define ETH_DMAARBITRATION_RX1_TX1   ((uint32_t)0x00000000)
+#define ETH_DMAARBITRATION_RX1_TX1   ((uint32_t)0x00000000U)
 #define ETH_DMAARBITRATION_RX2_TX1   ETH_DMAMR_PR_2_1
 #define ETH_DMAARBITRATION_RX3_TX1   ETH_DMAMR_PR_3_1
 #define ETH_DMAARBITRATION_RX4_TX1   ETH_DMAMR_PR_4_1
@@ -1026,7 +1047,7 @@ typedef struct{
 #define ETH_DMAARBITRATION_RX7_TX1   ETH_DMAMR_PR_7_1
 #define ETH_DMAARBITRATION_RX8_TX1   ETH_DMAMR_PR_8_1
 #define ETH_DMAARBITRATION_TX        (ETH_DMAMR_TXPR | ETH_DMAMR_DA)
-#define ETH_DMAARBITRATION_TX1_RX1   ((uint32_t)0x00000000)
+#define ETH_DMAARBITRATION_TX1_RX1   ((uint32_t)0x00000000U)
 #define ETH_DMAARBITRATION_TX2_RX1   (ETH_DMAMR_TXPR | ETH_DMAMR_PR_2_1)
 #define ETH_DMAARBITRATION_TX3_RX1   (ETH_DMAMR_TXPR | ETH_DMAMR_PR_3_1)
 #define ETH_DMAARBITRATION_TX4_RX1   (ETH_DMAMR_TXPR | ETH_DMAMR_PR_4_1)
@@ -1043,7 +1064,7 @@ typedef struct{
   */ 
 #define ETH_BURSTLENGTH_FIXED           ETH_DMASBMR_FB
 #define ETH_BURSTLENGTH_MIXED           ETH_DMASBMR_MB
-#define ETH_BURSTLENGTH_UNSPECIFIED     ((uint32_t)0x00000000)
+#define ETH_BURSTLENGTH_UNSPECIFIED     ((uint32_t)0x00000000U)
 /**
   * @}
   */
@@ -1199,7 +1220,7 @@ typedef struct{
 /** @defgroup ETH_Speed  ETH Speed
   * @{
   */ 
-#define ETH_SPEED_10M        ((uint32_t)0x00000000)
+#define ETH_SPEED_10M        ((uint32_t)0x00000000U)
 #define ETH_SPEED_100M       ETH_MACCR_FES
 /**
   * @}
@@ -1209,7 +1230,7 @@ typedef struct{
   * @{
   */ 
 #define ETH_FULLDUPLEX_MODE       ETH_MACCR_DM
-#define ETH_HALFDUPLEX_MODE       ((uint32_t)0x00000000)
+#define ETH_HALFDUPLEX_MODE       ((uint32_t)0x00000000U)
 /**
   * @}
   */
@@ -1238,7 +1259,7 @@ typedef struct{
 /** @defgroup ETH_Source_Addr_Control ETH Source Addr Control
   * @{
   */ 
-#define ETH_SOURCEADDRESS_DISABLE           ((uint32_t)0x00000000)
+#define ETH_SOURCEADDRESS_DISABLE           ((uint32_t)0x00000000U)
 #define ETH_SOURCEADDRESS_INSERT_ADDR0      ETH_MACCR_SARC_INSADDR0
 #define ETH_SOURCEADDRESS_INSERT_ADDR1      ETH_MACCR_SARC_INSADDR1
 #define ETH_SOURCEADDRESS_REPLACE_ADDR0     ETH_MACCR_SARC_REPADDR0
@@ -1300,9 +1321,9 @@ typedef struct{
   * @}
   */
 
-/** @defgroup ETH_MAC_Rx_Tx_Status ETH MAC Rx Tx Status 
+/** @defgroup ETH_MAC_Rx_Tx_Status ETH MAC Rx Tx Status
   * @{
-  */ 
+  */
 #define ETH_RECEIVE_WATCHDOG_TIMEOUT        ETH_MACRXTXSR_RWT
 #define ETH_EXECESSIVE_COLLISIONS           ETH_MACRXTXSR_EXCOL
 #define ETH_LATE_COLLISIONS                 ETH_MACRXTXSR_LCOL 
@@ -1313,7 +1334,19 @@ typedef struct{
 /**
   * @}
   */
-  
+
+/** @defgroup HAL_ETH_StateTypeDef ETH States
+  * @{
+  */
+#define HAL_ETH_STATE_RESET       ((uint32_t)0x00000000U)    /*!< Peripheral not yet Initialized or disabled */
+#define HAL_ETH_STATE_READY       ((uint32_t)0x00000010U)    /*!< Peripheral Communication started           */
+#define HAL_ETH_STATE_BUSY        ((uint32_t)0x00000023U)    /*!< an internal process is ongoing             */
+#define HAL_ETH_STATE_BUSY_TX     ((uint32_t)0x00000021U)    /*!< Transmission process is ongoing            */
+#define HAL_ETH_STATE_BUSY_RX     ((uint32_t)0x00000022U)    /*!< Reception process is ongoing               */
+#define HAL_ETH_STATE_ERROR       ((uint32_t)0x000000E0U)    /*!< Error State                                */
+/**
+  * @}
+  */
 /**
   * @}
   */
@@ -1327,7 +1360,19 @@ typedef struct{
   * @param  __HANDLE__: specifies the ETH handle.
   * @retval None
   */
-#define __HAL_ETH_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_ETH_STATE_RESET)
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+#define __HAL_ETH_RESET_HANDLE_STATE(__HANDLE__)  do{                                                   \
+                                                       (__HANDLE__)->gState = HAL_ETH_STATE_RESET;      \
+                                                       (__HANDLE__)->RxState = HAL_ETH_STATE_RESET;     \
+                                                       (__HANDLE__)->MspInitCallback = NULL;             \
+                                                       (__HANDLE__)->MspDeInitCallback = NULL;           \
+                                                     } while(0)
+#else
+#define __HAL_ETH_RESET_HANDLE_STATE(__HANDLE__)  do{                                                   \
+                                                       (__HANDLE__)->gState = HAL_ETH_STATE_RESET;      \
+                                                       (__HANDLE__)->RxState = HAL_ETH_STATE_RESET;     \
+                                                     } while(0)
+#endif /*USE_HAL_ETH_REGISTER_CALLBACKS */
 
 /** 
   * @brief  Enables the specified ETHERNET DMA interrupts.
@@ -1414,7 +1459,7 @@ typedef struct{
 #define __HAL_ETH_MAC_GET_IT(__HANDLE__, __INTERRUPT__)                   (((__HANDLE__)->Instance->MACISR &( __INTERRUPT__)) == ( __INTERRUPT__)) 
 
 /*!< External interrupt line 86 Connected to the ETH wakeup EXTI Line */
-#define ETH_WAKEUP_EXTI_LINE  ((uint32_t)0x00400000)  /* !<  86 - 64 = 22 */
+#define ETH_WAKEUP_EXTI_LINE  ((uint32_t)0x00400000U)  /* !<  86 - 64 = 22 */
 
 /**
   * @brief Enable the ETH WAKEUP Exti Line.
@@ -1440,6 +1485,31 @@ typedef struct{
   */
 #define __HAL_ETH_WAKEUP_EXTI_CLEAR_FLAG(__EXTI_LINE__) (EXTI_D1->PR3 = (__EXTI_LINE__))
 
+#if defined(DUAL_CORE)
+/**
+  * @brief Enable the ETH WAKEUP Exti Line by Core2.
+  * @param  __EXTI_LINE__: specifies the ETH WAKEUP Exti sources to be enabled.
+  *   @arg ETH_WAKEUP_EXTI_LINE     
+  * @retval None.
+  */
+#define __HAL_ETH_WAKEUP_EXTID2_ENABLE_IT(__EXTI_LINE__)   (EXTI_D2->IMR3 |= (__EXTI_LINE__)) 
+
+/**
+  * @brief checks whether the specified ETH WAKEUP Exti interrupt flag is set or not.
+  * @param  __EXTI_LINE__: specifies the ETH WAKEUP Exti sources to be cleared.
+  *   @arg ETH_WAKEUP_EXTI_LINE  
+  * @retval EXTI ETH WAKEUP Line Status.
+  */
+#define __HAL_ETH_WAKEUP_EXTID2_GET_FLAG(__EXTI_LINE__)  (EXTI_D2->PR3 & (__EXTI_LINE__))
+
+/**
+  * @brief Clear the ETH WAKEUP Exti flag.
+  * @param  __EXTI_LINE__: specifies the ETH WAKEUP Exti sources to be cleared.
+  *   @arg ETH_WAKEUP_EXTI_LINE  
+  * @retval None.
+  */
+#define __HAL_ETH_WAKEUP_EXTID2_CLEAR_FLAG(__EXTI_LINE__) (EXTI_D2->PR3 = (__EXTI_LINE__))
+#endif
 
 /**
   * @brief  enable rising edge interrupt on selected EXTI line.
@@ -1498,6 +1568,13 @@ HAL_StatusTypeDef HAL_ETH_DeInit(ETH_HandleTypeDef *heth);
 void              HAL_ETH_MspInit(ETH_HandleTypeDef *heth);                    
 void              HAL_ETH_MspDeInit(ETH_HandleTypeDef *heth);  
 HAL_StatusTypeDef HAL_ETH_DescAssignMemory(ETH_HandleTypeDef *heth, uint32_t Index, uint8_t *pBuffer1,uint8_t *pBuffer2);
+
+/* Callbacks Register/UnRegister functions  ***********************************/
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+HAL_StatusTypeDef HAL_ETH_RegisterCallback(ETH_HandleTypeDef *heth, HAL_ETH_CallbackIDTypeDef CallbackID, pETH_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_ETH_UnRegisterCallback(ETH_HandleTypeDef *heth, HAL_ETH_CallbackIDTypeDef CallbackID);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
+
 /**
   * @}
   */
@@ -1512,7 +1589,7 @@ HAL_StatusTypeDef HAL_ETH_Stop(ETH_HandleTypeDef *heth);
 HAL_StatusTypeDef HAL_ETH_Stop_IT(ETH_HandleTypeDef *heth);
 
 uint8_t           HAL_ETH_IsRxDataAvailable(ETH_HandleTypeDef *heth);
-HAL_StatusTypeDef HAL_ETH_GetRxDataBuffer(ETH_HandleTypeDef *heth, ETH_BufferTypeDef *pBuffer);
+HAL_StatusTypeDef HAL_ETH_GetRxDataBuffer(ETH_HandleTypeDef *heth, ETH_BufferTypeDef *RxBuffer);
 HAL_StatusTypeDef HAL_ETH_GetRxDataLength(ETH_HandleTypeDef *heth, uint32_t *Length);
 HAL_StatusTypeDef HAL_ETH_GetRxDataInfo(ETH_HandleTypeDef *heth, ETH_RxPacketInfo *RxPacketInfo);
 HAL_StatusTypeDef HAL_ETH_BuildRxDescriptors(ETH_HandleTypeDef *heth);

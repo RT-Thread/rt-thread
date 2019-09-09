@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -81,13 +65,13 @@ typedef struct
 {
   uint32_t AsynchPrescaler; /*!< Specifies the RTC Asynchronous Predivider value.
                               This parameter must be a number between Min_Data = 0x00 and Max_Data = 0xFFFFF
-                              
+
                               This feature can be modified afterwards using unitary function
                               @ref LL_RTC_SetAsynchPrescaler(). */
 
   uint32_t OutPutSource;    /*!< Specifies which signal will be routed to the RTC Tamper pin.
-                                 This parameter can be a value of @ref LL_RTC_Output_Source 
-                              
+                                 This parameter can be a value of @ref LL_RTC_Output_Source
+
                               This feature can be modified afterwards using unitary function
                               @ref LL_RTC_SetOutputSource(). */
 
@@ -195,7 +179,7 @@ typedef struct
 
 /** @defgroup RTC_LL_EC_TAMPLEVEL  Tamper Active Level
   * @{
-  */ 
+  */
 #define LL_RTC_TAMPER_ACTIVELEVEL_LOW          BKP_CR_TPAL           /*!< A high level on the TAMPER pin resets all data backup registers (if TPE bit is set) */
 #define LL_RTC_TAMPER_ACTIVELEVEL_HIGH         (0x00000000U)         /*!< A low level on the TAMPER pin resets all data backup registers (if TPE bit is set) */
 
@@ -305,10 +289,10 @@ __STATIC_INLINE void LL_RTC_SetAsynchPrescaler(RTC_TypeDef *RTCx, uint32_t Async
   */
 __STATIC_INLINE uint32_t LL_RTC_GetDivider(RTC_TypeDef *RTCx)
 {
-  register uint16_t Highprescaler = 0 , Lowprescaler = 0;
+  register uint16_t Highprescaler = 0, Lowprescaler = 0;
   Highprescaler = READ_REG(RTCx->DIVH & RTC_DIVH_RTC_DIV);
   Lowprescaler  = READ_REG(RTCx->DIVL & RTC_DIVL_RTC_DIV);
-  
+
   return (((uint32_t) Highprescaler << 16U) | Lowprescaler);
 }
 
@@ -355,7 +339,7 @@ __STATIC_INLINE uint32_t LL_RTC_GetOutPutSource(BKP_TypeDef *BKPx)
   */
 __STATIC_INLINE void LL_RTC_EnableWriteProtection(RTC_TypeDef *RTCx)
 {
- CLEAR_BIT(RTCx->CRL, RTC_CRL_CNF);
+  CLEAR_BIT(RTCx->CRL, RTC_CRL_CNF);
 }
 
 /**
@@ -389,10 +373,10 @@ __STATIC_INLINE void LL_RTC_DisableWriteProtection(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_TIME_Set(RTC_TypeDef *RTCx, uint32_t TimeCounter)
 {
-    /* Set RTC COUNTER MSB word */
-    WRITE_REG(RTCx->CNTH, (TimeCounter >> 16U));
-    /* Set RTC COUNTER LSB word */
-    WRITE_REG(RTCx->CNTL, (TimeCounter & RTC_CNTL_RTC_CNT));
+  /* Set RTC COUNTER MSB word */
+  WRITE_REG(RTCx->CNTH, (TimeCounter >> 16U));
+  /* Set RTC COUNTER LSB word */
+  WRITE_REG(RTCx->CNTL, (TimeCounter & RTC_CNTL_RTC_CNT));
 }
 
 /**
@@ -405,7 +389,7 @@ __STATIC_INLINE void LL_RTC_TIME_Set(RTC_TypeDef *RTCx, uint32_t TimeCounter)
 __STATIC_INLINE uint32_t LL_RTC_TIME_Get(RTC_TypeDef *RTCx)
 {
   register uint16_t high = 0, low = 0;
-  
+
   high = READ_REG(RTCx->CNTH & RTC_CNTH_RTC_CNT);
   low  = READ_REG(RTCx->CNTL & RTC_CNTL_RTC_CNT);
   return ((uint32_t)(((uint32_t) high << 16U) | low));
@@ -523,12 +507,12 @@ __STATIC_INLINE uint32_t LL_RTC_TAMPER_GetActiveLevel(BKP_TypeDef *BKPx)
   *         @arg @ref LL_RTC_BKP_DR2
   *         @arg @ref LL_RTC_BKP_DR3
   *         @arg @ref LL_RTC_BKP_DR4
-  *         @arg @ref LL_RTC_BKP_DR5 
-  *         @arg @ref LL_RTC_BKP_DR6 
-  *         @arg @ref LL_RTC_BKP_DR7 
-  *         @arg @ref LL_RTC_BKP_DR8 
-  *         @arg @ref LL_RTC_BKP_DR9 
-  *         @arg @ref LL_RTC_BKP_DR10 
+  *         @arg @ref LL_RTC_BKP_DR5
+  *         @arg @ref LL_RTC_BKP_DR6
+  *         @arg @ref LL_RTC_BKP_DR7
+  *         @arg @ref LL_RTC_BKP_DR8
+  *         @arg @ref LL_RTC_BKP_DR9
+  *         @arg @ref LL_RTC_BKP_DR10
   *         @arg @ref LL_RTC_BKP_DR11 (*)
   *         @arg @ref LL_RTC_BKP_DR12 (*)
   *         @arg @ref LL_RTC_BKP_DR13 (*)
@@ -585,12 +569,12 @@ __STATIC_INLINE void LL_RTC_BKP_SetRegister(BKP_TypeDef *BKPx, uint32_t BackupRe
   *         @arg @ref LL_RTC_BKP_DR2
   *         @arg @ref LL_RTC_BKP_DR3
   *         @arg @ref LL_RTC_BKP_DR4
-  *         @arg @ref LL_RTC_BKP_DR5 
-  *         @arg @ref LL_RTC_BKP_DR6 
-  *         @arg @ref LL_RTC_BKP_DR7 
-  *         @arg @ref LL_RTC_BKP_DR8 
-  *         @arg @ref LL_RTC_BKP_DR9 
-  *         @arg @ref LL_RTC_BKP_DR10 
+  *         @arg @ref LL_RTC_BKP_DR5
+  *         @arg @ref LL_RTC_BKP_DR6
+  *         @arg @ref LL_RTC_BKP_DR7
+  *         @arg @ref LL_RTC_BKP_DR8
+  *         @arg @ref LL_RTC_BKP_DR9
+  *         @arg @ref LL_RTC_BKP_DR10
   *         @arg @ref LL_RTC_BKP_DR11 (*)
   *         @arg @ref LL_RTC_BKP_DR12 (*)
   *         @arg @ref LL_RTC_BKP_DR13 (*)
@@ -654,9 +638,9 @@ __STATIC_INLINE uint32_t LL_RTC_BKP_GetRegister(BKP_TypeDef *BKPx, uint32_t Back
   * @note   This Calibration value should be between 0 and 121 when using positive sign with a 4-ppm step.
   * @retval None
   */
-__STATIC_INLINE void LL_RTC_CAL_SetCoarseDigital(BKP_TypeDef* BKPx, uint32_t Value)
+__STATIC_INLINE void LL_RTC_CAL_SetCoarseDigital(BKP_TypeDef *BKPx, uint32_t Value)
 {
-  MODIFY_REG(BKPx->RTCCR,BKP_RTCCR_CAL, Value);
+  MODIFY_REG(BKPx->RTCCR, BKP_RTCCR_CAL, Value);
 }
 
 /**
@@ -941,7 +925,7 @@ __STATIC_INLINE uint32_t LL_RTC_IsEnabledIT_OW(RTC_TypeDef *RTCx)
   */
 __STATIC_INLINE void LL_RTC_EnableIT_TAMP(BKP_TypeDef *BKPx)
 {
-  SET_BIT(BKPx->CSR,BKP_CSR_TPIE);
+  SET_BIT(BKPx->CSR, BKP_CSR_TPIE);
 }
 
 /**
@@ -952,7 +936,7 @@ __STATIC_INLINE void LL_RTC_EnableIT_TAMP(BKP_TypeDef *BKPx)
   */
 __STATIC_INLINE void LL_RTC_DisableIT_TAMP(BKP_TypeDef *BKPx)
 {
-  CLEAR_BIT(BKPx->CSR,BKP_CSR_TPIE);
+  CLEAR_BIT(BKPx->CSR, BKP_CSR_TPIE);
 }
 
 /**
@@ -963,7 +947,7 @@ __STATIC_INLINE void LL_RTC_DisableIT_TAMP(BKP_TypeDef *BKPx)
   */
 __STATIC_INLINE uint32_t LL_RTC_IsEnabledIT_TAMP(BKP_TypeDef *BKPx)
 {
-  return (READ_BIT(BKPx->CSR,BKP_CSR_TPIE) == BKP_CSR_TPIE);
+  return (READ_BIT(BKPx->CSR, BKP_CSR_TPIE) == BKP_CSR_TPIE);
 }
 /**
   * @}

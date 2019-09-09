@@ -61,7 +61,6 @@ extern "C" {
 #define HAL_TIM_MODULE_ENABLED
 #define HAL_UART_MODULE_ENABLED
 #define HAL_USART_MODULE_ENABLED
-#define HAL_UCPD_MODULE_ENABLED
 #define HAL_WWDG_MODULE_ENABLED
 
 /* ########################## Register Callbacks selection ############################## */
@@ -109,6 +108,7 @@ extern "C" {
 #define HSI_VALUE    (16000000UL)           /*!< Value of the Internal oscillator in Hz*/
 #endif /* HSI_VALUE */
 
+
 /**
   * @brief Internal Low Speed oscillator (LSI) value.
   */
@@ -137,6 +137,7 @@ in voltage and temperature.*/
 #if !defined  (EXTERNAL_I2S1_CLOCK_VALUE)
 #define EXTERNAL_I2S1_CLOCK_VALUE    (48000UL) /*!< Value of the I2S1 External clock source in Hz*/
 #endif /* EXTERNAL_I2S1_CLOCK_VALUE */
+
 
 /* Tip: To avoid modifying this file each time you need to use different HSE,
    ===  you can define the HSE value in your toolchain compiler preprocessor. */
@@ -281,10 +282,6 @@ in voltage and temperature.*/
 #ifdef HAL_USART_MODULE_ENABLED
 #include "stm32g0xx_hal_usart.h"
 #endif /* HAL_USART_MODULE_ENABLED */
-
-#ifdef HAL_UCPD_MODULE_ENABLED
-#include "stm32g0xx_ll_ucpd.h"
-#endif /* HAL_UCPD_MODULE_ENABLED */
 
 #ifdef HAL_WWDG_MODULE_ENABLED
 #include "stm32g0xx_hal_wwdg.h"

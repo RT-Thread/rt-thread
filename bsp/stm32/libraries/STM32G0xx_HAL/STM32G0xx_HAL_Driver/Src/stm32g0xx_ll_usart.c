@@ -22,11 +22,11 @@
 #include "stm32g0xx_ll_usart.h"
 #include "stm32g0xx_ll_rcc.h"
 #include "stm32g0xx_ll_bus.h"
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 #include "stm32_assert.h"
 #else
 #define assert_param(expr) ((void)0U)
-#endif
+#endif /* USE_FULL_ASSERT */
 
 /** @addtogroup STM32G0xx_LL_Driver
   * @{
@@ -41,31 +41,23 @@
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
-/** @addtogroup USART_LL_Private_Constants
-  * @{
-  */
-
-/**
-  * @}
-  */
-
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup USART_LL_Private_Macros
   * @{
   */
 
 #define IS_LL_USART_PRESCALER(__VALUE__)  (((__VALUE__) == LL_USART_PRESCALER_DIV1) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV2) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV4) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV6) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV8) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV10) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV12) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV16) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV32) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV64) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV128) \
-                                        || ((__VALUE__) == LL_USART_PRESCALER_DIV256))
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV2) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV4) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV6) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV8) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV10) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV12) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV16) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV32) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV64) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV128) \
+                                           || ((__VALUE__) == LL_USART_PRESCALER_DIV256))
 
 /* __BAUDRATE__ The maximum Baud Rate is derived from the maximum clock available
  *              divided by the smallest oversampling used on the USART (i.e. 8)    */
@@ -78,42 +70,42 @@
 #define IS_LL_USART_BRR_MAX(__VALUE__) ((__VALUE__) <= 0x0000FFFFU)
 
 #define IS_LL_USART_DIRECTION(__VALUE__) (((__VALUE__) == LL_USART_DIRECTION_NONE) \
-                                       || ((__VALUE__) == LL_USART_DIRECTION_RX) \
-                                       || ((__VALUE__) == LL_USART_DIRECTION_TX) \
-                                       || ((__VALUE__) == LL_USART_DIRECTION_TX_RX))
+                                          || ((__VALUE__) == LL_USART_DIRECTION_RX) \
+                                          || ((__VALUE__) == LL_USART_DIRECTION_TX) \
+                                          || ((__VALUE__) == LL_USART_DIRECTION_TX_RX))
 
 #define IS_LL_USART_PARITY(__VALUE__) (((__VALUE__) == LL_USART_PARITY_NONE) \
-                                    || ((__VALUE__) == LL_USART_PARITY_EVEN) \
-                                    || ((__VALUE__) == LL_USART_PARITY_ODD))
+                                       || ((__VALUE__) == LL_USART_PARITY_EVEN) \
+                                       || ((__VALUE__) == LL_USART_PARITY_ODD))
 
 #define IS_LL_USART_DATAWIDTH(__VALUE__) (((__VALUE__) == LL_USART_DATAWIDTH_7B) \
-                                       || ((__VALUE__) == LL_USART_DATAWIDTH_8B) \
-                                       || ((__VALUE__) == LL_USART_DATAWIDTH_9B))
+                                          || ((__VALUE__) == LL_USART_DATAWIDTH_8B) \
+                                          || ((__VALUE__) == LL_USART_DATAWIDTH_9B))
 
 #define IS_LL_USART_OVERSAMPLING(__VALUE__) (((__VALUE__) == LL_USART_OVERSAMPLING_16) \
-                                          || ((__VALUE__) == LL_USART_OVERSAMPLING_8))
+                                             || ((__VALUE__) == LL_USART_OVERSAMPLING_8))
 
 #define IS_LL_USART_LASTBITCLKOUTPUT(__VALUE__) (((__VALUE__) == LL_USART_LASTCLKPULSE_NO_OUTPUT) \
-                                              || ((__VALUE__) == LL_USART_LASTCLKPULSE_OUTPUT))
+                                                 || ((__VALUE__) == LL_USART_LASTCLKPULSE_OUTPUT))
 
 #define IS_LL_USART_CLOCKPHASE(__VALUE__) (((__VALUE__) == LL_USART_PHASE_1EDGE) \
-                                        || ((__VALUE__) == LL_USART_PHASE_2EDGE))
+                                           || ((__VALUE__) == LL_USART_PHASE_2EDGE))
 
 #define IS_LL_USART_CLOCKPOLARITY(__VALUE__) (((__VALUE__) == LL_USART_POLARITY_LOW) \
-                                           || ((__VALUE__) == LL_USART_POLARITY_HIGH))
+                                              || ((__VALUE__) == LL_USART_POLARITY_HIGH))
 
 #define IS_LL_USART_CLOCKOUTPUT(__VALUE__) (((__VALUE__) == LL_USART_CLOCK_DISABLE) \
-                                         || ((__VALUE__) == LL_USART_CLOCK_ENABLE))
+                                            || ((__VALUE__) == LL_USART_CLOCK_ENABLE))
 
 #define IS_LL_USART_STOPBITS(__VALUE__) (((__VALUE__) == LL_USART_STOPBITS_0_5) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_1) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_1_5) \
-                                      || ((__VALUE__) == LL_USART_STOPBITS_2))
+                                         || ((__VALUE__) == LL_USART_STOPBITS_1) \
+                                         || ((__VALUE__) == LL_USART_STOPBITS_1_5) \
+                                         || ((__VALUE__) == LL_USART_STOPBITS_2))
 
 #define IS_LL_USART_HWCONTROL(__VALUE__) (((__VALUE__) == LL_USART_HWCONTROL_NONE) \
-                                       || ((__VALUE__) == LL_USART_HWCONTROL_RTS) \
-                                       || ((__VALUE__) == LL_USART_HWCONTROL_CTS) \
-                                       || ((__VALUE__) == LL_USART_HWCONTROL_RTS_CTS))
+                                          || ((__VALUE__) == LL_USART_HWCONTROL_RTS) \
+                                          || ((__VALUE__) == LL_USART_HWCONTROL_CTS) \
+                                          || ((__VALUE__) == LL_USART_HWCONTROL_RTS_CTS))
 
 /**
   * @}
@@ -207,7 +199,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
   uint32_t periphclk = LL_RCC_PERIPH_FREQUENCY_NO;
 #if !defined(RCC_CCIPR_USART3SEL)&&!defined(RCC_CCIPR_USART4SEL)||!defined(RCC_CCIPR_USART2SEL)
   LL_RCC_ClocksTypeDef RCC_Clocks;
-#endif
+#endif /* !RCC_CCIPR_USART3SEL && !RCC_CCIPR_USART4SEL || !RCC_CCIPR_USART2SEL */
 
   /* Check the parameters */
   assert_param(IS_UART_INSTANCE(USARTx));
@@ -265,7 +257,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
       /* USART2 clock is PCLK */
       LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
       periphclk = RCC_Clocks.PCLK1_Frequency;
-#endif
+#endif /* RCC_CCIPR_USART2SEL */
     }
 #if defined(USART3)
     else if (USARTx == USART3)
@@ -276,7 +268,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
       /* USART3 clock is PCLK */
       LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
       periphclk = RCC_Clocks.PCLK1_Frequency;
-#endif
+#endif /* RCC_CCIPR_USART3SEL */
     }
 #endif /* USART3 */
 #if defined(USART4)
@@ -288,7 +280,7 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_Ini
       /* USART4 clock is PCLK1 */
       LL_RCC_GetSystemClocksFreq(&RCC_Clocks);
       periphclk = RCC_Clocks.PCLK1_Frequency;
-#endif
+#endif /* RCC_CCIPR_USART4SEL */
     }
 #endif /* USART4 */
     else

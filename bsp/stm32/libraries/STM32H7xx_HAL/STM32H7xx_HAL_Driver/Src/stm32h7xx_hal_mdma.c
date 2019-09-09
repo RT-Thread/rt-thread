@@ -77,8 +77,8 @@
               add his own function by customization of function pointer XferCpltCallback and 
               XferErrorCallback (i.e a member of MDMA handle structure). 
               
-          (+) Use HAL_MDMA_Abort_IT() function to abort the current transfer : non-blocking method. This API returns immediately
-              then the callback XferAbortCallback (if specified  by the user) is asserted once the MDMA channel hase effectively aborted.
+          (+) Use HAL_MDMA_Abort_IT() function to abort the current transfer : non-blocking method. This API will finish the execution immediately
+              then the callback XferAbortCallback (if specified  by the user) is asserted once the MDMA channel has effectively aborted.
               (could be called from an interrupt service routine).
               
           (+) Use functions HAL_MDMA_RegisterCallback and HAL_MDMA_UnRegisterCallback respectevely to register unregister user callbacks
@@ -93,8 +93,8 @@
     [..]
          (+)  If the transfer Request corresponds to SW request (MDMA_REQUEST_SW) User can use function HAL_MDMA_GenerateSWRequest to
               trigger requests manually. Function HAL_MDMA_GenerateSWRequest must be used with the following precautions:
-              (++) This function returns an error if used while the Transfer hase ends or not started.
-              (++) If used while the current request hase not been served yet (current request transfer on going)
+              (++) This function returns an error if used while the Transfer has ended or not started.
+              (++) If used while the current request has not been served yet (current request transfer on going)
                 this function returns an error and the new request is ignored.
               
               Generally this function should be used in conjunctions with the MDMA callbacks:              
@@ -102,14 +102,14 @@
                  (+++) Configure a transfer with request set to MDMA_REQUEST_SW and trigger mode set to MDMA_BUFFER_TRANSFER
                  (+++) Register a callback for buffer transfer complete (using callback ID set to HAL_MDMA_XFER_BUFFERCPLT_CB_ID) 
                  (+++) After calling HAL_MDMA_Start_IT the MDMA will issue the transfer of a first BufferTransferLength data.
-                 (+++) When the buffer transfer complete callback is asserted first buffer hase been transferred and user can ask for a new buffer transfer 
+                 (+++) When the buffer transfer complete callback is asserted first buffer has been transferred and user can ask for a new buffer transfer 
                    request using HAL_MDMA_GenerateSWRequest. 
  
               (++) example 2:  
                  (+++) Configure a transfer with request set to MDMA_REQUEST_SW and trigger mode set to MDMA_BLOCK_TRANSFER
                  (+++) Register a callback for block transfer complete (using callback ID HAL_MDMA_XFER_BLOCKCPLT_CB_ID) 
                  (+++) After calling HAL_MDMA_Start_IT the MDMA will issue the transfer of a first block of data.
-                 (+++) When the block transfer complete callback is asserted the fisrt block hase been transferred and user can ask 
+                 (+++) When the block transfer complete callback is asserted the first block has been transferred and user can ask 
                    for a new block transfer request using HAL_MDMA_GenerateSWRequest. 
 
     [..]  Use HAL_MDMA_GetState() function to return the MDMA state and HAL_MDMA_GetError() in case of error detection.
@@ -119,13 +119,13 @@
      [..]
        Below the list of most used macros in MDMA HAL driver.
        
-      (+) __HAL_MDMA_ENABLE: Enable the specified MDMA Stream.
-      (+) __HAL_MDMA_DISABLE: Disable the specified MDMA Stream.
-      (+) __HAL_MDMA_GET_FLAG: Get the MDMA Stream pending flags.
-      (+) __HAL_MDMA_CLEAR_FLAG: Clear the MDMA Stream pending flags.
-      (+) __HAL_MDMA_ENABLE_IT: Enable the specified MDMA Stream interrupts.
-      (+) __HAL_MDMA_DISABLE_IT: Disable the specified MDMA Stream interrupts.
-      (+) __HAL_MDMA_GET_IT_SOURCE: Check whether the specified MDMA Stream interrupt has occurred or not. 
+      (+) __HAL_MDMA_ENABLE: Enable the specified MDMA Channel.
+      (+) __HAL_MDMA_DISABLE: Disable the specified MDMA Channel.
+      (+) __HAL_MDMA_GET_FLAG: Get the MDMA Channel pending flags.
+      (+) __HAL_MDMA_CLEAR_FLAG: Clear the MDMA Channel pending flags.
+      (+) __HAL_MDMA_ENABLE_IT: Enable the specified MDMA Channel interrupts.
+      (+) __HAL_MDMA_DISABLE_IT: Disable the specified MDMA Channel interrupts.
+      (+) __HAL_MDMA_GET_IT_SOURCE: Check whether the specified MDMA Channel interrupt has occurred or not. 
      
      [..] 
       (@) You can refer to the header file of the MDMA HAL driver for more useful macros.
@@ -136,32 +136,16 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal.h"
@@ -182,8 +166,8 @@
 /** @addtogroup MDMA_Private_Constants
  * @{
  */
-#define HAL_TIMEOUT_MDMA_ABORT    ((uint32_t)5U)    /* 5 ms */
-#define HAL_MDMA_CHANNEL_SIZE     ((uint32_t)0x40U) /* an MDMA instance channel size is 64 byte  */ 
+#define HAL_TIMEOUT_MDMA_ABORT    5U    /* 5 ms */
+#define HAL_MDMA_CHANNEL_SIZE     0x40U /* an MDMA instance channel size is 64 byte  */ 
 /**
   * @}
   */
@@ -229,7 +213,7 @@ static void MDMA_Init(MDMA_HandleTypeDef *hmdma);
   * @brief  Initializes the MDMA according to the specified
   *         parameters in the MDMA_InitTypeDef and create the associated handle.
   * @param  hmdma: Pointer to a MDMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified MDMA Stream.  
+  *               the configuration information for the specified MDMA Channel.  
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MDMA_Init(MDMA_HandleTypeDef *hmdma)
@@ -270,7 +254,7 @@ HAL_StatusTypeDef HAL_MDMA_Init(MDMA_HandleTypeDef *hmdma)
   __HAL_MDMA_DISABLE(hmdma);
   
   /* Check if the MDMA channel is effectively disabled */
-  while((hmdma->Instance->CCR & MDMA_CCR_EN) != RESET)
+  while((hmdma->Instance->CCR & MDMA_CCR_EN) != 0U)
   {
     /* Check for the Timeout */
     if((HAL_GetTick() - tickstart ) > HAL_TIMEOUT_MDMA_ABORT)
@@ -285,15 +269,15 @@ HAL_StatusTypeDef HAL_MDMA_Init(MDMA_HandleTypeDef *hmdma)
     }
   }
   
-  /* Init MDMA channel registers */
+  /* Initialize the MDMA channel registers */
   MDMA_Init(hmdma);
   
-  /* Reset the  MDMA first/last linkedlist node addresses and node counter */
+  /* Reset the MDMA first/last linkedlist node addresses and node counter */
   hmdma->FirstLinkedListNodeAddress  = 0; 
   hmdma->LastLinkedListNodeAddress   = 0; 
   hmdma->LinkedListNodeCounter  = 0;  
   
-  /* Initialise the error code */
+  /* Initialize the error code */
   hmdma->ErrorCode = HAL_MDMA_ERROR_NONE;
   
   /* Initialize the MDMA state */
@@ -305,7 +289,7 @@ HAL_StatusTypeDef HAL_MDMA_Init(MDMA_HandleTypeDef *hmdma)
 /**
   * @brief  DeInitializes the MDMA peripheral 
   * @param  hmdma: pointer to a MDMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified MDMA Stream.  
+  *               the configuration information for the specified MDMA Channel.  
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MDMA_DeInit(MDMA_HandleTypeDef *hmdma)
@@ -347,7 +331,7 @@ HAL_StatusTypeDef HAL_MDMA_DeInit(MDMA_HandleTypeDef *hmdma)
   hmdma->LastLinkedListNodeAddress   = 0; 
   hmdma->LinkedListNodeCounter  = 0; 
   
-  /* Initialise the error code */
+  /* Initialize the error code */
   hmdma->ErrorCode = HAL_MDMA_ERROR_NONE;
   
   /* Initialize the MDMA state */
@@ -384,7 +368,7 @@ HAL_StatusTypeDef HAL_MDMA_ConfigPostRequestMask(MDMA_HandleTypeDef *hmdma, uint
   if(HAL_MDMA_STATE_READY == hmdma->State)
   {
     /* if HW request set Post Request MaskAddress and MaskData,  */
-    if((hmdma->Instance->CTCR & MDMA_CTCR_SWRM) == 0)
+    if((hmdma->Instance->CTCR & MDMA_CTCR_SWRM) == 0U)
     {
       /* Set the HW request clear Mask and Data */
       hmdma->Instance->CMAR = MaskAddress;
@@ -396,7 +380,7 @@ HAL_StatusTypeDef HAL_MDMA_ConfigPostRequestMask(MDMA_HandleTypeDef *hmdma, uint
          If mask address not set (0) => BWM must be set to 0
          If mask address set (different than 0) => BWM could be set to 1 or 0
       */
-      if(MaskAddress == 0)
+      if(MaskAddress == 0U)
       {
         hmdma->Instance->CTCR &=  ~MDMA_CTCR_BWM;
       }
@@ -591,8 +575,8 @@ HAL_StatusTypeDef HAL_MDMA_UnRegisterCallback(MDMA_HandleTypeDef *hmdma, HAL_MDM
   */
 HAL_StatusTypeDef HAL_MDMA_LinkedList_CreateNode(MDMA_LinkNodeTypeDef *pNode, MDMA_LinkNodeConfTypeDef *pNodeConfig)
 {
-  uint32_t addressMask = 0;
-  uint32_t blockoffset = 0;
+  uint32_t addressMask;
+  uint32_t blockoffset;
   
   /* Check the MDMA peripheral state */
   if((pNode == NULL) || (pNodeConfig == NULL))
@@ -620,21 +604,21 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_CreateNode(MDMA_LinkNodeTypeDef *pNode, MD
   assert_param(IS_MDMA_BLOCK_COUNT(pNodeConfig->BlockCount));  
   
   
-  /*configure next Link node Address Register to zero */
+  /* Configure next Link node Address Register to zero */
   pNode->CLAR =  0;
   
-  /*Configure the Link Node registers*/
+  /* Configure the Link Node registers*/
   pNode->CTBR   = 0;
   pNode->CMAR   = 0;  
   pNode->CMDR   = 0;
   pNode->Reserved = 0;
   
-  /* write new CTCR Register value */
-  pNode->CTCR =  pNodeConfig->Init.SourceInc | pNodeConfig->Init.DestinationInc  | \
-    pNodeConfig->Init.SourceDataSize | pNodeConfig->Init.DestDataSize  | \
-      pNodeConfig->Init.DataAlignment| pNodeConfig->Init.SourceBurst   | \
-        pNodeConfig->Init.DestBurst  | \
-          ((pNodeConfig->Init.BufferTransferLength - 1) << POSITION_VAL(MDMA_CTCR_TLEN)) | \
+  /* Write new CTCR Register value */
+  pNode->CTCR =  pNodeConfig->Init.SourceInc | pNodeConfig->Init.DestinationInc | \
+    pNodeConfig->Init.SourceDataSize | pNodeConfig->Init.DestDataSize           | \
+      pNodeConfig->Init.DataAlignment| pNodeConfig->Init.SourceBurst            | \
+        pNodeConfig->Init.DestBurst                                             | \
+          ((pNodeConfig->Init.BufferTransferLength - 1U) << MDMA_CTCR_TLEN_Pos) | \
             pNodeConfig->Init.TransferTriggerMode;
   
   /* If SW request set the CTCR register to SW Request Mode*/
@@ -649,20 +633,20 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_CreateNode(MDMA_LinkNodeTypeDef *pNode, MD
      If mask address not set (0) => BWM must be set to 0
      If mask address set (different than 0) => BWM could be set to 1 or 0
   */
-  if((pNodeConfig->Init.Request == MDMA_REQUEST_SW) || (pNodeConfig->PostRequestMaskAddress != 0))
+  if((pNodeConfig->Init.Request == MDMA_REQUEST_SW) || (pNodeConfig->PostRequestMaskAddress != 0U))
   {
     pNode->CTCR |=  MDMA_CTCR_BWM;
   }
   
   /* Set the new CBNDTR Register value */ 
-  pNode->CBNDTR = ((pNodeConfig->BlockCount - 1) << POSITION_VAL(MDMA_CBNDTR_BRC)) & MDMA_CBNDTR_BRC;
+  pNode->CBNDTR = ((pNodeConfig->BlockCount - 1U) << MDMA_CBNDTR_BRC_Pos) & MDMA_CBNDTR_BRC;
   
   /* if block source address offset is negative set the Block Repeat Source address Update Mode to decrement */
   if(pNodeConfig->Init.SourceBlockAddressOffset < 0)
   {
     pNode->CBNDTR |= MDMA_CBNDTR_BRSUM;
     /*write new CBRUR Register value : source repeat block offset */
-    blockoffset = (-1 * pNodeConfig->Init.SourceBlockAddressOffset);
+    blockoffset = (uint32_t)(- pNodeConfig->Init.SourceBlockAddressOffset);
     pNode->CBRUR = blockoffset & 0x0000FFFFU;
   }
   else
@@ -676,13 +660,13 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_CreateNode(MDMA_LinkNodeTypeDef *pNode, MD
   {
     pNode->CBNDTR |= MDMA_CBNDTR_BRDUM;
     /*write new CBRUR Register value : destination repeat block offset */
-    blockoffset = (-1 * pNodeConfig->Init.DestBlockAddressOffset);
-    pNode->CBRUR |= ((blockoffset & 0x0000FFFFU) << POSITION_VAL(MDMA_CBRUR_DUV));
+    blockoffset = (uint32_t)(- pNodeConfig->Init.DestBlockAddressOffset);
+    pNode->CBRUR |= ((blockoffset & 0x0000FFFFU) << MDMA_CBRUR_DUV_Pos);
   }
   else
   {
     /*write new CBRUR Register value : destination repeat block offset */     
-    pNode->CBRUR |= (((uint32_t)pNodeConfig->Init.DestBlockAddressOffset) & 0x0000FFFFU) << POSITION_VAL(MDMA_CBRUR_DUV);    
+    pNode->CBRUR |= ((((uint32_t)pNodeConfig->Init.DestBlockAddressOffset) & 0x0000FFFFU) << MDMA_CBRUR_DUV_Pos);    
   }    
   
   /* Configure MDMA Link Node data length */
@@ -734,7 +718,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_CreateNode(MDMA_LinkNodeTypeDef *pNode, MD
   */
 HAL_StatusTypeDef HAL_MDMA_LinkedList_AddNode(MDMA_HandleTypeDef *hmdma, MDMA_LinkNodeTypeDef *pNewNode, MDMA_LinkNodeTypeDef *pPrevNode)
 {
-  MDMA_LinkNodeTypeDef *pNode = 0;
+  MDMA_LinkNodeTypeDef *pNode;
   uint32_t counter = 0, nodeInserted = 0;
   HAL_StatusTypeDef hal_status = HAL_OK;  
   
@@ -753,7 +737,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_AddNode(MDMA_HandleTypeDef *hmdma, MDMA_Li
     hmdma->State = HAL_MDMA_STATE_BUSY;
     
     /* Check if this is the first node (after the Inititlization node) */
-    if((uint32_t)hmdma->FirstLinkedListNodeAddress == 0)
+    if((uint32_t)hmdma->FirstLinkedListNodeAddress == 0U)
     {
       if(pPrevNode == NULL)
       {
@@ -794,9 +778,9 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_AddNode(MDMA_HandleTypeDef *hmdma, MDMA_Li
       if(hal_status == HAL_OK)
       {
         /* Check if the previous node is the last one in the current list or zero */     
-        if((pPrevNode == hmdma->LastLinkedListNodeAddress) || (pPrevNode == 0))
+        if((pPrevNode == hmdma->LastLinkedListNodeAddress) || (pPrevNode == NULL))
         {
-          /* insert the new node at the end of the list. */
+          /* insert the new node at the end of the list */
           pNewNode->CLAR = hmdma->LastLinkedListNodeAddress->CLAR;            
           hmdma->LastLinkedListNodeAddress->CLAR = (uint32_t)pNewNode;
           /* Update the Handle last node address */
@@ -809,7 +793,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_AddNode(MDMA_HandleTypeDef *hmdma, MDMA_Li
           /*insert the new node after the pPreviousNode node */ 
           pNode = hmdma->FirstLinkedListNodeAddress;
           counter = 0;
-          while((counter < hmdma->LinkedListNodeCounter) && (nodeInserted == 0))
+          while((counter < hmdma->LinkedListNodeCounter) && (nodeInserted == 0U))
           {
             counter++;
             if(pNode == pPrevNode)
@@ -827,7 +811,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_AddNode(MDMA_HandleTypeDef *hmdma, MDMA_Li
             }
           }
           
-          if(nodeInserted == 0)
+          if(nodeInserted == 0U)
           {
             hal_status = HAL_ERROR;
           }
@@ -867,7 +851,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_AddNode(MDMA_HandleTypeDef *hmdma, MDMA_Li
   */
 HAL_StatusTypeDef HAL_MDMA_LinkedList_RemoveNode(MDMA_HandleTypeDef *hmdma, MDMA_LinkNodeTypeDef *pNode)
 {
-  MDMA_LinkNodeTypeDef *ptmpNode = 0;
+  MDMA_LinkNodeTypeDef *ptmpNode;
   uint32_t counter = 0, nodeDeleted = 0;
   HAL_StatusTypeDef hal_status = HAL_OK;  
   
@@ -886,7 +870,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_RemoveNode(MDMA_HandleTypeDef *hmdma, MDMA
     hmdma->State = HAL_MDMA_STATE_BUSY;
     
     /* If first and last node are null (no nodes in the list) : return error*/
-    if(((uint32_t)hmdma->FirstLinkedListNodeAddress == 0) || ((uint32_t)hmdma->LastLinkedListNodeAddress == 0) || (hmdma->LinkedListNodeCounter == 0))
+    if(((uint32_t)hmdma->FirstLinkedListNodeAddress == 0U) || ((uint32_t)hmdma->LastLinkedListNodeAddress == 0U) || (hmdma->LinkedListNodeCounter == 0U))
     {
       hal_status = HAL_ERROR;
     }
@@ -925,7 +909,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_RemoveNode(MDMA_HandleTypeDef *hmdma, MDMA
     {
       /*Deleted node is not the first one : find it  */      
       ptmpNode = hmdma->FirstLinkedListNodeAddress;
-      while((counter < hmdma->LinkedListNodeCounter) && (nodeDeleted == 0))
+      while((counter < hmdma->LinkedListNodeCounter) && (nodeDeleted == 0U))
       {
         counter++;
         if(ptmpNode->CLAR == ((uint32_t)pNode))
@@ -948,7 +932,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_RemoveNode(MDMA_HandleTypeDef *hmdma, MDMA
         }
       }
       
-      if(nodeDeleted == 0)
+      if(nodeDeleted == 0U)
       {
         /* last node reashed without finding the node to delete : return error */
         hal_status = HAL_ERROR;
@@ -997,7 +981,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_EnableCircularMode(MDMA_HandleTypeDef *hmd
     hmdma->State = HAL_MDMA_STATE_BUSY; 
  
     /* If first and last node are null (no nodes in the list) : return error*/
-    if(((uint32_t)hmdma->FirstLinkedListNodeAddress == 0) || ((uint32_t)hmdma->LastLinkedListNodeAddress == 0) || (hmdma->LinkedListNodeCounter == 0))
+    if(((uint32_t)hmdma->FirstLinkedListNodeAddress == 0U) || ((uint32_t)hmdma->LastLinkedListNodeAddress == 0U) || (hmdma->LinkedListNodeCounter == 0U))
     {
       hal_status = HAL_ERROR;
     }
@@ -1041,7 +1025,7 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_DisableCircularMode(MDMA_HandleTypeDef *hm
     hmdma->State = HAL_MDMA_STATE_BUSY; 
  
     /* If first and last node are null (no nodes in the list) : return error*/
-    if(((uint32_t)hmdma->FirstLinkedListNodeAddress == 0) || ((uint32_t)hmdma->LastLinkedListNodeAddress == 0) || (hmdma->LinkedListNodeCounter == 0))
+    if(((uint32_t)hmdma->FirstLinkedListNodeAddress == 0U) || ((uint32_t)hmdma->LastLinkedListNodeAddress == 0U) || (hmdma->LinkedListNodeCounter == 0U))
     {
       hal_status = HAL_ERROR;
     }
@@ -1086,14 +1070,14 @@ HAL_StatusTypeDef HAL_MDMA_LinkedList_DisableCircularMode(MDMA_HandleTypeDef *hm
 /**
   * @brief  Starts the MDMA Transfer.
   * @param  hmdma           : pointer to a MDMA_HandleTypeDef structure that contains
-  *                           the configuration information for the specified MDMA Stream.  
+  *                           the configuration information for the specified MDMA Channel.  
   * @param  SrcAddress      : The source memory Buffer address
   * @param  DstAddress      : The destination memory Buffer address
   * @param  BlockDataLength : The length of a block transfer in bytes
   * @param  BlockCount      : The number of a blocks to be transfer
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_MDMA_Start (MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress, uint32_t DstAddress, uint32_t BlockDataLength, uint32_t BlockCount)
+HAL_StatusTypeDef HAL_MDMA_Start(MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress, uint32_t DstAddress, uint32_t BlockDataLength, uint32_t BlockCount)
 {
   /* Check the parameters */
   assert_param(IS_MDMA_TRANSFER_LENGTH(BlockDataLength));
@@ -1122,10 +1106,8 @@ HAL_StatusTypeDef HAL_MDMA_Start (MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress
     /* Configure the source, destination address and the data length */
     MDMA_SetConfig(hmdma, SrcAddress, DstAddress, BlockDataLength, BlockCount);
     
-    
     /* Enable the Peripheral */
     __HAL_MDMA_ENABLE(hmdma);
-    
     
     if(hmdma->Init.Request == MDMA_REQUEST_SW)
     {
@@ -1148,7 +1130,7 @@ HAL_StatusTypeDef HAL_MDMA_Start (MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress
 /**
   * @brief  Starts the MDMA Transfer with interrupts enabled.
   * @param  hmdma           : pointer to a MDMA_HandleTypeDef structure that contains
-  *                           the configuration information for the specified MDMA Stream.  
+  *                           the configuration information for the specified MDMA Channel.  
   * @param  SrcAddress      : The source memory Buffer address
   * @param  DstAddress      : The destination memory Buffer address
   * @param  BlockDataLength : The length of a block transfer in bytes
@@ -1231,10 +1213,10 @@ HAL_StatusTypeDef HAL_MDMA_Start_IT(MDMA_HandleTypeDef *hmdma, uint32_t SrcAddre
   * @param  hmdma  : pointer to a MDMA_HandleTypeDef structure that contains
   *                 the configuration information for the specified MDMA Channel.
   *                   
-  * @note  After disabling a MDMA Stream, a check for wait until the MDMA Channel is 
-  *        effectively disabled is added. If a Stream is disabled 
+  * @note  After disabling a MDMA Channel, a check for wait until the MDMA Channel is 
+  *        effectively disabled is added. If a Channel is disabled 
   *        while a data transfer is ongoing, the current data will be transferred
-  *        and the Stream will be effectively disabled only after the transfer of
+  *        and the Channel will be effectively disabled only after the transfer of
   *        this single data is finished.  
   * @retval HAL status
   */
@@ -1266,7 +1248,7 @@ HAL_StatusTypeDef HAL_MDMA_Abort(MDMA_HandleTypeDef *hmdma)
     __HAL_MDMA_DISABLE(hmdma);
     
     /* Check if the MDMA Channel is effectively disabled */
-    while((hmdma->Instance->CCR & MDMA_CCR_EN) != 0) 
+    while((hmdma->Instance->CCR & MDMA_CCR_EN) != 0U)
     {
       /* Check for the Timeout */
       if( (HAL_GetTick()  - tickstart ) > HAL_TIMEOUT_MDMA_ABORT)
@@ -1313,7 +1295,9 @@ HAL_StatusTypeDef HAL_MDMA_Abort_IT(MDMA_HandleTypeDef *hmdma)
   
   if(HAL_MDMA_STATE_BUSY != hmdma->State)
   {
+    /* No transfer ongoing */
     hmdma->ErrorCode = HAL_MDMA_ERROR_NO_XFER;
+	
     return HAL_ERROR;
   }
   else
@@ -1336,10 +1320,10 @@ HAL_StatusTypeDef HAL_MDMA_Abort_IT(MDMA_HandleTypeDef *hmdma)
   * @param  Timeout:       Timeout duration.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, uint32_t CompleteLevel, uint32_t Timeout)
+HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, HAL_MDMA_LevelCompleteTypeDef CompleteLevel, uint32_t Timeout)
 {
-  uint32_t levelFlag = 0, errorFlag = 0;
-  uint32_t tickstart = 0;
+  uint32_t levelFlag, errorFlag;
+  uint32_t tickstart;
   
   /* Check the parameters */
   assert_param(IS_MDMA_LEVEL_COMPLETE(CompleteLevel));
@@ -1359,23 +1343,23 @@ HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, uint32_t C
   }  
   
   /* Get the level transfer complete flag */
-  levelFlag = ((CompleteLevel == HAL_MDMA_FULL_TRANSFER) ? MDMA_FLAG_CTC   :\
-    (CompleteLevel == HAL_MDMA_BUFFER_TRANSFER)? MDMA_FLAG_BFTC :\
-      (CompleteLevel == HAL_MDMA_BLOCK_TRANSFER) ? MDMA_FLAG_BT   :\
-        MDMA_FLAG_BRT);
+  levelFlag = ((CompleteLevel == HAL_MDMA_FULL_TRANSFER)  ? MDMA_FLAG_CTC  : \
+               (CompleteLevel == HAL_MDMA_BUFFER_TRANSFER)? MDMA_FLAG_BFTC : \
+               (CompleteLevel == HAL_MDMA_BLOCK_TRANSFER) ? MDMA_FLAG_BT   : \
+               MDMA_FLAG_BRT);
   
   
   /* Get timeout */
   tickstart = HAL_GetTick();
   
-  while(__HAL_MDMA_GET_FLAG(hmdma, levelFlag) == RESET)
+  while(__HAL_MDMA_GET_FLAG(hmdma, levelFlag) == 0U)
   {
-    if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_TE) != RESET))
+    if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_TE) != 0U))
     {      
       /* Get the transfer error source flag */
       errorFlag = hmdma->Instance->CESR;
       
-      if((errorFlag & MDMA_CESR_TED) == 0)
+      if((errorFlag & MDMA_CESR_TED) == 0U)
       {
         /* Update error code : Read Transfer error  */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_READ_XFER;
@@ -1386,35 +1370,35 @@ HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, uint32_t C
         hmdma->ErrorCode |= HAL_MDMA_ERROR_WRITE_XFER;        
       }
       
-      if((errorFlag & MDMA_CESR_TEMD) != 0)
+      if((errorFlag & MDMA_CESR_TEMD) != 0U)
       {
         /* Update error code : Error Mask Data */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_MASK_DATA;
       }
       
-      if((errorFlag & MDMA_CESR_TELD) != 0)
+      if((errorFlag & MDMA_CESR_TELD) != 0U)
       {
         /* Update error code : Error Linked list */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_LINKED_LIST;
       }
       
-      if((errorFlag & MDMA_CESR_ASE) != 0)
+      if((errorFlag & MDMA_CESR_ASE) != 0U)
       {
         /* Update error code : Address/Size alignment error */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_ALIGNMENT;
       }
       
-      if((errorFlag & MDMA_CESR_BSE) != 0)
+      if((errorFlag & MDMA_CESR_BSE) != 0U)
       {
         /* Update error code : Block Size error */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_BLOCK_SIZE;
       }      
       
-      HAL_MDMA_Abort(hmdma); /* if error then abort the current transfer */
+      (void) HAL_MDMA_Abort(hmdma); /* if error then abort the current transfer */
       
       /*
         Note that the Abort function will 
-          - Clear the transfer error flags
+          - Clear all transfer flags
           - Unlock
           - Set the State          
       */       
@@ -1426,16 +1410,16 @@ HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, uint32_t C
     /* Check for the Timeout */
     if(Timeout != HAL_MAX_DELAY)
     {
-      if((Timeout == 0)||((HAL_GetTick() - tickstart ) > Timeout))
+      if(((HAL_GetTick() - tickstart ) > Timeout) || (Timeout == 0U))
       {
         /* Update error code */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_TIMEOUT;
 
-        HAL_MDMA_Abort(hmdma); /* if timeout then abort the current transfer */
+        (void) HAL_MDMA_Abort(hmdma); /* if timeout then abort the current transfer */
 
         /*
           Note that the Abort function will 
-            - Clear the transfer error flags
+            - Clear all transfer flags
             - Unlock
             - Set the State          
         */
@@ -1469,6 +1453,10 @@ HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, uint32_t C
     
     hmdma->State = HAL_MDMA_STATE_READY;
   }
+  else
+  {
+    return HAL_ERROR;
+  }
   
   return HAL_OK;
 }
@@ -1481,22 +1469,29 @@ HAL_StatusTypeDef HAL_MDMA_PollForTransfer(MDMA_HandleTypeDef *hmdma, uint32_t C
   */
 HAL_StatusTypeDef HAL_MDMA_GenerateSWRequest(MDMA_HandleTypeDef *hmdma)
 {
+  uint32_t request_mode;
+  
   /* Check the MDMA peripheral handle */
   if(hmdma == NULL)
   {
     return HAL_ERROR;
   }
   
-  if((hmdma->Instance->CCR &  MDMA_CCR_EN) == RESET)
+  /* Get the softawre request mode */
+  request_mode = hmdma->Instance->CTCR & MDMA_CTCR_SWRM;
+  
+  if((hmdma->Instance->CCR &  MDMA_CCR_EN) == 0U)
   {
     /* if no Transfer on going (MDMA enable bit not set) retrun error */
     hmdma->ErrorCode = HAL_MDMA_ERROR_NO_XFER;
+    
     return HAL_ERROR;      
   }
-  else if(((hmdma->Instance->CISR &  MDMA_CISR_CRQA) != RESET) || ((hmdma->Instance->CTCR & MDMA_CTCR_SWRM) == RESET))
+  else if(((hmdma->Instance->CISR &  MDMA_CISR_CRQA) != 0U) || (request_mode == 0U))
   {
-    /* if an MDMA ongoing request hase not yet ends or if request mode is not SW request retrun error */
+    /* if an MDMA ongoing request has not yet end or if request mode is not SW request retrun error */
     hmdma->ErrorCode = HAL_MDMA_ERROR_BUSY;
+    
     return HAL_ERROR;      
   }
   else
@@ -1511,27 +1506,27 @@ HAL_StatusTypeDef HAL_MDMA_GenerateSWRequest(MDMA_HandleTypeDef *hmdma)
 /**
   * @brief  Handles MDMA interrupt request.
   * @param  hmdma: pointer to a MDMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified MDMA Stream.  
+  *               the configuration information for the specified MDMA Channel.  
   * @retval None
   */
 void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
 {
   __IO uint32_t count = 0;
-  uint32_t timeout = SystemCoreClock / 9600;
+  uint32_t timeout = SystemCoreClock / 9600U;
   
   uint32_t generalIntFlag, errorFlag;
   
   /* General Interrupt Flag management ****************************************/  
-  generalIntFlag =  1 << (((uint32_t)hmdma->Instance - (uint32_t)(MDMA_Channel0))/HAL_MDMA_CHANNEL_SIZE);
-  if((MDMA->GISR0 & generalIntFlag) == RESET)
+  generalIntFlag =  1UL << ((((uint32_t)hmdma->Instance - (uint32_t)(MDMA_Channel0))/HAL_MDMA_CHANNEL_SIZE) & 0x1FU);
+  if((MDMA->GISR0 & generalIntFlag) == 0U)
   {
     return; /* the  General interrupt flag for the current channel is down , nothing to do */
   }    
   
   /* Transfer Error Interrupt management ***************************************/
-  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_TE) != RESET))
+  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_TE) != 0U))
   {
-    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_TE) != RESET)
+    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_TE) != 0U)
     {      
       /* Disable the transfer error interrupt */
       __HAL_MDMA_DISABLE_IT(hmdma, MDMA_IT_TE);
@@ -1539,7 +1534,7 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
       /* Get the transfer error source flag */
       errorFlag = hmdma->Instance->CESR;
       
-      if((errorFlag & MDMA_CESR_TED) == 0)
+      if((errorFlag & MDMA_CESR_TED) == 0U)
       {
         /* Update error code : Read Transfer error  */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_READ_XFER;
@@ -1550,25 +1545,25 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
         hmdma->ErrorCode |= HAL_MDMA_ERROR_WRITE_XFER;        
       }
       
-      if((errorFlag & MDMA_CESR_TEMD) != 0)
+      if((errorFlag & MDMA_CESR_TEMD) != 0U)
       {
         /* Update error code : Error Mask Data */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_MASK_DATA;
       }
       
-      if((errorFlag & MDMA_CESR_TELD) != 0)
+      if((errorFlag & MDMA_CESR_TELD) != 0U)
       {
         /* Update error code : Error Linked list */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_LINKED_LIST;
       }
       
-      if((errorFlag & MDMA_CESR_ASE) != 0)
+      if((errorFlag & MDMA_CESR_ASE) != 0U)
       {
         /* Update error code : Address/Size alignment error */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_ALIGNMENT;
       }
       
-      if((errorFlag & MDMA_CESR_BSE) != 0)
+      if((errorFlag & MDMA_CESR_BSE) != 0U)
       {
         /* Update error code : Block Size error error */
         hmdma->ErrorCode |= HAL_MDMA_ERROR_BLOCK_SIZE;
@@ -1580,9 +1575,9 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
   }
   
   /* Buffer Transfer Complete Interrupt management ******************************/
-  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_BFTC) != RESET))
+  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_BFTC) != 0U))
   {
-    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_BFTC) != RESET)
+    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_BFTC) != 0U)
     {
       /* Clear the buffer transfer complete flag */
       __HAL_MDMA_CLEAR_FLAG(hmdma, MDMA_FLAG_BFTC);
@@ -1596,9 +1591,9 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
   }
   
   /* Block Transfer Complete Interrupt management ******************************/
-  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_BT) != RESET))
+  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_BT) != 0U))
   {
-    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_BT) != RESET)
+    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_BT) != 0U)
     {
       /* Clear the block transfer complete flag */
       __HAL_MDMA_CLEAR_FLAG(hmdma, MDMA_FLAG_BT);
@@ -1612,9 +1607,9 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
   }
   
   /* Repeated Block Transfer Complete Interrupt management ******************************/
-  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_BRT) != RESET))
+  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_BRT) != 0U))
   {
-    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_BRT) != RESET)
+    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_BRT) != 0U)
     {
       /* Clear the repeat block transfer complete flag */
       __HAL_MDMA_CLEAR_FLAG(hmdma, MDMA_FLAG_BRT);
@@ -1628,9 +1623,9 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
   }   
   
   /* Channel Transfer Complete Interrupt management ***********************************/
-  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_CTC) != RESET))
+  if((__HAL_MDMA_GET_FLAG(hmdma, MDMA_FLAG_CTC) != 0U))
   {
-    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_CTC) != RESET)
+    if(__HAL_MDMA_GET_IT_SOURCE(hmdma, MDMA_IT_CTC) != 0U)
     {
       /* Disable all the transfer interrupts */
       __HAL_MDMA_DISABLE_IT(hmdma, (MDMA_IT_TE | MDMA_IT_CTC | MDMA_IT_BT | MDMA_IT_BRT | MDMA_IT_BFTC));
@@ -1648,8 +1643,8 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
           hmdma->XferAbortCallback(hmdma);
         }
         return;
-        
       }
+	  
       /* Clear the Channel Transfer Complete flag */
       __HAL_MDMA_CLEAR_FLAG(hmdma, MDMA_FLAG_CTC);
       
@@ -1682,12 +1677,12 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
         break;
       }
     }
-    while((hmdma->Instance->CCR & MDMA_CCR_EN) != RESET);
+    while((hmdma->Instance->CCR & MDMA_CCR_EN) != 0U);
     
     /* Process Unlocked */
     __HAL_UNLOCK(hmdma);
     
-    if((hmdma->Instance->CCR & MDMA_CCR_EN) != RESET)
+    if((hmdma->Instance->CCR & MDMA_CCR_EN) != 0U)
     {
       /* Change the MDMA state to error if MDMA disable fails */
       hmdma->State = HAL_MDMA_STATE_ERROR;
@@ -1705,7 +1700,6 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
       hmdma->XferErrorCallback(hmdma);
     }
   }
-  
 }
 
 /**
@@ -1730,7 +1724,7 @@ void HAL_MDMA_IRQHandler(MDMA_HandleTypeDef *hmdma)
 /**
   * @brief  Returns the MDMA state.
   * @param  hmdma: pointer to a MDMA_HandleTypeDef structure that contains
-  *               the configuration information for the specified MDMA Stream.
+  *               the configuration information for the specified MDMA Channel.
   * @retval HAL state
   */
 HAL_MDMA_StateTypeDef HAL_MDMA_GetState(MDMA_HandleTypeDef *hmdma)
@@ -1741,7 +1735,7 @@ HAL_MDMA_StateTypeDef HAL_MDMA_GetState(MDMA_HandleTypeDef *hmdma)
 /**
   * @brief  Return the MDMA error code
   * @param  hmdma : pointer to a MDMA_HandleTypeDef structure that contains
-  *              the configuration information for the specified MDMA Stream.
+  *              the configuration information for the specified MDMA Channel.
   * @retval MDMA Error Code
   */
 uint32_t HAL_MDMA_GetError(MDMA_HandleTypeDef *hmdma)
@@ -1757,28 +1751,29 @@ uint32_t HAL_MDMA_GetError(MDMA_HandleTypeDef *hmdma)
   * @}
   */
 
-/** @addtogroup JPEG_Private_Functions
+/** @addtogroup MDMA_Private_Functions
   * @{
   */
 
 /**
   * @brief  Sets the MDMA Transfer parameter.
   * @param  hmdma:       pointer to a MDMA_HandleTypeDef structure that contains
-  *                     the configuration information for the specified MDMA Stream.
+  *                     the configuration information for the specified MDMA Channel.
   * @param  SrcAddress: The source memory Buffer address
   * @param  DstAddress: The destination memory Buffer address
   * @param  BlockDataLength : The length of a block transfer in bytes
-  * @param  BlockCount: The number of a blocks to be transfer
+  * @param  BlockCount: The number of blocks to be transfered
   * @retval HAL status
   */
 static void MDMA_SetConfig(MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress, uint32_t DstAddress, uint32_t BlockDataLength, uint32_t BlockCount)
 {
   uint32_t addressMask;
-  /* Configure MDMA Channel data length */
+  
+  /* Configure the MDMA Channel data length */
   MODIFY_REG(hmdma->Instance->CBNDTR ,MDMA_CBNDTR_BNDT, (BlockDataLength & MDMA_CBNDTR_BNDT));
   
-  /*Configure the MDMA block repeat count*/
-  MODIFY_REG( hmdma->Instance->CBNDTR , MDMA_CBNDTR_BRC , ((BlockCount - 1) << POSITION_VAL(MDMA_CBNDTR_BRC)) & MDMA_CBNDTR_BRC);
+  /* Configure the MDMA block repeat count */
+  MODIFY_REG(hmdma->Instance->CBNDTR , MDMA_CBNDTR_BRC , ((BlockCount - 1U) << MDMA_CBNDTR_BRC_Pos) & MDMA_CBNDTR_BRC);
   
   /* Clear all interrupt flags */
   __HAL_MDMA_CLEAR_FLAG(hmdma, MDMA_FLAG_TE | MDMA_FLAG_CTC | MDMA_CISR_BRTIF | MDMA_CISR_BTIF | MDMA_CISR_TCIF);  
@@ -1813,26 +1808,33 @@ static void MDMA_SetConfig(MDMA_HandleTypeDef *hmdma, uint32_t SrcAddress, uint3
     hmdma->Instance->CTBR &= (~MDMA_CTBR_DBUS);  
   }
   
-  /* Set the linked list rgeitser to the first node of the list */
+  /* Set the linked list register to the first node of the list */
   hmdma->Instance->CLAR = (uint32_t)hmdma->FirstLinkedListNodeAddress;  
 }
 
+/**
+  * @brief  Initializes the MDMA handle according to the specified
+  *         parameters in the MDMA_InitTypeDef
+  * @param  hmdma:       pointer to a MDMA_HandleTypeDef structure that contains
+  *                     the configuration information for the specified MDMA Channel.
+  * @retval None
+  */
 static void MDMA_Init(MDMA_HandleTypeDef *hmdma)
 {
-  uint32_t blockoffset = 0;
+  uint32_t blockoffset;
 
   /* Prepare the MDMA Channel configuration */
   hmdma->Instance->CCR = hmdma->Init.Priority  | hmdma->Init.Endianness;
   
-  /* write new CTCR Register value */
-  hmdma->Instance->CTCR =  hmdma->Init.SourceInc      | hmdma->Init.DestinationInc  | \
-                   hmdma->Init.SourceDataSize | hmdma->Init.DestDataSize  | \
-                   hmdma->Init.DataAlignment  | hmdma->Init.SourceBurst   | \
-                   hmdma->Init.DestBurst      | \
-                   ((hmdma->Init.BufferTransferLength - 1) << POSITION_VAL(MDMA_CTCR_TLEN)) | \
-                   hmdma->Init.TransferTriggerMode;
+  /* Write new CTCR Register value */
+  hmdma->Instance->CTCR =  hmdma->Init.SourceInc      | hmdma->Init.DestinationInc | \
+                           hmdma->Init.SourceDataSize | hmdma->Init.DestDataSize   | \
+                           hmdma->Init.DataAlignment  | hmdma->Init.SourceBurst    | \
+                           hmdma->Init.DestBurst                                   | \
+                           ((hmdma->Init.BufferTransferLength - 1U) << MDMA_CTCR_TLEN_Pos) | \
+                           hmdma->Init.TransferTriggerMode;
   
-  /* If SW request set the CTCR register to SW Request Mode*/
+  /* If SW request set the CTCR register to SW Request Mode */
   if(hmdma->Init.Request == MDMA_REQUEST_SW)
   {
     /* 
@@ -1851,31 +1853,31 @@ static void MDMA_Init(MDMA_HandleTypeDef *hmdma)
   if(hmdma->Init.SourceBlockAddressOffset < 0)
   {
     hmdma->Instance->CBNDTR |= MDMA_CBNDTR_BRSUM;
-    /*write new CBRUR Register value : source repeat block offset */
-    blockoffset = (-1 * hmdma->Init.SourceBlockAddressOffset);
+    /* Write new CBRUR Register value : source repeat block offset */
+    blockoffset = (uint32_t)(- hmdma->Init.SourceBlockAddressOffset);
     hmdma->Instance->CBRUR = (blockoffset & 0x0000FFFFU);
   }
   else
   {
-    /*write new CBRUR Register value : source repeat block offset */     
+    /* Write new CBRUR Register value : source repeat block offset */     
     hmdma->Instance->CBRUR = (((uint32_t)hmdma->Init.SourceBlockAddressOffset) & 0x0000FFFFU);    
   }
   
-  /* if block destination address offset is negative set the Block Repeat destination address Update Mode to decrement */
+  /* If block destination address offset is negative set the Block Repeat destination address Update Mode to decrement */
   if(hmdma->Init.DestBlockAddressOffset < 0)
   {
     hmdma->Instance->CBNDTR |= MDMA_CBNDTR_BRDUM;
-    /*write new CBRUR Register value : destination repeat block offset */
-    blockoffset = (-1 * hmdma->Init.DestBlockAddressOffset);
-    hmdma->Instance->CBRUR |= ((blockoffset & 0x0000FFFFU) << POSITION_VAL(MDMA_CBRUR_DUV));    
+    /* Write new CBRUR Register value : destination repeat block offset */
+    blockoffset = (uint32_t)(- hmdma->Init.DestBlockAddressOffset);
+    hmdma->Instance->CBRUR |= ((blockoffset & 0x0000FFFFU) << MDMA_CBRUR_DUV_Pos);    
   }
   else
   {
     /*write new CBRUR Register value : destination repeat block offset */     
-    hmdma->Instance->CBRUR |= (((uint32_t)hmdma->Init.DestBlockAddressOffset) & 0x0000FFFFU) << POSITION_VAL(MDMA_CBRUR_DUV);    
+    hmdma->Instance->CBRUR |= ((((uint32_t)hmdma->Init.DestBlockAddressOffset) & 0x0000FFFFU) << MDMA_CBRUR_DUV_Pos);    
   }   
   
-  /* if HW request set the HW request and the requet CleraMask and ClearData MaskData,  */
+  /* if HW request set the HW request and the requet CleraMask and ClearData MaskData, */
   if(hmdma->Init.Request != MDMA_REQUEST_SW)
   {
     /* Set the HW request in CTRB register  */
@@ -1886,7 +1888,7 @@ static void MDMA_Init(MDMA_HandleTypeDef *hmdma)
     hmdma->Instance->CTBR = 0;
   }
   
-  /*Write Link Address Register*/
+  /* Write Link Address Register */
   hmdma->Instance->CLAR =  0;
 }
 

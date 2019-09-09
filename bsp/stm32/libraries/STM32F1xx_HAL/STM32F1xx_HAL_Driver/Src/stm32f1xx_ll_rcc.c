@@ -6,40 +6,25 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_ll_rcc.h"
 #ifdef  USE_FULL_ASSERT
-  #include "stm32_assert.h"
+#include "stm32_assert.h"
 #else
-  #define assert_param(expr) ((void)0U)
+#define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */
 /** @addtogroup STM32F1xx_LL_Driver
   * @{
@@ -104,7 +89,7 @@ uint32_t RCC_PLL2_GetFreqClockFreq(void);
   * @brief  Reset the RCC clock configuration to the default reset state.
   * @note   The default reset state of the clock configuration is given below:
   *         - HSI ON and used as system clock source
-  *         - HSE PLL, PLL2 & PLL3 are OFF 
+  *         - HSE PLL, PLL2 & PLL3 are OFF
   *         - AHB, APB1 and APB2 prescaler set to 1.
   *         - CSS, MCO OFF
   *         - All interrupts disabled
@@ -121,7 +106,7 @@ ErrorStatus LL_RCC_DeInit(void)
   LL_RCC_HSI_Enable();
 
   /* Wait for HSI READY bit */
-  while(LL_RCC_HSI_IsReady() != 1U)
+  while (LL_RCC_HSI_IsReady() != 1U)
   {}
 
   /* Configure HSI as system clock source */
@@ -135,7 +120,7 @@ ErrorStatus LL_RCC_DeInit(void)
   CLEAR_BIT(RCC->CR, RCC_CR_PLLON);
 
   /* Wait for PLL READY bit to be reset */
-  while(LL_RCC_PLL_IsReady() != 0U)
+  while (LL_RCC_PLL_IsReady() != 0U)
   {}
 
   /* Reset CFGR register */
@@ -180,9 +165,9 @@ ErrorStatus LL_RCC_DeInit(void)
   *         and different peripheral clocks available on the device.
   * @note   If SYSCLK source is HSI, function returns values based on HSI_VALUE(**)
   * @note   If SYSCLK source is HSE, function returns values based on HSE_VALUE(***)
-  * @note   If SYSCLK source is PLL, function returns values based on 
+  * @note   If SYSCLK source is PLL, function returns values based on
   *         HSI_VALUE(**) or HSE_VALUE(***) multiplied/divided by the PLL factors.
-  * @note   (**) HSI_VALUE is a defined constant but the real value may vary 
+  * @note   (**) HSI_VALUE is a defined constant but the real value may vary
   *              depending on the variations in voltage and temperature.
   * @note   (***) HSE_VALUE is a defined constant, user has to ensure that
   *               HSE_VALUE is same as the real frequency of the crystal used.
@@ -269,7 +254,7 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
   /* USBCLK clock frequency */
   switch (LL_RCC_GetUSBClockSource(USBxSource))
   {
-#if defined(RCC_CFGR_USBPRE)  
+#if defined(RCC_CFGR_USBPRE)
     case LL_RCC_USB_CLKSOURCE_PLL:        /* PLL clock used as USB clock source */
       if (LL_RCC_PLL_IsReady())
       {
@@ -286,8 +271,8 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
       break;
 #endif /* RCC_CFGR_USBPRE */
 #if defined(RCC_CFGR_OTGFSPRE)
-    /* USBCLK = PLLVCO/2 
-              = (2 x PLLCLK) / 2 
+    /* USBCLK = PLLVCO/2
+              = (2 x PLLCLK) / 2
               = PLLCLK */
     case LL_RCC_USB_CLKSOURCE_PLL_DIV_2:        /* PLL clock used as USB clock source */
       if (LL_RCC_PLL_IsReady())
@@ -296,7 +281,7 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
       }
       break;
 
-    /* USBCLK = PLLVCO/3 
+    /* USBCLK = PLLVCO/3
               = (2 x PLLCLK) / 3 */
     case LL_RCC_USB_CLKSOURCE_PLL_DIV_3:        /* PLL clock divided by 3 used as USB clock source */
     default:

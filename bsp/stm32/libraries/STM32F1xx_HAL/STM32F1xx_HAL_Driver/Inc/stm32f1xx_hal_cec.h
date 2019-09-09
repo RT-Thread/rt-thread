@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************  
   */
@@ -41,9 +25,10 @@
  extern "C" {
 #endif
 
-#if defined(STM32F100xB) || defined(STM32F100xE)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal_def.h"
+
+#if defined (CEC)
 
 /** @addtogroup STM32F1xx_HAL_Driver
   * @{
@@ -130,7 +115,7 @@ typedef enum
 /** 
   * @brief  CEC handle Structure definition  
   */  
-typedef struct
+typedef struct __CEC_HandleTypeDef
 {
   CEC_TypeDef             *Instance;      /*!< CEC registers base address */
   
@@ -152,8 +137,38 @@ typedef struct
                                                This parameter can be a value of @ref HAL_CEC_StateTypeDef */
   
   uint32_t                ErrorCode;      /*!< For errors handling purposes, copy of ISR register 
-                                               in case error is reported */    
+                                               in case error is reported */  
+
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+  void  (* TxCpltCallback) ( struct __CEC_HandleTypeDef * hcec);                            /*!< CEC Tx Transfer completed callback */
+  void  (* RxCpltCallback) ( struct __CEC_HandleTypeDef * hcec, uint32_t RxFrameSize);      /*!< CEC Rx Transfer completed callback */
+  void  (* ErrorCallback)  ( struct __CEC_HandleTypeDef * hcec);                            /*!< CEC error callback */
+
+  void  (* MspInitCallback)        ( struct __CEC_HandleTypeDef * hcec);    /*!< CEC Msp Init callback              */
+  void  (* MspDeInitCallback)      ( struct __CEC_HandleTypeDef * hcec);    /*!< CEC Msp DeInit callback            */
+
+#endif /* (USE_HAL_CEC_REGISTER_CALLBACKS) */											   
 }CEC_HandleTypeDef;
+
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL CEC Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_CEC_TX_CPLT_CB_ID      = 0x00U,    /*!< CEC Tx Transfer completed callback ID  */
+  HAL_CEC_RX_CPLT_CB_ID      = 0x01U,    /*!< CEC Rx Transfer completed callback ID  */
+  HAL_CEC_ERROR_CB_ID        = 0x02U,    /*!< CEC error callback  ID                 */
+  HAL_CEC_MSPINIT_CB_ID      = 0x03U,    /*!< CEC Msp Init callback ID               */
+  HAL_CEC_MSPDEINIT_CB_ID    = 0x04U     /*!< CEC Msp DeInit callback ID             */
+}HAL_CEC_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL CEC Callback pointer definition
+  */
+typedef  void (*pCEC_CallbackTypeDef)(CEC_HandleTypeDef * hcec); /*!< pointer to an CEC callback function */
+typedef  void (*pCEC_RxCallbackTypeDef)(CEC_HandleTypeDef * hcec, uint32_t RxFrameSize); /*!< pointer to an Rx Transfer completed callback function */
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -174,6 +189,9 @@ typedef struct
 #define HAL_CEC_ERROR_ACKE   CEC_ESR_ACKE   /*!< Block Acknowledge Error */
 #define HAL_CEC_ERROR_LINE   CEC_ESR_LINE   /*!< Line Error */
 #define HAL_CEC_ERROR_TBTFE  CEC_ESR_TBTFE  /*!< Tx Block Transfer Finished Error */
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+#define  HAL_CEC_ERROR_INVALID_CALLBACK ((uint32_t)0x00000080U) /*!< Invalid Callback Error  */
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -264,10 +282,19 @@ typedef struct
   * @param  __HANDLE__: CEC handle.
   * @retval None
   */
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
 #define __HAL_CEC_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
                                                        (__HANDLE__)->gState = HAL_CEC_STATE_RESET;     \
                                                        (__HANDLE__)->RxState = HAL_CEC_STATE_RESET;    \
-                                                     } while(0U)
+                                                       (__HANDLE__)->MspInitCallback = NULL;           \
+                                                       (__HANDLE__)->MspDeInitCallback = NULL;         \
+                                                     } while(0)
+#else  
+#define __HAL_CEC_RESET_HANDLE_STATE(__HANDLE__) do{                                                   \
+                                                       (__HANDLE__)->gState = HAL_CEC_STATE_RESET;     \
+                                                       (__HANDLE__)->RxState = HAL_CEC_STATE_RESET;    \
+                                                     } while(0)
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 
 /** @brief  Checks whether or not the specified CEC interrupt flag is set.
   * @param  __HANDLE__: specifies the CEC Handle.
@@ -375,7 +402,7 @@ typedef struct
 
 /**
   * @}
-  */                       
+  */
 
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup CEC_Exported_Functions CEC Exported Functions
@@ -392,6 +419,13 @@ HAL_StatusTypeDef HAL_CEC_DeInit(CEC_HandleTypeDef *hcec);
 HAL_StatusTypeDef HAL_CEC_SetDeviceAddress(CEC_HandleTypeDef *hcec, uint16_t CEC_OwnAddress);
 void HAL_CEC_MspInit(CEC_HandleTypeDef *hcec);
 void HAL_CEC_MspDeInit(CEC_HandleTypeDef *hcec);
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
+HAL_StatusTypeDef HAL_CEC_RegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID, pCEC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_CEC_UnRegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID);
+
+HAL_StatusTypeDef HAL_CEC_RegisterRxCpltCallback(CEC_HandleTypeDef *hcec, pCEC_RxCallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_CEC_UnRegisterRxCpltCallback(CEC_HandleTypeDef *hcec);
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -506,7 +540,9 @@ uint32_t HAL_CEC_GetError(CEC_HandleTypeDef *hcec);
 /**
   * @}
   */ 
-#endif /* defined(STM32F100xB) || defined(STM32F100xE) */
+
+#endif /* CEC */
+
 #ifdef __cplusplus
 }
 #endif

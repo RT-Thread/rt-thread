@@ -216,7 +216,7 @@ extern "C" {
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval None
 */
 __STATIC_INLINE void LL_AHB1_GRP1_EnableClock(uint32_t Periphs)
@@ -241,7 +241,7 @@ __STATIC_INLINE void LL_AHB1_GRP1_EnableClock(uint32_t Periphs)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval State of Periphs (1 or 0).
 */
 __STATIC_INLINE uint32_t LL_AHB1_GRP1_IsEnabledClock(uint32_t Periphs)
@@ -262,7 +262,7 @@ __STATIC_INLINE uint32_t LL_AHB1_GRP1_IsEnabledClock(uint32_t Periphs)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval None
 */
 __STATIC_INLINE void LL_AHB1_GRP1_DisableClock(uint32_t Periphs)
@@ -284,7 +284,7 @@ __STATIC_INLINE void LL_AHB1_GRP1_DisableClock(uint32_t Periphs)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval None
 */
 __STATIC_INLINE void LL_AHB1_GRP1_ForceReset(uint32_t Periphs)
@@ -306,7 +306,7 @@ __STATIC_INLINE void LL_AHB1_GRP1_ForceReset(uint32_t Periphs)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval None
 */
 __STATIC_INLINE void LL_AHB1_GRP1_ReleaseReset(uint32_t Periphs)
@@ -329,7 +329,7 @@ __STATIC_INLINE void LL_AHB1_GRP1_ReleaseReset(uint32_t Periphs)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval None
 */
 __STATIC_INLINE void LL_AHB1_GRP1_EnableClockStopSleep(uint32_t Periphs)
@@ -356,7 +356,7 @@ __STATIC_INLINE void LL_AHB1_GRP1_EnableClockStopSleep(uint32_t Periphs)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRC
   *         @arg @ref LL_AHB1_GRP1_PERIPH_CRYP (*)
   *         @arg @ref LL_AHB1_GRP1_PERIPH_RNG  (*)
-  * @note   (*) RNG & CRYP IP available only on STM32G081xx
+  * @note   (*) RNG & CRYP Peripherals available only on STM32G081xx
   * @retval None
 */
 __STATIC_INLINE void LL_AHB1_GRP1_DisableClockStopSleep(uint32_t Periphs)
