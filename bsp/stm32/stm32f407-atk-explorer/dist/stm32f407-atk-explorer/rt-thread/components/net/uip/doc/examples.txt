@@ -1,0 +1,34 @@
+/**
+\defgroup apps Applications
+@{
+
+The uIP distribution contains a number of example applications that
+can be either used directory or studied when learning to develop
+applications for uIP.
+
+*/
+
+/** \example hello-world.c */
+/** \example hello-world.h */
+
+/** \example smtp.c */
+/** \example smtp.h */
+
+/** \example webclient.c */
+/** \example webclient.h */
+
+/** \example example-mainloop-with-arp.c */
+/** \example example-mainloop-without-arp.c */
+
+/** \example telnetd.c */
+/** \example telnetd.h */
+
+/** \example resolv.c */
+/** \example resolv.h */
+
+/** \example dhcpc.c */
+/** \example dhcpc.h */
+
+/** \example uip-conf.h */
+
+/** @} */

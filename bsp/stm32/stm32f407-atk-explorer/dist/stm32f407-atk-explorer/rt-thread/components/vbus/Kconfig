@@ -1,0 +1,62 @@
+menu "VBUS(Virtual Software BUS)"
+
+config RT_USING_VBUS
+    bool "Enable VBUS"
+    default n
+
+if RT_USING_VBUS
+    config RT_USING_VBUS_RFS
+        bool "Enable Remote File System on VBUS"
+        default n
+        help
+            When enable remote file system, the application can visit the remote file system
+            through VBUS with POSIX file I/O.
+
+    config RT_USING_VBUS_RSHELL
+        bool "Enable Remote Shell on VBUS"
+        default n
+        help
+            When enable remote shell, the finsh/msh of RT-Thread can be operated from another
+            Operating System.
+
+    config RT_VBUS_USING_TESTS
+        bool "Enable tests on VBUS "
+        default n
+
+    config _RT_VBUS_RING_BASE
+        hex "VBUS address"
+        help
+            VBUS ring buffer physical address.
+
+    config _RT_VBUS_RING_SZ
+        int "VBUS ring size"
+        help
+            VBUS size of the ring buffer.
+
+    config RT_VBUS_GUEST_VIRQ
+        int "RT_VBUS_GUEST_VIRQ"
+        help
+            RT_VBUS_GUEST_VIRQ
+        help
+            The interrupt number used to notify the client on a particular system.
+
+    config RT_VBUS_HOST_VIRQ
+        int "RT_VBUS_HOST_VIRQ"
+        help
+            The interrupt be triggered on a particular system when the client notify the host.
+
+    config RT_VBUS_SHELL_DEV_NAME
+        string "RT_VBUS_SHELL_DEV_NAME"
+        default "vbser0"
+        help
+            The name of the UBUS shell device.
+
+    config RT_VBUS_RFS_DEV_NAME
+        string "RT_VBUS_RFS_DEV_NAME"
+        default "rfs"
+        help
+            The name of the UBUS rfs device.
+
+endif
+
+endmenu

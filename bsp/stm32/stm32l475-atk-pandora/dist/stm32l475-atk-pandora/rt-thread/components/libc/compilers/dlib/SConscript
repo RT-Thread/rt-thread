@@ -1,0 +1,26 @@
+from building import *
+
+Import('rtconfig')
+
+src   = Glob('*.c')
+cwd   = GetCurrentDir()
+group = []
+
+CPPPATH    = [cwd]
+CPPDEFINES = ['RT_USING_DLIBC']
+
+if rtconfig.PLATFORM == 'iar':
+
+    if GetDepend('RT_USING_DFS'):
+        from distutils.version import LooseVersion
+        from iar import IARVersion
+
+        CPPDEFINES = CPPDEFINES + ['_DLIB_FILE_DESCRIPTOR']
+
+        if LooseVersion(IARVersion()) < LooseVersion("8.20.1"):
+            CPPDEFINES = CPPDEFINES + ['_DLIB_THREAD_SUPPORT']
+
+    group = DefineGroup('dlib', src, depend = ['RT_USING_LIBC'], 
+        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

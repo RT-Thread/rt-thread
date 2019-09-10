@@ -1,0 +1,15 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+src += Glob('utilities/rshell.c')
+if GetDepend('RT_USING_VMM_RFS'):
+    src += Glob('utilities/rfs.c')
+
+CPPPATH = [cwd, os.path.join(cwd, 'share_hdr')]
+
+group = DefineGroup('VMM', src, depend = ['RT_USING_VMM'], CPPPATH = CPPPATH)
+
+Return('group')
