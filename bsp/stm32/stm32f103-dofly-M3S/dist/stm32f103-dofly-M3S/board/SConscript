@@ -1,0 +1,45 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f1xx_hal_msp.c
+''')
+
+if GetDepend(['BSP_USING_SDIO_SDCARD']):
+    src += Glob('ports/drv_sdcard.c')
+    
+if GetDepend(['BSP_USING_SPI_SDCARD']):
+    src += Glob('ports/drv_sdcard.c')
+    
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/spi_flash_init.c')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xe.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xe.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Source/Templates/iar/startup_stm32f103xe.s']
+
+# STM32F100xB || STM32F100xE || STM32F101x6
+# STM32F101xB || STM32F101xE || STM32F101xG
+# STM32F102x6 || STM32F102xB || STM32F103x6
+# STM32F103xB || STM32F103xE || STM32F103xG
+# STM32F105xC || STM32F107xC)
+# You can select chips from the list above
+CPPDEFINES = ['STM32F103xE']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

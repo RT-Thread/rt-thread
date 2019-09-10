@@ -1,0 +1,21 @@
+from building import *
+Import('rtconfig')
+
+src   = Glob('*.c') + Glob('*.cpp')
+cwd   = GetCurrentDir()
+group = []
+
+CPPPATH = [cwd]
+CPPDEFINES = ['RT_USING_ARM_LIBC']
+
+if GetDepend('RT_USING_DFS') == False:
+    SrcRemove(src, ['stdio.c'])
+
+if GetDepend('RT_USING_MODULE') == False:
+    SrcRemove(src, ['libc_syms.c'])
+
+if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], 
+        CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

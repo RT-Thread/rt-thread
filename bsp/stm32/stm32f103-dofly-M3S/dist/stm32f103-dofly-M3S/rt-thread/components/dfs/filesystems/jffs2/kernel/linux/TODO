@@ -1,0 +1,11 @@
+
+This contains a very limited set of Linux-compatibility headers, initially
+just for getting JFFS2 to build.
+
+Some things are simply stubs which don't _work_, to allow the JFFS2 code
+to compile. Note that you may need to implement these _properly_ in order
+to use these for making other Linux code work, or indeed for making the 
+JFFS2 NAND support work.
+
+The non-working parts include, but are not limited to: 
+	workqueue.h, wait.h, timer.h, spinlock.h, sched.h, compiler.h

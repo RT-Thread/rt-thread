@@ -1,0 +1,170 @@
+# ====================================================================
+#
+#      compress_zlib.cdl
+#
+#      Zlib compress/decompress configuration data
+#
+# ====================================================================
+## ####ECOSGPLCOPYRIGHTBEGIN####                                            
+## -------------------------------------------                              
+## This file is part of eCos, the Embedded Configurable Operating System.   
+## Copyright (C) 1998, 1999, 2000, 2001, 2002, 2009 Free Software Foundation, Inc.
+##
+## eCos is free software; you can redistribute it and/or modify it under    
+## the terms of the GNU General Public License as published by the Free     
+## Software Foundation; either version 2 or (at your option) any later      
+## version.                                                                 
+##
+## eCos is distributed in the hope that it will be useful, but WITHOUT      
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+## FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+## for more details.                                                        
+##
+## You should have received a copy of the GNU General Public License        
+## along with eCos; if not, write to the Free Software Foundation, Inc.,    
+## 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.            
+##
+## As a special exception, if other files instantiate templates or use      
+## macros or inline functions from this file, or you compile this file      
+## and link it with other works to produce a work based on this file,       
+## this file does not by itself cause the resulting work to be covered by   
+## the GNU General Public License. However the source code for this file    
+## must still be made available in accordance with section (3) of the GNU   
+## General Public License v2.                                               
+##
+## This exception does not invalidate any other reasons why a work based    
+## on this file might be covered by the GNU General Public License.         
+## -------------------------------------------                              
+## ####ECOSGPLCOPYRIGHTEND####                                              
+# ====================================================================
+######DESCRIPTIONBEGIN####
+#
+# Author(s):      jskov
+# Contributors:
+# Date:           2001-03-06
+#
+#####DESCRIPTIONEND####
+#
+# ====================================================================
+
+cdl_package CYGPKG_COMPRESS_ZLIB {
+    display       "Zlib compress and decompress package"
+    description   "
+                  This package provides support for compression and
+                  decompression."
+    include_dir   cyg/compress
+
+    requires      CYGPKG_ISOINFRA
+    requires      CYGPKG_CRC
+
+    compile       adler32.c compress.c uncompr.c zutil.c trees.c
+    compile       deflate.c infback.c inffast.c inflate.c inftrees.c
+
+    cdl_interface CYGINT_COMPRESS_ZLIB_LOCAL_ALLOC {
+        display "Override memory allocation routines."
+    }
+
+    cdl_option  CYGSEM_COMPRESS_ZLIB_DEFLATE_MAKES_GZIP {
+        display        "Should deflate() produce 'gzip' compatible output?"
+        flavor         bool
+        default_value  1
+        description "
+          If this option is set then the output of calling deflate()
+          will be wrapped up as a 'gzip' compatible file."
+    }
+
+    cdl_option CYGSEM_COMPRESS_ZLIB_NEEDS_MALLOC {
+        display        "Does this library need malloc?"
+        flavor         bool
+        active_if      { CYGINT_COMPRESS_ZLIB_LOCAL_ALLOC == 0 }
+        requires       CYGPKG_MEMALLOC
+        no_define
+        default_value  1
+        description    "
+           This pseudo-option will force the memalloc library to be
+           required iff the application does not provide it's own
+           infrastructure."
+    }
+
+    cdl_option CYGFUN_COMPRESS_ZLIB_GZIO {
+        display        "Include stdio-like utility functions"
+        flavor         bool
+        requires       CYGINT_ISO_STDIO_FILEPOS
+        requires       CYGINT_ISO_STRING_STRFUNCS
+        requires       CYGINT_ISO_STDIO_FORMATTED_IO
+        requires       CYGINT_ISO_STDIO_FILEACCESS
+        default_value  { CYGPKG_LIBC_STDIO_OPEN ? 1 : 0 }
+        compile        gzio.c
+        description    "
+           This option enables the stdio-like zlib utility functions
+           (gzread/gzwrite and friends) provided in gzio.c."
+    }
+
+
+# ====================================================================
+
+    cdl_component CYGPKG_COMPRESS_ZLIB_OPTIONS {
+        display "Zlib compress and decompress package build options"
+        flavor  none
+        no_define
+        description   "
+	    Package specific build options including control over
+	    compiler flags used only in building this package,
+	    and details of which tests are built."
+
+        cdl_option CYGPKG_COMPRESS_ZLIB_CFLAGS_ADD {
+            display "Additional compiler flags"
+            flavor  data
+            no_define
+            default_value { "-D__ECOS__ -DNO_ERRNO_H" }
+            description   "
+                This option modifies the set of compiler flags for
+                building this package. These flags are used in addition
+                to the set of global flags."
+        }
+
+        cdl_option CYGPKG_COMPRESS_ZLIB_CFLAGS_REMOVE {
+            display "Suppressed compiler flags"
+            flavor  data
+            no_define
+            default_value { "-Wstrict-prototypes" }
+            description   "
+                This option modifies the set of compiler flags for
+                building this package. These flags are removed from
+                the set of global flags if present."
+        }
+
+        cdl_option CYGPKG_COMPRESS_ZLIB_LDFLAGS_ADD {
+            display "Additional compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building this package. These flags are used in addition
+                to the set of global flags."
+        }
+
+        cdl_option CYGPKG_COMPRESS_ZLIB_LDFLAGS_REMOVE {
+            display "Suppressed compiler flags"
+            flavor  data
+            no_define
+            default_value { "" }
+            description   "
+                This option modifies the set of compiler flags for
+                building this package. These flags are removed from
+                the set of global flags if present."
+        }
+	
+    }
+
+    cdl_option CYGPKG_COMPRESS_ZLIB_TESTS {
+        display "zlib tests"
+        flavor  data
+        no_define
+        calculated { "tests/zlib1 tests/zlib2" }
+    }
+}
+
+# ====================================================================
+# EOF compress_zlib.cdl

@@ -1,0 +1,169 @@
+menu "Device virtual file system"
+
+config RT_USING_DFS
+    bool "Using device virtual file system"
+    select RT_USING_MUTEX
+    default y
+    help
+        The device file system is a light weight virtual file system.
+
+if RT_USING_DFS
+    config DFS_USING_WORKDIR
+        bool "Using working directory"
+        default y
+
+    config DFS_FILESYSTEMS_MAX
+        int "The maximal number of mounted file system"
+        default 4 if RT_USING_DFS_NFS
+        default 2
+
+    config DFS_FILESYSTEM_TYPES_MAX
+        int "The maximal number of file system type"
+        default 4 if RT_USING_DFS_NFS
+        default 2
+
+    config DFS_FD_MAX
+        int "The maximal number of opened files"
+        default 16
+
+    config RT_USING_DFS_MNTTABLE
+        bool "Using mount table for file system"
+        default n
+        help
+            User can use mount table for automatically mount, for example:
+                const struct dfs_mount_tbl mount_table[] =
+                {
+                    {"flash0", "/", "elm", 0, 0},
+                    {0}
+                };
+            The mount_table must be terminated with NULL.
+
+    config RT_USING_DFS_ELMFAT
+        bool "Enable elm-chan fatfs"
+        default n
+        help
+            FatFs is a generic FAT/exFAT file system module for small embedded systems.
+
+    if RT_USING_DFS_ELMFAT
+        menu "elm-chan's FatFs, Generic FAT Filesystem Module"
+        config RT_DFS_ELM_CODE_PAGE
+            int "OEM code page"
+            default 437
+
+        config RT_DFS_ELM_WORD_ACCESS
+            bool "Using RT_DFS_ELM_WORD_ACCESS"
+            default y
+
+        choice
+            prompt "Support long file name"
+            default RT_DFS_ELM_USE_LFN_3
+
+            config RT_DFS_ELM_USE_LFN_0
+                bool "0: LFN disable"
+
+            config RT_DFS_ELM_USE_LFN_1
+                bool "1: LFN with static LFN working buffer"
+
+            config RT_DFS_ELM_USE_LFN_2
+                bool "2: LFN with dynamic LFN working buffer on the stack"
+
+            config RT_DFS_ELM_USE_LFN_3
+                bool "3: LFN with dynamic LFN working buffer on the heap"
+        endchoice
+
+        config RT_DFS_ELM_USE_LFN
+            int
+            default 0 if RT_DFS_ELM_USE_LFN_0
+            default 1 if RT_DFS_ELM_USE_LFN_1
+            default 2 if RT_DFS_ELM_USE_LFN_2
+            default 3 if RT_DFS_ELM_USE_LFN_3
+
+        config RT_DFS_ELM_MAX_LFN
+            int "Maximal size of file name length"
+            range 12 255
+            default 255
+
+        config RT_DFS_ELM_DRIVES
+            int "Number of volumes (logical drives) to be used."
+            default 2
+
+        config RT_DFS_ELM_MAX_SECTOR_SIZE
+            int "Maximum sector size to be handled."
+            default 512
+            help
+                if you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
+
+        config RT_DFS_ELM_USE_ERASE
+            bool "Enable sector erase feature"
+            default n
+
+        config RT_DFS_ELM_REENTRANT
+            bool "Enable the reentrancy (thread safe) of the FatFs module"
+            default y
+        endmenu
+    endif
+
+    config RT_USING_DFS_DEVFS
+        bool "Using devfs for device objects"
+        default y
+
+    config RT_USING_DFS_ROMFS
+        bool "Enable ReadOnly file system on flash"
+        default n
+
+    config RT_USING_DFS_RAMFS
+        bool "Enable RAM file system"
+        select RT_USING_MEMHEAP
+        default n
+
+    config RT_USING_DFS_UFFS
+        bool "Enable UFFS file system: Ultra-low-cost Flash File System"
+        select RT_USING_MTD_NAND
+        default n
+
+    if RT_USING_DFS_UFFS
+        choice
+            prompt "UFFS ECC mode"
+            default RT_UFFS_ECC_MODE_1
+
+            config RT_UFFS_ECC_MODE_0
+                bool "0: Do not use ECC"
+
+            config RT_UFFS_ECC_MODE_1
+                bool "1: UFFS calculate the ECC"
+
+            config RT_UFFS_ECC_MODE_2
+                bool "2: Flash driver(or by hardware) calculate the ECC"
+
+            config RT_UFFS_ECC_MODE_3
+                bool "3: Hardware calculate the ECC and automatically write to spare."
+        endchoice
+
+        config RT_UFFS_ECC_MODE
+            int
+            default 0 if RT_UFFS_ECC_MODE_0
+            default 1 if RT_UFFS_ECC_MODE_1
+            default 2 if RT_UFFS_ECC_MODE_2
+            default 3 if RT_UFFS_ECC_MODE_3
+
+    endif
+
+    config RT_USING_DFS_JFFS2
+        bool "Enable JFFS2 file system"
+        select RT_USING_MTD_NOR
+        default n
+
+    config RT_USING_DFS_NFS
+        bool "Using NFS v3 client file system"
+        depends on RT_USING_LWIP
+        default n
+
+    if RT_USING_DFS_NFS
+        config RT_NFS_HOST_EXPORT
+            string "NFSv3 host export"
+            default "192.168.1.5:/"
+    endif
+
+endif
+
+endmenu

@@ -1,0 +1,11 @@
+# SConscript for touch framework 
+
+from building import *
+
+cwd = GetCurrentDir()
+src = ['touch.c']
+CPPPATH = [cwd, cwd + '/../include']
+
+group = DefineGroup('Touch', src, depend = ['RT_USING_TOUCH', 'RT_USING_DEVICE'], CPPPATH = CPPPATH)
+
+Return('group')

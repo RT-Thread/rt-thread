@@ -1,0 +1,11 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd]
+
+group = DefineGroup('aio', src, depend = ['RT_USING_POSIX', 'RT_USING_POSIX_AIO'], CPPPATH = CPPPATH)
+
+Return('group')

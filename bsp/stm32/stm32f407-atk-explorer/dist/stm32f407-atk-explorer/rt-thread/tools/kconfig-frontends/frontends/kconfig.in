@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+LIST="@KCFG_LIST@"
+
+main() {
+    local kcfg="${1}"; shift
+    local k
+
+    case "${kcfg}" in
+    "")         error "what should I do (see -h)?\n";;
+    -h|--help)  help; exit 0;;
+    -*)         error "no such option '%s'\n" "${kcfg}";;
+    esac
+
+    for k in ${LIST}; do
+        if [ "${kcfg}" = "${k}" ]; then
+            exec kconfig-${kcfg} "${@}"
+            error "cannot execute tool '%s'\n" "${kcfg}"
+        fi
+    done
+    error "no such tool '%s'\n" "${kcfg}"
+}
+
+help() {
+    cat <<-_EOF_
+NAME
+    kconfig - meta-frontend to kconfig tools
+
+SYNOPSIS
+    kconfig -h|--help
+    kconfig <kconfig-tool> [option ...]
+
+DESCRIPTION
+    kconfig is the meta-frontend to all other kconfig tools:
+        ${LIST}
+
+    The acceptable options depend on what tool is being called.
+_EOF_
+}
+
+error() {
+    local fmt="${1}"; shift
+
+    printf "kconfig: ${fmt}" "${@}" >&2
+    exit 1
+}
+
+main "${@}"
