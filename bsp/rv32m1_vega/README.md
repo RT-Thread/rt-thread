@@ -54,7 +54,7 @@ msh />
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------  |
 | UART | 支持 | UART0, RX(PTC7), TX(PTC8) |
-|  | 未支持 | UART1, RX(PTA25), TX(PTA26) |
+|      | 支持 | UART1, RX(PTA25), TX(PTA26) |
 | clock | 支持 |  |
 | GPIO | 支持（列表可能不完善，同时也需要按照使用到的IO调整pinmux、clock） |  |
 | MMC/SD | 支持 |  |
@@ -67,6 +67,8 @@ msh />
 | PTA23 | LED_GREEN |
 | PTA24 | LED_RED |
 | PTA24 | LED_STS |
+| PTA25 | UART1_RX |
+| PTA26 | UART1_TX |
 | PTE8 | BTN_SW3 |
 | PTE9 | BTN_SW4 |
 | PTE12 | BTN_SW5 |
