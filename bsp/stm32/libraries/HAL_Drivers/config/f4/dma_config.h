@@ -31,6 +31,12 @@ extern "C" {
 #define UART5_RX_DMA_INSTANCE            DMA1_Stream0
 #define UART5_RX_DMA_CHANNEL             DMA_CHANNEL_4
 #define UART5_RX_DMA_IRQ                 DMA1_Stream0_IRQn
+#elif defined(BSP_UART8_TX_USING_DMA) && !defined(UART8_TX_DMA_INSTANCE)
+#define UART8_DMA_TX_IRQHandler          DMA1_Stream0_IRQHandler
+#define UART8_TX_DMA_RCC                 RCC_AHB1ENR_DMA1EN
+#define UART8_TX_DMA_INSTANCE            DMA1_Stream0
+#define UART8_TX_DMA_CHANNEL             DMA_CHANNEL_5
+#define UART8_TX_DMA_IRQ                 DMA1_Stream0_IRQn
 #endif
 
 /* DMA1 stream1 */
@@ -40,6 +46,12 @@ extern "C" {
 #define UART3_RX_DMA_INSTANCE            DMA1_Stream1
 #define UART3_RX_DMA_CHANNEL             DMA_CHANNEL_4
 #define UART3_RX_DMA_IRQ                 DMA1_Stream1_IRQn
+#elif defined(BSP_UART7_RX_USING_DMA) && !defined(UART7_RX_DMA_INSTANCE)
+#define UART7_DMA_RX_IRQHandler          DMA1_Stream1_IRQHandler
+#define UART7_RX_DMA_RCC                 RCC_AHB1ENR_DMA1EN
+#define UART7_RX_DMA_INSTANCE            DMA1_Stream1
+#define UART7_RX_DMA_CHANNEL             DMA_CHANNEL_5
+#define UART7_RX_DMA_IRQ                 DMA1_Stream1_IRQn
 #endif
 
 /* DMA1 stream2 */
@@ -70,6 +82,12 @@ extern "C" {
 #define UART3_TX_DMA_INSTANCE            DMA1_Stream3
 #define UART3_TX_DMA_CHANNEL             DMA_CHANNEL_4
 #define UART3_TX_DMA_IRQ                 DMA1_Stream3_IRQn
+#elif defined(BSP_UART7_TX_USING_DMA) && !defined(UART7_TX_DMA_INSTANCE)
+#define UART7_DMA_RX_IRQHandler          DMA1_Stream3_IRQHandler
+#define UART7_RX_DMA_RCC                 RCC_AHB1ENR_DMA1EN
+#define UART7_RX_DMA_INSTANCE            DMA1_Stream3
+#define UART7_RX_DMA_CHANNEL             DMA_CHANNEL_5
+#define UART7_RX_DMA_IRQ                 DMA1_Stream3_IRQn
 #endif
 
 /* DMA1 stream4 */
@@ -109,6 +127,12 @@ extern "C" {
 #define UART2_TX_DMA_INSTANCE            DMA1_Stream6
 #define UART2_TX_DMA_CHANNEL             DMA_CHANNEL_4
 #define UART2_TX_DMA_IRQ                 DMA1_Stream6_IRQn
+#elif defined(BSP_UART8_RX_USING_DMA) && !defined(UART8_RX_DMA_INSTANCE)
+#define UART8_DMA_RX_IRQHandler          DMA1_Stream6_IRQHandler
+#define UART8_RX_DMA_RCC                 RCC_AHB1ENR_DMA1EN
+#define UART8_RX_DMA_INSTANCE            DMA1_Stream6
+#define UART8_RX_DMA_CHANNEL             DMA_CHANNEL_5
+#define UART8_RX_DMA_IRQ                 DMA1_Stream6_IRQn
 #endif
 
 /* DMA1 stream7 */
