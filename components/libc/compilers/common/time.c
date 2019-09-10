@@ -8,7 +8,7 @@
  * 2019-08-21     zhangjun     copy from minilibc
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <rtthread.h>
 
 #if !defined (__IAR_SYSTEMS_ICC__)
@@ -213,44 +213,26 @@ char* ctime(const time_t *timep)
 
 #endif /* __IAR_SYSTEMS_ICC__ */
 
-/*
- * Structure returned by gettimeofday(2) system call,
- * and used in other calls.
- */
-struct timeval {
-    long    tv_sec;     /* seconds */
-    long    tv_usec;    /* and microseconds */
-};
-
-#ifdef RT_USING_DEVICE
 int gettimeofday(struct timeval *tp, void *ignore)
 {
-    time_t time;
+    time_t time = 0;
+#ifdef RT_USING_DEVICE
     rt_device_t device;
-
     device = rt_device_find("rtc");
     RT_ASSERT(device != RT_NULL);
-
     rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
     if (tp != RT_NULL)
     {
         tp->tv_sec = time;
         tp->tv_usec = 0;
     }
+#else
+    tv->tv_sec = 0;
+    tv->tv_usec = 0;
+#endif
 
     return time;
 }
-#endif
-
-#ifndef _gettimeofday
-/* Dummy function when hardware do not have RTC */
-int _gettimeofday( struct timeval *tv, void *ignore)
-{
-    tv->tv_sec = 0;  // convert to seconds
-    tv->tv_usec = 0;  // get remaining microseconds
-    return 0;  // return non-zero for error
-}
-#endif
 
 
 /**
