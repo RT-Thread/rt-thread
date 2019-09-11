@@ -10,7 +10,6 @@
 #define _SYS_TIME_H_
 
 #include <time.h>
-#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,6 +26,13 @@ struct timeval {
     long    tv_usec;    /* and microseconds */
 };
 #endif /* _TIMEVAL_DEFINED */
+
+/*
+ * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
+ */
+#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
+#define _TIMESPEC_DEFINED
+#endif
 
 #ifndef _TIMESPEC_DEFINED
 #define _TIMESPEC_DEFINED
