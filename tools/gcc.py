@@ -37,6 +37,15 @@ def GetGCCRoot(rtconfig):
     else:
         root_path = os.path.join(exec_path, '..', prefix)
 
+    return root_path
+
+def CheckHeader(rtconfig, filename):
+    root = GetGCCRoot(rtconfig)
+
+    fn = os.path.join(root, 'include', filename)
+    if os.path.isfile(fn):
+        return True
+
     # Usually the cross compiling gcc toolchain has directory as:
     #
     # bin
@@ -55,15 +64,6 @@ def GetGCCRoot(rtconfig):
     if os.path.isfile(fn):
         return True
     
-    return root_path
-
-def CheckHeader(rtconfig, filename):
-    root = GetGCCRoot(rtconfig)
-
-    fn = os.path.join(root, 'include', filename)
-    if os.path.isfile(fn):
-        return True
-
     return False
 
 def GetNewLibVersion(rtconfig):
