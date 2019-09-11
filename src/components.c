@@ -126,6 +126,7 @@ void rt_components_init(void)
     }
 #endif
 }
+#endif   /* RT_USING_COMPONENTS_INIT */
 
 #ifdef RT_USING_USER_MAIN
 
@@ -173,10 +174,11 @@ void main_thread_entry(void *parameter)
 {
     extern int main(void);
     extern int $Super$$main(void);
-
+    
+#ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
     rt_components_init();
-
+#endif    
 #ifdef RT_USING_SMP
     rt_hw_secondary_cpu_up();
 #endif
@@ -253,5 +255,4 @@ int rtthread_startup(void)
     /* never reach here */
     return 0;
 }
-#endif
 #endif
