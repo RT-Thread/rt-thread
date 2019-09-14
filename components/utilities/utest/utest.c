@@ -63,20 +63,20 @@ void utest_log_lv_set(rt_uint8_t lv)
 int utest_init(void)
 {
     /* initialize the utest commands table.*/
-#if defined(__CC_ARM)                                 /* ARM C Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)       /* ARM C Compiler */
     extern const int UtestTcTab$$Base;
     extern const int UtestTcTab$$Limit;
     tc_table = (utest_tc_export_t)&UtestTcTab$$Base;
     tc_num = (utest_tc_export_t)&UtestTcTab$$Limit - tc_table;
-#elif defined (__ICCARM__) || defined(__ICCRX__)      /* for IAR Compiler */
+#elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
     tc_table = (utest_tc_export_t)__section_begin("UtestTcTab");
     tc_num = (utest_tc_export_t)__section_end("UtestTcTab") - tc_table;
-#elif defined (__GNUC__)                              /* for GCC Compiler */
+#elif defined (__GNUC__)                            /* for GCC Compiler */
     extern const int __rt_utest_tc_tab_start;
     extern const int __rt_utest_tc_tab_end;
     tc_table = (utest_tc_export_t)&__rt_utest_tc_tab_start;
     tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
-#endif /* defined(__CC_ARM) */
+#endif
 
     LOG_I("utest is initialize success.");
     LOG_I("total utest testcase num: (%d)", tc_num);
@@ -215,7 +215,7 @@ static void utest_run(const char *utest_name)
             i++;
         }
 
-        if (i == tc_num && is_find == RT_FALSE)
+        if (i == tc_num && is_find == RT_FALSE && utest_name != RT_NULL)
         {
             LOG_I("[==========] [ utest    ] Not find (%s)", utest_name);
             LOG_I("[==========] [ utest    ] finished");
