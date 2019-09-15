@@ -6,9 +6,6 @@ src = Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
 
-if GetDepend('RT_USING_COMPONENTS_INIT') == False:
-    SrcRemove(src, ['components.c'])
-
 if GetDepend('RT_USING_MODULE') == False:
     SrcRemove(src, ['module.c'])
 

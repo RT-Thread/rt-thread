@@ -27,3 +27,9 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "$ENV_DIR/tools/scripts/cmds/Kconfig"
 source "$BSP_DIR/drivers/Kconfig"
+
+config SOC_W60X
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y

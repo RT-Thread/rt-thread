@@ -29,4 +29,9 @@ source "$ENV_DIR/tools/scripts/cmds/Kconfig"
 source "$BSP_DIR/libraries/Kconfig"
 source "$BSP_DIR/drivers/Kconfig"
 
-select PKG_USING_REALTEK_AMEBA
+config SOC_AMEBAZ
+    bool
+    select PKG_USING_REALTEK_AMEBA
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
