@@ -21,6 +21,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f407-st-discovery](stm32f407-st-discovery) | ST 官方 STM32F407-discovery 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer) | 正点原子 F407 探索者开发板 |
 | [stm32f411-st-nucleo](stm32f411-st-nucleo/) | ST 官方 STM32F411-Nucleo-64 开发板 |
+| [stm32f427-robomaster-a](stm32f427-robomaster-a/) |大疆公司 RoboMaster A型开发板|
 | [stm32f429-atk-apollo](stm32f429-atk-apollo)      | 正点原子 F429 阿波罗开发板 |
 | [stm32f429-fire-challenger](stm32f429-fire-challenger/) | 野火 F429 挑战者开发板 |
 | [stm32f429-armfly-v6](stm32f429-armfly-v6) | 安富莱 F429-v6 开发板 |
