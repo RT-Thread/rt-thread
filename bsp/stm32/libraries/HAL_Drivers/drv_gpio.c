@@ -636,7 +636,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 }
 #endif
 
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32L0)
 void EXTI0_1_IRQHandler(void)
 {
     rt_interrupt_enter();
