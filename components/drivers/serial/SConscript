@@ -1,8 +1,12 @@
 from building import *
 
-cwd     = GetCurrentDir()
-src	= Glob('*.c')
-CPPPATH = [cwd + '/../include']
+cwd = GetCurrentDir()
+src = ['serial.c']
+
+if GetDepend('RT_CHAT_AT'):
+    src += ['chat-at.c']
+
+CPPPATH = [cwd, cwd + '/../include']
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL'], CPPPATH = CPPPATH)
 
 Return('group')
