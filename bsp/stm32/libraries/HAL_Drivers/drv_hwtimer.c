@@ -228,7 +228,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     tim = (TIM_HandleTypeDef *)timer->parent.user_data;
 
     /* set tim cnt */
-    __HAL_TIM_SET_AUTORELOAD(tim, t);
+    __HAL_TIM_SET_AUTORELOAD(tim, t - 1);
 
     if (opmode == HWTIMER_MODE_ONESHOT)
     {
