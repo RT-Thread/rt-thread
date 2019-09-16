@@ -90,6 +90,10 @@ endmenu
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
 endmenu
 
 menu "Board extended module Drivers"
