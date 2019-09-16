@@ -314,7 +314,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
 
     # add program path
-    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env.PrependENVPath('PATH', os.environ['PATH'])
     # add rtconfig.h/BSP path into Kernel group
     DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 
