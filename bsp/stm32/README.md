@@ -32,6 +32,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f767-atk-apollo](stm32f767-atk-apollo) | 正点原子 F767 阿波罗开发板 |
 | [stm32f767-fire-challenger](stm32f767-fire-challenger/) | 野火 F767 挑战者开发板 |
 | [stm32f767-st-nucleo](stm32f767-st-nucleo) | ST 官方 STM32F767-nucleo 开发板 |
+| [stm32f769-st-disco](stm32f769-st-disco) | ST 官方 STM32f769-discovery 开发板 |
 | **G0 系列** |  |
 | [stm32g071-st-nucleo](stm32g071-st-nucleo) | ST 官方 STM32G071-nucleo 开发板 |
 | **H7 系列** |  |
