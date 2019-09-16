@@ -815,7 +815,6 @@ struct rt_mempool
     rt_size_t        block_free_count;                  /**< numbers of free memory block */
 
     rt_list_t        suspend_thread;                    /**< threads pended on this resource */
-    rt_size_t        suspend_thread_count;              /**< numbers of thread pended on this resource */
 };
 typedef struct rt_mempool *rt_mp_t;
 #endif
