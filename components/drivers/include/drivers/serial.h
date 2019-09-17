@@ -104,7 +104,7 @@ struct serial_configure
 };
 
 /*
- * Serial FIFO mode 
+ * Serial FIFO mode
  */
 struct rt_serial_rx_fifo
 {
@@ -121,7 +121,7 @@ struct rt_serial_tx_fifo
     struct rt_completion completion;
 };
 
-/* 
+/*
  * Serial DMA mode
  */
 struct rt_serial_rx_dma
@@ -144,6 +144,7 @@ struct rt_serial_device
 
     void *serial_rx;
     void *serial_tx;
+    void *user_data;
 };
 typedef struct rt_serial_device rt_serial_t;
 
