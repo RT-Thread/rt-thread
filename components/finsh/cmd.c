@@ -691,7 +691,7 @@ long list_mempool(void)
                 mp = (struct rt_mempool *)obj;
 
                 suspend_thread_count = 0;
-                for (node = mp->suspend_thread.next; node != &mp->suspend_thread; node = node->next)
+                rt_list_for_each(node, &mp->suspend_thread)
                 {
                     suspend_thread_count++;
                 }
