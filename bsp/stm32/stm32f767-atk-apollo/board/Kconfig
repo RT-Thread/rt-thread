@@ -61,6 +61,11 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
+        default n
 
 endmenu
 
@@ -245,6 +250,10 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDIO"
         select RT_USING_SDIO
         select RT_USING_DFS
+        default n
+
+    config BSP_USING_LTDC
+        bool "Enable LTDC"
         default n
 	
  source "../libraries/HAL_Drivers/Kconfig"
