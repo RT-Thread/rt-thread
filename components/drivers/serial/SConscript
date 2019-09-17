@@ -6,6 +6,12 @@ src = ['serial.c']
 if GetDepend('RT_MODEM_CHAT'):
     src += ['chat.c']
 
+if GetDepend('RT_MODEM_CORE'):
+    src += ['modem.c']
+
+if GetDepend('RT_MODEM_TYPE_M6312'):
+    src += ['m6312.c']
+
 CPPPATH = [cwd, cwd + '/../include']
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL'], CPPPATH = CPPPATH)
 

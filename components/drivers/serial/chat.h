@@ -1,25 +1,26 @@
-#ifndef __chat_at_h__
-#define __chat_at_h__
+#ifndef __modem_chat_h__
+#define __modem_chat_h__
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
-#define CHAT_RESP_LIST(F) \
-    F(CHAT_RESP_OK,         "OK"), \
-    F(CHAT_RESP_READY,      "READY"), \
-    F(CHAT_RESP_CONNECT,    "CONNECT"), \
-    F(CHAT_RESP_BUSY,       "BUSY"), \
-    F(CHAT_RESP_NO_CARRIER, "NO CARRIER"), \
-    F(CHAT_RESP_ERROR,      "ERROR") \
+#define MODEM_CHAT_RESP_LIST(F) \
+    F(MODEM_CHAT_RESP_OK,         "OK"), \
+    F(MODEM_CHAT_RESP_READY,      "READY"), \
+    F(MODEM_CHAT_RESP_CONNECT,    "CONNECT"), \
+    F(MODEM_CHAT_RESP_BUSY,       "BUSY"), \
+    F(MODEM_CHAT_RESP_NO_CARRIER, "NO CARRIER"), \
+    F(MODEM_CHAT_RESP_ERROR,      "ERROR") \
 
-#define DEFINE_RESP_ID_TABLE(id, s) id
+#define DEFINE_MODEM_RESP_ID_TABLE(id, s) id
 
 enum {
-    CHAT_RESP_LIST(DEFINE_RESP_ID_TABLE),
-    CHAT_RESP_MAX,
-    CHAT_RESP_NOT_NEED = CHAT_RESP_MAX,
+    MODEM_CHAT_RESP_LIST(DEFINE_MODEM_RESP_ID_TABLE),
+    MODEM_CHAT_RESP_MAX,
+    MODEM_CHAT_RESP_NOT_NEED = MODEM_CHAT_RESP_MAX,
 };
 
-struct chat_data {
+struct rt_modem_chat_data {
     const char* transmit;
     rt_uint8_t expect;      // use CHAT_RESP_xxx
     rt_uint8_t retries;
@@ -27,6 +28,6 @@ struct chat_data {
 };
 
 
-rt_err_t chat_run(const struct chat_data *data, rt_size_t len);
+rt_err_t rt_modem_chat(struct rt_serial_device *serial, const struct rt_modem_chat_data *data, rt_size_t len);
 
 #endif

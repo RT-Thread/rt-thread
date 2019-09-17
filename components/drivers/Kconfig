@@ -8,7 +8,7 @@ if RT_USING_DEVICE_IPC
     config RT_PIPE_BUFSZ
         int "Set pipe buffer size"
         default 512
-    
+
     config RT_USING_SYSTEM_WORKQUEUE
         bool "Using system default workqueue"
         default n
@@ -39,17 +39,83 @@ if RT_USING_SERIAL
         int "Set RX buffer size"
         default 64
 
-    config RT_MODEM_CHAT
-        bool "Enable chat support"
-        help
-            chat module support conversational exchange between the system and the modem
-        default n
 
-    if RT_CHAT_AT
-        config RT_CHAT_DEVICE
-            string "the device name for chat"
-            default "uart"
-    endif
+    menu "Serial Modem"
+        config RT_MODEM_CHAT
+            bool "Enable modem chat support"
+            help
+                chat module support conversational exchange between the system and the modem
+            default n
+
+        choice
+            prompt "Modem type"
+            default RT_MODEM_TYPE_NONE
+            config RT_MODEM_TYPE_NONE
+                bool "None"
+            config RT_MODEM_TYPE_M6312
+                bool "M6312"
+        endchoice
+
+        if !RT_MODEM_TYPE_NONE
+            config RT_MODEM_CORE
+                bool
+                select RT_USING_PIN
+                select RT_MODEM_CHAT
+                select RT_USING_LWIP
+                select RT_LWIP_PPP
+                select RT_LWIP_PPPOS
+                default y
+
+            config RT_MODEM_APN
+                string "APN"
+                default "CMNET"
+
+            config RT_MODEM_NUMBER
+                string "Number"
+                default "*99***1#"
+
+            menu "Reconfigure serial"
+                config RT_MODEM_RECONFIGURE_SERIAL
+                    bool "Enable reconfigure serial device"
+                    default y
+
+                if RT_MODEM_RECONFIGURE_SERIAL
+                    config RT_MODEM_BAUD_RATE
+                        int "Baudrate"
+                        default 115200
+                    choice
+                        prompt "Parity"
+                        default RT_MODEM_PARITY_NONE
+                        config RT_MODEM_PARITY_NONE
+                            bool "Parity NONE"
+                        config RT_MODEM_PARITY_ODD
+                            bool "Parity ODD"
+                        config RT_MODEM_PARITY_EVEN
+                            bool "Parity EVEN"
+                    endchoice
+                endif
+            endmenu
+
+            menu "Auto Attach Modem Device"
+                config RT_MODEM_AUTO_ATTACH
+                    bool "Enable auto attach modem device"
+                    default n
+
+                if RT_MODEM_AUTO_ATTACH
+                    config RT_MODEM_DEVICE_NAME
+                        string "Serial device name"
+                        default "uart"
+                    config RT_MODEM_POWER_PIN
+                        int "Power pin"
+                        default -1
+                    config RT_MODEM_RESET_PIN
+                        int "Reset pin"
+                        default -1
+                endif
+            endmenu
+        endif
+    endmenu
+
 endif
 
 config RT_USING_CAN
@@ -196,7 +262,7 @@ config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
 
-    if RT_USING_SPI  
+    if RT_USING_SPI
         config RT_USING_QSPI
             bool "Enable QSPI mode"
             default n
@@ -220,7 +286,7 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
@@ -249,7 +315,7 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
-    
+
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memmory pool block size"
