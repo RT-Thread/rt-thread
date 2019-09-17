@@ -3,8 +3,8 @@ from building import *
 cwd = GetCurrentDir()
 src = ['serial.c']
 
-if GetDepend('RT_CHAT_AT'):
-    src += ['chat-at.c']
+if GetDepend('RT_MODEM_CHAT'):
+    src += ['chat.c']
 
 CPPPATH = [cwd, cwd + '/../include']
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL'], CPPPATH = CPPPATH)

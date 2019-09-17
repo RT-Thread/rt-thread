@@ -39,7 +39,7 @@ if RT_USING_SERIAL
         int "Set RX buffer size"
         default 64
 
-    config RT_CHAT_AT
+    config RT_MODEM_CHAT
         bool "Enable chat support"
         help
             chat module support conversational exchange between the system and the modem

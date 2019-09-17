@@ -3,7 +3,7 @@
 #define DBG_TAG    "CHAT"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
-#include "chat-at.h"
+#include "chat.h"
 
 #ifndef RT_CHAT_DEVICE
 #error "RT_CHAT_DEVICE not defined"
