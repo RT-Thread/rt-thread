@@ -660,6 +660,9 @@ menu "Using USB"
                     config _RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         select RT_USB_DEVICE_WINUSB
+                    config _RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
+                        select RT_USB_DEVICE_AUDIO
                 endchoice
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
@@ -684,6 +687,9 @@ menu "Using USB"
                         depends on RT_USING_LWIP
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
+                        default n
+                    config RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
                         default n
                 endif
                 if RT_USB_DEVICE_CDC
@@ -751,6 +757,24 @@ menu "Using USB"
                     config RT_USB_DEVICE_HID_MEDIA
                         bool "Use to HID device as media keyboard"
                         default y
+                endif
+                if RT_USB_DEVICE_AUDIO
+                    config RT_USB_DEVICE_AUDIO_MIC
+                        bool "Use usb mic device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_MIC
+                            config RT_USBD_MIC_DEVICE_NAME
+                            string "audio mic device name"
+                            default "mic0"
+                        endif
+                    config RT_USB_DEVICE_AUDIO_SPEAKER
+                        bool "Use usb speaker device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_SPEAKER
+                            config RT_USBD_SPEAKER_DEVICE_NAME
+                            string "audio speaker device name"
+                            default "sound0"
+                        endif
                 endif
         endif
     endmenu
