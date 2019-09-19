@@ -237,7 +237,8 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
 {
     rt_uint8_t value;
     uintf_t intf;
-
+    ufunction_t func;
+    
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
@@ -251,12 +252,17 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
     }
 
     /* find the specified interface and its alternate setting */
-    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, RT_NULL);
+    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, &func);
     value = intf->curr_setting->intf_desc->bAlternateSetting;
 
     /* send the interface alternate setting to endpoint 0*/
     rt_usbd_ep0_write(device, &value, 1);
 
+    if (intf->handler)
+    {
+        intf->handler(func, setup);
+    }
+    
     return RT_EOK;
 }
 
@@ -270,6 +276,7 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
  */
 static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
 {
+    ufunction_t func;
     uintf_t intf;
     uep_t ep;
     struct rt_list_node* i;
@@ -288,7 +295,7 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
     }
         
     /* find the specified interface */
-    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, RT_NULL);
+    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, &func);
 
     /* set alternate setting to the interface */
     rt_usbd_set_altsetting(intf, setup->wValue & 0xFF);
@@ -302,6 +309,11 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
         dcd_ep_enable(device->dcd, ep);
     }
     dcd_ep0_send_status(device->dcd);
+    
+    if (intf->handler)
+    {
+        intf->handler(func, setup);
+    }
     
     return RT_EOK;
 }
