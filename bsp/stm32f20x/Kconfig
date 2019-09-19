@@ -24,3 +24,9 @@ config SOC_STM32F2
     default y
 
 source "$BSP_DIR/Drivers/Kconfig"
+
+config SOC_STM32F20X
+    bool
+    # select RT_USING_COMPONENTS_INIT
+    # select RT_USING_USER_MAIN
+    default y

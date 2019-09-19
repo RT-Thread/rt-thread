@@ -106,7 +106,6 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
-    mp->suspend_thread_count = 0;
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
@@ -159,9 +158,6 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
          * suspend list
          */
         rt_thread_resume(thread);
-
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -226,7 +222,6 @@ rt_mp_t rt_mp_create(const char *name,
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
-    mp->suspend_thread_count = 0;
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
@@ -281,9 +276,6 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
          * suspend list
          */
         rt_thread_resume(thread);
-
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -344,7 +336,6 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         /* need suspend thread */
         rt_thread_suspend(thread);
         rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
-        mp->suspend_thread_count++;
 
         if (time > 0)
         {
@@ -431,7 +422,7 @@ void rt_mp_free(void *block)
     *block_ptr = mp->block_list;
     mp->block_list = (rt_uint8_t *)block_ptr;
 
-    if (mp->suspend_thread_count > 0)
+    if (!rt_list_isempty(&(mp->suspend_thread)))
     {
         /* get the suspended thread */
         thread = rt_list_entry(mp->suspend_thread.next,
@@ -443,9 +434,6 @@ void rt_mp_free(void *block)
 
         /* resume thread */
         rt_thread_resume(thread);
-
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);

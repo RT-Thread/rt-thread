@@ -675,6 +675,8 @@ long list_mempool(void)
             {
                 struct rt_object *obj;
                 struct rt_mempool *mp;
+                int suspend_thread_count;
+                rt_list_t *node;
 
                 obj = rt_list_entry(obj_list[i], struct rt_object, list);
                 level = rt_hw_interrupt_disable();
@@ -687,7 +689,14 @@ long list_mempool(void)
                 rt_hw_interrupt_enable(level);
 
                 mp = (struct rt_mempool *)obj;
-                if (mp->suspend_thread_count > 0)
+
+                suspend_thread_count = 0;
+                rt_list_for_each(node, &mp->suspend_thread)
+                {
+                    suspend_thread_count++;
+                }
+
+                if (suspend_thread_count > 0)
                 {
                     rt_kprintf("%-*.*s %04d  %04d  %04d %d:",
                             maxlen, RT_NAME_MAX,
@@ -695,7 +704,7 @@ long list_mempool(void)
                             mp->block_size,
                             mp->block_total_count,
                             mp->block_free_count,
-                            mp->suspend_thread_count);
+                            suspend_thread_count);
                     show_wait_queue(&(mp->suspend_thread));
                     rt_kprintf("\n");
                 }
@@ -707,7 +716,7 @@ long list_mempool(void)
                             mp->block_size,
                             mp->block_total_count,
                             mp->block_free_count,
-                            mp->suspend_thread_count);
+                            suspend_thread_count);
                 }
             }
         }

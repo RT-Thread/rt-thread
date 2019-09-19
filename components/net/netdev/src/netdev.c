@@ -889,7 +889,7 @@ static void netdev_list_if(void)
         }
         else if (netdev->hwaddr_len == NETDEV_IFCONFIG_IEMI_MAX_LEN)
         {
-            rt_kprintf("IEMI: ");
+            rt_kprintf("IMEI: ");
             for (index = 0; index < netdev->hwaddr_len; index++)
             {
                 /* two numbers are displayed at one time*/
