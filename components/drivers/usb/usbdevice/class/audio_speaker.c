@@ -83,6 +83,7 @@ struct uac_audio_speaker
 {
     rt_device_t  dev;
     rt_event_t   event;
+    rt_uint8_t   open_count;
 
     rt_uint8_t  *buffer;
     rt_uint32_t  buffer_index;
@@ -300,13 +301,17 @@ void speaker_entry(void *parameter)
 
     while (1)
     {
-        if (rt_event_recv(speaker.event, EVENT_AUDIO_START,
+        if (rt_event_recv(speaker.event, EVENT_AUDIO_START | EVENT_AUDIO_STOP,
                           RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                           1000, &e) != RT_EOK)
         {
             continue;
         }
-        LOG_D("record start");
+        if (speaker.open_count == 0)
+        {
+            continue;
+        }
+        LOG_D("play start");
 
         rt_device_open(speaker.dev, RT_DEVICE_OFLAG_WRONLY);
 
@@ -323,7 +328,10 @@ void speaker_entry(void *parameter)
                               RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                               1000, &e) != RT_EOK)
             {
-                continue;
+                if (speaker.open_count > 0)
+                    continue;
+                else
+                    break;
             }
             if (e & EVENT_AUDIO_DATA)
             {
@@ -335,7 +343,7 @@ void speaker_entry(void *parameter)
                 break;
             }
         }
-        LOG_D("record stop");
+        LOG_D("play stop");
         rt_device_close(speaker.dev);
     }
 
@@ -351,6 +359,7 @@ static rt_err_t _audio_start(ufunction_t func)
     speaker.ep->request.req_type = UIO_REQUEST_READ_FULL;
     rt_usbd_io_request(func->device, speaker.ep, &speaker.ep->request);
 
+    speaker.open_count ++;
     rt_event_send(speaker.event, EVENT_AUDIO_START);
 
     return 0;
@@ -358,6 +367,7 @@ static rt_err_t _audio_start(ufunction_t func)
 
 static rt_err_t _audio_stop(ufunction_t func)
 {
+    speaker.open_count --;
     rt_event_send(speaker.event, EVENT_AUDIO_STOP);
     return 0;
 }

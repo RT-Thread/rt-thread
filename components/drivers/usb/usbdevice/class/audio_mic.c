@@ -83,6 +83,7 @@ struct uac_audio_mic
 {
     rt_device_t  dev;
     rt_event_t   event;
+    rt_uint8_t   open_count;
 
     rt_uint8_t  *buffer;
     rt_uint32_t  buffer_index;
@@ -300,9 +301,13 @@ void mic_entry(void *parameter)
 
     while (1)
     {
-        if (rt_event_recv(mic.event, EVENT_RECORD_START,
+        if (rt_event_recv(mic.event, EVENT_RECORD_START | EVENT_RECORD_STOP,
                           RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                           1000, &e) != RT_EOK)
+        {
+            continue;
+        }
+        if (mic.open_count == 0)
         {
             continue;
         }
@@ -323,7 +328,10 @@ void mic_entry(void *parameter)
                               RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
                               1000, &e) != RT_EOK)
             {
-                continue;
+                if (mic.open_count > 0)
+                    continue;
+                else
+                    break;
             }
             if (e & EVENT_RECORD_DATA)
             {
@@ -351,12 +359,14 @@ static rt_err_t _record_start(ufunction_t func)
     mic.ep->request.req_type = UIO_REQUEST_WRITE;
     rt_usbd_io_request(func->device, mic.ep, &mic.ep->request);
 
+    mic.open_count ++;
     rt_event_send(mic.event, EVENT_RECORD_START);
     return 0;
 }
 
 static rt_err_t _record_stop(ufunction_t func)
 {
+    mic.open_count --;
     rt_event_send(mic.event, EVENT_RECORD_STOP);
     return 0;
 }
