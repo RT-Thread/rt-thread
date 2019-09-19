@@ -12,6 +12,7 @@
 #include <rtthread.h>
 #include "board.h"
 #include "pin_mux.h"
+#include "fsl_iomuxc.h"
 
 #ifdef BSP_USING_DMA
 #include "fsl_dmamux.h"
@@ -109,6 +110,148 @@ void imxrt_dma_init(void)
     EDMA_Init(DMA0, &config);
 }
 #endif
+
+#ifdef BSP_USING_LPUART
+void imxrt_uart_pins_init(void)
+{
+#ifdef BSP_USING_LPUART1
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 is configured as LPUART1_TX */
+            0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B0_13_LPUART1_RX,        /* GPIO_AD_B0_13 is configured as LPUART1_RX */
+            0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B0_12_LPUART1_TX,        /* GPIO_AD_B0_12 PAD functional properties : */
+            0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+                                                     Drive Strength Field: R0/6
+                                                     Speed Field: medium(100MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Keeper
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B0_13_LPUART1_RX,        /* GPIO_AD_B0_13 PAD functional properties : */
+            0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
+                                                     Drive Strength Field: R0/6
+                                                     Speed Field: medium(100MHz)
+                                                     Open Drain Enable Field: Open Drain Disabled
+                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                     Pull / Keep Select Field: Keeper
+                                                     Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                     Hyst. Enable Field: Hysteresis Disabled */
+#endif
+#ifdef BSP_USING_LPUART2
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_02_LPUART2_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_03_LPUART2_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_02_LPUART2_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_03_LPUART2_RX,
+            0x10B0u);
+
+#endif
+#ifdef BSP_USING_LPUART3
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_06_LPUART3_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_07_LPUART3_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_06_LPUART3_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_07_LPUART3_RX,
+            0x10B0u);
+#endif
+#ifdef BSP_USING_LPUART4
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_00_LPUART4_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_01_LPUART4_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_00_LPUART4_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_01_LPUART4_RX,
+            0x10B0u);
+#endif
+#ifdef BSP_USING_LPUART5
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_12_LPUART5_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_B1_13_LPUART5_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_12_LPUART5_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_B1_13_LPUART5_RX,
+            0x10B0u);
+#endif
+#ifdef BSP_USING_LPUART6
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B0_02_LPUART6_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B0_03_LPUART6_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B0_02_LPUART6_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B0_03_LPUART6_RX,
+            0x10B0u);
+#endif
+#ifdef BSP_USING_LPUART7
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_EMC_31_LPUART7_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_EMC_32_LPUART7_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_EMC_31_LPUART7_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_EMC_32_LPUART7_RX,
+            0x10B0u);
+#endif
+#ifdef BSP_USING_LPUART8
+
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_10_LPUART8_TX,
+            0U);
+        IOMUXC_SetPinMux(
+            IOMUXC_GPIO_AD_B1_11_LPUART8_RX,
+            0U);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_10_LPUART8_TX,
+            0x10B0u);
+        IOMUXC_SetPinConfig(
+            IOMUXC_GPIO_AD_B1_11_LPUART8_RX,
+            0x10B0u);
+#endif
+}
+#endif /* BSP_USING_LPUART */
+
 /**
  * This function will initial rt1050 board.
  */
@@ -120,6 +263,10 @@ void rt_hw_board_init()
 
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+
+#ifdef BSP_USING_LPUART
+    imxrt_uart_pins_init();
+#endif
 
 #ifdef BSP_USING_DMA
     imxrt_dma_init();
