@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -42,7 +42,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
-/** @defgroup RNG_LL_Private_Macros RNG Private Macros
+/** @addtogroup RNG_LL_Private_Macros
   * @{
   */
 #define IS_LL_RNG_CED(__MODE__) (((__MODE__) == LL_RNG_CED_ENABLE) || \
@@ -51,7 +51,6 @@
 /**
   * @}
   */
-
 /* Private function prototypes -----------------------------------------------*/
 
 /* Exported functions --------------------------------------------------------*/
@@ -74,20 +73,18 @@ ErrorStatus LL_RNG_DeInit(RNG_TypeDef *RNGx)
 {
   /* Check the parameters */
   assert_param(IS_RNG_ALL_INSTANCE(RNGx));
-
   /* Enable RNG reset state */
   LL_AHB1_GRP1_ForceReset(LL_AHB1_GRP1_PERIPH_RNG);
 
   /* Release RNG from reset state */
   LL_AHB1_GRP1_ReleaseReset(LL_AHB1_GRP1_PERIPH_RNG);
-
   return (SUCCESS);
 }
 
 /**
   * @brief  Initialize RNG registers according to the specified parameters in RNG_InitStruct.
   * @param  RNGx RNG Instance
-  * @param  RNG_InitStruct: pointer to a LL_RNG_InitTypeDef structure
+  * @param  RNG_InitStruct pointer to a LL_RNG_InitTypeDef structure
   *         that contains the configuration information for the specified RNG peripheral.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: RNG registers are initialized according to RNG_InitStruct content
@@ -107,7 +104,7 @@ ErrorStatus LL_RNG_Init(RNG_TypeDef *RNGx, LL_RNG_InitTypeDef *RNG_InitStruct)
 
 /**
   * @brief Set each @ref LL_RNG_InitTypeDef field to default value.
-  * @param RNG_InitStruct Pointer to a @ref LL_RNG_InitTypeDef structure
+  * @param RNG_InitStruct pointer to a @ref LL_RNG_InitTypeDef structure
   *                       whose fields will be set to default values.
   * @retval None
   */
@@ -117,7 +114,6 @@ void LL_RNG_StructInit(LL_RNG_InitTypeDef *RNG_InitStruct)
   RNG_InitStruct->ClockErrorDetection = LL_RNG_CED_ENABLE;
 
 }
-
 /**
   * @}
   */
@@ -130,7 +126,7 @@ void LL_RNG_StructInit(LL_RNG_InitTypeDef *RNG_InitStruct)
   * @}
   */
 
-#endif /* defined (RNG) */
+#endif /* RNG */
 
 /**
   * @}

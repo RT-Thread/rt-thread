@@ -89,6 +89,23 @@ extern "C" {
   * @}
   */
 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+/** @defgroup SYSCFG_ClampingDiode Clamping Diode
+  * @{
+  */
+#define SYSCFG_CDEN_PA1                SYSCFG_CFGR2_PA1_CDEN    /*!< Enables Clamping Diode on PA1 */
+#define SYSCFG_CDEN_PA3                SYSCFG_CFGR2_PA3_CDEN    /*!< Enables Clamping Diode on PA3 */
+#define SYSCFG_CDEN_PA5                SYSCFG_CFGR2_PA5_CDEN    /*!< Enables Clamping Diode on PA5 */
+#define SYSCFG_CDEN_PA6                SYSCFG_CFGR2_PA6_CDEN    /*!< Enables Clamping Diode on PA6 */
+#define SYSCFG_CDEN_PA13               SYSCFG_CFGR2_PA13_CDEN   /*!< Enables Clamping Diode on PA13 */
+#define SYSCFG_CDEN_PB0                SYSCFG_CFGR2_PB0_CDEN    /*!< Enables Clamping Diode on PB0 */
+#define SYSCFG_CDEN_PB1                SYSCFG_CFGR2_PB1_CDEN    /*!< Enables Clamping Diode on PB1 */
+#define SYSCFG_CDEN_PB2                SYSCFG_CFGR2_PB2_CDEN    /*!< Enables Clamping Diode on PB2 */
+
+/**
+  * @}
+  */
+#endif
 
 /** @defgroup HAL_Pin_remapping Pin remapping
   * @{
@@ -107,6 +124,8 @@ extern "C" {
 #define HAL_SYSCFG_IRDA_ENV_SEL_USART1    (SYSCFG_CFGR1_IR_MOD_0)                            /*!< 01: USART1 is selected as IR Modulation envelope source */
 #if defined (STM32G081xx) || defined (STM32G071xx) || defined (STM32G070xx)
 #define HAL_SYSCFG_IRDA_ENV_SEL_USART4    (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART4 is selected as IR Modulation envelope source */
+#elif defined (STM32G041xx) || defined (STM32G031xx) || defined (STM32G030xx)
+#define HAL_SYSCFG_IRDA_ENV_SEL_USART2    (SYSCFG_CFGR1_IR_MOD_1)                            /*!< 10: USART2 is selected as IR Modulation envelope source */
 #endif
 
 /**
@@ -495,6 +514,18 @@ extern "C" {
                                                                 CLEAR_BIT(SYSCFG->CFGR1, (__FASTMODEPLUS__));\
                                                                }while(0U)
 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+/** @brief  Clamping Diode on specific pins enable/disable macros
+  * @param __PIN__ This parameter can be a combination of values @ref SYSCFG_ClampingDiode
+  */
+#define __HAL_SYSCFG_CLAMPINGDIODE_ENABLE(__PIN__)  do {assert_param(IS_SYSCFG_CLAMPINGDIODE((__PIN__)));\
+                                                                SET_BIT(SYSCFG->CFGR2, (__PIN__));\
+                                                               }while(0U)
+
+#define __HAL_SYSCFG_CLAMPINGDIODE_DISABLE(__PIN__) do {assert_param(IS_SYSCFG_CLAMPINGDIODE((__PIN__)));\
+                                                                CLEAR_BIT(SYSCFG->CFGR2, (__PIN__));\
+                                                               }while(0U)
+#endif
 
 /** @brief  ISR wrapper check
   * @note Allow to determine interrupt source per line.
@@ -561,11 +592,25 @@ extern "C" {
                                             ((__CONFIG__) == SYSCFG_BREAK_LOCKUP))
 #endif
 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+#define IS_SYSCFG_CLAMPINGDIODE(__PIN__) ((((__PIN__) & SYSCFG_CDEN_PA1)  == SYSCFG_CDEN_PA1)  || \
+                                          (((__PIN__) & SYSCFG_CDEN_PA3)  == SYSCFG_CDEN_PA3)  || \
+                                          (((__PIN__) & SYSCFG_CDEN_PA5)  == SYSCFG_CDEN_PA5)  || \
+                                          (((__PIN__) & SYSCFG_CDEN_PA6)  == SYSCFG_CDEN_PA6)  || \
+                                          (((__PIN__) & SYSCFG_CDEN_PA13) == SYSCFG_CDEN_PA13) || \
+                                          (((__PIN__) & SYSCFG_CDEN_PB0)  == SYSCFG_CDEN_PB0)  || \
+                                          (((__PIN__) & SYSCFG_CDEN_PB1)  == SYSCFG_CDEN_PB1)  || \
+                                          (((__PIN__) & SYSCFG_CDEN_PB2)  == SYSCFG_CDEN_PB2))
+#endif
 
 #if defined (STM32G081xx) || defined (STM32G071xx) || defined (STM32G070xx)
 #define IS_HAL_SYSCFG_IRDA_ENV_SEL(SEL)   (((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_TIM16)   || \
                                            ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART1)  || \
                                            ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART4))
+#elif defined (STM32G041xx) || defined (STM32G031xx) || defined (STM32G030xx)
+#define IS_HAL_SYSCFG_IRDA_ENV_SEL(SEL)   (((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_TIM16)   || \
+                                           ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART1)  || \
+                                           ((SEL) == HAL_SYSCFG_IRDA_ENV_SEL_USART2))
 #endif
 #define IS_HAL_SYSCFG_IRDA_POL_SEL(SEL)   (((SEL) == HAL_SYSCFG_IRDA_POLARITY_NOT_INVERTED)   || \
                                            ((SEL) == HAL_SYSCFG_IRDA_POLARITY_INVERTED))
@@ -696,6 +741,10 @@ void HAL_SYSCFG_EnableIOAnalogSwitchBooster(void);
 void HAL_SYSCFG_DisableIOAnalogSwitchBooster(void);
 void HAL_SYSCFG_EnableRemap(uint32_t PinRemap);
 void HAL_SYSCFG_DisableRemap(uint32_t PinRemap);
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+void HAL_SYSCFG_EnableClampingDiode(uint32_t PinConfig);
+void HAL_SYSCFG_DisableClampingDiode(uint32_t PinConfig);
+#endif
 #if defined (SYSCFG_CFGR1_UCPD1_STROBE) || defined (SYSCFG_CFGR1_UCPD2_STROBE)
 void HAL_SYSCFG_StrobeDBattpinsConfig(uint32_t ConfigDeadBattery);
 #endif

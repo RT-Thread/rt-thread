@@ -18,8 +18,9 @@
 #define LOG_TAG             "drv.usart"
 #include <drv_log.h>
 
-#if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) \
-    && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && !defined(BSP_USING_LPUART1)
+#if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && \
+    !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && \
+    !defined(BSP_USING_UART7) && !defined(BSP_USING_UART8) && !defined(BSP_USING_LPUART1)
     #error "Please define at least one BSP_USING_UARTx"
     /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 #endif
@@ -48,6 +49,12 @@ enum
 #ifdef BSP_USING_UART6
     UART6_INDEX,
 #endif
+#ifdef BSP_USING_UART7
+    UART7_INDEX,
+#endif
+#ifdef BSP_USING_UART8
+    UART8_INDEX,
+#endif
 #ifdef BSP_USING_LPUART1
     LPUART1_INDEX,
 #endif
@@ -72,6 +79,12 @@ static struct stm32_uart_config uart_config[] =
 #endif
 #ifdef BSP_USING_UART6
     UART6_CONFIG,
+#endif
+#ifdef BSP_USING_UART7
+    UART7_CONFIG,
+#endif
+#ifdef BSP_USING_UART8
+    UART8_CONFIG,
 #endif
 #ifdef BSP_USING_LPUART1
     LPUART1_CONFIG,
@@ -605,6 +618,80 @@ void UART6_DMA_TX_IRQHandler(void)
 }
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_TX_USING_DMA) */
 #endif /* BSP_USING_UART6*/
+
+#if defined(BSP_USING_UART7)
+void UART7_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART7_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_RX_USING_DMA)
+void UART7_DMA_RX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&uart_obj[UART7_INDEX].dma_rx.handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_RX_USING_DMA) */
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_TX_USING_DMA)
+void UART7_DMA_TX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&uart_obj[UART7_INDEX].dma_tx.handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART7_TX_USING_DMA) */
+#endif /* BSP_USING_UART7*/
+
+#if defined(BSP_USING_UART8)
+void UART8_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART8_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_RX_USING_DMA)
+void UART8_DMA_RX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&uart_obj[UART8_INDEX].dma_rx.handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_RX_USING_DMA) */
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_TX_USING_DMA)
+void UART8_DMA_TX_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_DMA_IRQHandler(&uart_obj[UART8_INDEX].dma_tx.handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART8_TX_USING_DMA) */
+#endif /* BSP_USING_UART8*/
 
 #if defined(BSP_USING_LPUART1)
 void LPUART1_IRQHandler(void)

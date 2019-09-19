@@ -228,18 +228,22 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     tim = (TIM_HandleTypeDef *)timer->parent.user_data;
 
     /* set tim cnt */
-    __HAL_TIM_SET_AUTORELOAD(tim, t);
+    __HAL_TIM_SET_AUTORELOAD(tim, t - 1);
 
     if (opmode == HWTIMER_MODE_ONESHOT)
     {
         /* set timer to single mode */
         tim->Instance->CR1 |= TIM_OPMODE_SINGLE;
     }
-
+    else
+    {
+        tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
+    }
+	
     /* start timer */
     if (HAL_TIM_Base_Start_IT(tim) != HAL_OK)
     {
-        LOG_E("TIM2 start failed");
+        LOG_E("TIM start failed");
         result = -RT_ERROR;
     }
 

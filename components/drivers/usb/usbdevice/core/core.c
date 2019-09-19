@@ -1488,9 +1488,10 @@ uep_t rt_usbd_find_endpoint(udevice_t device, ufunction_t* pfunc, rt_uint8_t ep_
  */
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
 {
-    struct rt_list_node *i, *j, *k;
+    struct rt_list_node *i, *j, *k, *m;
     ufunction_t func;
     uintf_t intf;
+    ualtsetting_t altsetting;
     uep_t ep;
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_add_config\n"));
@@ -1512,22 +1513,26 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
             intf = (uintf_t)rt_list_entry(j, struct uinterface, list);
             cfg->cfg_desc.bNumInterfaces++;
 
-            /* allocate address for every endpoint in the interface alternate setting */
-            for(k=intf->curr_setting->ep_list.next;
-                    k!=&intf->curr_setting->ep_list; k=k->next)
+            for(k=intf->setting_list.next; k!=&intf->setting_list;k=k->next)
             {
-                ep = (uep_t)rt_list_entry(k, struct uendpoint, list);
-                if(rt_usbd_ep_assign(device, ep) != RT_EOK)
-                {
-                    rt_kprintf("endpoint assign error\n");
-                }
-            }
+                altsetting = (ualtsetting_t)rt_list_entry(k, struct ualtsetting, list);
 
-            /* construct complete configuration descriptor */
-            rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - USB_DESC_LENGTH_CONFIG], 
-                        (void*)intf->curr_setting->desc,
-                        intf->curr_setting->desc_size);
-            cfg->cfg_desc.wTotalLength += intf->curr_setting->desc_size;
+                /* allocate address for every endpoint in the interface alternate setting */
+                for(m=altsetting->ep_list.next; m!=&altsetting->ep_list; m=m->next)
+                {
+                    ep = (uep_t)rt_list_entry(m, struct uendpoint, list);
+                    if(rt_usbd_ep_assign(device, ep) != RT_EOK)
+                    {
+                        rt_kprintf("endpoint assign error\n");
+                    }
+                }
+
+                /* construct complete configuration descriptor */
+                rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - USB_DESC_LENGTH_CONFIG],
+                            (void*)altsetting->desc,
+                            altsetting->desc_size);
+                cfg->cfg_desc.wTotalLength += altsetting->desc_size;
+            }
         }
     }
 

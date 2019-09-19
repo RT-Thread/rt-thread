@@ -300,11 +300,9 @@ int stm32_hw_crypto_device_init(void)
     _crypto_dev.dev.ops = &_ops;
 #if defined(BSP_USING_UDID)
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     cpuid[0] = HAL_GetUIDw0();
     cpuid[1] = HAL_GetUIDw1();
-#elif defined(SOC_SERIES_STM32F1)
-    HAL_GetUID(cpuid);
 #elif defined(SOC_SERIES_STM32H7)
     cpuid[0] = HAL_GetREVID();
     cpuid[1] = HAL_GetDEVID();

@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file      startup_stm32g081xx.s
   * @author    MCD Application Team
-  * @brief     STM32G051xx devices vector table for Atollic TrueSTUDIO toolchain.
+  * @brief     STM32G081xx devices vector table for SW4STM32 toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -14,8 +14,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2018 STMicroelectronics. All rights reserved.
   *
   * This software component is licensed by ST under BSD 3-Clause license,
   * the "License"; You may not use this file except in compliance with the 
@@ -85,9 +84,9 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
   bl  SystemInit
 /* Call static constructors */
-  bl __libc_init_array
+/* bl __libc_init_array */
 /* Call the application's entry point.*/
-  bl main
+  bl entry
 
 LoopForever:
     b LoopForever

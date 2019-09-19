@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F1xx_HAL_GPIO_EX_H
-#define __STM32F1xx_HAL_GPIO_EX_H
+#ifndef STM32F1xx_HAL_GPIO_EX_H
+#define STM32F1xx_HAL_GPIO_EX_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -825,47 +809,47 @@ extern "C" {
   * @{
   */
 #if defined(STM32F101x6) || defined(STM32F102x6) || defined(STM32F102xB) || defined(STM32F103x6)
-#define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0U :\
-                                   ((__GPIOx__) == (GPIOB))? 1U :\
-                                   ((__GPIOx__) == (GPIOC))? 2U :3U)
+#define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0uL :\
+                                   ((__GPIOx__) == (GPIOB))? 1uL :\
+                                   ((__GPIOx__) == (GPIOC))? 2uL :3uL)
 #elif defined(STM32F100xB) || defined(STM32F101xB) || defined(STM32F103xB) || defined(STM32F105xC) || defined(STM32F107xC)
-#define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0U :\
-                                   ((__GPIOx__) == (GPIOB))? 1U :\
-                                   ((__GPIOx__) == (GPIOC))? 2U :\
-                                   ((__GPIOx__) == (GPIOD))? 3U :4U)
+#define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0uL :\
+                                   ((__GPIOx__) == (GPIOB))? 1uL :\
+                                   ((__GPIOx__) == (GPIOC))? 2uL :\
+                                   ((__GPIOx__) == (GPIOD))? 3uL :4uL)
 #elif defined(STM32F100xE) || defined(STM32F101xE) || defined(STM32F101xG) || defined(STM32F103xE) || defined(STM32F103xG)
-#define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0U :\
-                                   ((__GPIOx__) == (GPIOB))? 1U :\
-                                   ((__GPIOx__) == (GPIOC))? 2U :\
-                                   ((__GPIOx__) == (GPIOD))? 3U :\
-                                   ((__GPIOx__) == (GPIOE))? 4U :\
-                                   ((__GPIOx__) == (GPIOF))? 5U :6U)
+#define GPIO_GET_INDEX(__GPIOx__) (((__GPIOx__) == (GPIOA))? 0uL :\
+                                   ((__GPIOx__) == (GPIOB))? 1uL :\
+                                   ((__GPIOx__) == (GPIOC))? 2uL :\
+                                   ((__GPIOx__) == (GPIOD))? 3uL :\
+                                   ((__GPIOx__) == (GPIOE))? 4uL :\
+                                   ((__GPIOx__) == (GPIOF))? 5uL :6uL)
 #endif
 
 #define AFIO_REMAP_ENABLE(REMAP_PIN)       do{ uint32_t tmpreg = AFIO->MAPR; \
                                                tmpreg |= AFIO_MAPR_SWJ_CFG;  \
                                                tmpreg |= REMAP_PIN;          \
                                                AFIO->MAPR = tmpreg;          \
-                                               }while(0U)
+                                               }while(0u)
 
 #define AFIO_REMAP_DISABLE(REMAP_PIN)      do{ uint32_t tmpreg = AFIO->MAPR;  \
                                                tmpreg |= AFIO_MAPR_SWJ_CFG;   \
                                                tmpreg &= ~REMAP_PIN;          \
                                                AFIO->MAPR = tmpreg;           \
-                                               }while(0U)
+                                               }while(0u)
 
 #define AFIO_REMAP_PARTIAL(REMAP_PIN, REMAP_PIN_MASK) do{ uint32_t tmpreg = AFIO->MAPR; \
                                                           tmpreg &= ~REMAP_PIN_MASK;    \
                                                           tmpreg |= AFIO_MAPR_SWJ_CFG;  \
                                                           tmpreg |= REMAP_PIN;          \
                                                           AFIO->MAPR = tmpreg;          \
-                                                          }while(0U)
+                                                          }while(0u)
 
 #define AFIO_DBGAFR_CONFIG(DBGAFR_SWJCFG)  do{ uint32_t tmpreg = AFIO->MAPR;     \
                                                tmpreg &= ~AFIO_MAPR_SWJ_CFG_Msk; \
                                                tmpreg |= DBGAFR_SWJCFG;          \
                                                AFIO->MAPR = tmpreg;              \
-                                               }while(0U)
+                                               }while(0u)
 
 /**
   * @}
@@ -905,6 +889,6 @@ void HAL_GPIOEx_DisableEventout(void);
 }
 #endif
 
-#endif /* __STM32F1xx_HAL_GPIO_EX_H */
+#endif /* STM32F1xx_HAL_GPIO_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

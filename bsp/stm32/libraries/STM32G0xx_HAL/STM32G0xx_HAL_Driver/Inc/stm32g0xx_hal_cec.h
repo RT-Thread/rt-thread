@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -111,8 +111,8 @@ typedef struct
 } CEC_InitTypeDef;
 
 /**
-  * @brief HAL CEC State structures definition
-  * @note  HAL CEC State value is a combination of 2 different substates: gState and RxState.
+  * @brief HAL CEC State definition
+  * @note  HAL CEC State value is a combination of 2 different substates: gState and RxState (see @ref CEC_State_Definition).
   *        - gState contains CEC state information related to global Handle management
   *          and also information related to Tx operations.
   *          gState value coding follow below described bitmap :
@@ -121,14 +121,14 @@ typedef struct
   *          b6  Error information
   *             0  : No Error
   *             1  : Error
-  *          b5     IP initilisation status
-  *             0  : Reset (IP not initialized)
-  *             1  : Init done (IP initialized. HAL CEC Init function already called)
+  *          b5     CEC peripheral initilisation status
+  *             0  : Reset (peripheral not initialized)
+  *             1  : Init done (peripheral initialized. HAL CEC Init function already called)
   *          b4-b3  (not used)
   *             xx : Should be set to 00
   *          b2     Intrinsic process state
   *             0  : Ready
-  *             1  : Busy (IP busy with some configuration or internal operations)
+  *             1  : Busy (peripheral busy with some configuration or internal operations)
   *          b1     (not used)
   *             x  : Should be set to 0
   *          b0     Tx state
@@ -138,9 +138,9 @@ typedef struct
   *          RxState value coding follow below described bitmap :
   *          b7-b6  (not used)
   *             xx : Should be set to 00
-  *          b5     IP initilisation status
-  *             0  : Reset (IP not initialized)
-  *             1  : Init done (IP initialized)
+  *          b5     CEC peripheral initilisation status
+  *             0  : Reset (peripheral not initialized)
+  *             1  : Init done (peripheral initialized)
   *          b4-b2  (not used)
   *            xxx : Should be set to 000
   *          b1     Rx state
@@ -149,27 +149,16 @@ typedef struct
   *          b0     (not used)
   *             x  : Should be set to 0.
   */
-typedef enum
-{
-  HAL_CEC_STATE_RESET             = 0x00U,    /*!< Peripheral is not yet Initialized
-                                                   Value is allowed for gState and RxState             */
-  HAL_CEC_STATE_READY             = 0x20U,    /*!< Peripheral Initialized and ready for use
-                                                   Value is allowed for gState and RxState             */
-  HAL_CEC_STATE_BUSY              = 0x24U,    /*!< an internal process is ongoing
-                                                   Value is allowed for gState only                    */
-  HAL_CEC_STATE_BUSY_RX           = 0x22U,    /*!< Data Reception process is ongoing
-                                                   Value is allowed for RxState only                   */
-  HAL_CEC_STATE_BUSY_TX           = 0x21U,    /*!< Data Transmission process is ongoing
-                                                   Value is allowed for gState only                    */
-  HAL_CEC_STATE_BUSY_RX_TX        = 0x23U,    /*!< an internal process is ongoing
-                                                   Value is allowed for gState only                    */
-  HAL_CEC_STATE_ERROR             = 0x60U     /*!< Error Value is allowed for gState only              */
-} HAL_CEC_StateTypeDef;
+typedef uint32_t HAL_CEC_StateTypeDef;
 
 /**
   * @brief  CEC handle Structure definition
   */
+#if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
 typedef struct __CEC_HandleTypeDef
+#else
+typedef struct
+#endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 {
   CEC_TypeDef             *Instance;      /*!< CEC registers base address */
 
@@ -194,8 +183,10 @@ typedef struct __CEC_HandleTypeDef
                                                in case error is reported */
 
 #if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
-  void (* TxCpltCallback)(struct __CEC_HandleTypeDef *hcec);                                /*!< CEC Tx Transfer completed callback */
-  void (* RxCpltCallback)(struct __CEC_HandleTypeDef *hcec, uint32_t RxFrameSize);          /*!< CEC Rx Transfer completed callback */
+  void (* TxCpltCallback)(struct __CEC_HandleTypeDef
+                          *hcec);                                /*!< CEC Tx Transfer completed callback */
+  void (* RxCpltCallback)(struct __CEC_HandleTypeDef *hcec,
+                          uint32_t RxFrameSize);          /*!< CEC Rx Transfer completed callback */
   void (* ErrorCallback)(struct __CEC_HandleTypeDef *hcec);                                 /*!< CEC error callback */
 
   void (* MspInitCallback)(struct __CEC_HandleTypeDef *hcec);               /*!< CEC Msp Init callback              */
@@ -221,7 +212,8 @@ typedef enum
   * @brief  HAL CEC Callback pointer definition
   */
 typedef  void (*pCEC_CallbackTypeDef)(CEC_HandleTypeDef *hcec);  /*!< pointer to an CEC callback function */
-typedef  void (*pCEC_RxCallbackTypeDef)(CEC_HandleTypeDef *hcec, uint32_t RxFrameSize);  /*!< pointer to an Rx Transfer completed callback function */
+typedef  void (*pCEC_RxCallbackTypeDef)(CEC_HandleTypeDef *hcec,
+                                        uint32_t RxFrameSize);  /*!< pointer to an Rx Transfer completed callback function */
 #endif /* USE_HAL_CEC_REGISTER_CALLBACKS */
 /**
   * @}
@@ -231,7 +223,25 @@ typedef  void (*pCEC_RxCallbackTypeDef)(CEC_HandleTypeDef *hcec, uint32_t RxFram
 /** @defgroup CEC_Exported_Constants CEC Exported Constants
   * @{
   */
-
+/** @defgroup CEC_State_Definition CEC State Code Definition
+  * @{
+  */
+#define   HAL_CEC_STATE_RESET      ((uint32_t)0x00000000)   /*!< Peripheral is not yet Initialized
+                                                                 Value is allowed for gState and RxState  */
+#define   HAL_CEC_STATE_READY      ((uint32_t)0x00000020)   /*!< Peripheral Initialized and ready for use
+                                                                 Value is allowed for gState and RxState  */
+#define   HAL_CEC_STATE_BUSY       ((uint32_t)0x00000024)   /*!< an internal process is ongoing
+                                                                 Value is allowed for gState only         */
+#define   HAL_CEC_STATE_BUSY_RX    ((uint32_t)0x00000022)   /*!< Data Reception process is ongoing
+                                                                 Value is allowed for RxState only        */
+#define   HAL_CEC_STATE_BUSY_TX    ((uint32_t)0x00000021)   /*!< Data Transmission process is ongoing
+                                                                 Value is allowed for gState only         */
+#define   HAL_CEC_STATE_BUSY_RX_TX ((uint32_t)0x00000023)   /*!< an internal process is ongoing
+                                                                 Value is allowed for gState only         */
+#define   HAL_CEC_STATE_ERROR      ((uint32_t)0x00000050)   /*!< Error Value is allowed for gState only   */
+/**
+  * @}
+  */
 /** @defgroup CEC_Error_Code CEC Error Code
   * @{
   */
@@ -413,7 +423,7 @@ typedef  void (*pCEC_RxCallbackTypeDef)(CEC_HandleTypeDef *hcec, uint32_t RxFram
   * @{
   */
 #define CEC_ISR_ALL_ERROR              ((uint32_t)CEC_ISR_RXOVR|CEC_ISR_BRE|CEC_ISR_SBPE|CEC_ISR_LBPE|CEC_ISR_RXACKE|\
-                                                  CEC_ISR_ARBLST|CEC_ISR_TXUDR|CEC_ISR_TXERR|CEC_ISR_TXACKE)
+                                        CEC_ISR_ARBLST|CEC_ISR_TXUDR|CEC_ISR_TXERR|CEC_ISR_TXACKE)
 /**
   * @}
   */
@@ -635,7 +645,8 @@ void HAL_CEC_MspInit(CEC_HandleTypeDef *hcec);
 void HAL_CEC_MspDeInit(CEC_HandleTypeDef *hcec);
 
 #if (USE_HAL_CEC_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef HAL_CEC_RegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID, pCEC_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_CEC_RegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID,
+                                           pCEC_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_CEC_UnRegisterCallback(CEC_HandleTypeDef *hcec, HAL_CEC_CallbackIDTypeDef CallbackID);
 
 HAL_StatusTypeDef HAL_CEC_RegisterRxCpltCallback(CEC_HandleTypeDef *hcec, pCEC_RxCallbackTypeDef pCallback);
@@ -649,7 +660,8 @@ HAL_StatusTypeDef HAL_CEC_UnRegisterRxCpltCallback(CEC_HandleTypeDef *hcec);
   * @{
   */
 /* I/O operation functions  ***************************************************/
-HAL_StatusTypeDef HAL_CEC_Transmit_IT(CEC_HandleTypeDef *hcec, uint8_t InitiatorAddress, uint8_t DestinationAddress, uint8_t *pData, uint32_t Size);
+HAL_StatusTypeDef HAL_CEC_Transmit_IT(CEC_HandleTypeDef *hcec, uint8_t InitiatorAddress, uint8_t DestinationAddress,
+                                      uint8_t *pData, uint32_t Size);
 uint32_t HAL_CEC_GetLastReceivedFrameSize(CEC_HandleTypeDef *hcec);
 void HAL_CEC_ChangeRxBuffer(CEC_HandleTypeDef *hcec, uint8_t *Rxbuffer);
 void HAL_CEC_IRQHandler(CEC_HandleTypeDef *hcec);

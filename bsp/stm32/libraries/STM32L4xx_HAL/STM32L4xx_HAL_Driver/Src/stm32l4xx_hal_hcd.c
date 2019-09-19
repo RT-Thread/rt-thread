@@ -39,29 +39,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -75,7 +59,7 @@
 
 #ifdef HAL_HCD_MODULE_ENABLED
 
-#if defined (USB_OTG_FS) || defined (USB_OTG_HS)
+#if defined (USB_OTG_FS)
 
 /** @defgroup HCD HCD
   * @brief HCD HAL module driver
@@ -123,6 +107,8 @@ static void HCD_Port_IRQHandler(HCD_HandleTypeDef *hhcd);
   */
 HAL_StatusTypeDef HAL_HCD_Init(HCD_HandleTypeDef *hhcd)
 {
+  USB_OTG_GlobalTypeDef *USBx;
+
   /* Check the HCD handle allocation */
   if (hhcd == NULL)
   {
@@ -131,6 +117,8 @@ HAL_StatusTypeDef HAL_HCD_Init(HCD_HandleTypeDef *hhcd)
 
   /* Check the parameters */
   assert_param(IS_HCD_ALL_INSTANCE(hhcd->Instance));
+
+  USBx = hhcd->Instance;
 
   if (hhcd->State == HAL_HCD_STATE_RESET)
   {
@@ -160,6 +148,12 @@ HAL_StatusTypeDef HAL_HCD_Init(HCD_HandleTypeDef *hhcd)
 
   hhcd->State = HAL_HCD_STATE_BUSY;
 
+  /* Disable DMA mode for FS instance */
+  if ((USBx->CID & (0x1U << 8)) == 0U)
+  {
+    hhcd->Init.dma_enable = 0U;
+  }
+
   /* Disable the Interrupts */
   __HAL_HCD_DISABLE(hhcd);
 
@@ -188,7 +182,6 @@ HAL_StatusTypeDef HAL_HCD_Init(HCD_HandleTypeDef *hhcd)
   *          This parameter can be a value from 0 to 255
   * @param  speed Current device speed.
   *          This parameter can be one of these values:
-  *            HCD_SPEED_HIGH: High speed mode,
   *            HCD_SPEED_FULL: Full speed mode,
   *            HCD_SPEED_LOW: Low speed mode
   * @param  ep_type Endpoint Type.
@@ -1206,12 +1199,6 @@ static void HCD_HC_IN_IRQHandler(HCD_HandleTypeDef *hhcd, uint8_t chnum)
   }
   else if ((USBx_HC(ch_num)->HCINT & USB_OTG_HCINT_XFRC) == USB_OTG_HCINT_XFRC)
   {
-    if (hhcd->Init.dma_enable != 0U)
-    {
-      hhcd->hc[ch_num].xfer_count = hhcd->hc[ch_num].xfer_len - \
-                                    (USBx_HC(ch_num)->HCTSIZ & USB_OTG_HCTSIZ_XFRSIZ);
-    }
-
     hhcd->hc[ch_num].state = HC_XFRC;
     hhcd->hc[ch_num].ErrCnt = 0U;
     __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_XFRC);
@@ -1309,12 +1296,9 @@ static void HCD_HC_IN_IRQHandler(HCD_HandleTypeDef *hhcd, uint8_t chnum)
              (hhcd->hc[ch_num].ep_type == EP_TYPE_BULK))
     {
       hhcd->hc[ch_num].ErrCnt = 0U;
-      if (hhcd->Init.dma_enable == 0U)
-      {
-        hhcd->hc[ch_num].state = HC_NAK;
-        __HAL_HCD_UNMASK_HALT_HC_INT(ch_num);
-        (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
-      }
+      hhcd->hc[ch_num].state = HC_NAK;
+      __HAL_HCD_UNMASK_HALT_HC_INT(ch_num);
+      (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
     }
     else
     {
@@ -1394,14 +1378,6 @@ static void HCD_HC_OUT_IRQHandler(HCD_HandleTypeDef *hhcd, uint8_t chnum)
     hhcd->hc[ch_num].ErrCnt = 0U;
     hhcd->hc[ch_num].state = HC_NAK;
 
-    if (hhcd->hc[ch_num].do_ping == 0U)
-    {
-      if (hhcd->hc[ch_num].speed == HCD_SPEED_HIGH)
-      {
-        hhcd->hc[ch_num].do_ping = 1U;
-      }
-    }
-
     __HAL_HCD_UNMASK_HALT_HC_INT(ch_num);
     (void)USB_HC_Halt(hhcd->Instance, (uint8_t)ch_num);
     __HAL_HCD_CLEAR_HC_INT(ch_num, USB_OTG_HCINT_NAK);
@@ -1428,7 +1404,8 @@ static void HCD_HC_OUT_IRQHandler(HCD_HandleTypeDef *hhcd, uint8_t chnum)
     if (hhcd->hc[ch_num].state == HC_XFRC)
     {
       hhcd->hc[ch_num].urb_state  = URB_DONE;
-      if (hhcd->hc[ch_num].ep_type == EP_TYPE_BULK)
+      if ((hhcd->hc[ch_num].ep_type == EP_TYPE_BULK) ||
+          (hhcd->hc[ch_num].ep_type == EP_TYPE_INTR))
       {
         hhcd->hc[ch_num].toggle_out ^= 1U;
       }
@@ -1635,8 +1612,7 @@ static void HCD_Port_IRQHandler(HCD_HandleTypeDef *hhcd)
   * @}
   */
 
-#endif /* defined (USB_OTG_FS) || defined (USB_OTG_HS) */
-
+#endif /* defined (USB_OTG_FS) */
 #endif /* HAL_HCD_MODULE_ENABLED */
 
 /**

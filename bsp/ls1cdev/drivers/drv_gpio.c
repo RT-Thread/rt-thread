@@ -73,8 +73,24 @@ rt_err_t ls1c_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 {
     unsigned int gpio = pin;
     char irq_name[10];
-
-    gpio_set_irq_type(gpio, mode);
+    rt_uint32_t type;
+    switch (mode)
+    {
+      case PIN_IRQ_MODE_RISING:
+      type=IRQ_TYPE_EDGE_RISING;
+      break;
+      case PIN_IRQ_MODE_FALLING:
+      type=IRQ_TYPE_EDGE_FALLING;
+      break;
+      case PIN_IRQ_MODE_HIGH_LEVEL:
+      type=IRQ_TYPE_LEVEL_HIGH;
+      break;
+      case PIN_IRQ_MODE_LOW_LEVEL:
+      type=IRQ_TYPE_LEVEL_LOW;
+      break;
+    }
+    gpio_set_irq_type(gpio, type);
+	
     rt_sprintf(irq_name, "PIN_%d", gpio);
     rt_hw_interrupt_install(LS1C_GPIO_TO_IRQ(gpio), (rt_isr_handler_t)hdr, args, irq_name);
 

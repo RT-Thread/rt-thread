@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    stm32f1xx_hal_can.h
+  * @file    stm32f1xx_hal_can_legacy.h
   * @author  MCD Application Team
   * @brief   Header file of CAN HAL module.
   ******************************************************************************
@@ -34,8 +34,8 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F1xx_HAL_CAN_H
-#define __STM32F1xx_HAL_CAN_H
+#ifndef __STM32F1xx_HAL_CAN_LEGACY_H
+#define __STM32F1xx_HAL_CAN_LEGACY_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -790,7 +790,7 @@ HAL_CAN_StateTypeDef HAL_CAN_GetState(CAN_HandleTypeDef* hcan);
 }
 #endif
 
-#endif /* __STM32F1xx_HAL_CAN_H */
+#endif /* __STM32F1xx_HAL_CAN_LEGACY_H */
 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

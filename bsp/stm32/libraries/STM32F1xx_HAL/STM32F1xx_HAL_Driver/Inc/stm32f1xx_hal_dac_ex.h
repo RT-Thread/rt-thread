@@ -2,53 +2,37 @@
   ******************************************************************************
   * @file    stm32f1xx_hal_dac_ex.h
   * @author  MCD Application Team
-  * @brief   Header file of DAC HAL Extension module.
+  * @brief   Header file of DAC HAL Extended module.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F1xx_HAL_DAC_EX_H
-#define __STM32F1xx_HAL_DAC_EX_H
+#ifndef STM32F1xx_HAL_DAC_EX_H
+#define STM32F1xx_HAL_DAC_EX_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
-
-#if defined (STM32F100xB) || defined (STM32F100xE) || defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG) || defined (STM32F105xC) || defined (STM32F107xC)
-   
-/* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal_def.h"
 
 /** @addtogroup STM32F1xx_HAL_Driver
   * @{
   */
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f1xx_hal_def.h"
+
+#if defined(DAC)
 
 /** @addtogroup DACEx
   * @{
@@ -56,39 +40,43 @@
 
 /* Exported types ------------------------------------------------------------*/
 
+/**
+  * @brief  HAL State structures definition
+  */
+
 /* Exported constants --------------------------------------------------------*/
-  
+
 /** @defgroup DACEx_Exported_Constants DACEx Exported Constants
   * @{
-  */ 
+  */
 
-/** @defgroup DACEx_lfsrunmask_triangleamplitude DACEx lfsrunmask triangleamplitude
+/** @defgroup DACEx_lfsrunmask_triangleamplitude DACEx lfsrunmask triangle amplitude
   * @{
   */
-#define DAC_LFSRUNMASK_BIT0                0x00000000U /*!< Unmask DAC channel LFSR bit0 for noise wave generation */
-#define DAC_LFSRUNMASK_BITS1_0             ((uint32_t)DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[1:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS2_0             ((uint32_t)DAC_CR_MAMP1_1) /*!< Unmask DAC channel LFSR bit[2:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS3_0             ((uint32_t)DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0)/*!< Unmask DAC channel LFSR bit[3:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS4_0             ((uint32_t)DAC_CR_MAMP1_2) /*!< Unmask DAC channel LFSR bit[4:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS5_0             ((uint32_t)DAC_CR_MAMP1_2 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[5:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS6_0             ((uint32_t)DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1) /*!< Unmask DAC channel LFSR bit[6:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS7_0             ((uint32_t)DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[7:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS8_0             ((uint32_t)DAC_CR_MAMP1_3) /*!< Unmask DAC channel LFSR bit[8:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS9_0             ((uint32_t)DAC_CR_MAMP1_3 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[9:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS10_0            ((uint32_t)DAC_CR_MAMP1_3 | DAC_CR_MAMP1_1) /*!< Unmask DAC channel LFSR bit[10:0] for noise wave generation */
-#define DAC_LFSRUNMASK_BITS11_0            ((uint32_t)DAC_CR_MAMP1_3 | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[11:0] for noise wave generation */
-#define DAC_TRIANGLEAMPLITUDE_1            0x00000000U /*!< Select max triangle amplitude of 1 */
-#define DAC_TRIANGLEAMPLITUDE_3            ((uint32_t)DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 3 */
-#define DAC_TRIANGLEAMPLITUDE_7            ((uint32_t)DAC_CR_MAMP1_1) /*!< Select max triangle amplitude of 7 */
-#define DAC_TRIANGLEAMPLITUDE_15           ((uint32_t)DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 15 */
-#define DAC_TRIANGLEAMPLITUDE_31           ((uint32_t)DAC_CR_MAMP1_2) /*!< Select max triangle amplitude of 31 */
-#define DAC_TRIANGLEAMPLITUDE_63           ((uint32_t)DAC_CR_MAMP1_2 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 63 */
-#define DAC_TRIANGLEAMPLITUDE_127          ((uint32_t)DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1) /*!< Select max triangle amplitude of 127 */
-#define DAC_TRIANGLEAMPLITUDE_255          ((uint32_t)DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 255 */
-#define DAC_TRIANGLEAMPLITUDE_511          ((uint32_t)DAC_CR_MAMP1_3) /*!< Select max triangle amplitude of 511 */
-#define DAC_TRIANGLEAMPLITUDE_1023         ((uint32_t)DAC_CR_MAMP1_3 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 1023 */
-#define DAC_TRIANGLEAMPLITUDE_2047         ((uint32_t)DAC_CR_MAMP1_3 | DAC_CR_MAMP1_1) /*!< Select max triangle amplitude of 2047 */
-#define DAC_TRIANGLEAMPLITUDE_4095         ((uint32_t)DAC_CR_MAMP1_3 | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 4095 */
+#define DAC_LFSRUNMASK_BIT0                0x00000000U                                                         /*!< Unmask DAC channel LFSR bit0 for noise wave generation */
+#define DAC_LFSRUNMASK_BITS1_0             (                                                   DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[1:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS2_0             (                                  DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[2:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS3_0             (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[3:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS4_0             (                 DAC_CR_MAMP1_2                                  ) /*!< Unmask DAC channel LFSR bit[4:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS5_0             (                 DAC_CR_MAMP1_2                  | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[5:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS6_0             (                 DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[6:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS7_0             (                 DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[7:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS8_0             (DAC_CR_MAMP1_3                                                   ) /*!< Unmask DAC channel LFSR bit[8:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS9_0             (DAC_CR_MAMP1_3                                   | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[9:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS10_0            (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1                 ) /*!< Unmask DAC channel LFSR bit[10:0] for noise wave generation */
+#define DAC_LFSRUNMASK_BITS11_0            (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Unmask DAC channel LFSR bit[11:0] for noise wave generation */
+#define DAC_TRIANGLEAMPLITUDE_1            0x00000000U                                                         /*!< Select max triangle amplitude of 1 */
+#define DAC_TRIANGLEAMPLITUDE_3            (                                                   DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 3 */
+#define DAC_TRIANGLEAMPLITUDE_7            (                                  DAC_CR_MAMP1_1                 ) /*!< Select max triangle amplitude of 7 */
+#define DAC_TRIANGLEAMPLITUDE_15           (                                  DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 15 */
+#define DAC_TRIANGLEAMPLITUDE_31           (                 DAC_CR_MAMP1_2                                  ) /*!< Select max triangle amplitude of 31 */
+#define DAC_TRIANGLEAMPLITUDE_63           (                 DAC_CR_MAMP1_2                  | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 63 */
+#define DAC_TRIANGLEAMPLITUDE_127          (                 DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1                 ) /*!< Select max triangle amplitude of 127 */
+#define DAC_TRIANGLEAMPLITUDE_255          (                 DAC_CR_MAMP1_2 | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 255 */
+#define DAC_TRIANGLEAMPLITUDE_511          (DAC_CR_MAMP1_3                                                   ) /*!< Select max triangle amplitude of 511 */
+#define DAC_TRIANGLEAMPLITUDE_1023         (DAC_CR_MAMP1_3                                   | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 1023 */
+#define DAC_TRIANGLEAMPLITUDE_2047         (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1                 ) /*!< Select max triangle amplitude of 2047 */
+#define DAC_TRIANGLEAMPLITUDE_4095         (DAC_CR_MAMP1_3                  | DAC_CR_MAMP1_1 | DAC_CR_MAMP1_0) /*!< Select max triangle amplitude of 4095 */
 
 /**
   * @}
@@ -145,100 +133,19 @@
   * @}
   */
 
-#if defined (STM32F100xB) || defined (STM32F100xE)
-/** @defgroup DAC_flags_definition DAC flags definition
-  * @{
-  */ 
-#define DAC_FLAG_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
-#define DAC_FLAG_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)   
-
-/**
-  * @}
-  */
-
-/** @defgroup DAC_IT_definition DAC IT definition
-  * @{
-  */ 
-#define DAC_IT_DMAUDR1                   ((uint32_t)DAC_SR_DMAUDR1)
-#define DAC_IT_DMAUDR2                   ((uint32_t)DAC_SR_DMAUDR2)   
-
-/**
-  * @}
-  */
-#endif /* STM32F100xB || STM32F100xE */
-
 /**
   * @}
   */
 
 /* Exported macro ------------------------------------------------------------*/
 
-#if defined (STM32F100xB) || defined (STM32F100xE)
-/** @defgroup DACEx_Exported_Macros DACEx Exported Macros
-  * @{
-  */
-
-/** @brief Enable the DAC interrupt
-  * @param  __HANDLE__: specifies the DAC handle
-  * @param  __INTERRUPT__: specifies the DAC interrupt.
-  *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt
-  * @retval None
-  */
-#define __HAL_DAC_ENABLE_IT(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR) |= (__INTERRUPT__))
-
-/** @brief Disable the DAC interrupt
-  * @param  __HANDLE__: specifies the DAC handle
-  * @param  __INTERRUPT__: specifies the DAC interrupt.
-  *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt
-  * @retval None
-  */
-#define __HAL_DAC_DISABLE_IT(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR) &= ~(__INTERRUPT__))
-
-/** @brief  Checks if the specified DAC interrupt source is enabled or disabled.
-  * @param __HANDLE__: DAC handle
-  * @param __INTERRUPT__: DAC interrupt source to check
-  *          This parameter can be any combination of the following values:
-  *            @arg DAC_IT_DMAUDR1: DAC channel 1 DMA underrun interrupt
-  *            @arg DAC_IT_DMAUDR2: DAC channel 2 DMA underrun interrupt
-  * @retval State of interruption (SET or RESET)
-  */
-#define __HAL_DAC_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (((__HANDLE__)->Instance->CR & (__INTERRUPT__)) == (__INTERRUPT__))
-    
-/** @brief  Get the selected DAC's flag status.
-  * @param  __HANDLE__: specifies the DAC handle.
-  * @param  __FLAG__: specifies the DAC flag to get.
-  *          This parameter can be any combination of the following values:
-  *            @arg DAC_FLAG_DMAUDR1: DAC channel 1 DMA underrun flag
-  *            @arg DAC_FLAG_DMAUDR2: DAC channel 2 DMA underrun flag
-  * @retval None
-  */
-#define __HAL_DAC_GET_FLAG(__HANDLE__, __FLAG__) ((((__HANDLE__)->Instance->SR) & (__FLAG__)) == (__FLAG__))
-
-/** @brief  Clear the DAC's flag.
-  * @param  __HANDLE__: specifies the DAC handle.
-  * @param  __FLAG__: specifies the DAC flag to clear.
-  *          This parameter can be any combination of the following values:
-  *            @arg DAC_FLAG_DMAUDR1: DAC channel 1 DMA underrun flag
-  *            @arg DAC_FLAG_DMAUDR2: DAC channel 2 DMA underrun flag
-  * @retval None
-  */
-#define __HAL_DAC_CLEAR_FLAG(__HANDLE__, __FLAG__) (((__HANDLE__)->Instance->SR) = (__FLAG__))
-
-
-/**
-  * @}
-  */
-#endif /* STM32F100xB || STM32F100xE */
 
 /* Private macro -------------------------------------------------------------*/
 
 /** @defgroup DACEx_Private_Macros DACEx Private Macros
   * @{
   */
+
 #if defined (STM32F101xE) || defined (STM32F101xG) || defined (STM32F103xE) || defined (STM32F103xG)
 #define IS_DAC_TRIGGER(TRIGGER) (((TRIGGER) == DAC_TRIGGER_NONE)    || \
                                  ((TRIGGER) == DAC_TRIGGER_T6_TRGO) || \
@@ -297,45 +204,38 @@
                                                       ((VALUE) == DAC_TRIANGLEAMPLITUDE_1023) || \
                                                       ((VALUE) == DAC_TRIANGLEAMPLITUDE_2047) || \
                                                       ((VALUE) == DAC_TRIANGLEAMPLITUDE_4095))
-
 /**
   * @}
   */
 
-
-/* Exported functions --------------------------------------------------------*/  
+/* Exported functions --------------------------------------------------------*/
+/* Extended features functions ***********************************************/
 
 /** @addtogroup DACEx_Exported_Functions
   * @{
   */
 
-/** @addtogroup DACEx_Exported_Functions_Group1
+/** @addtogroup DACEx_Exported_Functions_Group2
   * @{
   */
-/* Extension features functions ***********************************************/
+/* IO operation functions *****************************************************/
 
-uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef* hdac);
-HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef* hdac, uint32_t Channel, uint32_t Amplitude);
-HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef* hdac, uint32_t Channel, uint32_t Amplitude);
-HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef* hdac, uint32_t Alignment, uint32_t Data1, uint32_t Data2);
+HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude);
+HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude);
 
-void HAL_DACEx_ConvCpltCallbackCh2(DAC_HandleTypeDef* hdac);
-void HAL_DACEx_ConvHalfCpltCallbackCh2(DAC_HandleTypeDef* hdac);
-void HAL_DACEx_ErrorCallbackCh2(DAC_HandleTypeDef* hdac);
+HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Alignment, uint32_t Data1, uint32_t Data2);
+uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac);
 
-#if defined (STM32F100xB) || defined (STM32F100xE)
-void HAL_DAC_IRQHandler(DAC_HandleTypeDef* hdac);
-void HAL_DAC_DMAUnderrunCallbackCh1(DAC_HandleTypeDef *hdac);
-void HAL_DACEx_DMAUnderrunCallbackCh2(DAC_HandleTypeDef* hdac);
-#endif /* STM32F100xB) || defined (STM32F100xE) */
+void HAL_DACEx_ConvCpltCallbackCh2(DAC_HandleTypeDef *hdac);
+void HAL_DACEx_ConvHalfCpltCallbackCh2(DAC_HandleTypeDef *hdac);
+void HAL_DACEx_ErrorCallbackCh2(DAC_HandleTypeDef *hdac);
+void HAL_DACEx_DMAUnderrunCallbackCh2(DAC_HandleTypeDef *hdac);
+
 
 /**
   * @}
   */
 
-
-
-    
 /**
   * @}
   */
@@ -343,9 +243,12 @@ void HAL_DACEx_DMAUnderrunCallbackCh2(DAC_HandleTypeDef* hdac);
 /** @addtogroup DACEx_Private_Functions
   * @{
   */
+
+/* DAC_DMAConvCpltCh2 / DAC_DMAErrorCh2 / DAC_DMAHalfConvCpltCh2 */
+/* are called by HAL_DAC_Start_DMA */
 void DAC_DMAConvCpltCh2(DMA_HandleTypeDef *hdma);
-void DAC_DMAHalfConvCpltCh2(DMA_HandleTypeDef *hdma); 
 void DAC_DMAErrorCh2(DMA_HandleTypeDef *hdma);
+void DAC_DMAHalfConvCpltCh2(DMA_HandleTypeDef *hdma);
 
 /**
   * @}
@@ -359,12 +262,16 @@ void DAC_DMAErrorCh2(DMA_HandleTypeDef *hdma);
   * @}
   */
 
-#endif /* STM32F100xB || STM32F100xE || STM32F101xE || STM32F101xG || STM32F103xE || STM32F103xG || STM32F105xC || STM32F107xC */
+#endif /* DAC */
+
+/**
+  * @}
+  */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__STM32F1xx_HAL_DAC_EX_H */
+#endif /*STM32F1xx_HAL_DAC_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

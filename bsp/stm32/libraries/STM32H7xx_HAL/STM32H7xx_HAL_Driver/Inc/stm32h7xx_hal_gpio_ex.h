@@ -6,39 +6,23 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_GPIO_EX_H
-#define __STM32H7xx_HAL_GPIO_EX_H
+#ifndef STM32H7xx_HAL_GPIO_EX_H
+#define STM32H7xx_HAL_GPIO_EX_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -68,8 +52,16 @@
 #define GPIO_AF0_RTC_50Hz      ((uint8_t)0x00)  /* RTC_50Hz Alternate Function mapping                       */
 #define GPIO_AF0_MCO           ((uint8_t)0x00)  /* MCO (MCO1 and MCO2) Alternate Function mapping            */
 #define GPIO_AF0_SWJ           ((uint8_t)0x00)  /* SWJ (SWD and JTAG) Alternate Function mapping             */
-#define GPIO_AF0_LCDBIAS       ((uint8_t)0x00)  /* LCDBIAS Alternate Function mapping                          */
+#define GPIO_AF0_LCDBIAS       ((uint8_t)0x00)  /* LCDBIAS Alternate Function mapping                        */
 #define GPIO_AF0_TRACE         ((uint8_t)0x00)  /* TRACE Alternate Function mapping                          */
+#define GPIO_AF0_C1DSLEEP      ((uint8_t)0x00)  /* Cortex-M7 Deep Sleep Alternate Function mapping : available on STM32H7 Rev.B and above  */
+#define GPIO_AF0_C1SLEEP       ((uint8_t)0x00)  /* Cortex-M7 Sleep Alternate Function mapping : available on STM32H7 Rev.B and above       */
+#define GPIO_AF0_D1PWREN       ((uint8_t)0x00)  /* Domain 1 PWR enable Alternate Function mapping : available on STM32H7 Rev.B and above   */
+#define GPIO_AF0_D2PWREN       ((uint8_t)0x00)  /* Domain 2 PWR enable Alternate Function mapping : available on STM32H7 Rev.B and above   */
+#if defined(DUAL_CORE)
+#define GPIO_AF0_C2DSLEEP      ((uint8_t)0x00)  /* Cortex-M4 Deep Sleep Alternate Function mapping : available on STM32H7 Rev.B and above  */
+#define GPIO_AF0_C2SLEEP       ((uint8_t)0x00)  /* Cortex-M4 Sleep Alternate Function mapping : available on STM32H7 Rev.B and above       */
+#endif /* DUAL_CORE */
 
 /**
   * @brief   AF 1 selection
@@ -175,7 +167,7 @@
 #define GPIO_AF9_TIM14         ((uint8_t)0x09)  /* TIM14 Alternate Function mapping   */
 #define GPIO_AF9_QUADSPI       ((uint8_t)0x09)  /* QUADSPI Alternate Function mapping   */
 #define GPIO_AF9_SDMMC2        ((uint8_t)0x09)  /* SDMMC2 Alternate Function mapping   */
-#define GPIO_AF9_LTDC           ((uint8_t)0x09)  /* LTDC Alternate Function mapping   */
+#define GPIO_AF9_LTDC          ((uint8_t)0x09)  /* LTDC Alternate Function mapping   */
 #define GPIO_AF9_SPDIF         ((uint8_t)0x09)  /* SPDIF Alternate Function mapping   */
 #define GPIO_AF9_FMC           ((uint8_t)0x09)  /* FMC Alternate Function mapping     */
 #define GPIO_AF9_SAI4          ((uint8_t)0x09)  /* SAI4 Alternate Function mapping   */
@@ -192,6 +184,8 @@
 #define GPIO_AF10_COMP1         ((uint8_t)0xA)  /* COMP1 Alternate Function mapping */
 #define GPIO_AF10_COMP2         ((uint8_t)0xA)  /* COMP2 Alternate Function mapping */
 #define GPIO_AF10_LTDC          ((uint8_t)0xA)  /* LTDC Alternate Function mapping   */
+#define GPIO_AF10_CRS_SYNC      ((uint8_t)0xA)  /* CRS Sync Alternate Function mapping : available on STM32H7 Rev.B and above  */
+
 
 /**
   * @brief   AF 11 selection
@@ -300,32 +294,20 @@
 /** @defgroup GPIOEx_Get_Port_Index GPIO Get Port Index
   * @{
   */
-#define GPIO_GET_INDEX(__GPIOx__)   (uint8_t)(((__GPIOx__) == (GPIOA))? 0U :\
-                                              ((__GPIOx__) == (GPIOB))? 1U :\
-                                              ((__GPIOx__) == (GPIOC))? 2U :\
-                                              ((__GPIOx__) == (GPIOD))? 3U :\
-                                              ((__GPIOx__) == (GPIOE))? 4U :\
-                                              ((__GPIOx__) == (GPIOF))? 5U :\
-                                              ((__GPIOx__) == (GPIOG))? 6U :\
-                                              ((__GPIOx__) == (GPIOH))? 7U :\
-                                              ((__GPIOx__) == (GPIOI))? 8U :\
-                                              ((__GPIOx__) == (GPIOJ))? 9U : 10U)
+#define GPIO_GET_INDEX(__GPIOx__)  (((__GPIOx__) == (GPIOA))? 0UL :\
+                                    ((__GPIOx__) == (GPIOB))? 1UL :\
+                                    ((__GPIOx__) == (GPIOC))? 2UL :\
+                                    ((__GPIOx__) == (GPIOD))? 3UL :\
+                                    ((__GPIOx__) == (GPIOE))? 4UL :\
+                                    ((__GPIOx__) == (GPIOF))? 5UL :\
+                                    ((__GPIOx__) == (GPIOG))? 6UL :\
+                                    ((__GPIOx__) == (GPIOH))? 7UL :\
+                                    ((__GPIOx__) == (GPIOI))? 8UL :\
+                                    ((__GPIOx__) == (GPIOJ))? 9UL : 10UL)
 /**
   * @}
   */
 
-#define IS_GPIO_PIN_AVAILABLE(__INSTANCE__,__PIN__)  \
-           ((((__INSTANCE__) == GPIOA) && (((__PIN__) & (GPIOA_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOA_PIN_AVAILABLE)) == (GPIOA_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOB) && (((__PIN__) & (GPIOB_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOB_PIN_AVAILABLE)) == (GPIOB_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOC) && (((__PIN__) & (GPIOC_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOC_PIN_AVAILABLE)) == (GPIOC_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOD) && (((__PIN__) & (GPIOD_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOD_PIN_AVAILABLE)) == (GPIOD_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOE) && (((__PIN__) & (GPIOE_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOE_PIN_AVAILABLE)) == (GPIOE_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOF) && (((__PIN__) & (GPIOF_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOF_PIN_AVAILABLE)) == (GPIOF_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOG) && (((__PIN__) & (GPIOG_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOG_PIN_AVAILABLE)) == (GPIOG_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOI) && (((__PIN__) & (GPIOI_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOI_PIN_AVAILABLE)) == (GPIOI_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOJ) && (((__PIN__) & (GPIOJ_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOJ_PIN_AVAILABLE)) == (GPIOJ_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOK) && (((__PIN__) & (GPIOK_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOK_PIN_AVAILABLE)) == (GPIOK_PIN_AVAILABLE))) || \
-            (((__INSTANCE__) == GPIOH) && (((__PIN__) & (GPIOH_PIN_AVAILABLE)) != 0) && (((__PIN__) | (GPIOH_PIN_AVAILABLE)) == (GPIOH_PIN_AVAILABLE))))
 /** @defgroup GPIOEx_IS_Alternat_function_selection GPIO Check Alternate Function
   * @{
   */
@@ -348,7 +330,7 @@
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
@@ -358,6 +340,6 @@
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_GPIO_EX_H */
+#endif /* STM32H7xx_HAL_GPIO_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -434,9 +434,19 @@ menuconfig RT_USING_HWCRYPTO
         endif
     endif
 
-config RT_USING_ENCODER
-    bool "Using ENCODER device drivers"
+config RT_USING_PULSE_ENCODER
+    bool "Using PULSE ENCODER device drivers"
     default n
+
+config RT_USING_INPUT_CAPTURE
+    bool "Using INPUT CAPTURE device drivers"
+    default n
+
+if RT_USING_INPUT_CAPTURE
+    config RT_INPUT_CAPTURE_RB_SIZE
+        int "Set input capture ringbuffer size"
+        default 100
+endif
 
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"

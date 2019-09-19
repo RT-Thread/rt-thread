@@ -377,8 +377,6 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     HAL_CAN_StateTypeDef state = hcan->State;
 
     /* Check the parameters */
-    RT_ASSERT(IS_CAN_IDTYPE(pmsg->ide));
-    RT_ASSERT(IS_CAN_RTR(pmsg->rtr));
     RT_ASSERT(IS_CAN_DLC(pmsg->len));
 
     if ((state == HAL_CAN_STATE_READY) ||
@@ -440,6 +438,8 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         {
             txheader.RTR = CAN_RTR_REMOTE;
         }
+        /* clear TIR */
+        hcan->Instance->sTxMailBox[box_num].TIR &= CAN_TI0R_TXRQ;
         /* Set up the Id */
         if (RT_CAN_STDID == pmsg->ide)
         {
@@ -515,7 +515,16 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     /* get len */
     pmsg->len = rxheader.DLC;
     /* get hdr */
-    pmsg->hdr = rxheader.FilterMatchIndex;
+    if (hcan->Instance == CAN1)
+    {
+        pmsg->hdr = (rxheader.FilterMatchIndex + 1) >> 1;
+    }
+#ifdef CAN2
+    else if (hcan->Instance == CAN2)
+    {
+       pmsg->hdr = (rxheader.FilterMatchIndex >> 1) + 14;
+    }
+#endif
 
     return RT_EOK;
 }

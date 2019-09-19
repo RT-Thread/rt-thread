@@ -11,29 +11,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -61,8 +45,10 @@
 /** @defgroup PWR_PVD_Mode_Mask PWR PVD Mode Mask
   * @{
   */
+#if !defined (DUAL_CORE)
 #define PVD_MODE_IT              ((uint32_t)0x00010000U)
 #define PVD_MODE_EVT             ((uint32_t)0x00020000U)
+#endif /* DUAL_CORE */
 #define PVD_RISING_EDGE          ((uint32_t)0x00000001U)
 #define PVD_FALLING_EDGE         ((uint32_t)0x00000002U)
 #define PVD_RISING_FALLING_EDGE  ((uint32_t)0x00000003U)
@@ -175,7 +161,7 @@ void HAL_PWR_DisableBkUpAccess(void)
     [..]
      The device present 3 principles low-power modes features:
       (+) SLEEP mode: Cortex-M7 core stopped and D1, D2 and D3 peripherals kept running.
-      (+) STOP mode: all clocks are stoppedand the regulator running in main or low power mode.
+      (+) STOP mode: all clocks are stopped and the regulator is running in main or low power mode.
       (+) STANDBY mode: D1, D2 and D3 domains enter DSTANDBY mode and the VCORE supply
                         regulator is powered off.
 
@@ -276,23 +262,27 @@ void HAL_PWR_ConfigPVD(PWR_PVDTypeDef *sConfigPVD)
   MODIFY_REG(PWR->CR1, PWR_CR1_PLS, sConfigPVD->PVDLevel);
 
   /* Clear any previous config */
+#if !defined (DUAL_CORE)
   __HAL_PWR_PVD_EXTI_DISABLE_EVENT();
   __HAL_PWR_PVD_EXTI_DISABLE_IT();
+#endif /* DUAL_CORE */
   __HAL_PWR_PVD_EXTI_DISABLE_RISING_EDGE();
   __HAL_PWR_PVD_EXTI_DISABLE_FALLING_EDGE();
 
+#if !defined (DUAL_CORE)
   /* Configure interrupt mode */
   if((sConfigPVD->Mode & PVD_MODE_IT) == PVD_MODE_IT)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_IT();
   }
-  
+
   /* Configure event mode */
   if((sConfigPVD->Mode & PVD_MODE_EVT) == PVD_MODE_EVT)
   {
     __HAL_PWR_PVD_EXTI_ENABLE_EVENT();
   }
-  
+#endif /* DUAL_CORE */
+
   /* Configure the edge */
   if((sConfigPVD->Mode & PVD_RISING_EDGE) == PVD_RISING_EDGE)
   {
@@ -367,11 +357,11 @@ void HAL_PWR_DisableWakeUpPin(uint32_t WakeUpPinx)
 {
   assert_param(IS_PWR_WAKEUP_PIN(WakeUpPinx));
 
-  CLEAR_BIT(PWR->WKUPEPR, WakeUpPinx);
+  CLEAR_BIT(PWR->WKUPEPR, (PWR_WKUPEPR_WKUPEN & WakeUpPinx));
 }
 
 /**
-  * @brief  Enter CM7 core to Sleep mode.
+  * @brief  Enter the current core to Sleep mode.
   * @param  Regulator: Specifies the regulator state in SLEEP mode.
   *          This parameter can be one of the following values:
   *            @arg PWR_MAINREGULATOR_ON: SLEEP mode with regulator ON
@@ -402,14 +392,13 @@ void HAL_PWR_EnterSLEEPMode(uint32_t Regulator, uint8_t SLEEPEntry)
   else
   {
     /* Request Wait For Event */
-    __SEV();
-    __WFE();
     __WFE();
   }
 }
 
 /**
   * @brief  Enter the system to STOP mode.
+  * @note   This API must be used only for single core devices.
   * @note   In System Stop mode, all I/O pins keep the same state as in Run mode.
   * @note   When exiting System Stop mode by issuing an interrupt or a wakeup event,
   *         the HSI RC oscillator is selected as default system wakeup clock.
@@ -429,7 +418,7 @@ void HAL_PWR_EnterSLEEPMode(uint32_t Regulator, uint8_t SLEEPEntry)
   */
 void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
 {
-  uint32_t tmpreg = 0;
+  uint32_t tmpreg;
 
   /* Check the parameters */
   assert_param(IS_PWR_REGULATOR(Regulator));
@@ -446,6 +435,11 @@ void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
   /* Store the new value */
   PWR->CR1 = tmpreg;
 
+#if defined(DUAL_CORE)
+  /* Keep DSTOP mode when D1 domain enters Deepsleep */
+  CLEAR_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D1);
+  CLEAR_BIT(PWR->CPU2CR, PWR_CPU2CR_PDDS_D1);
+#else
   /* Keep DSTOP mode when D1 domain enters Deepsleep */
   CLEAR_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D1);
 
@@ -454,6 +448,7 @@ void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
 
   /* Keep DSTOP mode when D3 domain enters Deepsleep */
   CLEAR_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D3);
+#endif /*DUAL_CORE*/
 
   /* Set SLEEPDEEP bit of Cortex System Control Register */
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -471,8 +466,6 @@ void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
   else
   {
     /* Request Wait For Event */
-    __SEV();
-    __WFE();
     __WFE();
   }
   /* Reset SLEEPDEEP bit of Cortex System Control Register */
@@ -488,6 +481,11 @@ void HAL_PWR_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry)
   */
 void HAL_PWR_EnterSTANDBYMode(void)
 {
+#if defined(DUAL_CORE)
+  /* Keep DSTANDBY mode when D1 domain enters Deepsleep */
+  SET_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D1);
+  SET_BIT(PWR->CPU2CR, PWR_CPU2CR_PDDS_D1);
+#else
   /* Keep DSTANDBY mode when D1 domain enters Deepsleep */
   SET_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D1);
 
@@ -496,6 +494,7 @@ void HAL_PWR_EnterSTANDBYMode(void)
 
   /* Keep DSTANDBY mode when D3 domain enters Deepsleep */
   SET_BIT(PWR->CPUCR, PWR_CPUCR_PDDS_D3);
+#endif /*DUAL_CORE*/
 
   /* Set SLEEPDEEP bit of Cortex System Control Register */
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -566,6 +565,33 @@ void HAL_PWR_DisableSEVOnPend(void)
   */
 void HAL_PWR_PVD_IRQHandler(void)
 {
+#if defined(DUAL_CORE)
+  /* PVD EXTI line interrupt detected */
+  if (HAL_GetCurrentCPUID() == CM7_CPUID)
+  {
+    /* Check PWR EXTI flag */
+    if(__HAL_PWR_PVD_EXTI_GET_FLAG() != RESET)
+    {
+      /* PWR PVD interrupt user callback */
+      HAL_PWR_PVDCallback();
+
+      /* Clear PWR EXTI pending bit */
+      __HAL_PWR_PVD_EXTI_CLEAR_FLAG();
+    }
+  }
+  else
+  {
+    /* Check PWR EXTI D2 flag */
+    if(__HAL_PWR_PVD_EXTID2_GET_FLAG() != RESET)
+    {
+      /* PWR PVD interrupt user callback */
+      HAL_PWR_PVDCallback();
+
+      /* Clear PWR EXTI D2 pending bit */
+      __HAL_PWR_PVD_EXTID2_CLEAR_FLAG();
+    }
+  }
+#else
   /* PVD EXTI line interrupt detected */
   if(__HAL_PWR_PVD_EXTI_GET_FLAG() != RESET)
   {
@@ -575,6 +601,7 @@ void HAL_PWR_PVD_IRQHandler(void)
     /* Clear PWR EXTI pending bit */
     __HAL_PWR_PVD_EXTI_CLEAR_FLAG();
   }
+#endif /*DUAL_CORE*/
 }
 
 /**

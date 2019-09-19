@@ -64,7 +64,11 @@ typedef struct
 /**
   * @brief  WWDG handle Structure definition
   */
+#if (USE_HAL_WWDG_REGISTER_CALLBACKS == 1)
 typedef struct __WWDG_HandleTypeDef
+#else
+typedef struct
+#endif
 {
   WWDG_TypeDef      *Instance;  /*!< Register base address */
 
