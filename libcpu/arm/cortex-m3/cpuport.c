@@ -395,7 +395,6 @@ int __rt_ffs(int value)
         "ADDS    r0, r0, #0x01        \n"
 
         "exit:                        \n"
-        "BX      lr                   \n"
 
         : "=r"(value)
         : "r"(value)
