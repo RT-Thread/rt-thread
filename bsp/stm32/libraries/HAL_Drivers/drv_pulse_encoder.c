@@ -87,11 +87,11 @@ rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder)
     sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
     sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
     sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
-    sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
+    sConfig.IC1Prescaler = TIM_ICPSC_DIV4;
     sConfig.IC1Filter = 3;
     sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
     sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
-    sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
+    sConfig.IC2Prescaler = TIM_ICPSC_DIV4;
     sConfig.IC2Filter = 3;
 
     if (HAL_TIM_Encoder_Init(tim_handler, &sConfig) != HAL_OK)
@@ -109,6 +109,13 @@ rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder)
         return -RT_ERROR;
     }
 
+    return RT_EOK;
+}
+
+rt_err_t pulse_encoder_clear_count(struct rt_pulse_encoder_device *pulse_encoder)
+{
+    TIM_HandleTypeDef *tim_handler = (TIM_HandleTypeDef *)pulse_encoder->parent.user_data;
+    __HAL_TIM_SET_COUNTER(tim_handler, 0);
     return RT_EOK;
 }
 
@@ -133,9 +140,6 @@ rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt
     case PULSE_ENCODER_CMD_DISABLE:
         HAL_TIM_Encoder_Stop(tim_handler, TIM_CHANNEL_ALL);
         break;
-    case PULSE_ENCODER_CMD_CLEAR_COUNT:
-        __HAL_TIM_SET_COUNTER(tim_handler, 0);
-        break;
     default:
         result = -RT_ENOSYS;
         break;
@@ -148,6 +152,7 @@ static const struct rt_pulse_encoder_ops _ops =
 {
     .init = pulse_encoder_init,
     .get_count = pulse_encoder_get_count,
+    .clear_count = pulse_encoder_clear_count,
     .control = pulse_encoder_control,
 };
 
