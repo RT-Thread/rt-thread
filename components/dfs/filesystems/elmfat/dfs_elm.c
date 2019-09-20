@@ -655,7 +655,7 @@ int dfs_elm_ftruncate(struct dfs_fd *file, off_t length)
         RT_ASSERT(fd != RT_NULL);
 
         /* save file read/write point */
-		fptr = fd->fptr;
+        fptr = fd->fptr;
         fd->fptr = length;
         result = f_truncate(fd);
         fd->fptr = fptr;
