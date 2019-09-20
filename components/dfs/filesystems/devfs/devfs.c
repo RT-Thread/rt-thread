@@ -304,6 +304,7 @@ static const struct dfs_file_ops _device_fops =
     RT_NULL,                    /* lseek */
     dfs_device_fs_getdents,
     dfs_device_fs_poll,
+    RT_NULL,                    /* ftruncate */
 };
 
 static const struct dfs_filesystem_ops _device_fs =

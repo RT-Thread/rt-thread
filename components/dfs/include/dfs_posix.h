@@ -51,6 +51,7 @@ int write(int fd, const void *buf, size_t len);
 #endif
 
 off_t lseek(int fd, off_t offset, int whence);
+int ftruncate(int fd, off_t length);
 int rename(const char *from, const char *to);
 int unlink(const char *pathname);
 int stat(const char *file, struct stat *buf);

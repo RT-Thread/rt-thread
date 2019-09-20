@@ -32,6 +32,7 @@ struct dfs_file_ops
     int (*getdents) (struct dfs_fd *fd, struct dirent *dirp, uint32_t count);
 
     int (*poll)     (struct dfs_fd *fd, struct rt_pollreq *req);
+    int (*ftruncate)(struct dfs_fd *fd, off_t length);
 };
 
 /* file descriptor */

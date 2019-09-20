@@ -1136,10 +1136,11 @@ static const struct dfs_file_ops nfs_fops =
     nfs_ioctl,
     nfs_read,
     nfs_write,
-    NULL, /* flush */
+    RT_NULL,                    /* flush */
     nfs_lseek,
     nfs_getdents,
-    NULL, /* poll */
+    RT_NULL,                    /* poll */
+    RT_NULL,                    /* ftruncate */
 };
 
 static const struct dfs_filesystem_ops _nfs =

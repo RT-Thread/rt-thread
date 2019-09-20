@@ -619,6 +619,8 @@ static const struct dfs_file_ops dfs_uffs_fops =
     dfs_uffs_flush,
     dfs_uffs_seek,
     dfs_uffs_getdents,
+    RT_NULL,                    /* poll */
+    RT_NULL,                    /* ftruncate */
 };
 
 static const struct dfs_filesystem_ops dfs_uffs_ops =

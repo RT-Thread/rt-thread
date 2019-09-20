@@ -291,10 +291,12 @@ static const struct dfs_file_ops _rom_fops =
     dfs_romfs_close,
     dfs_romfs_ioctl,
     dfs_romfs_read,
-    NULL,
-    NULL,
+    RT_NULL,                    /* write */
+    RT_NULL,                    /* flush */
     dfs_romfs_lseek,
     dfs_romfs_getdents,
+    RT_NULL,                    /* poll */
+    RT_NULL,                    /* ftruncate */
 };
 static const struct dfs_filesystem_ops _romfs =
 {

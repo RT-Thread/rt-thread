@@ -635,6 +635,40 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
     return index * sizeof(struct dirent);
 }
 
+int dfs_elm_ftruncate(struct dfs_fd *file, off_t length)
+{
+    FRESULT result = FR_OK;
+
+    if (length < 0)
+    {
+        return -1;
+    }
+
+    if (file->type == FT_REGULAR)
+    {
+        FIL *fd;
+        FSIZE_t fptr;
+
+        /* regular file type */
+        fd = (FIL *)(file->data);
+
+        RT_ASSERT(fd != RT_NULL);
+
+        /* save file read/write point */
+		fptr = fd->fptr;
+        fd->fptr = length;
+        result = f_truncate(fd);
+        fd->fptr = fptr;
+    }
+    else if (file->type == FT_DIRECTORY)
+    {
+        /* error!, which is a directory, -1 is returned */
+        return -1;
+    }
+
+    return elm_result_to_dfs(result);
+}
+
 int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
 {
     FRESULT result;
@@ -790,7 +824,8 @@ static const struct dfs_file_ops dfs_elm_fops =
     dfs_elm_flush,
     dfs_elm_lseek,
     dfs_elm_getdents,
-    RT_NULL, /* poll interface */
+    RT_NULL,                    /* poll */
+    dfs_elm_ftruncate,
 };
 
 static const struct dfs_filesystem_ops dfs_elm =

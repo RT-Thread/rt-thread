@@ -653,6 +653,8 @@ static const struct dfs_file_ops _jffs2_fops =
     dfs_jffs2_flush,
     dfs_jffs2_lseek,
     dfs_jffs2_getdents,
+    RT_NULL,                    /* poll */
+    RT_NULL,                    /* ftruncate */
 };
 
 static const struct dfs_filesystem_ops _jffs2_ops =

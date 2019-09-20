@@ -348,6 +348,34 @@ int dfs_file_lseek(struct dfs_fd *fd, off_t offset)
 }
 
 /**
+ * this function is will cause the regular file referenced by fd
+ * to be truncated to a size of precisely length bytes.
+ *
+ * @param fd the file descriptor.
+ * @param length the length to be truncated.
+ *
+ * @return the status of truncated.
+ */
+int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
+{
+    int result;
+
+    if (fd == NULL)
+        return -EINVAL;
+
+    if (fd->fops->ftruncate == NULL)
+        return -ENOSYS;
+
+    result = fd->fops->ftruncate(fd, length);
+
+    /* update current size */
+    if (result == 0)
+        fd->size = length;
+
+    return result;
+}
+
+/**
  * this function will get file information.
  *
  * @param path the file path.

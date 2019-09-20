@@ -388,9 +388,11 @@ static const struct dfs_file_ops _ram_fops =
     dfs_ramfs_ioctl,
     dfs_ramfs_read,
     dfs_ramfs_write,
-    NULL, /* flush */
+    RT_NULL,                    /* flush */
     dfs_ramfs_lseek,
     dfs_ramfs_getdents,
+    RT_NULL,                    /* poll */
+    RT_NULL,                    /* ftruncate */
 };
 
 static const struct dfs_filesystem_ops _ramfs =

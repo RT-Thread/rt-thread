@@ -65,10 +65,12 @@ static const struct dfs_file_ops _skt_fops =
     dfs_skt_close,
     dfs_skt_ioctl,
     dfs_skt_read,
-    NULL, /* write */
-    NULL, /* flush */
+    RT_NULL,                    /* write */
+    RT_NULL,                    /* flush */
     dfs_skt_lseek,
     dfs_skt_getdents,
+    RT_NULL,                    /* poll */
+    RT_NULL,                    /* ftruncate */
 };
 
 static const struct dfs_filesystem_ops _skt_fs =
