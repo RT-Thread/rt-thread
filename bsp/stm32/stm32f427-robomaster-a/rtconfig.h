@@ -79,11 +79,8 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_SENSOR
-#define RT_USING_SENSOR_CMD
 
 /* Using USB */
 
@@ -145,12 +142,6 @@
 
 /* peripheral libraries and drivers */
 
-#define PKG_USING_SENSORS_DRIVERS
-#define PKG_USING_MPU6XXX
-#define PKG_USING_MPU6XXX_LATEST_VERSION
-#define PKG_USING_MPU6XXX_ACCE
-#define PKG_USING_MPU6XXX_GYRO
-#define PKG_USING_MPU6XXX_MAG
 
 /* miscellaneous packages */
 
@@ -171,7 +162,6 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART6
-#define BSP_USING_UART3
 
 /* Board extended module Drivers */
 
