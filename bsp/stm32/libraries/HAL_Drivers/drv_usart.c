@@ -98,8 +98,8 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    uart = (struct stm32_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+
+    uart = rt_container_of(serial, struct stm32_uart, serial);
 
     uart->handle.Instance          = uart->config->Instance;
     uart->handle.Init.BaudRate     = cfg->baud_rate;
@@ -162,8 +162,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
 #endif
 
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct stm32_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
 
     switch (cmd)
     {
@@ -196,7 +195,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
 
-    uart = (struct stm32_uart *)serial->parent.user_data;
+    uart = rt_container_of(serial, struct stm32_uart, serial);
     UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
@@ -213,8 +212,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     int ch;
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct stm32_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
 
     ch = -1;
     if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET)
@@ -233,8 +231,7 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
 {
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct stm32_uart *)(serial->parent.user_data);
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
     
     if (size == 0)
     {
@@ -278,9 +275,7 @@ static void uart_isr(struct rt_serial_device *serial)
 #endif
 
     RT_ASSERT(serial != RT_NULL);
-
-    uart = (struct stm32_uart *) serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
 
     /* UART in mode Receiver -------------------------------------------------*/
     if ((__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_RXNE) != RESET) &&
@@ -368,9 +363,7 @@ static void dma_isr(struct rt_serial_device *serial)
     rt_base_t level;
 
     RT_ASSERT(serial != RT_NULL);
-
-    uart = (struct stm32_uart *) serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
 
     if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_TC) != RESET) ||
             (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_HT) != RESET))
@@ -727,8 +720,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     struct stm32_uart *uart;
     
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct stm32_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct stm32_uart, serial);
 
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
@@ -989,7 +981,7 @@ int rt_hw_usart_init(void)
                                        | RT_DEVICE_FLAG_INT_RX
                                        | RT_DEVICE_FLAG_INT_TX
                                        | uart_obj[i].uart_dma_flag
-                                       , &uart_obj[i]);
+                                       , NULL);
         RT_ASSERT(result == RT_EOK);
     }
 
