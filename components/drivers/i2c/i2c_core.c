@@ -83,7 +83,7 @@ rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
     struct rt_i2c_msg msg;
 
     msg.addr  = addr;
-    msg.flags = flags & RT_I2C_ADDR_10BIT;
+    msg.flags = flags;
     msg.len   = count;
     msg.buf   = (rt_uint8_t *)buf;
 
@@ -103,8 +103,7 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
     RT_ASSERT(bus != RT_NULL);
 
     msg.addr   = addr;
-    msg.flags  = flags & RT_I2C_ADDR_10BIT;
-    msg.flags |= RT_I2C_RD;
+    msg.flags  = flags | RT_I2C_RD;
     msg.len    = count;
     msg.buf    = buf;
 
