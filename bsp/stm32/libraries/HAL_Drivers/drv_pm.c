@@ -85,6 +85,12 @@ static void run(struct rt_pm *pm, uint8_t mode)
 
     if (mode == last_mode)
         return;
+	
+	if (last_mode == PM_RUN_MODE_LOW_SPEED)
+    {
+		/* Exit LP RUN mode */
+        HAL_PWREx_DisableLowPowerRunMode();
+    }
     last_mode = mode;
 
     /* 1. 设置 MSI 作为 SYSCLK 时钟源,以修改 PLL */

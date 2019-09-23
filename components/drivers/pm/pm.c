@@ -444,7 +444,10 @@ int rt_pm_run_enter(uint8_t mode)
     if (mode < pm->run_mode)
     {
         /* change system runing mode */
-        pm->ops->run(pm, mode);
+		if (pm->ops->run != RT_NULL)
+		{
+			pm->ops->run(pm, mode);
+		}
         /* changer device frequency */
         _pm_device_frequency_change(mode);
     }
