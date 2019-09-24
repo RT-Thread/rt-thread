@@ -51,7 +51,7 @@ struct stm32_pulse_encoder_device
     struct rt_pulse_encoder_device pulse_encoder;
     TIM_HandleTypeDef tim_handler;
     IRQn_Type encoder_irqn;
-    volatile rt_int32_t over_under_flowcount;
+    rt_int32_t over_under_flowcount;
     char *name;
 };
 
@@ -82,7 +82,7 @@ rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder)
     TIM_Encoder_InitTypeDef sConfig;
     TIM_MasterConfigTypeDef sMasterConfig;
     struct stm32_pulse_encoder_device *stm32_device;
-    stm32_device = rt_container_of(pulse_encoder, struct stm32_pulse_encoder_device, pulse_encoder);
+    stm32_device = (struct stm32_pulse_encoder_device*)pulse_encoder;
 
     stm32_device->tim_handler.Init.Prescaler = 0;
     stm32_device->tim_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -133,7 +133,7 @@ rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder)
 rt_err_t pulse_encoder_clear_count(struct rt_pulse_encoder_device *pulse_encoder)
 {
     struct stm32_pulse_encoder_device *stm32_device;
-    stm32_device = rt_container_of(pulse_encoder, struct stm32_pulse_encoder_device, pulse_encoder);
+    stm32_device = (struct stm32_pulse_encoder_device*)pulse_encoder;
     stm32_device->over_under_flowcount = 0;
     __HAL_TIM_SET_COUNTER(&stm32_device->tim_handler, 0);
     return RT_EOK;
@@ -142,15 +142,15 @@ rt_err_t pulse_encoder_clear_count(struct rt_pulse_encoder_device *pulse_encoder
 rt_int32_t pulse_encoder_get_count(struct rt_pulse_encoder_device *pulse_encoder)
 {
     struct stm32_pulse_encoder_device *stm32_device;
-    stm32_device = rt_container_of(pulse_encoder, struct stm32_pulse_encoder_device, pulse_encoder);
-    return (rt_int32_t)((rt_int16_t)__HAL_TIM_GET_COUNTER(&stm32_device->tim_handler) + stm32_device->over_under_flowcount*AUTO_RELOAD_VALUE);
+    stm32_device = (struct stm32_pulse_encoder_device*)pulse_encoder;
+    return (rt_int32_t)((rt_int16_t)__HAL_TIM_GET_COUNTER(&stm32_device->tim_handler) + stm32_device->over_under_flowcount * AUTO_RELOAD_VALUE);
 }
 
 rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt_uint32_t cmd, void *args)
 {
     rt_err_t result;
     struct stm32_pulse_encoder_device *stm32_device;
-    stm32_device = rt_container_of(pulse_encoder, struct stm32_pulse_encoder_device, pulse_encoder);
+    stm32_device = (struct stm32_pulse_encoder_device*)pulse_encoder;
 
     result = RT_EOK;
 
@@ -174,11 +174,11 @@ rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt
 
 void pulse_encoder_update_isr(struct stm32_pulse_encoder_device *device)
 {
-  /* TIM Update event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_UPDATE) != RESET)
-  {
+    /* TIM Update event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_UPDATE) != RESET)
+    {
         __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_UPDATE);
-        if(__HAL_TIM_IS_TIM_COUNTING_DOWN(&device->tim_handler))
+        if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&device->tim_handler))
         {
             device->over_under_flowcount--;
         }
@@ -186,46 +186,52 @@ void pulse_encoder_update_isr(struct stm32_pulse_encoder_device *device)
         {
             device->over_under_flowcount++;
         }
-  }
-  /* Capture compare 1 event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC1) != RESET)
-  {
+    }
+    /* Capture compare 1 event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC1) != RESET)
+    {
         __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC1);
-  }
-  /* Capture compare 2 event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC2) != RESET)
-  {
-      __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC2);
-  }
-  /* Capture compare 3 event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC3) != RESET)
-  {
-      __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC3);
-  }
-  /* Capture compare 4 event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC4) != RESET)
-  {
-      __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC4);
-  }
-  /* TIM Break input event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_BREAK) != RESET)
-  {
-      __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_BREAK);
-  }
-  /* TIM Trigger detection event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_TRIGGER) != RESET)
-  {
-      __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_TRIGGER);
-  }
-  /* TIM commutation event */
-  if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_COM) != RESET)
-  {
-      __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_FLAG_COM);
-  }
+    }
+    /* Capture compare 2 event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC2) != RESET)
+    {
+        __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC2);
+    }
+    /* Capture compare 3 event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC3) != RESET)
+    {
+        __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC3);
+    }
+    /* Capture compare 4 event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_CC4) != RESET)
+    {
+        __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_CC4);
+    }
+    /* TIM Break input event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_BREAK) != RESET)
+    {
+        __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_BREAK);
+    }
+    /* TIM Trigger detection event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_TRIGGER) != RESET)
+    {
+        __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_IT_TRIGGER);
+    }
+    /* TIM commutation event */
+    if (__HAL_TIM_GET_FLAG(&device->tim_handler, TIM_FLAG_COM) != RESET)
+    {
+        __HAL_TIM_CLEAR_IT(&device->tim_handler, TIM_FLAG_COM);
+    }
 }
 
 #ifdef BSP_USING_PULSE_ENCODER1
-void TIM1_UP_TIM10_IRQHandler(void)
+#if defined(SOC_SERIES_STM32F4)
+    void TIM1_UP_TIM10_IRQHandler(void)
+#elif defined(SOC_SERIES_STM32F1)
+    void TIM1_UP_IRQHandler(void)
+#else
+    #error "Please check TIM1's IRQHandler"
+#endif
 {
     /* enter interrupt */
     rt_interrupt_enter();
