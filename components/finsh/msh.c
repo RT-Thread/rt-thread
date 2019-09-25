@@ -89,6 +89,37 @@ int msh_help(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
 
+int cmd_ps(int argc, char **argv)
+{
+    extern long list_thread(void);
+    extern int list_module(void);
+
+#ifdef RT_USING_MODULE
+    if ((argc == 2) && (strcmp(argv[1], "-m") == 0))
+        list_module();
+    else
+#endif
+        list_thread();
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
+
+#ifdef RT_USING_HEAP
+int cmd_free(int argc, char **argv)
+{
+    extern void list_mem(void);
+    extern void list_memheap(void);
+
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+    list_memheap();
+#else
+    list_mem();
+#endif
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+#endif
+
 static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
 {
     char *ptr;
