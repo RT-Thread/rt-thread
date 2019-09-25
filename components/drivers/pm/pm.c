@@ -17,18 +17,18 @@
 #ifdef RT_USING_PM
 
 static struct rt_pm _pm;
-static uint8_t _pm_default_sleep = RT_PM_DEFAULT_SLEEP_MODE;
+static rt_uint8_t _pm_default_sleep = RT_PM_DEFAULT_SLEEP_MODE;
 static struct rt_pm_notify _pm_notify;
-static uint8_t _pm_init_flag = 0;
+static rt_uint8_t _pm_init_flag = 0;
 
 #define RT_PM_TICKLESS_THRESH (2)
 
-RT_WEAK uint32_t rt_pm_enter_critical(uint8_t sleep_mode)
+RT_WEAK rt_uint32_t rt_pm_enter_critical(rt_uint8_t sleep_mode)
 {
     return rt_hw_interrupt_disable();
 }
 
-RT_WEAK void rt_pm_exit_critical(uint32_t ctx, uint8_t sleep_mode)
+RT_WEAK void rt_pm_exit_critical(rt_uint32_t ctx, rt_uint8_t sleep_mode)
 {
     rt_hw_interrupt_enable(ctx);
 }
@@ -36,7 +36,7 @@ RT_WEAK void rt_pm_exit_critical(uint32_t ctx, uint8_t sleep_mode)
 /**
  * This function will suspend all registered devices
  */
-static int _pm_device_suspend(uint8_t mode)
+static int _pm_device_suspend(rt_uint8_t mode)
 {
     int index, ret = RT_EOK;
 
@@ -45,8 +45,8 @@ static int _pm_device_suspend(uint8_t mode)
         if (_pm.device_pm[index].ops->suspend != RT_NULL)
         {
             ret = _pm.device_pm[index].ops->suspend(_pm.device_pm[index].device, mode);
-            if (ret != RT_EOK)
-                break;
+            if(ret != RT_EOK)
+                break; 
         }
     }
 
@@ -56,7 +56,7 @@ static int _pm_device_suspend(uint8_t mode)
 /**
  * This function will resume all registered devices
  */
-static void _pm_device_resume(uint8_t mode)
+static void _pm_device_resume(rt_uint8_t mode)
 {
     int index;
 
@@ -72,7 +72,7 @@ static void _pm_device_resume(uint8_t mode)
 /**
  * This function will update the frequency of all registered devices
  */
-static void _pm_device_frequency_change(uint8_t mode)
+static void _pm_device_frequency_change(rt_uint8_t mode)
 {
     rt_uint32_t index;
 
@@ -106,10 +106,10 @@ static void _pm_frequency_scaling(struct rt_pm *pm)
 /**
  * This function selects the sleep mode according to the rt_pm_request/rt_pm_release count.
  */
-static uint8_t _pm_select_sleep_mode(struct rt_pm *pm)
+static rt_uint8_t _pm_select_sleep_mode(struct rt_pm *pm)
 {
     int index;
-    uint8_t mode;
+    rt_uint8_t mode;
 
     mode = _pm_default_sleep;
     for (index = PM_SLEEP_MODE_NONE; index < PM_SLEEP_MODE_MAX; index ++)
@@ -128,7 +128,7 @@ static uint8_t _pm_select_sleep_mode(struct rt_pm *pm)
 /**
  * This function changes the power sleep mode base on the result of selection
  */
-static void _pm_change_sleep_mode(struct rt_pm *pm, uint8_t mode)
+static void _pm_change_sleep_mode(struct rt_pm *pm, rt_uint8_t mode)
 {
     rt_tick_t timeout_tick, delta_tick;
     rt_base_t level;
@@ -214,7 +214,7 @@ static void _pm_change_sleep_mode(struct rt_pm *pm, uint8_t mode)
  */
 void rt_system_power_manager(void)
 {
-    uint8_t mode;
+    rt_uint8_t mode;
 
     if (_pm_init_flag == 0)
         return;
@@ -233,7 +233,7 @@ void rt_system_power_manager(void)
  *
  * @param parameter the parameter of run mode or sleep mode
  */
-void rt_pm_request(uint8_t mode)
+void rt_pm_request(rt_uint8_t mode)
 {
     rt_base_t level;
     struct rt_pm *pm;
@@ -258,7 +258,7 @@ void rt_pm_request(uint8_t mode)
  * @param parameter the parameter of run mode or sleep mode
  *
  */
-void rt_pm_release(uint8_t mode)
+void rt_pm_release(rt_uint8_t mode)
 {
     rt_ubase_t level;
     struct rt_pm *pm;
@@ -342,7 +342,7 @@ void rt_pm_device_unregister(struct rt_device *device)
 /**
  * This function set notification callback for application
  */
-void rt_pm_notify_set(void (*notify)(uint8_t event, uint8_t mode, void *data), void *data)
+void rt_pm_notify_set(void (*notify)(rt_uint8_t event, rt_uint8_t mode, void *data), void *data)
 {
     _pm_notify.notify = notify;
     _pm_notify.data = data;
@@ -351,7 +351,7 @@ void rt_pm_notify_set(void (*notify)(uint8_t event, uint8_t mode, void *data), v
 /**
  * This function set default sleep mode when no pm_request
  */
-void rt_pm_default_set(uint8_t sleep_mode)
+void rt_pm_default_set(rt_uint8_t sleep_mode)
 {
     _pm_default_sleep = sleep_mode;
 }
@@ -428,7 +428,7 @@ static rt_err_t _rt_pm_device_control(rt_device_t dev,
     return RT_EOK;
 }
 
-int rt_pm_run_enter(uint8_t mode)
+int rt_pm_run_enter(rt_uint8_t mode)
 {
     rt_base_t level;
     struct rt_pm *pm;
