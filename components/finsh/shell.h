@@ -82,7 +82,7 @@ struct finsh_shell
     rt_uint16_t line_position;
     rt_uint16_t line_curpos;
 
-#ifndef RT_USING_POSIX
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
     rt_device_t device;
 #endif
 
