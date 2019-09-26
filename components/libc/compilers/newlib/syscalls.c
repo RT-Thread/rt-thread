@@ -453,3 +453,7 @@ mode_t umask(mode_t mask)
     return 022;
 }
 
+int flock(int fd, int operation)
+{
+    return 0;
+}
