@@ -1,0 +1,26 @@
+from building import *
+
+# The set of source files associated with this SConscript file.
+src = Split('''
+src/dfs.c
+src/dfs_file.c
+src/dfs_fs.c
+src/dfs_posix.c
+''')
+cwd = GetCurrentDir()
+CPPPATH = [cwd + "/include"]
+
+if GetDepend('RT_USING_POSIX'):
+    src += ['src/poll.c', 'src/select.c']
+
+group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
+
+if GetDepend('RT_USING_DFS'):
+    # search in the file system implementation
+    list = os.listdir(cwd)
+
+    for item in list:
+        if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+            group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

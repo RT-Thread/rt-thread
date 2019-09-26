@@ -1,0 +1,34 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+src = Glob('*.c')
+
+CPPPATH = [RTT_ROOT + '/include']
+
+if GetDepend('RT_USING_COMPONENTS_INIT') == False:
+    SrcRemove(src, ['components.c'])
+
+if GetDepend('RT_USING_MODULE') == False:
+    SrcRemove(src, ['module.c'])
+
+if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SMALL_MEM') == False:
+    SrcRemove(src, ['mem.c'])
+
+if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SLAB') == False:
+    SrcRemove(src, ['slab.c'])
+
+if GetDepend('RT_USING_MEMPOOL') == False:
+    SrcRemove(src, ['mempool.c'])
+
+if GetDepend('RT_USING_MEMHEAP') == False:
+    SrcRemove(src, ['memheap.c'])
+    if GetDepend('RT_USING_MEMHEAP_AS_HEAP'):
+        SrcRemove(src, ['mem.c'])
+
+if GetDepend('RT_USING_DEVICE') == False:
+    SrcRemove(src, ['device.c'])
+
+group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

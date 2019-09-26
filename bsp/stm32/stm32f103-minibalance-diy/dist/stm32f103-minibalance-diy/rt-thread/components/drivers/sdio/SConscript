@@ -1,0 +1,18 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+block_dev.c
+mmcsd_core.c
+sd.c
+sdio.c
+mmc.c
+""")
+
+# The set of source files associated with this SConscript file.
+path = [cwd + '/../include']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SDIO'], CPPPATH = path)
+
+Return('group')

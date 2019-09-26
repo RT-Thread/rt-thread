@@ -1,0 +1,338 @@
+menu "RT-Thread Kernel"
+
+config RT_NAME_MAX
+    int "The maximal size of kernel object name"
+    range 2 32
+    default 8
+    help
+        Each kernel object, such as thread, timer, semaphore etc, has a name,
+        the RT_NAME_MAX is the maximal size of this object name.
+
+config RT_USING_ARCH_DATA_TYPE
+    bool "Use the data types defined in ARCH_CPU"
+    default n
+    help
+        For the data type like, `rt_uint8/int8_t, rt_uint16/int16_t, rt_uint32/int32_t`,
+        BSP can define these basic data types in ARCH_CPU level.
+
+        Please re-define these data types in rtconfig_project.h file.
+
+config RT_USING_SMP
+    bool "Enable SMP(Symmetric multiprocessing)"
+    default n
+	help
+        This option should be selected by machines which have an SMP-
+        capable CPU.
+        The only effect of this option is to make the SMP-related
+        options available to the user for configuration.
+
+config RT_CPUS_NR
+    int "Number of CPUs"
+	default 2
+	depends on RT_USING_SMP
+    help
+		Number of CPUs in the system
+
+config RT_ALIGN_SIZE
+    int "Alignment size for CPU architecture data access"
+    default 4
+    help
+        Alignment size for CPU architecture data access
+
+    choice
+        prompt "The maximal level value of priority of thread"
+        default RT_THREAD_PRIORITY_32
+
+        config RT_THREAD_PRIORITY_8
+            bool "8"
+
+        config RT_THREAD_PRIORITY_32
+            bool "32"
+
+        config RT_THREAD_PRIORITY_256
+            bool "256"
+    endchoice
+
+config RT_THREAD_PRIORITY_MAX
+    int
+    default 8   if RT_THREAD_PRIORITY_8
+    default 32  if RT_THREAD_PRIORITY_32
+    default 256 if RT_THREAD_PRIORITY_256
+
+config RT_TICK_PER_SECOND
+    int "Tick frequency, Hz"
+    range 10 1000
+    default 100
+    help
+        System's tick frequency, Hz.
+
+config RT_USING_OVERFLOW_CHECK
+    bool "Using stack overflow checking"
+    default y
+    help
+        Enable thread stack overflow checking. The stack overflow is checking when
+        each thread switch.
+
+config RT_USING_HOOK
+    bool "Enable system hook"
+    default y
+    select RT_USING_IDLE_HOOK
+    help
+        Enable the hook function when system running, such as idle thread hook,
+        thread context switch etc.
+
+config RT_USING_IDLE_HOOK
+    bool "Enable IDLE Task hook"
+    default y if RT_USING_HOOK
+
+    if RT_USING_IDLE_HOOK
+    config RT_IDEL_HOOK_LIST_SIZE
+        int "The max size of idel hook list"
+        default 4
+        range 1 16
+        help
+            The system has a hook list. This is the hook list size.
+    endif
+
+config IDLE_THREAD_STACK_SIZE
+    int "The stack size of idle thread"
+    default 256
+
+config RT_USING_TIMER_SOFT
+    bool "Enable software timer with a timer thread"
+    default y
+    help
+        the timeout function context of soft-timer is under a high priority timer
+        thread.
+
+if RT_USING_TIMER_SOFT
+config RT_TIMER_THREAD_PRIO
+    int "The priority level value of timer thread"
+    default 4
+
+config RT_TIMER_THREAD_STACK_SIZE
+    int "The stack size of timer thread"
+    default 512
+
+endif
+
+menuconfig RT_DEBUG
+    bool "Enable debugging features"
+    default y
+
+if RT_DEBUG
+
+config RT_DEBUG_COLOR
+    bool "Enable color debugging log"
+    default n
+
+config RT_DEBUG_INIT_CONFIG
+    bool "Enable debugging of components initialization"
+    default n
+
+config RT_DEBUG_INIT
+    int
+    default 1 if RT_DEBUG_INIT_CONFIG
+
+config RT_DEBUG_THREAD_CONFIG
+    bool "Enable debugging of Thread State Changes"
+    default n
+
+config RT_DEBUG_THREAD
+    int
+    default 1 if RT_DEBUG_THREAD_CONFIG
+
+config RT_DEBUG_SCHEDULER_CONFIG
+    bool "Enable debugging of Scheduler"
+    default n
+
+config RT_DEBUG_SCHEDULER
+    int
+    default 1 if RT_DEBUG_SCHEDULER_CONFIG
+
+config RT_DEBUG_IPC_CONFIG
+    bool "Enable debugging of IPC"
+    default n
+
+config RT_DEBUG_IPC
+    int
+    default 1 if RT_DEBUG_IPC_CONFIG
+
+config RT_DEBUG_TIMER_CONFIG
+    bool "Enable debugging of Timer"
+    default n
+
+config RT_DEBUG_TIMER
+    int
+    default 1 if RT_DEBUG_TIMER_CONFIG
+
+config RT_DEBUG_IRQ_CONFIG
+    bool "Enable debugging of IRQ(Interrupt Request)"
+    default n
+
+config RT_DEBUG_IRQ
+    int
+    default 1 if RT_DEBUG_IRQ_CONFIG
+
+config RT_DEBUG_MEM_CONFIG
+    bool "Enable debugging of Small Memory Algorithm"
+    default n
+
+config RT_DEBUG_MEM
+    int
+    default 1 if RT_DEBUG_MEM_CONFIG
+
+config RT_DEBUG_SLAB_CONFIG
+    bool "Enable debugging of SLAB Memory Algorithm"
+    default n
+
+config RT_DEBUG_SLAB
+    int
+    default 1 if RT_DEBUG_SLAB_CONFIG
+
+config RT_DEBUG_MEMHEAP_CONFIG
+    bool "Enable debugging of Memory Heap Algorithm"
+    default n
+
+config RT_DEBUG_MEMHEAP
+    int
+    default 1 if RT_DEBUG_MEMHEAP_CONFIG
+
+config RT_DEBUG_MODULE_CONFIG
+    bool "Enable debugging of Application Module"
+    default n
+
+config RT_DEBUG_MODULE
+    int
+    default 1 if RT_DEBUG_MODULE_CONFIG
+
+endif
+
+menu "Inter-Thread communication"
+
+config RT_USING_SEMAPHORE
+    bool "Enable semaphore"
+    default y
+
+config RT_USING_MUTEX
+    bool "Enable mutex"
+    default y
+
+config RT_USING_EVENT
+    bool "Enable event flag"
+    default y
+
+config RT_USING_MAILBOX
+    bool "Enable mailbox"
+    default y
+
+config RT_USING_MESSAGEQUEUE
+    bool "Enable message queue"
+    default y
+
+config RT_USING_SIGNALS
+    bool "Enable signals"
+    select RT_USING_MEMPOOL
+    default n
+    help
+        A signal is an asynchronous notification sent to a specific thread
+        in order to notify it of an event that occurred.
+endmenu
+
+menu "Memory Management"
+
+    config RT_USING_MEMPOOL
+        bool "Using memory pool"
+        default y
+        help
+            Using static memory fixed partition
+
+    config RT_USING_MEMHEAP
+        bool "Using memory heap object"
+        default n
+        help
+            Using memory heap object to manage dynamic memory heap.
+
+    choice
+        prompt "Dynamic Memory Management"
+        default RT_USING_SMALL_MEM
+
+        config RT_USING_NOHEAP
+            bool "Disable Heap"
+
+        config RT_USING_SMALL_MEM
+            bool "Small Memory Algorithm"
+
+        config RT_USING_SLAB
+            bool "SLAB Algorithm for large memory"
+
+        if RT_USING_MEMHEAP
+        config RT_USING_MEMHEAP_AS_HEAP
+            bool "Use all of memheap objects as heap"
+        endif
+    endchoice
+
+    if RT_USING_SMALL_MEM
+        config RT_USING_MEMTRACE
+            bool "Enable memory trace"
+            default n
+            help
+                When enable RT_USING_MEMTRACE with shell, developer can call cmd:
+                1. memtrace
+                   to dump memory block information.
+                2. memcheck
+                   to check memory block to avoid memory overwritten.
+
+                And developer also can call memcheck() in each of scheduling
+                to check memory block to find which thread has wrongly modified
+                memory.
+    endif
+
+    config RT_USING_HEAP
+        bool
+        default n if RT_USING_NOHEAP
+        default y if RT_USING_SMALL_MEM
+        default y if RT_USING_SLAB
+        default y if RT_USING_MEMHEAP_AS_HEAP
+
+endmenu
+
+menu "Kernel Device Object"
+
+    config RT_USING_DEVICE
+        bool "Using device object"
+        default y
+
+    config RT_USING_DEVICE_OPS
+        bool "Using ops for each device object"
+        default n
+
+    config RT_USING_INTERRUPT_INFO
+        bool "Enable additional interrupt trace information"
+        default n
+        help
+            Add name and counter information for interrupt trace.
+
+    config RT_USING_CONSOLE
+        bool "Using console for rt_kprintf"
+        default y
+
+    if RT_USING_CONSOLE
+        config RT_CONSOLEBUF_SIZE
+            int "the buffer size for console log printf"
+            default 128
+
+        config RT_CONSOLE_DEVICE_NAME
+            string "the device name for console"
+            default "uart"
+    endif
+
+endmenu
+
+config RT_VER_NUM
+    hex
+    default 0x40002
+    help
+        RT-Thread version number
+
+endmenu

@@ -1,0 +1,3 @@
+/**
+   \example uip-code-style.c
+ */
