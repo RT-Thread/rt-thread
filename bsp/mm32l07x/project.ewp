@@ -349,6 +349,7 @@
           <state>$PROJ_DIR$\Libraries\MM32L0xx\Include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\Libraries\MM32L0xx\Source</state>
           <state>$PROJ_DIR$\..\..\include</state>
@@ -1380,6 +1381,7 @@
           <state>$PROJ_DIR$\Libraries\MM32L0xx\Include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\Libraries\MM32L0xx\Source</state>
           <state>$PROJ_DIR$\..\..\include</state>
@@ -2242,19 +2244,10 @@
       <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
@@ -2286,5 +2279,8 @@
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
     </file>
+  </group>
+  <group>
+    <name>libc</name>
   </group>
 </project>
