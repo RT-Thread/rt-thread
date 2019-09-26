@@ -361,6 +361,7 @@
           <state>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\CMSIS\Device\ST\STM32F0xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
@@ -1412,6 +1413,7 @@
           <state>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\CMSIS\Device\ST\STM32F0xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
@@ -2231,19 +2233,10 @@
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_compiler.c</name>
@@ -2277,6 +2270,9 @@
     </file>
   </group>
   <group>
+    <name>libc</name>
+  </group>
+  <group>
     <name>STM32_HAL</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\CMSIS\Device\ST\STM32F0xx\Source\Templates\system_stm32f0xx.c</name>
@@ -2289,6 +2285,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_crc_ex.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F0xx_HAL\STM32F0xx_HAL_Driver\Src\stm32f0xx_hal_pwr.c</name>
