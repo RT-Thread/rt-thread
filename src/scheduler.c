@@ -840,10 +840,13 @@ void rt_enter_critical(void)
      */
 
     /* lock scheduler for all cpus */
-    if (current_thread->scheduler_lock_nest == !!current_thread->cpus_lock_nest)
+    if (current_thread->critical_lock_nest == 0)
     {
         rt_hw_spin_lock(&_rt_critical_lock);
     }
+
+    /* critical for local cpu */
+    current_thread->critical_lock_nest ++;
 
     /* lock scheduler for local cpu */
     current_thread->scheduler_lock_nest ++;
@@ -892,7 +895,9 @@ void rt_exit_critical(void)
 
     current_thread->scheduler_lock_nest --;
 
-    if (current_thread->scheduler_lock_nest == !!current_thread->cpus_lock_nest)
+    current_thread->critical_lock_nest --;
+
+    if (current_thread->critical_lock_nest == 0)
     {
         rt_hw_spin_unlock(&_rt_critical_lock);
     }
@@ -951,7 +956,7 @@ rt_uint16_t rt_critical_level(void)
 #ifdef RT_USING_SMP
     struct rt_thread *current_thread = rt_cpu_self()->current_thread;
 
-    return current_thread->scheduler_lock_nest;
+    return current_thread->critical_lock_nest;
 #else
 	return rt_scheduler_lock_nest;
 #endif /*RT_USING_SMP*/
