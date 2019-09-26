@@ -1,0 +1,14 @@
+from building import *
+Import('rtconfig')
+
+src = Glob('*.c') + Glob('*.cpp') + Glob('arch/*.c')
+cwd = GetCurrentDir()
+group   = []
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM == 'gcc':
+    group = DefineGroup('libc', src, 
+        depend = ['RT_USING_MODULE'], 
+        CPPPATH = CPPPATH)
+
+Return('group')

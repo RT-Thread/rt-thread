@@ -1,0 +1,19 @@
+# for network related component
+import os
+Import('RTT_ROOT')
+from building import *
+
+objs = []
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+
+# the default version of LWIP is 2.0.2
+if not GetDepend('RT_USING_LWIP141') and not GetDepend('RT_USING_LWIP202') and not GetDepend('RT_USING_LWIP210'):
+    AddDepend('RT_USING_LWIP202')
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')

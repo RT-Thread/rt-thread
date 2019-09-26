@@ -1,0 +1,1 @@
+APP_SOURCES += webclient-strings.c webclient.c
