@@ -143,6 +143,12 @@ typedef union {
     } tickets;
 } rt_hw_spinlock_t;
 
+typedef struct
+{
+    rt_hw_spinlock_t lock;
+} rt_spinlock_t;
+
+void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock);
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 
@@ -181,7 +187,15 @@ void rt_hw_secondary_cpu_idle_exec(void);
 #define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
 #define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
 
+typedef int rt_spinlock_t;
+
 #endif
+
+void rt_spin_lock_init(rt_spinlock_t *lock);
+void rt_spin_lock(rt_spinlock_t *lock);
+void rt_spin_unlock(rt_spinlock_t *lock);
+rt_base_t rt_spin_lock_irqsave(rt_spinlock_t *lock);
+void rt_spin_unlock_irqrestore(rt_spinlock_t *lock, rt_base_t level);
 
 #ifdef __cplusplus
 }

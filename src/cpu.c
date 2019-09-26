@@ -12,6 +12,119 @@
 #include <rthw.h>
 
 #ifdef RT_USING_SMP
+/***********************************
+ * disable scheduler
+ ***********************************/
+static void rt_preempt_disable(void)
+{
+	register rt_base_t level;
+	struct rt_thread *current_thread;
+
+	/* disable interrupt */
+	level = rt_hw_local_irq_disable();
+
+	current_thread = rt_cpu_self()->current_thread;
+	if (!current_thread)
+	{
+		rt_hw_local_irq_enable(level);
+		return;
+	}
+
+	/* lock scheduler for local cpu */
+	current_thread->scheduler_lock_nest ++;
+
+	/* enable interrupt */
+	rt_hw_local_irq_enable(level);
+}
+
+/***********************************
+ * restore scheduler
+ ***********************************/
+static void rt_preempt_enable(void)
+{
+	register rt_base_t level;
+	struct rt_thread *current_thread;
+
+	/* disable interrupt */
+	level = rt_hw_local_irq_disable();
+
+	current_thread = rt_cpu_self()->current_thread;
+	if (!current_thread)
+	{
+		rt_hw_local_irq_enable(level);
+		return;
+	}
+
+	/* unlock scheduler for local cpu */
+	current_thread->scheduler_lock_nest --;
+
+	rt_schedule();
+	/* enable interrupt */
+	rt_hw_local_irq_enable(level);
+}
+#endif
+
+void rt_spin_lock_init(rt_spinlock_t *lock)
+{
+#ifdef RT_USING_SMP
+	rt_hw_spin_lock_init(&lock->lock);
+#endif
+}
+RTM_EXPORT(rt_spin_lock_init)
+
+void rt_spin_lock(rt_spinlock_t *lock)
+{
+#ifdef RT_USING_SMP
+	rt_preempt_disable();
+	rt_hw_spin_lock(&lock->lock);
+#else
+    rt_enter_critical();
+#endif
+}
+RTM_EXPORT(rt_spin_lock)
+
+void rt_spin_unlock(rt_spinlock_t *lock)
+{
+#ifdef RT_USING_SMP
+	rt_hw_spin_unlock(&lock->lock);
+	rt_preempt_enable();
+#else
+    rt_exit_critical();
+#endif
+}
+RTM_EXPORT(rt_spin_unlock)
+
+rt_base_t rt_spin_lock_irqsave(rt_spinlock_t *lock)
+{
+	unsigned long level;
+
+#ifdef RT_USING_SMP
+	rt_preempt_disable();
+
+	level = rt_hw_local_irq_disable();
+	rt_hw_spin_lock(&lock->lock);
+
+	return level;
+#else
+    return rt_hw_interrupt_disable();
+#endif
+}
+RTM_EXPORT(rt_spin_lock_irqsave)
+
+void rt_spin_unlock_irqrestore(rt_spinlock_t *lock, rt_base_t level)
+{
+#ifdef RT_USING_SMP
+	rt_hw_spin_unlock(&lock->lock);
+	rt_hw_local_irq_enable(level);
+
+	rt_preempt_enable();
+#else
+    rt_hw_interrupt_enable(level);
+#endif
+}
+RTM_EXPORT(rt_spin_unlock_irqrestore)
+
+#ifdef RT_USING_SMP
 
 static struct rt_cpu rt_cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
