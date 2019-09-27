@@ -1900,7 +1900,7 @@ rt_mq_t rt_mq_create(const char *name,
     mq->msg_pool = RT_KERNEL_MALLOC((mq->msg_size + sizeof(struct rt_mq_message)) * mq->max_msgs);
     if (mq->msg_pool == RT_NULL)
     {
-        rt_mq_delete(mq);
+        rt_object_delete(&(mq->parent.parent));
 
         return RT_NULL;
     }
