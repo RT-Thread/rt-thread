@@ -26,6 +26,9 @@ if GetDepend('RT_USING_MEMHEAP') == False:
 if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
+if GetDepend('RT_USING_SMP') == False:
+    SrcRemove(src, ['cpu.c'])
+
 group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
