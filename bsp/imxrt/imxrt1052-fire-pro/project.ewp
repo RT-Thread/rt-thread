@@ -360,16 +360,16 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1050\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1050\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
         </option>
@@ -1124,10 +1124,13 @@
       <name>$PROJ_DIR$\board\MCUX_Config\pin_mux.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_can.c</name>
     </file>
   </group>
   <group>
@@ -1142,6 +1145,9 @@
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
     </file>
     <file>
@@ -1150,6 +1156,9 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\can\can.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\cputime\cputime.c</name>
     </file>
@@ -1187,25 +1196,16 @@
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
-    </file>
   </group>
   <group>
     <name>libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\gmtime_r.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
   </group>
   <group>
@@ -1243,32 +1243,32 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\time.c</name>
-    </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\system_MIMXRT1052.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\system_MIMXRT1052.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\iar\startup_MIMXRT1052.s</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\iar\startup_MIMXRT1052.s</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpuart.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpuart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_flexcan.c</name>
     </file>
   </group>
 </project>

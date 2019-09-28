@@ -4,7 +4,6 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Split('''
 shell.c
-symbol.c
 cmd.c
 ''')
 
@@ -21,18 +20,19 @@ finsh_vm.c
 finsh_token.c
 ''')
 
-msh_src = Split('''
-msh.c
-msh_cmd.c
-msh_file.c
-''')
+msh_src = Glob('msh.c')
 
-CPPPATH = [cwd]
+if GetDepend('RT_USING_DFS'):
+    msh_src += ['msh_file.c']
 
+if not GetDepend('FINSH_USING_SYMTAB'):
+    src += ['symbol.c']
 if GetDepend('FINSH_USING_MSH'):
 	src = src + msh_src
 if not GetDepend('FINSH_USING_MSH_ONLY'):
     src = src + fsh_src
+
+CPPPATH = [cwd]
 
 group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
 

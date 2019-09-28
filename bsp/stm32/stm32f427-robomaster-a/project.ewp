@@ -347,9 +347,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\packages\mpu6xxx-latest\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\sensors</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
@@ -1380,9 +1378,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\packages\mpu6xxx-latest\inc</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\sensors</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
@@ -2143,15 +2139,6 @@
     </file>
   </group>
   <group>
-    <name>mpu6xxx</name>
-    <file>
-      <name>$PROJ_DIR$\packages\mpu6xxx-latest\src\mpu6xxx.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\mpu6xxx-latest\src\sensor_inven_mpu6xxx.c</name>
-    </file>
-  </group>
-  <group>
     <name>cpu</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
@@ -2200,33 +2187,15 @@
     </file>
   </group>
   <group>
-    <name>Sensors</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sensors\sensor.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\sensors\sensor_cmd.c</name>
-    </file>
-  </group>
-  <group>
     <name>finsh</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\symbol.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
   </group>
   <group>

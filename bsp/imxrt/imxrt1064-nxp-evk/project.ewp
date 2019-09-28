@@ -358,24 +358,23 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\board\MCUX_Config</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\common</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\drivers</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064</state>
+          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\board\ports</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers</state>
-          <state>$PROJ_DIR$\..\Libraries\drivers\config</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\iar</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh</state>
+          <state>$PROJ_DIR$\..\libraries\drivers</state>
+          <state>$PROJ_DIR$\..\libraries\drivers\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\xip</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\Libraries\MIMXRT1064\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\libraries\MIMXRT1064\CMSIS\Include</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1065,49 +1064,49 @@
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\clock.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\cpu.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\device.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\idle.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\ipc.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\irq.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\memheap.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\memheap.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\mempool.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\object.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\scheduler.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\signal.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\thread.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\src\timer.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
   </group>
   <group>
@@ -1128,10 +1127,10 @@
       <name>$PROJ_DIR$\board\MCUX_Config\pin_mux.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\drivers\drv_uart.c</name>
     </file>
   </group>
   <group>
@@ -1149,142 +1148,133 @@
   <group>
     <name>cpu</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\common\backtrace.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\common\div0.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\common\showmem.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\cortex-m7\cpuport.c</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\libcpu\arm\cortex-m7\context_iar.S</name>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\cputime\cputime.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\cputime\cputime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\serial\serial.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\completion.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\dataqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\pipe.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\ringblk_buf.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\ringbuffer.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\waitqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\src\workqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
     </file>
   </group>
   <group>
     <name>finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh\symbol.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh\msh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\finsh\msh_file.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
     </file>
   </group>
   <group>
     <name>libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\common\gmtime_r.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
   </group>
   <group>
     <name>dlib</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\environ.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\libc.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\rmtx.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\rmtx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\stdio.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_mem.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_open.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_read.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\syscall_write.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\libc\compilers\dlib\time.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
   </group>
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\system_MIMXRT1064.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\system_MIMXRT1064.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_common.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_common.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_clock.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_cache.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\iar\startup_MIMXRT1064.s</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\iar\startup_MIMXRT1064.s</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_lpuart.c</name>
+      <name>$PROJ_DIR$\..\libraries\MIMXRT1064\MIMXRT1064\drivers\fsl_lpuart.c</name>
     </file>
   </group>
 </project>
