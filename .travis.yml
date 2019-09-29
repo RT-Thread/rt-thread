@@ -108,7 +108,6 @@ env:
   - RTT_BSP='stm32/stm32l496-ali-developer' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32f20x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32f429-disco' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32h743-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='swm320-lq100' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
