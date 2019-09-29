@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -19,28 +16,28 @@
           <PackID>NXP.MIMXRT1052_DFP.11.0.0</PackID>
           <PackURL>http://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20000000,0x020000) IRAM2(0x00000000,0x020000) XRAM(0x20200000,0x040000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC8000 -FN2 -FF0MIMXRT105x_HYPER_256KB_SEC -FS060000000 -FL04000000 -FF1MIMXRT105x_QuadSPI_4KB_SEC -FS160000000 -FL1800000 -FP0($$Device:MIMXRT1052CVL5B$arm\MIMXRT105x_HYPER_256KB_SEC.FLM) -FP1($$Device:MIMXRT1052CVL5B$arm\MIMXRT105x_QuadSPI_4KB_SEC.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:MIMXRT1052CVL5B$fsl_device_registers.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:MIMXRT1052CVL5B$MIMXRT1052.xml</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -62,8 +59,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -72,8 +69,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -83,14 +80,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,8 +101,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -114,7 +111,7 @@
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM7</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments></TargetDllArguments>
+          <TargetDllArguments />
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM7</TargetDlgDllArguments>
         </DllOption>
@@ -139,10 +136,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -175,7 +172,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M7"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -307,7 +304,7 @@
                 <Size>0x20000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -335,8 +332,8 @@
             <VariousControls>
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>SKIP_SYSCLK_INIT, CPU_MIMXRT1052CVL5B, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1, EVK_MCIMXRM, RT_USING_ARM_LIBC</Define>
-              <Undefine></Undefine>
-              <IncludePath>.;..\..\..\include;applications;board;board\MCUX_Config;board\ports;..\Libraries\drivers;..\Libraries\drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\Libraries\MIMXRT1050\CMSIS\Include;..\Libraries\MIMXRT1050\MIMXRT1052;..\Libraries\MIMXRT1050\MIMXRT1052\drivers</IncludePath>
+              <Undefine />
+              <IncludePath>.;..\..\..\include;applications;board;board\MCUX_Config;board\ports;..\libraries\drivers;..\libraries\drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\MIMXRT1050\CMSIS\Include;..\libraries\MIMXRT1050\MIMXRT1052;..\libraries\MIMXRT1050\MIMXRT1052\drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,10 +348,10 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -366,12 +363,12 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x10000000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase />
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
-            <LinkerInputFile></LinkerInputFile>
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
             <DisabledWarnings>6314</DisabledWarnings>
           </LDads>
         </TargetArmAds>
@@ -385,71 +382,99 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\cpu.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\device.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\memheap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>signal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\signal.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -465,6 +490,8 @@
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mnt.c</FileName>
               <FileType>1</FileType>
@@ -480,30 +507,40 @@
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>clock_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\MCUX_Config\clock_config.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pin_mux.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\MCUX_Config\pin_mux.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_gpio.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_spi.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -515,21 +552,36 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
@@ -545,31 +597,43 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>poll.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\poll.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>select.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\dfs\src\select.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
@@ -579,151 +643,123 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
-          <GroupOption>
-            <CommonProperty>
-              <UseCPPCompiler>0</UseCPPCompiler>
-              <RVCTCodeConst>0</RVCTCodeConst>
-              <RVCTZI>0</RVCTZI>
-              <RVCTOtherData>0</RVCTOtherData>
-              <ModuleSelection>0</ModuleSelection>
-              <IncludeInBuild>1</IncludeInBuild>
-              <AlwaysBuild>0</AlwaysBuild>
-              <GenerateAssemblyFile>0</GenerateAssemblyFile>
-              <AssembleAssemblyFile>0</AssembleAssemblyFile>
-              <PublicsOnly>0</PublicsOnly>
-              <StopOnExitCode>3</StopOnExitCode>
-              <CustomArgument></CustomArgument>
-              <IncludeLibraryModules></IncludeLibraryModules>
-              <ComprImg>0</ComprImg>
-            </CommonProperty>
-            <GroupArmAds>
-              <Cads>
-                <interw>2</interw>
-                <Optim>0</Optim>
-                <oTime>2</oTime>
-                <SplitLS>2</SplitLS>
-                <OneElfS>2</OneElfS>
-                <Strict>2</Strict>
-                <EnumInt>2</EnumInt>
-                <PlainCh>2</PlainCh>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <wLevel>0</wLevel>
-                <uThumb>2</uThumb>
-                <uSurpInc>2</uSurpInc>
-                <uC99>2</uC99>
-                <useXO>2</useXO>
-                <v6Lang>0</v6Lang>
-                <v6LangP>0</v6LangP>
-                <vShortEn>2</vShortEn>
-                <vShortWch>2</vShortWch>
-                <v6Lto>2</v6Lto>
-                <v6WtE>2</v6WtE>
-                <v6Rtti>2</v6Rtti>
-                <VariousControls>
-                  <MiscControls> --c99</MiscControls>
-                  <Define> </Define>
-                  <Undefine> </Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Cads>
-              <Aads>
-                <interw>2</interw>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <thumb>2</thumb>
-                <SplitLS>2</SplitLS>
-                <SwStkChk>2</SwStkChk>
-                <NoWarn>2</NoWarn>
-                <uSurpInc>2</uSurpInc>
-                <useXO>2</useXO>
-                <uClangAs>2</uClangAs>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Aads>
-            </GroupArmAds>
-          </GroupOption>
           <Files>
             <File>
               <FileName>cputime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\spi_core.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>spi_flash_sfud.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\spi_flash_sfud.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sfud.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sfud_sfdp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\spi\sfud\src\sfud_sfdp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
+          <GroupOption>
+            <GroupArmAds>
+              <Cads>
+                <VariousControls>
+                  <MiscControls> --c99</MiscControls>
+                  <Define> </Define>
+                  <Undefine> </Undefine>
+                  <IncludePath> </IncludePath>
+                </VariousControls>
+              </Cads>
+            </GroupArmAds>
+          </GroupOption>
         </Group>
         <Group>
           <GroupName>finsh</GroupName>
@@ -733,26 +769,22 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
-            <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\symbol.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
-            <File>
-              <FileName>msh_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_cmd.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
@@ -768,30 +800,33 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mem_std.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stubs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>time.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\time.c</FilePath>
-            </File>
-            <File>
-              <FileName>gmtime_r.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\gmtime_r.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -801,73 +836,93 @@
             <File>
               <FileName>system_MIMXRT1052.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\system_MIMXRT1052.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\system_MIMXRT1052.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_common.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_cache.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_cache.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup_MIMXRT1052.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\arm\startup_MIMXRT1052.s</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\arm\startup_MIMXRT1052.s</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_gpio.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpuart.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpuart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_lpspi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_dmamux.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_dmamux.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_dmamux.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_edma.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_edma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_lpuart_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpuart_edma.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpuart_edma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fsl_lpspi_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi_edma.c</FilePath>
+              <FilePath>..\libraries\MIMXRT1050\MIMXRT1052\drivers\fsl_lpspi_edma.c</FilePath>
             </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
-    <components/>
-    <files/>
+    <apis />
+    <components />
+    <files />
   </RTE>
-
 </Project>

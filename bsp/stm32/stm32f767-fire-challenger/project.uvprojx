@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rt-thread</TargetName>
@@ -19,28 +16,28 @@
           <PackID>Keil.STM32F7xx_DFP.2.11.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20020000,0x60000) IRAM2(0x20000000,0x20000) IROM(0x08000000,0x100000) IROM2(0x00200000,0x100000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20020000 -FC1000 -FN2 -FF0STM32F7x_1024 -FS08000000 -FL0100000 -FF1STM32F7x_1024dual -FS18000000 -FL1100000 -FP0($$Device:STM32F767IGTx$CMSIS\Flash\STM32F7x_1024.FLM) -FP1($$Device:STM32F767IGTx$CMSIS\Flash\STM32F7x_1024dual.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:STM32F767IGTx$Drivers\CMSIS\Device\ST\STM32F7xx\Include\stm32f7xx.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:STM32F767IGTx$CMSIS\SVD\STM32F7x7_v1r2.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -62,8 +59,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -72,8 +69,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -83,14 +80,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,8 +101,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
@@ -138,11 +135,11 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash3 />
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -175,7 +172,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M7"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -308,7 +305,7 @@
                 <Size>0x20000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -335,10 +332,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define>STM32F767xx, USE_HAL_DRIVER, RT_USING_ARM_LIBC</Define>
-              <Undefine></Undefine>
-              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;packages\LittlevGL2RTT-test;packages\LittlevGL2RTT-test\lvgl;packages\LittlevGL2RTT-test\lvgl\lv_core;packages\LittlevGL2RTT-test\lvgl\lv_draw;packages\LittlevGL2RTT-test\lvgl\lv_hal;packages\LittlevGL2RTT-test\lvgl\lv_misc;packages\LittlevGL2RTT-test\lvgl\lv_fonts;packages\LittlevGL2RTT-test\lvgl\lv_objx;packages\LittlevGL2RTT-test\lvgl\lv_themes;packages\LittlevGL2RTT-test\example;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\dfs\filesystems\elmfat;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\..\..\components\libc\mmap;..\..\..\components\libc\pthreads;..\..\..\components\libc\time;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include</IncludePath>
+              <MiscControls />
+              <Define>STM32F767xx, USE_HAL_DRIVER</Define>
+              <Undefine />
+              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m7;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common;..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Inc;..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Include;..\libraries\STM32F7xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -353,10 +350,10 @@
             <useXO>0</useXO>
             <uClangAs>0</uClangAs>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -368,13 +365,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase />
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab)</Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -387,71 +384,99 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\cpu.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\device.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\memheap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\scheduler.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>signal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\signal.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
@@ -477,648 +502,40 @@
               <FileType>1</FileType>
               <FilePath>board\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>board\CubeMX_Config\Src\stm32f7xx_hal_msp.c</FilePath>
             </File>
-            <File>
-              <FileName>sdcard_port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\ports\sdcard_port.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup_stm32f767xx.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\arm\startup_stm32f767xx.s</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
             </File>
-            <File>
-              <FileName>drv_sdram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_sdram.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>drv_sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_sdio.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>LittlevGL2RTT</GroupName>
-          <GroupOption>
-            <CommonProperty>
-              <UseCPPCompiler>0</UseCPPCompiler>
-              <RVCTCodeConst>0</RVCTCodeConst>
-              <RVCTZI>0</RVCTZI>
-              <RVCTOtherData>0</RVCTOtherData>
-              <ModuleSelection>0</ModuleSelection>
-              <IncludeInBuild>1</IncludeInBuild>
-              <AlwaysBuild>0</AlwaysBuild>
-              <GenerateAssemblyFile>0</GenerateAssemblyFile>
-              <AssembleAssemblyFile>0</AssembleAssemblyFile>
-              <PublicsOnly>0</PublicsOnly>
-              <StopOnExitCode>3</StopOnExitCode>
-              <CustomArgument></CustomArgument>
-              <IncludeLibraryModules></IncludeLibraryModules>
-              <ComprImg>0</ComprImg>
-            </CommonProperty>
-            <GroupArmAds>
-              <Cads>
-                <interw>2</interw>
-                <Optim>0</Optim>
-                <oTime>2</oTime>
-                <SplitLS>2</SplitLS>
-                <OneElfS>2</OneElfS>
-                <Strict>2</Strict>
-                <EnumInt>2</EnumInt>
-                <PlainCh>2</PlainCh>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <wLevel>0</wLevel>
-                <uThumb>2</uThumb>
-                <uSurpInc>2</uSurpInc>
-                <uC99>2</uC99>
-                <uGnu>2</uGnu>
-                <useXO>2</useXO>
-                <v6Lang>0</v6Lang>
-                <v6LangP>0</v6LangP>
-                <vShortEn>2</vShortEn>
-                <vShortWch>2</vShortWch>
-                <v6Lto>2</v6Lto>
-                <v6WtE>2</v6WtE>
-                <v6Rtti>2</v6Rtti>
-                <VariousControls>
-                  <MiscControls> --c99 --gnu -g -W</MiscControls>
-                  <Define> </Define>
-                  <Undefine> </Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Cads>
-              <Aads>
-                <interw>2</interw>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <thumb>2</thumb>
-                <SplitLS>2</SplitLS>
-                <SwStkChk>2</SwStkChk>
-                <NoWarn>2</NoWarn>
-                <uSurpInc>2</uSurpInc>
-                <useXO>2</useXO>
-                <uClangAs>2</uClangAs>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Aads>
-            </GroupArmAds>
-          </GroupOption>
-          <Files>
-            <File>
-              <FileName>littlevgl2rtt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\littlevgl2rtt.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_group.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_core\lv_group.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_indev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_core\lv_indev.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_obj.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_core\lv_obj.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_refr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_core\lv_refr.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_style.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_core\lv_style.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_vdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_core\lv_vdb.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_arc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_arc.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_img.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_img.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_label.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_label.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_line.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_line.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_rbasic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_rbasic.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_rect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_rect.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_triangle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_triangle.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_draw_vbasic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_draw\lv_draw_vbasic.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_hal_disp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_hal\lv_hal_disp.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_hal_indev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_hal\lv_hal_indev.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_hal_tick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_hal\lv_hal_tick.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_anim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_anim.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_area.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_area.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_circ.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_circ.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_color.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_color.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_font.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_ll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_ll.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_log.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_log.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_math.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_math.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_templ.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_templ.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_txt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_txt.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_ufs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_misc\lv_ufs.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_builtin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_builtin.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_10.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_10.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_10_cyrillic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_10_cyrillic.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_10_latin_sup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_10_latin_sup.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_20.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_20_cyrillic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_20_cyrillic.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_20_latin_sup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_20_latin_sup.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_30.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_30.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_30_cyrillic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_30_cyrillic.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_30_latin_sup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_30_latin_sup.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_40.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_40.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_40_cyrillic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_40_cyrillic.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_dejavu_40_latin_sup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_dejavu_40_latin_sup.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_monospace_8.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_monospace_8.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_symbol_10.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_symbol_10.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_symbol_20.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_symbol_20.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_symbol_30.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_symbol_30.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_symbol_40.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_fonts\lv_font_symbol_40.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_arc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_arc.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_bar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_bar.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_btn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_btn.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_btnm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_btnm.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_calendar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_calendar.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_cb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_cb.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_chart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_chart.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_cont.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_cont.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_ddlist.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_ddlist.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_gauge.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_gauge.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_img.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_img.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_imgbtn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_imgbtn.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_kb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_kb.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_label.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_label.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_led.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_line.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_line.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_list.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_list.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_lmeter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_lmeter.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_mbox.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_mbox.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_objx_templ.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_objx_templ.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_page.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_page.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_preload.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_preload.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_roller.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_roller.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_slider.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_slider.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_sw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_sw.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_ta.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_ta.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_tabview.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_tabview.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_win.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_objx\lv_win.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_alien.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_alien.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_default.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_default.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_material.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_material.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_mono.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_mono.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_nemo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_nemo.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_night.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_night.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_templ.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_templ.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_theme_zen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\lvgl\lv_themes\lv_theme_zen.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>LittlevGL2RTT_Demo</GroupName>
-          <GroupOption>
-            <CommonProperty>
-              <UseCPPCompiler>0</UseCPPCompiler>
-              <RVCTCodeConst>0</RVCTCodeConst>
-              <RVCTZI>0</RVCTZI>
-              <RVCTOtherData>0</RVCTOtherData>
-              <ModuleSelection>0</ModuleSelection>
-              <IncludeInBuild>1</IncludeInBuild>
-              <AlwaysBuild>0</AlwaysBuild>
-              <GenerateAssemblyFile>0</GenerateAssemblyFile>
-              <AssembleAssemblyFile>0</AssembleAssemblyFile>
-              <PublicsOnly>0</PublicsOnly>
-              <StopOnExitCode>3</StopOnExitCode>
-              <CustomArgument></CustomArgument>
-              <IncludeLibraryModules></IncludeLibraryModules>
-              <ComprImg>0</ComprImg>
-            </CommonProperty>
-            <GroupArmAds>
-              <Cads>
-                <interw>2</interw>
-                <Optim>0</Optim>
-                <oTime>2</oTime>
-                <SplitLS>2</SplitLS>
-                <OneElfS>2</OneElfS>
-                <Strict>2</Strict>
-                <EnumInt>2</EnumInt>
-                <PlainCh>2</PlainCh>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <wLevel>0</wLevel>
-                <uThumb>2</uThumb>
-                <uSurpInc>2</uSurpInc>
-                <uC99>2</uC99>
-                <uGnu>2</uGnu>
-                <useXO>2</useXO>
-                <v6Lang>0</v6Lang>
-                <v6LangP>0</v6LangP>
-                <vShortEn>2</vShortEn>
-                <vShortWch>2</vShortWch>
-                <v6Lto>2</v6Lto>
-                <v6WtE>2</v6WtE>
-                <v6Rtti>2</v6Rtti>
-                <VariousControls>
-                  <MiscControls> --c99 --gnu -g -W</MiscControls>
-                  <Define> </Define>
-                  <Undefine> </Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Cads>
-              <Aads>
-                <interw>2</interw>
-                <Ropi>2</Ropi>
-                <Rwpi>2</Rwpi>
-                <thumb>2</thumb>
-                <SplitLS>2</SplitLS>
-                <SwStkChk>2</SwStkChk>
-                <NoWarn>2</NoWarn>
-                <uSurpInc>2</uSurpInc>
-                <useXO>2</useXO>
-                <uClangAs>2</uClangAs>
-                <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
-                  <IncludePath></IncludePath>
-                </VariousControls>
-              </Aads>
-            </GroupArmAds>
-          </GroupOption>
-          <Files>
-            <File>
-              <FileName>littlevgl2rtt_demo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\example\littlevgl2rtt_demo.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_test_theme.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\LittlevGL2RTT-test\example\lv_test_theme.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1130,80 +547,40 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu_cache.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\cpuport.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\libcpu\arm\cortex-m7\context_rvds.S</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
-            </File>
-            <File>
-              <FileName>poll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\poll.c</FilePath>
-            </File>
-            <File>
-              <FileName>select.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\select.c</FilePath>
-            </File>
-            <File>
-              <FileName>devfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_elm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
-            </File>
-            <File>
-              <FileName>ff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
-            </File>
-            <File>
-              <FileName>ccsbcs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\elmfat\option\ccsbcs.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1215,66 +592,57 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
             </File>
-            <File>
-              <FileName>block_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\block_dev.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmcsd_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\mmcsd_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\sd.c</FilePath>
-            </File>
-            <File>
-              <FileName>sdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\sdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>mmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\sdio\mmc.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\completion.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\pipe.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
@@ -1290,140 +658,19 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
-            <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\symbol.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\libc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
-            </File>
-            <File>
-              <FileName>stdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stubs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
-            </File>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\time.c</FilePath>
-            </File>
-            <File>
-              <FileName>gmtime_r.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\gmtime_r.c</FilePath>
-            </File>
-            <File>
-              <FileName>posix_mmap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\mmap\posix_mmap.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>pthreads</GroupName>
-          <Files>
-            <File>
-              <FileName>mqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\mqueue.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_attr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_attr.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_barrier.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_barrier.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_cond.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_cond.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_mutex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_mutex.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_rwlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_rwlock.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_spin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_spin.c</FilePath>
-            </File>
-            <File>
-              <FileName>pthread_tls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\pthread_tls.c</FilePath>
-            </File>
-            <File>
-              <FileName>sched.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\sched.c</FilePath>
-            </File>
-            <File>
-              <FileName>semaphore.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\pthreads\semaphore.c</FilePath>
-            </File>
-            <File>
-              <FileName>clock_time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\time\clock_time.c</FilePath>
-            </File>
-            <File>
-              <FileName>posix_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\time\posix_sleep.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1435,146 +682,147 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\CMSIS\Device\ST\STM32F7xx\Source\Templates\system_stm32f7xx.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_cec.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cec.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cortex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_cryp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cryp.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_cryp_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cryp_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f7xx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_pwr.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_pwr_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rcc_ex.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_rng.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_rng.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_sram.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f7xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_uart_ex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stm32f7xx_hal_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_ll_sdmmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_ll_sdmmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_hal_sd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_sd.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_ll_fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_ll_fmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_hal_sdram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_sdram.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_hal_dma2d.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_dma2d.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_hal_ltdc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_ltdc_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_hal_ltdc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_ltdc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_ll_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_ll_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f7xx_ll_dma2d.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_ll_dma2d.c</FilePath>
             </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
-    <components/>
-    <files/>
+    <apis />
+    <components />
+    <files />
   </RTE>
-
 </Project>

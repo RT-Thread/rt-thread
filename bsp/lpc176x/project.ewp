@@ -284,11 +284,12 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
@@ -1165,11 +1166,12 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
@@ -1768,6 +1770,9 @@
       <name>$PROJ_DIR$\..\..\src\clock.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\components.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\cpu.c</name>
     </file>
     <file>
@@ -1873,9 +1878,6 @@
       <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
@@ -1908,6 +1910,9 @@
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
     </file>
+  </group>
+  <group>
+    <name>libc</name>
   </group>
   <group>
     <name>lwIP</name>

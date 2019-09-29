@@ -10,7 +10,7 @@
       <TargetName>rt-thread_gd32e230</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6120000::V6.12::.\ARMCLANG</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -184,7 +184,6 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>0</RvdsVP>
-            <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -338,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>GD32E230</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;applications;drivers;Libraries\CMSIS\GD\GD32E230\Include;Libraries\CMSIS;Libraries\GD32E230_standard_peripheral\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m23;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include</IncludePath>
+              <IncludePath>.;..\..\include;applications;drivers;Libraries\CMSIS\GD\GD32E230\Include;Libraries\CMSIS;Libraries\GD32E230_standard_peripheral\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m23;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\spi\sfud\inc;..\..\components\drivers\include;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -684,9 +683,9 @@
                 <v6WtE>2</v6WtE>
                 <v6Rtti>2</v6Rtti>
                 <VariousControls>
-                  <MiscControls></MiscControls>
-                  <Define></Define>
-                  <Undefine></Undefine>
+                  <MiscControls> --c99</MiscControls>
+                  <Define> </Define>
+                  <Undefine> </Undefine>
                   <IncludePath></IncludePath>
                 </VariousControls>
               </Cads>
