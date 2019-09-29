@@ -226,9 +226,9 @@ void pulse_encoder_update_isr(struct stm32_pulse_encoder_device *device)
 
 #ifdef BSP_USING_PULSE_ENCODER1
 #if defined(SOC_SERIES_STM32F4)
-    void TIM1_UP_TIM10_IRQHandler(void)
+void TIM1_UP_TIM10_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F1)
-    void TIM1_UP_IRQHandler(void)
+void TIM1_UP_IRQHandler(void)
 #else
     #error "Please check TIM1's IRQHandler"
 #endif
