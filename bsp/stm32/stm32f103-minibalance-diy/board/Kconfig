@@ -2,7 +2,9 @@ menu "Hardware Drivers Config"
 
 config SOC_STM32F103RC
     bool
-    select SOC_SERIES_STM32F1
+	select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -10,7 +12,18 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart1) "
         select BSP_USING_UART1
-        default y
+        default y	
+		
+    config BSP_USING_BLUETOOTH_USART
+        bool "Enable BT (uart2 connect to smartphone app) "
+        select BSP_USING_UART2
+        default n	
+		
+    config BSP_USING_PS2_USART
+        bool "Enable PS2 (uart3 connect to PS2) "
+        select BSP_USING_UART3
+        default n	
+		
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -20,6 +33,16 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+		endif		
+				
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -27,14 +50,51 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART1
                 bool "Enable UART1"
-                default y
-
+                default y				
             config BSP_UART1_RX_USING_DMA
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n				
+            config BSP_USING_UART2
+                bool "Enable UART2"
                 default n
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n					
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n  				
         endif
-
+				
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM8
+            bool "Enable timer8 output pwm"
+            default n
+            if BSP_USING_PWM8
+                config BSP_USING_PWM8_CH1
+                    bool "Enable PWM8 channel 1"
+                    default n
+                config BSP_USING_PWM8_CH2
+                    bool "Enable PWM8 channel 2"
+                    default n					
+                config BSP_USING_PWM8_CH3
+                    bool "Enable PWM8 channel 3"
+                    default n					
+				config BSP_USING_PWM8_CH4
+                    bool "Enable PWM8 channel 4"
+                    default n
+            endif
+        endif
+		
     source "../libraries/HAL_Drivers/Kconfig"
        
 endmenu

@@ -14,7 +14,7 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
-#define RT_IDEL_HOOK_LIST_SIZE 4
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
@@ -82,6 +82,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_PWM
 
 /* Using USB */
 
@@ -159,12 +160,20 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_USB_TO_USART
+#define BSP_USING_PS2_USART
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_UART3
+#define BSP_USING_PWM
+#define BSP_USING_PWM8
+#define BSP_USING_PWM8_CH1
+#define BSP_USING_PWM8_CH2
+#define BSP_USING_PWM8_CH3
+#define BSP_USING_PWM8_CH4
 
 /* Board extended module Drivers */
 
