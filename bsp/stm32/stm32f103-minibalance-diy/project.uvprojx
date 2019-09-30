@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER, STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;packages\rt-robot-latest\chassis;packages\rt-robot-latest\controller;packages\rt-robot-latest\encoder;packages\rt-robot-latest\kinematics;packages\rt-robot-latest\motor;packages\rt-robot-latest\protocol;packages\rt-robot-latest\wheel;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -503,6 +503,91 @@
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>robots</GroupName>
+          <Files>
+            <File>
+              <FileName>chassis.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\chassis\chassis.c</FilePath>
+            </File>
+            <File>
+              <FileName>controller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\controller\controller.c</FilePath>
+            </File>
+            <File>
+              <FileName>inc_pid_controller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\controller\inc_pid_controller.c</FilePath>
+            </File>
+            <File>
+              <FileName>pos_pid_controller.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\controller\pos_pid_controller.c</FilePath>
+            </File>
+            <File>
+              <FileName>ab_phase_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\encoder\ab_phase_encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\encoder\encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>single_phase_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\encoder\single_phase_encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>kinematics.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\kinematics\kinematics.c</FilePath>
+            </File>
+            <File>
+              <FileName>dual_pwm_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\motor\dual_pwm_motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\motor\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\motor\servo.c</FilePath>
+            </File>
+            <File>
+              <FileName>single_pwm_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\motor\single_pwm_motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>ano.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\protocol\ano.c</FilePath>
+            </File>
+            <File>
+              <FileName>command.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\protocol\command.c</FilePath>
+            </File>
+            <File>
+              <FileName>ps2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\protocol\ps2.c</FilePath>
+            </File>
+            <File>
+              <FileName>wheel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\rt-robot-latest\wheel\wheel.c</FilePath>
             </File>
           </Files>
         </Group>
