@@ -9,7 +9,6 @@ cwd = GetCurrentDir()
 src = Split('''
 CMSIS/Device/ST/STM32G4xx/Source/Templates/system_stm32g4xx.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c
-STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cec.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_crc.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cryp.c
@@ -26,7 +25,9 @@ STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c
     
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c']
+    src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart.c']
+    src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart_ex.c']
 
 if GetDepend(['RT_USING_I2C']):
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_i2c.c']

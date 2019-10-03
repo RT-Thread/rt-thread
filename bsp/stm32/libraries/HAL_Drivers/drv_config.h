@@ -83,6 +83,17 @@ extern "C" {
 #include "g0/adc_config.h"
 #include "g0/tim_config.h"
 #include "g0/pwm_config.h"
+#elif  defined(SOC_SERIES_STM32G4)
+#include "g4/dma_config.h"
+#include "g4/uart_config.h"
+#include "g4/spi_config.h"
+#include "g4/qspi_config.h"
+#include "g4/usbd_fs_config.h"
+#include "g4/adc_config.h"
+#include "g4/tim_config.h"
+#include "g4/sdio_config.h"
+#include "g4/pwm_config.h"
+#include "g4/pulse_encoder_config.h"
 #elif  defined(SOC_SERIES_STM32H7)
 #include "h7/dma_config.h"
 #include "h7/uart_config.h"
