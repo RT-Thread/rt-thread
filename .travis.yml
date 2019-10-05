@@ -98,6 +98,7 @@ env:
   - RTT_BSP='stm32/stm32f767-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f767-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32g071-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32g431-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32h743-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l4r9-st-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l053-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
