@@ -495,7 +495,9 @@ int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
             {
                 fd->fptr = length;
                 result = f_truncate(fd);
-            }else{
+            }
+            else
+            {
                 result = f_lseek(fd, length);
             }
             /* restore file read/write point */
