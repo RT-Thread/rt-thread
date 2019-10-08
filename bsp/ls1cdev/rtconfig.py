@@ -12,8 +12,8 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
-#	EXEC_PATH   = "/opt/mips-2015.05/bin"
-	EXEC_PATH   = r'D:\mgc\embedded\codebench\bin'
+	EXEC_PATH   = "/opt/mips-2016.05/bin"
+#	EXEC_PATH   = r'D:\mgc\embedded\codebench\bin'
 else:
     print('================ERROR===========================')
     print('Not support %s yet!' % CROSS_TOOL)
@@ -30,6 +30,7 @@ BUILD       = 'debug'
 # download: https://coding.net/u/bernard/p/rtthread_tools/git/blob/master/GCC_Toolchains.md
 PREFIX = 'mips-sde-elf-'
 CC = PREFIX + 'gcc'
+CXX = PREFIX + 'g++'
 AS = PREFIX + 'gcc'
 AR = PREFIX + 'ar'
 LINK = PREFIX + 'gcc'
@@ -43,6 +44,11 @@ DEVICE = ' -mips32 -msoft-float -mfp32'
 CFLAGS = DEVICE + ' -EL -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -EL -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp -DSYSTEM_STACK=0x80003fe8'
 LFLAGS = DEVICE + ' -nostartfiles -EL -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ls1c_ram.lds'
+
+#CXXFLAGS = CFLAGS +  ' -Woverloaded-virtual -fno-exceptions -fno-rtti'
+CXXFLAGS = CFLAGS 
+
+
 
 CPATH = ''
 LPATH = ''

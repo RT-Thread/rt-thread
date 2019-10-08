@@ -17,6 +17,7 @@ rtconfig.AFLAGS += ' -I' + str(Dir('#'))
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+	CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
 	AR = rtconfig.AR, ARFLAGS = '-rc',
 	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -30,12 +31,13 @@ objs = PrepareBuilding(env, RTT_ROOT)
 if GetDepend('RT_USING_SELF_BOOT'):
     rtconfig.LFLAGS += " -Ttext 0x80010000"
 else:
-	rtconfig.LFLAGS += " -Ttext 0x80200000"    
+    rtconfig.LFLAGS += " -Ttext 0x80200000"    
 env.Replace(LINKFLAGS = rtconfig.LFLAGS)
 
 if GetDepend('RT_USING_FPU'):
     env['CCFLAGS']   = env['CCFLAGS'].replace('-msoft-float', '-mhard-float')
     env['ASFLAGS']   = env['ASFLAGS'].replace('-msoft-float', '-mhard-float')
+    env['CXXFLAGS']  = env['CXXFLAGS'].replace('-msoft-float', '-mhard-float')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-msoft-float', '-mhard-float')
     
 if GetDepend('RT_USING_RTGUI'):
