@@ -472,6 +472,52 @@ int ioctl(int fildes, int cmd, ...)
 RTM_EXPORT(ioctl);
 
 /**
+ *
+ * this function is a POSIX compliant version, which cause the regular file
+ * referenced by fd to be truncated to a size of precisely length bytes.
+ * @param fd the file descriptor.
+ * @param length the length to be truncated.
+ *
+ * @return Upon successful completion, ftruncate() shall return 0;
+ * otherwise, -1 shall be returned and errno set to indicate the error.
+ */
+int ftruncate(int fd, off_t length)
+{
+    int result;
+    struct dfs_fd *d;
+
+    d = fd_get(fd);
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+
+        return -1;
+    }
+
+    if (length < 0)
+    {
+        fd_put(d);
+        rt_set_errno(-EINVAL);
+
+        return -1;
+    }
+    result = dfs_file_ftruncate(d, length);
+    if (result < 0)
+    {
+        fd_put(d);
+        rt_set_errno(result);
+
+        return -1;
+    }
+
+    /* release the ref-count of fd */
+    fd_put(d);
+
+    return 0;
+}
+RTM_EXPORT(ftruncate);
+
+/**
  * this function is a POSIX compliant version, which will return the
  * information about a mounted file system.
  *
