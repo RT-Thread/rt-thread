@@ -3,14 +3,14 @@ menu "Hardware Drivers Config"
 config SOC_STM32F103RC
     bool
 	select SOC_SERIES_STM32F1
-    select RT_USING_COMPONENTS_INIT
+	select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
-        bool "Enable USB TO USART (uart1) "
+		bool "Enable USB TO USART (uart1) "
         select BSP_USING_UART1
         default y	
 		
