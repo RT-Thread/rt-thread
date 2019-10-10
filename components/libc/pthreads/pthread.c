@@ -102,7 +102,7 @@ void _pthread_data_destroy(pthread_t pth)
             rt_sem_delete(ptd->joinable_sem);
 
         /* release thread resource */
-        if (ptd->attr.stackaddr == RT_NULL)
+        if (ptd->attr.stackaddr == RT_NULL && ptd->tid->stack_addr != RT_NULL)
         {
             /* release thread allocated stack */
             rt_free(ptd->tid->stack_addr);
@@ -219,20 +219,6 @@ int pthread_create(pthread_t            *pid,
     }
 
     rt_snprintf(name, sizeof(name), "pth%02d", pthread_number ++);
-    if (ptd->attr.stackaddr == 0)
-    {
-        stack = (void *)rt_malloc(ptd->attr.stacksize);
-    }
-    else
-    {
-        stack = (void *)(ptd->attr.stackaddr);
-    }
-
-    if (stack == RT_NULL)
-    {
-        ret = ENOMEM;
-        goto __exit;
-    }
 
     /* pthread is a static thread object */
     ptd->tid = (rt_thread_t) rt_malloc(sizeof(struct rt_thread));
@@ -241,6 +227,7 @@ int pthread_create(pthread_t            *pid,
         ret = ENOMEM;
         goto __exit;
     }
+    memset(ptd->tid, 0, sizeof(struct rt_thread));
 
     if (ptd->attr.detachstate == PTHREAD_CREATE_JOINABLE)
     {
@@ -259,6 +246,22 @@ int pthread_create(pthread_t            *pid,
     /* set parameter */
     ptd->thread_entry = start;
     ptd->thread_parameter = parameter;
+
+    /* stack */
+    if (ptd->attr.stackaddr == 0)
+    {
+        stack = (void *)rt_malloc(ptd->attr.stacksize);
+    }
+    else
+    {
+        stack = (void *)(ptd->attr.stackaddr);
+    }
+
+    if (stack == RT_NULL)
+    {
+        ret = ENOMEM;
+        goto __exit;
+    }
 
     /* initial this pthread to system */
     if (rt_thread_init(ptd->tid, name, pthread_entry_stub, ptd,
