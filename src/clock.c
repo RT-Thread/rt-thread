@@ -89,6 +89,8 @@ void rt_tick_increase(void)
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
 
+        thread->can_yield = 1;
+
         /* yield */
         rt_thread_yield();
     }

@@ -608,6 +608,7 @@ struct rt_thread
 
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+    rt_ubase_t  can_yield;                              /**< indicate whether remaining_tick has been reloaded since last schedule */
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 

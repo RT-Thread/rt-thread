@@ -159,6 +159,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* tick init */
     thread->init_tick      = tick;
     thread->remaining_tick = tick;
+    thread->can_yield      = 0;
 
     /* error and flags */
     thread->error = RT_EOK;
