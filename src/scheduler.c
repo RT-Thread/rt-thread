@@ -440,13 +440,13 @@ void rt_schedule(void)
                 {
                     to_thread = rt_current_thread;
                 }
-                else if (current_thread->current_priority == highest_ready_priority && current_thread->can_yield == 0)
+                else if (rt_current_thread->current_priority == highest_ready_priority && rt_current_thread->can_yield == 0)
                 {
-                    to_thread = current_thread;
+                    to_thread = rt_current_thread;
                 }
                 else
                 {
-                    current_thread->can_yield = 0;
+                    rt_current_thread->can_yield = 0;
                     need_insert_from_thread = 1;
                 }
             }
