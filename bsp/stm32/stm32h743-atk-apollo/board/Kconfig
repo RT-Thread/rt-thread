@@ -20,6 +20,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SDRAM
         default n
 
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q256 qspi)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -45,6 +52,12 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_LTDC
         bool
+        default n
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
         default n
 
     menuconfig BSP_USING_ONCHIP_RTC
