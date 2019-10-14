@@ -13,6 +13,9 @@ drv_mpu.c
 CubeMX_Config/Src/stm32h7xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_QSPI_FLASH']):
+    src += Glob('ports/drv_qspi_flash.c')
+
 path = [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
