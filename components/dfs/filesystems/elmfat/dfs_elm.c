@@ -478,6 +478,33 @@ int dfs_elm_close(struct dfs_fd *file)
 
 int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
+    switch (cmd)
+    {
+    case RT_FIOFTRUNCATE:
+        {
+            FIL *fd;
+            FSIZE_t fptr, length;
+            FRESULT result = FR_OK;
+            fd = (FIL *)(file->data);
+            RT_ASSERT(fd != RT_NULL);
+
+            /* save file read/write point */
+            fptr = fd->fptr;
+            length = *(off_t*)args;
+            if (length <= fd->obj.objsize)
+            {
+                fd->fptr = length;
+                result = f_truncate(fd);
+            }
+            else
+            {
+                result = f_lseek(fd, length);
+            }
+            /* restore file read/write point */
+            fd->fptr = fptr;
+            return elm_result_to_dfs(result);
+        }
+    }
     return -ENOSYS;
 }
 
