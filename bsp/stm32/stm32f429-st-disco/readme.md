@@ -20,8 +20,6 @@ STM32F429I-DISCOVERY 开发板使用高性能 MCU STM32F429，可以用于实现
 |LED| 6 个 |
 |按键| 2 个 |
 
-本 BSP 已测试支持 RT-Thread GUIEngine 和 Littlevgl，可以使用 env 工具安装相应的 Package。
-
 ## 2. 编译说明
 
 STM32F429-DISCO 板级包支持 MDK4﹑MDK5﹑IAR 开发环境和 GCC 编译器，以下是具体版本信息：
@@ -63,15 +61,15 @@ finsh />
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | USART | 支持 | USART1/2/3 |
-| SPI | 支持 | SPI5 |
-| IIC | 支持 | IIC3 |
-| SDRAM | 支持 | |
-| LCD | 支持 | 支持 FrameBuffer 模式 LCD 显示 |
-| 触摸屏 | 支持 | IIC 接口 STMPE811 |
-| USB OTG Host| 即将支持 | 预计 2018/11 |
-| USB OTG Device| 未支持 | |
-| GPIO | 未支持 |  |
-| L3GD20 | 未支持 | |
+| GPIO | 支持 |  |
+| SPI |  |  |
+| IIC |  |  |
+| SDRAM |  | |
+| LCD |  |  |
+| 触摸屏 |  |  |
+| USB OTG Host|  |  |
+| USB OTG Device|  | |
+| L3GD20 |  | |
 
 
 
