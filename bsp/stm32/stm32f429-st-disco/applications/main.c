@@ -13,8 +13,8 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED1 pin: PG6 */
-#define LED1_PIN    GET_PIN(G, 6)
+/* defined the LED1 pin: PG13 */
+#define LED1_PIN    GET_PIN(G, 13)
 
 int main(void)
 {
