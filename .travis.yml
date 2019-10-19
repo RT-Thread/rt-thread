@@ -91,6 +91,7 @@ env:
   - RTT_BSP='stm32/stm32f429-armfly-v6' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f429-st-disco' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f446-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f469-st-disco' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f746-st-disco' RTT_TOOL_CHAIN='sourcery-arm'

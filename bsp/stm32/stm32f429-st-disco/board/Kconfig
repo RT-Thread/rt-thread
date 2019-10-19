@@ -7,37 +7,6 @@ config SOC_STM32F429ZI
     select RT_USING_USER_MAIN
     default y
 
-menu "Onboard Peripheral Drivers"
-    config BSP_USING_SDRAM
-        bool "Enable SDRAM"
-        select BSP_USING_FMC
-        default n
-
-    config BSP_USING_LCD_MIPI
-        bool
-        default n
-        
-    config BSP_USING_LCD_OTM8009A
-        bool "Enable LCD OTM8009A"
-        select BSP_USING_SDRAM
-        select BSP_USING_LTDC
-        select BSP_USING_LCD_MIPI
-        default n
-        
-    config BSP_USING_TOUCH
-        bool "Enable TOUCH"
-        select BSP_USING_I2C1
-        default n
-        if BSP_USING_TOUCH
-            config BSP_TOUCH_INT_PIN
-                int "Touch interrupt pin"
-                default 149
-            config BSP_I2C_NAME
-                string "I2C Bus Name"
-                default "i2c1"
-        endif
-endmenu
-
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
@@ -65,8 +34,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         default n
-        if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25" 
+        if BSP_USING_I2C1 
             config BSP_I2C1_SCL_PIN
                 int "I2C1 scl pin number"
                 range 1 176
@@ -104,18 +72,8 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
 
-    config BSP_USING_ON_CHIP_FLASH
-        bool "Enable on-chip FLASH"
-        default n
-
     config BSP_USING_FMC
         bool "Enable FMC"
-        default n
-        
-    config BSP_USING_SDIO
-        bool "Enable SDIO"
-        select RT_USING_SDIO
-        select RT_USING_DFS
         default n
 
     config BSP_USING_USBD_FS
