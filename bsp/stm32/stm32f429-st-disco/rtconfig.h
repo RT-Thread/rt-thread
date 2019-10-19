@@ -165,9 +165,6 @@
 
 #define SOC_STM32F429ZI
 
-/* Onboard Peripheral Drivers */
-
-
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
