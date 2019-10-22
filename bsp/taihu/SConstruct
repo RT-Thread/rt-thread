@@ -16,6 +16,7 @@ cwd = GetCurrentDir()
 rtconfig.AFLAGS = rtconfig.AFLAGS + ' -I' + RTT_ROOT + '/libcpu/ppc/ppc405/include '
 rtconfig.CFLAGS = rtconfig.CFLAGS + ' -I' + RTT_ROOT + '/libcpu/ppc/ppc405/include '
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,

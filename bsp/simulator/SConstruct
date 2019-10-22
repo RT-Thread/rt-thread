@@ -56,6 +56,7 @@ elif rtconfig.PLATFORM == 'mingw':
         odbccp32
         ''')
     TARGET = 'rtthread-win32.' + rtconfig.TARGET_EXT
+    DefaultEnvironment(tools=[])
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
