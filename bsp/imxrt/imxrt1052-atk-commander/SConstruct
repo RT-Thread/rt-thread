@@ -16,7 +16,7 @@ except:
     exit(-1)
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
-
+DefaultEnvironment(tools=[])
 if rtconfig.PLATFORM == 'armcc':
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
