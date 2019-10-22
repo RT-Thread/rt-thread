@@ -32,6 +32,7 @@ if GetOption('gdb'):
             print rtconfig.TARGET + 'not exist, please build first!!'
         exit(0)
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
