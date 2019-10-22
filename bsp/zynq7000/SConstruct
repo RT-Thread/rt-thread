@@ -14,6 +14,7 @@ from building import *
 
 TARGET = 'rtthread-zynq7000.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,

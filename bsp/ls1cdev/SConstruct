@@ -14,6 +14,7 @@ TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 rtconfig.AFLAGS += ' -I' + str(Dir('#'))
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
