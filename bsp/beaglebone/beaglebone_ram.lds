@@ -57,8 +57,8 @@ SECTIONS
         PROVIDE(__dtors_end__ = .);
     }
 
+    . = ALIGN(8);
     __data_start = .;
-    . = ALIGN(4);
     .data :
     {
         *(.data)
@@ -66,7 +66,7 @@ SECTIONS
     }
     __data_end = .;
 
-    . = ALIGN(4);
+    . = ALIGN(8);
     __bss_start = .;
     .bss       :
     {
