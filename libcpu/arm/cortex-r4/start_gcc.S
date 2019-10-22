@@ -36,6 +36,7 @@
 .globl stack_start
 .globl stack_top
 
+.align 3
 stack_start:
 .rept (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
 .byte 0
