@@ -128,7 +128,7 @@ def ConverToEclipsePathFormat(path):
     return '"${workspace_loc:/${ProjName}/' + path + '}"'
 
 
-def HandleToolOption(tools, env, project, reset):
+def HandleToolOption(tools, env, project, reset, mcu_type):
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
     CPPDEFINES = project['CPPDEFINES']
@@ -137,46 +137,86 @@ def HandleToolOption(tools, env, project, reset):
     for tool in tools:
         if tool.get('id').find('c.compile') != 1:
             options = tool.findall('option')
+            include_paths_option = None
+            include_files_option = None
+            defs_option = None
+            # find all compile options
             for option in options:
                 if option.get('id').find('c.compiler.include.paths') != -1 or option.get('id').find('c.compiler.option.includepaths') != -1:
-                    # find all of paths in this project
-                    include_paths = option.findall('listOptionValue')
-                    project_paths = []
-                    for item in include_paths:
-                        if reset is True:
-                            # clean all old configuration
-                            option.remove(item)
-                        else:
-                            project_paths += [item.get('value')]
-
-                    if len(project_paths) > 0:
-                        cproject_paths = set(paths) - set(project_paths)
+                    include_paths_option = option
+                elif option.get('id').find('c.compiler.include.files') != -1 or option.get('id').find('c.compiler.option.includefiles') != -1 :
+                    include_files_option = option
+                elif option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
+                    defs_option = option
+            # change the inclue path
+            if include_paths_option is not None :
+                option = include_paths_option
+                # find all of paths in this project
+                include_paths = option.findall('listOptionValue')
+                project_paths = []
+                for item in include_paths:
+                    if reset is True:
+                        # clean all old configuration
+                        option.remove(item)
                     else:
-                        cproject_paths = paths
+                        project_paths += [item.get('value')]
 
-                    # print('c.compiler.include.paths')
-                    cproject_paths = sorted(cproject_paths)
-                    for item in cproject_paths:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+                if len(project_paths) > 0:
+                    cproject_paths = set(paths) - set(project_paths)
+                else:
+                    cproject_paths = paths
 
-                if option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
-                    defs = option.findall('listOptionValue')
-                    project_defs = []
-                    for item in defs:
-                        if reset is True:
-                            # clean all old configuration
-                            option.remove(item)
-                        else:
-                            project_defs += [item.get('value')]
-                    if len(project_defs) > 0:
-                        cproject_defs = set(CPPDEFINES) - set(project_defs)
+                # print('c.compiler.include.paths')
+                cproject_paths = sorted(cproject_paths)
+                for item in cproject_paths:
+                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+            # change the inclue files (default) or definitions
+            if include_files_option is not None:
+                option = include_paths_option
+                file_header = '''
+#ifndef RTCONFIG_PREINC_H__
+#define RTCONFIG_PREINC_H__
+
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Configuration */
+
+'''
+                file_tail = '\n#endif /*RTCONFIG_PREINC_H__*/\n'
+                rtt_pre_inc_item = '"${workspace_loc:/${ProjName}/rtconfig_preinc.h}"'
+                # save the CPPDEFINES in to rtconfig_preinc.h
+                with open('rtconfig_preinc.h', mode = 'w+') as f:
+                    f.write(file_header)
+                    for cppdef in CPPDEFINES:
+                        f.write("#define " + cppdef + '\n')
+                    f.write(file_tail)
+                #  change the c.compiler.include.files
+                files = option.findall('listOptionValue')
+                find_ok = False
+                for item in files:
+                    if item.get('value') == rtt_pre_inc_item:
+                        find_ok = True
+                        break
+                if find_ok is False:
+                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': rtt_pre_inc_item})
+            elif defs_option is not None :
+                option = defs_option
+                defs = option.findall('listOptionValue')
+                project_defs = []
+                for item in defs:
+                    if reset is True:
+                        # clean all old configuration
+                        option.remove(item)
                     else:
-                        cproject_defs = CPPDEFINES
+                        project_defs += [item.get('value')]
+                if len(project_defs) > 0:
+                    cproject_defs = set(CPPDEFINES) - set(project_defs)
+                else:
+                    cproject_defs = CPPDEFINES
 
-                    # print('c.compiler.defs')
-                    cproject_defs = sorted(cproject_defs)
-                    for item in cproject_defs:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+                # print('c.compiler.defs')
+                cproject_defs = sorted(cproject_defs)
+                for item in cproject_defs:
+                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
 
         if tool.get('id').find('c.linker') != -1:
             options = tool.findall('option')
@@ -262,7 +302,7 @@ def UpdateProjectStructure(env, prj_name):
 
     return
 
-def GenExcluding(env, project):
+def GenExcluding(env, project, mcu_type):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
     coll_dirs = CollectPaths(project['DIRS'])
@@ -300,7 +340,12 @@ def GenExcluding(env, project):
     exclude_files = ExcludeFiles(all_files, src_files)
     exclude_files = [RelativeProjectPath(env, file).replace('\\', '/') for file in exclude_files]
     env['ExFiles'] = exclude_files
-        
+
+    if mcu_type :
+        # TODO save the rt-thread and packages exclude folder only
+        # TODO exclude the libraries/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/ arm|iar|gcc/xxx.s
+        pass
+
     return  exclude_paths + exclude_files
 
 
@@ -320,7 +365,7 @@ def RelativeProjectPath(env, path):
     return path
 
 
-def UpdateCproject(env, project, excluding, reset):
+def UpdateCproject(env, project, excluding, reset, mcu_type):
     excluding = sorted(excluding)
 
     cproject = etree.parse('.cproject')
@@ -329,7 +374,7 @@ def UpdateCproject(env, project, excluding, reset):
     cconfigurations = root.findall('storageModule/cconfiguration')
     for cconfiguration in cconfigurations:
         tools = cconfiguration.findall('storageModule/configuration/folderInfo/toolChain/tool')
-        HandleToolOption(tools, env, project, reset)
+        HandleToolOption(tools, env, project, reset, mcu_type)
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         entry = sourceEntries.find('entry')
@@ -354,7 +399,7 @@ def UpdateCproject(env, project, excluding, reset):
     out.close()
 
 
-def TargetEclipse(env, reset = False, prj_name = None):
+def TargetEclipse(env, reset = False, prj_name = None, mcu_type = None):
     global source_pattern
 
     print('Update eclipse setting...')
@@ -369,10 +414,10 @@ def TargetEclipse(env, reset = False, prj_name = None):
     UpdateProjectStructure(env, prj_name)
 
     # generate the exclude paths and files
-    excluding = GenExcluding(env, project)
+    excluding = GenExcluding(env, project, mcu_type)
 
     # update the project configuration on '.cproject' file
-    UpdateCproject(env, project, excluding, reset)
+    UpdateCproject(env, project, excluding, reset, mcu_type)
 
     print('done!')
 
