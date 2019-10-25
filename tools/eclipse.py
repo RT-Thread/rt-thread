@@ -172,7 +172,7 @@ def HandleToolOption(tools, env, project, reset, mcu_type):
                     SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
             # change the inclue files (default) or definitions
             if include_files_option is not None:
-                option = include_paths_option
+                option = include_files_option
                 file_header = '''
 #ifndef RTCONFIG_PREINC_H__
 #define RTCONFIG_PREINC_H__
@@ -313,7 +313,20 @@ def GenExcluding(env, project, mcu_type):
         exclude_paths = ExcludePaths(rtt_root, all_paths)
     elif rtt_root.startswith(bsp_root):
         # RT-Thread root folder is in the bsp folder, such as project folder which generate by 'scons --dist' cmd
-        exclude_paths = ExcludePaths(bsp_root, all_paths)
+        if mcu_type is None :  # BSP mode, not MCU mode
+            exclude_paths = ExcludePaths(bsp_root, all_paths)
+        else :
+            check_path = []
+            exclude_paths = []
+            # analyze the primary folder which relative to BSP_ROOT and in all_paths
+            for path in all_paths :
+                if path.startswith(bsp_root) :
+                    folders = RelativeProjectPath(env, path).split('\\')
+                    if folders[0] != '.' and '\\' + folders[0] not in check_path:
+                        check_path += ['\\' + folders[0]]
+            # exclue the folder which has managed by scons
+            for path in check_path:
+                exclude_paths += ExcludePaths(bsp_root + path, all_paths)
     else:
         exclude_paths = ExcludePaths(rtt_root, all_paths)
         exclude_paths += ExcludePaths(bsp_root, all_paths)
@@ -332,19 +345,15 @@ def GenExcluding(env, project, mcu_type):
             exclude_paths += [path]
 
     exclude_paths = [RelativeProjectPath(env, path).replace('\\', '/') for path in exclude_paths]
-    env['ExPaths'] = exclude_paths
 
     all_files = CollectFiles(all_paths, source_pattern)
     src_files = project['FILES']
 
     exclude_files = ExcludeFiles(all_files, src_files)
     exclude_files = [RelativeProjectPath(env, file).replace('\\', '/') for file in exclude_files]
-    env['ExFiles'] = exclude_files
 
-    if mcu_type :
-        # TODO save the rt-thread and packages exclude folder only
-        # TODO exclude the libraries/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/ arm|iar|gcc/xxx.s
-        pass
+    env['ExPaths'] = exclude_paths
+    env['ExFiles'] = exclude_files
 
     return  exclude_paths + exclude_files
 
@@ -360,7 +369,7 @@ def RelativeProjectPath(env, path):
         return 'rt-thread/' + _make_path_relative(rtt_root, path)
 
     # TODO add others folder
-    print('ERROR: the ' + path + 'not support')
+    print('ERROR: the ' + path + ' not support')
 
     return path
 
