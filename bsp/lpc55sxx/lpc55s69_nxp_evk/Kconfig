@@ -1,0 +1,26 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+config SOC_LPC55S6x
+    bool 
+    select ARCH_ARM_CORTEX_M33
+    default y
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "../libraries/Kconfig"
+source "board/Kconfig"
