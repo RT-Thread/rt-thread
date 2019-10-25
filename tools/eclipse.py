@@ -128,7 +128,7 @@ def ConverToEclipsePathFormat(path):
     return '"${workspace_loc:/${ProjName}/' + path + '}"'
 
 
-def HandleToolOption(tools, env, project, reset, mcu_type):
+def HandleToolOption(tools, env, project, reset):
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
     CPPDEFINES = project['CPPDEFINES']
@@ -302,7 +302,8 @@ def UpdateProjectStructure(env, prj_name):
 
     return
 
-def GenExcluding(env, project, mcu_type):
+
+def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
     coll_dirs = CollectPaths(project['DIRS'])
@@ -313,20 +314,17 @@ def GenExcluding(env, project, mcu_type):
         exclude_paths = ExcludePaths(rtt_root, all_paths)
     elif rtt_root.startswith(bsp_root):
         # RT-Thread root folder is in the bsp folder, such as project folder which generate by 'scons --dist' cmd
-        if mcu_type is None :  # BSP mode, not MCU mode
-            exclude_paths = ExcludePaths(bsp_root, all_paths)
-        else :
-            check_path = []
-            exclude_paths = []
-            # analyze the primary folder which relative to BSP_ROOT and in all_paths
-            for path in all_paths :
-                if path.startswith(bsp_root) :
-                    folders = RelativeProjectPath(env, path).split('\\')
-                    if folders[0] != '.' and '\\' + folders[0] not in check_path:
-                        check_path += ['\\' + folders[0]]
-            # exclue the folder which has managed by scons
-            for path in check_path:
-                exclude_paths += ExcludePaths(bsp_root + path, all_paths)
+        check_path = []
+        exclude_paths = []
+        # analyze the primary folder which relative to BSP_ROOT and in all_paths
+        for path in all_paths :
+            if path.startswith(bsp_root) :
+                folders = RelativeProjectPath(env, path).split('\\')
+                if folders[0] != '.' and '\\' + folders[0] not in check_path:
+                    check_path += ['\\' + folders[0]]
+        # exclue the folder which has managed by scons
+        for path in check_path:
+            exclude_paths += ExcludePaths(bsp_root + path, all_paths)
     else:
         exclude_paths = ExcludePaths(rtt_root, all_paths)
         exclude_paths += ExcludePaths(bsp_root, all_paths)
@@ -374,7 +372,7 @@ def RelativeProjectPath(env, path):
     return path
 
 
-def UpdateCproject(env, project, excluding, reset, mcu_type):
+def UpdateCproject(env, project, excluding, reset):
     excluding = sorted(excluding)
 
     cproject = etree.parse('.cproject')
@@ -383,7 +381,7 @@ def UpdateCproject(env, project, excluding, reset, mcu_type):
     cconfigurations = root.findall('storageModule/cconfiguration')
     for cconfiguration in cconfigurations:
         tools = cconfiguration.findall('storageModule/configuration/folderInfo/toolChain/tool')
-        HandleToolOption(tools, env, project, reset, mcu_type)
+        HandleToolOption(tools, env, project, reset)
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         entry = sourceEntries.find('entry')
@@ -408,7 +406,7 @@ def UpdateCproject(env, project, excluding, reset, mcu_type):
     out.close()
 
 
-def TargetEclipse(env, reset = False, prj_name = None, mcu_type = None):
+def TargetEclipse(env, reset = False, prj_name = None):
     global source_pattern
 
     print('Update eclipse setting...')
@@ -423,10 +421,10 @@ def TargetEclipse(env, reset = False, prj_name = None, mcu_type = None):
     UpdateProjectStructure(env, prj_name)
 
     # generate the exclude paths and files
-    excluding = GenExcluding(env, project, mcu_type)
+    excluding = GenExcluding(env, project)
 
     # update the project configuration on '.cproject' file
-    UpdateCproject(env, project, excluding, reset, mcu_type)
+    UpdateCproject(env, project, excluding, reset)
 
     print('done!')
 

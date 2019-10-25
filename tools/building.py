@@ -181,11 +181,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action = 'store_true',
                       default = False,
                       help = 'reset the project configurations to default')
-    AddOption('--mcu-type',
-                      dest = 'mcu-type',
-                      type = 'string',
-                      default = False,
-                      help = 'set mcu type name')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -857,7 +852,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from eclipse import TargetEclipse
-        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'), GetOption('mcu-type'))
+        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
 
 
 def EndBuilding(target, program = None):
