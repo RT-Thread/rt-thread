@@ -60,22 +60,21 @@
               </tool>
               <tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1570350559" name="GNU ARM Cross C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.634882052" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/applications}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board/CubeMX_Config/Inc}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board/ports}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/bsp/stm32/libraries/HAL_Drivers/config}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/bsp/stm32/libraries/HAL_Drivers}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/bsp/stm32/libraries/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/bsp/stm32/libraries/STM32F1xx_HAL/CMSIS/Include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/bsp/stm32/libraries/STM32F1xx_HAL/STM32F1xx_HAL_Driver/Inc}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/components/drivers/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/components/finsh}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/components/libc/compilers/minilibc}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/libcpu/arm/common}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/rt-thread/libcpu/arm/cortex-m3}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//.}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//applications}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//board/CubeMX_Config/Inc}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//board}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/stm32/libraries/HAL_Drivers/config}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/stm32/libraries/HAL_Drivers}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/stm32/libraries/STM32F1xx_HAL/CMSIS/Device/ST/STM32F1xx/Include}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/stm32/libraries/STM32F1xx_HAL/CMSIS/Include}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/stm32/libraries/STM32F1xx_HAL/STM32F1xx_HAL_Driver/Inc}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/components/drivers/include}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/components/finsh}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/components/libc/compilers/minilibc}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/include}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/libcpu/arm/common}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/libcpu/arm/cortex-m3}&quot;" />
                 </option>
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.100549972" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols">
                   <listOptionValue builtIn="false" value="DEBUG" />
@@ -95,7 +94,7 @@
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.usenewlibnano.923990336" name="Use newlib-nano (--specs=nano.specs)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.usenewlibnano" useByScannerDiscovery="false" value="true" valueType="boolean" />
                 <option defaultValue="true" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.shared.548869459" name="Shared (-shared)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.shared" useByScannerDiscovery="false" valueType="boolean" />
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.scriptfile.1818777301" name="Script files (-T)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.scriptfile" useByScannerDiscovery="false" valueType="stringList">
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/board/linker_scripts/link.lds}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//board/linker_scripts/link.lds}&quot;" />
                 </option>
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.libs.1135656995" name="Libraries (-l)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.libs" useByScannerDiscovery="false" />
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.paths.36884122" name="Library search path (-L)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.linker.paths" useByScannerDiscovery="false" />
