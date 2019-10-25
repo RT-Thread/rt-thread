@@ -122,17 +122,25 @@ def ExcludePaths(rootpath, paths):
     return ret
 
 
-def ConverToEclipsePathFormat(path):
-    if path.startswith('.'):
-        path = path[1:]
-    return '"${workspace_loc:/${ProjName}/' + path + '}"'
+rtt_path_prefix = '"${workspace_loc://${ProjName}//'
+
+
+def ConverToRttEclipsePathFormat(path):
+    return rtt_path_prefix + path + '}"'
+
+
+def IsRttEclipsePathFormat(path):
+    if path.startswith(rtt_path_prefix):
+        return True
+    else :
+        return False
 
 
 def HandleToolOption(tools, env, project, reset):
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
     CPPDEFINES = project['CPPDEFINES']
-    paths = [ConverToEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
+    paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
     for tool in tools:
         if tool.get('id').find('c.compile') != 1:
@@ -153,22 +161,13 @@ def HandleToolOption(tools, env, project, reset):
                 option = include_paths_option
                 # find all of paths in this project
                 include_paths = option.findall('listOptionValue')
-                project_paths = []
                 for item in include_paths:
-                    if reset is True:
-                        # clean all old configuration
+                    if reset is True or IsRttEclipsePathFormat(item.get('value')) :
+                        # clean old configuration
                         option.remove(item)
-                    else:
-                        project_paths += [item.get('value')]
-
-                if len(project_paths) > 0:
-                    cproject_paths = set(paths) - set(project_paths)
-                else:
-                    cproject_paths = paths
-
                 # print('c.compiler.include.paths')
-                cproject_paths = sorted(cproject_paths)
-                for item in cproject_paths:
+                paths = sorted(paths)
+                for item in paths:
                     SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
             # change the inclue files (default) or definitions
             if include_files_option is not None:
@@ -178,7 +177,7 @@ def HandleToolOption(tools, env, project, reset):
 #define RTCONFIG_PREINC_H__
 
 /* Automatically generated file; DO NOT EDIT. */
-/* RT-Thread Configuration */
+/* RT-Thread pre-include file */
 
 '''
                 file_tail = '\n#endif /*RTCONFIG_PREINC_H__*/\n'
@@ -227,7 +226,7 @@ def HandleToolOption(tools, env, project, reset):
                     items = env['LINKFLAGS'].split(' ')
                     if '-T' in items:
                         linker_script = items[items.index('-T') + 1]
-                        linker_script = ConverToEclipsePathFormat(linker_script)
+                        linker_script = ConverToRttEclipsePathFormat(linker_script)
 
                     listOptionValue = option.find('listOptionValue')
                     if listOptionValue != None:
@@ -239,7 +238,7 @@ def HandleToolOption(tools, env, project, reset):
                 if option.get('id').find('c.linker.option.script') != -1:
                     items = env['LINKFLAGS'].split(' ')
                     if '-T' in items:
-                        linker_script = ConverToEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
+                        linker_script = ConverToRttEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
                         option.set('value',linker_script)
 
                 # update nostartfiles config
