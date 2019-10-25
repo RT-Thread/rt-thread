@@ -9,8 +9,8 @@ config SOC_STM32H750IB
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (W25Q256 qspi)"
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q256)"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
@@ -28,6 +28,16 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_LCD
         bool "Enable LCD"
         select BSP_USING_PWM
+        default n
+
+    config BSP_USING_ESP32
+        bool "Enable ESP32"
+        select BSP_USING_UART4
+        select RT_USING_AT
+        select AT_USING_CLIENT
+        select AT_USING_SOCKET
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP32
         default n
 endmenu
 
@@ -47,6 +57,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1"
                 default y
 
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
         endif
 
     config BSP_USING_QSPI
