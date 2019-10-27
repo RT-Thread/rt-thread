@@ -51,6 +51,12 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         default n
 
+    config BSP_USING_USBD
+        bool "Enable OTGFS as USB device"
+        select RT_USING_USB_DEVICE
+        select BSP_USBD_TYPE_FS
+        default n
+
 endmenu
 
 menu "Board extended module Drivers"
