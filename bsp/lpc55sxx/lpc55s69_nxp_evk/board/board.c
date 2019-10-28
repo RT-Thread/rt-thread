@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2019-2020, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +11,7 @@
  * 2010-05-02     Aozima       update CMSIS to 130
  * 2017-08-02     XiaoYang     porting to LPC54608 bsp
  * 2019-08-05     Magicoe      porting to LPC55S69-EVK bsp
+ * 2020-01-01     Karl         Add RT_USING_TFM support
  */
 
 #include <rthw.h>
@@ -56,11 +58,20 @@ void rt_hw_board_init()
     /* Set the Vector Table base location at 0x10000000 */
     SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
 #else  /* VECT_TAB_FLASH  */
+
+#ifdef RT_USING_TFM
+    /* Set the Vector Table base location at 0x00020000 when RTT with TF-M*/
+    SCB->VTOR  = (0x00020000 & NVIC_VTOR_MASK);
+#else
     /* Set the Vector Table base location at 0x00000000 */
     SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
 #endif
+#endif
 
+#ifndef RT_USING_TFM
+    /* This init has finished in secure side of TF-M  */
     BOARD_BootClockPLL150M();
+#endif
     //BOARD_BootClockFROHF96M();
     
     /* init systick  1 systick = 1/(100M / 100) 100¸ösystick = 1s*/
