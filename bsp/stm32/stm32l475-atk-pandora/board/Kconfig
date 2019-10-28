@@ -300,7 +300,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
-    config BSP_USING_USBD_FS
+    config BSP_USING_USBD
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
         default n
