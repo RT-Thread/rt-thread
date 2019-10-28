@@ -122,61 +122,100 @@ def ExcludePaths(rootpath, paths):
     return ret
 
 
-def ConverToEclipsePathFormat(path):
-    if path.startswith('.'):
-        path = path[1:]
-    return '"${workspace_loc:/${ProjName}/' + path + '}"'
+rtt_path_prefix = '"${workspace_loc://${ProjName}//'
+
+
+def ConverToRttEclipsePathFormat(path):
+    return rtt_path_prefix + path + '}"'
+
+
+def IsRttEclipsePathFormat(path):
+    if path.startswith(rtt_path_prefix):
+        return True
+    else :
+        return False
 
 
 def HandleToolOption(tools, env, project, reset):
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
     CPPDEFINES = project['CPPDEFINES']
-    paths = [ConverToEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
+    paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
     for tool in tools:
         if tool.get('id').find('c.compile') != 1:
             options = tool.findall('option')
+            include_paths_option = None
+            include_files_option = None
+            defs_option = None
+            # find all compile options
             for option in options:
                 if option.get('id').find('c.compiler.include.paths') != -1 or option.get('id').find('c.compiler.option.includepaths') != -1:
-                    # find all of paths in this project
-                    include_paths = option.findall('listOptionValue')
-                    project_paths = []
-                    for item in include_paths:
-                        if reset is True:
-                            # clean all old configuration
-                            option.remove(item)
-                        else:
-                            project_paths += [item.get('value')]
+                    include_paths_option = option
+                elif option.get('id').find('c.compiler.include.files') != -1 or option.get('id').find('c.compiler.option.includefiles') != -1 :
+                    include_files_option = option
+                elif option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
+                    defs_option = option
+            # change the inclue path
+            if include_paths_option is not None :
+                option = include_paths_option
+                # find all of paths in this project
+                include_paths = option.findall('listOptionValue')
+                for item in include_paths:
+                    if reset is True or IsRttEclipsePathFormat(item.get('value')) :
+                        # clean old configuration
+                        option.remove(item)
+                # print('c.compiler.include.paths')
+                paths = sorted(paths)
+                for item in paths:
+                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+            # change the inclue files (default) or definitions
+            if include_files_option is not None:
+                option = include_files_option
+                file_header = '''
+#ifndef RTCONFIG_PREINC_H__
+#define RTCONFIG_PREINC_H__
 
-                    if len(project_paths) > 0:
-                        cproject_paths = set(paths) - set(project_paths)
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread pre-include file */
+
+'''
+                file_tail = '\n#endif /*RTCONFIG_PREINC_H__*/\n'
+                rtt_pre_inc_item = '"${workspace_loc:/${ProjName}/rtconfig_preinc.h}"'
+                # save the CPPDEFINES in to rtconfig_preinc.h
+                with open('rtconfig_preinc.h', mode = 'w+') as f:
+                    f.write(file_header)
+                    for cppdef in CPPDEFINES:
+                        f.write("#define " + cppdef + '\n')
+                    f.write(file_tail)
+                #  change the c.compiler.include.files
+                files = option.findall('listOptionValue')
+                find_ok = False
+                for item in files:
+                    if item.get('value') == rtt_pre_inc_item:
+                        find_ok = True
+                        break
+                if find_ok is False:
+                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': rtt_pre_inc_item})
+            elif defs_option is not None :
+                option = defs_option
+                defs = option.findall('listOptionValue')
+                project_defs = []
+                for item in defs:
+                    if reset is True:
+                        # clean all old configuration
+                        option.remove(item)
                     else:
-                        cproject_paths = paths
+                        project_defs += [item.get('value')]
+                if len(project_defs) > 0:
+                    cproject_defs = set(CPPDEFINES) - set(project_defs)
+                else:
+                    cproject_defs = CPPDEFINES
 
-                    # print('c.compiler.include.paths')
-                    cproject_paths = sorted(cproject_paths)
-                    for item in cproject_paths:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
-
-                if option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
-                    defs = option.findall('listOptionValue')
-                    project_defs = []
-                    for item in defs:
-                        if reset is True:
-                            # clean all old configuration
-                            option.remove(item)
-                        else:
-                            project_defs += [item.get('value')]
-                    if len(project_defs) > 0:
-                        cproject_defs = set(CPPDEFINES) - set(project_defs)
-                    else:
-                        cproject_defs = CPPDEFINES
-
-                    # print('c.compiler.defs')
-                    cproject_defs = sorted(cproject_defs)
-                    for item in cproject_defs:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+                # print('c.compiler.defs')
+                cproject_defs = sorted(cproject_defs)
+                for item in cproject_defs:
+                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
 
         if tool.get('id').find('c.linker') != -1:
             options = tool.findall('option')
@@ -187,7 +226,7 @@ def HandleToolOption(tools, env, project, reset):
                     items = env['LINKFLAGS'].split(' ')
                     if '-T' in items:
                         linker_script = items[items.index('-T') + 1]
-                        linker_script = ConverToEclipsePathFormat(linker_script)
+                        linker_script = ConverToRttEclipsePathFormat(linker_script)
 
                     listOptionValue = option.find('listOptionValue')
                     if listOptionValue != None:
@@ -199,7 +238,7 @@ def HandleToolOption(tools, env, project, reset):
                 if option.get('id').find('c.linker.option.script') != -1:
                     items = env['LINKFLAGS'].split(' ')
                     if '-T' in items:
-                        linker_script = ConverToEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
+                        linker_script = ConverToRttEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
                         option.set('value',linker_script)
 
                 # update nostartfiles config
@@ -262,6 +301,7 @@ def UpdateProjectStructure(env, prj_name):
 
     return
 
+
 def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
@@ -273,7 +313,17 @@ def GenExcluding(env, project):
         exclude_paths = ExcludePaths(rtt_root, all_paths)
     elif rtt_root.startswith(bsp_root):
         # RT-Thread root folder is in the bsp folder, such as project folder which generate by 'scons --dist' cmd
-        exclude_paths = ExcludePaths(bsp_root, all_paths)
+        check_path = []
+        exclude_paths = []
+        # analyze the primary folder which relative to BSP_ROOT and in all_paths
+        for path in all_paths :
+            if path.startswith(bsp_root) :
+                folders = RelativeProjectPath(env, path).split('\\')
+                if folders[0] != '.' and '\\' + folders[0] not in check_path:
+                    check_path += ['\\' + folders[0]]
+        # exclue the folder which has managed by scons
+        for path in check_path:
+            exclude_paths += ExcludePaths(bsp_root + path, all_paths)
     else:
         exclude_paths = ExcludePaths(rtt_root, all_paths)
         exclude_paths += ExcludePaths(bsp_root, all_paths)
@@ -292,15 +342,16 @@ def GenExcluding(env, project):
             exclude_paths += [path]
 
     exclude_paths = [RelativeProjectPath(env, path).replace('\\', '/') for path in exclude_paths]
-    env['ExPaths'] = exclude_paths
 
     all_files = CollectFiles(all_paths, source_pattern)
     src_files = project['FILES']
 
     exclude_files = ExcludeFiles(all_files, src_files)
     exclude_files = [RelativeProjectPath(env, file).replace('\\', '/') for file in exclude_files]
+
+    env['ExPaths'] = exclude_paths
     env['ExFiles'] = exclude_files
-        
+
     return  exclude_paths + exclude_files
 
 
@@ -315,7 +366,7 @@ def RelativeProjectPath(env, path):
         return 'rt-thread/' + _make_path_relative(rtt_root, path)
 
     # TODO add others folder
-    print('ERROR: the ' + path + 'not support')
+    print('ERROR: the ' + path + ' not support')
 
     return path
 
