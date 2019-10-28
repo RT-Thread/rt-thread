@@ -128,6 +128,14 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    config BSP_USING_USBD
+        bool "Enable OTGHS as USB device"
+        select RT_USING_USB_DEVICE
+        select BSP_USBD_TYPE_HS
+        select BSP_USBD_SPEED_HS
+        select BSP_USBD_PHY_ULPI
+        default n
+
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu

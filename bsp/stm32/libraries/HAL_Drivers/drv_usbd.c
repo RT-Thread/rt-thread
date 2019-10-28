@@ -6,11 +6,12 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-04-10     ZYH          first version
+ * 2019-10-27     flybreak     Compatible with the HS
  */
 
 #include <rtthread.h>
 
-#ifdef BSP_USING_USBD_FS
+#ifdef BSP_USING_USBD
 #include <rtdevice.h>
 #include "board.h"
 #include <string.h>
@@ -32,13 +33,12 @@ static struct ep_id _ep_pool[] =
     {0xFF, USB_EP_ATTR_TYPE_MASK,   USB_DIR_MASK,   0,  ID_ASSIGNED  },
 };
 
-void USBD_FS_IRQ_HANDLER(void)
+void USBD_IRQ_HANDLER(void)
 {
     rt_interrupt_enter();
     HAL_PCD_IRQHandler(&_stm_pcd);
     /* leave interrupt */
     rt_interrupt_leave();
-
 }
 
 void HAL_PCD_ResetCallback(PCD_HandleTypeDef *pcd)
@@ -194,10 +194,10 @@ static rt_err_t _init(rt_device_t device)
     pcd->Instance = USBD_INSTANCE;
     memset(&pcd->Init, 0, sizeof pcd->Init);
     pcd->Init.dev_endpoints = 8;
-    pcd->Init.speed = PCD_SPEED_FULL;
+    pcd->Init.speed = USBD_PCD_SPEED;
     pcd->Init.ep0_mps = DEP0CTL_MPS_64;
 #if !defined(SOC_SERIES_STM32F1)
-    pcd->Init.phy_itface = PCD_PHY_EMBEDDED;
+    pcd->Init.phy_itface = USBD_PCD_PHY_MODULE;
 #endif
     /* Initialize LL Driver */
     HAL_PCD_Init(pcd);
