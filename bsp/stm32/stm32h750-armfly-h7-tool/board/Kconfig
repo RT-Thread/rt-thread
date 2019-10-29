@@ -1,0 +1,147 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32H750IB
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q256)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
+    config PHY_USING_LAN8720A
+        bool
+
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_LWIP
+        select PHY_USING_LAN8720A
+        default n
+
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_PWM
+        default n
+
+    config BSP_USING_ESP32
+        bool "Enable ESP32"
+        select BSP_USING_UART4
+        select RT_USING_AT
+        select AT_USING_CLIENT
+        select AT_USING_SOCKET
+        select PKG_USING_AT_DEVICE
+        select AT_DEVICE_USING_ESP32
+        default n
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+        endif
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_QSPI_USING_DMA
+        bool "Enable QSPI DMA support"
+        default n
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 1 216
+                default 135
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 216
+                default 95
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM2
+            bool "Enable timer2 output pwm"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH2
+                    bool "Enable PWM2 channel2"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    config BSP_USING_USBD
+        bool "Enable OTGHS as USB device"
+        select RT_USING_USB_DEVICE
+        select BSP_USBD_TYPE_HS
+        select BSP_USBD_SPEED_HS
+        select BSP_USBD_PHY_ULPI
+        default n
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

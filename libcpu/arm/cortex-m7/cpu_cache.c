@@ -72,15 +72,15 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
 
     if (ops & (RT_HW_CACHE_FLUSH | RT_HW_CACHE_INVALIDATE))
     {
-        SCB_CleanInvalidateDCache_by_Addr((rt_uint32_t *)startAddr, size_byte);
+        SCB_CleanInvalidateDCache_by_Addr((uint32_t *)startAddr, size_byte);
     }
     else if (ops & RT_HW_CACHE_FLUSH)
     {
-        SCB_CleanDCache_by_Addr((rt_uint32_t *)startAddr, size_byte);
+        SCB_CleanDCache_by_Addr((uint32_t *)startAddr, size_byte);
     }
     else if (ops & RT_HW_CACHE_INVALIDATE)
     {
-        SCB_InvalidateDCache_by_Addr((rt_uint32_t *)startAddr, size_byte);
+        SCB_InvalidateDCache_by_Addr((uint32_t *)startAddr, size_byte);
     }
     else
     {

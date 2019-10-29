@@ -11,7 +11,7 @@ sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
 TARGET = 'rtthread-%s.%s' % (rtconfig.BOARD_NAME, rtconfig.TARGET_EXT)
-
+DefaultEnvironment(tools=[])
 if rtconfig.PLATFORM == 'armcc':
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
