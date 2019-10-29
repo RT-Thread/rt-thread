@@ -334,7 +334,7 @@
               <MiscControls />
               <Define>USE_HAL_DRIVER, STM32G071xx</Define>
               <Undefine />
-              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common;..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Inc;..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Include;..\libraries\STM32G0xx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;.;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common;..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Inc;..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include;..\libraries\STM32G0xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -389,13 +389,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -513,7 +506,7 @@
             <File>
               <FileName>startup_stm32g071xx.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Source\Templates\arm\startup_stm32g071xx.s</FilePath>
+              <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\arm\startup_stm32g071xx.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -742,7 +735,7 @@
             <File>
               <FileName>system_stm32g0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</FilePath>
+              <FilePath>..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</FilePath>
             </File>
           </Files>
           <Files>
