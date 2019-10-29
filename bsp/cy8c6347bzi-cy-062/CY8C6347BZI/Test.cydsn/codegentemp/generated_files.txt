@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="us-ascii"?>
+
+<fileSet version="1" anchorPath="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp" xsi:schemaLocation="http://cypress.com/xsd/cypathdictionary cypathdictionary.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://cypress.com/xsd/cypathdictionary">
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter_cfg.h" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter_sysint_cfg.h" value="HEADER;;;;;Pins and Interrupts" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter_sysint_cfg.c" value="SOURCE_C;CortexM0p,CortexM4;;;;Pins and Interrupts" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter_cfg.c" value="SOURCE_C;CortexM0p;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cymetadata.c" value="SOURCE_C;CortexM0p,CortexM4;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cydevice_trm.h" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cydevicegnu_trm.inc" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cydevicerv_trm.inc" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cydeviceiar_trm.inc" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter.h" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter_gpio.h" value="HEADER;;;;;Pins and Interrupts" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cyfitter_sysint.h" value="HEADER;;;;;Pins and Interrupts" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cydisabledsheets.h" value="HEADER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\UART0.c" value="SOURCE_C;CortexM0p,CortexM4;;;;UART0" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\UART0.h" value="HEADER;;;;;UART0" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\UART0_SCBCLK.h" value="HEADER;;;;;UART0_SCBCLK" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\project.h" value="OTHER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cycodeshareimport.ld" value="OTHER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cycodeshareexport.ld" value="OTHER;;;;;" />
+  <file name="C:\Work\App\RT-Thread\rt-thread-master\bsp\cy8c6347bzi-cy-062\CY8C6347BZI\Test.cydsn\codegentemp\cycodeshareimport.scat" value="OTHER;;;;;" />
+</fileSet>

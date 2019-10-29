@@ -1,0 +1,22 @@
+
+		SoftJin Router, Version 1.0
+
+I1203: Reading Design Test
+I1204: Reading netlist from file Test_r.vh2
+I1206: Completed Reading of file Test_r.vh2
+I1204: Reading placement from file Test.pco
+I1206: Completed Reading of file Test.pco
+I1204: Reading timing library from file Test_r.lib
+I1206: Completed Reading of file Test_r.lib
+I1204: Reading timing constraints from file Test.sdc
+I1206: Completed Reading of file Test.sdc
+I1204: Reading architecture from file C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\dev\psoc6/0/route_arch-rrg.cydata
+I1206: Completed Reading of file C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\dev\psoc6/0/route_arch-rrg.cydata
+I1209: Started routing
+I1223: Total Nets : 6 
+I1212: Iteration  1 :     0 unrouted : 0 seconds
+I1215: Routing is successful
+I1207: Completed routing
+I1210: Writing routes
+I1218: Exiting the router
+I1224: Total Time : 1 seconds

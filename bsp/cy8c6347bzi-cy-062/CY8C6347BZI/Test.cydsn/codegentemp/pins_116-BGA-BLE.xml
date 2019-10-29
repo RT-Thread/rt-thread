@@ -1,0 +1,1967 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pindata xsi:schemaLocation="http://cypress.com/xsd/cypindata_v2 ../../dtd/cypindata_v2.xsd" device="CY8C6347BZI-BLD53" package="116-BGA-BLE" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://cypress.com/xsd/cypindata_v2">
+  <capabilities>
+    <capability name="DIGITAL" value="0x0000000000000001" />
+    <capability name="ANALOG" value="0x0000000000000002" />
+    <capability name="ROUTABLE" value="0x0000000000000004" />
+    <capability name="GPIO" value="0x0000000000000010" />
+    <capability name="SIO" value="0x0000000000000020" />
+    <capability name="OVTIO" value="0x0000000000000040" />
+    <capability name="TRUETOUCH" value="0x0000000000000080" />
+    <capability name="DAC_HI_OUT" value="0x0000000000000100" />
+    <capability name="ABUF_POS" value="0x0000000000000200" />
+    <capability name="ABUF_OUT" value="0x0000000000000400" />
+    <capability name="ABUF_NEG" value="0x0000000000000800" />
+    <capability name="SWD" value="0x0000000000001000" />
+    <capability name="SWO" value="0x0000000000002000" />
+    <capability name="JTAG" value="0x0000000000004000" />
+    <capability name="JTAG_NTRST" value="0x0000000000008000" />
+    <capability name="XRES" value="0x0000000000010000" />
+    <capability name="TRACE" value="0x0000000000020000" />
+    <capability name="WAKEUP" value="0x0000000000040000" />
+    <capability name="I2CWKUP_SDA" value="0x0000000000100000" />
+    <capability name="I2CWKUP_SCL" value="0x0000000000200000" />
+    <capability name="USB_D_PLUS" value="0x0000000000400000" />
+    <capability name="USB_D_MINUS" value="0x0000000000800000" />
+    <capability name="ECO_MHZ_XO" value="0x0000000001000000" />
+    <capability name="ECO_MHZ_XI" value="0x0000000002000000" />
+    <capability name="ECO_32KHZ_XO" value="0x0000000004000000" />
+    <capability name="ECO_32KHZ_XI" value="0x0000000008000000" />
+    <capability name="DSM_EXT_PIN_ONE" value="0x0000000010000000" />
+    <capability name="DSM_EXT_PIN_TWO" value="0x0000000020000000" />
+    <capability name="SAR_EXT_PIN" value="0x0000000040000000" />
+    <capability name="EXTSYNC" value="0x0000000100000000" />
+    <capability name="EXTREJECT" value="0x0000000200000000" />
+    <capability name="EXTCLK" value="0x0000000400000000" />
+    <capability name="EXT_VREF" value="0x0000000800000000" />
+    <capability name="PORT_INTERRUPT" value="0x0000001000000000" />
+    <capability name="HOTSWAP" value="0x0000002000000000" />
+    <capability name="LCD_COM" value="0x0000004000000000" />
+    <capability name="LCD_SEG" value="0x0000008000000000" />
+    <capability name="CSD_SHIELD_TANK" value="0x0000010000000000" />
+    <capability name="CSD_CMOD" value="0x0000020000000000" />
+  </capabilities>
+  <pins>
+    <pin number="2" name="VCCD">
+      <pad name="VCCD" number="1" type="PWR" ioSupplyPin="VDDD" powerPadNames="VCCD" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="3" name="P12[3]">
+      <pad name="P12[3]" number="141" type="GPIO" portId="12" pinId="3" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="13" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="88" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="88" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="26" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="26" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="7" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_s" resource="spi_select_0" />
+      </pad>
+    </pin>
+    <pin number="4" name="P12[0]">
+      <pad name="P12[0]" number="138" type="GPIO" portId="12" pinId="0" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="12" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="85" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="85" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="23" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="23" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="4" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="mosi_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="24" />
+      </pad>
+    </pin>
+    <pin number="5" name="P11[7]">
+      <pad name="P11[7]" number="133" type="GPIO" portId="11" pinId="7" ioSupplyPin="VDDIO_0" capabilities="0x0000000000000017">
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_clk" />
+      </pad>
+    </pin>
+    <pin number="6" name="P11[5]">
+      <pad name="P11[5]" number="129" type="GPIO" portId="11" pinId="5" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="11" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="83" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="83" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="21" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="21" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="2" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" alternative="1" resource="spi_select_2" />
+      </pad>
+    </pin>
+    <pin number="7" name="P10[6]">
+      <pad name="P10[6]" number="122" type="GPIO" portId="10" pinId="6" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line" alternative="6" />
+        <ffbterm ffbtype="TCPWM" ffbid="10" term="line" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="76" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="76" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="14" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="14" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_select" wire="3" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="0" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="1" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="2" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="3" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="6" />
+      </pad>
+    </pin>
+    <pin number="8" name="P10[1]">
+      <pad name="P10[1]" number="117" type="GPIO" portId="10" pinId="1" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="30" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="71" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="71" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="9" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="9" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="uart_tx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="i2c_sda" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_miso" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="miso_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="miso_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="21" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="2" alternative="1" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="1" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="adft_pin" wire="1" />
+        <ffbterm ffbtype="IOSS" ffbid="0" term="adft1_net" />
+      </pad>
+    </pin>
+    <pin number="9" name="VDDA">
+      <pad name="VDDA_CSD" number="101" type="PWR" ioSupplyPin="VDDIO_A" powerPadNames="VDDA_CSD" capabilities="0x0000000000000000" />
+      <pad name="VDDIO_A" number="114" type="PWR" ioSupplyPin="VDDIO_A" powerPadNames="VDDIO_A" capabilities="0x0000000000000000" />
+      <pad name="VDDA" number="115" type="PWR" ioSupplyPin="VDDIO_A" powerPadNames="VDDA" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="11" name="VDDD">
+      <pad name="VDDD" number="2" type="PWR" ioSupplyPin="VDDD" powerPadNames="VDDD" capabilities="0x0000000000000000" />
+      <pad name="VDDQ" number="3" type="PWR" ioSupplyPin="VDDD" powerPadNames="VDDQ" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="12" name="VSS">
+      <pad name="VSUB_VIC_0" number="4" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_VIC_0" capabilities="0x0000000000000000" />
+      <pad name="VSSQ" number="5" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSQ" capabilities="0x0000000000000000" />
+      <pad name="VSSD_0" number="6" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSD_0" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_B" number="7" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSIO_B" capabilities="0x0000000000000000" />
+      <pad name="VSUB_0" number="16" type="GND" ioSupplyPin="VBACKUP" powerPadNames="VSUB_0" capabilities="0x0000000000000000" />
+      <pad name="VSUB_AGR_0" number="24" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_AGR_0" capabilities="0x0000000000000000" />
+      <pad name="VSS_NS" number="30" type="GND" ioSupplyPin="VDD_NS" powerPadNames="VSS_NS" capabilities="0x0000000000000000" />
+      <pad name="VSSD_1" number="31" type="GND" ioSupplyPin="VDDUSB" powerPadNames="VSSD_1" capabilities="0x0000000000000000" />
+      <pad name="VDDUSBR" number="33" type="DEDICATED" ioSupplyPin="VDDUSB" capabilities="0x0000000000000000" />
+      <pad name="SIP_BOND_N" number="36" type="DEDICATED" ioSupplyPin="VDDIO_R" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="IOSS" ffbid="0" term="pupd_bond_option" />
+      </pad>
+      <pad name="VSSIO_R" number="37" type="GND" ioSupplyPin="VDDIO_R" powerPadNames="VSSIO_R" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_1" number="66" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_VIC_1" capabilities="0x0000000000000000" />
+      <pad name="VSSD_2" number="80" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSD_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_1" number="88" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSIO_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_1" number="98" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_2" number="99" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_2" capabilities="0x0000000000000000" />
+      <pad name="VSSA_CSD" number="100" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA_CSD" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_3" number="110" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_3" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_A" number="111" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSIO_A" capabilities="0x0000000000000000" />
+      <pad name="VSSA" number="112" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA" capabilities="0x0000000000000000" />
+      <pad name="VSSD_EFUSE" number="130" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSD_EFUSE" capabilities="0x0000000000000000" />
+      <pad name="VSUB_2" number="131" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSUB_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_0" number="136" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSIO_0" capabilities="0x0000000000000000" />
+      <pad name="VSSA_PILO" number="137" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSA_PILO" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="13" name="VDDIO0">
+      <pad name="VDDIO_0" number="134" type="PWR" ioSupplyPin="VDDIO_0" powerPadNames="VDDIO_0" capabilities="0x0000000000000000" />
+      <pad name="VDDIO_0_RCV" number="135" type="PWR" ioSupplyPin="VDDIO_0" powerPadNames="VDDIO_0_RCV" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="14" name="P12[1]">
+      <pad name="P12[1]" number="139" type="GPIO" portId="12" pinId="1" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="12" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="86" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="86" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="24" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="24" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="5" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="miso_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="25" />
+      </pad>
+    </pin>
+    <pin number="15" name="P11[6]">
+      <pad name="P11[6]" number="132" type="GPIO" portId="11" pinId="6" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="84" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="84" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="22" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="22" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="3" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" alternative="1" resource="spi_select_3" />
+      </pad>
+    </pin>
+    <pin number="16" name="P11[4]">
+      <pad name="P11[4]" number="128" type="GPIO" portId="11" pinId="4" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="11" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="82" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="82" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="20" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="20" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="1" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_output" wire="1" />
+      </pad>
+    </pin>
+    <pin number="17" name="P10[5]">
+      <pad name="P10[5]" number="121" type="GPIO" portId="10" pinId="5" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="8" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="75" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="75" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="13" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="13" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_select" wire="2" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="0" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="1" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="2" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="3" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="PDM" ffbid="0" term="pdm_data" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="5" />
+      </pad>
+    </pin>
+    <pin number="18" name="P10[0]">
+      <pad name="P10[0]" number="116" type="GPIO" portId="10" pinId="0" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="30" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="70" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="70" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="8" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="8" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="uart_rx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="i2c_scl" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_mosi" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="mosi_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="mosi_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="20" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="3" alternative="1" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="0" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="adft_pin" wire="0" />
+        <ffbterm ffbtype="IOSS" ffbid="0" term="adft0_net" />
+      </pad>
+    </pin>
+    <pin number="19" name="VSS">
+      <pad name="VSUB_VIC_0" number="4" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_VIC_0" capabilities="0x0000000000000000" />
+      <pad name="VSSQ" number="5" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSQ" capabilities="0x0000000000000000" />
+      <pad name="VSSD_0" number="6" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSD_0" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_B" number="7" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSIO_B" capabilities="0x0000000000000000" />
+      <pad name="VSUB_0" number="16" type="GND" ioSupplyPin="VBACKUP" powerPadNames="VSUB_0" capabilities="0x0000000000000000" />
+      <pad name="VSUB_AGR_0" number="24" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_AGR_0" capabilities="0x0000000000000000" />
+      <pad name="VSS_NS" number="30" type="GND" ioSupplyPin="VDD_NS" powerPadNames="VSS_NS" capabilities="0x0000000000000000" />
+      <pad name="VSSD_1" number="31" type="GND" ioSupplyPin="VDDUSB" powerPadNames="VSSD_1" capabilities="0x0000000000000000" />
+      <pad name="VDDUSBR" number="33" type="DEDICATED" ioSupplyPin="VDDUSB" capabilities="0x0000000000000000" />
+      <pad name="SIP_BOND_N" number="36" type="DEDICATED" ioSupplyPin="VDDIO_R" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="IOSS" ffbid="0" term="pupd_bond_option" />
+      </pad>
+      <pad name="VSSIO_R" number="37" type="GND" ioSupplyPin="VDDIO_R" powerPadNames="VSSIO_R" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_1" number="66" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_VIC_1" capabilities="0x0000000000000000" />
+      <pad name="VSSD_2" number="80" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSD_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_1" number="88" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSIO_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_1" number="98" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_2" number="99" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_2" capabilities="0x0000000000000000" />
+      <pad name="VSSA_CSD" number="100" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA_CSD" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_3" number="110" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_3" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_A" number="111" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSIO_A" capabilities="0x0000000000000000" />
+      <pad name="VSSA" number="112" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA" capabilities="0x0000000000000000" />
+      <pad name="VSSD_EFUSE" number="130" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSD_EFUSE" capabilities="0x0000000000000000" />
+      <pad name="VSUB_2" number="131" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSUB_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_0" number="136" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSIO_0" capabilities="0x0000000000000000" />
+      <pad name="VSSA_PILO" number="137" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSA_PILO" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="20" name="VREF">
+      <pad name="VREF" number="113" type="DEDICATED" ioSupplyPin="VDDIO_A" capabilities="0x0000000040000000">
+        <ffbterm ffbtype="SARADC" ffbid="0" term="ext_vref" />
+      </pad>
+    </pin>
+    <pin number="21" name="VBACKUP">
+      <pad name="VBACKUP" number="8" type="PWR" ioSupplyPin="VBACKUP" powerPadNames="VBACKUP" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="22" name="P0[0]">
+      <pad name="P0[0]" number="9" type="GPIO" portId="0" pinId="0" ioSupplyPin="VBACKUP" capabilities="0x000000C408000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="8" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="0" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="0" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="ext_clk" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="0" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="wco_in" />
+      </pad>
+    </pin>
+    <pin number="23" name="P13[7]">
+      <pad name="P13[7]" number="153" type="GPIO" portId="13" pinId="7" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line_compl" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="19" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="100" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="100" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="38" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="38" alternative="1" />
+      </pad>
+    </pin>
+    <pin number="24" name="P12[2]">
+      <pad name="P12[2]" number="140" type="GPIO" portId="12" pinId="2" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="13" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="87" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="87" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="25" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="25" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="6" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="sclk_s" />
+      </pad>
+    </pin>
+    <pin number="25" name="P12[4]">
+      <pad name="P12[4]" number="142" type="GPIO" portId="12" pinId="4" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="14" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="89" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="89" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="27" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="27" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_select" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="PDM" ffbid="0" term="pdm_clk" alternative="1" />
+      </pad>
+    </pin>
+    <pin number="26" name="P11[3]">
+      <pad name="P11[3]" number="127" type="GPIO" portId="11" pinId="3" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="10" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="81" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="81" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="19" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="19" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_data" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_cts" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="0" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_s" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_output" wire="0" />
+      </pad>
+    </pin>
+    <pin number="27" name="P9[7]">
+      <pad name="P9[7]" number="109" type="GPIO" portId="9" pinId="7" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000217">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line_compl" alternative="6" />
+        <ffbterm ffbtype="TCPWM" ffbid="9" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="69" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="69" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="7" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="7" alternative="1" />
+        <ffbterm ffbtype="OA" ffbid="1" term="vplus" />
+        <ffbterm ffbtype="AREF" ffbid="0" term="ext_vref" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="7" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data7_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data7_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio7_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio7_o" />
+      </pad>
+    </pin>
+    <pin number="28" name="P9[6]">
+      <pad name="P9[6]" number="108" type="GPIO" portId="9" pinId="6" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000217">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line" alternative="6" />
+        <ffbterm ffbtype="TCPWM" ffbid="9" term="line" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="68" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="68" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="6" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="6" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_select" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="0" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="2" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="3" resource="spi_select_3" />
+        <ffbterm ffbtype="OA" ffbid="0" term="vplus" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="6" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data6_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data6_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio6_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio6_o" />
+      </pad>
+    </pin>
+    <pin number="29" name="P9[5]">
+      <pad name="P9[5]" number="107" type="GPIO" portId="9" pinId="5" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000217">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line_compl" alternative="5" />
+        <ffbterm ffbtype="TCPWM" ffbid="8" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="67" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="67" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="5" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="5" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="3" resource="spi_select_2" />
+        <ffbterm ffbtype="OA" ffbid="1" term="vplus" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="5" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data5_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data5_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio5_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio5_o" />
+      </pad>
+    </pin>
+    <pin number="30" name="P9[4]">
+      <pad name="P9[4]" number="106" type="GPIO" portId="9" pinId="4" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000817">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line" alternative="5" />
+        <ffbterm ffbtype="TCPWM" ffbid="8" term="line" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="66" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="66" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="4" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="4" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="OA" ffbid="1" term="vminus" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="4" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data4_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data4_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio4_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio4_o" />
+      </pad>
+    </pin>
+    <pin number="31" name="VSS">
+      <pad name="VSUB_VIC_0" number="4" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_VIC_0" capabilities="0x0000000000000000" />
+      <pad name="VSSQ" number="5" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSQ" capabilities="0x0000000000000000" />
+      <pad name="VSSD_0" number="6" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSD_0" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_B" number="7" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSIO_B" capabilities="0x0000000000000000" />
+      <pad name="VSUB_0" number="16" type="GND" ioSupplyPin="VBACKUP" powerPadNames="VSUB_0" capabilities="0x0000000000000000" />
+      <pad name="VSUB_AGR_0" number="24" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_AGR_0" capabilities="0x0000000000000000" />
+      <pad name="VSS_NS" number="30" type="GND" ioSupplyPin="VDD_NS" powerPadNames="VSS_NS" capabilities="0x0000000000000000" />
+      <pad name="VSSD_1" number="31" type="GND" ioSupplyPin="VDDUSB" powerPadNames="VSSD_1" capabilities="0x0000000000000000" />
+      <pad name="VDDUSBR" number="33" type="DEDICATED" ioSupplyPin="VDDUSB" capabilities="0x0000000000000000" />
+      <pad name="SIP_BOND_N" number="36" type="DEDICATED" ioSupplyPin="VDDIO_R" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="IOSS" ffbid="0" term="pupd_bond_option" />
+      </pad>
+      <pad name="VSSIO_R" number="37" type="GND" ioSupplyPin="VDDIO_R" powerPadNames="VSSIO_R" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_1" number="66" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_VIC_1" capabilities="0x0000000000000000" />
+      <pad name="VSSD_2" number="80" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSD_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_1" number="88" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSIO_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_1" number="98" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_2" number="99" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_2" capabilities="0x0000000000000000" />
+      <pad name="VSSA_CSD" number="100" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA_CSD" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_3" number="110" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_3" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_A" number="111" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSIO_A" capabilities="0x0000000000000000" />
+      <pad name="VSSA" number="112" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA" capabilities="0x0000000000000000" />
+      <pad name="VSSD_EFUSE" number="130" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSD_EFUSE" capabilities="0x0000000000000000" />
+      <pad name="VSUB_2" number="131" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSUB_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_0" number="136" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSIO_0" capabilities="0x0000000000000000" />
+      <pad name="VSSA_PILO" number="137" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSA_PILO" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="32" name="P0[5]">
+      <pad name="P0[5]" number="14" type="GPIO" portId="0" pinId="5" ioSupplyPin="VBACKUP" capabilities="0x000000C400000017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="10" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="5" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="5" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="5" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="5" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="ext_clk" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_s" resource="spi_select_0" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_output" wire="1" alternative="2" />
+      </pad>
+      <pad name="P0_5_HV" number="15" type="GPIO_HV" ioSupplyPin="VBACKUP" capabilities="0x0000000000000013">
+        <ffbterm ffbtype="SRSS" ffbid="0" term="pmic_wakeup_out" />
+      </pad>
+    </pin>
+    <pin number="33" name="P0[1]">
+      <pad name="P0[1]" number="10" type="GPIO" portId="0" pinId="1" ioSupplyPin="VBACKUP" capabilities="0x000000C004008017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="8" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="select_m" wire="3" resource="spi_select_2" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="swj_trstn" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="wco_out" />
+      </pad>
+    </pin>
+    <pin number="34" name="P12[5]">
+      <pad name="P12[5]" number="143" type="GPIO" portId="12" pinId="5" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="14" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="90" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="90" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="28" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="28" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="3" resource="spi_select_2" />
+        <ffbterm ffbtype="PDM" ffbid="0" term="pdm_data" alternative="1" />
+      </pad>
+    </pin>
+    <pin number="35" name="P11[2]">
+      <pad name="P11[2]" number="126" type="GPIO" portId="11" pinId="2" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="10" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="80" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="80" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="18" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="18" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_rts" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_clk" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="sclk_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="sclk_s" alternative="1" />
+      </pad>
+    </pin>
+    <pin number="36" name="P10[4]">
+      <pad name="P10[4]" number="120" type="GPIO" portId="10" pinId="4" ioSupplyPin="VDDIO_A" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="8" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="74" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="74" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="12" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="12" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_select" wire="1" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="0" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="1" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="2" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="3" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="PDM" ffbid="0" term="pdm_clk" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="4" />
+      </pad>
+    </pin>
+    <pin number="37" name="P9[3]">
+      <pad name="P9[3]" number="105" type="GPIO" portId="9" pinId="3" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020417">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="29" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="65" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="65" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="3" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="3" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="select_s" resource="spi_select_0" />
+        <ffbterm ffbtype="OA" ffbid="1" term="ctb_dsi_comp" alternative="1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="0" />
+        <ffbterm ffbtype="OA" ffbid="1" term="out_10x" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="3" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data3_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data3_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio3_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio3_o" />
+      </pad>
+    </pin>
+    <pin number="38" name="P9[2]">
+      <pad name="P9[2]" number="104" type="GPIO" portId="9" pinId="2" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020417">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="29" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="64" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="64" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="2" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="2" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="sclk_s" />
+        <ffbterm ffbtype="OA" ffbid="0" term="ctb_dsi_comp" alternative="1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="1" />
+        <ffbterm ffbtype="OA" ffbid="0" term="out_10x" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="2" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data2_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data2_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio2_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio2_o" />
+      </pad>
+    </pin>
+    <pin number="39" name="P9[1]">
+      <pad name="P9[1]" number="103" type="GPIO" portId="9" pinId="1" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020817">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="28" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="63" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="63" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="1" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="1" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="miso_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="19" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="2" />
+        <ffbterm ffbtype="OA" ffbid="0" term="vminus" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="1" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data1_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data1_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio1_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio1_o" />
+      </pad>
+    </pin>
+    <pin number="40" name="P9[0]">
+      <pad name="P9[0]" number="102" type="GPIO" portId="9" pinId="0" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020217">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="28" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="62" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="62" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="0" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="0" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="2" term="mosi_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="18" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="3" />
+        <ffbterm ffbtype="OA" ffbid="0" term="vplus" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="io" wire="0" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data0_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="data0_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio0_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="9" term="gpio0_o" />
+      </pad>
+    </pin>
+    <pin number="42" name="XRES">
+      <pad name="XRES" number="17" type="DEDICATED" ioSupplyPin="VDDD" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="SRSS" ffbid="0" term="xres_n" />
+      </pad>
+    </pin>
+    <pin number="43" name="P0[3]">
+      <pad name="P0[3]" number="12" type="GPIO" portId="0" pinId="3" ioSupplyPin="VBACKUP" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="9" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="3" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="3" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="3" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="miso_s" />
+      </pad>
+    </pin>
+    <pin number="44" name="P0[2]">
+      <pad name="P0[2]" number="11" type="GPIO" portId="0" pinId="2" ioSupplyPin="VBACKUP" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="9" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="2" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="2" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="mosi_s" />
+      </pad>
+    </pin>
+    <pin number="45" name="P11[1]">
+      <pad name="P11[1]" number="125" type="GPIO" portId="11" pinId="1" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="9" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="79" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="79" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="17" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="17" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_tx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="i2c_sda" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_miso" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="miso_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="miso_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="23" />
+      </pad>
+    </pin>
+    <pin number="46" name="P10[3]">
+      <pad name="P10[3]" number="119" type="GPIO" portId="10" pinId="3" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="31" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="73" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="73" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="11" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="11" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="uart_cts" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_select" wire="0" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="0" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="1" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="2" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_m" wire="3" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="select_s" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="0" alternative="1" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="3" />
+      </pad>
+    </pin>
+    <pin number="47" name="P8[7]">
+      <pad name="P8[7]" number="97" type="GPIO" portId="8" pinId="7" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="27" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="61" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="61" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="61" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="61" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="3" resource="spi_select_2" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="7" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data7_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data7_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio7_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio7_o" />
+      </pad>
+    </pin>
+    <pin number="48" name="P8[6]">
+      <pad name="P8[6]" number="96" type="GPIO" portId="8" pinId="6" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="27" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="60" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="60" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="60" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="60" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" resource="spi_select_3" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="6" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data6_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data6_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio6_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio6_o" />
+      </pad>
+    </pin>
+    <pin number="49" name="P8[5]">
+      <pad name="P8[5]" number="95" type="GPIO" portId="8" pinId="5" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="26" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="59" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="59" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="59" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="59" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" resource="spi_select_2" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="5" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data5_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data5_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio5_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio5_o" />
+      </pad>
+    </pin>
+    <pin number="51" name="VIND1">
+      <pad name="VIND1" number="26" type="DEDICATED" ioSupplyPin="VDD_NS" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="SRSS" ffbid="0" term="lxbuck1" />
+      </pad>
+    </pin>
+    <pin number="52" name="P1[1]">
+      <pad name="P1[1]" number="19" type="OVTIO" portId="1" pinId="1" ioSupplyPin="VDDD" capabilities="0x000000E000000057">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="11" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="7" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="7" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="7" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="7" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="miso_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="3" />
+      </pad>
+    </pin>
+    <pin number="53" name="P0[4]">
+      <pad name="P0[4]" number="13" type="GPIO" portId="0" pinId="4" ioSupplyPin="VBACKUP" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="10" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="4" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="4" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="4" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="4" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="0" term="sclk_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_output" wire="0" alternative="2" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="pmic_wakeup_in" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="hibernate_wakeup" wire="1" />
+      </pad>
+    </pin>
+    <pin number="54" name="P13[6]">
+      <pad name="P13[6]" number="152" type="GPIO" portId="13" pinId="6" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="19" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="99" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="99" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="37" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="37" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_select" wire="3" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="0" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="1" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="2" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="3" alternative="1" resource="spi_select_3" />
+      </pad>
+    </pin>
+    <pin number="55" name="P11[0]">
+      <pad name="P11[0]" number="124" type="GPIO" portId="11" pinId="0" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="9" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="78" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="78" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="16" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="16" alternative="1" />
+        <ffbterm ffbtype="SMIF" ffbid="0" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_rx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="i2c_scl" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_mosi" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="mosi_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="mosi_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="22" />
+      </pad>
+    </pin>
+    <pin number="56" name="P10[2]">
+      <pad name="P10[2]" number="118" type="GPIO" portId="10" pinId="2" ioSupplyPin="VDDIO_A" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="31" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="72" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="72" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="10" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="10" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="uart_rts" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="spi_clk" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="sclk_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="1" term="sclk_s" alternative="1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="1" alternative="1" />
+        <ffbterm ffbtype="SARMUX" ffbid="0" term="pads" wire="2" />
+      </pad>
+    </pin>
+    <pin number="57" name="P8[3]">
+      <pad name="P8[3]" number="93" type="GPIO" portId="8" pinId="3" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="25" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="57" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="57" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="57" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="57" />
+        <ffbterm ffbtype="LPCOMP" ffbid="1" term="dsi_comp" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_s" resource="spi_select_0" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="3" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data3_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data3_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio3_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio3_o" />
+      </pad>
+    </pin>
+    <pin number="58" name="P8[2]">
+      <pad name="P8[2]" number="92" type="GPIO" portId="8" pinId="2" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="25" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="56" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="56" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="56" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="56" />
+        <ffbterm ffbtype="LPCOMP" ffbid="0" term="dsi_comp" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="sclk_s" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="2" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data2_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data2_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio2_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio2_o" />
+      </pad>
+    </pin>
+    <pin number="59" name="P8[1]">
+      <pad name="P8[1]" number="91" type="GPIO" portId="8" pinId="1" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line_compl" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="24" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="55" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="55" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="55" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="55" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="miso_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="17" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="1" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data1_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data1_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio1_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio1_o" />
+      </pad>
+    </pin>
+    <pin number="60" name="P8[0]">
+      <pad name="P8[0]" number="90" type="GPIO" portId="8" pinId="0" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="24" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="54" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="54" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="54" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="54" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="mosi_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="16" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="0" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data0_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data0_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio0_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio0_o" />
+      </pad>
+    </pin>
+    <pin number="61" name="VIND2">
+      <pad name="VIND2" number="27" type="DEDICATED" ioSupplyPin="VDD_NS" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="SRSS" ffbid="0" term="lxbuck2" />
+      </pad>
+    </pin>
+    <pin number="62" name="VBUCK1">
+      <pad name="VCCBUCK1" number="28" type="PWR" ioSupplyPin="VDD_NS" powerPadNames="VCCBUCK1" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="63" name="P1[0]">
+      <pad name="P1[0]" number="18" type="OVTIO" portId="1" pinId="0" ioSupplyPin="VDDD" capabilities="0x000000E000000057">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="11" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="6" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="6" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="6" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="6" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="mosi_s" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="2" />
+      </pad>
+    </pin>
+    <pin number="64" name="P13[1]">
+      <pad name="P13[1]" number="147" type="GPIO" portId="13" pinId="1" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line_compl" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="16" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="94" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="94" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="32" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="32" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_tx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="i2c_sda" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_miso" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="miso_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="miso_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="27" />
+      </pad>
+    </pin>
+    <pin number="65" name="P12[6]">
+      <pad name="P12[6]" number="144" type="GPIO" portId="12" pinId="6" ioSupplyPin="VDDIO_0" capabilities="0x000000C002000017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="15" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="91" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="91" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="29" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="29" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_select" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="0" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="2" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="3" resource="spi_select_3" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="eco_in" />
+      </pad>
+    </pin>
+    <pin number="66" name="P8[4]">
+      <pad name="P8[4]" number="94" type="GPIO" portId="8" pinId="4" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line" alternative="2" />
+        <ffbterm ffbtype="TCPWM" ffbid="26" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="58" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="58" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="58" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="58" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="io" wire="4" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data4_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="data4_o" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio4_i" />
+        <ffbterm ffbtype="SmartIO" ffbid="8" term="gpio4_o" />
+      </pad>
+    </pin>
+    <pin number="67" name="P7[7]">
+      <pad name="P7[7]" number="87" type="GPIO" portId="7" pinId="7" ioSupplyPin="VDDIO_1" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="23" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="53" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="53" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="53" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="53" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="0" alternative="2" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="shield_pad" />
+      </pad>
+    </pin>
+    <pin number="68" name="P7[6]">
+      <pad name="P7[6]" number="86" type="GPIO" portId="7" pinId="6" ioSupplyPin="VDDIO_1" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="23" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="52" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="52" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="52" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="52" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="3" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" alternative="1" resource="spi_select_3" />
+        <ffbterm ffbtype="BLE" ffbid="0" term="ext_pa_lna_chip_en_out" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="1" alternative="2" />
+      </pad>
+    </pin>
+    <pin number="69" name="P7[5]">
+      <pad name="P7[5]" number="85" type="GPIO" portId="7" pinId="5" ioSupplyPin="VDDIO_1" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="22" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="51" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="51" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="51" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="51" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="2" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" alternative="1" resource="spi_select_2" />
+        <ffbterm ffbtype="BLE" ffbid="0" term="ext_pa_tx_ctl_out" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="2" alternative="2" />
+      </pad>
+    </pin>
+    <pin number="70" name="VDDIO1">
+      <pad name="VDDIO_1" number="89" type="PWR" ioSupplyPin="VDDIO_1" powerPadNames="VDDIO_1" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="71" name="VRF">
+      <pad name="VCCBUCK2" number="29" type="PWR" ioSupplyPin="VDD_NS" powerPadNames="VCCBUCK2" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="72" name="VSS">
+      <pad name="VSUB_VIC_0" number="4" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_VIC_0" capabilities="0x0000000000000000" />
+      <pad name="VSSQ" number="5" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSQ" capabilities="0x0000000000000000" />
+      <pad name="VSSD_0" number="6" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSD_0" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_B" number="7" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSIO_B" capabilities="0x0000000000000000" />
+      <pad name="VSUB_0" number="16" type="GND" ioSupplyPin="VBACKUP" powerPadNames="VSUB_0" capabilities="0x0000000000000000" />
+      <pad name="VSUB_AGR_0" number="24" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_AGR_0" capabilities="0x0000000000000000" />
+      <pad name="VSS_NS" number="30" type="GND" ioSupplyPin="VDD_NS" powerPadNames="VSS_NS" capabilities="0x0000000000000000" />
+      <pad name="VSSD_1" number="31" type="GND" ioSupplyPin="VDDUSB" powerPadNames="VSSD_1" capabilities="0x0000000000000000" />
+      <pad name="VDDUSBR" number="33" type="DEDICATED" ioSupplyPin="VDDUSB" capabilities="0x0000000000000000" />
+      <pad name="SIP_BOND_N" number="36" type="DEDICATED" ioSupplyPin="VDDIO_R" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="IOSS" ffbid="0" term="pupd_bond_option" />
+      </pad>
+      <pad name="VSSIO_R" number="37" type="GND" ioSupplyPin="VDDIO_R" powerPadNames="VSSIO_R" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_1" number="66" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_VIC_1" capabilities="0x0000000000000000" />
+      <pad name="VSSD_2" number="80" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSD_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_1" number="88" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSIO_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_1" number="98" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_2" number="99" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_2" capabilities="0x0000000000000000" />
+      <pad name="VSSA_CSD" number="100" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA_CSD" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_3" number="110" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_3" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_A" number="111" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSIO_A" capabilities="0x0000000000000000" />
+      <pad name="VSSA" number="112" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA" capabilities="0x0000000000000000" />
+      <pad name="VSSD_EFUSE" number="130" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSD_EFUSE" capabilities="0x0000000000000000" />
+      <pad name="VSUB_2" number="131" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSUB_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_0" number="136" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSIO_0" capabilities="0x0000000000000000" />
+      <pad name="VSSA_PILO" number="137" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSA_PILO" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="73" name="VDD_NS">
+      <pad name="VDD_NS" number="25" type="PWR" ioSupplyPin="VDDD" powerPadNames="VDD_NS" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="74" name="P13[0]">
+      <pad name="P13[0]" number="146" type="GPIO" portId="13" pinId="0" ioSupplyPin="VDDIO_0" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="16" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="93" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="93" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="31" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="31" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_rx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="i2c_scl" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_mosi" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="mosi_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="mosi_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="26" />
+      </pad>
+    </pin>
+    <pin number="75" name="P12[7]">
+      <pad name="P12[7]" number="145" type="GPIO" portId="12" pinId="7" ioSupplyPin="VDDIO_0" capabilities="0x000000C001000017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line_compl" alternative="3" />
+        <ffbterm ffbtype="TCPWM" ffbid="15" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="92" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="92" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="30" alternative="1" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="30" alternative="1" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="eco_out" />
+      </pad>
+    </pin>
+    <pin number="76" name="P7[4]">
+      <pad name="P7[4]" number="84" type="GPIO" portId="7" pinId="4" ioSupplyPin="VDDIO_1" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="22" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="50" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="50" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="50" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="50" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="1" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" alternative="1" resource="spi_select_1" />
+        <ffbterm ffbtype="BLE" ffbid="0" term="ext_lna_rx_ctl_out" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_data" wire="3" alternative="2" />
+      </pad>
+    </pin>
+    <pin number="77" name="P7[3]">
+      <pad name="P7[3]" number="83" type="GPIO" portId="7" pinId="3" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="21" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="49" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="49" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="49" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="49" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_cts" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_select" wire="0" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="0" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="1" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="2" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_m" wire="3" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="select_s" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="vref_ext" />
+      </pad>
+    </pin>
+    <pin number="78" name="P7[2]">
+      <pad name="P7[2]" number="82" type="GPIO" portId="7" pinId="2" ioSupplyPin="VDDIO_1" capabilities="0x000001C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="21" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="48" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="48" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="48" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="48" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_rts" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_clk" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="sclk_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="sclk_s" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csh" />
+      </pad>
+    </pin>
+    <pin number="79" name="VSS">
+      <pad name="VSUB_VIC_0" number="4" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_VIC_0" capabilities="0x0000000000000000" />
+      <pad name="VSSQ" number="5" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSQ" capabilities="0x0000000000000000" />
+      <pad name="VSSD_0" number="6" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSD_0" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_B" number="7" type="GND" ioSupplyPin="VDDD" powerPadNames="VSSIO_B" capabilities="0x0000000000000000" />
+      <pad name="VSUB_0" number="16" type="GND" ioSupplyPin="VBACKUP" powerPadNames="VSUB_0" capabilities="0x0000000000000000" />
+      <pad name="VSUB_AGR_0" number="24" type="GND" ioSupplyPin="VDDD" powerPadNames="VSUB_AGR_0" capabilities="0x0000000000000000" />
+      <pad name="VSS_NS" number="30" type="GND" ioSupplyPin="VDD_NS" powerPadNames="VSS_NS" capabilities="0x0000000000000000" />
+      <pad name="VSSD_1" number="31" type="GND" ioSupplyPin="VDDUSB" powerPadNames="VSSD_1" capabilities="0x0000000000000000" />
+      <pad name="VDDUSBR" number="33" type="DEDICATED" ioSupplyPin="VDDUSB" capabilities="0x0000000000000000" />
+      <pad name="SIP_BOND_N" number="36" type="DEDICATED" ioSupplyPin="VDDIO_R" capabilities="0x0000000000000000">
+        <ffbterm ffbtype="IOSS" ffbid="0" term="pupd_bond_option" />
+      </pad>
+      <pad name="VSSIO_R" number="37" type="GND" ioSupplyPin="VDDIO_R" powerPadNames="VSSIO_R" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_1" number="66" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_VIC_1" capabilities="0x0000000000000000" />
+      <pad name="VSSD_2" number="80" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSD_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_1" number="88" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSSIO_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_1" number="98" type="GND" ioSupplyPin="VDDIO_1" powerPadNames="VSUB_1" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_2" number="99" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_2" capabilities="0x0000000000000000" />
+      <pad name="VSSA_CSD" number="100" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA_CSD" capabilities="0x0000000000000000" />
+      <pad name="VSUB_VIC_3" number="110" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSUB_VIC_3" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_A" number="111" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSIO_A" capabilities="0x0000000000000000" />
+      <pad name="VSSA" number="112" type="GND" ioSupplyPin="VDDIO_A" powerPadNames="VSSA" capabilities="0x0000000000000000" />
+      <pad name="VSSD_EFUSE" number="130" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSD_EFUSE" capabilities="0x0000000000000000" />
+      <pad name="VSUB_2" number="131" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSUB_2" capabilities="0x0000000000000000" />
+      <pad name="VSSIO_0" number="136" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSIO_0" capabilities="0x0000000000000000" />
+      <pad name="VSSA_PILO" number="137" type="GND" ioSupplyPin="VDDIO_0" powerPadNames="VSSA_PILO" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="80" name="P7[1]">
+      <pad name="P7[1]" number="81" type="GPIO" portId="7" pinId="1" ioSupplyPin="VDDIO_1" capabilities="0x000002C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="20" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="47" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="47" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="47" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="47" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_tx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="i2c_sda" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_miso" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="miso_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="miso_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="15" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="cmod" />
+      </pad>
+    </pin>
+    <pin number="81" name="VSSR">
+      <pad name="PAD_GNDISO1" number="366" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="367" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="368" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="369" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="370" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="371" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="372" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="373" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="374" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="375" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="376" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="377" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="378" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="379" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="380" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="381" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="382" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="383" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="384" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="385" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="386" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="387" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="388" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="389" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="390" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="391" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="82" name="P1[5]">
+      <pad name="P1[5]" number="23" type="OVTIO" portId="1" pinId="5" ioSupplyPin="VDDD" capabilities="0x000000E000000057">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line_compl" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="22" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="11" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="11" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="11" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="11" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="3" resource="spi_select_2" />
+      </pad>
+    </pin>
+    <pin number="83" name="P1[4]">
+      <pad name="P1[4]" number="22" type="OVTIO" portId="1" pinId="4" ioSupplyPin="VDDD" capabilities="0x000000E000000057">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="21" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="10" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="10" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="10" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="10" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="hibernate_wakeup" wire="0" />
+      </pad>
+    </pin>
+    <pin number="84" name="P1[3]">
+      <pad name="P1[3]" number="21" type="OVTIO" portId="1" pinId="3" ioSupplyPin="VDDD" capabilities="0x000000E000000057">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line_compl" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="20" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="9" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="9" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="9" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="9" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="select_s" resource="spi_select_0" />
+      </pad>
+    </pin>
+    <pin number="85" name="P1[2]">
+      <pad name="P1[2]" number="20" type="OVTIO" portId="1" pinId="2" ioSupplyPin="VDDD" capabilities="0x000000E000000057">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line" alternative="4" />
+        <ffbterm ffbtype="TCPWM" ffbid="20" term="line" alternative="1" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="8" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="8" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="8" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="8" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="7" term="sclk_s" />
+      </pad>
+    </pin>
+    <pin number="86" name="P5[2]">
+      <pad name="P5[2]" number="60" type="GPIO" portId="5" pinId="2" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="13" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="32" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="32" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="32" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="32" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="sclk_s" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="tx_ws" />
+      </pad>
+    </pin>
+    <pin number="87" name="P5[4]">
+      <pad name="P5[4]" number="62" type="GPIO" portId="5" pinId="4" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="14" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="34" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="34" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="34" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="34" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" resource="spi_select_1" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" resource="spi_select_1" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="rx_sck" />
+      </pad>
+    </pin>
+    <pin number="88" name="P6[1]">
+      <pad name="P6[1]" number="72" type="GPIO" portId="6" pinId="1" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="16" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="39" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="39" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="39" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="39" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="miso_s" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="fault_out" wire="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="miso_s" />
+      </pad>
+    </pin>
+    <pin number="89" name="P6[4]">
+      <pad name="P6[4]" number="75" type="GPIO" portId="6" pinId="4" ioSupplyPin="VDDIO_1" capabilities="0x000000C000006017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="18" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="42" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="42" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="42" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="42" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="i2c_scl" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_rx" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="i2c_scl" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_mosi" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="mosi_m" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="mosi_s" alternative="2" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="12" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_output" wire="0" alternative="1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="swj_swo_tdo" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_mosi" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="mosi_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="mosi_s" alternative="1" />
+      </pad>
+    </pin>
+    <pin number="90" name="P7[0]">
+      <pad name="P7[0]" number="79" type="GPIO" portId="7" pinId="0" ioSupplyPin="VDDIO_1" capabilities="0x000000C000020017">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="20" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="46" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="46" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="46" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="46" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="uart_rx" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="i2c_scl" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="spi_mosi" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="mosi_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="4" term="mosi_s" alternative="1" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="14" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="trace_clock" />
+      </pad>
+    </pin>
+    <pin number="91" name="ANT">
+      <pad name="PAD_RFIO_0" number="654" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_RFIO_1" number="655" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="92" name="VSSR">
+      <pad name="PAD_GNDISO1" number="392" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="393" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="394" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="395" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="396" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="397" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="398" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="399" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="400" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="401" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="402" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="403" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="404" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="405" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="406" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="407" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="408" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="409" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="410" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="411" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="412" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="413" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="414" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="415" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="416" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="417" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="93" name="VSSR">
+      <pad name="PAD_GNDISO1" number="418" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="419" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="420" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="421" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="422" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="423" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="424" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="425" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="426" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="427" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="428" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="429" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="430" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="431" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="432" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="433" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="434" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="435" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="436" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="437" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="438" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="439" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="440" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="441" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="442" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="443" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="94" name="VSSR">
+      <pad name="PAD_GNDISO1" number="444" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="445" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="446" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="447" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="448" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="449" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="450" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="451" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="452" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="453" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="454" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="455" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="456" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="457" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="458" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="459" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="460" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="461" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="462" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="463" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="464" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="465" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="466" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="467" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="468" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="469" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="95" name="VSSR">
+      <pad name="PAD_GNDISO1" number="470" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="471" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="472" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="473" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="474" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="475" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="476" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="477" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="478" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="479" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="480" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="481" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="482" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="483" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="484" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="485" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="486" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="487" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="488" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="489" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="490" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="491" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="492" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="493" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="494" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="495" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="96" name="P5[1]">
+      <pad name="P5[1]" number="59" type="GPIO" portId="5" pinId="1" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="12" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="31" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="31" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="31" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="31" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_tx" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="i2c_sda" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_miso" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="miso_m" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="miso_s" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="tx_sck" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="11" />
+      </pad>
+    </pin>
+    <pin number="97" name="P5[3]">
+      <pad name="P5[3]" number="61" type="GPIO" portId="5" pinId="3" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="5" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="13" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="33" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="33" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="33" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="33" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_s" resource="spi_select_0" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="tx_sdo" />
+      </pad>
+    </pin>
+    <pin number="98" name="P6[0]">
+      <pad name="P6[0]" number="71" type="GPIO" portId="6" pinId="0" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="0" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="16" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="38" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="38" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="38" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="38" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="mosi_s" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="fault_out" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="mosi_s" />
+      </pad>
+    </pin>
+    <pin number="99" name="P6[3]">
+      <pad name="P6[3]" number="74" type="GPIO" portId="6" pinId="3" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="17" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="41" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="41" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="41" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="41" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="uart_cts" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="select_s" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_select" wire="0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="0" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="3" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_s" resource="spi_select_0" />
+        <ffbterm ffbtype="LPCOMP" ffbid="1" term="inn" />
+      </pad>
+    </pin>
+    <pin number="100" name="P6[7]">
+      <pad name="P6[7]" number="78" type="GPIO" portId="6" pinId="7" ioSupplyPin="VDDIO_1" capabilities="0x000000C000005017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="19" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="45" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="45" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="45" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="45" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_cts" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_select" wire="0" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="0" alternative="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="1" alternative="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="2" alternative="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_m" wire="3" alternative="2" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="select_s" alternative="2" resource="spi_select_0" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="swj_swclk_tclk" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_select" wire="0" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="0" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="1" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="2" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_m" wire="3" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="select_s" alternative="1" resource="spi_select_0" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="swd_clk" />
+      </pad>
+    </pin>
+    <pin number="101" name="VSSR">
+      <pad name="PAD_GNDISO1" number="496" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="497" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="498" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="499" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="500" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="501" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="502" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="503" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="504" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="505" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="506" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="507" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="508" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="509" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="510" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="511" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="512" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="513" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="514" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="515" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="516" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="517" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="518" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="519" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="520" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="521" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="102" name="VDDR1">
+      <pad name="PAD_VDDRF_0" number="652" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_VDDRF_1" number="653" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="103" name="VSSR">
+      <pad name="PAD_GNDISO1" number="522" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="523" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="524" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="525" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="526" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="527" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="528" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="529" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="530" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="531" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="532" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="533" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="534" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="535" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="536" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="537" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="538" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="539" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="540" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="541" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="542" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="543" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="544" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="545" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="546" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="547" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="104" name="VSSR">
+      <pad name="PAD_GNDISO1" number="548" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="549" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="550" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="551" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="552" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="553" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="554" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="555" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="556" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="557" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="558" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="559" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="560" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="561" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="562" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="563" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="564" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="565" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="566" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="567" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="568" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="569" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="570" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="571" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="572" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="573" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="105" name="VSSR">
+      <pad name="PAD_GNDISO1" number="574" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="575" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="576" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="577" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="578" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="579" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="580" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="581" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="582" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="583" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="584" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="585" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="586" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="587" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="588" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="589" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="590" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="591" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="592" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="593" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="594" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="595" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="596" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="597" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="598" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="599" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="106" name="P5[0]">
+      <pad name="P5[0]" number="58" type="GPIO" portId="5" pinId="0" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="4" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="12" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="30" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="30" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="30" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="30" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="uart_rx" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="i2c_scl" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_mosi" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="mosi_m" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="mosi_s" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="clk_i2s_if" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="10" />
+      </pad>
+    </pin>
+    <pin number="107" name="VDDR_HVL">
+      <pad name="VDDR_HVL_2" number="69" type="PWR" ioSupplyPin="VDDIO_1" powerPadNames="VDDR_HVL_2" capabilities="0x0000000000000000" />
+      <pad name="VDDR_HVL_3" number="70" type="PWR" ioSupplyPin="VDDIO_1" powerPadNames="VDDR_HVL_3" capabilities="0x0000000000000000" />
+      <pad name="PAD_PVIN" number="665" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AVIN" number="666" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="108" name="P5[5]">
+      <pad name="P5[5]" number="63" type="GPIO" portId="5" pinId="5" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="6" term="line_compl" />
+        <ffbterm ffbtype="TCPWM" ffbid="14" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="35" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="35" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="35" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="35" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" resource="spi_select_2" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" resource="spi_select_2" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="rx_ws" />
+      </pad>
+    </pin>
+    <pin number="109" name="P6[2]">
+      <pad name="P6[2]" number="73" type="GPIO" portId="6" pinId="2" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="1" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="17" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="40" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="40" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="40" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="40" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="uart_rts" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="3" term="sclk_s" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_clk" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="sclk_m" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="sclk_s" />
+        <ffbterm ffbtype="LPCOMP" ffbid="1" term="inp" />
+      </pad>
+    </pin>
+    <pin number="110" name="P6[6]">
+      <pad name="P6[6]" number="77" type="GPIO" portId="6" pinId="6" ioSupplyPin="VDDIO_1" capabilities="0x000000C000005017">
+        <ffbterm ffbtype="TCPWM" ffbid="3" term="line" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="19" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="44" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="44" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="44" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="44" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_rts" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_clk" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="sclk_m" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="sclk_s" alternative="2" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="swj_swdio_tms" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_clk" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="sclk_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="sclk_s" alternative="1" />
+        <ffbterm ffbtype="SRSS" ffbid="0" term="swd_data" />
+      </pad>
+    </pin>
+    <pin number="111" name="VDDR2">
+      <pad name="PAD_VDDPA" number="656" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_VDDRF_2" number="657" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="112" name="VDDR3">
+      <pad name="PAD_VDDLO" number="658" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_VDDCP" number="659" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="113" name="VSSR">
+      <pad name="PAD_GNDISO1" number="600" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="601" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="602" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="603" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="604" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="605" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="606" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="607" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="608" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="609" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="610" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="611" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="612" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="613" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="614" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="615" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="616" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="617" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="618" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="619" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="620" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="621" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="622" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="623" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="624" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="625" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="114" name="XI">
+      <pad name="PAD_XI" number="660" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="115" name="XO">
+      <pad name="PAD_XO" number="661" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="116" name="DVDD">
+      <pad name="PAD_DVDD" number="662" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_LDO_DIG" number="663" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="117" name="VDCDC">
+      <pad name="PAD_DCDCOUT" number="664" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="118" name="VSSR">
+      <pad name="PAD_GNDISO1" number="626" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDIF" number="627" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_0" number="628" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF2_1" number="629" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_0" number="630" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDRF_1" number="631" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_0" number="632" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDBL_1" number="633" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_0" number="634" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDPA_1" number="635" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO2" number="636" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_0" number="637" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDLO_1" number="638" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_0" number="639" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDCP_1" number="640" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDSUB" number="641" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO3" number="642" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_0" number="643" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_DGND_1" number="644" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO4" number="645" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_AGND" number="646" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_0" number="647" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_PGND_1" number="648" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO5" number="649" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO7" number="650" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+      <pad name="PAD_GNDISO6" number="651" type="DEDICATED" ioSupplyPin="vddd" capabilities="0x0000000000000000" />
+    </pin>
+    <pin number="119" name="P5[6]">
+      <pad name="P5[6]" number="67" type="GPIO" portId="5" pinId="6" ioSupplyPin="VDDIO_1" capabilities="0x000000C000000017">
+        <ffbterm ffbtype="TCPWM" ffbid="7" term="line" />
+        <ffbterm ffbtype="TCPWM" ffbid="15" term="line" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="36" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="36" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="36" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="36" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="spi_select" wire="3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="0" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="1" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="2" resource="spi_select_3" />
+        <ffbterm ffbtype="SCB" ffbid="5" term="select_m" wire="3" resource="spi_select_3" />
+        <ffbterm ffbtype="I2S" ffbid="0" term="rx_sdi" />
+        <ffbterm ffbtype="LPCOMP" ffbid="0" term="inp" />
+      </pad>
+    </pin>
+    <pin number="120" name="P6[5]">
+      <pad name="P6[5]" number="76" type="GPIO" portId="6" pinId="5" ioSupplyPin="VDDIO_1" capabilities="0x000000C000004017">
+        <ffbterm ffbtype="TCPWM" ffbid="2" term="line_compl" alternative="1" />
+        <ffbterm ffbtype="TCPWM" ffbid="18" term="line_compl" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx" alternative="43" />
+        <ffbterm ffbtype="CSD" ffbid="0" term="csd_tx_n" alternative="43" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="com" wire="43" />
+        <ffbterm ffbtype="LCD" ffbid="0" term="seg" wire="43" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="i2c_sda" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="uart_tx" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="i2c_sda" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="spi_miso" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="miso_m" alternative="2" />
+        <ffbterm ffbtype="SCB" ffbid="6" term="miso_s" alternative="2" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_input" wire="13" />
+        <ffbterm ffbtype="PERI" ffbid="0" term="tr_io_output" wire="1" alternative="1" />
+        <ffbterm ffbtype="CPUSS" ffbid="0" term="swj_swdoe_tdi" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="spi_miso" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="miso_m" alternative="1" />
+        <ffbterm ffbtype="SCB" ffbid="8" term="miso_s" alternative="1" />
+      </pad>
+    </pin>
+  </pins>
+</pindata>
