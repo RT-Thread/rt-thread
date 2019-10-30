@@ -1,0 +1,287 @@
+--
+--	Conversion of Test.v to vh2:
+--
+--	Cypress Semiconductor - WARP Version 6.3 IR 41
+--	Wed Oct 30 15:14:55 2019
+--
+
+USE cypress.cypress.all;
+USE cypress.rtlpkg.all;
+ENTITY top_RTL IS
+ATTRIBUTE part_name of top_RTL:TYPE IS "cpsoc3";
+END top_RTL;
+--------------------------------------------------------
+ARCHITECTURE R_T_L OF top_RTL IS
+SIGNAL \UART0:Net_847\ : bit;
+SIGNAL \UART0:clock_wire\ : bit;
+SIGNAL \UART0:Net_22\ : bit;
+SIGNAL \UART0:Net_23\ : bit;
+SIGNAL one : bit;
+SIGNAL \UART0:tx_wire\ : bit;
+SIGNAL \UART0:tmpFB_0__tx_net_0\ : bit;
+SIGNAL \UART0:tmpIO_0__tx_net_0\ : bit;
+TERMINAL \UART0:tmpSIOVREF__tx_net_0\ : bit;
+SIGNAL zero : bit;
+SIGNAL \UART0:Net_1172\ : bit;
+SIGNAL \UART0:tmpIO_0__rx_net_0\ : bit;
+TERMINAL \UART0:tmpSIOVREF__rx_net_0\ : bit;
+SIGNAL \UART0:rx_wire\ : bit;
+SIGNAL \UART0:cts_wire\ : bit;
+SIGNAL \UART0:intr_wire\ : bit;
+SIGNAL \UART0:rts_wire\ : bit;
+SIGNAL \UART0:tx_en_wire\ : bit;
+SIGNAL \UART0:Net_145\ : bit;
+SIGNAL \UART0:Net_146\ : bit;
+SIGNAL \UART0:Net_154\ : bit;
+SIGNAL \UART0:Net_155_3\ : bit;
+SIGNAL \UART0:Net_155_2\ : bit;
+SIGNAL \UART0:Net_155_1\ : bit;
+SIGNAL \UART0:Net_155_0\ : bit;
+SIGNAL \UART0:Net_156\ : bit;
+SIGNAL \UART0:Net_157\ : bit;
+SIGNAL Net_7 : bit;
+SIGNAL Net_6 : bit;
+SIGNAL \UART0:Net_161\ : bit;
+SIGNAL Net_2 : bit;
+SIGNAL Net_3 : bit;
+SIGNAL Net_4 : bit;
+SIGNAL Net_9 : bit;
+SIGNAL Net_10 : bit;
+SIGNAL Net_20 : bit;
+TERMINAL Net_23 : bit;
+TERMINAL Net_24 : bit;
+SIGNAL tmpFB_0__Pin_LED_Orange_net_0 : bit;
+SIGNAL tmpIO_0__Pin_LED_Orange_net_0 : bit;
+TERMINAL Net_31 : bit;
+TERMINAL tmpSIOVREF__Pin_LED_Orange_net_0 : bit;
+SIGNAL tmpFB_0__SW2_P0_4_net_0 : bit;
+SIGNAL tmpIO_0__SW2_P0_4_net_0 : bit;
+TERMINAL Net_21 : bit;
+TERMINAL tmpSIOVREF__SW2_P0_4_net_0 : bit;
+TERMINAL Net_22 : bit;
+TERMINAL Net_25 : bit;
+TERMINAL Net_27 : bit;
+TERMINAL Net_29 : bit;
+SIGNAL Net_35 : bit;
+BEGIN
+
+one <=  ('1') ;
+
+zero <=  ('0') ;
+
+\UART0:SCBCLK\:cy_clock_v1_0
+	GENERIC MAP(cy_registers=>"",
+		id=>"163063b4-a585-4808-9b6f-d4095f8572dc/b68e5b9d-7828-482d-a282-930f990e3b3e",
+		source_clock_id=>"",
+		divisor=>0,
+		period=>"723379629.62963",
+		is_direct=>'0',
+		is_digital=>'0')
+	PORT MAP(clock_out=>\UART0:Net_847\,
+		dig_domain_out=>open);
+\UART0:tx\:cy_mxs40_gpio_v1_0
+	GENERIC MAP(cy_registers=>"",
+		width=>1,
+		sio_grp_cnt=>0,
+		id=>"163063b4-a585-4808-9b6f-d4095f8572dc/65f3af6c-759b-4ccb-8c66-5c95ba1f5f4f",
+		drive_mode=>"6",
+		ibuf_enabled=>"0",
+		init_dr_st=>"1",
+		input_sync=>"0",
+		intr_mode=>"0",
+		io_voltage=>"",
+		output_conn=>"1",
+		oe_conn=>"0",
+		output_sync=>"0",
+		oe_sync=>"0",
+		drive_strength=>"0",
+		max_frequency=>"100",
+		output_current_cap=>"8",
+		i2c_mode=>"0",
+		pin_aliases=>"",
+		pin_mode=>"O",
+		slew_rate=>"0",
+		vtrip=>"0",
+		use_annotation=>"0",
+		hotswap_needed=>"0")
+	PORT MAP(oe=>(one),
+		y=>\UART0:tx_wire\,
+		fb=>(\UART0:tmpFB_0__tx_net_0\),
+		analog=>(open),
+		io=>(\UART0:tmpIO_0__tx_net_0\),
+		annotation=>(open),
+		siovref=>(\UART0:tmpSIOVREF__tx_net_0\));
+\UART0:rx\:cy_mxs40_gpio_v1_0
+	GENERIC MAP(cy_registers=>"",
+		width=>1,
+		sio_grp_cnt=>0,
+		id=>"163063b4-a585-4808-9b6f-d4095f8572dc/b7e8018e-1ef7-49c0-b5a5-61641a03e31c",
+		drive_mode=>"0",
+		ibuf_enabled=>"1",
+		init_dr_st=>"1",
+		input_sync=>"0",
+		intr_mode=>"0",
+		io_voltage=>"",
+		output_conn=>"0",
+		oe_conn=>"0",
+		output_sync=>"0",
+		oe_sync=>"0",
+		drive_strength=>"0",
+		max_frequency=>"100",
+		output_current_cap=>"8",
+		i2c_mode=>"0",
+		pin_aliases=>"",
+		pin_mode=>"I",
+		slew_rate=>"0",
+		vtrip=>"0",
+		use_annotation=>"0",
+		hotswap_needed=>"0")
+	PORT MAP(oe=>(one),
+		y=>(zero),
+		fb=>\UART0:Net_1172\,
+		analog=>(open),
+		io=>(\UART0:tmpIO_0__rx_net_0\),
+		annotation=>(open),
+		siovref=>(\UART0:tmpSIOVREF__rx_net_0\));
+\UART0:SCB_IRQ\:cy_mxs40_isr_v1_0
+	GENERIC MAP(cy_registers=>"",
+		deepsleep_required=>'0',
+		int_type=>"10")
+	PORT MAP(int_signal=>\UART0:intr_wire\);
+\UART0:SCB\:cy_mxs40_scb_v1_10
+	GENERIC MAP(cy_registers=>"",
+		requires_io_preconfigure=>'0',
+		mode=>2,
+		master=>'0')
+	PORT MAP(clock=>\UART0:Net_847\,
+		uart_rx=>\UART0:Net_1172\,
+		uart_tx=>\UART0:tx_wire\,
+		uart_rts=>\UART0:rts_wire\,
+		uart_cts=>zero,
+		uart_tx_en=>\UART0:tx_en_wire\,
+		i2c_scl=>\UART0:Net_145\,
+		i2c_sda=>\UART0:Net_146\,
+		spi_clk_m=>\UART0:Net_154\,
+		spi_clk_s=>zero,
+		spi_select_m=>(\UART0:Net_155_3\, \UART0:Net_155_2\, \UART0:Net_155_1\, \UART0:Net_155_0\),
+		spi_select_s=>zero,
+		spi_mosi_m=>\UART0:Net_156\,
+		spi_miso_m=>zero,
+		spi_mosi_s=>zero,
+		spi_miso_s=>\UART0:Net_157\,
+		interrupt=>\UART0:intr_wire\,
+		tr_tx_req=>Net_7,
+		tr_rx_req=>Net_6,
+		tr_i2c_scl_filtered=>\UART0:Net_161\);
+GlobalSignal:cy_gsref_v1_0
+	GENERIC MAP(guid=>"8C3B410E-0600-5ECF-95DD-0AF91BF8D8A7")
+	PORT MAP(sig_out=>Net_20);
+SysInt_SW:cy_mxs40_isr_v1_0
+	GENERIC MAP(cy_registers=>"",
+		deepsleep_required=>'1',
+		int_type=>"01")
+	PORT MAP(int_signal=>Net_20);
+D_1:cy_annotation_universal_v1_0
+	GENERIC MAP(comp_name=>"LED_v1_0",
+		port_names=>"A, K",
+		width=>2)
+	PORT MAP(connect=>(Net_23, Net_24));
+Pin_LED_Orange:cy_mxs40_gpio_v1_0
+	GENERIC MAP(cy_registers=>"",
+		width=>1,
+		sio_grp_cnt=>0,
+		id=>"a61270bc-07ec-447d-ac9e-34cfe85c30e9",
+		drive_mode=>"6",
+		ibuf_enabled=>"0",
+		init_dr_st=>"1",
+		input_sync=>"0",
+		intr_mode=>"0",
+		io_voltage=>"",
+		output_conn=>"0",
+		oe_conn=>"0",
+		output_sync=>"0",
+		oe_sync=>"0",
+		drive_strength=>"0",
+		max_frequency=>"100",
+		output_current_cap=>"8",
+		i2c_mode=>"0",
+		pin_aliases=>"",
+		pin_mode=>"O",
+		slew_rate=>"0",
+		vtrip=>"0",
+		use_annotation=>"1",
+		hotswap_needed=>"0")
+	PORT MAP(oe=>(one),
+		y=>(zero),
+		fb=>(tmpFB_0__Pin_LED_Orange_net_0),
+		analog=>(open),
+		io=>(tmpIO_0__Pin_LED_Orange_net_0),
+		annotation=>Net_31,
+		siovref=>(tmpSIOVREF__Pin_LED_Orange_net_0));
+SW2_P0_4:cy_mxs40_gpio_v1_0
+	GENERIC MAP(cy_registers=>"",
+		width=>1,
+		sio_grp_cnt=>0,
+		id=>"4f69c7e9-bf16-4c2c-879a-215de54625bb",
+		drive_mode=>"2",
+		ibuf_enabled=>"1",
+		init_dr_st=>"1",
+		input_sync=>"0",
+		intr_mode=>"2",
+		io_voltage=>"",
+		output_conn=>"0",
+		oe_conn=>"0",
+		output_sync=>"0",
+		oe_sync=>"0",
+		drive_strength=>"0",
+		max_frequency=>"100",
+		output_current_cap=>"8",
+		i2c_mode=>"0",
+		pin_aliases=>"",
+		pin_mode=>"I",
+		slew_rate=>"0",
+		vtrip=>"0",
+		use_annotation=>"1",
+		hotswap_needed=>"0")
+	PORT MAP(oe=>(one),
+		y=>(zero),
+		fb=>(tmpFB_0__SW2_P0_4_net_0),
+		analog=>(open),
+		io=>(tmpIO_0__SW2_P0_4_net_0),
+		annotation=>Net_21,
+		siovref=>(tmpSIOVREF__SW2_P0_4_net_0));
+SW2:cy_annotation_universal_v1_0
+	GENERIC MAP(comp_name=>"SwitchSPST_v1_0",
+		port_names=>"T1, T2",
+		width=>2)
+	PORT MAP(connect=>(Net_22, Net_21));
+PWR_Wakeup:cy_annotation_universal_v1_0
+	GENERIC MAP(comp_name=>"Power_v1_0",
+		port_names=>"T1",
+		width=>1)
+	PORT MAP(connect=>Net_22);
+R3:cy_annotation_universal_v1_0
+	GENERIC MAP(comp_name=>"Resistor_v1_0",
+		port_names=>"T1, T2",
+		width=>2)
+	PORT MAP(connect=>(Net_25, Net_23));
+R3_1:cy_annotation_universal_v1_0
+	GENERIC MAP(comp_name=>"Resistor_v1_0",
+		port_names=>"T1, T2",
+		width=>2)
+	PORT MAP(connect=>(Net_27, Net_31));
+PWR:cy_annotation_universal_v1_0
+	GENERIC MAP(comp_name=>"Power_v1_0",
+		port_names=>"T1",
+		width=>1)
+	PORT MAP(connect=>Net_29);
+\MCWDT:MCWDT\:cy_mxs40_mcwdt_v1_0
+	GENERIC MAP(cy_registers=>"")
+	PORT MAP(interrupt=>Net_35);
+MCWDT_isr:cy_mxs40_isr_v1_0
+	GENERIC MAP(cy_registers=>"",
+		deepsleep_required=>'0',
+		int_type=>"10")
+	PORT MAP(int_signal=>Net_35);
+
+END R_T_L;

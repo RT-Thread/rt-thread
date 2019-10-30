@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CyXmlSerializer>
+<!--This file is machine generated and read. It is not intended to be edited by hand.-->
+<!--Due to this, there is no schema for this file.-->
+<CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21 type_name="CyDesigner.Common.ProjMgmt.Model.CyPrjMgmtWrkspcCustomData" version="4">
+<CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997 type_name="CyDesigner.Common.Base.CyCustomData" version="2">
+<userData>
+<dataGuid v="1b906a0f-a7b6-4e4d-a428-82f98b53cb35">
+<CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35 type_name="CyDesigner.Common.ProjMgmt.GUI.CyExplorerWindow+CyExplorerWindowState" version="3" SelectedTab="Source">
+<TreeKeys>
+<v>Source</v>
+<v>Components</v>
+<v>Output</v>
+</TreeKeys>
+<TreeStates>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications\wakeup_app.c">
+<ExpandedNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\TopDesign</v>
+<v>CY8C6347BZI\Test\Test.cydwr</v>
+<v>CY8C6347BZI\Test\Test.cydwr\Pins</v>
+<v>CY8C6347BZI\Test\Test.cydwr\Analog</v>
+<v>CY8C6347BZI\Test\Test.cydwr\DMA</v>
+<v>CY8C6347BZI\Test\Test.cydwr\Clocks</v>
+<v>CY8C6347BZI\Test\Test.cydwr\Interrupts</v>
+<v>CY8C6347BZI\Test\Test.cydwr\System</v>
+<v>CY8C6347BZI\Test\Test.cydwr\Directives</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\ARM GCC Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\ARM GCC Generic\cy8c6xx7_cm0plus.ld</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\ARM IAR Generic\cy8c6xx7_cm0plus.icf</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\ARM MDK Generic\cy8c6xx7_cm0plus.scat</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Header Files</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM GCC Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM GCC Generic\startup_psoc6_01_cm0plus.S</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM IAR Generic\startup_psoc6_01_cm0plus.s</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM MDK Generic\startup_psoc6_01_cm0plus.s</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\main_cm0p.c</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\system_psoc6_cm0plus.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM GCC Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM GCC Generic\cy8c6xx7_cm4_dual.ld</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM IAR Generic\cy8c6xx7_cm4_dual.icf</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM MDK Generic\cy8c6xx7_cm4_dual.scat</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Header Files</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications\timer_app.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications\wakeup_app.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\backtrace.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\context_gcc.S</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\cpuport.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\div0.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\showmem.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\completion.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\dataqueue.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\pin.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\pipe.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\pm.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\ringbuffer.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\serial.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\waitqueue.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers\workqueue.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\board.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\board.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\drv_pm.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\drv_pmtimer.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\drv_pmtimer.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\drv_wakeup.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\drv_wakeup.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\uart.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers\uart.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\cmd.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_compiler.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_error.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_heap.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_init.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_node.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_ops.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_parser.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_token.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_var.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\finsh_vm.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\msh.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\msh_cmd.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\msh_file.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\shell.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh\symbol.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_dirent.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_errno.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_fcntl.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_fdset.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_ioctl.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_signal.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\libc\libc_stat.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtdbg.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtdebug.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtdef.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rthw.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtlibc.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtm.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtservice.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include\rtthread.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\clock.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\components.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\device.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\idle.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\ipc.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\irq.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\kservice.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\mem.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\memheap.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\mempool.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\object.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\scheduler.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\signal.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\slab.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\thread.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel\timer.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\rtconfig.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM GCC Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM GCC Generic\startup_psoc6_01_cm4.S</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM IAR Generic\startup_psoc6_01_cm4.s</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM MDK Generic\startup_psoc6_01_cm4.s</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\main_cm4.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\system_psoc6_cm4.c</v>
+<v>CY8C6347BZI\Test\Shared Files</v>
+<v>CY8C6347BZI\Test\Shared Files\cy_ble_config.h</v>
+<v>CY8C6347BZI\Test\Shared Files\cyapicallbacks.h</v>
+<v>CY8C6347BZI\Test\Shared Files\PowerConfiguration.h</v>
+<v>CY8C6347BZI\Test\Shared Files\system_psoc6.h</v>
+<v>CY8C6347BZI\Test\Generated_Source</v>
+<v>CY8C6347BZI\Test\Generated_Source\PSoC6</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM GCC Generic\startup_psoc6_01_cm0plus.S</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM IAR Generic\startup_psoc6_01_cm0plus.s</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\ARM MDK Generic\startup_psoc6_01_cm0plus.s</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\main_cm0p.c</v>
+<v>CY8C6347BZI\Test\CM0p (Core 0)\Source Files\system_psoc6_cm0plus.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM GCC Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM GCC Generic\cy8c6xx7_cm4_dual.ld</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM IAR Generic\cy8c6xx7_cm4_dual.icf</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\ARM MDK Generic\cy8c6xx7_cm4_dual.scat</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Header Files</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications\timer_app.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\applications\wakeup_app.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\backtrace.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\context_gcc.S</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\cpuport.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\div0.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\cortex-m4\showmem.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\DeviceDrivers</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\drivers</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\finsh</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\include</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\Kernel</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\rtthread\rtconfig.h</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM GCC Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM GCC Generic\startup_psoc6_01_cm4.S</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM IAR Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM IAR Generic\startup_psoc6_01_cm4.s</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM MDK Generic</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\ARM MDK Generic\startup_psoc6_01_cm4.s</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\main_cm4.c</v>
+<v>CY8C6347BZI\Test\CM4 (Core 1)\Source Files\system_psoc6_cm4.c</v>
+<v>CY8C6347BZI\Test\Shared Files</v>
+<v>CY8C6347BZI\Test\Shared Files\cy_ble_config.h</v>
+<v>CY8C6347BZI\Test\Shared Files\cyapicallbacks.h</v>
+<v>CY8C6347BZI\Test\Shared Files\PowerConfiguration.h</v>
+<v>CY8C6347BZI\Test\Shared Files\system_psoc6.h</v>
+<v>CY8C6347BZI\Test\Generated_Source</v>
+<v>CY8C6347BZI\Test\Generated_Source\PSoC6</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\TopDesign</v>
+<v>CY8C6347BZI\Test\TopDesign\TopDesign.cysch</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\TopDesign</v>
+<v>CY8C6347BZI\Test\TopDesign\TopDesign.cysch</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\CortexM0p</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ble_clk.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_device.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_efuse.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_flash.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_gpio.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_drv.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_pipe.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_sema.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_lvd.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_mcwdt.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_profile.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_prot.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_common.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_ezi2c.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_i2c.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_spi.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_uart.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysanalog.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysclk.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysint.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syslib.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syslib_gcc.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syspm.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_systick.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_trigmux.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_wdt.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cyfitter_sysint_cfg.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\main_cm0p.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\MCWDT_PDL.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\startup_psoc6_01_cm0plus.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\system_psoc6_cm0plus.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\UART0.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Test.elf</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Test.hex</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Test.map</v>
+<v>CY8C6347BZI\Test\CortexM4</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\backtrace.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\board.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\clock.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cmd.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\completion.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\components.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\context_gcc.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cpuport.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_ble_clk.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_device.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_efuse.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_flash.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_gpio.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_ipc_drv.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_ipc_pipe.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_ipc_sema.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_lvd.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_mcwdt.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_profile.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_prot.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_scb_common.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_scb_ezi2c.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_scb_i2c.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_scb_spi.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_scb_uart.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_sysanalog.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_sysclk.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_sysint.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_syslib.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_syslib_gcc.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_syspm.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_systick.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_trigmux.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cy_wdt.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cyfitter_sysint_cfg.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\dataqueue.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\device.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\div0.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\drv_pm.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\drv_pmtimer.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\drv_wakeup.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_compiler.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_error.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_heap.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_init.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_node.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_ops.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_parser.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_token.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_var.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\finsh_vm.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\idle.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\ipc.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\irq.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\kservice.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\main_cm4.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\MCWDT_PDL.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\mem.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\memheap.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\mempool.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\msh.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\msh_cmd.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\msh_file.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\object.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\pin.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\pipe.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\pm.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\ringbuffer.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\scheduler.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\serial.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\shell.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\showmem.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\signal.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\slab.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\startup_psoc6_01_cm4.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\symbol.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\system_psoc6_cm4.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\thread.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\timer.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\timer_app.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\uart.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\UART0.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\waitqueue.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\wakeup_app.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files\workqueue.lst</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Test.elf</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Test.hex</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Test.map</v>
+<v>CY8C6347BZI\Test\Test.gpdsc</v>
+<v>CY8C6347BZI\Test\Test.rpt</v>
+<v>CY8C6347BZI\Test\Test_timing.html</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\CortexM0p</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ble_clk.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_device.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_efuse.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_flash.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_gpio.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_drv.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_pipe.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_ipc_sema.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_lvd.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_mcwdt.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_profile.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_prot.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_common.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_ezi2c.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_i2c.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_spi.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_scb_uart.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysanalog.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysclk.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_sysint.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syslib.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syslib_gcc.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_syspm.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_systick.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_trigmux.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cy_wdt.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cyfitter_cfg.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cyfitter_sysint_cfg.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\cymetadata.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\main_cm0p.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\MCWDT_PDL.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\startup_psoc6_01_cm0plus.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\system_psoc6_cm0plus.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Listing Files\UART0.lst</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Test.elf</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Test.hex</v>
+<v>CY8C6347BZI\Test\CortexM0p\ARM_GCC_541\Debug\Test.map</v>
+<v>CY8C6347BZI\Test\CortexM4</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug</v>
+<v>CY8C6347BZI\Test\CortexM4\ARM_GCC_541\Debug\Listing Files</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStates>
+<TreeKeysV2>
+<v>Datasheet</v>
+</TreeKeysV2>
+<TreeStatesV2>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\PSoC 6 Architecture TRM</v>
+<v>CY8C6347BZI\Test\PSoC 63 Family Datasheet</v>
+<v>CY8C6347BZI\Test\Peripheral Driver Library</v>
+<v>CY8C6347BZI\Test\System Reference Guides</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>CY8C6347BZI</v>
+<v>CY8C6347BZI\Test</v>
+<v>CY8C6347BZI\Test\PSoC 6 Architecture TRM</v>
+<v>CY8C6347BZI\Test\PSoC 63 Family Datasheet</v>
+<v>CY8C6347BZI\Test\Peripheral Driver Library</v>
+<v>CY8C6347BZI\Test\System Reference Guides</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStatesV2>
+</CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35>
+</dataGuid>
+</userData>
+</CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
+<Unloaded />
+<OpenDocs>
+<name v=".\Test.cydsn\main_cm4.c" />
+<name v="..\applications\wakeup_app.c" />
+</OpenDocs>
+<OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
+
+  Actipro Docking/MDI for WinForms
+  Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
+  http://www.actiprosoftware.com
+
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1258, 655" SelectedTabbedMdiWindow="42010ee3-c85e-4491-9721-0d8b0dd4d53c"><DocumentWindow Key="C:\Work\Git\rt-thread\bsp\CY8C63_PM\CY8C6347BZI\Test.cydsn\main_cm4.c" Guid="d665d9c4-9ea9-46b0-b895-cfd3ae38e2c2" /><DocumentWindow Key="C:\Work\Git\rt-thread\bsp\CY8C63_PM\applications\wakeup_app.c" Guid="42010ee3-c85e-4491-9721-0d8b0dd4d53c" /><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="ea6e25d8-c97e-444c-8edc-1fe90316363b" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+<config v="" />
+<AutoUpdate v="true" />
+</CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
+</CyXmlSerializer>
