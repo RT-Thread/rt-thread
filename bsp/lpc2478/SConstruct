@@ -12,6 +12,7 @@ from building import *
 
 TARGET = 'rtthread-lpc24xx.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,

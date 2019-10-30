@@ -8,7 +8,7 @@
  * 2019-08-21     zhangjun     copy from minilibc
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <rtthread.h>
 
 #if !defined (__IAR_SYSTEMS_ICC__)
@@ -30,18 +30,8 @@ const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30),
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
-static long int timezone;
 static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
 static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
-
-/*
- * Structure returned by gettimeofday(2) system call,
- * and used in other calls.
- */
-struct timeval {
-	long	tv_sec;		/* seconds */
-	long	tv_usec;	/* and microseconds */
-};
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -220,37 +210,29 @@ char* ctime(const time_t *timep)
     return asctime(localtime(timep));
 }
 
-#ifdef RT_USING_DEVICE
+#endif /* __IAR_SYSTEMS_ICC__ */
+
 int gettimeofday(struct timeval *tp, void *ignore)
 {
-    time_t time;
+    time_t time = 0;
+#ifdef RT_USING_DEVICE
     rt_device_t device;
-
     device = rt_device_find("rtc");
     RT_ASSERT(device != RT_NULL);
-
     rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
     if (tp != RT_NULL)
     {
         tp->tv_sec = time;
         tp->tv_usec = 0;
     }
+#else
+    tv->tv_sec = 0;
+    tv->tv_usec = 0;
+#endif
 
     return time;
 }
-#endif
 
-#ifndef _gettimeofday
-/* Dummy function when hardware do not have RTC */
-int _gettimeofday( struct timeval *tv, void *ignore)
-{
-    tv->tv_sec = 0;  // convert to seconds
-    tv->tv_usec = 0;  // get remaining microseconds
-    return 0;  // return non-zero for error
-}
-#endif
-
-#endif /* __IAR_SYSTEMS_ICC__ */
 
 /**
  * Returns the current time.

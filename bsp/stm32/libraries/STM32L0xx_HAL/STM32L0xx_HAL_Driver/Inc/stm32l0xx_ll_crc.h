@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L0xx_LL_CRC_H
-#define __STM32L0xx_LL_CRC_H
+#ifndef STM32L0xx_LL_CRC_H
+#define STM32L0xx_LL_CRC_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,7 +52,7 @@ extern "C" {
 /** @defgroup CRC_LL_EC_POLYLENGTH Polynomial length
   * @{
   */
-#define LL_CRC_POLYLENGTH_32B              (uint32_t)0x00000000U                    /*!< 32 bits Polynomial size */
+#define LL_CRC_POLYLENGTH_32B              0x00000000U                              /*!< 32 bits Polynomial size */
 #define LL_CRC_POLYLENGTH_16B              CRC_CR_POLYSIZE_0                        /*!< 16 bits Polynomial size */
 #define LL_CRC_POLYLENGTH_8B               CRC_CR_POLYSIZE_1                        /*!< 8 bits Polynomial size */
 #define LL_CRC_POLYLENGTH_7B               (CRC_CR_POLYSIZE_1 | CRC_CR_POLYSIZE_0)  /*!< 7 bits Polynomial size */
@@ -79,7 +63,7 @@ extern "C" {
 /** @defgroup CRC_LL_EC_INDATA_REVERSE Input Data Reverse
   * @{
   */
-#define LL_CRC_INDATA_REVERSE_NONE         (uint32_t)0x00000000U                    /*!< Input Data bit order not affected */
+#define LL_CRC_INDATA_REVERSE_NONE         0x00000000U                              /*!< Input Data bit order not affected */
 #define LL_CRC_INDATA_REVERSE_BYTE         CRC_CR_REV_IN_0                          /*!< Input Data bit reversal done by byte */
 #define LL_CRC_INDATA_REVERSE_HALFWORD     CRC_CR_REV_IN_1                          /*!< Input Data bit reversal done by half-word */
 #define LL_CRC_INDATA_REVERSE_WORD         (CRC_CR_REV_IN_1 | CRC_CR_REV_IN_0)      /*!< Input Data bit reversal done by word */
@@ -90,7 +74,7 @@ extern "C" {
 /** @defgroup CRC_LL_EC_OUTDATA_REVERSE Output Data Reverse
   * @{
   */
-#define LL_CRC_OUTDATA_REVERSE_NONE        (uint32_t)0x00000000U                     /*!< Output Data bit order not affected */
+#define LL_CRC_OUTDATA_REVERSE_NONE        0x00000000U                               /*!< Output Data bit order not affected */
 #define LL_CRC_OUTDATA_REVERSE_BIT         CRC_CR_REV_OUT                            /*!< Output Data bit reversal done by bit */
 /**
   * @}
@@ -101,7 +85,7 @@ extern "C" {
   *           X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + X^10 +X^8 + X^7 + X^5 + X^4 + X^2 + X + 1 .
   * @{
   */
-#define LL_CRC_DEFAULT_CRC32_POLY          (uint32_t)0x04C11DB7U                     /*!< Default CRC generating polynomial value */
+#define LL_CRC_DEFAULT_CRC32_POLY          0x04C11DB7U                               /*!< Default CRC generating polynomial value */
 /**
   * @}
   */
@@ -109,7 +93,7 @@ extern "C" {
 /** @defgroup CRC_LL_EC_Default_InitValue    Default CRC computation initialization value
   * @{
   */
-#define LL_CRC_DEFAULT_CRC_INITVALUE       (uint32_t)0xFFFFFFFFU                     /*!< Default CRC computation initialization value */
+#define LL_CRC_DEFAULT_CRC_INITVALUE       0xFFFFFFFFU                               /*!< Default CRC computation initialization value */
 /**
   * @}
   */
@@ -134,7 +118,7 @@ extern "C" {
   * @param  __VALUE__ Value to be written in the register
   * @retval None
   */
-#define LL_CRC_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, (__VALUE__))
+#define LL_CRC_WriteReg(__INSTANCE__, __REG__, __VALUE__) WRITE_REG(__INSTANCE__->__REG__, __VALUE__)
 
 /**
   * @brief  Read a value in CRC register
@@ -352,7 +336,10 @@ __STATIC_INLINE void LL_CRC_FeedData32(CRC_TypeDef *CRCx, uint32_t InData)
   */
 __STATIC_INLINE void LL_CRC_FeedData16(CRC_TypeDef *CRCx, uint16_t InData)
 {
-  *(uint16_t __IO *)(&CRCx->DR) = (uint16_t) InData;
+  __IO uint16_t *pReg;
+
+  pReg = (__IO uint16_t *)(__IO void *)(&CRCx->DR);
+  *pReg = InData;
 }
 
 /**
@@ -431,7 +418,7 @@ __STATIC_INLINE uint32_t LL_CRC_Read_IDR(CRC_TypeDef *CRCx)
   * @note   This register can be used as a temporary storage location for one byte.
   * @rmtoll IDR          IDR           LL_CRC_Write_IDR
   * @param  CRCx CRC Instance
-  * @param  InData value to be stored in CRC_IDR register (8-bit) between between Min_Data=0 and Max_Data=0xFF
+  * @param  InData value to be stored in CRC_IDR register (8-bit) between Min_Data=0 and Max_Data=0xFF
   * @retval None
   */
 __STATIC_INLINE void LL_CRC_Write_IDR(CRC_TypeDef *CRCx, uint32_t InData)
@@ -472,6 +459,6 @@ ErrorStatus LL_CRC_DeInit(CRC_TypeDef *CRCx);
 }
 #endif
 
-#endif /* __STM32L0xx_LL_CRC_H */
+#endif /* STM32L0xx_LL_CRC_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -46,6 +46,24 @@ def CheckHeader(rtconfig, filename):
     if os.path.isfile(fn):
         return True
 
+    # Usually the cross compiling gcc toolchain has directory as:
+    #
+    # bin
+    # lib
+    # share
+    # arm-none-eabi
+    #    bin
+    #    include
+    #    lib
+    #    share
+    prefix = rtconfig.PREFIX
+    if prefix.endswith('-'):
+        prefix = prefix[:-1]
+
+    fn = os.path.join(root, prefix, 'include', filename)
+    if os.path.isfile(fn):
+        return True
+    
     return False
 
 def GetNewLibVersion(rtconfig):

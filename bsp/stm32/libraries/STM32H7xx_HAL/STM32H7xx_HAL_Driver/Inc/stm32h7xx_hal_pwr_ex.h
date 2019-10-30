@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_PWR_EX_H
-#define __STM32H7xx_HAL_PWR_EX_H
+#ifndef STM32H7xx_HAL_PWR_EX_H
+#define STM32H7xx_HAL_PWR_EX_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -94,39 +78,26 @@ typedef struct
 /** @defgroup PWREx_WakeUp_Pins PWREx Wake-Up Pins
   * @{
   */
-#define PWR_WAKEUP_PIN6  PWR_WKUPEPR_WKUPEN_6
-#define PWR_WAKEUP_PIN5  PWR_WKUPEPR_WKUPEN_5
-#define PWR_WAKEUP_PIN4  PWR_WKUPEPR_WKUPEN_4
-#define PWR_WAKEUP_PIN3  PWR_WKUPEPR_WKUPEN_3
-#define PWR_WAKEUP_PIN2  PWR_WKUPEPR_WKUPEN_2
-#define PWR_WAKEUP_PIN1  PWR_WKUPEPR_WKUPEN_1
+#define PWR_WAKEUP_PIN6  PWR_WKUPEPR_WKUPEN6
+#define PWR_WAKEUP_PIN5  PWR_WKUPEPR_WKUPEN5
+#define PWR_WAKEUP_PIN4  PWR_WKUPEPR_WKUPEN4
+#define PWR_WAKEUP_PIN3  PWR_WKUPEPR_WKUPEN3
+#define PWR_WAKEUP_PIN2  PWR_WKUPEPR_WKUPEN2
+#define PWR_WAKEUP_PIN1  PWR_WKUPEPR_WKUPEN1
 /* High level and No pull */
-#define PWR_WAKEUP_PIN6_HIGH  PWR_WKUPEPR_WKUPEN_6
-#define PWR_WAKEUP_PIN5_HIGH  PWR_WKUPEPR_WKUPEN_5
-#define PWR_WAKEUP_PIN4_HIGH  PWR_WKUPEPR_WKUPEN_4
-#define PWR_WAKEUP_PIN3_HIGH  PWR_WKUPEPR_WKUPEN_3
-#define PWR_WAKEUP_PIN2_HIGH  PWR_WKUPEPR_WKUPEN_2
-#define PWR_WAKEUP_PIN1_HIGH  PWR_WKUPEPR_WKUPEN_1
+#define PWR_WAKEUP_PIN6_HIGH  PWR_WKUPEPR_WKUPEN6
+#define PWR_WAKEUP_PIN5_HIGH  PWR_WKUPEPR_WKUPEN5
+#define PWR_WAKEUP_PIN4_HIGH  PWR_WKUPEPR_WKUPEN4
+#define PWR_WAKEUP_PIN3_HIGH  PWR_WKUPEPR_WKUPEN3
+#define PWR_WAKEUP_PIN2_HIGH  PWR_WKUPEPR_WKUPEN2
+#define PWR_WAKEUP_PIN1_HIGH  PWR_WKUPEPR_WKUPEN1
 /* Low level and No pull */
-#define PWR_WAKEUP_PIN6_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP_6 | PWR_WKUPEPR_WKUPEN_6)
-#define PWR_WAKEUP_PIN5_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP_5 | PWR_WKUPEPR_WKUPEN_5)
-#define PWR_WAKEUP_PIN4_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP_4 | PWR_WKUPEPR_WKUPEN_4)
-#define PWR_WAKEUP_PIN3_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP_3 | PWR_WKUPEPR_WKUPEN_3)
-#define PWR_WAKEUP_PIN2_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP_2 | PWR_WKUPEPR_WKUPEN_2)
-#define PWR_WAKEUP_PIN1_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP_1 | PWR_WKUPEPR_WKUPEN_1)
-
-/* Wake-Up Pins EXTI register mask */
-#define PWR_EXTI_WAKEUP_PINS_MASK  (uint32_t)(EXTI_IMR2_IM55 | EXTI_IMR2_IM56 | \
-                                              EXTI_IMR2_IM57 | EXTI_IMR2_IM58 | \
-                                              EXTI_IMR2_IM59 | EXTI_IMR2_IM60)
-/* Wake-Up Pins EXTI register offset */
-#define PWR_EXTI_WAKEUP_PINS_PULL_POSITION_OFFSET  23U
-
-/* Wake-Up Pins PWR register offsets */
-#define PWR_WAKEUP_PINS_POLARITY_REGISTER_OFFSET  8U
-#define PWR_WAKEUP_PINS_PULL_REGISTER_OFFSET      16U
-#define PWR_WAKEUP_PINS_PULL_POSITION_OFFSET      2U
-
+#define PWR_WAKEUP_PIN6_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP6 | PWR_WKUPEPR_WKUPEN6)
+#define PWR_WAKEUP_PIN5_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP5 | PWR_WKUPEPR_WKUPEN5)
+#define PWR_WAKEUP_PIN4_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP4 | PWR_WKUPEPR_WKUPEN4)
+#define PWR_WAKEUP_PIN3_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP3 | PWR_WKUPEPR_WKUPEN3)
+#define PWR_WAKEUP_PIN2_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP2 | PWR_WKUPEPR_WKUPEN2)
+#define PWR_WAKEUP_PIN1_LOW  (uint32_t)(PWR_WKUPEPR_WKUPP1 | PWR_WKUPEPR_WKUPEN1)
 /**
   * @}
   */
@@ -164,6 +135,16 @@ typedef struct
   * @}
   */
 
+#if defined(DUAL_CORE)
+/** @defgroup PWREx_Core_Select PWREx Core definition
+  * @{
+  */
+#define PWR_CORE_CPU1  ((uint32_t)0x00000000U)
+#define PWR_CORE_CPU2  ((uint32_t)0x00000001U)
+/**
+  * @}
+  */
+#endif /*DUAL_CORE*/
 
 /** @defgroup PWREx_Domains PWREx Domains definition
   * @{
@@ -178,7 +159,12 @@ typedef struct
 /** @defgroup PWREx_Domain_Flags PWREx Domain Flags definition
   * @{
   */
+#if defined(DUAL_CORE)
+#define PWR_D1_DOMAIN_FLAGS  ((uint32_t)0x00000000U)
+#define PWR_D2_DOMAIN_FLAGS  ((uint32_t)0x00000001U)
+#else
 #define PWR_CPU_FLAGS        ((uint32_t)0x00000000U)
+#endif /*DUAL_CORE*/
 /**
   * @}
   */
@@ -196,17 +182,17 @@ typedef struct
 /** @defgroup PWREx_Supply_configuration PWREx Supply configuration
   * @{
   */
-#define PWR_LDO_SUPPLY                      PWR_CR3_LDOEN /* Core domains are suppplied from the LDO */
+#define PWR_LDO_SUPPLY                      PWR_CR3_LDOEN                                                               /*!< Core domains are suppplied from the LDO                                                                     */
 #if defined(SMPS)
-#define PWR_DIRECT_SMPS_SUPPLY              PWR_CR3_SMPSEN /* Core domains are suppplied from the SMPS only */
-#define PWR_SMPS_1V8_SUPPLIES_LDO           (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN) /* The SMPS 1.8V output supplies the LDO which supplies the Core domains */
-#define PWR_SMPS_2V5_SUPPLIES_LDO           (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN) /* The SMPS 2.5V output supplies the LDO which supplies the Core domains */
-#define PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN) /* The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
-#define PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN) /* The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
-#define PWR_SMPS_1V8_SUPPLIES_EXT           (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /* The SMPS 1.8V output supplies an external source which supplies the Core domains */
-#define PWR_SMPS_2V5_SUPPLIES_EXT           (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /* The SMPS 2.5V output supplies an external source which supplies the Core domains */
+#define PWR_DIRECT_SMPS_SUPPLY              PWR_CR3_SMPSEN                                                              /*!< Core domains are suppplied from the SMPS only                                                               */
+#define PWR_SMPS_1V8_SUPPLIES_LDO           (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)                      /*!< The SMPS 1.8V output supplies the LDO which supplies the Core domains                                       */
+#define PWR_SMPS_2V5_SUPPLIES_LDO           (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)                      /*!< The SMPS 2.5V output supplies the LDO which supplies the Core domains                                       */
+#define PWR_SMPS_1V8_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 1.8V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
+#define PWR_SMPS_2V5_SUPPLIES_EXT_AND_LDO   (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_LDOEN)  /*!< The SMPS 2.5V output supplies an external circuits and the LDO. The Core domains are suppplied from the LDO */
+#define PWR_SMPS_1V8_SUPPLIES_EXT           (PWR_CR3_SMPSLEVEL_0 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 1.8V output supplies an external source which supplies the Core domains                            */
+#define PWR_SMPS_2V5_SUPPLIES_EXT           (PWR_CR3_SMPSLEVEL_1 | PWR_CR3_SMPSEXTHP | PWR_CR3_SMPSEN | PWR_CR3_BYPASS) /*!< The SMPS 2.5V output supplies an external source which supplies the Core domains                            */
 #endif /* SMPS */
-#define PWR_EXTERNAL_SOURCE_SUPPLY          PWR_CR3_BYPASS /* The SMPS disabled and the LDO Bypass. The Core domains are supplied from an external source */
+#define PWR_EXTERNAL_SOURCE_SUPPLY          PWR_CR3_BYPASS                                                              /*!< The SMPS disabled and the LDO Bypass. The Core domains are supplied from an external source                 */
 
 #if defined(SMPS)
 #define PWR_SUPPLY_CONFIG_MASK               (PWR_CR3_SMPSLEVEL | PWR_CR3_SMPSEXTHP | \
@@ -218,22 +204,6 @@ typedef struct
   * @}
   */
 
-#if defined(SMPS)
-/** @defgroup HAL_PWREx_SMPS_SetOperationMode PWREx SMPS operation modes
-  * @{
-  */
-#define PWR_SMPS_FORCED_PWM                  PWR_PDR1_SMPSFPWMEN
-#define PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL0  PWR_PDR1_PSKSYNC
-#define PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL1  (PWR_PDR1_PSKSYNC | PWR_PDR1_PSKTHR_0)
-#define PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL2  (PWR_PDR1_PSKSYNC | PWR_PDR1_PSKTHR_1)
-#define PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL3  (PWR_PDR1_PSKSYNC | PWR_PDR1_PSKTHR)
-#define PWR_SMPS_FAST_PULSE_SKIPPING         (PWR_PDR1_FASTTRAN |PWR_PDR1_PSKSYNC)
-#define PWR_SMPS_ULTRA_FAST_PULSE_SKIPPING   PWR_PDR1_FASTTRAN
-#define PWR_SMPS_MODE_MASK                   (PWR_PDR1_FASTTRAN | PWR_PDR1_PSKTHR | PWR_PDR1_PSKSYNC | PWR_PDR1_SMPSFPWMEN)
-/**
-  * @}
-  */
-#endif /* SMPS */
 
 /** @defgroup PWREx_AVD_detection_level PWREx AVD detection level
   * @{
@@ -249,13 +219,13 @@ typedef struct
 /** @defgroup PWREx_AVD_Mode PWREx AVD Mode
   * @{
   */
-#define PWR_AVD_MODE_NORMAL                ((uint32_t)0x00000000U)   /*!< Basic mode is used */
-#define PWR_AVD_MODE_IT_RISING             ((uint32_t)0x00010001U)   /*!< External Interrupt Mode with Rising edge trigger detection */
-#define PWR_AVD_MODE_IT_FALLING            ((uint32_t)0x00010002U)   /*!< External Interrupt Mode with Falling edge trigger detection */
+#define PWR_AVD_MODE_NORMAL                ((uint32_t)0x00000000U)   /*!< Basic mode is used                                                 */
+#define PWR_AVD_MODE_IT_RISING             ((uint32_t)0x00010001U)   /*!< External Interrupt Mode with Rising edge trigger detection         */
+#define PWR_AVD_MODE_IT_FALLING            ((uint32_t)0x00010002U)   /*!< External Interrupt Mode with Falling edge trigger detection        */
 #define PWR_AVD_MODE_IT_RISING_FALLING     ((uint32_t)0x00010003U)   /*!< External Interrupt Mode with Rising/Falling edge trigger detection */
-#define PWR_AVD_MODE_EVENT_RISING          ((uint32_t)0x00020001U)   /*!< Event Mode with Rising edge trigger detection */
-#define PWR_AVD_MODE_EVENT_FALLING         ((uint32_t)0x00020002U)   /*!< Event Mode with Falling edge trigger detection */
-#define PWR_AVD_MODE_EVENT_RISING_FALLING  ((uint32_t)0x00020003U)   /*!< Event Mode with Rising/Falling edge trigger detection */
+#define PWR_AVD_MODE_EVENT_RISING          ((uint32_t)0x00020001U)   /*!< Event Mode with Rising edge trigger detection                      */
+#define PWR_AVD_MODE_EVENT_FALLING         ((uint32_t)0x00020002U)   /*!< Event Mode with Falling edge trigger detection                     */
+#define PWR_AVD_MODE_EVENT_RISING_FALLING  ((uint32_t)0x00020003U)   /*!< Event Mode with Rising/Falling edge trigger detection              */
 /**
   * @}
   */
@@ -274,7 +244,7 @@ typedef struct
   * @{
   */
 #define PWR_BATTERY_CHARGING_RESISTOR_5    ((uint32_t)0x00000000U) /*!< VBAT charging through a 5 kOhms resistor   */
-#define PWR_BATTERY_CHARGING_RESISTOR_1_5  PWR_CR3_VBRS           /*!< VBAT charging through a 1.5 kOhms resistor */
+#define PWR_BATTERY_CHARGING_RESISTOR_1_5  PWR_CR3_VBRS            /*!< VBAT charging through a 1.5 kOhms resistor */
 /**
   * @}
   */
@@ -317,29 +287,57 @@ typedef struct
   * @brief Enable the AVD EXTI Line 16.
   * @retval None.
   */
-#define __HAL_PWR_AVD_EXTI_ENABLE_IT()  SET_BIT(EXTI_D1->IMR1, PWR_EXTI_LINE_AVD)
+#define __HAL_PWR_AVD_EXTI_ENABLE_IT()  SET_BIT(EXTI->IMR1, PWR_EXTI_LINE_AVD)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief Enable the AVD EXTI D2 Line 16.
+  * @retval None.
+  */
+#define __HAL_PWR_AVD_EXTID2_ENABLE_IT()  SET_BIT(EXTI_D2->IMR1, PWR_EXTI_LINE_AVD)
+#endif /*DUAL_CORE*/
 
 /**
   * @brief Disable the AVD EXTI Line 16
   * @retval None.
   */
-#define __HAL_PWR_AVD_EXTI_DISABLE_IT()  CLEAR_BIT(EXTI_D1->IMR1, PWR_EXTI_LINE_AVD)
+#define __HAL_PWR_AVD_EXTI_DISABLE_IT()  CLEAR_BIT(EXTI->IMR1, PWR_EXTI_LINE_AVD)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief Disable the AVD EXTI D2 Line 16.
+  * @retval None.
+  */
+#define __HAL_PWR_AVD_EXTID2_DISABLE_IT()  CLEAR_BIT(EXTI_D2->IMR1, PWR_EXTI_LINE_AVD)
+#endif /*DUAL_CORE*/
 
 /**
   * @brief   Enable event on AVD EXTI Line 16.
   * @retval None.
   */
-#define __HAL_PWR_AVD_EXTI_ENABLE_EVENT()  SET_BIT(EXTI_D1->EMR1, PWR_EXTI_LINE_AVD)
+#define __HAL_PWR_AVD_EXTI_ENABLE_EVENT()  SET_BIT(EXTI->EMR1, PWR_EXTI_LINE_AVD)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief   Enable event on AVD EXTI D2 Line 16.
+  * @retval None.
+  */
+#define __HAL_PWR_AVD_EXTID2_ENABLE_EVENT()  SET_BIT(EXTI_D2->EMR1, PWR_EXTI_LINE_AVD)
+#endif /*DUAL_CORE*/
 
 /**
   * @brief   Disable event on AVD EXTI Line 16.
   * @retval None.
   */
-#define __HAL_PWR_AVD_EXTI_DISABLE_EVENT()  CLEAR_BIT(EXTI_D1->EMR1, PWR_EXTI_LINE_AVD)
+#define __HAL_PWR_AVD_EXTI_DISABLE_EVENT()  CLEAR_BIT(EXTI->EMR1, PWR_EXTI_LINE_AVD)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief   Disable event on AVD EXTI D2 Line 16.
+  * @retval None.
+  */
+#define __HAL_PWR_AVD_EXTID2_DISABLE_EVENT()  CLEAR_BIT(EXTI_D2->EMR1, PWR_EXTI_LINE_AVD)
+#endif /*DUAL_CORE*/
 
 /**
   * @brief  Enable the AVD Extended Interrupt Rising Trigger.
@@ -390,15 +388,29 @@ do { \
   * @brief  Check whether the specified AVD EXTI interrupt flag is set or not.
   * @retval EXTI AVD Line Status.
   */
-#define __HAL_PWR_AVD_EXTI_GET_FLAG()  READ_BIT(EXTI_D1->PR1, PWR_EXTI_LINE_AVD)
+#define __HAL_PWR_AVD_EXTI_GET_FLAG()  ((READ_BIT(EXTI->PR1, PWR_EXTI_LINE_AVD) == PWR_EXTI_LINE_AVD) ? SET : RESET)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief  Check whether the specified AVD EXTI D2 interrupt flag is set or not.
+  * @retval EXTI D2 AVD Line Status.
+  */
+#define __HAL_PWR_AVD_EXTID2_GET_FLAG()  ((READ_BIT(EXTI_D2->PR1, PWR_EXTI_LINE_AVD) == PWR_EXTI_LINE_AVD) ? SET : RESET)
+#endif /*DUAL_CORE*/
 
 /**
   * @brief  Clear the AVD EXTI flag.
   * @retval None.
   */
-#define __HAL_PWR_AVD_EXTI_CLEAR_FLAG()  SET_BIT(EXTI_D1->PR1, PWR_EXTI_LINE_AVD)
+#define __HAL_PWR_AVD_EXTI_CLEAR_FLAG()  SET_BIT(EXTI->PR1, PWR_EXTI_LINE_AVD)
 
+#if defined(DUAL_CORE)
+/**
+  * @brief  Clear the AVD EXTI D2 flag.
+  * @retval None.
+  */
+#define __HAL_PWR_AVD_EXTID2_CLEAR_FLAG()  SET_BIT(EXTI_D2->PR1, PWR_EXTI_LINE_AVD)
+#endif /*DUAL_CORE*/
 
 /**
   * @}
@@ -415,9 +427,6 @@ do { \
 /* Power supply control functions */
 HAL_StatusTypeDef HAL_PWREx_ConfigSupply(uint32_t SupplySource);
 uint32_t HAL_PWREx_GetSupplyConfig(void);
-#if defined(SMPS)
-uint32_t HAL_PWREx_SMPS_SetOperationMode(uint32_t SMPS_Mode);
-#endif /*SMPS*/
 /* Power volatge scaling functions */
 HAL_StatusTypeDef HAL_PWREx_ControlVoltageScaling(uint32_t VoltageScaling);
 uint32_t HAL_PWREx_GetVoltageRange(void);
@@ -435,6 +444,17 @@ void HAL_PWREx_EnterSTOPMode(uint32_t Regulator, uint8_t STOPEntry, uint32_t Dom
 void HAL_PWREx_EnterSTANDBYMode(uint32_t Domain);
 void HAL_PWREx_ConfigD3Domain(uint32_t D3State);
 
+#if defined(DUAL_CORE)
+void HAL_PWREx_ClearDomainFlags(uint32_t DomainFlags);
+
+/* Power core holding functions */
+HAL_StatusTypeDef HAL_PWREx_HoldCore(uint32_t CPU);
+void HAL_PWREx_ReleaseCore(uint32_t CPU);
+
+#endif /*DUAL_CORE*/
+
+/* Clear pending event function */
+void HAL_PWREx_ClearPendingEvent(void);
 
 /* Flash low power control functions */
 void HAL_PWREx_EnableFlashPowerDown(void);
@@ -444,6 +464,7 @@ void HAL_PWREx_EnableWakeUpPin(PWREx_WakeupPinTypeDef *sPinParams);
 void HAL_PWREx_DisableWakeUpPin(uint32_t WakeUpPin);
 uint32_t HAL_PWREx_GetWakeupFlag(uint32_t WakeUpFlag);
 HAL_StatusTypeDef HAL_PWREx_ClearWakeupFlag(uint32_t WakeUpFlag);
+
 /* Power Wakeup PIN IRQ Handler */
 void HAL_PWREx_WAKEUP_PIN_IRQHandler(void);
 void HAL_PWREx_WKUP1_Callback(void);
@@ -462,11 +483,13 @@ void HAL_PWREx_WKUP6_Callback(void);
 /* Backup regulator control functions */
 HAL_StatusTypeDef HAL_PWREx_EnableBkUpReg(void);
 HAL_StatusTypeDef HAL_PWREx_DisableBkUpReg(void);
+
 /* USB regulator control functions */
 HAL_StatusTypeDef HAL_PWREx_EnableUSBReg(void);
 HAL_StatusTypeDef HAL_PWREx_DisableUSBReg(void);
 void HAL_PWREx_EnableUSBVoltageDetector(void);
 void HAL_PWREx_DisableUSBVoltageDetector(void);
+
 /* Battery control functions */
 void HAL_PWREx_EnableBatteryCharging(uint32_t ResistorValue);
 void HAL_PWREx_DisableBatteryCharging(void);
@@ -521,13 +544,6 @@ void HAL_PWREx_AVDCallback(void);
                                     ((PWR_SOURCE) == PWR_SMPS_2V5_SUPPLIES_EXT)         || \
                                     ((PWR_SOURCE) == PWR_EXTERNAL_SOURCE_SUPPLY))
 
-#define IS_PWR_SMPS_MODE(MODE)  (((MODE) == PWR_SMPS_FORCED_PWM) || \
-                                 ((MODE) == PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL0) || \
-                                 ((MODE) == PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL1) || \
-                                 ((MODE) == PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL2) || \
-                                 ((MODE) == PWR_SMPS_SLOW_PULSE_SKIPPING_LEVEL3) || \
-                                 ((MODE) == PWR_SMPS_FAST_PULSE_SKIPPING) ||  \
-                                 ((MODE) == PWR_SMPS_ULTRA_FAST_PULSE_SKIPPING))
 #else
 #define IS_PWR_SUPPLY(PWR_SOURCE)  (((PWR_SOURCE) == PWR_LDO_SUPPLY) || \
                                     ((PWR_SOURCE) == PWR_EXTERNAL_SOURCE_SUPPLY))
@@ -587,6 +603,16 @@ void HAL_PWREx_AVDCallback(void);
 #define IS_PWR_BATTERY_RESISTOR_SELECT(RESISTOR)  (((RESISTOR) == PWR_BATTERY_CHARGING_RESISTOR_5) ||\
                                                    ((RESISTOR) == PWR_BATTERY_CHARGING_RESISTOR_1_5))
 
+#define IS_PWR_D1_CPU(CPU) ((CPU) == CM7_CPUID)
+
+#if defined(DUAL_CORE)
+#define IS_PWR_CORE(CPU)  (((CPU) == PWR_CORE_CPU1) || ((CPU) == PWR_CORE_CPU2))
+
+#define IS_PWR_D2_CPU(CPU) ((CPU) == CM4_CPUID)
+
+#define IS_PWR_DOMAIN_FLAG(FLAG)  (((FLAG) == PWR_D1_DOMAIN_FLAGS) || \
+                                   ((FLAG) == PWR_D2_DOMAIN_FLAGS))
+#endif /*DUAL_CORE*/
 
 /**
   * @}
@@ -607,6 +633,6 @@ void HAL_PWREx_AVDCallback(void);
 #endif
 
 
-#endif /* __STM32H7xx_HAL_PWR_EX_H */
+#endif /* STM32H7xx_HAL_PWR_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

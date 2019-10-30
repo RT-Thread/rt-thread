@@ -48,6 +48,8 @@ void *__wrap_memset(void *s, int c, size_t n)
 }
 
 void rt_hw_board_init(void) {
+extern void riscv_clock_init(void);
+    riscv_clock_init();
     systick_config(TMR_FREQ / RT_TICK_PER_SECOND);
 
 #ifdef RT_USING_HEAP

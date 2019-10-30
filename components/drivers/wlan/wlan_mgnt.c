@@ -260,7 +260,8 @@ static rt_err_t rt_wlan_send_to_thread(rt_wlan_event_t event, void *buff, int le
     msg->event = event;
     if (len != 0)
     {
-        msg->buff = ((char *)msg) + sizeof(struct rt_wlan_msg);
+        msg->buff = (void *)&msg[1];
+        rt_memcpy(msg->buff, buff, len);
         msg->len = len;
     }
 

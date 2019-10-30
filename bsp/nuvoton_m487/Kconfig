@@ -23,3 +23,8 @@ source "$PKGS_DIR/Kconfig"
 
 source "$BSP_DIR/driver/Kconfig"
 
+config SOC_M487
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y

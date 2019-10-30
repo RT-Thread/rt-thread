@@ -12,6 +12,17 @@
 
 #ifdef BSP_USING_ONCHIP_RTC
 
+
+#ifndef HAL_RTCEx_BKUPRead
+#define HAL_RTCEx_BKUPRead(x1, x2) (~BKUP_REG_DATA)
+#endif
+#ifndef HAL_RTCEx_BKUPWrite
+#define HAL_RTCEx_BKUPWrite(x1, x2, x3)
+#endif
+#ifndef RTC_BKP_DR1
+#define RTC_BKP_DR1 RT_NULL
+#endif
+
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.rtc"
 #include <drv_log.h>
@@ -110,10 +121,13 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
+    /* Enable RTC Clock */
+    __HAL_RCC_RTC_ENABLE();
+
     RTC_Handler.Instance = RTC;
     if (HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1) != BKUP_REG_DATA)
     {
-        LOG_W("RTC hasn't been configured, please use <date> command to config.");
+        LOG_I("RTC hasn't been configured, please use <date> command to config.");
 
 #if defined(SOC_SERIES_STM32F1)
         RTC_Handler.Init.OutPut = RTC_OUTPUTSOURCE_NONE;

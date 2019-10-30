@@ -46,7 +46,7 @@
   */
 
 /* Definitions of ADC hardware constraints delays */
-/* Note: Only ADC IP HW delays are defined in ADC LL driver driver,           */
+/* Note: Only ADC peripheral HW delays are defined in ADC LL driver driver,   */
 /*       not timeout values:                                                  */
 /*       Timeout values for ADC operations are dependent to device clock      */
 /*       configuration (system clock versus ADC clock),                       */
@@ -363,6 +363,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
       {
         /* Time-out error */
         status = ERROR;
+        break;
       }
     }
     
@@ -378,6 +379,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
       {
         /* Time-out error */
         status = ERROR;
+        break;
       }
     }
   }
@@ -439,7 +441,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
     CLEAR_BIT(ADCx->CFGR2,
               (  ADC_CFGR2_CKMODE
                | ADC_CFGR2_TOVS   | ADC_CFGR2_OVSS  | ADC_CFGR2_OVSR
-               | ADC_CFGR2_OVSE   | ADC_CFGR2_CKMODE                )
+               | ADC_CFGR2_OVSE                                     )
              );
     
     /* Reset register SMPR */
@@ -472,6 +474,7 @@ ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)
       {
         /* Time-out error */
         status = ERROR;
+        break;
       }
     }
     
@@ -567,12 +570,18 @@ ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)
                | ADC_InitStruct->LowPowerMode
               );
     
+    MODIFY_REG(ADCx->CFGR2,
+               ADC_CFGR2_CKMODE
+              ,
+               ADC_InitStruct->Clock
+              );
   }
   else
   {
     /* Initialization error: ADC instance is not disabled. */
     status = ERROR;
   }
+  
   return status;
 }
 

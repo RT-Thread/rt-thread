@@ -438,6 +438,8 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
         {
             txheader.RTR = CAN_RTR_REMOTE;
         }
+        /* clear TIR */
+        hcan->Instance->sTxMailBox[box_num].TIR &= CAN_TI0R_TXRQ;
         /* Set up the Id */
         if (RT_CAN_STDID == pmsg->ide)
         {

@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -213,14 +197,14 @@ typedef struct
   */
 
 /** @brief Reset CRYP handle state
-  * @param  __HANDLE__: specifies the CRYP handle.
+  * @param  __HANDLE__ specifies the CRYP handle.
   * @retval None
   */
 #define __HAL_CRYP_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_CRYP_STATE_RESET)
 
 /**
   * @brief  Enable/Disable the CRYP peripheral.
-  * @param  __HANDLE__: specifies the CRYP handle.
+  * @param  __HANDLE__ specifies the CRYP handle.
   * @retval None
   */
 #define __HAL_CRYP_ENABLE(__HANDLE__)                   SET_BIT((__HANDLE__)->Instance->CR, AES_CR_EN)
@@ -228,16 +212,16 @@ typedef struct
 
 /**
   * @brief  Set the algorithm mode: AES-ECB, AES-CBC, AES-CTR, DES-ECB, DES-CBC,...
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __MODE__: The algorithm mode.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __MODE__ The algorithm mode.
   * @retval None
   */
 #define __HAL_CRYP_SET_MODE(__HANDLE__,__MODE__)             SET_BIT((__HANDLE__)->Instance->CR, (__MODE__))
 
 
 /** @brief  Check whether the specified CRYP flag is set or not.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __FLAG__ specifies the flag to check.
   *         This parameter can be one of the following values:
   *            @arg CRYP_FLAG_CCF   : Computation Complete Flag
   *            @arg CRYP_FLAG_RDERR : Read Error Flag
@@ -247,8 +231,8 @@ typedef struct
 #define __HAL_CRYP_GET_FLAG(__HANDLE__,__FLAG__)         (((__HANDLE__)->Instance->SR & (__FLAG__)) == (__FLAG__))
 
 /** @brief  Clear the CRYP pending flag.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __FLAG__ specifies the flag to clear.
   *         This parameter can be one of the following values:
   *            @arg CRYP_CLEARFLAG_CCF   : Computation Complete Clear Flag
   *            @arg CRYP_CLEARFLAG_RDERR : Read Error Clear
@@ -259,23 +243,23 @@ typedef struct
 
 /**
   * @brief  Enable the CRYP interrupt.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __INTERRUPT__: CRYP Interrupt.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __INTERRUPT__ CRYP Interrupt.
   * @retval None
   */
 #define __HAL_CRYP_ENABLE_IT(__HANDLE__,__INTERRUPT__)   SET_BIT((__HANDLE__)->Instance->CR, (__INTERRUPT__))
 
 /**
   * @brief  Disable the CRYP interrupt.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __INTERRUPT__: CRYP interrupt.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __INTERRUPT__ CRYP interrupt.
   * @retval None
   */
 #define __HAL_CRYP_DISABLE_IT(__HANDLE__,__INTERRUPT__)  CLEAR_BIT((__HANDLE__)->Instance->CR, (__INTERRUPT__))
 
 /** @brief  Checks if the specified CRYP interrupt source is enabled or disabled.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param __INTERRUPT__: CRYP interrupt source to check
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param __INTERRUPT__ CRYP interrupt source to check
   *         This parameter can be one of the following values:
   *            @arg CRYP_IT_CC   : Computation Complete interrupt
   *            @arg CRYP_IT_ERR : Error interrupt (used for RDERR and WRERR)
@@ -287,8 +271,8 @@ typedef struct
     )
          
 /** @brief  Clear the CRYP pending IT.
-  * @param  __HANDLE__: specifies the CRYP handle.
-  * @param  __IT__: specifies the IT to clear.
+  * @param  __HANDLE__ specifies the CRYP handle.
+  * @param  __IT__ specifies the IT to clear.
   *         This parameter can be one of the following values:
   *            @arg CRYP_CLEARFLAG_CCF   : Computation Complete Clear Flag
   *            @arg CRYP_CLEARFLAG_RDERR : Read Error Clear

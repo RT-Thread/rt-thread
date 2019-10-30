@@ -709,6 +709,16 @@ static rt_int32_t sdio_initialize_function(struct rt_mmcsd_card *card,
     if (ret)
         goto err1;
 
+    /*
+     * product/manufacturer id is optional for function CIS, so
+     * copy it from the card structure as needed.
+     */
+    if (func->product == 0)
+    {
+        func->manufacturer = card->cis.manufacturer;
+        func->product = card->cis.product;
+    }
+
     card->sdio_function[func_num] = func;
 
     return 0;

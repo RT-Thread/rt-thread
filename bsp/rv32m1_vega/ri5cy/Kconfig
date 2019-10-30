@@ -25,6 +25,8 @@ config SOC_VEGA_RI5CY
 config BOARD_X_FRDM_VEGA
     bool
     select SOC_VEGA_RI5CY
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 source "driver/Kconfig"

@@ -172,6 +172,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* lock init */
     thread->scheduler_lock_nest = 0;
     thread->cpus_lock_nest = 0;
+    thread->critical_lock_nest = 0;
 #endif /*RT_USING_SMP*/
 
     /* initialize cleanup function and user data */
