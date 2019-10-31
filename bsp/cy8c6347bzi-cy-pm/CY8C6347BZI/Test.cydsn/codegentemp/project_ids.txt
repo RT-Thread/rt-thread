@@ -1,6 +1,0 @@
-C:\Work\Git\rt-thread\bsp\CY8C63_PM\CY8C6347BZI\Test.cydsn\Test.cyprj|02d6a5fc-8cb8-4746-bf69-b7996a8ed423
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|ea990492-3fd0-455a-ad0f-c40779763878
-C:\Users\miqi\Documents\PSoC Creator\4.2\Downloads ( 4.2).cylib\Downloads ( 4.2).cyprj|8125ad5b-0896-454b-8f29-c8ddd1fca6dd
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|4bc9371f-4dc8-4507-a730-e1fe76e048ab
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|b90049c3-ebdd-4217-a13f-4fe63e8ef6ad
-C:\Program Files (x86)\Cypress\PSoC Creator\4.2\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|63d395cf-a9c5-4149-986b-470203c2c740

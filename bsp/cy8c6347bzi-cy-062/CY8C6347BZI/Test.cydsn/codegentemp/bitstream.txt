@@ -1,3 +1,0 @@
-===========Generating Bitstream===========
-# UDB_INT_CFG (count=8)
-00000000: 00 00 00 00 00 00 00 00
