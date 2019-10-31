@@ -142,37 +142,68 @@ def HandleToolOption(tools, env, project, reset):
     CPPDEFINES = project['CPPDEFINES']
     paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
+    compile_include_paths_option = None
+    compile_include_files_option = None
+    compile_defs_option = None
+    linker_scriptfile_option = None
+    linker_script_option = None
+    linker_nostart_option = None
+    linker_libs_option = None
+    linker_paths_option = None
+    linker_newlib_nano_option = None
+
     for tool in tools:
+
         if tool.get('id').find('c.compile') != 1:
             options = tool.findall('option')
-            include_paths_option = None
-            include_files_option = None
-            defs_option = None
             # find all compile options
             for option in options:
                 if option.get('id').find('c.compiler.include.paths') != -1 or option.get('id').find('c.compiler.option.includepaths') != -1:
-                    include_paths_option = option
+                    compile_include_paths_option = option
                 elif option.get('id').find('c.compiler.include.files') != -1 or option.get('id').find('c.compiler.option.includefiles') != -1 :
-                    include_files_option = option
+                    compile_include_files_option = option
                 elif option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
-                    defs_option = option
-            # change the inclue path
-            if include_paths_option is not None :
-                option = include_paths_option
-                # find all of paths in this project
-                include_paths = option.findall('listOptionValue')
-                for item in include_paths:
-                    if reset is True or IsRttEclipsePathFormat(item.get('value')) :
-                        # clean old configuration
-                        option.remove(item)
-                # print('c.compiler.include.paths')
-                paths = sorted(paths)
-                for item in paths:
-                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
-            # change the inclue files (default) or definitions
-            if include_files_option is not None:
-                option = include_files_option
-                file_header = '''
+                    compile_defs_option = option
+
+        if tool.get('id').find('c.linker') != -1:
+            options = tool.findall('option')
+            # find all linker options
+            for option in options:
+                if option.get('id').find('c.linker.scriptfile') != -1:
+                    linker_scriptfile_option = option
+                elif option.get('id').find('c.linker.option.script') != -1:
+                    linker_script_option = option
+                elif option.get('id').find('c.linker.nostart') != -1:
+                    linker_nostart_option = option
+                elif option.get('id').find('c.linker.libs') != -1 and env.has_key('LIBS'):
+                    linker_libs_option = option
+                elif option.get('id').find('c.linker.paths') != -1 and env.has_key('LIBPATH'):
+                    linker_paths_option = option
+                elif option.get('id').find('c.linker.usenewlibnano') != -1:
+                    linker_newlib_nano_option = option
+
+    # change the inclue path
+    if compile_include_paths_option is not None :
+        option = compile_include_paths_option
+        # find all of paths in this project
+        include_paths = option.findall('listOptionValue')
+        for item in include_paths:
+            if reset is True or IsRttEclipsePathFormat(item.get('value')) :
+                # clean old configuration
+                option.remove(item)
+        # print('c.compiler.include.paths')
+        paths = sorted(paths)
+        for item in paths:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+    # change the inclue files (default) or definitions
+    if compile_include_files_option is not None:
+        option = compile_include_files_option
+        # add '_REENT_SMALL' to CPPDEFINES when --specs=nano.specs has select
+        if linker_newlib_nano_option is not None and linker_newlib_nano_option.get('value') == 'true' and '_REENT_SMALL' not in CPPDEFINES:
+            CPPDEFINES += ['_REENT_SMALL']
+            print(linker_newlib_nano_option.get('value'))
+
+        file_header = '''
 #ifndef RTCONFIG_PREINC_H__
 #define RTCONFIG_PREINC_H__
 
@@ -180,91 +211,89 @@ def HandleToolOption(tools, env, project, reset):
 /* RT-Thread pre-include file */
 
 '''
-                file_tail = '\n#endif /*RTCONFIG_PREINC_H__*/\n'
-                rtt_pre_inc_item = '"${workspace_loc:/${ProjName}/rtconfig_preinc.h}"'
-                # save the CPPDEFINES in to rtconfig_preinc.h
-                with open('rtconfig_preinc.h', mode = 'w+') as f:
-                    f.write(file_header)
-                    for cppdef in CPPDEFINES:
-                        f.write("#define " + cppdef + '\n')
-                    f.write(file_tail)
-                #  change the c.compiler.include.files
-                files = option.findall('listOptionValue')
-                find_ok = False
-                for item in files:
-                    if item.get('value') == rtt_pre_inc_item:
-                        find_ok = True
-                        break
-                if find_ok is False:
-                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': rtt_pre_inc_item})
-            elif defs_option is not None :
-                option = defs_option
-                defs = option.findall('listOptionValue')
-                project_defs = []
-                for item in defs:
-                    if reset is True:
-                        # clean all old configuration
-                        option.remove(item)
-                    else:
-                        project_defs += [item.get('value')]
-                if len(project_defs) > 0:
-                    cproject_defs = set(CPPDEFINES) - set(project_defs)
-                else:
-                    cproject_defs = CPPDEFINES
+        file_tail = '\n#endif /*RTCONFIG_PREINC_H__*/\n'
+        rtt_pre_inc_item = '"${workspace_loc:/${ProjName}/rtconfig_preinc.h}"'
+        # save the CPPDEFINES in to rtconfig_preinc.h
+        with open('rtconfig_preinc.h', mode = 'w+') as f:
+            f.write(file_header)
+            for cppdef in CPPDEFINES:
+                f.write("#define " + cppdef + '\n')
+            f.write(file_tail)
+        #  change the c.compiler.include.files
+        files = option.findall('listOptionValue')
+        find_ok = False
+        for item in files:
+            if item.get('value') == rtt_pre_inc_item:
+                find_ok = True
+                break
+        if find_ok is False:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': rtt_pre_inc_item})
+    elif compile_defs_option is not None :
+        option = compile_defs_option
+        defs = option.findall('listOptionValue')
+        project_defs = []
+        for item in defs:
+            if reset is True:
+                # clean all old configuration
+                option.remove(item)
+            else:
+                project_defs += [item.get('value')]
+        if len(project_defs) > 0:
+            cproject_defs = set(CPPDEFINES) - set(project_defs)
+        else:
+            cproject_defs = CPPDEFINES
 
-                # print('c.compiler.defs')
-                cproject_defs = sorted(cproject_defs)
-                for item in cproject_defs:
-                    SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+        # print('c.compiler.defs')
+        cproject_defs = sorted(cproject_defs)
+        for item in cproject_defs:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
 
-        if tool.get('id').find('c.linker') != -1:
-            options = tool.findall('option')
-            for option in options:
-                # update linker script config
-                if option.get('id').find('c.linker.scriptfile') != -1:
-                    linker_script = 'link.lds'
-                    items = env['LINKFLAGS'].split(' ')
-                    if '-T' in items:
-                        linker_script = items[items.index('-T') + 1]
-                        linker_script = ConverToRttEclipsePathFormat(linker_script)
+    # update linker script config
+    if linker_scriptfile_option is not None :
+        option = linker_scriptfile_option
+        linker_script = 'link.lds'
+        items = env['LINKFLAGS'].split(' ')
+        if '-T' in items:
+            linker_script = items[items.index('-T') + 1]
+            linker_script = ConverToRttEclipsePathFormat(linker_script)
 
-                    listOptionValue = option.find('listOptionValue')
-                    if listOptionValue != None:
-                        listOptionValue.set('value', linker_script)
-                    else:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
-
-                # scriptfile in stm32cubeIDE        
-                if option.get('id').find('c.linker.option.script') != -1:
-                    items = env['LINKFLAGS'].split(' ')
-                    if '-T' in items:
-                        linker_script = ConverToRttEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
-                        option.set('value',linker_script)
-
-                # update nostartfiles config
-                if option.get('id').find('c.linker.nostart') != -1:
-                    if env['LINKFLAGS'].find('-nostartfiles') != -1:
-                        option.set('value', 'true')
-                    else:
-                        option.set('value', 'false')
-
-                # update libs
-                if option.get('id').find('c.linker.libs') != -1 and env.has_key('LIBS'):
-                    # remove old libs
-                    for item in option.findall('listOptionValue'):
-                        option.remove(item)
-                    # add new libs
-                    for lib in env['LIBS']:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
-
-                # update lib paths
-                if option.get('id').find('c.linker.paths') != -1 and env.has_key('LIBPATH'):
-                    # remove old lib paths
-                    for item in option.findall('listOptionValue'):
-                        option.remove(item)
-                    # add new old lib paths
-                    for path in env['LIBPATH']:
-                        SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
+        listOptionValue = option.find('listOptionValue')
+        if listOptionValue != None:
+            listOptionValue.set('value', linker_script)
+        else:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': linker_script})
+    # scriptfile in stm32cubeIDE
+    if linker_script_option is not None :
+        option = linker_script_option
+        items = env['LINKFLAGS'].split(' ')
+        if '-T' in items:
+            linker_script = ConverToRttEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
+            option.set('value', linker_script)
+    # update nostartfiles config
+    if linker_nostart_option is not None :
+        option = linker_nostart_option
+        if env['LINKFLAGS'].find('-nostartfiles') != -1:
+            option.set('value', 'true')
+        else:
+            option.set('value', 'false')
+    # update libs
+    if linker_libs_option is not None :
+        option = linker_libs_option
+        # remove old libs
+        for item in option.findall('listOptionValue'):
+            option.remove(item)
+        # add new libs
+        for lib in env['LIBS']:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
+    # update lib paths
+    if linker_paths_option is not None :
+        option = linker_paths_option
+        # remove old lib paths
+        for item in option.findall('listOptionValue'):
+            option.remove(item)
+        # add new old lib paths
+        for path in env['LIBPATH']:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
 
     return
 
