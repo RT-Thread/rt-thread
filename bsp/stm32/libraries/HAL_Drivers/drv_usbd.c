@@ -99,14 +99,14 @@ void HAL_PCDEx_SetConnectionState(PCD_HandleTypeDef *hpcd, uint8_t state)
     {
 #if defined(SOC_SERIES_STM32F1)
     rt_pin_mode(BSP_USB_CONNECT_PIN,PIN_MODE_OUTPUT);
-    rt_pin_write(BSP_USB_CONNECT_PIN, PIN_HIGH);
+    rt_pin_write(BSP_USB_CONNECT_PIN, BSP_USB_PULL_UP_STATUS);
 #endif
     }
     else
     {
 #if defined(SOC_SERIES_STM32F1)
     rt_pin_mode(BSP_USB_CONNECT_PIN,PIN_MODE_OUTPUT);
-    rt_pin_write(BSP_USB_CONNECT_PIN, PIN_LOW);
+    rt_pin_write(BSP_USB_CONNECT_PIN, !BSP_USB_PULL_UP_STATUS);
 #endif
     }
 }
@@ -201,6 +201,9 @@ static rt_err_t _init(rt_device_t device)
 #endif
     /* Initialize LL Driver */
     HAL_PCD_Init(pcd);
+    /* USB interrupt Init */
+    HAL_NVIC_SetPriority(USBD_IRQ_TYPE, 2, 0);
+    HAL_NVIC_EnableIRQ(USBD_IRQ_TYPE);
 #if !defined(SOC_SERIES_STM32F1)
     HAL_PCDEx_SetRxFiFo(pcd, 0x80);
     HAL_PCDEx_SetTxFiFo(pcd, 0, 0x40);
@@ -246,6 +249,9 @@ int stm_usbd_register(void)
     /* Register endpoint infomation */
     _stm_udc.ep_pool = _ep_pool;
     _stm_udc.ep0.id = &_ep_pool[0];
+#ifdef BSP_USBD_SPEED_HS
+    _stm_udc.device_is_hs = RT_TRUE;
+#endif
     rt_device_register((rt_device_t)&_stm_udc, "usbd", 0);
     rt_usb_device_init();
     return RT_EOK;
