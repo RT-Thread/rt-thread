@@ -201,7 +201,6 @@ def HandleToolOption(tools, env, project, reset):
         # add '_REENT_SMALL' to CPPDEFINES when --specs=nano.specs has select
         if linker_newlib_nano_option is not None and linker_newlib_nano_option.get('value') == 'true' and '_REENT_SMALL' not in CPPDEFINES:
             CPPDEFINES += ['_REENT_SMALL']
-            print(linker_newlib_nano_option.get('value'))
 
         file_header = '''
 #ifndef RTCONFIG_PREINC_H__
