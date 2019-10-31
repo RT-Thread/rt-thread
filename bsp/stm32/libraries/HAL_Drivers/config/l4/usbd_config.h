@@ -14,9 +14,11 @@
 #include <rtconfig.h>
 
 #ifdef BSP_USBD_TYPE_HS
+#define USBD_IRQ_TYPE     OTG_HS_IRQn
 #define USBD_IRQ_HANDLER  OTG_HS_IRQHandler
 #define USBD_INSTANCE     USB_OTG_HS
 #else
+#define USBD_IRQ_TYPE     OTG_FS_IRQn
 #define USBD_IRQ_HANDLER  OTG_FS_IRQHandler
 #define USBD_INSTANCE     USB_OTG_FS
 #endif
