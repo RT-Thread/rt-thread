@@ -430,6 +430,15 @@ static void rt_dma_recv_update_put_index(struct rt_serial_device *serial, rt_siz
     
     if(rx_fifo->is_full == RT_TRUE)
     {
+        static rt_bool_t already_output = RT_FALSE;
+		
+        if (already_output == RT_FALSE)
+        {
+            LOG_W("Warning: There is no enough buffer for saving data,"
+                  " please increase the RT_SERIAL_RB_BUFSZ option.");
+            already_output = RT_TRUE;
+        }
+
         rx_fifo->get_index = rx_fifo->put_index;
     }
 }
@@ -1167,9 +1176,18 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 /* if the next position is read index, discard this 'read char' */
                 if (rx_fifo->put_index == rx_fifo->get_index)
                 {
+                    static rt_bool_t already_output = RT_FALSE;
+														
                     rx_fifo->get_index += 1;
                     rx_fifo->is_full = RT_TRUE;
                     if (rx_fifo->get_index >= serial->config.bufsz) rx_fifo->get_index = 0;
+
+                    if (already_output == RT_FALSE)
+                    {
+                        LOG_W("Warning: There is no enough buffer for saving data,"
+                                " please increase the RT_SERIAL_RB_BUFSZ option.");
+                        already_output = RT_TRUE;
+                    }
                 }
 
                 /* enable interrupt */
@@ -1271,4 +1289,3 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #endif /* RT_SERIAL_USING_DMA */
     }
 }
-
