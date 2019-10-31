@@ -11,10 +11,17 @@
 #ifndef __USBD_CONFIG_H__
 #define __USBD_CONFIG_H__
 
+#define USBD_IRQ_TYPE        USB_LP_CAN1_RX0_IRQn
 #define USBD_IRQ_HANDLER     USB_LP_CAN1_RX0_IRQHandler
 #define USBD_INSTANCE        USB
 #define USBD_PCD_SPEED       PCD_SPEED_FULL
 #define USBD_PCD_PHY_MODULE  PCD_PHY_EMBEDDED
-#define BSP_USB_CONNECT_PIN  -1
 
+#ifndef BSP_USB_CONNECT_PIN
+#define BSP_USB_CONNECT_PIN  -1
+#endif
+
+#ifndef BSP_USB_PULL_UP_STATUS
+#define BSP_USB_PULL_UP_STATUS  1
+#endif
 #endif
