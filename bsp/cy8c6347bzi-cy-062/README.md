@@ -70,22 +70,22 @@ CY8CKIT-062-BLE PSoC6 BLE Pioneer Kit 是赛普拉斯推出的一款32位双核C
 下载程序成功之后，系统会自动运行。打开终端工具串口小助手，复位设备后，可以看到 RT-Thread 的输出信息:
 
 > 注：推荐使用串口调试助手如：sscom
-
-msh >
-\ | /
-- RT -     Thread Operating System
-/ | \     4.0.0 build Nov  1 2019
-2006 - 2018 Copyright by rt-thread team
-thread1 created ok
-thread1 count: 0
-thread2 created ok
-thread2 count: 0
-msh >thread2 count: 1
-thread2 count: 2
-thread2 count: 3
-thread2 count: 4
-thread1 count: 1
-
+                              
+>                             msh >
+>                             \ | /
+>                             - RT -     Thread Operating System
+>                             / | \     4.0.0 build Nov  1 2019
+>                             2006 - 2018 Copyright by rt-thread team
+>                             thread1 created ok
+>                             thread1 count: 0
+>                             thread2 created ok
+>                             thread2 count: 0
+>                             msh >thread2 count: 1
+>                             thread2 count: 2
+>                             thread2 count: 3
+>                             thread2 count: 4
+>                             thread1 count: 1
+                                  
 
 ## 注意事项
 第一次打开工程的时候，弹出的对话框中点击Cancel,请不要替换文件
