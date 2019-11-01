@@ -34,7 +34,7 @@ static void thread2_entry(void* parameter)
     rt_kprintf("thread2 created ok\n");
     while(1)
     {
-//        rt_kprintf("thread2 count: %d\n",count++);
+        rt_kprintf("thread2 count: %d\n",count++);
         rt_thread_delay(RT_TICK_PER_SECOND/4);
         
     }
