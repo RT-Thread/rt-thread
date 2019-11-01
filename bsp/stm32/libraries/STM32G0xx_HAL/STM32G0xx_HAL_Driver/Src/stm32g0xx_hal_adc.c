@@ -484,12 +484,12 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef* hadc)
   /* Verification that ADC voltage regulator is correctly enabled, whether    */
   /* or not ADC is coming from state reset (if any potential problem of       */
   /* clocking, voltage regulator would not be enabled).                       */
-  if(LL_ADC_IsInternalRegulatorEnabled(hadc->Instance) == 0U)
+  if(LL_ADC_IsInternalRegulatorEnabled(hadc->Instance) == 0UL)
   {
     /* Update ADC state machine to error */
     SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
     
-    /* Set ADC error code to ADC IP internal error */
+    /* Set ADC error code to ADC peripheral internal error */
     SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
     
     tmp_hal_status = HAL_ERROR;
@@ -588,7 +588,7 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef* hadc)
         /* Update ADC state machine to error */
         SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
         
-        /* Set ADC error code to ADC IP internal error */
+        /* Set ADC error code to ADC peripheral internal error */
         SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
       }
     }
@@ -706,7 +706,7 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef* hadc)
     }
     
     /* Check back that ADC registers have effectively been configured to      */
-    /* ensure of no potential problem of ADC core IP clocking.                */
+    /* ensure of no potential problem of ADC core peripheral clocking.        */
     /* Check through register CFGR1 (excluding analog watchdog configuration: */
     /* set into separate dedicated function, and bits of ADC resolution set   */
     /* out of temporary variable 'tmpCFGR1').                                 */
@@ -728,7 +728,7 @@ HAL_StatusTypeDef HAL_ADC_Init(ADC_HandleTypeDef* hadc)
                         HAL_ADC_STATE_BUSY_INTERNAL,
                         HAL_ADC_STATE_ERROR_INTERNAL);
       
-      /* Set ADC error code to ADC IP internal error */
+      /* Set ADC error code to ADC peripheral internal error */
       SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
       
       tmp_hal_status = HAL_ERROR;
@@ -926,7 +926,7 @@ __weak void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
   * @param  CallbackID ID of the callback to be registered
   *         This parameter can be one of the following values:
   *          @arg @ref HAL_ADC_CONVERSION_COMPLETE_CB_ID      ADC conversion complete callback ID
-  *          @arg @ref HAL_ADC_CONVERSION_HALF_CB_ID          ADC conversion complete callback ID
+  *          @arg @ref HAL_ADC_CONVERSION_HALF_CB_ID          ADC conversion DMA half-transfer callback ID
   *          @arg @ref HAL_ADC_LEVEL_OUT_OF_WINDOW_1_CB_ID    ADC analog watchdog 1 callback ID
   *          @arg @ref HAL_ADC_ERROR_CB_ID                    ADC error callback ID
   *          @arg @ref HAL_ADC_LEVEL_OUT_OF_WINDOW_2_CB_ID    ADC analog watchdog 2 callback ID
@@ -951,7 +951,7 @@ HAL_StatusTypeDef HAL_ADC_RegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_Call
     return HAL_ERROR;
   }
   
-  if ((hadc->State & HAL_ADC_STATE_READY) != 0)
+  if ((hadc->State & HAL_ADC_STATE_READY) != 0UL)
   {
     switch (CallbackID)
     {
@@ -1041,7 +1041,7 @@ HAL_StatusTypeDef HAL_ADC_RegisterCallback(ADC_HandleTypeDef *hadc, HAL_ADC_Call
   * @param  CallbackID ID of the callback to be unregistered
   *         This parameter can be one of the following values:
   *          @arg @ref HAL_ADC_CONVERSION_COMPLETE_CB_ID      ADC conversion complete callback ID
-  *          @arg @ref HAL_ADC_CONVERSION_HALF_CB_ID          ADC conversion complete callback ID
+  *          @arg @ref HAL_ADC_CONVERSION_HALF_CB_ID          ADC conversion DMA half-transfer callback ID
   *          @arg @ref HAL_ADC_LEVEL_OUT_OF_WINDOW_1_CB_ID    ADC analog watchdog 1 callback ID
   *          @arg @ref HAL_ADC_ERROR_CB_ID                    ADC error callback ID
   *          @arg @ref HAL_ADC_LEVEL_OUT_OF_WINDOW_2_CB_ID    ADC analog watchdog 2 callback ID
@@ -1386,7 +1386,7 @@ HAL_StatusTypeDef HAL_ADC_PollForConversion(ADC_HandleTypeDef* hadc, uint32_t Ti
         /* Change ADC state to error state */
         SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
         
-        /* Set ADC error code to ADC IP internal error */
+        /* Set ADC error code to ADC peripheral internal error */
         SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
       }
     }
@@ -1966,7 +1966,7 @@ void HAL_ADC_IRQHandler(ADC_HandleTypeDef* hadc)
           /* Change ADC state to error state */
           SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
           
-          /* Set ADC error code to ADC IP internal error */
+          /* Set ADC error code to ADC peripheral internal error */
           SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
         }
       }
@@ -2692,7 +2692,7 @@ HAL_StatusTypeDef ADC_ConversionStop(ADC_HandleTypeDef* hadc)
         /* Update ADC state machine to error */
         SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
       
-        /* Set ADC error code to ADC IP internal error */
+        /* Set ADC error code to ADC peripheral internal error */
         SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
         
         return HAL_ERROR;
@@ -2728,7 +2728,7 @@ HAL_StatusTypeDef ADC_Enable(ADC_HandleTypeDef* hadc)
       /* Update ADC state machine to error */
       SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
       
-      /* Set ADC error code to ADC IP internal error */
+      /* Set ADC error code to ADC peripheral internal error */
       SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
       
       return HAL_ERROR;
@@ -2764,7 +2764,7 @@ HAL_StatusTypeDef ADC_Enable(ADC_HandleTypeDef* hadc)
           /* Update ADC state machine to error */
           SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
           
-          /* Set ADC error code to ADC IP internal error */
+          /* Set ADC error code to ADC peripheral internal error */
           SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
           
           return HAL_ERROR;
@@ -2808,7 +2808,7 @@ HAL_StatusTypeDef ADC_Disable(ADC_HandleTypeDef* hadc)
       /* Update ADC state machine to error */
       SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
       
-      /* Set ADC error code to ADC IP internal error */
+      /* Set ADC error code to ADC peripheral internal error */
       SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
       
       return HAL_ERROR;
@@ -2825,7 +2825,7 @@ HAL_StatusTypeDef ADC_Disable(ADC_HandleTypeDef* hadc)
         /* Update ADC state machine to error */
         SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_INTERNAL);
         
-        /* Set ADC error code to ADC IP internal error */
+        /* Set ADC error code to ADC peripheral internal error */
         SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
         
         return HAL_ERROR;
@@ -2883,7 +2883,7 @@ static void ADC_DMAConvCplt(DMA_HandleTypeDef *hdma)
           /* Change ADC state to error state */
           SET_BIT(hadc->State, HAL_ADC_STATE_ERROR_CONFIG);
           
-          /* Set ADC error code to ADC IP internal error */
+          /* Set ADC error code to ADC peripheral internal error */
           SET_BIT(hadc->ErrorCode, HAL_ADC_ERROR_INTERNAL);
         }
       }

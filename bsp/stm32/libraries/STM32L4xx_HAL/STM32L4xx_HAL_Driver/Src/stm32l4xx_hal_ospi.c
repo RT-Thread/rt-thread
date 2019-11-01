@@ -25,7 +25,7 @@
     [..]
       (#) As prerequisite, fill in the HAL_OSPI_MspInit() :
         (++) Enable OctoSPI and OctoSPIM clocks interface with __HAL_RCC_OSPIx_CLK_ENABLE().
-        (++) Reset OctoSPI IP with __HAL_RCC_OSPIx_FORCE_RESET() and __HAL_RCC_OSPIx_RELEASE_RESET().
+        (++) Reset OctoSPI Peripheral with __HAL_RCC_OSPIx_FORCE_RESET() and __HAL_RCC_OSPIx_RELEASE_RESET().
         (++) Enable the clocks for the OctoSPI GPIOS with __HAL_RCC_GPIOx_CLK_ENABLE().
         (++) Configure these OctoSPI pins in alternate mode using HAL_GPIO_Init().
         (++) If interrupt or DMA mode is used, enable and configure OctoSPI global
@@ -130,7 +130,7 @@
     [..]
       (#) HAL_OSPI_GetState() function gives the current state of the HAL OctoSPI driver.
       (#) HAL_OSPI_SetTimeout() function configures the timeout value used in the driver.
-      (#) HAL_OSPI_SetFifoThreshold() function configures the threshold on the Fifo of the OSPI IP.
+      (#) HAL_OSPI_SetFifoThreshold() function configures the threshold on the Fifo of the OSPI Peripheral.
       (#) HAL_OSPI_GetFifoThreshold() function gives the current of the Fifo's threshold
 
     *** IO manager configuration functions ***
@@ -201,29 +201,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2018 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -377,8 +361,7 @@ HAL_StatusTypeDef HAL_OSPI_Init (OSPI_HandleTypeDef *hospi)
      /* Configure memory type, device size, chip select high time, free running clock, clock mode */
       MODIFY_REG(hospi->Instance->DCR1, (OCTOSPI_DCR1_MTYP | OCTOSPI_DCR1_DEVSIZE | OCTOSPI_DCR1_CSHT | OCTOSPI_DCR1_FRCK | OCTOSPI_DCR1_CKMODE),
                  (hospi->Init.MemoryType | ((hospi->Init.DeviceSize - 1U) << OCTOSPI_DCR1_DEVSIZE_Pos) |
-                  ((hospi->Init.ChipSelectHighTime - 1U) << OCTOSPI_DCR1_CSHT_Pos) | hospi->Init.FreeRunningClock |
-                  hospi->Init.ClockMode));
+                  ((hospi->Init.ChipSelectHighTime - 1U) << OCTOSPI_DCR1_CSHT_Pos) | hospi->Init.ClockMode));
 
       /* Configure wrap size */
       MODIFY_REG(hospi->Instance->DCR2, OCTOSPI_DCR2_WRAPSIZE, hospi->Init.WrapSize);
@@ -406,6 +389,12 @@ HAL_StatusTypeDef HAL_OSPI_Init (OSPI_HandleTypeDef *hospi)
 
          /* Enable OctoSPI */
          __HAL_OSPI_ENABLE(hospi);
+         
+         /* Enable free running clock if needed : must be done after OSPI enable */
+         if (hospi->Init.FreeRunningClock == HAL_OSPI_FREERUNCLK_ENABLE)
+         {
+           SET_BIT(hospi->Instance->DCR1, OCTOSPI_DCR1_FRCK);
+         }
 
          /* Initialize the OSPI state */
          if (hospi->Init.MemoryType == HAL_OSPI_MEMTYPE_HYPERBUS)
@@ -458,6 +447,9 @@ HAL_StatusTypeDef HAL_OSPI_DeInit(OSPI_HandleTypeDef *hospi)
   {
      /* Disable OctoSPI */
      __HAL_OSPI_DISABLE(hospi);
+
+     /* Disable free running clock if needed : must be done after OSPI disable */
+     CLEAR_BIT(hospi->Instance->DCR1, OCTOSPI_DCR1_FRCK);
 
 #if defined (USE_HAL_OSPI_REGISTER_CALLBACKS) && (USE_HAL_OSPI_REGISTER_CALLBACKS == 1U)
      if(hospi->MspDeInitCallback == NULL)
@@ -2767,19 +2759,19 @@ static HAL_StatusTypeDef OSPI_ConfigCmd(OSPI_HandleTypeDef *hospi, OSPI_RegularC
     MODIFY_REG(hospi->Instance->CR, OCTOSPI_CR_FSEL, cmd->FlashId);
   }
 
-  if (cmd->OperationType != HAL_OSPI_OPTYPE_WRITE_CFG)
-  {
-    ccr_reg = &(hospi->Instance->CCR);
-    tcr_reg = &(hospi->Instance->TCR);
-    ir_reg  = &(hospi->Instance->IR);
-    abr_reg = &(hospi->Instance->ABR);
-  }
-  else
+  if (cmd->OperationType == HAL_OSPI_OPTYPE_WRITE_CFG)
   {
     ccr_reg = &(hospi->Instance->WCCR);
     tcr_reg = &(hospi->Instance->WTCR);
     ir_reg  = &(hospi->Instance->WIR);
     abr_reg = &(hospi->Instance->WABR);
+  }
+  else
+  {
+    ccr_reg = &(hospi->Instance->CCR);
+    tcr_reg = &(hospi->Instance->TCR);
+    ir_reg  = &(hospi->Instance->IR);
+    abr_reg = &(hospi->Instance->ABR);
   }
 
   /* Configure the CCR register with DQS and SIOO modes */

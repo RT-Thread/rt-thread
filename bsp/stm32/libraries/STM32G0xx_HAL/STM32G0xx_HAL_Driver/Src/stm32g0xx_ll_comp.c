@@ -22,9 +22,9 @@
 #include "stm32g0xx_ll_comp.h"
 
 #ifdef  USE_FULL_ASSERT
-  #include "stm32_assert.h"
+#include "stm32_assert.h"
 #else
-  #define assert_param(expr) ((void)0U)
+#define assert_param(expr) ((void)0U)
 #endif
 
 /** @addtogroup STM32G0xx_LL_Driver
@@ -131,13 +131,13 @@
 ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
-  
+
   /* Note: Hardware constraint (refer to description of this function):       */
   /*       COMP instance must not be locked.                                  */
-  if(LL_COMP_IsLocked(COMPx) == 0UL)
+  if (LL_COMP_IsLocked(COMPx) == 0UL)
   {
     LL_COMP_WriteReg(COMPx, CSR, 0x00000000UL);
 
@@ -149,7 +149,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
     /* The only way to unlock the comparator is a device hardware reset.       */
     status = ERROR;
   }
-  
+
   return status;
 }
 
@@ -168,7 +168,7 @@ ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)
 ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStruct)
 {
   ErrorStatus status = SUCCESS;
-  
+
   /* Check the parameters */
   assert_param(IS_COMP_ALL_INSTANCE(COMPx));
   assert_param(IS_LL_COMP_POWER_MODE(COMP_InitStruct->PowerMode));
@@ -177,10 +177,10 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
   assert_param(IS_LL_COMP_INPUT_HYSTERESIS(COMP_InitStruct->InputHysteresis));
   assert_param(IS_LL_COMP_OUTPUT_POLARITY(COMP_InitStruct->OutputPolarity));
   assert_param(IS_LL_COMP_OUTPUT_BLANKING_SOURCE(COMP_InitStruct->OutputBlankingSource));
-  
+
   /* Note: Hardware constraint (refer to description of this function)        */
   /*       COMP instance must not be locked.                                  */
-  if(LL_COMP_IsLocked(COMPx) == 0UL)
+  if (LL_COMP_IsLocked(COMPx) == 0UL)
   {
     /* Configuration of comparator instance :                                 */
     /*  - PowerMode                                                           */
@@ -190,14 +190,14 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
     /*  - OutputPolarity                                                      */
     /*  - OutputBlankingSource                                                */
     MODIFY_REG(COMPx->CSR,
-                 COMP_CSR_PWRMODE
+               COMP_CSR_PWRMODE
                | COMP_CSR_INPSEL
                | COMP_CSR_INMSEL
                | COMP_CSR_HYST
                | COMP_CSR_POLARITY
                | COMP_CSR_BLANKING
-              ,
-                 COMP_InitStruct->PowerMode
+               ,
+               COMP_InitStruct->PowerMode
                | COMP_InitStruct->InputPlus
                | COMP_InitStruct->InputMinus
                | COMP_InitStruct->InputHysteresis
@@ -211,7 +211,7 @@ ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStru
     /* Initialization error: COMP instance is locked.                         */
     status = ERROR;
   }
-  
+
   return status;
 }
 

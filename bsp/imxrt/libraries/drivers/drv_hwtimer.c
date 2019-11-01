@@ -108,7 +108,7 @@ static rt_err_t imxrt_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwt
 
     RT_ASSERT(timer != RT_NULL);
 
-    hwtimer_dev->CR |= (mode == HWTIMER_MODE_PERIOD) ? GPT_CR_FRR_MASK : 0U;
+    hwtimer_dev->CR |= (mode != HWTIMER_MODE_PERIOD) ? GPT_CR_FRR_MASK : 0U;
 
     GPT_SetOutputCompareValue(hwtimer_dev, kGPT_OutputCompare_Channel1, cnt);
 

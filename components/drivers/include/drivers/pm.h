@@ -86,8 +86,8 @@ struct rt_pm;
  */
 struct rt_pm_ops
 {
-    void (*sleep)(struct rt_pm *pm, uint8_t mode);
-    void (*run)(struct rt_pm *pm, uint8_t mode);
+    void (*sleep)(struct rt_pm *pm, rt_uint8_t mode);
+    void (*run)(struct rt_pm *pm, rt_uint8_t mode);
     void (*timer_start)(struct rt_pm *pm, rt_uint32_t timeout);
     void (*timer_stop)(struct rt_pm *pm);
     rt_tick_t (*timer_get_tick)(struct rt_pm *pm);
@@ -95,9 +95,9 @@ struct rt_pm_ops
 
 struct rt_device_pm_ops
 {
-    int (*suspend)(const struct rt_device *device, uint8_t mode);
-    void (*resume)(const struct rt_device *device, uint8_t mode);
-    int (*frequency_change)(const struct rt_device *device, uint8_t mode);
+    int (*suspend)(const struct rt_device *device, rt_uint8_t mode);
+    void (*resume)(const struct rt_device *device, rt_uint8_t mode);
+    int (*frequency_change)(const struct rt_device *device, rt_uint8_t mode);
 };
 
 struct rt_device_pm
@@ -137,22 +137,22 @@ enum
 
 struct rt_pm_notify
 {
-    void (*notify)(uint8_t event, uint8_t mode, void *data);
+    void (*notify)(rt_uint8_t event, rt_uint8_t mode, void *data);
     void *data;
 };
 
-void rt_pm_request(uint8_t sleep_mode);
-void rt_pm_release(uint8_t sleep_mode);
-int rt_pm_run_enter(uint8_t run_mode);
+void rt_pm_request(rt_uint8_t sleep_mode);
+void rt_pm_release(rt_uint8_t sleep_mode);
+int rt_pm_run_enter(rt_uint8_t run_mode);
 
 void rt_pm_device_register(struct rt_device *device, const struct rt_device_pm_ops *ops);
 void rt_pm_device_unregister(struct rt_device *device);
 
-void rt_pm_notify_set(void (*notify)(uint8_t event, uint8_t mode, void *data), void *data);
-void rt_pm_default_set(uint8_t sleep_mode);
+void rt_pm_notify_set(void (*notify)(rt_uint8_t event, rt_uint8_t mode, void *data), void *data);
+void rt_pm_default_set(rt_uint8_t sleep_mode);
 
 void rt_system_pm_init(const struct rt_pm_ops *ops,
-                       uint8_t              timer_mask,
+                       rt_uint8_t              timer_mask,
                        void                 *user_data);
 
 #endif /* __PM_H__ */

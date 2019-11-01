@@ -434,9 +434,19 @@ menuconfig RT_USING_HWCRYPTO
         endif
     endif
 
-config RT_USING_ENCODER
-    bool "Using ENCODER device drivers"
+config RT_USING_PULSE_ENCODER
+    bool "Using PULSE ENCODER device drivers"
     default n
+
+config RT_USING_INPUT_CAPTURE
+    bool "Using INPUT CAPTURE device drivers"
+    default n
+
+if RT_USING_INPUT_CAPTURE
+    config RT_INPUT_CAPTURE_RB_SIZE
+        int "Set input capture ringbuffer size"
+        default 100
+endif
 
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
@@ -650,6 +660,9 @@ menu "Using USB"
                     config _RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
                         select RT_USB_DEVICE_WINUSB
+                    config _RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
+                        select RT_USB_DEVICE_AUDIO
                 endchoice
                 if RT_USB_DEVICE_COMPOSITE
                     config RT_USB_DEVICE_CDC
@@ -674,6 +687,9 @@ menu "Using USB"
                         depends on RT_USING_LWIP
                     config RT_USB_DEVICE_WINUSB
                         bool "Enable to use device as winusb device"
+                        default n
+                    config RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
                         default n
                 endif
                 if RT_USB_DEVICE_CDC
@@ -741,6 +757,24 @@ menu "Using USB"
                     config RT_USB_DEVICE_HID_MEDIA
                         bool "Use to HID device as media keyboard"
                         default y
+                endif
+                if RT_USB_DEVICE_AUDIO
+                    config RT_USB_DEVICE_AUDIO_MIC
+                        bool "Use usb mic device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_MIC
+                            config RT_USBD_MIC_DEVICE_NAME
+                            string "audio mic device name"
+                            default "mic0"
+                        endif
+                    config RT_USB_DEVICE_AUDIO_SPEAKER
+                        bool "Use usb speaker device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_SPEAKER
+                            config RT_USBD_SPEAKER_DEVICE_NAME
+                            string "audio speaker device name"
+                            default "sound0"
+                        endif
                 endif
         endif
     endmenu

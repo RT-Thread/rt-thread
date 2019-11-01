@@ -27,6 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal_def.h"
+#include "stm32g0xx_ll_rcc.h"
 
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{
@@ -2126,19 +2127,32 @@ typedef struct
   */
 #if defined(RCC_PLLQ_SUPPORT)
 #define __HAL_RCC_PLL_CONFIG(__PLLSOURCE__, __PLLM__, __PLLN__, __PLLP__, __PLLQ__,__PLLR__ ) \
-                  (RCC->PLLCFGR = ((uint32_t) (__PLLR__)                           | \
-                                   (uint32_t) (__PLLQ__)                           | \
-                                   (uint32_t) (__PLLP__)                           | \
-                                   (uint32_t) ((__PLLN__) << RCC_PLLCFGR_PLLN_Pos) | \
-                                   (uint32_t) (__PLLM__)                           | \
-                                   (uint32_t) (__PLLSOURCE__)))
+                  MODIFY_REG( RCC->PLLCFGR,                                                   \
+                             (RCC_PLLCFGR_PLLSRC                              |               \
+                              RCC_PLLCFGR_PLLM                                |               \
+                              RCC_PLLCFGR_PLLN                                |               \
+                              RCC_PLLCFGR_PLLP                                |               \
+                              RCC_PLLCFGR_PLLQ                                |               \
+                              RCC_PLLCFGR_PLLR),                                              \
+                             ((uint32_t) (__PLLSOURCE__)                      |               \
+                              (uint32_t) (__PLLM__)                           |               \
+                              (uint32_t) ((__PLLN__) << RCC_PLLCFGR_PLLN_Pos) |               \
+                              (uint32_t) (__PLLP__)                           |               \
+                              (uint32_t) (__PLLQ__)                           |               \
+                              (uint32_t) (__PLLR__)))
 #else
 #define __HAL_RCC_PLL_CONFIG(__PLLSOURCE__, __PLLM__, __PLLN__, __PLLP__, __PLLR__ ) \
-                  (RCC->PLLCFGR = ((uint32_t) (__PLLR__)                           | \
-                                   (uint32_t) (__PLLP__)                           | \
-                                   (uint32_t) ((__PLLN__) << RCC_PLLCFGR_PLLN_Pos) | \
-                                   (uint32_t) (__PLLM__)                           | \
-                                   (uint32_t) (__PLLSOURCE__)))
+                  MODIFY_REG( RCC->PLLCFGR,                                                   \
+                             (RCC_PLLCFGR_PLLSRC                              |               \
+                              RCC_PLLCFGR_PLLM                                |               \
+                              RCC_PLLCFGR_PLLN                                |               \
+                              RCC_PLLCFGR_PLLP                                |               \
+                              RCC_PLLCFGR_PLLR),                                              \
+                             ((uint32_t) (__PLLSOURCE__)                      |               \
+                              (uint32_t) (__PLLM__)                           |               \
+                              (uint32_t) ((__PLLN__) << RCC_PLLCFGR_PLLN_Pos) |               \
+                              (uint32_t) (__PLLP__)                           |               \
+                              (uint32_t) (__PLLR__)))
 #endif
 /** @brief  Macro to get the oscillator used as PLL clock source.
   * @retval The oscillator used as PLL clock source. The returned value can be one

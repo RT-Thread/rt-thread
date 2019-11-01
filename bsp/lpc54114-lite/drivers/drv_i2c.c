@@ -53,7 +53,7 @@ static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
         xfer.slaveAddress   = msg->addr;
         xfer.flags          = kI2C_TransferDefaultFlag;
         xfer.subaddress     = 0;
-        xfer.subaddressSize = 1;
+        xfer.subaddressSize = 0;
         xfer.data           = msg->buf;
         xfer.dataSize       = msg->len;
 

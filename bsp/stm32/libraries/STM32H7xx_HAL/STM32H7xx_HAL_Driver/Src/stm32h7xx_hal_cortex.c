@@ -68,29 +68,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -308,7 +292,7 @@ void HAL_MPU_Enable(uint32_t MPU_Control)
 /**
   * @brief  Initializes and configures the Region and the memory to be protected.
   * @param  MPU_Init Pointer to a MPU_Region_InitTypeDef structure that contains
-  *                the initialization and configuration information.
+  *                  the initialization and configuration information.
   * @retval None
   */
 void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init)
@@ -320,7 +304,7 @@ void HAL_MPU_ConfigRegion(MPU_Region_InitTypeDef *MPU_Init)
   /* Set the Region number */
   MPU->RNR = MPU_Init->Number;
 
-  if ((MPU_Init->Enable) != RESET)
+  if ((MPU_Init->Enable) != 0UL)
   {
     /* Check the parameters */
     assert_param(IS_MPU_INSTRUCTION_ACCESS(MPU_Init->DisableExec));
@@ -460,7 +444,7 @@ uint32_t HAL_NVIC_GetActive(IRQn_Type IRQn)
 /**
   * @brief  Configures the SysTick clock source.
   * @param  CLKSource specifies the SysTick clock source.
-  *          This parameter can be one of the following values:
+  *         This parameter can be one of the following values:
   *             @arg SYSTICK_CLKSOURCE_HCLK_DIV8: AHB clock divided by 8 selected as SysTick clock source.
   *             @arg SYSTICK_CLKSOURCE_HCLK: AHB clock selected as SysTick clock source.
   * @retval None
@@ -499,6 +483,25 @@ __weak void HAL_SYSTICK_Callback(void)
    */
 }
 
+#if defined(DUAL_CORE)
+
+/**
+  * @brief  Returns the current CPU ID.
+  * @retval CPU identifier
+  */
+uint32_t HAL_GetCurrentCPUID(void)
+{
+  if (((SCB->CPUID & 0x000000F0U) >> 4 )== 0x7U)
+  {
+    return  CM7_CPUID;
+  }
+  else
+  {
+    return CM4_CPUID;
+  }
+}
+
+#else
 
 /**
 * @brief  Returns the current CPU ID.
@@ -509,6 +512,7 @@ uint32_t HAL_GetCurrentCPUID(void)
   return  CM7_CPUID;
 }
 
+#endif /*DUAL_CORE*/
 /**
   * @}
   */

@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32H743II
     bool
     select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -16,6 +18,13 @@ menu "Onboard Peripheral Drivers"
         bool "Enable LCD"
         select BSP_USING_LTDC
         select BSP_USING_SDRAM
+        default n
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (W25Q256 qspi)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
         default n
 
 endmenu
@@ -43,6 +52,12 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_LTDC
         bool
+        default n
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
         default n
 
     menuconfig BSP_USING_ONCHIP_RTC

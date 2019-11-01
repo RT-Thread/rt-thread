@@ -314,9 +314,6 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
       tmp &= (0x0FuL << (8u * (position & 0x03u)));
       if (tmp == (GPIO_GET_INDEX(GPIOx) << (8u * (position & 0x03u))))
       {
-        tmp = 0x0FuL << (8u * (position & 0x03u));
-        EXTI->EXTICR[position >> 2u] &= ~tmp;
-
         /* Clear EXTI line configuration */
         EXTI->IMR1 &= ~(iocurrent);
         EXTI->EMR1 &= ~(iocurrent);
@@ -324,6 +321,9 @@ void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
         /* Clear Rising Falling edge configuration */
         EXTI->RTSR1 &= ~(iocurrent);
         EXTI->FTSR1 &= ~(iocurrent);
+
+        tmp = 0x0FuL << (8u * (position & 0x03u));
+        EXTI->EXTICR[position >> 2u] &= ~tmp;
       }
 
       /*------------------------- GPIO Mode Configuration --------------------*/
@@ -432,13 +432,13 @@ void HAL_GPIO_TogglePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
   /* Check the parameters */
   assert_param(IS_GPIO_PIN(GPIO_Pin));
 
-  if ((GPIOx->ODR & GPIO_Pin) == GPIO_Pin)
+  if ((GPIOx->ODR & GPIO_Pin) != 0x00u)
   {
-    GPIOx->BSRR = (uint32_t)GPIO_Pin << GPIO_NUMBER;
+    GPIOx->BRR = (uint32_t)GPIO_Pin;
   }
   else
   {
-    GPIOx->BSRR = GPIO_Pin;
+    GPIOx->BSRR = (uint32_t)GPIO_Pin;
   }
 }
 
@@ -469,9 +469,10 @@ HAL_StatusTypeDef HAL_GPIO_LockPin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
   GPIOx->LCKR = GPIO_Pin;
   /* Set LCKx bit(s): LCKK='1' + LCK[15-0] */
   GPIOx->LCKR = tmp;
-  /* Read LCKK bit*/
+  /* Read LCKK register. This read is mandatory to complete key lock sequence */
   tmp = GPIOx->LCKR;
 
+  /* read again in order to confirm lock is active */
   if ((GPIOx->LCKR & GPIO_LCKR_LCKK) != 0x00u)
   {
     return HAL_OK;
@@ -514,7 +515,7 @@ __weak void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
   UNUSED(GPIO_Pin);
 
   /* NOTE: This function should not be modified, when the callback is needed,
-           the HAL_GPIO_EXTI_Callback could be implemented in the user file
+           the HAL_GPIO_EXTI_Rising_Callback could be implemented in the user file
    */
 }
 
@@ -529,7 +530,7 @@ __weak void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
   UNUSED(GPIO_Pin);
 
   /* NOTE: This function should not be modified, when the callback is needed,
-           the HAL_GPIO_EXTI_Callback could be implemented in the user file
+           the HAL_GPIO_EXTI_Falling_Callback could be implemented in the user file
    */
 }
 

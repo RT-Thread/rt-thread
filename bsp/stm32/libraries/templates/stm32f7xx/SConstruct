@@ -17,6 +17,7 @@ except:
 
 TARGET = 'rt-thread.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -35,6 +36,9 @@ Export('rtconfig')
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+
+stm32_library = 'STM32F7xx_HAL'
+rtconfig.BSP_LIBRARY_TYPE = stm32_library
 
 SDK_ROOT = os.path.abspath('./')
 

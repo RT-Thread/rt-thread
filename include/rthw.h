@@ -143,6 +143,12 @@ typedef union {
     } tickets;
 } rt_hw_spinlock_t;
 
+struct rt_spinlock
+{
+    rt_hw_spinlock_t lock;
+};
+
+void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock);
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 

@@ -2,37 +2,21 @@
   ******************************************************************************
   * @file    stm32l0xx_hal.h
   * @author  MCD Application Team
-  * @brief   This file contains all the functions prototypes for the HAL 
+  * @brief   This file contains all the functions prototypes for the HAL
   *          module driver.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32L0xx_HAL_H
@@ -52,21 +36,24 @@
 
 /** @defgroup HAL HAL
   * @{
-  */ 
+  */
+
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 /** @defgroup HAL_Exported_Constants HAL Exported Constants
   * @{
-  */ 
+  */
 
 /** @defgroup SYSCFG_BootMode Boot Mode
   * @{
   */
 #define SYSCFG_BOOT_MAINFLASH          ((uint32_t)0x00000000U)
 #define SYSCFG_BOOT_SYSTEMFLASH        ((uint32_t)SYSCFG_CFGR1_BOOT_MODE_0)
-#define SYSCFG_BOOT_SRAM               ((uint32_t)SYSCFG_CFGR1_BOOT_MODE)     
+#define SYSCFG_BOOT_SRAM               ((uint32_t)SYSCFG_CFGR1_BOOT_MODE)
 
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup DBGMCU_Low_Power_Config DBGMCU Low Power Configuration
   * @{
@@ -80,7 +67,7 @@
 /**
   * @}
   */
-  
+
 #if defined (LCD_BASE) /* STM32L0x3xx only */
 /** @defgroup SYSCFG_LCD_EXT_CAPA SYSCFG LCD External Capacitors
   * @{
@@ -94,7 +81,7 @@
 #endif
 #if defined (SYSCFG_CFGR2_CAPA_4)
 #define SYSCFG_VLCD_PE12_EXT_CAPA_ON    SYSCFG_CFGR2_CAPA_4  /*!< Connection on PE12  */
-#endif                        
+#endif
 
 /**
   * @}
@@ -103,8 +90,8 @@
 
 /** @defgroup SYSCFG_VREFINT_OUT_SELECT SYSCFG VREFINT Out Selection
   * @{
-  */ 
-#define SYSCFG_VREFINT_OUT_NONE          ((uint32_t)0x00000000U) /* no pad connected */  
+  */
+#define SYSCFG_VREFINT_OUT_NONE          ((uint32_t)0x00000000U) /* no pad connected */
 #define SYSCFG_VREFINT_OUT_PB0           SYSCFG_CFGR3_VREF_OUT_0 /* Selects PBO as output for the Vrefint */
 #define SYSCFG_VREFINT_OUT_PB1           SYSCFG_CFGR3_VREF_OUT_1 /* Selects PB1 as output for the Vrefint */
 #define SYSCFG_VREFINT_OUT_PB0_PB1       SYSCFG_CFGR3_VREF_OUT   /* Selects PBO and PB1 as output for the Vrefint */
@@ -115,7 +102,7 @@
                                                 ((OUTPUT) == SYSCFG_VREFINT_OUT_PB0_PB1))
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup SYSCFG_flags_definition SYSCFG Flags Definition
   * @{
@@ -127,12 +114,12 @@
 /**
   * @}
   */
-  
-/** @defgroup SYSCFG_FastModePlus_GPIO Fast Mode Plus on GPIO 
+
+/** @defgroup SYSCFG_FastModePlus_GPIO Fast Mode Plus on GPIO
   * @{
-  */ 
-/** @brief  Fast mode Plus driving capability on a specific GPIO  
-  */  
+  */
+/** @brief  Fast mode Plus driving capability on a specific GPIO
+  */
 #if defined (SYSCFG_CFGR2_I2C_PB6_FMP)
 #define SYSCFG_FASTMODEPLUS_PB6       SYSCFG_CFGR2_I2C_PB6_FMP  /* Enable Fast Mode Plus on PB6 */
 #endif
@@ -155,33 +142,34 @@
  */
  /**
   * @}
-  */ 
-  
- /** @defgroup HAL_Exported_Macros HAL Exported Macros
-  * @{
-  */  
+  */
 
-/** @brief  Freeze/Unfreeze Peripherals in Debug mode 
+/* Exported macros -----------------------------------------------------------*/
+/** @defgroup HAL_Exported_Macros HAL Exported Macros
+  * @{
+  */
+
+/** @brief  Freeze/Unfreeze Peripherals in Debug mode
   */
 #if defined (DBGMCU_APB1_FZ_DBG_TIM2_STOP)
 /**
-  * @brief  TIM2 Peripherals Debug mode 
-  */ 
+  * @brief  TIM2 Peripherals Debug mode
+  */
 #define __HAL_DBGMCU_FREEZE_TIM2()     SET_BIT(DBGMCU->APB1FZ,DBGMCU_APB1_FZ_DBG_TIM2_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM2()   CLEAR_BIT(DBGMCU->APB1FZ,DBGMCU_APB1_FZ_DBG_TIM2_STOP)
 #endif
 
 #if defined (DBGMCU_APB1_FZ_DBG_TIM3_STOP)
 /**
-  * @brief  TIM3 Peripherals Debug mode 
-  */ 
+  * @brief  TIM3 Peripherals Debug mode
+  */
 #define __HAL_DBGMCU_FREEZE_TIM3()     SET_BIT(DBGMCU->APB1FZ,DBGMCU_APB1_FZ_DBG_TIM3_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM3()   CLEAR_BIT(DBGMCU->APB1FZ,DBGMCU_APB1_FZ_DBG_TIM3_STOP)
 #endif
 
 #if defined (DBGMCU_APB1_FZ_DBG_TIM6_STOP)
 /**
-  * @brief  TIM6 Peripherals Debug mode 
+  * @brief  TIM6 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_TIM6()     SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_TIM6_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM6()   CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_TIM6_STOP)
@@ -189,7 +177,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_TIM7_STOP)
 /**
-  * @brief  TIM7 Peripherals Debug mode 
+  * @brief  TIM7 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_TIM7()     SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_TIM7_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM7()   CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_TIM7_STOP)
@@ -197,7 +185,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_RTC_STOP)
 /**
-  * @brief  RTC Peripherals Debug mode 
+  * @brief  RTC Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_RTC()      SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_RTC_STOP)
 #define __HAL_DBGMCU_UNFREEZE_RTC()    CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_RTC_STOP)
@@ -205,7 +193,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_WWDG_STOP)
 /**
-  * @brief  WWDG Peripherals Debug mode 
+  * @brief  WWDG Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_WWDG()     SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_WWDG_STOP)
 #define __HAL_DBGMCU_UNFREEZE_WWDG()   CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_WWDG_STOP)
@@ -213,7 +201,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_IWDG_STOP)
 /**
-  * @brief  IWDG Peripherals Debug mode 
+  * @brief  IWDG Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_IWDG()     SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_IWDG_STOP)
 #define __HAL_DBGMCU_UNFREEZE_IWDG()   CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_IWDG_STOP)
@@ -221,7 +209,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_I2C1_STOP)
 /**
-  * @brief  I2C1 Peripherals Debug mode 
+  * @brief  I2C1 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_I2C1_TIMEOUT()   SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_I2C1_STOP)
 #define __HAL_DBGMCU_UNFREEZE_I2C1_TIMEOUT_DBGMCU() CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_I2C1_STOP)
@@ -229,7 +217,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_I2C2_STOP)
 /**
-  * @brief  I2C2 Peripherals Debug mode 
+  * @brief  I2C2 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_I2C2_TIMEOUT_DBGMCU()   SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_I2C2_STOP)
 #define __HAL_DBGMCU_UNFREEZE_I2C2_TIMEOUT_DBGMCU() CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_I2C2_STOP)
@@ -237,7 +225,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_I2C3_STOP)
 /**
-  * @brief  I2C3 Peripherals Debug mode 
+  * @brief  I2C3 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_I2C3_TIMEOUT()   SET_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_I2C3_STOP)
 #define __HAL_DBGMCU_UNFREEZE_I2C3_TIMEOUT() CLEAR_BIT(DBGMCU->APB1FZ, DBGMCU_APB1_FZ_DBG_I2C3_STOP)
@@ -245,7 +233,7 @@
 
 #if defined (DBGMCU_APB1_FZ_DBG_LPTIMER_STOP)
 /**
-  * @brief  LPTIMER Peripherals Debug mode 
+  * @brief  LPTIMER Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_LPTIMER()        SET_BIT(DBGMCU->APB1FZ ,DBGMCU_APB1_FZ_DBG_LPTIMER_STOP)
 #define __HAL_DBGMCU_UNFREEZE_LPTIMER()      CLEAR_BIT(DBGMCU->APB1FZ ,DBGMCU_APB1_FZ_DBG_LPTIMER_STOP)
@@ -253,7 +241,7 @@
 
 #if defined (DBGMCU_APB2_FZ_DBG_TIM22_STOP)
 /**
-  * @brief  TIM22 Peripherals Debug mode 
+  * @brief  TIM22 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_TIM22()          SET_BIT(DBGMCU->APB2FZ, DBGMCU_APB2_FZ_DBG_TIM22_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM22()        CLEAR_BIT(DBGMCU->APB2FZ, DBGMCU_APB2_FZ_DBG_TIM22_STOP)
@@ -261,7 +249,7 @@
 
 #if defined (DBGMCU_APB2_FZ_DBG_TIM21_STOP)
 /**
-  * @brief  TIM21 Peripherals Debug mode 
+  * @brief  TIM21 Peripherals Debug mode
   */
 #define __HAL_DBGMCU_FREEZE_TIM21()          SET_BIT(DBGMCU->APB2FZ, DBGMCU_APB2_FZ_DBG_TIM21_STOP)
 #define __HAL_DBGMCU_UNFREEZE_TIM21()        CLEAR_BIT(DBGMCU->APB2FZ, DBGMCU_APB2_FZ_DBG_TIM21_STOP)
@@ -277,11 +265,11 @@
 
 
 /** @brief  Embedded SRAM mapped at 0x00000000
-  */                                      
+  */
 #define __HAL_SYSCFG_REMAPMEMORY_SRAM()             MODIFY_REG(SYSCFG->CFGR1, SYSCFG_CFGR1_MEM_MODE, SYSCFG_CFGR1_MEM_MODE_0 | SYSCFG_CFGR1_MEM_MODE_1)
 
 /** @brief  Configuration of the DBG Low Power mode.
-  * @param  __DBGLPMODE__: bit field to indicate in wich Low Power mode DBG is still active.
+  * @param  __DBGLPMODE__ bit field to indicate in wich Low Power mode DBG is still active.
   *         This parameter can be a value of
   *         - DBGMCU_SLEEP
   *         - DBGMCU_STOP
@@ -289,19 +277,19 @@
   */
 #define __HAL_SYSCFG_DBG_LP_CONFIG(__DBGLPMODE__)    do {assert_param(IS_DBGMCU_PERIPH(__DBGLPMODE__)); \
                                                        MODIFY_REG(DBGMCU->CR, DBGMCU_CR_DBG, (__DBGLPMODE__)); \
-                                                     } while (0) 
+                                                     } while (0)
 
-#if defined (LCD_BASE) /* STM32L0x3xx only */  
-                                                       
+#if defined (LCD_BASE) /* STM32L0x3xx only */
+
 /** @brief  Macro to configure the VLCD Decoupling capacitance connection.
   *
-  * @param  __SYSCFG_VLCD_CAPA__: specifies the decoupling of LCD capacitance for rails connection on GPIO.
+  * @param  __SYSCFG_VLCD_CAPA__ specifies the decoupling of LCD capacitance for rails connection on GPIO.
   *          This parameter can be a combination of following values (when available):
-  *            @arg SYSCFG_VLCD_PB2_EXT_CAPA_ON:  Connection on PB2   
+  *            @arg SYSCFG_VLCD_PB2_EXT_CAPA_ON:  Connection on PB2
   *            @arg SYSCFG_VLCD_PB12_EXT_CAPA_ON: Connection on PB12
   *            @arg SYSCFG_VLCD_PB0_EXT_CAPA_ON:  Connection on PB0
   *            @arg SYSCFG_VLCD_PE11_EXT_CAPA_ON: Connection on PE11
-  *            @arg SYSCFG_VLCD_PE12_EXT_CAPA_ON: Connection on PE12   
+  *            @arg SYSCFG_VLCD_PE12_EXT_CAPA_ON: Connection on PE12
   * @retval None
   */
 #define __HAL_SYSCFG_VLCD_CAPA_CONFIG(__SYSCFG_VLCD_CAPA__) \
@@ -310,16 +298,16 @@
 /**
   * @brief  Returns the decoupling of LCD capacitance configured by user.
   * @retval The LCD capacitance connection as configured by user. The returned can be a combination of :
-  *            SYSCFG_VLCD_PB2_EXT_CAPA_ON:  Connection on PB2   
+  *            SYSCFG_VLCD_PB2_EXT_CAPA_ON:  Connection on PB2
   *            SYSCFG_VLCD_PB12_EXT_CAPA_ON: Connection on PB12
   *            SYSCFG_VLCD_PB0_EXT_CAPA_ON:  Connection on PB0
   *            SYSCFG_VLCD_PE11_EXT_CAPA_ON: Connection on PE11
-  *            SYSCFG_VLCD_PE12_EXT_CAPA_ON: Connection on PE12 
+  *            SYSCFG_VLCD_PE12_EXT_CAPA_ON: Connection on PE12
   */
 #define __HAL_SYSCFG_GET_VLCD_CAPA_CONFIG()          READ_BIT(SYSCFG->CFGR2, SYSCFG_LCD_EXT_CAPA)
-              
+
 #endif
-                                                        
+
 /**
   * @brief  Returns the boot mode as configured by user.
   * @retval The boot mode as configured by user. The returned can be a value of :
@@ -331,14 +319,14 @@
 
 
 /** @brief  Check whether the specified SYSCFG flag is set or not.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __FLAG__ specifies the flag to check.
   *         The only parameter supported is SYSCFG_FLAG_VREFINT_READY
   * @retval The new state of __FLAG__ (TRUE or FALSE).
   */
 #define __HAL_SYSCFG_GET_FLAG(__FLAG__) (((SYSCFG->CFGR3) & (__FLAG__)) == (__FLAG__))
 
 /** @brief  Fast mode Plus driving capability enable macro
-  * @param __FASTMODEPLUS__: This parameter can be a value of : 
+  * @param __FASTMODEPLUS__ This parameter can be a value of :
   *     @arg SYSCFG_FASTMODEPLUS_PB6
   *     @arg SYSCFG_FASTMODEPLUS_PB7
   *     @arg SYSCFG_FASTMODEPLUS_PB8
@@ -348,7 +336,7 @@
                                                                 SET_BIT(SYSCFG->CFGR2, (__FASTMODEPLUS__));                 \
                                                                }while(0)
 /** @brief  Fast mode Plus driving capability disable macro
-  * @param __FASTMODEPLUS__: This parameter can be a value of : 
+  * @param __FASTMODEPLUS__ This parameter can be a value of :
   *     @arg SYSCFG_FASTMODEPLUS_PB6
   *     @arg SYSCFG_FASTMODEPLUS_PB7
   *     @arg SYSCFG_FASTMODEPLUS_PB8
@@ -359,10 +347,20 @@
                                                                }while(0)
 
 
-/**                  
+/**
   * @}
   */
 
+/* Exported variables --------------------------------------------------------*/
+/** @defgroup HAL_Exported_Variables HAL Exported Variables
+  * @{
+  */
+extern __IO uint32_t uwTick;
+/**
+  * @}
+  */
+
+/* Exported functions --------------------------------------------------------*/
 /** @defgroup HAL_Exported_Functions HAL Exported Functions
   * @{
   */
@@ -374,24 +372,35 @@ HAL_StatusTypeDef HAL_Init(void);
 HAL_StatusTypeDef HAL_DeInit(void);
 void HAL_MspInit(void);
 void HAL_MspDeInit(void);
-HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
+HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority);
 
-/**                  
+/**
   * @}
   */
-  
- /** @defgroup HAL_Exported_Functions_Group2 Peripheral Control functions 
-  *  @brief    Peripheral Control functions
+
+/** @defgroup HAL_Exported_Functions_Group2 Peripheral Control functions
+  * @brief    Peripheral Control functions
   * @{
   */
 void HAL_IncTick(void);
-void HAL_Delay(__IO uint32_t Delay);
+void HAL_Delay(uint32_t Delay);
 uint32_t HAL_GetTick(void);
 void HAL_SuspendTick(void);
 void HAL_ResumeTick(void);
 uint32_t HAL_GetHalVersion(void);
 uint32_t HAL_GetREVID(void);
 uint32_t HAL_GetDEVID(void);
+uint32_t HAL_GetUIDw0(void);
+uint32_t HAL_GetUIDw1(void);
+uint32_t HAL_GetUIDw2(void);
+/**
+  * @}
+  */
+
+/** @defgroup HAL_Exported_Functions_Group3 DBGMCU Peripheral Control functions
+  * @brief    DBGMCU Peripheral Control functions
+  * @{
+  */
 void HAL_DBGMCU_EnableDBGSleepMode(void);
 void HAL_DBGMCU_DisableDBGSleepMode(void);
 void HAL_DBGMCU_EnableDBGStopMode(void);
@@ -400,15 +409,22 @@ void HAL_DBGMCU_EnableDBGStandbyMode(void);
 void HAL_DBGMCU_DisableDBGStandbyMode(void);
 void HAL_DBGMCU_DBG_EnableLowPowerConfig(uint32_t Periph);
 void HAL_DBGMCU_DBG_DisableLowPowerConfig(uint32_t Periph);
+/**
+  * @}
+  */
+
+/** @defgroup HAL_Exported_Functions_Group4 SYSCFG Peripheral Control functions
+  * @brief    SYSCFG Peripheral Control functions
+  * @{
+  */
 uint32_t  HAL_SYSCFG_GetBootMode(void);
 void HAL_SYSCFG_Enable_Lock_VREFINT(void);
 void HAL_SYSCFG_Disable_Lock_VREFINT(void);
 void HAL_SYSCFG_VREFINT_OutputSelect(uint32_t SYSCFG_Vrefint_OUTPUT);
-
-/**                  
+/**
   * @}
   */
-/**                  
+/**
   * @}
   */
 
@@ -425,12 +441,12 @@ void HAL_SYSCFG_VREFINT_OutputSelect(uint32_t SYSCFG_Vrefint_OUTPUT);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
-  
+  */
+
 #ifdef __cplusplus
 }
 #endif

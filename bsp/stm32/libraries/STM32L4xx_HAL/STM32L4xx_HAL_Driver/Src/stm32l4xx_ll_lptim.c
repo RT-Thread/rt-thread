@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -37,11 +21,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_ll_lptim.h"
 #include "stm32l4xx_ll_bus.h"
+#include "stm32l4xx_ll_rcc.h"
+
 
 #ifdef  USE_FULL_ASSERT
-  #include "stm32_assert.h"
+#include "stm32_assert.h"
 #else
-  #define assert_param(expr) ((void)0U)
+#define assert_param(expr) ((void)0U)
 #endif
 
 /** @addtogroup STM32L4xx_LL_Driver
@@ -84,6 +70,13 @@
 
 
 /* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
+/** @defgroup LPTIM_Private_Functions LPTIM Private Functions
+  * @{
+  */
+/**
+  * @}
+  */
 /* Exported functions --------------------------------------------------------*/
 /** @addtogroup LPTIM_LL_Exported_Functions
   * @{
@@ -100,7 +93,7 @@
   *          - SUCCESS: LPTIMx registers are de-initialized
   *          - ERROR: invalid LPTIMx instance
   */
-ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef* LPTIMx)
+ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef *LPTIMx)
 {
   ErrorStatus result = SUCCESS;
 
@@ -118,7 +111,7 @@ ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef* LPTIMx)
     LL_APB1_GRP2_ForceReset(LL_APB1_GRP2_PERIPH_LPTIM2);
     LL_APB1_GRP2_ReleaseReset(LL_APB1_GRP2_PERIPH_LPTIM2);
   }
-#endif
+#endif /* LPTIM2 */
   else
   {
     result = ERROR;
@@ -133,7 +126,7 @@ ErrorStatus LL_LPTIM_DeInit(LPTIM_TypeDef* LPTIMx)
   * @param  LPTIM_InitStruct pointer to a @ref LL_LPTIM_InitTypeDef structure
   * @retval None
   */
-void LL_LPTIM_StructInit(LL_LPTIM_InitTypeDef* LPTIM_InitStruct)
+void LL_LPTIM_StructInit(LL_LPTIM_InitTypeDef *LPTIM_InitStruct)
 {
   /* Set the default configuration */
   LPTIM_InitStruct->ClockSource = LL_LPTIM_CLK_SOURCE_INTERNAL;
@@ -152,19 +145,9 @@ void LL_LPTIM_StructInit(LL_LPTIM_InitTypeDef* LPTIM_InitStruct)
   *          - SUCCESS: LPTIMx instance has been initialized
   *          - ERROR: LPTIMx instance hasn't been initialized
   */
-ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef * LPTIMx, LL_LPTIM_InitTypeDef* LPTIM_InitStruct)
+ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef *LPTIMx, LL_LPTIM_InitTypeDef *LPTIM_InitStruct)
 {
   ErrorStatus result = SUCCESS;
-
-  /* The LPTIMx_CFGR register must only be modified when the LPTIM is disabled
-     (ENABLE bit is reset to 0).
-  */
-  if (LL_LPTIM_IsEnabled(LPTIMx))
-  {
-    result = ERROR;
-  }
-  else
-  {
   /* Check the parameters */
   assert_param(IS_LPTIM_INSTANCE(LPTIMx));
   assert_param(IS_LL_LPTIM_CLOCK_SOURCE(LPTIM_InitStruct->ClockSource));
@@ -172,16 +155,25 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef * LPTIMx, LL_LPTIM_InitTypeDef* LPTIM_In
   assert_param(IS_LL_LPTIM_WAVEFORM(LPTIM_InitStruct->Waveform));
   assert_param(IS_LL_LPTIM_OUTPUT_POLARITY(LPTIM_InitStruct->Polarity));
 
-  /* Set CKSEL bitfield according to ClockSource value */
-  /* Set PRESC bitfield according to Prescaler value */
-  /* Set WAVE bitfield according to Waveform value */
-  /* Set WAVEPOL bitfield according to Polarity value */
-  MODIFY_REG(LPTIMx->CFGR,
-             (LPTIM_CFGR_CKSEL | LPTIM_CFGR_PRESC | LPTIM_CFGR_WAVE| LPTIM_CFGR_WAVPOL),
-             LPTIM_InitStruct->ClockSource | \
-             LPTIM_InitStruct->Prescaler | \
-             LPTIM_InitStruct->Waveform | \
-             LPTIM_InitStruct->Polarity);
+  /* The LPTIMx_CFGR register must only be modified when the LPTIM is disabled
+     (ENABLE bit is reset to 0).
+  */
+  if (LL_LPTIM_IsEnabled(LPTIMx) == 1UL)
+  {
+    result = ERROR;
+  }
+  else
+  {
+    /* Set CKSEL bitfield according to ClockSource value */
+    /* Set PRESC bitfield according to Prescaler value */
+    /* Set WAVE bitfield according to Waveform value */
+    /* Set WAVEPOL bitfield according to Polarity value */
+    MODIFY_REG(LPTIMx->CFGR,
+               (LPTIM_CFGR_CKSEL | LPTIM_CFGR_PRESC | LPTIM_CFGR_WAVE | LPTIM_CFGR_WAVPOL),
+               LPTIM_InitStruct->ClockSource | \
+               LPTIM_InitStruct->Prescaler | \
+               LPTIM_InitStruct->Waveform | \
+               LPTIM_InitStruct->Polarity);
   }
 
   return result;
@@ -196,10 +188,150 @@ ErrorStatus LL_LPTIM_Init(LPTIM_TypeDef * LPTIMx, LL_LPTIM_InitTypeDef* LPTIM_In
   */
 
 /**
+  * @brief  Disable the LPTIM instance
+  * @rmtoll CR           ENABLE        LL_LPTIM_Disable
+  * @param  LPTIMx Low-Power Timer instance
+  * @note   The following sequence is required to solve LPTIM disable HW limitation.
+  *         Please check Errata Sheet ES0335 for more details under "MCU may remain
+  *         stuck in LPTIM interrupt when entering Stop mode" section.
+  * @retval None
+  */
+void LL_LPTIM_Disable(LPTIM_TypeDef *LPTIMx)
+{
+  LL_RCC_ClocksTypeDef rcc_clock;
+  uint32_t tmpclksource = 0;
+  uint32_t tmpIER;
+  uint32_t tmpCFGR;
+  uint32_t tmpCMP;
+  uint32_t tmpARR;
+  uint32_t tmpOR;
+#if defined(LPTIM_RCR_REP)
+  uint32_t tmpRCR;
+#endif
+
+  /* Check the parameters */
+  assert_param(IS_LPTIM_INSTANCE(LPTIMx));
+
+  __disable_irq();
+
+  /********** Save LPTIM Config *********/
+  /* Save LPTIM source clock */
+  switch ((uint32_t)LPTIMx)
+  {
+     case LPTIM1_BASE:
+       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE);
+       break;
+#if defined(LPTIM2)
+     case LPTIM2_BASE:
+       tmpclksource = LL_RCC_GetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE);
+       break;
+#endif /* LPTIM2 */
+     default:
+       break;
+  }
+
+  /* Save LPTIM configuration registers */
+  tmpIER = LPTIMx->IER;
+  tmpCFGR = LPTIMx->CFGR;
+  tmpCMP = LPTIMx->CMP;
+  tmpARR = LPTIMx->ARR;
+  tmpOR = LPTIMx->OR;
+#if defined(LPTIM_RCR_REP)
+  tmpRCR = LPTIMx->RCR;
+#endif
+
+  /************* Reset LPTIM ************/
+  (void)LL_LPTIM_DeInit(LPTIMx);
+
+  /********* Restore LPTIM Config *******/
+  LL_RCC_GetSystemClocksFreq(&rcc_clock);
+
+#if defined(LPTIM_RCR_REP)
+  if ((tmpCMP != 0UL) || (tmpARR != 0UL) || (tmpRCR != 0UL))
+#else
+  if ((tmpCMP != 0UL) || (tmpARR != 0UL))
+#endif
+  {
+    /* Force LPTIM source kernel clock from APB */
+    switch ((uint32_t)LPTIMx)
+    {
+       case LPTIM1_BASE:
+         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM1_CLKSOURCE_PCLK1);
+         break;
+#if defined(LPTIM2)
+       case LPTIM2_BASE:
+         LL_RCC_SetLPTIMClockSource(LL_RCC_LPTIM2_CLKSOURCE_PCLK1);
+         break;
+#endif /* LPTIM2 */
+       default:
+         break;
+    }
+
+    if (tmpCMP != 0UL)
+    {
+      /* Restore CMP and ARR registers (LPTIM should be enabled first) */
+      LPTIMx->CR |= LPTIM_CR_ENABLE;
+      LPTIMx->CMP = tmpCMP;
+
+      /* Polling on CMP write ok status after above restore operation */
+      do
+      {
+        rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
+      } while (((LL_LPTIM_IsActiveFlag_CMPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+
+      LL_LPTIM_ClearFlag_CMPOK(LPTIMx);
+    }
+
+    if (tmpARR != 0UL)
+    {
+      LPTIMx->CR |= LPTIM_CR_ENABLE;
+      LPTIMx->ARR = tmpARR;
+
+      LL_RCC_GetSystemClocksFreq(&rcc_clock);
+      /* Polling on ARR write ok status after above restore operation */
+      do
+      {
+        rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
+      } while (((LL_LPTIM_IsActiveFlag_ARROK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+
+      LL_LPTIM_ClearFlag_ARROK(LPTIMx);
+    }
+
+#if defined(LPTIM_RCR_REP)
+    if (tmpRCR != 0UL)
+    {
+      LPTIMx->CR |= LPTIM_CR_ENABLE;
+      LPTIMx->RCR = tmpRCR;
+
+      LL_RCC_GetSystemClocksFreq(&rcc_clock);
+      /* Polling on RCR write ok status after above restore operation */
+      do
+      {
+        rcc_clock.SYSCLK_Frequency--; /* Used for timeout */
+      } while (((LL_LPTIM_IsActiveFlag_REPOK(LPTIMx) != 1UL)) && ((rcc_clock.SYSCLK_Frequency) > 0UL));
+
+      LL_LPTIM_ClearFlag_REPOK(LPTIMx);
+    }
+#endif
+
+    /* Restore LPTIM source kernel clock */
+    LL_RCC_SetLPTIMClockSource(tmpclksource);
+  }
+
+  /* Restore configuration registers (LPTIM should be disabled first) */
+  LPTIMx->CR &= ~(LPTIM_CR_ENABLE);
+  LPTIMx->IER = tmpIER;
+  LPTIMx->CFGR = tmpCFGR;
+  LPTIMx->OR = tmpOR;
+
+  __enable_irq();
+}
+
+/**
   * @}
   */
 
-#endif /* defined (LPTIM1) || defined (LPTIM2) */
+#endif /* LPTIM1 || LPTIM2 */
 
 /**
   * @}

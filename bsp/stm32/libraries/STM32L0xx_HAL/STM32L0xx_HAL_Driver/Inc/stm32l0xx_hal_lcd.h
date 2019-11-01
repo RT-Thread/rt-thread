@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -514,20 +498,20 @@ typedef struct
   */
 
 /** @brief Reset LCD handle state
-  * @param  __HANDLE__: specifies the LCD Handle.
+  * @param  __HANDLE__ specifies the LCD Handle.
   * @retval None
   */
 #define __HAL_LCD_RESET_HANDLE_STATE(__HANDLE__)  ((__HANDLE__)->State = HAL_LCD_STATE_RESET)
 
 /** @brief  macros to enables or disables the LCD
-  * @param  __HANDLE__: specifies the LCD Handle.  
+  * @param  __HANDLE__ specifies the LCD Handle.  
   * @retval None
   */     
 #define __HAL_LCD_ENABLE(__HANDLE__)              (SET_BIT((__HANDLE__)->Instance->CR, LCD_CR_LCDEN))
 #define __HAL_LCD_DISABLE(__HANDLE__)             (CLEAR_BIT((__HANDLE__)->Instance->CR, LCD_CR_LCDEN))
 
 /** @brief  macros to enables or disables the Voltage output buffer
-  * @param  __HANDLE__: specifies the LCD Handle.
+  * @param  __HANDLE__ specifies the LCD Handle.
   * @retval None
   */
 #define __HAL_LCD_VOLTOUTBUFFER_ENABLE(__HANDLE__)              (SET_BIT((__HANDLE__)->Instance->CR, LCD_CR_BUFEN))
@@ -537,7 +521,7 @@ typedef struct
   *         internal resistance may need a longer drive time to achieve 
   *         satisfactory contrast. This function is useful in this case if some 
   *         additional power consumption can be tolerated.
-  * @param  __HANDLE__: specifies the LCD Handle.
+  * @param  __HANDLE__ specifies the LCD Handle.
   * @note   When this mode is enabled, the PulseOn Duration (PON) have to be 
   *         programmed to 1/CK_PS (LCD_PULSEONDURATION_1).
   * @retval None
@@ -556,8 +540,8 @@ typedef struct
 
 /**
   * @brief  Macro to configure the LCD pulses on duration.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __DURATION__: specifies the LCD pulse on duration in terms of 
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __DURATION__ specifies the LCD pulse on duration in terms of 
   *         CK_PS (prescaled LCD clock period) pulses.
   *   This parameter can be one of the following values:
   *     @arg LCD_PULSEONDURATION_0: 0 pulse
@@ -578,8 +562,8 @@ typedef struct
 
 /**
   * @brief  Macro to configure the LCD dead time.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __DEADTIME__: specifies the LCD dead time.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __DEADTIME__ specifies the LCD dead time.
   *   This parameter can be one of the following values:
   *     @arg LCD_DEADTIME_0: No dead Time
   *     @arg LCD_DEADTIME_1: One Phase between different couple of Frame
@@ -599,8 +583,8 @@ typedef struct
 
 /**
   * @brief  Macro to configure the LCD Contrast.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __CONTRAST__: specifies the LCD Contrast.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __CONTRAST__ specifies the LCD Contrast.
   *   This parameter can be one of the following values:
   *     @arg LCD_CONTRASTLEVEL_0: Maximum Voltage = 2.60V
   *     @arg LCD_CONTRASTLEVEL_1: Maximum Voltage = 2.73V
@@ -620,8 +604,8 @@ typedef struct
 
 /**
   * @brief  Macro to configure the LCD Blink mode and Blink frequency.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __BLINKMODE__: specifies the LCD blink mode.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __BLINKMODE__ specifies the LCD blink mode.
   *   This parameter can be one of the following values:
   *     @arg LCD_BLINKMODE_OFF:           Blink disabled
   *     @arg LCD_BLINKMODE_SEG0_COM0:     Blink enabled on SEG[0], COM[0] (1 pixel)
@@ -629,7 +613,7 @@ typedef struct
   *                                       pixels according to the programmed duty)
   *     @arg LCD_BLINKMODE_ALLSEG_ALLCOM: Blink enabled on all SEG and all COM 
   *                                       (all pixels)
-  * @param  __BLINKFREQUENCY__: specifies the LCD blink frequency.
+  * @param  __BLINKFREQUENCY__ specifies the LCD blink frequency.
   *     @arg LCD_BLINKFREQUENCY_DIV8:    The Blink frequency = fLcd/8
   *     @arg LCD_BLINKFREQUENCY_DIV16:   The Blink frequency = fLcd/16
   *     @arg LCD_BLINKFREQUENCY_DIV32:   The Blink frequency = fLcd/32
@@ -647,8 +631,8 @@ typedef struct
           }while(0)
 
 /** @brief  Enables or disables the specified LCD interrupt.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __INTERRUPT__: specifies the LCD interrupt source to be enabled or disabled.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __INTERRUPT__ specifies the LCD interrupt source to be enabled or disabled.
   *          This parameter can be one of the following values:
   *     @arg LCD_IT_SOF: Start of Frame Interrupt
   *     @arg LCD_IT_UDD: Update Display Done Interrupt
@@ -666,8 +650,8 @@ typedef struct
                             }while(0)
 
 /** @brief  Checks whether the specified LCD interrupt is enabled or not.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __IT__: specifies the LCD interrupt source to check.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __IT__ specifies the LCD interrupt source to check.
   *        This parameter can be one of the following values:
   *        @arg LCD_IT_SOF: Start of Frame Interrupt
   *        @arg LCD_IT_UDD: Update Display Done Interrupt.
@@ -679,8 +663,8 @@ typedef struct
 #define __HAL_LCD_GET_IT_SOURCE(__HANDLE__, __IT__) (((__HANDLE__)->Instance->FCR) & (__IT__))
 
 /** @brief  Checks whether the specified LCD flag is set or not.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __FLAG__ specifies the flag to check.
   *        This parameter can be one of the following values:
   *        @arg LCD_FLAG_ENS: LCD Enabled flag. It indicates the LCD controller status.
   * @note  The ENS bit is set immediately when the LCDEN bit in the LCD_CR 
@@ -701,8 +685,8 @@ typedef struct
 #define __HAL_LCD_GET_FLAG(__HANDLE__, __FLAG__)    (((__HANDLE__)->Instance->SR & (__FLAG__)) == (__FLAG__))   
 
 /** @brief  Clears the specified LCD pending flag.
-  * @param  __HANDLE__: specifies the LCD Handle.
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ specifies the LCD Handle.
+  * @param  __FLAG__ specifies the flag to clear.
   *        This parameter can be any combination of the following values:
   *        @arg LCD_FLAG_SOF: Start of Frame Interrupt
   *        @arg LCD_FLAG_UDD: Update Display Done Interrupt

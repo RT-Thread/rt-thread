@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -38,7 +22,7 @@
 #define STM32L4xx_HAL_RTC_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -68,7 +52,7 @@ typedef enum
   HAL_RTC_STATE_TIMEOUT           = 0x03U,  /*!< RTC timeout state                   */
   HAL_RTC_STATE_ERROR             = 0x04U   /*!< RTC error state                     */
 
-}HAL_RTCStateTypeDef;
+} HAL_RTCStateTypeDef;
 
 /**
   * @brief  RTC Configuration Structure definition
@@ -99,7 +83,7 @@ typedef struct
   uint32_t OutPutPullUp;    /*!< Specifies the RTC Output Pull-Up mode.
                                  This parameter can be a value of @ref RTC_Output_PullUp_ALARM_OUT */
 #endif
-}RTC_InitTypeDef;
+} RTC_InitTypeDef;
 
 /**
   * @brief  RTC Time structure definition
@@ -135,7 +119,7 @@ typedef struct
   uint32_t StoreOperation;  /*!< Specifies RTC_StoreOperation value to be written in the BKP bit
                                  in CR register to store the operation.
                                  This parameter can be a value of @ref RTC_StoreOperation_Definitions */
-}RTC_TimeTypeDef;
+} RTC_TimeTypeDef;
 
 /**
   * @brief  RTC Date structure definition
@@ -154,7 +138,7 @@ typedef struct
   uint8_t Year;     /*!< Specifies the RTC Date Year.
                          This parameter must be a number between Min_Data = 0 and Max_Data = 99 */
 
-}RTC_DateTypeDef;
+} RTC_DateTypeDef;
 
 /**
   * @brief  RTC Alarm structure definition
@@ -178,7 +162,7 @@ typedef struct
 
   uint32_t Alarm;                /*!< Specifies the alarm .
                                       This parameter can be a value of @ref RTC_Alarms_Definitions */
-}RTC_AlarmTypeDef;
+} RTC_AlarmTypeDef;
 
 /**
   * @brief  RTC Handle Structure definition
@@ -197,22 +181,22 @@ typedef struct __RTC_HandleTypeDef
   __IO HAL_RTCStateTypeDef  State;      /*!< Time communication state */
 
 #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
-  void  (* AlarmAEventCallback)              ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Alarm A Event callback            */
-  void  (* AlarmBEventCallback)              ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Alarm B Event callback            */
-  void  (* TimeStampEventCallback)           ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC TimeStamp Event callback          */
-  void  (* WakeUpTimerEventCallback)         ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC WakeUpTimer Event callback        */
+  void (* AlarmAEventCallback)(struct __RTC_HandleTypeDef *hrtc);                    /*!< RTC Alarm A Event callback            */
+  void (* AlarmBEventCallback)(struct __RTC_HandleTypeDef *hrtc);                    /*!< RTC Alarm B Event callback            */
+  void (* TimeStampEventCallback)(struct __RTC_HandleTypeDef *hrtc);                 /*!< RTC TimeStamp Event callback          */
+  void (* WakeUpTimerEventCallback)(struct __RTC_HandleTypeDef *hrtc);               /*!< RTC WakeUpTimer Event callback        */
 #if defined(RTC_TAMPER1_SUPPORT)
-  void  (* Tamper1EventCallback)             ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Tamper 1 Event callback           */
+  void (* Tamper1EventCallback)(struct __RTC_HandleTypeDef *hrtc);                   /*!< RTC Tamper 1 Event callback           */
 #endif /* RTC_TAMPER1_SUPPORT */
-  void  (* Tamper2EventCallback)             ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Tamper 2 Event callback           */
+  void (* Tamper2EventCallback)(struct __RTC_HandleTypeDef *hrtc);                   /*!< RTC Tamper 2 Event callback           */
 #if defined(RTC_TAMPER3_SUPPORT)
-  void  (* Tamper3EventCallback)             ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Tamper 3 Event callback           */
+  void (* Tamper3EventCallback)(struct __RTC_HandleTypeDef *hrtc);                   /*!< RTC Tamper 3 Event callback           */
 #endif /* RTC_TAMPER3_SUPPORT */
-  void  (* MspInitCallback)                  ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Msp Init callback                 */
-  void  (* MspDeInitCallback)                ( struct __RTC_HandleTypeDef * hrtc);   /*!< RTC Msp DeInit callback               */
+  void (* MspInitCallback)(struct __RTC_HandleTypeDef *hrtc);                        /*!< RTC Msp Init callback                 */
+  void (* MspDeInitCallback)(struct __RTC_HandleTypeDef *hrtc);                      /*!< RTC Msp DeInit callback               */
 #endif /* (USE_HAL_RTC_REGISTER_CALLBACKS == 1) */
 
-}RTC_HandleTypeDef;
+} RTC_HandleTypeDef;
 
 #if (USE_HAL_RTC_REGISTER_CALLBACKS == 1)
 /**
@@ -233,12 +217,12 @@ typedef enum
 #endif /* RTC_TAMPER3_SUPPORT */
   HAL_RTC_MSPINIT_CB_ID                  =  7u,    /*!< RTC Msp Init callback ID           */
   HAL_RTC_MSPDEINIT_CB_ID                =  8u     /*!< RTC Msp DeInit callback ID         */
-}HAL_RTC_CallbackIDTypeDef;
+} HAL_RTC_CallbackIDTypeDef;
 
 /**
   * @brief  HAL RTC Callback pointer definition
   */
-typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to an RTC callback function */
+typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef *hrtc);  /*!< pointer to an RTC callback function */
 #endif /* (USE_HAL_RTC_REGISTER_CALLBACKS == 1) */
 
 /**
@@ -482,10 +466,10 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   */
 
 #if defined(STM32L412xx) || defined(STM32L422xx)
-/** @defgroup RTC_Interruption_Mask    RTC Interruptions Flag Mask
+/** @defgroup RTC_Flag_Mask    RTC Flag Mask (5bits) describe in RTC_Flags_Definitions
   * @{
   */
-#define RTC_IT_MASK                         0x001Fu                  /*!< RTC interruptions flags mask */
+#define RTC_FLAG_MASK                       0x001Fu            /*!< RTC flags mask (5bits) */
 /**
   * @}
   */
@@ -495,23 +479,21 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   *           - YYYYY  : Interrupt flag position in the XX register (5bits)
   *           - XX  : Interrupt status register (2bits)
   *                 - 01: ICSR register
-  *                 - 10: SR register
+  *                 - 10: SR or SCR or MISR or SMISR registers
   * @{
   */
-#define RTC_FLAG_RECALPF                    0x00000110u    /*!< Recalibration pending Flag */
-#define RTC_FLAG_INITF                      0x00000106u    /*!< Initialization flag */
-#define RTC_FLAG_RSF                        0x00000105u    /*!< Registers synchronization flag */
-#define RTC_FLAG_INITS                      0x00000104u    /*!< Initialization status flag */
-#define RTC_FLAG_SHPF                       0x00000103u    /*!< Shift operation pending flag */
-#define RTC_FLAG_WUTWF                      0x00000102u    /*!< Wakeup timer write flag */
-#define RTC_FLAG_ALRBWF                     0x00000101u    /*!< Alarm B write flag */
-#define RTC_FLAG_ALRAWF                     0x00000100u    /*!< Alarm A write flag */
-#define RTC_FLAG_ITSF                       0x00000205u    /*!< Clear Internal Time-stamp flag */
-#define RTC_FLAG_TSOVF                      0x00000204u    /*!< Clear Time-stamp overflow flag */
-#define RTC_FLAG_TSF                        0x00000203u    /*!< Clear Time-stamp flag */
-#define RTC_FLAG_WUTF                       0x00000202u    /*!< Clear Wakeup timer flag */
-#define RTC_FLAG_ALRBF                      0x00000201u    /*!< Clear Alarm B flag */
-#define RTC_FLAG_ALRAF                      0x00000200u    /*!< Clear Alarm A flag */
+#define RTC_FLAG_RECALPF                    (0x00000100U | RTC_ICSR_RECALPF_Pos) /*!< Recalibration pending Flag */
+#define RTC_FLAG_INITF                      (0x00000100U | RTC_ICSR_INITF_Pos)   /*!< Initialization flag */
+#define RTC_FLAG_RSF                        (0x00000100U | RTC_ICSR_RSF_Pos)     /*!< Registers synchronization flag */
+#define RTC_FLAG_INITS                      (0x00000100U | RTC_ICSR_INITS_Pos)   /*!< Initialization status flag */
+#define RTC_FLAG_SHPF                       (0x00000100U | RTC_ICSR_SHPF_Pos)    /*!< Shift operation pending flag */
+#define RTC_FLAG_WUTWF                      (0x00000100U | RTC_ICSR_WUTWF_Pos)   /*!< Wakeup timer write flag */
+#define RTC_FLAG_ITSF                       (0x00000200U | RTC_SR_ITSF_Pos)      /*!< Internal Time-stamp flag */
+#define RTC_FLAG_TSOVF                      (0x00000200U | RTC_SR_TSOVF_Pos)     /*!< Time-stamp overflow flag */
+#define RTC_FLAG_TSF                        (0x00000200U | RTC_SR_TSF_Pos)       /*!< Time-stamp flag */
+#define RTC_FLAG_WUTF                       (0x00000200U | RTC_SR_WUTF_Pos)      /*!< Wakeup timer flag */
+#define RTC_FLAG_ALRBF                      (0x00000200U | RTC_SR_ALRBF_Pos)     /*!< Alarm B flag */
+#define RTC_FLAG_ALRAF                      (0x00000200U | RTC_SR_ALRAF_Pos)     /*!< Alarm A flag */
 /**
   * @}
   */
@@ -632,11 +614,11 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
                             __HAL_RTC_WRITEPROTECTION_ENABLE(__HANDLE__);                 \
                         } while(0u);
 
- /**
-  * @brief  Enable the RTC ALARMA peripheral.
-  * @param  __HANDLE__ specifies the RTC handle.
-  * @retval None
-  */
+/**
+ * @brief  Enable the RTC ALARMA peripheral.
+ * @param  __HANDLE__ specifies the RTC handle.
+ * @retval None
+ */
 #define __HAL_RTC_ALARMA_ENABLE(__HANDLE__)  ((__HANDLE__)->Instance->CR |= (RTC_CR_ALRAE))
 
 /**
@@ -707,6 +689,20 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   */
 #define __HAL_RTC_ALARM_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)     (((((__HANDLE__)->Instance->CR) & (__INTERRUPT__)) != 0U) ? 1U : 0U)
 
+#if defined(STM32L412xx) || defined(STM32L422xx)
+/**
+  * @brief  Get the selected RTC Alarm's flag status.
+  * @param  __HANDLE__ specifies the RTC handle.
+  * @param  __FLAG__ specifies the RTC Alarm Flag sources to check.
+  *         This parameter can be:
+  *            @arg @ref RTC_FLAG_ALRAF
+  *            @arg @ref RTC_FLAG_ALRBF
+  * @retval None
+  */
+#define __HAL_RTC_ALARM_GET_FLAG(__HANDLE__, __FLAG__)   (__HAL_RTC_GET_FLAG((__HANDLE__), (__FLAG__)))
+
+#else /* #if defined(STM32L412xx) || defined(STM32L422xx) */
+
 /**
   * @brief  Get the selected RTC Alarm's flag status.
   * @param  __HANDLE__ specifies the RTC handle.
@@ -718,11 +714,8 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
   *            @arg @ref RTC_FLAG_ALRBWF
   * @retval None
   */
-#if defined(STM32L412xx) || defined(STM32L422xx)
-#define __HAL_RTC_ALARM_GET_FLAG(__HANDLE__, __FLAG__)   (__HAL_RTC_GET_FLAG((__HANDLE__), (__FLAG__)))
-#else
 #define __HAL_RTC_ALARM_GET_FLAG(__HANDLE__, __FLAG__)  (((((__HANDLE__)->Instance->ISR) & (__FLAG__)) != 0U) ? 1U : 0U)
-#endif
+#endif /* #if defined(STM32L412xx) || defined(STM32L422xx) */
 
 /**
   * @brief  Clear the RTC Alarm's pending flags.
@@ -765,31 +758,31 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
 #define __HAL_RTC_ALARM_EXTI_DISABLE_EVENT()         (EXTI->EMR1 &= ~(RTC_EXTI_LINE_ALARM_EVENT))
 
 /**
-  * @brief  Enable falling edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Enable falling edge trigger on the RTC Alarm associated Exti line.
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_ENABLE_FALLING_EDGE()   (EXTI->FTSR1 |= RTC_EXTI_LINE_ALARM_EVENT)
 
 /**
-  * @brief  Disable falling edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Disable falling edge trigger on the RTC Alarm associated Exti line.
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_DISABLE_FALLING_EDGE()  (EXTI->FTSR1 &= ~(RTC_EXTI_LINE_ALARM_EVENT))
 
 /**
-  * @brief  Enable rising edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Enable rising edge trigger on the RTC Alarm associated Exti line.
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_ENABLE_RISING_EDGE()    (EXTI->RTSR1 |= RTC_EXTI_LINE_ALARM_EVENT)
 
 /**
-  * @brief  Disable rising edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Disable rising edge trigger on the RTC Alarm associated Exti line.
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_DISABLE_RISING_EDGE()   (EXTI->RTSR1 &= ~(RTC_EXTI_LINE_ALARM_EVENT))
 
 /**
-  * @brief  Enable rising & falling edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Enable rising & falling edge trigger on the RTC Alarm associated Exti line.
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_ENABLE_RISING_FALLING_EDGE()  do { \
@@ -798,7 +791,7 @@ typedef  void (*pRTC_CallbackTypeDef)(RTC_HandleTypeDef * hrtc); /*!< pointer to
                                                            } while(0u)
 
 /**
-  * @brief  Disable rising & falling edge trigger on the RTC Alarm associated Exti line.  
+  * @brief  Disable rising & falling edge trigger on the RTC Alarm associated Exti line.
   * @retval None
   */
 #define __HAL_RTC_ALARM_EXTI_DISABLE_RISING_FALLING_EDGE() do { \
@@ -886,7 +879,7 @@ HAL_StatusTypeDef HAL_RTC_PollForAlarmAEvent(RTC_HandleTypeDef *hrtc, uint32_t T
   * @{
   */
 /* Peripheral Control functions ***********************************************/
-HAL_StatusTypeDef   HAL_RTC_WaitForSynchro(RTC_HandleTypeDef* hrtc);
+HAL_StatusTypeDef   HAL_RTC_WaitForSynchro(RTC_HandleTypeDef *hrtc);
 /**
   * @}
   */
@@ -1046,7 +1039,8 @@ HAL_RTCStateTypeDef HAL_RTC_GetState(RTC_HandleTypeDef *hrtc);
 /** @defgroup RTC_Private_Functions RTC Private Functions
   * @{
   */
-HAL_StatusTypeDef  RTC_EnterInitMode(RTC_HandleTypeDef* hrtc);
+HAL_StatusTypeDef  RTC_EnterInitMode(RTC_HandleTypeDef *hrtc);
+HAL_StatusTypeDef  RTC_ExitInitMode(RTC_HandleTypeDef *hrtc);
 uint8_t            RTC_ByteToBcd2(uint8_t Value);
 uint8_t            RTC_Bcd2ToByte(uint8_t Value);
 /**

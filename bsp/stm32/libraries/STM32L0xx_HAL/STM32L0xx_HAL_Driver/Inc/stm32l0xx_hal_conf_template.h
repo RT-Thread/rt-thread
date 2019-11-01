@@ -8,29 +8,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics. 
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the 
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -100,8 +84,9 @@
   *        This value is the default MSI range value after Reset.
   */
 #if !defined  (MSI_VALUE)
-  #define MSI_VALUE    ((uint32_t)2000000U) /*!< Value of the Internal oscillator in Hz*/
+  #define MSI_VALUE    ((uint32_t)2097152U) /*!< Value of the Internal oscillator in Hz*/
 #endif /* MSI_VALUE */
+
 /**
   * @brief Internal High Speed oscillator (HSI) value.
   *        This value is used by the RCC HAL module to compute the system frequency
@@ -163,7 +148,46 @@
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
   *        HAL drivers code
   */
-/* #define USE_FULL_ASSERT    1 */
+/* #define USE_FULL_ASSERT    1U */
+
+
+/* ################## Register callback feature configuration ############### */
+/**
+  * @brief Set below the peripheral configuration  to "1U" to add the support
+  *        of HAL callback registration/deregistration feature for the HAL
+  *        driver(s). This allows user application to provide specific callback
+  *        functions thanks to HAL_PPP_RegisterCallback() rather than overwriting
+  *        the default weak callback functions (see each stm32l0xx_hal_ppp.h file
+  *        for possible callback identifiers defined in HAL_PPP_CallbackIDTypeDef
+  *        for each PPP peripheral).
+  */
+#define USE_HAL_ADC_REGISTER_CALLBACKS        0U
+#define USE_HAL_COMP_REGISTER_CALLBACKS       0U
+#define USE_HAL_DAC_REGISTER_CALLBACKS        0U
+#define USE_HAL_I2C_REGISTER_CALLBACKS        0U
+#define USE_HAL_I2S_REGISTER_CALLBACKS        0U
+#define USE_HAL_IRDA_REGISTER_CALLBACKS       0U
+#define USE_HAL_LPTIM_REGISTER_CALLBACKS      0U
+#define USE_HAL_PCD_REGISTER_CALLBACKS        0U
+#define USE_HAL_RNG_REGISTER_CALLBACKS        0U
+#define USE_HAL_RTC_REGISTER_CALLBACKS        0U
+#define USE_HAL_SMARTCARD_REGISTER_CALLBACKS  0U
+#define USE_HAL_SMBUS_REGISTER_CALLBACKS      0U
+#define USE_HAL_SPI_REGISTER_CALLBACKS        0U
+#define USE_HAL_TIM_REGISTER_CALLBACKS        0U
+#define USE_HAL_TSC_REGISTER_CALLBACKS        0U
+#define USE_HAL_UART_REGISTER_CALLBACKS       0U
+#define USE_HAL_USART_REGISTER_CALLBACKS      0U
+#define USE_HAL_WWDG_REGISTER_CALLBACKS       0U
+
+/* ################## SPI peripheral configuration ########################## */
+
+/* CRC FEATURE: Use to activate CRC feature inside HAL SPI Driver
+ * Activated: CRC code is present inside driver
+ * Deactivated: CRC code cleaned from driver
+ */
+
+#define USE_SPI_CRC                   1U
 
 /* Includes ------------------------------------------------------------------*/
 /**
@@ -290,7 +314,7 @@
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.
-  * @param  expr: If expr is false, it calls assert_failed function
+  * @param  expr If expr is false, it calls assert_failed function
   *         which reports the name of the source file and the source
   *         line number of the call that failed. 
   *         If expr is true, it returns no value.
