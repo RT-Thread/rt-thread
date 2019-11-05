@@ -1,0 +1,5 @@
+config RT_USING_UART0
+    bool "Enable UART0 (The UART component name is UART0 in the TopDesign of PSoC Creator)"
+    default y
+
+
