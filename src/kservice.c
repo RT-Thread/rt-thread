@@ -114,6 +114,69 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
+const char rt_errno_verbose[][24] =
+{
+    "no error",
+    "generic error",
+    "Timed out",
+    "resource is full",
+    "resource is empty",
+    "No memory ",
+    "No system",
+    "Busy",
+    "IO error",
+    "Interrupted system call",
+    "Invalid argument",
+    "Unkown error"
+};
+
+const char rt_errno_short[][7] =
+{
+    "OK",
+    "ERROR",
+    "TIMOUT",
+    "FULL",
+    "EMPTY",
+    "NOMEM",
+    "NOSYS",
+    "BUSY",
+    "EIO",
+    "EINTR",
+    "EINVAL",
+    "UNKNOW"
+};
+
+/**
+ * This function return a pointer to a string that contains the 
+ * message of error.
+ *
+ * @param mode the type of messag 
+ *          RT_STRERROR_LONG  -- long message
+ *          RT_STRERROR_SHORT -- short message
+ * @param error the errorno code
+ * @return a point to error message string
+ */
+const char *rt_strerror(rt_uint8_t mode, rt_err_t error)
+{
+    const char* ret = RT_NULL;
+    if (error < 0)
+        error = -error;
+
+    if(mode == RT_STRERROR_LONG)
+    {
+        ret = (error > RT_EINVAL)?
+              rt_errno_verbose[RT_EINVAL+1]:
+              rt_errno_verbose[error];
+    }else if(mode == RT_STRERROR_SHORT)
+    {
+        ret = (error > RT_EINVAL)?
+              rt_errno_short[RT_EINVAL+1]:
+              rt_errno_short[error];
+    }  
+    return ret;
+}
+RTM_EXPORT(rt_strerror);
+
 /**
  * This function will set the content of memory to specified value
  *
@@ -909,9 +972,15 @@ rt_int32_t rt_vsnprintf(char       *buf,
                 ++ str;
             }
             continue;
-
+        case 'M':
+        case 'm':
+            num = va_arg(args, rt_err_t);
+            s = rt_strerror(((*fmt) == 'm')?RT_STRERROR_LONG:
+                            RT_STRERROR_SHORT,num);
+            goto skip_s;
         case 's':
             s = va_arg(args, char *);
+            skip_s:
             if (!s) s = "(NULL)";
 
             len = rt_strlen(s);
