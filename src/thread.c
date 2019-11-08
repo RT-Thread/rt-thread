@@ -531,6 +531,51 @@ rt_err_t rt_thread_delay(rt_tick_t tick)
 RTM_EXPORT(rt_thread_delay);
 
 /**
+ * This function will let current thread delay for some ticks, and restart at a fixed period.
+ *
+ * @param powerOf2TickPeriods A thread cycle tick number. should be 2^n
+ * @param tickIdx tick index between 0 and (powerOf2TickPeriods-1)
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_thread_fixed_period_schedule(rt_uint32_t powerOf2TickPeriods, rt_uint32_t tickIdx)
+{
+    register rt_base_t temp;
+    struct rt_thread* thread;
+
+    /* set to current thread */
+    thread = rt_thread_self();
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+    RT_ASSERT(powerOf2TickPeriods != 0 && (powerOf2TickPeriods & (powerOf2TickPeriods - 1)) == 0);
+    RT_ASSERT(tickIdx < powerOf2TickPeriods);
+    rt_uint32_t mask = powerOf2TickPeriods - 1;
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
+
+    /* suspend thread */
+    rt_thread_suspend(thread);
+
+    /* reset the timeout of thread timer and start it */
+    rt_uint32_t leftTick = powerOf2TickPeriods - ((rt_tick_get() - tickIdx) & mask);
+
+    rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &leftTick);
+    rt_timer_start(&(thread->thread_timer));
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(temp);
+
+    rt_schedule();
+
+    /* clear error number of this thread to RT_EOK */
+    if (thread->error == -RT_ETIMEOUT)
+        thread->error = RT_EOK;
+
+    return RT_EOK;
+}
+
+/**
  * This function will let current thread delay for some milliseconds.
  *
  * @param tick the delay time

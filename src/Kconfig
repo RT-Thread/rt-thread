@@ -20,7 +20,7 @@ config RT_USING_ARCH_DATA_TYPE
 config RT_USING_SMP
     bool "Enable SMP(Symmetric multiprocessing)"
     default n
-    help
+	help
         This option should be selected by machines which have an SMP-
         capable CPU.
         The only effect of this option is to make the SMP-related
@@ -28,10 +28,10 @@ config RT_USING_SMP
 
 config RT_CPUS_NR
     int "Number of CPUs"
-    default 2
-    depends on RT_USING_SMP
+	default 2
+	depends on RT_USING_SMP
     help
-        Number of CPUs in the system
+		Number of CPUs in the system
 
 config RT_ALIGN_SIZE
     int "Alignment size for CPU architecture data access"
@@ -61,7 +61,7 @@ config RT_THREAD_PRIORITY_MAX
 
 config RT_TICK_PER_SECOND
     int "Tick frequency, Hz"
-    range 10 1000
+    range 10 8000
     default 100
     help
         System's tick frequency, Hz.

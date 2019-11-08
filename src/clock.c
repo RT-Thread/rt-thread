@@ -65,6 +65,11 @@ void rt_tick_set(rt_tick_t tick)
     rt_hw_interrupt_enable(level);
 }
 
+RT_WEAK rt_tick_t rt_tick_increase_size(void)
+{
+    return 1;
+}
+
 /**
  * This function will notify kernel there is one tick passed. Normally,
  * this function is invoked by clock ISR.
@@ -75,16 +80,16 @@ void rt_tick_increase(void)
 
     /* increase the global tick */
 #ifdef RT_USING_SMP
-    rt_cpu_self()->tick ++;
+    rt_cpu_self()->tick += rt_tick_increase_size();
 #else
-    ++ rt_tick;
+    rt_tick += rt_tick_increase_size();
 #endif
 
     /* check time slice */
     thread = rt_thread_self();
 
-    -- thread->remaining_tick;
-    if (thread->remaining_tick == 0)
+    thread->remaining_tick -= rt_tick_increase_size();
+    if (((rt_int32_t)thread->remaining_tick) <= 0)
     {
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;

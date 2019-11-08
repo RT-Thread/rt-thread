@@ -74,6 +74,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 void rt_system_tick_init(void);
 rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
+rt_tick_t rt_tick_increase_size(void);
 void rt_tick_increase(void);
 rt_tick_t  rt_tick_from_millisecond(rt_int32_t ms);
 
@@ -138,6 +139,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread);
 
 rt_err_t rt_thread_yield(void);
 rt_err_t rt_thread_delay(rt_tick_t tick);
+rt_err_t rt_thread_fixed_period_schedule(rt_uint32_t powerOf2TickPeriods, rt_uint32_t tickIdx);
 rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
