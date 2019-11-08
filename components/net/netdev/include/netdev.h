@@ -12,6 +12,7 @@
 #define __NETDEV_H__
 
 #include <rtthread.h>
+#include <netdev_ipaddr.h>
 
 #ifdef __cplusplus
 extern "C" {
