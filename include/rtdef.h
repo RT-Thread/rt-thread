@@ -200,11 +200,11 @@ typedef int (*init_fn_t)(void);
         };
         #define INIT_EXPORT(fn, level)                                                       \
             const char __rti_##fn##_name[] = #fn;                                            \
-            RT_USED const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+            RT_USED const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn." level) = \
             { __rti_##fn##_name, fn};
     #else
         #define INIT_EXPORT(fn, level)                                                       \
-            RT_USED const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+            RT_USED const init_fn_t __rt_init_##fn SECTION(".rti_fn." level) = fn
     #endif
 #endif
 #else
