@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=D:/work/rt-thread-me/bsp/stm32/stm32h750-armfly-h7-tool/board/CubeMX_Config/Inc
+HeaderPath=D:/work/rt-thread/bsp/stm32/stm32h750-armfly-h7-tool/board/CubeMX_Config/Inc
 HeaderFiles=stm32h7xx_it.h;stm32h7xx_hal_conf.h;main.h;
-SourcePath=D:/work/rt-thread-me/bsp/stm32/stm32h750-armfly-h7-tool/board/CubeMX_Config/Src
+SourcePath=D:/work/rt-thread/bsp/stm32/stm32h750-armfly-h7-tool/board/CubeMX_Config/Src
 SourceFiles=stm32h7xx_it.c;stm32h7xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

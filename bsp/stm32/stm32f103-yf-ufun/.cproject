@@ -78,7 +78,6 @@
                 </option>
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.100549972" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols">
                   <listOptionValue builtIn="false" value="DEBUG" />
-                  <listOptionValue builtIn="false" value="_REENT_SMALL" />
                 </option>
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.other.2133065240" name="Other compiler flags" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.other" useByScannerDiscovery="true" value="" valueType="string" />
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.files.714348818" name="Include files (-include)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.files" useByScannerDiscovery="true" valueType="includeFiles">

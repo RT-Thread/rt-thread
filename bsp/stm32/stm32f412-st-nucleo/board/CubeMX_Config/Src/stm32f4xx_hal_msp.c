@@ -197,9 +197,6 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)
 
     /* Peripheral clock enable */
     __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
-    /* USB_OTG_FS interrupt Init */
-    HAL_NVIC_SetPriority(OTG_FS_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
   /* USER CODE BEGIN USB_OTG_FS_MspInit 1 */
 
   /* USER CODE END USB_OTG_FS_MspInit 1 */
@@ -233,8 +230,6 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* hpcd)
     */
     HAL_GPIO_DeInit(GPIOA, USB_SOF_Pin|USB_ID_Pin|USB_DM_Pin|USB_DP_Pin);
 
-    /* USB_OTG_FS interrupt DeInit */
-    HAL_NVIC_DisableIRQ(OTG_FS_IRQn);
   /* USER CODE BEGIN USB_OTG_FS_MspDeInit 1 */
 
   /* USER CODE END USB_OTG_FS_MspDeInit 1 */

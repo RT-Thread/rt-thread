@@ -354,12 +354,12 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Include</state>
@@ -1406,12 +1406,12 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Include</state>
@@ -2113,9 +2113,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
@@ -2167,7 +2164,7 @@
       <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32g0xx_hal_msp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Source\Templates\iar\startup_stm32g071xx.s</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\iar\startup_stm32g071xx.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
@@ -2275,7 +2272,7 @@
   <group>
     <name>STM32_HAL</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\STM32G0xx_HAL_Driver\Src\stm32g0xx_hal_cec.c</name>
