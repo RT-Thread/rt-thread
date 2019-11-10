@@ -114,6 +114,40 @@ int *_rt_errno(void)
 }
 RTM_EXPORT(_rt_errno);
 
+static const char rt_errno_strs[][8] =
+{
+    "OK",
+    "ERROR",
+    "ETIMOUT",
+    "ERSFULL",
+    "ERSEPTY",
+    "ENOMEM",
+    "ENOSYS",
+    "EBUSY",
+    "EIO",
+    "EINTRPT",
+    "EINVAL",
+    "EUNKNOW"
+};
+
+/**
+ * This function return a pointer to a string that contains the
+ * message of error.
+ *
+ * @param error the errorno code
+ * @return a point to error message string
+ */
+const char *rt_strerror(rt_err_t error)
+{
+    if (error < 0)
+        error = -error;
+
+    return (error > RT_EINVAL + 1) ?
+           rt_errno_strs[RT_EINVAL + 1] :
+           rt_errno_strs[error];
+}
+RTM_EXPORT(rt_strerror);
+
 /**
  * This function will set the content of memory to specified value
  *
@@ -910,8 +944,13 @@ rt_int32_t rt_vsnprintf(char       *buf,
             }
             continue;
 
+        case 'm':
+            num = va_arg(args, rt_err_t);
+            s = rt_strerror(num);
+
         case 's':
-            s = va_arg(args, char *);
+            if ((*fmt) == 's')
+                s = va_arg(args, char *);
             if (!s) s = "(NULL)";
 
             len = rt_strlen(s);
