@@ -35,6 +35,9 @@ struct rt_stm32_eth
 {
     /* inherit from ethernet device */
     struct eth_device parent;
+#ifndef PHY_USING_INTERRUPT_MODE
+    rt_timer_t poll_link_timer;
+#endif
 
     /* interface address info, hw address */
     rt_uint8_t  dev_addr[MAX_ADDR_LEN];
@@ -426,7 +429,8 @@ static void phy_linkchange()
         }
     }
 
-    if (phy_speed != phy_speed_new) {
+    if (phy_speed != phy_speed_new)
+    {
         phy_speed = phy_speed_new;
         if (phy_speed & PHY_LINK)
         {
@@ -514,35 +518,26 @@ static void phy_monitor_thread_entry(void *parameter)
     rt_thread_mdelay(2000);
     HAL_ETH_WritePHYRegister(&EthHandle, PHY_BASIC_CONTROL_REG, PHY_AUTO_NEGOTIATION_MASK);
 
-    while (1)
-    {
-        phy_linkchange();
-
-        if (stm32_eth_device.parent.netif->flags & NETIF_FLAG_LINK_UP)
-        {
+    phy_linkchange();
 #ifdef PHY_USING_INTERRUPT_MODE
-            /* configuration intterrupt pin */
-            rt_pin_mode(PHY_INT_PIN, PIN_MODE_INPUT_PULLUP);
-            rt_pin_attach_irq(PHY_INT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_isr, (void *)"callbackargs");
-            rt_pin_irq_enable(PHY_INT_PIN, PIN_IRQ_ENABLE);
+    /* configuration intterrupt pin */
+    rt_pin_mode(PHY_INT_PIN, PIN_MODE_INPUT_PULLUP);
+    rt_pin_attach_irq(PHY_INT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_isr, (void *)"callbackargs");
+    rt_pin_irq_enable(PHY_INT_PIN, PIN_IRQ_ENABLE);
 
-            /* enable phy interrupt */
-            HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MASK_REG, PHY_INT_MASK);
+    /* enable phy interrupt */
+    HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_MASK_REG, PHY_INT_MASK);
 #if defined(PHY_INTERRUPT_CTRL_REG)
-            HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_CTRL_REG, PHY_INTERRUPT_EN);
+    HAL_ETH_WritePHYRegister(&EthHandle, PHY_INTERRUPT_CTRL_REG, PHY_INTERRUPT_EN);
 #endif
-            break;
-#endif
-        } /* link up. */
-        else
-        {
-            LOG_I("link down");
-            /* send link down. */
-            eth_device_linkchange(&stm32_eth_device.parent, RT_FALSE);
-        }
-
-        rt_thread_delay(RT_TICK_PER_SECOND);
+#else /* PHY_USING_INTERRUPT_MODE */
+    stm32_eth_device.poll_link_timer = rt_timer_create("phylnk", (void (*)(void*))phy_linkchange,
+                                        NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
+    if (!stm32_eth_device.poll_link_timer || rt_timer_start(stm32_eth_device.poll_link_timer) != RT_EOK)
+    {
+        LOG_E("Start link change detection timer failed");
     }
+#endif /* PHY_USING_INTERRUPT_MODE */
 }
 
 /* Register the EMAC device */
