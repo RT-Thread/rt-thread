@@ -344,8 +344,13 @@ void rt_schedule(void)
                 {
                     to_thread = current_thread;
                 }
+                else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                {
+                    to_thread = current_thread;
+                }
                 else
                 {
+                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
             }
@@ -435,8 +440,13 @@ void rt_schedule(void)
                 {
                     to_thread = rt_current_thread;
                 }
+                else if (rt_current_thread->current_priority == highest_ready_priority && (rt_current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                {
+                    to_thread = rt_current_thread;
+                }
                 else
                 {
+                    rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     need_insert_from_thread = 1;
                 }
             }
@@ -578,8 +588,13 @@ void rt_scheduler_do_irq_switch(void *context)
                 {
                     to_thread = current_thread;
                 }
+                else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                {
+                    to_thread = current_thread;
+                }
                 else
                 {
+                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
             }
