@@ -384,7 +384,12 @@ void rt_schedule(void)
         }
     }
 
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
 #ifdef RT_USING_SIGNALS
+    /* check stat of thread for signal */
+    level = rt_hw_interrupt_disable();
     if (current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
     {
         extern void rt_thread_handle_sig(rt_bool_t clean_state);
@@ -400,9 +405,6 @@ void rt_schedule(void)
     {
         rt_hw_interrupt_enable(level);
     }
-#else
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
 #endif
 
 __exit:
@@ -487,7 +489,13 @@ void rt_schedule(void)
 
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
+
+                    /* enable interrupt */
+                    rt_hw_interrupt_enable(level);
+
 #ifdef RT_USING_SIGNALS
+                    /* check stat of thread for signal */
+                    level = rt_hw_interrupt_disable();
                     if (rt_current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
                     {
                         extern void rt_thread_handle_sig(rt_bool_t clean_state);
@@ -503,9 +511,6 @@ void rt_schedule(void)
                     {
                         rt_hw_interrupt_enable(level);
                     }
-#else
-                    /* enable interrupt */
-                    rt_hw_interrupt_enable(level);
 #endif
                     goto __exit;
                 }
