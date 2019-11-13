@@ -446,11 +446,11 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
 
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
-
     /* disable interrupt */
     lock = rt_hw_interrupt_disable();
+
+    /* change stat */
+    thread->stat = RT_THREAD_CLOSE;
 
     /* insert to defunct thread list */
     rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));

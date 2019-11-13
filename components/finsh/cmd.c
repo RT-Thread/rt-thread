@@ -887,7 +887,7 @@ long list(void)
             /* skip the internal command */
             if (strncmp((char *)index->name, "__", 2) == 0) continue;
 
-#ifdef FINSH_USING_DESCRIPTION
+#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
 #else
             rt_kprintf("%s\n", index->name);

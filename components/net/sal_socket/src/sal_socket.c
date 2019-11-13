@@ -371,7 +371,7 @@ int sal_netdev_cleanup(struct netdev *netdev)
         sal_unlock();
         if (find_dev)
         {
-            rt_thread_mdelay(rt_tick_from_millisecond(100));
+            rt_thread_mdelay(100);
         }
     }
     while (find_dev);
