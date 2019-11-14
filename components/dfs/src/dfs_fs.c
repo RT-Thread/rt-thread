@@ -518,6 +518,43 @@ int dfs_mount_table(void)
     return 0;
 }
 INIT_ENV_EXPORT(dfs_mount_table);
+
+int dfs_mount_device(rt_device_t dev)
+{
+  int index = 0;
+  
+  if(dev == RT_NULL) {
+    rt_kprintf("the device is NULL to be mounted.\n");
+    return -RT_ERROR;
+  }
+  
+  while (1)
+  {
+    if (mount_table[index].path == NULL) break;
+    
+    if(strcmp(mount_table[index].device_name, dev->parent.name) == 0) {
+      if (dfs_mount(mount_table[index].device_name,
+                    mount_table[index].path,
+                    mount_table[index].filesystemtype,
+                    mount_table[index].rwflag,
+                    mount_table[index].data) != 0)
+      {
+        rt_kprintf("mount fs[%s] device[%s] to %s failed.\n", mount_table[index].filesystemtype, dev->parent.name,
+                   mount_table[index].path);
+        return -RT_ERROR;
+      } else {
+        rt_kprintf("mount fs[%s] device[%s] to %s ok.\n", mount_table[index].filesystemtype, dev->parent.name,
+                   mount_table[index].path);
+        return RT_EOK;
+      }
+    }
+    
+    index ++;
+  }
+  
+  rt_kprintf("can't find device:%s to be mounted.\n", dev->parent.name);
+  return -RT_ERROR;
+}
 #endif
 
 #ifdef RT_USING_FINSH
