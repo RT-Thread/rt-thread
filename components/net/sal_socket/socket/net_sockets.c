@@ -105,9 +105,7 @@ int shutdown(int s, int how)
         rt_set_errno(-ENOTSOCK);
         error = -1;
     }
-
-    /* socket has been closed, delete it from file system fd */
-    fd_put(d);
+    
     fd_put(d);
 
     return error;
