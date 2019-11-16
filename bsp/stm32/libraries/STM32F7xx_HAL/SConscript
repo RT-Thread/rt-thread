@@ -12,6 +12,7 @@ STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cec.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_crc.c
+STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_crc_ex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cryp.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cryp_ex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_exti.c
@@ -25,7 +26,7 @@ STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rng.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sram.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c
 ''')
- 
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart_ex.c']
