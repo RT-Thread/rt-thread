@@ -107,11 +107,11 @@ void rt_thread_exit(void)
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
     }
 
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
     /* switch to next task */
     rt_schedule();
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
 }
 
 static rt_err_t _rt_thread_init(struct rt_thread *thread,
