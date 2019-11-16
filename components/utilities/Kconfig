@@ -146,7 +146,6 @@ config RT_USING_ULOG
             config ULOG_TIME_USING_TIMESTAMP
                 bool "Enable timestamp format for time."
                 default n
-                select RT_USING_LIBC
                 depends on ULOG_OUTPUT_TIME
 
             config ULOG_OUTPUT_LEVEL
