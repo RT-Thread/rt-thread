@@ -421,7 +421,7 @@ static rt_err_t _rndis_query_response(ufunction_t func,rndis_query_msg_t msg)
     case OID_GEN_LINK_SPEED:
         resp = _create_resp(4);
         if(resp == RT_NULL) break;
-        _set_resp(resp, func->device->dcd->device_is_hs ? (480UL * 1000 *1000) : (12UL * 1000 * 1000) / 100);
+        _set_resp(resp, (func->device->dcd->device_is_hs ? (480UL * 1000 *1000) : (12UL * 1000 * 1000)) / 100);
         break;
 
     case OID_GEN_MEDIA_CONNECT_STATUS:
