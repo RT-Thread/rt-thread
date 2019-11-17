@@ -3,12 +3,6 @@ CC = gcc -O0 -m32 -fno-builtin -fno-stack-protector -nostdinc -nostdlib
 LD = ld -melf_i386 -nostdlib
 
 all: rtthread rtsym exe dll floppy.img
-	@mkdir -p tmp
-	@sudo mount -t vfat floppy.img tmp -o loop
-	@sudo cp -fv rtthread.elf tmp/boot/oskernel
-	@sudo rm tmp/bin/* -fr
-	@sudo cp out/*.mo tmp/bin/ -fv
-	@sudo umount tmp
 
 rtthread:
 	@scons
@@ -38,8 +32,16 @@ clean:
 	scons -c clean
 	rm -fr build rtthread* out obj
 
-floppy.img:
-	wget https://github.com/bajdcc/tinix/raw/master/floppy.img
+floppy-orig.img:
+	wget https://github.com/bajdcc/tinix/raw/master/floppy.img -O floppy-orig.img
+
+floppy.img: floppy-orig.img
+	cp floppy-orig.img floppy.img.tmp
+	mcopy -oi floppy.img.tmp rtthread.elf ::/boot/oskernel
+	mdeltree -i floppy.img.tmp ::/bin
+	mmd -i floppy.img.tmp ::/bin
+	mcopy -i floppy.img.tmp out/*.mo ::bin/
+	mv floppy.img.tmp floppy.img
 
 # https://en.wikibooks.org/wiki/QEMU/Devices/Network
 run:
