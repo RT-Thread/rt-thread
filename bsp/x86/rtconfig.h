@@ -99,6 +99,7 @@
 #define DFS_FD_MAX					4
 
 #define RT_USING_DFS_DEVFS
+#define DFS_USING_WORKDIR
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 //#define RT_USING_LWIP
@@ -176,5 +177,5 @@
 /* #define RTGUI_IMAGE_XPM */
 /* #define RTGUI_IMAGE_BMP */
 
-// #define RT_USING_MODULE
+#define RT_USING_MODULE
 #endif
