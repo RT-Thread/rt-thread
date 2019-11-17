@@ -6,7 +6,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 
 src	= Glob('*.c')
 
-CPPPATH = [cwd, cwd + '/include']
+CPPPATH = [cwd, cwd + '/include', RTT_ROOT + '/components/drivers/include']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
