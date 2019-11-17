@@ -35,7 +35,7 @@ clean:
 floppy-orig.img:
 	wget https://github.com/bajdcc/tinix/raw/master/floppy.img -O floppy-orig.img
 
-floppy.img: floppy-orig.img
+floppy.img: floppy-orig.img rtthread.elf out
 	cp floppy-orig.img floppy.img.tmp
 	mcopy -oi floppy.img.tmp rtthread.elf ::/boot/oskernel
 	mdeltree -i floppy.img.tmp ::/bin
