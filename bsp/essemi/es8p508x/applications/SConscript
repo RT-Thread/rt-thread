@@ -1,11 +1,9 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'applications')
-src	= Glob('*.c')
+cwd = GetCurrentDir()
+src = Glob('*.c')
 
-CPPPATH = [cwd, str(Dir('#'))]
+CPPPATH = [cwd]
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
