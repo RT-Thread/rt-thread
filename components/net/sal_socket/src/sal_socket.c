@@ -701,8 +701,6 @@ int sal_shutdown(int socket, int how)
         error = -1;
     }
 
-    /* delete socket */
-    socket_delete(socket);
 
     return error;
 }
