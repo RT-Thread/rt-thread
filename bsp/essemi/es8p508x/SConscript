@@ -1,9 +1,8 @@
-# for module compiling
+# RT-Thread SConscript bridge
 import os
-Import('RTT_ROOT')
 
 objs = []
-cwd = str(Dir('#'))
+cwd  = GetCurrentDir()
 list = os.listdir(cwd)
 
 for d in list:
