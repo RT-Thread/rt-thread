@@ -13,7 +13,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'E:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_IA32_ELF/bin'
+	EXEC_PATH 	= '/usr/bin'
 elif CROSS_TOOL == 'keil':
     print('================ERROR============================')
     print('Not support keil yet!')
