@@ -130,7 +130,7 @@ RT_WEAK void rt_hw_board_init()
     __set_PRIMASK(0);
     /* System clock initialization */
     SystemClock_Config();
-    /* disbale interrupt */
+    /* disable interrupt */
     __set_PRIMASK(1);
 
     rt_hw_systick_init();
