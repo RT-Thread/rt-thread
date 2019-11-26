@@ -1,12 +1,12 @@
-# IMXRT 系列外设驱动添加指南
+# i.MX RT 系列外设驱动添加指南
 
 ## 1. 简介
 
-本文档是为需要给现有的 IMXRT BSP 添加更多外设驱动的开发者准备的。通过阅读本文，开发者可以按照自己的实际情况给现有 BSP 添加自己需要的驱动。
+本文档是为需要给现有的 i.MX RT BSP 添加更多外设驱动的开发者准备的。通过阅读本文，开发者可以按照自己的实际情况给现有 BSP 添加自己需要的驱动。
 
 ## 2. 前提要求
 
-- 熟练使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)
+- 熟练使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/programming-manual/env/env/)
 - 熟悉 Kconfig 语法
 - 熟悉 MCUXpresso 工具
 - 对 RT-Thread 设备驱动框架有一定了解
@@ -63,9 +63,9 @@
 
 ## 4. 注意事项
 
-- 部分驱动如果没有适配 BSP 所属的 IMXRT 系列，请等待 RT-Thread 团队更新。
+- 部分驱动如果没有适配 BSP 所属的 i.MX RT 系列，请等待 RT-Thread 团队更新。
 
-  - 驱动文件对 IMXRT 系列的支持情况可以查看 [IMXRT系列驱动介绍文档](./IMXRT系列驱动介绍.md)。
+  - 驱动文件对 i.MX RT 系列的支持情况可以查看 [i.MX RT系列驱动介绍文档](./IMXRT系列驱动介绍.md)。
 
 - 对于驱动文件或文档说明，有任何建议或者意见，欢迎反馈到 [RT_Thread GitHub](https://github.com/RT-Thread/rt-thread) 网站或 [RT-Thread 官方论坛](https://www.rt-thread.org/qa/forum.php)。
 

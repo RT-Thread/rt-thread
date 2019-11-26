@@ -15,10 +15,13 @@
 #include "drv_uart.h"
 
 #include <stdio.h>
+#include <sysctl.h>
 
 // #include "uart.h"
 #include "uarths.h"
 #include "plic.h"
+
+static volatile uarths_t *const _uarths = (volatile uarths_t *)UARTHS_BASE_ADDR;
 
 struct device_uart
 {
@@ -66,9 +69,6 @@ int rt_hw_uart_init(void)
         uart->hw_base   = UARTHS_BASE_ADDR;
         uart->irqno     = IRQN_UARTHS_INTERRUPT;
 
-        /* initialize UART HS */
-        uarths_init();
-
         rt_hw_serial_register(serial,
                               "uarths",
                               RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
@@ -114,6 +114,8 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
 {
     rt_uint32_t baud_div;
     struct device_uart *uart;
+    uint32_t freq = sysctl_clock_get_freq(SYSCTL_CLOCK_CPU);
+    uint16_t div = freq / cfg->baud_rate - 1;
 
     RT_ASSERT(serial != RT_NULL);
     serial->config = *cfg;
@@ -121,15 +123,22 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     uart = serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
 
-    /* Init UART Hardware */
-
-    /* Enable UART clock */
-
-    /* Set both receiver and transmitter in UART mode (not SIR) */
-
-    /* Set databits, stopbits and parity. (8-bit data, 1 stopbit, no parity) */
-
-    /* set baudrate */
+    if (uart->hw_base == UARTHS_BASE_ADDR)
+    {
+        _uarths->div.div = div;
+        _uarths->txctrl.txen = 1;
+        _uarths->rxctrl.rxen = 1;
+        _uarths->txctrl.txcnt = 0;
+        _uarths->rxctrl.rxcnt = 0;
+        _uarths->ip.txwm = 1;
+        _uarths->ip.rxwm = 1;
+        _uarths->ie.txwm = 0;
+        _uarths->ie.rxwm = 1;
+    }
+    else
+    {
+        /* other uart */
+    }
 
     return (RT_EOK);
 }
@@ -167,7 +176,8 @@ static int drv_uart_putc(struct rt_serial_device *serial, char c)
     uart = serial->parent.user_data;
     if (uart->hw_base == UARTHS_BASE_ADDR)
     {
-        uarths_putchar(c);
+        while (_uarths->txdata.full);
+        _uarths->txdata.data = (uint8_t)c;
     }
     else
     {
@@ -184,8 +194,11 @@ static int drv_uart_getc(struct rt_serial_device *serial)
 
     if (uart->hw_base == UARTHS_BASE_ADDR)
     {
-        ret = uarths_getc();
-        if (ret != EOF) return ret;
+        uarths_rxdata_t recv = _uarths->rxdata;
+        if (recv.empty)
+            return EOF;
+        else
+            return (recv.data & 0xff);
     }
 
     /* Receive Data Available */
@@ -203,7 +216,14 @@ static void uart_irq_handler(int irqno, void *param)
     /* read interrupt status and clear it */
     if (uart->hw_base == UARTHS_BASE_ADDR)
     {
-        if (uarths->ip.rxwm) 
+        if (_uarths->ip.rxwm) 
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
+}
+
+/* WEAK for SDK 0.5.6 */
+
+RT_WEAK void uart_debug_init(int uart_channel)
+{
+
 }

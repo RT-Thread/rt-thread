@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32L452RE
     bool
     select SOC_SERIES_STM32L4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -29,8 +31,8 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
-				
-			config BSP_USING_UART2
+
+            config BSP_USING_UART2
                 bool "Enable UART2"
                 default y
 
@@ -60,7 +62,9 @@ menu "On-chip Peripheral Drivers"
                 select BSP_SPI1_TX_USING_DMA
                 default n
         endif
-
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
         default n

@@ -14,9 +14,9 @@
 #include <drv_common.h>
 #include <board.h>
 
-#define __STM32_PORT(port)  GPIO##port
+#define __STM32_PORT(port)  GPIO##port##_BASE
 
-#define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA)/(0x0400UL) )) + PIN)
+#define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
 
 #define __STM32_PIN(index, gpio, gpio_index)                                \
     {                                                                       \

@@ -89,12 +89,12 @@
 
      *** Callback registration ***
      =============================================
-
+    [..]
      The compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS when set to 1
      allows the user to configure dynamically the driver callbacks.
      Use Functions @ref HAL_SMBUS_RegisterCallback() or @ref HAL_SMBUS_RegisterAddrCallback()
      to register an interrupt callback.
-
+    [..]
      Function @ref HAL_SMBUS_RegisterCallback() allows to register following callbacks:
        (+) MasterTxCpltCallback : callback for Master transmission end of transfer.
        (+) MasterRxCpltCallback : callback for Master reception end of transfer.
@@ -106,9 +106,9 @@
        (+) MspDeInitCallback    : callback for Msp DeInit.
      This function takes as parameters the HAL peripheral handle, the Callback ID
      and a pointer to the user callback function.
-
+    [..]
      For specific callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_RegisterAddrCallback.
-
+    [..]
      Use function @ref HAL_SMBUS_UnRegisterCallback to reset a callback to the default
      weak function.
      @ref HAL_SMBUS_UnRegisterCallback takes as parameters the HAL peripheral handle,
@@ -122,9 +122,9 @@
        (+) ErrorCallback        : callback for error detection.
        (+) MspInitCallback      : callback for Msp Init.
        (+) MspDeInitCallback    : callback for Msp DeInit.
-
+    [..]
      For callback AddrCallback use dedicated register callbacks : @ref HAL_SMBUS_UnRegisterAddrCallback.
-
+    [..]
      By default, after the @ref HAL_SMBUS_Init() and when the state is @ref HAL_I2C_STATE_RESET
      all callbacks are set to the corresponding weak functions:
      examples @ref HAL_SMBUS_MasterTxCpltCallback(), @ref HAL_SMBUS_MasterRxCpltCallback().
@@ -133,7 +133,7 @@
      these callbacks are null (not registered beforehand).
      If MspInit or MspDeInit are not null, the @ref HAL_SMBUS_Init()/ @ref HAL_SMBUS_DeInit()
      keep and use the user MspInit/MspDeInit callbacks (registered beforehand) whatever the state.
-
+    [..]
      Callbacks can be registered/unregistered in @ref HAL_I2C_STATE_READY state only.
      Exception done MspInit/MspDeInit functions that can be registered/unregistered
      in @ref HAL_I2C_STATE_READY or @ref HAL_I2C_STATE_RESET state,
@@ -141,7 +141,7 @@
      Then, the user first registers the MspInit/MspDeInit user callbacks
      using @ref HAL_SMBUS_RegisterCallback() before calling @ref HAL_SMBUS_DeInit()
      or @ref HAL_SMBUS_Init() function.
-
+    [..]
      When the compilation flag USE_HAL_SMBUS_REGISTER_CALLBACKS is set to 0 or
      not defined, the callback registration feature is not available and all callbacks
      are set to the corresponding weak functions.

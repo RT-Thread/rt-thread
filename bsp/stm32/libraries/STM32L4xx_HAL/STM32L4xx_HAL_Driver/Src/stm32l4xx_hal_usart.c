@@ -124,29 +124,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -187,7 +171,7 @@
                                               USART_CR1_TE | USART_CR1_RE  | USART_CR1_OVER8))    /*!< USART CR1 fields of parameters set by USART_SetConfig API */
 #define USART_CR2_FIELDS          ((uint32_t)(USART_CR2_CPHA | USART_CR2_CPOL | \
                                               USART_CR2_CLKEN | USART_CR2_LBCL | USART_CR2_STOP)) /*!< USART CR2 fields of parameters set by USART_SetConfig API */
-#endif
+#endif /* USART_CR1_FIFOEN */
 
 #define USART_BRR_MIN    0x10U        /* USART BRR minimum authorized value */
 #define USART_BRR_MAX    0xFFFFU      /* USART BRR maximum authorized value */
@@ -213,7 +197,8 @@ static void USART_DMAError(DMA_HandleTypeDef *hdma);
 static void USART_DMAAbortOnError(DMA_HandleTypeDef *hdma);
 static void USART_DMATxAbortCallback(DMA_HandleTypeDef *hdma);
 static void USART_DMARxAbortCallback(DMA_HandleTypeDef *hdma);
-static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout);
+static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status,
+                                                      uint32_t Tickstart, uint32_t Timeout);
 static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart);
 static HAL_StatusTypeDef USART_CheckIdleState(USART_HandleTypeDef *husart);
 static void USART_TxISR_8BIT(USART_HandleTypeDef *husart);
@@ -221,14 +206,14 @@ static void USART_TxISR_16BIT(USART_HandleTypeDef *husart);
 #if defined(USART_CR1_FIFOEN)
 static void USART_TxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart);
 static void USART_TxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart);
-#endif
+#endif /* USART_CR1_FIFOEN */
 static void USART_EndTransmit_IT(USART_HandleTypeDef *husart);
 static void USART_RxISR_8BIT(USART_HandleTypeDef *husart);
 static void USART_RxISR_16BIT(USART_HandleTypeDef *husart);
 #if defined(USART_CR1_FIFOEN)
 static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart);
 static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart);
-#endif
+#endif /* USART_CR1_FIFOEN */
 
 
 /**
@@ -448,7 +433,8 @@ __weak void HAL_USART_MspDeInit(USART_HandleTypeDef *husart)
   * @param  pCallback pointer to the Callback function
   * @retval HAL status
 +  */
-HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID, pUSART_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID,
+                                             pUSART_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -502,7 +488,7 @@ HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_US
       case HAL_USART_TX_FIFO_EMPTY_CB_ID :
         husart->TxFifoEmptyCallback = pCallback;
         break;
-#endif
+#endif /* USART_CR1_FIFOEN */
 
       case HAL_USART_MSPINIT_CB_ID :
         husart->MspInitCallback = pCallback;
@@ -623,7 +609,7 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
       case HAL_USART_TX_FIFO_EMPTY_CB_ID :
         husart->TxFifoEmptyCallback = HAL_USARTEx_TxFifoEmptyCallback;           /* Legacy weak TxFifoEmptyCallback       */
         break;
-#endif
+#endif /* USART_CR1_FIFOEN */
 
       case HAL_USART_MSPINIT_CB_ID :
         husart->MspInitCallback = HAL_USART_MspInit;                             /* Legacy weak MspInitCallback           */
@@ -910,7 +896,7 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
     {
 #if defined(USART_CR2_SLVEN)
       if (husart->SlaveMode == USART_SLAVEMODE_DISABLE)
-#endif
+#endif /* USART_CR2_SLVEN */
       {
         /* Wait until TXE flag is set to send dummy byte in order to generate the
         * clock for the slave to send data.
@@ -936,7 +922,7 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
       }
       else
       {
-        *prxdata8bits = (uint8_t)(husart->Instance->RDR & (uint8_t)uhMask);
+        *prxdata8bits = (uint8_t)(husart->Instance->RDR & (uint8_t)(uhMask & 0xFFU));
         prxdata8bits++;
       }
 
@@ -951,7 +937,7 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
       __HAL_USART_CLEAR_UDRFLAG(husart);
       __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
     }
-#endif
+#endif /* USART_CR2_SLVEN */
 
     /* At end of Rx process, restore husart->State to Ready */
     husart->State = HAL_USART_STATE_READY;
@@ -976,7 +962,8 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
+HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                            uint16_t Size, uint32_t Timeout)
 {
   uint8_t  *prxdata8bits;
   uint16_t *prxdata16bits;
@@ -1031,7 +1018,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
     if ((husart->TxXferCount == 0x01U) || (husart->SlaveMode == USART_SLAVEMODE_ENABLE))
 #else
     if (husart->TxXferCount == 0x01U)
-#endif
+#endif /* USART_CR2_SLVEN */
     {
       /* Wait until TXE flag is set to send data */
       if (USART_WaitOnFlagUntilTimeout(husart, USART_FLAG_TXE, RESET, tickstart, Timeout) != HAL_OK)
@@ -1045,7 +1032,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
       }
       else
       {
-        husart->Instance->TDR = (uint8_t)(*ptxdata8bits & (uint8_t)uhMask);
+        husart->Instance->TDR = (uint8_t)(*ptxdata8bits & (uint8_t)(uhMask & 0xFFU));
         ptxdata8bits++;
       }
 
@@ -1071,7 +1058,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
         }
         else
         {
-          husart->Instance->TDR = (uint8_t)(*ptxdata8bits & (uint8_t)uhMask);
+          husart->Instance->TDR = (uint8_t)(*ptxdata8bits & (uint8_t)(uhMask & 0xFFU));
           ptxdata8bits++;
         }
 
@@ -1093,7 +1080,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
         }
         else
         {
-          *prxdata8bits = (uint8_t)(husart->Instance->RDR & (uint8_t)uhMask);
+          *prxdata8bits = (uint8_t)(husart->Instance->RDR & (uint8_t)(uhMask & 0xFFU));
           prxdata8bits++;
         }
 
@@ -1170,7 +1157,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pT
       __HAL_USART_ENABLE_IT(husart, USART_IT_TXFT);
     }
     else
-#endif
+#endif /* USART_CR1_FIFOEN */
     {
       /* Set the Tx ISR function pointer according to the data word length */
       if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
@@ -1209,7 +1196,7 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
 {
 #if defined(USART_CR1_FIFOEN)
   uint16_t nb_dummy_data;
-#endif
+#endif /* USART_CR1_FIFOEN */
 
   if (husart->State == HAL_USART_STATE_READY)
   {
@@ -1256,7 +1243,7 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
       SET_BIT(husart->Instance->CR3, USART_CR3_RXFTIE);
     }
     else
-#endif
+#endif /* USART_CR1_FIFOEN */
     {
       /* Set the Rx ISR function pointer according to the data word length */
       if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
@@ -1276,12 +1263,12 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
       SET_BIT(husart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 #else
       SET_BIT(husart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE);
-#endif
+#endif /* USART_CR1_FIFOEN */
     }
 
 #if defined(USART_CR2_SLVEN)
     if (husart->SlaveMode == USART_SLAVEMODE_DISABLE)
-#endif
+#endif /* USART_CR2_SLVEN */
     {
       /* Send dummy data in order to generate the clock for the Slave to send the next data.
          When FIFO mode is disabled only one data must be transferred.
@@ -1296,7 +1283,7 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
         }
       }
       else
-#endif
+#endif /* USART_CR1_FIFOEN */
       {
         husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
       }
@@ -1318,7 +1305,8 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
   * @param  Size amount of data to be sent (same amount to be received).
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,  uint16_t Size)
+HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                               uint16_t Size)
 {
 
   if (husart->State == HAL_USART_STATE_READY)
@@ -1373,7 +1361,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint
       SET_BIT(husart->Instance->CR3, (USART_CR3_TXFTIE | USART_CR3_RXFTIE));
     }
     else
-#endif
+#endif /* USART_CR1_FIFOEN */
     {
       if ((husart->Init.WordLength == USART_WORDLENGTH_9B) && (husart->Init.Parity == USART_PARITY_NONE))
       {
@@ -1397,14 +1385,14 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint
       SET_BIT(husart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE_RXFNEIE);
 #else
       SET_BIT(husart->Instance->CR1, USART_CR1_PEIE | USART_CR1_RXNEIE);
-#endif
+#endif /* USART_CR1_FIFOEN */
 
       /* Enable the USART Transmit Data Register Empty Interrupt */
 #if defined(USART_CR1_FIFOEN)
       SET_BIT(husart->Instance->CR1, USART_CR1_TXEIE_TXFNFIE);
 #else
       SET_BIT(husart->Instance->CR1, USART_CR1_TXEIE);
-#endif
+#endif /* USART_CR1_FIFOEN */
     }
 
     return HAL_OK;
@@ -1460,7 +1448,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
       status = HAL_DMA_Start_IT(husart->hdmatx, *(uint32_t *)tmp, (uint32_t)&husart->Instance->TDR, Size);
     }
 
-    if(status == HAL_OK)
+    if (status == HAL_OK)
     {
       /* Clear the TC flag in the ICR register */
       __HAL_USART_CLEAR_FLAG(husart, USART_CLEAR_TCF);
@@ -1484,7 +1472,7 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
 
       /* Restore husart->State to ready */
       husart->State = HAL_USART_STATE_READY;
-      
+
       return HAL_ERROR;
     }
   }
@@ -1546,7 +1534,7 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
 #if defined(USART_CR2_SLVEN)
     if ((status == HAL_OK) &&
         (husart->SlaveMode == USART_SLAVEMODE_DISABLE))
-#endif
+#endif /* USART_CR2_SLVEN */
     {
       /* Enable the USART transmit DMA channel: the transmit channel is used in order
          to generate in the non-blocking mode the clock to the slave device,
@@ -1562,7 +1550,7 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
       }
     }
 
-    if(status == HAL_OK)
+    if (status == HAL_OK)
     {
       /* Process Unlocked */
       __HAL_UNLOCK(husart);
@@ -1585,11 +1573,11 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
     }
     else
     {
-      if(husart->hdmarx != NULL)
+      if (husart->hdmarx != NULL)
       {
         status = HAL_DMA_Abort(husart->hdmarx);
       }
- 
+
       /* No need to check on error code */
       UNUSED(status);
 
@@ -1620,9 +1608,10 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
   * @param  Size amount of data to be received/sent.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size)
+HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                                uint16_t Size)
 {
-  HAL_StatusTypeDef status = HAL_OK;
+  HAL_StatusTypeDef status;
   uint32_t *tmp;
 
   if (husart->State == HAL_USART_STATE_READY)
@@ -1668,13 +1657,18 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uin
       status = HAL_DMA_Start_IT(husart->hdmarx, (uint32_t)&husart->Instance->RDR, *(uint32_t *)tmp, Size);
 
       /* Enable the USART transmit DMA channel */
-      if(status == HAL_OK)
+      if (status == HAL_OK)
       {
         tmp = (uint32_t *)&pTxData;
         status = HAL_DMA_Start_IT(husart->hdmatx, *(uint32_t *)tmp, (uint32_t)&husart->Instance->TDR, Size);
       }
     }
-    if(status == HAL_OK)
+    else
+    {
+      status = HAL_ERROR;
+    }
+
+    if (status == HAL_OK)
     {
       /* Process Unlocked */
       __HAL_UNLOCK(husart);
@@ -1700,7 +1694,7 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uin
     }
     else
     {
-      if(husart->hdmarx != NULL)
+      if (husart->hdmarx != NULL)
       {
         status = HAL_DMA_Abort(husart->hdmarx);
       }
@@ -1845,9 +1839,6 @@ HAL_StatusTypeDef HAL_USART_DMAStop(USART_HandleTypeDef *husart)
         /* Set error code to DMA */
         husart->ErrorCode = HAL_USART_ERROR_DMA;
 
-        /* Process Unlocked */
-        __HAL_UNLOCK(husart);
-
         return HAL_TIMEOUT;
       }
     }
@@ -1861,9 +1852,6 @@ HAL_StatusTypeDef HAL_USART_DMAStop(USART_HandleTypeDef *husart)
       {
         /* Set error code to DMA */
         husart->ErrorCode = HAL_USART_ERROR_DMA;
-
-        /* Process Unlocked */
-        __HAL_UNLOCK(husart);
 
         return HAL_TIMEOUT;
       }
@@ -1887,17 +1875,18 @@ HAL_StatusTypeDef HAL_USART_DMAStop(USART_HandleTypeDef *husart)
   *           - Set handle State to READY
   * @note   This procedure is executed in blocking mode : when exiting function, Abort is considered as completed.
   * @retval HAL status
-*/
+  */
 HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
 {
 #if defined(USART_CR1_FIFOEN)
   /* Disable TXEIE, TCIE, RXNE, RXFT, TXFT, PE and ERR (Frame error, noise error, overrun error) interrupts */
-  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE));
+  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE |
+                                    USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE));
 #else
   CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_TXEIE | USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, USART_CR3_EIE);
-#endif
+#endif /* USART_CR1_FIFOEN */
 
   /* Disable the USART DMA Tx request if enabled */
   if (HAL_IS_BIT_SET(husart->Instance->CR3, USART_CR3_DMAT))
@@ -1917,9 +1906,6 @@ HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
         {
           /* Set error code to DMA */
           husart->ErrorCode = HAL_USART_ERROR_DMA;
-
-          /* Process Unlocked */
-          __HAL_UNLOCK(husart);
 
           return HAL_TIMEOUT;
         }
@@ -1946,9 +1932,6 @@ HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
           /* Set error code to DMA */
           husart->ErrorCode = HAL_USART_ERROR_DMA;
 
-          /* Process Unlocked */
-          __HAL_UNLOCK(husart);
-
           return HAL_TIMEOUT;
         }
       }
@@ -1968,7 +1951,7 @@ HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
   {
     __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
   }
-#endif
+#endif /* USART_CR1_FIFOEN */
 
   /* Discard the received data */
   __HAL_USART_SEND_REQ(husart, USART_RXDATA_FLUSH_REQUEST);
@@ -1995,19 +1978,20 @@ HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
   * @note   This procedure is executed in Interrupt mode, meaning that abort procedure could be
   *         considered as completed only when user abort complete callback is executed (not when exiting function).
   * @retval HAL status
-*/
+  */
 HAL_StatusTypeDef HAL_USART_Abort_IT(USART_HandleTypeDef *husart)
 {
   uint32_t abortcplt = 1U;
 
 #if defined(USART_CR1_FIFOEN)
   /* Disable TXEIE, TCIE, RXNE, RXFT, TXFT, PE and ERR (Frame error, noise error, overrun error) interrupts */
-  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE));
+  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE |
+                                    USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE));
 #else
   CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_TXEIE | USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, USART_CR3_EIE);
-#endif
+#endif /* USART_CR1_FIFOEN */
 
   /* If DMA Tx and/or DMA Rx Handles are associated to USART Handle, DMA Abort complete callbacks should be initialised
      before any call to DMA Abort functions */
@@ -2107,7 +2091,7 @@ HAL_StatusTypeDef HAL_USART_Abort_IT(USART_HandleTypeDef *husart)
     {
       __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
     }
-#endif
+#endif /* USART_CR1_FIFOEN */
 
     /* Discard the received data */
     __HAL_USART_SEND_REQ(husart, USART_RXDATA_FLUSH_REQUEST);
@@ -2147,7 +2131,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
   errorflags = (isrflags & (uint32_t)(USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE | USART_ISR_UDR));
 #else
   errorflags = (isrflags & (uint32_t)(USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE));
-#endif
+#endif /* USART_CR2_SLVEN */
   if (errorflags == 0U)
   {
     /* USART in mode Receiver ---------------------------------------------------*/
@@ -2158,7 +2142,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
 #else
     if (((isrflags & USART_ISR_RXNE) != 0U)
         && ((cr1its & USART_CR1_RXNEIE) != 0U))
-#endif
+#endif /* USART_CR1_FIFOEN */
     {
       if (husart->RxISR != NULL)
       {
@@ -2177,7 +2161,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
   if ((errorflags != 0U)
       && (((cr3its & USART_CR3_EIE) != 0U)
           || ((cr1its & (USART_CR1_RXNEIE | USART_CR1_PEIE)) != 0U)))
-#endif
+#endif /* USART_CR1_FIFOEN */
   {
     /* USART parity error interrupt occurred -------------------------------------*/
     if (((isrflags & USART_ISR_PE) != 0U) && ((cr1its & USART_CR1_PEIE) != 0U))
@@ -2212,7 +2196,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
     if (((isrflags & USART_ISR_ORE) != 0U)
         && (((cr1its & USART_CR1_RXNEIE) != 0U) ||
             ((cr3its & USART_CR3_EIE) != 0U)))
-#endif
+#endif /* USART_CR1_FIFOEN */
     {
       __HAL_USART_CLEAR_IT(husart, USART_CLEAR_OREF);
 
@@ -2235,7 +2219,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
         husart->ErrorCode |= HAL_USART_ERROR_UDR;
       }
     }
-#endif
+#endif /* USART_CR2_SLVEN */
 
     /* Call USART Error Call back function if need be --------------------------*/
     if (husart->ErrorCode != HAL_USART_ERROR_NONE)
@@ -2248,7 +2232,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
 #else
       if (((isrflags & USART_ISR_RXNE) != 0U)
           && ((cr1its & USART_CR1_RXNEIE) != 0U))
-#endif
+#endif /* USART_CR1_FIFOEN */
       {
         if (husart->RxISR != NULL)
         {
@@ -2280,10 +2264,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
             husart->hdmatx->XferAbortCallback = NULL;
 
             /* Abort DMA TX */
-            if (HAL_DMA_Abort_IT(husart->hdmatx) != HAL_OK)
-            {
-              /* Nothing to do */
-            }
+            (void)HAL_DMA_Abort_IT(husart->hdmatx);
           }
 
           /* Abort the USART DMA Rx channel */
@@ -2351,7 +2332,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
 #else
   if (((isrflags & USART_ISR_TXE) != 0U)
       && ((cr1its & USART_CR1_TXEIE) != 0U))
-#endif
+#endif /* USART_CR1_FIFOEN */
   {
     if (husart->TxISR != NULL)
     {
@@ -2393,7 +2374,7 @@ void HAL_USART_IRQHandler(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
     return;
   }
-#endif
+#endif /* USART_CR1_FIFOEN */
 }
 
 /**
@@ -2506,8 +2487,8 @@ __weak void HAL_USART_AbortCpltCallback(USART_HandleTypeDef *husart)
   */
 
 /** @defgroup USART_Exported_Functions_Group4 Peripheral State and Error functions
- *  @brief   USART Peripheral State and Error functions
- *
+  *  @brief   USART Peripheral State and Error functions
+  *
 @verbatim
   ==============================================================================
             ##### Peripheral State and Error functions #####
@@ -2553,8 +2534,8 @@ uint32_t HAL_USART_GetError(USART_HandleTypeDef *husart)
   */
 
 /** @defgroup USART_Private_Functions USART Private Functions
- * @{
- */
+  * @{
+  */
 
 /**
   * @brief  Initialize the callbacks to their default values.
@@ -2575,7 +2556,7 @@ void USART_InitCallbacksToDefault(USART_HandleTypeDef *husart)
 #if defined(USART_CR1_FIFOEN)
   husart->RxFifoFullCallback        = HAL_USARTEx_RxFifoFullCallback;      /* Legacy weak RxFifoFullCallback        */
   husart->TxFifoEmptyCallback       = HAL_USARTEx_TxFifoEmptyCallback;     /* Legacy weak TxFifoEmptyCallback       */
-#endif
+#endif /* USART_CR1_FIFOEN */
 }
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
 
@@ -2588,13 +2569,14 @@ static void USART_EndTransfer(USART_HandleTypeDef *husart)
 {
 #if defined(USART_CR1_FIFOEN)
   /* Disable TXEIE, TCIE, RXNE, RXFT, TXFT, PE and ERR (Frame error, noise error, overrun error) interrupts */
-  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE));
+  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE |
+                                    USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE));
 #else
   /* Disable TXEIE, TCIE, RXNE, PE and ERR (Frame error, noise error, overrun error) interrupts */
   CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE | USART_CR1_TXEIE | USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, USART_CR3_EIE);
-#endif
+#endif /* USART_CR1_FIFOEN */
 
   /* At end of process, restore husart->State to Ready */
   husart->State = HAL_USART_STATE_READY;
@@ -2901,7 +2883,8 @@ static void USART_DMARxAbortCallback(DMA_HandleTypeDef *hdma)
   * @param  Timeout timeout duration.
   * @retval HAL status
   */
-static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout)
+static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status,
+                                                      uint32_t Tickstart, uint32_t Timeout)
 {
   /* Wait until flag is set */
   while ((__HAL_USART_GET_FLAG(husart, Flag) ? SET : RESET) == Status)
@@ -2947,7 +2930,7 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   assert_param(IS_USART_MODE(husart->Init.Mode));
 #if defined(USART_PRESC_PRESCALER)
   assert_param(IS_USART_PRESCALER(husart->Init.ClockPrescaler));
-#endif
+#endif /* USART_PRESC_PRESCALER */
 
   /*-------------------------- USART CR1 Configuration -----------------------*/
   /* Clear M, PCE, PS, TE and RE bits and configure
@@ -2976,7 +2959,7 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   /* Configure
    * - USART Clock Prescaler : set PRESCALER according to husart->Init.ClockPrescaler value */
   MODIFY_REG(husart->Instance->PRESC, USART_PRESC_PRESCALER, husart->Init.ClockPrescaler);
-#endif
+#endif /* USART_PRESC_PRESCALER */
 
   /*-------------------------- USART BRR Configuration -----------------------*/
   /* BRR is filled-up according to OVER8 bit setting which is forced to 1     */
@@ -2989,35 +2972,35 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK1Freq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK1Freq(), husart->Init.BaudRate));
-#endif
+#endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_PCLK2:
 #if defined(USART_PRESC_PRESCALER)
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK2Freq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK2Freq(), husart->Init.BaudRate));
-#endif
+#endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_HSI:
 #if defined(USART_PRESC_PRESCALER)
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HSI_VALUE, husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HSI_VALUE, husart->Init.BaudRate));
-#endif
+#endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_SYSCLK:
 #if defined(USART_PRESC_PRESCALER)
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetSysClockFreq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetSysClockFreq(), husart->Init.BaudRate));
-#endif
+#endif /* USART_PRESC_PRESCALER */
       break;
     case USART_CLOCKSOURCE_LSE:
 #if defined(USART_PRESC_PRESCALER)
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(LSE_VALUE, husart->Init.BaudRate, husart->Init.ClockPrescaler));
 #else
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(LSE_VALUE, husart->Init.BaudRate));
-#endif
+#endif /* USART_PRESC_PRESCALER */
       break;
     default:
       ret = HAL_ERROR;
@@ -3040,7 +3023,7 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   /* Initialize the number of data to process during RX/TX ISR execution */
   husart->NbTxDataToProcess = 1U;
   husart->NbRxDataToProcess = 1U;
-#endif
+#endif /* USART_CR1_FIFOEN */
 
   /* Clear ISR function pointers */
   husart->RxISR   = NULL;
@@ -3257,7 +3240,7 @@ static void USART_TxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
     }
   }
 }
-#endif
+#endif /* USART_CR1_FIFOEN */
 
 /**
   * @brief  Wraps up transmission in non-blocking mode.
@@ -3327,6 +3310,9 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
   const HAL_USART_StateTypeDef state = husart->State;
   uint16_t txdatacount;
   uint16_t uhMask = husart->Mask;
+#if defined(USART_CR1_FIFOEN)
+  uint32_t txftie;
+#endif /* USART_CR1_FIFOEN */
 
   if ((state == HAL_USART_STATE_BUSY_RX) ||
       (state == HAL_USART_STATE_BUSY_TX_RX))
@@ -3342,7 +3328,7 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
       CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE));
 #else
       CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE));
-#endif
+#endif /* USART_CR1_FIFOEN */
 
       /* Disable the USART Error Interrupt: (Frame error, noise error, overrun error) */
       CLEAR_BIT(husart->Instance->CR3, USART_CR3_EIE);
@@ -3350,7 +3336,12 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
       /* Clear RxISR function pointer */
       husart->RxISR = NULL;
 
+#if defined(USART_CR1_FIFOEN)
+      /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+      txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
+#else
       /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+#endif /* USART_CR1_FIFOEN */
       txdatacount = husart->TxXferCount;
 
       if (state == HAL_USART_STATE_BUSY_RX)
@@ -3362,7 +3353,7 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
           __HAL_USART_CLEAR_UDRFLAG(husart);
           __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
         }
-#endif
+#endif /* USART_CR2_SLVEN */
 
         /* Rx process is completed, restore husart->State to Ready */
         husart->State = HAL_USART_STATE_READY;
@@ -3375,8 +3366,14 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
         HAL_USART_RxCpltCallback(husart);
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
       }
+#if defined(USART_CR1_FIFOEN)
+      else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+               (txftie != USART_CR3_TXFTIE) &&
+               (txdatacount == 0U))
+#else
       else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
                (txdatacount == 0U))
+#endif /* USART_CR1_FIFOEN */
       {
         /* TxRx process is completed, restore husart->State to Ready */
         husart->State = HAL_USART_STATE_READY;
@@ -3399,7 +3396,7 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
              (husart->SlaveMode == USART_SLAVEMODE_DISABLE))
 #else
     else if (state == HAL_USART_STATE_BUSY_RX)
-#endif
+#endif /* USART_CR2_SLVEN */
     {
       /* Send dummy byte in order to generate the clock for the Slave to Send the next data */
       husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
@@ -3426,6 +3423,9 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
   uint16_t txdatacount;
   uint16_t *tmp;
   uint16_t uhMask = husart->Mask;
+#if defined(USART_CR1_FIFOEN)
+  uint32_t txftie;
+#endif /* USART_CR1_FIFOEN */
 
   if ((state == HAL_USART_STATE_BUSY_RX) ||
       (state == HAL_USART_STATE_BUSY_TX_RX))
@@ -3442,7 +3442,7 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
       CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE));
 #else
       CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE));
-#endif
+#endif /* USART_CR1_FIFOEN */
 
       /* Disable the USART Error Interrupt: (Frame error, noise error, overrun error) */
       CLEAR_BIT(husart->Instance->CR3, USART_CR3_EIE);
@@ -3450,7 +3450,12 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
       /* Clear RxISR function pointer */
       husart->RxISR = NULL;
 
+#if defined(USART_CR1_FIFOEN)
+      /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+      txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
+#else
       /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+#endif /* USART_CR1_FIFOEN */
       txdatacount = husart->TxXferCount;
 
       if (state == HAL_USART_STATE_BUSY_RX)
@@ -3462,7 +3467,7 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
           __HAL_USART_CLEAR_UDRFLAG(husart);
           __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
         }
-#endif
+#endif /* USART_CR2_SLVEN */
 
         /* Rx process is completed, restore husart->State to Ready */
         husart->State = HAL_USART_STATE_READY;
@@ -3475,8 +3480,14 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
         HAL_USART_RxCpltCallback(husart);
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
       }
+#if defined(USART_CR1_FIFOEN)
+      else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+               (txftie != USART_CR3_TXFTIE) &&
+               (txdatacount == 0U))
+#else
       else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
                (txdatacount == 0U))
+#endif /* USART_CR1_FIFOEN */
       {
         /* TxRx process is completed, restore husart->State to Ready */
         husart->State = HAL_USART_STATE_READY;
@@ -3499,7 +3510,7 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
              (husart->SlaveMode == USART_SLAVEMODE_DISABLE))
 #else
     else if (state == HAL_USART_STATE_BUSY_RX)
-#endif
+#endif /* USART_CR2_SLVEN */
     {
       /* Send dummy byte in order to generate the clock for the Slave to Send the next data */
       husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
@@ -3528,6 +3539,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
   uint16_t rxdatacount;
   uint16_t uhMask = husart->Mask;
   uint16_t nb_rx_data;
+  uint32_t txftie;
 
   /* Check that a Rx process is ongoing */
   if ((state == HAL_USART_STATE_BUSY_RX) ||
@@ -3537,7 +3549,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
     {
       if (__HAL_USART_GET_FLAG(husart, USART_FLAG_RXFNE) == SET)
       {
-        *husart->pRxBuffPtr = (uint8_t)(husart->Instance->RDR & (uint8_t)uhMask);
+        *husart->pRxBuffPtr = (uint8_t)(husart->Instance->RDR & (uint8_t)(uhMask & 0xFFU));
         husart->pRxBuffPtr++;
         husart->RxXferCount--;
 
@@ -3552,7 +3564,8 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
           /* Clear RxISR function pointer */
           husart->RxISR = NULL;
 
-          /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+          /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+          txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
           txdatacount = husart->TxXferCount;
 
           if (state == HAL_USART_STATE_BUSY_RX)
@@ -3564,7 +3577,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
               __HAL_USART_CLEAR_UDRFLAG(husart);
               __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
             }
-#endif
+#endif /* USART_CR2_SLVEN */
 
             /* Rx process is completed, restore husart->State to Ready */
             husart->State = HAL_USART_STATE_READY;
@@ -3579,6 +3592,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
           }
           else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+                   (txftie != USART_CR3_TXFTIE) &&
                    (txdatacount == 0U))
           {
             /* TxRx process is completed, restore husart->State to Ready */
@@ -3603,7 +3617,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
                  (husart->SlaveMode == USART_SLAVEMODE_DISABLE))
 #else
         else if (state == HAL_USART_STATE_BUSY_RX)
-#endif
+#endif /* USART_CR2_SLVEN */
         {
           /* Send dummy byte in order to generate the clock for the Slave to Send the next data */
           husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
@@ -3638,7 +3652,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
 #else
       if ((husart->TxXferCount == 0U) &&
           (state == HAL_USART_STATE_BUSY_TX_RX))
-#endif
+#endif /* USART_CR2_SLVEN */
       {
         /* Send dummy byte in order to generate the clock for the Slave to Send the next data */
         husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
@@ -3669,6 +3683,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
   uint16_t *tmp;
   uint16_t uhMask = husart->Mask;
   uint16_t nb_rx_data;
+  uint32_t txftie;
 
   /* Check that a Tx process is ongoing */
   if ((state == HAL_USART_STATE_BUSY_RX) ||
@@ -3694,7 +3709,8 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
           /* Clear RxISR function pointer */
           husart->RxISR = NULL;
 
-          /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+          /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+          txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
           txdatacount = husart->TxXferCount;
 
           if (state == HAL_USART_STATE_BUSY_RX)
@@ -3706,7 +3722,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
               __HAL_USART_CLEAR_UDRFLAG(husart);
               __HAL_USART_SEND_REQ(husart, USART_TXDATA_FLUSH_REQUEST);
             }
-#endif
+#endif /* USART_CR2_SLVEN */
 
             /* Rx process is completed, restore husart->State to Ready */
             husart->State = HAL_USART_STATE_READY;
@@ -3721,6 +3737,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
           }
           else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+                   (txftie != USART_CR3_TXFTIE) &&
                    (txdatacount == 0U))
           {
             /* TxRx process is completed, restore husart->State to Ready */
@@ -3745,7 +3762,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
                  (husart->SlaveMode == USART_SLAVEMODE_DISABLE))
 #else
         else if (state == HAL_USART_STATE_BUSY_RX)
-#endif
+#endif /* USART_CR2_SLVEN */
         {
           /* Send dummy byte in order to generate the clock for the Slave to Send the next data */
           husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
@@ -3780,7 +3797,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
 #else
       if ((husart->TxXferCount == 0U) &&
           (state == HAL_USART_STATE_BUSY_TX_RX))
-#endif
+#endif /* USART_CR2_SLVEN */
       {
         /* Send dummy byte in order to generate the clock for the Slave to Send the next data */
         husart->Instance->TDR = (USART_DUMMY_DATA & (uint16_t)0x00FF);
@@ -3793,7 +3810,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
     __HAL_USART_SEND_REQ(husart, USART_RXDATA_FLUSH_REQUEST);
   }
 }
-#endif
+#endif /* USART_CR1_FIFOEN */
 
 /**
   * @}

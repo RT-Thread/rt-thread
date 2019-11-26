@@ -333,7 +333,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>CORE_M4</Define>
               <Undefine />
-              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\Device\NXP\LPC407x_8x_177x_8x\Include;Libraries\CMSIS\Include;Libraries\Drivers\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\Device\NXP\LPC407x_8x_177x_8x\Include;Libraries\CMSIS\Include;Libraries\Drivers\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -367,7 +367,7 @@
             <ScatterFile>.\drivers\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab)</Misc>
+            <Misc />
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
@@ -875,13 +875,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\symbol.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
@@ -892,13 +885,6 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh_cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_cmd.c</FilePath>
             </File>
           </Files>
           <Files>

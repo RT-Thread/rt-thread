@@ -1,11 +1,11 @@
 /**************************************************************************//**
  * @file     cmsis_armcc.h
- * @brief    CMSIS compiler ARMCC (ARM compiler V5) header file
- * @version  V5.0.1
- * @date     03. February 2017
+ * @brief    CMSIS compiler ARMCC (Arm Compiler 5) header file
+ * @version  V5.0.4
+ * @date     10. January 2018
  ******************************************************************************/
 /*
- * Copyright (c) 2009-2017 ARM Limited. All rights reserved.
+ * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -27,7 +27,7 @@
 
 
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 400677)
-  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
+  #error "Please use Arm Compiler Toolchain V4.0.677 or later!"
 #endif
 
 /* CMSIS compiler control architecture macros */
@@ -50,36 +50,56 @@
 
 /* CMSIS compiler specific defines */
 #ifndef   __ASM
-  #define __ASM                     __asm
+  #define __ASM                                  __asm
 #endif
 #ifndef   __INLINE
-  #define __INLINE                  __inline
+  #define __INLINE                               __inline
 #endif
 #ifndef   __STATIC_INLINE
-  #define __STATIC_INLINE           static __inline
+  #define __STATIC_INLINE                        static __inline
 #endif
+#ifndef   __STATIC_FORCEINLINE                 
+  #define __STATIC_FORCEINLINE                   static __forceinline
+#endif           
 #ifndef   __NO_RETURN
-  #define __NO_RETURN               __declspec(noreturn)
+  #define __NO_RETURN                            __declspec(noreturn)
 #endif
 #ifndef   __USED
-  #define __USED                    __attribute__((used))
+  #define __USED                                 __attribute__((used))
 #endif
 #ifndef   __WEAK
-  #define __WEAK                    __attribute__((weak))
-#endif
-#ifndef   __UNALIGNED_UINT32
-  #define __UNALIGNED_UINT32(x)     (*((__packed uint32_t *)(x)))
-#endif
-#ifndef   __ALIGNED
-  #define __ALIGNED(x)              __attribute__((aligned(x)))
+  #define __WEAK                                 __attribute__((weak))
 #endif
 #ifndef   __PACKED
-  #define __PACKED                  __attribute__((packed))
+  #define __PACKED                               __attribute__((packed))
 #endif
 #ifndef   __PACKED_STRUCT
-  #define __PACKED_STRUCT           __packed struct
+  #define __PACKED_STRUCT                        __packed struct
 #endif
-
+#ifndef   __PACKED_UNION
+  #define __PACKED_UNION                         __packed union
+#endif
+#ifndef   __UNALIGNED_UINT32        /* deprecated */
+  #define __UNALIGNED_UINT32(x)                  (*((__packed uint32_t *)(x)))
+#endif
+#ifndef   __UNALIGNED_UINT16_WRITE
+  #define __UNALIGNED_UINT16_WRITE(addr, val)    ((*((__packed uint16_t *)(addr))) = (val))
+#endif
+#ifndef   __UNALIGNED_UINT16_READ
+  #define __UNALIGNED_UINT16_READ(addr)          (*((const __packed uint16_t *)(addr)))
+#endif
+#ifndef   __UNALIGNED_UINT32_WRITE
+  #define __UNALIGNED_UINT32_WRITE(addr, val)    ((*((__packed uint32_t *)(addr))) = (val))
+#endif
+#ifndef   __UNALIGNED_UINT32_READ
+  #define __UNALIGNED_UINT32_READ(addr)          (*((const __packed uint32_t *)(addr)))
+#endif
+#ifndef   __ALIGNED
+  #define __ALIGNED(x)                           __attribute__((aligned(x)))
+#endif
+#ifndef   __RESTRICT
+  #define __RESTRICT                             __restrict
+#endif
 
 /* ###########################  Core Function Access  ########################### */
 /** \ingroup  CMSIS_Core_FunctionInterface
@@ -317,8 +337,6 @@ __STATIC_INLINE void __set_FAULTMASK(uint32_t faultMask)
            (defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     ) */
 
 
-#if ((defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     )
-
 /**
   \brief   Get FPSCR
   \details Returns the current value of the Floating Point Status/Control register.
@@ -351,9 +369,6 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
   (void)fpscr;
 #endif
 }
-
-#endif /* ((defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     ) */
-
 
 
 /*@} end of CMSIS_Core_RegAccFunctions */
@@ -428,9 +443,10 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
                    __schedule_barrier();\
                 } while (0U)
 
+                  
 /**
   \brief   Reverse byte order (32 bit)
-  \details Reverses the byte order in integer value.
+  \details Reverses the byte order in unsigned integer value. For example, 0x12345678 becomes 0x78563412.
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
@@ -439,7 +455,7 @@ __STATIC_INLINE void __set_FPSCR(uint32_t fpscr)
 
 /**
   \brief   Reverse byte order (16 bit)
-  \details Reverses the byte order in two unsigned short values.
+  \details Reverses the byte order within each halfword of a word. For example, 0x12345678 becomes 0x34127856.
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
@@ -453,13 +469,13 @@ __attribute__((section(".rev16_text"))) __STATIC_INLINE __ASM uint32_t __REV16(u
 
 
 /**
-  \brief   Reverse byte order in signed short value
-  \details Reverses the byte order in a signed short value with sign extension to integer.
+  \brief   Reverse byte order (16 bit)
+  \details Reverses the byte order in a 16-bit value and returns the signed 16-bit result. For example, 0x0080 becomes 0x8000.
   \param [in]    value  Value to reverse
   \return               Reversed value
  */
 #ifndef __NO_EMBEDDED_ASM
-__attribute__((section(".revsh_text"))) __STATIC_INLINE __ASM int32_t __REVSH(int32_t value)
+__attribute__((section(".revsh_text"))) __STATIC_INLINE __ASM int16_t __REVSH(int16_t value)
 {
   revsh r0, r0
   bx lr
@@ -500,17 +516,17 @@ __attribute__((section(".revsh_text"))) __STATIC_INLINE __ASM int32_t __REVSH(in
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __RBIT(uint32_t value)
 {
   uint32_t result;
-  int32_t s = (4 /*sizeof(v)*/ * 8) - 1; /* extra shift needed at end */
+  uint32_t s = (4U /*sizeof(v)*/ * 8U) - 1U; /* extra shift needed at end */
 
   result = value;                      /* r will be reversed bits of v; first get LSB of v */
-  for (value >>= 1U; value; value >>= 1U)
+  for (value >>= 1U; value != 0U; value >>= 1U)
   {
     result <<= 1U;
     result |= value & 1U;
     s--;
   }
   result <<= s;                        /* shift when v's highest bits are zero */
-  return(result);
+  return result;
 }
 #endif
 
@@ -706,6 +722,58 @@ __attribute__((section(".rrx_text"))) __STATIC_INLINE __ASM uint32_t __RRX(uint3
   \param [in]    ptr  Pointer to location
  */
 #define __STRT(value, ptr)                __strt(value, ptr)
+
+#else  /* ((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__  == 1)) || \
+           (defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     ) */
+
+/**
+  \brief   Signed Saturate
+  \details Saturates a signed value.
+  \param [in]  value  Value to be saturated
+  \param [in]    sat  Bit position to saturate to (1..32)
+  \return             Saturated value
+ */
+__attribute__((always_inline)) __STATIC_INLINE int32_t __SSAT(int32_t val, uint32_t sat)
+{
+  if ((sat >= 1U) && (sat <= 32U))
+  {
+    const int32_t max = (int32_t)((1U << (sat - 1U)) - 1U);
+    const int32_t min = -1 - max ;
+    if (val > max)
+    {
+      return max;
+    }
+    else if (val < min)
+    {
+      return min;
+    }
+  }
+  return val;
+}
+
+/**
+  \brief   Unsigned Saturate
+  \details Saturates an unsigned value.
+  \param [in]  value  Value to be saturated
+  \param [in]    sat  Bit position to saturate to (0..31)
+  \return             Saturated value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __USAT(int32_t val, uint32_t sat)
+{
+  if (sat <= 31U)
+  {
+    const uint32_t max = ((1U << sat) - 1U);
+    if (val > (int32_t)max)
+    {
+      return max;
+    }
+    else if (val < 0)
+    {
+      return 0U;
+    }
+  }
+  return (uint32_t)val;
+}
 
 #endif /* ((defined (__ARM_ARCH_7M__ ) && (__ARM_ARCH_7M__  == 1)) || \
            (defined (__ARM_ARCH_7EM__) && (__ARM_ARCH_7EM__ == 1))     ) */

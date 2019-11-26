@@ -20,7 +20,7 @@
 #include <fcntl.h>
 
 #ifndef O_NONBLOCK
-#define O_NONBLOCK   04000
+#define O_NONBLOCK   0x4000
 #endif
 
 #if defined(_WIN32)
@@ -35,7 +35,7 @@
 #endif
 
 #ifndef O_DIRECTORY
-#define O_DIRECTORY 0200000
+#define O_DIRECTORY 0x200000
 #endif
 
 #ifndef O_BINARY

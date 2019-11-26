@@ -78,7 +78,7 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stack_frame->exception_stack_frame.acc     = 0x33332222;
     stack_frame->exception_stack_frame.ar1_ar0 = 0x00001111 & (unsigned long)parameter; /* ar0 : argument */
     stack_frame->exception_stack_frame.p       = 0x55554444;                            /* p */
-    stack_frame->exception_stack_frame.dp_st1  = (0x00000000) | rt_hw_get_st1();        /* dp_st1 */
+    stack_frame->exception_stack_frame.dp_st1  = (0x00000000) | rt_hw_get_st1() & 0xFFFFFFFE;        /* dp_st1 */
     stack_frame->exception_stack_frame.dbgstat_ier    = 0;                              /* dbgstat_ier */
     stack_frame->exception_stack_frame.return_address = (unsigned long)tentry;          /* return_address */
     stack_frame->rpc = (unsigned long)texit;

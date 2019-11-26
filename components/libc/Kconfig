@@ -39,4 +39,10 @@ if RT_USING_LIBC && RT_USING_DFS
         default n
 endif
 
+if RT_USING_LIBC != y
+        config RT_LIBC_USING_TIME
+        bool "Enable TIME FUNCTIONS WITHOUT COMPILER'S LIBC"
+        default y
+endif
+
 endmenu

@@ -7,36 +7,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_H
-#define __STM32H7xx_HAL_H
+#ifndef STM32H7xx_HAL_H
+#define STM32H7xx_HAL_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -44,6 +28,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_conf.h"
+#include <rtthread.h>
 
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
@@ -70,6 +55,18 @@ typedef enum
 
 /* Exported constants --------------------------------------------------------*/
 
+/** @defgroup REV_ID device revision ID
+  * @{
+  */
+#define REV_ID_Y ((uint32_t)0x1003)  /*!< STM32H7 rev.Y */
+#define REV_ID_B ((uint32_t)0x2000)  /*!< STM32H7 rev.B */
+#define REV_ID_X ((uint32_t)0x2001)  /*!< STM32H7 rev.X */
+#define REV_ID_V ((uint32_t)0x2003)  /*!< STM32H7 rev.V */
+
+/**
+  * @}
+  */
+
 /** @defgroup SYSCFG_VREFBUF_VoltageScale VREFBUF Voltage Scale
   * @{
   */
@@ -77,7 +74,7 @@ typedef enum
 #define SYSCFG_VREFBUF_VOLTAGE_SCALE1   VREFBUF_CSR_VRS_OUT1   /*!< Voltage reference scale 1 (VREF_OUT1) */
 #define SYSCFG_VREFBUF_VOLTAGE_SCALE2   VREFBUF_CSR_VRS_OUT4   /*!< Voltage reference scale 2 (VREF_OUT4) */
 #define SYSCFG_VREFBUF_VOLTAGE_SCALE3   VREFBUF_CSR_VRS_OUT3   /*!< Voltage reference scale 3 (VREF_OUT3) */
-   
+
 
 #define IS_SYSCFG_VREFBUF_VOLTAGE_SCALE(__SCALE__)  (((__SCALE__) == SYSCFG_VREFBUF_VOLTAGE_SCALE0) || \
                                                      ((__SCALE__) == SYSCFG_VREFBUF_VOLTAGE_SCALE1) || \
@@ -94,11 +91,11 @@ typedef enum
   */
 #define SYSCFG_VREFBUF_HIGH_IMPEDANCE_DISABLE  ((uint32_t)0x00000000) /*!< VREF_plus pin is internally connected to Voltage reference buffer output */
 #define SYSCFG_VREFBUF_HIGH_IMPEDANCE_ENABLE   VREFBUF_CSR_HIZ        /*!< VREF_plus pin is high impedance */
-  
+
 #define IS_SYSCFG_VREFBUF_HIGH_IMPEDANCE(__VALUE__)  (((__VALUE__) == SYSCFG_VREFBUF_HIGH_IMPEDANCE_DISABLE) || \
                                                       ((__VALUE__) == SYSCFG_VREFBUF_HIGH_IMPEDANCE_ENABLE))
 
-#define IS_SYSCFG_VREFBUF_TRIMMING(__VALUE__)  (((__VALUE__) > 0) && ((__VALUE__) <= VREFBUF_CCR_TRIM))
+#define IS_SYSCFG_VREFBUF_TRIMMING(__VALUE__)  (((__VALUE__) > 0UL) && ((__VALUE__) <= VREFBUF_CCR_TRIM))
 
 /**
   * @}
@@ -153,7 +150,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 /** @defgroup SYSCFG_Boot_Config  Boot Config
   * @{
   */
@@ -168,7 +165,7 @@ typedef enum
 /**
   * @}
   */
-  
+
 
 /** @defgroup SYSCFG_IOCompenstionCell_Config  IOCompenstionCell Config
   * @{
@@ -179,7 +176,7 @@ typedef enum
 #define IS_SYSCFG_CODE_SELECT(SELECT) (((SELECT) == SYSCFG_CELL_CODE)|| \
                                         ((SELECT) == SYSCFG_REGISTER_CODE))
 
-#define IS_SYSCFG_CODE_CONFIG(CONFIG) ((CONFIG) < (0x10))
+#define IS_SYSCFG_CODE_CONFIG(CONFIG) ((CONFIG) < (0x10UL))
 
 /**
   * @}
@@ -191,7 +188,7 @@ typedef enum
 /** @defgroup EXTI_Event_Input_Config  Event Input Config
   * @{
   */
-  
+
 #define EXTI_MODE_IT          ((uint32_t)0x00010000)
 #define EXTI_MODE_EVT         ((uint32_t)0x00020000)
 #define EXTI_RISING_EDGE      ((uint32_t)0x00100000)
@@ -216,89 +213,124 @@ typedef enum
 #define EXTI_LINE13      ((uint32_t)0x0D)  /*!< External interrupt LINE 13 */
 #define EXTI_LINE14      ((uint32_t)0x0E)  /*!< External interrupt LINE 14 */
 #define EXTI_LINE15      ((uint32_t)0x0F)  /*!< External interrupt LINE 15 */
-#define EXTI_LINE16      ((uint32_t)0x10) 
-#define EXTI_LINE17      ((uint32_t)0x11)                                                
-#define EXTI_LINE18      ((uint32_t)0x12)                                                
-#define EXTI_LINE19      ((uint32_t)0x13)                                                                                            
-#define EXTI_LINE20      ((uint32_t)0x14)                                                                                                                                            
-#define EXTI_LINE21      ((uint32_t)0x15)                                                      
-#define EXTI_LINE22      ((uint32_t)0x16)                                                    
-#define EXTI_LINE23      ((uint32_t)0x17) 
-#define EXTI_LINE24      ((uint32_t)0x18) 
-#define EXTI_LINE25      ((uint32_t)0x19) 
-#define EXTI_LINE26      ((uint32_t)0x1A)  
-#define EXTI_LINE27      ((uint32_t)0x1B)  
-#define EXTI_LINE28      ((uint32_t)0x1C)  
-#define EXTI_LINE29      ((uint32_t)0x1D)  
-#define EXTI_LINE30      ((uint32_t)0x1E) 
-#define EXTI_LINE31      ((uint32_t)0x1F)  
-#define EXTI_LINE32      ((uint32_t)0x20)                                                                                     
-#define EXTI_LINE33      ((uint32_t)0x21)                                           
-#define EXTI_LINE34      ((uint32_t)0x22)                                                                                     
-#define EXTI_LINE35      ((uint32_t)0x23)                                                                                      
-#define EXTI_LINE36      ((uint32_t)0x24)                                                                                      
-#define EXTI_LINE37      ((uint32_t)0x25)                                                                                       
-#define EXTI_LINE38      ((uint32_t)0x26)                                                                                      
-#define EXTI_LINE39      ((uint32_t)0x27)  
+#define EXTI_LINE16      ((uint32_t)0x10)
+#define EXTI_LINE17      ((uint32_t)0x11)
+#define EXTI_LINE18      ((uint32_t)0x12)
+#define EXTI_LINE19      ((uint32_t)0x13)
+#define EXTI_LINE20      ((uint32_t)0x14)
+#define EXTI_LINE21      ((uint32_t)0x15)
+#define EXTI_LINE22      ((uint32_t)0x16)
+#define EXTI_LINE23      ((uint32_t)0x17)
+#define EXTI_LINE24      ((uint32_t)0x18)
+#define EXTI_LINE25      ((uint32_t)0x19)
+#define EXTI_LINE26      ((uint32_t)0x1A)
+#define EXTI_LINE27      ((uint32_t)0x1B)
+#define EXTI_LINE28      ((uint32_t)0x1C)
+#define EXTI_LINE29      ((uint32_t)0x1D)
+#define EXTI_LINE30      ((uint32_t)0x1E)
+#define EXTI_LINE31      ((uint32_t)0x1F)
+#define EXTI_LINE32      ((uint32_t)0x20)
+#define EXTI_LINE33      ((uint32_t)0x21)
+#define EXTI_LINE34      ((uint32_t)0x22)
+#define EXTI_LINE35      ((uint32_t)0x23)
+#define EXTI_LINE36      ((uint32_t)0x24)
+#define EXTI_LINE37      ((uint32_t)0x25)
+#define EXTI_LINE38      ((uint32_t)0x26)
+#define EXTI_LINE39      ((uint32_t)0x27)
 
-#define EXTI_LINE40      ((uint32_t)0x28) 
-#define EXTI_LINE41      ((uint32_t)0x29)  
-#define EXTI_LINE42      ((uint32_t)0x2A)                                                                                     
-#define EXTI_LINE43      ((uint32_t)0x2B)                                           
-#define EXTI_LINE44      ((uint32_t)0x2C)                                                                                     
-/* EXTI_LINE45 Reserved */                                                                                     
-/* EXTI_LINE46 Reserved */                                                                                    
-#define EXTI_LINE47      ((uint32_t)0x2F)                                                                                       
-#define EXTI_LINE48      ((uint32_t)0x30)                                                                                      
-#define EXTI_LINE49      ((uint32_t)0x31) 
-                                           
-#define EXTI_LINE50      ((uint32_t)0x32) 
-#define EXTI_LINE51      ((uint32_t)0x33)  
-#define EXTI_LINE52      ((uint32_t)0x34)                                                                                     
-#define EXTI_LINE53      ((uint32_t)0x35)                                           
-#define EXTI_LINE54      ((uint32_t)0x36)                                                                                     
-#define EXTI_LINE55      ((uint32_t)0x37)                                                                                      
-#define EXTI_LINE56      ((uint32_t)0x38)                                                                                      
-#define EXTI_LINE57      ((uint32_t)0x39)                                                                                       
-#define EXTI_LINE58      ((uint32_t)0x3A)                                                                                      
+#define EXTI_LINE40      ((uint32_t)0x28)
+#define EXTI_LINE41      ((uint32_t)0x29)
+#define EXTI_LINE42      ((uint32_t)0x2A)
+#define EXTI_LINE43      ((uint32_t)0x2B)
+#define EXTI_LINE44      ((uint32_t)0x2C)
+/* EXTI_LINE45 Reserved */
+#if defined(DUAL_CORE)
+#define EXTI_LINE46      ((uint32_t)0x2E)
+#else
+/* EXTI_LINE46 Reserved */
+#endif
+#define EXTI_LINE47      ((uint32_t)0x2F)
+#define EXTI_LINE48      ((uint32_t)0x30)
+#define EXTI_LINE49      ((uint32_t)0x31)
+
+#define EXTI_LINE50      ((uint32_t)0x32)
+#define EXTI_LINE51      ((uint32_t)0x33)
+#define EXTI_LINE52      ((uint32_t)0x34)
+#define EXTI_LINE53      ((uint32_t)0x35)
+#define EXTI_LINE54      ((uint32_t)0x36)
+#define EXTI_LINE55      ((uint32_t)0x37)
+#define EXTI_LINE56      ((uint32_t)0x38)
+#define EXTI_LINE57      ((uint32_t)0x39)
+#define EXTI_LINE58      ((uint32_t)0x3A)
 #define EXTI_LINE59      ((uint32_t)0x3B)
 
-#define EXTI_LINE60      ((uint32_t)0x3C) 
-#define EXTI_LINE61      ((uint32_t)0x3D)  
-#define EXTI_LINE62      ((uint32_t)0x3E)                                                                                     
-#define EXTI_LINE63      ((uint32_t)0x3F)                                           
-#define EXTI_LINE64      ((uint32_t)0x40)                                                                                     
-#define EXTI_LINE65      ((uint32_t)0x41)                                                                                      
-#define EXTI_LINE66      ((uint32_t)0x42)                                                                                      
-#define EXTI_LINE67      ((uint32_t)0x43)                                                                                       
-#define EXTI_LINE68      ((uint32_t)0x44)                                                                                      
+#define EXTI_LINE60      ((uint32_t)0x3C)
+#define EXTI_LINE61      ((uint32_t)0x3D)
+#define EXTI_LINE62      ((uint32_t)0x3E)
+#define EXTI_LINE63      ((uint32_t)0x3F)
+#define EXTI_LINE64      ((uint32_t)0x40)
+#define EXTI_LINE65      ((uint32_t)0x41)
+#define EXTI_LINE66      ((uint32_t)0x42)
+#define EXTI_LINE67      ((uint32_t)0x43)
+#define EXTI_LINE68      ((uint32_t)0x44)
 #define EXTI_LINE69      ((uint32_t)0x45)
 
-#define EXTI_LINE70      ((uint32_t)0x46) 
-#define EXTI_LINE71      ((uint32_t)0x47)  
-#define EXTI_LINE72      ((uint32_t)0x48)                                                                                     
-#define EXTI_LINE73      ((uint32_t)0x49)                                           
-#define EXTI_LINE74      ((uint32_t)0x4A)                                                                                     
-#define EXTI_LINE75      ((uint32_t)0x4B)                                                                                      
-#define EXTI_LINE76      ((uint32_t)0x4C)                                                                                      
+#define EXTI_LINE70      ((uint32_t)0x46)
+#define EXTI_LINE71      ((uint32_t)0x47)
+#define EXTI_LINE72      ((uint32_t)0x48)
+#define EXTI_LINE73      ((uint32_t)0x49)
+#define EXTI_LINE74      ((uint32_t)0x4A)
+#define EXTI_LINE75      ((uint32_t)0x4B)
+#define EXTI_LINE76      ((uint32_t)0x4C)
 
-/* EXTI_LINE77   Reserved */                                                                           
-/* EXTI_LINE78   Reserved */                                                                          
-/* EXTI_LINE79   Reserved */   
-/* EXTI_LINE80   Reserved */   
+#if defined(DUAL_CORE)
+#define EXTI_LINE77      ((uint32_t)0x4D)
+#define EXTI_LINE78      ((uint32_t)0x4E)
+#define EXTI_LINE79      ((uint32_t)0x4F)
+
+#define EXTI_LINE80      ((uint32_t)0x50)
 /* EXTI_LINE81   Reserved */
-/* EXTI_LINE82   Reserved */                                                                         
-/* EXTI_LINE83   Reserved */                                      
-/* EXTI_LINE84   Reserved */                                                                         
+#define EXTI_LINE82      ((uint32_t)0x52)
+/* EXTI_LINE83   Reserved */
+#define EXTI_LINE84      ((uint32_t)0x54)
+#define EXTI_LINE85      ((uint32_t)0x55)
+#define EXTI_LINE86      ((uint32_t)0x56)
+#define EXTI_LINE87      ((uint32_t)0x57)
+/* EXTI_LINE88   Reserved */
+#else
+/* EXTI_LINE77   Reserved */
+/* EXTI_LINE78   Reserved */
+/* EXTI_LINE79   Reserved */
+/* EXTI_LINE80   Reserved */
+/* EXTI_LINE81   Reserved */
+/* EXTI_LINE82   Reserved */
+/* EXTI_LINE83   Reserved */
+/* EXTI_LINE84   Reserved */
 
-#define EXTI_LINE85      ((uint32_t)0x55)                                                                                      
-#define EXTI_LINE86      ((uint32_t)0x56)                                                                                      
-#define EXTI_LINE87      ((uint32_t)0x57)                                                                                       
+#define EXTI_LINE85      ((uint32_t)0x55)
+#define EXTI_LINE86      ((uint32_t)0x56)
+#define EXTI_LINE87      ((uint32_t)0x57)
 
-/* EXTI_LINE88   Reserved */ 
+/* EXTI_LINE88   Reserved */
+#endif
 
-
-#define IS_EXTI_CONFIG_LINE(LINE) (((LINE) == EXTI_LINE0) || ((LINE) == EXTI_LINE1)|| \
+#if defined(DUAL_CORE)
+#define IS_HAL_EXTI_CONFIG_LINE(LINE) (((LINE) == EXTI_LINE0) || ((LINE) == EXTI_LINE1) || \
+                                ((LINE) == EXTI_LINE2)  || ((LINE) == EXTI_LINE3)   || \
+                                ((LINE) == EXTI_LINE4)  || ((LINE) == EXTI_LINE5)   || \
+                                ((LINE) == EXTI_LINE6)  || ((LINE) == EXTI_LINE7)   || \
+                                ((LINE) == EXTI_LINE8)  || ((LINE) == EXTI_LINE9)   || \
+                                ((LINE) == EXTI_LINE10) || ((LINE) == EXTI_LINE11)  || \
+                                ((LINE) == EXTI_LINE12) || ((LINE) == EXTI_LINE13)  || \
+                                ((LINE) == EXTI_LINE14) || ((LINE) == EXTI_LINE15)  || \
+                                ((LINE) == EXTI_LINE16) || ((LINE) == EXTI_LINE17)  || \
+                                ((LINE) == EXTI_LINE18) || ((LINE) == EXTI_LINE19)  || \
+                                ((LINE) == EXTI_LINE20) || ((LINE) == EXTI_LINE21)  || \
+                                ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE51)  || \
+                                ((LINE) == EXTI_LINE82) || ((LINE) == EXTI_LINE84)  || \
+                                ((LINE) == EXTI_LINE85) || ((LINE) == EXTI_LINE86))
+#else
+#define IS_HAL_EXTI_CONFIG_LINE(LINE) (((LINE) == EXTI_LINE0) || ((LINE) == EXTI_LINE1)|| \
                                 ((LINE) == EXTI_LINE2)  || ((LINE) == EXTI_LINE3)   || \
                                 ((LINE) == EXTI_LINE4)  || ((LINE) == EXTI_LINE5)   || \
                                 ((LINE) == EXTI_LINE6)  || ((LINE) == EXTI_LINE7)   || \
@@ -311,7 +343,53 @@ typedef enum
                                 ((LINE) == EXTI_LINE20) || ((LINE) == EXTI_LINE21) || \
                                 ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE51) || \
                                 ((LINE) == EXTI_LINE85) || ((LINE) == EXTI_LINE86))
+#endif
 
+#if defined(DUAL_CORE)
+#define IS_EXTI_ALL_LINE(LINE) (((LINE) == EXTI_LINE0)  || ((LINE) == EXTI_LINE1)  || \
+                                ((LINE) == EXTI_LINE2)  || ((LINE) == EXTI_LINE3)  || \
+                                ((LINE) == EXTI_LINE4)  || ((LINE) == EXTI_LINE5)  || \
+                                ((LINE) == EXTI_LINE6)  || ((LINE) == EXTI_LINE7)  || \
+                                ((LINE) == EXTI_LINE8)  || ((LINE) == EXTI_LINE9)  || \
+                                ((LINE) == EXTI_LINE10) || ((LINE) == EXTI_LINE11) || \
+                                ((LINE) == EXTI_LINE12) || ((LINE) == EXTI_LINE13) || \
+                                ((LINE) == EXTI_LINE14) || ((LINE) == EXTI_LINE15) || \
+                                ((LINE) == EXTI_LINE16) || ((LINE) == EXTI_LINE17) || \
+                                ((LINE) == EXTI_LINE18) || ((LINE) == EXTI_LINE19) || \
+                                ((LINE) == EXTI_LINE20) || ((LINE) == EXTI_LINE21) || \
+                                ((LINE) == EXTI_LINE22) || ((LINE) == EXTI_LINE23) || \
+                                ((LINE) == EXTI_LINE24) || ((LINE) == EXTI_LINE25) || \
+                                ((LINE) == EXTI_LINE26) || ((LINE) == EXTI_LINE27) || \
+                                ((LINE) == EXTI_LINE28) || ((LINE) == EXTI_LINE29) || \
+                                ((LINE) == EXTI_LINE30) || ((LINE) == EXTI_LINE31) || \
+                                ((LINE) == EXTI_LINE32) || ((LINE) == EXTI_LINE33) || \
+                                ((LINE) == EXTI_LINE34) || ((LINE) == EXTI_LINE35) || \
+                                ((LINE) == EXTI_LINE36) || ((LINE) == EXTI_LINE37) || \
+                                ((LINE) == EXTI_LINE38) || ((LINE) == EXTI_LINE39) || \
+                                ((LINE) == EXTI_LINE40) || ((LINE) == EXTI_LINE41) || \
+                                ((LINE) == EXTI_LINE42) || ((LINE) == EXTI_LINE43) || \
+                                ((LINE) == EXTI_LINE44) || ((LINE) == EXTI_LINE46) || \
+                                ((LINE) == EXTI_LINE47) || ((LINE) == EXTI_LINE48) || \
+                                ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE50) || \
+                                ((LINE) == EXTI_LINE51) || ((LINE) == EXTI_LINE52) || \
+                                ((LINE) == EXTI_LINE53) || ((LINE) == EXTI_LINE54) || \
+                                ((LINE) == EXTI_LINE55) || ((LINE) == EXTI_LINE56) || \
+                                ((LINE) == EXTI_LINE57) || ((LINE) == EXTI_LINE58) || \
+                                ((LINE) == EXTI_LINE59) || ((LINE) == EXTI_LINE60) || \
+                                ((LINE) == EXTI_LINE61) || ((LINE) == EXTI_LINE62) || \
+                                ((LINE) == EXTI_LINE63) || ((LINE) == EXTI_LINE64) || \
+                                ((LINE) == EXTI_LINE65) || ((LINE) == EXTI_LINE66) || \
+                                ((LINE) == EXTI_LINE67) || ((LINE) == EXTI_LINE68) || \
+                                ((LINE) == EXTI_LINE69) || ((LINE) == EXTI_LINE70) || \
+                                ((LINE) == EXTI_LINE71) || ((LINE) == EXTI_LINE72) || \
+                                ((LINE) == EXTI_LINE73) || ((LINE) == EXTI_LINE74) || \
+                                ((LINE) == EXTI_LINE75) || ((LINE) == EXTI_LINE76) || \
+                                ((LINE) == EXTI_LINE77) || ((LINE) == EXTI_LINE79) || \
+                                ((LINE) == EXTI_LINE84) || ((LINE) == EXTI_LINE85) || \
+                                ((LINE) == EXTI_LINE86) || ((LINE) == EXTI_LINE87) || \
+                                ((LINE) == EXTI_LINE78) || \
+                                ((LINE) == EXTI_LINE80) || ((LINE) == EXTI_LINE82))
+#else
 #define IS_EXTI_ALL_LINE(LINE) (((LINE) == EXTI_LINE0)  || ((LINE) == EXTI_LINE1)  || \
                                 ((LINE) == EXTI_LINE2)  || ((LINE) == EXTI_LINE3)  || \
                                 ((LINE) == EXTI_LINE4)  || ((LINE) == EXTI_LINE5)  || \
@@ -351,8 +429,52 @@ typedef enum
                                 ((LINE) == EXTI_LINE73) || ((LINE) == EXTI_LINE74) || \
                                 ((LINE) == EXTI_LINE75) || ((LINE) == EXTI_LINE76) || \
                                 ((LINE) == EXTI_LINE85) || \
-                                ((LINE) == EXTI_LINE86) || ((LINE) == EXTI_LINE87)) 
-                                
+                                ((LINE) == EXTI_LINE86) || ((LINE) == EXTI_LINE87))
+#endif /*DUAL_CORE*/
+
+#if defined(DUAL_CORE)
+#define IS_EXTI_D1_LINE(LINE) (((LINE) == EXTI_LINE0)  || ((LINE) == EXTI_LINE1)  || \
+                                ((LINE) == EXTI_LINE2)  || ((LINE) == EXTI_LINE3)  || \
+                                ((LINE) == EXTI_LINE4)  || ((LINE) == EXTI_LINE5)  || \
+                                ((LINE) == EXTI_LINE6)  || ((LINE) == EXTI_LINE7)  || \
+                                ((LINE) == EXTI_LINE8)  || ((LINE) == EXTI_LINE9)  || \
+                                ((LINE) == EXTI_LINE10) || ((LINE) == EXTI_LINE11) || \
+                                ((LINE) == EXTI_LINE12) || ((LINE) == EXTI_LINE13) || \
+                                ((LINE) == EXTI_LINE14) || ((LINE) == EXTI_LINE15) || \
+                                ((LINE) == EXTI_LINE16) || ((LINE) == EXTI_LINE17) || \
+                                ((LINE) == EXTI_LINE18) || ((LINE) == EXTI_LINE19) || \
+                                ((LINE) == EXTI_LINE20) || ((LINE) == EXTI_LINE21) || \
+                                ((LINE) == EXTI_LINE22) || ((LINE) == EXTI_LINE23) || \
+                                ((LINE) == EXTI_LINE24) || ((LINE) == EXTI_LINE25) || \
+                                ((LINE) == EXTI_LINE26) || ((LINE) == EXTI_LINE27) || \
+                                ((LINE) == EXTI_LINE28) || ((LINE) == EXTI_LINE29) || \
+                                ((LINE) == EXTI_LINE30) || ((LINE) == EXTI_LINE31) || \
+                                ((LINE) == EXTI_LINE32) || ((LINE) == EXTI_LINE33) || \
+                                ((LINE) == EXTI_LINE34) || ((LINE) == EXTI_LINE35) || \
+                                ((LINE) == EXTI_LINE36) || ((LINE) == EXTI_LINE37) || \
+                                ((LINE) == EXTI_LINE38) || ((LINE) == EXTI_LINE39) || \
+                                ((LINE) == EXTI_LINE40) || ((LINE) == EXTI_LINE41) || \
+                                ((LINE) == EXTI_LINE42) || ((LINE) == EXTI_LINE43) || \
+                                ((LINE) == EXTI_LINE44) || ((LINE) == EXTI_LINE46) || \
+                                ((LINE) == EXTI_LINE47) || ((LINE) == EXTI_LINE48) || \
+                                ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE50) || \
+                                ((LINE) == EXTI_LINE51) || ((LINE) == EXTI_LINE52) || \
+                                ((LINE) == EXTI_LINE53) || ((LINE) == EXTI_LINE54) || \
+                                ((LINE) == EXTI_LINE55) || ((LINE) == EXTI_LINE56) || \
+                                ((LINE) == EXTI_LINE57) || ((LINE) == EXTI_LINE58) || \
+                                ((LINE) == EXTI_LINE59) || ((LINE) == EXTI_LINE60) || \
+                                ((LINE) == EXTI_LINE61) || ((LINE) == EXTI_LINE62) || \
+                                ((LINE) == EXTI_LINE63) || ((LINE) == EXTI_LINE64) || \
+                                ((LINE) == EXTI_LINE65) || ((LINE) == EXTI_LINE66) || \
+                                ((LINE) == EXTI_LINE67) || ((LINE) == EXTI_LINE68) || \
+                                ((LINE) == EXTI_LINE69) || ((LINE) == EXTI_LINE70) || \
+                                ((LINE) == EXTI_LINE71) || ((LINE) == EXTI_LINE72) || \
+                                ((LINE) == EXTI_LINE73) || ((LINE) == EXTI_LINE74) || \
+                                ((LINE) == EXTI_LINE75) || ((LINE) == EXTI_LINE76) || \
+                                ((LINE) == EXTI_LINE77) || ((LINE) == EXTI_LINE79) || \
+                                ((LINE) == EXTI_LINE84) || ((LINE) == EXTI_LINE85) || \
+                                ((LINE) == EXTI_LINE86) || ((LINE) == EXTI_LINE87))
+#else
 #define IS_EXTI_D1_LINE(LINE) (((LINE) == EXTI_LINE0)  || ((LINE) == EXTI_LINE1)  || \
                                 ((LINE) == EXTI_LINE2)  || ((LINE) == EXTI_LINE3)  || \
                                 ((LINE) == EXTI_LINE4)  || ((LINE) == EXTI_LINE5)  || \
@@ -393,8 +515,53 @@ typedef enum
                                 ((LINE) == EXTI_LINE75) || ((LINE) == EXTI_LINE76) || \
                                 ((LINE) == EXTI_LINE85) || \
                                 ((LINE) == EXTI_LINE86) || ((LINE) == EXTI_LINE87))
+#endif /*DUAL_CORE*/
 
+#if defined(DUAL_CORE)
+#define IS_EXTI_D2_LINE(LINE) (((LINE) == EXTI_LINE0)  || ((LINE) == EXTI_LINE1)    || \
+                                ((LINE) == EXTI_LINE2) || ((LINE) == EXTI_LINE3)   || \
+                                ((LINE) == EXTI_LINE4) || ((LINE) == EXTI_LINE5)   || \
+                                ((LINE) == EXTI_LINE6) || ((LINE) == EXTI_LINE7)   || \
+                                ((LINE) == EXTI_LINE8) || ((LINE) == EXTI_LINE9)   || \
+                                ((LINE) == EXTI_LINE10) || ((LINE) == EXTI_LINE11) || \
+                                ((LINE) == EXTI_LINE12) || ((LINE) == EXTI_LINE13) || \
+                                ((LINE) == EXTI_LINE14) || ((LINE) == EXTI_LINE15) || \
+                                ((LINE) == EXTI_LINE16) || ((LINE) == EXTI_LINE17) || \
+                                ((LINE) == EXTI_LINE18) || ((LINE) == EXTI_LINE19) || \
+                                ((LINE) == EXTI_LINE20) || ((LINE) == EXTI_LINE21) || \
+                                ((LINE) == EXTI_LINE22) || ((LINE) == EXTI_LINE23) || \
+                                ((LINE) == EXTI_LINE24) || ((LINE) == EXTI_LINE25) || \
+                                ((LINE) == EXTI_LINE26) || ((LINE) == EXTI_LINE27) || \
+                                ((LINE) == EXTI_LINE28) || ((LINE) == EXTI_LINE29) || \
+                                ((LINE) == EXTI_LINE30) || ((LINE) == EXTI_LINE31) || \
+                                ((LINE) == EXTI_LINE32) || ((LINE) == EXTI_LINE33) || \
+                                ((LINE) == EXTI_LINE34) || ((LINE) == EXTI_LINE35) || \
+                                ((LINE) == EXTI_LINE36) || ((LINE) == EXTI_LINE37) || \
+                                ((LINE) == EXTI_LINE38) || ((LINE) == EXTI_LINE39) || \
+                                ((LINE) == EXTI_LINE40) || ((LINE) == EXTI_LINE41) || \
+                                ((LINE) == EXTI_LINE42) || ((LINE) == EXTI_LINE43) || \
+                                ((LINE) == EXTI_LINE44) || ((LINE) == EXTI_LINE46) || \
+                                ((LINE) == EXTI_LINE47) || ((LINE) == EXTI_LINE48) || \
+                                ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE50) || \
+                                ((LINE) == EXTI_LINE51) || ((LINE) == EXTI_LINE52) || \
+                                ((LINE) == EXTI_LINE53) || ((LINE) == EXTI_LINE54) || \
+                                ((LINE) == EXTI_LINE55) || ((LINE) == EXTI_LINE56) || \
+                                ((LINE) == EXTI_LINE57) || ((LINE) == EXTI_LINE58) || \
+                                ((LINE) == EXTI_LINE59) || ((LINE) == EXTI_LINE60) || \
+                                ((LINE) == EXTI_LINE61) || ((LINE) == EXTI_LINE62) || \
+                                ((LINE) == EXTI_LINE63) || ((LINE) == EXTI_LINE64) || \
+                                ((LINE) == EXTI_LINE65) || ((LINE) == EXTI_LINE66) || \
+                                ((LINE) == EXTI_LINE67) || ((LINE) == EXTI_LINE68) || \
+                                ((LINE) == EXTI_LINE69) || ((LINE) == EXTI_LINE70) || \
+                                ((LINE) == EXTI_LINE71) || ((LINE) == EXTI_LINE72) || \
+                                ((LINE) == EXTI_LINE73) || ((LINE) == EXTI_LINE74) || \
+                                ((LINE) == EXTI_LINE75) || ((LINE) == EXTI_LINE76) || \
+                                ((LINE) == EXTI_LINE78) || ((LINE) == EXTI_LINE80) || \
+                                ((LINE) == EXTI_LINE82) || ((LINE) == EXTI_LINE85) || \
+                                ((LINE) == EXTI_LINE86) || ((LINE) == EXTI_LINE87))
+#endif /*DUAL_CORE*/
 
+#if defined(DUAL_CORE)
 #define IS_EXTI_D3_LINE(LINE) (((LINE) == EXTI_LINE0) || ((LINE) == EXTI_LINE1)    || \
                                 ((LINE) == EXTI_LINE2) || ((LINE) == EXTI_LINE3)   || \
                                 ((LINE) == EXTI_LINE4) || ((LINE) == EXTI_LINE5)   || \
@@ -410,20 +577,37 @@ typedef enum
                                 ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE50) || \
                                 ((LINE) == EXTI_LINE51) || ((LINE) == EXTI_LINE52) || \
                                 ((LINE) == EXTI_LINE53))
-                                                                           
-                                
-#define  BDMA_CH6_CLEAR             ((uint32_t)0x00000000)   /*!< BDMA ch6 event selected as D3 domain pendclear source*/                  
-#define  BDMA_CH7_CLEAR             ((uint32_t)0x00000001)   /*!< BDMA ch7 event selected as D3 domain pendclear source*/
-#define  LPTIM4_OUT_CLEAR           ((uint32_t)0x00000002)   /*!< LPTIM4 out selected as D3 domain pendclear source*/
-#define  LPTIM5_OUT_CLEAR           ((uint32_t)0x00000003)   /*!< LPTIM5 out selected as D3 domain pendclear source*/
+#else
+#define IS_EXTI_D3_LINE(LINE) (((LINE) == EXTI_LINE0) || ((LINE) == EXTI_LINE1)    || \
+                                ((LINE) == EXTI_LINE2) || ((LINE) == EXTI_LINE3)   || \
+                                ((LINE) == EXTI_LINE4) || ((LINE) == EXTI_LINE5)   || \
+                                ((LINE) == EXTI_LINE6) || ((LINE) == EXTI_LINE7)   || \
+                                ((LINE) == EXTI_LINE8) || ((LINE) == EXTI_LINE9)   || \
+                                ((LINE) == EXTI_LINE10) || ((LINE) == EXTI_LINE11) || \
+                                ((LINE) == EXTI_LINE12) || ((LINE) == EXTI_LINE13) || \
+                                ((LINE) == EXTI_LINE14) || ((LINE) == EXTI_LINE15) || \
+                                ((LINE) == EXTI_LINE19) || ((LINE) == EXTI_LINE20) || \
+                                ((LINE) == EXTI_LINE21) || ((LINE) == EXTI_LINE25) || \
+                                ((LINE) == EXTI_LINE34) || ((LINE) == EXTI_LINE35) || \
+                                ((LINE) == EXTI_LINE41) || ((LINE) == EXTI_LINE48) || \
+                                ((LINE) == EXTI_LINE49) || ((LINE) == EXTI_LINE50) || \
+                                ((LINE) == EXTI_LINE51) || ((LINE) == EXTI_LINE52) || \
+                                ((LINE) == EXTI_LINE53))
+#endif
+
+
+#define  BDMA_CH6_CLEAR           ((uint32_t)0x00000000)   /*!< BDMA ch6 event selected as D3 domain pendclear source*/
+#define  BDMA_CH7_CLEAR           ((uint32_t)0x00000001)   /*!< BDMA ch7 event selected as D3 domain pendclear source*/
+#define  LPTIM4_OUT_CLEAR         ((uint32_t)0x00000002)   /*!< LPTIM4 out selected as D3 domain pendclear source*/
+#define  LPTIM5_OUT_CLEAR         ((uint32_t)0x00000003)   /*!< LPTIM5 out selected as D3 domain pendclear source*/
 
 #define IS_EXTI_D3_CLEAR(SOURCE) (((SOURCE) == BDMA_CH6_CLEAR) || ((SOURCE) == BDMA_CH7_CLEAR)    || \
                                  ((SOURCE) == LPTIM4_OUT_CLEAR) || ((SOURCE) == LPTIM5_OUT_CLEAR))
-                                
+
 /**
   * @}
   */
-  
+
 
 /** @defgroup FMC_SwapBankMapping_Config  SwapBankMapping Config
   * @{
@@ -441,6 +625,124 @@ typedef enum
 
 
 /* Exported macro ------------------------------------------------------------*/
+/** @defgroup ART_Exported_Macros ART Exported Macros
+  * @{
+  */
+#if defined(DUAL_CORE)
+
+/** @brief  ART Enable Macro.
+  *         Enable the Cortex-M4 ART cache.
+  */
+#define __HAL_ART_ENABLE()   SET_BIT(ART->CTR, ART_CTR_EN)
+
+/** @brief  ART Disable Macro.
+  *         Disable the Cortex-M4 ART cache.
+  */
+#define __HAL_ART_DISABLE()   CLEAR_BIT(ART->CTR, ART_CTR_EN)
+
+/** @brief  ART Cache BaseAddress Config.
+  *         Configure the Cortex-M4 ART cache Base Address.
+  */
+#define __HAL_ART_CONFIG_BASE_ADDRESS(__BASE_ADDRESS__)   MODIFY_REG(ART->CTR, ART_CTR_PCACHEADDR, (((__BASE_ADDRESS__) >> 12U) & 0x000FFF00UL))
+
+#endif /* DUAL_CORE */
+/**
+  * @}
+  */
+
+/** @defgroup SYSCFG_Exported_Macros SYSCFG Exported Macros
+  * @{
+  */
+
+/** @brief  SYSCFG Break AXIRAM double ECC lock.
+  *         Enable and lock the connection of AXIRAM double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_AXISRAM_DBL_ECC_LOCK()     SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_AXISRAML)
+
+/** @brief  SYSCFG Break ITCM double ECC lock.
+  *         Enable and lock the connection of ITCM double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_ITCM_DBL_ECC_LOCK()        SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_ITCML)
+
+/** @brief  SYSCFG Break DTCM double ECC lock.
+  *         Enable and lock the connection of DTCM double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_DTCM_DBL_ECC_LOCK()        SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_DTCML)
+
+/** @brief  SYSCFG Break SRAM1 double ECC lock.
+  *         Enable and lock the connection of SRAM1 double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_SRAM1_DBL_ECC_LOCK()       SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_SRAM1L)
+
+/** @brief  SYSCFG Break SRAM2 double ECC lock.
+  *         Enable and lock the connection of SRAM2 double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_SRAM2_DBL_ECC_LOCK()       SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_SRAM2L)
+
+/** @brief  SYSCFG Break SRAM3 double ECC lock.
+  *         Enable and lock the connection of SRAM3 double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_SRAM3_DBL_ECC_LOCK()       SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_SRAM3L)
+
+/** @brief  SYSCFG Break SRAM4 double ECC lock.
+  *         Enable and lock the connection of SRAM4 double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_SRAM4_DBL_ECC_LOCK()       SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_SRAM4L)
+
+/** @brief  SYSCFG Break Backup SRAM double ECC lock.
+  *         Enable and lock the connection of Backup SRAM double ECC error to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_BKRAM_DBL_ECC_LOCK()       SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_BKRAML)
+
+/** @brief  SYSCFG Break Cortex-M7 Lockup lock.
+  *         Enable and lock the connection of Cortex-M7 LOCKUP output to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_CM7_LOCKUP_LOCK()          SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_CM7L)
+
+/** @brief  SYSCFG Break FLASH double ECC lock.
+  *         Enable and lock the connection of Flash double ECC error connection to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_FLASH_DBL_ECC_LOCK()       SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_FLASHL)
+
+/** @brief  SYSCFG Break PVD lock.
+  *         Enable and lock the PVD connection to Timer1/8/15/16/17 and HRTIMER Break input, as well as the PVDE and PLS[2:0] in the PWR_CR1 register.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_PVD_LOCK()                 SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_PVDL)
+
+#if defined(DUAL_CORE)
+/** @brief  SYSCFG Break Cortex-M4 Lockup lock.
+  *         Enable and lock the connection of Cortex-M4 LOCKUP output to TIM1/8/15/16/17 and HRTIMER Break input.
+  * @note   The selected configuration is locked and can be unlocked only by system reset.
+            This feature is available on STM32H7 rev.B and above.
+  */
+#define __HAL_SYSCFG_BREAK_CM4_LOCKUP_LOCK()          SET_BIT(SYSCFG->CFGR, SYSCFG_CFGR_CM4L)
+#endif /* DUAL_CORE */
+
+/**
+  * @}
+  */
 
 /** @brief  Freeze/Unfreeze Peripherals in Debug mode
   */
@@ -512,6 +814,81 @@ typedef enum
 #define __HAL_DBGMCU_UnFreeze_IWDG1()          (DBGMCU->APB4FZ1  &= ~ (DBGMCU_APB4FZ1_DBG_IWDG1))
 
 
+#if defined(DUAL_CORE)
+#define __HAL_DBGMCU_FREEZE2_IWDG2()          (DBGMCU->APB4FZ2  |= (DBGMCU_APB4FZ2_DBG_IWDG2))
+#define __HAL_DBGMCU_FREEZE2_WWDG2()          (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_WWDG2))
+
+#define __HAL_DBGMCU_UnFreeze2_IWDG2()        (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_IWDG2))
+#define __HAL_DBGMCU_UnFreeze2_WWDG2()        (DBGMCU->APB1LFZ2 &= ~ (DBGMCU_APB1LFZ2_DBG_WWDG2))
+
+
+#define __HAL_DBGMCU_FREEZE2_WWDG1()          (DBGMCU->APB3FZ2 |= (DBGMCU_APB3FZ2_DBG_WWDG1))
+
+#define __HAL_DBGMCU_FREEZE2_TIM2()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM2))
+#define __HAL_DBGMCU_FREEZE2_TIM3()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM3))
+#define __HAL_DBGMCU_FREEZE2_TIM4()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM4))
+#define __HAL_DBGMCU_FREEZE2_TIM5()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM5))
+#define __HAL_DBGMCU_FREEZE2_TIM6()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM6))
+#define __HAL_DBGMCU_FREEZE2_TIM7()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM7))
+#define __HAL_DBGMCU_FREEZE2_TIM12()          (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM12))
+#define __HAL_DBGMCU_FREEZE2_TIM13()          (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM13))
+#define __HAL_DBGMCU_FREEZE2_TIM14()          (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_TIM14))
+#define __HAL_DBGMCU_FREEZE2_LPTIM1()         (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_LPTIM1))
+#define __HAL_DBGMCU_FREEZE2_I2C1()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_I2C1))
+#define __HAL_DBGMCU_FREEZE2_I2C2()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_I2C2))
+#define __HAL_DBGMCU_FREEZE2_I2C3()           (DBGMCU->APB1LFZ2 |= (DBGMCU_APB1LFZ2_DBG_I2C3))
+#define __HAL_DBGMCU_FREEZE2_FDCAN()          (DBGMCU->APB1HFZ2 |= (DBGMCU_APB1HFZ2_DBG_FDCAN))
+
+
+#define __HAL_DBGMCU_FREEZE2_TIM1()           (DBGMCU->APB2FZ2 |= (DBGMCU_APB2FZ2_DBG_TIM1))
+#define __HAL_DBGMCU_FREEZE2_TIM8()           (DBGMCU->APB2FZ2 |= (DBGMCU_APB2FZ2_DBG_TIM8))
+#define __HAL_DBGMCU_FREEZE2_TIM15()          (DBGMCU->APB2FZ2 |= (DBGMCU_APB2FZ2_DBG_TIM15))
+#define __HAL_DBGMCU_FREEZE2_TIM16()          (DBGMCU->APB2FZ2 |= (DBGMCU_APB2FZ2_DBG_TIM16))
+#define __HAL_DBGMCU_FREEZE2_TIM17()          (DBGMCU->APB2FZ2 |= (DBGMCU_APB2FZ2_DBG_TIM17))
+#define __HAL_DBGMCU_FREEZE2_HRTIM()          (DBGMCU->APB2FZ2 |= (DBGMCU_APB2FZ2_DBG_HRTIM))
+
+#define __HAL_DBGMCU_FREEZE2_I2C4()           (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_I2C4))
+#define __HAL_DBGMCU_FREEZE2_LPTIM2()         (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_LPTIM2))
+#define __HAL_DBGMCU_FREEZE2_LPTIM3()         (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_LPTIM3))
+#define __HAL_DBGMCU_FREEZE2_LPTIM4()         (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_LPTIM4))
+#define __HAL_DBGMCU_FREEZE2_LPTIM5()         (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_LPTIM5))
+#define __HAL_DBGMCU_FREEZE2_RTC()            (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_RTC))
+#define __HAL_DBGMCU_FREEZE2_IWDG1()          (DBGMCU->APB4FZ2 |= (DBGMCU_APB4FZ2_DBG_IWDG1))
+
+#define __HAL_DBGMCU_UnFreeze2_WWDG1()          (DBGMCU->APB3FZ2  &= ~ (DBGMCU_APB3FZ2_DBG_WWDG1))
+
+#define __HAL_DBGMCU_UnFreeze2_TIM2()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM2))
+#define __HAL_DBGMCU_UnFreeze2_TIM3()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM3))
+#define __HAL_DBGMCU_UnFreeze2_TIM4()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM4))
+#define __HAL_DBGMCU_UnFreeze2_TIM5()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM5))
+#define __HAL_DBGMCU_UnFreeze2_TIM6()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM6))
+#define __HAL_DBGMCU_UnFreeze2_TIM7()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM7))
+#define __HAL_DBGMCU_UnFreeze2_TIM12()          (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM12))
+#define __HAL_DBGMCU_UnFreeze2_TIM13()          (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM13))
+#define __HAL_DBGMCU_UnFreeze2_TIM14()          (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_TIM14))
+#define __HAL_DBGMCU_UnFreeze2_LPTIM1()         (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_LPTIM1))
+#define __HAL_DBGMCU_UnFreeze2_I2C1()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_I2C1))
+#define __HAL_DBGMCU_UnFreeze2_I2C2()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_I2C2))
+#define __HAL_DBGMCU_UnFreeze2_I2C3()           (DBGMCU->APB1LFZ2  &= ~ (DBGMCU_APB1LFZ2_DBG_I2C3))
+#define __HAL_DBGMCU_UnFreeze2_FDCAN()          (DBGMCU->APB1HFZ2  &= ~ (DBGMCU_APB1HFZ2_DBG_FDCAN))
+
+
+#define __HAL_DBGMCU_UnFreeze2_TIM1()           (DBGMCU->APB2FZ2  &= ~ (DBGMCU_APB2FZ2_DBG_TIM1))
+#define __HAL_DBGMCU_UnFreeze2_TIM8()           (DBGMCU->APB2FZ2  &= ~ (DBGMCU_APB2FZ2_DBG_TIM8))
+#define __HAL_DBGMCU_UnFreeze2_TIM15()          (DBGMCU->APB2FZ2  &= ~ (DBGMCU_APB2FZ2_DBG_TIM15))
+#define __HAL_DBGMCU_UnFreeze2_TIM16()          (DBGMCU->APB2FZ2  &= ~ (DBGMCU_APB2FZ2_DBG_TIM16))
+#define __HAL_DBGMCU_UnFreeze2_TIM17()          (DBGMCU->APB2FZ2  &= ~ (DBGMCU_APB2FZ2_DBG_TIM17))
+#define __HAL_DBGMCU_UnFreeze2_HRTIM()          (DBGMCU->APB2FZ2  &= ~ (DBGMCU_APB2FZ2_DBG_HRTIM))
+
+#define __HAL_DBGMCU_UnFreeze2_I2C4()           (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_I2C4))
+#define __HAL_DBGMCU_UnFreeze2_LPTIM2()         (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_LPTIM2))
+#define __HAL_DBGMCU_UnFreeze2_LPTIM3()         (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_LPTIM3))
+#define __HAL_DBGMCU_UnFreeze2_LPTIM4()         (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_LPTIM4))
+#define __HAL_DBGMCU_UnFreeze2_LPTIM5()         (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_LPTIM5))
+#define __HAL_DBGMCU_UnFreeze2_RTC()            (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_RTC))
+#define __HAL_DBGMCU_UnFreeze2_IWDG1()          (DBGMCU->APB4FZ2  &= ~ (DBGMCU_APB4FZ2_DBG_IWDG1))
+
+#endif /*DUAL_CORE*/
 
 /** @defgroup HAL_Private_Macros HAL Private Macros
   * @{
@@ -519,6 +896,18 @@ typedef enum
 #define IS_TICKFREQ(FREQ) (((FREQ) == HAL_TICK_FREQ_10HZ)  || \
                            ((FREQ) == HAL_TICK_FREQ_100HZ) || \
                            ((FREQ) == HAL_TICK_FREQ_1KHZ))
+/**
+  * @}
+  */
+
+/* Exported variables --------------------------------------------------------*/
+
+/** @addtogroup HAL_Exported_Variables
+  * @{
+  */
+extern __IO uint32_t uwTick;
+extern uint32_t uwTickPrio;
+extern HAL_TickFreqTypeDef uwTickFreq;
 /**
   * @}
   */
@@ -534,7 +923,7 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
 
 /* Peripheral Control functions  ************************************************/
 void HAL_IncTick(void);
-void HAL_Delay(__IO uint32_t Delay);
+void HAL_Delay(uint32_t Delay);
 uint32_t HAL_GetTick(void);
 uint32_t HAL_GetTickPrio(void);
 HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq);
@@ -544,11 +933,21 @@ void HAL_ResumeTick(void);
 uint32_t HAL_GetHalVersion(void);
 uint32_t HAL_GetREVID(void);
 uint32_t HAL_GetDEVID(void);
+uint32_t HAL_GetUIDw0(void);
+uint32_t HAL_GetUIDw1(void);
+uint32_t HAL_GetUIDw2(void);
 void HAL_SYSCFG_ETHInterfaceSelect(uint32_t SYSCFG_ETHInterface);
 void HAL_SYSCFG_AnalogSwitchConfig(uint32_t SYSCFG_AnalogSwitch , uint32_t SYSCFG_SwitchState );
 void HAL_SYSCFG_EnableBOOST(void);
 void HAL_SYSCFG_DisableBOOST(void);
 void HAL_SYSCFG_CM7BootAddConfig(uint32_t BootRegister, uint32_t BootAddress);
+#if defined(DUAL_CORE)
+void HAL_SYSCFG_CM4BootAddConfig(uint32_t BootRegister, uint32_t BootAddress);
+void HAL_SYSCFG_EnableCM7BOOT(void);
+void HAL_SYSCFG_DisableCM7BOOT(void);
+void HAL_SYSCFG_EnableCM4BOOT(void);
+void HAL_SYSCFG_DisableCM4BOOT(void);
+#endif /*DUAL_CORE*/
 void HAL_EnableCompensationCell(void);
 void HAL_DisableCompensationCell(void);
 void HAL_SYSCFG_EnableIOSpeedOptimize(void);
@@ -561,14 +960,28 @@ void HAL_EnableDBGStopMode(void);
 void HAL_DisableDBGStopMode(void);
 void HAL_EnableDBGStandbyMode(void);
 void HAL_DisableDBGStandbyMode(void);
+#if defined(DUAL_CORE)
+void HAL_EnableDomain2DBGSleepMode(void);
+void HAL_DisableDomain2DBGSleepMode(void);
+void HAL_EnableDomain2DBGStopMode(void);
+void HAL_DisableDomain2DBGStopMode(void);
+void HAL_EnableDomain2DBGStandbyMode(void);
+void HAL_DisableDomain2DBGStandbyMode(void);
+#endif /*DUAL_CORE*/
 void HAL_EnableDomain3DBGStopMode(void);
 void HAL_DisableDomain3DBGStopMode(void);
 void HAL_EnableDomain3DBGStandbyMode(void);
 void HAL_DisableDomain3DBGStandbyMode(void);
 void HAL_EXTI_EdgeConfig(uint32_t EXTI_Line , uint32_t EXTI_Edge );
 void HAL_EXTI_GenerateSWInterrupt(uint32_t EXTI_Line);
+#if defined(DUAL_CORE)
+void HAL_EXTI_D2_ClearFlag(uint32_t EXTI_Line);
+#endif /*DUAL_CORE*/
 void HAL_EXTI_D1_ClearFlag(uint32_t EXTI_Line);
 void HAL_EXTI_D1_EventInputConfig(uint32_t EXTI_Line , uint32_t EXTI_Mode,  uint32_t EXTI_LineCmd);
+#if defined(DUAL_CORE)
+void HAL_EXTI_D2_EventInputConfig(uint32_t EXTI_Line , uint32_t EXTI_Mode,  uint32_t EXTI_LineCmd);
+#endif /*DUAL_CORE*/
 void HAL_EXTI_D3_EventInputConfig(uint32_t EXTI_Line, uint32_t EXTI_LineCmd , uint32_t EXTI_ClearSrc);
 void HAL_SetFMCMemorySwappingConfig(uint32_t BankMapConfig);
 uint32_t HAL_GetFMCMemorySwappingConfig(void);
@@ -590,6 +1003,6 @@ void HAL_SYSCFG_DisableVREFBUF(void);
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_H */
+#endif /* STM32H7xx_HAL_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

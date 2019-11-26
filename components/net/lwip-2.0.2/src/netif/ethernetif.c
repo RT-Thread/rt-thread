@@ -261,6 +261,12 @@ void lwip_netdev_netstat(struct netdev *netif)
 #endif /* RT_LWIP_TCP || RT_LWIP_UDP */
 #endif /* RT_USING_FINSH */
 
+static int lwip_netdev_set_default(struct netdev *netif)
+{
+    netif_set_default((struct netif *)netif->user_data);
+    return ERR_OK;
+}
+
 const struct netdev_ops lwip_netdev_ops =
 {
     lwip_netdev_set_up,
@@ -290,6 +296,8 @@ const struct netdev_ops lwip_netdev_ops =
     lwip_netdev_netstat,
 #endif /* RT_LWIP_TCP || RT_LWIP_UDP */
 #endif /* RT_USING_FINSH */
+
+    lwip_netdev_set_default,
 };
 
 static int netdev_add(struct netif *lwip_netif)

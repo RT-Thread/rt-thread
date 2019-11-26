@@ -14,6 +14,7 @@
 #include <board.h>
 
 #ifdef RT_USING_SMP
+
 int rt_hw_cpu_id(void)
 {
     int cpu_id;
@@ -24,6 +25,11 @@ int rt_hw_cpu_id(void)
     cpu_id &= 0xf;
     return cpu_id;
 };
+
+void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock)
+{
+    lock->slock = 0;
+}
 
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
 {

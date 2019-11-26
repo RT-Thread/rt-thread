@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F103ZE
     bool
     select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -278,8 +280,8 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
-	
-	menuconfig BSP_USING_CAN
+
+    menuconfig BSP_USING_CAN
         bool "Enable CAN"
         default n
         select RT_USING_CAN
@@ -287,6 +289,20 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_CAN1
                 bool "using CAN1"
                 default n
+        endif
+
+    config BSP_USING_USBD
+        bool "Enable USB device"
+        select RT_USING_USB_DEVICE
+        default n
+        if BSP_USING_USBD
+            config BSP_USB_CONNECT_PIN
+                int "USB connect pin"
+                default 67
+
+            config BSP_USB_PULL_UP_STATUS
+                int "USB PULL UP STATUS"
+                default 0
         endif
     source "../libraries/HAL_Drivers/Kconfig"
     

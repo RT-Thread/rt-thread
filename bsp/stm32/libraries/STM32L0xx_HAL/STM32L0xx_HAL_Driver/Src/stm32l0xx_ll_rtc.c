@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -60,12 +44,12 @@
   * @{
   */
 /* Default values used for prescaler */
-#define RTC_ASYNCH_PRESC_DEFAULT     ((uint32_t) 0x0000007FU)
-#define RTC_SYNCH_PRESC_DEFAULT      ((uint32_t) 0x000000FFU)
+#define RTC_ASYNCH_PRESC_DEFAULT     0x0000007FU
+#define RTC_SYNCH_PRESC_DEFAULT      0x000000FFU
 
 /* Values used for timeout */
-#define RTC_INITMODE_TIMEOUT         ((uint32_t) 1000U) /* 1s when tick set to 1ms */
-#define RTC_SYNCHRO_TIMEOUT          ((uint32_t) 1000U) /* 1s when tick set to 1ms */
+#define RTC_INITMODE_TIMEOUT         1000U /* 1s when tick set to 1ms */
+#define RTC_SYNCHRO_TIMEOUT          1000U /* 1s when tick set to 1ms */
 /**
   * @}
   */
@@ -78,9 +62,9 @@
 #define IS_LL_RTC_HOURFORMAT(__VALUE__) (((__VALUE__) == LL_RTC_HOURFORMAT_24HOUR) \
                                       || ((__VALUE__) == LL_RTC_HOURFORMAT_AMPM))
 
-#define IS_LL_RTC_ASYNCH_PREDIV(__VALUE__)   ((__VALUE__) <= (uint32_t)0x7FU)
+#define IS_LL_RTC_ASYNCH_PREDIV(__VALUE__)   ((__VALUE__) <= 0x7FU)
 
-#define IS_LL_RTC_SYNCH_PREDIV(__VALUE__)    ((__VALUE__) <= (uint32_t)0x7FFFU)
+#define IS_LL_RTC_SYNCH_PREDIV(__VALUE__)    ((__VALUE__) <= 0x7FFFU)
 
 #define IS_LL_RTC_FORMAT(__VALUE__) (((__VALUE__) == LL_RTC_FORMAT_BIN) \
                                   || ((__VALUE__) == LL_RTC_FORMAT_BCD))
@@ -101,7 +85,7 @@
                                    || ((__VALUE__) == LL_RTC_WEEKDAY_SATURDAY) \
                                    || ((__VALUE__) == LL_RTC_WEEKDAY_SUNDAY))
 
-#define IS_LL_RTC_DAY(__DAY__)    (((__DAY__) >= (uint32_t)1U) && ((__DAY__) <= (uint32_t)31U))
+#define IS_LL_RTC_DAY(__DAY__)    (((__DAY__) >= 1U) && ((__DAY__) <= 31U))
 
 #define IS_LL_RTC_MONTH(__VALUE__) (((__VALUE__) == LL_RTC_MONTH_JANUARY) \
                                  || ((__VALUE__) == LL_RTC_MONTH_FEBRUARY) \
@@ -176,33 +160,33 @@ ErrorStatus LL_RTC_DeInit(RTC_TypeDef *RTCx)
   if (LL_RTC_EnterInitMode(RTCx) != ERROR)
   {
     /* Reset TR, DR and CR registers */
-    LL_RTC_WriteReg(RTCx, TR,       0x00000000U);
+    WRITE_REG(RTCx->TR,       0x00000000U);
 #if defined(RTC_WAKEUP_SUPPORT)
-    LL_RTC_WriteReg(RTCx, WUTR,     RTC_WUTR_WUT);
+    WRITE_REG(RTCx->WUTR,     RTC_WUTR_WUT);
 #endif /* RTC_WAKEUP_SUPPORT */
-    LL_RTC_WriteReg(RTCx, DR  ,     (RTC_DR_WDU_0 | RTC_DR_MU_0 | RTC_DR_DU_0));
+    WRITE_REG(RTCx->DR, (RTC_DR_WDU_0 | RTC_DR_MU_0 | RTC_DR_DU_0));
     /* Reset All CR bits except CR[2:0] */
 #if defined(RTC_WAKEUP_SUPPORT)
-    LL_RTC_WriteReg(RTCx, CR, (LL_RTC_ReadReg(RTCx, CR) & RTC_CR_WUCKSEL));
+    WRITE_REG(RTCx->CR, (READ_REG(RTCx->CR) & RTC_CR_WUCKSEL));
 #else
-    LL_RTC_WriteReg(RTCx, CR, 0x00000000U);
+    WRITE_REG(RTCx, CR, 0x00000000U);
 #endif /* RTC_WAKEUP_SUPPORT */
-    LL_RTC_WriteReg(RTCx, PRER,     (RTC_PRER_PREDIV_A | RTC_SYNCH_PRESC_DEFAULT));
-    LL_RTC_WriteReg(RTCx, ALRMAR,   0x00000000U);
-    LL_RTC_WriteReg(RTCx, ALRMBR,   0x00000000U);
-    LL_RTC_WriteReg(RTCx, SHIFTR,   0x00000000U);
-    LL_RTC_WriteReg(RTCx, CALR,     0x00000000U);
-    LL_RTC_WriteReg(RTCx, ALRMASSR, 0x00000000U);
-    LL_RTC_WriteReg(RTCx, ALRMBSSR, 0x00000000U);
+    WRITE_REG(RTCx->PRER, (RTC_PRER_PREDIV_A | RTC_SYNCH_PRESC_DEFAULT));
+    WRITE_REG(RTCx->ALRMAR,   0x00000000U);
+    WRITE_REG(RTCx->ALRMBR,   0x00000000U);
+    WRITE_REG(RTCx->SHIFTR,   0x00000000U);
+    WRITE_REG(RTCx->CALR,     0x00000000U);
+    WRITE_REG(RTCx->ALRMASSR, 0x00000000U);
+    WRITE_REG(RTCx->ALRMBSSR, 0x00000000U);
 
     /* Reset ISR register and exit initialization mode */
-    LL_RTC_WriteReg(RTCx, ISR,      0x00000000U);
+    WRITE_REG(RTCx->ISR,      0x00000000U);
 
     /* Reset Tamper and alternate functions configuration register */
-    LL_RTC_WriteReg(RTCx, TAMPCR, 0x00000000U);
+    WRITE_REG(RTCx->TAMPCR, 0x00000000U);
 
     /* Reset Option register */
-    LL_RTC_WriteReg(RTCx, OR, 0x00000000U);
+    WRITE_REG(RTCx->OR, 0x00000000U);
 
     /* Wait till the RTC RSF flag is set */
     status = LL_RTC_WaitForSynchro(RTCx);
@@ -382,8 +366,8 @@ void LL_RTC_TIME_StructInit(LL_RTC_TimeTypeDef *RTC_TimeStruct)
   * @param  RTC_Format This parameter can be one of the following values:
   *         @arg @ref LL_RTC_FORMAT_BIN
   *         @arg @ref LL_RTC_FORMAT_BCD
-  * @param  RTC_DateStruct: pointer to a RTC_DateTypeDef structure that contains
-  *                         the date configuration information for the RTC.
+  * @param  RTC_DateStruct pointer to a RTC_DateTypeDef structure that contains
+  *                        the date configuration information for the RTC.
   * @retval An ErrorStatus enumeration value:
   *          - SUCCESS: RTC Day register is configured
   *          - ERROR: RTC Day register is not configured
@@ -398,7 +382,7 @@ ErrorStatus LL_RTC_DATE_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_Date
 
   if ((RTC_Format == LL_RTC_FORMAT_BIN) && ((RTC_DateStruct->Month & 0x10U) == 0x10U))
   {
-    RTC_DateStruct->Month = (RTC_DateStruct->Month & (uint32_t)~(0x10U)) + 0x0AU;
+    RTC_DateStruct->Month = (RTC_DateStruct->Month & (uint8_t)~(0x10U)) + 0x0AU;
   }
   if (RTC_Format == LL_RTC_FORMAT_BIN)
   {
@@ -757,7 +741,7 @@ ErrorStatus LL_RTC_EnterInitMode(RTC_TypeDef *RTCx)
 {
   __IO uint32_t timeout = RTC_INITMODE_TIMEOUT;
   ErrorStatus status = SUCCESS;
-  uint32_t tmp = 0U;
+  uint32_t tmp;
 
   /* Check the parameter */
   assert_param(IS_RTC_ALL_INSTANCE(RTCx));
@@ -828,7 +812,7 @@ ErrorStatus LL_RTC_WaitForSynchro(RTC_TypeDef *RTCx)
 {
   __IO uint32_t timeout = RTC_SYNCHRO_TIMEOUT;
   ErrorStatus status = SUCCESS;
-  uint32_t tmp = 0U;
+  uint32_t tmp;
 
   /* Check the parameter */
   assert_param(IS_RTC_ALL_INSTANCE(RTCx));

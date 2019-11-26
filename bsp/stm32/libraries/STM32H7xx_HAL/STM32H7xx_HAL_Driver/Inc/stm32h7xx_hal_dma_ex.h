@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_DMA_EX_H
-#define __STM32H7xx_HAL_DMA_EX_H
+#ifndef STM32H7xx_HAL_DMA_EX_H
+#define STM32H7xx_HAL_DMA_EX_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -123,31 +107,31 @@ typedef struct
   * @brief    DMAEx MUX SyncSignalID selection
   * @{
   */
-#define HAL_DMAMUX1_SYNC_DMAMUX1_CH0_EVT   0U   /*!< D2 Domain synchronization Signal is DMAMUX1 Channel0 Event */
-#define HAL_DMAMUX1_SYNC_DMAMUX1_CH1_EVT   1U   /*!< D2 Domain synchronization Signal is DMAMUX1 Channel1 Event */
-#define HAL_DMAMUX1_SYNC_DMAMUX1_CH2_EVT   2U   /*!< D2 Domain synchronization Signal is DMAMUX1 Channel2 Event */
-#define HAL_DMAMUX1_SYNC_LPTIM1_OUT        3U   /*!< D2 Domain synchronization Signal is LPTIM1 OUT             */
-#define HAL_DMAMUX1_SYNC_LPTIM2_OUT        4U   /*!< D2 Domain synchronization Signal is LPTIM2 OUT             */
-#define HAL_DMAMUX1_SYNC_LPTIM3_OUT        5U   /*!< D2 Domain synchronization Signal is LPTIM3 OUT             */
-#define HAL_DMAMUX1_SYNC_EXTI0             6U   /*!< D2 Domain synchronization Signal is EXTI0 IT               */
-#define HAL_DMAMUX1_SYNC_TIM12_TRGO        7U   /*!< D2 Domain synchronization Signal is TIM12 TRGO             */
+#define HAL_DMAMUX1_SYNC_DMAMUX1_CH0_EVT   0U   /*!< DMAMUX1 synchronization Signal is DMAMUX1 Channel0 Event */
+#define HAL_DMAMUX1_SYNC_DMAMUX1_CH1_EVT   1U   /*!< DMAMUX1 synchronization Signal is DMAMUX1 Channel1 Event */
+#define HAL_DMAMUX1_SYNC_DMAMUX1_CH2_EVT   2U   /*!< DMAMUX1 synchronization Signal is DMAMUX1 Channel2 Event */
+#define HAL_DMAMUX1_SYNC_LPTIM1_OUT        3U   /*!< DMAMUX1 synchronization Signal is LPTIM1 OUT             */
+#define HAL_DMAMUX1_SYNC_LPTIM2_OUT        4U   /*!< DMAMUX1 synchronization Signal is LPTIM2 OUT             */
+#define HAL_DMAMUX1_SYNC_LPTIM3_OUT        5U   /*!< DMAMUX1 synchronization Signal is LPTIM3 OUT             */
+#define HAL_DMAMUX1_SYNC_EXTI0             6U   /*!< DMAMUX1 synchronization Signal is EXTI0 IT               */
+#define HAL_DMAMUX1_SYNC_TIM12_TRGO        7U   /*!< DMAMUX1 synchronization Signal is TIM12 TRGO             */
 
-#define HAL_DMAMUX2_SYNC_DMAMUX2_CH0_EVT   0U   /*!< D3 Domain synchronization Signal is DMAMUX2 Channel0 Event */
-#define HAL_DMAMUX2_SYNC_DMAMUX2_CH1_EVT   1U   /*!< D3 Domain synchronization Signal is DMAMUX2 Channel1 Event */
-#define HAL_DMAMUX2_SYNC_DMAMUX2_CH2_EVT   2U   /*!< D3 Domain synchronization Signal is DMAMUX2 Channel2 Event */
-#define HAL_DMAMUX2_SYNC_DMAMUX2_CH3_EVT   3U   /*!< D3 Domain synchronization Signal is DMAMUX2 Channel3 Event */
-#define HAL_DMAMUX2_SYNC_DMAMUX2_CH4_EVT   4U   /*!< D3 Domain synchronization Signal is DMAMUX2 Channel4 Event */
-#define HAL_DMAMUX2_SYNC_DMAMUX2_CH5_EVT   5U   /*!< D3 Domain synchronization Signal is DMAMUX2 Channel5 Event */
-#define HAL_DMAMUX2_SYNC_LPUART1_RX_WKUP   6U   /*!< D3 Domain synchronization Signal is LPUART1 RX Wakeup      */
-#define HAL_DMAMUX2_SYNC_LPUART1_TX_WKUP   7U   /*!< D3 Domain synchronization Signal is LPUART1 TX Wakeup      */
-#define HAL_DMAMUX2_SYNC_LPTIM2_OUT        8U   /*!< D3 Domain synchronization Signal is LPTIM2 output          */
-#define HAL_DMAMUX2_SYNC_LPTIM3_OUT        9U   /*!< D3 Domain synchronization Signal is LPTIM3 output          */
-#define HAL_DMAMUX2_SYNC_I2C4_WKUP        10U   /*!< D3 Domain synchronization Signal is I2C4 Wakeup            */
-#define HAL_DMAMUX2_SYNC_SPI6_WKUP        11U   /*!< D3 Domain synchronization Signal is SPI6 Wakeup            */
-#define HAL_DMAMUX2_SYNC_COMP1_OUT        12U   /*!< D3 Domain synchronization Signal is Comparator 1 output    */
-#define HAL_DMAMUX2_SYNC_RTC_WKUP         13U   /*!< D3 Domain synchronization Signal is RTC Wakeup             */
-#define HAL_DMAMUX2_SYNC_EXTI0            14U   /*!< D3 Domain synchronization Signal is EXTI0 IT               */
-#define HAL_DMAMUX2_SYNC_EXTI2            15U   /*!< D3 Domain synchronization Signal is EXTI2 IT               */
+#define HAL_DMAMUX2_SYNC_DMAMUX2_CH0_EVT   0U   /*!< DMAMUX2 synchronization Signal is DMAMUX2 Channel0 Event */
+#define HAL_DMAMUX2_SYNC_DMAMUX2_CH1_EVT   1U   /*!< DMAMUX2 synchronization Signal is DMAMUX2 Channel1 Event */
+#define HAL_DMAMUX2_SYNC_DMAMUX2_CH2_EVT   2U   /*!< DMAMUX2 synchronization Signal is DMAMUX2 Channel2 Event */
+#define HAL_DMAMUX2_SYNC_DMAMUX2_CH3_EVT   3U   /*!< DMAMUX2 synchronization Signal is DMAMUX2 Channel3 Event */
+#define HAL_DMAMUX2_SYNC_DMAMUX2_CH4_EVT   4U   /*!< DMAMUX2 synchronization Signal is DMAMUX2 Channel4 Event */
+#define HAL_DMAMUX2_SYNC_DMAMUX2_CH5_EVT   5U   /*!< DMAMUX2 synchronization Signal is DMAMUX2 Channel5 Event */
+#define HAL_DMAMUX2_SYNC_LPUART1_RX_WKUP   6U   /*!< DMAMUX2 synchronization Signal is LPUART1 RX Wakeup      */
+#define HAL_DMAMUX2_SYNC_LPUART1_TX_WKUP   7U   /*!< DMAMUX2 synchronization Signal is LPUART1 TX Wakeup      */
+#define HAL_DMAMUX2_SYNC_LPTIM2_OUT        8U   /*!< DMAMUX2 synchronization Signal is LPTIM2 output          */
+#define HAL_DMAMUX2_SYNC_LPTIM3_OUT        9U   /*!< DMAMUX2 synchronization Signal is LPTIM3 output          */
+#define HAL_DMAMUX2_SYNC_I2C4_WKUP        10U   /*!< DMAMUX2 synchronization Signal is I2C4 Wakeup            */
+#define HAL_DMAMUX2_SYNC_SPI6_WKUP        11U   /*!< DMAMUX2 synchronization Signal is SPI6 Wakeup            */
+#define HAL_DMAMUX2_SYNC_COMP1_OUT        12U   /*!< DMAMUX2 synchronization Signal is Comparator 1 output    */
+#define HAL_DMAMUX2_SYNC_RTC_WKUP         13U   /*!< DMAMUX2 synchronization Signal is RTC Wakeup             */
+#define HAL_DMAMUX2_SYNC_EXTI0            14U   /*!< DMAMUX2 synchronization Signal is EXTI0 IT               */
+#define HAL_DMAMUX2_SYNC_EXTI2            15U   /*!< DMAMUX2 synchronization Signal is EXTI2 IT               */
 
 /**
   * @}
@@ -171,45 +155,45 @@ typedef struct
   * @brief    DMAEx MUX SignalGeneratorID selection
   * @{
   */
-#define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH0_EVT   0U   /*!< D2 domain Request generator Signal is DMAMUX1 Channel0 Event */
-#define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH1_EVT   1U   /*!< D2 domain Request generator Signal is DMAMUX1 Channel1 Event */
-#define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH2_EVT   2U   /*!< D2 domain Request generator Signal is DMAMUX1 Channel2 Event */
-#define HAL_DMAMUX1_REQ_GEN_LPTIM1_OUT        3U   /*!< D2 domain Request generator Signal is LPTIM1 OUT             */
-#define HAL_DMAMUX1_REQ_GEN_LPTIM2_OUT        4U   /*!< D2 domain Request generator Signal is LPTIM2 OUT             */
-#define HAL_DMAMUX1_REQ_GEN_LPTIM3_OUT        5U   /*!< D2 domain Request generator Signal is LPTIM3 OUT             */
-#define HAL_DMAMUX1_REQ_GEN_EXTI0             6U   /*!< D2 domain Request generator Signal is EXTI0 IT               */
-#define HAL_DMAMUX1_REQ_GEN_TIM12_TRGO        7U   /*!< D2 domain Request generator Signal is TIM12 TRGO             */
+#define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH0_EVT   0U   /*!< DMAMUX1 Request generator Signal is DMAMUX1 Channel0 Event */
+#define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH1_EVT   1U   /*!< DMAMUX1 Request generator Signal is DMAMUX1 Channel1 Event */
+#define HAL_DMAMUX1_REQ_GEN_DMAMUX1_CH2_EVT   2U   /*!< DMAMUX1 Request generator Signal is DMAMUX1 Channel2 Event */
+#define HAL_DMAMUX1_REQ_GEN_LPTIM1_OUT        3U   /*!< DMAMUX1 Request generator Signal is LPTIM1 OUT             */
+#define HAL_DMAMUX1_REQ_GEN_LPTIM2_OUT        4U   /*!< DMAMUX1 Request generator Signal is LPTIM2 OUT             */
+#define HAL_DMAMUX1_REQ_GEN_LPTIM3_OUT        5U   /*!< DMAMUX1 Request generator Signal is LPTIM3 OUT             */
+#define HAL_DMAMUX1_REQ_GEN_EXTI0             6U   /*!< DMAMUX1 Request generator Signal is EXTI0 IT               */
+#define HAL_DMAMUX1_REQ_GEN_TIM12_TRGO        7U   /*!< DMAMUX1 Request generator Signal is TIM12 TRGO             */
 
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH0_EVT   0U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel0 Event */
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH1_EVT   1U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel1 Event */
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH2_EVT   2U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel2 Event */
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH3_EVT   3U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel3 Event */
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH4_EVT   4U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel4 Event */
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH5_EVT   5U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel5 Event */
-#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH6_EVT   6U   /*!< D3 domain Request generator Signal is DMAMUX2 Channel6 Event */
-#define HAL_DMAMUX2_REQ_GEN_LPUART1_RX_WKUP   7U   /*!< D3 domain Request generator Signal is LPUART1 RX Wakeup      */
-#define HAL_DMAMUX2_REQ_GEN_LPUART1_TX_WKUP   8U   /*!< D3 domain Request generator Signal is LPUART1 TX Wakeup      */
-#define HAL_DMAMUX2_REQ_GEN_LPTIM2_WKUP       9U   /*!< D3 domain Request generator Signal is LPTIM2 Wakeup          */
-#define HAL_DMAMUX2_REQ_GEN_LPTIM2_OUT       10U   /*!< D3 domain Request generator Signal is LPTIM2 OUT             */
-#define HAL_DMAMUX2_REQ_GEN_LPTIM3_WKUP      11U   /*!< D3 domain Request generator Signal is LPTIM3 Wakeup          */
-#define HAL_DMAMUX2_REQ_GEN_LPTIM3_OUT       12U   /*!< D3 domain Request generator Signal is LPTIM3 OUT             */
-#define HAL_DMAMUX2_REQ_GEN_LPTIM4_WKUP      13U   /*!< D3 domain Request generator Signal is LPTIM4 Wakeup          */
-#define HAL_DMAMUX2_REQ_GEN_LPTIM5_WKUP      14U   /*!< D3 domain Request generator Signal is LPTIM5 Wakeup          */
-#define HAL_DMAMUX2_REQ_GEN_I2C4_WKUP        15U   /*!< D3 domain Request generator Signal is I2C4 Wakeup            */
-#define HAL_DMAMUX2_REQ_GEN_SPI6_WKUP        16U   /*!< D3 domain Request generator Signal is SPI6 Wakeup            */
-#define HAL_DMAMUX2_REQ_GEN_COMP1_OUT        17U   /*!< D3 domain Request generator Signal is Comparator 1 output    */
-#define HAL_DMAMUX2_REQ_GEN_COMP2_OUT        18U   /*!< D3 domain Request generator Signal is Comparator 2 output    */
-#define HAL_DMAMUX2_REQ_GEN_RTC_WKUP         19U   /*!< D3 domain Request generator Signal is RTC Wakeup             */
-#define HAL_DMAMUX2_REQ_GEN_EXTI0            20U   /*!< D3 domain Request generator Signal is EXTI0                  */
-#define HAL_DMAMUX2_REQ_GEN_EXTI2            21U   /*!< D3 domain Request generator Signal is EXTI2                  */
-#define HAL_DMAMUX2_REQ_GEN_I2C4_IT_EVT      22U   /*!< D3 domain Request generator Signal is I2C4 IT Event          */
-#define HAL_DMAMUX2_REQ_GEN_SPI6_IT          23U   /*!< D3 domain Request generator Signal is SPI6 IT                */
-#define HAL_DMAMUX2_REQ_GEN_LPUART1_TX_IT    24U   /*!< D3 domain Request generator Signal is LPUART1 Tx IT          */
-#define HAL_DMAMUX2_REQ_GEN_LPUART1_RX_IT    25U   /*!< D3 domain Request generator Signal is LPUART1 Rx IT          */
-#define HAL_DMAMUX2_REQ_GEN_ADC3_IT          26U   /*!< D3 domain Request generator Signal is ADC3 IT                */
-#define HAL_DMAMUX2_REQ_GEN_ADC3_AWD1_OUT    27U   /*!< D3 domain Request generator Signal is ADC3 Analog Watchdog 1 output */
-#define HAL_DMAMUX2_REQ_GEN_BDMA_CH0_IT      28U   /*!< D3 domain Request generator Signal is BDMA Channel 0 IT      */
-#define HAL_DMAMUX2_REQ_GEN_BDMA_CH1_IT      29U   /*!< D3 domain Request generator Signal is BDMA Channel 1 IT      */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH0_EVT   0U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel0 Event */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH1_EVT   1U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel1 Event */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH2_EVT   2U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel2 Event */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH3_EVT   3U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel3 Event */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH4_EVT   4U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel4 Event */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH5_EVT   5U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel5 Event */
+#define HAL_DMAMUX2_REQ_GEN_DMAMUX2_CH6_EVT   6U   /*!< DMAMUX2 Request generator Signal is DMAMUX2 Channel6 Event */
+#define HAL_DMAMUX2_REQ_GEN_LPUART1_RX_WKUP   7U   /*!< DMAMUX2 Request generator Signal is LPUART1 RX Wakeup      */
+#define HAL_DMAMUX2_REQ_GEN_LPUART1_TX_WKUP   8U   /*!< DMAMUX2 Request generator Signal is LPUART1 TX Wakeup      */
+#define HAL_DMAMUX2_REQ_GEN_LPTIM2_WKUP       9U   /*!< DMAMUX2 Request generator Signal is LPTIM2 Wakeup          */
+#define HAL_DMAMUX2_REQ_GEN_LPTIM2_OUT       10U   /*!< DMAMUX2 Request generator Signal is LPTIM2 OUT             */
+#define HAL_DMAMUX2_REQ_GEN_LPTIM3_WKUP      11U   /*!< DMAMUX2 Request generator Signal is LPTIM3 Wakeup          */
+#define HAL_DMAMUX2_REQ_GEN_LPTIM3_OUT       12U   /*!< DMAMUX2 Request generator Signal is LPTIM3 OUT             */
+#define HAL_DMAMUX2_REQ_GEN_LPTIM4_WKUP      13U   /*!< DMAMUX2 Request generator Signal is LPTIM4 Wakeup          */
+#define HAL_DMAMUX2_REQ_GEN_LPTIM5_WKUP      14U   /*!< DMAMUX2 Request generator Signal is LPTIM5 Wakeup          */
+#define HAL_DMAMUX2_REQ_GEN_I2C4_WKUP        15U   /*!< DMAMUX2 Request generator Signal is I2C4 Wakeup            */
+#define HAL_DMAMUX2_REQ_GEN_SPI6_WKUP        16U   /*!< DMAMUX2 Request generator Signal is SPI6 Wakeup            */
+#define HAL_DMAMUX2_REQ_GEN_COMP1_OUT        17U   /*!< DMAMUX2 Request generator Signal is Comparator 1 output    */
+#define HAL_DMAMUX2_REQ_GEN_COMP2_OUT        18U   /*!< DMAMUX2 Request generator Signal is Comparator 2 output    */
+#define HAL_DMAMUX2_REQ_GEN_RTC_WKUP         19U   /*!< DMAMUX2 Request generator Signal is RTC Wakeup             */
+#define HAL_DMAMUX2_REQ_GEN_EXTI0            20U   /*!< DMAMUX2 Request generator Signal is EXTI0                  */
+#define HAL_DMAMUX2_REQ_GEN_EXTI2            21U   /*!< DMAMUX2 Request generator Signal is EXTI2                  */
+#define HAL_DMAMUX2_REQ_GEN_I2C4_IT_EVT      22U   /*!< DMAMUX2 Request generator Signal is I2C4 IT Event          */
+#define HAL_DMAMUX2_REQ_GEN_SPI6_IT          23U   /*!< DMAMUX2 Request generator Signal is SPI6 IT                */
+#define HAL_DMAMUX2_REQ_GEN_LPUART1_TX_IT    24U   /*!< DMAMUX2 Request generator Signal is LPUART1 Tx IT          */
+#define HAL_DMAMUX2_REQ_GEN_LPUART1_RX_IT    25U   /*!< DMAMUX2 Request generator Signal is LPUART1 Rx IT          */
+#define HAL_DMAMUX2_REQ_GEN_ADC3_IT          26U   /*!< DMAMUX2 Request generator Signal is ADC3 IT                */
+#define HAL_DMAMUX2_REQ_GEN_ADC3_AWD1_OUT    27U   /*!< DMAMUX2 Request generator Signal is ADC3 Analog Watchdog 1 output */
+#define HAL_DMAMUX2_REQ_GEN_BDMA_CH0_IT      28U   /*!< DMAMUX2 Request generator Signal is BDMA Channel 0 IT      */
+#define HAL_DMAMUX2_REQ_GEN_BDMA_CH1_IT      29U   /*!< DMAMUX2 Request generator Signal is BDMA Channel 1 IT      */
 
 
 /**
@@ -267,10 +251,10 @@ void HAL_DMAEx_MUX_IRQHandler(DMA_HandleTypeDef *hdma);
   * @{
   */
 
-#define IS_D2_DMAMUX_SYNC_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX1_SYNC_TIM12_TRGO)
-#define IS_D3_DMAMUX_SYNC_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX2_SYNC_EXTI2)
+#define IS_DMA_DMAMUX_SYNC_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX1_SYNC_TIM12_TRGO)
+#define IS_BDMA_DMAMUX_SYNC_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX2_SYNC_EXTI2)
 
-#define IS_DMAMUX_SYNC_REQUEST_NUMBER(REQUEST_NUMBER) (((REQUEST_NUMBER) > 0) && ((REQUEST_NUMBER) <= 32))
+#define IS_DMAMUX_SYNC_REQUEST_NUMBER(REQUEST_NUMBER) (((REQUEST_NUMBER) > 0U) && ((REQUEST_NUMBER) <= 32U))
 
 #define IS_DMAMUX_SYNC_POLARITY(POLARITY) (((POLARITY) == HAL_DMAMUX_SYNC_NO_EVENT)    || \
                                            ((POLARITY) == HAL_DMAMUX_SYNC_RISING)   || \
@@ -282,10 +266,10 @@ void HAL_DMAEx_MUX_IRQHandler(DMA_HandleTypeDef *hdma);
 #define IS_DMAMUX_SYNC_EVENT(EVENT) (((EVENT) == DISABLE)   || \
                                      ((EVENT) == ENABLE))
 
-#define IS_D2_DMAMUX_REQUEST_GEN_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX1_REQ_GEN_TIM12_TRGO)
-#define IS_D3_DMAMUX_REQUEST_GEN_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX2_REQ_GEN_BDMA_CH1_IT)
+#define IS_DMA_DMAMUX_REQUEST_GEN_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX1_REQ_GEN_TIM12_TRGO)
+#define IS_BDMA_DMAMUX_REQUEST_GEN_SIGNAL_ID(SIGNAL_ID) ((SIGNAL_ID) <= HAL_DMAMUX2_REQ_GEN_BDMA_CH1_IT)
 
-#define IS_DMAMUX_REQUEST_GEN_REQUEST_NUMBER(REQUEST_NUMBER) (((REQUEST_NUMBER) > 0) && ((REQUEST_NUMBER) <= 32))
+#define IS_DMAMUX_REQUEST_GEN_REQUEST_NUMBER(REQUEST_NUMBER) (((REQUEST_NUMBER) > 0U) && ((REQUEST_NUMBER) <= 32U))
 
 #define IS_DMAMUX_REQUEST_GEN_POLARITY(POLARITY) (((POLARITY) == HAL_DMAMUX_REQ_GEN_NO_EVENT) || \
                                                   ((POLARITY) == HAL_DMAMUX_REQ_GEN_RISING)   || \
@@ -317,6 +301,6 @@ void HAL_DMAEx_MUX_IRQHandler(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_DMA_H */
+#endif /* STM32H7xx_HAL_DMA_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

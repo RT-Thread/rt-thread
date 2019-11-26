@@ -24,6 +24,8 @@ source "$PKGS_DIR/Kconfig"
 config BOARD_X1000_REALBOARD
     bool 
     select ARCH_MIPS_XBURST
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 config RT_USING_HARD_FLOAT

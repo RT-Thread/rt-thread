@@ -343,7 +343,7 @@
               <MiscControls>--diag_suppress=870</MiscControls>
               <Define>RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>drivers;applications;.;../../include;../../libcpu/arm/s3c24x0;../../libcpu/arm/common;../../components/drivers/include;../../components/libc/pthreads;../../components/libc/time;../../components/libc/compilers/armlibc;../../components/finsh;../../components/external/jpeg;../../components/net/lwip-2.0.2/src;../../components/net/lwip-2.0.2/src/include;../../components/net/lwip-2.0.2/src/include/ipv4;../../components/net/lwip-2.0.2/src/arch/include;../../components/net/lwip-2.0.2/src/include/netif;../../components/net/lwip-2.0.2/src/include/posix;../../components/dfs/include;../../components/dfs/filesystems/devfs;../../components/dfs/filesystems/elmfat</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;drivers;..\..\libcpu\arm\common;..\..\libcpu\arm\s3c24x0;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common;..\..\components\libc\pthreads;..\..\components\libc\time;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -373,7 +373,7 @@
             <ScatterFile>rtthread-mini2440.sct</ScatterFile>
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc> --keep *.o(RTMSymTab)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
+            <Misc />
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
@@ -381,40 +381,110 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Drivers</GroupName>
+          <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/board.c</FilePath>
+              <FilePath>..\..\src\clock.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>led.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/led.c</FilePath>
+              <FilePath>..\..\src\components.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>console.c</FileName>
+              <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/console.c</FilePath>
+              <FilePath>..\..\src\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>sdcard.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/sdcard.c</FilePath>
+              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>dm9000.c</FileName>
+              <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/dm9000.c</FilePath>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -424,920 +494,146 @@
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Kernel</GroupName>
+          <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/clock.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
+              <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/device.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>idle.c</FileName>
+              <FileName>console.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/idle.c</FilePath>
+              <FilePath>drivers\console.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ipc.c</FileName>
+              <FileName>sdcard.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/ipc.c</FilePath>
+              <FilePath>drivers\sdcard.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>irq.c</FileName>
+              <FileName>dm9000.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../src/irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/timer.c</FilePath>
+              <FilePath>drivers\dm9000.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>S3C24X0</GroupName>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/cpu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/mmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/stack.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/system_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/s3c24x0/start_rvds.S</FilePath>
-            </File>
-          </Files>
+          <GroupName>cpu</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>completion.c</FileName>
+              <FileName>s3c24x0_cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/completion.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>dataqueue.c</FileName>
+              <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\interrupt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pipe.c</FileName>
+              <FileName>mmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/pipe.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\mmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\rtc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>waitqueue.c</FileName>
+              <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/waitqueue.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\serial.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>stack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\stack.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>pthreads</GroupName>
           <Files>
             <File>
-              <FileName>mqueue.c</FileName>
+              <FileName>system_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/mqueue.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\system_clock.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread.c</FileName>
+              <FileName>trap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread.c</FilePath>
+              <FilePath>..\..\libcpu\arm\s3c24x0\trap.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread_attr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_attr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_barrier.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_barrier.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_cond.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_cond.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_mutex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_mutex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_rwlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_rwlock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_spin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_spin.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_tls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/pthread_tls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sched.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/sched.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>semaphore.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/pthreads/semaphore.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock_time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/time/clock_time.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>posix_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/time/posix_sleep.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>libc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/compilers/armlibc/libc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>libc_syms.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/compilers/armlibc/libc_syms.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/compilers/armlibc/mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/compilers/armlibc/stdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stubs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/compilers/armlibc/stubs.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/compilers/armlibc/time.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>finsh</GroupName>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/symbol.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_compiler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_compiler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_error.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_error.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_heap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_heap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_node.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_node.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_ops.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_parser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_parser.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_var.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_var.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_vm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_vm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>finsh_token.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_token.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>jpeg</GroupName>
-          <Files>
-            <File>
-              <FileName>jaricom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jaricom.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jcomapi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jcomapi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jutils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jutils.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jerror.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jerror.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jmemmgr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jmemmgr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdapimin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdapimin.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdapistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdapistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdarith.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdarith.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdtrans.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdtrans.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdmaster.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdmaster.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdinput.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdinput.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdmarker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdmarker.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdhuff.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdhuff.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdmainct.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdmainct.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdcoefct.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdcoefct.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdpostct.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdpostct.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>jddctmgr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jddctmgr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jidctfst.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jidctfst.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jidctflt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jidctflt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jidctint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jidctint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdsample.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdsample.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdcolor.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdcolor.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jquant1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jquant1.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jquant2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jquant2.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jdmerge.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jdmerge.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>jmemnobs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/external/jpeg/jmemnobs.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>lwIP</GroupName>
-          <Files>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/arch/sys_arch.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>api_lib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/api_lib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>api_msg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/api_msg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>err.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/err.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/netbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/netdb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netifapi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/netifapi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/sockets.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcpip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/api/tcpip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>def.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/def.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dns.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/dns.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>inet_chksum.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/inet_chksum.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/memp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/netif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/pbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>raw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/raw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stats.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/stats.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/tcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/tcp_in.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/tcp_out.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timeouts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/timeouts.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>udp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/udp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/netif/ethernet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernetif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/netif/ethernetif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lowpan6.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/netif/lowpan6.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>autoip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/autoip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dhcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/dhcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>etharp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/etharp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>icmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/icmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>igmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/igmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/ip4.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4_addr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/ip4_addr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4_frag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/net/lwip-2.0.2/src/core/ipv4/ip4_frag.c</FilePath>
+              <FileName>start_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\s3c24x0\start_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -1347,56 +643,582 @@
             <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/src/dfs.c</FilePath>
+              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/src/dfs_file.c</FilePath>
+              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/src/dfs_fs.c</FilePath>
+              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/src/dfs_posix.c</FilePath>
+              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/filesystems/devfs/devfs.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/filesystems/elmfat/dfs_elm.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/filesystems/elmfat/ff.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>cc936.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/dfs/filesystems/elmfat/option/cc936.c</FilePath>
+              <FilePath>..\..\components\dfs\filesystems\elmfat\option\cc936.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>completion.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dataqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pipe.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_compiler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_error.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_heap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_node.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_parser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_var.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_vm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>finsh_token.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>pthreads</GroupName>
+          <Files>
+            <File>
+              <FileName>mqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\mqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_attr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_attr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_barrier.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_barrier.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_cond.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_cond.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_mutex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_mutex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_rwlock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_rwlock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_spin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_spin.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pthread_tls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\pthread_tls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sched.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\sched.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>semaphore.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\pthreads\semaphore.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock_time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\time\clock_time.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>posix_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\time\posix_sleep.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>lwIP</GroupName>
+          <Files>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\arch\sys_arch.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>api_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\api_lib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>api_msg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\api_msg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>err.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\err.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>netbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\netbuf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\netdb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>netifapi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\netifapi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\sockets.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcpip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\api\tcpip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>def.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\def.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dns.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\dns.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>inet_chksum.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\inet_chksum.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\init.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\memp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>netif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\netif.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pbuf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\pbuf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>raw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\raw.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stats.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\stats.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\sys.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\tcp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcp_in.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\tcp_in.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tcp_out.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\tcp_out.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timeouts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\timeouts.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>udp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\udp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ethernet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\netif\ethernet.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ethernetif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\netif\ethernetif.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lowpan6.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\netif\lowpan6.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>autoip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\autoip.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dhcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\dhcp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>etharp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\etharp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>icmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\icmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>igmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\igmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip4_addr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_addr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ip4_frag.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</FilePath>
             </File>
           </Files>
         </Group>

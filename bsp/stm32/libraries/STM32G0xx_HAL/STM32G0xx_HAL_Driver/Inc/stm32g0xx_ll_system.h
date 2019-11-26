@@ -130,7 +130,7 @@ extern "C" {
   * @{
   */
 #define LL_SYSCFG_UCPD1_STROBE       SYSCFG_CFGR1_UCPD1_STROBE       /*!< UCPD1 STROBE sw configuration */
-#define LL_SYSCFG_UCPD2_STROBE       SYSCFG_CFGR1_UCPD1_STROBE       /*!< UCPD2 STROBE sw configuration */
+#define LL_SYSCFG_UCPD2_STROBE       SYSCFG_CFGR1_UCPD2_STROBE       /*!< UCPD2 STROBE sw configuration */
 /**
   * @}
   */
@@ -177,6 +177,22 @@ extern "C" {
   * @}
   */
 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+/** @defgroup SYSTEM_LL_EC_CLAMPING_DIODE SYSCFG CLAMPING DIODE
+  * @{
+  */  
+#define LL_SYSCFG_CFGR2_PA1_CDEN         SYSCFG_CFGR2_PA1_CDEN     /*!< Enables Clamping diode of PA1 */
+#define LL_SYSCFG_CFGR2_PA3_CDEN         SYSCFG_CFGR2_PA3_CDEN     /*!< Enables Clamping diode of PA3 */
+#define LL_SYSCFG_CFGR2_PA5_CDEN         SYSCFG_CFGR2_PA5_CDEN     /*!< Enables Clamping diode of PA5 */
+#define LL_SYSCFG_CFGR2_PA6_CDEN         SYSCFG_CFGR2_PA6_CDEN     /*!< Enables Clamping diode of PA6 */
+#define LL_SYSCFG_CFGR2_PA13_CDEN        SYSCFG_CFGR2_PA13_CDEN    /*!< Enables Clamping diode of PA13 */
+#define LL_SYSCFG_CFGR2_PB0_CDEN         SYSCFG_CFGR2_PB0_CDEN     /*!< Enables Clamping diode of PB0 */
+#define LL_SYSCFG_CFGR2_PB1_CDEN         SYSCFG_CFGR2_PB1_CDEN     /*!< Enables Clamping diode of PB1 */  
+#define LL_SYSCFG_CFGR2_PB2_CDEN         SYSCFG_CFGR2_PB2_CDEN     /*!< Enables Clamping diode of PB2 */
+/**
+  * @}
+  */
+#endif
 
 /** @defgroup SYSTEM_LL_EC_APB1_GRP1_STOP_IP  DBGMCU APB1 GRP1 STOP IP
   * @{
@@ -1335,6 +1351,84 @@ __STATIC_INLINE void LL_SYSCFG_ClearFlag_SP(void)
   SET_BIT(SYSCFG->CFGR2, SYSCFG_CFGR2_SPF);
 }
 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx) 
+/**
+  * @brief  Enable Clamping Diode on specific pin
+  * @rmtoll SYSCFG_CFGR2 PA1_CDEN   LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR2 PA3_CDEN   LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR2 PA5_CDEN   LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR2 PA6_CDEN   LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR2 PA13_CDEN  LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR2 PB0_CDEN   LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR2 PB1_CDEN   LL_SYSCFG_EnableClampingDiode\n
+  *         SYSCFG_CFGR1 PB2_CDEN   LL_SYSCFG_EnableClampingDiode
+  * @param  ConfigClampingDiode This parameter can be a combination of the following values:
+  *         @arg @ref LL_SYSCFG_CFGR2_PA1_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA3_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA5_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA6_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA13_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB0_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB1_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB2_CDEN
+  * @retval None
+  */
+__STATIC_INLINE void LL_SYSCFG_EnableClampingDiode(uint32_t ConfigClampingDiode)
+{
+  SET_BIT(SYSCFG->CFGR2, ConfigClampingDiode);
+}
+
+/**
+  * @brief  Disable Clamping Diode on specific pin
+  * @rmtoll SYSCFG_CFGR2 PA1_CDEN   LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR2 PA3_CDEN   LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR2 PA5_CDEN   LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR2 PA6_CDEN   LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR2 PA13_CDEN  LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR2 PB0_CDEN   LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR2 PB1_CDEN   LL_SYSCFG_DisableClampingDiode\n
+  *         SYSCFG_CFGR1 PB2_CDEN   LL_SYSCFG_DisableClampingDiode
+  * @param  ConfigClampingDiode This parameter can be a combination of the following values:
+  *         @arg @ref LL_SYSCFG_CFGR2_PA1_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA3_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA5_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA6_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA13_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB0_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB1_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB2_CDEN
+  * @retval None
+  */
+__STATIC_INLINE void LL_SYSCFG_DisableClampingDiode(uint32_t ConfigClampingDiode)
+{
+  CLEAR_BIT(SYSCFG->CFGR2, ConfigClampingDiode);
+}
+/**
+  * @brief  Indicates whether clamping diode(s) is(are) enabled.
+  * @rmtoll SYSCFG_CFGR2 PA1_CDEN   LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR2 PA3_CDEN   LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR2 PA5_CDEN   LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR2 PA6_CDEN   LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR2 PA13_CDEN  LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR2 PB0_CDEN   LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR2 PB1_CDEN   LL_SYSCFG_IsEnabledClampingDiode\n
+  *         SYSCFG_CFGR1 PB2_CDEN   LL_SYSCFG_IsEnabledClampingDiode
+  * @param  ConfigClampingDiode This parameter can be a combination of the following values:
+  *         @arg @ref LL_SYSCFG_CFGR2_PA1_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA3_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA5_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA6_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PA13_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB0_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB1_CDEN
+  *         @arg @ref LL_SYSCFG_CFGR2_PB2_CDEN
+  * @retval None
+  */
+__STATIC_INLINE uint32_t LL_SYSCFG_IsEnabledClampingDiode(uint32_t ConfigClampingDiode)
+{
+  return ((READ_BIT(SYSCFG->CFGR2, ConfigClampingDiode) == (ConfigClampingDiode)) ? 1UL : 0UL);
+}
+#endif
 
 /**
   * @}

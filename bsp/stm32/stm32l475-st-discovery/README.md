@@ -36,7 +36,7 @@ STM32L475 IoT Discovery kit 是 ST 官方推出的一款基于 ARM Cortex-M4 内
 - 调试接口：ST-LINK Micro USB 接口(ST-LINK 转串口对应 串口1)
 - 支持 mbed
 
-开发板更多详细信息请参考ST官方网站 [STM32 开发板介绍]https://www.st.com/en/evaluation-tools/b-l475e-iot01a.html
+开发板更多详细信息请参考ST官方网站 [STM32 开发板介绍](https://www.st.com/en/evaluation-tools/b-l475e-iot01a.html)
 
 ## 外设支持
 

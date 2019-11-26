@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F407ZG
     bool
     select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -293,6 +295,18 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
+
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        default n
+        select RT_USING_PULSE_ENCODER
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER4
+                bool "Enable Pulse Encoder4"
+                default n
+
+        endif
+
  source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu

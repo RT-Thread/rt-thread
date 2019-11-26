@@ -806,9 +806,9 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   */
 #define __HAL_UART_FLUSH_DRREGISTER(__HANDLE__)  \
   do{                \
-      SET_BIT((__HANDLE__)->Instance->RQR, UART_RXDATA_FLUSH_REQUEST); \
-      SET_BIT((__HANDLE__)->Instance->RQR, UART_TXDATA_FLUSH_REQUEST); \
-    }  while(0U)
+    SET_BIT((__HANDLE__)->Instance->RQR, UART_RXDATA_FLUSH_REQUEST); \
+    SET_BIT((__HANDLE__)->Instance->RQR, UART_TXDATA_FLUSH_REQUEST); \
+  }  while(0U)
 
 /** @brief  Clear the specified UART pending flag.
   * @param  __HANDLE__ specifies the UART Handle.
@@ -973,7 +973,8 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   *            @arg @ref UART_IT_ERR   Error interrupt (Frame error, noise error, overrun error)
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
-#define __HAL_UART_GET_IT(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->ISR & (1U << ((__INTERRUPT__)>> 8U))) != RESET) ? SET : RESET)
+#define __HAL_UART_GET_IT(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->ISR\
+                                                        & (1U << ((__INTERRUPT__)>> 8U))) != RESET) ? SET : RESET)
 
 /** @brief  Check whether the specified UART interrupt source is enabled or not.
   * @param  __HANDLE__ specifies the UART Handle.
@@ -998,8 +999,8 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   * @retval The new state of __INTERRUPT__ (SET or RESET).
   */
 #define __HAL_UART_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((((((uint8_t)(__INTERRUPT__)) >> 5U) == 1U) ? (__HANDLE__)->Instance->CR1 : \
-                                                               (((((uint8_t)(__INTERRUPT__)) >> 5U) == 2U) ? (__HANDLE__)->Instance->CR2 : \
-                                                               (__HANDLE__)->Instance->CR3)) & (1U << (((uint16_t)(__INTERRUPT__)) & UART_IT_MASK)))  != RESET) ? SET : RESET)
+                                                                (((((uint8_t)(__INTERRUPT__)) >> 5U) == 2U) ? (__HANDLE__)->Instance->CR2 : \
+                                                                 (__HANDLE__)->Instance->CR3)) & (1U << (((uint16_t)(__INTERRUPT__)) & UART_IT_MASK)))  != RESET) ? SET : RESET)
 
 /** @brief  Clear the specified UART ISR flag, in setting the proper ICR register flag.
   * @param  __HANDLE__ specifies the UART Handle.
@@ -1161,7 +1162,8 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   * @param  __CLOCKPRESCALER__ UART prescaler value.
   * @retval Division result
   */
-#define UART_DIV_LPUART(__PCLK__, __BAUD__, __CLOCKPRESCALER__)      ((uint32_t)(((((uint64_t)(__PCLK__)/UART_GET_DIV_FACTOR((__CLOCKPRESCALER__)))*256U) + (uint32_t)((__BAUD__)/2U)) / (__BAUD__)))
+#define UART_DIV_LPUART(__PCLK__, __BAUD__, __CLOCKPRESCALER__)      ((uint32_t)(((((uint64_t)(__PCLK__)/UART_GET_DIV_FACTOR((__CLOCKPRESCALER__)))*256U)\
+                                                                      + (uint32_t)((__BAUD__)/2U)) / (__BAUD__)))
 
 /** @brief  BRR division operation to set BRR register in 8-bit oversampling mode.
   * @param  __PCLK__ UART clock.
@@ -1169,7 +1171,8 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   * @param  __CLOCKPRESCALER__ UART prescaler value.
   * @retval Division result
   */
-#define UART_DIV_SAMPLING8(__PCLK__, __BAUD__, __CLOCKPRESCALER__)   (((((__PCLK__)/UART_GET_DIV_FACTOR((__CLOCKPRESCALER__)))*2U) + ((__BAUD__)/2U)) / (__BAUD__))
+#define UART_DIV_SAMPLING8(__PCLK__, __BAUD__, __CLOCKPRESCALER__)   (((((__PCLK__)/UART_GET_DIV_FACTOR((__CLOCKPRESCALER__)))*2U)\
+                                                                       + ((__BAUD__)/2U)) / (__BAUD__))
 
 /** @brief  BRR division operation to set BRR register in 16-bit oversampling mode.
   * @param  __PCLK__ UART clock.
@@ -1177,7 +1180,8 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   * @param  __CLOCKPRESCALER__ UART prescaler value.
   * @retval Division result
   */
-#define UART_DIV_SAMPLING16(__PCLK__, __BAUD__, __CLOCKPRESCALER__)  ((((__PCLK__)/UART_GET_DIV_FACTOR((__CLOCKPRESCALER__))) + ((__BAUD__)/2U)) / (__BAUD__))
+#define UART_DIV_SAMPLING16(__PCLK__, __BAUD__, __CLOCKPRESCALER__)  ((((__PCLK__)/UART_GET_DIV_FACTOR((__CLOCKPRESCALER__)))\
+                                                                       + ((__BAUD__)/2U)) / (__BAUD__))
 
 /** @brief  Check whether or not UART instance is Low Power UART.
   * @param  __HANDLE__ specifies the UART Handle.
@@ -1238,10 +1242,10 @@ typedef  void (*pUART_CallbackTypeDef)(UART_HandleTypeDef *huart);  /*!< pointer
   * @retval SET (__CONTROL__ is valid) or RESET (__CONTROL__ is invalid)
   */
 #define IS_UART_HARDWARE_FLOW_CONTROL(__CONTROL__)\
-                                   (((__CONTROL__) == UART_HWCONTROL_NONE) || \
-                                    ((__CONTROL__) == UART_HWCONTROL_RTS)  || \
-                                    ((__CONTROL__) == UART_HWCONTROL_CTS)  || \
-                                    ((__CONTROL__) == UART_HWCONTROL_RTS_CTS))
+  (((__CONTROL__) == UART_HWCONTROL_NONE) || \
+   ((__CONTROL__) == UART_HWCONTROL_RTS)  || \
+   ((__CONTROL__) == UART_HWCONTROL_CTS)  || \
+   ((__CONTROL__) == UART_HWCONTROL_RTS_CTS))
 
 /**
   * @brief Ensure that UART communication mode is valid.
@@ -1509,7 +1513,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart);
 
 /* Callbacks Register/UnRegister functions  ***********************************/
 #if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
-HAL_StatusTypeDef HAL_UART_RegisterCallback(UART_HandleTypeDef *huart, HAL_UART_CallbackIDTypeDef CallbackID, pUART_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_UART_RegisterCallback(UART_HandleTypeDef *huart, HAL_UART_CallbackIDTypeDef CallbackID,
+                                            pUART_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_UART_UnRegisterCallback(UART_HandleTypeDef *huart, HAL_UART_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_UART_REGISTER_CALLBACKS */
 
@@ -1589,10 +1594,13 @@ uint32_t              HAL_UART_GetError(UART_HandleTypeDef *huart);
 /** @addtogroup UART_Private_Functions UART Private Functions
   * @{
   */
-
+#if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
+void UART_InitCallbacksToDefault(UART_HandleTypeDef *huart);
+#endif /* USE_HAL_UART_REGISTER_CALLBACKS */
 HAL_StatusTypeDef UART_SetConfig(UART_HandleTypeDef *huart);
 HAL_StatusTypeDef UART_CheckIdleState(UART_HandleTypeDef *huart);
-HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout);
+HAL_StatusTypeDef UART_WaitOnFlagUntilTimeout(UART_HandleTypeDef *huart, uint32_t Flag, FlagStatus Status,
+                                              uint32_t Tickstart, uint32_t Timeout);
 void UART_AdvFeatureConfig(UART_HandleTypeDef *huart);
 
 /**

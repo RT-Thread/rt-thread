@@ -2,11 +2,18 @@ from building import *
 
 Import('rtconfig')
 
-src   = Glob('*.c')
+src   = []
 cwd   = GetCurrentDir()
 group = []
 CPPPATH = [cwd]
 
-group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_LIBC'):
+        src += Glob('*.c')
+else:
+        if GetDepend('RT_LIBC_USING_TIME'):
+                src += ['time.c']
+
+if (rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'iar') and rtconfig.ARCH != 'sim' :
+        group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

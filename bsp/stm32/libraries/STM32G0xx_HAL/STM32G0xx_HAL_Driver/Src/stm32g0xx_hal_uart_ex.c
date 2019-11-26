@@ -74,9 +74,6 @@
 /** @defgroup UARTEx_Private_Functions UARTEx Private Functions
   * @{
   */
-#if (USE_HAL_UART_REGISTER_CALLBACKS == 1)
-extern void UART_InitCallbacksToDefault(UART_HandleTypeDef *huart);
-#endif /* USE_HAL_UART_REGISTER_CALLBACKS */
 static void UARTEx_Wakeup_AddressConfig(UART_HandleTypeDef *huart, UART_WakeUpTypeDef WakeUpSelection);
 static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart);
 /**
@@ -166,7 +163,8 @@ static void UARTEx_SetNbDataToProcess(UART_HandleTypeDef *huart);
   *       oversampling rate).
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime, uint32_t DeassertionTime)
+HAL_StatusTypeDef HAL_RS485Ex_Init(UART_HandleTypeDef *huart, uint32_t Polarity, uint32_t AssertionTime,
+                                   uint32_t DeassertionTime)
 {
   uint32_t temp;
 
@@ -317,7 +315,7 @@ __weak void HAL_UARTEx_TxFifoEmptyCallback(UART_HandleTypeDef *huart)
 
 /** @defgroup UARTEx_Exported_Functions_Group3 Peripheral Control functions
   * @brief    Extended Peripheral Control functions
- *
+  *
 @verbatim
  ===============================================================================
                       ##### Peripheral Control functions #####
