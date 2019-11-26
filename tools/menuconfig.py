@@ -30,6 +30,15 @@ import shutil
 
 # make rtconfig.h from .config
 
+def is_pkg_special_config(config_str):
+    ''' judge if it's CONFIG_PKG_XX_PATH or CONFIG_PKG_XX_VER'''
+
+    if type(config_str) == type('a'):
+        if config_str.startswith("PKG_") and (config_str.endswith('_PATH') or config_str.endswith('_VER')):
+            return True
+    return False
+
+
 def mk_rtconfig(filename):
     try:
         config = open(filename, 'r')
@@ -46,7 +55,8 @@ def mk_rtconfig(filename):
     for line in config:
         line = line.lstrip(' ').replace('\n', '').replace('\r', '')
 
-        if len(line) == 0: continue
+        if len(line) == 0:
+            continue
 
         if line[0] == '#':
             if len(line) == 1:
@@ -57,11 +67,12 @@ def mk_rtconfig(filename):
                 empty_line = 1
                 continue
 
-            comment_line = line[1:]
-            if line.startswith('# CONFIG_'): line = ' ' + line[9:]
-            else: line = line[1:]
+            if line.startswith('# CONFIG_'):
+                line = ' ' + line[9:]
+            else:
+                line = line[1:]
+                rtconfig.write('/*%s */\n' % line)
 
-            rtconfig.write('/*%s */\n' % line)
             empty_line = 0
         else:
             empty_line = 0
@@ -71,7 +82,7 @@ def mk_rtconfig(filename):
                     setting[0] = setting[0][7:]
 
                 # remove CONFIG_PKG_XX_PATH or CONFIG_PKG_XX_VER
-                if type(setting[0]) == type('a') and (setting[0].endswith('_PATH') or setting[0].endswith('_VER')):
+                if is_pkg_special_config(setting[0]):
                     continue
 
                 if setting[1] == 'y':

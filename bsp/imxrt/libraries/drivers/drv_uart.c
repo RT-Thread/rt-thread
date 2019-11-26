@@ -582,8 +582,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    uart = (struct imxrt_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct imxrt_uart, serial);
 
     LPUART_GetDefaultConfig(&config);
     config.baudRate_Bps = cfg->baud_rate;
@@ -635,8 +634,7 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
     struct imxrt_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct imxrt_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct imxrt_uart, serial);
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
@@ -677,8 +675,7 @@ static int imxrt_putc(struct rt_serial_device *serial, char ch)
     struct imxrt_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct imxrt_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct imxrt_uart, serial);
 
     LPUART_WriteByte(uart->uart_base, ch);
     while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
@@ -692,8 +689,7 @@ static int imxrt_getc(struct rt_serial_device *serial)
     struct imxrt_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct imxrt_uart *)serial->parent.user_data;
-    RT_ASSERT(uart != RT_NULL);
+    uart = rt_container_of(serial, struct imxrt_uart, serial);
 
     ch = -1;
     if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
@@ -712,7 +708,7 @@ rt_size_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_
     rt_size_t xfer_size = 0;
 
     RT_ASSERT(serial != RT_NULL);
-    uart = (struct imxrt_uart *)serial->parent.user_data;
+    uart = rt_container_of(serial, struct imxrt_uart, serial);
 
     if (0 != size)
     {
@@ -760,7 +756,7 @@ int rt_hw_uart_init(void)
         uarts[i].serial.ops    = &imxrt_uart_ops;
         uarts[i].serial.config = config;
 
-        ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name, flag | uarts[i].dma_flag, (void *)&uarts[i]);
+        ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name, flag | uarts[i].dma_flag, NULL);
     }
 
     return ret;

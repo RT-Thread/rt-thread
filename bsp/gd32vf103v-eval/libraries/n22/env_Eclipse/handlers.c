@@ -15,9 +15,6 @@ __attribute__((weak))  uintptr_t handle_trap(uintptr_t mcause, uintptr_t sp) {
         handle_nmi();
     }
     write(1, "trap\n", 5);
-    printf("In trap handler, the mcause is %d\n", mcause);
-    printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
-    printf("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
     _exit(mcause);
     return 0;
 }

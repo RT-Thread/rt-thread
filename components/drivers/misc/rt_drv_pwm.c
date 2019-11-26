@@ -259,7 +259,7 @@ static int pwm_set(int argc, char **argv)
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_set, pwm_set 1 100 50);
+MSH_CMD_EXPORT(pwm_set, pwm_set pwm1 1 100 50);
 
 #endif /* FINSH_USING_MSH */
 #endif /* RT_USING_FINSH */

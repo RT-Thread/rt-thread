@@ -47,8 +47,6 @@ void rtthread_startup(void)
     /* init board */
     rt_hw_board_init();
 
-    rt_hw_interrupt_disable();
-
     /* show version */
     rt_show_version();
 

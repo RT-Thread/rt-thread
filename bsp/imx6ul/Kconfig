@@ -24,3 +24,9 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 source "$BSP_DIR/drivers/Kconfig"
+
+config SOC_MCIMX6X4
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    #select RT_USING_USER_MAIN
+    default y

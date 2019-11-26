@@ -83,7 +83,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
     RT_ASSERT(thread != RT_NULL);
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
-	if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
+    if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
 #else
     if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
 #endif
@@ -344,8 +344,13 @@ void rt_schedule(void)
                 {
                     to_thread = current_thread;
                 }
+                else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                {
+                    to_thread = current_thread;
+                }
                 else
                 {
+                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
             }
@@ -379,7 +384,12 @@ void rt_schedule(void)
         }
     }
 
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
 #ifdef RT_USING_SIGNALS
+    /* check stat of thread for signal */
+    level = rt_hw_interrupt_disable();
     if (current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
     {
         extern void rt_thread_handle_sig(rt_bool_t clean_state);
@@ -395,9 +405,6 @@ void rt_schedule(void)
     {
         rt_hw_interrupt_enable(level);
     }
-#else
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
 #endif
 
 __exit:
@@ -435,8 +442,13 @@ void rt_schedule(void)
                 {
                     to_thread = rt_current_thread;
                 }
+                else if (rt_current_thread->current_priority == highest_ready_priority && (rt_current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                {
+                    to_thread = rt_current_thread;
+                }
                 else
                 {
+                    rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     need_insert_from_thread = 1;
                 }
             }
@@ -477,7 +489,13 @@ void rt_schedule(void)
 
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
+
+                    /* enable interrupt */
+                    rt_hw_interrupt_enable(level);
+
 #ifdef RT_USING_SIGNALS
+                    /* check stat of thread for signal */
+                    level = rt_hw_interrupt_disable();
                     if (rt_current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
                     {
                         extern void rt_thread_handle_sig(rt_bool_t clean_state);
@@ -493,9 +511,6 @@ void rt_schedule(void)
                     {
                         rt_hw_interrupt_enable(level);
                     }
-#else
-                    /* enable interrupt */
-                    rt_hw_interrupt_enable(level);
 #endif
                     goto __exit;
                 }
@@ -578,8 +593,13 @@ void rt_scheduler_do_irq_switch(void *context)
                 {
                     to_thread = current_thread;
                 }
+                else if (current_thread->current_priority == highest_ready_priority && (current_thread->stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                {
+                    to_thread = current_thread;
+                }
                 else
                 {
+                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
             }
@@ -840,10 +860,13 @@ void rt_enter_critical(void)
      */
 
     /* lock scheduler for all cpus */
-    if (current_thread->scheduler_lock_nest == !!current_thread->cpus_lock_nest)
+    if (current_thread->critical_lock_nest == 0)
     {
         rt_hw_spin_lock(&_rt_critical_lock);
     }
+
+    /* critical for local cpu */
+    current_thread->critical_lock_nest ++;
 
     /* lock scheduler for local cpu */
     current_thread->scheduler_lock_nest ++;
@@ -892,7 +915,9 @@ void rt_exit_critical(void)
 
     current_thread->scheduler_lock_nest --;
 
-    if (current_thread->scheduler_lock_nest == !!current_thread->cpus_lock_nest)
+    current_thread->critical_lock_nest --;
+
+    if (current_thread->critical_lock_nest == 0)
     {
         rt_hw_spin_unlock(&_rt_critical_lock);
     }
@@ -951,9 +976,9 @@ rt_uint16_t rt_critical_level(void)
 #ifdef RT_USING_SMP
     struct rt_thread *current_thread = rt_cpu_self()->current_thread;
 
-    return current_thread->scheduler_lock_nest;
+    return current_thread->critical_lock_nest;
 #else
-	return rt_scheduler_lock_nest;
+    return rt_scheduler_lock_nest;
 #endif /*RT_USING_SMP*/
 }
 RTM_EXPORT(rt_critical_level);

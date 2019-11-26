@@ -281,8 +281,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             utils.ReloadModule(rtconfig)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
-    if rtconfig.PLATFORM == 'armcc':
-        if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
+    if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+        if rtconfig.PLATFORM == 'armcc' and not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
             if rtconfig.EXEC_PATH.find('bin40') > 0:
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
                 Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('RV31', 'armcc')
@@ -314,7 +314,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
 
     # add program path
-    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env.PrependENVPath('PATH', os.environ['PATH'])
     # add rtconfig.h/BSP path into Kernel group
     DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 

@@ -137,6 +137,9 @@ struct netdev_ops
     int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp);
     void (*netstat)(struct netdev *netdev);
 #endif
+
+    /* set default network interface device in current network stack*/
+    int (*set_default)(struct netdev *netdev);
 };
 
 /* The network interface device registered and unregistered*/

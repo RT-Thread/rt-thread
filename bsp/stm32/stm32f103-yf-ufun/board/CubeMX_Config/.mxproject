@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=F:/rt-thread/bsp/stm32/stm32f103-yf-ufun/board/CubeMX_Config/Inc
+HeaderPath=D:/rt-thread/bsp/stm32/stm32f103-yf-ufun/board/CubeMX_Config/Inc
 HeaderFiles=stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;
-SourcePath=F:/rt-thread/bsp/stm32/stm32f103-yf-ufun/board/CubeMX_Config/Src
+SourcePath=D:/rt-thread/bsp/stm32/stm32f103-yf-ufun/board/CubeMX_Config/Src
 SourceFiles=stm32f1xx_it.c;stm32f1xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

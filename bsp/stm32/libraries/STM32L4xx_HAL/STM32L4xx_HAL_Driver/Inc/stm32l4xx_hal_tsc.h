@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -86,8 +70,8 @@ typedef struct
                                          This parameter can be a value of @ref TSC_CTPulseHL_Config  */
   uint32_t CTPulseLowLength;        /*!< Charge-transfer low pulse length
                                          This parameter can be a value of @ref TSC_CTPulseLL_Config  */
-  uint32_t SpreadSpectrum;          /*!< Spread spectrum activation
-                                         This parameter can be a value of @ref TSC_CTPulseLL_Config  */
+  FunctionalState SpreadSpectrum;   /*!< Spread spectrum activation
+                                         This parameter can be set to ENABLE or DISABLE. */
   uint32_t SpreadSpectrumDeviation; /*!< Spread spectrum deviation
                                          This parameter must be a number between Min_Data = 0 and Max_Data = 127 */
   uint32_t SpreadSpectrumPrescaler; /*!< Spread spectrum prescaler
@@ -102,7 +86,7 @@ typedef struct
                                          This parameter can be a value of @ref TSC_Synchro_Pin_Polarity */
   uint32_t AcquisitionMode;         /*!< Acquisition mode
                                          This parameter can be a value of @ref TSC_Acquisition_Mode  */
-  uint32_t MaxCountInterrupt;       /*!< Max count interrupt activation
+  FunctionalState MaxCountInterrupt;/*!< Max count interrupt activation
                                          This parameter can be set to ENABLE or DISABLE. */
   uint32_t ChannelIOs;              /*!< Channel IOs mask */
   uint32_t ShieldIOs;               /*!< Shield IOs mask */
@@ -140,10 +124,7 @@ typedef struct __TSC_HandleTypeDef
 #endif  /* USE_HAL_TSC_REGISTER_CALLBACKS */
 } TSC_HandleTypeDef;
 
-/**
-  * @brief  TSC Group Index Structure definition
-  */
-typedef enum
+enum
 {
   TSC_GROUP1_IDX = 0x00UL,
   TSC_GROUP2_IDX,
@@ -162,7 +143,7 @@ typedef enum
   TSC_GROUP8_IDX,
 #endif
   TSC_NB_OF_GROUPS
-}TSC_GroupIndexTypeDef;
+};
 
 #if (USE_HAL_TSC_REGISTER_CALLBACKS == 1)
 /**
@@ -338,21 +319,21 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
 /** @defgroup TSC_Group_definition Group definition
   * @{
   */
-#define TSC_GROUP1              (uint32_t)(0x1UL << TSC_GROUP1_IDX)
-#define TSC_GROUP2              (uint32_t)(0x1UL << TSC_GROUP2_IDX)
-#define TSC_GROUP3              (uint32_t)(0x1UL << TSC_GROUP3_IDX)
-#define TSC_GROUP4              (uint32_t)(0x1UL << TSC_GROUP4_IDX)
+#define TSC_GROUP1              (0x1UL << TSC_GROUP1_IDX)
+#define TSC_GROUP2              (0x1UL << TSC_GROUP2_IDX)
+#define TSC_GROUP3              (0x1UL << TSC_GROUP3_IDX)
+#define TSC_GROUP4              (0x1UL << TSC_GROUP4_IDX)
 #if defined(TSC_IOCCR_G5_IO1)
-#define TSC_GROUP5              (uint32_t)(0x1UL << TSC_GROUP5_IDX)
+#define TSC_GROUP5              (0x1UL << TSC_GROUP5_IDX)
 #endif
 #if defined(TSC_IOCCR_G6_IO1)
-#define TSC_GROUP6              (uint32_t)(0x1UL << TSC_GROUP6_IDX)
+#define TSC_GROUP6              (0x1UL << TSC_GROUP6_IDX)
 #endif
 #if defined(TSC_IOCCR_G7_IO1)
-#define TSC_GROUP7              (uint32_t)(0x1UL << TSC_GROUP7_IDX)
+#define TSC_GROUP7              (0x1UL << TSC_GROUP7_IDX)
 #endif
 #if defined(TSC_IOCCR_G8_IO1)
-#define TSC_GROUP8              (uint32_t)(0x1UL << TSC_GROUP8_IDX)
+#define TSC_GROUP8              (0x1UL << TSC_GROUP8_IDX)
 #endif
 
 #define TSC_GROUPX_NOT_SUPPORTED        0xFF000000UL    /*!< TSC GroupX not supported       */
@@ -468,7 +449,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __HANDLE__ TSC handle
   * @retval None
   */
-#define __HAL_TSC_DISABLE(__HANDLE__)                              ((__HANDLE__)->Instance->CR &= (uint32_t)(~TSC_CR_TSCE))
+#define __HAL_TSC_DISABLE(__HANDLE__)                              ((__HANDLE__)->Instance->CR &= (~TSC_CR_TSCE))
 
 /**
   * @brief Start acquisition.
@@ -482,14 +463,14 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __HANDLE__ TSC handle
   * @retval None
   */
-#define __HAL_TSC_STOP_ACQ(__HANDLE__)                             ((__HANDLE__)->Instance->CR &= (uint32_t)(~TSC_CR_START))
+#define __HAL_TSC_STOP_ACQ(__HANDLE__)                             ((__HANDLE__)->Instance->CR &= (~TSC_CR_START))
 
 /**
   * @brief Set IO default mode to output push-pull low.
   * @param  __HANDLE__ TSC handle
   * @retval None
   */
-#define __HAL_TSC_SET_IODEF_OUTPPLOW(__HANDLE__)                   ((__HANDLE__)->Instance->CR &= (uint32_t)(~TSC_CR_IODEF))
+#define __HAL_TSC_SET_IODEF_OUTPPLOW(__HANDLE__)                   ((__HANDLE__)->Instance->CR &= (~TSC_CR_IODEF))
 
 /**
   * @brief Set IO default mode to input floating.
@@ -503,7 +484,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __HANDLE__ TSC handle
   * @retval None
   */
-#define __HAL_TSC_SET_SYNC_POL_FALL(__HANDLE__)                    ((__HANDLE__)->Instance->CR &= (uint32_t)(~TSC_CR_SYNCPOL))
+#define __HAL_TSC_SET_SYNC_POL_FALL(__HANDLE__)                    ((__HANDLE__)->Instance->CR &= (~TSC_CR_SYNCPOL))
 
 /**
   * @brief Set synchronization polarity to rising edge and high level.
@@ -526,7 +507,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __INTERRUPT__ TSC interrupt
   * @retval None
   */
-#define __HAL_TSC_DISABLE_IT(__HANDLE__, __INTERRUPT__)            ((__HANDLE__)->Instance->IER &= (uint32_t)(~(__INTERRUPT__)))
+#define __HAL_TSC_DISABLE_IT(__HANDLE__, __INTERRUPT__)            ((__HANDLE__)->Instance->IER &= (~(__INTERRUPT__)))
 
 /** @brief Check whether the specified TSC interrupt source is enabled or not.
   * @param  __HANDLE__ TSC Handle
@@ -565,7 +546,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __GX_IOY_MASK__ IOs mask
   * @retval None
   */
-#define __HAL_TSC_DISABLE_HYSTERESIS(__HANDLE__, __GX_IOY_MASK__)  ((__HANDLE__)->Instance->IOHCR &= (uint32_t)(~(__GX_IOY_MASK__)))
+#define __HAL_TSC_DISABLE_HYSTERESIS(__HANDLE__, __GX_IOY_MASK__)  ((__HANDLE__)->Instance->IOHCR &= (~(__GX_IOY_MASK__)))
 
 /**
   * @brief Open analog switch on a group of IOs.
@@ -573,7 +554,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __GX_IOY_MASK__ IOs mask
   * @retval None
   */
-#define __HAL_TSC_OPEN_ANALOG_SWITCH(__HANDLE__, __GX_IOY_MASK__)  ((__HANDLE__)->Instance->IOASCR &= (uint32_t)(~(__GX_IOY_MASK__)))
+#define __HAL_TSC_OPEN_ANALOG_SWITCH(__HANDLE__, __GX_IOY_MASK__)  ((__HANDLE__)->Instance->IOASCR &= (~(__GX_IOY_MASK__)))
 
 /**
   * @brief Close analog switch on a group of IOs.
@@ -597,7 +578,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __GX_IOY_MASK__ IOs mask
   * @retval None
   */
-#define __HAL_TSC_DISABLE_CHANNEL(__HANDLE__, __GX_IOY_MASK__)     ((__HANDLE__)->Instance->IOCCR &= (uint32_t)(~(__GX_IOY_MASK__)))
+#define __HAL_TSC_DISABLE_CHANNEL(__HANDLE__, __GX_IOY_MASK__)     ((__HANDLE__)->Instance->IOCCR &= (~(__GX_IOY_MASK__)))
 
 /**
   * @brief Enable a group of IOs in sampling mode.
@@ -613,7 +594,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __GX_IOY_MASK__ IOs mask
   * @retval None
   */
-#define __HAL_TSC_DISABLE_SAMPLING(__HANDLE__, __GX_IOY_MASK__) ((__HANDLE__)->Instance->IOSCR &= (uint32_t)(~(__GX_IOY_MASK__)))
+#define __HAL_TSC_DISABLE_SAMPLING(__HANDLE__, __GX_IOY_MASK__) ((__HANDLE__)->Instance->IOSCR &= (~(__GX_IOY_MASK__)))
 
 /**
   * @brief Enable acquisition groups.
@@ -629,7 +610,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @param  __GX_MASK__ Groups mask
   * @retval None
   */
-#define __HAL_TSC_DISABLE_GROUP(__HANDLE__, __GX_MASK__) ((__HANDLE__)->Instance->IOGCSR &= (uint32_t)(~(__GX_MASK__)))
+#define __HAL_TSC_DISABLE_GROUP(__HANDLE__, __GX_MASK__) ((__HANDLE__)->Instance->IOGCSR &= (~(__GX_MASK__)))
 
 /** @brief Gets acquisition group status.
   * @param  __HANDLE__ TSC Handle
@@ -637,7 +618,7 @@ typedef  void (*pTSC_CallbackTypeDef)(TSC_HandleTypeDef *htsc); /*!< pointer to 
   * @retval SET or RESET
   */
 #define __HAL_TSC_GET_GROUP_STATUS(__HANDLE__, __GX_INDEX__) \
-((((__HANDLE__)->Instance->IOGCSR & (uint32_t)(1UL << (((__GX_INDEX__) & (uint32_t)TSC_NB_OF_GROUPS) + 16UL))) == (uint32_t)(1UL << (((__GX_INDEX__) & (uint32_t)TSC_NB_OF_GROUPS) + 16UL))) ? TSC_GROUP_COMPLETED : TSC_GROUP_ONGOING)
+((((__HANDLE__)->Instance->IOGCSR & (uint32_t)(1UL << (((__GX_INDEX__) & 0xFUL) + 16UL))) == (uint32_t)(1UL << (((__GX_INDEX__) & 0xFUL) + 16UL))) ? TSC_GROUP_COMPLETED : TSC_GROUP_ONGOING)
 
 /**
   * @}
@@ -798,7 +779,7 @@ uint32_t HAL_TSC_GroupGetValue(TSC_HandleTypeDef *htsc, uint32_t gx_index);
   */
 /* Peripheral Control functions ***********************************************/
 HAL_StatusTypeDef HAL_TSC_IOConfig(TSC_HandleTypeDef *htsc, TSC_IOConfigTypeDef *config);
-HAL_StatusTypeDef HAL_TSC_IODischarge(TSC_HandleTypeDef *htsc, uint32_t choice);
+HAL_StatusTypeDef HAL_TSC_IODischarge(TSC_HandleTypeDef *htsc, FunctionalState choice);
 /**
   * @}
   */

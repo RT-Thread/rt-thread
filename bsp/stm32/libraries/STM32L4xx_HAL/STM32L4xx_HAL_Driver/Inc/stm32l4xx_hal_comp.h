@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_HAL_COMP_H
-#define __STM32L4xx_HAL_COMP_H
+#ifndef STM32L4xx_HAL_COMP_H
+#define STM32L4xx_HAL_COMP_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,13 +38,13 @@ extern "C" {
   * @{
   */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup COMP_Exported_Types COMP Exported Types
   * @{
   */
 
-/** 
-  * @brief  COMP Init structure definition  
+/**
+  * @brief  COMP Init structure definition
   */
 typedef struct
 {
@@ -95,7 +79,7 @@ typedef struct
   uint32_t TriggerMode;        /*!< Set the comparator output triggering External Interrupt Line (EXTI).
                                     This parameter can be a value of @ref COMP_EXTI_TriggerMode */
 
-}COMP_InitTypeDef;
+} COMP_InitTypeDef;
 
 /**
   * @brief  HAL COMP state machine: HAL COMP states definition
@@ -109,12 +93,16 @@ typedef enum
   HAL_COMP_STATE_READY_LOCKED      = (HAL_COMP_STATE_READY | COMP_STATE_BITFIELD_LOCK), /*!< COMP initialized but configuration is locked         */
   HAL_COMP_STATE_BUSY              = 0x02U,                                             /*!< COMP is running                                      */
   HAL_COMP_STATE_BUSY_LOCKED       = (HAL_COMP_STATE_BUSY | COMP_STATE_BITFIELD_LOCK)   /*!< COMP is running and configuration is locked          */
-}HAL_COMP_StateTypeDef;
+} HAL_COMP_StateTypeDef;
 
-/** 
+/**
   * @brief  COMP Handle Structure definition
   */
+#if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
 typedef struct __COMP_HandleTypeDef
+#else
+typedef struct
+#endif
 {
   COMP_TypeDef       *Instance;       /*!< Register base address    */
   COMP_InitTypeDef   Init;            /*!< COMP required parameters */
@@ -307,10 +295,10 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @retval None
   */
 #if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
-#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) do{                                                 \
-                                                     (__HANDLE__)->State = HAL_COMP_STATE_RESET;      \
-                                                     (__HANDLE__)->MspInitCallback = NULL;            \
-                                                     (__HANDLE__)->MspDeInitCallback = NULL;          \
+#define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) do{                                                  \
+                                                      (__HANDLE__)->State = HAL_COMP_STATE_RESET;      \
+                                                      (__HANDLE__)->MspInitCallback = NULL;            \
+                                                      (__HANDLE__)->MspDeInitCallback = NULL;          \
                                                     } while(0)
 #else
 #define __HAL_COMP_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_COMP_STATE_RESET)
@@ -321,7 +309,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @param __HANDLE__ COMP handle
   * @retval None
   */
-#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE) 
+#define COMP_CLEAR_ERRORCODE(__HANDLE__) ((__HANDLE__)->ErrorCode = HAL_COMP_ERROR_NONE)
 
 /**
   * @brief  Enable the specified comparator.
@@ -399,7 +387,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 /**
   * @brief  Disable the COMP1 EXTI line rising & falling edge trigger.
   * @retval None
-  */                                         
+  */
 #define __HAL_COMP_COMP1_EXTI_DISABLE_RISING_FALLING_EDGE()  do { \
                                                                LL_EXTI_DisableRisingTrig_0_31(COMP_EXTI_LINE_COMP1); \
                                                                LL_EXTI_DisableFallingTrig_0_31(COMP_EXTI_LINE_COMP1); \
@@ -579,7 +567,7 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @{
   */
 
-/** @defgroup COMP_GET_EXTI_LINE COMP private macros to get EXTI line associated with comparators 
+/** @defgroup COMP_GET_EXTI_LINE COMP private macros to get EXTI line associated with comparators
   * @{
   */
 /**
@@ -588,8 +576,8 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
   * @retval value of @ref COMP_ExtiLine
   */
 #if defined(COMP2)
-#define COMP_GET_EXTI_LINE(__INSTANCE__)    (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1 \
-                                            : COMP_EXTI_LINE_COMP2)
+#define COMP_GET_EXTI_LINE(__INSTANCE__)    (((__INSTANCE__) == COMP1) ? COMP_EXTI_LINE_COMP1  \
+                                             : COMP_EXTI_LINE_COMP2)
 #else
 #define COMP_GET_EXTI_LINE(__INSTANCE__)    COMP_EXTI_LINE_COMP1
 #endif /* COMP2 */
@@ -760,13 +748,14 @@ typedef  void (*pCOMP_CallbackTypeDef)(COMP_HandleTypeDef *hcomp); /*!< pointer 
 
 /* Initialization and de-initialization functions  **********************************/
 HAL_StatusTypeDef HAL_COMP_Init(COMP_HandleTypeDef *hcomp);
-HAL_StatusTypeDef HAL_COMP_DeInit (COMP_HandleTypeDef *hcomp);
+HAL_StatusTypeDef HAL_COMP_DeInit(COMP_HandleTypeDef *hcomp);
 void              HAL_COMP_MspInit(COMP_HandleTypeDef *hcomp);
 void              HAL_COMP_MspDeInit(COMP_HandleTypeDef *hcomp);
 
 #if (USE_HAL_COMP_REGISTER_CALLBACKS == 1)
 /* Callbacks Register/UnRegister functions  ***********************************/
-HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_CallbackIDTypeDef CallbackID, pCOMP_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_COMP_RegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_CallbackIDTypeDef CallbackID,
+                                            pCOMP_CallbackTypeDef pCallback);
 HAL_StatusTypeDef HAL_COMP_UnRegisterCallback(COMP_HandleTypeDef *hcomp, HAL_COMP_CallbackIDTypeDef CallbackID);
 #endif /* USE_HAL_COMP_REGISTER_CALLBACKS */
 /**
@@ -822,6 +811,6 @@ uint32_t              HAL_COMP_GetError(COMP_HandleTypeDef *hcomp);
 }
 #endif
 
-#endif /* __STM32L4xx_HAL_COMP_H */
+#endif /* STM32L4xx_HAL_COMP_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

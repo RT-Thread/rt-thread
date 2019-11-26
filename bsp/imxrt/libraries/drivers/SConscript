@@ -40,6 +40,9 @@ if GetDepend('BSP_USING_SDRAM'):
 if GetDepend('BSP_USING_LCD'):
     src += ['drv_lcd.c']
 
+if GetDepend('BSP_USING_ETH'):
+    src += ['drv_eth.c']
+
 path =  [cwd,cwd + '/config']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

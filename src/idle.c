@@ -51,11 +51,11 @@ ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t rt_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
 #ifdef RT_USING_IDLE_HOOK
-#ifndef RT_IDEL_HOOK_LIST_SIZE
-#define RT_IDEL_HOOK_LIST_SIZE  4
+#ifndef RT_IDLE_HOOK_LIST_SIZE
+#define RT_IDLE_HOOK_LIST_SIZE  4
 #endif
 
-static void (*idle_hook_list[RT_IDEL_HOOK_LIST_SIZE])(void);
+static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
 
 /**
  * @ingroup Hook
@@ -78,7 +78,7 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
+    for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
     {
         if (idle_hook_list[i] == RT_NULL)
         {
@@ -110,7 +110,7 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
+    for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
     {
         if (idle_hook_list[i] == hook)
         {
@@ -246,7 +246,7 @@ static void rt_thread_idle_entry(void *parameter)
 #ifdef RT_USING_IDLE_HOOK
         rt_size_t i;
 
-        for (i = 0; i < RT_IDEL_HOOK_LIST_SIZE; i++)
+        for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
         {
             if (idle_hook_list[i] != RT_NULL)
             {

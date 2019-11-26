@@ -33,6 +33,7 @@
 .globl stack_start
 .globl stack_top
 
+.align 3
 stack_start:
 .rept ISR_Stack_Size
 .long 0

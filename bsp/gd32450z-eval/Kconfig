@@ -21,6 +21,12 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
+config SOC_GD32450Z
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 config BSP_USING_SDRAM
     bool "Using sdram"
     default y 

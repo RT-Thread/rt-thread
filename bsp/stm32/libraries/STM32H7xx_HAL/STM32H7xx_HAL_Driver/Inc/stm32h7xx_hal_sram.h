@@ -8,58 +8,41 @@
   *
   * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                       opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_SRAM_H
-#define __STM32H7xx_HAL_SRAM_H
+#ifndef STM32H7xx_HAL_SRAM_H
+#define STM32H7xx_HAL_SRAM_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
+
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_ll_fmc.h"
-#include "stm32h7xx_hal_mdma.h"
 
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
   */
 /** @addtogroup SRAM
   * @{
-  */ 
+  */
 
 /* Exported typedef ----------------------------------------------------------*/
 
 /** @defgroup SRAM_Exported_Types SRAM Exported Types
   * @{
   */
-/** 
-  * @brief  HAL SRAM State structures definition  
-  */ 
+/**
+  * @brief  HAL SRAM State structures definition
+  */
 typedef enum
 {
   HAL_SRAM_STATE_RESET     = 0x00U,  /*!< SRAM not yet initialized or disabled           */
@@ -67,28 +50,56 @@ typedef enum
   HAL_SRAM_STATE_BUSY      = 0x02U,  /*!< SRAM internal process is ongoing               */
   HAL_SRAM_STATE_ERROR     = 0x03U,  /*!< SRAM error state                               */
   HAL_SRAM_STATE_PROTECTED = 0x04U   /*!< SRAM peripheral NORSRAM device write protected */
-  
-}HAL_SRAM_StateTypeDef;
 
-/** 
-  * @brief  SRAM handle Structure definition  
-  */ 
+} HAL_SRAM_StateTypeDef;
+
+/**
+  * @brief  SRAM handle Structure definition
+  */
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+typedef struct __SRAM_HandleTypeDef
+#else
 typedef struct
+#endif /* USE_HAL_SRAM_REGISTER_CALLBACKS  */	
 {
-  FMC_NORSRAM_TypeDef           *Instance;  /*!< Register base address                        */ 
-  
+  FMC_NORSRAM_TypeDef           *Instance;  /*!< Register base address                        */
+
   FMC_NORSRAM_EXTENDED_TypeDef  *Extended;  /*!< Extended mode register base address          */
-  
+
   FMC_NORSRAM_InitTypeDef       Init;       /*!< SRAM device control configuration parameters */
 
-  HAL_LockTypeDef               Lock;       /*!< SRAM locking object                          */ 
-  
-  __IO HAL_SRAM_StateTypeDef    State;      /*!< SRAM device access state                     */
-  
-  MDMA_HandleTypeDef             *hmdma;      /*!< Pointer DMA handler                          */
-  
-}SRAM_HandleTypeDef; 
+  HAL_LockTypeDef               Lock;       /*!< SRAM locking object                          */
 
+  __IO HAL_SRAM_StateTypeDef    State;      /*!< SRAM device access state                     */
+
+  MDMA_HandleTypeDef             *hmdma;      /*!< Pointer DMA handler                          */
+
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+  void  (* MspInitCallback)        ( struct __SRAM_HandleTypeDef * hsram);    /*!< SRAM Msp Init callback              */
+  void  (* MspDeInitCallback)      ( struct __SRAM_HandleTypeDef * hsram);    /*!< SRAM Msp DeInit callback            */
+  void  (* DmaXferCpltCallback)    ( MDMA_HandleTypeDef * hmdma);               /*!< SRAM DMA Xfer Complete callback     */
+  void  (* DmaXferErrorCallback)   ( MDMA_HandleTypeDef * hmdma);               /*!< SRAM DMA Xfer Error callback        */
+#endif
+} SRAM_HandleTypeDef;
+
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL SRAM Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_SRAM_MSP_INIT_CB_ID       = 0x00U,  /*!< SRAM MspInit Callback ID           */
+  HAL_SRAM_MSP_DEINIT_CB_ID     = 0x01U,  /*!< SRAM MspDeInit Callback ID         */
+  HAL_SRAM_DMA_XFER_CPLT_CB_ID  = 0x02U,  /*!< SRAM DMA Xfer Complete Callback ID */
+  HAL_SRAM_DMA_XFER_ERR_CB_ID   = 0x03U   /*!< SRAM DMA Xfer Complete Callback ID */
+}HAL_SRAM_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL SRAM Callback pointer definition
+  */
+typedef void (*pSRAM_CallbackTypeDef)(SRAM_HandleTypeDef *hsram);
+typedef void (*pSRAM_DmaCallbackTypeDef)(MDMA_HandleTypeDef *hmdma);
+#endif
 /**
   * @}
   */
@@ -101,10 +112,18 @@ typedef struct
  */
 
 /** @brief Reset SRAM handle state
-  * @param  __HANDLE__: SRAM handle
+  * @param  __HANDLE__ SRAM handle
   * @retval None
   */
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+#define __HAL_SRAM_RESET_HANDLE_STATE(__HANDLE__)         do {                                             \
+                                                               (__HANDLE__)->State = HAL_SRAM_STATE_RESET; \
+                                                               (__HANDLE__)->MspInitCallback = NULL;       \
+                                                               (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                             } while(0)
+#else
 #define __HAL_SRAM_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_SRAM_STATE_RESET)
+#endif
 
 /**
   * @}
@@ -146,10 +165,17 @@ HAL_StatusTypeDef HAL_SRAM_Write_DMA(SRAM_HandleTypeDef *hsram, uint32_t *pAddre
 void HAL_SRAM_DMA_XferCpltCallback(MDMA_HandleTypeDef *hmdma);
 void HAL_SRAM_DMA_XferErrorCallback(MDMA_HandleTypeDef *hmdma);
 
+#if (USE_HAL_SRAM_REGISTER_CALLBACKS == 1)
+/* SRAM callback registering/unregistering */
+HAL_StatusTypeDef HAL_SRAM_RegisterCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId, pSRAM_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SRAM_UnRegisterCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId);
+HAL_StatusTypeDef HAL_SRAM_RegisterDmaCallback(SRAM_HandleTypeDef *hsram, HAL_SRAM_CallbackIDTypeDef CallbackId, pSRAM_DmaCallbackTypeDef pCallback);
+#endif
+
 /**
   * @}
   */
-  
+
 /** @addtogroup SRAM_Exported_Functions_Group3 Control functions
  * @{
  */
@@ -171,24 +197,25 @@ HAL_SRAM_StateTypeDef HAL_SRAM_GetState(SRAM_HandleTypeDef *hsram);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
   */
-  
-/**
-  * @}
-  */ 
 
 /**
   * @}
   */
-  
+
+/**
+  * @}
+  */
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_SRAM_H */
+#endif /* STM32H7xx_HAL_SRAM_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

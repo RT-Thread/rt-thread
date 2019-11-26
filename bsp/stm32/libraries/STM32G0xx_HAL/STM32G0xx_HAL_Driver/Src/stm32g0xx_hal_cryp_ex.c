@@ -9,11 +9,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -100,7 +100,7 @@ HAL_StatusTypeDef HAL_CRYPEx_AESGCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, u
 {
   uint32_t tickstart;
   uint64_t headerlength = (uint64_t)hcryp->Init.HeaderSize * 32U; /* Header length in bits */
-  uint64_t inputlength = (uint64_t)hcryp->Size * 8U; /* input length in bits */
+  uint64_t inputlength = (uint64_t)hcryp->SizesSum * 8U; /* input length in bits */
   uint32_t tagaddr = (uint32_t)AuthTag;
 
   if (hcryp->State == HAL_CRYP_STATE_READY)
@@ -139,7 +139,7 @@ HAL_StatusTypeDef HAL_CRYPEx_AESGCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, u
     /* Set the encrypt operating mode*/
     MODIFY_REG(hcryp->Instance->CR, AES_CR_MODE, CRYP_OPERATINGMODE_ENCRYPT);
 
-    /*TinyAES IP from V3.1.1 : data has to be inserted normally (no swapping)*/
+    /*TinyAES peripheral from V3.1.1 : data has to be inserted normally (no swapping)*/
     /* Write into the AES_DINR register the number of bits in header (64 bits)
     followed by the number of bits in the payload */
 
@@ -219,6 +219,10 @@ HAL_StatusTypeDef HAL_CRYPEx_AESCCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, u
   {
     /* Process locked */
     __HAL_LOCK(hcryp);
+
+    /* Disable interrupts in case they were kept enabled to proceed
+       a single message in several iterations */
+    __HAL_CRYP_DISABLE_IT(hcryp, CRYP_IT_CCFIE | CRYP_IT_ERRIE);
 
     /* Change the CRYP peripheral state */
     hcryp->State = HAL_CRYP_STATE_BUSY;
@@ -318,7 +322,7 @@ HAL_StatusTypeDef HAL_CRYPEx_AESCCM_GenerateAuthTAG(CRYP_HandleTypeDef *hcryp, u
   ==============================================================================
     [..]  This section provides functions allowing to Enable or Disable the
           the AutoKeyDerivation parameter in CRYP_HandleTypeDef structure
-          These function are allowed only in TinyAES IP.
+          These function are allowed only in TinyAES peripheral.
 @endverbatim
   * @{
   */

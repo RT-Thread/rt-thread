@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F103ZE
     bool
     select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -200,7 +202,18 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-	
+
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        default n
+        select RT_USING_PULSE_ENCODER
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER3
+                bool "Enable Pulse Encoder3"
+                default n
+
+        endif
+
  source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu

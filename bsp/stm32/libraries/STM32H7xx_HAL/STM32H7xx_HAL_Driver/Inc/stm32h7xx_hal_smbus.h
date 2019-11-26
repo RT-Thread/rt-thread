@@ -6,39 +6,23 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_SMBUS_H
-#define __STM32H7xx_HAL_SMBUS_H
+#ifndef STM32H7xx_HAL_SMBUS_H
+#define STM32H7xx_HAL_SMBUS_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -97,7 +81,7 @@ typedef struct
                                      This parameter can be a value of @ref SMBUS_peripheral_mode */
 
   uint32_t SMBusTimeout;           /*!< Specifies the content of the 32 Bits SMBUS_TIMEOUT_register value.
-                                     (Enable bits and different timeout values)
+                                      (Enable bits and different timeout values)
                                      This parameter calculated by referring to SMBUS initialization
                                          section in Reference manual */
 } SMBUS_InitTypeDef;
@@ -136,6 +120,10 @@ typedef struct
 #define HAL_SMBUS_ERROR_BUSTIMEOUT      (0x00000020U)    /*!< Bus Timeout error    */
 #define HAL_SMBUS_ERROR_ALERT           (0x00000040U)    /*!< Alert error          */
 #define HAL_SMBUS_ERROR_PECERR          (0x00000080U)    /*!< PEC error            */
+#if (USE_HAL_SMBUS_REGISTER_CALLBACKS == 1)
+#define HAL_SMBUS_ERROR_INVALID_CALLBACK  (0x00000100U)    /*!< Invalid Callback error */
+#endif /* USE_HAL_SMBUS_REGISTER_CALLBACKS */
+#define HAL_SMBUS_ERROR_INVALID_PARAM    (0x00000200U)   /*!< Invalid Parameters error */
 /**
   * @}
   */
@@ -144,7 +132,7 @@ typedef struct
   * @brief  SMBUS handle Structure definition
   * @{
   */
-typedef struct
+typedef struct __SMBUS_HandleTypeDef
 {
   I2C_TypeDef                  *Instance;       /*!< SMBUS registers base address       */
 
@@ -166,7 +154,47 @@ typedef struct
 
   __IO uint32_t                ErrorCode;       /*!< SMBUS Error code                   */
 
-}SMBUS_HandleTypeDef;
+#if (USE_HAL_SMBUS_REGISTER_CALLBACKS == 1)
+  void (* MasterTxCpltCallback)(struct __SMBUS_HandleTypeDef *hsmbus);           /*!< SMBUS Master Tx Transfer completed callback */
+  void (* MasterRxCpltCallback)(struct __SMBUS_HandleTypeDef *hsmbus);           /*!< SMBUS Master Rx Transfer completed callback */
+  void (* SlaveTxCpltCallback)(struct __SMBUS_HandleTypeDef *hsmbus);            /*!< SMBUS Slave Tx Transfer completed callback  */
+  void (* SlaveRxCpltCallback)(struct __SMBUS_HandleTypeDef *hsmbus);            /*!< SMBUS Slave Rx Transfer completed callback  */
+  void (* ListenCpltCallback)(struct __SMBUS_HandleTypeDef *hsmbus);             /*!< SMBUS Listen Complete callback              */
+  void (* ErrorCallback)(struct __SMBUS_HandleTypeDef *hsmbus);                  /*!< SMBUS Error callback                        */
+
+  void (* AddrCallback)(struct __SMBUS_HandleTypeDef *hsmbus, uint8_t TransferDirection, uint16_t AddrMatchCode);  /*!< SMBUS Slave Address Match callback */
+
+  void (* MspInitCallback)(struct __SMBUS_HandleTypeDef *hsmbus);                /*!< SMBUS Msp Init callback                     */
+  void (* MspDeInitCallback)(struct __SMBUS_HandleTypeDef *hsmbus);              /*!< SMBUS Msp DeInit callback                   */
+
+#endif  /* USE_HAL_SMBUS_REGISTER_CALLBACKS */
+} SMBUS_HandleTypeDef;
+
+#if (USE_HAL_SMBUS_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL SMBUS Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_SMBUS_MASTER_TX_COMPLETE_CB_ID      = 0x00U,    /*!< SMBUS Master Tx Transfer completed callback ID  */
+  HAL_SMBUS_MASTER_RX_COMPLETE_CB_ID      = 0x01U,    /*!< SMBUS Master Rx Transfer completed callback ID  */
+  HAL_SMBUS_SLAVE_TX_COMPLETE_CB_ID       = 0x02U,    /*!< SMBUS Slave Tx Transfer completed callback ID   */
+  HAL_SMBUS_SLAVE_RX_COMPLETE_CB_ID       = 0x03U,    /*!< SMBUS Slave Rx Transfer completed callback ID   */
+  HAL_SMBUS_LISTEN_COMPLETE_CB_ID         = 0x04U,    /*!< SMBUS Listen Complete callback ID               */
+  HAL_SMBUS_ERROR_CB_ID                   = 0x05U,    /*!< SMBUS Error callback ID                         */
+
+  HAL_SMBUS_MSPINIT_CB_ID                 = 0x06U,    /*!< SMBUS Msp Init callback ID                      */
+  HAL_SMBUS_MSPDEINIT_CB_ID               = 0x07U     /*!< SMBUS Msp DeInit callback ID                    */
+
+} HAL_SMBUS_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL SMBUS Callback pointer definition
+  */
+typedef  void (*pSMBUS_CallbackTypeDef)(SMBUS_HandleTypeDef *hsmbus); /*!< pointer to an SMBUS callback function */
+typedef  void (*pSMBUS_AddrCallbackTypeDef)(SMBUS_HandleTypeDef *hsmbus, uint8_t TransferDirection, uint16_t AddrMatchCode); /*!< pointer to an SMBUS Address Match callback function */
+
+#endif /* USE_HAL_SMBUS_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -208,7 +236,7 @@ typedef struct
   * @}
   */
 
-/** @defgroup SMBUS_own_address2_masks SMBUS own address2 masks
+/** @defgroup SMBUS_own_address2_masks SMBUS ownaddress2 masks
   * @{
   */
 
@@ -370,117 +398,125 @@ typedef struct
   */
 
 /** @brief  Reset SMBUS handle state.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
   * @retval None
   */
-#define __HAL_SMBUS_RESET_HANDLE_STATE(__HANDLE__)      ((__HANDLE__)->State = HAL_SMBUS_STATE_RESET)
+#if (USE_HAL_SMBUS_REGISTER_CALLBACKS == 1)
+#define __HAL_SMBUS_RESET_HANDLE_STATE(__HANDLE__)           do{                                                   \
+                                                                (__HANDLE__)->State = HAL_SMBUS_STATE_RESET;       \
+                                                                (__HANDLE__)->MspInitCallback = NULL;            \
+                                                                (__HANDLE__)->MspDeInitCallback = NULL;          \
+                                                             } while(0)
+#else
+#define __HAL_SMBUS_RESET_HANDLE_STATE(__HANDLE__)         ((__HANDLE__)->State = HAL_SMBUS_STATE_RESET)
+#endif
 
 /** @brief  Enable the specified SMBUS interrupts.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
-  * @param  __INTERRUPT__: specifies the interrupt source to enable.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
+  * @param  __INTERRUPT__ specifies the interrupt source to enable.
   *        This parameter can be one of the following values:
-  *            @arg SMBUS_IT_ERRI: Errors interrupt enable
-  *            @arg SMBUS_IT_TCI: Transfer complete interrupt enable
-  *            @arg SMBUS_IT_STOPI: STOP detection interrupt enable
-  *            @arg SMBUS_IT_NACKI: NACK received interrupt enable
-  *            @arg SMBUS_IT_ADDRI: Address match interrupt enable
-  *            @arg SMBUS_IT_RXI: RX interrupt enable
-  *            @arg SMBUS_IT_TXI: TX interrupt enable
+  *            @arg @ref SMBUS_IT_ERRI  Errors interrupt enable
+  *            @arg @ref SMBUS_IT_TCI   Transfer complete interrupt enable
+  *            @arg @ref SMBUS_IT_STOPI STOP detection interrupt enable
+  *            @arg @ref SMBUS_IT_NACKI NACK received interrupt enable
+  *            @arg @ref SMBUS_IT_ADDRI Address match interrupt enable
+  *            @arg @ref SMBUS_IT_RXI   RX interrupt enable
+  *            @arg @ref SMBUS_IT_TXI   TX interrupt enable
   *
   * @retval None
   */
 #define __HAL_SMBUS_ENABLE_IT(__HANDLE__, __INTERRUPT__)   ((__HANDLE__)->Instance->CR1 |= (__INTERRUPT__))
 
 /** @brief  Disable the specified SMBUS interrupts.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
-  * @param  __INTERRUPT__: specifies the interrupt source to disable.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
+  * @param  __INTERRUPT__ specifies the interrupt source to disable.
   *        This parameter can be one of the following values:
-  *            @arg SMBUS_IT_ERRI: Errors interrupt enable
-  *            @arg SMBUS_IT_TCI: Transfer complete interrupt enable
-  *            @arg SMBUS_IT_STOPI: STOP detection interrupt enable
-  *            @arg SMBUS_IT_NACKI: NACK received interrupt enable
-  *            @arg SMBUS_IT_ADDRI: Address match interrupt enable
-  *            @arg SMBUS_IT_RXI: RX interrupt enable
-  *            @arg SMBUS_IT_TXI: TX interrupt enable
+  *            @arg @ref SMBUS_IT_ERRI  Errors interrupt enable
+  *            @arg @ref SMBUS_IT_TCI   Transfer complete interrupt enable
+  *            @arg @ref SMBUS_IT_STOPI STOP detection interrupt enable
+  *            @arg @ref SMBUS_IT_NACKI NACK received interrupt enable
+  *            @arg @ref SMBUS_IT_ADDRI Address match interrupt enable
+  *            @arg @ref SMBUS_IT_RXI   RX interrupt enable
+  *            @arg @ref SMBUS_IT_TXI   TX interrupt enable
   *
   * @retval None
   */
 #define __HAL_SMBUS_DISABLE_IT(__HANDLE__, __INTERRUPT__)  ((__HANDLE__)->Instance->CR1 &= (~(__INTERRUPT__)))
 
 /** @brief  Check whether the specified SMBUS interrupt source is enabled or not.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
-  * @param  __INTERRUPT__: specifies the SMBUS interrupt source to check.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
+  * @param  __INTERRUPT__ specifies the SMBUS interrupt source to check.
   *          This parameter can be one of the following values:
-  *            @arg SMBUS_IT_ERRI: Errors interrupt enable
-  *            @arg SMBUS_IT_TCI: Transfer complete interrupt enable
-  *            @arg SMBUS_IT_STOPI: STOP detection interrupt enable
-  *            @arg SMBUS_IT_NACKI: NACK received interrupt enable
-  *            @arg SMBUS_IT_ADDRI: Address match interrupt enable
-  *            @arg SMBUS_IT_RXI: RX interrupt enable
-  *            @arg SMBUS_IT_TXI: TX interrupt enable
+  *            @arg @ref SMBUS_IT_ERRI  Errors interrupt enable
+  *            @arg @ref SMBUS_IT_TCI   Transfer complete interrupt enable
+  *            @arg @ref SMBUS_IT_STOPI STOP detection interrupt enable
+  *            @arg @ref SMBUS_IT_NACKI NACK received interrupt enable
+  *            @arg @ref SMBUS_IT_ADDRI Address match interrupt enable
+  *            @arg @ref SMBUS_IT_RXI   RX interrupt enable
+  *            @arg @ref SMBUS_IT_TXI   TX interrupt enable
   *
-  * @retval The new state of __IT__ (TRUE or FALSE).
+  * @retval The new state of __IT__ (SET or RESET).
   */
 #define __HAL_SMBUS_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((((__HANDLE__)->Instance->CR1 & (__INTERRUPT__)) == (__INTERRUPT__)) ? SET : RESET)
 
 /** @brief  Check whether the specified SMBUS flag is set or not.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
-  * @param  __FLAG__: specifies the flag to check.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
+  * @param  __FLAG__ specifies the flag to check.
   *        This parameter can be one of the following values:
-  *            @arg SMBUS_FLAG_TXE:     Transmit data register empty
-  *            @arg SMBUS_FLAG_TXIS:    Transmit interrupt status
-  *            @arg SMBUS_FLAG_RXNE:    Receive data register not empty
-  *            @arg SMBUS_FLAG_ADDR:    Address matched (slave mode)
-  *            @arg SMBUS_FLAG_AF:      NACK received flag
-  *            @arg SMBUS_FLAG_STOPF:   STOP detection flag
-  *            @arg SMBUS_FLAG_TC:      Transfer complete (master mode)
-  *            @arg SMBUS_FLAG_TCR:     Transfer complete reload
-  *            @arg SMBUS_FLAG_BERR:    Bus error
-  *            @arg SMBUS_FLAG_ARLO:    Arbitration lost
-  *            @arg SMBUS_FLAG_OVR:     Overrun/Underrun
-  *            @arg SMBUS_FLAG_PECERR:  PEC error in reception
-  *            @arg SMBUS_FLAG_TIMEOUT: Timeout or Tlow detection flag
-  *            @arg SMBUS_FLAG_ALERT:   SMBus alert
-  *            @arg SMBUS_FLAG_BUSY:    Bus busy
-  *            @arg SMBUS_FLAG_DIR:     Transfer direction (slave mode)
+  *            @arg @ref SMBUS_FLAG_TXE     Transmit data register empty
+  *            @arg @ref SMBUS_FLAG_TXIS    Transmit interrupt status
+  *            @arg @ref SMBUS_FLAG_RXNE    Receive data register not empty
+  *            @arg @ref SMBUS_FLAG_ADDR    Address matched (slave mode)
+  *            @arg @ref SMBUS_FLAG_AF      NACK received flag
+  *            @arg @ref SMBUS_FLAG_STOPF   STOP detection flag
+  *            @arg @ref SMBUS_FLAG_TC      Transfer complete (master mode)
+  *            @arg @ref SMBUS_FLAG_TCR     Transfer complete reload
+  *            @arg @ref SMBUS_FLAG_BERR    Bus error
+  *            @arg @ref SMBUS_FLAG_ARLO    Arbitration lost
+  *            @arg @ref SMBUS_FLAG_OVR     Overrun/Underrun
+  *            @arg @ref SMBUS_FLAG_PECERR  PEC error in reception
+  *            @arg @ref SMBUS_FLAG_TIMEOUT Timeout or Tlow detection flag
+  *            @arg @ref SMBUS_FLAG_ALERT   SMBus alert
+  *            @arg @ref SMBUS_FLAG_BUSY    Bus busy
+  *            @arg @ref SMBUS_FLAG_DIR     Transfer direction (slave mode)
   *
-  * @retval The new state of __FLAG__ (TRUE or FALSE).
+  * @retval The new state of __FLAG__ (SET or RESET).
   */
 #define SMBUS_FLAG_MASK  (0x0001FFFFU)
-#define __HAL_SMBUS_GET_FLAG(__HANDLE__, __FLAG__) (((((__HANDLE__)->Instance->ISR) & ((__FLAG__) & SMBUS_FLAG_MASK)) == ((__FLAG__) & SMBUS_FLAG_MASK)))
+#define __HAL_SMBUS_GET_FLAG(__HANDLE__, __FLAG__) (((((__HANDLE__)->Instance->ISR) & ((__FLAG__) & SMBUS_FLAG_MASK)) == ((__FLAG__) & SMBUS_FLAG_MASK)) ? SET : RESET)
 
 /** @brief  Clear the SMBUS pending flags which are cleared by writing 1 in a specific bit.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
-  * @param  __FLAG__: specifies the flag to clear.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
+  * @param  __FLAG__ specifies the flag to clear.
   *          This parameter can be any combination of the following values:
-  *            @arg SMBUS_FLAG_ADDR:    Address matched (slave mode)
-  *            @arg SMBUS_FLAG_AF:      NACK received flag
-  *            @arg SMBUS_FLAG_STOPF:   STOP detection flag
-  *            @arg SMBUS_FLAG_BERR:    Bus error
-  *            @arg SMBUS_FLAG_ARLO:    Arbitration lost
-  *            @arg SMBUS_FLAG_OVR:     Overrun/Underrun
-  *            @arg SMBUS_FLAG_PECERR:  PEC error in reception
-  *            @arg SMBUS_FLAG_TIMEOUT: Timeout or Tlow detection flag
-  *            @arg SMBUS_FLAG_ALERT:   SMBus alert
+  *            @arg @ref SMBUS_FLAG_ADDR    Address matched (slave mode)
+  *            @arg @ref SMBUS_FLAG_AF      NACK received flag
+  *            @arg @ref SMBUS_FLAG_STOPF   STOP detection flag
+  *            @arg @ref SMBUS_FLAG_BERR    Bus error
+  *            @arg @ref SMBUS_FLAG_ARLO    Arbitration lost
+  *            @arg @ref SMBUS_FLAG_OVR     Overrun/Underrun
+  *            @arg @ref SMBUS_FLAG_PECERR  PEC error in reception
+  *            @arg @ref SMBUS_FLAG_TIMEOUT Timeout or Tlow detection flag
+  *            @arg @ref SMBUS_FLAG_ALERT   SMBus alert
   *
   * @retval None
   */
 #define __HAL_SMBUS_CLEAR_FLAG(__HANDLE__, __FLAG__) ((__HANDLE__)->Instance->ICR = (__FLAG__))
 
 /** @brief  Enable the specified SMBUS peripheral.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
   * @retval None
   */
 #define __HAL_SMBUS_ENABLE(__HANDLE__)                  (SET_BIT((__HANDLE__)->Instance->CR1, I2C_CR1_PE))
 
 /** @brief  Disable the specified SMBUS peripheral.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
   * @retval None
   */
 #define __HAL_SMBUS_DISABLE(__HANDLE__)                 (CLEAR_BIT((__HANDLE__)->Instance->CR1, I2C_CR1_PE))
 
 /** @brief  Generate a Non-Acknowledge SMBUS peripheral in Slave mode.
-  * @param  __HANDLE__: specifies the SMBUS Handle.
+  * @param  __HANDLE__ specifies the SMBUS Handle.
   * @retval None
   */
 #define __HAL_SMBUS_GENERATE_NACK(__HANDLE__)           (SET_BIT((__HANDLE__)->Instance->CR2, I2C_CR2_NACK))
@@ -499,6 +535,8 @@ typedef struct
 
 #define IS_SMBUS_ANALOG_FILTER(FILTER)                  (((FILTER) == SMBUS_ANALOGFILTER_ENABLE) || \
                                                           ((FILTER) == SMBUS_ANALOGFILTER_DISABLE))
+
+#define IS_SMBUS_DIGITAL_FILTER(FILTER)                 ((FILTER) <= 0x0000000FU)
 
 #define IS_SMBUS_ADDRESSING_MODE(MODE)                  (((MODE) == SMBUS_ADDRESSINGMODE_7BIT)  || \
                                                           ((MODE) == SMBUS_ADDRESSINGMODE_10BIT))
@@ -544,13 +582,13 @@ typedef struct
                                                           ((REQUEST) == SMBUS_NO_STARTSTOP))
 
 
-#define IS_SMBUS_TRANSFER_OPTIONS_REQUEST(REQUEST)      (((REQUEST) == SMBUS_FIRST_FRAME)                        || \
+#define IS_SMBUS_TRANSFER_OPTIONS_REQUEST(REQUEST)      (IS_SMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST)       || \
+                                                          ((REQUEST) == SMBUS_FIRST_FRAME)                       || \
                                                           ((REQUEST) == SMBUS_NEXT_FRAME)                        || \
                                                           ((REQUEST) == SMBUS_FIRST_AND_LAST_FRAME_NO_PEC)       || \
                                                           ((REQUEST) == SMBUS_LAST_FRAME_NO_PEC)                 || \
                                                           ((REQUEST) == SMBUS_FIRST_AND_LAST_FRAME_WITH_PEC)     || \
-                                                          ((REQUEST) == SMBUS_LAST_FRAME_WITH_PEC)               || \
-                                                          IS_SMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST))
+                                                          ((REQUEST) == SMBUS_LAST_FRAME_WITH_PEC))
 
 #define IS_SMBUS_TRANSFER_OTHER_OPTIONS_REQUEST(REQUEST) (((REQUEST) == SMBUS_OTHER_FRAME_NO_PEC)                || \
                                                           ((REQUEST) == SMBUS_OTHER_AND_LAST_FRAME_NO_PEC)       || \
@@ -563,14 +601,14 @@ typedef struct
 #define SMBUS_GENERATE_START(__ADDMODE__,__ADDRESS__)     (((__ADDMODE__) == SMBUS_ADDRESSINGMODE_7BIT) ? (uint32_t)((((uint32_t)(__ADDRESS__) & (I2C_CR2_SADD)) | (I2C_CR2_START) | (I2C_CR2_AUTOEND)) & (~I2C_CR2_RD_WRN)) : \
                                                                   (uint32_t)((((uint32_t)(__ADDRESS__) & (I2C_CR2_SADD)) | (I2C_CR2_ADD10) | (I2C_CR2_START)) & (~I2C_CR2_RD_WRN)))
 
-#define SMBUS_GET_ADDR_MATCH(__HANDLE__)                (((__HANDLE__)->Instance->ISR & I2C_ISR_ADDCODE) >> 17)
-#define SMBUS_GET_DIR(__HANDLE__)                       (((__HANDLE__)->Instance->ISR & I2C_ISR_DIR) >> 16)
-#define SMBUS_GET_STOP_MODE(__HANDLE__)                 ((__HANDLE__)->Instance->CR2 & I2C_CR2_AUTOEND)
-#define SMBUS_GET_PEC_MODE(__HANDLE__)                  ((__HANDLE__)->Instance->CR2 & I2C_CR2_PECBYTE)
-#define SMBUS_GET_ALERT_ENABLED(__HANDLE__)             ((__HANDLE__)->Instance->CR1 & I2C_CR1_ALERTEN)
+#define SMBUS_GET_ADDR_MATCH(__HANDLE__)                  (((__HANDLE__)->Instance->ISR & I2C_ISR_ADDCODE) >> 17U)
+#define SMBUS_GET_DIR(__HANDLE__)                         (((__HANDLE__)->Instance->ISR & I2C_ISR_DIR) >> 16U)
+#define SMBUS_GET_STOP_MODE(__HANDLE__)                   ((__HANDLE__)->Instance->CR2 & I2C_CR2_AUTOEND)
+#define SMBUS_GET_PEC_MODE(__HANDLE__)                    ((__HANDLE__)->Instance->CR2 & I2C_CR2_PECBYTE)
+#define SMBUS_GET_ALERT_ENABLED(__HANDLE__)                ((__HANDLE__)->Instance->CR1 & I2C_CR1_ALERTEN)
 
-#define SMBUS_GET_ISR_REG(__HANDLE__)                   ((__HANDLE__)->Instance->ISR)
-#define SMBUS_CHECK_FLAG(__ISR__, __FLAG__)             ((((__ISR__) & ((__FLAG__) & SMBUS_FLAG_MASK)) == ((__FLAG__) & SMBUS_FLAG_MASK)))
+#define SMBUS_CHECK_FLAG(__ISR__, __FLAG__)             ((((__ISR__) & ((__FLAG__) & SMBUS_FLAG_MASK)) == ((__FLAG__) & SMBUS_FLAG_MASK)) ? SET : RESET)
+#define SMBUS_CHECK_IT_SOURCE(__CR1__, __IT__)          ((((__CR1__) & (__IT__)) == (__IT__)) ? SET : RESET)
 
 #define IS_SMBUS_OWN_ADDRESS1(ADDRESS1)                         ((ADDRESS1) <= 0x000003FFU)
 #define IS_SMBUS_OWN_ADDRESS2(ADDRESS2)                         ((ADDRESS2) <= (uint16_t)0x00FFU)
@@ -588,12 +626,22 @@ typedef struct
  * @{
  */
 
-/* Initialization and de-initialization functions  **********************************/
+/* Initialization and de-initialization functions  ****************************/
 HAL_StatusTypeDef HAL_SMBUS_Init(SMBUS_HandleTypeDef *hsmbus);
-HAL_StatusTypeDef HAL_SMBUS_DeInit (SMBUS_HandleTypeDef *hsmbus);
+HAL_StatusTypeDef HAL_SMBUS_DeInit(SMBUS_HandleTypeDef *hsmbus);
 void HAL_SMBUS_MspInit(SMBUS_HandleTypeDef *hsmbus);
 void HAL_SMBUS_MspDeInit(SMBUS_HandleTypeDef *hsmbus);
+HAL_StatusTypeDef HAL_SMBUS_ConfigAnalogFilter(SMBUS_HandleTypeDef *hsmbus, uint32_t AnalogFilter);
+HAL_StatusTypeDef HAL_SMBUS_ConfigDigitalFilter(SMBUS_HandleTypeDef *hsmbus, uint32_t DigitalFilter);
 
+/* Callbacks Register/UnRegister functions  ***********************************/
+#if (USE_HAL_SMBUS_REGISTER_CALLBACKS == 1)
+HAL_StatusTypeDef HAL_SMBUS_RegisterCallback(SMBUS_HandleTypeDef *hsmbus, HAL_SMBUS_CallbackIDTypeDef CallbackID, pSMBUS_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SMBUS_UnRegisterCallback(SMBUS_HandleTypeDef *hsmbus, HAL_SMBUS_CallbackIDTypeDef CallbackID);
+
+HAL_StatusTypeDef HAL_SMBUS_RegisterAddrCallback(SMBUS_HandleTypeDef *hsmbus, pSMBUS_AddrCallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SMBUS_UnRegisterAddrCallback(SMBUS_HandleTypeDef *hsmbus);
+#endif /* USE_HAL_SMBUS_REGISTER_CALLBACKS */
 /**
   * @}
   */
@@ -684,11 +732,12 @@ uint32_t HAL_SMBUS_GetError(SMBUS_HandleTypeDef *hsmbus);
 /**
   * @}
   */
+
 #ifdef __cplusplus
 }
 #endif
 
 
-#endif /* __STM32H7xx_HAL_SMBUS_H */
+#endif /* STM32H7xx_HAL_SMBUS_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

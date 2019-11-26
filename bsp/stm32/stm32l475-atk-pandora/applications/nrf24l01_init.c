@@ -11,7 +11,6 @@
 #include <rtthread.h>
 
 #ifdef PKG_USING_NRF24L01
-
 #include "drv_spi.h"
 static int rt_hw_nrf24l01_init(void)
 {
@@ -19,5 +18,4 @@ static int rt_hw_nrf24l01_init(void)
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_hw_nrf24l01_init);
-
-#endif
+#endif /* PKG_USING_NRF24L01 */

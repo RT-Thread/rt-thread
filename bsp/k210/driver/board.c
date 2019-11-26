@@ -19,13 +19,6 @@
 #include "fpioa.h"
 #include "dmac.h"
 
-#include "uarths.h"
-void rt_hw_console_output(const char *str)
-{
-    uarths_puts(str);
-    return ;
-}
-
 void init_bss(void)
 {
     unsigned int *dst;

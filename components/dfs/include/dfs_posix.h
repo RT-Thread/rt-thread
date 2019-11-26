@@ -58,6 +58,7 @@ int fstat(int fildes, struct stat *buf);
 int fsync(int fildes);
 int fcntl(int fildes, int cmd, ...);
 int ioctl(int fildes, int cmd, ...);
+int ftruncate(int fd, off_t length);
 
 /* directory api*/
 int rmdir(const char *path);
