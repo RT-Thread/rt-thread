@@ -18,6 +18,14 @@
 
 #include <rtdevice.h>
 
+#define DBG_TAG               "drv.I2C"
+#ifdef RT_I2C_DEBUG
+#define DBG_LVL               DBG_LOG
+#else
+#define DBG_LVL               DBG_INFO
+#endif
+#include <rtdbg.h>
+
 #ifdef RT_USING_I2C_BITOPS
 
 /*user can change this*/
@@ -243,7 +251,7 @@ static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
         {
             if (gd32_i2c_read(gd32_i2c->i2c_periph, msg->addr, msg->buf, msg->len) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!");
                 goto out;
             }
         }
@@ -251,7 +259,7 @@ static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
         {
             if (gd32_i2c_write(gd32_i2c->i2c_periph, msg->addr, msg->buf, msg->len) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!");
                 goto out;
             }
         }
@@ -260,7 +268,7 @@ static rt_size_t gd32_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
     ret = i;
 
 out:
-    i2c_dbg("send stop condition\n");
+    LOG_D("send stop condition");
 
     return ret;
 }
