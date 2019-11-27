@@ -7,7 +7,7 @@
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
  */
- 
+
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
 
@@ -42,7 +42,7 @@ extern "C" {
 #include "f2/adc_config.h"
 #include "f2/tim_config.h"
 #include "f2/sdio_config.h"
-#include "f2/pwm_config.h"	
+#include "f2/pwm_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
@@ -76,6 +76,7 @@ extern "C" {
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
 #include "l4/usbd_config.h"
+#include "l4/ospi_config.h"
 #elif  defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"
