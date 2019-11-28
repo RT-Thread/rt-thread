@@ -399,6 +399,33 @@ def RelativeProjectPath(env, path):
     return path
 
 
+def HandleExcludingOption(entry, sourceEntries, excluding):
+    old_excluding = []
+    if entry != None:
+        old_excluding = entry.get('excluding').split('|')
+        sourceEntries.remove(entry)
+
+    value = ''
+    for item in old_excluding:
+        if item.startswith('//') :
+            old_excluding.remove(item)
+        else :
+            if value == '':
+                value = item
+            else:
+                value += '|' + item
+
+    for item in excluding:
+        # add special excluding path prefix for RT-Thread
+        item = '//' + item
+        if value == '':
+            value = item
+        else:
+            value += '|' + item
+
+    SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
+
+
 def UpdateCproject(env, project, excluding, reset):
     excluding = sorted(excluding)
 
@@ -412,17 +439,7 @@ def UpdateCproject(env, project, excluding, reset):
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         entry = sourceEntries.find('entry')
-        if entry != None:
-            sourceEntries.remove(entry)
-
-        value = ''
-        for item in excluding:
-            if value == '':
-                value = item
-            else:
-                value += '|' + item
-
-        SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
+        HandleExcludingOption(entry, sourceEntries, excluding)
 
     # write back to .cproject
     out = open('.cproject', 'w')
