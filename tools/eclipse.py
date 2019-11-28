@@ -426,7 +426,7 @@ def HandleExcludingOption(entry, sourceEntries, excluding):
     SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
 
 
-def UpdateCproject(env, project, excluding, reset):
+def UpdateCproject(env, project, excluding, reset, prj_name):
     excluding = sorted(excluding)
 
     cproject = etree.parse('.cproject')
@@ -440,6 +440,14 @@ def UpdateCproject(env, project, excluding, reset):
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         entry = sourceEntries.find('entry')
         HandleExcludingOption(entry, sourceEntries, excluding)
+    # update refreshScope
+    if prj_name:
+        prj_name = '/' + prj_name
+        configurations = root.findall('storageModule/configuration')
+        for configuration in configurations:
+            resource = configuration.find('resource')
+            configuration.remove(resource)
+            SubElement(configuration, 'resource', {'resourceType': "PROJECT", 'workspacePath': prj_name})
 
     # write back to .cproject
     out = open('.cproject', 'w')
@@ -468,7 +476,7 @@ def TargetEclipse(env, reset = False, prj_name = None):
     excluding = GenExcluding(env, project)
 
     # update the project configuration on '.cproject' file
-    UpdateCproject(env, project, excluding, reset)
+    UpdateCproject(env, project, excluding, reset, prj_name)
 
     print('done!')
 
