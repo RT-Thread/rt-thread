@@ -22,7 +22,7 @@
     !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && \
     !defined(BSP_USING_UART7) && !defined(BSP_USING_UART8) && !defined(BSP_USING_LPUART1)
     #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
+    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 #ifdef RT_SERIAL_USING_DMA
@@ -749,6 +749,12 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
+
+#if (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4)) && defined(DMAMUX1)
+        /* enable DMAMUX clock for L4+ and G4 */
+        __HAL_RCC_DMAMUX1_CLK_ENABLE();
+#endif
+
 #endif
         UNUSED(tmpreg);   /* To avoid compiler warnings */
     }
