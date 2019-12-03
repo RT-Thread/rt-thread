@@ -111,6 +111,12 @@ extern "C" {
 #define SPI2_TX_DMA_REQUEST             DMA_REQUEST_1
 #endif /* DMAMUX1 */
 #define SPI2_TX_DMA_IRQ                 DMA1_Channel5_IRQn
+#elif defined(BSP_OSPI_USING_DMA) && !defined(OSPI_DMA_INSTANCE)
+#define OSPI1_DMA_IRQHandler            DMA1_Channel5_IRQHandler
+#define OSPI1_DMA_RCC                   RCC_AHB1ENR_DMA1EN
+#define OSPI1_DMA_INSTANCE              DMA1_Channel5
+#define OSPI1_DMA_REQUEST               DMA_REQUEST_OCTOSPI1
+#define OSPI1_DMA_IRQ                   DMA1_Channel5_IRQn
 #endif
 
 /* DMA1 channel6 */
