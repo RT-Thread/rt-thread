@@ -67,12 +67,6 @@ struct rt_i2c_client
     rt_uint16_t                    client_addr;
 };
 
-#ifdef RT_I2C_DEBUG
-#define i2c_dbg(fmt, ...)   rt_kprintf(fmt, ##__VA_ARGS__)
-#else
-#define i2c_dbg(fmt, ...)
-#endif
-
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name);
 struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name);

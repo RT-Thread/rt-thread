@@ -169,12 +169,12 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     AddOption('--project-path',
                       dest = 'project-path',
                       type = 'string',
-                      default = False,
+                      default = None,
                       help = 'set dist-ide project output path')
     AddOption('--project-name',
                       dest = 'project-name',
                       type = 'string',
-                      default = False,
+                      default = None,
                       help = 'set project name')
     AddOption('--reset-project-config',
                       dest = 'reset-project-config',
