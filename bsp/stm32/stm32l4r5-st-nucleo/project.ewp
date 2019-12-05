@@ -351,18 +351,24 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
+          <state>$PROJ_DIR$\packages\fal-latest\inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\board\ports\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_flash</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -1419,18 +1425,24 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
+          <state>$PROJ_DIR$\packages\fal-latest\inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\board\ports\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
+          <state>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_flash</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -2196,6 +2208,9 @@
       <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32l4xx_hal_msp.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\board\ports\src\mountdisk.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\CMSIS\Device\ST\STM32L4xx\Source\Templates\iar\startup_stm32l4r5xx.s</name>
     </file>
     <file>
@@ -2205,7 +2220,25 @@
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_flash\drv_flash_l4.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
+    </file>
+  </group>
+  <group>
+    <name>fal</name>
+    <file>
+      <name>$PROJ_DIR$\packages\fal-latest\src\fal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\fal-latest\src\fal_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\fal-latest\src\fal_partition.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\fal-latest\src\fal_rtt.c</name>
     </file>
   </group>
   <group>
@@ -2224,6 +2257,33 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
+  </group>
+  <group>
+    <name>Filesystem</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_file.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_fs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_posix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs\devfs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\elmfat\ff.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\elmfat\option\ccsbcs.c</name>
     </file>
   </group>
   <group>
@@ -2266,6 +2326,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
   </group>
   <group>
@@ -2335,6 +2398,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_usart_ex.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash_ex.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32L4xx_HAL\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_flash_ramfunc.c</name>
     </file>
   </group>
 </project>

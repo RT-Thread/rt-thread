@@ -12,8 +12,12 @@ board.c
 CubeMX_Config/Src/stm32l4xx_hal_msp.c
 ''')
 
+if GetDepend(['RT_USING_DFS_ELMFAT']):
+    src += Glob('ports/src/mountdisk.c')
+    
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports/Inc']
 
 startup_path_prefix = SDK_LIB
 

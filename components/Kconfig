@@ -2,11 +2,11 @@ menu "RT-Thread Components"
 
 config RT_USING_COMPONENTS_INIT
     bool 
-    default n
+    default y
     
 config RT_USING_USER_MAIN
     bool 
-    default n
+    default y
     
     if RT_USING_USER_MAIN
         config RT_MAIN_THREAD_STACK_SIZE

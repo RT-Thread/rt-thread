@@ -239,11 +239,27 @@ const static struct udcd_ops _udc_ops =
     _wakeup,
 };
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops _ops =
+{
+    _init,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL
+};
+#endif
+
 int stm_usbd_register(void)
 {
     rt_memset((void *)&_stm_udc, 0, sizeof(struct udcd));
     _stm_udc.parent.type = RT_Device_Class_USBDevice;
-    _stm_udc.parent.init = _init;
+#ifdef RT_USING_DEVICE_OPS
+    _stm_udc.parent.ops = &_ops;
+#else
+	_stm_udc.parent.init = _init;
+#endif
     _stm_udc.parent.user_data = &_stm_pcd;
     _stm_udc.ops = &_udc_ops;
     /* Register endpoint infomation */
