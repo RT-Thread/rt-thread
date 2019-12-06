@@ -26,7 +26,7 @@
 #include <board.h>
 #include <rthw.h>
 
-#include "../common/mips.h"
+#include <mips.h>
 
 
 #define CONFIG_SYS_DCACHE_SIZE      16384
@@ -114,8 +114,8 @@ do {                        \
 
 void rt_hw_dcache_flush_line(rt_uint32_t addr)
 {
-	cache_op(HIT_WRITEBACK_INV_D, addr);
-	SYNC_WB();
+    cache_op(HIT_WRITEBACK_INV_D, addr);
+    SYNC_WB();
 }
 
 void rt_hw_dcache_flush_range(rt_uint32_t start_addr, rt_uint32_t size)

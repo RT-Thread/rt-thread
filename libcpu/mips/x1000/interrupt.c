@@ -29,7 +29,7 @@
 #include <rthw.h>
 #include <board.h>
 
-#include "../common/mips.h"
+#include <mips.h>
 
 #define INTERRUPTS_MAX	64
 
@@ -48,24 +48,14 @@ void rt_hw_interrupt_init(void)
 {
     rt_int32_t idx;
 
-	clear_c0_status(0xff04); /* clear ERL */
-	set_c0_status(0x0400);   /* set IP2 */
-
-
     rt_memset(isr_table, 0x00, sizeof(isr_table));
     for (idx = 0; idx < INTERRUPTS_MAX; idx ++)
     {
         isr_table[idx].handler = rt_hw_interrupt_handler;
     }
 
-    /* init interrupt nest, and context in thread sp */
-    rt_interrupt_nest               = 0;
-    rt_interrupt_from_thread        = 0;
-    rt_interrupt_to_thread          = 0;
-    rt_thread_switch_interrupt_flag = 0;
-
-	/* enable cpu interrupt mask */
-	set_c0_status(IE_IRQ0 | IE_IRQ1);
+    mips_unmask_cpu_irq(2);
+    mips_unmask_cpu_irq(3);
 }
 
 void rt_hw_interrupt_mask(int vector)
@@ -105,7 +95,7 @@ rt_inline int fls(int x)
     return 32 - x;
 }
 
-void rt_interrupt_dispatch(void *ptreg)
+void rt_do_mips_cpu_irq(rt_uint32_t ip)
 {
     void *param;
     rt_isr_handler_t irq_func;
@@ -116,19 +106,13 @@ void rt_interrupt_dispatch(void *ptreg)
     rt_uint32_t c0_status, c0_cause;
     rt_uint32_t pending_im;
 
-    /* check os timer */
-    c0_status = read_c0_status();
-    c0_cause = read_c0_cause();
-
-	pending_im = (c0_cause & ST0_IM) & (c0_status & ST0_IM);
-
-    if (pending_im & CAUSEF_IP3)
+    if (ip ==3)
     {
-		extern void rt_hw_ost_handler(void);
+extern void rt_hw_ost_handler(void);
         rt_hw_ost_handler();
         return;
     }
-    if (pending_im & CAUSEF_IP2)
+    if (ip == 2)
     {
         intc_ipr0 = REG_INTC_IPR(0);
         intc_ipr1 = REG_INTC_IPR(1);
@@ -146,7 +130,7 @@ void rt_interrupt_dispatch(void *ptreg)
         }
         else
         {
-        	//VPU
+            //VPU
         }
 
         if (irq >= INTERRUPTS_MAX)
@@ -163,20 +147,10 @@ void rt_interrupt_dispatch(void *ptreg)
 
         /* ack interrupt */
         __intc_ack_irq(irq);
+    } else {
+    rt_kprintf("Suprious interrupt from CPI IP: %d\n", ip);
     }
 
-    if (pending_im & CAUSEF_IP0)
-        rt_kprintf("CAUSEF_IP0\n");
-    if (pending_im & CAUSEF_IP1)
-        rt_kprintf("CAUSEF_IP1\n");
-    if (pending_im & CAUSEF_IP4)
-        rt_kprintf("CAUSEF_IP4\n");
-    if (pending_im & CAUSEF_IP5)
-        rt_kprintf("CAUSEF_IP5\n");
-    if (pending_im & CAUSEF_IP6)
-        rt_kprintf("CAUSEF_IP6\n");
-    if (pending_im & CAUSEF_IP7)
-        rt_kprintf("CAUSEF_IP7\n");
 }
 
 #ifdef RT_USING_INTERRUPT_INFO
@@ -203,13 +177,13 @@ MSH_CMD_EXPORT(list_irqs, list interrupt counter);
 
 unsigned int spin_lock_irqsave(void)
 {
-	register unsigned int t;
-	t = read_c0_status();
-	write_c0_status((t & (~1)));
-	return (t);
+    register unsigned int t;
+    t = read_c0_status();
+    write_c0_status((t & (~1)));
+    return (t);
 }
 
 void spin_unlock_irqrestore(unsigned int val)
 {
-	write_c0_status(val);
+    write_c0_status(val);
 }

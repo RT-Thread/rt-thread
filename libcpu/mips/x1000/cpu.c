@@ -19,7 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ8ÈÕ     Urey         the first version
+ * 2016ï¿½ï¿½9ï¿½ï¿½8ï¿½ï¿½     Urey         the first version
  */
 
 
@@ -27,17 +27,17 @@
 #include <board.h>
 #include <rthw.h>
 
-#include "../common/mips.h"
+#include <mips.h>
 
 mips32_core_cfg_t g_mips_core =
 {
-	.icache_line_size 	= 32,
-	.icache_size		= 16384,
+    .icache_line_size 	= 32,
+    .icache_size		= 16384,
 
-	.dcache_line_size 	= 32,
-	.dcache_size		= 16384,
+    .dcache_line_size 	= 32,
+    .dcache_size		= 16384,
 
-	.max_tlb_entries 	= 16,		/* max_tlb_entries */
+    .max_tlb_entries 	= 16,		/* max_tlb_entries */
 };
 
 void rt_hw_tlb_init(void)
@@ -45,45 +45,45 @@ void rt_hw_tlb_init(void)
 //----------------------------------------------------------------------------------
 //cchappy tlb  0x30000000 to 0xC0000000
 //----------------------------------------------------------------------------------
-	unsigned int pagemask = 0x007fe000;//0x01ffe000; /* 4MB */
-	/* cached D:allow-W V:valid G */
-	unsigned int entrylo0 = (0x30000000 >> 6) | (3 << 3) + (1 << 2) + (1 << 1) + 1;
-	unsigned int entrylo1 = (0x30400000 >> 6) | (3 << 3) + (1 << 2) + (1 << 1) + 1;
-	unsigned int entryhi 	= 0xc0000000; /* kseg2 base */
-	int i;
-	__write_32bit_c0_register($5, 4, 0xa9000000);
-	write_c0_pagemask(pagemask);
-	write_c0_wired(0);
+    unsigned int pagemask = 0x007fe000;//0x01ffe000; /* 4MB */
+    /* cached D:allow-W V:valid G */
+    unsigned int entrylo0 = (0x30000000 >> 6) | (3 << 3) + (1 << 2) + (1 << 1) + 1;
+    unsigned int entrylo1 = (0x30400000 >> 6) | (3 << 3) + (1 << 2) + (1 << 1) + 1;
+    unsigned int entryhi 	= 0xc0000000; /* kseg2 base */
+    int i;
+    __write_32bit_c0_register($5, 4, 0xa9000000);
+    write_c0_pagemask(pagemask);
+    write_c0_wired(0);
 /* indexed write 32 tlb entry */
-	for(i = 0; i < 32; i++)
-	{
-		asm (
-		".macro _ssnop; sll $0, $0, 1; .endm\n\t"
-		".macro _ehb; sll $0, $0, 3; .endm\n\t"
-		".macro mtc0_tlbw_hazard; _ssnop; _ssnop; _ehb; .endm\n\t"
-		".macro tlbw_use_hazard; _ssnop; _ssnop; _ssnop; _ehb; .endm\n\t"
-		"\n\t"
-		"mtc0 %0, $0\n\t" /* write Index */
-		"tlbw_use_hazard\n\t"
-		"mtc0 %1, $5\n\t" /* write PageMask */
-		"mtc0 %2, $10\n\t" /* write EntryHi */
-		"mtc0 %3, $2\n\t" /* write EntryLo0 */
-		"mtc0 %4, $3\n\t" /* write EntryLo1 */
-		"mtc0_tlbw_hazard\n\t"
-		"tlbwi \n\t" /* TLB indexed write */
-		"tlbw_use_hazard\n\t"
-		: : "Jr" (i), "r" (pagemask), "r" (entryhi),
-		"r" (entrylo0), "r" (entrylo1)
-		);
-		entryhi += 0x0800000; /* 32MB */
-		entrylo0 += (0x0800000 >> 6);
-		entrylo1 += (0x0800000 >> 6);
-	}
+    for(i = 0; i < 32; i++)
+    {
+        asm (
+        ".macro _ssnop; sll $0, $0, 1; .endm\n\t"
+        ".macro _ehb; sll $0, $0, 3; .endm\n\t"
+        ".macro mtc0_tlbw_hazard; _ssnop; _ssnop; _ehb; .endm\n\t"
+        ".macro tlbw_use_hazard; _ssnop; _ssnop; _ssnop; _ehb; .endm\n\t"
+        "\n\t"
+        "mtc0 %0, $0\n\t" /* write Index */
+        "tlbw_use_hazard\n\t"
+        "mtc0 %1, $5\n\t" /* write PageMask */
+        "mtc0 %2, $10\n\t" /* write EntryHi */
+        "mtc0 %3, $2\n\t" /* write EntryLo0 */
+        "mtc0 %4, $3\n\t" /* write EntryLo1 */
+        "mtc0_tlbw_hazard\n\t"
+        "tlbwi \n\t" /* TLB indexed write */
+        "tlbw_use_hazard\n\t"
+        : : "Jr" (i), "r" (pagemask), "r" (entryhi),
+        "r" (entrylo0), "r" (entrylo1)
+        );
+        entryhi += 0x0800000; /* 32MB */
+        entrylo0 += (0x0800000 >> 6);
+        entrylo1 += (0x0800000 >> 6);
+    }
 }
 
 void rt_hw_cache_init(void)
 {
-	r4k_cache_flush_all();
+    r4k_cache_flush_all();
 }
 
 /**
@@ -110,9 +110,9 @@ RT_WEAK void rt_hw_cpu_reset()
  */
 RT_WEAK void rt_hw_cpu_shutdown()
 {
-	rt_kprintf("shutdown...\n");
-	rt_hw_interrupt_disable();
-	while (1);
+    rt_kprintf("shutdown...\n");
+    rt_hw_interrupt_disable();
+    while (1);
 }
 
 /**

@@ -19,13 +19,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ19ÈÕ     Urey         the first version
+ * 2016ï¿½ï¿½9ï¿½ï¿½19ï¿½ï¿½     Urey         the first version
  */
 
 #ifndef _X1000_CACHE_H_
 #define _X1000_CACHE_H_
 
-#include "../common/mips.h"
+#include <mips.h>
 #include "../common/mips_cache.h"
 
 

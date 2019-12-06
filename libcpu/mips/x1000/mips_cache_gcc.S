@@ -12,7 +12,7 @@
 #define	__ASSEMBLY__
 #endif
 
-#include "../common/mips.h"
+#include <mips.h>
 
     .text
     .set noreorder

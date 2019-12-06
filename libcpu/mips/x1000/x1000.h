@@ -25,7 +25,7 @@
 #ifndef __X1000_H__
 #define __X1000_H__
 
-#include "../common/mips.h"
+#include <mips.h>
 
 #ifndef __ASSEMBLY__
 
@@ -44,34 +44,6 @@
 static inline void jz_sync(void)
 {
     __asm__ volatile ("sync");
-}
-
-static inline void writeb(u8 value, u32 address)
-{
-    *((volatile u8 *) address) = value;
-}
-static inline void writew( u16 value, u32 address)
-{
-    *((volatile u16 *) address) = value;
-}
-static inline void writel(u32 value, u32 address)
-{
-    *((volatile u32 *) address) = value;
-}
-
-static inline u8 readb(u32 address)
-{
-    return *((volatile u8 *)address);
-}
-
-static inline u16 readw(u32 address)
-{
-    return *((volatile u16 *)address);
-}
-
-static inline u32 readl(u32 address)
-{
-    return *((volatile u32 *)address);
 }
 
 static inline void jz_writeb(u32 address, u8 value)
