@@ -479,6 +479,9 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
             	dfs_mount_device(&(blk_dev->dev));
             }
 #endif
+            /* only mount the whole block device as a partion once */
+	    if (no_part_table)
+                break;
         }
     }
     else
