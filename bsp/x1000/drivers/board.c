@@ -82,11 +82,13 @@ INIT_ENV_EXPORT(lcd_hw_init);
 
 void rt_hw_board_init(void)
 {
-    memcpy((void*)&_iramstart, (void*)&_iramcopy, (rt_uint32_t)&_iramend - (rt_uint32_t)&_iramstart);
-    memset((void*)&__bss_start, 0x0, (rt_uint32_t)&__bss_end - (rt_uint32_t)&__bss_start);
-
     rt_hw_cache_init();
     rt_hw_exception_init();
+
+#ifdef RT_USING_FPU
+    /* init hardware fpu */
+    rt_hw_fpu_init();
+#endif
 
     /* init hardware interrupt */
     rt_hw_interrupt_init();

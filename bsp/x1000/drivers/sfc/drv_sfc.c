@@ -1,7 +1,7 @@
 /*
  * drv_sfc.c
  *
- *  Created on: 2016Äê4ÔÂ5ÈÕ
+ *  Created on: 2016ï¿½ï¿½4ï¿½ï¿½5ï¿½ï¿½
  *      Author: Urey
  */
 
@@ -726,7 +726,7 @@ static void sfc_glb_info_config(struct sfc *sfc,struct sfc_transfer *transfer)
         else
             r4k_dma_cache_sync((uint32_t) transfer->data, transfer->len,
                                 DMA_TO_DEVICE);
-        sfc_set_mem_addr(sfc, PHYS(transfer->data));
+        sfc_set_mem_addr(sfc, CPHYSADDR(transfer->data));
         sfc_transfer_mode(sfc, DMA_MODE);
     }
     else

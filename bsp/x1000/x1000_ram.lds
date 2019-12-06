@@ -23,15 +23,12 @@ MEMORY
 ENTRY(_start)
 SECTIONS
 {
-    .start :
+    .text :
     {
         *(.start);
-    } > DRAM
-
-    . = ALIGN(4);
-
-    .text : 
-    {
+        __ebase_entry = .;
+        KEEP(*(.exc_vectors))
+        __ebase_end = .;
         *(.text.unlikely .text.*_unlikely .text.unlikely.*)
         *(.text.exit .text.exit.*)
         *(.text.startup .text.startup.*)
@@ -44,7 +41,7 @@ SECTIONS
         *(.glue_7)
         *(.glue_7t)
         *(.gnu.linkonce.t*)
-     
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -73,9 +70,9 @@ SECTIONS
         _etext = .;
     } > DRAM
 
-    .eh_frame_hdr : 
-    { 
-         *(.eh_frame_hdr) 
+    .eh_frame_hdr :
+    {
+         *(.eh_frame_hdr)
          *(.eh_frame_entry)
          *(.eh_frame_entry.*)
     } > DRAM
@@ -104,19 +101,27 @@ SECTIONS
         PROVIDE(__dtors_end__ = .);
     } > DRAM
 
-    .data : 
+    .data :
     {
      *(.data)
      *(.data.*)
-    
+
      *(.data1)
      *(.data1.*)
-     
+
      . = ALIGN(8);
      _gp = ABSOLUTE(.);     /* Base of small data */
-     
+
      *(.sdata)
      *(.sdata.*)
+    } > DRAM
+
+    .stack :
+    {
+        . = ALIGN(8);
+        _system_stack_start = .;
+        . = . + 0x1000;
+        _system_stack = .;
     } > DRAM
 
     . = ALIGN(4);
@@ -125,15 +130,6 @@ SECTIONS
     .iram : AT(_iramat)
     {
         _iramstart = .;
-        *(.vectors.1);
-        . = 0x100;
-        *(.vectors.2);
-        . = 0x180;
-        *(.vectors.3);
-        . = 0x200;
-        *(.vectors.4);
-        *(.vectors);
-
         *(.icode);
         *(.irodata);
         *(.idata);
@@ -142,7 +138,7 @@ SECTIONS
     } > IRAM
     _iramcopy = LOADADDR(.iram);
 
-    .sbss : 
+    .sbss :
     {
     __bss_start = .;
         *(.sbss)
@@ -159,7 +155,7 @@ SECTIONS
         *(COMMON)
     __bss_end = .;
     } > DRAM
-    
+
     _end = .;
 
     /* Stabs debugging sections.  */

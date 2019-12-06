@@ -19,6 +19,7 @@ config PKGS_DIR
     default "packages"
 
 source "$RTT_DIR/Kconfig"
+source "$RTT_DIR/libcpu/mips/common/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
 config BOARD_X1000_REALBOARD
@@ -26,10 +27,6 @@ config BOARD_X1000_REALBOARD
     select ARCH_MIPS_XBURST
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    default y
-
-config RT_USING_HARD_FLOAT
-    bool "Enable Hardware Float Unit"
     default y
 
 source "$BSP_DIR/drivers/Kconfig"

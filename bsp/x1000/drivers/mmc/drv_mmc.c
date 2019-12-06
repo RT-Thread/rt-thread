@@ -271,14 +271,14 @@ rt_inline void jzmmc_submit_dma(struct jzmmc_host *host, struct rt_mmcsd_data *d
 {
     host->dma_desc.nda  = 0;
     host->dma_desc.len  = data->blks * data->blksize;
-    host->dma_desc.da   = virt_to_phys(data->buf);
+    host->dma_desc.da   = CPHYSADDR(data->buf);
     host->dma_desc.dcmd = DMACMD_ENDI; /* only one DMA descriptor */
 
 #ifdef DMA_BUFFER
     if ((uint32_t)(data->buf) & (DMA_ALIGN - 1))
     {
         /* not align */
-        host->dma_desc.da   = virt_to_phys(host->_dma_buffer);
+        host->dma_desc.da   = CPHYSADDR(host->_dma_buffer);
         if (data->flags & DATA_DIR_WRITE)
         {
             LOG_D("%d ->", data->blks * data->blksize);
@@ -303,7 +303,7 @@ rt_inline void jzmmc_submit_dma(struct jzmmc_host *host, struct rt_mmcsd_data *d
 rt_inline void jzmmc_dma_start(struct jzmmc_host *host, struct rt_mmcsd_data *data)
 {
     volatile int i = 120;
-    uint32_t dma_addr = virt_to_phys(data->buf);
+    uint32_t dma_addr = CPHYSADDR(data->buf);
     unsigned int dma_len = data->blks * data->blksize;
     unsigned int dmac;
 #ifdef PERFORMANCE_DMA
@@ -323,12 +323,12 @@ rt_inline void jzmmc_dma_start(struct jzmmc_host *host, struct rt_mmcsd_data *da
         }
     }
 #endif
-    LOG_D("DMA start: nda 0x%08x, da 0x%08x, len 0x%04x, cmd 0x%08x", virt_to_phys(&(host->dma_desc)),
+    LOG_D("DMA start: nda 0x%08x, da 0x%08x, len 0x%04x, cmd 0x%08x", CPHYSADDR(&(host->dma_desc)),
         host->dma_desc.da, host->dma_desc.len, host->dma_desc.dcmd);
      
     rt_hw_dcache_flush_range((rt_ubase_t)(&(host->dma_desc)), 32);
-    while(i--);  //TODO:¶ÌÔÝÑÓÊ±,²»ÑÓÊ±»á·¢Éú´íÎó   
-    msc_writel(host, MSC_DMANDA_OFFSET, virt_to_phys(&(host->dma_desc)));
+    while(i--);  //TODO:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±,ï¿½ï¿½ï¿½ï¿½Ê±ï¿½á·¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½   
+    msc_writel(host, MSC_DMANDA_OFFSET, CPHYSADDR(&(host->dma_desc)));
     msc_writel(host, MSC_DMAC_OFFSET, dmac);
 }
 
