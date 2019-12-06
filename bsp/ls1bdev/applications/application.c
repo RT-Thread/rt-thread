@@ -24,36 +24,36 @@ extern void rt_hw_dc_init(void);
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_RTGUI
-	{
-		rt_device_t dc;
+    {
+        rt_device_t dc;
 
-		/* init Display Controller */
-		rt_hw_dc_init();
+        /* init Display Controller */
+        rt_hw_dc_init();
 
-		/* find Display Controller device */
-		dc = rt_device_find("dc");
+        /* find Display Controller device */
+        dc = rt_device_find("dc");
 
-		/* set Display Controller device as rtgui graphic driver */
-		rtgui_graphic_set_device(dc);
-	}
+        /* set Display Controller device as rtgui graphic driver */
+        rtgui_graphic_set_device(dc);
+    }
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
-	/* initialization RT-Thread Components */
-	rt_components_init();
+    /* initialization RT-Thread Components */
+    rt_components_init();
 #endif
 }
 
-int rt_application_init(void)
+int main(void)
 {
-	rt_thread_t tid;
+    rt_thread_t tid;
 
-	/* create initialization thread */
-	tid = rt_thread_create("init",
-							rt_init_thread_entry, RT_NULL,
-							4096, 8, 20);
-	if (tid != RT_NULL)
-		rt_thread_startup(tid);
+    /* create initialization thread */
+    tid = rt_thread_create("init",
+                            rt_init_thread_entry, RT_NULL,
+                            4096, 8, 20);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
-	return 0;
+    return 0;
 }
