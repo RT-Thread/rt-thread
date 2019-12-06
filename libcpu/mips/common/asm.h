@@ -1,19 +1,16 @@
 /*
- * This file is subject to the terms and conditions of the GNU General Public
- * License.  See the file "COPYING" in the main directory of this archive
- * for more details.
+ * Assembly Macros For MIPS
  *
- * Copyright (C) 1995, 1996, 1997, 1999, 2001 by Ralf Baechle
- * Copyright (C) 1999 by Silicon Graphics, Inc.
- * Copyright (C) 2001 MIPS Technologies, Inc.
- * Copyright (C) 2002  Maciej W. Rozycki
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * Some useful macros for MIPS assembler code
+ * SPDX-License-Identifier: Apache-2.0
  *
- * Some of the routines below contain useless nops that will be optimized
- * away by gas in -O mode. These nops are however required to fill delay
- * slots in noreorder mode.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-12-04     Jiaxun Yang  Initial version
  */
+
+
 #ifndef __ASM_H__
 #define __ASM_H__
 
@@ -21,94 +18,94 @@
  * LEAF - declare leaf routine
  */
 #define	LEAF(symbol)                        \
-		.globl	symbol;                     \
-		.align	2;                          \
-		.type	symbol,@function;           \
-		.ent	symbol,0;                   \
+        .globl	symbol;                     \
+        .align	2;                          \
+        .type	symbol,@function;           \
+        .ent	symbol,0;                   \
 symbol:		.frame	sp,0,ra
 
 /*
  * NESTED - declare nested routine entry point
  */
 #define	NESTED(symbol, framesize, rpc)      \
-		.globl	symbol;                     \
-		.align	2;                          \
-		.type	symbol,@function;           \
-		.ent	symbol,0;                   \
+        .globl	symbol;                     \
+        .align	2;                          \
+        .type	symbol,@function;           \
+        .ent	symbol,0;                   \
 symbol:		.frame	sp, framesize, rpc
 
 /*
  * END - mark end of function
  */
 #define	END(function)                       \
-		.end	function;		        	\
-		.size	function,.-function
+        .end	function;		        	\
+        .size	function,.-function
 
 /*
  * EXPORT - export definition of symbol
  */
 #define EXPORT(symbol)						\
-		.globl	symbol;                     \
+        .globl	symbol;                     \
 symbol:
 
 /*
  * FEXPORT - export definition of a function symbol
  */
 #define FEXPORT(symbol)						\
-		.globl	symbol;						\
-		.type	symbol,@function;			\
+        .globl	symbol;						\
+        .type	symbol,@function;			\
 symbol:
 
 /*
  * Global data declaration with size.
  */
 #define EXPORTS(name,sz) 		\
-  	.globl name; 				\
-  	.type name,@object; 		\
-  	.size name,sz; 				\
+      .globl name; 				\
+      .type name,@object; 		\
+      .size name,sz; 				\
 name:
 
 /*
  * Weak data declaration with size.
  */
 #define WEXPORT(name,sz) 		\
-  	.weakext name; 				\
-  	.type name,@object; 		\
-  	.size name,sz; 				\
+      .weakext name; 				\
+      .type name,@object; 		\
+      .size name,sz; 				\
 name:
 
 /*
  * Global data reference with size.
  */
 #define	IMPORT(name, size) 		\
-	.extern	name,size
+    .extern	name,size
 
 /*
  * Global zeroed data.
  */
 #define BSS(name,size) 			\
-  	.type name,@object; 		\
-	.comm	name,size
+      .type name,@object; 		\
+    .comm	name,size
 
 /*
  * Local zeroed data.
  */
 #define LBSS(name,size) 		\
-  	.lcomm	name,size
+      .lcomm	name,size
 
 
 /*
  * ABS - export absolute symbol
  */
 #define	ABS(symbol,value)       \
-		.globl	symbol;         \
+        .globl	symbol;         \
 symbol		=	value
 
 
 #define	TEXT(msg)               \
-		.pushsection .data;		\
+        .pushsection .data;		\
 8:		.asciiz	msg;            \
-		.popsection;
+        .popsection;
 
 
 #define ENTRY(name) 			\
