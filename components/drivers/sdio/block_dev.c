@@ -357,6 +357,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     rt_int32_t err = 0;
     rt_uint8_t i, status;
     rt_uint8_t *sector;
+    bool no_part_table = RT_FALSE;
     char dname[4];
     char sname[8];
     struct mmcsd_blk_device *blk_dev = RT_NULL;
@@ -460,8 +461,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                     rt_device_register(&blk_dev->dev, "sd0",
                         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
                     rt_list_insert_after(&blk_devices, &blk_dev->list);
-    
-                    break;
+                    no_part_table = RT_TRUE;
                 }
                 else
                 {
@@ -477,6 +477,9 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
             	LOG_I("try to mount file system!");
             	/* try to mount file system on this block device */
             	dfs_mount_device(&(blk_dev->dev));
+		/* only mount the whole block device as a partion once */
+		if (no_part_table)
+			break;
             }
 #endif
             /* only mount the whole block device as a partion once */
