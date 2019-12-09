@@ -27,14 +27,14 @@
     .def   _rt_hw_interrupt_enable
     
 ;workaround for importing fpu settings from the compiler
-	.cdecls C,NOLIST
-	%{
-		#ifdef __TMS320C28XX_FPU32__
-			#define __FPU32__ 1
-		#else
-			#define __FPU32__ 0
-		#endif
-	%}
+    .cdecls C,NOLIST
+    %{
+        #ifdef __TMS320C28XX_FPU32__
+            #define __FPU32__ 1
+        #else
+            #define __FPU32__ 0
+        #endif
+    %}
 
 
 RT_CTX_SAVE  .macro      
@@ -50,36 +50,36 @@ RT_CTX_SAVE  .macro
     PUSH    XT
     PUSH    RPC
     
-	.if __FPU32__
-	PUSH	RB
-	MOV32	*SP++, STF
-	MOV32	*SP++, R0H
-	MOV32	*SP++, R1H
-	MOV32	*SP++, R2H
-	MOV32	*SP++, R3H
-	MOV32	*SP++, R4H
-	MOV32	*SP++, R5H
-	MOV32	*SP++, R6H
-	MOV32	*SP++, R7H
-	.endif
+    .if __FPU32__
+    PUSH	RB
+    MOV32	*SP++, STF
+    MOV32	*SP++, R0H
+    MOV32	*SP++, R1H
+    MOV32	*SP++, R2H
+    MOV32	*SP++, R3H
+    MOV32	*SP++, R4H
+    MOV32	*SP++, R5H
+    MOV32	*SP++, R6H
+    MOV32	*SP++, R7H
+    .endif
  
     .endm
 
 
 RT_CTX_RESTORE  .macro
 
-	.if __FPU32__
-	MOV32	R7H, *--SP, UNCF
-	MOV32	R6H, *--SP, UNCF
-	MOV32	R5H, *--SP, UNCF
-	MOV32	R4H, *--SP, UNCF
-	MOV32	R3H, *--SP, UNCF
-	MOV32	R2H, *--SP, UNCF
-	MOV32	R1H, *--SP, UNCF
-	MOV32	R0H, *--SP, UNCF
-	MOV32	STF, *--SP
-	POP		RB
-	.endif
+    .if __FPU32__
+    MOV32	R7H, *--SP, UNCF
+    MOV32	R6H, *--SP, UNCF
+    MOV32	R5H, *--SP, UNCF
+    MOV32	R4H, *--SP, UNCF
+    MOV32	R3H, *--SP, UNCF
+    MOV32	R2H, *--SP, UNCF
+    MOV32	R1H, *--SP, UNCF
+    MOV32	R0H, *--SP, UNCF
+    MOV32	STF, *--SP
+    POP		RB
+    .endif
                                   
     POP     RPC
     POP     XT
