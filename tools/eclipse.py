@@ -336,6 +336,11 @@ def GenExcluding(env, project):
     coll_dirs = CollectPaths(project['DIRS'])
     all_paths = [OSPath(path) for path in coll_dirs]
 
+    # remove unused path
+    for path in all_paths:
+        if not path.startswith(rtt_root) and not path.startswith(bsp_root):
+            all_paths.remove(path)
+
     if bsp_root.startswith(rtt_root):
         # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub
         exclude_paths = ExcludePaths(rtt_root, all_paths)
