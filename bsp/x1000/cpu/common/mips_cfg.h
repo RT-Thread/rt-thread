@@ -1,6 +1,7 @@
 /*
- * File      : stack.h
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * File      : mips_cfg.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,11 +19,30 @@
  *
  * Change Logs:
  * Date           Author       Notes
-*/
+ * 2016Äê9ÔÂ10ÈÕ     Urey         the first version
+ */
 
-#ifndef __STACK_H__
-#define __STACK_H__
+#ifndef _MIPS_CFG_H_
+#define _MIPS_CFG_H_
 
-#define SYSTEM_STACK          0x80003fe8		/* the kernel system stack address */
+#ifndef __ASSEMBLY__
+#include <stdint.h>
+typedef struct mips32_core_cfg
+{
+    uint16_t icache_line_size;
+//    uint16_t icache_lines_per_way;
+//    uint16_t icache_ways;
+    uint16_t icache_size;
+    uint16_t dcache_line_size;
+//    uint16_t dcache_lines_per_way;
+//    uint16_t dcache_ways;
+    uint16_t dcache_size;
 
-#endif
+    uint16_t max_tlb_entries;	/* number of tlb entry */
+} mips32_core_cfg_t;
+
+extern mips32_core_cfg_t g_mips_core;
+
+#endif /* __ASSEMBLY__ */
+
+#endif /* _MIPS_CFG_H_ */
