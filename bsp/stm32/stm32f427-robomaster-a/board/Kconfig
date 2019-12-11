@@ -8,6 +8,12 @@ config SOC_STM32F427II
     default y
 
 menu "Onboard Peripheral Drivers"
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -75,6 +81,12 @@ menu "On-chip Peripheral Drivers"
                     bool "using CAN2"
                     default n
         endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
 
     menuconfig BSP_USING_PWM
         bool "Enable pwm"
