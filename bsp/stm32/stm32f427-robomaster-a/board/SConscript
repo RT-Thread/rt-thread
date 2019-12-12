@@ -12,6 +12,9 @@ board.c
 CubeMX_Config/Src/stm32f4xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/sdcard_port.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
