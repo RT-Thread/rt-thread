@@ -228,6 +228,8 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     tim = (TIM_HandleTypeDef *)timer->parent.user_data;
 
     /* set tim cnt */
+    __HAL_TIM_SET_COUNTER(tim, 0);
+    /* set tim arr */
     __HAL_TIM_SET_AUTORELOAD(tim, t - 1);
 
     if (opmode == HWTIMER_MODE_ONESHOT)
@@ -260,6 +262,9 @@ static void timer_stop(rt_hwtimer_t *timer)
 
     /* stop timer */
     HAL_TIM_Base_Stop_IT(tim);
+
+    /* set tim cnt */
+    __HAL_TIM_SET_COUNTER(tim, 0);
 }
 
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
