@@ -224,6 +224,13 @@ config RT_USING_SPI
                 select RT_USING_QSPI
                 default n
 
+                config RT_SFUD_SPI_MAX_HZ
+                int "Default spi maximum speed(HZ)"
+                range 0 50000000
+                default 50000000
+                help
+                    Read the JEDEC SFDP command must run at 50 MHz or less,and you also can use rt_spi_configure(); to config spi speed.
+
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n

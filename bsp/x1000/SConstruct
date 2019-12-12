@@ -28,7 +28,7 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=True)
 
 if GetDepend('RT_USING_HARD_FLOAT'):
     env['CCFLAGS']   = env['CCFLAGS'].replace('-msoft-float', '-mhard-float')
