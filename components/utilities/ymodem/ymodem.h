@@ -119,7 +119,7 @@ struct rym_ctx
     rt_device_t dev;
 };
 
-/** recv a file on device dev with ymodem session ctx.
+/* recv a file on device dev with ymodem session ctx.
  *
  * If an error happens, you can get where it is failed from ctx->stage.
  *
@@ -148,7 +148,7 @@ rt_err_t rym_recv_on_device(struct rym_ctx *ctx, rt_device_t dev, rt_uint16_t of
                             rym_callback on_begin, rym_callback on_data, rym_callback on_end,
                             int handshake_timeout);
 
-/** send a file on device dev with ymodem session ctx.
+/* send a file on device dev with ymodem session ctx.
  *
  * If an error happens, you can get where it is failed from ctx->stage.
  *
