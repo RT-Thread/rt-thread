@@ -1,16 +1,12 @@
-/**
-  * Copyright (c) 2019 Fuzhou Rockchip Electronics Co., Ltd
-  *
-  * SPDX-License-Identifier: Apache-2.0
-  ******************************************************************************
-  * @file    ry_sy.c
-  * @author  Steven Liu
-  * @version V1.0
-  * @date    09-Dec-2019
-  * @brief   YMODEM Send and Receive
-  *
-  ******************************************************************************
-  */
+/*
+ * Copyright (c) 2019 Fuzhou Rockchip Electronics Co., Ltd
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2019-12-09     Steven Liu   the first version
+ */
 
 #include <rtthread.h>
 #include <ymodem.h>
