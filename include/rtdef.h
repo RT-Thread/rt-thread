@@ -522,7 +522,7 @@ typedef siginfo_t rt_siginfo_t;
 
 /**
  * CPUs definitions
- * 
+ *
  */
 struct rt_cpu
 {

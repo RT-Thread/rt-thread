@@ -179,7 +179,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->cleanup   = 0;
     thread->user_data = 0;
 
-    /* init thread timer */
+    /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
                   thread->name,
                   rt_thread_timeout,
@@ -242,7 +242,7 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(stack_start != RT_NULL);
 
-    /* init thread object */
+    /* initialize thread object */
     rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
 
     return _rt_thread_init(thread,
@@ -293,7 +293,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    /* set current priority to init priority */
+    /* set current priority to initialize priority */
     thread->current_priority = thread->init_priority;
 
     /* calculate priority attribute */
