@@ -60,7 +60,7 @@ extern void (*rt_object_put_hook)(struct rt_object *object);
  */
 rt_inline rt_err_t rt_ipc_object_init(struct rt_ipc_object *ipc)
 {
-    /* init ipc object */
+    /* initialize ipc object */
     rt_list_init(&(ipc->suspend_thread));
 
     return RT_EOK;
@@ -159,13 +159,13 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
     struct rt_thread *thread;
     register rt_ubase_t temp;
 
-    /* wakeup all suspend threads */
+    /* wakeup all suspended threads */
     while (!rt_list_isempty(list))
     {
         /* disable interrupt */
         temp = rt_hw_interrupt_disable();
 
-        /* get next suspend thread */
+        /* get next suspended thread */
         thread = rt_list_entry(list->next, struct rt_thread, tlist);
         /* set error code to RT_ERROR */
         thread->error = -RT_ERROR;
@@ -173,7 +173,7 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
         /*
          * resume thread
          * In rt_thread_resume function, it will remove current thread from
-         * suspend list
+         * suspended list
          */
         rt_thread_resume(thread);
 
@@ -191,7 +191,7 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
  *
  * @param sem the semaphore object
  * @param name the name of semaphore
- * @param value the init value of semaphore
+ * @param value the initial value of semaphore
  * @param flag the flag of semaphore
  *
  * @return the operation status, RT_EOK on successful
@@ -204,13 +204,13 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(value < 0x10000U);
 
-    /* init object */
+    /* initialize object */
     rt_object_init(&(sem->parent.parent), RT_Object_Class_Semaphore, name);
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(sem->parent));
 
-    /* set init value */
+    /* set initial value */
     sem->value = (rt_uint16_t)value;
 
     /* set parent */
@@ -236,7 +236,7 @@ rt_err_t rt_sem_detach(rt_sem_t sem)
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
     RT_ASSERT(rt_object_is_systemobject(&sem->parent.parent));
 
-    /* wakeup all suspend threads */
+    /* wakeup all suspended threads */
     rt_ipc_list_resume_all(&(sem->parent.suspend_thread));
 
     /* detach semaphore object */
@@ -251,7 +251,7 @@ RTM_EXPORT(rt_sem_detach);
  * This function will create a semaphore from system resource
  *
  * @param name the name of semaphore
- * @param value the init value of semaphore
+ * @param value the initial value of semaphore
  * @param flag the flag of semaphore
  *
  * @return the created semaphore, RT_NULL on error happen
@@ -270,10 +270,10 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
     if (sem == RT_NULL)
         return sem;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(sem->parent));
 
-    /* set init value */
+    /* set initial value */
     sem->value = value;
 
     /* set parent */
@@ -301,7 +301,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
     RT_ASSERT(rt_object_is_systemobject(&sem->parent.parent) == RT_FALSE);
 
-    /* wakeup all suspend threads */
+    /* wakeup all suspended threads */
     rt_ipc_list_resume_all(&(sem->parent.suspend_thread));
 
     /* delete semaphore object */
@@ -532,10 +532,10 @@ rt_err_t rt_mutex_init(rt_mutex_t mutex, const char *name, rt_uint8_t flag)
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
 
-    /* init object */
+    /* initialize object */
     rt_object_init(&(mutex->parent.parent), RT_Object_Class_Mutex, name);
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(mutex->parent));
 
     mutex->value = 1;
@@ -566,10 +566,10 @@ rt_err_t rt_mutex_detach(rt_mutex_t mutex)
     RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
     RT_ASSERT(rt_object_is_systemobject(&mutex->parent.parent));
 
-    /* wakeup all suspend threads */
+    /* wakeup all suspended threads */
     rt_ipc_list_resume_all(&(mutex->parent.suspend_thread));
 
-    /* detach mutex object */
+    /* detach semaphore object */
     rt_object_detach(&(mutex->parent.parent));
 
     return RT_EOK;
@@ -598,7 +598,7 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag)
     if (mutex == RT_NULL)
         return mutex;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(mutex->parent));
 
     mutex->value              = 1;
@@ -631,7 +631,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
     RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
     RT_ASSERT(rt_object_is_systemobject(&mutex->parent.parent) == RT_FALSE);
 
-    /* wakeup all suspend threads */
+    /* wakeup all suspended threads */
     rt_ipc_list_resume_all(&(mutex->parent.suspend_thread));
 
     /* delete mutex object */
@@ -917,16 +917,16 @@ rt_err_t rt_event_init(rt_event_t event, const char *name, rt_uint8_t flag)
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
 
-    /* init object */
+    /* initialize object */
     rt_object_init(&(event->parent.parent), RT_Object_Class_Event, name);
 
     /* set parent flag */
     event->parent.parent.flag = flag;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(event->parent));
 
-    /* init event */
+    /* initialize event */
     event->set = 0;
 
     return RT_EOK;
@@ -980,10 +980,10 @@ rt_event_t rt_event_create(const char *name, rt_uint8_t flag)
     /* set parent */
     event->parent.parent.flag = flag;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(event->parent));
 
-    /* init event */
+    /* initialize event */
     event->set = 0;
 
     return event;
@@ -1050,7 +1050,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
     event->set |= set;
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
-    
+
     if (!rt_list_isempty(&event->parent.suspend_thread))
     {
         /* search thread list to resume thread */
@@ -1073,7 +1073,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
             {
                 if (thread->event_set & event->set)
                 {
-                    /* save recieved event set */
+                    /* save the received event set */
                     thread->event_set = thread->event_set & event->set;
 
                     /* received an OR event */
@@ -1143,7 +1143,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
     if (set == 0)
         return -RT_ERROR;
 
-    /* init status */
+    /* initialize status */
     status = -RT_ERROR;
     /* get current thread */
     thread = rt_thread_self();
@@ -1253,7 +1253,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
     RT_ASSERT(rt_object_get_type(&event->parent.parent) == RT_Object_Class_Event);
-    
+
     if (cmd == RT_IPC_CMD_RESET)
     {
         /* disable interrupt */
@@ -1262,7 +1262,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
         /* resume all waiting thread */
         rt_ipc_list_resume_all(&event->parent.suspend_thread);
 
-        /* init event set */
+        /* initialize event set */
         event->set = 0;
 
         /* enable interrupt */
@@ -1299,23 +1299,23 @@ rt_err_t rt_mb_init(rt_mailbox_t mb,
 {
     RT_ASSERT(mb != RT_NULL);
 
-    /* init object */
+    /* initialize object */
     rt_object_init(&(mb->parent.parent), RT_Object_Class_MailBox, name);
 
     /* set parent flag */
     mb->parent.parent.flag = flag;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(mb->parent));
 
-    /* init mailbox */
+    /* initialize mailbox */
     mb->msg_pool   = (rt_ubase_t *)msgpool;
     mb->size       = size;
     mb->entry      = 0;
     mb->in_offset  = 0;
     mb->out_offset = 0;
 
-    /* init an additional list of sender suspend thread */
+    /* initialize an additional list of sender suspend thread */
     rt_list_init(&(mb->suspend_sender_thread));
 
     return RT_EOK;
@@ -1372,10 +1372,10 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
     /* set parent */
     mb->parent.parent.flag = flag;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(mb->parent));
 
-    /* init mailbox */
+    /* initialize mailbox */
     mb->size     = size;
     mb->msg_pool = (rt_ubase_t *)RT_KERNEL_MALLOC(mb->size * sizeof(rt_ubase_t));
     if (mb->msg_pool == RT_NULL)
@@ -1389,7 +1389,7 @@ rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
     mb->in_offset  = 0;
     mb->out_offset = 0;
 
-    /* init an additional list of sender suspend thread */
+    /* initialize an additional list of sender suspend thread */
     rt_list_init(&(mb->suspend_sender_thread));
 
     return mb;
@@ -1791,27 +1791,27 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
 
-    /* init object */
+    /* initialize object */
     rt_object_init(&(mq->parent.parent), RT_Object_Class_MessageQueue, name);
 
     /* set parent flag */
     mq->parent.parent.flag = flag;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(mq->parent));
 
-    /* set messasge pool */
+    /* set message pool */
     mq->msg_pool = msgpool;
 
     /* get correct message size */
     mq->msg_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
     mq->max_msgs = pool_size / (mq->msg_size + sizeof(struct rt_mq_message));
 
-    /* init message list */
+    /* initialize message list */
     mq->msg_queue_head = RT_NULL;
     mq->msg_queue_tail = RT_NULL;
 
-    /* init message empty list */
+    /* initialize message empty list */
     mq->msg_queue_free = RT_NULL;
     for (temp = 0; temp < mq->max_msgs; temp ++)
     {
@@ -1824,7 +1824,7 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     /* the initial entry is zero */
     mq->entry = 0;
 
-    /* init an additional list of sender suspend thread */
+    /* initialize an additional list of sender suspend thread */
     rt_list_init(&(mq->suspend_sender_thread));
 
     return RT_EOK;
@@ -1887,10 +1887,10 @@ rt_mq_t rt_mq_create(const char *name,
     /* set parent */
     mq->parent.parent.flag = flag;
 
-    /* init ipc object */
+    /* initialize ipc object */
     rt_ipc_object_init(&(mq->parent));
 
-    /* init message queue */
+    /* initialize message queue */
 
     /* get correct message size */
     mq->msg_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
@@ -1905,11 +1905,11 @@ rt_mq_t rt_mq_create(const char *name,
         return RT_NULL;
     }
 
-    /* init message list */
+    /* initialize message list */
     mq->msg_queue_head = RT_NULL;
     mq->msg_queue_tail = RT_NULL;
 
-    /* init message empty list */
+    /* initialize message empty list */
     mq->msg_queue_free = RT_NULL;
     for (temp = 0; temp < mq->max_msgs; temp ++)
     {
@@ -1922,7 +1922,7 @@ rt_mq_t rt_mq_create(const char *name,
     /* the initial entry is zero */
     mq->entry = 0;
 
-    /* init an additional list of sender suspend thread */
+    /* initialize an additional list of sender suspend thread */
     rt_list_init(&(mq->suspend_sender_thread));
 
     return mq;
