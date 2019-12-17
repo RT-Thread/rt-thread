@@ -67,7 +67,7 @@ struct rt_pin_ops
 {
     void (*pin_mode)(struct rt_device *device, rt_base_t pin, rt_base_t mode);
     void (*pin_write)(struct rt_device *device, rt_base_t pin, rt_base_t value);
-	void (*pin_togget)(struct rt_device *device, rt_base_t pin);
+	void (*pin_toggle)(struct rt_device *device, rt_base_t pin);
     int (*pin_read)(struct rt_device *device, rt_base_t pin);
 
     /* TODO: add GPIO interrupt */
@@ -81,7 +81,7 @@ int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void 
 
 void rt_pin_mode(rt_base_t pin, rt_base_t mode);
 void rt_pin_write(rt_base_t pin, rt_base_t value);
-void rt_pin_togget(rt_base_t pin);
+void rt_pin_toggle(rt_base_t pin);
 int  rt_pin_read(rt_base_t pin);
 rt_err_t rt_pin_attach_irq(rt_int32_t pin, rt_uint32_t mode,
                              void (*hdr)(void *args), void  *args);
