@@ -1,35 +1,18 @@
 /**
   ******************************************************************************
-  * @file    stm32h7xx_hal_conf_template.h
-  * @brief   HAL configuration template file. 
-  *          This file should be copied to the application folder and renamed
-  *          to stm32h7xx_hal_conf.h.
+  * @file    stm32h7xx_hal_conf.h
+  * @author  MCD Application Team
+  * @brief   HAL configuration file.
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2019 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -51,7 +34,7 @@
   */
 #define HAL_MODULE_ENABLED  
 
-/* #define HAL_ADC_MODULE_ENABLED   */
+  /* #define HAL_ADC_MODULE_ENABLED   */
 /* #define HAL_FDCAN_MODULE_ENABLED   */
 /* #define HAL_CEC_MODULE_ENABLED   */
 /* #define HAL_COMP_MODULE_ENABLED   */
@@ -67,17 +50,16 @@
 #define HAL_SDRAM_MODULE_ENABLED
 /* #define HAL_HASH_MODULE_ENABLED   */
 /* #define HAL_HRTIM_MODULE_ENABLED   */
-/* #define HAL_HSEM_MODULE_ENABLED   */
 /* #define HAL_JPEG_MODULE_ENABLED   */
 /* #define HAL_OPAMP_MODULE_ENABLED   */
 /* #define HAL_I2S_MODULE_ENABLED   */
 /* #define HAL_SMBUS_MODULE_ENABLED   */
-/* #define HAL_IWDG_MODULE_ENABLED   */
+#define HAL_IWDG_MODULE_ENABLED
 /* #define HAL_LPTIM_MODULE_ENABLED   */
 #define HAL_LTDC_MODULE_ENABLED
-/* #define HAL_QSPI_MODULE_ENABLED   */
+#define HAL_QSPI_MODULE_ENABLED
 /* #define HAL_RNG_MODULE_ENABLED   */
-/* #define HAL_RTC_MODULE_ENABLED   */
+#define HAL_RTC_MODULE_ENABLED
 /* #define HAL_SAI_MODULE_ENABLED   */
 /* #define HAL_SD_MODULE_ENABLED   */
 /* #define HAL_MMC_MODULE_ENABLED   */
@@ -170,26 +152,61 @@
 #define  TICK_INT_PRIORITY            ((uint32_t)0U) /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
 #define  USE_SD_TRANSCEIVER           1U               /*!< use uSD Transceiver */
+
+#define  USE_HAL_ADC_REGISTER_CALLBACKS     0U /* ADC register callback disabled     */
+#define  USE_HAL_CEC_REGISTER_CALLBACKS     0U /* CEC register callback disabled     */
+#define  USE_HAL_COMP_REGISTER_CALLBACKS    0U /* COMP register callback disabled    */
+#define  USE_HAL_CRYP_REGISTER_CALLBACKS    0U /* CRYP register callback disabled    */
+#define  USE_HAL_DAC_REGISTER_CALLBACKS     0U /* DAC register callback disabled     */
+#define  USE_HAL_DCMI_REGISTER_CALLBACKS    0U /* DCMI register callback disabled    */
+#define  USE_HAL_DFSDM_REGISTER_CALLBACKS   0U /* DFSDM register callback disabled   */
+#define  USE_HAL_DMA2D_REGISTER_CALLBACKS   0U /* DMA2D register callback disabled   */
+#define  USE_HAL_DSI_REGISTER_CALLBACKS     0U /* DSI register callback disabled     */
+#define  USE_HAL_ETH_REGISTER_CALLBACKS     0U /* ETH register callback disabled     */
+#define  USE_HAL_FDCAN_REGISTER_CALLBACKS   0U /* FDCAN register callback disabled   */
+#define  USE_HAL_NAND_REGISTER_CALLBACKS    0U /* NAND register callback disabled    */
+#define  USE_HAL_NOR_REGISTER_CALLBACKS     0U /* NOR register callback disabled     */
+#define  USE_HAL_SDRAM_REGISTER_CALLBACKS   0U /* SDRAM register callback disabled   */
+#define  USE_HAL_SRAM_REGISTER_CALLBACKS    0U /* SRAM register callback disabled    */
+#define  USE_HAL_HASH_REGISTER_CALLBACKS    0U /* HASH register callback disabled    */
+#define  USE_HAL_HCD_REGISTER_CALLBACKS     0U /* HCD register callback disabled     */
+#define  USE_HAL_HRTIM_REGISTER_CALLBACKS   0U /* HRTIM register callback disabled   */
+#define  USE_HAL_I2C_REGISTER_CALLBACKS     0U /* I2C register callback disabled     */
+#define  USE_HAL_I2S_REGISTER_CALLBACKS     0U /* I2S register callback disabled     */
+#define  USE_HAL_JPEG_REGISTER_CALLBACKS    0U /* JPEG register callback disabled    */
+#define  USE_HAL_LPTIM_REGISTER_CALLBACKS   0U /* LPTIM register callback disabled   */
+#define  USE_HAL_LTDC_REGISTER_CALLBACKS    0U /* LTDC register callback disabled    */
+#define  USE_HAL_MDIOS_REGISTER_CALLBACKS   0U /* MDIO register callback disabled    */
+#define  USE_HAL_OPAMP_REGISTER_CALLBACKS   0U /* MDIO register callback disabled    */
+#define  USE_HAL_PCD_REGISTER_CALLBACKS     0U /* PCD register callback disabled     */
+#define  USE_HAL_QSPI_REGISTER_CALLBACKS    0U /* QSPI register callback disabled    */
+#define  USE_HAL_RNG_REGISTER_CALLBACKS     0U /* RNG register callback disabled     */
+#define  USE_HAL_RTC_REGISTER_CALLBACKS     0U /* RTC register callback disabled     */
+#define  USE_HAL_SAI_REGISTER_CALLBACKS     0U /* SAI register callback disabled     */
+#define  USE_HAL_SPDIFRX_REGISTER_CALLBACKS 0U /* SPDIFRX register callback disabled */
+#define  USE_HAL_SMBUS_REGISTER_CALLBACKS   0U /* SMBUS register callback disabled   */
+#define  USE_HAL_SPI_REGISTER_CALLBACKS     0U /* SPI register callback disabled     */
+#define  USE_HAL_SWPMI_REGISTER_CALLBACKS   0U /* SWPMI register callback disabled   */
+#define  USE_HAL_TIM_REGISTER_CALLBACKS     0U /* TIM register callback disabled     */
+#define  USE_HAL_WWDG_REGISTER_CALLBACKS    0U /* WWDG register callback disabled    */
+
+/* ########################### Ethernet Configuration ######################### */
+#define ETH_TX_DESC_CNT         4  /* number of Ethernet Tx DMA descriptors */
+#define ETH_RX_DESC_CNT         4  /* number of Ethernet Rx DMA descriptors */
+
+#define ETH_MAC_ADDR0    ((uint8_t)0x02)
+#define ETH_MAC_ADDR1    ((uint8_t)0x00)
+#define ETH_MAC_ADDR2    ((uint8_t)0x00)
+#define ETH_MAC_ADDR3    ((uint8_t)0x00)
+#define ETH_MAC_ADDR4    ((uint8_t)0x00)
+#define ETH_MAC_ADDR5    ((uint8_t)0x00)
+
 /* ########################## Assert Selection ############################## */
 /**
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
   *        HAL drivers code
   */
 /* #define USE_FULL_ASSERT    1U */ 
-
-/* ################## SPI peripheral configuration ########################## */
-
-/* CRC FEATURE: Use to activate CRC feature inside HAL SPI Driver
-* Activated: CRC code is present inside driver
-* Deactivated: CRC code cleaned from driver
-*/
-
-#define USE_SPI_CRC                     0U
-
-/* ################## ETH peripheral configuration ########################## */
-
-#define ETH_TX_DESC_CNT ((uint32_t)4U)       /* Tx Descriptor Length  */
-#define ETH_RX_DESC_CNT ((uint32_t)4U)       /* Rx Descriptor Length  */
 
 /* Includes ------------------------------------------------------------------*/
 /**
@@ -200,10 +217,6 @@
   #include "stm32h7xx_hal_rcc.h"
 #endif /* HAL_RCC_MODULE_ENABLED */
 
-#ifdef HAL_EXTI_MODULE_ENABLED
-  #include "stm32h7xx_hal_exti.h"
-#endif /* HAL_EXTI_MODULE_ENABLED */
-
 #ifdef HAL_GPIO_MODULE_ENABLED
   #include "stm32h7xx_hal_gpio.h"
 #endif /* HAL_GPIO_MODULE_ENABLED */
@@ -211,6 +224,10 @@
 #ifdef HAL_DMA_MODULE_ENABLED
   #include "stm32h7xx_hal_dma.h"
 #endif /* HAL_DMA_MODULE_ENABLED */
+
+#ifdef HAL_MDMA_MODULE_ENABLED
+ #include "stm32h7xx_hal_mdma.h"
+#endif /* HAL_MDMA_MODULE_ENABLED */
 
 #ifdef HAL_HASH_MODULE_ENABLED
   #include "stm32h7xx_hal_hash.h"
@@ -224,6 +241,10 @@
   #include "stm32h7xx_hal_dma2d.h"
 #endif /* HAL_DMA2D_MODULE_ENABLED */
 
+#ifdef HAL_DSI_MODULE_ENABLED
+  #include "stm32h7xx_hal_dsi.h"
+#endif /* HAL_DSI_MODULE_ENABLED */
+
 #ifdef HAL_DFSDM_MODULE_ENABLED
   #include "stm32h7xx_hal_dfsdm.h"
 #endif /* HAL_DFSDM_MODULE_ENABLED */
@@ -231,6 +252,10 @@
 #ifdef HAL_ETH_MODULE_ENABLED
   #include "stm32h7xx_hal_eth.h"
 #endif /* HAL_ETH_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32h7xx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
 
 #ifdef HAL_CORTEX_MODULE_ENABLED
   #include "stm32h7xx_hal_cortex.h"
@@ -257,7 +282,7 @@
 #endif /* HAL_CRC_MODULE_ENABLED */
 
 #ifdef HAL_CRYP_MODULE_ENABLED
-  #include "stm32h7xx_hal_cryp.h" 
+  #include "stm32h7xx_hal_cryp.h"
 #endif /* HAL_CRYP_MODULE_ENABLED */
 
 #ifdef HAL_DAC_MODULE_ENABLED
@@ -287,7 +312,7 @@
 #ifdef HAL_NAND_MODULE_ENABLED
   #include "stm32h7xx_hal_nand.h"
 #endif /* HAL_NAND_MODULE_ENABLED */
-      
+
 #ifdef HAL_I2C_MODULE_ENABLED
  #include "stm32h7xx_hal_i2c.h"
 #endif /* HAL_I2C_MODULE_ENABLED */
@@ -308,10 +333,10 @@
  #include "stm32h7xx_hal_mdios.h"
 #endif /* HAL_MDIOS_MODULE_ENABLED */
 
-#ifdef HAL_MDMA_MODULE_ENABLED
- #include "stm32h7xx_hal_mdma.h"
-#endif /* HAL_MDMA_MODULE_ENABLED */
-   
+#ifdef HAL_MMC_MODULE_ENABLED
+ #include "stm32h7xx_hal_mmc.h"
+#endif /* HAL_MMC_MODULE_ENABLED */
+
 #ifdef HAL_LPTIM_MODULE_ENABLED
 #include "stm32h7xx_hal_lptim.h"
 #endif /* HAL_LPTIM_MODULE_ENABLED */
@@ -323,7 +348,7 @@
 #ifdef HAL_OPAMP_MODULE_ENABLED
 #include "stm32h7xx_hal_opamp.h"
 #endif /* HAL_OPAMP_MODULE_ENABLED */
-   
+
 #ifdef HAL_PWR_MODULE_ENABLED
  #include "stm32h7xx_hal_pwr.h"
 #endif /* HAL_PWR_MODULE_ENABLED */
@@ -331,7 +356,11 @@
 #ifdef HAL_QSPI_MODULE_ENABLED
  #include "stm32h7xx_hal_qspi.h"
 #endif /* HAL_QSPI_MODULE_ENABLED */
-   
+
+#ifdef HAL_RAMECC_MODULE_ENABLED
+ #include "stm32h7xx_hal_ramecc.h"
+#endif /* HAL_HCD_MODULE_ENABLED */
+
 #ifdef HAL_RNG_MODULE_ENABLED
  #include "stm32h7xx_hal_rng.h"
 #endif /* HAL_RNG_MODULE_ENABLED */
@@ -348,14 +377,10 @@
  #include "stm32h7xx_hal_sd.h"
 #endif /* HAL_SD_MODULE_ENABLED */
 
-#ifdef HAL_MMC_MODULE_ENABLED
- #include "stm32h7xx_hal_mmc.h"
-#endif /* HAL_MMC_MODULE_ENABLED */
-
 #ifdef HAL_SDRAM_MODULE_ENABLED
  #include "stm32h7xx_hal_sdram.h"
 #endif /* HAL_SDRAM_MODULE_ENABLED */
-   
+
 #ifdef HAL_SPI_MODULE_ENABLED
  #include "stm32h7xx_hal_spi.h"
 #endif /* HAL_SPI_MODULE_ENABLED */
@@ -395,7 +420,7 @@
 #ifdef HAL_WWDG_MODULE_ENABLED
  #include "stm32h7xx_hal_wwdg.h"
 #endif /* HAL_WWDG_MODULE_ENABLED */
-   
+
 #ifdef HAL_PCD_MODULE_ENABLED
  #include "stm32h7xx_hal_pcd.h"
 #endif /* HAL_PCD_MODULE_ENABLED */

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-13     BalanceTWK   first version
+ * 2019-06-11     WillianChan   Add SD card hot plug detection
  */
 
 #ifndef _DRV_SDIO_H
@@ -19,21 +20,24 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4)
 #define SDCARD_INSTANCE_TYPE              SDIO_TypeDef
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
 #define SDCARD_INSTANCE_TYPE              SDMMC_TypeDef
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4)
 #define SDCARD_INSTANCE                   SDIO
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7)
 #define SDCARD_INSTANCE                   SDMMC1
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) */
 
 #define SDIO_BUFF_SIZE       4096
-#define SDIO_MAX_FREQ        1000000
 #define SDIO_ALIGN_LEN       32
+
+#ifndef SDIO_MAX_FREQ
+#define SDIO_MAX_FREQ        (1000000)
+#endif
 
 #ifndef SDIO_BASE_ADDRESS
 #define SDIO_BASE_ADDRESS    (0x40012800U)
@@ -186,5 +190,7 @@ struct stm32_sdio_class
         DMA_HandleTypeDef handle_tx;
     } dma;
 };
+
+extern void stm32_mmcsd_change(void);
 
 #endif

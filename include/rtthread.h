@@ -348,11 +348,11 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb);
 rt_mailbox_t rt_mb_create(const char *name, rt_size_t size, rt_uint8_t flag);
 rt_err_t rt_mb_delete(rt_mailbox_t mb);
 
-rt_err_t rt_mb_send(rt_mailbox_t mb, rt_uint32_t value);
+rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value);
 rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
-                         rt_uint32_t  value,
+                         rt_ubase_t  value,
                          rt_int32_t   timeout);
-rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout);
+rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif
 
@@ -373,8 +373,12 @@ rt_mq_t rt_mq_create(const char *name,
                      rt_uint8_t  flag);
 rt_err_t rt_mq_delete(rt_mq_t mq);
 
-rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size);
-rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size);
+rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size);
+rt_err_t rt_mq_send_wait(rt_mq_t     mq,
+                         const void *buffer,
+                         rt_size_t   size,
+                         rt_int32_t  timeout);
+rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size);
 rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,

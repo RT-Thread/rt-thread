@@ -58,16 +58,21 @@ extern "C" {
 #ifndef RT_USING_ARCH_DATA_TYPE
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
-typedef signed   long                   rt_int32_t;     /**< 32bit integer type */
-typedef signed long long                rt_int64_t;     /**< 64bit integer type */
+typedef signed   int                    rt_int32_t;     /**< 32bit integer type */
 typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
-typedef unsigned long                   rt_uint32_t;    /**< 32bit unsigned integer type */
+typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned integer type */
+
+#ifdef ARCH_CPU_64BIT
+typedef signed long                     rt_int64_t;     /**< 64bit integer type */
+typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
+#else
+typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
 #endif
-typedef int                             rt_bool_t;      /**< boolean type */
+#endif
 
-/* 32bit CPU */
+typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
 typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
 
@@ -191,11 +196,11 @@ typedef int (*init_fn_t)(void);
         };
         #define INIT_EXPORT(fn, level)                                                       \
             const char __rti_##fn##_name[] = #fn;                                            \
-            RT_USED const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
+            RT_USED const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn." level) = \
             { __rti_##fn##_name, fn};
     #else
         #define INIT_EXPORT(fn, level)                                                       \
-            RT_USED const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
+            RT_USED const init_fn_t __rt_init_##fn SECTION(".rti_fn." level) = fn
     #endif
 #endif
 #else
@@ -546,7 +551,9 @@ struct rt_thread
     rt_sigset_t     sig_pending;                        /**< the pending signals */
     rt_sigset_t     sig_mask;                           /**< the mask bits of signal */
 
+#ifndef RT_USING_SMP
     void            *sig_ret;                           /**< the return stack pointer from signal */
+#endif
     rt_sighandler_t *sig_vectors;                       /**< vectors of signal handler */
     void            *si_list;                           /**< the signal infor list */
 #endif
@@ -657,7 +664,7 @@ struct rt_mailbox
 {
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
-    rt_uint32_t         *msg_pool;                      /**< start address of message buffer */
+    rt_ubase_t          *msg_pool;                      /**< start address of message buffer */
 
     rt_uint16_t          size;                          /**< size of message pool */
 
@@ -688,6 +695,8 @@ struct rt_messagequeue
     void                *msg_queue_head;                /**< list head */
     void                *msg_queue_tail;                /**< list tail */
     void                *msg_queue_free;                /**< pointer indicated the free node of queue */
+
+    rt_list_t            suspend_sender_thread;         /**< sender thread suspended on this message queue */
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif
@@ -761,7 +770,6 @@ struct rt_mempool
     rt_size_t        block_free_count;                  /**< numbers of free memory block */
 
     rt_list_t        suspend_thread;                    /**< threads pended on this resource */
-    rt_size_t        suspend_thread_count;              /**< numbers of thread pended on this resource */
 };
 typedef struct rt_mempool *rt_mp_t;
 #endif
@@ -800,6 +808,7 @@ enum rt_device_class_type
     RT_Device_Class_Timer,                              /**< Timer device */
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
     RT_Device_Class_Sensor,                             /**< Sensor device */
+    RT_Device_Class_Touch,                              /**< Touch device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 

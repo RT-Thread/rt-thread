@@ -30,7 +30,7 @@ static char *const sensor_name_str[] =
     "hr_",       /* Heart Rate        */
     "tvoc_",     /* TVOC Level        */
     "noi_",      /* Noise Loudness    */
-    "step_"      /* Step sensor       */
+    "step_",     /* Step sensor       */
     "forc_"      /* Force sensor      */
 };
 
@@ -44,7 +44,7 @@ void rt_sensor_cb(rt_sensor_t sen)
     {
         return;
     }
-    
+
     if (sen->irq_handle != RT_NULL)
     {
         sen->irq_handle(sen);
@@ -69,7 +69,7 @@ void rt_sensor_cb(rt_sensor_t sen)
 /* ISR for sensor interrupt */
 static void irq_callback(void *args)
 {
-    rt_sensor_t sensor = args;
+    rt_sensor_t sensor = (rt_sensor_t)args;
     rt_uint8_t i;
 
     if (sensor->module)
@@ -116,48 +116,12 @@ static rt_err_t rt_sensor_irq_init(rt_sensor_t sensor)
     return 0;
 }
 
-/* Sensor interrupt enable */
-static void rt_sensor_irq_enable(rt_sensor_t sensor)
-{
-    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
-    {
-        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_TRUE);
-    }
-}
-
-/* Sensor interrupt disable */
-static void rt_sensor_irq_disable(rt_sensor_t sensor)
-{
-    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
-    {
-        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
-    }
-}
-
 /* RT-Thread Device Interface */
-
-static rt_err_t rt_sensor_init(rt_device_t dev)
-{
-    rt_sensor_t sensor = (rt_sensor_t)dev;
-    RT_ASSERT(dev != RT_NULL);
-
-    if (sensor->module != RT_NULL && sensor->info.fifo_max > 0 && sensor->data_buf == RT_NULL)
-    {
-        /* Allocate memory for the sensor buffer */
-        sensor->data_buf = rt_malloc(sizeof(struct rt_sensor_data) * sensor->info.fifo_max);
-        if (sensor->data_buf == RT_NULL)
-        {
-            return -RT_ENOMEM;
-        }
-    }
-
-    return RT_EOK;
-}
-
 static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
     RT_ASSERT(dev != RT_NULL);
+    rt_err_t res = RT_EOK;
 
     if (sensor->module)
     {
@@ -165,37 +129,52 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
         rt_mutex_take(sensor->module->lock, RT_WAITING_FOREVER);
     }
 
+    if (sensor->module != RT_NULL && sensor->info.fifo_max > 0 && sensor->data_buf == RT_NULL)
+    {
+        /* Allocate memory for the sensor buffer */
+        sensor->data_buf = rt_malloc(sizeof(struct rt_sensor_data) * sensor->info.fifo_max);
+        if (sensor->data_buf == RT_NULL)
+        {
+            res = -RT_ENOMEM;
+            goto __exit;
+        }
+    }
+
     if (oflag & RT_DEVICE_FLAG_RDONLY && dev->flag & RT_DEVICE_FLAG_RDONLY)
     {
-        /* If polling mode is supported, configure it to polling mode */
-        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_POLLING) == RT_EOK)
+        if (sensor->ops->control != RT_NULL)
         {
-            sensor->config.mode = RT_SENSOR_MODE_POLLING;
+            /* If polling mode is supported, configure it to polling mode */
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_POLLING);
         }
+        sensor->config.mode = RT_SENSOR_MODE_POLLING;
     }
     else if (oflag & RT_DEVICE_FLAG_INT_RX && dev->flag & RT_DEVICE_FLAG_INT_RX)
     {
-        /* If interrupt mode is supported, configure it to interrupt mode */
-        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT) == RT_EOK)
+        if (sensor->ops->control != RT_NULL)
         {
-            sensor->config.mode = RT_SENSOR_MODE_INT;
-            /* Initialization sensor interrupt */
-            rt_sensor_irq_init(sensor);
+            /* If interrupt mode is supported, configure it to interrupt mode */
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_INT);
         }
+        /* Initialization sensor interrupt */
+        rt_sensor_irq_init(sensor);
+        sensor->config.mode = RT_SENSOR_MODE_INT;
     }
     else if (oflag & RT_DEVICE_FLAG_FIFO_RX && dev->flag & RT_DEVICE_FLAG_FIFO_RX)
     {
-        /* If fifo mode is supported, configure it to fifo mode */
-        if (sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO) == RT_EOK)
+        if (sensor->ops->control != RT_NULL)
         {
-            sensor->config.mode = RT_SENSOR_MODE_FIFO;
-            /* Initialization sensor interrupt */
-            rt_sensor_irq_init(sensor);
+            /* If fifo mode is supported, configure it to fifo mode */
+            sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, (void *)RT_SENSOR_MODE_FIFO);
         }
+        /* Initialization sensor interrupt */
+        rt_sensor_irq_init(sensor);
+        sensor->config.mode = RT_SENSOR_MODE_FIFO;
     }
     else
     {
-        return -RT_EINVAL;
+        res = -RT_EINVAL;
+        goto __exit;
     }
 
     /* Configure power mode to normal mode */
@@ -204,18 +183,21 @@ static rt_err_t rt_sensor_open(rt_device_t dev, rt_uint16_t oflag)
         sensor->config.power = RT_SENSOR_POWER_NORMAL;
     }
 
+__exit:
     if (sensor->module)
     {
         /* release the module mutex */
         rt_mutex_release(sensor->module->lock);
     }
 
-    return RT_EOK;
+    return res;
 }
 
-static rt_err_t  rt_sensor_close(rt_device_t dev)
+static rt_err_t rt_sensor_close(rt_device_t dev)
 {
     rt_sensor_t sensor = (rt_sensor_t)dev;
+    int i;
+
     RT_ASSERT(dev != RT_NULL);
 
     if (sensor->module)
@@ -230,8 +212,31 @@ static rt_err_t  rt_sensor_close(rt_device_t dev)
     }
 
     /* Sensor disable interrupt */
-    rt_sensor_irq_disable(sensor);
+    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+    {
+        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
+    }
 
+    if (sensor->module != RT_NULL && sensor->info.fifo_max > 0 && sensor->data_buf != RT_NULL)
+    {
+        for (i = 0; i < sensor->module->sen_num; i ++)
+        {
+            if (sensor->module->sen[i]->parent.ref_count > 0)
+                goto __exit;
+        }
+
+        /* Free memory for the sensor buffer */
+        for (i = 0; i < sensor->module->sen_num; i ++)
+        {
+            if (sensor->module->sen[i]->data_buf != RT_NULL)
+            {
+                rt_free(sensor->module->sen[i]->data_buf);
+                sensor->module->sen[i]->data_buf = RT_NULL;
+            }
+        }
+    }
+
+__exit:
     if (sensor->module)
     {
         rt_mutex_release(sensor->module->lock);
@@ -320,7 +325,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         }
         break;
     case RT_SENSOR_CTRL_SET_ODR:
-        
+
         /* Configuration data output rate */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_ODR, args);
         if (result == RT_EOK)
@@ -329,27 +334,8 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
             LOG_D("set odr %d", sensor->config.odr);
         }
         break;
-    case RT_SENSOR_CTRL_SET_MODE:
-        
-        /* Configuration sensor work mode */
-        result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_MODE, args);
-        if (result == RT_EOK)
-        {
-            sensor->config.mode = (rt_uint32_t)args & 0xFF;
-            LOG_D("set work mode code:", sensor->config.mode);
-
-            if (sensor->config.mode == RT_SENSOR_MODE_POLLING)
-            {
-                rt_sensor_irq_disable(sensor);
-            }
-            else if (sensor->config.mode == RT_SENSOR_MODE_INT || sensor->config.mode == RT_SENSOR_MODE_FIFO)
-            {
-                rt_sensor_irq_enable(sensor);
-            }
-        }
-        break;
     case RT_SENSOR_CTRL_SET_POWER:
-        
+
         /* Configuration sensor power mode */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SET_POWER, args);
         if (result == RT_EOK)
@@ -359,7 +345,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
         }
         break;
     case RT_SENSOR_CTRL_SELF_TEST:
-        
+
         /* Device self-test */
         result = sensor->ops->control(sensor, RT_SENSOR_CTRL_SELF_TEST, args);
         break;
@@ -378,7 +364,7 @@ static rt_err_t rt_sensor_control(rt_device_t dev, int cmd, void *args)
 #ifdef RT_USING_DEVICE_OPS
 const static struct rt_device_ops rt_sensor_ops =
 {
-    rt_sensor_init,
+    RT_NULL,
     rt_sensor_open,
     rt_sensor_close,
     rt_sensor_read,
@@ -403,7 +389,7 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
 
     /* Add a type name for the sensor device */
     sensor_name = sensor_name_str[sensor->info.type];
-    device_name = rt_calloc(1, rt_strlen(sensor_name) + 1 + rt_strlen(name));
+    device_name = (char *)rt_calloc(1, rt_strlen(sensor_name) + 1 + rt_strlen(name));
     if (device_name == RT_NULL)
     {
         LOG_E("device_name calloc failed!");
@@ -429,7 +415,7 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
 #ifdef RT_USING_DEVICE_OPS
     device->ops         = &rt_sensor_ops;
 #else
-    device->init        = rt_sensor_init;
+    device->init        = RT_NULL;
     device->open        = rt_sensor_open;
     device->close       = rt_sensor_close;
     device->read        = rt_sensor_read;
@@ -444,10 +430,12 @@ int rt_hw_sensor_register(rt_sensor_t sensor,
     result = rt_device_register(device, device_name, flag | RT_DEVICE_FLAG_STANDALONE);
     if (result != RT_EOK)
     {
+        rt_free(device_name);
         LOG_E("rt_sensor register err code: %d", result);
         return result;
     }
 
+    rt_free(device_name);
     LOG_I("rt_sensor init success");
     return RT_EOK;
 }

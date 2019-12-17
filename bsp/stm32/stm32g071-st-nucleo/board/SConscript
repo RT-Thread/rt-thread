@@ -18,11 +18,11 @@ path += [cwd + '/CubeMX_Config/Inc']
 startup_path_prefix = SDK_LIB
 
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/ST/STM32G0xx/Source/Templates/gcc/startup_stm32g071xx.s']
+    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/Device/ST/STM32G0xx/Source/Templates/gcc/startup_stm32g071xx.s']
 elif rtconfig.CROSS_TOOL == 'keil':
-    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/ST/STM32G0xx/Source/Templates/arm/startup_stm32g071xx.s']
+    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/Device/ST/STM32G0xx/Source/Templates/arm/startup_stm32g071xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':
-    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/ST/STM32G0xx/Source/Templates/iar/startup_stm32g071xx.s']
+    src += [startup_path_prefix + '/STM32G0xx_HAL/CMSIS/Device/ST/STM32G0xx/Source/Templates/iar/startup_stm32g071xx.s']
 
 CPPDEFINES = ['STM32G071xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

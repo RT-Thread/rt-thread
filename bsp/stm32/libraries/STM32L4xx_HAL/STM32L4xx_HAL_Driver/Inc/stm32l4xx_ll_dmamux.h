@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -133,26 +117,35 @@ extern "C" {
   */
 #define LL_DMAMUX_CCR_SOIE                DMAMUX_CxCR_SOIE          /*!< Synchronization Event Overrun Interrupt */
 #define LL_DMAMUX_RGCR_RGOIE              DMAMUX_RGxCR_OIE          /*!< Request Generation Trigger Event Overrun Interrupt    */
+/**
+  * @}
+  */
 
 /** @defgroup DMAMUX_LL_EC_REQUEST Transfer request
   * @{
   */
 #define LL_DMAMUX_REQ_MEM2MEM          0U   /*!< Memory to memory transfer  */
+
 #define LL_DMAMUX_REQ_GENERATOR0       1U   /*!< DMAMUX request generator 0 */
 #define LL_DMAMUX_REQ_GENERATOR1       2U   /*!< DMAMUX request generator 1 */
 #define LL_DMAMUX_REQ_GENERATOR2       3U   /*!< DMAMUX request generator 2 */
 #define LL_DMAMUX_REQ_GENERATOR3       4U   /*!< DMAMUX request generator 3 */
+
 #define LL_DMAMUX_REQ_ADC1             5U   /*!< DMAMUX ADC1 request        */
+
 #define LL_DMAMUX_REQ_DAC1_CH1         6U   /*!< DMAMUX DAC1 CH1 request    */
 #define LL_DMAMUX_REQ_DAC1_CH2         7U   /*!< DMAMUX DAC1 CH2 request    */
+
 #define LL_DMAMUX_REQ_TIM6_UP          8U   /*!< DMAMUX TIM6 UP request     */
 #define LL_DMAMUX_REQ_TIM7_UP          9U   /*!< DMAMUX TIM7 UP request     */
+
 #define LL_DMAMUX_REQ_SPI1_RX         10U   /*!< DMAMUX SPI1 RX request     */
 #define LL_DMAMUX_REQ_SPI1_TX         11U   /*!< DMAMUX SPI1 TX request     */
 #define LL_DMAMUX_REQ_SPI2_RX         12U   /*!< DMAMUX SPI2 RX request     */
 #define LL_DMAMUX_REQ_SPI2_TX         13U   /*!< DMAMUX SPI2 TX request     */
 #define LL_DMAMUX_REQ_SPI3_RX         14U   /*!< DMAMUX SPI3 RX request     */
 #define LL_DMAMUX_REQ_SPI3_TX         15U   /*!< DMAMUX SPI3 TX request     */
+
 #define LL_DMAMUX_REQ_I2C1_RX         16U   /*!< DMAMUX I2C1 RX request     */
 #define LL_DMAMUX_REQ_I2C1_TX         17U   /*!< DMAMUX I2C1 TX request     */
 #define LL_DMAMUX_REQ_I2C2_RX         18U   /*!< DMAMUX I2C2 RX request     */
@@ -161,24 +154,30 @@ extern "C" {
 #define LL_DMAMUX_REQ_I2C3_TX         21U   /*!< DMAMUX I2C3 TX request     */
 #define LL_DMAMUX_REQ_I2C4_RX         22U   /*!< DMAMUX I2C4 RX request     */
 #define LL_DMAMUX_REQ_I2C4_TX         23U   /*!< DMAMUX I2C4 TX request     */
+
 #define LL_DMAMUX_REQ_USART1_RX       24U   /*!< DMAMUX USART1 RX request   */
 #define LL_DMAMUX_REQ_USART1_TX       25U   /*!< DMAMUX USART1 TX request   */
 #define LL_DMAMUX_REQ_USART2_RX       26U   /*!< DMAMUX USART2 RX request   */
 #define LL_DMAMUX_REQ_USART2_TX       27U   /*!< DMAMUX USART2 TX request   */
 #define LL_DMAMUX_REQ_USART3_RX       28U   /*!< DMAMUX USART3 RX request   */
 #define LL_DMAMUX_REQ_USART3_TX       29U   /*!< DMAMUX USART3 TX request   */
+
 #define LL_DMAMUX_REQ_UART4_RX        30U   /*!< DMAMUX UART4 RX request    */
 #define LL_DMAMUX_REQ_UART4_TX        31U   /*!< DMAMUX UART4 TX request    */
 #define LL_DMAMUX_REQ_UART5_RX        32U   /*!< DMAMUX UART5 RX request    */
 #define LL_DMAMUX_REQ_UART5_TX        33U   /*!< DMAMUX UART5 TX request    */
+
 #define LL_DMAMUX_REQ_LPUART1_RX      34U   /*!< DMAMUX LPUART1 RX request  */
 #define LL_DMAMUX_REQ_LPUART1_TX      35U   /*!< DMAMUX LPUART1 TX request  */
+
 #define LL_DMAMUX_REQ_SAI1_A          36U   /*!< DMAMUX SAI1 A request      */
 #define LL_DMAMUX_REQ_SAI1_B          37U   /*!< DMAMUX SAI1 B request      */
 #define LL_DMAMUX_REQ_SAI2_A          38U   /*!< DMAMUX SAI2 A request      */
 #define LL_DMAMUX_REQ_SAI2_B          39U   /*!< DMAMUX SAI2 B request      */
+
 #define LL_DMAMUX_REQ_OSPI1           40U   /*!< DMAMUX OCTOSPI1 request    */
 #define LL_DMAMUX_REQ_OSPI2           41U   /*!< DMAMUX OCTOSPI2 request    */
+
 #define LL_DMAMUX_REQ_TIM1_CH1        42U   /*!< DMAMUX TIM1 CH1 request    */
 #define LL_DMAMUX_REQ_TIM1_CH2        43U   /*!< DMAMUX TIM1 CH2 request    */
 #define LL_DMAMUX_REQ_TIM1_CH3        44U   /*!< DMAMUX TIM1 CH3 request    */
@@ -186,6 +185,7 @@ extern "C" {
 #define LL_DMAMUX_REQ_TIM1_UP         46U   /*!< DMAMUX TIM1 UP request     */
 #define LL_DMAMUX_REQ_TIM1_TRIG       47U   /*!< DMAMUX TIM1 TRIG request   */
 #define LL_DMAMUX_REQ_TIM1_COM        48U   /*!< DMAMUX TIM1 COM request    */
+
 #define LL_DMAMUX_REQ_TIM8_CH1        49U   /*!< DMAMUX TIM8 CH1 request    */
 #define LL_DMAMUX_REQ_TIM8_CH2        50U   /*!< DMAMUX TIM8 CH2 request    */
 #define LL_DMAMUX_REQ_TIM8_CH3        51U   /*!< DMAMUX TIM8 CH3 request    */
@@ -193,22 +193,26 @@ extern "C" {
 #define LL_DMAMUX_REQ_TIM8_UP         53U   /*!< DMAMUX TIM8 UP request     */
 #define LL_DMAMUX_REQ_TIM8_TRIG       54U   /*!< DMAMUX TIM8 TRIG request   */
 #define LL_DMAMUX_REQ_TIM8_COM        55U   /*!< DMAMUX TIM8 COM request    */
+
 #define LL_DMAMUX_REQ_TIM2_CH1        56U   /*!< DMAMUX TIM2 CH1 request    */
 #define LL_DMAMUX_REQ_TIM2_CH2        57U   /*!< DMAMUX TIM2 CH2 request    */
 #define LL_DMAMUX_REQ_TIM2_CH3        58U   /*!< DMAMUX TIM2 CH3 request    */
 #define LL_DMAMUX_REQ_TIM2_CH4        59U   /*!< DMAMUX TIM2 CH4 request    */
 #define LL_DMAMUX_REQ_TIM2_UP         60U   /*!< DMAMUX TIM2 UP request     */
+
 #define LL_DMAMUX_REQ_TIM3_CH1        61U   /*!< DMAMUX TIM3 CH1 request    */
 #define LL_DMAMUX_REQ_TIM3_CH2        62U   /*!< DMAMUX TIM3 CH2 request    */
 #define LL_DMAMUX_REQ_TIM3_CH3        63U   /*!< DMAMUX TIM3 CH3 request    */
 #define LL_DMAMUX_REQ_TIM3_CH4        64U   /*!< DMAMUX TIM3 CH4 request    */
 #define LL_DMAMUX_REQ_TIM3_UP         65U   /*!< DMAMUX TIM3 UP request     */
 #define LL_DMAMUX_REQ_TIM3_TRIG       66U   /*!< DMAMUX TIM3 TRIG request   */
+
 #define LL_DMAMUX_REQ_TIM4_CH1        67U   /*!< DMAMUX TIM4 CH1 request    */
 #define LL_DMAMUX_REQ_TIM4_CH2        68U   /*!< DMAMUX TIM4 CH2 request    */
 #define LL_DMAMUX_REQ_TIM4_CH3        69U   /*!< DMAMUX TIM4 CH3 request    */
 #define LL_DMAMUX_REQ_TIM4_CH4        70U   /*!< DMAMUX TIM4 CH4 request    */
 #define LL_DMAMUX_REQ_TIM4_UP         71U   /*!< DMAMUX TIM4 UP request     */
+
 #define LL_DMAMUX_REQ_TIM5_CH1        72U   /*!< DMAMUX TIM5 CH1 request    */
 #define LL_DMAMUX_REQ_TIM5_CH2        73U   /*!< DMAMUX TIM5 CH2 request    */
 #define LL_DMAMUX_REQ_TIM5_CH3        74U   /*!< DMAMUX TIM5 CH3 request    */
@@ -219,21 +223,23 @@ extern "C" {
 #define LL_DMAMUX_REQ_TIM15_UP        79U   /*!< DMAMUX TIM15 UP request    */
 #define LL_DMAMUX_REQ_TIM15_TRIG      80U   /*!< DMAMUX TIM15 TRIG request  */
 #define LL_DMAMUX_REQ_TIM15_COM       81U   /*!< DMAMUX TIM15 COM request   */
+
 #define LL_DMAMUX_REQ_TIM16_CH1       82U   /*!< DMAMUX TIM16 CH1 request   */
 #define LL_DMAMUX_REQ_TIM16_UP        83U   /*!< DMAMUX TIM16 UP request    */
 #define LL_DMAMUX_REQ_TIM17_CH1       84U   /*!< DMAMUX TIM17 CH1 request   */
 #define LL_DMAMUX_REQ_TIM17_UP        85U   /*!< DMAMUX TIM17 UP request    */
+
 #define LL_DMAMUX_REQ_DFSDM1_FLT0     86U   /*!< DMAMUX DFSDM1_FLT0 request */
 #define LL_DMAMUX_REQ_DFSDM1_FLT1     87U   /*!< DMAMUX DFSDM1_FLT1 request */
 #define LL_DMAMUX_REQ_DFSDM1_FLT2     88U   /*!< DMAMUX DFSDM1_FLT2 request */
 #define LL_DMAMUX_REQ_DFSDM1_FLT3     89U   /*!< DMAMUX DFSDM1_FLT3 request */
+
 #define LL_DMAMUX_REQ_DCMI            90U   /*!< DMAMUX DCMI request        */
-#define LL_DMAMUX_REQ_AES_IN          91U   /*!< DMAMUX AES_IN request      */
+
+#define LL_DMAMUX_REQ_AES_IN          91U   /*!< DMAMUX AES_IN request     */
 #define LL_DMAMUX_REQ_AES_OUT         92U   /*!< DMAMUX AES_OUT request     */
+
 #define LL_DMAMUX_REQ_HASH_IN         93U   /*!< DMAMUX HASH_IN request     */
-/**
-  * @}
-  */
 
 /**
   * @}
@@ -242,16 +248,16 @@ extern "C" {
 /** @defgroup DMAMUX_LL_EC_CHANNEL DMAMUX Channel
   * @{
   */
-#define LL_DMAMUX_CHANNEL_0               0x00000000U               /*!< DMAMUX Channel 0 connected to DMA1 Channel 1  */
-#define LL_DMAMUX_CHANNEL_1               0x00000001U               /*!< DMAMUX Channel 1 connected to DMA1 Channel 2  */
-#define LL_DMAMUX_CHANNEL_2               0x00000002U               /*!< DMAMUX Channel 2 connected to DMA1 Channel 3  */
-#define LL_DMAMUX_CHANNEL_3               0x00000003U               /*!< DMAMUX Channel 3 connected to DMA1 Channel 4  */
-#define LL_DMAMUX_CHANNEL_4               0x00000004U               /*!< DMAMUX Channel 4 connected to DMA1 Channel 5  */
-#define LL_DMAMUX_CHANNEL_5               0x00000005U               /*!< DMAMUX Channel 5 connected to DMA1 Channel 6  */
-#define LL_DMAMUX_CHANNEL_6               0x00000006U               /*!< DMAMUX Channel 6 connected to DMA1 Channel 7  */
-#define LL_DMAMUX_CHANNEL_7               0x00000007U               /*!< DMAMUX Channel 7 connected to DMA2 Channel 1  */
-#define LL_DMAMUX_CHANNEL_8               0x00000008U               /*!< DMAMUX Channel 8 connected to DMA2 Channel 2  */
-#define LL_DMAMUX_CHANNEL_9               0x00000009U               /*!< DMAMUX Channel 9 connected to DMA2 Channel 3  */
+#define LL_DMAMUX_CHANNEL_0               0x00000000U               /*!< DMAMUX Channel 0 connected  to DMA1 Channel 1 */
+#define LL_DMAMUX_CHANNEL_1               0x00000001U               /*!< DMAMUX Channel 1 connected  to DMA1 Channel 2 */
+#define LL_DMAMUX_CHANNEL_2               0x00000002U               /*!< DMAMUX Channel 2 connected  to DMA1 Channel 3 */
+#define LL_DMAMUX_CHANNEL_3               0x00000003U               /*!< DMAMUX Channel 3 connected  to DMA1 Channel 4 */
+#define LL_DMAMUX_CHANNEL_4               0x00000004U               /*!< DMAMUX Channel 4 connected  to DMA1 Channel 5 */
+#define LL_DMAMUX_CHANNEL_5               0x00000005U               /*!< DMAMUX Channel 5 connected  to DMA1 Channel 6 */
+#define LL_DMAMUX_CHANNEL_6               0x00000006U               /*!< DMAMUX Channel 6 connected  to DMA1 Channel 7 */
+#define LL_DMAMUX_CHANNEL_7               0x00000007U               /*!< DMAMUX Channel 7 connected  to DMA2 Channel 1 */
+#define LL_DMAMUX_CHANNEL_8               0x00000008U               /*!< DMAMUX Channel 8 connected  to DMA2 Channel 2 */
+#define LL_DMAMUX_CHANNEL_9               0x00000009U               /*!< DMAMUX Channel 9 connected  to DMA2 Channel 3 */
 #define LL_DMAMUX_CHANNEL_10              0x0000000AU               /*!< DMAMUX Channel 10 connected to DMA2 Channel 4 */
 #define LL_DMAMUX_CHANNEL_11              0x0000000BU               /*!< DMAMUX Channel 11 connected to DMA2 Channel 5 */
 #define LL_DMAMUX_CHANNEL_12              0x0000000CU               /*!< DMAMUX Channel 12 connected to DMA2 Channel 6 */
@@ -274,32 +280,32 @@ extern "C" {
 /** @defgroup DMAMUX_LL_EC_SYNC_EVT Synchronization Signal Event
   * @{
   */
-#define LL_DMAMUX_SYNC_EXTI_LINE0          0U   /*!< Synchronization signal from EXTI Line0  */
-#define LL_DMAMUX_SYNC_EXTI_LINE1          1U   /*!< Synchronization signal from EXTI Line1  */
-#define LL_DMAMUX_SYNC_EXTI_LINE2          2U   /*!< Synchronization signal from EXTI Line2  */
-#define LL_DMAMUX_SYNC_EXTI_LINE3          3U   /*!< Synchronization signal from EXTI Line3  */
-#define LL_DMAMUX_SYNC_EXTI_LINE4          4U   /*!< Synchronization signal from EXTI Line4  */
-#define LL_DMAMUX_SYNC_EXTI_LINE5          5U   /*!< Synchronization signal from EXTI Line5  */
-#define LL_DMAMUX_SYNC_EXTI_LINE6          6U   /*!< Synchronization signal from EXTI Line6  */
-#define LL_DMAMUX_SYNC_EXTI_LINE7          7U   /*!< Synchronization signal from EXTI Line7  */
-#define LL_DMAMUX_SYNC_EXTI_LINE8          8U   /*!< Synchronization signal from EXTI Line8  */
-#define LL_DMAMUX_SYNC_EXTI_LINE9          9U   /*!< Synchronization signal from EXTI Line9  */
-#define LL_DMAMUX_SYNC_EXTI_LINE10        10U   /*!< Synchronization signal from EXTI Line10 */
-#define LL_DMAMUX_SYNC_EXTI_LINE11        11U   /*!< Synchronization signal from EXTI Line11 */
-#define LL_DMAMUX_SYNC_EXTI_LINE12        12U   /*!< Synchronization signal from EXTI Line12 */
-#define LL_DMAMUX_SYNC_EXTI_LINE13        13U   /*!< Synchronization signal from EXTI Line13 */
-#define LL_DMAMUX_SYNC_EXTI_LINE14        14U   /*!< Synchronization signal from EXTI Line14 */
-#define LL_DMAMUX_SYNC_EXTI_LINE15        15U   /*!< Synchronization signal from EXTI Line15 */
-#define LL_DMAMUX_SYNC_DMAMUX_CH0         16U   /*!< Synchronization signal from DMAMUX channel0 Event */
-#define LL_DMAMUX_SYNC_DMAMUX_CH1         17U   /*!< Synchronization signal from DMAMUX channel1 Event */
-#define LL_DMAMUX_SYNC_DMAMUX_CH2         18U   /*!< Synchronization signal from DMAMUX channel2 Event */
-#define LL_DMAMUX_SYNC_DMAMUX_CH3         19U   /*!< Synchronization signal from DMAMUX channel3 Event */
-#define LL_DMAMUX_SYNC_LPTIM1_OUT         20U   /*!< Synchronization signal from LPTIM1 Ouput */
-#define LL_DMAMUX_SYNC_LPTIM2_OUT         21U   /*!< Synchronization signal from LPTIM2 Ouput */
-#define LL_DMAMUX_SYNC_DSI_TE             22U   /*!< Synchronization signal from DSI Tearing Effect */
-#define LL_DMAMUX_SYNC_DSI_REFRESH_END    23U   /*!< Synchronization signal from DSI End of Refresh */
-#define LL_DMAMUX_SYNC_DMA2D_TX_END       24U   /*!< Synchronization signal from DMA2D End of Transfer */
-#define LL_DMAMUX_SYNC_LTDC_LINE_IT       25U   /*!< Synchronization signal from LTDC Line Interrupt   */
+#define LL_DMAMUX_SYNC_EXTI_LINE0         0x00000000U                                                                                     /*!< Synchronization signal from EXTI Line0  */
+#define LL_DMAMUX_SYNC_EXTI_LINE1         DMAMUX_CxCR_SYNC_ID_0                                                                           /*!< Synchronization signal from EXTI Line1  */
+#define LL_DMAMUX_SYNC_EXTI_LINE2         DMAMUX_CxCR_SYNC_ID_1                                                                           /*!< Synchronization signal from EXTI Line2  */
+#define LL_DMAMUX_SYNC_EXTI_LINE3         (DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0)                                                 /*!< Synchronization signal from EXTI Line3  */
+#define LL_DMAMUX_SYNC_EXTI_LINE4         DMAMUX_CxCR_SYNC_ID_2                                                                           /*!< Synchronization signal from EXTI Line4  */
+#define LL_DMAMUX_SYNC_EXTI_LINE5         (DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_0)                                                 /*!< Synchronization signal from EXTI Line5  */
+#define LL_DMAMUX_SYNC_EXTI_LINE6         (DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_1)                                                 /*!< Synchronization signal from EXTI Line6  */
+#define LL_DMAMUX_SYNC_EXTI_LINE7         (DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from EXTI Line7  */
+#define LL_DMAMUX_SYNC_EXTI_LINE8         DMAMUX_CxCR_SYNC_ID_3                                                                           /*!< Synchronization signal from EXTI Line8  */
+#define LL_DMAMUX_SYNC_EXTI_LINE9         (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_0)                                                 /*!< Synchronization signal from EXTI Line9  */
+#define LL_DMAMUX_SYNC_EXTI_LINE10        (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_1)                                                 /*!< Synchronization signal from EXTI Line10 */
+#define LL_DMAMUX_SYNC_EXTI_LINE11        (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from EXTI Line11 */
+#define LL_DMAMUX_SYNC_EXTI_LINE12        (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_2)                                                 /*!< Synchronization signal from EXTI Line12 */
+#define LL_DMAMUX_SYNC_EXTI_LINE13        (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from EXTI Line13 */
+#define LL_DMAMUX_SYNC_EXTI_LINE14        (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_1)                         /*!< Synchronization signal from EXTI Line14 */
+#define LL_DMAMUX_SYNC_EXTI_LINE15        (DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0) /*!< Synchronization signal from EXTI Line15 */
+#define LL_DMAMUX_SYNC_DMAMUX_CH0         DMAMUX_CxCR_SYNC_ID_4                                                                           /*!< Synchronization signal from DMAMUX channel0 Event */
+#define LL_DMAMUX_SYNC_DMAMUX_CH1         (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_0)                                                 /*!< Synchronization signal from DMAMUX channel1 Event */
+#define LL_DMAMUX_SYNC_DMAMUX_CH2         (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_1)                                                 /*!< Synchronization signal from DMAMUX channel2 Event */
+#define LL_DMAMUX_SYNC_DMAMUX_CH3         (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from DMAMUX channel3 Event */
+#define LL_DMAMUX_SYNC_LPTIM1_OUT         (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_2)                                                 /*!< Synchronization signal from LPTIM1 Ouput */
+#define LL_DMAMUX_SYNC_LPTIM2_OUT         (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from LPTIM2 Ouput */
+#define LL_DMAMUX_SYNC_DSI_TE             (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_1)                         /*!< Synchronization signal from DSI Tearing Effect */
+#define LL_DMAMUX_SYNC_DSI_REFRESH_END    (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_2 | DMAMUX_CxCR_SYNC_ID_1 | DMAMUX_CxCR_SYNC_ID_0) /*!< Synchronization signal from DSI End of Refresh */
+#define LL_DMAMUX_SYNC_DMA2D_TX_END       (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_3)                                                 /*!< Synchronization signal from DMA2D End of Transfer */
+#define LL_DMAMUX_SYNC_LTDC_LINE_IT       (DMAMUX_CxCR_SYNC_ID_4 | DMAMUX_CxCR_SYNC_ID_3 | DMAMUX_CxCR_SYNC_ID_0)                         /*!< Synchronization signal from LTDC Line Interrupt   */
 /**
   * @}
   */
@@ -307,10 +313,10 @@ extern "C" {
 /** @defgroup DMAMUX_LL_EC_REQUEST_GENERATOR Request Generator Channel
   * @{
   */
-#define LL_DMAMUX_REQ_GEN_0           0x00000000U
-#define LL_DMAMUX_REQ_GEN_1           0x00000001U
-#define LL_DMAMUX_REQ_GEN_2           0x00000002U
-#define LL_DMAMUX_REQ_GEN_3           0x00000003U
+#define LL_DMAMUX_REQ_GEN_0               0x00000000U
+#define LL_DMAMUX_REQ_GEN_1               0x00000001U
+#define LL_DMAMUX_REQ_GEN_2               0x00000002U
+#define LL_DMAMUX_REQ_GEN_3               0x00000003U
 /**
   * @}
   */
@@ -329,32 +335,32 @@ extern "C" {
 /** @defgroup DMAMUX_LL_EC_REQUEST_GEN External Request Signal Generation
   * @{
   */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE0       0U   /*!< Request signal generation from EXTI Line0  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE1       1U   /*!< Request signal generation from EXTI Line1  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE2       2U   /*!< Request signal generation from EXTI Line2  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE3       3U   /*!< Request signal generation from EXTI Line3  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE4       4U   /*!< Request signal generation from EXTI Line4  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE5       5U   /*!< Request signal generation from EXTI Line5  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE6       6U   /*!< Request signal generation from EXTI Line6  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE7       7U   /*!< Request signal generation from EXTI Line7  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE8       8U   /*!< Request signal generation from EXTI Line8  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE9       9U   /*!< Request signal generation from EXTI Line9  */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE10     10U   /*!< Request signal generation from EXTI Line10 */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE11     11U   /*!< Request signal generation from EXTI Line11 */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE12     12U   /*!< Request signal generation from EXTI Line12 */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE13     13U   /*!< Request signal generation from EXTI Line13 */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE14     14U   /*!< Request signal generation from EXTI Line14 */
-#define LL_DMAMUX_REQ_GEN_EXTI_LINE15     15U   /*!< Request signal generation from EXTI Line15 */
-#define LL_DMAMUX_REQ_GEN_DMAMUX_CH0      16U   /*!< Request signal generation from DMAMUX channel0 Event */
-#define LL_DMAMUX_REQ_GEN_DMAMUX_CH1      17U   /*!< Request signal generation from DMAMUX channel1 Event */
-#define LL_DMAMUX_REQ_GEN_DMAMUX_CH2      18U   /*!< Request signal generation from DMAMUX channel2 Event */
-#define LL_DMAMUX_REQ_GEN_DMAMUX_CH3      19U   /*!< Request signal generation from DMAMUX channel3 Event */
-#define LL_DMAMUX_REQ_GEN_LPTIM1_OUT      20U   /*!< Request signal generation from LPTIM1 Ouput */
-#define LL_DMAMUX_REQ_GEN_LPTIM2_OUT      21U   /*!< Request signal generation from LPTIM2 Ouput */
-#define LL_DMAMUX_REQ_GEN_DSI_TE          22U   /*!< Request signal generation from DSI Tearing Effect */
-#define LL_DMAMUX_REQ_GEN_DSI_REFRESH_END 23U   /*!< Request signal generation from DSI End of Refresh */
-#define LL_DMAMUX_REQ_GEN_DMA2D_TX_END    24U   /*!< Request signal generation from DMA2D End of Transfer */
-#define LL_DMAMUX_REQ_GEN_LTDC_LINE_IT    25U   /*!< Request signal generation from LTDC Line Interrupt   */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE0      0x00000000U                                                                                      /*!< Request signal generation from EXTI Line0  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE1      DMAMUX_RGxCR_SIG_ID_0                                                                            /*!< Request signal generation from EXTI Line1  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE2      DMAMUX_RGxCR_SIG_ID_1                                                                            /*!< Request signal generation from EXTI Line2  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE3      (DMAMUX_RGxCR_SIG_ID_1 |DMAMUX_RGxCR_SIG_ID_0)                                                   /*!< Request signal generation from EXTI Line3  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE4      DMAMUX_RGxCR_SIG_ID_2                                                                            /*!< Request signal generation from EXTI Line4  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE5      (DMAMUX_RGxCR_SIG_ID_2 | DMAMUX_RGxCR_SIG_ID_0)                                                  /*!< Request signal generation from EXTI Line5  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE6      (DMAMUX_RGxCR_SIG_ID_2 | DMAMUX_RGxCR_SIG_ID_1)                                                  /*!< Request signal generation from EXTI Line6  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE7      (DMAMUX_RGxCR_SIG_ID_2 | DMAMUX_RGxCR_SIG_ID_1 | DMAMUX_RGxCR_SIG_ID_0)                          /*!< Request signal generation from EXTI Line7  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE8      DMAMUX_RGxCR_SIG_ID_3                                                                            /*!< Request signal generation from EXTI Line8  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE9      (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_0)                                                  /*!< Request signal generation from EXTI Line9  */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE10     (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_1)                                                  /*!< Request signal generation from EXTI Line10 */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE11     (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_1 | DMAMUX_RGxCR_SIG_ID_0)                          /*!< Request signal generation from EXTI Line11 */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE12     (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_2)                                                  /*!< Request signal generation from EXTI Line12 */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE13     (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_2 | DMAMUX_RGxCR_SIG_ID_0)                          /*!< Request signal generation from EXTI Line13 */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE14     (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_2 | DMAMUX_RGxCR_SIG_ID_1)                          /*!< Request signal generation from EXTI Line14 */
+#define LL_DMAMUX_REQ_GEN_EXTI_LINE15     (DMAMUX_RGxCR_SIG_ID_3 | DMAMUX_RGxCR_SIG_ID_2 | DMAMUX_RGxCR_SIG_ID_1 | DMAMUX_RGxCR_SIG_ID_0)  /*!< Request signal generation from EXTI Line15 */
+#define LL_DMAMUX_REQ_GEN_DMAMUX_CH0      DMAMUX_RGxCR_SIG_ID_4                                                                            /*!< Request signal generation from DMAMUX channel0 Event */
+#define LL_DMAMUX_REQ_GEN_DMAMUX_CH1      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_0)                                                  /*!< Request signal generation from DMAMUX channel1 Event */
+#define LL_DMAMUX_REQ_GEN_DMAMUX_CH2      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_1)                                                  /*!< Request signal generation from DMAMUX channel2 Event */
+#define LL_DMAMUX_REQ_GEN_DMAMUX_CH3      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_1 | DMAMUX_RGxCR_SIG_ID_0)                          /*!< Request signal generation from DMAMUX channel3 Event */
+#define LL_DMAMUX_REQ_GEN_LPTIM1_OUT      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_2)                                                  /*!< Request signal generation from LPTIM1 Ouput */
+#define LL_DMAMUX_REQ_GEN_LPTIM2_OUT      (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_2  | DMAMUX_RGxCR_SIG_ID_0)                         /*!< Request signal generation from LPTIM2 Ouput */
+#define LL_DMAMUX_REQ_GEN_DSI_TE          (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_2  | DMAMUX_RGxCR_SIG_ID_1)                         /*!< Request signal generation from DSI Tearing Effect */
+#define LL_DMAMUX_REQ_GEN_DSI_REFRESH_END (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_2  | DMAMUX_RGxCR_SIG_ID_1 | DMAMUX_RGxCR_SIG_ID_0) /*!< Request signal generation from DSI End of Refresh */
+#define LL_DMAMUX_REQ_GEN_DMA2D_TX_END    (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_3)                                                  /*!< Request signal generation from DMA2D End of Transfer */
+#define LL_DMAMUX_REQ_GEN_LTDC_LINE_IT    (DMAMUX_RGxCR_SIG_ID_4 | DMAMUX_RGxCR_SIG_ID_3  | DMAMUX_RGxCR_SIG_ID_0)                         /*!< Request signal generation from LTDC Line Interrupt   */
 /**
   * @}
   */
@@ -523,7 +529,8 @@ extern "C" {
   */
 __STATIC_INLINE void LL_DMAMUX_SetRequestID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel, uint32_t Request)
 {
-  MODIFY_REG(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_DMAREQ_ID, Request);
+  (void)(DMAMUXx);
+  MODIFY_REG((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_DMAREQ_ID, Request);
 }
 
 /**
@@ -645,7 +652,8 @@ __STATIC_INLINE void LL_DMAMUX_SetRequestID(DMAMUX_Channel_TypeDef *DMAMUXx, uin
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetRequestID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return (uint32_t)(READ_BIT(((DMAMUX_Channel_TypeDef *)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE * (Channel)))))->CCR, DMAMUX_CxCR_DMAREQ_ID));
+  (void)(DMAMUXx);
+  return (uint32_t)(READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_DMAREQ_ID));
 }
 
 /**
@@ -672,7 +680,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetRequestID(DMAMUX_Channel_TypeDef *DMAMUXx,
   */
 __STATIC_INLINE void LL_DMAMUX_SetSyncRequestNb(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel, uint32_t RequestNb)
 {
-  MODIFY_REG(((DMAMUX_Channel_TypeDef *)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE * (Channel)))))->CCR, DMAMUX_CxCR_NBREQ, ((RequestNb - 1U) << DMAMUX_CxCR_NBREQ_Pos));
+  (void)(DMAMUXx);
+  MODIFY_REG((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_NBREQ, ((RequestNb - 1U) << DMAMUX_CxCR_NBREQ_Pos));
 }
 
 /**
@@ -698,7 +707,8 @@ __STATIC_INLINE void LL_DMAMUX_SetSyncRequestNb(DMAMUX_Channel_TypeDef *DMAMUXx,
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetSyncRequestNb(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return (uint32_t)(((READ_BIT(((DMAMUX_Channel_TypeDef *)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE * (Channel)))))->CCR, DMAMUX_CxCR_NBREQ)) >> DMAMUX_CxCR_NBREQ_Pos) + 1U);
+  (void)(DMAMUXx);
+  return (uint32_t)(((READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_NBREQ)) >> DMAMUX_CxCR_NBREQ_Pos) + 1U);
 }
 
 /**
@@ -729,7 +739,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetSyncRequestNb(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE void LL_DMAMUX_SetSyncPolarity(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel, uint32_t Polarity)
 {
-  MODIFY_REG(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SPOL, Polarity);
+  (void)(DMAMUXx);
+  MODIFY_REG((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SPOL, Polarity);
 }
 
 /**
@@ -759,7 +770,8 @@ __STATIC_INLINE void LL_DMAMUX_SetSyncPolarity(DMAMUX_Channel_TypeDef *DMAMUXx, 
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetSyncPolarity(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return (uint32_t)(READ_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SPOL));
+  (void)(DMAMUXx);
+  return (uint32_t)(READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SPOL));
 }
 
 /**
@@ -785,7 +797,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetSyncPolarity(DMAMUX_Channel_TypeDef *DMAMU
   */
 __STATIC_INLINE void LL_DMAMUX_EnableEventGeneration(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  SET_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_EGE);
+  (void)(DMAMUXx);
+  SET_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_EGE);
 }
 
 /**
@@ -811,7 +824,8 @@ __STATIC_INLINE void LL_DMAMUX_EnableEventGeneration(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE void LL_DMAMUX_DisableEventGeneration(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  CLEAR_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_EGE);
+  (void)(DMAMUXx);
+  CLEAR_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_EGE);
 }
 
 /**
@@ -837,7 +851,8 @@ __STATIC_INLINE void LL_DMAMUX_DisableEventGeneration(DMAMUX_Channel_TypeDef *DM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledEventGeneration(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return ((READ_BIT(((DMAMUX_Channel_TypeDef *)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE * (Channel)))))->CCR, DMAMUX_CxCR_EGE) == (DMAMUX_CxCR_EGE))? 1UL : 0UL);
+  (void)(DMAMUXx);
+  return ((READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_EGE) == (DMAMUX_CxCR_EGE))? 1UL : 0UL);
 }
 
 /**
@@ -863,7 +878,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledEventGeneration(DMAMUX_Channel_TypeD
   */
 __STATIC_INLINE void LL_DMAMUX_EnableSync(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  SET_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SE);
+  (void)(DMAMUXx);
+  SET_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SE);
 }
 
 /**
@@ -889,7 +905,8 @@ __STATIC_INLINE void LL_DMAMUX_EnableSync(DMAMUX_Channel_TypeDef *DMAMUXx, uint3
   */
 __STATIC_INLINE void LL_DMAMUX_DisableSync(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  CLEAR_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SE);
+  (void)(DMAMUXx);
+  CLEAR_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SE);
 }
 
 /**
@@ -915,7 +932,8 @@ __STATIC_INLINE void LL_DMAMUX_DisableSync(DMAMUX_Channel_TypeDef *DMAMUXx, uint
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledSync(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return ((READ_BIT(((DMAMUX_Channel_TypeDef *)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE * (Channel)))))->CCR, DMAMUX_CxCR_SE) == (DMAMUX_CxCR_SE))? 1UL : 0UL);
+  (void)(DMAMUXx);
+  return ((READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SE) == (DMAMUX_CxCR_SE))? 1UL : 0UL);
 }
 
 /**
@@ -968,7 +986,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledSync(DMAMUX_Channel_TypeDef *DMAMUXx
   */
 __STATIC_INLINE void LL_DMAMUX_SetSyncID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel, uint32_t SyncID)
 {
-  MODIFY_REG(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SYNC_ID, SyncID);
+  (void)(DMAMUXx);
+  MODIFY_REG((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SYNC_ID, SyncID);
 }
 
 /**
@@ -1020,7 +1039,8 @@ __STATIC_INLINE void LL_DMAMUX_SetSyncID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetSyncID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return (uint32_t)(READ_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SYNC_ID));
+  (void)(DMAMUXx);
+  return (uint32_t)(READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SYNC_ID));
 }
 
 /**
@@ -1036,7 +1056,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetSyncID(DMAMUX_Channel_TypeDef *DMAMUXx, ui
   */
 __STATIC_INLINE void LL_DMAMUX_EnableRequestGen(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  SET_BIT(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GE);
+  (void)(DMAMUXx);
+  SET_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GE);
 }
 
 /**
@@ -1052,7 +1073,8 @@ __STATIC_INLINE void LL_DMAMUX_EnableRequestGen(DMAMUX_Channel_TypeDef *DMAMUXx,
   */
 __STATIC_INLINE void LL_DMAMUX_DisableRequestGen(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  CLEAR_BIT(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GE);
+  (void)(DMAMUXx);
+  CLEAR_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GE);
 }
 
 /**
@@ -1068,6 +1090,7 @@ __STATIC_INLINE void LL_DMAMUX_DisableRequestGen(DMAMUX_Channel_TypeDef *DMAMUXx
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledRequestGen(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GE) == (DMAMUX_RGxCR_GE))? 1UL : 0UL);
 }
 
@@ -1089,7 +1112,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledRequestGen(DMAMUX_Channel_TypeDef *D
   */
 __STATIC_INLINE void LL_DMAMUX_SetRequestGenPolarity(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel, uint32_t Polarity)
 {
-  MODIFY_REG(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GPOL, Polarity);
+  (void)(DMAMUXx);
+  MODIFY_REG(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GPOL, Polarity);
 }
 
 /**
@@ -1109,7 +1133,8 @@ __STATIC_INLINE void LL_DMAMUX_SetRequestGenPolarity(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetRequestGenPolarity(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  return (uint32_t)(READ_BIT(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GPOL));
+  (void)(DMAMUXx);
+  return (uint32_t)(READ_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GPOL));
 }
 
 /**
@@ -1127,6 +1152,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetRequestGenPolarity(DMAMUX_Channel_TypeDef 
   */
 __STATIC_INLINE void LL_DMAMUX_SetGenRequestNb(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel, uint32_t RequestNb)
 {
+  (void)(DMAMUXx);
   MODIFY_REG(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GNBREQ, (RequestNb - 1U) << DMAMUX_RGxCR_GNBREQ_Pos);
 }
 
@@ -1143,6 +1169,7 @@ __STATIC_INLINE void LL_DMAMUX_SetGenRequestNb(DMAMUX_Channel_TypeDef *DMAMUXx, 
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetGenRequestNb(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
+  (void)(DMAMUXx);
   return (uint32_t)((READ_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_GNBREQ) >> DMAMUX_RGxCR_GNBREQ_Pos) + 1U);
 }
 
@@ -1186,7 +1213,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetGenRequestNb(DMAMUX_Channel_TypeDef *DMAMU
   */
 __STATIC_INLINE void LL_DMAMUX_SetRequestSignalID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel, uint32_t RequestSignalID)
 {
-  MODIFY_REG(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_SIG_ID, RequestSignalID);
+  (void)(DMAMUXx);
+  MODIFY_REG(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_SIG_ID, RequestSignalID);
 }
 
 /**
@@ -1228,7 +1256,8 @@ __STATIC_INLINE void LL_DMAMUX_SetRequestSignalID(DMAMUX_Channel_TypeDef *DMAMUX
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_GetRequestSignalID(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  return (uint32_t)(READ_BIT(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_SIG_ID));
+  (void)(DMAMUXx);
+  return (uint32_t)(READ_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_SIG_ID));
 }
 
 /**
@@ -1247,6 +1276,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_GetRequestSignalID(DMAMUX_Channel_TypeDef *DM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO0(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF0) == (DMAMUX_CSR_SOF0)) ? 1UL : 0UL);
 }
 
@@ -1258,7 +1288,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO0(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO1(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF1) == (DMAMUX_CSR_SOF1)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF1) == (DMAMUX_CSR_SOF1)) ? 1UL : 0UL);
 }
 
 /**
@@ -1269,7 +1300,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO1(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO2(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF2) == (DMAMUX_CSR_SOF2)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF2) == (DMAMUX_CSR_SOF2)) ? 1UL : 0UL);
 }
 
 /**
@@ -1280,7 +1312,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO2(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO3(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF3) == (DMAMUX_CSR_SOF3)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF3) == (DMAMUX_CSR_SOF3)) ? 1UL : 0UL);
 }
 
 /**
@@ -1291,7 +1324,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO3(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO4(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF4) == (DMAMUX_CSR_SOF4)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF4) == (DMAMUX_CSR_SOF4)) ? 1UL : 0UL);
 }
 
 /**
@@ -1302,7 +1336,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO4(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO5(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF5) == (DMAMUX_CSR_SOF5)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF5) == (DMAMUX_CSR_SOF5)) ? 1UL : 0UL);
 }
 
 /**
@@ -1313,6 +1348,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO5(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO6(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF6) == (DMAMUX_CSR_SOF6)) ? 1UL : 0UL);
 }
 
@@ -1324,6 +1360,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO6(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO7(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF7) == (DMAMUX_CSR_SOF7)) ? 1UL : 0UL);
 }
 
@@ -1335,6 +1372,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO7(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO8(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF8) == (DMAMUX_CSR_SOF8)) ? 1UL : 0UL);
 }
 
@@ -1346,6 +1384,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO8(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO9(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF9) == (DMAMUX_CSR_SOF9)) ? 1UL : 0UL);
 }
 
@@ -1357,6 +1396,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO9(DMAMUX_Channel_TypeDef *DMAM
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO10(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF10) == (DMAMUX_CSR_SOF10)) ? 1UL : 0UL);
 }
 
@@ -1368,6 +1408,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO10(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO11(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF11) == (DMAMUX_CSR_SOF11)) ? 1UL : 0UL);
 }
 
@@ -1379,6 +1420,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO11(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO12(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF12) == (DMAMUX_CSR_SOF12)) ? 1UL : 0UL);
 }
 
@@ -1390,6 +1432,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO12(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO13(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   return ((READ_BIT(DMAMUX1_ChannelStatus->CSR, DMAMUX_CSR_SOF13) == (DMAMUX_CSR_SOF13)) ? 1UL : 0UL);
 }
 
@@ -1401,7 +1444,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_SO13(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO0(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF0) == (DMAMUX_RGSR_OF0)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF0) == (DMAMUX_RGSR_OF0)) ? 1UL : 0UL);
 }
 
 /**
@@ -1412,7 +1456,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO0(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO1(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF1) == (DMAMUX_RGSR_OF1)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF1) == (DMAMUX_RGSR_OF1)) ? 1UL : 0UL);
 }
 
 /**
@@ -1423,7 +1468,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO1(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO2(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF2) == (DMAMUX_RGSR_OF2)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF2) == (DMAMUX_RGSR_OF2)) ? 1UL : 0UL);
 }
 
 /**
@@ -1434,7 +1480,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO2(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO3(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
-  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF3) == (DMAMUX_RGSR_OF3)) ? 1UL : 0UL);;
+  (void)(DMAMUXx);
+  return ((READ_BIT(DMAMUX1_RequestGenStatus->RGSR, DMAMUX_RGSR_OF3) == (DMAMUX_RGSR_OF3)) ? 1UL : 0UL);
 }
 
 /**
@@ -1445,6 +1492,7 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsActiveFlag_RGO3(DMAMUX_Channel_TypeDef *DMA
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO0(DMAMUX_Channel_TypeDef * DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF0);
 }
 
@@ -1456,6 +1504,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO0(DMAMUX_Channel_TypeDef * DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO1(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF1);
 }
 
@@ -1467,6 +1516,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO1(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO2(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF2);
 }
 
@@ -1478,6 +1528,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO2(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO3(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF3);
 }
 
@@ -1489,6 +1540,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO3(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO4(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF4);
 }
 
@@ -1500,6 +1552,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO4(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO5(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF5);
 }
 
@@ -1511,6 +1564,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO5(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO6(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF6);
 }
 
@@ -1522,6 +1576,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO6(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO7(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF7);
 }
 
@@ -1533,6 +1588,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO7(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO8(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF8);
 }
 
@@ -1544,6 +1600,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO8(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO9(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF9);
 }
 
@@ -1555,6 +1612,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO9(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO10(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF10);
 }
 
@@ -1566,6 +1624,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO10(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO11(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF11);
 }
 
@@ -1577,6 +1636,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO11(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO12(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF12);
 }
 
@@ -1588,6 +1648,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO12(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO13(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_ChannelStatus->CFR, DMAMUX_CFR_CSOF13);
 }
 
@@ -1599,6 +1660,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_SO13(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO0(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_RequestGenStatus->RGCFR, DMAMUX_RGCFR_COF0);
 }
 
@@ -1610,6 +1672,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO0(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO1(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_RequestGenStatus->RGCFR, DMAMUX_RGCFR_COF1);
 }
 
@@ -1621,6 +1684,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO1(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO2(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_RequestGenStatus->RGCFR, DMAMUX_RGCFR_COF2);
 }
 
@@ -1632,6 +1696,7 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO2(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO3(DMAMUX_Channel_TypeDef *DMAMUXx)
 {
+  (void)(DMAMUXx);
   SET_BIT(DMAMUX1_RequestGenStatus->RGCFR, DMAMUX_RGCFR_COF3);
 }
 
@@ -1666,7 +1731,8 @@ __STATIC_INLINE void LL_DMAMUX_ClearFlag_RGO3(DMAMUX_Channel_TypeDef *DMAMUXx)
   */
 __STATIC_INLINE void LL_DMAMUX_EnableIT_SO(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  SET_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SOIE);
+  (void)(DMAMUXx);
+  SET_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SOIE);
 }
 
 /**
@@ -1692,7 +1758,8 @@ __STATIC_INLINE void LL_DMAMUX_EnableIT_SO(DMAMUX_Channel_TypeDef *DMAMUXx, uint
   */
 __STATIC_INLINE void LL_DMAMUX_DisableIT_SO(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  CLEAR_BIT(((DMAMUX_Channel_TypeDef*)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE*(Channel)))))->CCR, DMAMUX_CxCR_SOIE);
+  (void)(DMAMUXx);
+  CLEAR_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SOIE);
 }
 
 /**
@@ -1718,7 +1785,8 @@ __STATIC_INLINE void LL_DMAMUX_DisableIT_SO(DMAMUX_Channel_TypeDef *DMAMUXx, uin
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledIT_SO(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t Channel)
 {
-  return (((READ_BIT(((DMAMUX_Channel_TypeDef *)((uint32_t)((uint32_t)DMAMUXx + (DMAMUX_CCR_SIZE * (Channel)))))->CCR, DMAMUX_CxCR_SOIE)) == (DMAMUX_CxCR_SOIE))? 1UL : 0UL);
+  (void)(DMAMUXx);
+  return (((READ_BIT((DMAMUX1_Channel0 + Channel)->CCR, DMAMUX_CxCR_SOIE)) == (DMAMUX_CxCR_SOIE))? 1UL : 0UL);
 }
 
 /**
@@ -1734,7 +1802,8 @@ __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledIT_SO(DMAMUX_Channel_TypeDef *DMAMUX
   */
 __STATIC_INLINE void LL_DMAMUX_EnableIT_RGO(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  SET_BIT(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_OIE);
+  (void)(DMAMUXx);
+  SET_BIT((DMAMUX1_RequestGenerator0 + RequestGenChannel)->RGCR, DMAMUX_RGxCR_OIE);
 }
 
 /**
@@ -1750,7 +1819,8 @@ __STATIC_INLINE void LL_DMAMUX_EnableIT_RGO(DMAMUX_Channel_TypeDef *DMAMUXx, uin
   */
 __STATIC_INLINE void LL_DMAMUX_DisableIT_RGO(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  CLEAR_BIT(((DMAMUX_RequestGen_TypeDef*)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE*(RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_OIE);
+  (void)(DMAMUXx);
+  CLEAR_BIT((DMAMUX1_RequestGenerator0 + RequestGenChannel)->RGCR, DMAMUX_RGxCR_OIE);
 }
 
 /**
@@ -1766,7 +1836,8 @@ __STATIC_INLINE void LL_DMAMUX_DisableIT_RGO(DMAMUX_Channel_TypeDef *DMAMUXx, ui
   */
 __STATIC_INLINE uint32_t LL_DMAMUX_IsEnabledIT_RGO(DMAMUX_Channel_TypeDef *DMAMUXx, uint32_t RequestGenChannel)
 {
-  return ((READ_BIT(((DMAMUX_RequestGen_TypeDef *)((uint32_t)((uint32_t)DMAMUX1_RequestGenerator0 + (DMAMUX_RGCR_SIZE * (RequestGenChannel)))))->RGCR, DMAMUX_RGxCR_OIE) == (DMAMUX_RGxCR_OIE))? 1UL : 0UL);
+  (void)(DMAMUXx);
+  return ((READ_BIT((DMAMUX1_RequestGenerator0 + RequestGenChannel)->RGCR, DMAMUX_RGxCR_OIE) == (DMAMUX_RGxCR_OIE))? 1UL : 0UL);
 }
 
 /**

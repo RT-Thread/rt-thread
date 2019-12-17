@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -122,7 +122,7 @@ extern "C" {
                                          ((CONNECT) == DAC_CHIPCONNECT_ENABLE))
 
 #define IS_DAC_TRIMMING(TRIMMING) (((TRIMMING) == DAC_TRIMMING_FACTORY) || \
-                                     ((TRIMMING) == DAC_TRIMMING_USER))
+                                   ((TRIMMING) == DAC_TRIMMING_USER))
 
 #define IS_DAC_LFSR_UNMASK_TRIANGLE_AMPLITUDE(VALUE) (((VALUE) == DAC_LFSRUNMASK_BIT0) || \
                                                       ((VALUE) == DAC_LFSRUNMASK_BITS1_0) || \
@@ -160,8 +160,8 @@ extern "C" {
   */
 
 /** @addtogroup DACEx_Exported_Functions_Group2
- * @{
- */
+  * @{
+  */
 /* IO operation functions *****************************************************/
 
 HAL_StatusTypeDef HAL_DACEx_TriangleWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t Amplitude);
@@ -186,7 +186,8 @@ void HAL_DACEx_DMAUnderrunCallbackCh2(DAC_HandleTypeDef *hdac);
 /* Peripheral Control functions ***********************************************/
 
 HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel);
-HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel, uint32_t NewTrimmingValue);
+HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel,
+                                            uint32_t NewTrimmingValue);
 uint32_t HAL_DACEx_GetTrimOffset(DAC_HandleTypeDef *hdac, uint32_t Channel);
 
 /**
@@ -196,7 +197,6 @@ uint32_t HAL_DACEx_GetTrimOffset(DAC_HandleTypeDef *hdac, uint32_t Channel);
 /**
   * @}
   */
-
 
 /** @addtogroup DACEx_Private_Functions
   * @{
@@ -209,8 +209,8 @@ void DAC_DMAErrorCh2(DMA_HandleTypeDef *hdma);
 void DAC_DMAHalfConvCpltCh2(DMA_HandleTypeDef *hdma);
 
 /**
- * @}
- */
+  * @}
+  */
 
 /**
   * @}

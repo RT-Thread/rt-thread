@@ -273,7 +273,7 @@ HAL_StatusTypeDef HAL_RCC_DeInit(void)
   SystemCoreClock = HSI_VALUE;
 
   /* Adapt Systick interrupt period */
-  if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
+  if (HAL_InitTick(uwTickPrio) != HAL_OK)
   {
     return HAL_ERROR;
   }
@@ -399,7 +399,7 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
         }
 
         /* Adapt Systick interrupt period */
-        if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
+        if (HAL_InitTick(uwTickPrio) != HAL_OK)
         {
           return HAL_ERROR;
         }
@@ -680,7 +680,27 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     }
     else
     {
-      return HAL_ERROR;
+      /* Check if there is a request to disable the PLL used as System clock source */
+      if((RCC_OscInitStruct->PLL.PLLState) == RCC_PLL_OFF)
+      {
+        return HAL_ERROR;
+      }
+      else
+      {   
+        /* Do not return HAL_ERROR if request repeats the current configuration */
+        temp_pllckcfg = RCC->PLLCFGR;
+        if((READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLSRC) != RCC_OscInitStruct->PLL.PLLSource) ||
+           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLM) != RCC_OscInitStruct->PLL.PLLM) ||
+           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLN) != (RCC_OscInitStruct->PLL.PLLN << RCC_PLLCFGR_PLLN_Pos)) ||
+           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLP) != RCC_OscInitStruct->PLL.PLLP) ||
+#if defined (RCC_PLLQ_SUPPORT)
+           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLQ) != RCC_OscInitStruct->PLL.PLLQ) ||
+#endif
+           (READ_BIT(temp_pllckcfg, RCC_PLLCFGR_PLLR) != RCC_OscInitStruct->PLL.PLLR))
+        {
+          return HAL_ERROR;
+        }
+      }
     }
   }
   return HAL_OK;
@@ -870,7 +890,7 @@ HAL_StatusTypeDef HAL_RCC_ClockConfig(RCC_ClkInitTypeDef  *RCC_ClkInitStruct, ui
   SystemCoreClock = (HAL_RCC_GetSysClockFreq() >> ((AHBPrescTable[(RCC->CFGR & RCC_CFGR_HPRE) >> RCC_CFGR_HPRE_Pos]) & 0x1FU));
 
   /* Configure the source of time base considering new system clocks settings*/
-  return HAL_InitTick(TICK_INT_PRIORITY);
+  return HAL_InitTick(uwTickPrio);
 }
 
 /**
@@ -1067,7 +1087,7 @@ uint32_t HAL_RCC_GetHCLKFreq(void)
 uint32_t HAL_RCC_GetPCLK1Freq(void)
 {
   /* Get HCLK source and Compute PCLK1 frequency ---------------------------*/
-  return (HAL_RCC_GetHCLKFreq() >> ((APBPrescTable[(RCC->CFGR & RCC_CFGR_PPRE) >> RCC_CFGR_PPRE_Pos]) & 0x1FU));
+  return ((uint32_t)(__LL_RCC_CALC_PCLK1_FREQ(HAL_RCC_GetHCLKFreq(), LL_RCC_GetAPB1Prescaler())));
 }
 
 /**

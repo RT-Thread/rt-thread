@@ -56,7 +56,6 @@ def _get_filetype(fn):
 
 def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     group = SubElement(parent, 'Group')
-    group.text = name
     group_name = SubElement(group, 'GroupName')
     group_name.text = name
 
@@ -92,6 +91,8 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
 
     file_path.text = path.decode(fs_encoding)
 
+    return group
+
 def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     name = os.path.basename(filename)
     path = os.path.dirname (filename)
@@ -124,6 +125,8 @@ def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     file_path = SubElement(file, 'FilePath')
 
     file_path.text = path.decode(fs_encoding)
+
+    return group
 
 def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
     # don't add an empty group
@@ -243,16 +246,13 @@ def MDK45Project(tree, target, script):
                     full_path = os.path.join(path_item, item + '.lib')
                     if os.path.isfile(full_path): # has this library
                         lib_path = full_path
+                        break
 
                 if lib_path != '':
-                    need_create = 1
-                    for neighbor in groups.iter('Group'):
-                        if neighbor.text == group['name']:
-                            MDK4AddLibToGroup(ProjectFiles, neighbor, group['name'], lib_path, project_path)
-                            need_create = 0
-                            break
-                    if (need_create != 0):
-                        MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+                    if group_tree != None:
+                        MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], lib_path, project_path)
+                    else:
+                        group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')

@@ -13,6 +13,8 @@
 #include <wlan_cfg.h>
 #include <wlan_prot.h>
 
+#if defined(RT_WLAN_MANAGE_ENABLE) && defined(RT_WLAN_MSH_CMD_ENABLE)
+
 struct wifi_cmd_des
 {
     const char *cmd;
@@ -75,7 +77,7 @@ static int wifi_help(int argc, char *argv[])
 {
     rt_kprintf("wifi\n");
     rt_kprintf("wifi help\n");
-    rt_kprintf("wifi scan\n");
+    rt_kprintf("wifi scan [SSID]\n");
     rt_kprintf("wifi join [SSID] [PASSWORD]\n");
     rt_kprintf("wifi ap SSID [PASSWORD]\n");
     rt_kprintf("wifi disc\n");
@@ -143,12 +145,23 @@ static int wifi_status(int argc, char *argv[])
 static int wifi_scan(int argc, char *argv[])
 {
     struct rt_wlan_scan_result *scan_result = RT_NULL;
+    struct rt_wlan_info *info = RT_NULL;
+    struct rt_wlan_info filter;
 
-    if (argc > 2)
+    if (argc > 3)
         return -1;
 
+    if (argc == 3)
+    {
+        INVALID_INFO(&filter);
+        SSID_SET(&filter, argv[2]);
+        info = &filter;
+    }
+
+    /* clean scan result */
+    rt_wlan_scan_result_clean();
     /* scan ap info */
-    scan_result = rt_wlan_scan_sync();
+    scan_result = rt_wlan_scan_with_info(info);
     if (scan_result)
     {
         int index, num;
@@ -224,8 +237,10 @@ static int wifi_join(int argc, char *argv[])
     const char *key = RT_NULL;
     struct rt_wlan_cfg_info cfg_info;
 
+    rt_memset(&cfg_info, 0, sizeof(cfg_info));
     if (argc ==  2)
     {
+#ifdef RT_WLAN_CFG_ENABLE
         /* get info to connect */
         if (rt_wlan_cfg_read_index(&cfg_info, 0) == 1)
         {
@@ -234,8 +249,9 @@ static int wifi_join(int argc, char *argv[])
                 key = (char *)(&cfg_info.key.val[0]);
         }
         else
+#endif
         {
-            rt_kprintf("not find info\n");
+            rt_kprintf("not find connect info\n");
         }
     }
     else if (argc == 3)
@@ -387,8 +403,9 @@ static int wifi_debug_save_cfg(int argc, char *argv[])
         rt_memcpy(&cfg_info.key.val[0], password, len);
         cfg_info.key.len = len;
     }
-
+#ifdef RT_WLAN_CFG_ENABLE
     rt_wlan_cfg_save(&cfg_info);
+#endif
     return 0;
 }
 
@@ -396,7 +413,9 @@ static int wifi_debug_dump_cfg(int argc, char *argv[])
 {
     if (argc == 1)
     {
+#ifdef RT_WLAN_CFG_ENABLE
         rt_wlan_cfg_dump();
+#endif
     }
     else
     {
@@ -409,8 +428,10 @@ static int wifi_debug_clear_cfg(int argc, char *argv[])
 {
     if (argc == 1)
     {
+#ifdef RT_WLAN_CFG_ENABLE
         rt_wlan_cfg_delete_all();
         rt_wlan_cfg_cache_save();
+#endif
     }
     else
     {
@@ -446,6 +467,10 @@ static int wifi_debug_set_mode(int argc, char *argv[])
     else if (rt_strcmp("ap", argv[1]) == 0)
     {
         mode = RT_WLAN_AP;
+    }
+    else if (rt_strcmp("none", argv[1]) == 0)
+    {
+        mode = RT_WLAN_NONE;
     }
     else
         return -1;
@@ -563,4 +588,6 @@ static int wifi_msh(int argc, char *argv[])
 
 #if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
 FINSH_FUNCTION_EXPORT_ALIAS(wifi_msh, __cmd_wifi, wifi command.);
+#endif
+
 #endif

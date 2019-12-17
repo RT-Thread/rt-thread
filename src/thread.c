@@ -142,7 +142,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                                           (void *)rt_thread_exit);
 #else
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-                                          (void *)((char *)thread->stack_addr + thread->stack_size - 4),
+                                          (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
                                           (void *)rt_thread_exit);
 #endif
 
@@ -169,7 +169,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->cleanup   = 0;
     thread->user_data = 0;
 
-    /* init thread timer */
+    /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
                   thread->name,
                   rt_thread_timeout,
@@ -230,7 +230,7 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(stack_start != RT_NULL);
 
-    /* init thread object */
+    /* initialize thread object */
     rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
 
     return _rt_thread_init(thread,
@@ -269,7 +269,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    /* set current priority to init priority */
+    /* set current priority to initialize priority */
     thread->current_priority = thread->init_priority;
 
     /* calculate priority attribute */
@@ -422,11 +422,11 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
 
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
-
     /* disable interrupt */
     lock = rt_hw_interrupt_disable();
+
+    /* change stat */
+    thread->stat = RT_THREAD_CLOSE;
 
     /* insert to defunct thread list */
     rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));

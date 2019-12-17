@@ -1,18 +1,17 @@
 menu "Network"
 
 menu "Socket abstraction layer"
-    
+
 config RT_USING_SAL
     bool "Enable socket abstraction layer"
     select RT_USING_NETDEV
-    select RT_USING_LIBC
     select RT_USING_SYSTEM_WORKQUEUE
     default n
 
     if RT_USING_SAL
 
         if RT_USING_LWIP || AT_USING_SOCKET
-        
+
             menu "protocol stack implement"
 
                 config SAL_USING_LWIP
@@ -24,29 +23,30 @@ config RT_USING_SAL
                     bool "Support AT Commands stack"
                     default y
                     depends on AT_USING_SOCKET
-                    
+
                 config SAL_USING_TLS
                     bool "Support MbedTLS protocol"
                     default y
                     depends on PKG_USING_MBEDTLS
             endmenu
-        
+
         endif
 
         config SAL_USING_POSIX
             bool "Enable BSD socket operated by file system API"
             default n
             select RT_USING_DFS
+            select RT_USING_LIBC
             select RT_USING_POSIX
             help
                 Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
-                
+
         if !SAL_USING_POSIX
-            
+
             config SAL_SOCKETS_NUM
                 int "the maximum number of sockets"
                 default 16
-       
+
         endif
 
     endif
@@ -68,7 +68,7 @@ config RT_USING_NETDEV
         config NETDEV_USING_PING
             bool "Enable ping features"
             default y
-        
+
         config NETDEV_USING_NETSTAT
             bool "Enable netstat features"
             default y
@@ -76,6 +76,25 @@ config RT_USING_NETDEV
         config NETDEV_USING_AUTO_DEFAULT
             bool "Enable default netdev automatic change features"
             default y
+
+        config NETDEV_USING_IPV6
+            bool "Enable IPV6 protocol support"
+            default n
+
+        config NETDEV_IPV4
+            int
+            default 1
+
+        config NETDEV_IPV6
+            int
+            default 1 if NETDEV_USING_IPV6
+            default 0 if !NETDEV_USING_IPV6
+
+        config NETDEV_IPV6_SCOPES
+            bool
+            help
+                Defined to synchronize the ip6_addr structure state
+            default n
     endif
 
 endmenu
@@ -104,11 +123,11 @@ config RT_USING_LWIP
         endchoice
 
         if (RT_USING_LWIP210 || RT_USING_LWIP202)
-            if (!RT_USING_NETDEV || (RT_USING_NETDEV && NETDEV_IPV6))
-                config RT_USING_LWIP_IPV6
-                    bool "IPV6 protocol"
-                    default n
-            endif
+            config RT_USING_LWIP_IPV6
+                bool "IPV6 protocol"
+                default n
+                select NETDEV_USING_IPV6
+                select NETDEV_IPV6_SCOPES if RT_USING_LWIP210
         endif
 
         config RT_LWIP_IGMP
@@ -258,7 +277,7 @@ config RT_USING_LWIP
         config LWIP_NETIF_STATUS_CALLBACK
             int "Enable netif status callback"
             default 1
-        
+
         config LWIP_NETIF_LINK_CALLBACK
             int "Enable netif link status callback"
             default 1
@@ -295,7 +314,7 @@ config RT_USING_LWIP
         config RT_LWIP_USING_HW_CHECKSUM
             bool "Enable hardware checksum"
             default n
-        
+
         config RT_LWIP_USING_PING
             bool "Enable ping features"
             default y
@@ -426,8 +445,6 @@ config RT_USING_LWIP
     endif
 
 endmenu
-
-source "$RTT_DIR/components/net/freemodbus/Kconfig"
 
 source "$RTT_DIR/components/net/at/Kconfig"
 

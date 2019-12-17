@@ -44,7 +44,7 @@
 | SPI Flash    |     支持     | W25Q64                                |
 | 以太网       |     支持     | W5500                                 |
 | 电位器       |     支持     | 使用 ADC1                              |
-| SD卡         |   即将支持   |                                       |
+| SD卡         |     支持     |                                       |
 | CAN          |     支持     |                                       |
 | SDRAM        |   即将支持   |                                       |
 | WIFI ESP8266 |   即将支持   |                                       |
@@ -57,9 +57,9 @@
 | RTC          |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT          |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
-| SDIO         |   暂不支持   | 即将支持                              |
-| PWM          |   暂不支持   | 即将支持                              |
-| USB Device   |   暂不支持   | 即将支持                              |
+| SDIO         |     支持     |                                      |
+| PWM          |     支持     |                                      |
+| USB Device   |     支持     |                                      |
 | USB Host     |   暂不支持   | 即将支持                              |
 | **扩展模块** | **支持情况** | **备注**                              |
 | 暂无         |   暂不支持   | 暂不支持                              |

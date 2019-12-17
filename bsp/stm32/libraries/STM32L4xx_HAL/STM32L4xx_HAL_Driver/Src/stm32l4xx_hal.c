@@ -21,29 +21,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -68,7 +52,7 @@
  * @brief STM32L4xx HAL Driver version number
    */
 #define STM32L4XX_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define STM32L4XX_HAL_VERSION_SUB1   (0x09U) /*!< [23:16] sub1 version */
+#define STM32L4XX_HAL_VERSION_SUB1   (0x0AU) /*!< [23:16] sub1 version */
 #define STM32L4XX_HAL_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define STM32L4XX_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define STM32L4XX_HAL_VERSION        ((STM32L4XX_HAL_VERSION_MAIN  << 24U)\
@@ -104,6 +88,8 @@
   * @{
   */
 __IO uint32_t uwTick;
+uint32_t uwTickPrio = (1UL << __NVIC_PRIO_BITS); /* Invalid priority */
+uint32_t uwTickFreq = HAL_TICK_FREQ_DEFAULT;  /* 1KHz */
 /**
   * @}
   */
@@ -122,7 +108,7 @@ __IO uint32_t uwTick;
               ##### Initialization and de-initialization functions #####
  ===============================================================================
     [..]  This section provides functions allowing to:
-      (+) Initialize the Flash interface the NVIC allocation and initial time base
+      (+) Initialize the Flash interface, the NVIC allocation and initial time base
           clock configuration.
       (+) De-initialize common part of the HAL.
       (+) Configure the time base source to have 1ms time base with a dedicated
@@ -274,15 +260,30 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
   HAL_StatusTypeDef  status = HAL_OK;
 
-  /*Configure the SysTick to have interrupt in 1ms time basis*/
-  if (HAL_SYSTICK_Config(SystemCoreClock/1000UL) != 0U)
+  if (uwTickFreq != 0U)
   {
-    status = HAL_ERROR;
+    /*Configure the SysTick to have interrupt in 1ms time basis*/
+    if (HAL_SYSTICK_Config(SystemCoreClock / (1000U / uwTickFreq)) == 0U)
+    {
+      /* Configure the SysTick IRQ priority */
+      if (TickPriority < (1UL << __NVIC_PRIO_BITS))
+      {
+        HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
+        uwTickPrio = TickPriority;
+      }
+      else
+      {
+        status = HAL_ERROR;
+      }
+    }
+    else
+    {
+      status = HAL_ERROR;
+    }
   }
   else
   {
-    /*Configure the SysTick IRQ priority */
-    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0);
+    status = HAL_ERROR;
   }
 
   /* Return function status */
@@ -324,7 +325,7 @@ __weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   */
 __weak void HAL_IncTick(void)
 {
-  uwTick++;
+  uwTick += uwTickFreq;
 }
 
 /**
@@ -336,6 +337,47 @@ __weak void HAL_IncTick(void)
 __weak uint32_t HAL_GetTick(void)
 {
   return uwTick;
+}
+
+/**
+  * @brief This function returns a tick priority.
+  * @retval tick priority
+  */
+uint32_t HAL_GetTickPrio(void)
+{
+  return uwTickPrio;
+}
+
+/**
+  * @brief Set new tick Freq.
+  * @param Freq tick frequency
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_SetTickFreq(uint32_t Freq)
+{
+  HAL_StatusTypeDef status  = HAL_OK;
+  assert_param(IS_TICKFREQ(Freq));
+
+  if (uwTickFreq != Freq)
+  {
+    /* Apply the new tick Freq  */
+    status = HAL_InitTick(uwTickPrio);
+    if (status == HAL_OK)
+    {
+      uwTickFreq = Freq;
+    }
+  }
+
+  return status;
+}
+
+/**
+  * @brief Return tick frequency.
+  * @retval tick period in Hz
+  */
+uint32_t HAL_GetTickFreq(void)
+{
+  return uwTickFreq;
 }
 
 /**
@@ -357,7 +399,7 @@ __weak void HAL_Delay(uint32_t Delay)
   /* Add a period to guaranty minimum wait */
   if (wait < HAL_MAX_DELAY)
   {
-    wait++;
+    wait += (uint32_t)(uwTickFreq);
   }
 
   while((HAL_GetTick() - tickstart) < wait)
@@ -574,7 +616,7 @@ void HAL_SYSCFG_SRAM2Erase(void)
   */
 void HAL_SYSCFG_EnableMemorySwappingBank(void)
 {
-  *(__IO uint32_t *)FB_MODE_BB = 0x00000000UL;
+  *(__IO uint32_t *)FB_MODE_BB = 0x00000001UL;
 }
 
 /**

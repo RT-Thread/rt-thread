@@ -35,7 +35,7 @@ extern "C" {
 #endif
 
 #ifndef RT_CPU_CACHE_LINE_SZ
-#define RT_CPU_CACHE_LINE_SZ	32
+#define RT_CPU_CACHE_LINE_SZ    32
 #endif
 
 enum RT_HW_CACHE_OPS
@@ -98,14 +98,14 @@ void rt_hw_interrupt_enable(rt_base_t level);
 /*
  * Context interfaces
  */
-void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to);
-void rt_hw_context_switch_to(rt_uint32_t to);
-void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to);
+void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
+void rt_hw_context_switch_to(rt_ubase_t to);
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to);
 
 void rt_hw_console_output(const char *str);
 
-void rt_hw_backtrace(rt_uint32_t *fp, rt_uint32_t thread_entry);
-void rt_hw_show_memory(rt_uint32_t addr, rt_uint32_t size);
+void rt_hw_backtrace(rt_uint32_t *fp, rt_ubase_t thread_entry);
+void rt_hw_show_memory(rt_uint32_t addr, rt_size_t size);
 
 /*
  * Exception interfaces

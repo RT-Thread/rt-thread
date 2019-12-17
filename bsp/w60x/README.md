@@ -13,15 +13,15 @@ W60X 芯片是[联盛德微电子](http://www.winnermicro.com)推出的一款嵌
 | UART       | 支持     | UART0/UART1/UART2                               |
 | GPIO       | 支持     | 自动根据芯片型号选择引脚布局                    |
 | SPI        | 支持     | 低速 SPI，支持 SPI BUS，8/32bit 主机模式        |
-| SPI Flash  | 支持     | 支持 W25QXX、SFUD                               |
 | WDT        | 支持     | 支持                                            |
-| I2C        | 支持     | 硬件 I2C                                        |
+| I2C        | 支持     | 硬件 I2C 和 软件 I2C                            |
 | RTC        | 支持     | 支持 ntp 同步、支持 Alarm                       |
 | ADC        | 支持     | 8 channel ADC 采集 CPU 温度采集（W601 支持）    |
 | PWM        | 支持     | 5 channel PWM 输出                              |
 | Timer      | 支持     | 5个Timers 独立工作                              |
-| WiFi       | 支持     | 支持 IEEE802.11b/g/n，支持 sta、ap、ap+sta 模式  |
-| 低功耗     | 支持     | 支持 WiFi 协议节电，支持 standby 深度节电         |
+| Crypto     | 支持     | 支持硬件 AES/DES/3DES/RC/SHA1/MD3/CRC 加解密算法|
+| WiFi       | 支持     | 支持 IEEE802.11b/g/n，支持 sta、ap、ap+sta 模式 |
+| 低功耗     | 支持     | 支持 WiFi 协议节电，支持 standby 深度节电       |
 
 ## 使用说明
 

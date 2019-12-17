@@ -14,7 +14,7 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
-#define RT_IDEL_HOOK_LIST_SIZE 4
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
@@ -47,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x30103
+#define RT_VER_NUM 0x30104
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
@@ -130,10 +130,8 @@
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -166,6 +164,8 @@
 #define NETDEV_USING_PING
 #define NETDEV_USING_NETSTAT
 #define NETDEV_USING_AUTO_DEFAULT
+#define NETDEV_IPV4 1
+#define NETDEV_IPV6 0
 
 /* light weight TCP/IP stack */
 
@@ -208,9 +208,6 @@
 #define LWIP_SO_RCVBUF 1
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-
-/* Modbus master and slave stack */
-
 
 /* AT commands */
 

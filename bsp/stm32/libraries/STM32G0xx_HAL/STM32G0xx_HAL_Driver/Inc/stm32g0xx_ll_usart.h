@@ -44,33 +44,26 @@ extern "C" {
   * @{
   */
 /* Array used to get the USART prescaler division decimal values versus @ref USART_LL_EC_PRESCALER values */
-static const uint16_t USART_PRESCALER_TAB[] =
+static const uint32_t USART_PRESCALER_TAB[] =
 {
-  (uint16_t)1,
-  (uint16_t)2,
-  (uint16_t)4,
-  (uint16_t)6,
-  (uint16_t)8,
-  (uint16_t)10,
-  (uint16_t)12,
-  (uint16_t)16,
-  (uint16_t)32,
-  (uint16_t)64,
-  (uint16_t)128,
-  (uint16_t)256
+  1UL,
+  2UL,
+  4UL,
+  6UL,
+  8UL,
+  10UL,
+  12UL,
+  16UL,
+  32UL,
+  64UL,
+  128UL,
+  256UL
 };
 /**
   * @}
   */
 
 /* Private constants ---------------------------------------------------------*/
-/** @defgroup USART_LL_Private_Constants USART Private Constants
-  * @{
-  */
-/**
-  * @}
-  */
-
 /* Private macros ------------------------------------------------------------*/
 #if defined(USE_FULL_LL_DRIVER)
 /** @defgroup USART_LL_Private_Macros USART Private Macros
@@ -570,7 +563,8 @@ typedef struct
   * @param  __BAUDRATE__ Baud rate value to achieve
   * @retval USARTDIV value to be used for BRR register filling in OverSampling_8 case
   */
-#define __LL_USART_DIV_SAMPLING8(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) (((((__PERIPHCLK__)/(uint32_t)(USART_PRESCALER_TAB[(__PRESCALER__)]))*2U) + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
+#define __LL_USART_DIV_SAMPLING8(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) (((((__PERIPHCLK__)/(USART_PRESCALER_TAB[(__PRESCALER__)]))*2U)\
+                                                                               + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
 
 /**
   * @brief  Compute USARTDIV value according to Peripheral Clock and
@@ -592,7 +586,8 @@ typedef struct
   * @param  __BAUDRATE__ Baud rate value to achieve
   * @retval USARTDIV value to be used for BRR register filling in OverSampling_16 case
   */
-#define __LL_USART_DIV_SAMPLING16(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) ((((__PERIPHCLK__)/(uint32_t)(USART_PRESCALER_TAB[(__PRESCALER__)])) + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
+#define __LL_USART_DIV_SAMPLING16(__PERIPHCLK__, __PRESCALER__, __BAUDRATE__) ((((__PERIPHCLK__)/(USART_PRESCALER_TAB[(__PRESCALER__)]))\
+                                                                                + ((__BAUDRATE__)/2U))/(__BAUDRATE__))
 
 /**
   * @}
@@ -1864,22 +1859,27 @@ __STATIC_INLINE uint32_t LL_USART_GetWKUPType(USART_TypeDef *USARTx)
   * @param  BaudRate Baud Rate
   * @retval None
   */
-__STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue, uint32_t OverSampling,
+__STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue,
+                                          uint32_t OverSampling,
                                           uint32_t BaudRate)
 {
-  register uint32_t usartdiv;
+  uint32_t usartdiv;
   register uint32_t brrtemp;
 
-  if (OverSampling == LL_USART_OVERSAMPLING_8)
+  if (PrescalerValue > LL_USART_PRESCALER_DIV256)
   {
-    usartdiv = (uint16_t)(__LL_USART_DIV_SAMPLING8(PeriphClk, (uint16_t)PrescalerValue, BaudRate));
+    /* Do not overstep the size of USART_PRESCALER_TAB */
+  }
+  else if (OverSampling == LL_USART_OVERSAMPLING_8)
+  {
+    usartdiv = (uint16_t)(__LL_USART_DIV_SAMPLING8(PeriphClk, (uint8_t)PrescalerValue, BaudRate));
     brrtemp = usartdiv & 0xFFF0U;
     brrtemp |= (uint16_t)((usartdiv & (uint16_t)0x000FU) >> 1U);
     USARTx->BRR = brrtemp;
   }
   else
   {
-    USARTx->BRR = (uint16_t)(__LL_USART_DIV_SAMPLING16(PeriphClk, (uint16_t)PrescalerValue, BaudRate));
+    USARTx->BRR = (uint16_t)(__LL_USART_DIV_SAMPLING16(PeriphClk, (uint8_t)PrescalerValue, BaudRate));
   }
 }
 
@@ -1909,11 +1909,12 @@ __STATIC_INLINE void LL_USART_SetBaudRate(USART_TypeDef *USARTx, uint32_t Periph
   *         @arg @ref LL_USART_OVERSAMPLING_8
   * @retval Baud Rate
   */
-__STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue, uint32_t OverSampling)
+__STATIC_INLINE uint32_t LL_USART_GetBaudRate(USART_TypeDef *USARTx, uint32_t PeriphClk, uint32_t PrescalerValue,
+                                              uint32_t OverSampling)
 {
   register uint32_t usartdiv;
   register uint32_t brrresult = 0x0U;
-  register uint32_t periphclkpresc = (uint32_t)(PeriphClk / (uint32_t)(USART_PRESCALER_TAB[(uint16_t)PrescalerValue]));
+  register uint32_t periphclkpresc = (uint32_t)(PeriphClk / (USART_PRESCALER_TAB[(uint8_t)PrescalerValue]));
 
   usartdiv = USARTx->BRR;
 
@@ -3264,7 +3265,7 @@ __STATIC_INLINE void LL_USART_ClearFlag_FE(USART_TypeDef *USARTx)
 
 /**
   * @brief  Clear Noise Error detected Flag
-  * @rmtoll ICR          NECF           LL_USART_ClearFlag_NE
+  * @rmtoll ICR          NECF          LL_USART_ClearFlag_NE
   * @param  USARTx USART Instance
   * @retval None
   */
@@ -4200,12 +4201,12 @@ __STATIC_INLINE uint32_t LL_USART_DMA_GetRegAddr(USART_TypeDef *USARTx, uint32_t
   if (Direction == LL_USART_DMA_REG_DATA_TRANSMIT)
   {
     /* return address of TDR register */
-    data_reg_addr = (uint32_t) & (USARTx->TDR);
+    data_reg_addr = (uint32_t) &(USARTx->TDR);
   }
   else
   {
     /* return address of RDR register */
-    data_reg_addr = (uint32_t) & (USARTx->RDR);
+    data_reg_addr = (uint32_t) &(USARTx->RDR);
   }
 
   return data_reg_addr;
@@ -4227,7 +4228,7 @@ __STATIC_INLINE uint32_t LL_USART_DMA_GetRegAddr(USART_TypeDef *USARTx, uint32_t
   */
 __STATIC_INLINE uint8_t LL_USART_ReceiveData8(USART_TypeDef *USARTx)
 {
-  return (uint8_t)(READ_BIT(USARTx->RDR, USART_RDR_RDR));
+  return (uint8_t)(READ_BIT(USARTx->RDR, USART_RDR_RDR) & 0xFFU);
 }
 
 /**

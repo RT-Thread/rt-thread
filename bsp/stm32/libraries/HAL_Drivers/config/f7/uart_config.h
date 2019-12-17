@@ -30,15 +30,15 @@ extern "C" {
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_UART1_RX_USING_DMA)
-#ifndef UART1_DMA_CONFIG
-#define UART1_DMA_CONFIG                                            \
+#ifndef UART1_DMA_RX_CONFIG
+#define UART1_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART1_RX_DMA_INSTANCE,                         \
         .channel = UART1_RX_DMA_CHANNEL,                           \
         .dma_rcc = UART1_RX_DMA_RCC,                               \
         .dma_irq = UART1_RX_DMA_IRQ,                               \
     }
-#endif /* UART1_DMA_CONFIG */
+#endif /* UART1_DMA_RX_CONFIG */
 #endif /* BSP_UART1_RX_USING_DMA */
 
 #if defined(BSP_USING_UART2)
@@ -53,15 +53,15 @@ extern "C" {
 #endif /* BSP_USING_UART2 */
 
 #if defined(BSP_UART2_RX_USING_DMA)
-#ifndef UART2_DMA_CONFIG
-#define UART2_DMA_CONFIG                                            \
+#ifndef UART2_DMA_RX_CONFIG
+#define UART2_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART2_RX_DMA_INSTANCE,                         \
         .channel = UART2_RX_DMA_CHANNEL,                           \
         .dma_rcc = UART2_RX_DMA_RCC,                               \
         .dma_irq = UART2_RX_DMA_IRQ,                               \
     }
-#endif /* UART2_DMA_CONFIG */
+#endif /* UART2_DMA_RX_CONFIG */
 #endif /* BSP_UART2_RX_USING_DMA */
 
 #if defined(BSP_USING_UART3)
@@ -76,15 +76,15 @@ extern "C" {
 #endif /* BSP_USING_UART3 */
 
 #if defined(BSP_UART3_RX_USING_DMA)
-#ifndef UART3_DMA_CONFIG
-#define UART3_DMA_CONFIG                                            \
+#ifndef UART3_DMA_RX_CONFIG
+#define UART3_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART3_RX_DMA_INSTANCE,                         \
         .channel = UART3_RX_DMA_CHANNEL,                           \
         .dma_rcc = UART3_RX_DMA_RCC,                               \
         .dma_irq = UART3_RX_DMA_IRQ,                               \
     }
-#endif /* UART3_DMA_CONFIG */
+#endif /* UART3_DMA_RX_CONFIG */
 #endif /* BSP_UART3_RX_USING_DMA */
 
 #if defined(BSP_USING_UART4)
@@ -99,15 +99,15 @@ extern "C" {
 #endif /* BSP_USING_UART4 */
 
 #if defined(BSP_UART4_RX_USING_DMA)
-#ifndef UART4_DMA_CONFIG
-#define UART4_DMA_CONFIG                                            \
+#ifndef UART4_DMA_RX_CONFIG
+#define UART4_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART4_RX_DMA_INSTANCE,                         \
         .channel = UART4_RX_DMA_CHANNEL,                           \
         .dma_rcc = UART4_RX_DMA_RCC,                               \
         .dma_irq = UART4_RX_DMA_IRQ,                               \
     }
-#endif /* UART4_DMA_CONFIG */
+#endif /* UART4_DMA_RX_CONFIG */
 #endif /* BSP_UART4_RX_USING_DMA */
 
 #if defined(BSP_USING_UART5)
@@ -122,16 +122,39 @@ extern "C" {
 #endif /* BSP_USING_UART5 */
 
 #if defined(BSP_UART5_RX_USING_DMA)
-#ifndef UART5_DMA_CONFIG
-#define UART5_DMA_CONFIG                                            \
+#ifndef UART5_DMA_RX_CONFIG
+#define UART5_DMA_RX_CONFIG                                            \
     {                                                               \
         .Instance = UART5_RX_DMA_INSTANCE,                         \
         .channel = UART5_RX_DMA_CHANNEL,                           \
         .dma_rcc = UART5_RX_DMA_RCC,                               \
         .dma_irq = UART5_RX_DMA_IRQ,                               \
     }
-#endif /* UART5_DMA_CONFIG */
+#endif /* UART5_DMA_RX_CONFIG */
 #endif /* BSP_UART5_RX_USING_DMA */
+
+#if defined(BSP_USING_UART6)
+#ifndef UART6_CONFIG
+#define UART6_CONFIG                                                \
+    {                                                               \
+        .name = "uart6",                                            \
+        .Instance = USART6,                                          \
+        .irq_type = USART6_IRQn,                                     \
+    }
+#endif /* UART6_CONFIG */
+#endif /* BSP_USING_UART6 */
+
+#if defined(BSP_UART6_RX_USING_DMA)
+#ifndef UART6_DMA_RX_CONFIG
+#define UART6_DMA_RX_CONFIG                                            \
+    {                                                               \
+        .Instance = UART6_RX_DMA_INSTANCE,                         \
+        .channel = UART6_RX_DMA_CHANNEL,                           \
+        .dma_rcc = UART6_RX_DMA_RCC,                               \
+        .dma_irq = UART6_RX_DMA_IRQ,                               \
+    }
+#endif /* UART6_DMA_RX_CONFIG */
+#endif /* BSP_UART6_RX_USING_DMA */
 
 #ifdef __cplusplus
 }

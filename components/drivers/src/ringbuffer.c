@@ -332,11 +332,11 @@ struct rt_ringbuffer* rt_ringbuffer_create(rt_uint16_t size)
 
     size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
-    rb = rt_malloc(sizeof(struct rt_ringbuffer));
+    rb = (struct rt_ringbuffer *)rt_malloc(sizeof(struct rt_ringbuffer));
     if (rb == RT_NULL)
         goto exit;
 
-    pool = rt_malloc(size);
+    pool = (rt_uint8_t *)rt_malloc(size);
     if (pool == RT_NULL)
     {
         rt_free(rb);

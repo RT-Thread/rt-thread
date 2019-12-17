@@ -24,7 +24,7 @@ extern "C" {
     NOTE: P1003.1c/D10, p. 34 adds sigev_notify_function and
           sigev_notify_attributes to the sigevent structure.  */
 
-union sigval 
+union sigval
 {
     int    sival_int;    /* Integer signal value */
     void  *sival_ptr;    /* Pointer signal value */
@@ -107,7 +107,7 @@ typedef unsigned long sigset_t;
 
 typedef void (*_sig_func_ptr)(int);
 
-struct sigaction 
+struct sigaction
 {
     _sig_func_ptr sa_handler;
     sigset_t sa_mask;
@@ -163,7 +163,7 @@ typedef unsigned long sigset_t;
 
 typedef void (*_sig_func_ptr)(int);
 
-struct sigaction 
+struct sigaction
 {
     _sig_func_ptr sa_handler;
     sigset_t sa_mask;

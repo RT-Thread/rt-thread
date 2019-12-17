@@ -15,7 +15,7 @@
  * 2011-02-23     Bernard      fix variable section end issue of finsh shell
  *                             initialization when use GNU GCC compiler.
  * 2016-11-26     armink       add password authentication
- * 2018-07-02     aozima       add custome prompt support.
+ * 2018-07-02     aozima       add custom prompt support.
  */
 
 #include <rthw.h>
@@ -41,8 +41,38 @@ static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 struct finsh_shell _shell;
 #endif
 
+/* finsh symtab */
+#ifdef FINSH_USING_SYMTAB
+struct finsh_syscall *_syscall_table_begin  = NULL;
+struct finsh_syscall *_syscall_table_end    = NULL;
+struct finsh_sysvar *_sysvar_table_begin    = NULL;
+struct finsh_sysvar *_sysvar_table_end      = NULL;
+#endif
+
 struct finsh_shell *shell;
 static char *finsh_prompt_custom = RT_NULL;
+
+#if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
+struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call)
+{
+    unsigned int *ptr;
+    ptr = (unsigned int*) (call + 1);
+    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _syscall_table_end))
+        ptr ++;
+
+    return (struct finsh_syscall*)ptr;
+}
+
+struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call)
+{
+    unsigned int *ptr;
+    ptr = (unsigned int*) (call + 1);
+    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _sysvar_table_end))
+        ptr ++;
+
+    return (struct finsh_sysvar*)ptr;
+}
+#endif /* defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__)) */
 
 #ifdef RT_USING_HEAP
 int finsh_set_prompt(const char * prompt)
@@ -56,7 +86,7 @@ int finsh_set_prompt(const char * prompt)
     /* strdup */
     if(prompt)
     {
-        finsh_prompt_custom = rt_malloc(strlen(prompt)+1);
+        finsh_prompt_custom = (char *)rt_malloc(strlen(prompt)+1);
         if(finsh_prompt_custom)
         {
             strcpy(finsh_prompt_custom, prompt);
@@ -136,6 +166,7 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode)
 
 static int finsh_getchar(void)
 {
+#ifdef RT_USING_DEVICE
 #ifdef RT_USING_POSIX
     return getchar();
 #else
@@ -147,9 +178,13 @@ static int finsh_getchar(void)
 
     return (int)ch;
 #endif
+#else
+    extern char rt_hw_console_getchar(void);
+    return rt_hw_console_getchar();
+#endif
 }
 
-#ifndef RT_USING_POSIX
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
@@ -309,8 +344,8 @@ static void finsh_wait_auth(void)
                 else if (ch == '\b' && cur_pos > 0)
                 {
                     /* backspace */
-                    password[cur_pos] = '\0';
                     cur_pos--;
+                    password[cur_pos] = '\0';
                     rt_kprintf("\b \b");
                 }
                 else if (ch == '\r' || ch == '\n')
@@ -477,7 +512,7 @@ void finsh_thread_entry(void *parameter)
     finsh_init(&shell->parser);
 #endif
 
-#ifndef RT_USING_POSIX
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
     /* set console device as shell device */
     if (shell->device == RT_NULL)
     {

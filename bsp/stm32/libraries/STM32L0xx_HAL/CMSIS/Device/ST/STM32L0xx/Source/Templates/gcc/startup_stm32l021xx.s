@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file      startup_stm32l021xx.s
   * @author    MCD Application Team
-  * @brief     STM32L021xx Devices vector table for gcc.
+  * @brief     STM32L021xx Devices vector table for GCC toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -118,9 +118,10 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
   bl  SystemInit
 /* Call static constructors */
-    bl __libc_init_array
+/* bl __libc_init_array */
 /* Call the application's entry point.*/
-  bl  main
+  bl entry
+
 
 LoopForever:
     b LoopForever
@@ -181,7 +182,7 @@ g_pfnVectors:
   .word     0                                 /* Reserved                     */
   .word     DMA1_Channel1_IRQHandler          /* DMA1 Channel 1               */
   .word     DMA1_Channel2_3_IRQHandler        /* DMA1 Channel 2 and Channel 3 */
-  .word     DMA1_Channel4_5_6_7_IRQHandler    /* DMA1 Channel 4, Channel 5, Channel 6 and Channel 7*/
+  .word     DMA1_Channel4_5_IRQHandler        /* DMA1 Channel 4 and Channel 5 */
   .word     ADC1_COMP_IRQHandler              /* ADC1, COMP1 and COMP2        */
   .word     LPTIM1_IRQHandler                 /* LPTIM1                       */
   .word     0                                 /* Reserved                     */
@@ -256,8 +257,8 @@ g_pfnVectors:
    .weak      DMA1_Channel2_3_IRQHandler
    .thumb_set DMA1_Channel2_3_IRQHandler,Default_Handler
 
-   .weak      DMA1_Channel4_5_6_7_IRQHandler
-   .thumb_set DMA1_Channel4_5_6_7_IRQHandler,Default_Handler
+   .weak      DMA1_Channel4_5_IRQHandler
+   .thumb_set DMA1_Channel4_5_IRQHandler,Default_Handler
 
    .weak      ADC1_COMP_IRQHandler
    .thumb_set ADC1_COMP_IRQHandler,Default_Handler

@@ -69,8 +69,8 @@ config RT_USING_IDLE_HOOK
     default y if RT_USING_HOOK
 
     if RT_USING_IDLE_HOOK
-    config RT_IDEL_HOOK_LIST_SIZE
-        int "The max size of idel hook list"
+    config RT_IDLE_HOOK_LIST_SIZE
+        int "The max size of idle hook list"
         default 4
         range 1 16
         help

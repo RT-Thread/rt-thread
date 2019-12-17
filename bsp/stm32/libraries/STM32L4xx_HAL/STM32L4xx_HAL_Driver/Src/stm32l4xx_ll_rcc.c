@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -207,7 +191,7 @@ uint32_t RCC_PLLSAI2_GetFreqDomain_DSI(void);
   */
 ErrorStatus LL_RCC_DeInit(void)
 {
-  uint32_t vl_mask;
+  __IO uint32_t vl_mask;
 
   /* Set MSION bit */
   LL_RCC_MSI_Enable();
@@ -229,11 +213,12 @@ ErrorStatus LL_RCC_DeInit(void)
   /* Reset CFGR register */
   LL_RCC_WriteReg(CFGR, 0x00000000U);
 
-  vl_mask = 0xFFFFFFFFU;
+  /* Read CR register */
+  vl_mask = LL_RCC_ReadReg(CR);
 
   /* Reset HSION, HSIKERON, HSIASFS, HSEON, PLLON bits */
-  CLEAR_BIT(vl_mask, (RCC_CR_HSION | RCC_CR_HSIASFS | RCC_CR_HSIKERON  | RCC_CR_HSEON |
-  RCC_CR_PLLON));
+  CLEAR_BIT(vl_mask,
+            (RCC_CR_HSION | RCC_CR_HSIASFS | RCC_CR_HSIKERON  | RCC_CR_HSEON | RCC_CR_PLLON));
 
 #if defined(RCC_PLLSAI1_SUPPORT)
   /* Reset PLLSAI1ON bit */
@@ -245,7 +230,7 @@ ErrorStatus LL_RCC_DeInit(void)
   CLEAR_BIT(vl_mask, RCC_CR_PLLSAI2ON);
 #endif /*RCC_PLLSAI2_SUPPORT*/
 
-  /* Write new mask in CR register */
+  /* Write new value in CR register */
   LL_RCC_WriteReg(CR, vl_mask);
 
 #if defined(RCC_PLLSAI2_SUPPORT)
@@ -762,7 +747,16 @@ uint32_t LL_RCC_GetLPTIMClockFreq(uint32_t LPTIMxSource)
       case LL_RCC_LPTIM1_CLKSOURCE_LSI:    /* LPTIM1 Clock is LSI Osc. */
         if (LL_RCC_LSI_IsReady() != 0U)
         {
-          lptim_frequency = LSI_VALUE;
+#if defined(RCC_CSR_LSIPREDIV)
+          if (LL_RCC_LSI_GetPrediv() == LL_RCC_LSI_PREDIV_128)
+          {
+            lptim_frequency = LSI_VALUE / 128U;
+          }
+          else
+#endif /* RCC_CSR_LSIPREDIV */
+          {
+            lptim_frequency = LSI_VALUE;
+          }
         }
         break;
 
@@ -798,7 +792,16 @@ uint32_t LL_RCC_GetLPTIMClockFreq(uint32_t LPTIMxSource)
         case LL_RCC_LPTIM2_CLKSOURCE_LSI:    /* LPTIM2 Clock is LSI Osc. */
           if (LL_RCC_LSI_IsReady() != 0U)
           {
-            lptim_frequency = LSI_VALUE;
+#if defined(RCC_CSR_LSIPREDIV)
+            if (LL_RCC_LSI_GetPrediv() == LL_RCC_LSI_PREDIV_128)
+            {
+              lptim_frequency = LSI_VALUE / 128U;
+            }
+            else
+#endif /* RCC_CSR_LSIPREDIV */
+            {
+              lptim_frequency = LSI_VALUE;
+            }
           }
           break;
 

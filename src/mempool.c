@@ -85,6 +85,9 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(start != RT_NULL);
+    RT_ASSERT(size > 0 && block_size > 0);
 
     /* initialize object */
     rt_object_init(&(mp->parent), RT_Object_Class_MemPool, name);
@@ -103,7 +106,6 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
-    mp->suspend_thread_count = 0;
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
@@ -157,9 +159,6 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
          */
         rt_thread_resume(thread);
 
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
-
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
     }
@@ -192,6 +191,10 @@ rt_mp_t rt_mp_create(const char *name,
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
+    /* parameter check */
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(block_count > 0 && block_size > 0);
+
     /* allocate object */
     mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
     /* allocate object failed */
@@ -219,7 +222,6 @@ rt_mp_t rt_mp_create(const char *name,
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
-    mp->suspend_thread_count = 0;
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
@@ -275,9 +277,6 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
          */
         rt_thread_resume(thread);
 
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
-
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
     }
@@ -308,6 +307,9 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
     struct rt_thread *thread;
     rt_uint32_t before_sleep = 0;
 
+    /* parameter check */
+    RT_ASSERT(mp != RT_NULL);
+
     /* get current thread */
     thread = rt_thread_self();
 
@@ -334,7 +336,6 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         /* need suspend thread */
         rt_thread_suspend(thread);
         rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
-        mp->suspend_thread_count++;
 
         if (time > 0)
         {
@@ -402,6 +403,9 @@ void rt_mp_free(void *block)
     struct rt_thread *thread;
     register rt_base_t level;
 
+    /* parameter check */
+    if (block == RT_NULL) return;
+
     /* get the control block of pool which the block belongs to */
     block_ptr = (rt_uint8_t **)((rt_uint8_t *)block - sizeof(rt_uint8_t *));
     mp        = (struct rt_mempool *)*block_ptr;
@@ -418,7 +422,7 @@ void rt_mp_free(void *block)
     *block_ptr = mp->block_list;
     mp->block_list = (rt_uint8_t *)block_ptr;
 
-    if (mp->suspend_thread_count > 0)
+    if (!rt_list_isempty(&(mp->suspend_thread)))
     {
         /* get the suspended thread */
         thread = rt_list_entry(mp->suspend_thread.next,
@@ -430,9 +434,6 @@ void rt_mp_free(void *block)
 
         /* resume thread */
         rt_thread_resume(thread);
-
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);

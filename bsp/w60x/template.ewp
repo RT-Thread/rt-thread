@@ -728,7 +728,7 @@
                 </option>
                 <option>
                     <name>IlinkMapFile</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkLogFile</name>
@@ -1101,7 +1101,7 @@
                 </option>
                 <option>
                     <name>GEndianModeBE</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OGBufferedTerminalOutput</name>
@@ -1132,7 +1132,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>26</version>
-                    <state>1</state>
+                    <state>38</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -1149,7 +1149,7 @@
                 <option>
                     <name>CoreVariant</name>
                     <version>26</version>
-                    <state>0</state>
+                    <state>38</state>
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
@@ -1172,7 +1172,7 @@
                 <option>
                     <name>GFPUCoreSlave2</name>
                     <version>26</version>
-                    <state>0</state>
+                    <state>38</state>
                 </option>
                 <option>
                     <name>OGCMSISPackSelectDevice</name>
@@ -1320,7 +1320,7 @@
                 </option>
                 <option>
                     <name>CCSignedPlainChar</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCRequirePrototypes</name>
@@ -1381,7 +1381,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>1</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -1644,15 +1644,15 @@
                 <option>
                     <name>OOCOutputFormat</name>
                     <version>3</version>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state></state>
+                    <state>../../rtthread.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1660,7 +1660,7 @@
                 </option>
                 <option>
                     <name>OOCObjCopyEnable</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -1683,7 +1683,7 @@
             <archiveVersion>1</archiveVersion>
             <data>
                 <prebuild></prebuild>
-                <postbuild></postbuild>
+                <postbuild>cmd /c "$PROJ_DIR$\makeimg.bat"</postbuild>
             </data>
         </settings>
         <settings>
@@ -1743,7 +1743,7 @@
                 </option>
                 <option>
                     <name>IlinkMapFile</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkLogFile</name>
@@ -1767,11 +1767,11 @@
                 </option>
                 <option>
                     <name>IlinkIcfOverride</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>lnk0t.icf</state>
+                    <state>$PROJ_DIR$\.\drivers\linker_scripts\link.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>

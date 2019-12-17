@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F746NG
     bool
     select SOC_SERIES_STM32F7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -84,6 +86,16 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM11
+                bool "Enable TIM11"
+                default n
+        endif
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
@@ -97,6 +109,8 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_LTDC
         bool
         default n
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

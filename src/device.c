@@ -95,7 +95,7 @@ RTM_EXPORT(rt_device_unregister);
  * @return the error code, RT_EOK on successfully.
  *
  * @deprecated since 1.2.x, this function is not needed because the initialization
- *             of a device is performed when applicaiton opens it.
+ *             of a device is performed when application opens it.
  */
 rt_err_t rt_device_init_all(void)
 {
@@ -162,7 +162,7 @@ rt_device_t rt_device_create(int type, int attach_size)
 
     size = RT_ALIGN(sizeof(struct rt_device), RT_ALIGN_SIZE);
     attach_size = RT_ALIGN(attach_size, RT_ALIGN_SIZE);
-    /* use the totoal size */
+    /* use the total size */
     size += attach_size;
 
     device = (rt_device_t)rt_malloc(size);
@@ -208,7 +208,7 @@ rt_err_t rt_device_init(rt_device_t dev)
 
     RT_ASSERT(dev != RT_NULL);
 
-    /* get device init handler */
+    /* get device_init handler */
     if (device_init != RT_NULL)
     {
         if (!(dev->flag & RT_DEVICE_FLAG_ACTIVATED))
@@ -269,7 +269,7 @@ rt_err_t rt_device_open(rt_device_t dev, rt_uint16_t oflag)
         return -RT_EBUSY;
     }
 
-    /* call device open interface */
+    /* call device_open interface */
     if (device_open != RT_NULL)
     {
         result = device_open(dev, oflag);
@@ -317,7 +317,7 @@ rt_err_t rt_device_close(rt_device_t dev)
     if (dev->ref_count != 0)
         return RT_EOK;
 
-    /* call device close interface */
+    /* call device_close interface */
     if (device_close != RT_NULL)
     {
         result = device_close(dev);
@@ -357,7 +357,7 @@ rt_size_t rt_device_read(rt_device_t dev,
         return 0;
     }
 
-    /* call device read interface */
+    /* call device_read interface */
     if (device_read != RT_NULL)
     {
         return device_read(dev, pos, buffer, size);
@@ -396,7 +396,7 @@ rt_size_t rt_device_write(rt_device_t dev,
         return 0;
     }
 
-    /* call device write interface */
+    /* call device_write interface */
     if (device_write != RT_NULL)
     {
         return device_write(dev, pos, buffer, size);
@@ -423,7 +423,7 @@ rt_err_t rt_device_control(rt_device_t dev, int cmd, void *arg)
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
 
-    /* call device write interface */
+    /* call device_write interface */
     if (device_control != RT_NULL)
     {
         return device_control(dev, cmd, arg);

@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -332,7 +316,7 @@ typedef struct
   */
 typedef struct
 {
-  uint32_t TriggerSource;               /*!< Set ADC group regular conversion trigger source: internal (SW start) or from external IP (timer event, external interrupt line).
+  uint32_t TriggerSource;               /*!< Set ADC group regular conversion trigger source: internal (SW start) or from external peripheral (timer event, external interrupt line).
                                              This parameter can be a value of @ref ADC_LL_EC_REG_TRIGGER_SOURCE
                                              @note On this STM32 serie, setting trigger source to external trigger also set trigger polarity to rising edge
                                                    (default setting for compatibility with some ADC on other STM32 families having this setting set by HW default value).
@@ -421,17 +405,17 @@ typedef struct
   * @{
   */
 #define LL_ADC_CLOCK_ASYNC_DIV1            ((uint32_t)0x00000000U)                               /*!< ADC asynchronous clock without prescaler */
-#define LL_ADC_CLOCK_ASYNC_DIV2            (ADC_CCR_PRESC_0)                                     /*!< ADC asynchronous clock with prescaler division by 2. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV4            (ADC_CCR_PRESC_1                  )                   /*!< ADC asynchronous clock with prescaler division by 4. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV6            (ADC_CCR_PRESC_1 | ADC_CCR_PRESC_0)                   /*!< ADC asynchronous clock with prescaler division by 6. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV8            (ADC_CCR_PRESC_2                                    ) /*!< ADC asynchronous clock with prescaler division by 8. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV10           (ADC_CCR_PRESC_2                   | ADC_CCR_PRESC_0) /*!< ADC asynchronous clock with prescaler division by 10. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV12           (ADC_CCR_PRESC_2 | ADC_CCR_PRESC_1                  ) /*!< ADC asynchronous clock with prescaler division by 12. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV16           (ADC_CCR_PRESC_2 | ADC_CCR_PRESC_1 | ADC_CCR_PRESC_0) /*!< ADC asynchronous clock with prescaler division by 16. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV32           (ADC_CCR_PRESC_3)                                     /*!< ADC asynchronous clock with prescaler division by 32. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV64           (ADC_CCR_PRESC_3 | ADC_CCR_PRESC_0)                   /*!< ADC asynchronous clock with prescaler division by 64. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV128          (ADC_CCR_PRESC_3 | ADC_CCR_PRESC_1)                   /*!< ADC asynchronous clock with prescaler division by 128. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
-#define LL_ADC_CLOCK_ASYNC_DIV256          (ADC_CCR_PRESC_3 | ADC_CCR_PRESC_1 | ADC_CCR_PRESC_0) /*!< ADC asynchronous clock with prescaler division by 256. ADC common clock asynchonous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV2            (ADC_CCR_PRESC_0)                                     /*!< ADC asynchronous clock with prescaler division by 2. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV4            (ADC_CCR_PRESC_1                  )                   /*!< ADC asynchronous clock with prescaler division by 4. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV6            (ADC_CCR_PRESC_1 | ADC_CCR_PRESC_0)                   /*!< ADC asynchronous clock with prescaler division by 6. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV8            (ADC_CCR_PRESC_2                                    ) /*!< ADC asynchronous clock with prescaler division by 8. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV10           (ADC_CCR_PRESC_2                   | ADC_CCR_PRESC_0) /*!< ADC asynchronous clock with prescaler division by 10. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV12           (ADC_CCR_PRESC_2 | ADC_CCR_PRESC_1                  ) /*!< ADC asynchronous clock with prescaler division by 12. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV16           (ADC_CCR_PRESC_2 | ADC_CCR_PRESC_1 | ADC_CCR_PRESC_0) /*!< ADC asynchronous clock with prescaler division by 16. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV32           (ADC_CCR_PRESC_3)                                     /*!< ADC asynchronous clock with prescaler division by 32. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV64           (ADC_CCR_PRESC_3 | ADC_CCR_PRESC_0)                   /*!< ADC asynchronous clock with prescaler division by 64. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV128          (ADC_CCR_PRESC_3 | ADC_CCR_PRESC_1)                   /*!< ADC asynchronous clock with prescaler division by 128. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
+#define LL_ADC_CLOCK_ASYNC_DIV256          (ADC_CCR_PRESC_3 | ADC_CCR_PRESC_1 | ADC_CCR_PRESC_0) /*!< ADC asynchronous clock with prescaler division by 256. ADC common clock asynchronous prescaler is applied to each ADC instance if the corresponding ADC instance clock is set to clock source asynchronous (refer to function @ref LL_ADC_SetClock() ). */
 /**
   * @}
   */
@@ -455,8 +439,12 @@ typedef struct
 /*       only by selecting the corresponding ADC internal channel.            */
 #define LL_ADC_PATH_INTERNAL_NONE          ((uint32_t)0x00000000U)/*!< ADC measurement pathes all disabled */
 #define LL_ADC_PATH_INTERNAL_VREFINT       (ADC_CCR_VREFEN)       /*!< ADC measurement path to internal channel VrefInt */
+#if defined(ADC_CCR_TSEN)
 #define LL_ADC_PATH_INTERNAL_TEMPSENSOR    (ADC_CCR_TSEN)         /*!< ADC measurement path to internal channel temperature sensor */
+#endif
+#if defined(ADC_CCR_VLCDEN)
 #define LL_ADC_PATH_INTERNAL_VLCD          (ADC_CCR_VLCDEN)       /*!< ADC measurement path to internal channel Vlcd */
+#endif
 /**
   * @}
   */
@@ -546,14 +534,35 @@ typedef struct
   * @{
   */
 #define LL_ADC_REG_TRIG_SOFTWARE           ((uint32_t)0x00000000U)                                                                        /*!< ADC group regular conversion trigger internal: SW start. */
-#define LL_ADC_REG_TRIG_EXT_TIM6_TRGO      (ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                                                /*!< ADC group regular conversion trigger from external IP: TIM6 TRGO. Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_TIM21_CH2      (ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                           /*!< ADC group regular conversion trigger from external IP: TIM21 channel 2 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_TIM2_TRGO      (ADC_CFGR1_EXTSEL_1 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                           /*!< ADC group regular conversion trigger from external IP: TIM2 TRGO. Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_TIM2_CH4       (ADC_CFGR1_EXTSEL_1 | ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                      /*!< ADC group regular conversion trigger from external IP: TIM2 channel 4 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_TIM22_TRGO     (ADC_CFGR1_EXTSEL_2 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                           /*!< ADC group regular conversion trigger from external IP: TIM22 TRGO. Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_TIM2_CH3       (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                      /*!< ADC group regular conversion trigger from external IP: TIM2 channel 4 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_TIM3_TRGO      (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_1 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                      /*!< ADC group regular conversion trigger from external IP: TIM3 TRG0. Trigger edge set to rising edge (default setting). */
-#define LL_ADC_REG_TRIG_EXT_EXTI_LINE11    (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_1 | ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT) /*!< ADC group regular conversion trigger from external IP: external interrupt line 11. Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_TIM6_TRGO      (ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                                                /*!< ADC group regular conversion trigger from external peripheral: TIM6 TRGO. Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_TIM21_CH2      (ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                           /*!< ADC group regular conversion trigger from external peripheral: TIM21 channel 2 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_TIM2_TRGO      (ADC_CFGR1_EXTSEL_1 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                           /*!< ADC group regular conversion trigger from external peripheral: TIM2 TRGO. Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_TIM2_CH4       (ADC_CFGR1_EXTSEL_1 | ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                      /*!< ADC group regular conversion trigger from external peripheral: TIM2 channel 4 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_TIM22_TRGO     (ADC_CFGR1_EXTSEL_2 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                                           /*!< ADC group regular conversion trigger from external peripheral: TIM22 TRGO. Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_TIM3_TRGO      (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_1 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                      /*!< ADC group regular conversion trigger from external peripheral: TIM3 TRG0. Trigger edge set to rising edge (default setting). */
+#define LL_ADC_REG_TRIG_EXT_EXTI_LINE11    (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_1 | ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT) /*!< ADC group regular conversion trigger from external peripheral: external interrupt line 11. Trigger edge set to rising edge (default setting). */
+
+/* ADC group regular external trigger TIM2_CC3 available only on              */
+/* STM32L0 devices categories: Cat.1, Cat.2, Cat.5                            */
+#if defined (STM32L011xx) || defined (STM32L021xx) || \
+    defined (STM32L031xx) || defined (STM32L041xx) || \
+    defined (STM32L071xx) || defined (STM32L072xx) || defined (STM32L073xx) || \
+    defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx) || \
+    defined (STM32L010x6) || defined (STM32L010x8) || defined (STM32L010xB)
+#define LL_ADC_REG_TRIG_EXT_TIM2_CH3       (ADC_CFGR1_EXTSEL_2 | ADC_CFGR1_EXTSEL_0 | ADC_REG_TRIG_EXT_EDGE_DEFAULT)                      /*!< ADC group regular conversion trigger from external peripheral: TIM2 channel 4 event (capture compare: input capture or output capture). Trigger edge set to rising edge (default setting). */
+#endif
+
+/* ADC group regular external trigger TIM21_TRGO available only on            */
+/* STM32L0 devices categories: Cat.2, Cat.3, Cat.5                            */
+#if defined (STM32L031xx) || defined (STM32L041xx) || \
+    defined (STM32L051xx) || defined (STM32L052xx) || defined (STM32L053xx) || \
+    defined (STM32L061xx) || defined (STM32L062xx) || defined (STM32L063xx) || \
+    defined (STM32L071xx) || defined (STM32L072xx) || defined (STM32L073xx) || \
+    defined (STM32L081xx) || defined (STM32L082xx) || defined (STM32L083xx) || \
+    defined (STM32L010x6) || defined (STM32L010x8) || defined (STM32L010xB)
+#define LL_ADC_REG_TRIG_EXT_TIM21_TRGO     (LL_ADC_REG_TRIG_EXT_TIM22_TRGO)
+#endif
+
 /**
   * @}
   */
@@ -731,14 +740,14 @@ typedef struct
 
 
 /** @defgroup ADC_LL_EC_HW_DELAYS  Definitions of ADC hardware constraints delays
-  * @note   Only ADC IP HW delays are defined in ADC LL driver driver,
+  * @note   Only ADC peripheral HW delays are defined in ADC LL driver driver,
   *         not timeout values.
   *         For details on delays values, refer to descriptions in source code
   *         above each literal definition.
   * @{
   */
   
-/* Note: Only ADC IP HW delays are defined in ADC LL driver driver,           */
+/* Note: Only ADC peripheral HW delays are defined in ADC LL driver driver,   */
 /*       not timeout values.                                                  */
 /*       Timeout values for ADC operations are dependent to device clock      */
 /*       configuration (system clock versus ADC clock),                       */
@@ -997,7 +1006,7 @@ typedef struct
   * @note   Example:
   *           __LL_ADC_DECIMAL_NB_TO_CHANNEL(4)
   *           will return a data equivalent to "LL_ADC_CHANNEL_4".
-  * @param  __DECIMAL_NB__: Value between Min_Data=0 and Max_Data=18
+  * @param  __DECIMAL_NB__ Value between Min_Data=0 and Max_Data=18
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_ADC_CHANNEL_0
   *         @arg @ref LL_ADC_CHANNEL_1
@@ -1432,7 +1441,7 @@ typedef struct
   *         internal voltage reference VrefInt.
   *         Otherwise, this macro performs the processing to scale
   *         ADC conversion data to 12 bits.
-  * @param  __VREFINT_ADC_DATA__: ADC conversion data (resolution 12 bits)
+  * @param  __VREFINT_ADC_DATA__ ADC conversion data (resolution 12 bits)
   *         of internal voltage reference VrefInt (unit: digital value).
   * @param  __ADC_RESOLUTION__ This parameter can be one of the following values:
   *         @arg @ref LL_ADC_RESOLUTION_12B
@@ -1452,7 +1461,10 @@ typedef struct
 /* Note: On device STM32L011, calibration parameter TS_CAL1 is not available. */
 /*       Therefore, helper macro __LL_ADC_CALC_TEMPERATURE() is not available.*/
 /*       Use helper macro @ref __LL_ADC_CALC_TEMPERATURE_TYP_PARAMS().        */
-#if !defined(STM32L011xx)
+/* Note: On device STM32L010xx, temperature sensor is not available.          */
+/*       Therefore, helper macro related to temperature sensor are            */
+/*       not available.                                                       */
+#if !defined(STM32L011xx) && !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4)
 /**
   * @brief  Helper macro to calculate the temperature (unit: degree Celsius)
   *         from ADC conversion data of internal temperature sensor.
@@ -1513,6 +1525,10 @@ typedef struct
   )
 #endif
 
+/* Note: On device STM32L010xx, temperature sensor is not available.          */
+/*       Therefore, helper macro related to temperature sensor are            */
+/*       not available.                                                       */
+#if !defined(STM32L010xB) && !defined(STM32L010x8) && !defined(STM32L010x6) && !defined(STM32L010x4)
 /**
   * @brief  Helper macro to calculate the temperature (unit: degree Celsius)
   *         from ADC conversion data of internal temperature sensor.
@@ -1574,7 +1590,7 @@ typedef struct
     ) / (__TEMPSENSOR_TYP_AVGSLOPE__)                                          \
    ) + (__TEMPSENSOR_CALX_TEMP__)                                              \
   )
-
+#endif
 /**
   * @}
   */
@@ -1660,7 +1676,7 @@ __STATIC_INLINE uint32_t LL_ADC_DMA_GetRegAddr(ADC_TypeDef *ADCx, uint32_t Regis
   *         @arg @ref LL_ADC_CLOCK_ASYNC_DIV128 (1)
   *         @arg @ref LL_ADC_CLOCK_ASYNC_DIV256 (1)
   *
-  *         (1) ADC common clock asynchonous prescaler is applied to 
+  *         (1) ADC common clock asynchronous prescaler is applied to 
   *             each ADC instance if the corresponding ADC instance clock  
   *             is set to clock source asynchronous.
   *             (refer to function @ref LL_ADC_SetClock() ).
@@ -1690,7 +1706,7 @@ __STATIC_INLINE void LL_ADC_SetCommonClock(ADC_Common_TypeDef *ADCxy_COMMON, uin
   *         @arg @ref LL_ADC_CLOCK_ASYNC_DIV128 (1)
   *         @arg @ref LL_ADC_CLOCK_ASYNC_DIV256 (1)
   *
-  *         (1) ADC common clock asynchonous prescaler is applied to 
+  *         (1) ADC common clock asynchronous prescaler is applied to 
   *             each ADC instance if the corresponding ADC instance clock  
   *             is set to clock source asynchronous.
   *             (refer to function @ref LL_ADC_SetClock() ).
@@ -1768,18 +1784,21 @@ __STATIC_INLINE uint32_t LL_ADC_GetCommonFrequencyMode(ADC_Common_TypeDef *ADCxy
   * @param  PathInternal This parameter can be a combination of the following values:
   *         @arg @ref LL_ADC_PATH_INTERNAL_NONE
   *         @arg @ref LL_ADC_PATH_INTERNAL_VREFINT
-  *         @arg @ref LL_ADC_PATH_INTERNAL_TEMPSENSOR
-  *         @arg @ref LL_ADC_PATH_INTERNAL_VLCD (*)
+  *         @arg @ref LL_ADC_PATH_INTERNAL_TEMPSENSOR (2)
+  *         @arg @ref LL_ADC_PATH_INTERNAL_VLCD (1)
   *
-  *         (*) value not defined in all devices: only on STM32L053xx, STM32L063xx, STM32L073xx, STM32L083xx.
+  *         (1) value not defined in all devices: only on STM32L053xx, STM32L063xx, STM32L073xx, STM32L083xx.
+  *         (2) value not defined in all devices: only on STM32L053xx, STM32L063xx, STM32L073xx, STM32L083xx, STM32L04xxx, STM32L03xxx, STM32L02xxx.
   * @retval None
   */
 __STATIC_INLINE void LL_ADC_SetCommonPathInternalCh(ADC_Common_TypeDef *ADCxy_COMMON, uint32_t PathInternal)
 {
-#if defined (ADC_CCR_VLCDEN)
+#if defined (ADC_CCR_VLCDEN) && defined (ADC_CCR_TSEN)
   MODIFY_REG(ADCxy_COMMON->CCR, ADC_CCR_VREFEN | ADC_CCR_TSEN | ADC_CCR_VLCDEN, PathInternal);
-#else
+#elif defined (ADC_CCR_TSEN)
   MODIFY_REG(ADCxy_COMMON->CCR, ADC_CCR_VREFEN | ADC_CCR_TSEN, PathInternal);
+#else
+  MODIFY_REG(ADCxy_COMMON->CCR, ADC_CCR_VREFEN, PathInternal);
 #endif
 }
 
@@ -1797,17 +1816,20 @@ __STATIC_INLINE void LL_ADC_SetCommonPathInternalCh(ADC_Common_TypeDef *ADCxy_CO
   * @retval Returned value can be a combination of the following values:
   *         @arg @ref LL_ADC_PATH_INTERNAL_NONE
   *         @arg @ref LL_ADC_PATH_INTERNAL_VREFINT
-  *         @arg @ref LL_ADC_PATH_INTERNAL_TEMPSENSOR
-  *         @arg @ref LL_ADC_PATH_INTERNAL_VLCD (*)
+  *         @arg @ref LL_ADC_PATH_INTERNAL_TEMPSENSOR (2)
+  *         @arg @ref LL_ADC_PATH_INTERNAL_VLCD (1)
   *
-  *         (*) value not defined in all devices: only on STM32L053xx, STM32L063xx, STM32L073xx, STM32L083xx.
+  *         (1) value not defined in all devices: only on STM32L053xx, STM32L063xx, STM32L073xx, STM32L083xx.
+  *         (2) value not defined in all devices: only on STM32L053xx, STM32L063xx, STM32L073xx, STM32L083xx, STM32L04xxx, STM32L03xxx, STM32L02xxx.
   */
 __STATIC_INLINE uint32_t LL_ADC_GetCommonPathInternalCh(ADC_Common_TypeDef *ADCxy_COMMON)
 {
-#if defined(ADC_CCR_VLCDEN)
+#if defined (ADC_CCR_VLCDEN) && defined (ADC_CCR_TSEN)
   return (uint32_t)(READ_BIT(ADCxy_COMMON->CCR, ADC_CCR_VREFEN | ADC_CCR_TSEN | ADC_CCR_VLCDEN));
-#else
+#elif defined (ADC_CCR_TSEN)
   return (uint32_t)(READ_BIT(ADCxy_COMMON->CCR, ADC_CCR_VREFEN | ADC_CCR_TSEN));
+#else
+  return (uint32_t)(READ_BIT(ADCxy_COMMON->CCR, ADC_CCR_VREFEN));
 #endif
 }
 
@@ -2167,7 +2189,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetSamplingTimeCommonChannels(ADC_TypeDef *ADCx)
 
 /**
   * @brief  Set ADC group regular conversion trigger source:
-  *         internal (SW start) or from external IP (timer event,
+  *         internal (SW start) or from external peripheral (timer event,
   *         external interrupt line).
   * @note   On this STM32 serie, setting trigger source to external trigger
   *         also set trigger polarity to rising edge 
@@ -2205,7 +2227,7 @@ __STATIC_INLINE void LL_ADC_REG_SetTriggerSource(ADC_TypeDef *ADCx, uint32_t Tri
 
 /**
   * @brief  Get ADC group regular conversion trigger source:
-  *         internal (SW start) or from external IP (timer event,
+  *         internal (SW start) or from external peripheral (timer event,
   *         external interrupt line).
   * @note   To determine whether group regular trigger source is
   *         internal (SW start) or external, without detail
@@ -3043,7 +3065,7 @@ __STATIC_INLINE void LL_ADC_ConfigAnalogWDThresholds(ADC_TypeDef *ADCx, uint32_t
   * @param  AWDThresholdsHighLow This parameter can be one of the following values:
   *         @arg @ref LL_ADC_AWD_THRESHOLD_HIGH
   *         @arg @ref LL_ADC_AWD_THRESHOLD_LOW
-  * @param  AWDThresholdValue: Value between Min_Data=0x000 and Max_Data=0xFFF
+  * @param  AWDThresholdValue Value between Min_Data=0x000 and Max_Data=0xFFF
   * @retval None
   */
 __STATIC_INLINE void LL_ADC_SetAnalogWDThresholds(ADC_TypeDef *ADCx, uint32_t AWDThresholdsHighLow, uint32_t AWDThresholdValue)

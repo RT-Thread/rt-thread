@@ -6,7 +6,7 @@ from building import *
 cwd = GetCurrentDir()
 
 src = Split("""
-CMSIS/ST/STM32G0xx/Source/Templates/system_stm32g0xx.c
+CMSIS/Device/ST/STM32G0xx/Source/Templates/system_stm32g0xx.c
 STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cec.c
 STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc.c
 STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rcc_ex.c
@@ -18,10 +18,8 @@ STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr.c
 STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_pwr_ex.c
 STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_cortex.c
 STM32G0xx_HAL_Driver/Src/stm32g0xx_hal.c
+STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c
 """)
-
-if GetDepend(['RT_USING_PIN']):
-    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_gpio.c']
 
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_uart.c']
@@ -53,7 +51,7 @@ if GetDepend(['RT_USING_WDT']):
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_wwdg.c']
 
 path = [cwd + '/STM32G0xx_HAL_Driver/Inc', 
-    cwd + '/CMSIS/ST/STM32G0xx/Include',
+    cwd + '/CMSIS/Device/ST/STM32G0xx/Include',
     cwd + '/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']

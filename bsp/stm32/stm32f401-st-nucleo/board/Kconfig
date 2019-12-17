@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F401RE
     bool
     select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -68,7 +70,8 @@ menu "On-chip Peripheral Drivers"
                 range 1 216
                 default 16
         endif
-
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

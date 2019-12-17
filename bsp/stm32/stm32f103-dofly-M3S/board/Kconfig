@@ -3,16 +3,27 @@ menu "Hardware Drivers Config"
 config SOC_STM32F103ZE
     bool
     select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_SDCARD
+    config BSP_USING_SDIO_SDCARD
         bool "Enable SDCARD (sdio)"
         select BSP_USING_SDIO
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         select RT_USING_PIN
+        default n
+        
+    config BSP_USING_SPI_SDCARD
+        bool "Enable SDCARD (spi2)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
+        select RT_USING_SPI_MSD
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
         default n
         
     config BSP_USING_SPI_FLASH
@@ -125,10 +136,18 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
-
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"
+
+    config BSP_USING_NRF24L01
+        bool "Enable NRF24L01"
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
+        select PKG_USING_NRF24L01
+        default n
 
 endmenu
 

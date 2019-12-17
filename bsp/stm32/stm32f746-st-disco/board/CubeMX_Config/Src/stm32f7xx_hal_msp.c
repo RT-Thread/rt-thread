@@ -105,7 +105,6 @@ void HAL_MspInit(void)
 */
 void HAL_ETH_MspInit(ETH_HandleTypeDef* heth)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(heth->Instance==ETH)
   {
@@ -163,10 +162,8 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* heth)
 * @param heth: ETH handle pointer
 * @retval None
 */
-
 void HAL_ETH_MspDeInit(ETH_HandleTypeDef* heth)
 {
-
   if(heth->Instance==ETH)
   {
   /* USER CODE BEGIN ETH_MspDeInit 0 */
@@ -207,7 +204,6 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* heth)
 */
 void HAL_LTDC_MspInit(LTDC_HandleTypeDef* hltdc)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(hltdc->Instance==LTDC)
   {
@@ -304,10 +300,8 @@ void HAL_LTDC_MspInit(LTDC_HandleTypeDef* hltdc)
 * @param hltdc: LTDC handle pointer
 * @retval None
 */
-
 void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* hltdc)
 {
-
   if(hltdc->Instance==LTDC)
   {
   /* USER CODE BEGIN LTDC_MspDeInit 0 */
@@ -375,7 +369,6 @@ void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* hltdc)
 */
 void HAL_QSPI_MspInit(QSPI_HandleTypeDef* hqspi)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(hqspi->Instance==QUADSPI)
   {
@@ -437,10 +430,8 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef* hqspi)
 * @param hqspi: QSPI handle pointer
 * @retval None
 */
-
 void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* hqspi)
 {
-
   if(hqspi->Instance==QUADSPI)
   {
   /* USER CODE BEGIN QUADSPI_MspDeInit 0 */
@@ -478,7 +469,6 @@ void HAL_QSPI_MspDeInit(QSPI_HandleTypeDef* hqspi)
 */
 void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(hsd->Instance==SDMMC1)
   {
@@ -526,10 +516,8 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
 * @param hsd: SD handle pointer
 * @retval None
 */
-
 void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
 {
-
   if(hsd->Instance==SDMMC1)
   {
   /* USER CODE BEGIN SDMMC1_MspDeInit 0 */
@@ -559,6 +547,50 @@ void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
 }
 
 /**
+* @brief TIM_Base MSP Initialization
+* This function configures the hardware resources used in this example
+* @param htim_base: TIM_Base handle pointer
+* @retval None
+*/
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
+{
+  if(htim_base->Instance==TIM11)
+  {
+  /* USER CODE BEGIN TIM11_MspInit 0 */
+
+  /* USER CODE END TIM11_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_TIM11_CLK_ENABLE();
+  /* USER CODE BEGIN TIM11_MspInit 1 */
+
+  /* USER CODE END TIM11_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief TIM_Base MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param htim_base: TIM_Base handle pointer
+* @retval None
+*/
+void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* htim_base)
+{
+  if(htim_base->Instance==TIM11)
+  {
+  /* USER CODE BEGIN TIM11_MspDeInit 0 */
+
+  /* USER CODE END TIM11_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM11_CLK_DISABLE();
+  /* USER CODE BEGIN TIM11_MspDeInit 1 */
+
+  /* USER CODE END TIM11_MspDeInit 1 */
+  }
+
+}
+
+/**
 * @brief UART MSP Initialization
 * This function configures the hardware resources used in this example
 * @param huart: UART handle pointer
@@ -566,7 +598,6 @@ void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
 */
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
-
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(huart->Instance==USART1)
   {
@@ -609,10 +640,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 * @param huart: UART handle pointer
 * @retval None
 */
-
 void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 {
-
   if(huart->Instance==USART1)
   {
   /* USER CODE BEGIN USART1_MspDeInit 0 */
@@ -642,7 +671,7 @@ static void HAL_FMC_MspInit(void){
   /* USER CODE BEGIN FMC_MspInit 0 */
 
   /* USER CODE END FMC_MspInit 0 */
-  GPIO_InitTypeDef GPIO_InitStruct;
+  GPIO_InitTypeDef GPIO_InitStruct ={0};
   if (FMC_Initialized) {
     return;
   }

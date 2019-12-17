@@ -20,7 +20,7 @@
 static rt_tick_t rt_tick = 0;
 
 /**
- * This function will init system tick and set it to zero.
+ * This function will initialize system tick and set it to zero.
  * @ingroup SystemInit
  *
  * @deprecated since 1.1.0, this function does not need to be invoked

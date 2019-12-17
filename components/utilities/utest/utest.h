@@ -15,6 +15,10 @@
 #include "utest_log.h"
 #include "utest_assert.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * utest_error
  * 
@@ -156,5 +160,9 @@ utest_t utest_handle_get(void);
 #define UTEST_UNIT_RUN(test_unit_func)                                         \
     utest_unit_run(test_unit_func, #test_unit_func);                           \
     if(utest_handle_get()->failed_num != 0) return;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __UTEST_H__ */
