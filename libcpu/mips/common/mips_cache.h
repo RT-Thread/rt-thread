@@ -19,7 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ10ÈÕ     Urey         the first version
+ * 2016-09-07     Urey         the first version
  */
 
 #ifndef _MIPS_CACHE_H_
@@ -38,11 +38,7 @@
 #define INDEX_LOAD_TAG_D        0x05
 #define INDEX_STORE_TAG_I       0x08
 #define INDEX_STORE_TAG_D       0x09
-#if defined(CONFIG_CPU_LOONGSON2)
-#define HIT_INVALIDATE_I        0x00
-#else
 #define HIT_INVALIDATE_I        0x10
-#endif
 #define HIT_INVALIDATE_D        0x11
 #define HIT_WRITEBACK_INV_D     0x15
 

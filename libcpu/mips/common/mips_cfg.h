@@ -19,7 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ10ÈÕ     Urey         the first version
+ * 2016-09-07     Urey         the first version
  */
 
 #ifndef _MIPS_CFG_H_
@@ -30,12 +30,12 @@
 typedef struct mips32_core_cfg
 {
     uint16_t icache_line_size;
-//    uint16_t icache_lines_per_way;
-//    uint16_t icache_ways;
+    uint16_t icache_lines_per_way;
+    uint16_t icache_ways;
     uint16_t icache_size;
     uint16_t dcache_line_size;
-//    uint16_t dcache_lines_per_way;
-//    uint16_t dcache_ways;
+    uint16_t dcache_lines_per_way;
+    uint16_t dcache_ways;
     uint16_t dcache_size;
 
     uint16_t max_tlb_entries;	/* number of tlb entry */
