@@ -11,8 +11,9 @@
 #include <rtthread.h>
 #include <ymodem.h>
 #include <dfs_posix.h>
+
+#include <stdio.h>
 #include <stdlib.h>
-#include <board.h>
 #include <string.h>
 
 struct custom_ctx
