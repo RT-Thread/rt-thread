@@ -1,8 +1,12 @@
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c')
+cwd = GetCurrentDir()
+src = Glob('ymodem.c')
+
+if GetDepend('YMODEM_USING_FILE_TRANSFER'):
+    src += ['ry_sy.c']
+
 CPPPATH = [cwd]
-group   = DefineGroup('Utilities', src, depend = ['RT_USING_RYM'], CPPPATH = CPPPATH)
+group = DefineGroup('Utilities', src, depend = ['RT_USING_RYM'], CPPPATH = CPPPATH)
 
 Return('group')

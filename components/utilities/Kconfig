@@ -2,13 +2,17 @@ menu "Utilities"
 
 config RT_USING_RYM
     bool "Enable Ymodem"
-    depends on RT_USING_DFS = y
     default n
 
     if RT_USING_RYM
         config YMODEM_DISABLE_CRC_TABLE
-        bool "Disable CRC Table"
-        default n
+	        bool "Disable CRC Table"
+	        default n
+
+        config YMODEM_USING_FILE_TRANSFER
+	        select RT_USING_DFS
+	        bool "Enable Ymodem file transfer"
+	        default n
     endif
 
 config RT_USING_ULOG

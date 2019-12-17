@@ -9,6 +9,9 @@
  */
 
 #include <rtthread.h>
+
+#ifdef YMODEM_USING_FILE_TRANSFER
+
 #include <ymodem.h>
 #include <dfs_posix.h>
 #include <stdlib.h>
@@ -235,3 +238,5 @@ static rt_err_t sy(uint8_t argc, char **argv)
 MSH_CMD_EXPORT(sy, YMODEM Send e.g: sy file_path [uart0] default by console.);
 
 #endif /* RT_USING_FINSH */
+
+#endif /* YMODEM_USING_FILE_TRANSFER */
