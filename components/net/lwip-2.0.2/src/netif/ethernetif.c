@@ -481,8 +481,13 @@ static err_t eth_netif_device_init(struct netif *netif)
 rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flags)
 {
     struct netif* netif;
-
+#if LWIP_NETIF_HOSTNAME
+#define LWIP_HOSTNAME_LEN 16
+    char *hostname = RT_NULL;
+    netif = (struct netif*) rt_malloc (sizeof(struct netif) + LWIP_HOSTNAME_LEN);
+#else
     netif = (struct netif*) rt_malloc (sizeof(struct netif));
+#endif
     if (netif == RT_NULL)
     {
         rt_kprintf("malloc netif failed\n");
@@ -519,7 +524,9 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
-    netif->hostname = "rtthread";
+	hostname = (char *)netif + sizeof(struct netif);
+    rt_sprintf(hostname, "RT-Thread_%02x%02x", name[0], name[1]);
+    netif->hostname = hostname;
 #endif /* LWIP_NETIF_HOSTNAME */
 
     /* if tcp thread has been started up, we add this netif to the system */
