@@ -42,7 +42,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x30104
 
 /* RT-Thread Components */
 
@@ -312,5 +312,6 @@
 /* External Libraries */
 
 #define WM_USING_ONESHOT
+#define SOC_W60X
 
 #endif

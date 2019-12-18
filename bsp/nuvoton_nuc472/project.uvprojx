@@ -330,7 +330,7 @@
               <MiscControls />
               <Define />
               <Undefine />
-              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\Include;Libraries\Device\Nuvoton\NUC472_442\Include;Libraries\StdDriver\inc;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\Include;Libraries\Device\Nuvoton\NUC472_442\Include;Libraries\StdDriver\inc;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common;..\..\components\net\lwip-2.0.2\src;..\..\components\net\lwip-2.0.2\src\include;..\..\components\net\lwip-2.0.2\src\include\ipv4;..\..\components\net\lwip-2.0.2\src\arch\include;..\..\components\net\lwip-2.0.2\src\include\netif;..\..\components\net\lwip-2.0.2\src\include\posix</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,13 +384,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -736,7 +729,21 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CORTEX-M4</GroupName>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -756,20 +763,6 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>

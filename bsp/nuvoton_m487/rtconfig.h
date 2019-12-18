@@ -37,7 +37,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x30104
 
 /* RT-Thread Components */
 
@@ -96,12 +96,7 @@
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
-
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
+#define RT_SFUD_SPI_MAX_HZ 50000000
 
 /* Using USB */
 
@@ -162,9 +157,6 @@
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
 
-/* Modbus master and slave stack */
-
-
 /* AT commands */
 
 
@@ -213,5 +205,6 @@
 
 /* samples: kernel and components samples */
 
+#define SOC_M487
 
 #endif

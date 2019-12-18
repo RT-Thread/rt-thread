@@ -224,7 +224,7 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>STM32H743xx</state>
+          <state>STM32H750xx</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -355,6 +355,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto</state>
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\CMSIS\Include</state>
@@ -1275,7 +1276,7 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>STM32H743xx</state>
+          <state>STM32H750xx</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1406,6 +1407,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto</state>
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\CMSIS\Include</state>
@@ -2111,9 +2113,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
@@ -2174,20 +2173,14 @@
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_crypto.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
     </file>
   </group>
   <group>
-    <name>cpu</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
+    <name>CORTEX-M7</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
     </file>
@@ -2197,9 +2190,27 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto\hwcrypto.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto\hw_rng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\hwcrypto\hw_crc.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>

@@ -2076,9 +2076,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
@@ -2149,7 +2146,13 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
+    <name>CORTEX-M4</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2158,12 +2161,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
     </file>
   </group>
   <group>

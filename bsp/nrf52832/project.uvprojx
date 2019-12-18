@@ -335,7 +335,7 @@
               <MiscControls>--reduce_paths</MiscControls>
               <Define>NRF52_PAN_55, NRF52_PAN_12, NRF52_PAN_15, NRF52_PAN_58, SWI_DISABLE0, SOFTDEVICE_PRESENT, NRF52_PAN_54, NRF52, BLE_STACK_SUPPORT_REQD, NRF52_PAN_51, NRF52_PAN_36, RTTHREAD, CONFIG_GPIO_AS_PINRESET, NRF52_PAN_64, NRF52_PAN_20, NRF52_PAN_74, NRF52832_XXAA, S132, NRF_SD_BLE_API_VERSION=4, NRF52_PAN_31, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>.;..\..\include;applications;.;board;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\common\softdevice_handler;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers\nrf52;nRF5_SDK_13.0.0_04a0bfd\components\ble\common;nRF5_SDK_13.0.0_04a0bfd\components\ble\nrf_ble_gatt;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_advertising;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_services\ble_nus;startups;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\device;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\delay;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\uart;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\clock;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\gpiote;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\common;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\hal;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\pwm;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\saadc;nRF5_SDK_13.0.0_04a0bfd\components\libraries\util;nRF5_SDK_13.0.0_04a0bfd\components\libraries\timer;nRF5_SDK_13.0.0_04a0bfd\components\libraries\fstorage;nRF5_SDK_13.0.0_04a0bfd\components\libraries\experimental_section_vars;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src;nRF5_SDK_13.0.0_04a0bfd\components\libraries\strerror;nRF5_SDK_13.0.0_04a0bfd\components\toolchain\cmsis\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;board;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\common\softdevice_handler;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers\nrf52;nRF5_SDK_13.0.0_04a0bfd\components\ble\common;nRF5_SDK_13.0.0_04a0bfd\components\ble\nrf_ble_gatt;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_advertising;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_services\ble_nus;startups;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\device;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\delay;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\uart;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\clock;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\gpiote;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\common;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\hal;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\pwm;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\saadc;nRF5_SDK_13.0.0_04a0bfd\components\libraries\util;nRF5_SDK_13.0.0_04a0bfd\components\libraries\timer;nRF5_SDK_13.0.0_04a0bfd\components\libraries\fstorage;nRF5_SDK_13.0.0_04a0bfd\components\libraries\experimental_section_vars;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src;nRF5_SDK_13.0.0_04a0bfd\components\libraries\strerror;nRF5_SDK_13.0.0_04a0bfd\components\toolchain\cmsis\include;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,13 +390,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -717,7 +710,21 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CORTEX-M4</GroupName>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -737,20 +744,6 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>

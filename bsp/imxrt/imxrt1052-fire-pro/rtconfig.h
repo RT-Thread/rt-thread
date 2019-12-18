@@ -40,7 +40,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40001
+#define RT_VER_NUM 0x30104
 
 /* RT-Thread Components */
 
@@ -78,13 +78,8 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CAN
-#define RT_CAN_USING_HDR
 #define RT_USING_CPUTIME
 #define RT_USING_PIN
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -98,10 +93,10 @@
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -160,8 +155,6 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define BSP_USING_CAN
-#define BSP_USING_CAN2
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 

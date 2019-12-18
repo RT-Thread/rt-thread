@@ -2115,9 +2115,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
@@ -2188,16 +2185,7 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
+    <name>CORTEX-M7</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
     </file>
@@ -2206,6 +2194,15 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
     </file>
   </group>
   <group>
@@ -2272,6 +2269,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_crc_ex.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F7xx_HAL\STM32F7xx_HAL_Driver\Src\stm32f7xx_hal_cryp.c</name>

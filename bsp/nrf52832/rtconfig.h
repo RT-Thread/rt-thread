@@ -41,7 +41,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x30104
 
 /* RT-Thread Components */
 
@@ -77,12 +77,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -150,5 +144,6 @@
 
 /* samples: kernel and components samples */
 
+#define SOC_NRF52832
 
 #endif

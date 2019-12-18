@@ -219,7 +219,7 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>STM32F446xx</state>
+          <state>STM32G431xx</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -346,21 +346,21 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Device\ST\STM32G4xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
-          <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1254,7 +1254,7 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>STM32F446xx</state>
+          <state>STM32G431xx</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1381,21 +1381,21 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Device\ST\STM32G4xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
-          <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2079,9 +2079,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
@@ -2130,10 +2127,10 @@
       <name>$PROJ_DIR$\board\board.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32f4xx_hal_msp.c</name>
+      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32g4xx_hal_msp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f446xx.s</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Device\ST\STM32G4xx\Source\Templates\iar\startup_stm32g431xx.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
@@ -2146,7 +2143,13 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
+    <name>CORTEX-M4</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2155,12 +2158,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
     </file>
   </group>
   <group>
@@ -2207,59 +2204,65 @@
   </group>
   <group>
     <name>libc</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
+    </file>
   </group>
   <group>
     <name>STM32_HAL</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Device\ST\STM32G4xx\Source\Templates\system_stm32g4xx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cec.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_cortex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cortex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_crc.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_cryp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_cryp_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_cryp_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_dma_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_pwr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_pwr_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_pwr_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_rcc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_rcc_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_rng.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rng.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_uart_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_usart_ex.c</name>
     </file>
   </group>
 </project>

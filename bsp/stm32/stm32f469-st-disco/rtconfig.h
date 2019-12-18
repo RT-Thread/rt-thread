@@ -43,7 +43,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart3"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x30104
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -111,12 +111,6 @@
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
-
 /* Using USB */
 
 
@@ -134,9 +128,6 @@
 
 
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -181,19 +172,11 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
 
 /* miscellaneous packages */
 
 
 /* samples: kernel and components samples */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4

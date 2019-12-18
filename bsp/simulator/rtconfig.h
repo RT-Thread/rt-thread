@@ -39,7 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "console"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x30104
 
 /* RT-Thread Components */
 
@@ -96,6 +96,7 @@
 
 /* POSIX layer and C standard library */
 
+#define RT_LIBC_USING_TIME
 
 /* Network */
 

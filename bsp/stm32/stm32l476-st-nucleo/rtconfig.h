@@ -39,8 +39,9 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x40001
+#define RT_VER_NUM 0x30104
 #define ARCH_ARM
+#define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
 
@@ -84,9 +85,6 @@
 #define RT_USING_PM
 #define RT_USING_RTC
 
-/* Using WiFi */
-
-
 /* Using USB */
 
 
@@ -103,9 +101,6 @@
 
 
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
