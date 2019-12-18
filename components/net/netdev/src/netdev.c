@@ -66,13 +66,13 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     for (index = 0; index < NETDEV_IPV6_NUM_ADDRESSES; index++)
     {
         ip_addr_set_zero(&(netdev->ip6_addr[index]));
-        IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V6);
+        IP_SET_TYPE_VAL(netdev->ip6_addr[index], IPADDR_TYPE_V6);
     }
 #endif /* NETDEV_IPV6 */
     for (index = 0; index < NETDEV_DNS_SERVERS_NUM; index++)
     {
         ip_addr_set_zero(&(netdev->dns_servers[index]));
-        IP_SET_TYPE_VAL(netdev->ip_addr, IPADDR_TYPE_V4);
+        IP_SET_TYPE_VAL(netdev->dns_servers[index], IPADDR_TYPE_V4);
     }
     netdev->status_callback = RT_NULL;
     netdev->addr_callback = RT_NULL;
