@@ -19,7 +19,7 @@
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
-	int rc = 0;
+    int rc = 0;
     rt_device_t device;
     rt_pipe_t *pipe;
 
