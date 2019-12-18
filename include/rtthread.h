@@ -138,6 +138,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread);
 
 rt_err_t rt_thread_yield(void);
 rt_err_t rt_thread_delay(rt_tick_t tick);
+rt_err_t rt_thread_delay_util(rt_tick_t *tick, rt_tick_t inc_tick);
 rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
