@@ -543,6 +543,8 @@ rt_err_t rt_thread_delay_util(rt_tick_t *tick, rt_tick_t inc_tick)
     register rt_base_t level;
     struct rt_thread *thread;
 
+    RT_ASSERT(tick != RT_NULL);
+
     /* set to current thread */
     thread = rt_thread_self();
     RT_ASSERT(thread != RT_NULL);
@@ -567,9 +569,6 @@ rt_err_t rt_thread_delay_util(rt_tick_t *tick, rt_tick_t inc_tick)
 
         rt_schedule();
 
-        /* get the wakeup tick */
-        *tick = rt_tick_get();
-
         /* clear error number of this thread to RT_EOK */
         if (thread->error == -RT_ETIMEOUT)
         {
@@ -580,6 +579,9 @@ rt_err_t rt_thread_delay_util(rt_tick_t *tick, rt_tick_t inc_tick)
     {
         rt_hw_interrupt_enable(level);
     }
+
+    /* get the wakeup tick */
+    *tick = rt_tick_get();
 
     return RT_EOK;
 }
