@@ -19,6 +19,7 @@
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
+    int rc = 0;
     rt_device_t device;
     rt_pipe_t *pipe;
 
@@ -31,6 +32,11 @@ static int pipe_fops_open(struct dfs_fd *fd)
     if (device->ref_count == 0)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            rc = -RT_ENOMEM;
+            goto __exit;
+        }
     }
 
     switch (fd->flags & O_ACCMODE)
@@ -48,9 +54,10 @@ static int pipe_fops_open(struct dfs_fd *fd)
     }
     device->ref_count ++;
 
+__exit:
     rt_mutex_release(&(pipe->lock));
 
-    return 0;
+    return rc;
 }
 
 static int pipe_fops_close(struct dfs_fd *fd)
@@ -90,7 +97,8 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
-        rt_ringbuffer_destroy(pipe->fifo);
+        if (pipe->fifo != RT_NULL)
+            rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
