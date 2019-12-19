@@ -531,14 +531,14 @@ rt_err_t rt_thread_delay(rt_tick_t tick)
 RTM_EXPORT(rt_thread_delay);
 
 /**
- * This function will let current thread delay util (*tick + inc_tick).
+ * This function will let current thread delay until (*tick + inc_tick).
  *
  * @param tick the tick of last wakeup.
  * @param inc_tick the increment tick
  *
  * @return RT_EOK
  */
-rt_err_t rt_thread_delay_util(rt_tick_t *tick, rt_tick_t inc_tick)
+rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
     register rt_base_t level;
     struct rt_thread *thread;
