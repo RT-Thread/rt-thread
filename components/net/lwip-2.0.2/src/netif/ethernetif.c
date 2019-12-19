@@ -524,8 +524,8 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
-	hostname = (char *)netif + sizeof(struct netif);
-    rt_sprintf(hostname, "RT-Thread_%02x%02x", name[0], name[1]);
+    hostname = (char *)netif + sizeof(struct netif);
+    rt_sprintf(hostname, "RTTHREAD_%02x%02x", name[0], name[1]);
     netif->hostname = hostname;
 #endif /* LWIP_NETIF_HOSTNAME */
 
