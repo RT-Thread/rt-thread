@@ -296,6 +296,21 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+
     menuconfig BSP_USING_PULSE_ENCODER
         bool "Enable Pulse Encoder"
         default n
