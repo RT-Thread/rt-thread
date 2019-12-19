@@ -1333,14 +1333,14 @@ int __rt_ffs(int value)
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
 
-void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line, void *user_data);
 
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *
  * @param hook the hook function
  */
-void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line))
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line, void *user_data))
 {
     rt_assert_hook = hook;
 }
@@ -1352,7 +1352,7 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
  * @param func the function name when assertion.
  * @param line the file line number when assertion.
  */
-void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
+void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line, void *user_data)
 {
     volatile char dummy = 0;
 
@@ -1373,7 +1373,7 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
     }
     else
     {
-        rt_assert_hook(ex_string, func, line);
+        rt_assert_hook(ex_string, func, line, user_data);
     }
 }
 RTM_EXPORT(rt_assert_handler);

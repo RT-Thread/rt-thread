@@ -743,8 +743,8 @@ long list_timer(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(     " ---------- ---------- -----------\n");
+    rt_kprintf("%-*.s   handle    periodic   timeout       flag\n", maxlen, item_title); object_split(maxlen);
+    rt_kprintf(     " ---------- ---------- ----------  -----------\n");
     do {
         next = list_get_next(next, &find_arg);
         {
@@ -765,9 +765,10 @@ long list_timer(void)
                 rt_hw_interrupt_enable(level);
 
                 timer = (struct rt_timer *)obj;
-                rt_kprintf("%-*.*s 0x%08x 0x%08x ",
+                rt_kprintf("%-*.*s 0x%p 0x%08x 0x%08x  ",
                         maxlen, RT_NAME_MAX,
                         timer->parent.name,
+                        timer,
                         timer->init_tick,
                         timer->timeout_tick);
                 if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
