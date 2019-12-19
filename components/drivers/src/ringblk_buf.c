@@ -95,9 +95,9 @@ void rt_rbb_destroy(rt_rbb_t rbb)
 {
     RT_ASSERT(rbb);
 
-    rt_free(rbb);
     rt_free(rbb->buf);
     rt_free(rbb->blk_set);
+    rt_free(rbb);
 
 }
 RTM_EXPORT(rt_rbb_destroy);
