@@ -11,6 +11,7 @@
 #define TERMIOS_H__
 
 #include <rtthread.h>
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
