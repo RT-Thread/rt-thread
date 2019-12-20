@@ -100,9 +100,15 @@ RTM_EXPORT(rt_interrupt_leave);
  *
  * @return the number of nested interrupts.
  */
-rt_uint8_t rt_interrupt_get_nest(void)
+RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
 {
-    return rt_interrupt_nest;
+    rt_uint8_t ret;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    ret = rt_interrupt_nest;
+    rt_hw_interrupt_enable(level);
+    return ret;
 }
 RTM_EXPORT(rt_interrupt_get_nest);
 

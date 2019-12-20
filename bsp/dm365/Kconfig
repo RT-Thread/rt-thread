@@ -18,6 +18,12 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
+config SOC_DM365
+    bool    
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 comment "BSP configure"
 
 config RT_USING_GPIO_DEVICE

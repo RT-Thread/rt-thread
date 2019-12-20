@@ -50,7 +50,7 @@ STM32F103 德飞莱-尼莫 M3S 是徳飞莱推出的一款基于 ARM Cortex-M3 �
 | I2C | 支持 | 软件I2C |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | **扩展模块** | **支持情况** | **备注** |
-| NRF24L01 | 暂不支持 | 即将支持 |
+| NRF24L01 | 支持 | 根据实际板子接线情况修改 NRF24L01 软件包中的 `NRF24L01_CE_PIN` 和 `NRF24_IRQ_PIN` 的宏定义，以及 SPI 设备名 |
 
 ## 使用说明
 

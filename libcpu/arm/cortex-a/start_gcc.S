@@ -22,7 +22,11 @@
 .equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
+#ifdef RT_USING_FPU
+.equ UND_Stack_Size,     0x00000400
+#else
 .equ UND_Stack_Size,     0x00000000
+#endif
 .equ SVC_Stack_Size,     0x00000400
 .equ ABT_Stack_Size,     0x00000000
 .equ RT_FIQ_STACK_PGSZ,  0x00000000
@@ -37,6 +41,7 @@
 .globl stack_start
 .globl stack_top
 
+.align 3
 stack_start:
 .rept ISR_Stack_Size
 .byte 0
@@ -49,6 +54,11 @@ stack_top:
 _reset:
     /* set the cpu to SVC32 mode and disable interrupt */
     cps #Mode_SVC
+
+#ifdef RT_USING_FPU
+    mov r4, #0xfffffff
+    mcr p15, 0, r4, c1, c0, 2
+#endif
 
     /* disable the data alignment check */
     mrc p15, 0, r1, c1, c0, 0
@@ -176,6 +186,19 @@ vector_irq:
     stmfd   r0, {r13, r14}^ /* usr_sp, usr_lr */
     sub   r0, #8
 #endif
+#ifdef RT_USING_FPU
+    /* fpu context */
+    vmrs r6, fpexc
+    tst  r6, #(1<<30)
+    beq 1f
+    vstmdb r0!, {d0-d15}
+    vstmdb r0!, {d16-d31}
+    vmrs r5, fpscr
+    stmfd r0!, {r5}
+1:
+    stmfd r0!, {r6}
+#endif
+
     /* now irq stack is clean */
     /* r0 is task svc_sp */
     /* backup r0 -> r8 */
@@ -234,6 +257,18 @@ rt_hw_context_switch_interrupt_do:
     stmfd sp, {r13, r14}^  @push usr_sp, usr_lr
     sub sp, #8
 #endif
+#ifdef RT_USING_FPU
+    /* fpu context */
+    vmrs r6, fpexc
+    tst  r6, #(1<<30)
+    beq 1f
+    vstmdb sp!, {d0-d15}
+    vstmdb sp!, {d16-d31}
+    vmrs r5, fpscr
+    stmfd sp!, {r5}
+1:
+    stmfd sp!, {r6}
+#endif
 
     ldr     r4,  =rt_interrupt_from_thread
     ldr     r5,  [r4]
@@ -242,6 +277,19 @@ rt_hw_context_switch_interrupt_do:
     ldr     r6,  =rt_interrupt_to_thread
     ldr     r6,  [r6]
     ldr     sp,  [r6]       @ get new task's stack pointer
+
+#ifdef RT_USING_FPU
+/* fpu context */
+    ldmfd sp!, {r6}
+    vmsr fpexc, r6
+    tst  r6, #(1<<30)
+    beq 1f
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+    vldmia sp!, {d16-d31}
+    vldmia sp!, {d0-d15}
+1:
+#endif
 
 #ifdef RT_USING_LWP
     ldmfd sp, {r13, r14}^  @pop usr_sp, usr_lr
@@ -278,7 +326,14 @@ vector_swi:
     .globl  vector_undef
 vector_undef:
     push_svc_reg
+    cps #Mode_UND
     bl      rt_hw_trap_undef
+#ifdef RT_USING_FPU
+    ldr     lr, [sp, #15*4]
+    ldmia   sp, {r0 - r12}
+    add     sp, sp, #17 * 4
+    movs    pc, lr
+#endif
     b       .
 
     .align  5
@@ -315,6 +370,12 @@ set_secondary_cpu_boot_address:
 
 .global secondary_cpu_start
 secondary_cpu_start:
+
+#ifdef RT_USING_FPU
+    mov r4, #0xfffffff
+    mcr p15, 0, r4, c1, c0, 2
+#endif
+
     mrc p15, 0, r1, c1, c0, 1
     mov r0, #(1<<6)
     orr r1, r0
@@ -323,6 +384,11 @@ secondary_cpu_start:
     mrc p15, 0, r0, c1, c0, 0
     bic r0, #(1<<13)
     mcr p15, 0, r0, c1, c0, 0
+
+#ifdef RT_USING_FPU
+    cps #Mode_UND
+    ldr sp, =und_stack_2_limit
+#endif
 
     cps #Mode_IRQ
     ldr sp, =irq_stack_2_limit
@@ -349,3 +415,8 @@ irq_stack_2:
     .space (1 << 10)
 irq_stack_2_limit:
 
+#ifdef RT_USING_FPU
+und_stack_2:
+    .space (1 << 10)
+und_stack_2_limit:
+#endif

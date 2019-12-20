@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F107VC
     bool
     select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -39,7 +41,8 @@ menu "On-chip Peripheral Drivers"
 
       endif
 
-
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

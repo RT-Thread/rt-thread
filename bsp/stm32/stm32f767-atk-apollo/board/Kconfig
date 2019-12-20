@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F767IG
     bool
     select SOC_SERIES_STM32F7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -58,6 +60,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SDIO
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
+        default n
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
         default n
 
 endmenu
@@ -245,6 +252,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    config BSP_USING_LTDC
+        bool "Enable LTDC"
+        default n
+	
+ source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -70,7 +54,7 @@
 
 #define IS_LL_RCC_LPUART_CLKSOURCE(__VALUE__) (((__VALUE__) == LL_RCC_LPUART1_CLKSOURCE))
 
-#if defined(RCC_CCIPR_I2C3SEL) 
+#if defined(RCC_CCIPR_I2C3SEL)
 #define IS_LL_RCC_I2C_CLKSOURCE(__VALUE__)    (((__VALUE__) == LL_RCC_I2C1_CLKSOURCE) \
                                             || ((__VALUE__) == LL_RCC_I2C3_CLKSOURCE))
 #else
@@ -127,7 +111,7 @@ uint32_t RCC_PLL_GetFreqDomain_SYS(void);
   */
 ErrorStatus LL_RCC_DeInit(void)
 {
-  uint32_t vl_mask = 0U;
+  uint32_t vl_mask;
 
   /* Set MSION bit */
   LL_RCC_MSI_Enable();
@@ -146,20 +130,21 @@ ErrorStatus LL_RCC_DeInit(void)
   /* Set HSITRIM bits to the reset value*/
   LL_RCC_HSI_SetCalibTrimming(0x10U);
 
-  /* Reset SW, HPRE, PPRE and MCOSEL bits */
+  /* Reset SW, HPRE, PPRE1, PPRE2, MCOSEL and MCOPRE bits */
   vl_mask = 0xFFFFFFFFU;
-  CLEAR_BIT(vl_mask, (RCC_CFGR_SW | RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2 | RCC_CFGR_MCOSEL));
+  CLEAR_BIT(vl_mask, RCC_CFGR_SW | RCC_CFGR_HPRE | RCC_CFGR_PPRE1 | RCC_CFGR_PPRE2 | \
+                     RCC_CFGR_MCOSEL | RCC_CFGR_MCOPRE);
   LL_RCC_WriteReg(CFGR, vl_mask);
 
   /* Reset HSI, HSE, PLL */
   vl_mask = LL_RCC_ReadReg(CR);
-#if defined(RCC_CR_HSIOUTEN)  	
+#if defined(RCC_CR_HSIOUTEN)
   CLEAR_BIT(vl_mask, RCC_CR_HSION| RCC_CR_HSIKERON| RCC_CR_HSIDIVEN | RCC_CR_HSIOUTEN | \
-                     RCC_CR_HSEON | RCC_CR_PLLON); 
+                     RCC_CR_HSEON | RCC_CR_PLLON);
 #else
   CLEAR_BIT(vl_mask, RCC_CR_HSION| RCC_CR_HSIKERON| RCC_CR_HSIDIVEN | \
-                     RCC_CR_HSEON | RCC_CR_PLLON); 
-#endif					 
+                     RCC_CR_HSEON | RCC_CR_PLLON);
+#endif
   LL_RCC_WriteReg(CR, vl_mask);
   /* Delay after an RCC peripheral clock */
   vl_mask = LL_RCC_ReadReg(CR);
@@ -168,23 +153,34 @@ ErrorStatus LL_RCC_DeInit(void)
   LL_RCC_HSE_DisableBypass();
 
   /* Set RCC_CR_RTCPRE to 0b00*/
-  CLEAR_BIT(vl_mask, RCC_CR_RTCPRE); 
+  CLEAR_BIT(vl_mask, RCC_CR_RTCPRE);
   LL_RCC_WriteReg(CR, vl_mask);
+
+  /* Insure PLL is disabled before to reset PLLSRC/PLLMUL/PLLDIV in CFGR register */
+  while(LL_RCC_PLL_IsReady() != 0U) {};
 
   /* Reset CFGR register */
   LL_RCC_WriteReg(CFGR, 0x00000000U);
 
 #if defined(RCC_HSI48_SUPPORT)
-  /* Reset CRRCR register */
-  LL_RCC_WriteReg(CRRCR, 0x00000000U);
 
-  /* Disable HSI48 */
-  LL_RCC_HSI48_Disable();
+  /* Reset CRRCR register to disable HSI48 */
+#if defined(RCC_CRRCR_HSI48DIV6OUTEN)
+  CLEAR_BIT(RCC->CRRCR, (RCC_CRRCR_HSI48ON | RCC_CRRCR_HSI48DIV6OUTEN));
+#else
+  CLEAR_BIT(RCC->CRRCR, RCC_CRRCR_HSI48ON);
+#endif
 
 #endif /*RCC_HSI48_SUPPORT*/
 
   /* Disable all interrupts */
   LL_RCC_WriteReg(CIER, 0x00000000U);
+
+  /* Disable all interrupt flags */
+  LL_RCC_WriteReg(CICR, 0xFFFFFFFFU);
+
+  /* Clear reset flags */
+  LL_RCC_ClearResetFlags();
 
   return SUCCESS;
 }
@@ -199,11 +195,11 @@ ErrorStatus LL_RCC_DeInit(void)
   * @note   If SYSCLK source is MSI, function returns values based on MSI clock(*)
   * @note   If SYSCLK source is HSI, function returns values based on HSI_VALUE(**)
   * @note   If SYSCLK source is HSE, function returns values based on HSE_VALUE(***)
-  * @note   If SYSCLK source is PLL, function returns values based on 
+  * @note   If SYSCLK source is PLL, function returns values based on
   *         HSI_VALUE(**) or HSE_VALUE(***) multiplied/divided by the PLL factors.
   * @note   (*) MSI clock depends on the selected MSI range but the real value
-  *             may vary depending on the variations in voltage and temperature. 
-  * @note   (**) HSI_VALUE is a defined constant but the real value may vary 
+  *             may vary depending on the variations in voltage and temperature.
+  * @note   (**) HSI_VALUE is a defined constant but the real value may vary
   *              depending on the variations in voltage and temperature.
   * @note   (***) HSE_VALUE is a defined constant, user has to ensure that
   *               HSE_VALUE is same as the real frequency of the crystal used.
@@ -265,14 +261,21 @@ uint32_t LL_RCC_GetUSARTClockFreq(uint32_t USARTxSource)
         break;
 
       case LL_RCC_USART1_CLKSOURCE_HSI:    /* USART1 Clock is HSI Osc. */
-        if (LL_RCC_HSI_IsReady())
+        if (LL_RCC_HSI_IsReady() != 0U)
         {
-          usart_frequency = HSI_VALUE;
+          if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+          {
+            usart_frequency = (HSI_VALUE >> 2U);
+          }
+          else
+          {
+            usart_frequency = HSI_VALUE;
+          }
         }
         break;
 
       case LL_RCC_USART1_CLKSOURCE_LSE:    /* USART1 Clock is LSE Osc. */
-        if (LL_RCC_LSE_IsReady())
+        if (LL_RCC_LSE_IsReady() != 0U)
         {
           usart_frequency = LSE_VALUE;
         }
@@ -297,14 +300,21 @@ uint32_t LL_RCC_GetUSARTClockFreq(uint32_t USARTxSource)
         break;
 
       case LL_RCC_USART2_CLKSOURCE_HSI:    /* USART2 Clock is HSI Osc. */
-        if (LL_RCC_HSI_IsReady())
+        if (LL_RCC_HSI_IsReady() != 0U)
         {
-          usart_frequency = HSI_VALUE;
+          if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+          {
+            usart_frequency = (HSI_VALUE >> 2U);
+          }
+          else
+          {
+            usart_frequency = HSI_VALUE;
+          }
         }
         break;
 
       case LL_RCC_USART2_CLKSOURCE_LSE:    /* USART2 Clock is LSE Osc. */
-        if (LL_RCC_LSE_IsReady())
+        if (LL_RCC_LSE_IsReady() != 0U)
         {
           usart_frequency = LSE_VALUE;
         }
@@ -348,9 +358,16 @@ uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)
         break;
 
       case LL_RCC_I2C1_CLKSOURCE_HSI:    /* I2C1 Clock is HSI Osc. */
-        if (LL_RCC_HSI_IsReady())
+        if (LL_RCC_HSI_IsReady() != 0U)
         {
-          i2c_frequency = HSI_VALUE;
+          if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+          {
+            i2c_frequency = (HSI_VALUE >> 2U);
+          }
+          else
+          {
+            i2c_frequency = HSI_VALUE;
+          }
         }
         break;
 
@@ -372,9 +389,16 @@ uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)
         break;
 
       case LL_RCC_I2C3_CLKSOURCE_HSI:    /* I2C3 Clock is HSI Osc. */
-        if (LL_RCC_HSI_IsReady())
+        if (LL_RCC_HSI_IsReady() != 0U)
         {
-          i2c_frequency = HSI_VALUE;
+          if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+          {
+            i2c_frequency = (HSI_VALUE >> 2U);
+          }
+          else
+          {
+            i2c_frequency = HSI_VALUE;
+          }
         }
         break;
 
@@ -411,14 +435,21 @@ uint32_t LL_RCC_GetLPUARTClockFreq(uint32_t LPUARTxSource)
       break;
 
     case LL_RCC_LPUART1_CLKSOURCE_HSI:    /* LPUART1 Clock is HSI Osc. */
-      if (LL_RCC_HSI_IsReady())
+      if (LL_RCC_HSI_IsReady() != 0U)
       {
-        lpuart_frequency = HSI_VALUE;
+        if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+        {
+          lpuart_frequency = (HSI_VALUE >> 2U);
+        }
+        else
+        {
+          lpuart_frequency = HSI_VALUE;
+        }
       }
       break;
 
     case LL_RCC_LPUART1_CLKSOURCE_LSE:    /* LPUART1 Clock is LSE Osc. */
-      if (LL_RCC_LSE_IsReady())
+      if (LL_RCC_LSE_IsReady() != 0U)
       {
         lpuart_frequency = LSE_VALUE;
       }
@@ -453,21 +484,28 @@ uint32_t LL_RCC_GetLPTIMClockFreq(uint32_t LPTIMxSource)
     switch (LL_RCC_GetLPTIMClockSource(LPTIMxSource))
     {
       case LL_RCC_LPTIM1_CLKSOURCE_LSI:    /* LPTIM1 Clock is LSI Osc. */
-        if (LL_RCC_LSI_IsReady())
+        if (LL_RCC_LSI_IsReady() != 0U)
         {
           lptim_frequency = LSI_VALUE;
         }
         break;
 
       case LL_RCC_LPTIM1_CLKSOURCE_HSI:    /* LPTIM1 Clock is HSI Osc. */
-        if (LL_RCC_HSI_IsReady())
+        if (LL_RCC_HSI_IsReady() != 0U)
         {
-          lptim_frequency = HSI_VALUE;
+          if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+          {
+            lptim_frequency = (HSI_VALUE >> 2U);
+          }
+          else
+          {
+            lptim_frequency = HSI_VALUE;
+          }
         }
         break;
 
       case LL_RCC_LPTIM1_CLKSOURCE_LSE:    /* LPTIM1 Clock is LSE Osc. */
-        if (LL_RCC_LSE_IsReady())
+        if (LL_RCC_LSE_IsReady() != 0U)
         {
           lptim_frequency = LSE_VALUE;
         }
@@ -503,7 +541,7 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
   switch (LL_RCC_GetUSBClockSource(USBxSource))
   {
     case LL_RCC_USB_CLKSOURCE_PLL:        /* PLL clock used as USB clock source */
-      if (LL_RCC_PLL_IsReady())
+      if (LL_RCC_PLL_IsReady() != 0U)
       {
         usb_frequency = RCC_PLL_GetFreqDomain_SYS();
       }
@@ -511,7 +549,7 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
 
     case LL_RCC_USB_CLKSOURCE_HSI48:      /* HSI48 clock used as USB clock source */
     default:
-      if (LL_RCC_HSI48_IsReady())
+      if (LL_RCC_HSI48_IsReady() != 0U)
       {
         usb_frequency = HSI48_VALUE;
       }
@@ -540,7 +578,7 @@ uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)
   */
 uint32_t RCC_GetSystemClockFreq(void)
 {
-  uint32_t frequency = 0U;
+  uint32_t frequency;
 
   /* Get SYSCLK source -------------------------------------------------------*/
   switch (LL_RCC_GetSysClkSource())
@@ -549,11 +587,18 @@ uint32_t RCC_GetSystemClockFreq(void)
       frequency = __LL_RCC_CALC_MSI_FREQ(LL_RCC_MSI_GetRange());
       break;
 
-    case LL_RCC_SYS_CLKSOURCE_STATUS_HSI:  /* HSI used as system clock  source */
-      frequency = HSI_VALUE;
+    case LL_RCC_SYS_CLKSOURCE_STATUS_HSI:  /* HSI used as system clock source */
+      if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+      {
+        frequency = (HSI_VALUE >> 2U);
+      }
+      else
+      {
+        frequency = HSI_VALUE;
+      }
       break;
 
-    case LL_RCC_SYS_CLKSOURCE_STATUS_HSE:  /* HSE used as system clock  source */
+    case LL_RCC_SYS_CLKSOURCE_STATUS_HSE:  /* HSE used as system clock source */
       frequency = HSE_VALUE;
       break;
 
@@ -608,7 +653,7 @@ uint32_t RCC_GetPCLK2ClockFreq(uint32_t HCLK_Frequency)
   */
 uint32_t RCC_PLL_GetFreqDomain_SYS(void)
 {
-  uint32_t pllinputfreq = 0U, pllsource = 0U;
+  uint32_t pllinputfreq, pllsource;
 
   /* PLL_VCO = (HSE_VALUE or HSI_VALUE / PLL divider) * PLL Multiplicator */
 
@@ -618,15 +663,18 @@ uint32_t RCC_PLL_GetFreqDomain_SYS(void)
   switch (pllsource)
   {
     case LL_RCC_PLLSOURCE_HSI:       /* HSI used as PLL clock source */
-      pllinputfreq = HSI_VALUE;
+      if (LL_RCC_IsActiveFlag_HSIDIV() != 0U)
+      {
+        pllinputfreq = (HSI_VALUE >> 2U);
+      }
+      else
+      {
+        pllinputfreq = HSI_VALUE;
+      }
       break;
 
-    case LL_RCC_PLLSOURCE_HSE:       /* HSE used as PLL clock source */
+    default:       /* HSE used as PLL clock source */
       pllinputfreq = HSE_VALUE;
-      break;
-
-    default:
-      pllinputfreq = HSI_VALUE;
       break;
   }
   return __LL_RCC_CALC_PLLCLK_FREQ(pllinputfreq, LL_RCC_PLL_GetMultiplicator(), LL_RCC_PLL_GetDivider());

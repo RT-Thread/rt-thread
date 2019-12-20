@@ -19,6 +19,8 @@
 #endif /* RT_WLAN_CFG_DEBUG */
 #include <rtdbg.h>
 
+#ifdef RT_WLAN_CFG_ENABLE
+
 #define WLAN_CFG_LOCK()      (rt_mutex_take(&cfg_mutex, RT_WAITING_FOREVER))
 #define WLAN_CFG_UNLOCK()    (rt_mutex_release(&cfg_mutex))
 
@@ -462,3 +464,5 @@ void rt_wlan_cfg_dump(void)
         rt_kprintf("%3d    \n", info->channel);
     }
 }
+
+#endif

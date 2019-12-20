@@ -157,6 +157,7 @@ struct sockaddr
     char           sa_data[14];
 };
 
+#if NETDEV_IPV4
 /* members are in network byte order */
 struct sockaddr_in
 {
@@ -167,6 +168,19 @@ struct sockaddr_in
 #define SIN_ZERO_LEN 8
     char            sin_zero[SIN_ZERO_LEN];
 };
+#endif /* NETDEV_IPV4 */
+
+#if NETDEV_IPV6
+struct sockaddr_in6 
+{
+  uint8_t         sin6_len;      /* length of this structure    */
+  sa_family_t     sin6_family;   /* AF_INET6                    */
+  in_port_t       sin6_port;     /* Transport layer port #      */
+  uint32_t        sin6_flowinfo; /* IPv6 flow information       */
+  struct in6_addr sin6_addr;     /* IPv6 address                */
+  uint32_t        sin6_scope_id; /* Set of interfaces for scope */
+};
+#endif /* NETDEV_IPV6 */
 
 struct sockaddr_storage
 {
@@ -174,9 +188,9 @@ struct sockaddr_storage
     sa_family_t    ss_family;
     char           s2_data1[2];
     uint32_t       s2_data2[3];
-#if SAL_IPV6
-    u32_t          s2_data3[3];
-#endif /* SAL_IPV6 */
+#if NETDEV_IPV6
+    uint32_t       s2_data3[3];
+#endif /* NETDEV_IPV6 */
 };
 
 int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen);

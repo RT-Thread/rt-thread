@@ -440,8 +440,16 @@ static long _list_mempool(struct rt_list_node *list)
     rt_kprintf(     " ----  ----  ---- --------------\n");
     for (node = list->next; node != list; node = node->next)
     {
+        int suspend_thread_count;
+        rt_list_t *temp_node;
         mp = (struct rt_mempool *)rt_list_entry(node, struct rt_object, list);
-        if (mp->suspend_thread_count > 0)
+        suspend_thread_count = 0;
+        rt_list_for_each(temp_node, &mp->suspend_thread)
+        {
+            suspend_thread_count++;
+        }
+
+        if (suspend_thread_count > 0)
         {
             rt_kprintf("%-*.*s %04d  %04d  %04d %d:",
                        maxlen, RT_NAME_MAX,
@@ -449,7 +457,7 @@ static long _list_mempool(struct rt_list_node *list)
                        mp->block_size,
                        mp->block_total_count,
                        mp->block_free_count,
-                       mp->suspend_thread_count);
+                       suspend_thread_count);
             show_wait_queue(&(mp->suspend_thread));
             rt_kprintf("\n");
         }
@@ -461,7 +469,7 @@ static long _list_mempool(struct rt_list_node *list)
                        mp->block_size,
                        mp->block_total_count,
                        mp->block_free_count,
-                       mp->suspend_thread_count);
+                       suspend_thread_count);
         }
     }
 
@@ -547,6 +555,7 @@ static long _list_device(struct rt_list_node *list)
         "Timer Device",
         "Miscellaneous Device",
         "Sensor Device",
+        "Touch Device",
         "Unknown"
     };
     const char *item_title = "device";
@@ -598,7 +607,7 @@ long list(void)
             /* skip the internal command */
             if (strncmp((char *)index->name, "__", 2) == 0) continue;
 
-#ifdef FINSH_USING_DESCRIPTION
+#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
 #else
             rt_kprintf("%s\n", index->name);

@@ -117,7 +117,7 @@
        and weak (surcharged) callbacks are used.
 
      [..]
-       Using the HAL it is not possible to reach all supported SPI frequency with the differents SPI Modes,
+       Using the HAL it is not possible to reach all supported SPI frequency with the different SPI Modes,
        the following table resume the max SPI frequency reached with data size 8bits/16bits,
          according to frequency of the APBx Peripheral Clock (fPCLK) used by the SPI instance.
 
@@ -2253,6 +2253,9 @@ HAL_StatusTypeDef HAL_SPI_Abort(SPI_HandleTypeDef *hspi)
   resetcount = SPI_DEFAULT_TIMEOUT * (SystemCoreClock / 24U / 1000U);
   count = resetcount;
 
+  /* Clear ERRIE interrupt to avoid error interrupts generation during Abort procedure */
+  CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_ERRIE);
+
   /* Disable TXEIE, RXNEIE and ERRIE(mode fault event, overrun error, TI frame error) interrupts */
   if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXEIE))
   {
@@ -2290,11 +2293,8 @@ HAL_StatusTypeDef HAL_SPI_Abort(SPI_HandleTypeDef *hspi)
     count = resetcount;
   }
 
-  /* Clear ERRIE interrupts in case of DMA Mode */
-  CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_ERRIE);
-
-  /* Disable the SPI DMA Tx or SPI DMA Rx request if enabled */
-  if ((READ_BIT(hspi->Instance->CR2, (SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN))) == (SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN))
+  /* Disable the SPI DMA Tx request if enabled */
+  if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXDMAEN))
   {
     /* Abort the SPI DMA Tx Stream/Channel : use blocking DMA Abort API (no callback) */
     if (hspi->hdmatx != NULL)
@@ -2326,6 +2326,11 @@ HAL_StatusTypeDef HAL_SPI_Abort(SPI_HandleTypeDef *hspi)
         hspi->ErrorCode = HAL_SPI_ERROR_ABORT;
       }
     }
+  }
+
+  /* Disable the SPI DMA Rx request if enabled */
+  if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXDMAEN))
+  {
     /* Abort the SPI DMA Rx Stream/Channel : use blocking DMA Abort API (no callback) */
     if (hspi->hdmarx != NULL)
     {
@@ -2411,6 +2416,9 @@ HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
   resetcount = SPI_DEFAULT_TIMEOUT * (SystemCoreClock / 24U / 1000U);
   count = resetcount;
 
+  /* Clear ERRIE interrupt to avoid error interrupts generation during Abort procedure */
+  CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_ERRIE);
+
   /* Change Rx and Tx Irq Handler to Disable TXEIE, RXNEIE and ERRIE interrupts */
   if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXEIE))
   {
@@ -2448,9 +2456,6 @@ HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
     count = resetcount;
   }
 
-  /* Clear ERRIE interrupts in case of DMA Mode */
-  CLEAR_BIT(hspi->Instance->CR2, SPI_CR2_ERRIE);
-
   /* If DMA Tx and/or DMA Rx Handles are associated to SPI Handle, DMA Abort complete callbacks should be initialised
      before any call to DMA Abort functions */
   /* DMA Tx Handle is valid */
@@ -2482,41 +2487,7 @@ HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
     }
   }
 
-  /* Disable the SPI DMA Tx or the SPI Rx request if enabled */
-  if ((READ_BIT(hspi->Instance->CR2, (SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN))) == (SPI_CR2_TXDMAEN | SPI_CR2_RXDMAEN))
-  {
-    /* Abort the SPI DMA Tx Stream/Channel */
-    if (hspi->hdmatx != NULL)
-    {
-      /* Abort DMA Tx Handle linked to SPI Peripheral */
-      if (HAL_DMA_Abort_IT(hspi->hdmatx) != HAL_OK)
-      {
-        hspi->hdmatx->XferAbortCallback = NULL;
-        hspi->ErrorCode = HAL_SPI_ERROR_ABORT;
-      }
-      else
-      {
-        abortcplt = 0U;
-      }
-    }
-    /* Abort the SPI DMA Rx Stream/Channel */
-    if (hspi->hdmarx != NULL)
-    {
-      /* Abort DMA Rx Handle linked to SPI Peripheral */
-      if (HAL_DMA_Abort_IT(hspi->hdmarx) !=  HAL_OK)
-      {
-        hspi->hdmarx->XferAbortCallback = NULL;
-        hspi->ErrorCode = HAL_SPI_ERROR_ABORT;
-        abortcplt = 1U;
-      }
-      else
-      {
-        abortcplt = 0U;
-      }
-    }
-  }
-
-  /* Disable the SPI DMA Tx or the SPI Rx request if enabled */
+  /* Disable the SPI DMA Tx request if enabled */
   if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_TXDMAEN))
   {
     /* Abort the SPI DMA Tx Stream/Channel */
@@ -2534,7 +2505,7 @@ HAL_StatusTypeDef HAL_SPI_Abort_IT(SPI_HandleTypeDef *hspi)
       }
     }
   }
-  /* Disable the SPI DMA Tx or the SPI Rx request if enabled */
+  /* Disable the SPI DMA Rx request if enabled */
   if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXDMAEN))
   {
     /* Abort the SPI DMA Rx Stream/Channel */
@@ -2972,7 +2943,7 @@ static void SPI_DMATransmitCplt(DMA_HandleTypeDef *hdma)
   SPI_HandleTypeDef *hspi = (SPI_HandleTypeDef *)(((DMA_HandleTypeDef *)hdma)->Parent); /* Derogation MISRAC2012-Rule-11.5 */
   uint32_t tickstart;
 
-  /* Init tickstart for timeout managment*/
+  /* Init tickstart for timeout management*/
   tickstart = HAL_GetTick();
 
   /* DMA Normal Mode */
@@ -3443,7 +3414,7 @@ static void SPI_2linesRxISR_8BIT(struct __SPI_HandleTypeDef *hspi)
   /* Receive data in packing mode */
   if (hspi->RxXferCount > 1U)
   {
-    *((uint16_t *)hspi->pRxBuffPtr) = hspi->Instance->DR;
+    *((uint16_t *)hspi->pRxBuffPtr) = (uint16_t)(hspi->Instance->DR);
     hspi->pRxBuffPtr += sizeof(uint16_t);
     hspi->RxXferCount -= 2U;
     if (hspi->RxXferCount == 1U)
@@ -3566,7 +3537,7 @@ static void SPI_2linesTxISR_8BIT(struct __SPI_HandleTypeDef *hspi)
 static void SPI_2linesRxISR_16BIT(struct __SPI_HandleTypeDef *hspi)
 {
   /* Receive data in 16 Bit mode */
-  *((uint16_t *)hspi->pRxBuffPtr) = hspi->Instance->DR;
+  *((uint16_t *)hspi->pRxBuffPtr) = (uint16_t)(hspi->Instance->DR);
   hspi->pRxBuffPtr += sizeof(uint16_t);
   hspi->RxXferCount--;
 
@@ -3727,7 +3698,7 @@ static void SPI_RxISR_16BITCRC(struct __SPI_HandleTypeDef *hspi)
   */
 static void SPI_RxISR_16BIT(struct __SPI_HandleTypeDef *hspi)
 {
-  *((uint16_t *)hspi->pRxBuffPtr) = hspi->Instance->DR;
+  *((uint16_t *)hspi->pRxBuffPtr) = (uint16_t)(hspi->Instance->DR);
   hspi->pRxBuffPtr += sizeof(uint16_t);
   hspi->RxXferCount--;
 
@@ -4181,8 +4152,8 @@ static void SPI_AbortRx_ISR(SPI_HandleTypeDef *hspi)
 
   count = SPI_DEFAULT_TIMEOUT * (SystemCoreClock / 24U / 1000U);
 
-  /* Disable TXEIE, RXNEIE and ERRIE(mode fault event, overrun error, TI frame error) interrupts */
-  CLEAR_BIT(hspi->Instance->CR2, (SPI_CR2_TXEIE | SPI_CR2_RXNEIE | SPI_CR2_ERRIE));
+  /* Disable RXNEIE interrupt */
+  CLEAR_BIT(hspi->Instance->CR2, (SPI_CR2_RXNEIE));
 
   /* Check RXNEIE is disabled */
   do
@@ -4223,8 +4194,8 @@ static void SPI_AbortTx_ISR(SPI_HandleTypeDef *hspi)
 
   count = SPI_DEFAULT_TIMEOUT * (SystemCoreClock / 24U / 1000U);
 
-  /* Disable TXEIE, RXNEIE and ERRIE(mode fault event, overrun error, TI frame error) interrupts */
-  CLEAR_BIT(hspi->Instance->CR2, (SPI_CR2_TXEIE | SPI_CR2_RXNEIE | SPI_CR2_ERRIE));
+  /* Disable TXEIE interrupt */
+  CLEAR_BIT(hspi->Instance->CR2, (SPI_CR2_TXEIE));
 
   /* Check TXEIE is disabled */
   do
@@ -4252,6 +4223,36 @@ static void SPI_AbortTx_ISR(SPI_HandleTypeDef *hspi)
     hspi->ErrorCode = HAL_SPI_ERROR_ABORT;
   }
 
+  /* Check case of Full-Duplex Mode and disable directly RXNEIE interrupt */
+  if (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXNEIE))
+  {
+    /* Disable RXNEIE interrupt */
+    CLEAR_BIT(hspi->Instance->CR2, (SPI_CR2_RXNEIE));
+
+    /* Check RXNEIE is disabled */
+    do
+    {
+      if (count == 0U)
+      {
+        SET_BIT(hspi->ErrorCode, HAL_SPI_ERROR_ABORT);
+        break;
+      }
+      count--;
+    }
+    while (HAL_IS_BIT_SET(hspi->Instance->CR2, SPI_CR2_RXNEIE));
+
+    /* Control the BSY flag */
+    if (SPI_WaitFlagStateUntilTimeout(hspi, SPI_FLAG_BSY, RESET, SPI_DEFAULT_TIMEOUT, HAL_GetTick()) != HAL_OK)
+    {
+      hspi->ErrorCode = HAL_SPI_ERROR_ABORT;
+    }
+
+    /* Empty the FRLVL fifo */
+    if (SPI_WaitFifoStateUntilTimeout(hspi, SPI_FLAG_FRLVL, SPI_FRLVL_EMPTY, SPI_DEFAULT_TIMEOUT, HAL_GetTick()) != HAL_OK)
+    {
+      hspi->ErrorCode = HAL_SPI_ERROR_ABORT;
+    }
+  }
   hspi->State = HAL_SPI_STATE_ABORT;
 }
 

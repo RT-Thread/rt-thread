@@ -76,6 +76,18 @@ rt_hw_context_switch:
     stmfd sp, {r13, r14}^   @ push usr_sp usr_lr
     sub sp, #8
 #endif
+#ifdef RT_USING_FPU
+    /* fpu context */
+    vmrs r6, fpexc
+    tst  r6, #(1<<30)
+    beq 1f
+    vstmdb sp!, {d0-d15}
+    vstmdb sp!, {d16-d31}
+    vmrs r5, fpscr
+    stmfd sp!, {r5}
+1:
+    stmfd sp!, {r6}
+#endif
 
     str sp, [r0]            @ store sp in preempted tasks TCB
     ldr sp, [r1]            @ get new task stack pointer
@@ -146,6 +158,18 @@ rt_hw_context_switch_exit:
     cps #Mode_SVC
     mov     sp, r0
 #endif
+#endif
+#ifdef RT_USING_FPU
+/* fpu context */
+    ldmfd sp!, {r6}
+    vmsr fpexc, r6
+    tst  r6, #(1<<30)
+    beq 1f
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+    vldmia sp!, {d16-d31}
+    vldmia sp!, {d0-d15}
+1:
 #endif
 
 #ifdef RT_USING_LWP

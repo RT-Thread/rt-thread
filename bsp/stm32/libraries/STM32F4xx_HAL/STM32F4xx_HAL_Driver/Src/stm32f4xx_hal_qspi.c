@@ -124,7 +124,66 @@
       (#) HAL_QSPI_GetState() function gives the current state of the HAL QuadSPI driver.
       (#) HAL_QSPI_SetTimeout() function configures the timeout value used in the driver.
       (#) HAL_QSPI_SetFifoThreshold() function configures the threshold on the Fifo of the QSPI IP.
-      (#) HAL_QSPI_GetFifoThreshold() function gives the current of the Fifo's threshold 
+      (#) HAL_QSPI_GetFifoThreshold() function gives the current of the Fifo's threshold
+
+    *** Callback registration ***
+    =============================================
+    [..]
+      The compilation define  USE_HAL_QSPI_REGISTER_CALLBACKS when set to 1
+      allows the user to configure dynamically the driver callbacks.
+
+      Use Functions @ref HAL_QSPI_RegisterCallback() to register a user callback,
+      it allows to register following callbacks:
+        (+) ErrorCallback : callback when error occurs.
+        (+) AbortCpltCallback : callback when abort is completed.
+        (+) FifoThresholdCallback : callback when the fifo threshold is reached.
+        (+) CmdCpltCallback : callback when a command without data is completed.
+        (+) RxCpltCallback : callback when a reception transfer is completed.
+        (+) TxCpltCallback : callback when a transmission transfer is completed.
+        (+) RxHalfCpltCallback : callback when half of the reception transfer is completed.
+        (+) TxHalfCpltCallback : callback when half of the transmission transfer is completed.
+        (+) StatusMatchCallback : callback when a status match occurs.
+        (+) TimeOutCallback : callback when the timeout perioed expires.
+        (+) MspInitCallback    : QSPI MspInit.
+        (+) MspDeInitCallback  : QSPI MspDeInit.
+      This function takes as parameters the HAL peripheral handle, the Callback ID
+      and a pointer to the user callback function.
+
+      Use function @ref HAL_QSPI_UnRegisterCallback() to reset a callback to the default
+      weak (surcharged) function. It allows to reset following callbacks:
+        (+) ErrorCallback : callback when error occurs.
+        (+) AbortCpltCallback : callback when abort is completed.
+        (+) FifoThresholdCallback : callback when the fifo threshold is reached.
+        (+) CmdCpltCallback : callback when a command without data is completed.
+        (+) RxCpltCallback : callback when a reception transfer is completed.
+        (+) TxCpltCallback : callback when a transmission transfer is completed.
+        (+) RxHalfCpltCallback : callback when half of the reception transfer is completed.
+        (+) TxHalfCpltCallback : callback when half of the transmission transfer is completed.
+        (+) StatusMatchCallback : callback when a status match occurs.
+        (+) TimeOutCallback : callback when the timeout perioed expires.
+        (+) MspInitCallback    : QSPI MspInit.
+        (+) MspDeInitCallback  : QSPI MspDeInit.
+      This function) takes as parameters the HAL peripheral handle and the Callback ID.
+
+      By default, after the @ref HAL_QSPI_Init and if the state is HAL_QSPI_STATE_RESET
+      all callbacks are reset to the corresponding legacy weak (surcharged) functions.
+      Exception done for MspInit and MspDeInit callbacks that are respectively
+      reset to the legacy weak (surcharged) functions in the @ref HAL_QSPI_Init
+      and @ref  HAL_QSPI_DeInit only when these callbacks are null (not registered beforehand).
+      If not, MspInit or MspDeInit are not null, the @ref HAL_QSPI_Init and @ref HAL_QSPI_DeInit
+      keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
+
+      Callbacks can be registered/unregistered in READY state only.
+      Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
+      in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
+      during the Init/DeInit.
+      In that case first register the MspInit/MspDeInit user callbacks
+      using @ref HAL_QSPI_RegisterCallback before calling @ref HAL_QSPI_DeInit
+      or @ref HAL_QSPI_Init function.
+
+      When The compilation define USE_HAL_QSPI_REGISTER_CALLBACKS is set to 0 or
+      not defined, the callback registering feature is not available
+      and weak (surcharged) callbacks are used.
 
     *** Workarounds linked to Silicon Limitation ***
     ====================================================
@@ -136,31 +195,15 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics. 
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the 
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -282,10 +325,32 @@ HAL_StatusTypeDef HAL_QSPI_Init(QSPI_HandleTypeDef *hqspi)
   { 
     /* Allocate lock resource and initialize it */
     hqspi->Lock = HAL_UNLOCKED;
-     
+
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+    /* Reset Callback pointers in HAL_QSPI_STATE_RESET only */
+    hqspi->ErrorCallback         = HAL_QSPI_ErrorCallback;
+    hqspi->AbortCpltCallback     = HAL_QSPI_AbortCpltCallback;
+    hqspi->FifoThresholdCallback = HAL_QSPI_FifoThresholdCallback;
+    hqspi->CmdCpltCallback       = HAL_QSPI_CmdCpltCallback;
+    hqspi->RxCpltCallback        = HAL_QSPI_RxCpltCallback;
+    hqspi->TxCpltCallback        = HAL_QSPI_TxCpltCallback;
+    hqspi->RxHalfCpltCallback    = HAL_QSPI_RxHalfCpltCallback;
+    hqspi->TxHalfCpltCallback    = HAL_QSPI_TxHalfCpltCallback;
+    hqspi->StatusMatchCallback   = HAL_QSPI_StatusMatchCallback;
+    hqspi->TimeOutCallback       = HAL_QSPI_TimeOutCallback;
+
+    if(hqspi->MspInitCallback == NULL)
+    {
+      hqspi->MspInitCallback = HAL_QSPI_MspInit;
+    }
+
+    /* Init the low level hardware */
+    hqspi->MspInitCallback(hqspi);
+#else
     /* Init the low level hardware : GPIO, CLOCK */
     HAL_QSPI_MspInit(hqspi);
-             
+#endif
+
     /* Configure the default timeout for the QSPI memory access */
     HAL_QSPI_SetTimeout(hqspi, HAL_QPSI_TIMEOUT_DEFAULT_VALUE);
   }
@@ -342,8 +407,18 @@ HAL_StatusTypeDef HAL_QSPI_DeInit(QSPI_HandleTypeDef *hqspi)
   /* Disable the QSPI Peripheral Clock */
   __HAL_QSPI_DISABLE(hqspi);
 
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+  if(hqspi->MspDeInitCallback == NULL)
+  {
+    hqspi->MspDeInitCallback = HAL_QSPI_MspDeInit;
+  }
+
+  /* DeInit the low level hardware */
+  hqspi->MspDeInitCallback(hqspi);
+#else
   /* DeInit the low level hardware: GPIO, CLOCK, NVIC... */
   HAL_QSPI_MspDeInit(hqspi);
+#endif
 
   /* Set QSPI error code to none */
   hqspi->ErrorCode = HAL_QSPI_ERROR_NONE;
@@ -469,7 +544,11 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
     }
     
     /* FIFO Threshold callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+    hqspi->FifoThresholdCallback(hqspi);
+#else
     HAL_QSPI_FifoThresholdCallback(hqspi);
+#endif
   }
 
   /* QSPI Transfer Complete interrupt occurred -------------------------------*/
@@ -500,7 +579,11 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
       hqspi->State = HAL_QSPI_STATE_READY;
 
       /* TX Complete callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+      hqspi->TxCpltCallback(hqspi);
+#else
       HAL_QSPI_TxCpltCallback(hqspi);
+#endif
     }
     else if(hqspi->State == HAL_QSPI_STATE_BUSY_INDIRECT_RX)
     {
@@ -537,7 +620,11 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
       hqspi->State = HAL_QSPI_STATE_READY;
 
       /* RX Complete callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+      hqspi->RxCpltCallback(hqspi);
+#else
       HAL_QSPI_RxCpltCallback(hqspi);
+#endif
     }
     else if(hqspi->State == HAL_QSPI_STATE_BUSY)
     {
@@ -545,7 +632,11 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
       hqspi->State = HAL_QSPI_STATE_READY;
 
       /* Command Complete callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+      hqspi->CmdCpltCallback(hqspi);
+#else
       HAL_QSPI_CmdCpltCallback(hqspi);
+#endif
     }
     else if(hqspi->State == HAL_QSPI_STATE_ABORT)
     {
@@ -557,14 +648,22 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
         /* Abort called by the user */
 
         /* Abort Complete callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+        hqspi->AbortCpltCallback(hqspi);
+#else
         HAL_QSPI_AbortCpltCallback(hqspi);
+#endif
       }
       else 
       {
         /* Abort due to an error (eg :  DMA error) */
 
         /* Error callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+        hqspi->ErrorCallback(hqspi);
+#else
         HAL_QSPI_ErrorCallback(hqspi);
+#endif
       }
     }
   }
@@ -586,7 +685,11 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
     }
 
     /* Status match callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+    hqspi->StatusMatchCallback(hqspi);
+#else
     HAL_QSPI_StatusMatchCallback(hqspi);
+#endif
   }
 
   /* QSPI Transfer Error interrupt occurred ----------------------------------*/
@@ -608,7 +711,21 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
       
       /* Disable the DMA channel */
       hqspi->hdma->XferAbortCallback = QSPI_DMAAbortCplt;
-      HAL_DMA_Abort_IT(hqspi->hdma);
+      if (HAL_DMA_Abort_IT(hqspi->hdma) != HAL_OK)
+      {
+        /* Set error code to DMA */
+        hqspi->ErrorCode |= HAL_QSPI_ERROR_DMA;
+
+        /* Change state of QSPI */
+        hqspi->State = HAL_QSPI_STATE_READY;
+        
+        /* Error callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+        hqspi->ErrorCallback(hqspi);
+#else
+        HAL_QSPI_ErrorCallback(hqspi);
+#endif
+      }
     }
     else
     {
@@ -616,7 +733,11 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
       hqspi->State = HAL_QSPI_STATE_READY;
       
       /* Error callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+      hqspi->ErrorCallback(hqspi);
+#else
       HAL_QSPI_ErrorCallback(hqspi);
+#endif
     }
   }
 
@@ -625,9 +746,13 @@ void HAL_QSPI_IRQHandler(QSPI_HandleTypeDef *hqspi)
   {
     /* Clear interrupt */
     WRITE_REG(hqspi->Instance->FCR, QSPI_FLAG_TO);
-    
-    /* Time out callback */
+
+    /* Timeout callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+    hqspi->TimeOutCallback(hqspi);
+#else
     HAL_QSPI_TimeOutCallback(hqspi);
+#endif
   }
 }
 
@@ -1423,7 +1548,7 @@ HAL_StatusTypeDef HAL_QSPI_Receive_DMA(QSPI_HandleTypeDef *hqspi, uint8_t *pData
         /* Configure the direction of the DMA */
         hqspi->hdma->Init.Direction = DMA_PERIPH_TO_MEMORY;
 
-		MODIFY_REG(hqspi->hdma->Instance->CR, DMA_SxCR_DIR, hqspi->hdma->Init.Direction);
+        MODIFY_REG(hqspi->hdma->Instance->CR, DMA_SxCR_DIR, hqspi->hdma->Init.Direction);
 
         /* Enable the DMA Channel */
         tmp = (uint32_t*)&pData;
@@ -1919,6 +2044,227 @@ __weak void HAL_QSPI_TimeOutCallback(QSPI_HandleTypeDef *hqspi)
             the HAL_QSPI_TimeOutCallback could be implemented in the user file
    */
 }
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  Register a User QSPI Callback
+  *         To be used instead of the weak (surcharged) predefined callback
+  * @param hqspi : QSPI handle
+  * @param CallbackId : ID of the callback to be registered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_QSPI_ERROR_CB_ID          QSPI Error Callback ID
+  *          @arg @ref HAL_QSPI_ABORT_CB_ID          QSPI Abort Callback ID
+  *          @arg @ref HAL_QSPI_FIFO_THRESHOLD_CB_ID QSPI FIFO Threshold Callback ID
+  *          @arg @ref HAL_QSPI_CMD_CPLT_CB_ID       QSPI Command Complete Callback ID
+  *          @arg @ref HAL_QSPI_RX_CPLT_CB_ID        QSPI Rx Complete Callback ID
+  *          @arg @ref HAL_QSPI_TX_CPLT_CB_ID        QSPI Tx Complete Callback ID
+  *          @arg @ref HAL_QSPI_RX_HALF_CPLT_CB_ID   QSPI Rx Half Complete Callback ID
+  *          @arg @ref HAL_QSPI_TX_HALF_CPLT_CB_ID   QSPI Tx Half Complete Callback ID
+  *          @arg @ref HAL_QSPI_STATUS_MATCH_CB_ID   QSPI Status Match Callback ID
+  *          @arg @ref HAL_QSPI_TIMEOUT_CB_ID        QSPI Timeout Callback ID
+  *          @arg @ref HAL_QSPI_MSP_INIT_CB_ID       QSPI MspInit callback ID
+  *          @arg @ref HAL_QSPI_MSP_DEINIT_CB_ID     QSPI MspDeInit callback ID
+  * @param pCallback : pointer to the Callback function
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_QSPI_RegisterCallback (QSPI_HandleTypeDef *hqspi, HAL_QSPI_CallbackIDTypeDef CallbackId, pQSPI_CallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if(pCallback == NULL)
+  {
+    /* Update the error code */
+    hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+    return HAL_ERROR;
+  }
+
+  /* Process locked */
+  __HAL_LOCK(hqspi);
+
+  if(hqspi->State == HAL_QSPI_STATE_READY)
+  {
+    switch (CallbackId)
+    {
+    case  HAL_QSPI_ERROR_CB_ID :
+      hqspi->ErrorCallback = pCallback;
+      break;
+    case HAL_QSPI_ABORT_CB_ID :
+      hqspi->AbortCpltCallback = pCallback;
+      break;
+    case HAL_QSPI_FIFO_THRESHOLD_CB_ID :
+      hqspi->FifoThresholdCallback = pCallback;
+      break;
+    case HAL_QSPI_CMD_CPLT_CB_ID :
+      hqspi->CmdCpltCallback = pCallback;
+      break;
+    case HAL_QSPI_RX_CPLT_CB_ID :
+      hqspi->RxCpltCallback = pCallback;
+      break;
+    case HAL_QSPI_TX_CPLT_CB_ID :
+      hqspi->TxCpltCallback = pCallback;
+      break;
+    case HAL_QSPI_RX_HALF_CPLT_CB_ID :
+      hqspi->RxHalfCpltCallback = pCallback;
+      break;
+    case HAL_QSPI_TX_HALF_CPLT_CB_ID :
+      hqspi->TxHalfCpltCallback = pCallback;
+      break;
+    case HAL_QSPI_STATUS_MATCH_CB_ID :
+      hqspi->StatusMatchCallback = pCallback;
+      break;
+    case HAL_QSPI_TIMEOUT_CB_ID :
+      hqspi->TimeOutCallback = pCallback;
+      break;
+    case HAL_QSPI_MSP_INIT_CB_ID :
+      hqspi->MspInitCallback = pCallback;
+      break;
+    case HAL_QSPI_MSP_DEINIT_CB_ID :
+      hqspi->MspDeInitCallback = pCallback;
+      break;
+    default :
+      /* Update the error code */
+      hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if (hqspi->State == HAL_QSPI_STATE_RESET)
+  {
+    switch (CallbackId)
+    {
+    case HAL_QSPI_MSP_INIT_CB_ID :
+      hqspi->MspInitCallback = pCallback;
+      break;
+    case HAL_QSPI_MSP_DEINIT_CB_ID :
+      hqspi->MspDeInitCallback = pCallback;
+      break;
+    default :
+      /* Update the error code */
+      hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* Update the error code */
+    hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hqspi);
+  return status;
+}
+
+/**
+  * @brief  Unregister a User QSPI Callback
+  *         QSPI Callback is redirected to the weak (surcharged) predefined callback
+  * @param hqspi : QSPI handle
+  * @param CallbackId : ID of the callback to be unregistered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_QSPI_ERROR_CB_ID          QSPI Error Callback ID
+  *          @arg @ref HAL_QSPI_ABORT_CB_ID          QSPI Abort Callback ID
+  *          @arg @ref HAL_QSPI_FIFO_THRESHOLD_CB_ID QSPI FIFO Threshold Callback ID
+  *          @arg @ref HAL_QSPI_CMD_CPLT_CB_ID       QSPI Command Complete Callback ID
+  *          @arg @ref HAL_QSPI_RX_CPLT_CB_ID        QSPI Rx Complete Callback ID
+  *          @arg @ref HAL_QSPI_TX_CPLT_CB_ID        QSPI Tx Complete Callback ID
+  *          @arg @ref HAL_QSPI_RX_HALF_CPLT_CB_ID   QSPI Rx Half Complete Callback ID
+  *          @arg @ref HAL_QSPI_TX_HALF_CPLT_CB_ID   QSPI Tx Half Complete Callback ID
+  *          @arg @ref HAL_QSPI_STATUS_MATCH_CB_ID   QSPI Status Match Callback ID
+  *          @arg @ref HAL_QSPI_TIMEOUT_CB_ID        QSPI Timeout Callback ID
+  *          @arg @ref HAL_QSPI_MSP_INIT_CB_ID       QSPI MspInit callback ID
+  *          @arg @ref HAL_QSPI_MSP_DEINIT_CB_ID     QSPI MspDeInit callback ID
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_QSPI_UnRegisterCallback (QSPI_HandleTypeDef *hqspi, HAL_QSPI_CallbackIDTypeDef CallbackId)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  /* Process locked */
+  __HAL_LOCK(hqspi);
+
+  if(hqspi->State == HAL_QSPI_STATE_READY)
+  {
+    switch (CallbackId)
+    {
+    case  HAL_QSPI_ERROR_CB_ID :
+      hqspi->ErrorCallback = HAL_QSPI_ErrorCallback;
+      break;
+    case HAL_QSPI_ABORT_CB_ID :
+      hqspi->AbortCpltCallback = HAL_QSPI_AbortCpltCallback;
+      break;
+    case HAL_QSPI_FIFO_THRESHOLD_CB_ID :
+      hqspi->FifoThresholdCallback = HAL_QSPI_FifoThresholdCallback;
+      break;
+    case HAL_QSPI_CMD_CPLT_CB_ID :
+      hqspi->CmdCpltCallback = HAL_QSPI_CmdCpltCallback;
+      break;
+    case HAL_QSPI_RX_CPLT_CB_ID :
+      hqspi->RxCpltCallback = HAL_QSPI_RxCpltCallback;
+      break;
+    case HAL_QSPI_TX_CPLT_CB_ID :
+      hqspi->TxCpltCallback = HAL_QSPI_TxCpltCallback;
+      break;
+    case HAL_QSPI_RX_HALF_CPLT_CB_ID :
+      hqspi->RxHalfCpltCallback = HAL_QSPI_RxHalfCpltCallback;
+      break;
+    case HAL_QSPI_TX_HALF_CPLT_CB_ID :
+      hqspi->TxHalfCpltCallback = HAL_QSPI_TxHalfCpltCallback;
+      break;
+    case HAL_QSPI_STATUS_MATCH_CB_ID :
+      hqspi->StatusMatchCallback = HAL_QSPI_StatusMatchCallback;
+      break;
+    case HAL_QSPI_TIMEOUT_CB_ID :
+      hqspi->TimeOutCallback = HAL_QSPI_TimeOutCallback;
+      break;
+    case HAL_QSPI_MSP_INIT_CB_ID :
+      hqspi->MspInitCallback = HAL_QSPI_MspInit;
+      break;
+    case HAL_QSPI_MSP_DEINIT_CB_ID :
+      hqspi->MspDeInitCallback = HAL_QSPI_MspDeInit;
+      break;
+    default :
+      /* Update the error code */
+      hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if (hqspi->State == HAL_QSPI_STATE_RESET)
+  {
+    switch (CallbackId)
+    {
+    case HAL_QSPI_MSP_INIT_CB_ID :
+      hqspi->MspInitCallback = HAL_QSPI_MspInit;
+      break;
+    case HAL_QSPI_MSP_DEINIT_CB_ID :
+      hqspi->MspDeInitCallback = HAL_QSPI_MspDeInit;
+      break;
+    default :
+      /* Update the error code */
+      hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* Update the error code */
+    hqspi->ErrorCode |= HAL_QSPI_ERROR_INVALID_CALLBACK;
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hqspi);
+  return status;
+}
+#endif
 
 /**
   * @}
@@ -2043,8 +2389,19 @@ HAL_StatusTypeDef HAL_QSPI_Abort_IT(QSPI_HandleTypeDef *hqspi)
       
       /* Abort DMA channel */
       hqspi->hdma->XferAbortCallback = QSPI_DMAAbortCplt;
-      HAL_DMA_Abort_IT(hqspi->hdma);
-    }  
+      if (HAL_DMA_Abort_IT(hqspi->hdma) != HAL_OK)
+      {
+        /* Change state of QSPI */
+        hqspi->State = HAL_QSPI_STATE_READY;
+        
+        /* Abort Complete callback */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+        hqspi->AbortCpltCallback(hqspi);
+#else
+        HAL_QSPI_AbortCpltCallback(hqspi);
+#endif
+      }
+    }
     else
     {
       /* Clear interrupt */
@@ -2156,7 +2513,11 @@ static void QSPI_DMARxHalfCplt(DMA_HandleTypeDef *hdma)
 {
   QSPI_HandleTypeDef* hqspi = (QSPI_HandleTypeDef*)((DMA_HandleTypeDef*)hdma)->Parent;
 
-  HAL_QSPI_RxHalfCpltCallback(hqspi); 
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+  hqspi->RxHalfCpltCallback(hqspi);
+#else
+  HAL_QSPI_RxHalfCpltCallback(hqspi);
+#endif
 }
 
 /**
@@ -2168,7 +2529,11 @@ static void QSPI_DMATxHalfCplt(DMA_HandleTypeDef *hdma)
 {
   QSPI_HandleTypeDef* hqspi = (QSPI_HandleTypeDef*)((DMA_HandleTypeDef*)hdma)->Parent;
 
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+  hqspi->TxHalfCpltCallback(hqspi);
+#else
   HAL_QSPI_TxHalfCpltCallback(hqspi);
+#endif
 }
 
 /**

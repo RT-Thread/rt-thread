@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************  
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_QSPI_H
-#define __STM32H7xx_HAL_QSPI_H
+#ifndef STM32H7xx_HAL_QSPI_H
+#define STM32H7xx_HAL_QSPI_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -43,7 +27,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal_def.h"
-#include "stm32h7xx_hal_mdma.h"
 
 /** @addtogroup STM32H7xx_HAL_Driver
   * @{
@@ -51,58 +34,58 @@
 
 /** @addtogroup QSPI
   * @{
-  */ 
+  */
 
-/* Exported types ------------------------------------------------------------*/ 
+/* Exported types ------------------------------------------------------------*/
 /** @defgroup QSPI_Exported_Types QSPI Exported Types
   * @{
   */
 
-/** 
-  * @brief  QSPI Init structure definition  
+/**
+  * @brief  QSPI Init structure definition
   */
 
 typedef struct
 {
   uint32_t ClockPrescaler;     /* Specifies the prescaler factor for generating clock based on the AHB clock.
-                                  This parameter can be a number between 0 and 255 */ 
-                                  
+                                  This parameter can be a number between 0 and 255 */
+
   uint32_t FifoThreshold;      /* Specifies the threshold number of bytes in the FIFO (used only in indirect mode)
                                   This parameter can be a value between 1 and 32 */
 
-  uint32_t SampleShifting;     /* Specifies the Sample Shift. The data is sampled 1/2 clock cycle delay later to 
+  uint32_t SampleShifting;     /* Specifies the Sample Shift. The data is sampled 1/2 clock cycle delay later to
                                   take in account external signal delays. (It should be QSPI_SAMPLE_SHIFTING_NONE in DDR mode)
                                   This parameter can be a value of @ref QSPI_SampleShifting */
-                                  
-  uint32_t FlashSize;          /* Specifies the Flash Size. FlashSize+1 is effectively the number of address bits 
-                                  required to address the flash memory. The flash capacity can be up to 4GB 
-                                  (addressed using 32 bits) in indirect mode, but the addressable space in 
+
+  uint32_t FlashSize;          /* Specifies the Flash Size. FlashSize+1 is effectively the number of address bits
+                                  required to address the flash memory. The flash capacity can be up to 4GB
+                                  (addressed using 32 bits) in indirect mode, but the addressable space in
                                   memory-mapped mode is limited to 256MB
                                   This parameter can be a number between 0 and 31 */
-                                  
-  uint32_t ChipSelectHighTime; /* Specifies the Chip Select High Time. ChipSelectHighTime+1 defines the minimum number 
+
+  uint32_t ChipSelectHighTime; /* Specifies the Chip Select High Time. ChipSelectHighTime+1 defines the minimum number
                                   of clock cycles which the chip select must remain high between commands.
-                                  This parameter can be a value of @ref QSPI_ChipSelectHighTime */ 
-    
+                                  This parameter can be a value of @ref QSPI_ChipSelectHighTime */
+
   uint32_t ClockMode;          /* Specifies the Clock Mode. It indicates the level that clock takes between commands.
                                   This parameter can be a value of @ref QSPI_ClockMode */
 
   uint32_t FlashID;            /* Specifies the Flash which will be used,
                                   This parameter can be a value of @ref QSPI_Flash_Select */
-                                 
+
   uint32_t DualFlash;          /* Specifies the Dual Flash Mode State
-                                  This parameter can be a value of @ref QSPI_DualFlash_Mode */                                               
+                                  This parameter can be a value of @ref QSPI_DualFlash_Mode */
 }QSPI_InitTypeDef;
 
-/** 
-  * @brief HAL QSPI State structures definition  
-  */ 
+/**
+  * @brief HAL QSPI State structures definition
+  */
 typedef enum
 {
   HAL_QSPI_STATE_RESET             = 0x00U,    /*!< Peripheral not initialized                            */
   HAL_QSPI_STATE_READY             = 0x01U,    /*!< Peripheral initialized and ready for use              */
-  HAL_QSPI_STATE_BUSY              = 0x02U,    /*!< Peripheral in indirect mode and busy                  */ 
-  HAL_QSPI_STATE_BUSY_INDIRECT_TX  = 0x12U,    /*!< Peripheral in indirect mode with transmission ongoing */ 
+  HAL_QSPI_STATE_BUSY              = 0x02U,    /*!< Peripheral in indirect mode and busy                  */
+  HAL_QSPI_STATE_BUSY_INDIRECT_TX  = 0x12U,    /*!< Peripheral in indirect mode with transmission ongoing */
   HAL_QSPI_STATE_BUSY_INDIRECT_RX  = 0x22U,    /*!< Peripheral in indirect mode with reception ongoing    */
   HAL_QSPI_STATE_BUSY_AUTO_POLLING = 0x42U,    /*!< Peripheral in auto polling mode ongoing               */
   HAL_QSPI_STATE_BUSY_MEM_MAPPED   = 0x82U,    /*!< Peripheral in memory mapped mode ongoing              */
@@ -110,10 +93,14 @@ typedef enum
   HAL_QSPI_STATE_ERROR             = 0x04U     /*!< Peripheral in error                                   */
 }HAL_QSPI_StateTypeDef;
 
-/** 
-  * @brief  QSPI Handle Structure definition  
-  */  
+/**
+  * @brief  QSPI Handle Structure definition
+  */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+typedef struct __QSPI_HandleTypeDef
+#else
 typedef struct
+#endif/* USE_HAL_QSPI_REGISTER_CALLBACKS  */
 {
   QUADSPI_TypeDef            *Instance;        /* QSPI registers base address        */
   QSPI_InitTypeDef           Init;             /* QSPI communication parameters      */
@@ -127,11 +114,24 @@ typedef struct
   __IO HAL_LockTypeDef       Lock;             /* Locking object                     */
   __IO HAL_QSPI_StateTypeDef State;            /* QSPI communication state           */
   __IO uint32_t              ErrorCode;        /* QSPI Error code                    */
-  uint32_t                   Timeout;          /* Timeout for the QSPI memory access */ 
+  uint32_t                   Timeout;          /* Timeout for the QSPI memory access */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+  void (* ErrorCallback)        (struct __QSPI_HandleTypeDef *hqspi);
+  void (* AbortCpltCallback)    (struct __QSPI_HandleTypeDef *hqspi);
+  void (* FifoThresholdCallback)(struct __QSPI_HandleTypeDef *hqspi);
+  void (* CmdCpltCallback)      (struct __QSPI_HandleTypeDef *hqspi);
+  void (* RxCpltCallback)       (struct __QSPI_HandleTypeDef *hqspi);
+  void (* TxCpltCallback)       (struct __QSPI_HandleTypeDef *hqspi);
+  void (* StatusMatchCallback)  (struct __QSPI_HandleTypeDef *hqspi);
+  void (* TimeOutCallback)      (struct __QSPI_HandleTypeDef *hqspi);
+
+  void (* MspInitCallback)      (struct __QSPI_HandleTypeDef *hqspi);
+  void (* MspDeInitCallback)    (struct __QSPI_HandleTypeDef *hqspi);
+#endif
 }QSPI_HandleTypeDef;
 
-/** 
-  * @brief  QSPI Command structure definition  
+/**
+  * @brief  QSPI Command structure definition
   */
 typedef struct
 {
@@ -155,26 +155,26 @@ typedef struct
                                   This parameter can be a value of @ref QSPI_AlternateBytesMode */
   uint32_t DataMode;           /* Specifies the Data Mode (used for dummy cycles and data phases)
                                   This parameter can be a value of @ref QSPI_DataMode */
-  uint32_t NbData;             /* Specifies the number of data to transfer. 
-                                  This parameter can be any value between 0 and 0xFFFFFFFF (0 means undefined length 
+  uint32_t NbData;             /* Specifies the number of data to transfer.
+                                  This parameter can be any value between 0 and 0xFFFFFFFF (0 means undefined length
                                   until end of memory)*/
   uint32_t DdrMode;            /* Specifies the double data rate mode for address, alternate byte and data phase
                                   This parameter can be a value of @ref QSPI_DdrMode */
-  uint32_t DdrHoldHalfCycle;   /* Specifies the DDR hold half cycle. It delays the data output by one half of 
+  uint32_t DdrHoldHalfCycle;   /* Specifies the DDR hold half cycle. It delays the data output by one half of
                                   system clock in DDR mode.
                                   This parameter can be a value of @ref QSPI_DdrHoldHalfCycle */
   uint32_t SIOOMode;           /* Specifies the send instruction only once mode
                                   This parameter can be a value of @ref QSPI_SIOOMode */
 }QSPI_CommandTypeDef;
 
-/** 
-  * @brief  QSPI Auto Polling mode configuration structure definition  
+/**
+  * @brief  QSPI Auto Polling mode configuration structure definition
   */
 typedef struct
 {
   uint32_t Match;              /* Specifies the value to be compared with the masked status register to get a match.
                                   This parameter can be any value between 0 and 0xFFFFFFFF */
-  uint32_t Mask;               /* Specifies the mask to be applied to the status bytes received. 
+  uint32_t Mask;               /* Specifies the mask to be applied to the status bytes received.
                                   This parameter can be any value between 0 and 0xFFFFFFFF */
   uint32_t Interval;           /* Specifies the number of clock cycles between two read during automatic polling phases.
                                   This parameter can be any value between 0 and 0xFFFF */
@@ -185,18 +185,42 @@ typedef struct
   uint32_t AutomaticStop;      /* Specifies if automatic polling is stopped after a match.
                                   This parameter can be a value of @ref QSPI_AutomaticStop */
 }QSPI_AutoPollingTypeDef;
-                           
-/** 
-  * @brief  QSPI Memory Mapped mode configuration structure definition  
+
+/**
+  * @brief  QSPI Memory Mapped mode configuration structure definition
   */
 typedef struct
 {
   uint32_t TimeOutPeriod;      /* Specifies the number of clock to wait when the FIFO is full before to release the chip select.
                                   This parameter can be any value between 0 and 0xFFFF */
-  uint32_t TimeOutActivation;  /* Specifies if the time out counter is enabled to release the chip select. 
+  uint32_t TimeOutActivation;  /* Specifies if the time out counter is enabled to release the chip select.
                                   This parameter can be a value of @ref QSPI_TimeOutActivation */
-}QSPI_MemoryMappedTypeDef;   
+}QSPI_MemoryMappedTypeDef;
 
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  HAL QSPI Callback ID enumeration definition
+  */
+typedef enum
+{
+  HAL_QSPI_ERROR_CB_ID          = 0x00U,  /*!< QSPI Error Callback ID            */
+  HAL_QSPI_ABORT_CB_ID          = 0x01U,  /*!< QSPI Abort Callback ID            */
+  HAL_QSPI_FIFO_THRESHOLD_CB_ID = 0x02U,  /*!< QSPI FIFO Threshold Callback ID   */
+  HAL_QSPI_CMD_CPLT_CB_ID       = 0x03U,  /*!< QSPI Command Complete Callback ID */
+  HAL_QSPI_RX_CPLT_CB_ID        = 0x04U,  /*!< QSPI Rx Complete Callback ID      */
+  HAL_QSPI_TX_CPLT_CB_ID        = 0x05U,  /*!< QSPI Tx Complete Callback ID      */
+  HAL_QSPI_STATUS_MATCH_CB_ID   = 0x08U,  /*!< QSPI Status Match Callback ID     */
+  HAL_QSPI_TIMEOUT_CB_ID        = 0x09U,  /*!< QSPI Timeout Callback ID          */
+
+  HAL_QSPI_MSP_INIT_CB_ID       = 0x0AU,  /*!< QSPI MspInit Callback ID          */
+  HAL_QSPI_MSP_DEINIT_CB_ID     = 0x0B0   /*!< QSPI MspDeInit Callback ID        */
+}HAL_QSPI_CallbackIDTypeDef;
+
+/**
+  * @brief  HAL QSPI Callback pointer definition
+  */
+typedef void (*pQSPI_CallbackTypeDef)(QSPI_HandleTypeDef *hqspi);
+#endif
 /**
   * @}
   */
@@ -208,15 +232,18 @@ typedef struct
 
 /** @defgroup QSPI_ErrorCode QSPI Error Code
   * @{
-  */ 
+  */
 #define HAL_QSPI_ERROR_NONE            ((uint32_t)0x00000000U) /*!< No error           */
 #define HAL_QSPI_ERROR_TIMEOUT         ((uint32_t)0x00000001U) /*!< Timeout error      */
 #define HAL_QSPI_ERROR_TRANSFER        ((uint32_t)0x00000002U) /*!< Transfer error     */
 #define HAL_QSPI_ERROR_DMA             ((uint32_t)0x00000004U) /*!< DMA transfer error */
 #define HAL_QSPI_ERROR_INVALID_PARAM   ((uint32_t)0x00000008U) /*!< Invalid parameters error */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+#define HAL_QSPI_ERROR_INVALID_CALLBACK 0x00000010U /*!< Invalid callback error   */
+#endif
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup QSPI_SampleShifting QSPI Sample Shifting
   * @{
@@ -225,7 +252,7 @@ typedef struct
 #define QSPI_SAMPLE_SHIFTING_HALFCYCLE ((uint32_t)QUADSPI_CR_SSHIFT) /*!<1/2 clock cycle shift to sample data*/
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup QSPI_ChipSelectHighTime QSPI ChipSelect High Time
   * @{
@@ -258,7 +285,7 @@ typedef struct
 #define QSPI_FLASH_ID_2                ((uint32_t)QUADSPI_CR_FSEL) /*!<FLASH 2 selected*/
 /**
   * @}
-  */  
+  */
 
   /** @defgroup QSPI_DualFlash_Mode QSPI Dual Flash Mode
   * @{
@@ -267,7 +294,7 @@ typedef struct
 #define QSPI_DUALFLASH_DISABLE         ((uint32_t)0x00000000)     /*!<Dual-flash mode disabled*/
 /**
   * @}
-  */ 
+  */
 
 /** @defgroup QSPI_AddressSize QSPI Address Size
   * @{
@@ -278,7 +305,7 @@ typedef struct
 #define QSPI_ADDRESS_32_BITS           ((uint32_t)QUADSPI_CCR_ADSIZE)   /*!<32-bit address*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_AlternateBytesSize QSPI Alternate Bytes Size
   * @{
@@ -311,7 +338,7 @@ typedef struct
 #define QSPI_ADDRESS_4_LINES           ((uint32_t)QUADSPI_CCR_ADMODE)   /*!<Address on four lines*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_AlternateBytesMode QSPI Alternate Bytes Mode
 * @{
@@ -322,7 +349,7 @@ typedef struct
 #define QSPI_ALTERNATE_BYTES_4_LINES   ((uint32_t)QUADSPI_CCR_ABMODE)   /*!<Alternate bytes on four lines*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_DataMode QSPI Data Mode
   * @{
@@ -333,7 +360,7 @@ typedef struct
 #define QSPI_DATA_4_LINES              ((uint32_t)QUADSPI_CCR_DMODE)   /*!<Data on four lines*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_DdrMode QSPI DDR Mode
   * @{
@@ -369,7 +396,7 @@ typedef struct
 #define QSPI_MATCH_MODE_OR             ((uint32_t)QUADSPI_CR_PMM) /*!<OR match mode between unmasked bits*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_AutomaticStop QSPI Automatic Stop
   * @{
@@ -378,7 +405,7 @@ typedef struct
 #define QSPI_AUTOMATIC_STOP_ENABLE     ((uint32_t)QUADSPI_CR_APMS) /*!<AutoPolling stops as soon as there is a match*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_TimeOutActivation QSPI Timeout Activation
   * @{
@@ -387,7 +414,7 @@ typedef struct
 #define QSPI_TIMEOUT_COUNTER_ENABLE    ((uint32_t)QUADSPI_CR_TCEN) /*!<Timeout counter enabled, nCS released when timeout expires*/
 /**
   * @}
-  */  
+  */
 
 /** @defgroup QSPI_Flags QSPI Flags
   * @{
@@ -404,7 +431,7 @@ typedef struct
 
 /** @defgroup QSPI_Interrupts QSPI Interrupts
   * @{
-  */  
+  */
 #define QSPI_IT_TO                     QUADSPI_CR_TOIE /*!<Interrupt on the timeout flag*/
 #define QSPI_IT_SM                     QUADSPI_CR_SMIE /*!<Interrupt on the status match flag*/
 #define QSPI_IT_FT                     QUADSPI_CR_FTIE /*!<Interrupt on the fifo threshold flag*/
@@ -417,11 +444,11 @@ typedef struct
 /** @defgroup QSPI_Timeout_definition QSPI Timeout definition
   * @brief QSPI Timeout definition
   * @{
-  */ 
+  */
 #define HAL_QPSI_TIMEOUT_DEFAULT_VALUE ((uint32_t)5000)/* 5 s */
 /**
   * @}
-  */  
+  */
 
 /**
   * @}
@@ -435,12 +462,20 @@ typedef struct
   * @param  __HANDLE__: QSPI handle.
   * @retval None
   */
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+#define __HAL_QSPI_RESET_HANDLE_STATE(__HANDLE__)           do {                                              \
+                                                                  (__HANDLE__)->State = HAL_QSPI_STATE_RESET; \
+                                                                  (__HANDLE__)->MspInitCallback = NULL;       \
+                                                                  (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                               } while(0)
+#else
 #define __HAL_QSPI_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_QSPI_STATE_RESET)
+#endif
 
 /** @brief  Enable the QSPI peripheral.
   * @param  __HANDLE__: specifies the QSPI Handle.
   * @retval None
-  */ 
+  */
 #define __HAL_QSPI_ENABLE(__HANDLE__)                       SET_BIT((__HANDLE__)->Instance->CR, QUADSPI_CR_EN)
 
 /** @brief  Disable the QSPI peripheral.
@@ -487,7 +522,7 @@ typedef struct
   *            @arg QSPI_IT_TE: QSPI Transfer error interrupt
   * @retval The new state of __INTERRUPT__ (TRUE or FALSE).
   */
-#define __HAL_QSPI_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (READ_BIT((__HANDLE__)->Instance->CR, (__INTERRUPT__)) == (__INTERRUPT__)) 
+#define __HAL_QSPI_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) (READ_BIT((__HANDLE__)->Instance->CR, (__INTERRUPT__)) == (__INTERRUPT__))
 
 /**
   * @brief  Check whether the selected QSPI flag is set or not.
@@ -502,7 +537,7 @@ typedef struct
   *            @arg QSPI_FLAG_TE:   QSPI Transfer error flag
   * @retval None
   */
-#define __HAL_QSPI_GET_FLAG(__HANDLE__, __FLAG__)           (READ_BIT((__HANDLE__)->Instance->SR, (__FLAG__)) != 0)
+#define __HAL_QSPI_GET_FLAG(__HANDLE__, __FLAG__)           ((READ_BIT((__HANDLE__)->Instance->SR, (__FLAG__)) != 0U) ? SET : RESET)
 
 /** @brief  Clears the specified QSPI's flag status.
   * @param  __HANDLE__: specifies the QSPI Handle.
@@ -519,7 +554,7 @@ typedef struct
   * @}
   */
 
-/* Exported functions --------------------------------------------------------*/  
+/* Exported functions --------------------------------------------------------*/
 /** @addtogroup QSPI_Exported_Functions
   * @{
   */
@@ -559,8 +594,6 @@ void                  HAL_QSPI_FifoThresholdCallback(QSPI_HandleTypeDef *hqspi);
 void                  HAL_QSPI_CmdCpltCallback      (QSPI_HandleTypeDef *hqspi);
 void                  HAL_QSPI_RxCpltCallback       (QSPI_HandleTypeDef *hqspi);
 void                  HAL_QSPI_TxCpltCallback       (QSPI_HandleTypeDef *hqspi);
-void                  HAL_QSPI_RxHalfCpltCallback   (QSPI_HandleTypeDef *hqspi);
-void                  HAL_QSPI_TxHalfCpltCallback   (QSPI_HandleTypeDef *hqspi);
 
 /* QSPI status flag polling mode */
 void                  HAL_QSPI_StatusMatchCallback  (QSPI_HandleTypeDef *hqspi);
@@ -568,6 +601,18 @@ void                  HAL_QSPI_StatusMatchCallback  (QSPI_HandleTypeDef *hqspi);
 /* QSPI memory-mapped mode */
 void                  HAL_QSPI_TimeOutCallback      (QSPI_HandleTypeDef *hqspi);
 
+#if (USE_HAL_QSPI_REGISTER_CALLBACKS == 1)
+/* QSPI callback registering/unregistering */
+HAL_StatusTypeDef     HAL_QSPI_RegisterCallback     (QSPI_HandleTypeDef *hqspi, HAL_QSPI_CallbackIDTypeDef CallbackId, pQSPI_CallbackTypeDef pCallback);
+HAL_StatusTypeDef     HAL_QSPI_UnRegisterCallback   (QSPI_HandleTypeDef *hqspi, HAL_QSPI_CallbackIDTypeDef CallbackId);
+#endif
+/**
+  * @}
+  */
+
+/** @addtogroup QSPI_Exported_Functions_Group3
+  * @{
+  */
 /* Peripheral Control and State functions  ************************************/
 HAL_QSPI_StateTypeDef HAL_QSPI_GetState        (QSPI_HandleTypeDef *hqspi);
 uint32_t              HAL_QSPI_GetError        (QSPI_HandleTypeDef *hqspi);
@@ -576,23 +621,25 @@ HAL_StatusTypeDef     HAL_QSPI_Abort_IT        (QSPI_HandleTypeDef *hqspi);
 void                  HAL_QSPI_SetTimeout      (QSPI_HandleTypeDef *hqspi, uint32_t Timeout);
 HAL_StatusTypeDef     HAL_QSPI_SetFifoThreshold(QSPI_HandleTypeDef *hqspi, uint32_t Threshold);
 uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
+HAL_StatusTypeDef     HAL_QSPI_SetFlashID      (QSPI_HandleTypeDef *hqspi, uint32_t FlashID);
 /**
   * @}
   */
-/* End of exported functions -------------------------------------------------*/  
+
+/* End of exported functions -------------------------------------------------*/
 
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup QSPI_Private_Macros QSPI Private Macros
 * @{
 */
-#define IS_QSPI_CLOCK_PRESCALER(PRESCALER) ((PRESCALER) <= 0xFF)
+#define IS_QSPI_CLOCK_PRESCALER(PRESCALER) ((PRESCALER) <= 0xFFU)
 
-#define IS_QSPI_FIFO_THRESHOLD(THR)        (((THR) > 0) && ((THR) <= 32))
+#define IS_QSPI_FIFO_THRESHOLD(THR)        (((THR) > 0U) && ((THR) <= 32U))
 
 #define IS_QSPI_SSHIFT(SSHIFT)             (((SSHIFT) == QSPI_SAMPLE_SHIFTING_NONE) || \
                                             ((SSHIFT) == QSPI_SAMPLE_SHIFTING_HALFCYCLE))
 
-#define IS_QSPI_FLASH_SIZE(FSIZE)          (((FSIZE) <= 31))
+#define IS_QSPI_FLASH_SIZE(FSIZE)          (((FSIZE) <= 31U))
 
 #define IS_QSPI_CS_HIGH_TIME(CSHTIME)      (((CSHTIME) == QSPI_CS_HIGH_TIME_1_CYCLE) || \
                                             ((CSHTIME) == QSPI_CS_HIGH_TIME_2_CYCLE) || \
@@ -607,13 +654,13 @@ uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
                                             ((CLKMODE) == QSPI_CLOCK_MODE_3))
 
 
-#define IS_QSPI_FLASH_ID(FLASH)            (((FLASH) == QSPI_FLASH_ID_1) || \
-                                            ((FLASH) == QSPI_FLASH_ID_2)) 
-                                  
+#define IS_QSPI_FLASH_ID(FLASH_ID)         (((FLASH_ID) == QSPI_FLASH_ID_1) || \
+                                            ((FLASH_ID) == QSPI_FLASH_ID_2))
+
 #define IS_QSPI_DUAL_FLASH_MODE(MODE)      (((MODE) == QSPI_DUALFLASH_ENABLE) || \
                                             ((MODE) == QSPI_DUALFLASH_DISABLE))
 
-#define IS_QSPI_INSTRUCTION(INSTRUCTION)   ((INSTRUCTION) <= 0xFF) 
+#define IS_QSPI_INSTRUCTION(INSTRUCTION)   ((INSTRUCTION) <= 0xFFU)
 
 #define IS_QSPI_ADDRESS_SIZE(ADDR_SIZE)    (((ADDR_SIZE) == QSPI_ADDRESS_8_BITS)  || \
                                             ((ADDR_SIZE) == QSPI_ADDRESS_16_BITS) || \
@@ -625,7 +672,7 @@ uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
                                             ((SIZE) == QSPI_ALTERNATE_BYTES_24_BITS) || \
                                             ((SIZE) == QSPI_ALTERNATE_BYTES_32_BITS))
 
-#define IS_QSPI_DUMMY_CYCLES(DCY)          ((DCY) <= 31) 
+#define IS_QSPI_DUMMY_CYCLES(DCY)          ((DCY) <= 31U)
 
 #define IS_QSPI_INSTRUCTION_MODE(MODE)     (((MODE) == QSPI_INSTRUCTION_NONE)    || \
                                             ((MODE) == QSPI_INSTRUCTION_1_LINE)  || \
@@ -656,37 +703,40 @@ uint32_t              HAL_QSPI_GetFifoThreshold(QSPI_HandleTypeDef *hqspi);
 #define IS_QSPI_SIOO_MODE(SIOO_MODE)       (((SIOO_MODE) == QSPI_SIOO_INST_EVERY_CMD) || \
                                             ((SIOO_MODE) == QSPI_SIOO_INST_ONLY_FIRST_CMD))
 
-#define IS_QSPI_INTERVAL(INTERVAL)         ((INTERVAL) <= QUADSPI_PIR_INTERVAL) 
+#define IS_QSPI_INTERVAL(INTERVAL)         ((INTERVAL) <= QUADSPI_PIR_INTERVAL)
 
-#define IS_QSPI_STATUS_BYTES_SIZE(SIZE)    (((SIZE) >= 1) && ((SIZE) <= 4)) 
+#define IS_QSPI_STATUS_BYTES_SIZE(SIZE)    (((SIZE) >= 1U) && ((SIZE) <= 4U))
 
 #define IS_QSPI_MATCH_MODE(MODE)           (((MODE) == QSPI_MATCH_MODE_AND) || \
-                                            ((MODE) == QSPI_MATCH_MODE_OR)) 
+                                            ((MODE) == QSPI_MATCH_MODE_OR))
 
 #define IS_QSPI_AUTOMATIC_STOP(APMS)       (((APMS) == QSPI_AUTOMATIC_STOP_DISABLE) || \
-                                            ((APMS) == QSPI_AUTOMATIC_STOP_ENABLE)) 
+                                            ((APMS) == QSPI_AUTOMATIC_STOP_ENABLE))
 
 #define IS_QSPI_TIMEOUT_ACTIVATION(TCEN)   (((TCEN) == QSPI_TIMEOUT_COUNTER_DISABLE) || \
-                                            ((TCEN) == QSPI_TIMEOUT_COUNTER_ENABLE)) 
+                                            ((TCEN) == QSPI_TIMEOUT_COUNTER_ENABLE))
 
-#define IS_QSPI_TIMEOUT_PERIOD(PERIOD)     ((PERIOD) <= 0xFFFF) 
+#define IS_QSPI_TIMEOUT_PERIOD(PERIOD)     ((PERIOD) <= 0xFFFFU)
 /**
 * @}
-*/ 
+*/
 /* End of private macros -----------------------------------------------------*/
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}
-  */ 
-  
+  */
+
+/**
+  * @}
+  */
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_QSPI_H */
+#endif /* STM32H7xx_HAL_QSPI_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

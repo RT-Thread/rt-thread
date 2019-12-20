@@ -253,8 +253,8 @@ g_pfnVectors:
   .word     QUADSPI_IRQHandler                /* QuadSPI                      */
   .word     CEC_IRQHandler                    /* CEC                          */
   .word     SPDIF_RX_IRQHandler               /* SPDIF RX                     */
-  .word     FMPI2C1_Event_IRQHandler          /* FMPI2C 1 Event               */
-  .word     FMPI2C1_Error_IRQHandler          /* FMPI2C 1 Error               */
+  .word     FMPI2C1_EV_IRQHandler          /* FMPI2C 1 Event               */
+  .word     FMPI2C1_ER_IRQHandler          /* FMPI2C 1 Error               */
   
 /*******************************************************************************
 *
@@ -542,11 +542,11 @@ g_pfnVectors:
    .weak      SPDIF_RX_IRQHandler            
    .thumb_set SPDIF_RX_IRQHandler,Default_Handler 
  
-   .weak      FMPI2C1_Event_IRQHandler            
-   .thumb_set FMPI2C1_Event_IRQHandler,Default_Handler
+   .weak      FMPI2C1_EV_IRQHandler            
+   .thumb_set FMPI2C1_EV_IRQHandler,Default_Handler
    
-   .weak      FMPI2C1_Error_IRQHandler            
-   .thumb_set FMPI2C1_Error_IRQHandler,Default_Handler 
+   .weak      FMPI2C1_ER_IRQHandler            
+   .thumb_set FMPI2C1_ER_IRQHandler,Default_Handler 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/        
  

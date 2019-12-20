@@ -12,8 +12,8 @@
 
 #ifdef BSP_USING_ON_CHIP_FLASH
 #include "drv_config.h"
-#include "drv_flash.h"    
- 
+#include "drv_flash.h"
+
 #if defined(PKG_USING_FAL)
 #include "fal.h"
 #endif
@@ -53,8 +53,8 @@ static uint32_t GetPage(uint32_t Addr)
 static uint32_t GetBank(uint32_t Addr)
 {
     uint32_t bank = 0;
-#if defined (STM32L432xx)
-	bank = FLASH_BANK_1;
+#ifndef FLASH_BANK_2
+    bank = FLASH_BANK_1;
 #else
     if (READ_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_FB_MODE) == 0)
     {
@@ -135,7 +135,7 @@ int stm32_flash_write(rt_uint32_t addr, const uint8_t *buf, size_t size)
         LOG_E("ERROR: write outrange flash size! addr is (0x%p)\n", (void*)(addr + size));
         return -RT_EINVAL;
     }
-    
+
     if(addr % 8 != 0)
     {
         LOG_E("write addr must be 8-byte alignment");
@@ -270,7 +270,7 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
 
-const struct fal_flash_dev stm32_onchip_flash = { "onchip_flash", STM32_FLASH_START_ADRESS, STM32_FLASH_SIZE, 2048, {NULL, fal_flash_read, fal_flash_write, fal_flash_erase} };
+const struct fal_flash_dev stm32_onchip_flash = { "onchip_flash", STM32_FLASH_START_ADRESS, STM32_FLASH_SIZE, FLASH_PAGE_SIZE, {NULL, fal_flash_read, fal_flash_write, fal_flash_erase} };
 
 static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size)
 {

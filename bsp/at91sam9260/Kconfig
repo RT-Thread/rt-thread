@@ -18,6 +18,12 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
+config SOC_AT91SAM926
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y   
+
 config RT_USING_DBGU
     bool "Using RT_USING_DBGU"
     default y    

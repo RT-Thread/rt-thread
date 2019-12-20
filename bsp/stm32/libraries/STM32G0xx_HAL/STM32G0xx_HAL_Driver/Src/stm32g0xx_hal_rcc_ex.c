@@ -501,7 +501,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
     /* Clock not enabled for RTC*/
     else
     {
-      frequency = 0U;
+      /* Nothing to do as frequency already initialized to 0U */
     }
   }
   else
@@ -578,7 +578,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for USART1 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #if defined(RCC_CCIPR_USART2SEL)
@@ -605,7 +605,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for USART2 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_USART2SEL */
@@ -625,7 +625,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for CEC */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_CECSEL */
@@ -654,7 +654,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for LPUART1 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_LPUART1SEL */
@@ -683,7 +683,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for ADC */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 
@@ -706,7 +706,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for I2C1 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 
@@ -739,7 +739,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for I2S1 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 
@@ -767,7 +767,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for LPTIM1 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_LPTIM1SEL */
@@ -796,7 +796,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         /* Clock not enabled for LPTIM2 */
         else
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_LPTIM2SEL */
@@ -821,7 +821,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         }
         else /* No clock source */
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_TIM1SEL */
@@ -846,7 +846,7 @@ uint32_t HAL_RCCEx_GetPeriphCLKFreq(uint32_t PeriphClk)
         }
         else /* No clock source */
         {
-          frequency = 0U;
+          /* Nothing to do as frequency already initialized to 0U */
         }
         break;
 #endif /* RCC_CCIPR_TIM15SEL */

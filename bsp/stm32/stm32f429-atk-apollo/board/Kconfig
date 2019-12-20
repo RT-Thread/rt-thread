@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F429IG
     bool
     select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -15,7 +17,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_COM2
         bool "Enable COM2 (uart2 pin conflict with Ethernet and PWM)"
-	select BSP_USING_UART
+        select BSP_USING_UART
         select BSP_USING_UART2
         default n
 
@@ -60,7 +62,24 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
         default n
+        
+    config BSP_USING_AUDIO
+        bool "Enable AUDIO (WM8978)"
+        select BSP_USING_I2C1
+        select RT_USING_AUDIO
+        default n
+        
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
 
+            config BSP_USING_AUDIO_RECORD
+            bool "Enable Audio Record"
+            select BSP_USING_AUDIO_PLAY
+            default n
+        endif        
+        
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -106,6 +125,15 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default n
+        endif
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
@@ -251,6 +279,8 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_FMC
         bool
         default n
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

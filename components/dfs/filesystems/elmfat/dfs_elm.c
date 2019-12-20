@@ -202,7 +202,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     int index;
     char logic_nbr[2] = {'0', ':'};
 
-    work = rt_malloc(_MAX_SS);
+    work = (BYTE *)rt_malloc(_MAX_SS);
     if (RT_NULL == work)
     {
         return -ENOMEM;
@@ -233,7 +233,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         }
         else
         {
-            fat = rt_malloc(sizeof(FATFS));
+            fat = (FATFS *)rt_malloc(sizeof(FATFS));
             if (fat == RT_NULL)
             {
                 rt_free(work); /* release memory */
@@ -340,7 +340,7 @@ int dfs_elm_open(struct dfs_fd *file)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -478,6 +478,33 @@ int dfs_elm_close(struct dfs_fd *file)
 
 int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
+    switch (cmd)
+    {
+    case RT_FIOFTRUNCATE:
+        {
+            FIL *fd;
+            FSIZE_t fptr, length;
+            FRESULT result = FR_OK;
+            fd = (FIL *)(file->data);
+            RT_ASSERT(fd != RT_NULL);
+
+            /* save file read/write point */
+            fptr = fd->fptr;
+            length = *(off_t*)args;
+            if (length <= fd->obj.objsize)
+            {
+                fd->fptr = length;
+                result = f_truncate(fd);
+            }
+            else
+            {
+                result = f_lseek(fd, length);
+            }
+            /* restore file read/write point */
+            fd->fptr = fptr;
+            return elm_result_to_dfs(result);
+        }
+    }
     return -ENOSYS;
 }
 
@@ -648,7 +675,7 @@ int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -680,7 +707,7 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     if (vol < 0)
         return -ENOENT;
 
-    drivers_oldfn = rt_malloc(256);
+    drivers_oldfn = (char *)rt_malloc(256);
     if (drivers_oldfn == RT_NULL)
         return -ENOMEM;
     drivers_newfn = newpath;
@@ -714,7 +741,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 

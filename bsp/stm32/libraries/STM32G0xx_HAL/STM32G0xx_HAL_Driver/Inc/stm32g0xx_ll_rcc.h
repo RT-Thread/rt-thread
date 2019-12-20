@@ -116,7 +116,7 @@ typedef struct
 #define LSI_VALUE    32000U     /*!< Value of the LSI oscillator in Hz */
 #endif /* LSI_VALUE */
 #if !defined  (EXTERNAL_CLOCK_VALUE)
-#define EXTERNAL_CLOCK_VALUE    48000U /*!< Value of the I2S_CKIN external oscillator in Hz */
+#define EXTERNAL_CLOCK_VALUE    48000000U /*!< Value of the I2S_CKIN external oscillator in Hz */
 #endif /* EXTERNAL_CLOCK_VALUE */
 /**
   * @}
@@ -2442,7 +2442,7 @@ __STATIC_INLINE void LL_RCC_PLL_EnableDomain_ADC(void)
 /**
   * @brief  Disable PLL output mapped on ADC domain clock
   * @note Cannot be disabled if the PLL clock is used as the system clock
-  * @note   User shall check that PLL is not used by any other IP
+  * @note   User shall check that PLL is not used by any other peripheral
   *         (ex: I2S1)
   * @note In order to save power, when the PLLCLK  of the PLL is
   *       not used,  should be 0
@@ -2469,7 +2469,7 @@ __STATIC_INLINE void LL_RCC_PLL_EnableDomain_I2S1(void)
 /**
   * @brief  Disable PLL output mapped on I2S1 domain clock
   * @note Cannot be disabled if the PLL clock is used as the system clock
-  * @note   User shall check that PLL is not used by any other IP
+  * @note   User shall check that PLL is not used by any other peripheral
   *         (ex: RNG)
   * @note In order to save power, when the PLLCLK  of the PLL is
   *       not used,  should be 0
@@ -2497,7 +2497,7 @@ __STATIC_INLINE void LL_RCC_PLL_EnableDomain_RNG(void)
 /**
   * @brief  Disable PLL output mapped on RNG domain clock
   * @note Cannot be disabled if the PLL clock is used as the system clock
-  * @note   User shall check that PLL is not used by any other IP
+  * @note   User shall check that PLL is not used by any other peripheral
   *         (ex: TIM, TIM15)
   * @note In order to save power, when the PLLCLK  of the PLL is
   *       not used,  should be 0
@@ -2526,7 +2526,7 @@ __STATIC_INLINE void LL_RCC_PLL_EnableDomain_TIM1(void)
 /**
   * @brief  Disable PLL output mapped on TIM1 domain clock
   * @note Cannot be disabled if the PLL clock is used as the system clock
-  * @note   User shall check that PLL is not used by any other IP
+  * @note   User shall check that PLL is not used by any other peripheral
   *         (ex: RNG, TIM15)
   * @note In order to save power, when the PLLCLK  of the PLL is
   *       not used,  should be 0
@@ -2555,7 +2555,7 @@ __STATIC_INLINE void LL_RCC_PLL_EnableDomain_TIM15(void)
 /**
   * @brief  Disable PLL output mapped on TIM15 domain clock
   * @note Cannot be disabled if the PLL clock is used as the system clock
-  * @note   User shall check that PLL is not used by any other IP
+  * @note   User shall check that PLL is not used by any other peripheral
   *         (ex: RNG, TIM1)
   * @note In order to save power, when the PLLCLK  of the PLL is
   *       not used,  should be 0

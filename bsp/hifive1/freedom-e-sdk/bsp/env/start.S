@@ -80,7 +80,8 @@ _start:
 	li a0, 0
 	li a1, 0
 	call entry
-	tail exit
+	/* tail exit */
+
 1:
 	j 1b
 

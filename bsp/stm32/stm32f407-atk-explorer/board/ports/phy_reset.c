@@ -25,4 +25,4 @@ int phy_init(void)
     rt_pin_write(RESET_IO, PIN_HIGH);
     return RT_EOK;
 }
-INIT_APP_EXPORT(phy_init);
+INIT_BOARD_EXPORT(phy_init);

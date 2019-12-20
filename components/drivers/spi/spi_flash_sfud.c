@@ -22,12 +22,17 @@
 #endif /* RT_DEBUG_SFUD */
 
 #ifndef RT_SFUD_DEFAULT_SPI_CFG
+
+#ifndef RT_SFUD_SPI_MAX_HZ
+#define RT_SFUD_SPI_MAX_HZ 50000000
+#endif
+
 /* read the JEDEC SFDP command must run at 50 MHz or less */
 #define RT_SFUD_DEFAULT_SPI_CFG                  \
 {                                                \
     .mode = RT_SPI_MODE_0 | RT_SPI_MSB,          \
     .data_width = 8,                             \
-    .max_hz = 50 * 1000 * 1000,                  \
+    .max_hz = RT_SFUD_SPI_MAX_HZ,                \
 }
 #endif
 
@@ -151,11 +156,11 @@ static sfud_err spi_write_read(const sfud_spi *spi, const uint8_t *write_buf, si
     if(rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_QSPI) {
         qspi_dev = (struct rt_qspi_device *) (rtt_dev->rt_spi_device);
         if (write_size && read_size) {
-            if (rt_qspi_send_then_recv(qspi_dev, write_buf, write_size, read_buf, read_size) == 0) {
+            if (rt_qspi_send_then_recv(qspi_dev, write_buf, write_size, read_buf, read_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         } else if (write_size) {
-            if (rt_qspi_send(qspi_dev, write_buf, write_size) == 0) {
+            if (rt_qspi_send(qspi_dev, write_buf, write_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         }
@@ -168,11 +173,11 @@ static sfud_err spi_write_read(const sfud_spi *spi, const uint8_t *write_buf, si
                 result = SFUD_ERR_TIMEOUT;
             }
         } else if (write_size) {
-            if (rt_spi_send(rtt_dev->rt_spi_device, write_buf, write_size) == 0) {
+            if (rt_spi_send(rtt_dev->rt_spi_device, write_buf, write_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         } else {
-            if (rt_spi_recv(rtt_dev->rt_spi_device, read_buf, read_size) == 0) {
+            if (rt_spi_recv(rtt_dev->rt_spi_device, read_buf, read_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         }
@@ -317,7 +322,7 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops flash_device_ops = 
+const static struct rt_device_ops flash_device_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -729,6 +734,7 @@ static void sf(uint8_t argc, char **argv) {
                     for (i = 0; i < size; i += write_size) {
                         result = sfud_write(sfud_dev, addr + i, write_size, write_data);
                         if (result != SFUD_SUCCESS) {
+                            rt_kprintf("Writing %s failed, already wr for %lu bytes, write %d each time\n", sfud_dev->name, i, write_size);
                             break;
                         }
                     }
@@ -756,6 +762,7 @@ static void sf(uint8_t argc, char **argv) {
                         }
 
                         if (result != SFUD_SUCCESS) {
+                            rt_kprintf("Read %s failed, already rd for %lu bytes, read %d each time\n", sfud_dev->name, i, read_size);
                             break;
                         }
                     }

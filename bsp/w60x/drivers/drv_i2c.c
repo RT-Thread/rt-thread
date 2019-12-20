@@ -10,6 +10,7 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
+#include "board.h"
 #include "wm_i2c.h"
 #include "wm_io.h"
 #include "wm_gpio_afsel.h"
@@ -167,7 +168,11 @@ int wm_hw_i2c_init(void)
     tls_i2c_init(WM_HW_I2C_FREQ);
 
     wm_i2c.parent.ops = &wm_i2c_ops;
+#ifdef WM_I2C_BUS_NAME
+    rt_i2c_bus_device_register(&wm_i2c.parent, WM_I2C_BUS_NAME);
+#else
     rt_i2c_bus_device_register(&wm_i2c.parent, "i2c");
+#endif
 
     return 0;
 }

@@ -63,6 +63,11 @@ static void wm_timer_stop(rt_hwtimer_t *timer)
     tls_timer_stop(wm_timer->id);
 }
 
+static rt_uint32_t wm_timer_get(rt_hwtimer_t *timer)
+{
+    return 0;
+}
+
 static rt_err_t wm_timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 {
     /* The frequency value is an immutable value. */
@@ -93,7 +98,7 @@ static const struct rt_hwtimer_ops _ops =
     wm_timer_init,
     wm_timer_start,
     wm_timer_stop,
-    RT_NULL,
+    wm_timer_get,
     wm_timer_ctrl,
 };
 

@@ -190,7 +190,8 @@ static void USART_DMAError(DMA_HandleTypeDef *hdma);
 static void USART_DMAAbortOnError(DMA_HandleTypeDef *hdma);
 static void USART_DMATxAbortCallback(DMA_HandleTypeDef *hdma);
 static void USART_DMARxAbortCallback(DMA_HandleTypeDef *hdma);
-static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout);
+static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status,
+                                                      uint32_t Tickstart, uint32_t Timeout);
 static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart);
 static HAL_StatusTypeDef USART_CheckIdleState(USART_HandleTypeDef *husart);
 static void USART_TxISR_8BIT(USART_HandleTypeDef *husart);
@@ -421,7 +422,8 @@ __weak void HAL_USART_MspDeInit(USART_HandleTypeDef *husart)
   * @param  pCallback pointer to the Callback function
   * @retval HAL status
 +  */
-HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID, pUSART_CallbackTypeDef pCallback)
+HAL_StatusTypeDef HAL_USART_RegisterCallback(USART_HandleTypeDef *husart, HAL_USART_CallbackIDTypeDef CallbackID,
+                                             pUSART_CallbackTypeDef pCallback)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -733,12 +735,15 @@ HAL_StatusTypeDef HAL_USART_UnRegisterCallback(USART_HandleTypeDef *husart, HAL_
 /**
   * @brief  Simplex send an amount of data in blocking mode.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 provided through pTxData.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffer containing data to be sent, should be aligned on a half word frontier (16 bits)
   *         (as sent data will be handled using u16 pointer cast). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pTxData.
   * @param  husart USART handle.
-  * @param  pTxData Pointer to data buffer.
-  * @param  Size Amount of data to be sent.
+  * @param  pTxData Pointer to data buffer (u8 or u16 data elements).
+  * @param  Size Amount of data elements (u8 or u16) to be sent.
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
@@ -840,14 +845,17 @@ HAL_StatusTypeDef HAL_USART_Transmit(USART_HandleTypeDef *husart, uint8_t *pTxDa
 
 /**
   * @brief Receive an amount of data in blocking mode.
-  * @note To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the received data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 available through pRxData.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffer for storing data to be received, should be aligned on a half word frontier (16 bits)
   *         (as received data will be handled using u16 pointer cast). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pRxData.
   * @param husart USART handle.
-  * @param pRxData Pointer to data buffer.
-  * @param Size Amount of data to be received.
+  * @param pRxData Pointer to data buffer (u8 or u16 data elements).
+  * @param Size Amount of data elements (u8 or u16) to be received.
   * @param Timeout Timeout duration.
   * @retval HAL status
   */
@@ -965,17 +973,21 @@ HAL_StatusTypeDef HAL_USART_Receive(USART_HandleTypeDef *husart, uint8_t *pRxDat
 /**
   * @brief Full-Duplex Send and Receive an amount of data in blocking mode.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
+  *         of u16 available through pTxData and through pRxData.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffers containing data to be sent/received, should be aligned on a half word frontier (16 bits)
   *         (as sent/received data will be handled using u16 pointer cast). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pTxData and pRxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to TX data buffer.
-  * @param  pRxData pointer to RX data buffer.
-  * @param  Size amount of data to be sent (same amount to be received).
+  * @param  pTxData pointer to TX data buffer (u8 or u16 data elements).
+  * @param  pRxData pointer to RX data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent (same amount to be received).
   * @param  Timeout Timeout duration.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size, uint32_t Timeout)
+HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                            uint16_t Size, uint32_t Timeout)
 {
   uint8_t  *prxdata8bits;
   uint16_t *prxdata16bits;
@@ -1125,12 +1137,15 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive(USART_HandleTypeDef *husart, uint8_t
 /**
   * @brief  Send an amount of data in interrupt mode.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 provided through pTxData.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffer containing data to be sent, should be aligned on a half word frontier (16 bits)
   *         (as sent data will be handled using u16 pointer cast). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pTxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to data buffer.
-  * @param  Size amount of data to be sent.
+  * @param  pTxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size)
@@ -1218,14 +1233,17 @@ HAL_StatusTypeDef HAL_USART_Transmit_IT(USART_HandleTypeDef *husart, uint8_t *pT
 
 /**
   * @brief Receive an amount of data in interrupt mode.
-  * @note  To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   To receive synchronous data, dummy data are simultaneously transmitted.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the received data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 available through pRxData.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffer for storing data to be received, should be aligned on a half word frontier (16 bits)
   *         (as received data will be handled using u16 pointer cast). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pRxData.
   * @param  husart USART handle.
-  * @param  pRxData pointer to data buffer.
-  * @param  Size amount of data to be received.
+  * @param  pRxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be received.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size)
@@ -1335,16 +1353,20 @@ HAL_StatusTypeDef HAL_USART_Receive_IT(USART_HandleTypeDef *husart, uint8_t *pRx
 /**
   * @brief Full-Duplex Send and Receive an amount of data in interrupt mode.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
+  *         of u16 available through pTxData and through pRxData.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffers containing data to be sent/received, should be aligned on a half word frontier (16 bits)
   *         (as sent/received data will be handled using u16 pointer cast). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pTxData and pRxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to TX data buffer.
-  * @param  pRxData pointer to RX data buffer.
-  * @param  Size amount of data to be sent (same amount to be received).
+  * @param  pTxData pointer to TX data buffer (u8 or u16 data elements).
+  * @param  pRxData pointer to RX data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent (same amount to be received).
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,  uint16_t Size)
+HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                               uint16_t Size)
 {
 
   if (husart->State == HAL_USART_STATE_READY)
@@ -1445,12 +1467,15 @@ HAL_StatusTypeDef HAL_USART_TransmitReceive_IT(USART_HandleTypeDef *husart, uint
 /**
   * @brief Send an amount of data in DMA mode.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 provided through pTxData.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffer containing data to be sent, should be aligned on a half word frontier (16 bits)
   *         (as sent data will be handled by DMA from halfword frontier). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pTxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to data buffer.
-  * @param  Size amount of data to be sent.
+  * @param  pTxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be sent.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint16_t Size)
@@ -1540,14 +1565,17 @@ HAL_StatusTypeDef HAL_USART_Transmit_DMA(USART_HandleTypeDef *husart, uint8_t *p
   * @brief Receive an amount of data in DMA mode.
   * @note   When the USART parity is enabled (PCE = 1), the received data contain
   *         the parity bit (MSB position).
-  * @note The USART DMA transmit channel must be configured in order to generate the clock for the slave.
+  * @note   The USART DMA transmit channel must be configured in order to generate the clock for the slave.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the received data is handled as a set of u16. In this case, Size must indicate the number
+  *         of u16 available through pRxData.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffer for storing data to be received, should be aligned on a half word frontier (16 bits)
   *         (as received data will be handled by DMA from halfword frontier). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pRxData.
   * @param  husart USART handle.
-  * @param  pRxData pointer to data buffer.
-  * @param  Size amount of data to be received.
+  * @param  pRxData pointer to data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be received.
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pRxData, uint16_t Size)
@@ -1670,16 +1698,20 @@ HAL_StatusTypeDef HAL_USART_Receive_DMA(USART_HandleTypeDef *husart, uint8_t *pR
   * @brief Full-Duplex Transmit Receive an amount of data in non-blocking mode.
   * @note   When the USART parity is enabled (PCE = 1) the data received contain the parity bit.
   * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
+  *         the sent data and the received data are handled as sets of u16. In this case, Size must indicate the number
+  *         of u16 available through pTxData and through pRxData.
+  * @note   When UART parity is not enabled (PCE = 0), and Word Length is configured to 9 bits (M1-M0 = 01),
   *         address of user data buffers containing data to be sent/received, should be aligned on a half word frontier (16 bits)
   *         (as sent/received data will be handled by DMA from halfword frontier). Depending on compilation chain,
   *         use of specific alignment compilation directives or pragmas might be required to ensure proper alignment for pTxData and pRxData.
   * @param  husart USART handle.
-  * @param  pTxData pointer to TX data buffer.
-  * @param  pRxData pointer to RX data buffer.
-  * @param  Size amount of data to be received/sent.
+  * @param  pTxData pointer to TX data buffer (u8 or u16 data elements).
+  * @param  pRxData pointer to RX data buffer (u8 or u16 data elements).
+  * @param  Size amount of data elements (u8 or u16) to be received/sent.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData, uint16_t Size)
+HAL_StatusTypeDef HAL_USART_TransmitReceive_DMA(USART_HandleTypeDef *husart, uint8_t *pTxData, uint8_t *pRxData,
+                                                uint16_t Size)
 {
   HAL_StatusTypeDef status;
   uint32_t *tmp;
@@ -1956,11 +1988,12 @@ HAL_StatusTypeDef HAL_USART_DMAStop(USART_HandleTypeDef *husart)
   *           - Set handle State to READY
   * @note   This procedure is executed in blocking mode : when exiting function, Abort is considered as completed.
   * @retval HAL status
-*/
+  */
 HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
 {
   /* Disable TXEIE, TCIE, RXNE, RXFT, TXFT, PE and ERR (Frame error, noise error, overrun error) interrupts */
-  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE));
+  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE |
+                                    USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE));
 
   /* Disable the USART DMA Tx request if enabled */
@@ -2051,13 +2084,14 @@ HAL_StatusTypeDef HAL_USART_Abort(USART_HandleTypeDef *husart)
   * @note   This procedure is executed in Interrupt mode, meaning that abort procedure could be
   *         considered as completed only when user abort complete callback is executed (not when exiting function).
   * @retval HAL status
-*/
+  */
 HAL_StatusTypeDef HAL_USART_Abort_IT(USART_HandleTypeDef *husart)
 {
   uint32_t abortcplt = 1U;
 
   /* Disable TXEIE, TCIE, RXNE, RXFT, TXFT, PE and ERR (Frame error, noise error, overrun error) interrupts */
-  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE));
+  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE |
+                                    USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE));
 
   /* If DMA Tx and/or DMA Rx Handles are associated to USART Handle, DMA Abort complete callbacks should be initialised
@@ -2517,8 +2551,8 @@ __weak void HAL_USART_AbortCpltCallback(USART_HandleTypeDef *husart)
   */
 
 /** @defgroup USART_Exported_Functions_Group4 Peripheral State and Error functions
- *  @brief   USART Peripheral State and Error functions
- *
+  *  @brief   USART Peripheral State and Error functions
+  *
 @verbatim
   ==============================================================================
             ##### Peripheral State and Error functions #####
@@ -2564,8 +2598,8 @@ uint32_t HAL_USART_GetError(USART_HandleTypeDef *husart)
   */
 
 /** @defgroup USART_Private_Functions USART Private Functions
- * @{
- */
+  * @{
+  */
 
 /**
   * @brief  Initialize the callbacks to their default values.
@@ -2596,7 +2630,8 @@ void USART_InitCallbacksToDefault(USART_HandleTypeDef *husart)
 static void USART_EndTransfer(USART_HandleTypeDef *husart)
 {
   /* Disable TXEIE, TCIE, RXNE, RXFT, TXFT, PE and ERR (Frame error, noise error, overrun error) interrupts */
-  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE | USART_CR1_TCIE));
+  CLEAR_BIT(husart->Instance->CR1, (USART_CR1_RXNEIE_RXFNEIE | USART_CR1_PEIE | USART_CR1_TXEIE_TXFNFIE |
+                                    USART_CR1_TCIE));
   CLEAR_BIT(husart->Instance->CR3, (USART_CR3_EIE | USART_CR3_RXFTIE | USART_CR3_TXFTIE));
 
   /* At end of process, restore husart->State to Ready */
@@ -2904,7 +2939,8 @@ static void USART_DMARxAbortCallback(DMA_HandleTypeDef *hdma)
   * @param  Timeout timeout duration.
   * @retval HAL status
   */
-static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status, uint32_t Tickstart, uint32_t Timeout)
+static HAL_StatusTypeDef USART_WaitOnFlagUntilTimeout(USART_HandleTypeDef *husart, uint32_t Flag, FlagStatus Status,
+                                                      uint32_t Tickstart, uint32_t Timeout)
 {
   /* Wait until flag is set */
   while ((__HAL_USART_GET_FLAG(husart, Flag) ? SET : RESET) == Status)
@@ -2938,6 +2974,7 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   HAL_StatusTypeDef ret                = HAL_OK;
   uint16_t brrtemp;
   uint32_t usartdiv                    = 0x00000000;
+  uint32_t pclk;
 
   /* Check the parameters */
   assert_param(IS_USART_POLARITY(husart->Init.CLKPolarity));
@@ -2984,13 +3021,15 @@ static HAL_StatusTypeDef USART_SetConfig(USART_HandleTypeDef *husart)
   switch (clocksource)
   {
     case USART_CLOCKSOURCE_PCLK1:
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetPCLK1Freq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
+      pclk = HAL_RCC_GetPCLK1Freq();
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate, husart->Init.ClockPrescaler));
       break;
     case USART_CLOCKSOURCE_HSI:
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HSI_VALUE, husart->Init.BaudRate, husart->Init.ClockPrescaler));
       break;
     case USART_CLOCKSOURCE_SYSCLK:
-      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(HAL_RCC_GetSysClockFreq(), husart->Init.BaudRate, husart->Init.ClockPrescaler));
+      pclk = HAL_RCC_GetSysClockFreq();
+      usartdiv = (uint32_t)(USART_DIV_SAMPLING8(pclk, husart->Init.BaudRate, husart->Init.ClockPrescaler));
       break;
     case USART_CLOCKSOURCE_LSE:
       usartdiv = (uint32_t)(USART_DIV_SAMPLING8((uint32_t)LSE_VALUE, husart->Init.BaudRate, husart->Init.ClockPrescaler));
@@ -3299,6 +3338,7 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
   const HAL_USART_StateTypeDef state = husart->State;
   uint16_t txdatacount;
   uint16_t uhMask = husart->Mask;
+  uint32_t txftie;
 
   if ((state == HAL_USART_STATE_BUSY_RX) ||
       (state == HAL_USART_STATE_BUSY_TX_RX))
@@ -3318,7 +3358,8 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
       /* Clear RxISR function pointer */
       husart->RxISR = NULL;
 
-      /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+      /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+      txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
       txdatacount = husart->TxXferCount;
 
       if (state == HAL_USART_STATE_BUSY_RX)
@@ -3342,6 +3383,7 @@ static void USART_RxISR_8BIT(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
       }
       else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+               (txftie != USART_CR3_TXFTIE) &&
                (txdatacount == 0U))
       {
         /* TxRx process is completed, restore husart->State to Ready */
@@ -3388,6 +3430,7 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
   uint16_t txdatacount;
   uint16_t *tmp;
   uint16_t uhMask = husart->Mask;
+  uint32_t txftie;
 
   if ((state == HAL_USART_STATE_BUSY_RX) ||
       (state == HAL_USART_STATE_BUSY_TX_RX))
@@ -3408,7 +3451,8 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
       /* Clear RxISR function pointer */
       husart->RxISR = NULL;
 
-      /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+      /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+      txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
       txdatacount = husart->TxXferCount;
 
       if (state == HAL_USART_STATE_BUSY_RX)
@@ -3432,6 +3476,7 @@ static void USART_RxISR_16BIT(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
       }
       else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+               (txftie != USART_CR3_TXFTIE) &&
                (txdatacount == 0U))
       {
         /* TxRx process is completed, restore husart->State to Ready */
@@ -3479,6 +3524,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
   uint16_t rxdatacount;
   uint16_t uhMask = husart->Mask;
   uint16_t nb_rx_data;
+  uint32_t txftie;
 
   /* Check that a Rx process is ongoing */
   if ((state == HAL_USART_STATE_BUSY_RX) ||
@@ -3503,7 +3549,8 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
           /* Clear RxISR function pointer */
           husart->RxISR = NULL;
 
-          /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+          /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+          txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
           txdatacount = husart->TxXferCount;
 
           if (state == HAL_USART_STATE_BUSY_RX)
@@ -3528,6 +3575,7 @@ static void USART_RxISR_8BIT_FIFOEN(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
           }
           else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+                   (txftie != USART_CR3_TXFTIE) &&
                    (txdatacount == 0U))
           {
             /* TxRx process is completed, restore husart->State to Ready */
@@ -3609,6 +3657,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
   uint16_t *tmp;
   uint16_t uhMask = husart->Mask;
   uint16_t nb_rx_data;
+  uint32_t txftie;
 
   /* Check that a Tx process is ongoing */
   if ((state == HAL_USART_STATE_BUSY_RX) ||
@@ -3634,7 +3683,8 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
           /* Clear RxISR function pointer */
           husart->RxISR = NULL;
 
-          /* txdatacount is a temporary variable for MISRAC2012-Rule-13.5 */
+          /* txftie and txdatacount are temporary variables for MISRAC2012-Rule-13.5 */
+          txftie = READ_BIT(husart->Instance->CR3, USART_CR3_TXFTIE);
           txdatacount = husart->TxXferCount;
 
           if (state == HAL_USART_STATE_BUSY_RX)
@@ -3659,6 +3709,7 @@ static void USART_RxISR_16BIT_FIFOEN(USART_HandleTypeDef *husart)
 #endif /* USE_HAL_USART_REGISTER_CALLBACKS */
           }
           else if ((READ_BIT(husart->Instance->CR1, USART_CR1_TCIE) != USART_CR1_TCIE) &&
+                   (txftie != USART_CR3_TXFTIE) &&
                    (txdatacount == 0U))
           {
             /* TxRx process is completed, restore husart->State to Ready */

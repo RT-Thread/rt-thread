@@ -71,6 +71,7 @@ static void _workqueue_thread_entry(void *parameter)
         rt_list_remove(&(work->list));
         queue->work_current = work;
         work->flags &= ~RT_WORK_STATE_PENDING;
+        work->workqueue = RT_NULL;
         rt_hw_interrupt_enable(level);
 
         /* do work */
@@ -141,7 +142,7 @@ static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_wor
     return RT_EOK;
 }
 
-static rt_err_t _workqueue_cancel_delayed_work(struct rt_delayed_work *work)
+static rt_err_t _workqueue_cancel_delayed_work(struct rt_work *work)
 {
     rt_base_t level;
     int ret = RT_EOK;
@@ -152,10 +153,10 @@ static rt_err_t _workqueue_cancel_delayed_work(struct rt_delayed_work *work)
         goto __exit;
     }
 
-    if (work->work.flags & RT_WORK_STATE_PENDING)
+    if (work->flags & RT_WORK_STATE_PENDING)
     {
         /* Remove from the queue if already submitted */
-        ret = rt_workqueue_cancel_work(work->workqueue, &(work->work));
+        ret = _workqueue_cancel_work(work->workqueue, work);
         if (ret)
         {
             goto __exit;
@@ -163,12 +164,12 @@ static rt_err_t _workqueue_cancel_delayed_work(struct rt_delayed_work *work)
     }
     else
     {
-        if (work->work.flags & RT_WORK_STATE_SUBMITTING)
+        if (work->flags & RT_WORK_STATE_SUBMITTING)
         {
             level = rt_hw_interrupt_disable();
             rt_timer_stop(&(work->timer));
             rt_timer_detach(&(work->timer));
-            work->work.flags &= ~RT_WORK_STATE_SUBMITTING;
+            work->flags &= ~RT_WORK_STATE_SUBMITTING;
             rt_hw_interrupt_enable(level);
         }
     }
@@ -176,7 +177,7 @@ static rt_err_t _workqueue_cancel_delayed_work(struct rt_delayed_work *work)
     level = rt_hw_interrupt_disable();
     /* Detach from workqueue */
     work->workqueue = RT_NULL;
-    work->work.flags &= ~(RT_WORK_STATE_PENDING);
+    work->flags &= ~(RT_WORK_STATE_PENDING);
     rt_hw_interrupt_enable(level);
 
 __exit:
@@ -184,11 +185,10 @@ __exit:
 }
 
 static rt_err_t _workqueue_submit_delayed_work(struct rt_workqueue *queue,
-        struct rt_delayed_work *work, rt_tick_t ticks)
+        struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
-    int ret = RT_EOK;
-
+    rt_err_t ret = RT_EOK;
 
     /* Work cannot be active in multiple queues */
     if (work->workqueue && work->workqueue != queue)
@@ -215,13 +215,13 @@ static rt_err_t _workqueue_submit_delayed_work(struct rt_workqueue *queue,
     if (!ticks)
     {
         /* Submit work if no ticks is 0 */
-        _workqueue_submit_work(work->workqueue, &(work->work));
+        ret = _workqueue_submit_work(work->workqueue, work);
     }
     else
     {
         level = rt_hw_interrupt_disable();
         /* Add timeout */
-        work->work.flags |= RT_WORK_STATE_SUBMITTING;
+        work->flags |= RT_WORK_STATE_SUBMITTING;
         rt_timer_init(&(work->timer), "work", _delayed_work_timeout_handler, work, ticks,
                       RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
         rt_hw_interrupt_enable(level);
@@ -234,16 +234,17 @@ __exit:
 
 static void _delayed_work_timeout_handler(void *parameter)
 {
-    struct rt_delayed_work *delayed_work;
+    struct rt_work *delayed_work;
     rt_base_t level;
 
-    delayed_work = (struct rt_delayed_work *)parameter;
+    delayed_work = (struct rt_work *)parameter;
     level = rt_hw_interrupt_disable();
     rt_timer_stop(&(delayed_work->timer));
     rt_timer_detach(&(delayed_work->timer));
-    delayed_work->work.flags &= ~RT_WORK_STATE_SUBMITTING;
+    delayed_work->flags &= ~RT_WORK_STATE_SUBMITTING;
+    delayed_work->type &= ~RT_WORK_TYPE_DELAYED;
     rt_hw_interrupt_enable(level);
-    _workqueue_submit_work(delayed_work->workqueue, &(delayed_work->work));
+    _workqueue_submit_work(delayed_work->workqueue, delayed_work);
 }
 
 struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_size, rt_uint8_t priority)
@@ -295,9 +296,14 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
 
+    if (time > 0)
+    {
+        work->type |= RT_WORK_TYPE_DELAYED;
+    }
+
     if (work->type & RT_WORK_TYPE_DELAYED)
     {
-        return _workqueue_submit_delayed_work(queue, (struct rt_delayed_work *)work, time);
+        return _workqueue_submit_delayed_work(queue, work, time);
     }
     else
     {
@@ -341,7 +347,7 @@ rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *wo
 
     if (work->type & RT_WORK_TYPE_DELAYED)
     {
-        return _workqueue_cancel_delayed_work((struct rt_delayed_work *)work);
+        return _workqueue_cancel_delayed_work(work);
     }
     else
     {
@@ -391,8 +397,7 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
 void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
                           void *work_data), void *work_data)
 {
-    rt_work_init(&(work->work), work_func, work_data);
-    work->work.type = RT_WORK_TYPE_DELAYED;
+    rt_work_init(&work->work, work_func, work_data);
 }
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
@@ -408,8 +413,11 @@ rt_err_t rt_work_cancel(struct rt_work *work)
     return rt_workqueue_cancel_work(sys_workq, work);
 }
 
-static int rt_work_sys_workqueue_init(void)
+int rt_work_sys_workqueue_init(void)
 {
+    if (sys_workq != RT_NULL)
+        return 0;
+
     sys_workq = rt_workqueue_create("sys_work", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     RT_SYSTEM_WORKQUEUE_PRIORITY);
 

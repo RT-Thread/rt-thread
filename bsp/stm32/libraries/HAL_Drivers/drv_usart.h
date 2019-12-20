@@ -21,14 +21,15 @@
 int rt_hw_usart_init(void);
 
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0)
+    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7)
 #define DMA_INSTANCE_TYPE              DMA_Stream_TypeDef
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) */
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F2) \
+    || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) \
+    || defined(SOC_SERIES_STM32G4)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
 #elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_IT
@@ -41,6 +42,7 @@ struct stm32_uart_config
     USART_TypeDef *Instance;
     IRQn_Type irq_type;
     struct dma_config *dma_rx;
+    struct dma_config *dma_tx;
 };
 
 /* stm32 uart dirver class */
@@ -54,9 +56,13 @@ struct stm32_uart
     {
         DMA_HandleTypeDef handle;
         rt_size_t last_index;
-    } dma;
+    } dma_rx;
+    struct
+    {
+        DMA_HandleTypeDef handle;
+    } dma_tx;
 #endif
-    rt_uint8_t uart_dma_flag;
+    rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
 };
 
