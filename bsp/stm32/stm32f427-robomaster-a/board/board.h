@@ -25,7 +25,7 @@ extern "C" {
 #define STM32_FLASH_SIZE               (2048 * 1024)
 #define STM32_FLASH_END_ADDRESS        ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#define STM32_SRAM1_SIZE               (128)
+#define STM32_SRAM1_SIZE               (192)
 #define STM32_SRAM1_START              (0x20000000)
 #define STM32_SRAM1_END                (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024)
 
