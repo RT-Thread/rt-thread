@@ -535,6 +535,63 @@ rt_err_t rt_thread_delay(rt_tick_t tick)
 RTM_EXPORT(rt_thread_delay);
 
 /**
+ * This function will let current thread delay until (*tick + inc_tick).
+ *
+ * @param tick the tick of last wakeup.
+ * @param inc_tick the increment tick
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
+{
+    register rt_base_t level;
+    struct rt_thread *thread;
+
+    RT_ASSERT(tick != RT_NULL);
+
+    /* set to current thread */
+    thread = rt_thread_self();
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    if (rt_tick_get() - *tick < inc_tick)
+    {
+        *tick = rt_tick_get() - *tick + inc_tick;
+
+        /* suspend thread */
+        rt_thread_suspend(thread);
+
+        /* reset the timeout of thread timer and start it */
+        rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, tick);
+        rt_timer_start(&(thread->thread_timer));
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        rt_schedule();
+
+        /* clear error number of this thread to RT_EOK */
+        if (thread->error == -RT_ETIMEOUT)
+        {
+            thread->error = RT_EOK;
+        }
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
+
+    /* get the wakeup tick */
+    *tick = rt_tick_get();
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_thread_delay_until);
+
+/**
  * This function will let current thread delay for some milliseconds.
  *
  * @param tick the delay time
