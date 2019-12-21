@@ -264,8 +264,8 @@
 #endif
 
 /*
- * You can re-define following setting in rtcofnig.h to overwrite the default 
- * setting in the lwip opts.h 
+ * You can re-define following setting in rtcofnig.h to overwrite the default
+ * setting in the lwip opts.h
  */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
 // #define MEMP_NUM_NETBUF             2
