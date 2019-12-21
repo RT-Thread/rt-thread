@@ -165,7 +165,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 extern int lwip_ping_recv(int s, int *ttl);
 extern err_t lwip_ping_send(int s, ip_addr_t *addr, int size);
 
-int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len, 
+int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
                         uint32_t timeout, struct netdev_ping_resp *ping_resp)
 {
     int s, ttl, recv_len, result = 0;
@@ -180,7 +180,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     struct addrinfo hint, *res = RT_NULL;
     struct sockaddr_in *h = RT_NULL;
     struct in_addr ina;
-    
+
     RT_ASSERT(netif);
     RT_ASSERT(host);
     RT_ASSERT(ping_resp);
@@ -199,7 +199,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
         return -RT_ERROR;
     }
     rt_memcpy(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
-    
+
     /* new a socket */
     if ((s = lwip_socket(AF_INET, SOCK_RAW, IP_PROTO_ICMP)) < 0)
     {
@@ -267,7 +267,7 @@ const struct netdev_ops lwip_netdev_ops =
     lwip_netdev_set_addr_info,
 #ifdef RT_LWIP_DNS
     lwip_netdev_set_dns_server,
-#else 
+#else
     NULL,
 #endif /* RT_LWIP_DNS */
 
@@ -315,7 +315,7 @@ static int netdev_add(struct netif *lwip_netif)
 
     rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
     result = netdev_register(netdev, name, (void *)lwip_netif);
-    
+
     /* Update netdev info after registered */
     netdev->flags = lwip_netif->flags;
     netdev->mtu = lwip_netif->mtu;
@@ -325,7 +325,7 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->ip_addr = lwip_netif->ip_addr;
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
-	
+
 #ifdef RT_LWIP_DHCP
     netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
 #endif
@@ -484,7 +484,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
     hostname = (char *)netif + sizeof(struct netif);
-    rt_sprintf(hostname, "RTTHREAD_%02x%02x", name[0], name[1]);
+    rt_sprintf(hostname, "rtthread_%02x%02x", name[0], name[1]);
     netif->hostname = hostname;
 #endif /* LWIP_NETIF_HOSTNAME */
 
@@ -642,7 +642,7 @@ static void eth_rx_thread_entry(void* parameter)
             while (1)
             {
             	if(device->eth_rx == RT_NULL) break;
-            	
+
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
                 {
