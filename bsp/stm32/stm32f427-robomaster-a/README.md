@@ -22,7 +22,7 @@ RoboMaster开发板套件是一款面向机器人DIY的开源主控套件。开�
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32f427IIH6，主频 180MHz，2048KB FLASH ，128KB RAM
+- MCU：STM32f427IIH6，主频 180MHz，2048KB FLASH ，256KB RAM(含64KB CCM RAM未使用)
 - 常用外设
   - LED：2个，D10（红色，PE11），D9（绿色，PE14）
   - 按键：1个，KEY（PB2）
