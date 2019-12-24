@@ -29,7 +29,7 @@ extern int finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define M451_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

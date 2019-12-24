@@ -28,13 +28,11 @@
 #include "drv_ac97.h"
 #include "realview.h"
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "PL041"
-// #define DBG_LEVEL         DBG_LOG
-// #define DBG_LEVEL         DBG_INFO
-#define DBG_LEVEL         DBG_WARNING
-// #define DBG_LEVEL         DBG_ERROR
-#define DBG_COLOR
+#define DBG_TAG  "PL041"
+// #define DBG_LVL         DBG_LOG
+// #define DBG_LVL         DBG_INFO
+#define DBG_LVL  DBG_WARNING
+// #define DBG_LVL         DBG_ERROR
 #include <rtdbg.h>
 
 #define FRAME_PERIOD_US    (50)
@@ -304,7 +302,7 @@ static void aaci_pl041_irq_handle(int irqno, void *param)
     void *p_status;
 
     mask = PL041_READ(&PL041->allints);
-    PL041_WRITE(PL041->intclr, mask);
+    PL041_WRITE(&PL041->intclr, mask);
 
     for (channle = 0; (channle < PL041_CHANNLE_NUM) && (mask); channle++)
     {

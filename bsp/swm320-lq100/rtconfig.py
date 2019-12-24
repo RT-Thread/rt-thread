@@ -45,7 +45,7 @@ if PLATFORM == 'gcc':
 
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=' + FPU + ' -mfloat-abi=' + \
         FLOAT_ABI + ' -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -std=c99'
+    CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T drivers/linker_scripts/link.lds'
 

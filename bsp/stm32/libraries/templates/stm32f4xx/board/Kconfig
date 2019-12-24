@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F407ZG
     bool
     select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -30,45 +32,9 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
-
-    menuconfig BSP_USING_SPI
-        bool "Enable SPI BUS"
-        default n
-        select RT_USING_SPI
-        if BSP_USING_SPI
-            config BSP_USING_SPI1
-                bool "Enable SPI1 BUS"
-                default n
-
-            config BSP_SPI1_TX_USING_DMA
-                bool "Enable SPI1 TX DMA"
-                depends on BSP_USING_SPI1
-                default n
-                
-            config BSP_SPI1_RX_USING_DMA
-                bool "Enable SPI1 RX DMA"
-                depends on BSP_USING_SPI1
-                select BSP_SPI1_TX_USING_DMA
-                default n
-        endif
-
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 1 216
-                default 15
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 1 216
-                default 16
-        endif
-
+        
+    source "../libraries/HAL_Drivers/Kconfig"    
+    
 endmenu
 
 menu "Board extended module Drivers"

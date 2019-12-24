@@ -55,6 +55,14 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
+
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+
         _etext = .;
     } > CODE = 0
 
@@ -81,6 +89,11 @@ SECTIONS
         *(.data.*)
         *(.gnu.linkonce.d*)
 
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+        
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;

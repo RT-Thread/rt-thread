@@ -185,21 +185,21 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
     rt_uint64_t tim_clock;
 
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     if (0)
 #endif
     {
-#ifndef SOC_SERIES_STM32F0
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
 #endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -230,21 +230,21 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     if (0)
 #endif
     {
-#ifndef SOC_SERIES_STM32F0
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
 #endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -322,6 +322,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
+
     if (HAL_TIM_Base_Init(tim) != HAL_OK)
     {
         LOG_E("%s time base init failed", device->name);
@@ -411,8 +412,26 @@ __exit:
 
 static void pwm_get_channel(void)
 {
+#ifdef BSP_USING_PWM1_CH1
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM1_CH2
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM1_CH3
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM1_CH4
+    stm32_pwm_obj[PWM1_INDEX].channel |= 1 << 3;
+#endif
 #ifdef BSP_USING_PWM2_CH1
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM2_CH2
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM2_CH3
+    stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 2;
 #endif
 #ifdef BSP_USING_PWM2_CH4
     stm32_pwm_obj[PWM2_INDEX].channel |= 1 << 3;
@@ -429,20 +448,83 @@ static void pwm_get_channel(void)
 #ifdef BSP_USING_PWM3_CH4
     stm32_pwm_obj[PWM3_INDEX].channel |= 1 << 3;
 #endif
+#ifdef BSP_USING_PWM4_CH1
+    stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 0;
+#endif
 #ifdef BSP_USING_PWM4_CH2
     stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM4_CH3
     stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 2;
 #endif
+#ifdef BSP_USING_PWM4_CH4
+    stm32_pwm_obj[PWM4_INDEX].channel |= 1 << 3;
+#endif
 #ifdef BSP_USING_PWM5_CH1
-    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 0;
 #endif
 #ifdef BSP_USING_PWM5_CH2
-    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 2;
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 1;
 #endif
 #ifdef BSP_USING_PWM5_CH3
+    stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM5_CH4
     stm32_pwm_obj[PWM5_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM6_CH1
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM6_CH2
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM6_CH3
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM6_CH4
+    stm32_pwm_obj[PWM6_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM7_CH1
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM7_CH2
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM7_CH3
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM7_CH4
+    stm32_pwm_obj[PWM7_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM8_CH1
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM8_CH2
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM8_CH3
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM8_CH4
+    stm32_pwm_obj[PWM8_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM9_CH1
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM9_CH2
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM9_CH3
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM9_CH4
+    stm32_pwm_obj[PWM9_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM12_CH1
+    stm32_pwm_obj[PWM12_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM12_CH2
+    stm32_pwm_obj[PWM12_INDEX].channel |= 1 << 1;
 #endif
 }
 
@@ -467,7 +549,7 @@ static int stm32_pwm_init(void)
             LOG_D("%s init success", stm32_pwm_obj[i].name);
 
             /* register pwm device */
-            if (rt_device_pwm_register(rt_calloc(1, sizeof(struct rt_device_pwm)), stm32_pwm_obj[i].name, &drv_ops, &stm32_pwm_obj[i].tim_handle) == RT_EOK)
+            if (rt_device_pwm_register(&stm32_pwm_obj[i].pwm_device, stm32_pwm_obj[i].name, &drv_ops, &stm32_pwm_obj[i].tim_handle) == RT_EOK)
             {
 
                 LOG_D("%s register success", stm32_pwm_obj[i].name);

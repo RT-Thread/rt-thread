@@ -8,9 +8,7 @@
  * 2018-11-16    bluebear233   first version
  */
 
-#include <rtconfig.h>
 #include <rtthread.h>
-#include <rthw.h>
 #include "NuMicro.h"
 #include "drv_uart.h"
 #include "board.h"

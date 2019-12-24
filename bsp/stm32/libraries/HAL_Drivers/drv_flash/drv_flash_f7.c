@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-5      SummerGift   first version
+ * 2019-3-2       jinsheng     add Macro judgment
  */
 
 #include "board.h"
@@ -21,7 +22,32 @@
 //#define DRV_DEBUG
 #define LOG_TAG                "drv.flash"
 #include <drv_log.h>
-
+#if defined (FLASH_OPTCR_nDBANK)
+#define ADDR_FLASH_SECTOR_0     ((rt_uint32_t)0x08000000) /* Base address of Sector 0, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_1     ((rt_uint32_t)0x08004000) /* Base address of Sector 1, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_2     ((rt_uint32_t)0x08008000) /* Base address of Sector 2, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_3     ((rt_uint32_t)0x0800C000) /* Base address of Sector 3, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_4     ((rt_uint32_t)0x08010000) /* Base address of Sector 4, 64 Kbytes */
+#define ADDR_FLASH_SECTOR_5     ((rt_uint32_t)0x08020000) /* Base address of Sector 5, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_6     ((rt_uint32_t)0x08040000) /* Base address of Sector 6, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_7     ((rt_uint32_t)0x08060000) /* Base address of Sector 7, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_8     ((rt_uint32_t)0x08080000) /* Base address of Sector 8, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_9     ((rt_uint32_t)0x080A0000) /* Base address of Sector 9, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_10    ((rt_uint32_t)0x080C0000) /* Base address of Sector 10, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_11    ((rt_uint32_t)0x080E0000) /* Base address of Sector 11, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_12    ((rt_uint32_t)0x08100000) /* Base address of Sector 12, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_13    ((rt_uint32_t)0x08104000) /* Base address of Sector 13, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_14    ((rt_uint32_t)0x08108000) /* Base address of Sector 14, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_15    ((rt_uint32_t)0x0810C000) /* Base address of Sector 15, 16 Kbytes */
+#define ADDR_FLASH_SECTOR_16    ((rt_uint32_t)0x08110000) /* Base address of Sector 16, 64 Kbytes */
+#define ADDR_FLASH_SECTOR_17    ((rt_uint32_t)0x08120000) /* Base address of Sector 17, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_18    ((rt_uint32_t)0x08140000) /* Base address of Sector 18, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_19    ((rt_uint32_t)0x08160000) /* Base address of Sector 19, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_20    ((rt_uint32_t)0x08180000) /* Base address of Sector 20, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_21    ((rt_uint32_t)0x081A0000) /* Base address of Sector 21, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_22    ((rt_uint32_t)0x081C0000) /* Base address of Sector 22, 128 Kbytes */
+#define ADDR_FLASH_SECTOR_23    ((rt_uint32_t)0x081E0000) /* Base address of Sector 23, 128 Kbytes */
+#else
 #define ADDR_FLASH_SECTOR_0     ((rt_uint32_t)0x08000000) /* Base address of Sector 0, 32 Kbytes */
 #define ADDR_FLASH_SECTOR_1     ((rt_uint32_t)0x08008000) /* Base address of Sector 1, 32 Kbytes */
 #define ADDR_FLASH_SECTOR_2     ((rt_uint32_t)0x08010000) /* Base address of Sector 2, 32 Kbytes */
@@ -34,7 +60,7 @@
 #define ADDR_FLASH_SECTOR_9     ((rt_uint32_t)0x08140000) /* Base address of Sector 9, 256 Kbytes */
 #define ADDR_FLASH_SECTOR_10    ((rt_uint32_t)0x08180000) /* Base address of Sector 10, 256 Kbytes */
 #define ADDR_FLASH_SECTOR_11    ((rt_uint32_t)0x081C0000) /* Base address of Sector 11, 256 Kbytes */
-
+#endif
 /**
   * @brief  Gets the sector of a given address
   * @param  None
@@ -43,7 +69,7 @@
 static rt_uint32_t GetSector(rt_uint32_t Address)
 {
     rt_uint32_t sector = 0;
-
+#if defined (FLASH_OPTCR_nDBANK)
     if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
     {
         sector = FLASH_SECTOR_0;
@@ -52,6 +78,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_1;
     }
+#if (FLASH_SECTOR_TOTAL >= 4)    
     else if ((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
     {
         sector = FLASH_SECTOR_2;
@@ -60,6 +87,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_3;
     }
+#elif (FLASH_SECTOR_TOTAL >= 8)    
     else if ((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
     {
         sector = FLASH_SECTOR_4;
@@ -76,6 +104,7 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_7;
     }
+#elif (FLASH_SECTOR_TOTAL >= 24)
     else if ((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
     {
         sector = FLASH_SECTOR_8;
@@ -88,10 +117,127 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     {
         sector = FLASH_SECTOR_10;
     }
-    else /* (Address < FLASH_END_ADDR) && (Address >= ADDR_FLASH_SECTOR_11) */
+    else if ((Address < ADDR_FLASH_SECTOR_12) && (Address >= ADDR_FLASH_SECTOR_11))
     {
         sector = FLASH_SECTOR_11;
     }
+    else if ((Address < ADDR_FLASH_SECTOR_13) && (Address >= ADDR_FLASH_SECTOR_12))
+    {
+        sector = FLASH_SECTOR_12;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_14) && (Address >= ADDR_FLASH_SECTOR_13))
+    {
+        sector = FLASH_SECTOR_13;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_15) && (Address >= ADDR_FLASH_SECTOR_14))
+    {
+        sector = FLASH_SECTOR_14;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_16) && (Address >= ADDR_FLASH_SECTOR_15))
+    {
+        sector = FLASH_SECTOR_15;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_17) && (Address >= ADDR_FLASH_SECTOR_16))
+    {
+        sector = FLASH_SECTOR_16;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_18) && (Address >= ADDR_FLASH_SECTOR_17))
+    {
+        sector = FLASH_SECTOR_17;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_19) && (Address >= ADDR_FLASH_SECTOR_18))
+    {
+        sector = FLASH_SECTOR_18;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_20) && (Address >= ADDR_FLASH_SECTOR_19))
+    {
+        sector = FLASH_SECTOR_19;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_21) && (Address >= ADDR_FLASH_SECTOR_20))
+    {
+        sector = FLASH_SECTOR_20;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_22) && (Address >= ADDR_FLASH_SECTOR_21))
+    {
+        sector = FLASH_SECTOR_21;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_23) && (Address >= ADDR_FLASH_SECTOR_22))
+    {
+        sector = FLASH_SECTOR_22;
+    }          
+#else
+    else
+    {
+#if (FLASH_SECTOR_TOTAL == 4) 
+        sector = FLASH_SECTOR_4;
+#elif (FLASH_SECTOR_TOTAL == 8) 
+        sector = FLASH_SECTOR_8;
+#elif (FLASH_SECTOR_TOTAL == 24) 
+        sector = FLASH_SECTOR_23;
+#endif
+    }
+#endif
+#else
+    if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
+    {
+        sector = FLASH_SECTOR_0;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_2) && (Address >= ADDR_FLASH_SECTOR_1))
+    {
+        sector = FLASH_SECTOR_1;
+    }
+#if (FLASH_SECTOR_TOTAL >= 4)    
+    else if ((Address < ADDR_FLASH_SECTOR_3) && (Address >= ADDR_FLASH_SECTOR_2))
+    {
+        sector = FLASH_SECTOR_2;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_4) && (Address >= ADDR_FLASH_SECTOR_3))
+    {
+        sector = FLASH_SECTOR_3;
+    }
+#elif (FLASH_SECTOR_TOTAL >= 8)    
+    else if ((Address < ADDR_FLASH_SECTOR_5) && (Address >= ADDR_FLASH_SECTOR_4))
+    {
+        sector = FLASH_SECTOR_4;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_6) && (Address >= ADDR_FLASH_SECTOR_5))
+    {
+        sector = FLASH_SECTOR_5;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_7) && (Address >= ADDR_FLASH_SECTOR_6))
+    {
+        sector = FLASH_SECTOR_6;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_8) && (Address >= ADDR_FLASH_SECTOR_7))
+    {
+        sector = FLASH_SECTOR_7;
+    }
+#elif (FLASH_SECTOR_TOTAL >= 24)
+    else if ((Address < ADDR_FLASH_SECTOR_9) && (Address >= ADDR_FLASH_SECTOR_8))
+    {
+        sector = FLASH_SECTOR_8;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_10) && (Address >= ADDR_FLASH_SECTOR_9))
+    {
+        sector = FLASH_SECTOR_9;
+    }
+    else if ((Address < ADDR_FLASH_SECTOR_11) && (Address >= ADDR_FLASH_SECTOR_10))
+    {
+        sector = FLASH_SECTOR_10;
+    }
+#else
+    else
+    {
+#if (FLASH_SECTOR_TOTAL == 4) 
+        sector = FLASH_SECTOR_4;
+#elif (FLASH_SECTOR_TOTAL == 8) 
+        sector = FLASH_SECTOR_8;
+#elif (FLASH_SECTOR_TOTAL == 24) 
+        sector = FLASH_SECTOR_11;
+#endif
+    }
+#endif
+#endif
     return sector;
 }
 
@@ -236,7 +382,7 @@ __exit:
     }
 
     LOG_D("erase done: addr (0x%p), size %d", (void *)addr, size);
-    return result;
+    return size;
 }
 
 #if defined(PKG_USING_FAL)
@@ -253,9 +399,9 @@ static int fal_flash_erase_32k(long offset, size_t size);
 static int fal_flash_erase_128k(long offset, size_t size);
 static int fal_flash_erase_256k(long offset, size_t size);
 
-const struct fal_flash_dev stm32_onchip_flash_32k = { "onchip_flash_32k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_32K, (32 * 1024), {NULL, fal_flash_read_32k, fal_flash_write_32k, fal_flash_erase_32k} };
-const struct fal_flash_dev stm32_onchip_flash_128k = { "onchip_flash_128k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_128K, (128 * 1024), {NULL, fal_flash_read_128k, fal_flash_write_128k, fal_flash_erase_128k} };
-const struct fal_flash_dev stm32_onchip_flash_256k = { "onchip_flash_256k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_256K, (256 * 1024), {NULL, fal_flash_read_256k, fal_flash_write_256k, fal_flash_erase_256k} };
+const struct fal_flash_dev stm32_onchip_flash_32k = { "onchip_flash_32k", STM32_FLASH_START_ADRESS_32K, FLASH_SIZE_GRANULARITY_32K, (32 * 1024), {NULL, fal_flash_read_32k, fal_flash_write_32k, fal_flash_erase_32k} };
+const struct fal_flash_dev stm32_onchip_flash_128k = { "onchip_flash_128k", STM32_FLASH_START_ADRESS_128K, FLASH_SIZE_GRANULARITY_128K, (128 * 1024), {NULL, fal_flash_read_128k, fal_flash_write_128k, fal_flash_erase_128k} };
+const struct fal_flash_dev stm32_onchip_flash_256k = { "onchip_flash_256k", STM32_FLASH_START_ADRESS_256K, FLASH_SIZE_GRANULARITY_256K, (256 * 1024), {NULL, fal_flash_read_256k, fal_flash_write_256k, fal_flash_erase_256k} };
 
 static int fal_flash_read_32k(long offset, rt_uint8_t *buf, size_t size)
 {

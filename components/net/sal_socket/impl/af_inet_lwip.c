@@ -14,6 +14,7 @@
 #include <lwip/netdb.h>
 #include <lwip/api.h>
 #include <lwip/init.h>
+#include <lwip/netif.h>
 
 #ifdef SAL_USING_POSIX
 #include <dfs_poll.h>
@@ -21,6 +22,14 @@
 
 #include <sal.h>
 #include <af_inet.h>
+
+#include <netdev.h>
+
+#if (LWIP_VERSION < 0x2000000) && NETDEV_IPV6
+#error "The lwIP version is not support IPV6, please disable netdev IPV6 configuration "
+#elif (LWIP_VERSION > 0x2000000) && (NETDEV_IPV6 != LWIP_IPV6)
+#error "IPV6 configuration error, Please check and synchronize netdev and lwip IPV6 configuration."
+#endif
 
 #if LWIP_VERSION < 0x2000000
 #define SELWAIT_T int
@@ -214,6 +223,19 @@ static int inet_getsockname(int socket, struct sockaddr *name, socklen_t *namele
     return lwip_getsockname(socket, name, namelen);
 }
 
+int inet_ioctlsocket(int socket, long cmd, void *arg)
+{
+    switch (cmd)
+    {
+    case F_GETFL:
+    case F_SETFL:
+        return lwip_fcntl(socket, cmd, (int) arg); 
+
+    default:
+        return lwip_ioctl(socket, cmd, arg);
+    }
+}
+
 #ifdef SAL_USING_POSIX
 static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
@@ -251,6 +273,8 @@ static int inet_poll(struct dfs_fd *file, struct rt_pollreq *req)
         if (sock->errevent)
         {
             mask |= POLLERR;
+            /* clean error event */
+            sock->errevent = 0;
         }
         rt_hw_interrupt_enable(level);
     }
@@ -275,24 +299,13 @@ static const struct sal_socket_ops lwip_socket_ops =
     lwip_shutdown,
     lwip_getpeername,
     inet_getsockname,
-    lwip_ioctl,
+    inet_ioctlsocket,
 #ifdef SAL_USING_POSIX
     inet_poll,
 #endif
 };
 
-static int inet_create(struct sal_socket *socket, int type, int protocol)
-{
-    RT_ASSERT(socket);
-
-    //TODO Check type & protocol
-
-    socket->ops = &lwip_socket_ops;
-
-    return 0;
-}
-
-static struct sal_proto_ops lwip_proto_ops =
+static const struct sal_netdb_ops lwip_netdb_ops =
 {
     lwip_gethostbyname,
     lwip_gethostbyname_r,
@@ -303,17 +316,22 @@ static struct sal_proto_ops lwip_proto_ops =
 static const struct sal_proto_family lwip_inet_family =
 {
     AF_INET,
+#if LWIP_VERSION > 0x2000000
+    AF_INET6,
+#else
     AF_INET,
-    inet_create,
-    &lwip_proto_ops,
+#endif 
+    &lwip_socket_ops,
+    &lwip_netdb_ops,
 };
 
-int lwip_inet_init(void)
+/* Set lwIP network interface device protocol family information */
+int sal_lwip_netdev_set_pf_info(struct netdev *netdev)
 {
-    sal_proto_family_register(&lwip_inet_family);
-
+    RT_ASSERT(netdev);
+    
+    netdev->sal_user_data = (void *) &lwip_inet_family;
     return 0;
 }
-INIT_COMPONENT_EXPORT(lwip_inet_init);
 
 #endif /* SAL_USING_LWIP */

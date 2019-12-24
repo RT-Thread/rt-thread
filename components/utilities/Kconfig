@@ -1,50 +1,19 @@
 menu "Utilities"
 
-config RT_USING_LOGTRACE
-    bool "Enable log trace"
-    default n
-
-if RT_USING_LOGTRACE
-    config LOG_TRACE_MAX_SESSION
-        int "Maximal number of session"
-        default 16
-
-    choice
-        prompt "The default level of log"
-        default LOG_TRACE_USING_LEVEL_INFO
-
-        config LOG_TRACE_USING_LEVEL_NOTRACE
-            bool "No trace"
-
-        config LOG_TRACE_USING_LEVEL_ERROR
-            bool "Only error log"
-
-        config LOG_TRACE_USING_LEVEL_WARNING
-            bool "Warning log"
-
-        config LOG_TRACE_USING_LEVEL_INFO
-            bool "Information log"
-
-        config LOG_TRACE_USING_LEVEL_VERBOSE
-            bool "Verbose log"
-
-        config LOG_TRACE_USING_LEVEL_DEBUG
-            bool "All debug log"
-    endchoice
-
-    config LOG_TRACE_USING_MEMLOG
-        bool "Enable memory log for logtrace"
-        default n
-        help
-            Enable memory log for logtrace, then the logs in log_trace
-            will be printed out in idle thread hook function.
-
-            Please make sure the idle hook is not used.
-endif
-
 config RT_USING_RYM
     bool "Enable Ymodem"
     default n
+
+    if RT_USING_RYM
+        config YMODEM_USING_CRC_TABLE
+        bool "Enable CRC Table in Ymodem"
+        default n
+
+        config YMODEM_USING_FILE_TRANSFER
+        bool "Enable file transfer feature"
+        select RT_USING_DFS
+        default n
+    endif
 
 config RT_USING_ULOG
     bool "Enable ulog"
@@ -188,7 +157,6 @@ config RT_USING_ULOG
             config ULOG_TIME_USING_TIMESTAMP
                 bool "Enable timestamp format for time."
                 default n
-                select RT_USING_LIBC
                 depends on ULOG_OUTPUT_TIME
 
             config ULOG_OUTPUT_LEVEL
@@ -222,16 +190,19 @@ config RT_USING_ULOG
             select ULOG_OUTPUT_TIME
             select ULOG_USING_FILTER
             default n
-            
-        config ULOG_SW_VERSION_NUM
-            hex
-            default 0x00101
-            help
-                sfotware module version number
     endif
 
 config RT_USING_UTEST
     bool "Enable utest (RT-Thread test framework)"
     default n
+
+    if RT_USING_UTEST
+        config UTEST_THR_STACK_SIZE
+            int "The utest thread stack size"
+            default 4096
+        config UTEST_THR_PRIORITY
+            int "The utest thread priority"
+            default 20
+    endif
 
 endmenu

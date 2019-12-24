@@ -19,6 +19,7 @@
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
+    int rc = 0;
     rt_device_t device;
     rt_pipe_t *pipe;
 
@@ -31,6 +32,11 @@ static int pipe_fops_open(struct dfs_fd *fd)
     if (device->ref_count == 0)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            rc = -RT_ENOMEM;
+            goto __exit;
+        }
     }
 
     switch (fd->flags & O_ACCMODE)
@@ -48,9 +54,10 @@ static int pipe_fops_open(struct dfs_fd *fd)
     }
     device->ref_count ++;
 
+__exit:
     rt_mutex_release(&(pipe->lock));
 
-    return 0;
+    return rc;
 }
 
 static int pipe_fops_close(struct dfs_fd *fd)
@@ -90,12 +97,19 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
-        rt_ringbuffer_destroy(pipe->fifo);
+        if (pipe->fifo != RT_NULL)
+            rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
 
     rt_mutex_release(&(pipe->lock));
+
+    if (device->ref_count == 0 && pipe->is_named == RT_FALSE)
+    {
+        /* delete the unamed pipe */
+        rt_pipe_delete(device->parent.name);
+    }
 
     return 0;
 }
@@ -419,10 +433,11 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     rt_pipe_t *pipe;
     rt_device_t dev;
 
-    pipe = rt_malloc(sizeof(rt_pipe_t));
+    pipe = (rt_pipe_t *)rt_malloc(sizeof(rt_pipe_t));
     if (pipe == RT_NULL) return RT_NULL;
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
+    pipe->is_named = RT_TRUE; /* initialize as a named pipe */
     rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
     rt_wqueue_init(&(pipe->reader_queue));
     rt_wqueue_init(&(pipe->writer_queue));
@@ -517,6 +532,7 @@ int pipe(int fildes[2])
         return -1;
     }
 
+    pipe->is_named = RT_FALSE; /* unamed pipe */
     rt_snprintf(dev_name, sizeof(dev_name), "/dev/%s", dname);
     fildes[0] = open(dev_name, O_RDONLY, 0);
     if (fildes[0] < 0)

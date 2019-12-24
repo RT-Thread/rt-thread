@@ -17,6 +17,15 @@
 #include "board.h"
 #include "drv_timer.h"
 
+#include <mmu.h>
+
+struct mem_desc platform_mem_desc[] = {
+    {0x10000000, 0x50000000, 0x10000000, DEVICE_MEM},
+    {0x60000000, 0xe0000000, 0x60000000, NORMAL_MEM}
+};
+
+const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
+
 #define SYS_CTRL                        __REG32(REALVIEW_SCTL_BASE)
 
 extern void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);

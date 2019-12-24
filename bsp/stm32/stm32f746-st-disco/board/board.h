@@ -14,6 +14,7 @@
 #include <rtthread.h>
 #include <stm32f7xx.h>
 #include "drv_common.h"
+#include "drv_gpio.h"
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE             (1024 * 1024)

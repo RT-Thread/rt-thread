@@ -12,14 +12,12 @@
 
 #define DEBUG_TCP_CLIENT
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "TCP"
+#define DBG_TAG               "TCP"
 #ifdef DEBUG_TCP_CLIENT
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO /* DBG_ERROR */
+#define DBG_LVL               DBG_INFO /* DBG_ERROR */
 #endif
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #define BUFSZ   1024

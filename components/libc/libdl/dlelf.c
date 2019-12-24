@@ -11,10 +11,8 @@
 #include "dlmodule.h"
 #include "dlelf.h"
 
-#define DBG_SECTION_NAME    "DLMD"
-#define DBG_ENABLE          // enable debug macro
-#define DBG_LEVEL           DBG_INFO
-#define DBG_COLOR
+#define DBG_TAG    "DLMD"
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
 
 rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_ptr)

@@ -27,12 +27,9 @@
 #include "drv_gpio.h"
 #include "interrupt.h"
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "GPIO"
-#define DBG_LEVEL         DBG_WARNING
-#define DBG_COLOR
+#define DBG_TAG  "GPIO"
+#define DBG_LVL  DBG_WARNING
 #include <rtdbg.h>
-
 
 #define readl(addr)           (*(volatile unsigned int *)(addr))
 #define writel(value,addr)    (*(volatile unsigned int *)(addr) = (value))

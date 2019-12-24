@@ -8,14 +8,11 @@
  * 2019-01-08     zylx         first version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
 
 #ifdef BSP_USING_LCD
 #include <lcd_port.h>
 #include <string.h>
-#include "drv_gpio.h"
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.lcd"
@@ -244,10 +241,10 @@ void turn_on_lcd_backlight(void)
     struct rt_device_pwm *pwm_dev;
 
     /* turn on the LCD backlight */
-    pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
+    pwm_dev = (struct rt_device_pwm *)rt_device_find(LCD_PWM_DEV_NAME);
     /* pwm frequency:100K = 10000ns */
-    rt_pwm_set(pwm_dev, PWM_DEV_CHANNEL, 10000, 10000);
-    rt_pwm_enable(pwm_dev, PWM_DEV_CHANNEL);
+    rt_pwm_set(pwm_dev, LCD_PWM_DEV_CHANNEL, 10000, 10000);
+    rt_pwm_enable(pwm_dev, LCD_PWM_DEV_CHANNEL);
 }
 #elif defined(LCD_BACKLIGHT_USING_GPIO)
 void turn_on_lcd_backlight(void)

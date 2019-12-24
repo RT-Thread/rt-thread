@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -127,7 +111,7 @@ typedef struct
 /** 
   * @brief  SD handle Structure definition
   */ 
-typedef struct
+typedef struct __SD_HandleTypeDef
 {
   SD_TypeDef                   *Instance;        /*!< SD registers base address           */
   
@@ -159,6 +143,15 @@ typedef struct
   
   uint32_t                     CID[4];           /*!< SD card identification number table */
   
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+  void (* TxCpltCallback)                 (struct __SD_HandleTypeDef *hsd);
+  void (* RxCpltCallback)                 (struct __SD_HandleTypeDef *hsd);
+  void (* ErrorCallback)                  (struct __SD_HandleTypeDef *hsd);
+  void (* AbortCpltCallback)              (struct __SD_HandleTypeDef *hsd);
+
+  void (* MspInitCallback)                (struct __SD_HandleTypeDef *hsd);
+  void (* MspDeInitCallback)              (struct __SD_HandleTypeDef *hsd);
+#endif  
 }SD_HandleTypeDef;
 
 /** 
@@ -255,6 +248,32 @@ typedef struct
   * @}
   */
 
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+/** @defgroup SD_Exported_Types_Group7 SD Callback ID enumeration definition 
+  * @{
+  */
+typedef enum
+{
+  HAL_SD_TX_CPLT_CB_ID                 = 0x00U,  /*!< SD Tx Complete Callback ID                     */
+  HAL_SD_RX_CPLT_CB_ID                 = 0x01U,  /*!< SD Rx Complete Callback ID                     */
+  HAL_SD_ERROR_CB_ID                   = 0x02U,  /*!< SD Error Callback ID                           */
+  HAL_SD_ABORT_CB_ID                   = 0x03U,  /*!< SD Abort Callback ID                           */
+
+  HAL_SD_MSP_INIT_CB_ID                = 0x10U,  /*!< SD MspInit Callback ID                         */
+  HAL_SD_MSP_DEINIT_CB_ID              = 0x11U   /*!< SD MspDeInit Callback ID                       */
+}HAL_SD_CallbackIDTypeDef;
+/** 
+  * @}
+  */
+
+/** @defgroup SD_Exported_Types_Group8 SD Callback pointer definition 
+  * @{
+  */
+typedef void (*pSD_CallbackTypeDef)           (SD_HandleTypeDef *hsd);
+/** 
+  * @}
+  */
+#endif
 /** 
   * @}
   */
@@ -306,6 +325,10 @@ typedef struct
 #define HAL_SD_ERROR_DMA                      SDMMC_ERROR_DMA                     /*!< Error while DMA transfer                                      */
 #define HAL_SD_ERROR_TIMEOUT                  SDMMC_ERROR_TIMEOUT                 /*!< Timeout error                                                 */
                                                 
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+#define HAL_SD_ERROR_INVALID_CALLBACK         SDMMC_ERROR_INVALID_PARAMETER       /*!< Invalid callback error                                        */
+#endif
+                                                
 /** 
   * @}
   */
@@ -354,6 +377,19 @@ typedef struct
  *  @brief macros to handle interrupts and specific clock configurations
  * @{
  */
+/** @brief Reset SD handle state.
+  * @param  __HANDLE__ : SD handle.
+  * @retval None
+  */
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+#define __HAL_SD_RESET_HANDLE_STATE(__HANDLE__)           do {                                              \
+                                                               (__HANDLE__)->State = HAL_SD_STATE_RESET; \
+                                                               (__HANDLE__)->MspInitCallback = NULL;       \
+                                                               (__HANDLE__)->MspDeInitCallback = NULL;     \
+                                                             } while(0)
+#else
+#define __HAL_SD_RESET_HANDLE_STATE(__HANDLE__)           ((__HANDLE__)->State = HAL_SD_STATE_RESET)
+#endif
  
 /**
   * @brief  Enable the SD device.
@@ -584,6 +620,12 @@ void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd);
 void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd);
 void HAL_SD_ErrorCallback(SD_HandleTypeDef *hsd);
 void HAL_SD_AbortCallback(SD_HandleTypeDef *hsd);
+
+#if (USE_HAL_SD_REGISTER_CALLBACKS == 1)
+/* SD callback registering/unregistering */
+HAL_StatusTypeDef HAL_SD_RegisterCallback  (SD_HandleTypeDef *hsd, HAL_SD_CallbackIDTypeDef CallbackId, pSD_CallbackTypeDef pCallback);
+HAL_StatusTypeDef HAL_SD_UnRegisterCallback(SD_HandleTypeDef *hsd, HAL_SD_CallbackIDTypeDef CallbackId);
+#endif
 /**
   * @}
   */

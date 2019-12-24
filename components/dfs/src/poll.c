@@ -19,6 +19,8 @@
 #include <dfs_posix.h>
 #include <dfs_poll.h>
 
+#ifdef RT_USING_POSIX
+
 struct rt_poll_node;
 
 struct rt_poll_table
@@ -54,7 +56,7 @@ static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
     struct rt_poll_table *pt;
     struct rt_poll_node *node;
 
-    node = rt_malloc(sizeof(struct rt_poll_node));
+    node = (struct rt_poll_node *)rt_malloc(sizeof(struct rt_poll_node));
     if (node == RT_NULL)
         return;
 
@@ -132,7 +134,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
             mask = POLLMASK_DEFAULT;
             if (f->fops->poll)
             {
-                req->_key = pollfd->events | POLLERR| POLLHUP;
+                req->_key = pollfd->events | POLLERR | POLLHUP;
 
                 mask = f->fops->poll(f, req);
             }
@@ -214,3 +216,4 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
     return num;
 }
 
+#endif 

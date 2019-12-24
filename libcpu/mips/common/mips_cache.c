@@ -19,7 +19,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ7ÈÕ     Urey         the first version
+ * 2016-09-07    Urey         the first version
  */
 
 #include <rtthread.h>

@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F767IG
     bool
     select SOC_SERIES_STM32F7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -188,11 +190,23 @@ menuconfig BSP_USING_SPI
                 default 23
         endif
 
-    config BSP_USING_ONCHIP_RTC
+    menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
@@ -213,6 +227,8 @@ menuconfig BSP_USING_SPI
         bool
         default n
         
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

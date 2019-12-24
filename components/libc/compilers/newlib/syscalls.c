@@ -27,6 +27,14 @@
 
 /* Reentrant versions of system calls.  */
 
+#ifndef _REENT_ONLY
+int *
+__errno ()
+{
+  return _rt_errno();
+}
+#endif
+
 int
 _close_r(struct _reent *ptr, int fd)
 {
@@ -433,4 +441,19 @@ void abort(void)
     }
 
     while (1);
+}
+
+uid_t getuid(void)
+{
+    return 0;
+}
+
+mode_t umask(mode_t mask)
+{
+    return 022;
+}
+
+int flock(int fd, int operation)
+{
+    return 0;
 }

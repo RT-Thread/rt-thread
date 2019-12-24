@@ -11,6 +11,7 @@ CMSIS/Device/ST/STM32F0xx/Source/Templates/system_stm32f0xx.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc.c
+STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_crc_ex.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c
@@ -22,10 +23,8 @@ STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_gpio.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_pwr.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_rcc.c
 STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_utils.c
+STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c
 """)
-
-if GetDepend(['RT_USING_PIN']):
-    src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c']
 
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.c']
@@ -78,11 +77,8 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c']
 
 path = [cwd + '/CMSIS/Device/ST/STM32F0xx/Include', 
-	cwd + '/STM32F0xx_HAL_Driver/Inc',
+    cwd + '/STM32F0xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
-
-if GetDepend(['RT_USING_RTT_CMSIS']):
-    path += [RTT_ROOT + '/components/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

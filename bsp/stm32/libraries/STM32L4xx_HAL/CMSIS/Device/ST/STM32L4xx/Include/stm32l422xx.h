@@ -12,29 +12,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -93,7 +77,7 @@ typedef enum
   SysTick_IRQn                = -1,     /*!< 15 Cortex-M4 System Tick Interrupt                                */
 /******  STM32 specific Interrupt Numbers **********************************************************************/
   WWDG_IRQn                   = 0,      /*!< Window WatchDog Interrupt                                         */
-  PVD_PVM_IRQn                = 1,      /*!< PVD/PVM1/PVM2/PVM3/PVM4 through EXTI Line detection Interrupts    */
+  PVD_PVM_IRQn                = 1,      /*!< PVD/PVM1/PVM3/PVM4 through EXTI Line detection Interrupts         */
   TAMP_STAMP_IRQn             = 2,      /*!< Tamper and TimeStamp interrupts through the EXTI line             */
   RTC_WKUP_IRQn               = 3,      /*!< RTC Wakeup interrupt through the EXTI line                        */
   FLASH_IRQn                  = 4,      /*!< FLASH global Interrupt                                            */
@@ -1374,6 +1358,10 @@ typedef struct
 #define ADC_SMPR1_SMP9_0               (0x1UL << ADC_SMPR1_SMP9_Pos)           /*!< 0x08000000 */
 #define ADC_SMPR1_SMP9_1               (0x2UL << ADC_SMPR1_SMP9_Pos)           /*!< 0x10000000 */
 #define ADC_SMPR1_SMP9_2               (0x4UL << ADC_SMPR1_SMP9_Pos)           /*!< 0x20000000 */
+
+#define ADC_SMPR1_SMPPLUS_Pos          (31U)
+#define ADC_SMPR1_SMPPLUS_Msk          (0x1UL << ADC_SMPR1_SMPPLUS_Pos)        /*!< 0x80000000 */
+#define ADC_SMPR1_SMPPLUS              ADC_SMPR1_SMPPLUS_Msk                   /*!< ADC channels sampling time additional setting */
 
 /********************  Bit definition for ADC_SMPR2 register  *****************/
 #define ADC_SMPR2_SMP10_Pos            (0U)
@@ -3433,7 +3421,7 @@ typedef struct
 #define FLASH_CR_MER1_Msk                 (0x1UL << FLASH_CR_MER1_Pos)         /*!< 0x00000004 */
 #define FLASH_CR_MER1                     FLASH_CR_MER1_Msk
 #define FLASH_CR_PNB_Pos                  (3U)
-#define FLASH_CR_PNB_Msk                  (0x7FUL << FLASH_CR_PNB_Pos)         /*!< 0x000003F8 */
+#define FLASH_CR_PNB_Msk                  (0x3FUL << FLASH_CR_PNB_Pos)         /*!< 0x000001F8 */
 #define FLASH_CR_PNB                      FLASH_CR_PNB_Msk
 #define FLASH_CR_STRT_Pos                 (16U)
 #define FLASH_CR_STRT_Msk                 (0x1UL << FLASH_CR_STRT_Pos)         /*!< 0x00010000 */
@@ -5037,9 +5025,9 @@ typedef struct
 #define PWR_CR3_EIWUL_Pos            (15U)
 #define PWR_CR3_EIWUL_Msk            (0x1UL << PWR_CR3_EIWUL_Pos)              /*!< 0x00008000 */
 #define PWR_CR3_EIWUL                PWR_CR3_EIWUL_Msk                         /*!< Enable Internal Wake-up line */
-#define PWR_CR3_EN_ULP_Pos           (11U)
-#define PWR_CR3_EN_ULP_Msk           (0x1UL << PWR_CR3_EN_ULP_Pos)              /*!< 0x00000800 */
-#define PWR_CR3_EN_ULP               PWR_CR3_EN_ULP_Msk                        /*!< Enable ULP BORL, BORH and PVD for STOP2 and Standby modes */
+#define PWR_CR3_ENULP_Pos            (11U)
+#define PWR_CR3_ENULP_Msk            (0x1UL << PWR_CR3_ENULP_Pos)              /*!< 0x00000800 */
+#define PWR_CR3_ENULP                PWR_CR3_ENULP_Msk                         /*!< Enable ULP BORL, BORH and PVD for STOP2 and Standby modes */
 #define PWR_CR3_APC_Pos              (10U)
 #define PWR_CR3_APC_Msk              (0x1UL << PWR_CR3_APC_Pos)                /*!< 0x00000400 */
 #define PWR_CR3_APC                  PWR_CR3_APC_Msk                           /*!< Apply pull-up and pull-down configuration */
@@ -7546,6 +7534,12 @@ typedef struct
 #define QUADSPI_CR_SSHIFT_Pos          (4U)
 #define QUADSPI_CR_SSHIFT_Msk          (0x1UL << QUADSPI_CR_SSHIFT_Pos)        /*!< 0x00000010 */
 #define QUADSPI_CR_SSHIFT              QUADSPI_CR_SSHIFT_Msk                   /*!< Sample Shift */
+#define QUADSPI_CR_DFM_Pos             (6U)
+#define QUADSPI_CR_DFM_Msk             (0x1UL << QUADSPI_CR_DFM_Pos)           /*!< 0x00000040 */
+#define QUADSPI_CR_DFM                 QUADSPI_CR_DFM_Msk                      /*!< Dual-flash mode */
+#define QUADSPI_CR_FSEL_Pos            (7U)
+#define QUADSPI_CR_FSEL_Msk            (0x1UL << QUADSPI_CR_FSEL_Pos)          /*!< 0x00000080 */
+#define QUADSPI_CR_FSEL                QUADSPI_CR_FSEL_Msk                     /*!< Flash memory selection */
 #define QUADSPI_CR_FTHRES_Pos          (8U)
 #define QUADSPI_CR_FTHRES_Msk          (0xFUL << QUADSPI_CR_FTHRES_Pos)        /*!< 0x00000F00 */
 #define QUADSPI_CR_FTHRES              QUADSPI_CR_FTHRES_Msk                   /*!< FTHRES[3:0] FIFO Level */
@@ -7675,6 +7669,9 @@ typedef struct
 #define QUADSPI_CCR_SIOO_Pos           (28U)
 #define QUADSPI_CCR_SIOO_Msk           (0x1UL << QUADSPI_CCR_SIOO_Pos)         /*!< 0x10000000 */
 #define QUADSPI_CCR_SIOO               QUADSPI_CCR_SIOO_Msk                    /*!< SIOO: Send Instruction Only Once Mode */
+#define QUADSPI_CCR_DHHC_Pos           (30U)
+#define QUADSPI_CCR_DHHC_Msk           (0x1UL << QUADSPI_CCR_DHHC_Pos)         /*!< 0x40000000 */
+#define QUADSPI_CCR_DHHC               QUADSPI_CCR_DHHC_Msk                    /*!< DHHC: DDR hold */
 #define QUADSPI_CCR_DDRM_Pos           (31U)
 #define QUADSPI_CCR_DDRM_Msk           (0x1UL << QUADSPI_CCR_DDRM_Pos)         /*!< 0x80000000 */
 #define QUADSPI_CCR_DDRM               QUADSPI_CCR_DDRM_Msk                    /*!< DDRM: Double Data Rate Mode */
@@ -8831,7 +8828,7 @@ typedef struct
 
 /******************************************************************************/
 /*                                                                            */
-/*                         Low Power Timer (LPTTIM)                           */
+/*                         Low Power Timer (LPTIM)                            */
 /*                                                                            */
 /******************************************************************************/
 /******************  Bit definition for LPTIM_ISR register  *******************/
@@ -10820,6 +10817,9 @@ typedef struct
 /****************** LPTIM Instances : All supported instances *****************/
 #define IS_LPTIM_INSTANCE(INSTANCE)     (((INSTANCE) == LPTIM1) || \
                                          ((INSTANCE) == LPTIM2))
+
+/****************** LPTIM Instances : supporting the encoder mode *************/
+#define IS_LPTIM_ENCODER_INTERFACE_INSTANCE(INSTANCE) ((INSTANCE) == LPTIM1)
 
 /****************** TIM Instances : All supported instances *******************/
 #define IS_TIM_INSTANCE(INSTANCE)       (((INSTANCE) == TIM1)   || \

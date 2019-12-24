@@ -240,6 +240,7 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     register rt_base_t temp;
+    struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -249,11 +250,29 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
-    /* initialize object's parameters */
+    /* check object type to avoid re-initialization */
 
+    /* enter critical */
+    rt_enter_critical();
+    /* try to find object */
+    for (node  = information->object_list.next;
+            node != &(information->object_list);
+            node  = node->next)
+    {
+        struct rt_object *obj;
+
+        obj = rt_list_entry(node, struct rt_object, list);
+        if (obj) /* skip warning when disable debug */
+        {
+            RT_ASSERT(obj != object);
+        }
+    }
+    /* leave critical */
+    rt_exit_critical();
+
+    /* initialize object's parameters */
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
-
     /* copy name */
     rt_strncpy(object->name, name, RT_NAME_MAX);
 

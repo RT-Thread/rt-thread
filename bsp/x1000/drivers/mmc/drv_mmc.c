@@ -1,17 +1,14 @@
 /*
- * File      : drv_mmc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013 - 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-03-09     aozima       the first version
- * 2013-03-29     aozima       support Jz4770.
- * 2013-04-01     aozima       add interrupt support for Jz4770.
+ * 2013-03-29     aozima       support JZ4770.
+ * 2013-04-01     aozima       add interrupt support for JZ4770.
+ * 2019-04-04     Jean-Luc     fix bug in jzmmc_submit_dma.
  */
 
 #include <rthw.h>
@@ -33,12 +30,8 @@
 #define DMA_ALIGN       (32U)
 #define PIO_THRESHOLD       64  /* use pio mode if data length < PIO_THRESHOLD */
 
-#define DEBUG_ENABLE
-#define DEBUG_SECTION_NAME  "SDIO"
-#define DEBUG_LEVEL         DBG_INFO
-// #define DEBUG_LEVEL         DBG_LOG
-#define DEBUG_COLOR
-
+#define DBG_TAG  "SDIO"
+#define DBG_LVL  DBG_INFO
 #include <rtdbg.h>
 
 /*
@@ -279,7 +272,7 @@ rt_inline void jzmmc_submit_dma(struct jzmmc_host *host, struct rt_mmcsd_data *d
     host->dma_desc.nda  = 0;
     host->dma_desc.len  = data->blks * data->blksize;
     host->dma_desc.da   = virt_to_phys(data->buf);
-    host->dma_desc.dcmd = DMACMD_ENDI | DMACMD_LINK; /* only one DMA descriptor */
+    host->dma_desc.dcmd = DMACMD_ENDI; /* only one DMA descriptor */
 
 #ifdef DMA_BUFFER
     if ((uint32_t)(data->buf) & (DMA_ALIGN - 1))

@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F103RB
     bool
     select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -19,7 +21,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (w25q16 spi2)"
+        bool "Enable SPI FLASH (W25Q16 spi2)"
 	select BSP_USING_SPI
         select BSP_USING_SPI2
         select RT_USING_SFUD
@@ -178,17 +180,31 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         default n 
 
-    config BSP_USING_ONCHIP_RTC
+    menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-
+	
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

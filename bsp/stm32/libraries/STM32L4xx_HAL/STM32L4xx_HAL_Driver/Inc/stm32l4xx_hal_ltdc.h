@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -38,14 +22,13 @@
 #define STM32L4xx_HAL_LTDC_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
-
-#if defined (LTDC)
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal_def.h"
 
+#if defined (LTDC)
 
 /** @addtogroup STM32L4xx_HAL_Driver
   * @{
@@ -60,7 +43,11 @@
 /** @defgroup LTDC_Exported_Types LTDC Exported Types
   * @{
   */
+#if defined(LTDC_Layer2_BASE)
 #define MAX_LAYER  2U
+#elif defined(LTDC_Layer1_BASE)
+#define MAX_LAYER  1U
+#endif
 
 /**
   * @brief  LTDC color structure definition
@@ -176,12 +163,16 @@ typedef enum
   HAL_LTDC_STATE_BUSY              = 0x02U,    /*!< LTDC internal process is ongoing     */
   HAL_LTDC_STATE_TIMEOUT           = 0x03U,    /*!< LTDC Timeout state                   */
   HAL_LTDC_STATE_ERROR             = 0x04U     /*!< LTDC state error                     */
-}HAL_LTDC_StateTypeDef;
+} HAL_LTDC_StateTypeDef;
 
 /**
   * @brief  LTDC handle Structure definition
   */
+#if (USE_HAL_LTDC_REGISTER_CALLBACKS == 1)
 typedef struct __LTDC_HandleTypeDef
+#else
+typedef struct
+#endif /* USE_HAL_LTDC_REGISTER_CALLBACKS */
 {
   LTDC_TypeDef                *Instance;                /*!< LTDC Register base address                */
 
@@ -196,12 +187,12 @@ typedef struct __LTDC_HandleTypeDef
   __IO uint32_t               ErrorCode;                /*!< LTDC Error code                           */
 
 #if (USE_HAL_LTDC_REGISTER_CALLBACKS == 1)
-  void  (* LineEventCallback)  (struct __LTDC_HandleTypeDef *hltdc);  /*!< LTDC Line Event Callback    */
-  void  (* ReloadEventCallback)(struct __LTDC_HandleTypeDef *hltdc);  /*!< LTDC Reload Event Callback  */
-  void  (* ErrorCallback)      (struct __LTDC_HandleTypeDef *hltdc);  /*!< LTDC Error Callback         */
+  void (* LineEventCallback)(struct __LTDC_HandleTypeDef *hltdc);     /*!< LTDC Line Event Callback    */
+  void (* ReloadEventCallback)(struct __LTDC_HandleTypeDef *hltdc);   /*!< LTDC Reload Event Callback  */
+  void (* ErrorCallback)(struct __LTDC_HandleTypeDef *hltdc);         /*!< LTDC Error Callback         */
 
-  void  (* MspInitCallback)    (struct __LTDC_HandleTypeDef *hltdc);  /*!< LTDC Msp Init callback      */
-  void  (* MspDeInitCallback)  (struct __LTDC_HandleTypeDef *hltdc);  /*!< LTDC Msp DeInit callback    */
+  void (* MspInitCallback)(struct __LTDC_HandleTypeDef *hltdc);       /*!< LTDC Msp Init callback      */
+  void (* MspDeInitCallback)(struct __LTDC_HandleTypeDef *hltdc);     /*!< LTDC Msp DeInit callback    */
 
 #endif /* USE_HAL_LTDC_REGISTER_CALLBACKS */
 
@@ -221,12 +212,12 @@ typedef enum
   HAL_LTDC_RELOAD_EVENT_CB_ID       = 0x03U,    /*!< LTDC Reload Callback ID        */
   HAL_LTDC_ERROR_CB_ID              = 0x04U     /*!< LTDC Error Callback ID         */
 
-}HAL_LTDC_CallbackIDTypeDef;
+} HAL_LTDC_CallbackIDTypeDef;
 
 /**
   * @brief  HAL LTDC Callback pointer definition
   */
-typedef  void (*pLTDC_CallbackTypeDef)(LTDC_HandleTypeDef * hltdc); /*!< pointer to an LTDC callback function */
+typedef  void (*pLTDC_CallbackTypeDef)(LTDC_HandleTypeDef *hltdc);  /*!< pointer to an LTDC callback function */
 
 #endif /* USE_HAL_LTDC_REGISTER_CALLBACKS */
 
@@ -256,8 +247,12 @@ typedef  void (*pLTDC_CallbackTypeDef)(LTDC_HandleTypeDef * hltdc); /*!< pointer
 /** @defgroup LTDC_Layer LTDC Layer
   * @{
   */
+#if defined(LTDC_Layer1_BASE)
 #define LTDC_LAYER_1                      0x00000000U   /*!< LTDC Layer 1 */
+#endif
+#if defined(LTDC_Layer2_BASE)
 #define LTDC_LAYER_2                      0x00000001U   /*!< LTDC Layer 2 */
+#endif
 /**
   * @}
   */
@@ -414,10 +409,10 @@ typedef  void (*pLTDC_CallbackTypeDef)(LTDC_HandleTypeDef * hltdc); /*!< pointer
   */
 #if (USE_HAL_LTDC_REGISTER_CALLBACKS == 1)
 #define __HAL_LTDC_RESET_HANDLE_STATE(__HANDLE__) do{                                                  \
-                                                       (__HANDLE__)->State = HAL_LTDC_STATE_RESET;     \
-                                                       (__HANDLE__)->MspInitCallback = NULL;           \
-                                                       (__HANDLE__)->MspDeInitCallback = NULL;         \
-                                                     } while(0)
+                                                      (__HANDLE__)->State = HAL_LTDC_STATE_RESET;     \
+                                                      (__HANDLE__)->MspInitCallback = NULL;           \
+                                                      (__HANDLE__)->MspDeInitCallback = NULL;         \
+                                                    } while(0)
 #else
 #define __HAL_LTDC_RESET_HANDLE_STATE(__HANDLE__) ((__HANDLE__)->State = HAL_LTDC_STATE_RESET)
 #endif /*USE_HAL_LTDC_REGISTER_CALLBACKS */
@@ -550,8 +545,8 @@ typedef  void (*pLTDC_CallbackTypeDef)(LTDC_HandleTypeDef * hltdc); /*!< pointer
 /* Initialization and de-initialization functions *****************************/
 HAL_StatusTypeDef HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc);
 HAL_StatusTypeDef HAL_LTDC_DeInit(LTDC_HandleTypeDef *hltdc);
-void HAL_LTDC_MspInit(LTDC_HandleTypeDef* hltdc);
-void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef* hltdc);
+void HAL_LTDC_MspInit(LTDC_HandleTypeDef *hltdc);
+void HAL_LTDC_MspDeInit(LTDC_HandleTypeDef *hltdc);
 void HAL_LTDC_ErrorCallback(LTDC_HandleTypeDef *hltdc);
 void HAL_LTDC_LineEventCallback(LTDC_HandleTypeDef *hltdc);
 void HAL_LTDC_ReloadEventCallback(LTDC_HandleTypeDef *hltdc);

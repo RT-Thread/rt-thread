@@ -184,6 +184,4 @@
 #define RT_USING_UART
 #define RT_USING_UART1
 
-#define RT_USING_RTT_CMSIS
-
 #endif

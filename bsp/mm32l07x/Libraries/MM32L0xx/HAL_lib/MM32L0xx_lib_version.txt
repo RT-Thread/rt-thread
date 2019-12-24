@@ -1,0 +1,6 @@
+
+Release Notes
+
+
+2017-04-21
+MM32L0xx  std lib version is updated to Ver2.0.0

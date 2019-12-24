@@ -1,97 +1,154 @@
-/* RT-Thread config file */
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-/* RT_NAME_MAX*/
-#define RT_NAME_MAX	   6
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Project Configuration */
 
-/* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+/* RT-Thread Kernel */
 
-/* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	8
-
-/* Tick per Second */
-#define RT_TICK_PER_SECOND	200
-
-/* SECTION: RT_DEBUG */
-/* Thread Debug */
-// #define RT_DEBUG
-//#define RT_DEBUG_INIT 1
-// #define RT_USING_OVERFLOW_CHECK
-
-/* Using Hook */
+#define RT_NAME_MAX 8
+#define RT_ALIGN_SIZE 4
+#define RT_THREAD_PRIORITY_32
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 100
+#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
-
-// #define RT_USING_IDLE_HOOK
-
-#define IDLE_THREAD_STACK_SIZE	384
-
-/* Using Software Timer */
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
+#define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO		1
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	200
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_DEBUG
 
-/* SECTION: IPC */
-/* Using Semaphore*/
+/* Inter-Thread communication */
+
 #define RT_USING_SEMAPHORE
-
-/* Using Mutex */
 #define RT_USING_MUTEX
-
-/* Using Event */
 #define RT_USING_EVENT
-
-/* Using MailBox */
-/* #define RT_USING_MAILBOX */
-
-/* Using Message Queue */
+#define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
 
-/* SECTION: Memory Management */
-/* Using Memory Pool Management*/
-/* #define RT_USING_MEMPOOL */
+/* Memory Management */
 
-/* Using Dynamic Heap Management */
+#define RT_USING_MEMPOOL
+#define RT_USING_SMALL_MEM
 #define RT_USING_HEAP
 
-/* Using Small MM */
-#define RT_USING_SMALL_MEM
-#define RT_USING_TINY_SIZE
+/* Kernel Device Object */
 
-// <bool name="RT_USING_COMPONENTS_INIT" description="Using RT-Thread components initialization" default="true" />
-//#define RT_USING_COMPONENTS_INIT
-
-/* SECTION: Device System */
-/* Using Device System */
 #define RT_USING_DEVICE
-// <bool name="RT_USING_DEVICE_IPC" description="Using device communication" default="true" />
+#define RT_USING_CONSOLE
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_VER_NUM 0x40002
+
+/* RT-Thread Components */
+
+#define RT_USING_COMPONENTS_INIT
+
+/* C++ features */
+
+
+/* Command shell */
+
+#define RT_USING_FINSH
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
+#define FINSH_USING_SYMTAB
+#define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
+#define FINSH_ARG_MAX 10
+
+/* Device virtual file system */
+
+
+/* Device Drivers */
+
 #define RT_USING_DEVICE_IPC
-// <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_PIN
 
-/* SECTION: Console options */
-#define RT_USING_CONSOLE
-/* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
-// <string name="RT_CONSOLE_DEVICE_NAME" description="The device name for console" default="uart1" />
-#define RT_CONSOLE_DEVICE_NAME	    "uart0"
+/* Using Hardware Crypto drivers */
 
-// #define RT_USING_SPI
 
-/* SECTION: finsh, a C-Express shell */
-// #define RT_USING_FINSH
-/* configure finsh parameters */
-#define FINSH_THREAD_PRIORITY 6
-#define FINSH_THREAD_STACK_SIZE	512
-#define FINSH_HISTORY_LINES	1
-/* Using symbol table */
-// #define FINSH_USING_SYMTAB
-// #define FINSH_USING_DESCRIPTION
+/* Using WiFi */
 
-// #define FINSH_USING_MSH
-#define FINSH_USING_MSH_ONLY
+
+/* Using USB */
+
+
+/* POSIX layer and C standard library */
+
+#define RT_USING_LIBC
+
+/* Network */
+
+/* Socket abstraction layer */
+
+
+/* Network interface device */
+
+
+/* light weight TCP/IP stack */
+
+
+/* AT commands */
+
+
+/* VBUS(Virtual Software BUS) */
+
+
+/* Utilities */
+
+
+/* RT-Thread online packages */
+
+/* IoT - internet of things */
+
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+
+/* Wiced WiFi */
+
+
+/* IoT Cloud */
+
+
+/* security packages */
+
+
+/* language packages */
+
+
+/* multimedia packages */
+
+
+/* tools packages */
+
+
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
+/* miscellaneous packages */
+
+
+/* samples: kernel and components samples */
+
 
 #endif

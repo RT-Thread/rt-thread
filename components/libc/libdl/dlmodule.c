@@ -16,10 +16,8 @@
 
 #include <dfs_posix.h>
 
-#define DBG_SECTION_NAME    "DLMD"
-#define DBG_ENABLE          // enable debug macro
-#define DBG_LEVEL           DBG_INFO
-#define DBG_COLOR
+#define DBG_TAG    "DLMD"
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
 
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL;
@@ -443,6 +441,10 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
         /* close file and release fd */
         close(fd);
         fd = -1;
+    }
+    else
+    {
+        goto __exit;
     }
 
     /* check ELF header */

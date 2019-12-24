@@ -14,7 +14,7 @@ if GetDepend('RT_USING_DFS') == False:
 if GetDepend('RT_USING_MODULE') == False:
     SrcRemove(src, ['libc_syms.c'])
 
-if rtconfig.PLATFORM == 'armcc':
+if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
     group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], 
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 

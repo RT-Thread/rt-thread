@@ -1,7 +1,7 @@
 ## 拉取/合并请求描述：(PR description)
 
 [
-这段方括号里的内容是您必须填写并替换掉的，否则PR不可能被合并。方括号外面的内容不需要修改，但请仔细阅读。
+这段方括号里的内容是您**必须填写并替换掉**的，否则PR不可能被合并。**方括号外面的内容不需要修改，但请仔细阅读。**
 The content in this square bracket must be filled in and replaced, otherwise PR can not be merged. The contents outside square brackets need not be changed, but please read them carefully.
 
 请在这里填写您的PR描述，可以包括以下之一的内容：为什么提交这份PR；解决的问题是什么，你的解决方案是什么；
@@ -11,8 +11,8 @@ Please fill in your PR description here, which can include one of the following 
 And confirm in which case or board have been tested.
 ]
 
-以下的内容请在提交PR后，一项项进行check，没问题后逐条在页面上打钩。
-The following contents should be checked item by item after submitted PR, and ticked on the browser one by one after no problem.
+以下的内容不应该在提交PR时的message修改，修改下述message，PR会被直接关闭。请在提交PR后，浏览器查看PR并对以下检查项逐项check，没问题后逐条在页面上打钩。
+The following content must not be changed in submitted PR message. Otherwise, the PR will be closed immediately. After submitted PR, please use web browser to visit PR, and check items one by one, and ticked them if no problem.
 
 ### 当前拉取/合并请求的状态 Intent for your PR
 

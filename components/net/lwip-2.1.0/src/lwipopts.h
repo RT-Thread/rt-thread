@@ -390,6 +390,18 @@
 #define ARP_TABLE_SIZE              10
 #define ARP_QUEUEING                1
 
+/* ---------- Checksum options ---------- */
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+#define CHECKSUM_GEN_IP                 0
+#define CHECKSUM_GEN_UDP                0
+#define CHECKSUM_GEN_TCP                0
+#define CHECKSUM_GEN_ICMP               0
+#define CHECKSUM_CHECK_IP               0
+#define CHECKSUM_CHECK_UDP              0
+#define CHECKSUM_CHECK_TCP              0
+#define CHECKSUM_CHECK_ICMP             0
+#endif
+
 /* ---------- IP options ---------- */
 /* Define IP_FORWARD to 1 if you wish to have the ability to forward
    IP packets across network interfaces. If you are going to run lwIP
@@ -524,6 +536,13 @@
  */
 #ifndef LWIP_TCP_KEEPALIVE
 #define LWIP_TCP_KEEPALIVE              1
+#endif
+
+/**
+ * LWIP_NETIF_HOSTNAME==1: Support netif hostname
+ */
+#ifndef LWIP_NETIF_HOSTNAME
+#define LWIP_NETIF_HOSTNAME             1
 #endif
 
 /**

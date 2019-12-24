@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -542,8 +526,9 @@
   */ 
 #define GPIO_AF5_SPI1          ((uint8_t)0x05)  /* SPI1 Alternate Function mapping        */
 #define GPIO_AF5_SPI2          ((uint8_t)0x05)  /* SPI2/I2S2 Alternate Function mapping   */
+#define GPIO_AF5_SPI3          ((uint8_t)0x05)  /* SPI3 Alternate Function mapping        */
 #define GPIO_AF5_SPI4          ((uint8_t)0x05)  /* SPI4 Alternate Function mapping        */
-#define GPIO_AF5_I2S3ext       ((uint8_t)0x05)  /* I2S3ext_SD Alternate Function mapping   */
+#define GPIO_AF5_I2S3ext       ((uint8_t)0x05)  /* I2S3ext_SD Alternate Function mapping  */
 
 /** 
   * @brief   AF 6 selection  
@@ -566,7 +551,6 @@
 /** 
   * @brief   AF 9 selection 
   */ 
-#define GPIO_AF9_TIM14         ((uint8_t)0x09)  /* TIM14 Alternate Function mapping */
 #define GPIO_AF9_I2C2          ((uint8_t)0x09)  /* I2C2 Alternate Function mapping  */
 #define GPIO_AF9_I2C3          ((uint8_t)0x09)  /* I2C3 Alternate Function mapping  */
 
@@ -1319,7 +1303,7 @@
                                                ((__GPIOx__) == (GPIOE))? 4U : 7U)
 #endif /* STM32F401xC || STM32F401xE || STM32F411xE */
 
-#if defined(STM32F446xx) || defined(STM32F412Zx) ||defined(STM32F412Vx) || defined(STM32F412Rx) || defined(STM32F412Cx)  || defined(STM32F413xx) || defined(STM32F423xx) 
+#if defined(STM32F446xx) || defined(STM32F412Zx) || defined(STM32F413xx) || defined(STM32F423xx) 
 #define GPIO_GET_INDEX(__GPIOx__)    (uint8_t)(((__GPIOx__) == (GPIOA))? 0U :\
                                                ((__GPIOx__) == (GPIOB))? 1U :\
                                                ((__GPIOx__) == (GPIOC))? 2U :\
@@ -1327,7 +1311,25 @@
                                                ((__GPIOx__) == (GPIOE))? 4U :\
                                                ((__GPIOx__) == (GPIOF))? 5U :\
                                                ((__GPIOx__) == (GPIOG))? 6U : 7U)
-#endif /* STM32F446xx || STM32F412Zx || STM32F412Vx || STM32F412Rx || STM32F412Cx || STM32F413xx || STM32F423xx */
+#endif /* STM32F446xx || STM32F412Zx  || STM32F413xx || STM32F423xx */
+#if defined(STM32F412Vx)
+#define GPIO_GET_INDEX(__GPIOx__)    (uint8_t)(((__GPIOx__) == (GPIOA))? 0U :\
+                                               ((__GPIOx__) == (GPIOB))? 1U :\
+                                               ((__GPIOx__) == (GPIOC))? 2U :\
+                                               ((__GPIOx__) == (GPIOD))? 3U :\
+                                               ((__GPIOx__) == (GPIOE))? 4U : 7U)
+#endif /* STM32F412Vx */
+#if defined(STM32F412Rx)
+#define GPIO_GET_INDEX(__GPIOx__)    (uint8_t)(((__GPIOx__) == (GPIOA))? 0U :\
+                                               ((__GPIOx__) == (GPIOB))? 1U :\
+                                               ((__GPIOx__) == (GPIOC))? 2U :\
+                                               ((__GPIOx__) == (GPIOD))? 3U : 7U)
+#endif /* STM32F412Rx */
+#if defined(STM32F412Cx)
+#define GPIO_GET_INDEX(__GPIOx__)    (uint8_t)(((__GPIOx__) == (GPIOA))? 0U :\
+                                               ((__GPIOx__) == (GPIOB))? 1U :\
+                                               ((__GPIOx__) == (GPIOC))? 2U : 7U)
+#endif /* STM32F412Cx */
 
 /**
   * @}
@@ -1441,7 +1443,7 @@
 
 /*---------------------------------------- STM32F401xx------------------------*/
 #if defined(STM32F401xC) || defined(STM32F401xE) 
-#define IS_GPIO_AF(AF)   (((AF) == GPIO_AF0_RTC_50Hz)   || ((AF) == GPIO_AF9_TIM14)      || \
+#define IS_GPIO_AF(AF)   (((AF) == GPIO_AF0_RTC_50Hz)   || ((AF) == GPIO_AF12_SDIO)      || \
                           ((AF) == GPIO_AF0_MCO)        || ((AF) == GPIO_AF0_TAMPER)     || \
                           ((AF) == GPIO_AF0_SWJ)        || ((AF) == GPIO_AF0_TRACE)      || \
                           ((AF) == GPIO_AF1_TIM1)       || ((AF) == GPIO_AF1_TIM2)       || \
@@ -1453,7 +1455,7 @@
                           ((AF) == GPIO_AF7_USART1)     || ((AF) == GPIO_AF7_USART2)     || \
                           ((AF) == GPIO_AF8_USART6)     || ((AF) == GPIO_AF10_OTG_FS)    || \
                           ((AF) == GPIO_AF9_I2C2)       || ((AF) == GPIO_AF9_I2C3)       || \
-                          ((AF) == GPIO_AF12_SDIO)      || ((AF) == GPIO_AF15_EVENTOUT))
+                          ((AF) == GPIO_AF15_EVENTOUT))
 
 #endif /* STM32F401xC || STM32F401xE */
 /*----------------------------------------------------------------------------*/

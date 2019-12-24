@@ -83,7 +83,7 @@ extern const uffs_FlashOps nand_ops;
 
 extern void uffs_setup_storage(
     struct uffs_StorageAttrSt *attr,
-    struct rt_mtd_nand_device * nand);
+    struct rt_mtd_nand_device *nand);
 
 extern int dfs_uffs_init(void);
 #endif /* DFS_UFFS_H_ */

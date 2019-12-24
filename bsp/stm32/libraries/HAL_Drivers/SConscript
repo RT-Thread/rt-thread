@@ -24,25 +24,33 @@ if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
 
 if GetDepend(['RT_USING_QSPI']):
-    src += ['drv_qspi.c'] 
-
-if GetDepend(['RT_USING_USB_DEVICE']):
-    src += ['drv_usb.c']
+    src += ['drv_qspi.c']
 
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
-    src += ['drv_soft_i2c.c']
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
 
-if GetDepend('RT_USING_LWIP'):
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
     src += ['drv_eth.c']
 
 if GetDepend(['RT_USING_ADC']):
     src += Glob('drv_adc.c')
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+    src += ['drv_pm.c']
+    src += ['drv_lptim.c']
 
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
 
 if GetDepend('BSP_USING_LCD'):
     src += ['drv_lcd.c']
+
+if GetDepend('BSP_USING_LCD_MIPI'):
+    src += ['drv_lcd_mipi.c']
 
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
@@ -52,7 +60,10 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F0']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F1']):
     src += ['drv_flash/drv_flash_f1.c']
-    
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F2']):
+    src += ['drv_flash/drv_flash_f2.c']
+
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F4']):
     src += ['drv_flash/drv_flash_f4.c']
 
@@ -61,12 +72,21 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
     src += ['drv_flash/drv_flash_l4.c']
-
+	
+if GetDepend('RT_USING_HWCRYPTO'):
+    src += ['drv_crypto.c']
+	
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 
 if GetDepend(['BSP_USING_SDIO']):
     src += ['drv_sdio.c']
+
+if GetDepend(['BSP_USING_USBD']):
+    src += ['drv_usbd.c']
+
+if GetDepend(['BSP_USING_PULSE_ENCODER']):
+    src += ['drv_pulse_encoder.c']
 
 src += ['drv_common.c']
 

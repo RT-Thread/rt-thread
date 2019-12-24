@@ -5,13 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
+ * 2018-11-06     SummerGift   first version
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-#include "drv_gpio.h"
+
 /* defined the LED2 pin: PB7 */
 #define LED2_PIN    GET_PIN(B, 7)
 

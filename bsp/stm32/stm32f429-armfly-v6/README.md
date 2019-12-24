@@ -46,15 +46,15 @@ armfly-v6 STM32F429 是安富莱推出的一款基于 ARM Cortex-M4 内核的开
 | MPU6050 |     支持     |                                       |
 | SDRAM             |     支持     |                                       |
 | SD卡              |   支持   |                                       |
-| CAN               |   暂不支持   |                                       |
-| LCD | 暂不支持 | |
+| LCD               |   支持   | 支持 RGB 屏                                |
+| CAN               | 暂不支持 |                                            |
 | **片上外设**      | **支持情况** | **备注**                              |
 | GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
 | UART              |     支持     | UART1                             |
 | SPI               |     支持     | SPI1/2/5                              |
 | I2C               |     支持     | 软件 I2C                              |
 | ADC               |     支持     |                                     |
-| RTC               |     支持     |                                      |
+| RTC               |     支持     | 支持外部晶振和内部低速时钟 |
 | WDT               |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | SDIO              |   支持   |                               |

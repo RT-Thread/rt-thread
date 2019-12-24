@@ -5,8 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   change to new framework
- * 2019-01-08     AndeyQi      first version
+ * 2018-11-06     SummerGift   first version
+ * 2019-01-08     AndeyQi      add stm32f446-st-nucleo bsp
  */
 
 #include "board.h"

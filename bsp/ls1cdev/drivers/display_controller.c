@@ -41,8 +41,12 @@ struct vga_struct vga_mode[] =
     {/*"1440x900_67.00"*/   120280, 1440,   1528,   1680,   1920,   900,    901,    904,    935,    },
 };
 
+static volatile int fb_index = 0;
+
 ALIGN(16)
 volatile rt_uint16_t _rt_framebuffer[FB_YSIZE][FB_XSIZE];
+volatile rt_uint16_t _rt_framebuffer0[FB_YSIZE][FB_XSIZE];
+volatile rt_uint16_t _rt_framebuffer1[FB_YSIZE][FB_XSIZE];
 static struct rt_device_graphic_info _dc_info;
 
 static void pwminit(void)
@@ -130,13 +134,11 @@ static rt_err_t rt_dc_init(rt_device_t dev)
     if (mode<0)
     {
         rt_kprintf("\n\n\nunsupported framebuffer resolution\n\n\n");
-        return;
+        return RT_ERROR;
     }
 
     DC_FB_CONFIG = 0x0;
     DC_FB_CONFIG = 0x3; //    // framebuffer configuration RGB565
-    DC_FB_BUFFER_ADDR0 = (rt_uint32_t)_rt_framebuffer - 0x80000000;
-    DC_FB_BUFFER_ADDR1 = (rt_uint32_t)_rt_framebuffer - 0x80000000;
     DC_DITHER_CONFIG = 0x0;  //颜色抖动配置寄存器
     DC_DITHER_TABLE_LOW = 0x0; //颜色抖动查找表低位寄存器 
     DC_DITHER_TABLE_HIGH = 0x0; //颜色抖动查找表高位寄存器
@@ -175,7 +177,25 @@ static rt_err_t rt_dc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RTGRAPHIC_CTRL_RECT_UPDATE:
+    {
+        if (fb_index == 0)
+        {
+            DC_FB_BUFFER_ADDR0 = (rt_uint32_t)_rt_framebuffer1 - 0x80000000;
+            DC_FB_BUFFER_ADDR1 = (rt_uint32_t)_rt_framebuffer1 - 0x80000000;
+            rt_memcpy((void *)_rt_framebuffer1, (const void *)_rt_framebuffer, sizeof(_rt_framebuffer));
+            rt_memcpy((void *)_rt_framebuffer1, (const void *)_rt_framebuffer, sizeof(_rt_framebuffer));
+            fb_index =1;
+        }
+        else
+        {
+            DC_FB_BUFFER_ADDR0 = (rt_uint32_t)_rt_framebuffer0 - 0x80000000;
+            DC_FB_BUFFER_ADDR1 = (rt_uint32_t)_rt_framebuffer0 - 0x80000000;
+            rt_memcpy((void *)_rt_framebuffer0, (const void *)_rt_framebuffer, sizeof(_rt_framebuffer));
+            rt_memcpy((void *)_rt_framebuffer0, (const void *)_rt_framebuffer, sizeof(_rt_framebuffer));
+            fb_index =0;
+        }
         break;
+    }
     case RTGRAPHIC_CTRL_POWERON:
         break;
     case RTGRAPHIC_CTRL_POWEROFF:
@@ -200,7 +220,7 @@ void rt_hw_dc_init(void)
     }
 
     _dc_info.bits_per_pixel = 16;
-    _dc_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
+    _dc_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565;
     _dc_info.framebuffer = (rt_uint8_t*)HW_FB_ADDR;
     _dc_info.width = FB_XSIZE;
     _dc_info.height = FB_YSIZE;

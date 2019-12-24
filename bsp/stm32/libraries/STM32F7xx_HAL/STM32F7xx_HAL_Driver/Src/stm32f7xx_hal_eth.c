@@ -62,36 +62,69 @@
       (#) Configure the Ethernet DMA after ETH peripheral initialization
           HAL_ETH_ConfigDMA(); all DMA parameters should be filled.
 
+*** Callback registration ***
+  =============================================
+
+  The compilation define  USE_HAL_ETH_REGISTER_CALLBACKS when set to 1
+  allows the user to configure dynamically the driver callbacks.
+  Use Function @ref HAL_ETH_RegisterCallback() to register an interrupt callback.
+
+  Function @ref HAL_ETH_RegisterCallback() allows to register following callbacks:
+    (+) TxCpltCallback   : Tx Complete Callback.
+    (+) RxCpltCallback   : Rx Complete Callback.
+    (+) DMAErrorCallback : DMA Error Callback.
+    (+) MspInitCallback  : MspInit Callback.
+    (+) MspDeInitCallback: MspDeInit Callback.
+
+  This function takes as parameters the HAL peripheral handle, the Callback ID
+  and a pointer to the user callback function.
+
+  Use function @ref HAL_ETH_UnRegisterCallback() to reset a callback to the default
+  weak function.
+  @ref HAL_ETH_UnRegisterCallback takes as parameters the HAL peripheral handle,
+  and the Callback ID.
+  This function allows to reset following callbacks:
+    (+) TxCpltCallback   : Tx Complete Callback.
+    (+) RxCpltCallback   : Rx Complete Callback.
+    (+) DMAErrorCallback : DMA Error Callback.
+    (+) MspInitCallback  : MspInit Callback.
+    (+) MspDeInitCallback: MspDeInit Callback.
+
+  By default, after the HAL_ETH_Init and when the state is HAL_ETH_STATE_RESET
+  all callbacks are set to the corresponding weak functions:
+  examples @ref HAL_ETH_TxCpltCallback(), @ref HAL_ETH_RxCpltCallback().
+  Exception done for MspInit and MspDeInit functions that are
+  reset to the legacy weak function in the HAL_ETH_Init/ @ref HAL_ETH_DeInit only when
+  these callbacks are null (not registered beforehand).
+  if not, MspInit or MspDeInit are not null, the HAL_ETH_Init/ @ref HAL_ETH_DeInit
+  keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
+
+  Callbacks can be registered/unregistered in HAL_ETH_STATE_READY state only.
+  Exception done MspInit/MspDeInit that can be registered/unregistered
+  in HAL_ETH_STATE_READY or HAL_ETH_STATE_RESET state,
+  thus registered (user) MspInit/DeInit callbacks can be used during the Init/DeInit.
+  In that case first register the MspInit/MspDeInit user callbacks
+  using @ref HAL_ETH_RegisterCallback() before calling @ref HAL_ETH_DeInit
+  or HAL_ETH_Init function.
+
+  When The compilation define USE_HAL_ETH_REGISTER_CALLBACKS is set to 0 or
+  not defined, the callback registration feature is not available and all callbacks
+  are set to the corresponding weak functions.
+
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
@@ -137,6 +170,9 @@ static void ETH_DMATransmissionDisable(ETH_HandleTypeDef *heth);
 static void ETH_DMAReceptionEnable(ETH_HandleTypeDef *heth);
 static void ETH_DMAReceptionDisable(ETH_HandleTypeDef *heth);
 static void ETH_FlushTransmitFIFO(ETH_HandleTypeDef *heth);
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+static void ETH_InitCallbacksToDefault(ETH_HandleTypeDef *heth);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 
 /**
   * @}
@@ -192,8 +228,20 @@ HAL_StatusTypeDef HAL_ETH_Init(ETH_HandleTypeDef *heth)
   {
     /* Allocate lock resource and initialize it */
     heth->Lock = HAL_UNLOCKED;
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+    ETH_InitCallbacksToDefault(heth);
+
+    if(heth->MspInitCallback == NULL)
+    {
+      /* Init the low level hardware : GPIO, CLOCK, NVIC. */
+      heth->MspInitCallback = HAL_ETH_MspInit;
+    }
+    heth->MspInitCallback(heth);
+
+#else
     /* Init the low level hardware : GPIO, CLOCK, NVIC. */
     HAL_ETH_MspInit(heth);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
   }
   
   /* Enable SYSCFG Clock */
@@ -447,8 +495,17 @@ HAL_StatusTypeDef HAL_ETH_DeInit(ETH_HandleTypeDef *heth)
   /* Set the ETH peripheral state to BUSY */
   heth->State = HAL_ETH_STATE_BUSY;
   
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+  if(heth->MspDeInitCallback == NULL)
+  {
+    heth->MspDeInitCallback = HAL_ETH_MspDeInit;
+  }
+  /* De-Init the low level hardware : GPIO, CLOCK, NVIC. */
+  heth->MspDeInitCallback(heth);
+#else
   /* De-Init the low level hardware : GPIO, CLOCK, NVIC. */
   HAL_ETH_MspDeInit(heth);
+#endif
   
   /* Set ETH HAL state to Disabled */
   heth->State= HAL_ETH_STATE_RESET;
@@ -628,6 +685,173 @@ __weak void HAL_ETH_MspDeInit(ETH_HandleTypeDef *heth)
   the HAL_ETH_MspDeInit could be implemented in the user file
   */
 }
+
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  Register a User ETH Callback
+  *         To be used instead of the weak predefined callback
+  * @param heth eth handle
+  * @param CallbackID ID of the callback to be registered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_ETH_TX_COMPLETE_CB_ID Tx Complete Callback ID
+  *          @arg @ref HAL_ETH_RX_COMPLETE_CB_ID Rx Complete Callback ID
+  *          @arg @ref HAL_ETH_DMA_ERROR_CB_ID   DMA Error Callback ID
+  *          @arg @ref HAL_ETH_MSPINIT_CB_ID     MspInit callback ID
+  *          @arg @ref HAL_ETH_MSPDEINIT_CB_ID   MspDeInit callback ID
+  * @param pCallback pointer to the Callback function
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_ETH_RegisterCallback(ETH_HandleTypeDef *heth, HAL_ETH_CallbackIDTypeDef CallbackID, pETH_CallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if(pCallback == NULL)
+  {
+    return HAL_ERROR;
+  }
+  /* Process locked */
+  __HAL_LOCK(heth);
+
+  if(heth->State == HAL_ETH_STATE_READY)
+  {
+    switch (CallbackID)
+    {
+    case HAL_ETH_TX_COMPLETE_CB_ID :
+      heth->TxCpltCallback = pCallback;
+      break;
+
+    case HAL_ETH_RX_COMPLETE_CB_ID :
+      heth->RxCpltCallback = pCallback;
+      break;
+
+    case HAL_ETH_DMA_ERROR_CB_ID :
+      heth->DMAErrorCallback = pCallback;
+      break;
+
+    case HAL_ETH_MSPINIT_CB_ID :
+      heth->MspInitCallback = pCallback;
+      break;
+
+    case HAL_ETH_MSPDEINIT_CB_ID :
+      heth->MspDeInitCallback = pCallback;
+      break;
+
+    default :
+      /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if(heth->State == HAL_ETH_STATE_RESET)
+  {
+    switch (CallbackID)
+    {
+    case HAL_ETH_MSPINIT_CB_ID :
+      heth->MspInitCallback = pCallback;
+      break;
+
+    case HAL_ETH_MSPDEINIT_CB_ID :
+      heth->MspDeInitCallback = pCallback;
+      break;
+
+    default :
+      /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* Return error status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(heth);
+
+  return status;
+}
+
+/**
+  * @brief  Unregister an ETH Callback
+  *         ETH callabck is redirected to the weak predefined callback
+  * @param heth eth handle
+  * @param CallbackID ID of the callback to be unregistered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_ETH_TX_COMPLETE_CB_ID Tx Complete Callback ID
+  *          @arg @ref HAL_ETH_RX_COMPLETE_CB_ID Rx Complete Callback ID
+  *          @arg @ref HAL_ETH_DMA_ERROR_CB_ID   DMA Error Callback ID
+  *          @arg @ref HAL_ETH_MSPINIT_CB_ID     MspInit callback ID
+  *          @arg @ref HAL_ETH_MSPDEINIT_CB_ID   MspDeInit callback ID
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_ETH_UnRegisterCallback(ETH_HandleTypeDef *heth, HAL_ETH_CallbackIDTypeDef CallbackID)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  /* Process locked */
+  __HAL_LOCK(heth);
+
+  if(heth->State == HAL_ETH_STATE_READY)
+  {
+    switch (CallbackID)
+    {
+    case HAL_ETH_TX_COMPLETE_CB_ID :
+      heth->TxCpltCallback = HAL_ETH_TxCpltCallback;
+      break;
+
+    case HAL_ETH_RX_COMPLETE_CB_ID :
+      heth->RxCpltCallback = HAL_ETH_RxCpltCallback;
+      break;
+
+    case HAL_ETH_DMA_ERROR_CB_ID :
+      heth->DMAErrorCallback = HAL_ETH_ErrorCallback;
+      break;
+
+    case HAL_ETH_MSPINIT_CB_ID :
+      heth->MspInitCallback = HAL_ETH_MspInit;
+      break;
+
+    case HAL_ETH_MSPDEINIT_CB_ID :
+      heth->MspDeInitCallback = HAL_ETH_MspDeInit;
+      break;
+
+    default :
+      /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if(heth->State == HAL_ETH_STATE_RESET)
+  {
+    switch (CallbackID)
+    {
+    case HAL_ETH_MSPINIT_CB_ID :
+      heth->MspInitCallback = HAL_ETH_MspInit;
+      break;
+
+    case HAL_ETH_MSPDEINIT_CB_ID :
+      heth->MspDeInitCallback = HAL_ETH_MspDeInit;
+      break;
+
+    default :
+      /* Return error status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* Return error status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(heth);
+
+  return status;
+}
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 
 /**
   * @}
@@ -946,8 +1170,13 @@ void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth)
   /* Frame received */
   if (__HAL_ETH_DMA_GET_FLAG(heth, ETH_DMA_FLAG_R)) 
   {
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+    /*Call registered Receive complete callback*/
+    heth->RxCpltCallback(heth);
+#else
     /* Receive complete callback */
     HAL_ETH_RxCpltCallback(heth);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
     
      /* Clear the Eth DMA Rx IT pending bits */
     __HAL_ETH_DMA_CLEAR_IT(heth, ETH_DMA_IT_R);
@@ -962,8 +1191,13 @@ void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth)
   /* Frame transmitted */
   else if (__HAL_ETH_DMA_GET_FLAG(heth, ETH_DMA_FLAG_T)) 
   {
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+    /*  Call resgistered Transfer complete callback*/
+    heth->TxCpltCallback(heth);
+#else
     /* Transfer complete callback */
     HAL_ETH_TxCpltCallback(heth);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
     
     /* Clear the Eth DMA Tx IT pending bits */
     __HAL_ETH_DMA_CLEAR_IT(heth, ETH_DMA_IT_T);
@@ -981,8 +1215,12 @@ void HAL_ETH_IRQHandler(ETH_HandleTypeDef *heth)
   /* ETH DMA Error */
   if(__HAL_ETH_DMA_GET_FLAG(heth, ETH_DMA_FLAG_AIS))
   {
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+    heth->DMAErrorCallback(heth);
+#else
     /* Ethernet Error callback */
     HAL_ETH_ErrorCallback(heth);
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 
     /* Clear the interrupt flags */
     __HAL_ETH_DMA_CLEAR_IT(heth, ETH_DMA_FLAG_AIS);
@@ -1023,7 +1261,7 @@ __weak void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
   UNUSED(heth);
  
   /* NOTE : This function Should not be modified, when the callback is needed,
-  the HAL_ETH_TxCpltCallback could be implemented in the user file
+  the HAL_ETH_RxCpltCallback could be implemented in the user file
   */ 
 }
 
@@ -1039,7 +1277,7 @@ __weak void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *heth)
   UNUSED(heth);
  
   /* NOTE : This function Should not be modified, when the callback is needed,
-  the HAL_ETH_TxCpltCallback could be implemented in the user file
+  the HAL_ETH_ErrorCallback could be implemented in the user file
   */ 
 }
 
@@ -2025,6 +2263,16 @@ static void ETH_FlushTransmitFIFO(ETH_HandleTypeDef *heth)
   HAL_Delay(ETH_REG_WRITE_DELAY);
   (heth->Instance)->DMAOMR = tmpreg;
 }
+
+#if (USE_HAL_ETH_REGISTER_CALLBACKS == 1)
+static void ETH_InitCallbacksToDefault(ETH_HandleTypeDef *heth)
+{
+  /* Init the ETH Callback settings */
+  heth->TxCpltCallback       = HAL_ETH_TxCpltCallback; /* Legacy weak TxCpltCallback   */
+  heth->RxCpltCallback       = HAL_ETH_RxCpltCallback; /* Legacy weak RxCpltCallback   */
+  heth->DMAErrorCallback     = HAL_ETH_ErrorCallback;  /* Legacy weak DMAErrorCallback */
+}
+#endif /* USE_HAL_ETH_REGISTER_CALLBACKS */
 
 /**
   * @}

@@ -49,45 +49,9 @@ rt_hw_context_switch_to:
     mv   a0,   a1
     jal  rt_cpus_lock_status_restore
 #endif
-
-    /* load epc from stack */
-    LOAD a0,   0 * REGBYTES(sp)
-    csrw mepc, a0
-    LOAD x1,   1 * REGBYTES(sp)
-    /* load mstatus from stack */
     LOAD a0,   2 * REGBYTES(sp)
     csrw mstatus, a0
-    LOAD x4,   4 * REGBYTES(sp)
-    LOAD x5,   5 * REGBYTES(sp)
-    LOAD x6,   6 * REGBYTES(sp)
-    LOAD x7,   7 * REGBYTES(sp)
-    LOAD x8,   8 * REGBYTES(sp)
-    LOAD x9,   9 * REGBYTES(sp)
-    LOAD x10, 10 * REGBYTES(sp)
-    LOAD x11, 11 * REGBYTES(sp)
-    LOAD x12, 12 * REGBYTES(sp)
-    LOAD x13, 13 * REGBYTES(sp)
-    LOAD x14, 14 * REGBYTES(sp)
-    LOAD x15, 15 * REGBYTES(sp)
-    LOAD x16, 16 * REGBYTES(sp)
-    LOAD x17, 17 * REGBYTES(sp)
-    LOAD x18, 18 * REGBYTES(sp)
-    LOAD x19, 19 * REGBYTES(sp)
-    LOAD x20, 20 * REGBYTES(sp)
-    LOAD x21, 21 * REGBYTES(sp)
-    LOAD x22, 22 * REGBYTES(sp)
-    LOAD x23, 23 * REGBYTES(sp)
-    LOAD x24, 24 * REGBYTES(sp)
-    LOAD x25, 25 * REGBYTES(sp)
-    LOAD x26, 26 * REGBYTES(sp)
-    LOAD x27, 27 * REGBYTES(sp)
-    LOAD x28, 28 * REGBYTES(sp)
-    LOAD x29, 29 * REGBYTES(sp)
-    LOAD x30, 30 * REGBYTES(sp)
-    LOAD x31, 31 * REGBYTES(sp)
-
-    addi sp,  sp, 32 * REGBYTES
-    mret
+    j    rt_hw_context_switch_exit
 
 /*
  * #ifdef RT_USING_SMP
@@ -102,7 +66,6 @@ rt_hw_context_switch_to:
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-
     /* saved from thread context
      *     x1/ra       -> sp(0)
      *     x1/ra       -> sp(1)
@@ -163,48 +126,7 @@ save_mpie:
     jal  rt_cpus_lock_status_restore
 #endif /*RT_USING_SMP*/
 
-    /* resw ra to mepc */
-    LOAD a1,   0 * REGBYTES(sp)
-    csrw mepc, a1
-    LOAD x1,   1 * REGBYTES(sp)
-
-    /* force to machin mode(MPP=11) */
-    li a1, 0x00001800;
-    csrs mstatus, a1
-    LOAD a1,   2 * REGBYTES(sp)
-    csrs mstatus, a1
-
-    LOAD x4,   4 * REGBYTES(sp)
-    LOAD x5,   5 * REGBYTES(sp)
-    LOAD x6,   6 * REGBYTES(sp)
-    LOAD x7,   7 * REGBYTES(sp)
-    LOAD x8,   8 * REGBYTES(sp)
-    LOAD x9,   9 * REGBYTES(sp)
-    LOAD x10, 10 * REGBYTES(sp)
-    LOAD x11, 11 * REGBYTES(sp)
-    LOAD x12, 12 * REGBYTES(sp)
-    LOAD x13, 13 * REGBYTES(sp)
-    LOAD x14, 14 * REGBYTES(sp)
-    LOAD x15, 15 * REGBYTES(sp)
-    LOAD x16, 16 * REGBYTES(sp)
-    LOAD x17, 17 * REGBYTES(sp)
-    LOAD x18, 18 * REGBYTES(sp)
-    LOAD x19, 19 * REGBYTES(sp)
-    LOAD x20, 20 * REGBYTES(sp)
-    LOAD x21, 21 * REGBYTES(sp)
-    LOAD x22, 22 * REGBYTES(sp)
-    LOAD x23, 23 * REGBYTES(sp)
-    LOAD x24, 24 * REGBYTES(sp)
-    LOAD x25, 25 * REGBYTES(sp)
-    LOAD x26, 26 * REGBYTES(sp)
-    LOAD x27, 27 * REGBYTES(sp)
-    LOAD x28, 28 * REGBYTES(sp)
-    LOAD x29, 29 * REGBYTES(sp)
-    LOAD x30, 30 * REGBYTES(sp)
-    LOAD x31, 31 * REGBYTES(sp)
-
-    addi sp,  sp, 32 * REGBYTES
-    mret
+    j rt_hw_context_switch_exit
 
 #ifdef RT_USING_SMP
 /*
@@ -220,26 +142,42 @@ rt_hw_context_switch_interrupt:
 
     STORE a0, 0(a1)
 
-    csrr  a1, mepc
-    STORE a1, 0 * REGBYTES(a0)
-
-    csrr  a1, mstatus
-    STORE a1, 2 * REGBYTES(a0)
-
     LOAD  sp, 0(a2)
     move  a0, a3
     call rt_cpus_lock_status_restore
 
+    j rt_hw_context_switch_exit
+
+#endif
+
+.global rt_hw_context_switch_exit
+rt_hw_context_switch_exit:
+#ifdef RT_USING_SMP
+#ifdef RT_USING_SIGNALS
+    mv a0, sp
+
+    csrr  t0, mhartid
+    /* switch interrupt stack of current cpu */
+    la    sp, __stack_start__
+    addi  t1, t0, 1
+    li    t2, __STACKSIZE__
+    mul   t1, t1, t2
+    add   sp, sp, t1 /* sp = (cpuid + 1) * __STACKSIZE__ + __stack_start__ */
+
+    call rt_signal_check
+    mv sp, a0
+#endif
+#endif
     /* resw ra to mepc */
-    LOAD a1,   0 * REGBYTES(sp)
-    csrw mepc, a1
+    LOAD a0,   0 * REGBYTES(sp)
+    csrw mepc, a0
+
     LOAD x1,   1 * REGBYTES(sp)
 
-    /* force to machin mode(MPP=11) */
-    li a1, 0x00001800;
-    csrs mstatus, a1
-    LOAD a1,   2 * REGBYTES(sp)
-    csrs mstatus, a1
+    li    t0, 0x00001800
+    csrw  mstatus, t0
+    LOAD a0,   2 * REGBYTES(sp)
+    csrs mstatus, a0
 
     LOAD x4,   4 * REGBYTES(sp)
     LOAD x5,   5 * REGBYTES(sp)
@@ -272,5 +210,3 @@ rt_hw_context_switch_interrupt:
 
     addi sp,  sp, 32 * REGBYTES
     mret
-
-#endif

@@ -13,8 +13,8 @@
 
 #include <rtthread.h>
 
-#define ROMFS_DIRENT_FILE	0x00
-#define ROMFS_DIRENT_DIR	0x01
+#define ROMFS_DIRENT_FILE   0x00
+#define ROMFS_DIRENT_DIR    0x01
 
 struct romfs_dirent
 {

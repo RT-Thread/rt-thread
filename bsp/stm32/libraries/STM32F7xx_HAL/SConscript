@@ -12,8 +12,10 @@ STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cec.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cortex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_crc.c
+STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_crc_ex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cryp.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_cryp_ex.c
+STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_exti.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma_ex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pwr.c
@@ -22,13 +24,12 @@ STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rcc_ex.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_rng.c
 STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_sram.c
+STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c
 ''')
 
-if GetDepend(['RT_USING_PIN']):
-    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_gpio.c']
-    
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_uart_ex.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_usart.c']
 
 if GetDepend(['RT_USING_I2C']):
@@ -37,10 +38,10 @@ if GetDepend(['RT_USING_I2C']):
 
 if GetDepend(['RT_USING_SPI']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_spi_ex.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_qspi.c']
 
 if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
-    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pccard.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd.c'] 
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_pcd_ex.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_hcd.c']
@@ -92,6 +93,12 @@ if GetDepend(['BSP_USING_SDRAM']):
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_flash.c']
     src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_flash_ex.c']
+
+if GetDepend(['BSP_USING_LTDC']):
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_ltdc_ex.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_hal_dma2d.c']
+    src += ['STM32F7xx_HAL_Driver/Src/stm32f7xx_ll_dma2d.c']
 
 path = [cwd + '/STM32F7xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32F7xx/Include',

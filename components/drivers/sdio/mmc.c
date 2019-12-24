@@ -4,21 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author        Notes
- * 2015-06-15     hichard     first version
+ * Date           Author       Notes
+ * 2015-06-15     hichard      first version
  */
 
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmc.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "SDIO"
+#define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_LVL               DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 static const rt_uint32_t tran_unit[] =
@@ -184,6 +182,8 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
  */
 static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
+  rt_uint64_t card_capacity = 0;
+
   if(card == RT_NULL || ext_csd == RT_NULL)
   {
     LOG_E("emmc parse ext csd fail, invaild args");
@@ -193,9 +193,10 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
   card->flags |=  CARD_FLAG_HIGHSPEED;
   card->hs_max_data_rate = 200000000;
   
-  card->card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
-  card->card_capacity *= card->card_blksize;
-  card->card_capacity >>= 10; /* unit:KB */
+  card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
+  card_capacity *= card->card_blksize;
+  card_capacity >>= 10; /* unit:KB */
+  card->card_capacity = card_capacity;
   LOG_I("emmc card capacity %d KB.", card->card_capacity);
   
   return 0;

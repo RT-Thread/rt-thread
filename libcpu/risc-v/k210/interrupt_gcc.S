@@ -20,8 +20,12 @@ trap_entry:
     addi sp, sp, -32 * REGBYTES
 
     STORE x1,   1 * REGBYTES(sp)
-    li    t0,   0x80
-    STORE t0,   2 * REGBYTES(sp)
+
+    csrr  x1, mstatus
+    STORE x1,   2 * REGBYTES(sp)
+
+    csrr  x1, mepc
+    STORE x1, 0 * REGBYTES(sp)
 
     STORE x4,   4 * REGBYTES(sp)
     STORE x5,   5 * REGBYTES(sp)
@@ -69,15 +73,17 @@ trap_entry:
     call  rt_interrupt_enter
     csrr  a0, mcause
     csrr  a1, mepc
-    mv    a2, sp
+    mv    a2, s0
     call  handle_trap
     call  rt_interrupt_leave
 
 #ifdef RT_USING_SMP
     /* s0 --> sp */
+    mv  sp, s0
     mv  a0, s0
     call rt_scheduler_do_irq_switch
-    mv  sp, s0
+    j   rt_hw_context_switch_exit
+
 #else
 
     /* switch to from_thread stack */
@@ -89,9 +95,6 @@ trap_entry:
     beqz  s2, spurious_interrupt
     sw    zero, 0(s0)
 
-    csrr  a0, mepc
-    STORE a0, 0 * REGBYTES(sp)
-
     la    s0, rt_interrupt_from_thread
     LOAD  s1, 0(s0)
     STORE sp, 0(s1)
@@ -100,47 +103,7 @@ trap_entry:
     LOAD  s1, 0(s0)
     LOAD  sp, 0(s1)
 
-    LOAD  a0,  0 * REGBYTES(sp)
-    csrw  mepc, a0
 #endif
 
 spurious_interrupt:
-    LOAD  x1,   1 * REGBYTES(sp)
-
-    /* Remain in M-mode after mret */
-    li    t0, 0x00001800
-    csrs  mstatus, t0
-    LOAD  t0,   2 * REGBYTES(sp)
-    csrs  mstatus, t0 
-
-    LOAD  x4,   4 * REGBYTES(sp)
-    LOAD  x5,   5 * REGBYTES(sp)
-    LOAD  x6,   6 * REGBYTES(sp)
-    LOAD  x7,   7 * REGBYTES(sp)
-    LOAD  x8,   8 * REGBYTES(sp)
-    LOAD  x9,   9 * REGBYTES(sp)
-    LOAD  x10, 10 * REGBYTES(sp)
-    LOAD  x11, 11 * REGBYTES(sp)
-    LOAD  x12, 12 * REGBYTES(sp)
-    LOAD  x13, 13 * REGBYTES(sp)
-    LOAD  x14, 14 * REGBYTES(sp)
-    LOAD  x15, 15 * REGBYTES(sp)
-    LOAD  x16, 16 * REGBYTES(sp)
-    LOAD  x17, 17 * REGBYTES(sp)
-    LOAD  x18, 18 * REGBYTES(sp)
-    LOAD  x19, 19 * REGBYTES(sp)
-    LOAD  x20, 20 * REGBYTES(sp)
-    LOAD  x21, 21 * REGBYTES(sp)
-    LOAD  x22, 22 * REGBYTES(sp)
-    LOAD  x23, 23 * REGBYTES(sp)
-    LOAD  x24, 24 * REGBYTES(sp)
-    LOAD  x25, 25 * REGBYTES(sp)
-    LOAD  x26, 26 * REGBYTES(sp)
-    LOAD  x27, 27 * REGBYTES(sp)
-    LOAD  x28, 28 * REGBYTES(sp)
-    LOAD  x29, 29 * REGBYTES(sp)
-    LOAD  x30, 30 * REGBYTES(sp)
-    LOAD  x31, 31 * REGBYTES(sp)
-
-    addi  sp, sp, 32 * REGBYTES
-    mret
+    j rt_hw_context_switch_exit

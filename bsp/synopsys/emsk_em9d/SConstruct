@@ -1,0 +1,53 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+
+try:
+    from building import *
+except:
+    print('Cannot found RT-Thread root directory, please check RTT_ROOT')
+    print(RTT_ROOT)
+    exit(-1)
+
+TARGET = 'rtthread_snps_emsk_em9d.' + rtconfig.TARGET_EXT
+
+# use scons --gdb to debug emsk
+AddOption('--gdb',
+        dest = 'gdb',
+        action = 'store_true',
+        default = False,
+        help = 'use gdb to debug the elf')
+
+if GetOption('gdb'):
+        if os.path.isfile(rtconfig.TARGET):
+            os.system(rtconfig.DBG + rtconfig.DBG_HW_FLAGS + rtconfig.TARGET)
+        else:
+            print rtconfig.TARGET + 'not exist, please build first!!'
+        exit(0)
+
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+        AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+        CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+        AR = rtconfig.AR, ARFLAGS = '-rc',
+        LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT)
+
+# if the linker script changed, relink the target
+Depends(TARGET, rtconfig.LINK_SCRIPT)
+
+# make a building
+DoBuilding(TARGET, objs)

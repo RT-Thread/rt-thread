@@ -21,12 +21,23 @@
 # Date           Author       Notes
 # 2017-12-29     Bernard      The first version
 # 2018-07-31     weety        Support pyconfig
+# 2019-07-13     armink       Support guiconfig
 
 import os
+import re
 import sys
 import shutil
 
 # make rtconfig.h from .config
+
+def is_pkg_special_config(config_str):
+    ''' judge if it's CONFIG_PKG_XX_PATH or CONFIG_PKG_XX_VER'''
+
+    if type(config_str) == type('a'):
+        if config_str.startswith("PKG_") and (config_str.endswith('_PATH') or config_str.endswith('_VER')):
+            return True
+    return False
+
 
 def mk_rtconfig(filename):
     try:
@@ -44,7 +55,8 @@ def mk_rtconfig(filename):
     for line in config:
         line = line.lstrip(' ').replace('\n', '').replace('\r', '')
 
-        if len(line) == 0: continue
+        if len(line) == 0:
+            continue
 
         if line[0] == '#':
             if len(line) == 1:
@@ -55,11 +67,12 @@ def mk_rtconfig(filename):
                 empty_line = 1
                 continue
 
-            comment_line = line[1:]
-            if line.startswith('# CONFIG_'): line = ' ' + line[9:]
-            else: line = line[1:]
+            if line.startswith('# CONFIG_'):
+                line = ' ' + line[9:]
+            else:
+                line = line[1:]
+                rtconfig.write('/*%s */\n' % line)
 
-            rtconfig.write('/*%s */\n' % line)
             empty_line = 0
         else:
             empty_line = 0
@@ -69,13 +82,13 @@ def mk_rtconfig(filename):
                     setting[0] = setting[0][7:]
 
                 # remove CONFIG_PKG_XX_PATH or CONFIG_PKG_XX_VER
-                if type(setting[0]) == type('a') and (setting[0].endswith('_PATH') or setting[0].endswith('_VER')):
+                if is_pkg_special_config(setting[0]):
                     continue
 
                 if setting[1] == 'y':
                     rtconfig.write('#define %s\n' % setting[0])
                 else:
-                    rtconfig.write('#define %s %s\n' % (setting[0], setting[1]))
+                    rtconfig.write('#define %s %s\n' % (setting[0], re.findall(r"^.*?=(.*)$",line)[0]))
 
     if os.path.isfile('rtconfig_project.h'):
         rtconfig.write('#include "rtconfig_project.h"\n')
@@ -224,11 +237,13 @@ def menuconfig(RTT_ROOT):
     if mtime != mtime2:
         mk_rtconfig(fn)
 
-# pyconfig for windows and linux
-def pyconfig(RTT_ROOT):
-    import pymenuconfig
+# guiconfig for windows and linux
+def guiconfig(RTT_ROOT):
+    import pyguiconfig
 
-    touch_env()
+    if sys.platform != 'win32':
+        touch_env()
+
     env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
@@ -240,7 +255,8 @@ def pyconfig(RTT_ROOT):
     else:
         mtime = -1
 
-    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config'])
+    sys.argv = ['guiconfig', 'Kconfig'];
+    pyguiconfig._main()
 
     if os.path.isfile(fn):
         mtime2 = os.path.getmtime(fn)
@@ -252,19 +268,21 @@ def pyconfig(RTT_ROOT):
         mk_rtconfig(fn)
 
 
-# pyconfig_silent for windows and linux
-def pyconfig_silent(RTT_ROOT):
-    import pymenuconfig
-    print("In pyconfig silent mode. Don`t display menuconfig window.")
+# guiconfig for windows and linux
+def guiconfig_silent(RTT_ROOT):
+    import defconfig
 
-    touch_env()
+    if sys.platform != 'win32':
+        touch_env()
+
     env_dir = get_env_dir()
 
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
 
-    pymenuconfig.main(['--kconfig', 'Kconfig', '--config', '.config', '--silent', 'True'])
+    sys.argv = ['defconfig', '--kconfig', 'Kconfig', '.config']
+    defconfig.main()
 
     # silent mode, force to make rtconfig.h
     mk_rtconfig(fn)

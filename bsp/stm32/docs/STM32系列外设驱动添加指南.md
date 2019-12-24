@@ -87,12 +87,76 @@
 |  1   | GPIO     | 无需任何操作                                                 |
 |  2   | UART     | **开启该外设** ，然后配置所需要的引脚（或者使用默认引脚）    |
 |  3   | SPI      | **开启该外设** ，然后配置所需要的引脚（或者使用默认引脚）    |
-|  4   | I2C      | 依赖于PIN 驱动，无需任何操作                                 |
-|  5   | TIMER    | **使能 internal Clock 时钟**                                 |
-|  7   | PWM      | **首先使能 internal Clock 时钟，然后为 channelx 选项选择PWM Generation CHx，** 最后配置所需要的引脚（或者使用默认引脚） |
-|  8   | ADC      | **开启该外设，然后选择使用的通道**                           |
+|  4   | I2C      | 依赖于PIN 驱动，无需任何操作                                |
+|  5   | TIMER    | **使能 internal Clock 时钟** ，详细内容可参考5.3章节      |
+|  7   | PWM      | **首先使能 internal Clock 时钟，然后为 channelx 选项选择PWM Generation CHx，** 最后配置所需要的引脚（或者使用默认引脚） ，详细内容可参考5.3章节 |
+|  8   | ADC      | **开启该外设，然后选择使用的通道** ，详细内容可参考5.3章节  |
 |  9   | RTC      | **开启该外设，然后在时钟树状图里将 RTC 选择为 LSE 时钟**     |
-|  10  | Watchdog | **开启该外设**                                               |
+|  10  | Watchdog | **开启该外设**                                             |
 |  11  | EMAC     | **配置 ETH 外设的工作模式（一般为 RMII 模式）**              |
 |  12  | SDRAM    | **需要根据板载的 SDRAM 型号配置片选脚，地址线，数据线等**    |
+|  13  | SDIO     | **开启该外设，配置引脚（或者使用默认引脚），SDIO会改变时钟结构，故需重新配置时钟并修改board.c** |
 
+### 5.3 复杂外设配置说明
+
+本章节着重介绍配置步骤较为复杂的驱动。
+
+#### 5.3.1 TIMER 外设驱动添加说明
+
+ 1. 打开 STM32CubeMX 工程，设置 timer 在 Cube 里的选项，如下图所示：
+
+ ![timer CubeMX 配置](figures/timer_config1.png)
+
+ 2. 打开 stm32/stm32f429-atk-apollo/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程，如下图所示：
+
+ ![timer Kconfig 配置](figures/timer_config2.png)
+
+  3. 打开工程进行编译，工程会提示 TIM11_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/tim_config.h 中进行定义，如下图所示：
+
+ ![timer 编译](figures/timer_config3.png)
+ ![timer 编译](figures/timer_config4.png)
+
+#### 5.3.2 PWM 外设驱动添加说明
+
+ 1. 打开 STM32CubeMX 工程，设置 PWM 在 Cube 里的选项，如下图所示：
+
+ ![pwm CubeMX 配置](figures/pwm_config1.png)
+
+ 2. 打开 stm32/stm32f429-atk-apollo/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程，如下图所示：
+
+ ![pwm Kconfig 配置](figures/pwm_config2.png)
+
+ 3. 打开工程进行编译，工程会提示 PWM2_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/pwm_config.h 中进行定义，如下图所示：
+
+ ![pwm 编译](figures/pwm_config3.png)
+ ![pwm 编译](figures/pwm_config4.png)
+
+#### 5.3.3 ADC 外设驱动添加说明
+
+ 1. 打开 STM32CubeMX 工程，设置 ADC 在 Cube 里的选项，如下图所示：
+
+ ![adc CubeMX 配置](figures/adc_config1.png)
+
+ 2. 打开 stm32/stm32f429-atk-apollo/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程，如下图所示：
+
+ ![adc Kconfig 配置](figures/adc_config2.png)
+
+ 3. 打开工程进行编译，工程会提示 ADC1_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/adc_config.h 中进行定义，如下图所示：
+
+ ![adc 编译](figures/adc_config3.png)
+ ![adc 编译](figures/adc_config4.png)
+
+#### 5.3.4 编码器外设驱动添加说明
+
+ 1. 打开 STM32CubeMX 工程，设置 TIMER 在 Cube 里的选项，如下图所示：
+
+ ![pulse_encoder CubeMX 配置](figures/pulse_encoder_config1.png)
+
+ 2. 打开 stm32/stm32f407-atk-explorer/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程，如下图所示：
+
+ ![pulse_encoder Kconfig 配置](figures/pulse_encoder_config2.png)
+
+ 3. 打开工程进行编译，工程会提示 PULSE_ENCODER4_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/pulse_encoder_config.h 中进行定义，如下图所示：
+
+ ![pulse_encoder 编译](figures/pulse_encoder_config3.png)
+ ![pulse_encoder 编译](figures/pulse_encoder_config4.png)

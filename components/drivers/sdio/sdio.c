@@ -12,14 +12,12 @@
 #include <drivers/sdio.h>
 #include <drivers/sd.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "SDIO"
+#define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_LVL               DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifndef RT_SDIO_STACK_SIZE
@@ -710,6 +708,16 @@ static rt_int32_t sdio_initialize_function(struct rt_mmcsd_card *card,
     ret = sdio_read_cis(func);
     if (ret)
         goto err1;
+
+    /*
+     * product/manufacturer id is optional for function CIS, so
+     * copy it from the card structure as needed.
+     */
+    if (func->product == 0)
+    {
+        func->manufacturer = card->cis.manufacturer;
+        func->product = card->cis.product;
+    }
 
     card->sdio_function[func_num] = func;
 

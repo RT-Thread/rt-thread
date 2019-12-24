@@ -5,8 +5,8 @@
  *
  * @copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef ___SPI_H__
+#define ___SPI_H__
 
 #ifdef __cplusplus
 extern "C"

@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F103ZE
     bool
     select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -19,7 +21,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (w25q64 spi1)"
+        bool "Enable SPI FLASH (W25Q64 spi1)"
         select BSP_USING_SPI
         select BSP_USING_SPI1
         select RT_USING_SFUD
@@ -250,11 +252,23 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    config BSP_USING_ONCHIP_RTC
+    menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         select RT_USING_LIBC
         default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
 
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
@@ -267,6 +281,31 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+        endif
+
+    config BSP_USING_USBD
+        bool "Enable USB device"
+        select RT_USING_USB_DEVICE
+        default n
+        if BSP_USING_USBD
+            config BSP_USB_CONNECT_PIN
+                int "USB connect pin"
+                default 67
+
+            config BSP_USB_PULL_UP_STATUS
+                int "USB PULL UP STATUS"
+                default 0
+        endif
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

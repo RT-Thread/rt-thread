@@ -21,10 +21,8 @@ STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
 STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
 STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c
 STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rng.c
+STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
 ''')
-
-if GetDepend(['RT_USING_PIN']):
-    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c']
     
 if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c']
@@ -48,7 +46,7 @@ if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
 if GetDepend(['RT_USING_CAN']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_lptim.c']
@@ -104,6 +102,7 @@ if GetDepend(['BSP_USING_LTDC']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_ltdc_ex.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma2d.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_dma2d.c']
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dsi.c']
 
 path = [cwd + '/STM32F4xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32F4xx/Include',

@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -std=c99 -g -Wall'
+    CFLAGS = DEVICE + ' -g -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
@@ -55,6 +55,8 @@ if PLATFORM == 'gcc':
         AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2 -Os'
+
+    CXXFLAGS = CFLAGS 
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
@@ -69,6 +71,7 @@ if PLATFORM == 'gcc':
 elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
+    CXX = 'armcc'
     CXX = 'armcc'
     AS = 'armasm'
     AR = 'armar'
@@ -91,12 +94,15 @@ elif PLATFORM == 'armcc':
     else:
         CFLAGS += ' -O2 -Otime'
 
-    CXXFLAGS = CFLAGS
+    CXXFLAGS = CFLAGS 
+    CFLAGS += ' -std=c99'
+    
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iar':
     # toolchains
     CC = 'iccarm'
+    CXX = 'iccarm'
     CXX = 'iccarm'
     AS = 'iasmarm'
     AR = 'iarchive'

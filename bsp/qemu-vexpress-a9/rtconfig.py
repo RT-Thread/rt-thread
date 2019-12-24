@@ -1,15 +1,41 @@
 import os
 
+import uuid
+def get_mac_address(): 
+    mac=uuid.UUID(int = uuid.getnode()).hex[-12:] 
+    return "#define AUTOMAC".join([str(int(e/2) + 1) + '  0x' + mac[e:e+2] + '\n' for e in range(5,11,2)])
+
+header = '''
+#ifndef __MAC_AUTO_GENERATE_H__
+#define __MAC_AUTO_GENERATE_H__
+
+/* Automatically generated file; DO NOT EDIT. */
+/* mac configure file for RT-Thread qemu */
+
+#define AUTOMAC0  0x52
+#define AUTOMAC1  0x54
+#define AUTOMAC2  0x00
+#define AUTOMAC'''
+
+end = '''
+#endif
+'''
+
+automac_h_fn = os.path.join(os.path.dirname(__file__), 'drivers', 'automac.h')
+with open(automac_h_fn, 'w') as f:
+    f.write(header + get_mac_address() + end)
+
 # toolchains options
 ARCH='arm'
-CPU='cortex-a9'
+CPU='cortex-a'
 CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
+# only support GNU GCC compiler.
 PLATFORM    = 'gcc'
-EXEC_PATH   = '/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
+EXEC_PATH   = '/usr/bin'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')

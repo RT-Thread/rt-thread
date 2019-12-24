@@ -634,8 +634,13 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
           pDesc->Desc.ui32CtrlStatus = 0;
       }
 
+#ifdef RT_LWIP_USING_HW_CHECKSUM
       pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_IP_ALL_CKHSUMS |
                                      DES0_TX_CTRL_CHAINED);
+#else
+      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_NO_CHKSUM |
+                                     DES0_TX_CTRL_CHAINED);
+#endif
 
       /* Decrement our descriptor counter, move on to the next buffer in the
        * pbuf chain. */
