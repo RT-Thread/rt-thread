@@ -14,46 +14,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#if 0
-
-/*******************************************************************************
- * Function Name  : SysTick_Configuration
- * Description    : Configures the SysTick for OS tick.
- * Input          : None
- * Output         : None
- * Return         : None
- *******************************************************************************/
-void  SysTick_Configuration(void)
-{
-    nrf_drv_common_irq_enable(SysTick_IRQn, APP_TIMER_CONFIG_IRQ_PRIORITY);
-    nrf_systick_load_set(SystemCoreClock / RT_TICK_PER_SECOND);
-    nrf_systick_val_clear();
-    nrf_systick_csr_set(NRF_SYSTICK_CSR_CLKSOURCE_CPU | NRF_SYSTICK_CSR_TICKINT_ENABLE
-                        | NRF_SYSTICK_CSR_ENABLE);
-}
-
-/**
- * This is the timer interrupt service routine.
- *
- */
-
-
-void SysTick_Handler(void)
-{
-    if (rt_thread_self() != RT_NULL)
-    {
-    	/* enter interrupt */
-    	rt_interrupt_enter();
-
-    	rt_tick_increase();
-
-    	/* leave interrupt */
-    	rt_interrupt_leave();
-    }
-}
-
-#else
-
 #define TICK_RATE_HZ  RT_TICK_PER_SECOND
 #define SYSTICK_CLOCK_HZ  ( 32768UL )
 
@@ -222,14 +182,10 @@ static void _sleep_ongo( uint32_t sleep_tick )
             /* It is important that we clear pending here so that our corrections are latest and in sync with tick_interrupt handler */
             NVIC_ClearPendingIRQ(NRF_RTC_IRQn);
         }
-
-        //rt_kprintf("entry tick:%u, expected:%u, current tick:%u\r\n", entry_tick, sleep_tick, rt_tick_get());
     }
 
     rt_exit_critical();
 }
-
-#endif
 
 void rt_hw_system_powersave(void)
 {
