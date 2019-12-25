@@ -1,0 +1,66 @@
+/**
+@page nrf52810_drivers nRF52810/nRF52811 Drivers
+@{
+
+@ref nrf_bprot
+
+@ref nrf_ccm
+
+@ref nrf_clock
+
+@ref nrf_comp
+
+@ref nrf_ecb
+
+@ref nrf_gpio
+
+@ref nrf_gpiote
+
+@ref nrf_nvmc
+
+@ref nrf_pdm
+
+@ref nrf_power
+
+@ref nrf_ppi
+
+@ref nrf_pwm
+
+@ref nrf_qdec
+
+@ref nrf_radio
+
+@ref nrf_rng
+
+@ref nrf_rtc
+
+@ref nrf_saadc
+
+@ref nrf_spi
+
+@ref nrf_spim
+
+@ref nrf_spis
+
+@ref nrf_systick
+
+@ref nrf_swi_egu
+
+@ref nrf_temp
+
+@ref nrf_timer
+
+@ref nrf_twi
+
+@ref nrf_twim
+
+@ref nrf_twis
+
+@ref nrf_uart
+
+@ref nrf_uarte
+
+@ref nrf_wdt
+
+@}
+*/

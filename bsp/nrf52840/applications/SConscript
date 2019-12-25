@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'applications')
+src	= Glob('*.c')
+CPPPATH = [cwd, str(Dir('#'))]
+
+CPPDEFINES = ['CONFIG_NFCT_PINS_AS_GPIOS', 'FLOAT_ABI_HARD', 'NRF52840_XXAA', 'BLE_STACK_SUPPORT_REQD', 'NRF_SD_BLE_API_VERSION=6', 'S140', 'SOFTDEVICE_PRESENT', 'SWI_DISABLE0']
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

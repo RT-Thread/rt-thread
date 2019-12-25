@@ -1,0 +1,52 @@
+/**
+@page nrf51_series_drivers nRF51 Series Drivers
+@{
+
+@ref nrf_adc
+
+@ref nrf_ccm
+
+@ref nrf_clock
+
+@ref nrf_ecb
+
+@ref nrf_gpio
+
+@ref nrf_gpiote
+
+@ref nrf_lpcomp
+
+@ref nrf_mpu
+
+@ref nrf_nvmc
+
+@ref nrf_power
+
+@ref nrf_ppi
+
+@ref nrf_qdec
+
+@ref nrf_radio
+
+@ref nrf_rng
+
+@ref nrf_rtc
+
+@ref nrf_spi
+
+@ref nrf_spis
+
+@ref nrf_swi_egu
+
+@ref nrf_temp
+
+@ref nrf_timer
+
+@ref nrf_twi
+
+@ref nrf_uart
+
+@ref nrf_wdt
+
+@}
+*/

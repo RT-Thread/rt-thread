@@ -1,0 +1,17 @@
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+SDDir = cwd
+SDSRC = [SDDir + '/common/nrf_sdh.c']
+SDSRC += [SDDir + '/common/nrf_sdh_ble.c']
+SDSRC += [SDDir + '/common/nrf_sdh_rtthread.c']
+SDSRC += [SDDir + '/common/nrf_sdh_soc.c']
+
+sd_path = [SDDir + '/common']
+sd_path += [SDDir + '/s140/headers']
+sd_path += [SDDir + '/s140/headers/nrf52']
+
+sd_group = DefineGroup('nRF_SOFTDEVICE', SDSRC, depend = [''], CPPPATH = sd_path)
+Return('sd_group')
