@@ -419,12 +419,12 @@ rt_err_t rt_ecm_eth_tx(rt_device_t dev, struct pbuf* p)
         p->tot_len = USB_ETH_MTU;
     }
 
-    result = rt_sem_take(&device->tx_buffer_free, rt_tick_from_millisecond(1000));
+    result = rt_sem_take(&ecm_eth_dev->tx_buffer_free, rt_tick_from_millisecond(1000));
     if(result != RT_EOK)
     {
         LOG_W("wait for buffer free timeout");
         /* if cost 1s to wait send done it said that connection is close . drop it */
-        rt_sem_release(&device->tx_buffer_free);
+        rt_sem_release(&ecm_eth_dev->tx_buffer_free);
         return result;
     }
     
