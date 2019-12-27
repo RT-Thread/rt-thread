@@ -53,14 +53,6 @@ if GetDepend('BSP_USING_USB_DEVICE'):
     src += Glob('usb/phy/*.c')
     CPPDEFINES += ['ENDIANNESS']
 
-if GetDepend('BSP_USING_USB_HOST'):
-    src += ['drv_usbh.c']
-    src += Glob('usb/host/*.c')
-
-if GetDepend('BSP_USING_USB_HOST'):
-    src += Glob('usb/phy/*.c')
-    CPPDEFINES += ['ENDIANNESS']
-
 path =  [cwd,cwd + '/config']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
