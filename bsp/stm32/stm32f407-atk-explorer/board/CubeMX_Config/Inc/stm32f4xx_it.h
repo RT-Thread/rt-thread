@@ -73,6 +73,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void SPI1_IRQHandler(void);
 void USART1_IRQHandler(void);
+void OTG_FS_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
