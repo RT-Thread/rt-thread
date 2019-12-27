@@ -585,7 +585,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
     return RT_EOK;
 }
-RTM_EXPORT(rt_thread_delay_util);
+RTM_EXPORT(rt_thread_delay_until);
 
 /**
  * This function will let current thread delay for some milliseconds.
