@@ -17,7 +17,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_RS232
         bool "Enable RS232 (uart2 pin conflict with Ethernet)"
-	    select BSP_USING_UART
+        select BSP_USING_UART
         select BSP_USING_UART2
         default n
 
@@ -246,6 +246,21 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
@@ -255,7 +270,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_LTDC
         bool "Enable LTDC"
         default n
-	
+
  source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
