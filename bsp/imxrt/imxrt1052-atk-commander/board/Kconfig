@@ -124,21 +124,6 @@ menu "Onboard Peripheral Drivers"
         bool "Enable SDRAM"
         default n
 
-    menuconfig BSP_USING_USB_HOST
-        bool "Enable USB Host"
-        select RT_USING_USB_HOST
-        default n
-        if BSP_USING_USB_HOST
-            menuconfig RT_USBH_MSTORAGE
-                bool "Enable Udisk Drivers"
-                default n
-                if RT_USBH_MSTORAGE
-                    config UDISK_MOUNTPOINT
-                    string "Udisk mount dir"
-                    default "/"
-                endif
-        endif
-
     config BSP_USING_USB_DEVICE
         bool "Enable USB Device"
         select RT_USING_USB_DEVICE
