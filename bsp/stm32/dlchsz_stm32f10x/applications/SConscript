@@ -1,0 +1,17 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+main.c
+app_modbus_rtu_slave.c
+app_status_led.c
+app_msg_que.c
+app_protocol.c
+''')
+
+CPPPATH = [cwd, str(Dir('#'))]
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

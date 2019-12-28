@@ -1,0 +1,2 @@
+---- MODBUS_MAX_READ_REGISTERS Matches (1 in 0 files) ----
+__modbus_rtu_slave_thread in app_modbus_rtu_slave.c (E:\rtthread_os\rt_os\rt-thread\bsp\stm32\dlchsz_stm32f10x\applications) :                                     MODBUS_MAX_READ_REGISTERS, MODBUS_MAX_WRITE_REGISTERS);
