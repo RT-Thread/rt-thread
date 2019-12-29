@@ -18,3 +18,4 @@ static void __msg_que_init(void) {
     }
 }
 INIT_PREV_EXPORT(__msg_que_init);
+
