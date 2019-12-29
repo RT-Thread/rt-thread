@@ -25,6 +25,16 @@ extern "C" {
 #include "f0/tim_config.h"
 #include "f0/pwm_config.h"
 #include "f0/adc_config.h"
+#elif defined(SOC_SERIES_STM32L1)
+#include "l1/dma_config.h"
+#include "l1/uart_config.h"
+#include "l1/spi_config.h"
+#include "l1/adc_config.h"
+#include "l1/tim_config.h"
+#include "l1/sdio_config.h"
+#include "l1/pwm_config.h"
+#include "l1/usbd_config.h"
+#include "l1/pulse_encoder_config.h"
 #elif defined(SOC_SERIES_STM32F1)
 #include "f1/dma_config.h"
 #include "f1/uart_config.h"

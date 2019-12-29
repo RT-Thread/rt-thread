@@ -10,6 +10,11 @@ config SOC_SERIES_STM32F1
     bool
     select ARCH_ARM_CORTEX_M3
     select SOC_FAMILY_STM32
+    
+config SOC_SERIES_STM32L1
+    bool
+    select ARCH_ARM_CORTEX_M3
+    select SOC_FAMILY_STM32
 
 config SOC_SERIES_STM32F2
     bool
@@ -29,6 +34,11 @@ config SOC_SERIES_STM32F7
 config SOC_SERIES_STM32L0
     bool
     select ARCH_ARM_CORTEX_M0
+    select SOC_FAMILY_STM32
+    
+config SOC_SERIES_STM32L1
+    bool
+    select ARCH_ARM_CORTEX_M3
     select SOC_FAMILY_STM32
 
 config SOC_SERIES_STM32L4
