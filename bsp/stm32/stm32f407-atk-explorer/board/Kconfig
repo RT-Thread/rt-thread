@@ -296,6 +296,11 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
     menuconfig BSP_USING_USBH
         bool "Enable USB Host"
         select RT_USING_USB_HOST
