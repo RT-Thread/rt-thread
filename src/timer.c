@@ -305,7 +305,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT_MSG(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer, 
-                timer, "timer: 0x%p\r\n", timer);
+                "timer: 0x%p\r\n", timer);
 
     /* stop timer firstly */
     level = rt_hw_interrupt_disable();

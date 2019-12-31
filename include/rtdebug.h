@@ -91,11 +91,10 @@ if (!(EX))                                                                    \
     rt_assert_handler(#EX, __FUNCTION__, __LINE__, RT_NULL);                  \
 }
 
-#define RT_ASSERT_MSG(EX, user_data, ...)                                     \
+#define RT_ASSERT_MSG(EX, fmt, ...)                                           \
 if (!(EX))                                                                    \
 {                                                                             \
-    rt_kprintf(__VA_ARGS__);                                                  \
-    rt_assert_handler(#EX, __FUNCTION__, __LINE__, user_data);                \
+    rt_assert_handler(#EX, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);       \
 }
 
 /* Macro to check current context */
@@ -141,7 +140,7 @@ while (0)
 #else /* RT_DEBUG */
 
 #define RT_ASSERT(EX)
-#define RT_ASSERT_MSG(EX, user_data, ...)
+#define RT_ASSERT_MSG(EX, fmt, ...)
 #define RT_DEBUG_LOG(type, message)
 #define RT_DEBUG_NOT_IN_INTERRUPT
 #define RT_DEBUG_IN_THREAD_CONTEXT
