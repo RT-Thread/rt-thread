@@ -1377,6 +1377,12 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
  * @param ex the assertion condition string
  * @param func the function name when assertion.
  * @param line the file line number when assertion.
+ * @param fmt The format string
+ * @param ... Additional arguments. Depending on the format string, the function
+ * may expect a sequence of additional arguments, each containing one value to
+ * be inserted instead of each %-tag specified in the format parameter (if any). 
+ * There should be the same number of these arguments as the number of %-tags
+ * that expect a value.
  */
 void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line, const char *fmt, ...)
 {
