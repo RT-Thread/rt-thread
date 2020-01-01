@@ -12,8 +12,19 @@ board.c
 CubeMX_Config/Src/stm32l4xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_DSI']):
+    src += Glob('ports/drv_lcd_dsi.c')
+
+if GetDepend(['BSP_USING_SRAM']):
+    src += Glob('ports/drv_sram.c')
+
+if GetDepend(['BSP_USING_TOUCH']):
+    src += Glob('ports/drv_touch.c')	
+    src += Glob('ports/drv_touch_ft.c')	
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports/include']
 
 startup_path_prefix = SDK_LIB
 

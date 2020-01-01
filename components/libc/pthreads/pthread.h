@@ -32,7 +32,7 @@ extern "C" {
 #define PTHREAD_EXPLICIT_SCHED      0
 #define PTHREAD_INHERIT_SCHED       1
 
-typedef rt_thread_t pthread_t;
+typedef long pthread_t;
 typedef long pthread_condattr_t;
 typedef long pthread_rwlockattr_t;
 typedef long pthread_mutexattr_t;
@@ -76,15 +76,21 @@ enum
 #define PTHREAD_SCOPE_PROCESS   0
 #define PTHREAD_SCOPE_SYSTEM    1
 
+struct sched_param
+{
+    int sched_priority;
+};
+
 struct pthread_attr
 {
-    void*       stack_base;
-    rt_uint32_t stack_size;     /* stack size of thread */
+    void* stackaddr;        /* stack address of thread */
+    int   stacksize;        /* stack size of thread */
 
-    rt_uint8_t priority;        /* priority of thread */
-    rt_uint8_t detachstate;     /* detach state */
-    rt_uint8_t policy;          /* scheduler policy */
-    rt_uint8_t inheritsched;    /* Inherit parent prio/policy */
+    int   inheritsched;     /* Inherit parent prio/policy */
+    int   schedpolicy;      /* scheduler policy */
+    struct sched_param schedparam; /* sched parameter */
+
+    int   detachstate;      /* detach state */
 };
 typedef struct pthread_attr pthread_attr_t;
 
@@ -131,11 +137,6 @@ struct pthread_barrier
 };
 typedef struct pthread_barrier pthread_barrier_t;
 
-struct sched_param
-{
-    int sched_priority;
-};
-
 /* pthread thread interface */
 int pthread_attr_destroy(pthread_attr_t *attr);
 int pthread_attr_init(pthread_attr_t *attr);
@@ -171,10 +172,7 @@ rt_inline int pthread_equal (pthread_t t1, pthread_t t2)
     return t1 == t2;
 }
 
-rt_inline pthread_t pthread_self (void)
-{
-    return rt_thread_self();
-}
+pthread_t pthread_self (void);
 
 void pthread_exit (void *value_ptr);
 int pthread_once(pthread_once_t * once_control, void (*init_routine) (void));

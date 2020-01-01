@@ -36,8 +36,8 @@
 extern int Image$$ER_ZI$$ZI$$Limit;
 #define HEAP_BEGIN  (&Image$$ER_ZI$$ZI$$Limit)
 #elif (defined (__GNUC__))
-extern unsigned char __bss_end__;
-#define HEAP_BEGIN  (&__bss_end__)
+extern unsigned char __bss_end;
+#define HEAP_BEGIN  (&__bss_end)
 #elif (defined (__ICCARM__))
 #pragma section=".noinit"
 #define HEAP_BEGIN  (__section_end(".noinit"))

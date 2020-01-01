@@ -22,33 +22,18 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
 
+#if !defined (STM32L010xB) && !defined (STM32L010x8) && !defined (STM32L010x6) && !defined (STM32L010x4)
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal.h"
 
@@ -99,14 +84,16 @@
   *         (refer to device datasheet, parameter "TVREFINT").
   *         This function waits for the startup time
   *         (alternative solution: poll for bit SYSCFG_CFGR3_VREFINT_RDYF set).
+  * @note   VrefInt must be disabled before entering in low-power mode.
+  *         Refer to description of bit EN_VREFINT in reference manual.
   * @retval None
   */
 void HAL_COMPEx_EnableVREFINT(void)
 {
   __IO uint32_t wait_loop_index = 0U;
   
-  /* Enable the Buffer for the COMP by setting ENBUFLP_VREFINT_COMP bit in the CFGR3 register */
-  SYSCFG->CFGR3 |= (SYSCFG_CFGR3_ENBUFLP_VREFINT_COMP);
+  /* Enable VrefInt voltage reference and buffer */
+  SYSCFG->CFGR3 |= (SYSCFG_CFGR3_ENBUFLP_VREFINT_COMP | SYSCFG_CFGR3_EN_VREFINT);
   
   /* Wait loop initialization and execution */
   /* Note: Variable divided by 2 to compensate partially              */
@@ -121,12 +108,14 @@ void HAL_COMPEx_EnableVREFINT(void)
 /**
   * @brief  Disable Vrefint and path to comparator, used by comparator
   *         instance COMP2 input based on VrefInt or subdivision of VrefInt.
+  * @note   VrefInt must be disabled before entering in low-power mode.
+  *         Refer to description of bit EN_VREFINT in reference manual.
   * @retval None
   */
 void HAL_COMPEx_DisableVREFINT(void)
 {
-  /* Disable the Vrefint by resetting ENBUFLP_VREFINT_COMP bit in the CFGR3 register */
-  SYSCFG->CFGR3 &= (uint32_t)~((uint32_t)(SYSCFG_CFGR3_ENBUFLP_VREFINT_COMP));
+  /* Disable VrefInt voltage reference and buffer */
+  SYSCFG->CFGR3 &= (uint32_t)~((uint32_t)(SYSCFG_CFGR3_ENBUFLP_VREFINT_COMP | SYSCFG_CFGR3_EN_VREFINT));
 }
 
 /**
@@ -146,4 +135,5 @@ void HAL_COMPEx_DisableVREFINT(void)
 /**
   * @}
   */ 
+#endif /* #if !defined (STM32L010xB) && !defined (STM32L010x8) && !defined (STM32L010x6) && !defined (STM32L010x4) */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

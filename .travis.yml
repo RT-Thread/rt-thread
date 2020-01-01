@@ -7,12 +7,12 @@ before_script:
 # travis has changed to 64-bit and we require 32-bit compatibility libraries
   - sudo apt-get update
   # clang
-  - "sudo apt-get -qq install gcc-multilib libc6:i386 libgcc1:i386 gcc-4.6-base:i386 libstdc++5:i386 libstdc++6:i386 libsdl-dev || true"
+  - "sudo apt-get -qq install gcc-multilib libc6:i386 libgcc1:i386 libstdc++5:i386 libstdc++6:i386 libsdl-dev scons || true"
   # - sudo apt-get -qq install gcc-arm-none-eabi
   # - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && export RTT_EXEC_PATH=/usr/bin && arm-none-eabi-gcc --version || true"
   # - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2014.05-28-arm-none-eabi-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/arm-2014.05/bin && /opt/arm-2014.05/bin/arm-none-eabi-gcc --version || true"
   - "[ $RTT_TOOL_CHAIN = 'sourcery-arm' ] && wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/arm-2017q2-v6/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 && sudo tar xjf gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /opt && export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-6-2017-q2-update/bin && /opt/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gcc --version || true"
-  - "[ $RTT_TOOL_CHAIN = 'sourcery-mips' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/mips-sde-elf/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/mips-2016.05/bin && /opt/mips-2016.05/bin/mips-sde-elf-gcc --version || true"
+  - "[ $RTT_TOOL_CHAIN = 'sourcery-mips' ] && wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 && sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt && export RTT_EXEC_PATH=/opt/mips-2016.05/bin && /opt/mips-2016.05/bin/mips-sde-elf-gcc --version || true"
   # - "[ $RTT_TOOL_CHAIN = 'sourcery-ppc' ] && curl -s https://sourcery.mentor.com/public/gnu_toolchain/powerpc-eabi/freescale-2011.03-39-powerpc-eabi-i686-pc-linux-gnu.tar.bz2 | sudo tar xjf - -C /opt && export RTT_EXEC_PATH=/opt/freescale-2011.03/bin && /opt/freescale-2011.03/bin/powerpc-eabi-gcc --version || true"
   # - "[ $RTT_TOOL_CHAIN = 'atmel-avr32' ] && curl -s http://www.atmel.com/images/avr32-gnu-toolchain-3.4.1.348-linux.any.x86.tar.gz | sudo tar xzf - -C /opt && export RTT_EXEC_PATH=/opt/avr32-gnu-toolchain-linux_x86/bin && /opt/avr32-gnu-toolchain-linux_x86/bin/avr32-gcc --version && curl -sO http://www.atmel.com/images/avr-headers-3.2.3.970.zip && unzip -qq avr-headers-3.2.3.970.zip -d bsp/$RTT_BSP || true"
   - export RTT_ROOT=`pwd`
@@ -34,7 +34,10 @@ env:
   - RTT_BSP='gd32303e-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='gd32450z-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='gkipc' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='imxrt/imxrt1050-evk' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='imx6sx/cortex-a9' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='imxrt/imxrt1052-atk-commander' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='imxrt/imxrt1052-fire-pro' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='imxrt/imxrt1052-nxp-evk' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm3s8962' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm3s9b9x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm4f232' RTT_TOOL_CHAIN='sourcery-arm'
@@ -43,6 +46,7 @@ env:
   - RTT_BSP='lpc176x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc178x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc408x' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='lpc1114' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='lpc824' RTT_TOOL_CHAIN='sourcery-arm' # not support gcc
   - RTT_BSP='lpc2148' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc2478' RTT_TOOL_CHAIN='sourcery-arm'
@@ -51,7 +55,6 @@ env:
 #  - RTT_BSP='lpc54608-LPCXpresso' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='ls1bdev' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='ls1cdev' RTT_TOOL_CHAIN='sourcery-mips'
-  - RTT_BSP='imx6sx/cortex-a9' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='m16c62p' # m32c
   - RTT_BSP='mb9bf500r' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='mb9bf506r' RTT_TOOL_CHAIN='sourcery-arm'
@@ -60,7 +63,7 @@ env:
 #  - RTT_BSP='microblaze' # no scons
   - RTT_BSP='mini2440' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='mini4020' # no scons
-  - RTT_BSP='mm32l07x'
+#  - RTT_BSP='mm32l07x' # not support gcc
 #  - RTT_BSP='nios_ii' # no scons
   - RTT_BSP='nuvoton_nuc472' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='nuvoton_m05x' RTT_TOOL_CHAIN='sourcery-arm'
@@ -69,6 +72,7 @@ env:
   - RTT_BSP='qemu-vexpress-gemini' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='sam7x' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='simulator' # x86
+  - RTT_BSP='stm32/stm32f072-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f091-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-atk-nano' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-atk-warshipv3' RTT_TOOL_CHAIN='sourcery-arm'
@@ -77,15 +81,18 @@ env:
   - RTT_BSP='stm32/stm32f103-fire-arbitrary' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-hw100k-ibox' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-mini-system' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f103-yf-ufun' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f107-uc-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f401-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f405-smdz-breadfruit' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f407-atk-explorer' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f407-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f411-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f427-robomaster-a' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-armfly-v6' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f429-st-disco' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f446-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f469-st-disco' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f746-st-disco' RTT_TOOL_CHAIN='sourcery-arm'
@@ -93,7 +100,9 @@ env:
   - RTT_BSP='stm32/stm32f767-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f767-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32g071-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32g431-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32h743-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32h743-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l4r9-st-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l053-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l432-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
@@ -101,13 +110,7 @@ env:
   - RTT_BSP='stm32/stm32l475-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l476-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l496-ali-developer' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32f4xx-HAL' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32f10x' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32f10x-HAL' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32f20x' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32f429-apollo' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32f429-disco' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='stm32h743-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='swm320-lq100' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar

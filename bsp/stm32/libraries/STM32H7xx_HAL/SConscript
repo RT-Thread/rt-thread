@@ -25,33 +25,31 @@ STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rng.c
 STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sram.c
+STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c
 ''')
-
-if GetDepend(['RT_USING_PIN']):
-    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c']
-    
+ 
 if GetDepend(['RT_USING_SERIAL']):
-	src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c']
-	src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_usart.c']
-	src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_usart.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c']
 
 if GetDepend(['RT_USING_I2C']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c_ex.c']
 
 if GetDepend(['RT_USING_SPI']):
-    src += ['STM32F7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c']
-    src += ['STM32F7xx_HAL_Driver/Src/stm32h7xx_hal_qspi.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_qspi.c']
 
 if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
-    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pccard.c']
+   # src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pccard.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd.c'] 
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pcd_ex.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hcd.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c']
 
 if GetDepend(['RT_USING_CAN']):
-    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_can.c']
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_fdcan.c']
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c']

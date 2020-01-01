@@ -14,7 +14,7 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
-#define RT_IDEL_HOOK_LIST_SIZE 4
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
@@ -30,7 +30,8 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
-#define RT_USING_SMALL_MEM
+#define RT_USING_MEMHEAP
+#define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -80,6 +81,8 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 
 /* Using WiFi */
@@ -94,6 +97,9 @@
 /* Network */
 
 /* Socket abstraction layer */
+
+
+/* Network interface device */
 
 
 /* light weight TCP/IP stack */
@@ -113,11 +119,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -127,6 +128,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -141,10 +145,16 @@
 /* tools packages */
 
 
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
 
 
-/* example package: hello */
+/* samples: kernel and components samples */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32L4
@@ -154,6 +164,11 @@
 #define SOC_STM32L4R9AI
 
 /* Onboard Peripheral Drivers */
+
+#define BSP_USING_STLINK_TO_USART
+
+/* Enable Touch */
+
 
 /* On-chip Peripheral Drivers */
 

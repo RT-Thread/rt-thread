@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F767IG
     bool
     select SOC_SERIES_STM32F7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -15,7 +17,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_RS232
         bool "Enable RS232 (uart2 pin conflict with Ethernet)"
-	    select BSP_USING_UART
+        select BSP_USING_UART
         select BSP_USING_UART2
         default n
 
@@ -24,7 +26,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_QSPI_FLASH
-        bool "Enable QSPI FLASH (w25q128 qspi)"
+        bool "Enable QSPI FLASH (W25Q256 qspi)"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
@@ -58,6 +60,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SDIO
         select RT_USING_DFS
         select RT_USING_DFS_ELMFAT
+        default n
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        select BSP_USING_LTDC
+        select BSP_USING_SDRAM
         default n
 
 endmenu
@@ -239,12 +246,33 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+
     config BSP_USING_SDIO
         bool "Enable SDIO"
         select RT_USING_SDIO
         select RT_USING_DFS
         default n
 
+    config BSP_USING_LTDC
+        bool "Enable LTDC"
+        default n
+
+ source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

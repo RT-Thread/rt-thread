@@ -167,7 +167,7 @@ __exit:
     }
 
     LOG_D("erase done: addr (0x%p), size %d", (void *)addr, size);
-    return result;
+    return size;
 }
 
 #if defined(PKG_USING_FAL)

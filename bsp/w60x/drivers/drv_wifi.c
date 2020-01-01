@@ -14,8 +14,10 @@
 #include "wm_wifi.h"
 #include "drv_wifi.h"
 
-#define DBG_TAG "WIFI"
-#define DBG_LVL DBG_INFO
+#define DBG_ENABLE
+#define DBG_LEVEL DBG_INFO
+#define DBG_SECTION_NAME  "WIFI"
+#define DBG_COLOR
 #include <rtdbg.h>
 
 #include "wm_ram_config.h"

@@ -12,6 +12,17 @@
 
 #ifdef BSP_USING_ONCHIP_RTC
 
+
+#ifndef HAL_RTCEx_BKUPRead
+#define HAL_RTCEx_BKUPRead(x1, x2) (~BKUP_REG_DATA)
+#endif
+#ifndef HAL_RTCEx_BKUPWrite
+#define HAL_RTCEx_BKUPWrite(x1, x2, x3)
+#endif
+#ifndef RTC_BKP_DR1
+#define RTC_BKP_DR1 RT_NULL
+#endif
+
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.rtc"
 #include <drv_log.h>
@@ -44,15 +55,9 @@ static time_t get_rtc_timestamp(void)
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
-    RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
     RTC_TimeTypeDef RTC_TimeStruct = {0};
     RTC_DateTypeDef RTC_DateStruct = {0};
     struct tm *p_tm;
-
-    HAL_PWR_EnableBkUpAccess();
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
-    HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
     p_tm = localtime(&time_stamp);
     if (p_tm->tm_year < 100)
@@ -84,7 +89,9 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
 static void rt_rtc_init(void)
 {
+#ifndef SOC_SERIES_STM32H7
     __HAL_RCC_PWR_CLK_ENABLE();
+#endif
 
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 #ifdef BSP_RTC_USING_LSI
@@ -114,10 +121,13 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
+    /* Enable RTC Clock */
+    __HAL_RCC_RTC_ENABLE();
+
     RTC_Handler.Instance = RTC;
     if (HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR1) != BKUP_REG_DATA)
     {
-        LOG_W("RTC hasn't been configured, please use <date> command to config.");
+        LOG_I("RTC hasn't been configured, please use <date> command to config.");
 
 #if defined(SOC_SERIES_STM32F1)
         RTC_Handler.Init.OutPut = RTC_OUTPUTSOURCE_NONE;
@@ -137,7 +147,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
 
         /* set the frequency division */
 #ifdef BSP_RTC_USING_LSI

@@ -197,14 +197,14 @@ void rt_hw_trap_resv(struct rt_hw_register *regs)
     rt_hw_cpu_shutdown();
 }
 
-extern void rt_interrupt_dispatch(void);
+extern void rt_interrupt_dispatch(rt_uint32_t fiq_irq);
 
 void rt_hw_trap_irq(void)
 {
-    rt_interrupt_dispatch();
+    rt_interrupt_dispatch(INT_IRQ);
 }
 
 void rt_hw_trap_fiq(void)
 {
-    rt_interrupt_dispatch();
+    rt_interrupt_dispatch(INT_FIQ);
 }

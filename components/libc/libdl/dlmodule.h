@@ -59,6 +59,12 @@ struct rt_dlmodule
     struct rt_module_symtab *symtab;    /* module symbol table */
 };
 
+struct rt_dlmodule_ops
+{
+    rt_uint8_t *(*load)(const char* filename);  /* load dlmodule file data */
+    rt_err_t (*unload)(rt_uint8_t *param);  /* unload dlmodule file data */
+};
+
 struct rt_dlmodule *dlmodule_create(void);
 rt_err_t dlmodule_destroy(struct rt_dlmodule* module);
 
@@ -66,6 +72,12 @@ struct rt_dlmodule *dlmodule_self(void);
 
 struct rt_dlmodule *dlmodule_load(const char* pgname);
 struct rt_dlmodule *dlmodule_exec(const char* pgname, const char* cmd, int cmd_size);
+
+#if defined(RT_USING_CUSTOM_DLMODULE)
+struct rt_dlmodule* dlmodule_load_custom(const char* filename, struct rt_dlmodule_ops* ops);
+struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, int cmd_size, struct rt_dlmodule_ops* ops);
+#endif
+
 void dlmodule_exit(int ret_code);
 
 struct rt_dlmodule *dlmodule_find(const char *name);

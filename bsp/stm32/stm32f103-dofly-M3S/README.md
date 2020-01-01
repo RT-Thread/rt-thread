@@ -23,12 +23,12 @@ STM32F103 德飞莱-尼莫 M3S 是徳飞莱推出的一款基于 ARM Cortex-M3 �
 该开发板常用 **板载资源** 如下：
 
 - MCU：STM32F103ZET6，主频 72MHz，512KB FLASH ，64KB RAM
-- 外部 RAM：型号24c02，2KB
+- 外部 RAM：型号24C02，2KB
 - 外部 FLASH：型号W25Q64，8MB
 - 常用外设
   - LED：2个，LED2（红色，PE5），LED3（红色，PB5）
   - 按键：4个，S1（PE4），S2（PE3），S3（PE2），S4（兼具唤醒功能，PA0）
-- 常用接口：USB 转串口、SD 卡接口、RS232 接口、LCD 接口、nRF24L01接口等
+- 常用接口：USB 转串口、SD 卡接口、RS232 接口、LCD 接口、NRF24L01接口等
 - 调试接口，标准 JTAG/SWD
 
 开发板更多详细信息请参考徳飞莱的 [STM32F103-尼莫M3S 开发板介绍](https://item.taobao.com/item.htm?spm=a1z10.1-c.w4004-1022655459.10.44ae4d22Wa8UIo&id=44835368405)。
@@ -37,10 +37,20 @@ STM32F103 德飞莱-尼莫 M3S 是徳飞莱推出的一款基于 ARM Cortex-M3 �
 
 本 BSP 目前对外设的支持情况如下：
 
-| **片上外设**      | **支持情况** | **备注**                              |
+| **板载外设** | **支持情况** | **备注** |
 | :-----: | :-----: | :-----: |
+| SDCARD | 支持 |  |
+| SPI FLASH | 支持 | W25Q64，8MB |
+| EEPRAM | 支持 | 24c02，2KB |
+| **片上外设** | **支持情况** | **备注** |
 | GPIO  | 支持 |  |
 | USART | 支持 | USART1 |
+| SDIO | 支持 |  |
+| SPI | 支持 | SPI1/2/3 |
+| I2C | 支持 | 软件I2C |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
+| **扩展模块** | **支持情况** | **备注** |
+| NRF24L01 | 支持 | 根据实际板子接线情况修改 NRF24L01 软件包中的 `NRF24L01_CE_PIN` 和 `NRF24_IRQ_PIN` 的宏定义，以及 SPI 设备名 |
 
 ## 使用说明
 

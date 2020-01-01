@@ -19,9 +19,10 @@ extern "C" {
 #endif
 
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L0) \
-	|| defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+	|| defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)\
+	|| defined(SOC_SERIES_STM32H7)
 #define DMA_INSTANCE_TYPE              DMA_Stream_TypeDef
 #endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) */
 
@@ -30,11 +31,11 @@ struct dma_config {
     rt_uint32_t dma_rcc;
     IRQn_Type dma_irq;
 
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     rt_uint32_t channel;
 #endif
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)
     rt_uint32_t request;
 #endif
 };

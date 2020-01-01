@@ -43,13 +43,13 @@ struct rt_work
     void *work_data;
     rt_uint16_t flags;
     rt_uint16_t type;
+    struct rt_timer timer;
+    struct rt_workqueue *workqueue;
 };
 
 struct rt_delayed_work
 {
     struct rt_work work;
-    struct rt_timer timer;
-    struct rt_workqueue *workqueue;
 };
 
 #ifdef RT_USING_HEAP
@@ -74,11 +74,15 @@ rt_inline void rt_work_init(struct rt_work *work, void (*work_func)(struct rt_wo
     rt_list_init(&(work->list));
     work->work_func = work_func;
     work->work_data = work_data;
+    work->workqueue = RT_NULL;
+    work->flags = 0;
+    work->type = 0;
 }
 
 void rt_delayed_work_init(struct rt_delayed_work *work, void (*work_func)(struct rt_work *work,
                           void *work_data), void *work_data);
 
+int rt_work_sys_workqueue_init(void);
 #endif
 
 #endif

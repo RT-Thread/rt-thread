@@ -22,7 +22,10 @@ extern int __bss_end__;
 #define HEAP_BEGIN    (&__bss_end__)
 #endif
 
-#define HEAP_END           (0x20038000UL)
+#define HEAP_END           (0x20028000UL)
+
+#define HARDWARE_VERSION 0x0003U
+#include "pin_config.h"
 
 void rt_hw_board_init(void);
 

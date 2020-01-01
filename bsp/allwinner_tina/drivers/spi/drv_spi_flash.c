@@ -63,16 +63,6 @@ int rt_hw_spi_flash_with_sfud_init(void)
 }
 INIT_PREV_EXPORT(rt_hw_spi_flash_with_sfud_init);
 
-#elif defined(RT_USING_W25QXX)
-#include "spi_flash_w25qxx.h"
-
-int rt_hw_spi_flash_init(void)
-{
-    DEBUG_PRINTF("%s -> %d\n", __FUNCTION__, __LINE__);
-    return w25qxx_init(SPI_FLASH_CHIP, SPI_FLASH_DEVICE_NAME);
-}
-INIT_DEVICE_EXPORT(rt_hw_spi_flash_init);
-
 #endif
 
 #endif

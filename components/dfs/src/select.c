@@ -14,6 +14,8 @@
 #include <dfs_poll.h>
 #include <dfs_select.h>
 
+#ifdef RT_USING_POSIX
+
 static void fdszero(fd_set *set, int nfds)
 {
     fd_mask *m;
@@ -178,3 +180,4 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     return ret;
 }
 
+#endif 

@@ -11,21 +11,18 @@
 ;*                      After Reset the Cortex-M processor is in Thread mode,
 ;*                      priority is Privileged, and the Stack is set to Main.
 ;* <<< Use Configuration Wizard in Context Menu >>>   
-;*******************************************************************************
-; 
-; Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-; You may not use this file except in compliance with the License.
-; You may obtain a copy of the License at:
-; 
-;        http://www.st.com/software_license_agreement_liberty_v2
-; 
-; Unless required by applicable law or agreed to in writing, software 
-; distributed under the License is distributed on an "AS IS" BASIS, 
-; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-; See the License for the specific language governing permissions and
-; limitations under the License.
-; 
-;*******************************************************************************
+;******************************************************************************
+;* @attention
+;*
+;* Copyright (c) 2017 STMicroelectronics.
+;* All rights reserved.
+;*
+;* This software component is licensed by ST under BSD 3-Clause license,
+;* the "License"; You may not use this file except in compliance with the
+;* License. You may obtain a copy of the License at:
+;*                        opensource.org/licenses/BSD-3-Clause
+;*
+;******************************************************************************
 
 ; Amount of memory (in bytes) allocated for Stack
 ; Tailor this value to your application needs
@@ -224,7 +221,7 @@ __Vectors       DCD     __initial_sp                      ; Top of Stack
                 DCD     LPUART1_IRQHandler                ; LP UART1 interrupt                                                
                 DCD     0                                 ; Reserved                                                                              
                 DCD     CRS_IRQHandler                    ; Clock Recovery Global Interrupt                                   
-                DCD     0                                 ; Reserved                                              
+                DCD     ECC_IRQHandler                    ; ECC diagnostic Global Interrupt                                              
                 DCD     SAI4_IRQHandler                   ; SAI4 global interrupt                                                
                 DCD     0                                 ; Reserved                                 
                 DCD     0                                 ; Reserved                                    
@@ -431,7 +428,8 @@ Default_Handler PROC
                 EXPORT  LPTIM4_IRQHandler                 [WEAK]                                            
                 EXPORT  LPTIM5_IRQHandler                 [WEAK]                                            
                 EXPORT  LPUART1_IRQHandler                [WEAK]                                                  
-                EXPORT  CRS_IRQHandler                    [WEAK]                                   
+                EXPORT  CRS_IRQHandler                    [WEAK]
+                EXPORT  ECC_IRQHandler                    [WEAK] 				
                 EXPORT  SAI4_IRQHandler                   [WEAK]                                                                                     
                 EXPORT  WAKEUP_PIN_IRQHandler             [WEAK] 
 
@@ -571,7 +569,8 @@ LPTIM3_IRQHandler
 LPTIM4_IRQHandler                                                                 
 LPTIM5_IRQHandler                                                                 
 LPUART1_IRQHandler                                                                                                                         
-CRS_IRQHandler                                                            
+CRS_IRQHandler
+ECC_IRQHandler                                                            
 SAI4_IRQHandler      
 WAKEUP_PIN_IRQHandler
 

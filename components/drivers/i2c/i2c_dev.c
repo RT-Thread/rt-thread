@@ -11,6 +11,14 @@
 
 #include <rtdevice.h>
 
+#define DBG_TAG               "I2C"
+#ifdef RT_I2C_DEBUG
+#define DBG_LVL               DBG_LOG
+#else
+#define DBG_LVL               DBG_INFO
+#endif
+#include <rtdbg.h>
+
 static rt_size_t i2c_bus_device_read(rt_device_t dev,
                                      rt_off_t    pos,
                                      void       *buffer,
@@ -23,12 +31,12 @@ static rt_size_t i2c_bus_device_read(rt_device_t dev,
     RT_ASSERT(bus != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    i2c_dbg("I2C bus dev [%s] reading %u bytes.\n", dev->parent.name, count);
+    LOG_D("I2C bus dev [%s] reading %u bytes.", dev->parent.name, count);
 
     addr = pos & 0xffff;
     flags = (pos >> 16) & 0xffff;
 
-    return rt_i2c_master_recv(bus, addr, flags, buffer, count);
+    return rt_i2c_master_recv(bus, addr, flags, (rt_uint8_t *)buffer, count);
 }
 
 static rt_size_t i2c_bus_device_write(rt_device_t dev,
@@ -43,12 +51,12 @@ static rt_size_t i2c_bus_device_write(rt_device_t dev,
     RT_ASSERT(bus != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    i2c_dbg("I2C bus dev [%s] writing %u bytes.\n", dev->parent.name, count);
+    LOG_D("I2C bus dev [%s] writing %u bytes.", dev->parent.name, count);
 
     addr = pos & 0xffff;
     flags = (pos >> 16) & 0xffff;
 
-    return rt_i2c_master_send(bus, addr, flags, buffer, count);
+    return rt_i2c_master_send(bus, addr, flags, (const rt_uint8_t *)buffer, count);
 }
 
 static rt_err_t i2c_bus_device_control(rt_device_t dev,

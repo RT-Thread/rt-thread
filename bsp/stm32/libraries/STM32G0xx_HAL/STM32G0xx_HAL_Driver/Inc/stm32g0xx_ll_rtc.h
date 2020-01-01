@@ -6,11 +6,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -240,7 +240,7 @@ typedef struct
 #define LL_RTC_SCR_TSF                     RTC_SCR_CTSF
 #define LL_RTC_SCR_WUTF                    RTC_SCR_CWUTF
 #define LL_RTC_SCR_ALRBF                   RTC_SCR_CALRBF
-#define LL_RTC_CSR_ALRAF                   RTC_SCR_CALRAF
+#define LL_RTC_SCR_ALRAF                   RTC_SCR_CALRAF
 
 #define LL_RTC_ICSR_RECALPF                RTC_ICSR_RECALPF
 #define LL_RTC_ICSR_INITF                  RTC_ICSR_INITF
@@ -322,8 +322,8 @@ typedef struct
 /** @defgroup RTC_LL_EC_ALARM_OUTPUTTYPE  ALARM OUTPUT TYPE
   * @{
   */
-#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  0x00000000U            /*!< RTC_ALARM is open-drain output */
-#define LL_RTC_ALARM_OUTPUTTYPE_PUSHPULL   RTC_CR_TAMPALRM_TYPE   /*!< RTC_ALARM is push-pull output */
+#define LL_RTC_ALARM_OUTPUTTYPE_OPENDRAIN  RTC_CR_TAMPALRM_TYPE  /*!< RTC_ALARM is open-drain output */
+#define LL_RTC_ALARM_OUTPUTTYPE_PUSHPULL   0x00000000U           /*!< RTC_ALARM is push-pull output */
 /**
   * @}
   */
@@ -2412,7 +2412,7 @@ __STATIC_INLINE void LL_RTC_TS_Disable(RTC_TypeDef *RTCx)
   * @brief  Set Time-stamp event active edge
   * @note   Bit is write-protected. @ref LL_RTC_DisableWriteProtection function should be called before.
   * @note TSE must be reset when TSEDGE is changed to avoid unwanted TSF setting
-  * @rmtoll RTC_CR           ITSEDGE        LL_RTC_TS_SetActiveEdge
+  * @rmtoll RTC_CR           TSEDGE        LL_RTC_TS_SetActiveEdge
   * @param  RTCx RTC Instance
   * @param  Edge This parameter can be one of the following values:
   *         @arg @ref LL_RTC_TIMESTAMP_EDGE_RISING
@@ -2427,7 +2427,7 @@ __STATIC_INLINE void LL_RTC_TS_SetActiveEdge(RTC_TypeDef *RTCx, uint32_t Edge)
 /**
   * @brief  Get Time-stamp event active edge
   * @note   Bit is write-protected. @ref LL_RTC_DisableWriteProtection function should be called before.
-  * @rmtoll RTC_CR           ITSEDGE        LL_RTC_TS_GetActiveEdge
+  * @rmtoll RTC_CR           TSEDGE        LL_RTC_TS_GetActiveEdge
   * @param  RTCx RTC Instance
   * @retval Returned value can be one of the following values:
   *         @arg @ref LL_RTC_TIMESTAMP_EDGE_RISING
@@ -2468,7 +2468,7 @@ __STATIC_INLINE uint32_t LL_RTC_TS_GetHour(RTC_TypeDef *RTCx)
   * @brief  Get Timestamp Minutes in BCD format
   * @note helper macro __LL_RTC_CONVERT_BCD2BIN is available to convert Minutes from BCD to Binary format
   * @rmtoll RTC_TSTR         MNT           LL_RTC_TS_GetMinute\n
-  *         RTC_TSTR         HU           LL_RTC_TS_GetMinute
+  *         RTC_TSTR         MNU           LL_RTC_TS_GetMinute
   * @param  RTCx RTC Instance
   * @retval Value between Min_Data=0x00 and Max_Data=0x59
   */
@@ -2481,7 +2481,7 @@ __STATIC_INLINE uint32_t LL_RTC_TS_GetMinute(RTC_TypeDef *RTCx)
   * @brief  Get Timestamp Seconds in BCD format
   * @note helper macro __LL_RTC_CONVERT_BCD2BIN is available to convert Seconds from BCD to Binary format
   * @rmtoll RTC_TSTR         ST            LL_RTC_TS_GetSecond\n
-  *         RTC_TSTR         HU            LL_RTC_TS_GetSecond
+  *         RTC_TSTR         SU            LL_RTC_TS_GetSecond
   * @param  RTCx RTC Instance
   * @retval Value between Min_Data=0x00 and Max_Data=0x59
   */
@@ -3056,7 +3056,7 @@ __STATIC_INLINE void LL_RTC_BKP_SetRegister(TAMP_TypeDef *TAMPx, uint32_t Backup
 
   tmp = &(TAMPx->BKP0R) + BackupRegister;
 
-  /* Write the specified register */ 
+  /* Write the specified register */
   *tmp = Data;
 }
 

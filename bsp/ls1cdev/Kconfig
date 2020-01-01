@@ -1,6 +1,5 @@
 mainmenu "RT-Thread Configuration"
 
-
 config BSP_DIR
     string
     option env="BSP_ROOT"
@@ -10,99 +9,118 @@ config RTT_DIR
     string
     option env="RTT_ROOT"
     default "../.."
-    
+
 config PKGS_DIR
     string
     option env="PKGS_ROOT"
     default "packages"
 
 source "$RTT_DIR/Kconfig"
+source "$RTT_DIR/libcpu/mips/common/Kconfig"
 source "$PKGS_DIR/Kconfig"
+
+config SOC_1C300
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+choice
+    prompt "Board Type"
+        config RT_LS1C_OPENLOONGSON
+            bool "OpenLoongson Board"
+        config RT_LS1C_BAICAIBOARD
+            bool "Baicai Board"
+endchoice
 
 config RT_USING_SELF_BOOT
     bool "Enable RT-Thread run without bootloader"
     default n
-	
+
+if RT_USING_SELF_BOOT
+    config RT_SELF_BOOT_DEBUG
+    bool "Debug self boot code"
+    default n
+endif
+
 if RT_USING_SERIAL
 config RT_USING_UART2
     bool "Using RT_USING_UART2"
-    default y      
+    default y
 config RT_USING_UART1
     bool "Using RT_USING_UART1"
-    default y      
+    default y
+config RT_USING_UART3
+    bool "Using RT_USING_UART3"
+    default n
 
 config RT_UART_RX_BUFFER_SIZE
-    int "The rx buffer size"        
+    int "The rx buffer size"
     default 64 if RT_USING_SERIAL
-    default 64 
-endif  
+    default 64
+endif
 
 config RT_USING_GMAC_INT_MODE
     bool "Using RT_USING_GMAC_INT_MODE"
     default y
-	
-config RT_USING_FPU
-    bool "Using RT_USING_FPU"
-    default y
-	
+
 config RT_USING_SPI0
     bool "Enable SPI0"
 	select RT_USING_SPI
-    default y      
+    default y
 
 config RT_USING_SPI1
     bool "Enable SPI1"
 	select RT_USING_SPI
-    default y      
-	
+    default y
+
 if RT_USING_I2C
 config RT_USING_I2C1
     bool "Enable I2C1"
     default y
-	
+
 config RT_USING_I2C2
-    bool "Enable I2C2"  
-    default y 
+    bool "Enable I2C2"
+    default y
 endif
 
-	
+
 config USING_BXCAN0
     bool "Enable CAN0"
 	select RT_USING_CAN
-    default y      
-  
+    default y
+
 config USING_BXCAN1
     bool "Enable CAN1"
 	select RT_USING_CAN
-    default y      
+    default y
 
 if RT_USING_CAN
 config RT_CAN_USING_HDR
     bool "Using RT_CAN_USING_HDR"
 	select RT_USING_CAN
-    default y  
-endif    
+    default y
+endif
 
 choice
     prompt "Touch format"
     default NO_TOUCH
 
     config NO_TOUCH
-        bool "with no touch"	
-		
+        bool "with no touch"
+
 if RT_USING_RTGUI
     config XPT2046_USING_TOUCH
         bool "with XPT2046 touch"
-endif    
+endif
 
     config TINA_USING_TOUCH
-        bool "with TINA touch"		
+        bool "with TINA touch"
 endchoice
 
 if RT_USING_RTC
 config RT_RTC_NAME
     string "RT_RTC_NAME"
-    default "RTC" 
-endif    
+    default "RTC"
+endif
 
-    

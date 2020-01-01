@@ -16,7 +16,7 @@
 
 static const struct pin_index pins[] = 
 {
-#ifdef GPIOA
+#if defined(GPIOA)
     __STM32_PIN(0 ,  A, 0 ),
     __STM32_PIN(1 ,  A, 1 ),
     __STM32_PIN(2 ,  A, 2 ),
@@ -33,8 +33,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(13,  A, 13),
     __STM32_PIN(14,  A, 14),
     __STM32_PIN(15,  A, 15),
-#endif
-#ifdef GPIOB
+#if defined(GPIOB)
     __STM32_PIN(16,  B, 0),
     __STM32_PIN(17,  B, 1),
     __STM32_PIN(18,  B, 2),
@@ -51,8 +50,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(29,  B, 13),
     __STM32_PIN(30,  B, 14),
     __STM32_PIN(31,  B, 15),
-#endif
-#ifdef GPIOC
+#if defined(GPIOC)
     __STM32_PIN(32,  C, 0),
     __STM32_PIN(33,  C, 1),
     __STM32_PIN(34,  C, 2),
@@ -69,8 +67,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(45,  C, 13),
     __STM32_PIN(46,  C, 14),
     __STM32_PIN(47,  C, 15),
-#endif
-#ifdef GPIOD
+#if defined(GPIOD)
     __STM32_PIN(48,  D, 0),
     __STM32_PIN(49,  D, 1),
     __STM32_PIN(50,  D, 2),
@@ -87,8 +84,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(61,  D, 13),
     __STM32_PIN(62,  D, 14),
     __STM32_PIN(63,  D, 15),
-#endif
-#ifdef GPIOE
+#if defined(GPIOE)
     __STM32_PIN(64,  E, 0),
     __STM32_PIN(65,  E, 1),
     __STM32_PIN(66,  E, 2),
@@ -105,8 +101,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(77,  E, 13),
     __STM32_PIN(78,  E, 14),
     __STM32_PIN(79,  E, 15),
-#endif
-#ifdef GPIOF
+#if defined(GPIOF)
     __STM32_PIN(80,  F, 0),
     __STM32_PIN(81,  F, 1),
     __STM32_PIN(82,  F, 2),
@@ -123,8 +118,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(93,  F, 13),
     __STM32_PIN(94,  F, 14),
     __STM32_PIN(95,  F, 15),
-#endif
-#ifdef GPIOG
+#if defined(GPIOG)
     __STM32_PIN(96,  G, 0),
     __STM32_PIN(97,  G, 1),
     __STM32_PIN(98,  G, 2),
@@ -141,8 +135,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(109, G, 13),
     __STM32_PIN(110, G, 14),
     __STM32_PIN(111, G, 15),
-#endif
-#ifdef GPIOH
+#if defined(GPIOH)
     __STM32_PIN(112, H, 0),
     __STM32_PIN(113, H, 1),
     __STM32_PIN(114, H, 2),
@@ -159,8 +152,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(125, H, 13),
     __STM32_PIN(126, H, 14),
     __STM32_PIN(127, H, 15),
-#endif
-#ifdef GPIOI
+#if defined(GPIOI)
     __STM32_PIN(128, I, 0),
     __STM32_PIN(129, I, 1),
     __STM32_PIN(130, I, 2),
@@ -177,8 +169,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(141, I, 13),
     __STM32_PIN(142, I, 14),
     __STM32_PIN(143, I, 15),
-#endif
-#ifdef GPIOJ
+#if defined(GPIOJ)
     __STM32_PIN(144, J, 0),
     __STM32_PIN(145, J, 1),
     __STM32_PIN(146, J, 2),
@@ -195,8 +186,7 @@ static const struct pin_index pins[] =
     __STM32_PIN(157, J, 13),
     __STM32_PIN(158, J, 14),
     __STM32_PIN(159, J, 15),
-#endif
-#ifdef GPIOK
+#if defined(GPIOK)
     __STM32_PIN(160, K, 0),
     __STM32_PIN(161, K, 1),
     __STM32_PIN(162, K, 2),
@@ -213,7 +203,17 @@ static const struct pin_index pins[] =
     __STM32_PIN(173, K, 13),
     __STM32_PIN(174, K, 14),
     __STM32_PIN(175, K, 15),
-#endif
+#endif /* defined(GPIOK) */
+#endif /* defined(GPIOJ) */
+#endif /* defined(GPIOI) */
+#endif /* defined(GPIOH) */
+#endif /* defined(GPIOG) */
+#endif /* defined(GPIOF) */
+#endif /* defined(GPIOE) */
+#endif /* defined(GPIOD) */
+#endif /* defined(GPIOC) */
+#endif /* defined(GPIOB) */
+#endif /* defined(GPIOA) */
 };
 
 static const struct pin_irq_map pin_irq_map[] =
@@ -636,7 +636,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 }
 #endif
 
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32L0)
 void EXTI0_1_IRQHandler(void)
 {
     rt_interrupt_enter();
@@ -654,6 +654,7 @@ void EXTI2_3_IRQHandler(void)
 }
 void EXTI4_15_IRQHandler(void)
 {
+    rt_interrupt_enter();
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
@@ -666,6 +667,7 @@ void EXTI4_15_IRQHandler(void)
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
+    rt_interrupt_leave();
 }
 
 #else
@@ -756,6 +758,9 @@ int rt_hw_pin_init(void)
 #endif
 
 #if defined(__HAL_RCC_GPIOG_CLK_ENABLE)
+    #ifdef SOC_SERIES_STM32L4
+        HAL_PWREx_EnableVddIO2();
+    #endif
     __HAL_RCC_GPIOG_CLK_ENABLE();
 #endif
 

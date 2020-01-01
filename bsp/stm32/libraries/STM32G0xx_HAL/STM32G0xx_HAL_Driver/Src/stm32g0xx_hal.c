@@ -56,7 +56,7 @@
  * @brief STM32G0xx HAL Driver version number
    */
 #define __STM32G0xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
-#define __STM32G0xx_HAL_VERSION_SUB1   (0x00U) /*!< [23:16] sub1 version */
+#define __STM32G0xx_HAL_VERSION_SUB1   (0x03U) /*!< [23:16] sub1 version */
 #define __STM32G0xx_HAL_VERSION_SUB2   (0x00U) /*!< [15:8]  sub2 version */
 #define __STM32G0xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
 #define __STM32G0xx_HAL_VERSION         ((__STM32G0xx_HAL_VERSION_MAIN << 24U)\
@@ -331,7 +331,7 @@ uint32_t HAL_GetTickPrio(void)
 
 /**
   * @brief Set new tick Freq.
-  * @retval Status
+  * @retval status
   */
 HAL_StatusTypeDef HAL_SetTickFreq(uint32_t Freq)
 {
@@ -340,10 +340,12 @@ HAL_StatusTypeDef HAL_SetTickFreq(uint32_t Freq)
 
   if (uwTickFreq != Freq)
   {
-    uwTickFreq = Freq;
-
     /* Apply the new tick Freq  */
     status = HAL_InitTick(uwTickPrio);
+    if (status == HAL_OK)
+    {
+      uwTickFreq = Freq;
+    }
   }
 
   return status;
@@ -676,6 +678,35 @@ void HAL_SYSCFG_DisableRemap(uint32_t PinRemap)
   CLEAR_BIT(SYSCFG->CFGR1, PinRemap);
 }
 
+#if defined(STM32G041xx) || defined(STM32G031xx) || defined(STM32G030xx)
+/**
+  * @brief  Enable Clamping Diode on specified IO
+  * @param  PinConfig specifies on which pins clamping Diode has to be enabled
+  *         This parameter can be any combination of the following values:
+  *         @arg @ref SYSCFG_ClampingDiode
+  * @retval None
+  */
+void HAL_SYSCFG_EnableClampingDiode(uint32_t PinConfig)
+{
+  /* Check the parameter */
+  assert_param(IS_SYSCFG_CLAMPINGDIODE(PinConfig));
+  SET_BIT(SYSCFG->CFGR2, PinConfig);
+}
+
+/**
+  * @brief  Disable Clamping Diode on specified IO
+  * @param  PinConfig specifies on which pins clamping Diode has to be disabled
+  *         This parameter can be any combination of the following values:
+  *         @arg @ref SYSCFG_ClampingDiode
+  * @retval None
+  */
+void HAL_SYSCFG_DisableClampingDiode(uint32_t PinConfig)
+{
+  /* Check the parameter */
+  assert_param(IS_SYSCFG_CLAMPINGDIODE(PinConfig));
+  CLEAR_BIT(SYSCFG->CFGR2, PinConfig);
+}
+#endif
 
 #if defined (SYSCFG_CFGR1_UCPD1_STROBE) || defined (SYSCFG_CFGR1_UCPD2_STROBE)
 /**

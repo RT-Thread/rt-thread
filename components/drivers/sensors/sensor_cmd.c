@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2019-01-31     flybreak     first version
+ * Date           Author         Notes
+ * 2019-01-31     flybreak       first version
+ * 2019-07-16     WillianChan    Increase the output of sensor information
  */
 
 #include "sensor.h"
@@ -24,13 +25,13 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     switch (sensor->info.type)
     {
     case RT_SENSOR_CLASS_ACCE:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mg, timestamp:%5d", num, sensor_data->data.acce.x, sensor_data->data.acce.y, sensor_data->data.acce.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_GYRO:
-        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d, timestamp:%5d", num, sensor_data->data.gyro.x, sensor_data->data.gyro.y, sensor_data->data.gyro.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%8d, y:%8d, z:%8d dps, timestamp:%5d", num, sensor_data->data.gyro.x / 1000, sensor_data->data.gyro.y / 1000, sensor_data->data.gyro.z / 1000, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_MAG:
-        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
+        LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mGauss, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
         LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
@@ -39,7 +40,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, temp:%3d.%dC, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BARO:
-        LOG_I("num:%3d, press:%5d, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
+        LOG_I("num:%3d, press:%5d pa, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_STEP:
         LOG_I("num:%3d, step:%5d, timestamp:%5d", num, sensor_data->data.step, sensor_data->timestamp);
@@ -55,7 +56,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     }
 }
 
-rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
+static rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 {
     rt_sem_release(sensor_rx_sem);
     return 0;
@@ -63,15 +64,15 @@ rt_err_t rx_callback(rt_device_t dev, rt_size_t size)
 
 static void sensor_fifo_rx_entry(void *parameter)
 {
-    rt_device_t dev = parameter;
-    rt_sensor_t sensor = parameter;
+    rt_device_t dev = (rt_device_t)parameter;
+    rt_sensor_t sensor = (rt_sensor_t)parameter;
     struct rt_sensor_data *data = RT_NULL;
     struct rt_sensor_info info;
     rt_size_t res, i;
     
     rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
 
-    data = rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
+    data = (struct rt_sensor_data *)rt_malloc(sizeof(struct rt_sensor_data) * info.fifo_max);
     if (data == RT_NULL)
     {
         LOG_E("Memory allocation failed!");
@@ -137,8 +138,8 @@ MSH_CMD_EXPORT(sensor_fifo, Sensor fifo mode test function);
 
 static void sensor_irq_rx_entry(void *parameter)
 {
-    rt_device_t dev = parameter;
-    rt_sensor_t sensor = parameter;
+    rt_device_t dev = (rt_device_t)parameter;
+    rt_sensor_t sensor = (rt_sensor_t)parameter;
     struct rt_sensor_data data;
     rt_size_t res, i = 0;
 
@@ -268,13 +269,88 @@ static void sensor(int argc, char **argv)
     else if (!strcmp(argv[1], "info"))
     {
         struct rt_sensor_info info;
+        if (dev == RT_NULL)
+        {
+            LOG_W("Please probe sensor device first!");
+            return ;
+        }
         rt_device_control(dev, RT_SENSOR_CTRL_GET_INFO, &info);
-        rt_kprintf("vendor :%d\n", info.vendor);
-        rt_kprintf("model  :%s\n", info.model);
-        rt_kprintf("unit   :%d\n", info.unit);
+        switch (info.vendor)
+        {
+            case RT_SENSOR_VENDOR_UNKNOWN:
+                rt_kprintf("vendor    :unknown vendor\n");
+                break;
+            case RT_SENSOR_VENDOR_STM:
+                rt_kprintf("vendor    :STMicroelectronics\n");
+                break;
+            case RT_SENSOR_VENDOR_BOSCH:
+                rt_kprintf("vendor    :Bosch\n");
+                break;
+            case RT_SENSOR_VENDOR_INVENSENSE:
+                rt_kprintf("vendor    :Invensense\n");
+                break;
+            case RT_SENSOR_VENDOR_SEMTECH:
+                rt_kprintf("vendor    :Semtech\n");
+                break;
+            case RT_SENSOR_VENDOR_GOERTEK:
+                rt_kprintf("vendor    :Goertek\n");
+                break;
+            case RT_SENSOR_VENDOR_MIRAMEMS:
+                rt_kprintf("vendor    :MiraMEMS\n");
+                break;
+            case RT_SENSOR_VENDOR_DALLAS:
+                rt_kprintf("vendor    :Dallas\n");
+                break;
+        }
+        rt_kprintf("model     :%s\n", info.model);
+        switch (info.unit)
+        {
+            case RT_SENSOR_UNIT_NONE:
+                rt_kprintf("unit      :none\n");
+                break;
+            case RT_SENSOR_UNIT_MG:
+                rt_kprintf("unit      :mG\n");
+                break;
+            case RT_SENSOR_UNIT_MDPS:
+                rt_kprintf("unit      :mdps\n");
+                break;
+            case RT_SENSOR_UNIT_MGAUSS:
+                rt_kprintf("unit      :mGauss\n");
+                break;
+            case RT_SENSOR_UNIT_LUX:
+                rt_kprintf("unit      :lux\n");
+                break;
+            case RT_SENSOR_UNIT_CM:
+                rt_kprintf("unit      :cm\n");
+                break;
+            case RT_SENSOR_UNIT_PA:
+                rt_kprintf("unit      :pa\n");
+                break;
+            case RT_SENSOR_UNIT_PERMILLAGE:
+                rt_kprintf("unit      :permillage\n");
+                break;
+            case RT_SENSOR_UNIT_DCELSIUS:
+                rt_kprintf("unit      :Celsius\n");
+                break;
+            case RT_SENSOR_UNIT_HZ:
+                rt_kprintf("unit      :HZ\n");
+                break;
+            case RT_SENSOR_UNIT_ONE:
+                rt_kprintf("unit      :1\n");
+                break;
+            case RT_SENSOR_UNIT_BPM:
+                rt_kprintf("unit      :bpm\n");
+                break;
+            case RT_SENSOR_UNIT_MM:
+                rt_kprintf("unit      :mm\n");
+                break;
+            case RT_SENSOR_UNIT_MN:
+                rt_kprintf("unit      :mN\n");
+                break;
+        }
         rt_kprintf("range_max :%d\n", info.range_max);
         rt_kprintf("range_min :%d\n", info.range_min);
-        rt_kprintf("period_min:%d\n", info.period_min);
+        rt_kprintf("period_min:%dms\n", info.period_min);
         rt_kprintf("fifo_max  :%d\n", info.fifo_max);
     }
     else if (!strcmp(argv[1], "read"))

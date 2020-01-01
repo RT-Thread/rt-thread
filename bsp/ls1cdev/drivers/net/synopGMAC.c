@@ -572,47 +572,37 @@ struct pbuf *rt_eth_rx(rt_device_t device)
     }
 
     /*Handle the Receive Descriptors*/
-    //  do{
-    desc_index = synopGMAC_get_rx_qptr(gmacdev, &status, &dma_addr1, NULL, &data1, &dma_addr2, NULL, &data2);
-
-    if (desc_index >= 0 && data1 != 0)
-    {
-        DEBUG_MES("Received Data at Rx Descriptor %d for skb 0x%08x whose status is %08x\n", desc_index, dma_addr1, status);
-
-        if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
+      desc_index = synopGMAC_get_rx_qptr(gmacdev, &status, &dma_addr1, NULL, &data1, &dma_addr2, NULL, &data2);
+      if (desc_index >= 0 && data1 != 0)
         {
-            pbuf = pbuf_alloc(PBUF_LINK, MAX_ETHERNET_PAYLOAD, PBUF_RAM);
-            if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
-
-
-            dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
-            len =  synopGMAC_get_rx_desc_frame_length(status); //Not interested in Ethernet CRC bytes
-            rt_memcpy(pbuf->payload, (char *)data1, len);
-            DEBUG_MES("==get pkg len: %d\n", len);
-        }
-        else
-        {
-            rt_kprintf("s: %08x\n", status);
-            adapter->synopGMACNetStats.rx_errors++;
-            adapter->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
-            adapter->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
-            adapter->synopGMACNetStats.rx_frame_errors  += synopGMAC_is_frame_dribbling_errors(status);
-            adapter->synopGMACNetStats.rx_length_errors += synopGMAC_is_rx_frame_length_errors(status);
-        }
-
-        desc_index = synopGMAC_set_rx_qptr(gmacdev, dma_addr1, RX_BUF_SIZE, (u32)data1, 0, 0, 0);
-
-        if (desc_index < 0)
-        {
+          DEBUG_MES("Received Data at Rx Descriptor %d for skb 0x%08x whose status is %08x\n", desc_index, dma_addr1, status);
+          if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
+            {
+                dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
+                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes    
+                pbuf = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
+                if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
+                rt_memcpy(pbuf->payload, (char *)data1, len);
+                DEBUG_MES("==get pkg len: %d\n", len);
+            }
+            else
+            {
+                rt_kprintf("s: %08x\n", status);
+                adapter->synopGMACNetStats.rx_errors++;
+                adapter->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
+                adapter->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
+                adapter->synopGMACNetStats.rx_frame_errors  += synopGMAC_is_frame_dribbling_errors(status);
+                adapter->synopGMACNetStats.rx_length_errors += synopGMAC_is_rx_frame_length_errors(status);
+            }
+            desc_index = synopGMAC_set_rx_qptr(gmacdev, dma_addr1, RX_BUF_SIZE, (u32)data1, 0, 0, 0);
+            if (desc_index < 0)
+            {
 #if SYNOP_RX_DEBUG
-            rt_kprintf("Cannot set Rx Descriptor for data1 %08x\n", (u32)data1);
+                rt_kprintf("Cannot set Rx Descriptor for data1 %08x\n", (u32)data1);
 #endif
-            plat_free_memory((void *)data1);
+                plat_free_memory((void *)data1);
+            }
         }
-
-    }
-
-    //  }while(desc_index >= 0);
     rt_sem_release(&sem_lock);
     DEBUG_MES("%s : before return \n", __FUNCTION__);
     return pbuf;
@@ -964,6 +954,8 @@ int rt_hw_eth_init(void)
     eth_dev.parent.eth_rx            = rt_eth_rx;
 
     eth_device_init(&(eth_dev.parent), "e0");
+
+    eth_device_linkchange(&eth_dev.parent, RT_TRUE);   //linkup the e0 for lwip to check
 
     return 0;
 }

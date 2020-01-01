@@ -575,7 +575,7 @@ typedef struct
   \ingroup    CMSIS_core_register
   \defgroup   CMSIS_core_base     Core Definitions
   \brief      Definitions for base addresses, unions, and structures.
-  @
+  @{
  */
 
 /* Memory mapping of Cortex-M0 Hardware */

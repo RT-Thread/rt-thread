@@ -24,8 +24,8 @@ static void _rt_pipe_resume_writer(struct rt_audio_pipe *pipe)
 
         /* get suspended thread */
         thread = rt_list_entry(pipe->suspended_write_list.next,
-                struct rt_thread,
-                tlist);
+                               struct rt_thread,
+                               tlist);
 
         /* resume the write thread */
         rt_thread_resume(thread);
@@ -50,7 +50,7 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
     if (!(pipe->flag & RT_PIPE_FLAG_BLOCK_RD))
     {
         level = rt_hw_interrupt_disable();
-        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), buffer, size);
+        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), (rt_uint8_t *)buffer, size);
 
         /* if the ringbuffer is empty, there won't be any writer waiting */
         if (read_nbytes)
@@ -66,9 +66,10 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
     /* current context checking */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    do {
+    do
+    {
         level = rt_hw_interrupt_disable();
-        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), buffer, size);
+        read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), (rt_uint8_t *)buffer, size);
         if (read_nbytes == 0)
         {
             rt_thread_suspend(thread);
@@ -85,7 +86,8 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
             rt_hw_interrupt_enable(level);
             break;
         }
-    } while (read_nbytes == 0);
+    }
+    while (read_nbytes == 0);
 
     return read_nbytes;
 }
@@ -104,8 +106,8 @@ static void _rt_pipe_resume_reader(struct rt_audio_pipe *pipe)
 
         /* get suspended thread */
         thread = rt_list_entry(pipe->suspended_read_list.next,
-                struct rt_thread,
-                tlist);
+                               struct rt_thread,
+                               tlist);
 
         /* resume the read thread */
         rt_thread_resume(thread);
@@ -128,16 +130,16 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
     RT_ASSERT(pipe != RT_NULL);
 
     if ((pipe->flag & RT_PIPE_FLAG_FORCE_WR) ||
-       !(pipe->flag & RT_PIPE_FLAG_BLOCK_WR))
+            !(pipe->flag & RT_PIPE_FLAG_BLOCK_WR))
     {
         level = rt_hw_interrupt_disable();
 
         if (pipe->flag & RT_PIPE_FLAG_FORCE_WR)
             write_nbytes = rt_ringbuffer_put_force(&(pipe->ringbuffer),
-                                                   buffer, size);
+                                                   (const rt_uint8_t *)buffer, size);
         else
             write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer),
-                                             buffer, size);
+                                             (const rt_uint8_t *)buffer, size);
 
         _rt_pipe_resume_reader(pipe);
 
@@ -151,9 +153,10 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
     /* current context checking */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    do {
+    do
+    {
         level = rt_hw_interrupt_disable();
-        write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer), buffer, size);
+        write_nbytes = rt_ringbuffer_put(&(pipe->ringbuffer), (const rt_uint8_t *)buffer, size);
         if (write_nbytes == 0)
         {
             /* pipe full, waiting on suspended write list */
@@ -171,7 +174,8 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
             rt_hw_interrupt_enable(level);
             break;
         }
-    } while (write_nbytes == 0);
+    }
+    while (write_nbytes == 0);
 
     return write_nbytes;
 }
@@ -183,7 +187,7 @@ static rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args)
     pipe = (struct rt_audio_pipe *)dev;
 
     if (cmd == PIPE_CTRL_GET_SPACE && args)
-        *(rt_size_t*)args = rt_ringbuffer_space_len(&pipe->ringbuffer);
+        *(rt_size_t *)args = rt_ringbuffer_space_len(&pipe->ringbuffer);
     return RT_EOK;
 }
 
@@ -212,10 +216,10 @@ const static struct rt_device_ops audio_pipe_ops =
  * @return the operation status, RT_EOK on successful
  */
 rt_err_t rt_audio_pipe_init(struct rt_audio_pipe *pipe,
-                      const char *name,
-                      rt_int32_t flag,
-                      rt_uint8_t *buf,
-                      rt_size_t size)
+                            const char *name,
+                            rt_int32_t flag,
+                            rt_uint8_t *buf,
+                            rt_size_t size)
 {
     RT_ASSERT(pipe);
     RT_ASSERT(buf);
@@ -270,7 +274,7 @@ rt_err_t rt_audio_pipe_create(const char *name, rt_int32_t flag, rt_size_t size)
         return -RT_ENOMEM;
 
     /* create ring buffer of pipe */
-    rb_memptr = rt_malloc(size);
+    rb_memptr = (rt_uint8_t *)rt_malloc(size);
     if (rb_memptr == RT_NULL)
     {
         rt_free(pipe);

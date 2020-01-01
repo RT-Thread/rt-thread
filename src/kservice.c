@@ -316,7 +316,7 @@ RTM_EXPORT(rt_memmove);
  * This function will compare two areas of memory
  *
  * @param cs one area of memory
- * @param ct znother area of memory
+ * @param ct another area of memory
  * @param count the size of the area
  *
  * @return the result
@@ -326,7 +326,7 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
     const unsigned char *su1, *su2;
     int res = 0;
 
-    for (su1 = cs, su2 = ct; 0 < count; ++su1, ++su2, count--)
+    for (su1 = (const unsigned char *)cs, su2 = (const unsigned char *)ct; 0 < count; ++su1, ++su2, count--)
         if ((res = *su1 - *su2) != 0)
             break;
 
@@ -545,6 +545,26 @@ RTM_EXPORT(rt_show_version);
 /* private function */
 #define isdigit(c)  ((unsigned)((c) - '0') < 10)
 
+#ifdef RT_PRINTF_LONGLONG
+rt_inline int divide(long long *n, int base)
+{
+    int res;
+
+    /* optimized for processor which does not support divide instructions. */
+    if (base == 10)
+    {
+        res = (int)(((unsigned long long)*n) % 10U);
+        *n = (long long)(((unsigned long long)*n) / 10U);
+    }
+    else
+    {
+        res = (int)(((unsigned long long)*n) % 16U);
+        *n = (long long)(((unsigned long long)*n) / 16U);
+    }
+
+    return res;
+}
+#else
 rt_inline int divide(long *n, int base)
 {
     int res;
@@ -563,6 +583,7 @@ rt_inline int divide(long *n, int base)
 
     return res;
 }
+#endif
 
 rt_inline int skip_atoi(const char **s)
 {
@@ -584,7 +605,11 @@ rt_inline int skip_atoi(const char **s)
 #ifdef RT_PRINTF_PRECISION
 static char *print_number(char *buf,
                           char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
                           long  num,
+#endif
                           int   base,
                           int   s,
                           int   precision,
@@ -592,7 +617,11 @@ static char *print_number(char *buf,
 #else
 static char *print_number(char *buf,
                           char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
                           long  num,
+#endif
                           int   base,
                           int   s,
                           int   type)
@@ -1088,14 +1117,14 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
-    rt_device_t new, old;
+    rt_device_t new_device, old_device;
 
     /* save old device */
-    old = _console_device;
+    old_device = _console_device;
 
     /* find new console device */
-    new = rt_device_find(name);
-    if (new != RT_NULL)
+    new_device = rt_device_find(name);
+    if (new_device != RT_NULL)
     {
         if (_console_device != RT_NULL)
         {
@@ -1104,11 +1133,11 @@ rt_device_t rt_console_set_device(const char *name)
         }
 
         /* set new console device */
-        rt_device_open(new, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
-        _console_device = new;
+        rt_device_open(new_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
+        _console_device = new_device;
     }
 
-    return old;
+    return old_device;
 }
 RTM_EXPORT(rt_console_set_device);
 #endif
@@ -1303,7 +1332,9 @@ int __rt_ffs(int value)
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
+
 void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *

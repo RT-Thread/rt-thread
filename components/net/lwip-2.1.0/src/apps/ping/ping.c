@@ -130,7 +130,7 @@ int lwip_ping_recv(int s, int *ttl)
     return len;
 }
 
-#ifndef RT_USING_SAL
+#ifndef RT_USING_NETDEV
 
 /* using the lwIP custom ping */
 rt_err_t ping(char* target_name, rt_uint32_t times, rt_size_t size)
@@ -239,7 +239,7 @@ int cmd_ping(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_ping, __cmd_ping, ping network host);
 #endif /* RT_USING_FINSH */
 
-#endif /* RT_USING_SAL */
+#endif /* RT_USING_NETDEV */
 
 #endif /* RT_LWIP_ICMP */
 

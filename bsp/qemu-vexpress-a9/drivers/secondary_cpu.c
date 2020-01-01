@@ -17,6 +17,8 @@
 #include "drv_timer.h"
 
 #ifdef RT_USING_SMP
+#include <interrupt.h>
+
 static void rt_hw_timer2_isr(int vector, void *param)
 {
     rt_tick_increase();
@@ -42,7 +44,7 @@ void secondary_cpu_c_start(void)
     arm_gic_cpu_init(0, REALVIEW_GIC_CPU_BASE);
     arm_gic_set_cpu(0, IRQ_PBA8_TIMER0_1, 0x2);
 
-    timer_init(0, 1000);
+    timer_init(0, 10000);
     rt_hw_interrupt_install(IRQ_PBA8_TIMER0_1, rt_hw_timer2_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_PBA8_TIMER0_1);
 

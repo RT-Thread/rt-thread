@@ -107,11 +107,11 @@ void rt_thread_exit(void)
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
     }
 
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
     /* switch to next task */
     rt_schedule();
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
 }
 
 static rt_err_t _rt_thread_init(struct rt_thread *thread,
@@ -141,7 +141,7 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
                                           (void *)rt_thread_exit);
 #else
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
-                                          (void *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
+                                          (rt_uint8_t *)((char *)thread->stack_addr + thread->stack_size - sizeof(rt_ubase_t)),
                                           (void *)rt_thread_exit);
 #endif
 
@@ -172,13 +172,14 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* lock init */
     thread->scheduler_lock_nest = 0;
     thread->cpus_lock_nest = 0;
+    thread->critical_lock_nest = 0;
 #endif /*RT_USING_SMP*/
 
     /* initialize cleanup function and user data */
     thread->cleanup   = 0;
     thread->user_data = 0;
 
-    /* init thread timer */
+    /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
                   thread->name,
                   rt_thread_timeout,
@@ -191,7 +192,9 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     thread->sig_mask    = 0x00;
     thread->sig_pending = 0x00;
 
+#ifndef RT_USING_SMP
     thread->sig_ret     = RT_NULL;
+#endif
     thread->sig_vectors = RT_NULL;
     thread->si_list     = RT_NULL;
 #endif
@@ -239,7 +242,7 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(stack_start != RT_NULL);
 
-    /* init thread object */
+    /* initialize thread object */
     rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
 
     return _rt_thread_init(thread,
@@ -290,7 +293,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    /* set current priority to init priority */
+    /* set current priority to initialize priority */
     thread->current_priority = thread->init_priority;
 
     /* calculate priority attribute */
@@ -443,11 +446,11 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
 
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
-
     /* disable interrupt */
     lock = rt_hw_interrupt_disable();
+
+    /* change stat */
+    thread->stat = RT_THREAD_CLOSE;
 
     /* insert to defunct thread list */
     rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
@@ -526,6 +529,63 @@ rt_err_t rt_thread_delay(rt_tick_t tick)
     return rt_thread_sleep(tick);
 }
 RTM_EXPORT(rt_thread_delay);
+
+/**
+ * This function will let current thread delay until (*tick + inc_tick).
+ *
+ * @param tick the tick of last wakeup.
+ * @param inc_tick the increment tick
+ *
+ * @return RT_EOK
+ */
+rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
+{
+    register rt_base_t level;
+    struct rt_thread *thread;
+
+    RT_ASSERT(tick != RT_NULL);
+
+    /* set to current thread */
+    thread = rt_thread_self();
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    if (rt_tick_get() - *tick < inc_tick)
+    {
+        *tick = rt_tick_get() - *tick + inc_tick;
+
+        /* suspend thread */
+        rt_thread_suspend(thread);
+
+        /* reset the timeout of thread timer and start it */
+        rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, tick);
+        rt_timer_start(&(thread->thread_timer));
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        rt_schedule();
+
+        /* clear error number of this thread to RT_EOK */
+        if (thread->error == -RT_ETIMEOUT)
+        {
+            thread->error = RT_EOK;
+        }
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
+
+    /* get the wakeup tick */
+    *tick = rt_tick_get();
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_thread_delay_until);
 
 /**
  * This function will let current thread delay for some milliseconds.

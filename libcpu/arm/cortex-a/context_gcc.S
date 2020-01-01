@@ -34,8 +34,9 @@ rt_hw_interrupt_enable:
     bx  lr
 
 /*
- * void rt_hw_context_switch_to(rt_uint32 to);
- * r0 --> to
+ * void rt_hw_context_switch_to(rt_uint32 to, struct rt_thread *to_thread);
+ * r0 --> to (thread stack)
+ * r1 --> to_thread
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
@@ -45,16 +46,7 @@ rt_hw_context_switch_to:
     mov     r0, r1
     bl      rt_cpus_lock_status_restore
 #endif /*RT_USING_SMP*/
-
-#ifdef RT_USING_LWP
-    ldmfd sp, {r13, r14}^   @ pop usr_sp usr_lr
-    add sp, #8
-#endif
-
-    ldmfd sp!, {r4}         @ pop new task spsr
-    msr spsr_cxsf, r4
-
-    ldmfd sp!, {r0-r12, lr, pc}^   @ pop new task r0-r12, lr & pc
+    b       rt_hw_context_switch_exit
 
 .section .bss.share.isr
 _guest_switch_lvl:
@@ -64,9 +56,10 @@ _guest_switch_lvl:
 
 .section .text.isr, "ax"
 /*
- * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
- * r0 --> from
- * r1 --> to
+ * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to, struct rt_thread *to_thread);
+ * r0 --> from (from_thread stack)
+ * r1 --> to (to_thread stack)
+ * r2 --> to_thread
  */
 .globl rt_hw_context_switch
 rt_hw_context_switch:
@@ -83,6 +76,18 @@ rt_hw_context_switch:
     stmfd sp, {r13, r14}^   @ push usr_sp usr_lr
     sub sp, #8
 #endif
+#ifdef RT_USING_FPU
+    /* fpu context */
+    vmrs r6, fpexc
+    tst  r6, #(1<<30)
+    beq 1f
+    vstmdb sp!, {d0-d15}
+    vstmdb sp!, {d16-d31}
+    vmrs r5, fpscr
+    stmfd sp!, {r5}
+1:
+    stmfd sp!, {r6}
+#endif
 
     str sp, [r0]            @ store sp in preempted tasks TCB
     ldr sp, [r1]            @ get new task stack pointer
@@ -91,15 +96,7 @@ rt_hw_context_switch:
     mov     r0, r2
     bl      rt_cpus_lock_status_restore
 #endif /*RT_USING_SMP*/
-
-#ifdef RT_USING_LWP
-    ldmfd sp, {r13, r14}^   @ pop usr_sp usr_lr
-    add sp, #8
-#endif
-
-    ldmfd sp!, {r4}         @ pop new task cpsr to spsr
-    msr spsr_cxsf, r4
-    ldmfd sp!, {r0-r12, lr, pc}^  @ pop new task r0-r12, lr & pc, copy spsr to cpsr
+    b       rt_hw_context_switch_exit
 
 /*
  * void rt_hw_context_switch_interrupt(rt_uint32 from, rt_uint32 to);
@@ -121,51 +118,19 @@ rt_hw_context_switch:
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
 #ifdef RT_USING_SMP
-    /* r0 :irq_mod context
+    /* r0 :svc_mod context
      * r1 :addr of from_thread's sp
      * r2 :addr of to_thread's sp
      * r3 :to_thread's tcb
      */
 
-    @ r0 point to {r0-r3} in stack
-    push    {r1 - r3}
-    mov     r1, r0
-    add     r0, r0, #4*4
-    ldmfd   r0!, {r4-r12,lr}@ reload saved registers
-    mrs     r3,  spsr       @ get cpsr of interrupt thread
-    sub     r2,  lr, #4     @ save old task's pc to r2
-    msr     cpsr_c, #I_Bit|F_Bit|Mode_SVC
-
-    stmfd   sp!, {r2}       @ push old task's pc
-    stmfd   sp!, {r4-r12,lr}@ push old task's lr,r12-r4
-    ldmfd   r1,  {r4-r7}    @ restore r0-r3 of the interrupt thread
-    stmfd   sp!, {r4-r7}    @ push old task's r0-r3
-    stmfd   sp!, {r3}       @ push old task's cpsr
-
-#ifdef RT_USING_LWP
-    stmfd sp, {r13,r14}^    @push usr_sp usr_lr
-    sub sp, #8
-#endif
-
-    msr     cpsr_c, #I_Bit|F_Bit|Mode_IRQ
-    pop     {r1 - r3}
-    mov     sp, r0
-    msr     cpsr_c, #I_Bit|F_Bit|Mode_SVC
-    str     sp, [r1]
+    str     r0, [r1]
 
     ldr     sp, [r2]
     mov     r0, r3
     bl      rt_cpus_lock_status_restore
 
-#ifdef RT_USING_LWP
-    ldmfd sp, {r13,r14}^  @pop usr_sp usr_lr
-    add sp, #8
-#endif
-
-    ldmfd   sp!, {r4}       @ pop new task's cpsr to spsr
-    msr     spsr_cxsf, r4
-
-    ldmfd   sp!, {r0-r12,lr,pc}^ @ pop new task's r0-r12,lr & pc, copy spsr to cpsr
+    b       rt_hw_context_switch_exit
 
 #else /*RT_USING_SMP*/
     ldr r2, =rt_thread_switch_interrupt_flag
@@ -181,3 +146,37 @@ _reswitch:
     str r1, [r2]
     bx  lr
 #endif /*RT_USING_SMP*/
+
+.global rt_hw_context_switch_exit
+rt_hw_context_switch_exit:
+
+#ifdef RT_USING_SMP
+#ifdef RT_USING_SIGNALS
+    mov     r0, sp
+    cps #Mode_IRQ
+    bl      rt_signal_check
+    cps #Mode_SVC
+    mov     sp, r0
+#endif
+#endif
+#ifdef RT_USING_FPU
+/* fpu context */
+    ldmfd sp!, {r6}
+    vmsr fpexc, r6
+    tst  r6, #(1<<30)
+    beq 1f
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+    vldmia sp!, {d16-d31}
+    vldmia sp!, {d0-d15}
+1:
+#endif
+
+#ifdef RT_USING_LWP
+    ldmfd   sp, {r13, r14}^ /* usr_sp, usr_lr */
+    add     sp, #8
+#endif
+    ldmfd   sp!, {r1}
+    msr     spsr_cxsf, r1        /* original mode */
+    ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */
+

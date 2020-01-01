@@ -6,36 +6,20 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32H7xx_HAL_DMA_H
-#define __STM32H7xx_HAL_DMA_H
+#ifndef STM32H7xx_HAL_DMA_H
+#define STM32H7xx_HAL_DMA_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -231,7 +215,7 @@ typedef struct __DMA_HandleTypeDef
   * @brief    DMA Request selection
   * @{
   */
-/* D2 Domain : DMAMUX1 requests */
+/* DMAMUX1 requests */
 #define DMA_REQUEST_MEM2MEM          0U  /*!< memory to memory transfer   */
 
 #define DMA_REQUEST_GENERATOR0       1U  /*!< DMAMUX1 request generator 0 */
@@ -312,8 +296,8 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_UART5_RX         65U  /*!< DMAMUX1 UART5 RX request */
 #define DMA_REQUEST_UART5_TX         66U  /*!< DMAMUX1 UART5 TX request */
 
-#define DMA_REQUEST_DAC1_CH1         67U  /*!< DMAMUX1 DAC1 Channel 1 request      */
-#define DMA_REQUEST_DAC1_CH2         68U  /*!< DMAMUX1 DAC1 Channel 2 request      */
+#define DMA_REQUEST_DAC1_CH1         67U  /*!< DMAMUX1 DAC1 Channel 1 request */
+#define DMA_REQUEST_DAC1_CH2         68U  /*!< DMAMUX1 DAC1 Channel 2 request */
 
 #define DMA_REQUEST_TIM6_UP          69U  /*!< DMAMUX1 TIM6 UP request   */
 #define DMA_REQUEST_TIM7_UP          70U  /*!< DMAMUX1 TIM7 UP request   */
@@ -378,10 +362,10 @@ typedef struct __DMA_HandleTypeDef
 #define DMA_REQUEST_SAI3_A          113U  /*!< DMAMUX1 SAI3 A request  */
 #define DMA_REQUEST_SAI3_B          114U  /*!< DMAMUX1 SAI3 B request  */
 
-#define DMA_REQUEST_ADC3            115U  /*!< DMAMUX1 ADC3  request  */
+#define DMA_REQUEST_ADC3            115U  /*!< DMAMUX1 ADC3 request  */
 
 
-/* D3 Domain : DMAMUX2 requests */
+/* DMAMUX2 requests */
 #define BDMA_REQUEST_MEM2MEM          0U  /*!< memory to memory transfer   */
 #define BDMA_REQUEST_GENERATOR0       1U  /*!< DMAMUX2 request generator 0 */
 #define BDMA_REQUEST_GENERATOR1       2U  /*!< DMAMUX2 request generator 1 */
@@ -440,9 +424,9 @@ typedef struct __DMA_HandleTypeDef
   * @brief    DMA peripheral data size
   * @{
   */
-#define DMA_PDATAALIGN_BYTE          ((uint32_t)0x00000000U)        /*!< Peripheral data alignment: Byte     */
-#define DMA_PDATAALIGN_HALFWORD      ((uint32_t)DMA_SxCR_PSIZE_0)  /*!< Peripheral data alignment: HalfWord */
-#define DMA_PDATAALIGN_WORD          ((uint32_t)DMA_SxCR_PSIZE_1)  /*!< Peripheral data alignment: Word     */
+#define DMA_PDATAALIGN_BYTE          ((uint32_t)0x00000000U)       /*!< Peripheral data alignment: Byte      */
+#define DMA_PDATAALIGN_HALFWORD      ((uint32_t)DMA_SxCR_PSIZE_0)  /*!< Peripheral data alignment: HalfWord  */
+#define DMA_PDATAALIGN_WORD          ((uint32_t)DMA_SxCR_PSIZE_1)  /*!< Peripheral data alignment: Word      */
 /**
   * @}
   */
@@ -451,7 +435,7 @@ typedef struct __DMA_HandleTypeDef
   * @brief    DMA memory data size
   * @{
   */
-#define DMA_MDATAALIGN_BYTE          ((uint32_t)0x00000000U)        /*!< Memory data alignment: Byte     */
+#define DMA_MDATAALIGN_BYTE          ((uint32_t)0x00000000U)       /*!< Memory data alignment: Byte     */
 #define DMA_MDATAALIGN_HALFWORD      ((uint32_t)DMA_SxCR_MSIZE_0)  /*!< Memory data alignment: HalfWord */
 #define DMA_MDATAALIGN_WORD          ((uint32_t)DMA_SxCR_MSIZE_1)  /*!< Memory data alignment: Word     */
 /**
@@ -462,9 +446,11 @@ typedef struct __DMA_HandleTypeDef
   * @brief    DMA mode
   * @{
   */
-#define DMA_NORMAL         ((uint32_t)0x00000000U)       /*!< Normal mode                  */
-#define DMA_CIRCULAR       ((uint32_t)DMA_SxCR_CIRC)    /*!< Circular mode                */
-#define DMA_PFCTRL         ((uint32_t)DMA_SxCR_PFCTRL)  /*!< Peripheral flow control mode */
+#define DMA_NORMAL              ((uint32_t)0x00000000U)                  /*!< Normal mode                                    */
+#define DMA_CIRCULAR            ((uint32_t)DMA_SxCR_CIRC)                /*!< Circular mode                                  */
+#define DMA_PFCTRL              ((uint32_t)DMA_SxCR_PFCTRL)              /*!< Peripheral flow control mode                   */
+#define DMA_DOUBLE_BUFFER_M0    ((uint32_t)DMA_SxCR_DBM)                 /*!< Double buffer mode with first target memory M0 */
+#define DMA_DOUBLE_BUFFER_M1    ((uint32_t)(DMA_SxCR_DBM | DMA_SxCR_CT)) /*!< Double buffer mode with first target memory M1 */
 /**
   * @}
   */
@@ -473,7 +459,7 @@ typedef struct __DMA_HandleTypeDef
   * @brief    DMA priority levels
   * @{
   */
-#define DMA_PRIORITY_LOW             ((uint32_t)0x00000000U)     /*!< Priority level: Low       */
+#define DMA_PRIORITY_LOW             ((uint32_t)0x00000000U)    /*!< Priority level: Low       */
 #define DMA_PRIORITY_MEDIUM          ((uint32_t)DMA_SxCR_PL_0)  /*!< Priority level: Medium    */
 #define DMA_PRIORITY_HIGH            ((uint32_t)DMA_SxCR_PL_1)  /*!< Priority level: High      */
 #define DMA_PRIORITY_VERY_HIGH       ((uint32_t)DMA_SxCR_PL)    /*!< Priority level: Very High */
@@ -544,8 +530,8 @@ typedef struct __DMA_HandleTypeDef
   * @brief    DMA flag definitions
   * @{
   */
-#define DMA_FLAG_FEIF0_4                    ((uint32_t)0x00800001U)
-#define DMA_FLAG_DMEIF0_4                   ((uint32_t)0x00800004U)
+#define DMA_FLAG_FEIF0_4                    ((uint32_t)0x00000001U)
+#define DMA_FLAG_DMEIF0_4                   ((uint32_t)0x00000004U)
 #define DMA_FLAG_TEIF0_4                    ((uint32_t)0x00000008U)
 #define DMA_FLAG_HTIF0_4                    ((uint32_t)0x00000010U)
 #define DMA_FLAG_TCIF0_4                    ((uint32_t)0x00000020U)
@@ -636,7 +622,7 @@ typedef struct __DMA_HandleTypeDef
   *           - DMA_FIFOStatus_Empty: when FIFO is empty
   *           - DMA_FIFOStatus_Full: when FIFO is full
   */
-#define __HAL_DMA_GET_FS(__HANDLE__) ((IS_D2_DMA_INSTANCE(__HANDLE__))? (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->FCR & (DMA_SxFCR_FS)) : 0)
+#define __HAL_DMA_GET_FS(__HANDLE__) ((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))? (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->FCR & (DMA_SxFCR_FS)) : 0)
 
 /**
   * @brief  Enable the specified DMA Stream.
@@ -644,7 +630,7 @@ typedef struct __DMA_HandleTypeDef
   * @retval None
   */
 #define __HAL_DMA_ENABLE(__HANDLE__) \
-((IS_D2_DMA_INSTANCE(__HANDLE__))? (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR |=  DMA_SxCR_EN) : \
+((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))? (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR |=  DMA_SxCR_EN) : \
 (((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR |=  BDMA_CCR_EN))
 
 /**
@@ -653,7 +639,7 @@ typedef struct __DMA_HandleTypeDef
   * @retval None
   */
 #define __HAL_DMA_DISABLE(__HANDLE__) \
-((IS_D2_DMA_INSTANCE(__HANDLE__))? (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR &=  ~DMA_SxCR_EN) : \
+((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))? (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR &=  ~DMA_SxCR_EN) : \
 (((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR &=  ~BDMA_CCR_EN))
 
 /* Interrupt & Flag management */
@@ -680,14 +666,14 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA2_Stream3))? DMA_FLAG_TCIF3_7 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Stream7))? DMA_FLAG_TCIF3_7 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA2_Stream7))? DMA_FLAG_TCIF3_7 :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel0))? BDMA_FLAG_TC0    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel1))? BDMA_FLAG_TC1    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel2))? BDMA_FLAG_TC2    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel3))? BDMA_FLAG_TC3    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel4))? BDMA_FLAG_TC4    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel5))? BDMA_FLAG_TC5    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel6))? BDMA_FLAG_TC6    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel7))? BDMA_FLAG_TC7    :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel0))? BDMA_FLAG_TC0   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel1))? BDMA_FLAG_TC1   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel2))? BDMA_FLAG_TC2   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel3))? BDMA_FLAG_TC3   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel4))? BDMA_FLAG_TC4   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel5))? BDMA_FLAG_TC5   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel6))? BDMA_FLAG_TC6   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel7))? BDMA_FLAG_TC7   :\
  (uint32_t)0x00000000)
 
 /**
@@ -712,14 +698,14 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA2_Stream3))? DMA_FLAG_HTIF3_7 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Stream7))? DMA_FLAG_HTIF3_7 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA2_Stream7))? DMA_FLAG_HTIF3_7 :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel0))? BDMA_FLAG_HT0    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel1))? BDMA_FLAG_HT1    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel2))? BDMA_FLAG_HT2    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel3))? BDMA_FLAG_HT3    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel4))? BDMA_FLAG_HT4    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel5))? BDMA_FLAG_HT5    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel6))? BDMA_FLAG_HT6    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel7))? BDMA_FLAG_HT7    :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel0))? BDMA_FLAG_HT0   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel1))? BDMA_FLAG_HT1   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel2))? BDMA_FLAG_HT2   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel3))? BDMA_FLAG_HT3   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel4))? BDMA_FLAG_HT4   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel5))? BDMA_FLAG_HT5   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel6))? BDMA_FLAG_HT6   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel7))? BDMA_FLAG_HT7   :\
  (uint32_t)0x00000000)
 
 /**
@@ -744,14 +730,14 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA2_Stream3))? DMA_FLAG_TEIF3_7 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA1_Stream7))? DMA_FLAG_TEIF3_7 :\
  ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)DMA2_Stream7))? DMA_FLAG_TEIF3_7 :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel0))? BDMA_FLAG_TE0    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel1))? BDMA_FLAG_TE1    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel2))? BDMA_FLAG_TE2    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel3))? BDMA_FLAG_TE3    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel4))? BDMA_FLAG_TE4    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel5))? BDMA_FLAG_TE5    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel6))? BDMA_FLAG_TE6    :\
- ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel7))? BDMA_FLAG_TE7    :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel0))? BDMA_FLAG_TE0   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel1))? BDMA_FLAG_TE1   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel2))? BDMA_FLAG_TE2   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel3))? BDMA_FLAG_TE3   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel4))? BDMA_FLAG_TE4   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel5))? BDMA_FLAG_TE5   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel6))? BDMA_FLAG_TE6   :\
+ ((uint32_t)((__HANDLE__)->Instance) == ((uint32_t)BDMA_Channel7))? BDMA_FLAG_TE7   :\
  (uint32_t)0x00000000)
 
 /**
@@ -856,22 +842,21 @@ typedef struct __DMA_HandleTypeDef
  ((uint32_t)((__HANDLE__)->Instance) > (uint32_t)DMA1_Stream7)? (DMA2->LIFCR = (__FLAG__)) :\
  ((uint32_t)((__HANDLE__)->Instance) > (uint32_t)DMA1_Stream3)? (DMA1->HIFCR = (__FLAG__)) : (DMA1->LIFCR = (__FLAG__)))
 
-
-#define D2_TO_D3_DMA_IT(__DMA_IT__) \
+#define DMA_TO_BDMA_IT(__DMA_IT__) \
 ((((__DMA_IT__) & (DMA_IT_TC | DMA_IT_HT | DMA_IT_TE)) == (DMA_IT_TC | DMA_IT_HT | DMA_IT_TE)) ? (BDMA_CCR_TCIE | BDMA_CCR_HTIE |BDMA_CCR_TEIE) :\
-(((__DMA_IT__) & (DMA_IT_TC | DMA_IT_HT)) == (DMA_IT_TC | DMA_IT_HT)) ? (BDMA_CCR_TCIE | BDMA_CCR_HTIE) :\
-(((__DMA_IT__) & (DMA_IT_HT | DMA_IT_TE)) == (DMA_IT_HT | DMA_IT_TE)) ? (BDMA_CCR_HTIE |BDMA_CCR_TEIE)  :\
-(((__DMA_IT__) & (DMA_IT_TC | DMA_IT_TE)) == (DMA_IT_TC | DMA_IT_TE)) ? (BDMA_CCR_TCIE |BDMA_CCR_TEIE)  :\
-((__DMA_IT__) == DMA_IT_TC) ? BDMA_CCR_TCIE :\
-((__DMA_IT__) == DMA_IT_HT) ? BDMA_CCR_HTIE :\
-((__DMA_IT__) == DMA_IT_TE) ? BDMA_CCR_TEIE :\
-(uint32_t)0x00000000)
+ (((__DMA_IT__) & (DMA_IT_TC | DMA_IT_HT)) == (DMA_IT_TC | DMA_IT_HT)) ? (BDMA_CCR_TCIE | BDMA_CCR_HTIE) :\
+ (((__DMA_IT__) & (DMA_IT_HT | DMA_IT_TE)) == (DMA_IT_HT | DMA_IT_TE)) ? (BDMA_CCR_HTIE |BDMA_CCR_TEIE)  :\
+ (((__DMA_IT__) & (DMA_IT_TC | DMA_IT_TE)) == (DMA_IT_TC | DMA_IT_TE)) ? (BDMA_CCR_TCIE |BDMA_CCR_TEIE)  :\
+ ((__DMA_IT__) == DMA_IT_TC) ? BDMA_CCR_TCIE :\
+ ((__DMA_IT__) == DMA_IT_HT) ? BDMA_CCR_HTIE :\
+ ((__DMA_IT__) == DMA_IT_TE) ? BDMA_CCR_TEIE :\
+ (uint32_t)0x00000000)
 
 
-#define __HAL_DMA_D3_ENABLE_IT(__HANDLE__, __INTERRUPT__) \
-(((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR |= (D2_TO_D3_DMA_IT(__INTERRUPT__)))
+#define __HAL_BDMA_CHANNEL_ENABLE_IT(__HANDLE__, __INTERRUPT__) \
+(((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR |= (DMA_TO_BDMA_IT(__INTERRUPT__)))
 
-#define __HAL_DMA_D2_ENABLE_IT(__HANDLE__, __INTERRUPT__)   (((__INTERRUPT__) != DMA_IT_FE)? \
+#define __HAL_DMA_STREAM_ENABLE_IT(__HANDLE__, __INTERRUPT__)   (((__INTERRUPT__) != DMA_IT_FE)? \
 (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR |= (__INTERRUPT__)) : (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->FCR |= (__INTERRUPT__)))
 
 /**
@@ -886,14 +871,14 @@ typedef struct __DMA_HandleTypeDef
   *           @arg DMA_IT_DME: Direct mode error interrupt.
   * @retval None
   */
-#define __HAL_DMA_ENABLE_IT(__HANDLE__, __INTERRUPT__) ((IS_D2_DMA_INSTANCE(__HANDLE__))?\
-                                                        (__HAL_DMA_D2_ENABLE_IT((__HANDLE__), (__INTERRUPT__))) :\
-                                                        (__HAL_DMA_D3_ENABLE_IT((__HANDLE__), (__INTERRUPT__))))
+#define __HAL_DMA_ENABLE_IT(__HANDLE__, __INTERRUPT__) ((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))?\
+                                                        (__HAL_DMA_STREAM_ENABLE_IT((__HANDLE__), (__INTERRUPT__))) :\
+                                                        (__HAL_BDMA_CHANNEL_ENABLE_IT((__HANDLE__), (__INTERRUPT__))))
 
 
-#define __HAL_DMA_D3_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR &= ~(D2_TO_D3_DMA_IT(__INTERRUPT__)))
+#define __HAL_BDMA_CHANNEL_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR &= ~(DMA_TO_BDMA_IT(__INTERRUPT__)))
 
-#define __HAL_DMA_D2_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((__INTERRUPT__) != DMA_IT_FE)? \
+#define __HAL_DMA_STREAM_DISABLE_IT(__HANDLE__, __INTERRUPT__)  (((__INTERRUPT__) != DMA_IT_FE)? \
 (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR &= ~(__INTERRUPT__)) : (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->FCR &= ~(__INTERRUPT__)))
 
 /**
@@ -908,14 +893,14 @@ typedef struct __DMA_HandleTypeDef
   *            @arg DMA_IT_DME: Direct mode error interrupt.
   * @retval None
   */
-#define __HAL_DMA_DISABLE_IT(__HANDLE__, __INTERRUPT__) ((IS_D2_DMA_INSTANCE(__HANDLE__))?\
-                                                         (__HAL_DMA_D2_DISABLE_IT((__HANDLE__), (__INTERRUPT__))) :\
-                                                         (__HAL_DMA_D3_DISABLE_IT((__HANDLE__), (__INTERRUPT__))))
+#define __HAL_DMA_DISABLE_IT(__HANDLE__, __INTERRUPT__) ((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))?\
+                                                         (__HAL_DMA_STREAM_DISABLE_IT((__HANDLE__), (__INTERRUPT__))) :\
+                                                         (__HAL_BDMA_CHANNEL_DISABLE_IT((__HANDLE__), (__INTERRUPT__))))
 
 
-#define __HAL_DMA_D3_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  ((((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR & (D2_TO_D3_DMA_IT(__INTERRUPT__))))
+#define __HAL_BDMA_CHANNEL_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  ((((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CCR & (DMA_TO_BDMA_IT(__INTERRUPT__))))
 
-#define __HAL_DMA_D2_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  (((__INTERRUPT__) != DMA_IT_FE)? \
+#define __HAL_DMA_STREAM_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__)  (((__INTERRUPT__) != DMA_IT_FE)? \
                                                         (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->CR & (__INTERRUPT__)) : \
                                                         (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->FCR & (__INTERRUPT__)))
 
@@ -931,9 +916,9 @@ typedef struct __DMA_HandleTypeDef
   *            @arg DMA_IT_DME: Direct mode error interrupt.
   * @retval The state of DMA_IT.
   */
-#define __HAL_DMA_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((IS_D2_DMA_INSTANCE(__HANDLE__))? \
-                                                            (__HAL_DMA_D2_GET_IT_SOURCE((__HANDLE__), (__INTERRUPT__))) :\
-                                                            (__HAL_DMA_D3_GET_IT_SOURCE((__HANDLE__), (__INTERRUPT__))))
+#define __HAL_DMA_GET_IT_SOURCE(__HANDLE__, __INTERRUPT__) ((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))? \
+                                                            (__HAL_DMA_STREAM_GET_IT_SOURCE((__HANDLE__), (__INTERRUPT__))) :\
+                                                            (__HAL_BDMA_CHANNEL_GET_IT_SOURCE((__HANDLE__), (__INTERRUPT__))))
 
 /**
   * @brief  Writes the number of data units to be transferred on the DMA Stream.
@@ -952,7 +937,7 @@ typedef struct __DMA_HandleTypeDef
   *
   * @retval The number of remaining data units in the current DMAy Streamx transfer.
   */
-#define __HAL_DMA_SET_COUNTER(__HANDLE__, __COUNTER__) ((IS_D2_DMA_INSTANCE(__HANDLE__))? \
+#define __HAL_DMA_SET_COUNTER(__HANDLE__, __COUNTER__) ((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))? \
                                                         (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->NDTR = (uint16_t)(__COUNTER__)) :\
                                                         (((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CNDTR = (uint16_t)(__COUNTER__)))
 
@@ -962,7 +947,7 @@ typedef struct __DMA_HandleTypeDef
   *
   * @retval The number of remaining data units in the current DMA Stream transfer.
   */
-#define __HAL_DMA_GET_COUNTER(__HANDLE__) ((IS_D2_DMA_INSTANCE(__HANDLE__))?\
+#define __HAL_DMA_GET_COUNTER(__HANDLE__) ((IS_DMA_STREAM_INSTANCE((__HANDLE__)->Instance))? \
                                            (((DMA_Stream_TypeDef *)(__HANDLE__)->Instance)->NDTR) :\
                                            (((BDMA_Channel_TypeDef *)(__HANDLE__)->Instance)->CNDTR))
 
@@ -1034,13 +1019,9 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
   * @{
   */
 
-#define IS_DMA_D2_REQUEST(REQUEST) (((REQUEST) <= DMA_REQUEST_ADC3))
+#define IS_DMA_REQUEST(REQUEST) (((REQUEST) <= DMA_REQUEST_ADC3))
 
-#define IS_BDMA_D3_REQUEST(REQUEST) (((REQUEST) <= BDMA_REQUEST_ADC3))
-
-#define IS_D2_DMA_INSTANCE(__HANDLE__) (((uint32_t)((__HANDLE__)->Instance) >= ((uint32_t)DMA1_Stream0)) && ((uint32_t)((__HANDLE__)->Instance) <= ((uint32_t)DMA2_Stream7)))
-#define IS_D3_DMA_INSTANCE(__HANDLE__) (((uint32_t)((__HANDLE__)->Instance) >= ((uint32_t)BDMA_Channel0)) && ((uint32_t)((__HANDLE__)->Instance) <= ((uint32_t)BDMA_Channel7)))
-
+#define IS_BDMA_REQUEST(REQUEST) (((REQUEST) <= BDMA_REQUEST_ADC3))
 
 #define IS_DMA_DIRECTION(DIRECTION) (((DIRECTION) == DMA_PERIPH_TO_MEMORY ) || \
                                      ((DIRECTION) == DMA_MEMORY_TO_PERIPH)  || \
@@ -1062,9 +1043,11 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
                                        ((SIZE) == DMA_MDATAALIGN_HALFWORD) || \
                                        ((SIZE) == DMA_MDATAALIGN_WORD ))
 
-#define IS_DMA_MODE(MODE) (((MODE) == DMA_NORMAL )  || \
-                           ((MODE) == DMA_CIRCULAR) || \
-                           ((MODE) == DMA_PFCTRL))
+#define IS_DMA_MODE(MODE) (((MODE) == DMA_NORMAL )           || \
+                           ((MODE) == DMA_CIRCULAR)          || \
+                           ((MODE) == DMA_PFCTRL)            || \
+                           ((MODE) == DMA_DOUBLE_BUFFER_M0)  || \
+                           ((MODE) == DMA_DOUBLE_BUFFER_M1))
 
 #define IS_DMA_PRIORITY(PRIORITY) (((PRIORITY) == DMA_PRIORITY_LOW )   || \
                                    ((PRIORITY) == DMA_PRIORITY_MEDIUM) || \
@@ -1113,6 +1096,6 @@ uint32_t             HAL_DMA_GetError(DMA_HandleTypeDef *hdma);
 }
 #endif
 
-#endif /* __STM32H7xx_HAL_DMA_H */
+#endif /* STM32H7xx_HAL_DMA_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

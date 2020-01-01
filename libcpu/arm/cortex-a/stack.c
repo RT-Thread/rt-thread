@@ -60,6 +60,9 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0;       /* user lr */
     *(--stk) = 0;       /* user sp*/
 #endif
+#ifdef RT_USING_FPU
+    *(--stk) = 0;       /* not use fpu*/
+#endif
 
     /* return task's current stack address */
     return (rt_uint8_t *)stk;

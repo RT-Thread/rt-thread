@@ -1,0 +1,27 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = []
+
+src += Glob('Library/Source/*.c')
+src += ['CMSIS/system_ES8P508x.c']
+
+#add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['CMSIS/startup_ES8P508x.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src
+
+path = [cwd + '/CMSIS',
+        cwd + '/Library/Include',]
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')

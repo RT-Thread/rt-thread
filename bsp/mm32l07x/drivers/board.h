@@ -16,7 +16,7 @@
 #define SRAM_SIZE 0x2000
 
 #define SRAM_END (SRAM_BASE + SRAM_SIZE)
-#ifdef __CC_ARM
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
     extern int Image$$RW_IRAM1$$ZI$$Limit;
     #define HEAP_BEGIN ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__

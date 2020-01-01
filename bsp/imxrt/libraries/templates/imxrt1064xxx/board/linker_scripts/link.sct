@@ -1,0 +1,141 @@
+#! armcc -E
+/*
+** ###################################################################
+**     Processors:          MIMXRT1064DVL6A
+**
+**     Compiler:            Keil ARM C/C++ Compiler
+**     Reference manual:    IMXRT1064RM Rev.C, 08/2017
+**     Version:             rev. 0.1, 2019-05-29
+**     Build:               b190529
+**
+**     Abstract:
+**         Linker file for the Keil ARM C/C++ Compiler
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2017 NXP
+**     Redistribution and use in source and binary forms, with or without modification,
+**     are permitted provided that the following conditions are met:
+**
+**     1. Redistributions of source code must retain the above copyright notice, this list
+**       of conditions and the following disclaimer.
+**
+**     2. Redistributions in binary form must reproduce the above copyright notice, this
+**       list of conditions and the following disclaimer in the documentation and/or
+**       other materials provided with the distribution.
+**
+**     3. Neither the name of the copyright holder nor the names of its
+**       contributors may be used to endorse or promote products derived from this
+**       software without specific prior written permission.
+**
+**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+
+#define m_flash_config_start           0x70000000
+#define m_flash_config_size            0x00001000
+
+#define m_ivt_start                    0x70001000
+#define m_ivt_size                     0x00001000
+
+#define m_interrupts_start             0x70002000
+#define m_interrupts_size              0x00000400
+
+#define m_text_start                   0x70002400
+#define m_text_size                    0x003FDC00
+
+#define m_data_start                   0x20000000       ; DTCM 128KB
+#define m_data_size                    0x00020000
+
+#define m_data2_start                  0x20200000       ; OCRAM2 768KB
+#define m_data2_size                   0x000C0000
+
+#define m_data3_start                  0x00000000       ; ITCM 128KB
+#define m_data3_size                   0x00020000
+
+
+/* Sizes */
+#if (defined(__stack_size__))
+  #define Stack_Size                   __stack_size__
+#else
+  #define Stack_Size                   0x0400
+#endif
+
+#if (defined(__heap_size__))
+  #define Heap_Size                    __heap_size__
+#else
+  #define Heap_Size                    0x0400
+#endif
+
+#include "../../rtconfig.h"
+
+#if (defined(BSP_USING_4MFLASH))
+LR_m_rom_config m_flash_config_start m_flash_config_size      ; load region size_region
+{   
+    RW_m_config_text m_flash_config_start m_flash_config_size ; load address = execution address
+    { 
+        * (.boot_hdr.conf, +FIRST)
+    }  
+}
+
+LR_m_rom_ivt m_ivt_start m_ivt_size ; load region size_region
+{   
+    RW_m_ivt_text m_ivt_start m_ivt_size ; load address = execution address
+    { 
+        * (.boot_hdr.ivt, +FIRST)
+        * (.boot_hdr.boot_data)
+        * (.boot_hdr.dcd_data)
+    }   
+}
+#endif
+
+#define RTT_HEAP_SIZE (m_data_size-ImageLength(RW_m_data)-ImageLength(ARM_LIB_HEAP)-ImageLength(ARM_LIB_STACK))
+
+; load region size_region
+LR_IROM1 m_text_start m_text_size 
+{   
+    ER_IROM1 m_text_start m_text_size ; load address = execution address
+    { 
+        * (RESET,+FIRST)
+        * (InRoot$$Sections)
+        .ANY (+RO)
+    }
+  
+    RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size ; RW data
+    { 
+        .ANY (+RW +ZI)
+    }
+    
+    ARM_LIB_HEAP +0 EMPTY Heap_Size{}   ; Heap region growing up
+    ARM_LIB_STACK +0 EMPTY Stack_Size{} ; Stack region growing down
+    RTT_HEAP +0 EMPTY RTT_HEAP_SIZE{}
+
+    ; ncache RW data
+    RW_m_ncache m_data2_start m_data2_size 
+    { 
+        * (NonCacheable.init)
+        * (NonCacheable)
+    }
+;  ITCM 0x400 0xFBFF {
+;        ;drv_flexspi_hyper.o(+RO)
+;        ;fsl_flexspi.o(+RO)
+;        * (*CLOCK_DisableClock)
+;        * (*CLOCK_ControlGate)
+;        * (*CLOCK_EnableClock)
+;        * (*CLOCK_SetDiv)
+;        * (itcm)
+;    }
+}

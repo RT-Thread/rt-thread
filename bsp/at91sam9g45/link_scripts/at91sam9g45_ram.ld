@@ -1,6 +1,6 @@
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
-ENTRY(start)
+ENTRY(system_vectors)
 SECTIONS
 {
     . = 0x70000000;
@@ -8,7 +8,7 @@ SECTIONS
     . = ALIGN(4);
     .text : 
     {
-        *(.init)
+        *(.vectors)
         *(.text)
         *(.gnu.linkonce.t*)
         
@@ -76,9 +76,9 @@ SECTIONS
     .nobss : { *(.nobss) }
     
     . = ALIGN(4);
-    __bss_start__ = .;
+    __bss_start = .;
     .bss : { *(.bss)}
-    __bss_end__ = .;
+    __bss_end = .;
 
     /* stabs debugging sections. */
     .stab 0 : { *(.stab) }

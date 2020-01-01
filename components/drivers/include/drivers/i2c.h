@@ -60,11 +60,12 @@ struct rt_i2c_bus_device
     void *priv;
 };
 
-#ifdef RT_I2C_DEBUG
-#define i2c_dbg(fmt, ...)   rt_kprintf(fmt, ##__VA_ARGS__)
-#else
-#define i2c_dbg(fmt, ...)
-#endif
+struct rt_i2c_client
+{
+    struct rt_device               parent;
+    struct rt_i2c_bus_device       *bus;
+    rt_uint16_t                    client_addr;
+};
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name);

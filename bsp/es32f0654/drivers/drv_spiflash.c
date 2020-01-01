@@ -15,7 +15,7 @@
 #include "drv_spi.h"
 
 #if defined(BSP_USING_SPI_FLASH)
-static int rt_hw_spi_flash_init(void)
+int rt_hw_spi_flash_init(void)
 {
     es32f0_spi_device_attach(50, "spi0", "spi00");
 

@@ -164,7 +164,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         tim_device = (struct stm32_hwtimer *)timer;
 
         /* time init */
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
@@ -228,18 +228,24 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     tim = (TIM_HandleTypeDef *)timer->parent.user_data;
 
     /* set tim cnt */
-    __HAL_TIM_SET_AUTORELOAD(tim, t);
+    __HAL_TIM_SET_COUNTER(tim, 0);
+    /* set tim arr */
+    __HAL_TIM_SET_AUTORELOAD(tim, t - 1);
 
     if (opmode == HWTIMER_MODE_ONESHOT)
     {
         /* set timer to single mode */
         tim->Instance->CR1 |= TIM_OPMODE_SINGLE;
     }
-
+    else
+    {
+        tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
+    }
+	
     /* start timer */
     if (HAL_TIM_Base_Start_IT(tim) != HAL_OK)
     {
-        LOG_E("TIM2 start failed");
+        LOG_E("TIM start failed");
         result = -RT_ERROR;
     }
 
@@ -256,6 +262,9 @@ static void timer_stop(rt_hwtimer_t *timer)
 
     /* stop timer */
     HAL_TIM_Base_Stop_IT(tim);
+
+    /* set tim cnt */
+    __HAL_TIM_SET_COUNTER(tim, 0);
 }
 
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
@@ -278,7 +287,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         /* set timer frequence */
         freq = *((rt_uint32_t *)arg);
 
-#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
@@ -288,13 +297,13 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         {
 #if defined(SOC_SERIES_STM32L4)
             val = HAL_RCC_GetPCLK2Freq() / freq;
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             val = HAL_RCC_GetPCLK2Freq() * 2 / freq;
 #endif
         }
         else
         {
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             val = HAL_RCC_GetPCLK1Freq() * 2 / freq;
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
             val = HAL_RCC_GetPCLK1Freq() / freq;
@@ -399,7 +408,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM14
-#if defined(SOC_SERIES_STM32F4)
+#if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     void TIM8_TRG_COM_TIM14_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0)
     void TIM14_IRQHandler(void)

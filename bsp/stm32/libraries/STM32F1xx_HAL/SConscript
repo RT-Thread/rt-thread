@@ -17,10 +17,10 @@ STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cec.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sram.c
+STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
 """)
 
 if GetDepend(['RT_USING_PIN']):
-    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c']
     
 if GetDepend(['RT_USING_SERIAL']):
@@ -32,7 +32,6 @@ if GetDepend(['RT_USING_I2C']):
     
 if GetDepend(['RT_USING_SPI']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c']
-    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi_ex.c'] 
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_spi.c']
 
 if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
@@ -44,7 +43,7 @@ if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
 if GetDepend(['RT_USING_CAN']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c']
 
@@ -64,7 +63,7 @@ if GetDepend(['RT_USING_WDT']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_wwdg.c']
 
 if GetDepend(['RT_USING_SDIO']):
-    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_mmc.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_sdmmc.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c']
 
 if GetDepend(['RT_USING_AUDIO']):

@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+/* RT_USING_ARCH_DATA_TYPE is not set */
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 8
@@ -18,8 +19,8 @@
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
-#define RT_IDEL_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 1024
+#define RT_IDLE_HOOK_LIST_SIZE 4
+#define IDLE_THREAD_STACK_SIZE 4096
 /* RT_USING_TIMER_SOFT is not set */
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
@@ -42,7 +43,7 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
-/* RT_USING_SIGNALS is not set */
+#define RT_USING_SIGNALS
 
 /* Memory Management */
 
@@ -130,6 +131,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
+/* RT_USING_SYSTEM_WORKQUEUE is not set */
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
@@ -187,6 +189,10 @@
 
 /* RT_USING_SAL is not set */
 
+/* Network interface device */
+
+/* RT_USING_NETDEV is not set */
+
 /* light weight TCP/IP stack */
 
 /* RT_USING_LWIP is not set */
@@ -205,7 +211,6 @@
 
 /* Utilities */
 
-/* RT_USING_LOGTRACE is not set */
 /* RT_USING_RYM is not set */
 /* RT_USING_ULOG is not set */
 /* RT_USING_UTEST is not set */
@@ -240,6 +245,7 @@
 /* PKG_USING_NOPOLL is not set */
 /* PKG_USING_NETUTILS is not set */
 /* PKG_USING_AT_DEVICE is not set */
+/* PKG_USING_ATSRV_SOCKET is not set */
 /* PKG_USING_WIZNET is not set */
 
 /* IoT Cloud */
@@ -251,6 +257,7 @@
 /* PKG_USING_TENCENT_IOTKIT is not set */
 /* PKG_USING_NIMBLE is not set */
 /* PKG_USING_OTA_DOWNLOADER is not set */
+/* PKG_USING_IPMSG is not set */
 
 /* security packages */
 
@@ -268,6 +275,7 @@
 
 /* PKG_USING_OPENMV is not set */
 /* PKG_USING_MUPDF is not set */
+/* PKG_USING_STEMWIN is not set */
 
 /* tools packages */
 
@@ -294,34 +302,31 @@
 /* PKG_USING_CMSIS is not set */
 /* PKG_USING_DFS_YAFFS is not set */
 /* PKG_USING_LITTLEFS is not set */
+/* PKG_USING_THREAD_POOL is not set */
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-/* PKG_USING_LSM6DSL is not set */
-/* PKG_USING_LPS22HB is not set */
-/* PKG_USING_HTS221 is not set */
-/* PKG_USING_LSM303AGR is not set */
-/* PKG_USING_BME280 is not set */
-/* PKG_USING_BMA400 is not set */
-/* PKG_USING_BMI160_BMX160 is not set */
-/* PKG_USING_SPL0601 is not set */
+/* PKG_USING_SENSORS_DRIVERS is not set */
 /* PKG_USING_REALTEK_AMEBA is not set */
 /* PKG_USING_SHT2X is not set */
-/* PKG_USING_AHT10 is not set */
 /* PKG_USING_AP3216C is not set */
 /* PKG_USING_STM32_SDIO is not set */
 /* PKG_USING_ICM20608 is not set */
 /* PKG_USING_U8G2 is not set */
 /* PKG_USING_BUTTON is not set */
-/* PKG_USING_MPU6XXX is not set */
 /* PKG_USING_PCF8574 is not set */
 /* PKG_USING_SX12XX is not set */
-/* PKG_USING_SIGNAL_LED is not set */
 #define PKG_USING_KENDRYTE_SDK
-#define PKG_USING_KENDRYTE_SDK_V052
+/* PKG_USING_KENDRYTE_SDK_V052 is not set */
+/* PKG_USING_KENDRYTE_SDK_V053 is not set */
+/* PKG_USING_KENDRYTE_SDK_V054 is not set */
+#define PKG_USING_KENDRYTE_SDK_V055
 /* PKG_USING_KENDRYTE_SDK_LATEST_VERSION is not set */
+#define PKG_KENDRYTE_SDK_VERNUM 0x0055
+/* PKG_USING_INFRARED is not set */
+/* PKG_USING_ROSSERIAL is not set */
+/* PKG_USING_AT24CXX is not set */
+/* PKG_USING_MOTIONDRIVER2RTT is not set */
 
 /* miscellaneous packages */
 
@@ -345,6 +350,32 @@
 /* PKG_USING_PERIPHERAL_SAMPLES is not set */
 /* PKG_USING_HELLO is not set */
 /* PKG_USING_VI is not set */
+
+/* Privated Packages of RealThread */
+
+/* PKG_USING_CODEC is not set */
+/* PKG_USING_PLAYER is not set */
+/* PKG_USING_MPLAYER is not set */
+/* PKG_USING_PERSIMMON_SRC is not set */
+/* PKG_USING_JS_PERSIMMON is not set */
+/* PKG_USING_JERRYSCRIPT_WIN32 is not set */
+
+/* Network Utilities */
+
+/* PKG_USING_WICED is not set */
+/* PKG_USING_CLOUDSDK is not set */
+/* PKG_USING_COREMARK is not set */
+/* PKG_USING_POWER_MANAGER is not set */
+/* PKG_USING_RT_OTA is not set */
+/* PKG_USING_RDBD_SRC is not set */
+/* PKG_USING_RTINSIGHT is not set */
+/* PKG_USING_SMARTCONFIG is not set */
+/* PKG_USING_RTX is not set */
+/* RT_USING_TESTCASE is not set */
+/* PKG_USING_NGHTTP2 is not set */
+/* PKG_USING_AVS is not set */
+/* PKG_USING_STS is not set */
+/* PKG_USING_DLMS is not set */
 #define BOARD_K210_EVB
 #define BSP_USING_UART_HS
 /* BSP_USING_UART1 is not set */

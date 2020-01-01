@@ -225,7 +225,7 @@ static nfs_fh3 *get_dir_handle(nfs_filesystem *nfs, const char *name)
         copy_handle(handle, &nfs->current_handle);
     }
 
-    while ((file = strtok_r(NULL, "/", &path)) != NULL && path[0] != 0)
+    while ((file = strtok_r(NULL, "/", &path)) != NULL && path && path[0] != 0)
     {
         LOOKUP3args args;
         LOOKUP3res res;
@@ -747,7 +747,7 @@ int nfs_open(struct dfs_fd *file)
     RT_ASSERT(file->data != NULL);
     struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
-
+    RT_ASSERT(nfs != NULL);
 
     if (file->flags & O_DIRECTORY)
     {
@@ -1105,6 +1105,15 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
         name = nfs_readdir(nfs, dir);
         if (name == NULL)
             break;
+
+        if (rt_strcmp(name, ".") == 0)
+        {
+            continue;
+        }
+        else if (rt_strcmp(name, "..") == 0)
+        {
+            continue;
+        }
 
         d->d_type = DT_REG;
 

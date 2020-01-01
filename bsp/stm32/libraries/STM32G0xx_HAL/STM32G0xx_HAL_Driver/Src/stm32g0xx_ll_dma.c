@@ -67,7 +67,13 @@
 
 #define IS_LL_DMA_NBDATA(__VALUE__)             ((__VALUE__)  <= 0x0000FFFFU)
 
-#define IS_LL_DMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= 40U)
+#if defined(STM32G081xx)||defined(STM32G071xx)
+#define IS_LL_DMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX_REQ_UCPD2_TX)
+#elif defined(STM32G070xx)
+#define IS_LL_DMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX_REQ_USART4_TX)
+#elif defined(STM32G041xx)||defined(STM32G031xx)||defined(STM32G030xx)
+#define IS_LL_DMA_PERIPHREQUEST(__VALUE__)      ((__VALUE__) <= LL_DMAMUX_REQ_USART2_TX)
+#endif
 
 #define IS_LL_DMA_PRIORITY(__VALUE__)           (((__VALUE__) == LL_DMA_PRIORITY_LOW)    || \
                                                  ((__VALUE__) == LL_DMA_PRIORITY_MEDIUM) || \
@@ -83,6 +89,13 @@
                                                              ((CHANNEL) == LL_DMA_CHANNEL_5) || \
                                                              ((CHANNEL) == LL_DMA_CHANNEL_6) || \
                                                              ((CHANNEL) == LL_DMA_CHANNEL_7))))
+#elif defined(STM32G041xx) ||  defined(STM32G031xx) || defined(STM32G030xx)
+#define IS_LL_DMA_ALL_CHANNEL_INSTANCE(INSTANCE, CHANNEL)  ((((INSTANCE) == DMA1) && \
+                                                            (((CHANNEL) == LL_DMA_CHANNEL_1) || \
+                                                             ((CHANNEL) == LL_DMA_CHANNEL_2) || \
+                                                             ((CHANNEL) == LL_DMA_CHANNEL_3) || \
+                                                             ((CHANNEL) == LL_DMA_CHANNEL_4) || \
+                                                             ((CHANNEL) == LL_DMA_CHANNEL_5))))
 #endif
 /**
   * @}
@@ -117,7 +130,6 @@
   */
 ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
 {
-  DMA_Channel_TypeDef *tmp;
   ErrorStatus status = SUCCESS;
 
   /* Check the DMA Instance DMAx and Channel parameters*/
@@ -150,22 +162,24 @@ ErrorStatus LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)
   }
   else
   {
+    DMA_Channel_TypeDef *tmp;
+
     tmp = (DMA_Channel_TypeDef *)(__LL_DMA_GET_CHANNEL_INSTANCE(DMAx, Channel));
 
     /* Disable the selected DMAx_Channely */
     CLEAR_BIT(tmp->CCR, DMA_CCR_EN);
 
     /* Reset DMAx_Channely control register */
-    LL_DMA_WriteReg((tmp), CCR, 0U);
+    WRITE_REG(tmp->CCR, 0U);
 
     /* Reset DMAx_Channely remaining bytes register */
-    LL_DMA_WriteReg((tmp), CNDTR, 0U);
+    WRITE_REG(tmp->CNDTR, 0U);
 
     /* Reset DMAx_Channely peripheral address register */
-    LL_DMA_WriteReg((tmp), CPAR, 0U);
+    WRITE_REG(tmp->CPAR, 0U);
 
     /* Reset DMAx_Channely memory address register */
-    LL_DMA_WriteReg((tmp), CMAR, 0U);
+    WRITE_REG(tmp->CMAR, 0U);
 
     /* Reset Request register field for DMAx Channel */
     LL_DMA_SetPeriphRequest(DMAx, Channel, LL_DMAMUX_REQ_MEM2MEM);

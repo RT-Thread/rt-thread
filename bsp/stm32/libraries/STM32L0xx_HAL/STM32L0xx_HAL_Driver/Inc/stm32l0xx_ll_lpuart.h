@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -61,16 +45,10 @@ extern "C" {
 /** @defgroup LPUART_LL_Private_Constants LPUART Private Constants
   * @{
   */
-
-/* Defines used for the bit position in the register and perform offsets*/
-#define LPUART_POSITION_CR1_DEDT      (uint32_t)16U
-#define LPUART_POSITION_CR1_DEAT      (uint32_t)21U
-#define LPUART_POSITION_CR2_ADD       (uint32_t)24U
-
 /* Defines used in Baud Rate related macros and corresponding register setting computation */
-#define LPUART_LPUARTDIV_FREQ_MUL     (uint32_t)(256U)
-#define LPUART_BRR_MASK               (uint32_t)(0x000FFFFFU)
-#define LPUART_BRR_MIN_VALUE          (uint32_t)(0x00000300U)
+#define LPUART_LPUARTDIV_FREQ_MUL     256U
+#define LPUART_BRR_MASK               0x000FFFFFU
+#define LPUART_BRR_MIN_VALUE          0x00000300U
 /**
   * @}
   */
@@ -144,7 +122,7 @@ typedef struct
   */
 #define LL_LPUART_ICR_PECF                 USART_ICR_PECF                /*!< Parity error flag */
 #define LL_LPUART_ICR_FECF                 USART_ICR_FECF                /*!< Framing error flag */
-#define LL_LPUART_ICR_NCF                  USART_ICR_NCF                 /*!< Noise detected flag */
+#define LL_LPUART_ICR_NCF                  USART_ICR_NCF                 /*!< Noise error detected flag */
 #define LL_LPUART_ICR_ORECF                USART_ICR_ORECF               /*!< Overrun error flag */
 #define LL_LPUART_ICR_IDLECF               USART_ICR_IDLECF              /*!< Idle line detected flag */
 #define LL_LPUART_ICR_TCCF                 USART_ICR_TCCF                /*!< Transmission complete flag */
@@ -200,7 +178,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DIRECTION Direction
   * @{
   */
-#define LL_LPUART_DIRECTION_NONE           (uint32_t)0x00000000U              /*!< Transmitter and Receiver are disabled */
+#define LL_LPUART_DIRECTION_NONE           0x00000000U                        /*!< Transmitter and Receiver are disabled */
 #define LL_LPUART_DIRECTION_RX             USART_CR1_RE                       /*!< Transmitter is disabled and Receiver is enabled */
 #define LL_LPUART_DIRECTION_TX             USART_CR1_TE                       /*!< Transmitter is enabled and Receiver is disabled */
 #define LL_LPUART_DIRECTION_TX_RX          (USART_CR1_TE |USART_CR1_RE)       /*!< Transmitter and Receiver are enabled */
@@ -211,7 +189,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_PARITY Parity Control
   * @{
   */
-#define LL_LPUART_PARITY_NONE              (uint32_t)0x00000000U              /*!< Parity control disabled */
+#define LL_LPUART_PARITY_NONE              0x00000000U                        /*!< Parity control disabled */
 #define LL_LPUART_PARITY_EVEN              USART_CR1_PCE                      /*!< Parity control enabled and Even Parity is selected */
 #define LL_LPUART_PARITY_ODD               (USART_CR1_PCE | USART_CR1_PS)     /*!< Parity control enabled and Odd Parity is selected */
 /**
@@ -221,7 +199,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_WAKEUP Wakeup
   * @{
   */
-#define LL_LPUART_WAKEUP_IDLELINE          (uint32_t)0x00000000U              /*!<  LPUART wake up from Mute mode on Idle Line */
+#define LL_LPUART_WAKEUP_IDLELINE          0x00000000U                        /*!<  LPUART wake up from Mute mode on Idle Line */
 #define LL_LPUART_WAKEUP_ADDRESSMARK       USART_CR1_WAKE                     /*!<  LPUART wake up from Mute mode on Address Mark */
 /**
   * @}
@@ -231,7 +209,7 @@ typedef struct
   * @{
   */
 #define LL_LPUART_DATAWIDTH_7B             USART_CR1_M1                       /*!< 7 bits word length : Start bit, 7 data bits, n stop bits */
-#define LL_LPUART_DATAWIDTH_8B             (uint32_t)0x00000000U              /*!< 8 bits word length : Start bit, 8 data bits, n stop bits */
+#define LL_LPUART_DATAWIDTH_8B             0x00000000U                        /*!< 8 bits word length : Start bit, 8 data bits, n stop bits */
 #define LL_LPUART_DATAWIDTH_9B             USART_CR1_M0                       /*!< 9 bits word length : Start bit, 9 data bits, n stop bits */
 /**
   * @}
@@ -240,7 +218,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_STOPBITS Stop Bits
   * @{
   */
-#define LL_LPUART_STOPBITS_1               (uint32_t)0x00000000U              /*!< 1 stop bit */
+#define LL_LPUART_STOPBITS_1               0x00000000U                        /*!< 1 stop bit */
 #define LL_LPUART_STOPBITS_2               USART_CR2_STOP_1                   /*!< 2 stop bits */
 /**
   * @}
@@ -249,7 +227,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_TXRX TX RX Pins Swap
   * @{
   */
-#define LL_LPUART_TXRX_STANDARD            (uint32_t)0x00000000U              /*!< TX/RX pins are used as defined in standard pinout */
+#define LL_LPUART_TXRX_STANDARD            0x00000000U                        /*!< TX/RX pins are used as defined in standard pinout */
 #define LL_LPUART_TXRX_SWAPPED             (USART_CR2_SWAP)                   /*!< TX and RX pins functions are swapped.             */
 /**
   * @}
@@ -258,7 +236,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_RXPIN_LEVEL RX Pin Active Level Inversion
   * @{
   */
-#define LL_LPUART_RXPIN_LEVEL_STANDARD     (uint32_t)0x00000000U              /*!< RX pin signal works using the standard logic levels */
+#define LL_LPUART_RXPIN_LEVEL_STANDARD     0x00000000U                        /*!< RX pin signal works using the standard logic levels */
 #define LL_LPUART_RXPIN_LEVEL_INVERTED     (USART_CR2_RXINV)                  /*!< RX pin signal values are inverted.                  */
 /**
   * @}
@@ -267,7 +245,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_TXPIN_LEVEL TX Pin Active Level Inversion
   * @{
   */
-#define LL_LPUART_TXPIN_LEVEL_STANDARD     (uint32_t)0x00000000U              /*!< TX pin signal works using the standard logic levels */
+#define LL_LPUART_TXPIN_LEVEL_STANDARD     0x00000000U                        /*!< TX pin signal works using the standard logic levels */
 #define LL_LPUART_TXPIN_LEVEL_INVERTED     (USART_CR2_TXINV)                  /*!< TX pin signal values are inverted.                  */
 /**
   * @}
@@ -276,7 +254,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_BINARY_LOGIC Binary Data Inversion
   * @{
   */
-#define LL_LPUART_BINARY_LOGIC_POSITIVE    (uint32_t)0x00000000U              /*!< Logical data from the data register are send/received in positive/direct logic. (1=H, 0=L) */
+#define LL_LPUART_BINARY_LOGIC_POSITIVE    0x00000000U                        /*!< Logical data from the data register are send/received in positive/direct logic. (1=H, 0=L) */
 #define LL_LPUART_BINARY_LOGIC_NEGATIVE    USART_CR2_DATAINV                  /*!< Logical data from the data register are send/received in negative/inverse logic. (1=L, 0=H). The parity bit is also inverted. */
 /**
   * @}
@@ -285,7 +263,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_BITORDER Bit Order
   * @{
   */
-#define LL_LPUART_BITORDER_LSBFIRST        (uint32_t)0x00000000U              /*!< data is transmitted/received with data bit 0 first, following the start bit */
+#define LL_LPUART_BITORDER_LSBFIRST        0x00000000U                        /*!< data is transmitted/received with data bit 0 first, following the start bit */
 #define LL_LPUART_BITORDER_MSBFIRST        USART_CR2_MSBFIRST                 /*!< data is transmitted/received with the MSB first, following the start bit */
 /**
   * @}
@@ -294,7 +272,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_ADDRESS_DETECT Address Length Detection
   * @{
   */
-#define LL_LPUART_ADDRESS_DETECT_4B        (uint32_t)0x00000000U              /*!< 4-bit address detection method selected */
+#define LL_LPUART_ADDRESS_DETECT_4B        0x00000000U                        /*!< 4-bit address detection method selected */
 #define LL_LPUART_ADDRESS_DETECT_7B        USART_CR2_ADDM7                    /*!< 7-bit address detection (in 8-bit data mode) method selected */
 /**
   * @}
@@ -303,7 +281,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_HWCONTROL Hardware Control
   * @{
   */
-#define LL_LPUART_HWCONTROL_NONE           (uint32_t)0x00000000U              /*!< CTS and RTS hardware flow control disabled */
+#define LL_LPUART_HWCONTROL_NONE           0x00000000U                        /*!< CTS and RTS hardware flow control disabled */
 #define LL_LPUART_HWCONTROL_RTS            USART_CR3_RTSE                     /*!< RTS output enabled, data is only requested when there is space in the receive buffer */
 #define LL_LPUART_HWCONTROL_CTS            USART_CR3_CTSE                     /*!< CTS mode enabled, data is only transmitted when the nCTS input is asserted (tied to 0) */
 #define LL_LPUART_HWCONTROL_RTS_CTS        (USART_CR3_RTSE | USART_CR3_CTSE)  /*!< CTS and RTS hardware flow control enabled */
@@ -314,7 +292,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_WAKEUP_ON Wakeup Activation
   * @{
   */
-#define LL_LPUART_WAKEUP_ON_ADDRESS        (uint32_t)0x00000000U                   /*!< Wake up active on address match */
+#define LL_LPUART_WAKEUP_ON_ADDRESS        0x00000000U                             /*!< Wake up active on address match */
 #define LL_LPUART_WAKEUP_ON_STARTBIT       USART_CR3_WUS_1                         /*!< Wake up active on Start bit detection */
 #define LL_LPUART_WAKEUP_ON_RXNE           (USART_CR3_WUS_0 | USART_CR3_WUS_1)     /*!< Wake up active on RXNE */
 /**
@@ -324,7 +302,7 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DE_POLARITY Driver Enable Polarity
   * @{
   */
-#define LL_LPUART_DE_POLARITY_HIGH         (uint32_t)0x00000000U              /*!< DE signal is active high */
+#define LL_LPUART_DE_POLARITY_HIGH         0x00000000U                        /*!< DE signal is active high */
 #define LL_LPUART_DE_POLARITY_LOW          USART_CR3_DEP                      /*!< DE signal is active low */
 /**
   * @}
@@ -333,8 +311,8 @@ typedef struct
 /** @defgroup LPUART_LL_EC_DMA_REG_DATA DMA Register Data
   * @{
   */
-#define LL_LPUART_DMA_REG_DATA_TRANSMIT    (uint32_t)0U                       /*!< Get address of data register used for transmission */
-#define LL_LPUART_DMA_REG_DATA_RECEIVE     (uint32_t)1U                       /*!< Get address of data register used for reception */
+#define LL_LPUART_DMA_REG_DATA_TRANSMIT    0x00000000U                       /*!< Get address of data register used for transmission */
+#define LL_LPUART_DMA_REG_DATA_RECEIVE     0x00000001U                       /*!< Get address of data register used for reception */
 /**
   * @}
   */
@@ -383,7 +361,7 @@ typedef struct
   * @param  __BAUDRATE__ Baud Rate value to achieve
   * @retval LPUARTDIV value to be used for BRR register filling
   */
-#define __LL_LPUART_DIV(__PERIPHCLK__, __BAUDRATE__) (((((uint64_t)(__PERIPHCLK__)*LPUART_LPUARTDIV_FREQ_MUL) + ((__BAUDRATE__)/2))/(__BAUDRATE__)) & LPUART_BRR_MASK)
+#define __LL_LPUART_DIV(__PERIPHCLK__, __BAUDRATE__) (((((uint64_t)(__PERIPHCLK__)*LPUART_LPUARTDIV_FREQ_MUL) + ((__BAUDRATE__)/2U))/(__BAUDRATE__)) & LPUART_BRR_MASK)
 
 /**
   * @}
@@ -443,6 +421,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabled(USART_TypeDef *LPUARTx)
   return (READ_BIT(LPUARTx->CR1, USART_CR1_UE) == (USART_CR1_UE));
 }
 
+
 /**
   * @brief  LPUART enabled in STOP Mode
   * @note   When this function is enabled, LPUART is able to wake up the MCU from Stop mode, provided that
@@ -478,6 +457,41 @@ __STATIC_INLINE void LL_LPUART_DisableInStopMode(USART_TypeDef *LPUARTx)
 __STATIC_INLINE uint32_t LL_LPUART_IsEnabledInStopMode(USART_TypeDef *LPUARTx)
 {
   return (READ_BIT(LPUARTx->CR1, USART_CR1_UESM) == (USART_CR1_UESM));
+}
+
+/**
+  * @brief  LPUART Clock enabled in STOP Mode
+  * @note   When this function is called, LPUART Clock is enabled while in STOP mode
+  * @rmtoll CR3          UCESM         LL_LPUART_EnableClockInStopMode
+  * @param  LPUARTx LPUART Instance
+  * @retval None
+  */
+__STATIC_INLINE void LL_LPUART_EnableClockInStopMode(USART_TypeDef *LPUARTx)
+{
+  SET_BIT(LPUARTx->CR3, USART_CR3_UCESM);
+}
+
+/**
+  * @brief  LPUART clock disabled in STOP Mode
+  * @note   When this function is called, LPUART Clock is disabled while in STOP mode
+  * @rmtoll CR3          UCESM         LL_LPUART_DisableClockInStopMode
+  * @param  LPUARTx LPUART Instance
+  * @retval None
+  */
+__STATIC_INLINE void LL_LPUART_DisableClockInStopMode(USART_TypeDef *LPUARTx)
+{
+  CLEAR_BIT(LPUARTx->CR3, USART_CR3_UCESM);
+}
+
+/**
+  * @brief  Indicate if LPUART clock is enabled in STOP Mode
+  * @rmtoll CR3          UCESM         LL_LPUART_IsClockEnabledInStopMode
+  * @param  LPUARTx LPUART Instance
+  * @retval State of bit (1 or 0).
+  */
+__STATIC_INLINE uint32_t LL_LPUART_IsClockEnabledInStopMode(USART_TypeDef *LPUARTx)
+{
+  return (READ_BIT(LPUARTx->CR3, USART_CR3_UCESM) == (USART_CR3_UCESM));
 }
 
 /**
@@ -680,6 +694,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledMuteMode(USART_TypeDef *LPUARTx)
 {
   return (READ_BIT(LPUARTx->CR1, USART_CR1_MME) == (USART_CR1_MME));
 }
+
 
 /**
   * @brief  Set the length of the stop bits
@@ -907,7 +922,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetTransferBitOrder(USART_TypeDef *LPUARTx)
 __STATIC_INLINE void LL_LPUART_ConfigNodeAddress(USART_TypeDef *LPUARTx, uint32_t AddressLen, uint32_t NodeAddress)
 {
   MODIFY_REG(LPUARTx->CR2, USART_CR2_ADD | USART_CR2_ADDM7,
-             (uint32_t)(AddressLen | (NodeAddress << LPUART_POSITION_CR2_ADD)));
+             (uint32_t)(AddressLen | (NodeAddress << USART_CR2_ADD_Pos)));
 }
 
 /**
@@ -922,7 +937,7 @@ __STATIC_INLINE void LL_LPUART_ConfigNodeAddress(USART_TypeDef *LPUARTx, uint32_
   */
 __STATIC_INLINE uint32_t LL_LPUART_GetNodeAddress(USART_TypeDef *LPUARTx)
 {
-  return (uint32_t)(READ_BIT(LPUARTx->CR2, USART_CR2_ADD) >> LPUART_POSITION_CR2_ADD);
+  return (uint32_t)(READ_BIT(LPUARTx->CR2, USART_CR2_ADD) >> USART_CR2_ADD_Pos);
 }
 
 /**
@@ -1180,7 +1195,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledHalfDuplex(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_SetDEDeassertionTime(USART_TypeDef *LPUARTx, uint32_t Time)
 {
-  MODIFY_REG(LPUARTx->CR1, USART_CR1_DEDT, Time << LPUART_POSITION_CR1_DEDT);
+  MODIFY_REG(LPUARTx->CR1, USART_CR1_DEDT, Time << USART_CR1_DEDT_Pos);
 }
 
 /**
@@ -1191,7 +1206,7 @@ __STATIC_INLINE void LL_LPUART_SetDEDeassertionTime(USART_TypeDef *LPUARTx, uint
   */
 __STATIC_INLINE uint32_t LL_LPUART_GetDEDeassertionTime(USART_TypeDef *LPUARTx)
 {
-  return (uint32_t)(READ_BIT(LPUARTx->CR1, USART_CR1_DEDT) >> LPUART_POSITION_CR1_DEDT);
+  return (uint32_t)(READ_BIT(LPUARTx->CR1, USART_CR1_DEDT) >> USART_CR1_DEDT_Pos);
 }
 
 /**
@@ -1203,7 +1218,7 @@ __STATIC_INLINE uint32_t LL_LPUART_GetDEDeassertionTime(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_SetDEAssertionTime(USART_TypeDef *LPUARTx, uint32_t Time)
 {
-  MODIFY_REG(LPUARTx->CR1, USART_CR1_DEAT, Time << LPUART_POSITION_CR1_DEAT);
+  MODIFY_REG(LPUARTx->CR1, USART_CR1_DEAT, Time << USART_CR1_DEAT_Pos);
 }
 
 /**
@@ -1214,7 +1229,7 @@ __STATIC_INLINE void LL_LPUART_SetDEAssertionTime(USART_TypeDef *LPUARTx, uint32
   */
 __STATIC_INLINE uint32_t LL_LPUART_GetDEAssertionTime(USART_TypeDef *LPUARTx)
 {
-  return (uint32_t)(READ_BIT(LPUARTx->CR1, USART_CR1_DEAT) >> LPUART_POSITION_CR1_DEAT);
+  return (uint32_t)(READ_BIT(LPUARTx->CR1, USART_CR1_DEAT) >> USART_CR1_DEAT_Pos);
 }
 
 /**
@@ -1308,7 +1323,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_FE(USART_TypeDef *LPUARTx)
 }
 
 /**
-  * @brief  Check if the LPUART Noise detected Flag is set or not
+  * @brief  Check if the LPUART Noise error detected Flag is set or not
   * @rmtoll ISR          NE            LL_LPUART_IsActiveFlag_NE
   * @param  LPUARTx LPUART Instance
   * @retval State of bit (1 or 0).
@@ -1472,6 +1487,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsActiveFlag_REACK(USART_TypeDef *LPUARTx)
   return (READ_BIT(LPUARTx->ISR, USART_ISR_REACK) == (USART_ISR_REACK));
 }
 
+
 /**
   * @brief  Clear Parity Error Flag
   * @rmtoll ICR          PECF          LL_LPUART_ClearFlag_PE
@@ -1502,7 +1518,7 @@ __STATIC_INLINE void LL_LPUART_ClearFlag_FE(USART_TypeDef *LPUARTx)
   */
 __STATIC_INLINE void LL_LPUART_ClearFlag_NE(USART_TypeDef *LPUARTx)
 {
-  WRITE_REG(LPUARTx->ICR, USART_ICR_NCF);
+  WRITE_REG(LPUARTx->ICR, USART_ICR_NCF );
 }
 
 /**
@@ -1526,6 +1542,7 @@ __STATIC_INLINE void LL_LPUART_ClearFlag_IDLE(USART_TypeDef *LPUARTx)
 {
   WRITE_REG(LPUARTx->ICR, USART_ICR_IDLECF);
 }
+
 
 /**
   * @brief  Clear Transmission Complete Flag
@@ -1590,6 +1607,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_IDLE(USART_TypeDef *LPUARTx)
   SET_BIT(LPUARTx->CR1, USART_CR1_IDLEIE);
 }
 
+
 /**
   * @brief  Enable RX Not Empty Interrupt
   * @rmtoll CR1          RXNEIE        LL_LPUART_EnableIT_RXNE
@@ -1611,6 +1629,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_TC(USART_TypeDef *LPUARTx)
 {
   SET_BIT(LPUARTx->CR1, USART_CR1_TCIE);
 }
+
 
 /**
   * @brief  Enable TX Empty Interrupt
@@ -1644,6 +1663,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_CM(USART_TypeDef *LPUARTx)
 {
   SET_BIT(LPUARTx->CR1, USART_CR1_CMIE);
 }
+
 
 /**
   * @brief  Enable Error Interrupt
@@ -1682,6 +1702,7 @@ __STATIC_INLINE void LL_LPUART_EnableIT_WKUP(USART_TypeDef *LPUARTx)
   SET_BIT(LPUARTx->CR3, USART_CR3_WUFIE);
 }
 
+
 /**
   * @brief  Disable IDLE Interrupt
   * @rmtoll CR1          IDLEIE        LL_LPUART_DisableIT_IDLE
@@ -1692,6 +1713,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_IDLE(USART_TypeDef *LPUARTx)
 {
   CLEAR_BIT(LPUARTx->CR1, USART_CR1_IDLEIE);
 }
+
 
 /**
   * @brief  Disable RX Not Empty Interrupt
@@ -1714,6 +1736,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_TC(USART_TypeDef *LPUARTx)
 {
   CLEAR_BIT(LPUARTx->CR1, USART_CR1_TCIE);
 }
+
 
 /**
   * @brief  Disable TX Empty Interrupt
@@ -1747,6 +1770,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_CM(USART_TypeDef *LPUARTx)
 {
   CLEAR_BIT(LPUARTx->CR1, USART_CR1_CMIE);
 }
+
 
 /**
   * @brief  Disable Error Interrupt
@@ -1785,6 +1809,7 @@ __STATIC_INLINE void LL_LPUART_DisableIT_WKUP(USART_TypeDef *LPUARTx)
   CLEAR_BIT(LPUARTx->CR3, USART_CR3_WUFIE);
 }
 
+
 /**
   * @brief  Check if the LPUART IDLE Interrupt  source is enabled or disabled.
   * @rmtoll CR1          IDLEIE        LL_LPUART_IsEnabledIT_IDLE
@@ -1795,6 +1820,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_IDLE(USART_TypeDef *LPUARTx)
 {
   return (READ_BIT(LPUARTx->CR1, USART_CR1_IDLEIE) == (USART_CR1_IDLEIE));
 }
+
 
 /**
   * @brief  Check if the LPUART RX Not Empty Interrupt is enabled or disabled.
@@ -1817,6 +1843,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_TC(USART_TypeDef *LPUARTx)
 {
   return (READ_BIT(LPUARTx->CR1, USART_CR1_TCIE) == (USART_CR1_TCIE));
 }
+
 
 /**
   * @brief  Check if the LPUART TX Empty Interrupt is enabled or disabled.
@@ -1851,6 +1878,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_CM(USART_TypeDef *LPUARTx)
   return (READ_BIT(LPUARTx->CR1, USART_CR1_CMIE) == (USART_CR1_CMIE));
 }
 
+
 /**
   * @brief  Check if the LPUART Error Interrupt is enabled or disabled.
   * @rmtoll CR3          EIE           LL_LPUART_IsEnabledIT_ERROR
@@ -1883,6 +1911,7 @@ __STATIC_INLINE uint32_t LL_LPUART_IsEnabledIT_WKUP(USART_TypeDef *LPUARTx)
 {
   return (READ_BIT(LPUARTx->CR3, USART_CR3_WUFIE) == (USART_CR3_WUFIE));
 }
+
 
 /**
   * @}
@@ -2008,12 +2037,12 @@ __STATIC_INLINE uint32_t LL_LPUART_DMA_GetRegAddr(USART_TypeDef *LPUARTx, uint32
   if (Direction == LL_LPUART_DMA_REG_DATA_TRANSMIT)
   {
     /* return address of TDR register */
-    data_reg_addr = (uint32_t) &(LPUARTx->TDR);
+    data_reg_addr = (uint32_t) & (LPUARTx->TDR);
   }
   else
   {
     /* return address of RDR register */
-    data_reg_addr = (uint32_t) &(LPUARTx->RDR);
+    data_reg_addr = (uint32_t) & (LPUARTx->RDR);
   }
 
   return data_reg_addr;
@@ -2105,6 +2134,8 @@ __STATIC_INLINE void LL_LPUART_RequestEnterMuteMode(USART_TypeDef *LPUARTx)
 
 /**
   * @brief  Request a Receive Data flush
+  * @note   Allows to discard the received data without reading them, and avoid an overrun
+  *         condition.
   * @rmtoll RQR          RXFRQ         LL_LPUART_RequestRxDataFlush
   * @param  LPUARTx LPUART Instance
   * @retval None

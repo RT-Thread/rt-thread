@@ -12,9 +12,15 @@
                       ##### How to use this driver #####
   ==============================================================================
     [..]
+     *** Dual mode IO operation ***
+     ==============================
       (+) When Dual mode is enabled (i.e. DAC Channel1 and Channel2 are used simultaneously) :
           Use HAL_DACEx_DualGetValue() to get digital data to be converted and use
-          HAL_DACEx_DualSetValue() to set digital value to converted simultaneously in Channel 1 and Channel 2.
+          HAL_DACEx_DualSetValue() to set digital value to converted simultaneously in
+          Channel 1 and Channel 2.
+
+     *** Signal generation operation ***
+     ===================================
       (+) Use HAL_DACEx_TriangleWaveGenerate() to generate Triangle signal.
       (+) Use HAL_DACEx_NoiseWaveGenerate() to generate Noise signal.
 
@@ -28,11 +34,11 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics. 
+  * <h2><center>&copy; Copyright (c) 2018 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the 
+  * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
@@ -68,8 +74,8 @@
   */
 
 /** @defgroup DACEx_Exported_Functions_Group2 IO operation functions
- *  @brief    Extended IO operation functions
- *
+  *  @brief    Extended IO operation functions
+  *
 @verbatim
   ==============================================================================
                  ##### Extended features functions #####
@@ -201,7 +207,8 @@ HAL_StatusTypeDef HAL_DACEx_NoiseWaveGenerate(DAC_HandleTypeDef *hdac, uint32_t 
   */
 HAL_StatusTypeDef HAL_DACEx_DualSetValue(DAC_HandleTypeDef *hdac, uint32_t Alignment, uint32_t Data1, uint32_t Data2)
 {
-  uint32_t data, tmp;
+  uint32_t data;
+  uint32_t tmp;
 
   /* Check the parameters */
   assert_param(IS_DAC_ALIGN(Alignment));
@@ -435,7 +442,8 @@ HAL_StatusTypeDef HAL_DACEx_SelfCalibrate(DAC_HandleTypeDef *hdac, DAC_ChannelCo
   * @retval HAL status
   */
 
-HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel, uint32_t NewTrimmingValue)
+HAL_StatusTypeDef HAL_DACEx_SetUserTrimming(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel,
+                                            uint32_t NewTrimmingValue)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -491,8 +499,8 @@ uint32_t HAL_DACEx_GetTrimOffset(DAC_HandleTypeDef *hdac, uint32_t Channel)
   */
 
 /** @defgroup DACEx_Exported_Functions_Group3 Peripheral Control functions
- *  @brief    Extended Peripheral Control functions
- *
+  *  @brief    Extended Peripheral Control functions
+  *
 @verbatim
   ==============================================================================
              ##### Peripheral Control functions #####
@@ -532,7 +540,7 @@ uint32_t HAL_DACEx_DualGetValue(DAC_HandleTypeDef *hdac)
 
 /* Private functions ---------------------------------------------------------*/
 /** @defgroup DACEx_Private_Functions DACEx private functions
- *  @brief    Extended private functions
+  *  @brief    Extended private functions
    * @{
   */
 

@@ -45,9 +45,9 @@ lwp_user_entry:
 /*
  * void SVC_Handler(void);
  */
-.global SVC_Handler
-.type SVC_Handler, % function
-SVC_Handler:
+.global vector_swi
+.type vector_swi, % function
+vector_swi:
     push {lr}
     mrs lr, spsr
     push {r4, r5, lr}

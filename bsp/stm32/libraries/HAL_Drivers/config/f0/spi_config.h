@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-06     SummerGift   first version
+ * 2019-01-05     SummerGift   modify DMA support
  */
 
 #ifndef __SPI_CONFIG_H__
@@ -18,21 +19,68 @@ extern "C" {
 #endif
 
 #ifdef BSP_USING_SPI1
-#define SPI1_BUS_CONFIG                                  \
-    {                                                    \
-        .Instance = SPI1,                                \
-        .bus_name = "spi1",                              \
-        .dma_rx.dma_rcc = RCC_AHBENR_DMA1EN,             \
-        .dma_tx.dma_rcc = RCC_AHBENR_DMA1EN,             \
-        .dma_rx.Instance = DMA1_Channel2,                \
-        .dma_rx.dma_irq = DMA1_Ch2_3_DMA2_Ch1_2_IRQn,    \
-        .dma_tx.Instance = DMA1_Channel3,                \
-        .dma_tx.dma_irq = DMA1_Ch2_3_DMA2_Ch1_2_IRQn,    \
+#ifndef SPI1_BUS_CONFIG
+#define SPI1_BUS_CONFIG                             \
+    {                                               \
+        .Instance = SPI1,                           \
+        .bus_name = "spi1",                         \
     }
+#endif /* SPI1_BUS_CONFIG */
+#endif /* BSP_USING_SPI1 */
+    
+#ifdef BSP_SPI1_TX_USING_DMA
+#ifndef SPI1_TX_DMA_CONFIG
+#define SPI1_TX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = SPI1_TX_DMA_RCC,                 \
+        .Instance = SPI1_TX_DMA_INSTANCE,           \
+        .dma_irq = SPI1_TX_DMA_IRQ,                 \
+    }
+#endif /* SPI1_TX_DMA_CONFIG */
+#endif /* BSP_SPI1_TX_USING_DMA */
 
-#define SPI1_DMA_RX_IRQHandler           DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler    
-#define SPI1_DMA_TX_IRQHandler           DMA1_Ch2_3_DMA2_Ch1_2_IRQHandler
-#endif
+#ifdef BSP_SPI1_RX_USING_DMA
+#ifndef SPI1_RX_DMA_CONFIG
+#define SPI1_RX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = SPI1_RX_DMA_RCC,                 \
+        .Instance = SPI1_RX_DMA_INSTANCE,           \
+        .dma_irq = SPI1_RX_DMA_IRQ,                 \
+    }
+#endif /* SPI1_RX_DMA_CONFIG */
+#endif /* BSP_SPI1_RX_USING_DMA */
+
+#ifdef BSP_USING_SPI2
+#ifndef SPI2_BUS_CONFIG
+#define SPI2_BUS_CONFIG                             \
+    {                                               \
+        .Instance = SPI2,                           \
+        .bus_name = "spi2",                         \
+    }
+#endif /* SPI2_BUS_CONFIG */
+#endif /* BSP_USING_SPI2 */
+    
+#ifdef BSP_SPI2_TX_USING_DMA
+#ifndef SPI2_TX_DMA_CONFIG
+#define SPI2_TX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc  = SPI2_TX_DMA_RCC,                \
+        .Instance = SPI2_TX_DMA_INSTANCE,           \
+        .dma_irq  = SPI2_TX_DMA_IRQ,                \
+    }
+#endif /* SPI2_TX_DMA_CONFIG */
+#endif /* BSP_SPI2_TX_USING_DMA */
+
+#ifdef BSP_SPI2_RX_USING_DMA
+#ifndef SPI2_RX_DMA_CONFIG
+#define SPI2_RX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc  = SPI2_RX_DMA_RCC,                \
+        .Instance = SPI2_RX_DMA_INSTANCE,           \
+        .dma_irq  = SPI2_RX_DMA_IRQ,                \
+    }
+#endif /* SPI2_RX_DMA_CONFIG */
+#endif /* BSP_SPI2_RX_USING_DMA */
 
 #ifdef __cplusplus
 }

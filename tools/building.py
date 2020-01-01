@@ -161,6 +161,26 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       action = 'store_true',
                       default = False,
                       help = 'make distribution and strip useless files')
+    AddOption('--dist-ide',
+                      dest = 'make-dist-ide',
+                      action = 'store_true',
+                      default = False,
+                      help = 'make distribution for RT-Thread Studio IDE')
+    AddOption('--project-path',
+                      dest = 'project-path',
+                      type = 'string',
+                      default = None,
+                      help = 'set dist-ide project output path')
+    AddOption('--project-name',
+                      dest = 'project-name',
+                      type = 'string',
+                      default = None,
+                      help = 'set project name')
+    AddOption('--reset-project-config',
+                      dest = 'reset-project-config',
+                      action = 'store_true',
+                      default = False,
+                      help = 'reset the project configurations to default')
     AddOption('--cscope',
                       dest = 'cscope',
                       action = 'store_true',
@@ -261,8 +281,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             utils.ReloadModule(rtconfig)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
-    if rtconfig.PLATFORM == 'armcc':
-        if not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
+    if rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'armclang':
+        if rtconfig.PLATFORM == 'armcc' and not os.path.isfile(os.path.join(rtconfig.EXEC_PATH, 'armcc.exe')):
             if rtconfig.EXEC_PATH.find('bin40') > 0:
                 rtconfig.EXEC_PATH = rtconfig.EXEC_PATH.replace('bin40', 'armcc/bin')
                 Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('RV31', 'armcc')
@@ -294,7 +314,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['PATH'] = rtconfig.EXEC_PATH + ":" + os.environ['PATH']
 
     # add program path
-    env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env.PrependENVPath('PATH', os.environ['PATH'])
     # add rtconfig.h/BSP path into Kernel group
     DefineGroup("Kernel", [], [], CPPPATH=[str(Dir('#').abspath)])
 
@@ -357,7 +377,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 dest = 'pyconfig',
                 action = 'store_true',
                 default = False,
-                help = 'make menuconfig for RT-Thread BSP')
+                help = 'Python GUI menuconfig for RT-Thread BSP')
     AddOption('--pyconfig-silent',
                 dest = 'pyconfig_silent',
                 action = 'store_true',
@@ -365,14 +385,14 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                 help = 'Don`t show pyconfig window')
 
     if GetOption('pyconfig_silent'):    
-        from menuconfig import pyconfig_silent
+        from menuconfig import guiconfig_silent
 
-        pyconfig_silent(Rtt_Root)
+        guiconfig_silent(Rtt_Root)
         exit(0)
     elif GetOption('pyconfig'):
-        from menuconfig import pyconfig
+        from menuconfig import guiconfig
 
-        pyconfig(Rtt_Root)
+        guiconfig(Rtt_Root)
         exit(0)
 
     configfn = GetOption('useconfig')
@@ -830,6 +850,11 @@ def GenTargetProject(program = None):
         from makefile import TargetMakefile
         TargetMakefile(Env)
 
+    if GetOption('target') == 'eclipse':
+        from eclipse import TargetEclipse
+        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+
+
 def EndBuilding(target, program = None):
     import rtconfig
 
@@ -860,6 +885,24 @@ def EndBuilding(target, program = None):
     if GetOption('make-dist-strip') and program != None:
         from mkdist import MkDist_Strip
         MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
+        need_exit = True
+    if GetOption('make-dist-ide') and program != None:
+        from mkdist import MkDist
+        project_path = GetOption('project-path')
+        project_name = GetOption('project-name')
+
+        if not isinstance(project_path, str) or len(project_path) == 0 :
+            print("\nwarning : --project-path=your_project_path parameter is required.")
+            print("\nstop!")
+            exit(0)
+
+        if not isinstance(project_name, str) or len(project_name) == 0:
+            print("\nwarning : --project-name=your_project_name parameter is required.")
+            print("\nstop!")
+            exit(0)
+
+        rtt_ide = {'project_path' : project_path, 'project_name' : project_name}
+        MkDist(program, BSP_ROOT, Rtt_Root, Env, rtt_ide)
         need_exit = True
     if GetOption('cscope'):
         from cscope import CscopeDatabase

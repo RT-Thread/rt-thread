@@ -143,6 +143,15 @@ struct rt_uart_ls1c uart1 =
 struct rt_serial_device serial1;
 #endif /* RT_USING_UART1 */
 
+#if defined(RT_USING_UART3)
+struct rt_uart_ls1c uart3 =
+{
+    LS1C_UART3,
+    LS1C_UART3_IRQ,
+};
+struct rt_serial_device serial3;
+#endif /* RT_USING_UART3 */
+
 void rt_hw_uart_init(void)
 {
     struct rt_uart_ls1c *uart;
@@ -189,6 +198,27 @@ void rt_hw_uart_init(void)
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
 #endif /* RT_USING_UART1 */
+
+#ifdef RT_USING_UART3
+    uart = &uart3;
+
+    serial3.ops    = &ls1c_uart_ops;
+    serial3.config = config;
+
+    pin_set_purpose(0, PIN_PURPOSE_OTHER);
+    pin_set_purpose(1, PIN_PURPOSE_OTHER);
+    pin_set_remap(0, PIN_REMAP_FOURTH);
+    pin_set_remap(1, PIN_REMAP_FOURTH);
+
+    rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial3, "UART3");
+
+    /* register UART1 device */
+    rt_hw_serial_register(&serial3,
+                          "uart3",
+                          //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_UART3 */
 
 }
 

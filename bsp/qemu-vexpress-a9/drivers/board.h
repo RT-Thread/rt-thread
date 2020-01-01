@@ -16,6 +16,7 @@
 #define __BOARD_H__
 
 #include <realview.h>
+#include "vexpress_a9.h"
 
 #if defined(__CC_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;

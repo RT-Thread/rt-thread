@@ -25,13 +25,14 @@
 
 #include <rtthread.h>
 #include <drivers/spi.h>
+#include <rthw.h>
 #include "drv_spi.h"
+#include "ls1c_public.h"
+#include "spi_msd.h"
+#include "dfs_fs.h"
 #include "../libraries/ls1c_pin.h"
 
 #ifdef RT_USING_SPI
-
-//#define DEBUG
-
 #ifdef DEBUG
 #define DEBUG_PRINTF(...)           rt_kprintf(__VA_ARGS__)
 #else
@@ -265,20 +266,24 @@ int ls1c_hw_spi_init(void)
 #ifdef RT_USING_SPI0
     /* attach cs */
     {
-        static struct rt_spi_device spi_device0;
-        static struct rt_spi_device spi_device1;
-        static struct rt_spi_device spi_device2;
-        static struct ls1c_spi_cs  spi_cs0;
-        static struct ls1c_spi_cs  spi_cs1;
-        static struct ls1c_spi_cs  spi_cs2;
-
-        /* spi02: CS2  SD Card*/
-        spi_cs2.cs = LS1C_SPI_CS_2;
-        rt_spi_bus_attach_device(&spi_device2, "spi02", "spi0", (void *)&spi_cs2);
-        spi_cs1.cs = LS1C_SPI_CS_1;
-        rt_spi_bus_attach_device(&spi_device1, "spi01", "spi0", (void *)&spi_cs1);
-        spi_cs0.cs = LS1C_SPI_CS_0;
-        rt_spi_bus_attach_device(&spi_device0, "spi00", "spi0", (void *)&spi_cs0);
+     static struct rt_spi_device spi_device0;
+     static struct rt_spi_device spi_device1;
+     static struct rt_spi_device spi_device2;
+     static struct rt_spi_device spi_device3;
+     static struct ls1c_spi_cs  spi_cs0;
+     static struct ls1c_spi_cs  spi_cs1;
+     static struct ls1c_spi_cs  spi_cs2;
+     static struct ls1c_spi_cs  spi_cs3;
+     /* spi02: CS2  SD Card*/
+     spi_cs2.cs = LS1C_SPI_CS_2;
+     rt_spi_bus_attach_device(&spi_device2, "spi02", "spi0", (void *)&spi_cs2);
+     spi_cs1.cs = LS1C_SPI_CS_1;
+     rt_spi_bus_attach_device(&spi_device1, "spi01", "spi0", (void *)&spi_cs1);
+     spi_cs0.cs = LS1C_SPI_CS_0;
+     rt_spi_bus_attach_device(&spi_device0, "spi00", "spi0", (void *)&spi_cs0);
+     spi_cs3.cs = LS1C_SPI_CS_3;
+     rt_spi_bus_attach_device(&spi_device3, "spi03", "spi0", (void*)&spi_cs3);
+     msd_init("sd0", "spi02");
     }
 #endif
 #ifdef RT_USING_SPI1
@@ -295,6 +300,22 @@ int ls1c_hw_spi_init(void)
 
 
 INIT_BOARD_EXPORT(ls1c_hw_spi_init);
+
+static int board_sd_init(void)
+{
+    #if defined(RT_USING_DFS) && defined(RT_USING_DFS_ELMFAT)
+        /* mount sd card fat partition 1 as root directory */
+        if( dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+        {
+            rt_kprintf("File System initialized!\n");
+        }
+        else
+        {
+            rt_kprintf("File System initialzation failed!\n");
+        }
+    #endif /* RT_USING_DFS && RT_USING_DFS_ELMFAT */
+}
+INIT_APP_EXPORT(board_sd_init);
 
 #endif
 
