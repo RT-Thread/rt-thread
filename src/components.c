@@ -92,7 +92,7 @@ void rt_components_board_init(void)
         rt_kprintf(":%d done\n", result);
     }
 #else
-    const init_fn_t *fn_ptr;
+    volatile const init_fn_t *fn_ptr;
 
     for (fn_ptr = &__rt_init_rti_board_start; fn_ptr < &__rt_init_rti_board_end; fn_ptr++)
     {
@@ -118,7 +118,7 @@ void rt_components_init(void)
         rt_kprintf(":%d done\n", result);
     }
 #else
-    const init_fn_t *fn_ptr;
+    volatile const init_fn_t *fn_ptr;
 
     for (fn_ptr = &__rt_init_rti_board_end; fn_ptr < &__rt_init_rti_end; fn_ptr ++)
     {
