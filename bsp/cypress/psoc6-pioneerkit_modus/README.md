@@ -34,9 +34,7 @@ CY8CKIT-062-BLE PSoC6 BLE Pioneer Kit 是赛普拉斯推出的一款32位双核C
 
 ## 外设支持
 
-本 BSP 目前对外设的支持情况如下：
-
-开发板更多详细信息请参考文档 https://www.cypress.com/file/390496/download
+本 BSP 目前对外设的支持情况详细信息请参考文档 https://www.cypress.com/file/390496/download
 
 ## 使用说明
 
