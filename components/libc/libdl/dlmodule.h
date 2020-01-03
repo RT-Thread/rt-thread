@@ -63,10 +63,6 @@ struct rt_dlmodule_ops
 {
     rt_uint8_t *(*load)(const char* filename);  /* load dlmodule file data */
     rt_err_t (*unload)(rt_uint8_t *param);  /* unload dlmodule file data */
-
-    rt_uint16_t priority;
-    rt_uint32_t stack_size;
-    rt_uint32_t tick;
 };
 
 struct rt_dlmodule *dlmodule_create(void);

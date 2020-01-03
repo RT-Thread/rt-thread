@@ -709,7 +709,6 @@ __exit:
 struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, int cmd_size, struct rt_dlmodule_ops* ops)
 {
     struct rt_dlmodule *module = RT_NULL;
-    rt_uint32_t tick = 10;
 
     module = dlmodule_load_custom(pgname, ops);
     if (module)
@@ -722,14 +721,11 @@ struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, in
             module->cmd_line = rt_strdup(cmd);
 
             /* check stack size and priority */
-            if (ops->priority) module->priority = ops->priority;
-            if (ops->stack_size) module->stack_size = ops->stack_size;
-            if (ops->tick) tick = ops->tick;
             if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
             if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
 
             tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module, 
-                module->stack_size, module->priority, tick);
+                module->stack_size, module->priority, 10);
             if (tid)
             {
                 tid->module_id = module;
