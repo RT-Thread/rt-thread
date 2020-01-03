@@ -226,6 +226,24 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
                       length);
             count ++;
         }
+
+        /* get priority param */
+        for (i = 0; i < shdr[index].sh_size / sizeof(Elf32_Sym); i++)
+        {
+            if (rt_strcmp((const char *)(strtab + symtab[i].st_name), "dlmodule_thread_priority") == 0)
+            {
+                module->priority = *(rt_uint16_t*)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+            }
+        }
+
+        /* get stack size param */
+        for (i = 0; i < shdr[index].sh_size / sizeof(Elf32_Sym); i++)
+        {
+            if (rt_strcmp((const char *)(strtab + symtab[i].st_name), "dlmodule_thread_stacksize") == 0)
+            {
+                module->stack_size = *(rt_uint32_t*)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+            }
+        }
     }
 
     return RT_EOK;
