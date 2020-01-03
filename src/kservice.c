@@ -1333,14 +1333,14 @@ int __rt_ffs(int value)
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
 
-void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+void (*rt_assert_hook)(const char *ex, const char *file, const char *func, rt_size_t line);
 
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *
  * @param hook the hook function
  */
-void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line))
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *file, const char *func, rt_size_t line))
 {
     rt_assert_hook = hook;
 }
@@ -1349,10 +1349,11 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
  * The RT_ASSERT function.
  *
  * @param ex the assertion condition string
+ * @param file the file name of function when assertion.
  * @param func the function name when assertion.
  * @param line the file line number when assertion.
  */
-void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
+void rt_assert_handler(const char *ex_string, const char *file, const char *func, rt_size_t line)
 {
     volatile char dummy = 0;
 
@@ -1367,13 +1368,13 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
         else
 #endif
         {
-            rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
+            rt_kprintf("RT_ASSERT(%s)\nassertion failed at %s() in %s:%d \n", ex_string, func, file, line);
             while (dummy == 0);
         }
     }
     else
     {
-        rt_assert_hook(ex_string, func, line);
+        rt_assert_hook(ex_string, file, func, line);
     }
 }
 RTM_EXPORT(rt_assert_handler);

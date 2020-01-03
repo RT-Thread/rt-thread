@@ -87,7 +87,7 @@ while (0)
 #define RT_ASSERT(EX)                                                         \
 if (!(EX))                                                                    \
 {                                                                             \
-    rt_assert_handler(#EX, __FUNCTION__, __LINE__);                           \
+    rt_assert_handler(#EX, __FILE__, __FUNCTION__, __LINE__);                 \
 }
 
 /* Macro to check current context */
