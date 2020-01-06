@@ -35,8 +35,10 @@ menu "Onboard Peripheral Drivers"
         default n 
 
     config BSP_USING_SRAM
-        bool "Enable SRAM. Chip name is IS62WV51216, 1Mbytes static RAMs organized as 512K words by 16bits."
+        bool "Enable SRAM."
         default n
+        help
+            Chip name is IS62WV51216, 1Mbytes static RAMs organized as 512K words by 16bits.
 
 endmenu
 
