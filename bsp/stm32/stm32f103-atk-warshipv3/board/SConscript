@@ -12,8 +12,12 @@ board.c
 CubeMX_Config/Src/stm32f1xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_SRAM']):
+    src += Glob('ports/drv_sram.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports/include']
 
 startup_path_prefix = SDK_LIB
 
