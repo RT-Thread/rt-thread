@@ -84,18 +84,11 @@ CY8CKIT-062-BLE PSoC6 BLE Pioneer Kit 是赛普拉斯推出的一款32位双核C
 ```
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Jan  3 2020
+ / | \     4.0.3 build Jan  6 2020
  2006 - 2019 Copyright by rt-thread team
-thread1 created ok
-thread1 count: 0
-thread2 created ok
-thread2 count: 0
-thread2 count: 1
-thread2 count: 2
-thread2 count: 3
-thread1 count: 1
-thread2 count: 4
-thread2 count: 5
+hello rt-thread
+msh >hello rt-thread
+hello rt-thread
 ```                                  
 
 ## 联系人信息

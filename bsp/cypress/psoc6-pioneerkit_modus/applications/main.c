@@ -43,14 +43,23 @@
 #include "cycfg.h"
 #include "cy_device_headers.h"
 #include "cycfg_peripherals.h"
+#include <rtthread.h>
+#include "board.h"
+#include "cybsp.h"
 
-extern int demo_init(void);
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+#include <shell.h>
+#endif
+
 int main(void)
 {
-    demo_init();
 
     for(;;)
     {
+    	rt_kprintf("hello rt-thread\n");
+    	rt_thread_mdelay(1000);
+
 
     }
 }
