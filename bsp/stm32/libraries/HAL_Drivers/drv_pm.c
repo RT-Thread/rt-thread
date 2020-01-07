@@ -95,11 +95,13 @@ static void run(struct rt_pm *pm, uint8_t mode)
     {
     case PM_RUN_MODE_HIGH_SPEED:
     case PM_RUN_MODE_NORMAL_SPEED:
+        HAL_PWREx_DisableLowPowerRunMode();
         SystemClock_80M();
         /* Configure the main internal regulator output voltage (Range1 by default)*/
         HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
         break;
     case PM_RUN_MODE_MEDIUM_SPEED:
+        HAL_PWREx_DisableLowPowerRunMode();
         SystemClock_24M();
         /* Configure the main internal regulator output voltage */
         HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE2);
