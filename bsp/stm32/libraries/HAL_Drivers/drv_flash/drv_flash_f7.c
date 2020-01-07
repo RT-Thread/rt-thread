@@ -105,7 +105,8 @@ static rt_uint32_t GetSector(rt_uint32_t Address)
     }
     else  //0:dual bank mode
     {
-        RT_ASSERT("rtthread doesn't support duel bank mode yet!");
+        LOG_E("rtthread doesn't support duel bank mode yet!");
+        RT_ASSERT(0);
     }
 #else //no dual bank ability
     if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
@@ -306,13 +307,13 @@ __exit:
 }
 
 #if defined(PKG_USING_FAL)
-#define FLASH_SIZE_GRANULARITY_32K      4 * 32 * 1024
-#define FLASH_SIZE_GRANULARITY_128K     128 * 1024
-#define FLASH_SIZE_GRANULARITY_256K     7 * 256 *1024
+#define FLASH_SIZE_GRANULARITY_32K      (4 * 32 * 1024)
+#define FLASH_SIZE_GRANULARITY_128K     (128 * 1024)
+#define FLASH_SIZE_GRANULARITY_256K     (7 * 256 *1024)
 
-#define STM32_FLASH_START_ADRESS_32K    STM32_FLASH_START_ADRESS
-#define STM32_FLASH_START_ADRESS_128K   STM32_FLASH_START_ADRESS_32K + FLASH_SIZE_GRANULARITY_32K
-#define STM32_FLASH_START_ADRESS_256K   STM32_FLASH_START_ADRESS_128K + FLASH_SIZE_GRANULARITY_128K
+#define STM32_FLASH_START_ADRESS_32K    (STM32_FLASH_START_ADRESS)
+#define STM32_FLASH_START_ADRESS_128K   (STM32_FLASH_START_ADRESS_32K + FLASH_SIZE_GRANULARITY_32K)
+#define STM32_FLASH_START_ADRESS_256K   (STM32_FLASH_START_ADRESS_128K + FLASH_SIZE_GRANULARITY_128K)
 
 static int fal_flash_read_32k(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size);
