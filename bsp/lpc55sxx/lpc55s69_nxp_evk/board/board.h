@@ -36,10 +36,11 @@ extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
 #elif defined(__GNUC__)
-extern int __bss_end;
-#define HEAP_BEGIN  ((void *)&__bss_end)
+extern int __HeapBase;
+extern int __HeapLimit;
+#define HEAP_BEGIN  ((void *)&__HeapBase)
 #endif
-#define HEAP_END    (void*)(0x20000000 + 0x40000)
+#define HEAP_END    ((void*)&__HeapLimit)
 
 void rt_hw_board_init(void);
 
