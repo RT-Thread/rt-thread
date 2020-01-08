@@ -13,10 +13,10 @@
 
 /* parameters for sdram peripheral */
 /* stm32f1 Bank1:0x68000000 */
-#define SRAM_BANK_ADDR                  ((uint32_t)0x68000000)
+#define EXTERNAL_SRAM_BANK_ADDR         ((uint32_t)0x68000000)
 /* data width: 8, 16, 32 */
-#define SRAM_DATA_WIDTH                 16
+#define EXTERNAL_SRAM_DATA_WIDTH        16
 /* sram size */
-#define SRAM_SIZE                       ((uint32_t)0x100000)
+#define EXTERNAL_SRAM_SIZE              ((uint32_t)0x100000)
 
 #endif

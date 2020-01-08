@@ -34,9 +34,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC1
         default n 
 
-    config BSP_USING_SRAM
-        bool "Enable SRAM. Chip name is IS62WV51216, 1Mbytes static RAMs organized as 512K words by 16bits."
+    config BSP_USING_EXT_SRAM
+        bool "Enable external sram"
         default n
+        help
+             Chip name is IS62WV51216, 1Mbytes static RAMs organized as 512K words by 16bits.
 
 endmenu
 

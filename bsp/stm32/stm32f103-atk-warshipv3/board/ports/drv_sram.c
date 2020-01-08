@@ -12,11 +12,11 @@
 #include <rtdevice.h>
 #include <board.h>
 
-#ifdef BSP_USING_SRAM
+#ifdef BSP_USING_EXT_SRAM
 #include <sram_port.h>
 
 #define DRV_DEBUG
-#define LOG_TAG             "drv.sram"
+#define LOG_TAG             "drv.ext_sram"
 #include <drv_log.h>
 
 static SRAM_HandleTypeDef hsram1;
@@ -24,7 +24,7 @@ static SRAM_HandleTypeDef hsram1;
 static struct rt_memheap system_heap;
 #endif
 
-static int sram_init(void)
+static int external_sram_init(void)
 {
     int result = RT_EOK;
 
@@ -39,9 +39,9 @@ static int sram_init(void)
     hsram1.Init.NSBank              = FSMC_NORSRAM_BANK3;
     hsram1.Init.DataAddressMux      = FSMC_DATA_ADDRESS_MUX_DISABLE;
     hsram1.Init.MemoryType          = FSMC_MEMORY_TYPE_SRAM;
-#if SRAM_DATA_WIDTH == 8
+#if EXTERNAL_SRAM_DATA_WIDTH == 8
     hsram1.Init.MemoryDataWidth     = FSMC_NORSRAM_MEM_BUS_WIDTH_8;
-#elif SRAM_DATA_WIDTH == 16
+#elif EXTERNAL_SRAM_DATA_WIDTH == 16
     hsram1.Init.MemoryDataWidth     = FSMC_NORSRAM_MEM_BUS_WIDTH_16;
 #else
     hsram1.Init.MemoryDataWidth     = FSMC_NORSRAM_MEM_BUS_WIDTH_32;
@@ -69,15 +69,15 @@ static int sram_init(void)
     /* Initialize the SRAM controller */
     if (HAL_SRAM_Init(&hsram1, &Timing, NULL) != HAL_OK)
     {
-        LOG_E("SRAM init failed!");
+        LOG_E("External SRAM init failed!");
         result = -RT_ERROR;
     }
     else
     {
-        LOG_D("sram init success, mapped at 0x%X, size is %d bytes, data width is %d", SRAM_BANK_ADDR, SRAM_SIZE, SRAM_DATA_WIDTH);
+        LOG_D("External sram init success, mapped at 0x%X, size is %d bytes, data width is %d", EXTERNAL_SRAM_BANK_ADDR, EXTERNAL_SRAM_SIZE, EXTERNAL_SRAM_DATA_WIDTH);
 #ifdef RT_USING_MEMHEAP_AS_HEAP
         /* If RT_USING_MEMHEAP_AS_HEAP is enabled, SRAM is initialized to the heap */
-        rt_memheap_init(&system_heap, "sram", (void *)SRAM_BANK_ADDR, SRAM_SIZE);
+        rt_memheap_init(&system_heap, "ext_sram", (void *)EXTERNAL_SRAM_BANK_ADDR, EXTERNAL_SRAM_SIZE);
 #endif
     }
 
@@ -88,36 +88,36 @@ static int sram_init(void)
 
     return result;
 }
-INIT_BOARD_EXPORT(sram_init);
+INIT_BOARD_EXPORT(external_sram_init);
 
 #ifdef DRV_DEBUG
 #ifdef FINSH_USING_MSH
-int sram_test(void)
+int external_sram_test(void)
 {
     int i = 0;
     uint32_t start_time = 0, time_cast = 0;
-#if SRAM_DATA_WIDTH == 8
+#if EXTERNAL_SRAM_DATA_WIDTH == 8
     char data_width = 1;
     uint8_t data = 0;
-    uint8_t *ptr = (uint8_t *)SRAM_BANK_ADDR;
-#elif SRAM_DATA_WIDTH == 16
+    uint8_t *ptr = (uint8_t *)EXTERNAL_SRAM_BANK_ADDR;
+#elif EXTERNAL_SRAM_DATA_WIDTH == 16
     char data_width = 2;
     uint16_t data = 0;
-    uint16_t *ptr = (uint16_t *)SRAM_BANK_ADDR;
+    uint16_t *ptr = (uint16_t *)EXTERNAL_SRAM_BANK_ADDR;
 #else
     char data_width = 4;
     uint32_t data = 0;
-    uint32_t *ptr = (uint32_t *)SRAM_BANK_ADDR;
+    uint32_t *ptr = (uint32_t *)EXTERNAL_SRAM_BANK_ADDR;
 #endif
 
     /* write data */
-    LOG_D("Writing the %ld bytes data, waiting....", SRAM_SIZE);
+    LOG_D("Writing the %ld bytes data, waiting....", EXTERNAL_SRAM_SIZE);
     start_time = rt_tick_get();
-    for (i = 0; i < SRAM_SIZE / data_width; i++)
+    for (i = 0; i < EXTERNAL_SRAM_SIZE / data_width; i++)
     {
-#if SRAM_DATA_WIDTH == 8
+#if EXTERNAL_SRAM_DATA_WIDTH == 8
         ((__IO uint8_t *)ptr)[i] = (uint8_t)0x55;
-#elif SRAM_DATA_WIDTH == 16
+#elif EXTERNAL_SRAM_DATA_WIDTH == 16
         ((__IO uint16_t *)ptr)[i] = (uint16_t)0x5555;
 #else
         ((__IO uint32_t *)ptr)[i] = (uint32_t)0x55555555;
@@ -129,40 +129,40 @@ int sram_test(void)
 
     /* read data */
     LOG_D("start Reading and verifying data, waiting....");
-    for (i = 0; i < SRAM_SIZE / data_width; i++)
+    for (i = 0; i < EXTERNAL_SRAM_SIZE / data_width; i++)
     {
-#if SRAM_DATA_WIDTH == 8
+#if EXTERNAL_SRAM_DATA_WIDTH == 8
         data = ((__IO uint8_t *)ptr)[i];
         if (data != 0x55)
         {
-            LOG_E("SRAM test failed!");
+            LOG_E("External SRAM test failed!");
             break;
         }
-#elif SRAM_DATA_WIDTH == 16
+#elif EXTERNAL_SRAM_DATA_WIDTH == 16
         data = ((__IO uint16_t *)ptr)[i];
         if (data != 0x5555)
         {
-            LOG_E("SRAM test failed!");
+            LOG_E("External SRAM test failed!");
             break;
         }
 #else
         data = ((__IO uint32_t *)ptr)[i];
         if (data != 0x55555555)
         {
-            LOG_E("SRAM test failed!");
+            LOG_E("External SRAM test failed!");
             break;
         }
 #endif
     }
 
-    if (i >= SRAM_SIZE / data_width)
+    if (i >= EXTERNAL_SRAM_SIZE / data_width)
     {
-        LOG_D("SRAM test success!");
+        LOG_D("External SRAM test success!");
     }
 
     return RT_EOK;
 }
-MSH_CMD_EXPORT(sram_test, sram test);
+MSH_CMD_EXPORT(external_sram_test, sram test);
 #endif /* FINSH_USING_MSH */
 #endif /* DRV_DEBUG */
-#endif /* BSP_USING_SRAM */
+#endif /* BSP_USING_EXT_SRAM */
