@@ -226,6 +226,40 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
                       length);
             count ++;
         }
+
+        /* get priority & stack size params*/
+        rt_uint32_t flag = 0;
+        rt_uint16_t priority;
+        rt_uint32_t stacksize;
+        for (i = 0; i < shdr[index].sh_size / sizeof(Elf32_Sym); i++)
+        {
+            if (((flag & 0x01) == 0) &&
+                (rt_strcmp((const char *)(strtab + symtab[i].st_name), "dlmodule_thread_priority") == 0))
+            {
+                flag |= 0x01;
+                priority = *(rt_uint16_t*)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+                if (priority < RT_THREAD_PRIORITY_MAX)
+                {
+                    module->priority = priority;
+                }
+            }
+
+            if (((flag & 0x02) == 0) &&
+                (rt_strcmp((const char *)(strtab + symtab[i].st_name), "dlmodule_thread_stacksize") == 0))
+            {
+                flag |= 0x02;
+                stacksize = *(rt_uint32_t*)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+                if ((stacksize < 2048) || (stacksize > 1024 * 32))
+                {
+                    module->stack_size = stacksize;
+                }
+            }
+
+            if ((flag & 0x03) == 0x03)
+            {
+                break;
+            }
+        }
     }
 
     return RT_EOK;
