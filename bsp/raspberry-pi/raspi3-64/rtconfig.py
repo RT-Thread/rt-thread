@@ -16,9 +16,6 @@ if os.getenv('RTT_CC'):
 PLATFORM    = 'gcc'
 EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'  
 
-if os.getenv('RTT_EXEC_PATH'):
-    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
-
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':

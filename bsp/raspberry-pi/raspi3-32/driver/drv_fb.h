@@ -55,6 +55,5 @@ struct rt_hdmi_fb_device
 
 fb_t fb_info;
 void print_fb_info();
-void hdmi_fb_init();
 
 #endif/* __DRV_FB_H__ */
