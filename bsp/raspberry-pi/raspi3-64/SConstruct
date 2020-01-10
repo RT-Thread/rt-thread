@@ -17,12 +17,14 @@ env = Environment(tools = ['mingw'],
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=True)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
 # make a building
 DoBuilding(TARGET, objs)
+

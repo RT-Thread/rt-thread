@@ -1,20 +1,20 @@
 import os
 
 # toolchains options
-ARCH        ='arm'
-CPU         ='cortex-a7'
+ARCH        ='aarch64'
+CPU         ='cortex-a53'
 CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = r'../..'
+    RTT_ROOT = r'../../..'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
 PLATFORM    = 'gcc'
-EXEC_PATH   = r'/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
+EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'  
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -23,7 +23,8 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'arm-none-eabi-'
+    # PREFIX = 'arm-none-eabi-'
+    PREFIX = 'aarch64-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
@@ -34,7 +35,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE = ' -mfpu=neon-vfpv4 -mfloat-abi=softfp -march=armv7-a -mtune=cortex-a7 -ftree-vectorize -ffast-math'
+    DEVICE = ' -march=armv8-a -mtune=cortex-a53'
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
@@ -50,4 +51,4 @@ if PLATFORM == 'gcc':
     CXXFLAGS = CFLAGS
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
-POST_ACTION = OBJCPY + ' -O binary $TARGET kernel7.img\n' + SIZE + ' $TARGET \n'
+POST_ACTION = OBJCPY + ' -O binary $TARGET kernel8.img\n' + SIZE + ' $TARGET \n'
