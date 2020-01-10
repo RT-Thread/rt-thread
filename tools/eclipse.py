@@ -336,6 +336,11 @@ def GenExcluding(env, project):
     coll_dirs = CollectPaths(project['DIRS'])
     all_paths = [OSPath(path) for path in coll_dirs]
 
+    # remove unused path
+    for path in all_paths:
+        if not path.startswith(rtt_root) and not path.startswith(bsp_root):
+            all_paths.remove(path)
+
     if bsp_root.startswith(rtt_root):
         # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub
         exclude_paths = ExcludePaths(rtt_root, all_paths)
@@ -399,7 +404,34 @@ def RelativeProjectPath(env, path):
     return path
 
 
-def UpdateCproject(env, project, excluding, reset):
+def HandleExcludingOption(entry, sourceEntries, excluding):
+    old_excluding = []
+    if entry != None:
+        old_excluding = entry.get('excluding').split('|')
+        sourceEntries.remove(entry)
+
+    value = ''
+    for item in old_excluding:
+        if item.startswith('//') :
+            old_excluding.remove(item)
+        else :
+            if value == '':
+                value = item
+            else:
+                value += '|' + item
+
+    for item in excluding:
+        # add special excluding path prefix for RT-Thread
+        item = '//' + item
+        if value == '':
+            value = item
+        else:
+            value += '|' + item
+
+    SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
+
+
+def UpdateCproject(env, project, excluding, reset, prj_name):
     excluding = sorted(excluding)
 
     cproject = etree.parse('.cproject')
@@ -412,17 +444,15 @@ def UpdateCproject(env, project, excluding, reset):
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         entry = sourceEntries.find('entry')
-        if entry != None:
-            sourceEntries.remove(entry)
-
-        value = ''
-        for item in excluding:
-            if value == '':
-                value = item
-            else:
-                value += '|' + item
-
-        SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
+        HandleExcludingOption(entry, sourceEntries, excluding)
+    # update refreshScope
+    if prj_name:
+        prj_name = '/' + prj_name
+        configurations = root.findall('storageModule/configuration')
+        for configuration in configurations:
+            resource = configuration.find('resource')
+            configuration.remove(resource)
+            SubElement(configuration, 'resource', {'resourceType': "PROJECT", 'workspacePath': prj_name})
 
     # write back to .cproject
     out = open('.cproject', 'w')
@@ -451,7 +481,7 @@ def TargetEclipse(env, reset = False, prj_name = None):
     excluding = GenExcluding(env, project)
 
     # update the project configuration on '.cproject' file
-    UpdateCproject(env, project, excluding, reset)
+    UpdateCproject(env, project, excluding, reset, prj_name)
 
     print('done!')
 

@@ -316,7 +316,7 @@ RTM_EXPORT(rt_memmove);
  * This function will compare two areas of memory
  *
  * @param cs one area of memory
- * @param ct znother area of memory
+ * @param ct another area of memory
  * @param count the size of the area
  *
  * @return the result

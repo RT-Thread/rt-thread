@@ -264,8 +264,8 @@
 #endif
 
 /*
- * You can re-define following setting in rtcofnig.h to overwrite the default 
- * setting in the lwip opts.h 
+ * You can re-define following setting in rtcofnig.h to overwrite the default
+ * setting in the lwip opts.h
  */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
 // #define MEMP_NUM_NETBUF             2
@@ -499,6 +499,14 @@
 
 /* no read/write/close for socket */
 #define LWIP_POSIX_SOCKETS_IO_NAMES 0
+
+/**
+ * LWIP_NETIF_HOSTNAME==1: Support netif hostname
+ */
+#ifndef LWIP_NETIF_HOSTNAME
+#define LWIP_NETIF_HOSTNAME             1
+#endif
+
 #define LWIP_NETIF_API  1
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */

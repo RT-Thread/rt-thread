@@ -67,6 +67,7 @@ void HAL_ResumeTick(void)
 
 void HAL_Delay(__IO uint32_t Delay)
 {
+    rt_thread_mdelay(Delay);
 }
 
 /* re-implement tick interface for STM32 HAL */
@@ -130,7 +131,7 @@ RT_WEAK void rt_hw_board_init()
     __set_PRIMASK(0);
     /* System clock initialization */
     SystemClock_Config();
-    /* disbale interrupt */
+    /* disable interrupt */
     __set_PRIMASK(1);
 
     rt_hw_systick_init();
