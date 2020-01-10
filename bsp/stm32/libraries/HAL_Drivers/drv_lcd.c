@@ -256,7 +256,10 @@ void turn_on_lcd_backlight(void)
     rt_pin_write(LCD_BL_GPIO_NUM, PIN_HIGH);
 }
 #else
-#define turn_on_lcd_backlight()
+void turn_on_lcd_backlight(void)
+{
+    
+}
 #endif
 
 #ifdef RT_USING_DEVICE_OPS
