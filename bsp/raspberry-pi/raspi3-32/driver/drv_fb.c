@@ -429,7 +429,7 @@ void print_fb_info()
     rt_kprintf("call mbox:%x,%x,%x,%x,%x\n", mbox[0], mbox[1], mbox[2], mbox[3], mbox[4]);
 }
 
-void hdmi_fb_init()
+int hdmi_fb_init()
 {
     unsigned int *mbox = (unsigned int*) MBOX_ADDR;
     mbox[0] = 35 * 4;
@@ -503,6 +503,7 @@ void hdmi_fb_init()
         _hdmi_info.height = _hdmi.fb.height;
         _hdmi_info.framebuffer = (rt_uint8_t *) _hdmi.fb.addr;
     }
+    return 0;
 }
 
 INIT_DEVICE_EXPORT(hdmi_fb_init);
