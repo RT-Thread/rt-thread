@@ -339,7 +339,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>CPU_LPC55S69JBD100_cm33_core0, RT_USING_ARM_LIBC, RT_USING_TFM</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\include;applications;board;board\MCUX_Config\board;..\Libraries\drivers;..\Libraries\drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\Libraries\LPC55S6X\CMSIS\Include;..\Libraries\LPC55S6X\components\codec;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\Libraries\LPC55S6X\middleware\sdmmc\port</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;board;board\MCUX_Config\board;..\Libraries\drivers;..\Libraries\drivers\config;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\dfs\include;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\Libraries\LPC55S6X\CMSIS\Include;..\Libraries\LPC55S6X\components\codec;..\Libraries\LPC55S6X\LPC55S6X;..\Libraries\LPC55S6X\LPC55S6X\drivers;..\Libraries\LPC55S6X\middleware\sdmmc\inc;..\Libraries\LPC55S6X\middleware\sdmmc\port;.\packages\trusted-firmware-m-v1.0-beta\interface\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1141,6 +1141,26 @@
               <FileName>arm_keil_lib_power_cm33_core0.lib</FileName>
               <FileType>4</FileType>
               <FilePath>..\Libraries\LPC55S6X\LPC55S6X\arm\keil_lib_power_cm33_core0.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>TFM</GroupName>
+          <Files>
+            <File>
+              <FileName>tfm_sst_api.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\trusted-firmware-m-v1.0-beta\interface\src\tfm_sst_api.c</FilePath>
+            </File>
+            <File>
+              <FileName>tfm_ns_lock_rt-thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\trusted-firmware-m-v1.0-beta\interface\src\tfm_ns_lock_rt-thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>s_veneers.o</FileName>
+              <FileType>3</FileType>
+              <FilePath>.\packages\trusted-firmware-m-v1.0-beta\cmake_build\install\export\tfm\veneers\s_veneers.o</FilePath>
             </File>
           </Files>
         </Group>
