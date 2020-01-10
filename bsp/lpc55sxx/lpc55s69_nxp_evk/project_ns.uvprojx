@@ -463,6 +463,11 @@
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
             </File>
+            <File>
+              <FileName>tfm_ps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\tfm_ps.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
