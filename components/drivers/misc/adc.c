@@ -72,7 +72,7 @@ const static struct rt_device_ops adc_ops =
 };
 #endif
 
-rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const struct rt_adc_ops *ops, const void *user_data)
+rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const struct rt_adc_ops *ops, const void *user_data, rt_uint8_t chn_num, rt_uint16_t chn_size)
 {
     rt_err_t result = RT_EOK;
     RT_ASSERT(ops != RT_NULL && ops->convert != RT_NULL);
@@ -94,8 +94,28 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
     device->ops = ops;
     device->parent.user_data = (void *)user_data;
 
+    if((chn_num!=0) && (chn_size!=0))
+    {
+        device->dma_buf = rt_malloc(chn_num*chn_size*sizeof(rt_uint16_t));
+        if(device->dma_buf == RT_NULL)
+        {
+            LOG_E("Malloc memory for adc failed.");
+            result = -RT_ERROR;
+            goto end;
+        }
+        device->dma_chn_num = chn_num;
+        device->dma_chn_size = chn_size;
+    }
+    else
+    {
+        device->dma_buf = RT_NULL;
+        device->dma_chn_num = 0;
+        device->dma_chn_size = 0;
+    }
+
     result = rt_device_register(&device->parent, name, RT_DEVICE_FLAG_RDWR);
 
+end:
     return result;
 }
 

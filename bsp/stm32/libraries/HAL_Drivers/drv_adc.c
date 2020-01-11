@@ -13,11 +13,27 @@
 #include <board.h>
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3)
+#include <adc_port.h>
 #include "drv_config.h"
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.adc"
 #include <drv_log.h>
+
+#ifdef BSP_ADC1_USING_DMA
+DMA_HandleTypeDef hdma_adc1;
+ADC_ChannelConfTypeDef adc1_sequence[] = ADC1_SEQUENCER;
+#endif
+
+#ifdef BSP_ADC2_USING_DMA
+DMA_HandleTypeDef hdma_adc2;
+ADC_ChannelConfTypeDef adc2_sequence[] = ADC2_SEQUENCER;
+#endif
+
+#ifdef BSP_ADC3_USING_DMA
+DMA_HandleTypeDef hdma_adc3;
+ADC_ChannelConfTypeDef adc3_sequence[] = ADC3_SEQUENCER;
+#endif
 
 static ADC_HandleTypeDef adc_config[] =
 {
@@ -40,6 +56,27 @@ struct stm32_adc
     struct rt_adc_device stm32_adc_device;
 };
 
+#if defined(BSP_ADC1_USING_DMA)
+void ADC1_DMA_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_adc1);
+}
+#endif
+
+#if defined(BSP_ADC2_USING_DMA)
+void ADC2_DMA_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_adc2);
+}
+#endif
+
+#if defined(BSP_ADC3_USING_DMA)
+void ADC3_DMA_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(&hdma_adc3);
+}
+#endif
+
 static struct stm32_adc stm32_adc_obj[sizeof(adc_config) / sizeof(adc_config[0])];
 
 static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
@@ -50,19 +87,61 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
     if (enabled)
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
-        ADC_Enable(stm32_adc_handler);
-#else
-        __HAL_ADC_ENABLE(stm32_adc_handler);
+#if defined(BSP_ADC1_USING_DMA)
+        if(stm32_adc_handler->Instance == ADC1)
+        {
+            HAL_ADC_Start_DMA(stm32_adc_handler, (rt_uint32_t*)device->dma_buf, device->dma_chn_num*device->dma_chn_size);
+        }
+        else
+#elif defined(BSP_ADC2_USING_DMA)
+        if(stm32_adc_handler->Instance == ADC2)
+        {
+            HAL_ADC_Start_DMA(stm32_adc_handler, (rt_uint32_t*)device->dma_buf, device->dma_chn_num*device->dma_chn_size);
+        }
+        else
+#elif defined(BSP_ADC3_USING_DMA)
+        if(stm32_adc_handler->Instance == ADC3)
+        {
+            HAL_ADC_Start_DMA(stm32_adc_handler, (rt_uint32_t*)device->dma_buf, device->dma_chn_num*device->dma_chn_size);
+        }
+        else
 #endif
+        {
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+            ADC_Enable(stm32_adc_handler);
+#else
+            __HAL_ADC_ENABLE(stm32_adc_handler);
+#endif
+        }
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
-        ADC_Disable(stm32_adc_handler);
-#else
-        __HAL_ADC_DISABLE(stm32_adc_handler);
+#if defined(BSP_ADC1_USING_DMA)
+        if(stm32_adc_handler->Instance == ADC1)
+        {
+            HAL_ADC_Stop_DMA(stm32_adc_handler);
+        }
+        else
+#elif defined(BSP_ADC2_USING_DMA)
+        if(stm32_adc_handler->Instance == ADC2)
+        {
+            HAL_ADC_Stop_DMA(stm32_adc_handler);
+        }
+        else
+#elif defined(BSP_ADC3_USING_DMA)
+        if(stm32_adc_handler->Instance == ADC3)
+        {
+            HAL_ADC_Stop_DMA(stm32_adc_handler);
+        }
+        else
 #endif
+        {
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+            ADC_Disable(stm32_adc_handler);
+#else
+            __HAL_ADC_DISABLE(stm32_adc_handler);
+#endif
+        }
     }
 
     return RT_EOK;
@@ -138,7 +217,31 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
     return stm32_channel;
 }
 
-static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t stm32_get_adc_dma_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+{
+    rt_uint16_t *pdat;
+    rt_uint8_t chn_num;
+    rt_uint16_t chn_size;
+    rt_uint32_t sum = 0;
+    int i = 0;
+
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(value != RT_NULL);
+
+    pdat = device->dma_buf;
+    chn_num = device->dma_chn_num;
+    chn_size = device->dma_chn_size;
+
+    for(i=0; i<chn_size; i++)
+    {
+        sum += pdat[chn_num*i+channel];
+    }
+    *value = (sum+chn_size/2)/chn_size;
+
+    return RT_EOK;
+}
+
+static rt_err_t stm32_get_adc_normal_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     ADC_ChannelConfTypeDef ADC_ChanConf;
     ADC_HandleTypeDef *stm32_adc_handler;
@@ -201,6 +304,66 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     return RT_EOK;
 }
 
+static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+{
+    ADC_HandleTypeDef *stm32_adc_handler;
+
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(value != RT_NULL);
+
+    stm32_adc_handler = device->parent.user_data;
+
+#if defined(BSP_ADC1_USING_DMA)
+    if(stm32_adc_handler->Instance == ADC1)
+    {
+        return stm32_get_adc_dma_value(device, channel, value);
+    }
+    else
+#elif defined(BSP_ADC2_USING_DMA)
+    if(stm32_adc_handler->Instance == ADC2)
+    {
+        return stm32_get_adc_dma_value(device, channel, value);
+    }
+    else
+#elif defined(BSP_ADC3_USING_DMA)
+    if(stm32_adc_handler->Instance == ADC3)
+    {
+        return stm32_get_adc_dma_value(device, channel, value);
+    }
+    else
+#endif
+    {
+        return stm32_get_adc_normal_value(device, channel, value);
+    }
+}
+
+#if defined(BSP_ADC1_USING_DMA) || defined(BSP_ADC2_USING_DMA) || defined(BSP_ADC3_USING_DMA)
+static int stm32_adc_sequence_init(ADC_HandleTypeDef* hadc, ADC_ChannelConfTypeDef* hseq, int cnt)
+{
+    int i = 0;
+    int result = 0;
+
+    if(hadc->Init.NbrOfConversion != cnt)
+    {
+        LOG_E("NbrOfConversion of adc is not equal to sizeof sequence list");
+    }
+    else
+    {
+        for(i=0; i<cnt; i++)
+        {
+            if (HAL_ADC_ConfigChannel(hadc, &hseq[i]) != HAL_OK)
+            {
+                LOG_E("adc init channel sequence[%d] failed", i);
+                result = -RT_ERROR;
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+#endif
+
 static const struct rt_adc_ops stm_adc_ops =
 {
     .enabled = stm32_adc_enabled,
@@ -213,6 +376,7 @@ static int stm32_adc_init(void)
     /* save adc name */
     char name_buf[5] = {'a', 'd', 'c', '0', 0};
     int i = 0;
+    rt_uint16_t chn_size = 0;
 
     for (i = 0; i < sizeof(adc_config) / sizeof(adc_config[0]); i++)
     {
@@ -244,8 +408,89 @@ static int stm32_adc_init(void)
         }
         else
         {
+            /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time. */
+#if defined(BSP_ADC1_USING_DMA)
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+            {
+                if(stm32_adc_sequence_init(&stm32_adc_obj[i].ADC_Handler, adc1_sequence, sizeof(adc1_sequence)/sizeof(adc1_sequence[0])) != RT_EOK)
+                {
+                    result = -RT_ERROR;
+                    goto err;
+                }
+            }
+
+            /* DMA controller clock enable */
+            __HAL_RCC_DMA2_CLK_ENABLE();
+
+            /* DMA interrupt init */
+            /* DMA2_Stream2_IRQn interrupt configuration */
+            HAL_NVIC_SetPriority(ADC1_DMA_IRQ, 5, 0);
+            HAL_NVIC_EnableIRQ(ADC1_DMA_IRQ);
+#endif
+
+#if defined(BSP_ADC2_USING_DMA)
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
+            {
+                if(stm32_adc_sequence_init(&stm32_adc_obj[i].ADC_Handler, adc2_sequence, sizeof(adc2_sequence)/sizeof(adc2_sequence[0])) != RT_EOK)
+                {
+                    result = -RT_ERROR;
+                    goto err;
+                }
+            }
+            
+            /* DMA controller clock enable */
+            __HAL_RCC_DMA2_CLK_ENABLE();
+
+            /* DMA interrupt init */
+            /* DMA2_Stream2_IRQn interrupt configuration */
+            HAL_NVIC_SetPriority(ADC2_DMA_IRQ, 5, 0);
+            HAL_NVIC_EnableIRQ(ADC2_DMA_IRQ);
+#endif
+
+#if defined(BSP_ADC3_USING_DMA)
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
+            {
+                if(stm32_adc_sequence_init(&stm32_adc_obj[i].ADC_Handler, adc3_sequence, sizeof(adc3_sequence)/sizeof(adc3_sequence[0])) != RT_EOK)
+                {
+                    result = -RT_ERROR;
+                    goto err;
+                }
+            }
+            
+            /* DMA controller clock enable */
+            __HAL_RCC_DMA2_CLK_ENABLE();
+
+            /* DMA interrupt init */
+            /* DMA2_Stream2_IRQn interrupt configuration */
+            HAL_NVIC_SetPriority(ADC3_DMA_IRQ, 5, 0);
+            HAL_NVIC_EnableIRQ(ADC3_DMA_IRQ);
+#endif
+
+#if defined(BSP_ADC1_USING_DMA)
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC1)
+            {
+                chn_size = ADC1_CHAN_BUF_SIZE;
+            }
+            else
+#endif
+#if defined(BSP_ADC2_USING_DMA)
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC2)
+            {
+                chn_size = ADC2_CHAN_BUF_SIZE;
+            }
+            else
+#endif
+#if defined(BSP_ADC3_USING_DMA)
+            if (stm32_adc_obj[i].ADC_Handler.Instance == ADC3)
+            {
+                chn_size = ADC3_CHAN_BUF_SIZE;
+            }
+            else
+#endif
+            {}
+            
             /* register ADC device */
-            if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
+            if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler, stm32_adc_obj[i].ADC_Handler.Init.NbrOfConversion, chn_size) == RT_EOK)
             {
                 LOG_D("%s init success", name_buf);
             }
@@ -257,6 +502,7 @@ static int stm32_adc_init(void)
         }
     }
 
+err:
     return result;
 }
 INIT_BOARD_EXPORT(stm32_adc_init);
