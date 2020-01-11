@@ -151,7 +151,19 @@ extern "C" {
 #endif
 
 /* DMA2 stream0 */
-#if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
+#if defined(BSP_ADC1_USING_DMA) && !defined(ADC1_DMA_INSTANCE)
+#define ADC1_DMA_IRQHandler              DMA2_Stream0_IRQHandler
+#define ADC1_DMA_RCC                     RCC_AHB1ENR_DMA2EN
+#define ADC1_DMA_INSTANCE                DMA2_Stream0
+#define ADC1_DMA_CHANNEL                 DMA_CHANNEL_0
+#define ADC1_DMA_IRQ                     DMA2_Stream0_IRQn
+#elif defined(BSP_ADC3_USING_DMA) && !defined(ADC3_DMA_INSTANCE)
+#define ADC3_DMA_IRQHandler              DMA2_Stream0_IRQHandler
+#define ADC3_DMA_RCC                     RCC_AHB1ENR_DMA2EN
+#define ADC3_DMA_INSTANCE                DMA2_Stream0
+#define ADC3_DMA_CHANNEL                 DMA_CHANNEL_2
+#define ADC3_DMA_IRQ                     DMA2_Stream0_IRQn
+#elif defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
 #define SPI1_DMA_RX_IRQHandler           DMA2_Stream0_IRQHandler
 #define SPI1_RX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
 #define SPI1_RX_DMA_INSTANCE             DMA2_Stream0
@@ -166,7 +178,13 @@ extern "C" {
 #endif
 
 /* DMA2 stream1 */
-#if defined(BSP_SPI4_TX_USING_DMA) && !defined(SPI4_TX_DMA_INSTANCE)
+#if defined(BSP_ADC3_USING_DMA) && !defined(ADC3_DMA_INSTANCE)
+#define ADC3_DMA_IRQHandler              DMA2_Stream1_IRQHandler
+#define ADC3_DMA_RCC                     RCC_AHB1ENR_DMA2EN
+#define ADC3_DMA_INSTANCE                DMA2_Stream1
+#define ADC3_DMA_CHANNEL                 DMA_CHANNEL_2
+#define ADC3_DMA_IRQ                     DMA2_Stream1_IRQn
+#elif defined(BSP_SPI4_TX_USING_DMA) && !defined(SPI4_TX_DMA_INSTANCE)
 #define SPI4_DMA_TX_IRQHandler           DMA2_Stream1_IRQHandler
 #define SPI4_TX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
 #define SPI4_TX_DMA_INSTANCE             DMA2_Stream1
@@ -181,7 +199,13 @@ extern "C" {
 #endif
 
 /* DMA2 stream2 */
-#if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
+#if defined(BSP_ADC2_USING_DMA) && !defined(ADC2_DMA_INSTANCE)
+#define ADC2_DMA_IRQHandler              DMA2_Stream2_IRQHandler
+#define ADC2_DMA_RCC                     RCC_AHB1ENR_DMA2EN
+#define ADC2_DMA_INSTANCE                DMA2_Stream2
+#define ADC2_DMA_CHANNEL                 DMA_CHANNEL_1
+#define ADC2_DMA_IRQ                     DMA2_Stream2_IRQn
+#elif defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
 #define SPI1_DMA_RX_IRQHandler           DMA2_Stream2_IRQHandler
 #define SPI1_RX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
 #define SPI1_RX_DMA_INSTANCE             DMA2_Stream2
@@ -196,7 +220,13 @@ extern "C" {
 #endif
 
 /* DMA2 stream3 */
-#if defined(BSP_SPI5_RX_USING_DMA) && !defined(SPI5_RX_DMA_INSTANCE)
+#if defined(BSP_ADC2_USING_DMA) && !defined(ADC2_DMA_INSTANCE)
+#define ADC2_DMA_IRQHandler              DMA2_Stream3_IRQHandler
+#define ADC2_DMA_RCC                     RCC_AHB1ENR_DMA2EN
+#define ADC2_DMA_INSTANCE                DMA2_Stream3
+#define ADC2_DMA_CHANNEL                 DMA_CHANNEL_1
+#define ADC2_DMA_IRQ                     DMA2_Stream3_IRQn
+#elif defined(BSP_SPI5_RX_USING_DMA) && !defined(SPI5_RX_DMA_INSTANCE)
 #define SPI5_DMA_RX_IRQHandler           DMA2_Stream3_IRQHandler
 #define SPI5_RX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
 #define SPI5_RX_DMA_INSTANCE             DMA2_Stream3
@@ -217,7 +247,13 @@ extern "C" {
 #endif
 
 /* DMA2 stream4 */
-#if defined(BSP_SPI5_TX_USING_DMA) && !defined(SPI5_TX_DMA_INSTANCE)
+#if defined(BSP_ADC1_USING_DMA) && !defined(ADC1_DMA_INSTANCE)
+#define ADC1_DMA_IRQHandler              DMA2_Stream4_IRQHandler
+#define ADC1_DMA_RCC                     RCC_AHB1ENR_DMA2EN
+#define ADC1_DMA_INSTANCE                DMA2_Stream4
+#define ADC1_DMA_CHANNEL                 DMA_CHANNEL_0
+#define ADC1_DMA_IRQ                     DMA2_Stream4_IRQn
+#elif defined(BSP_SPI5_TX_USING_DMA) && !defined(SPI5_TX_DMA_INSTANCE)
 #define SPI5_DMA_TX_IRQHandler           DMA2_Stream4_IRQHandler
 #define SPI5_TX_DMA_RCC                  RCC_AHB1ENR_DMA2EN
 #define SPI5_TX_DMA_INSTANCE             DMA2_Stream4
