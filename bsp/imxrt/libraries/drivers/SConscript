@@ -43,6 +43,13 @@ if GetDepend('BSP_USING_LCD'):
 if GetDepend('BSP_USING_ETH'):
     src += ['drv_eth.c']
 
+if GetDepend('BSP_USING_AUDIO'):
+    src += ['drv_sai.c']
+    src += ['bsp_wm8960.c']
+  
+if GetDepend('BSP_USING_SDIO'):
+    src += ['drv_sdio.c'] 
+    
 path =  [cwd,cwd + '/config']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
