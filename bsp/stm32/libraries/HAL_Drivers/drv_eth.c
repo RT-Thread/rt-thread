@@ -415,7 +415,7 @@ static void phy_linkchange()
 
         phy_speed_new |= PHY_LINK;
 
-        SR = HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
+        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
         LOG_D("phy control status reg is 0x%X", SR);
 
         if (PHY_Status_SPEED_100M(SR))
