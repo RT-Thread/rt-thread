@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,8 +8,8 @@
  * 2011-09-15     Bernard      first version
  */
 
-#ifndef __ARMV7_H__
-#define __ARMV7_H__
+#ifndef __ARMV8_H__
+#define __ARMV8_H__
 
 /* the exception stack without VFP registers */
 struct rt_hw_exp_stack

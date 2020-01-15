@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-01-15     bigmagic     the first version
+ */
 #ifndef MMU_H__
 #define MMU_H__
 #include <rtthread.h>

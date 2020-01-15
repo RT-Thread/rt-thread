@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * Date           Author       Notes
  * 2018-10-06     ZhaoXiaowei    the first version
  */
