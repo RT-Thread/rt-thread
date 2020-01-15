@@ -22,7 +22,7 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=True)
 
 # make a building
 DoBuilding(TARGET, objs)
