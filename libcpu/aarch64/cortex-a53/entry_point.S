@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Date           Author       Notes
+ * 2020-01-15     bigmagic    the first version
+ */
+
 .section ".text.entrypoint"
 
 .set EL1_stack,         __el1_stack
