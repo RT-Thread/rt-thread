@@ -674,7 +674,7 @@ RT-Thread v2.0.1是2.0这个系列的bug修正版，而v2.1.0 alpha则是当前�
 *  修正USB host代码的编译错误；
 *  修正sensor框架回调函数的问题；
 *  修正pin设备注册时的设备名称问题；
- 
+
 而v2.1.0 alpha这个技术预览版则沿着最初设定的roadmap技术路线进行，这其中主要包括：
 
 *  lwip更深度的集成：把它集成到RT-Thread的文件系统接口中，这样Linux/Unix下的一些socket网络应用能够更顺利的移植到RT-Thread上，也为以后可以应用到更多地方的select接口铺路。
@@ -687,7 +687,7 @@ RT-Thread v2.0.1是2.0这个系列的bug修正版，而v2.1.0 alpha则是当前�
 以下是自v2.0.0 RC版本以来的详细更改记录。后续我还会给出v2.0.0版本自v1.2.x版本的主要不同、看点，以及给出下一个版本的roadmap规划。
 
 ## 内核
- 
+
 *  console以RT_DEVICE_FLAG_STREAM参数打开字符设备；
 *  在rt_memheap_free中加入更多的断言检查；
 
@@ -707,7 +707,7 @@ RT-Thread v2.0.1是2.0这个系列的bug修正版，而v2.1.0 alpha则是当前�
 *  添加VBUS组件用于Linux与RT-Thread系统之间，RT-Thread与RT-Thread系统之间通信（睿赛德服务公司捐赠）；
 *  增加lwIP/NAT组件，可以做多个网口间的地址转换（Hicard）；
 *  增加lwIP/DHCP服务端，用于向客户端分配IP地址（睿赛德服务公司提供）；
- 
+
 ## BSP
 
 *  修正LPC4357串口驱动初始化时过早打开中断的问题（nongxiaoming）；
@@ -818,7 +818,7 @@ v2.0.0版本的开发相对活跃些，开源社区提供了强有力的支持�
 * 启动timer前，对timer进行强制移除；
 * 在执行soft timer超时函数时，打开调度器锁；
 * 新增块设备的自动刷新参数，RT_DEVICE_CTRL_BLK_AUTOREFRESH；
- 
+
 ## 工具
 
 * 修正scons命令编译时，选择keil mdk (armcc)编译器时，命令行太长编译失败的问题；
@@ -871,7 +871,7 @@ v2.0.0版本的开发相对活跃些，开源社区提供了强有力的支持�
 # RT-Thread 2.0.0 Alpha更改说明
 
 发布时间:2014/4/8
-	
+
 RT-Thread 2.0.0分支的第一个技术预览版本，仅用于展示2.0.0发展分支的演化动向(按照roadmap，2.0.0这个分支会有一部分RT-Thread和Linux互补性的技术，为Linux增加更好的实时性，为RT-Thread增加更多的功能性，这份技术预览版正是朝着这个目标而努力)，欢迎反馈建议和问题。
 
 ## 组件
@@ -907,7 +907,7 @@ insmod rtvmm.ko
 # RT-Thread 1.2.1更改说明
 
 发布时间: 2014/4/8
-	
+
 在原有的1.2.0版本的bug修正版本，也是1.2.0系列的第一个修正版本，原则上不添加任何的新功能，我们尽量会按照每个季度一个修订版本的方式推进。大家在使用的过程中有什么问题还请反馈给我们，这些问题很可能会在下个版本中修正！
 
 以下是更改记录：
@@ -953,7 +953,7 @@ insmod rtvmm.ko
 发布时间: 2014/1/6 
 
 实现roadmap中提到的大部分内容
-	
+​
 1，文档方面已完成《RT-Thread编程手册》，同时还有论坛上jiezhi童鞋的《一起来学RT-Thread系列连载教程》
 2，BSP分支方面新增cortext-A8(beaglebone)，cortext-R4(rm48x50)，UNITY-2(SEP6200),lpc408x的移植
 3，组件方面：
@@ -1040,7 +1040,7 @@ insmod rtvmm.ko
 # RT-Thread 1.2.0RC更改说明
 
 发布时间: 2013/10/10/ 10:19
-	 
+
 主要说明: 该版本新增ARM Cortex-A8的支持(BeagleBone)，新增UNITY-2内核的支持(SEP6200)，新增Ymodem协议。
 
 变更履历
@@ -1135,7 +1135,7 @@ insmod rtvmm.ko
 版本: RT-Thread 1.2.0 Beta 版本
 
 发布时间: 2013/6/30
-		
+​
 进过开发人员三个月的努力，RT-Thread 1.2.0 Beta 版本如期发布。
 该版本默认采用lwIP 1.4.1协议栈，USB device stack也进一步完善。加入 log_trace 子系统，加入组件初始化升级版本，加入 ARM Cortex-R 的移植。
 
@@ -1182,7 +1182,7 @@ insmod rtvmm.ko
 版本: RT-Thread 1.2.0 Alpha版本
 
 发布时间: 2013/4/10
-	
+​
 遵循2013年RT-Thread roadmap，RT-Thread 1.2.0 Alpha版本发布，Alpha意味着此版本为技术预览版，仅用于展示RT-Thread 1.2.0未来的发展方向，并不适合于开发正式产品。RT-Thread 1.2.0版本是1.1.x系列的下一个分支，这个分支主要体现的是RT-Thread 1.x系列的文档情况。当然也有一些功能、代码方面的增强。
 
 伴随着新版本的到来，RT-Thread有几个重大的转变：
