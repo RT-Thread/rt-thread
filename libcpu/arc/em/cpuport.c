@@ -5,11 +5,13 @@
  */
 #include <rtthread.h>
 
-#include "inc/arc/arc_exception.h"
+#include "arc/arc_exception.h"
 
-/* enable interrupt and set interrupt priority mask */
-#define ARC_INIT_STATUS (AUX_STATUS_MASK_IE | ((-1 - INT_PRI_MIN) << 1))
-
+#if ARC_FEATURE_STACK_CHECK
+#define ARC_INIT_STATUS ((1 << AUX_STATUS_BIT_SC) | AUX_STATUS_MASK_IE | ((-1 - INT_PRI_MIN) << 1) | STATUS32_RESET_VALUE)
+#else
+#define ARC_INIT_STATUS (AUX_STATUS_MASK_IE | ((-1 - INT_PRI_MIN) << 1) | STATUS32_RESET_VALUE)
+#endif
 
 extern void start_r(void);
 
@@ -17,6 +19,7 @@ extern void start_r(void);
 rt_uint32_t context_switch_reqflg;
 rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
+rt_uint32_t exc_nest_count;
 
 struct init_stack_frame {
 	rt_uint32_t pc;
@@ -66,4 +69,19 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
 {
     exception_handle = exception_handle;
+}
+
+void set_hw_stack_check(rt_uint32_t *from, rt_uint32_t *to)
+{
+    struct rt_thread *rt_thread_to;
+	if (to != NULL) {
+        rt_thread_to = rt_container_of(to, struct rt_thread, sp);
+#if ARC_FEATURE_SEC_PRESENT
+		arc_aux_write(AUX_S_KSTACK_TOP, (uint32_t)(rt_thread_to->stack_addr));
+		arc_aux_write(AUX_S_KSTACK_BASE, (uint32_t)(rt_thread_to->stack_addr)+rt_thread_to->stack_size);
+#else
+		arc_aux_write(AUX_KSTACK_TOP, (uint32_t)(rt_thread_to->stack_addr));
+		arc_aux_write(AUX_KSTACK_BASE, (uint32_t)(rt_thread_to->stack_addr)+rt_thread_to->stack_size);
+#endif
+	}
 }
