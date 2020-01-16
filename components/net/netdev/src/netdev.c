@@ -1097,13 +1097,13 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
 
 int netdev_ping(int argc, char **argv)
 {
-    if (argc == 1)
+    if (argc == 2)
     {
-        rt_kprintf("Please input: ping <host address>\n");
+        netdev_cmd_ping(argv[1], 4, 0);
     }
     else
     {
-        netdev_cmd_ping(argv[1], 4, 0);
+        rt_kprintf("Please input: ping <host address>\n");
     }
 
     return 0;
