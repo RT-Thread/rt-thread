@@ -712,6 +712,9 @@ menu "Using USB"
                     config RT_VCOM_TASK_STK_SIZE
                         int "virtual com thread stack size"
                         default 512
+                    config RT_CDC_RX_BUFSIZE
+                        int "virtual com rx buffer size"
+                        default 128
                     config RT_VCOM_TX_USE_DMA
                         bool "Enable to use dma for vcom tx"
                         default n
