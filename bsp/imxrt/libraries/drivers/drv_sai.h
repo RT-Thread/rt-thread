@@ -18,7 +18,7 @@
 #include "fsl_sai_edma.h"
 
 #define AUD_DMA_FIFO_SIZE (2048)
-#define	CODEC_I2C_NAME  ("i2c1")
+#define CODEC_I2C_NAME ("i2c1")
 /* Select Audio/Video PLL (786.48 MHz) as sai1 clock source */
 #define DEMO_SAI1_CLOCK_SOURCE_SELECT (2U)
 /* Clock pre divider for sai1 clock source */
