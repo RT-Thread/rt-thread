@@ -95,7 +95,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART3 TX DMA channel (0-32)"
                         default 1
         endif
-		menuconfig BSP_USING_HWTIMER
+	menuconfig BSP_USING_HWTIMER
         bool "Enable GPT"
         default n
         select RT_USING_HWTIMER
