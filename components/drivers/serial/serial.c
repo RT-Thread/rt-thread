@@ -330,14 +330,16 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
 static void _serial_check_buffer_size(void)
 {
     static rt_bool_t already_output = RT_FALSE;
-		
+
     if (already_output == RT_FALSE)
     {
+#if defined(ULOG_USING_ISR_LOG)
         LOG_W("Warning: There is no enough buffer for saving data,"
               " please increase the RT_SERIAL_RB_BUFSZ option.");
+#endif
         already_output = RT_TRUE;
     }
-}	
+}
 
 #if defined(RT_USING_POSIX) || defined(RT_SERIAL_USING_DMA)
 static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
@@ -1286,4 +1288,3 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #endif /* RT_SERIAL_USING_DMA */
     }
 }
-
