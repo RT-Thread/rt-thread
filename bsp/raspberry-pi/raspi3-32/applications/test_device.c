@@ -366,7 +366,7 @@ rt_err_t test_wdt(void)
 
 int test_rtc(void)
 {
-#ifdef BSP_USING_RTD
+#ifdef BSP_USING_RTC
     rt_kprintf("Hello Test RTC!\n");
     uint8_t i;
     time_t now;
