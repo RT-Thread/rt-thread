@@ -1,0 +1,613 @@
+/**
+  **************************************************************************************
+  * @file    REG_RTC.h
+  * @brief   RTC Head File
+  *
+  * @version V0.01
+  * @date    12/5/2018
+  * @author  Eastsoft MCU Software Team
+  * @note
+  *
+  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd. ALL rights reserved.
+  *
+  **************************************************************************************
+  */
+
+#ifndef __RTC_H__
+#define __RTC_H__
+
+
+/******************************************************************************/
+/*                              设备特殊寄存器结构定义                        */
+/******************************************************************************/
+
+/*   允许匿名结构和匿名联合    */
+/* #pragma anon_unions */
+
+/****************** Bit definition for RTC_CON register ************************/
+
+#define  RTC_CON_MODE_POS  30U 
+#define  RTC_CON_MODE_MSK  BIT(RTC_CON_MODE_POS)
+
+#define  RTC_CON_CALVAL_POSS  24U 
+#define  RTC_CON_CALVAL_POSE  29U 
+#define  RTC_CON_CALVAL_MSK  BITS(RTC_CON_CALVAL_POSS,RTC_CON_CALVAL_POSE)
+
+#define  RTC_CON_SCALE_POSS  16U 
+#define  RTC_CON_SCALE_POSE  23U 
+#define  RTC_CON_SCALE_MSK  BITS(RTC_CON_SCALE_POSS,RTC_CON_SCALE_POSE)
+
+#define  RTC_CON_PSCALE_POSS  8U 
+#define  RTC_CON_PSCALE_POSE  14U 
+#define  RTC_CON_PSCALE_MSK  BITS(RTC_CON_PSCALE_POSS,RTC_CON_PSCALE_POSE)
+
+#define  RTC_CON_CYCLE_POS  5U 
+#define  RTC_CON_CYCLE_MSK  BIT(RTC_CON_CYCLE_POS)
+
+#define  RTC_CON_CALIB_POS  4U 
+#define  RTC_CON_CALIB_MSK  BIT(RTC_CON_CALIB_POS)
+
+#define  RTC_CON_CKSEL_POSS  2U 
+#define  RTC_CON_CKSEL_POSE  3U 
+#define  RTC_CON_CKSEL_MSK  BITS(RTC_CON_CKSEL_POSS,RTC_CON_CKSEL_POSE)
+
+#define  RTC_CON_RTCEN_POS  0U 
+#define  RTC_CON_RTCEN_MSK  BIT(RTC_CON_RTCEN_POS)
+
+/****************** Bit definition for RTC_WKUP register ************************/
+
+#define  RTC_WKUP_WKSCAL_POSS  26U 
+#define  RTC_WKUP_WKSCAL_POSE  29U 
+#define  RTC_WKUP_WKSCAL_MSK  BITS(RTC_WKUP_WKSCAL_POSS,RTC_WKUP_WKSCAL_POSE)
+
+#define  RTC_WKUP_WKSEL_POSS  24U 
+#define  RTC_WKUP_WKSEL_POSE  25U 
+#define  RTC_WKUP_WKSEL_MSK  BITS(RTC_WKUP_WKSEL_POSS,RTC_WKUP_WKSEL_POSE)
+
+#define  RTC_WKUP_WKCAL_POSS  0U 
+#define  RTC_WKUP_WKCAL_POSE  23U 
+#define  RTC_WKUP_WKCAL_MSK  BITS(RTC_WKUP_WKCAL_POSS,RTC_WKUP_WKCAL_POSE)
+
+/****************** Bit definition for RTC_TIME register ************************/
+
+#define  RTC_TIME_WEEK_POSS  24U 
+#define  RTC_TIME_WEEK_POSE  26U 
+#define  RTC_TIME_WEEK_MSK  BITS(RTC_TIME_WEEK_POSS,RTC_TIME_WEEK_POSE)
+
+#define  RTC_TIME_HOUR_T_POSS  20U 
+#define  RTC_TIME_HOUR_T_POSE  21U 
+#define  RTC_TIME_HOUR_T_MSK  BITS(RTC_TIME_HOUR_T_POSS,RTC_TIME_HOUR_T_POSE)
+
+#define  RTC_TIME_HOUR_U_POSS  16U 
+#define  RTC_TIME_HOUR_U_POSE  19U 
+#define  RTC_TIME_HOUR_U_MSK  BITS(RTC_TIME_HOUR_U_POSS,RTC_TIME_HOUR_U_POSE)
+
+#define  RTC_TIME_MIN_T_POSS  12U 
+#define  RTC_TIME_MIN_T_POSE  14U 
+#define  RTC_TIME_MIN_T_MSK  BITS(RTC_TIME_MIN_T_POSS,RTC_TIME_MIN_T_POSE)
+
+#define  RTC_TIME_MIN_U_POSS  8U 
+#define  RTC_TIME_MIN_U_POSE  11U 
+#define  RTC_TIME_MIN_U_MSK  BITS(RTC_TIME_MIN_U_POSS,RTC_TIME_MIN_U_POSE)
+
+#define  RTC_TIME_SEC_T_POSS  4U 
+#define  RTC_TIME_SEC_T_POSE  6U 
+#define  RTC_TIME_SEC_T_MSK  BITS(RTC_TIME_SEC_T_POSS,RTC_TIME_SEC_T_POSE)
+
+#define  RTC_TIME_SEC_U_POSS  0U 
+#define  RTC_TIME_SEC_U_POSE  3U 
+#define  RTC_TIME_SEC_U_MSK  BITS(RTC_TIME_SEC_U_POSS,RTC_TIME_SEC_U_POSE)
+
+/****************** Bit definition for RTC_CAL register ************************/
+
+#define  RTC_CAL_YEAR_T_POSS  20U 
+#define  RTC_CAL_YEAR_T_POSE  23U 
+#define  RTC_CAL_YEAR_T_MSK  BITS(RTC_CAL_YEAR_T_POSS,RTC_CAL_YEAR_T_POSE)
+
+#define  RTC_CAL_YEAR_U_POSS  16U 
+#define  RTC_CAL_YEAR_U_POSE  19U 
+#define  RTC_CAL_YEAR_U_MSK  BITS(RTC_CAL_YEAR_U_POSS,RTC_CAL_YEAR_U_POSE)
+
+#define  RTC_CAL_MON_T_POS  12U 
+#define  RTC_CAL_MON_T_MSK  BIT(RTC_CAL_MON_T_POS)
+
+#define  RTC_CAL_MON_U_POSS  8U 
+#define  RTC_CAL_MON_U_POSE  11U 
+#define  RTC_CAL_MON_U_MSK  BITS(RTC_CAL_MON_U_POSS,RTC_CAL_MON_U_POSE)
+
+#define  RTC_CAL_DATE_T_POSS  4U 
+#define  RTC_CAL_DATE_T_POSE  5U 
+#define  RTC_CAL_DATE_T_MSK  BITS(RTC_CAL_DATE_T_POSS,RTC_CAL_DATE_T_POSE)
+
+#define  RTC_CAL_DATE_U_POSS  0U 
+#define  RTC_CAL_DATE_U_POSE  3U 
+#define  RTC_CAL_DATE_U_MSK  BITS(RTC_CAL_DATE_U_POSS,RTC_CAL_DATE_U_POSE)
+
+/****************** Bit definition for RTC_ALTIME register ************************/
+
+#define  RTC_ALTIME_WEEK_POSS  24U 
+#define  RTC_ALTIME_WEEK_POSE  26U 
+#define  RTC_ALTIME_WEEK_MSK  BITS(RTC_ALTIME_WEEK_POSS,RTC_ALTIME_WEEK_POSE)
+
+#define  RTC_ALTIME_HOUR_T_POSS  20U 
+#define  RTC_ALTIME_HOUR_T_POSE  21U 
+#define  RTC_ALTIME_HOUR_T_MSK  BITS(RTC_ALTIME_HOUR_T_POSS,RTC_ALTIME_HOUR_T_POSE)
+
+#define  RTC_ALTIME_HOUR_U_POSS  16U 
+#define  RTC_ALTIME_HOUR_U_POSE  19U 
+#define  RTC_ALTIME_HOUR_U_MSK  BITS(RTC_ALTIME_HOUR_U_POSS,RTC_ALTIME_HOUR_U_POSE)
+
+#define  RTC_ALTIME_MIN_T_POSS  12U 
+#define  RTC_ALTIME_MIN_T_POSE  14U 
+#define  RTC_ALTIME_MIN_T_MSK  BITS(RTC_ALTIME_MIN_T_POSS,RTC_ALTIME_MIN_T_POSE)
+
+#define  RTC_ALTIME_MIN_U_POSS  8U 
+#define  RTC_ALTIME_MIN_U_POSE  11U 
+#define  RTC_ALTIME_MIN_U_MSK  BITS(RTC_ALTIME_MIN_U_POSS,RTC_ALTIME_MIN_U_POSE)
+
+#define  RTC_ALTIME_SEC_T_POSS  4U 
+#define  RTC_ALTIME_SEC_T_POSE  6U 
+#define  RTC_ALTIME_SEC_T_MSK  BITS(RTC_ALTIME_SEC_T_POSS,RTC_ALTIME_SEC_T_POSE)
+
+#define  RTC_ALTIME_SEC_U_POSS  0U 
+#define  RTC_ALTIME_SEC_U_POSE  3U 
+#define  RTC_ALTIME_SEC_U_MSK  BITS(RTC_ALTIME_SEC_U_POSS,RTC_ALTIME_SEC_U_POSE)
+
+/****************** Bit definition for RTC_ALCAL register ************************/
+
+#define  RTC_ALCAL_YEAR_T_POSS  20U 
+#define  RTC_ALCAL_YEAR_T_POSE  23U 
+#define  RTC_ALCAL_YEAR_T_MSK  BITS(RTC_ALCAL_YEAR_T_POSS,RTC_ALCAL_YEAR_T_POSE)
+
+#define  RTC_ALCAL_YEAR_U_POSS  16U 
+#define  RTC_ALCAL_YEAR_U_POSE  19U 
+#define  RTC_ALCAL_YEAR_U_MSK  BITS(RTC_ALCAL_YEAR_U_POSS,RTC_ALCAL_YEAR_U_POSE)
+
+#define  RTC_ALCAL_MON_T_POS  12U 
+#define  RTC_ALCAL_MON_T_MSK  BIT(RTC_ALCAL_MON_T_POS)
+
+#define  RTC_ALCAL_MON_U_POSS  8U 
+#define  RTC_ALCAL_MON_U_POSE  11U 
+#define  RTC_ALCAL_MON_U_MSK  BITS(RTC_ALCAL_MON_U_POSS,RTC_ALCAL_MON_U_POSE)
+
+#define  RTC_ALCAL_DATE_T_POSS  4U 
+#define  RTC_ALCAL_DATE_T_POSE  5U 
+#define  RTC_ALCAL_DATE_T_MSK  BITS(RTC_ALCAL_DATE_T_POSS,RTC_ALCAL_DATE_T_POSE)
+
+#define  RTC_ALCAL_DATE_U_POSS  0U 
+#define  RTC_ALCAL_DATE_U_POSE  3U 
+#define  RTC_ALCAL_DATE_U_MSK  BITS(RTC_ALCAL_DATE_U_POSS,RTC_ALCAL_DATE_U_POSE)
+
+/****************** Bit definition for RTC_ALEN register ************************/
+
+#define  RTC_ALEN_YEAR_POS  6U 
+#define  RTC_ALEN_YEAR_MSK  BIT(RTC_ALEN_YEAR_POS)
+
+#define  RTC_ALEN_MONTH_POS  5U 
+#define  RTC_ALEN_MONTH_MSK  BIT(RTC_ALEN_MONTH_POS)
+
+#define  RTC_ALEN_DATE_POS  4U 
+#define  RTC_ALEN_DATE_MSK  BIT(RTC_ALEN_DATE_POS)
+
+#define  RTC_ALEN_WEEK_POS  3U 
+#define  RTC_ALEN_WEEK_MSK  BIT(RTC_ALEN_WEEK_POS)
+
+#define  RTC_ALEN_HOUR_POS  2U 
+#define  RTC_ALEN_HOUR_MSK  BIT(RTC_ALEN_HOUR_POS)
+
+#define  RTC_ALEN_MIN_POS  1U 
+#define  RTC_ALEN_MIN_MSK  BIT(RTC_ALEN_MIN_POS)
+
+#define  RTC_ALEN_SEC_POS  0U 
+#define  RTC_ALEN_SEC_MSK  BIT(RTC_ALEN_SEC_POS)
+
+/****************** Bit definition for RTC_TRIG register ************************/
+
+#define  RTC_TRIG_WKTM_POS  16U 
+#define  RTC_TRIG_WKTM_MSK  BIT(RTC_TRIG_WKTM_POS)
+
+#define  RTC_TRIG_F1HZ_POS  15U 
+#define  RTC_TRIG_F1HZ_MSK  BIT(RTC_TRIG_F1HZ_POS)
+
+#define  RTC_TRIG_RYEAR_POS  14U 
+#define  RTC_TRIG_RYEAR_MSK  BIT(RTC_TRIG_RYEAR_POS)
+
+#define  RTC_TRIG_RMON_POS  13U 
+#define  RTC_TRIG_RMON_MSK  BIT(RTC_TRIG_RMON_POS)
+
+#define  RTC_TRIG_RDATE_POS  12U 
+#define  RTC_TRIG_RDATE_MSK  BIT(RTC_TRIG_RDATE_POS)
+
+#define  RTC_TRIG_RWEEK_POS  11U 
+#define  RTC_TRIG_RWEEK_MSK  BIT(RTC_TRIG_RWEEK_POS)
+
+#define  RTC_TRIG_RHOUR_POS  10U 
+#define  RTC_TRIG_RHOUR_MSK  BIT(RTC_TRIG_RHOUR_POS)
+
+#define  RTC_TRIG_RMIN_POS  9U 
+#define  RTC_TRIG_RMIN_MSK  BIT(RTC_TRIG_RMIN_POS)
+
+#define  RTC_TRIG_RSEC_POS  8U 
+#define  RTC_TRIG_RSEC_MSK  BIT(RTC_TRIG_RSEC_POS)
+
+#define  RTC_TRIG_AMALL_POS  7U 
+#define  RTC_TRIG_AMALL_MSK  BIT(RTC_TRIG_AMALL_POS)
+
+#define  RTC_TRIG_AYEAR_POS  6U 
+#define  RTC_TRIG_AYEAR_MSK  BIT(RTC_TRIG_AYEAR_POS)
+
+#define  RTC_TRIG_AMON_POS  5U 
+#define  RTC_TRIG_AMON_MSK  BIT(RTC_TRIG_AMON_POS)
+
+#define  RTC_TRIG_ADTAE_POS  4U 
+#define  RTC_TRIG_ADTAE_MSK  BIT(RTC_TRIG_ADTAE_POS)
+
+#define  RTC_TRIG_AWEEK_POS  3U 
+#define  RTC_TRIG_AWEEK_MSK  BIT(RTC_TRIG_AWEEK_POS)
+
+#define  RTC_TRIG_AHOUR_POS  2U 
+#define  RTC_TRIG_AHOUR_MSK  BIT(RTC_TRIG_AHOUR_POS)
+
+#define  RTC_TRIG_AMIN_POS  1U 
+#define  RTC_TRIG_AMIN_MSK  BIT(RTC_TRIG_AMIN_POS)
+
+#define  RTC_TRIG_ASEC_POS  0U 
+#define  RTC_TRIG_ASEC_MSK  BIT(RTC_TRIG_ASEC_POS)
+
+/****************** Bit definition for RTC_IER register ************************/
+
+#define  RTC_IER_WKTM_POS  16U 
+#define  RTC_IER_WKTM_MSK  BIT(RTC_IER_WKTM_POS)
+
+#define  RTC_IER_F1HZ_POS  15U 
+#define  RTC_IER_F1HZ_MSK  BIT(RTC_IER_F1HZ_POS)
+
+#define  RTC_IER_RYEAR_POS  14U 
+#define  RTC_IER_RYEAR_MSK  BIT(RTC_IER_RYEAR_POS)
+
+#define  RTC_IER_RMON_POS  13U 
+#define  RTC_IER_RMON_MSK  BIT(RTC_IER_RMON_POS)
+
+#define  RTC_IER_RDATE_POS  12U 
+#define  RTC_IER_RDATE_MSK  BIT(RTC_IER_RDATE_POS)
+
+#define  RTC_IER_RWEEK_POS  11U 
+#define  RTC_IER_RWEEK_MSK  BIT(RTC_IER_RWEEK_POS)
+
+#define  RTC_IER_RHOUR_POS  10U 
+#define  RTC_IER_RHOUR_MSK  BIT(RTC_IER_RHOUR_POS)
+
+#define  RTC_IER_RMIN_POS  9U 
+#define  RTC_IER_RMIN_MSK  BIT(RTC_IER_RMIN_POS)
+
+#define  RTC_IER_RSEC_POS  8U 
+#define  RTC_IER_RSEC_MSK  BIT(RTC_IER_RSEC_POS)
+
+#define  RTC_IER_AMALL_POS  7U 
+#define  RTC_IER_AMALL_MSK  BIT(RTC_IER_AMALL_POS)
+
+#define  RTC_IER_AYEAR_POS  6U 
+#define  RTC_IER_AYEAR_MSK  BIT(RTC_IER_AYEAR_POS)
+
+#define  RTC_IER_AMON_POS  5U 
+#define  RTC_IER_AMON_MSK  BIT(RTC_IER_AMON_POS)
+
+#define  RTC_IER_ADTAE_POS  4U 
+#define  RTC_IER_ADTAE_MSK  BIT(RTC_IER_ADTAE_POS)
+
+#define  RTC_IER_AWEEK_POS  3U 
+#define  RTC_IER_AWEEK_MSK  BIT(RTC_IER_AWEEK_POS)
+
+#define  RTC_IER_AHOUR_POS  2U 
+#define  RTC_IER_AHOUR_MSK  BIT(RTC_IER_AHOUR_POS)
+
+#define  RTC_IER_AMIN_POS  1U 
+#define  RTC_IER_AMIN_MSK  BIT(RTC_IER_AMIN_POS)
+
+#define  RTC_IER_ASEC_POS  0U 
+#define  RTC_IER_ASEC_MSK  BIT(RTC_IER_ASEC_POS)
+
+/****************** Bit definition for RTC_IDR register ************************/
+
+#define  RTC_IDR_WKTM_POS  16U 
+#define  RTC_IDR_WKTM_MSK  BIT(RTC_IDR_WKTM_POS)
+
+#define  RTC_IDR_F1HZ_POS  15U 
+#define  RTC_IDR_F1HZ_MSK  BIT(RTC_IDR_F1HZ_POS)
+
+#define  RTC_IDR_RYEAR_POS  14U 
+#define  RTC_IDR_RYEAR_MSK  BIT(RTC_IDR_RYEAR_POS)
+
+#define  RTC_IDR_RMON_POS  13U 
+#define  RTC_IDR_RMON_MSK  BIT(RTC_IDR_RMON_POS)
+
+#define  RTC_IDR_RDATE_POS  12U 
+#define  RTC_IDR_RDATE_MSK  BIT(RTC_IDR_RDATE_POS)
+
+#define  RTC_IDR_RWEEK_POS  11U 
+#define  RTC_IDR_RWEEK_MSK  BIT(RTC_IDR_RWEEK_POS)
+
+#define  RTC_IDR_RHOUR_POS  10U 
+#define  RTC_IDR_RHOUR_MSK  BIT(RTC_IDR_RHOUR_POS)
+
+#define  RTC_IDR_RMIN_POS  9U 
+#define  RTC_IDR_RMIN_MSK  BIT(RTC_IDR_RMIN_POS)
+
+#define  RTC_IDR_RSEC_POS  8U 
+#define  RTC_IDR_RSEC_MSK  BIT(RTC_IDR_RSEC_POS)
+
+#define  RTC_IDR_AMALL_POS  7U 
+#define  RTC_IDR_AMALL_MSK  BIT(RTC_IDR_AMALL_POS)
+
+#define  RTC_IDR_AYEAR_POS  6U 
+#define  RTC_IDR_AYEAR_MSK  BIT(RTC_IDR_AYEAR_POS)
+
+#define  RTC_IDR_AMON_POS  5U 
+#define  RTC_IDR_AMON_MSK  BIT(RTC_IDR_AMON_POS)
+
+#define  RTC_IDR_ADTAE_POS  4U 
+#define  RTC_IDR_ADTAE_MSK  BIT(RTC_IDR_ADTAE_POS)
+
+#define  RTC_IDR_AWEEK_POS  3U 
+#define  RTC_IDR_AWEEK_MSK  BIT(RTC_IDR_AWEEK_POS)
+
+#define  RTC_IDR_AHOUR_POS  2U 
+#define  RTC_IDR_AHOUR_MSK  BIT(RTC_IDR_AHOUR_POS)
+
+#define  RTC_IDR_AMIN_POS  1U 
+#define  RTC_IDR_AMIN_MSK  BIT(RTC_IDR_AMIN_POS)
+
+#define  RTC_IDR_ASEC_POS  0U 
+#define  RTC_IDR_ASEC_MSK  BIT(RTC_IDR_ASEC_POS)
+
+/****************** Bit definition for RTC_IVS register ************************/
+
+#define  RTC_IVS_WKTM_POS  16U 
+#define  RTC_IVS_WKTM_MSK  BIT(RTC_IVS_WKTM_POS)
+
+#define  RTC_IVS_F1HZ_POS  15U 
+#define  RTC_IVS_F1HZ_MSK  BIT(RTC_IVS_F1HZ_POS)
+
+#define  RTC_IVS_RYEAR_POS  14U 
+#define  RTC_IVS_RYEAR_MSK  BIT(RTC_IVS_RYEAR_POS)
+
+#define  RTC_IVS_RMON_POS  13U 
+#define  RTC_IVS_RMON_MSK  BIT(RTC_IVS_RMON_POS)
+
+#define  RTC_IVS_RDATE_POS  12U 
+#define  RTC_IVS_RDATE_MSK  BIT(RTC_IVS_RDATE_POS)
+
+#define  RTC_IVS_RWEEK_POS  11U 
+#define  RTC_IVS_RWEEK_MSK  BIT(RTC_IVS_RWEEK_POS)
+
+#define  RTC_IVS_RHOUR_POS  10U 
+#define  RTC_IVS_RHOUR_MSK  BIT(RTC_IVS_RHOUR_POS)
+
+#define  RTC_IVS_RMIN_POS  9U 
+#define  RTC_IVS_RMIN_MSK  BIT(RTC_IVS_RMIN_POS)
+
+#define  RTC_IVS_RSEC_POS  8U 
+#define  RTC_IVS_RSEC_MSK  BIT(RTC_IVS_RSEC_POS)
+
+#define  RTC_IVS_AMALL_POS  7U 
+#define  RTC_IVS_AMALL_MSK  BIT(RTC_IVS_AMALL_POS)
+
+#define  RTC_IVS_AYEAR_POS  6U 
+#define  RTC_IVS_AYEAR_MSK  BIT(RTC_IVS_AYEAR_POS)
+
+#define  RTC_IVS_AMON_POS  5U 
+#define  RTC_IVS_AMON_MSK  BIT(RTC_IVS_AMON_POS)
+
+#define  RTC_IVS_ADTAE_POS  4U 
+#define  RTC_IVS_ADTAE_MSK  BIT(RTC_IVS_ADTAE_POS)
+
+#define  RTC_IVS_AWEEK_POS  3U 
+#define  RTC_IVS_AWEEK_MSK  BIT(RTC_IVS_AWEEK_POS)
+
+#define  RTC_IVS_AHOUR_POS  2U 
+#define  RTC_IVS_AHOUR_MSK  BIT(RTC_IVS_AHOUR_POS)
+
+#define  RTC_IVS_AMIN_POS  1U 
+#define  RTC_IVS_AMIN_MSK  BIT(RTC_IVS_AMIN_POS)
+
+#define  RTC_IVS_ASEC_POS  0U 
+#define  RTC_IVS_ASEC_MSK  BIT(RTC_IVS_ASEC_POS)
+
+/****************** Bit definition for RTC_RIF register ************************/
+
+#define  RTC_RIF_WKTM_POS  16U 
+#define  RTC_RIF_WKTM_MSK  BIT(RTC_RIF_WKTM_POS)
+
+#define  RTC_RIF_F1HZ_POS  15U 
+#define  RTC_RIF_F1HZ_MSK  BIT(RTC_RIF_F1HZ_POS)
+
+#define  RTC_RIF_RYEAR_POS  14U 
+#define  RTC_RIF_RYEAR_MSK  BIT(RTC_RIF_RYEAR_POS)
+
+#define  RTC_RIF_RMON_POS  13U 
+#define  RTC_RIF_RMON_MSK  BIT(RTC_RIF_RMON_POS)
+
+#define  RTC_RIF_RDATE_POS  12U 
+#define  RTC_RIF_RDATE_MSK  BIT(RTC_RIF_RDATE_POS)
+
+#define  RTC_RIF_RWEEK_POS  11U 
+#define  RTC_RIF_RWEEK_MSK  BIT(RTC_RIF_RWEEK_POS)
+
+#define  RTC_RIF_RHOUR_POS  10U 
+#define  RTC_RIF_RHOUR_MSK  BIT(RTC_RIF_RHOUR_POS)
+
+#define  RTC_RIF_RMIN_POS  9U 
+#define  RTC_RIF_RMIN_MSK  BIT(RTC_RIF_RMIN_POS)
+
+#define  RTC_RIF_RSEC_POS  8U 
+#define  RTC_RIF_RSEC_MSK  BIT(RTC_RIF_RSEC_POS)
+
+#define  RTC_RIF_AMALL_POS  7U 
+#define  RTC_RIF_AMALL_MSK  BIT(RTC_RIF_AMALL_POS)
+
+#define  RTC_RIF_AYEAR_POS  6U 
+#define  RTC_RIF_AYEAR_MSK  BIT(RTC_RIF_AYEAR_POS)
+
+#define  RTC_RIF_AMON_POS  5U 
+#define  RTC_RIF_AMON_MSK  BIT(RTC_RIF_AMON_POS)
+
+#define  RTC_RIF_ADTAE_POS  4U 
+#define  RTC_RIF_ADTAE_MSK  BIT(RTC_RIF_ADTAE_POS)
+
+#define  RTC_RIF_AWEEK_POS  3U 
+#define  RTC_RIF_AWEEK_MSK  BIT(RTC_RIF_AWEEK_POS)
+
+#define  RTC_RIF_AHOUR_POS  2U 
+#define  RTC_RIF_AHOUR_MSK  BIT(RTC_RIF_AHOUR_POS)
+
+#define  RTC_RIF_AMIN_POS  1U 
+#define  RTC_RIF_AMIN_MSK  BIT(RTC_RIF_AMIN_POS)
+
+#define  RTC_RIF_ASEC_POS  0U 
+#define  RTC_RIF_ASEC_MSK  BIT(RTC_RIF_ASEC_POS)
+
+/****************** Bit definition for RTC_IFM register ************************/
+
+#define  RTC_IFM_WKTM_POS  16U 
+#define  RTC_IFM_WKTM_MSK  BIT(RTC_IFM_WKTM_POS)
+
+#define  RTC_IFM_F1HZ_POS  15U 
+#define  RTC_IFM_F1HZ_MSK  BIT(RTC_IFM_F1HZ_POS)
+
+#define  RTC_IFM_RYEAR_POS  14U 
+#define  RTC_IFM_RYEAR_MSK  BIT(RTC_IFM_RYEAR_POS)
+
+#define  RTC_IFM_RMON_POS  13U 
+#define  RTC_IFM_RMON_MSK  BIT(RTC_IFM_RMON_POS)
+
+#define  RTC_IFM_RDATE_POS  12U 
+#define  RTC_IFM_RDATE_MSK  BIT(RTC_IFM_RDATE_POS)
+
+#define  RTC_IFM_RWEEK_POS  11U 
+#define  RTC_IFM_RWEEK_MSK  BIT(RTC_IFM_RWEEK_POS)
+
+#define  RTC_IFM_RHOUR_POS  10U 
+#define  RTC_IFM_RHOUR_MSK  BIT(RTC_IFM_RHOUR_POS)
+
+#define  RTC_IFM_RMIN_POS  9U 
+#define  RTC_IFM_RMIN_MSK  BIT(RTC_IFM_RMIN_POS)
+
+#define  RTC_IFM_RSEC_POS  8U 
+#define  RTC_IFM_RSEC_MSK  BIT(RTC_IFM_RSEC_POS)
+
+#define  RTC_IFM_AMALL_POS  7U 
+#define  RTC_IFM_AMALL_MSK  BIT(RTC_IFM_AMALL_POS)
+
+#define  RTC_IFM_AYEAR_POS  6U 
+#define  RTC_IFM_AYEAR_MSK  BIT(RTC_IFM_AYEAR_POS)
+
+#define  RTC_IFM_AMON_POS  5U 
+#define  RTC_IFM_AMON_MSK  BIT(RTC_IFM_AMON_POS)
+
+#define  RTC_IFM_ADTAE_POS  4U 
+#define  RTC_IFM_ADTAE_MSK  BIT(RTC_IFM_ADTAE_POS)
+
+#define  RTC_IFM_AWEEK_POS  3U 
+#define  RTC_IFM_AWEEK_MSK  BIT(RTC_IFM_AWEEK_POS)
+
+#define  RTC_IFM_AHOUR_POS  2U 
+#define  RTC_IFM_AHOUR_MSK  BIT(RTC_IFM_AHOUR_POS)
+
+#define  RTC_IFM_AMIN_POS  1U 
+#define  RTC_IFM_AMIN_MSK  BIT(RTC_IFM_AMIN_POS)
+
+#define  RTC_IFM_ASEC_POS  0U 
+#define  RTC_IFM_ASEC_MSK  BIT(RTC_IFM_ASEC_POS)
+
+/****************** Bit definition for RTC_ICR register ************************/
+
+#define  RTC_ICR_WKTM_POS  16U 
+#define  RTC_ICR_WKTM_MSK  BIT(RTC_ICR_WKTM_POS)
+
+#define  RTC_ICR_F1HZ_POS  15U 
+#define  RTC_ICR_F1HZ_MSK  BIT(RTC_ICR_F1HZ_POS)
+
+#define  RTC_ICR_RYEAR_POS  14U 
+#define  RTC_ICR_RYEAR_MSK  BIT(RTC_ICR_RYEAR_POS)
+
+#define  RTC_ICR_RMON_POS  13U 
+#define  RTC_ICR_RMON_MSK  BIT(RTC_ICR_RMON_POS)
+
+#define  RTC_ICR_RDATE_POS  12U 
+#define  RTC_ICR_RDATE_MSK  BIT(RTC_ICR_RDATE_POS)
+
+#define  RTC_ICR_RWEEK_POS  11U 
+#define  RTC_ICR_RWEEK_MSK  BIT(RTC_ICR_RWEEK_POS)
+
+#define  RTC_ICR_RHOUR_POS  10U 
+#define  RTC_ICR_RHOUR_MSK  BIT(RTC_ICR_RHOUR_POS)
+
+#define  RTC_ICR_RMIN_POS  9U 
+#define  RTC_ICR_RMIN_MSK  BIT(RTC_ICR_RMIN_POS)
+
+#define  RTC_ICR_RSEC_POS  8U 
+#define  RTC_ICR_RSEC_MSK  BIT(RTC_ICR_RSEC_POS)
+
+#define  RTC_ICR_AMALL_POS  7U 
+#define  RTC_ICR_AMALL_MSK  BIT(RTC_ICR_AMALL_POS)
+
+#define  RTC_ICR_AYEAR_POS  6U 
+#define  RTC_ICR_AYEAR_MSK  BIT(RTC_ICR_AYEAR_POS)
+
+#define  RTC_ICR_AMON_POS  5U 
+#define  RTC_ICR_AMON_MSK  BIT(RTC_ICR_AMON_POS)
+
+#define  RTC_ICR_ADTAE_POS  4U 
+#define  RTC_ICR_ADTAE_MSK  BIT(RTC_ICR_ADTAE_POS)
+
+#define  RTC_ICR_AWEEK_POS  3U 
+#define  RTC_ICR_AWEEK_MSK  BIT(RTC_ICR_AWEEK_POS)
+
+#define  RTC_ICR_AHOUR_POS  2U 
+#define  RTC_ICR_AHOUR_MSK  BIT(RTC_ICR_AHOUR_POS)
+
+#define  RTC_ICR_AMIN_POS  1U 
+#define  RTC_ICR_AMIN_MSK  BIT(RTC_ICR_AMIN_POS)
+
+#define  RTC_ICR_ASEC_POS  0U 
+#define  RTC_ICR_ASEC_MSK  BIT(RTC_ICR_ASEC_POS)
+
+/****************** Bit definition for RTC_STAT register ************************/
+
+#define  RTC_STAT_SYNDONE_POS  1U 
+#define  RTC_STAT_SYNDONE_MSK  BIT(RTC_STAT_SYNDONE_POS)
+
+#define  RTC_STAT_EMPTY_POS  0U 
+#define  RTC_STAT_EMPTY_MSK  BIT(RTC_STAT_EMPTY_POS)
+
+/****************** Bit definition for RTC_BKEN register ************************/
+
+#define  RTC_BKEN_BKEN_POS  0U 
+#define  RTC_BKEN_BKEN_MSK  BIT(RTC_BKEN_BKEN_POS)
+
+typedef struct
+{
+  __IO uint32_t CON;
+  __IO uint32_t WKUP;
+  __IO uint32_t TIME;
+  __IO uint32_t CAL;
+  __IO uint32_t ALTIME;
+  __IO uint32_t ALCAL;
+  __IO uint32_t ALEN;
+  __IO uint32_t TRIG;
+  __O uint32_t IER;
+  __O uint32_t IDR;
+  __I uint32_t IVS;
+  __I uint32_t RIF;
+  __I uint32_t IFM;
+  __O uint32_t ICR;
+  uint32_t RESERVED0[2] ;
+  __I uint32_t STAT;
+  __IO uint32_t BKEN;
+} RTC_TypeDef;
+
+
+
+
+
+#endif
