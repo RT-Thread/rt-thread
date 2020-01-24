@@ -174,11 +174,11 @@ void main_thread_entry(void *parameter)
 {
     extern int main(void);
     extern int $Super$$main(void);
-    
+
 #ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
     rt_components_init();
-#endif    
+#endif
 #ifdef RT_USING_SMP
     rt_hw_secondary_cpu_up();
 #endif
