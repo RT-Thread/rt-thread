@@ -1178,15 +1178,20 @@ void rt_kputs(const char *str)
 /**
  * This function will print a formatted string on system console
  *
- * @param fmt the format
+ * @param fmt  The format string
+ * @param args An object representing the variable arguments list. This should
+ * be initialized by the va_start macro defined in <stdarg>.
  */
-void rt_kprintf(const char *fmt, ...)
+rt_int32_t rt_vprintf(const char *fmt, va_list args)
 {
-    va_list args;
     rt_size_t length;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
-    va_start(args, fmt);
+    if (fmt == RT_NULL)
+    {
+        return -1;
+    }
+
     /* the return value of vsnprintf is the number of bytes that would be
      * written to buffer had if the size of the buffer been sufficiently
      * large excluding the terminating null byte. If the output string
@@ -1211,6 +1216,27 @@ void rt_kprintf(const char *fmt, ...)
 #else
     rt_hw_console_output(rt_log_buf);
 #endif
+
+    return length;
+}
+RTM_EXPORT(rt_vprintf);
+
+/**
+ * This function will print a formatted string on system console
+ *
+ * @param fmt The format string
+ * @param ... Additional arguments. Depending on the format string, the function
+ * may expect a sequence of additional arguments, each containing one value to
+ * be inserted instead of each %-tag specified in the format parameter (if any). 
+ * There should be the same number of these arguments as the number of %-tags
+ * that expect a value.
+ */
+void rt_kprintf(const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    rt_vprintf(fmt, args);
     va_end(args);
 }
 RTM_EXPORT(rt_kprintf);
@@ -1333,14 +1359,14 @@ int __rt_ffs(int value)
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
 
-void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line, const char *fmt, va_list args);
 
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *
  * @param hook the hook function
  */
-void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line))
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line, const char *fmt, va_list args))
 {
     rt_assert_hook = hook;
 }
@@ -1351,13 +1377,21 @@ void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t
  * @param ex the assertion condition string
  * @param func the function name when assertion.
  * @param line the file line number when assertion.
+ * @param fmt The format string
+ * @param ... Additional arguments. Depending on the format string, the function
+ * may expect a sequence of additional arguments, each containing one value to
+ * be inserted instead of each %-tag specified in the format parameter (if any). 
+ * There should be the same number of these arguments as the number of %-tags
+ * that expect a value.
  */
-void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
+void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line, const char *fmt, ...)
 {
+    va_list args;
     volatile char dummy = 0;
 
     if (rt_assert_hook == RT_NULL)
     {
+        rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
 #ifdef RT_USING_MODULE
         if (dlmodule_self())
         {
@@ -1367,13 +1401,18 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
         else
 #endif
         {
-            rt_kprintf("(%s) assertion failed at function:%s, line number:%d \n", ex_string, func, line);
+            va_start(args, fmt);
+            rt_vprintf(fmt, args);
+            va_end(args);
+
             while (dummy == 0);
         }
     }
     else
     {
-        rt_assert_hook(ex_string, func, line);
+        va_start(args, fmt);
+        rt_assert_hook(ex_string, func, line, fmt, args);
+        va_end(args);
     }
 }
 RTM_EXPORT(rt_assert_handler);

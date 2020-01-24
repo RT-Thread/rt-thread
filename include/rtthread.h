@@ -510,9 +510,11 @@ void rt_components_board_init(void);
  */
 #ifndef RT_USING_CONSOLE
 #define rt_kprintf(...)
+#define rt_vprintf(...)
 #define rt_kputs(str)
 #else
 void rt_kprintf(const char *fmt, ...);
+rt_int32_t rt_vprintf(const char *fmt, va_list args);
 void rt_kputs(const char *str);
 #endif
 rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
@@ -559,10 +561,10 @@ rt_uint32_t rt_strcasecmp(const char *a, const char *b);
 void rt_show_version(void);
 
 #ifdef RT_DEBUG
-extern void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
-void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line));
+extern void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line, const char *fmt, va_list args);
+void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line, const char *fmt, va_list args));
 
-void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
+void rt_assert_handler(const char *ex, const char *func, rt_size_t line, const char *fmt, ...);
 #endif /* RT_DEBUG */
 
 #ifdef RT_USING_FINSH

@@ -8,6 +8,7 @@
 #define __RTDEBUG_H__
 
 #include <rtconfig.h>
+#include <rtdef.h>
 
 /* settings depend check */
 #ifdef RT_USING_POSIX
@@ -87,7 +88,13 @@ while (0)
 #define RT_ASSERT(EX)                                                         \
 if (!(EX))                                                                    \
 {                                                                             \
-    rt_assert_handler(#EX, __FUNCTION__, __LINE__);                           \
+    rt_assert_handler(#EX, __FUNCTION__, __LINE__, RT_NULL);                  \
+}
+
+#define RT_ASSERT_MSG(EX, fmt, ...)                                           \
+if (!(EX))                                                                    \
+{                                                                             \
+    rt_assert_handler(#EX, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);       \
 }
 
 /* Macro to check current context */
@@ -133,6 +140,7 @@ while (0)
 #else /* RT_DEBUG */
 
 #define RT_ASSERT(EX)
+#define RT_ASSERT_MSG(EX, fmt, ...)
 #define RT_DEBUG_LOG(type, message)
 #define RT_DEBUG_NOT_IN_INTERRUPT
 #define RT_DEBUG_IN_THREAD_CONTEXT
