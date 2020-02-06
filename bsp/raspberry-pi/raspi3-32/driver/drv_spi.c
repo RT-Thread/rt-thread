@@ -18,9 +18,9 @@
 void spi_gpio_write(rt_uint8_t pin, rt_uint8_t val)
 {
     if (val)
-        BCM283X_GPIO_GPSET(pin / 32) = 1 << (pin % 32);
+        BCM283X_GPIO_GPSET((pin / 32)) = 1 << (pin % 32);
     else
-        BCM283X_GPIO_GPCLR(pin / 32) = 0 << (pin % 32);
+        BCM283X_GPIO_GPCLR((pin / 32)) = 1 << (pin % 32);
 }
 
 struct raspi_spi_hw_config
@@ -147,11 +147,10 @@ static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
         flag = 0;
     else
         flag = 1;
-
-    if (message->cs_take)
-        (config.mode & RT_SPI_CS_HIGH)?
-                spi_gpio_write(cs_pin, 1):
-                spi_gpio_write(cs_pin, 0);
+    if (message->cs_take);
+      //  (config.mode & RT_SPI_CS_HIGH)?
+      //          spi_gpio_write(cs_pin, 1):
+      //          spi_gpio_write(cs_pin, 0);
 
     /* deal data */
     res = spi_transfernb((rt_uint8_t *)message->send_buf, (rt_uint8_t *)message->recv_buf,
