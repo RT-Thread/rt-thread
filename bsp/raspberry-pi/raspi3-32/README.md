@@ -35,16 +35,16 @@ RT-Thread对树莓派的支持主要从树莓派2B开始，它是一个四核Cor
 
 Windows环境下推荐使用[env工具][1]进行编译。
 
-Linux下推荐使用gcc工具 [gcc-arm-none-eabi-4_8-2014q1_linux][2]，如果还没有编译工具，下载后，解开文件。
+Linux下推荐使用gcc工具 gcc-arm-none-eabi-5_4-2016q3，如果还没有编译工具，下载后，解开文件。
 
 ```
-tar vxf gcc-arm-none-eabi-4_8-2014q1_linux.tar.bz2
+tar vxf gcc-arm-none-eabi-5_4-2016q3-20160926-linux.tar.bz2
 ```
 
 Linux环境下需要修改编译器目录设置，修改`bsp/raspi3-32/rtconfig.py`中的
 
 ```
-EXEC_PATH = r'/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
+EXEC_PATH = r'/opt/gcc-arm-none-eabi-5_4-2016q3/bin'
 ```
 
 为编译工具的实际所在目录，这里注意要加上后缀 `/bin`
