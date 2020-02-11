@@ -1,7 +1,0 @@
-How to use:
-(By ArdaFu 2015-04-29)
-
-1. Copy %arm% folder to &IAR EWARM% folder
-2. Restart your IDE.
-3. Select AlphaScale ASM9260T at project options-> General Options -> Target-> Device.
-4. Start debug :).

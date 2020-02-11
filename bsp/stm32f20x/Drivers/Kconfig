@@ -1,7 +1,0 @@
-config RT_USING_UART1
-    bool "Enable UART1 (PA9/10)"
-    default y
-
-config RT_USING_UART6
-    bool "Enable UART6 (PC6/7)"
-    default n
