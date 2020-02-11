@@ -20,7 +20,7 @@
 #include <string.h>
 
 #define DBG_TAG                        "drv.spi"
-#define DBG_LVL                        DBG_LOG
+#define DBG_LVL                        DBG_INFO
 #include <rtdbg.h>
 
 #define DUMMY_DATA		0xFF
@@ -139,6 +139,12 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         rt_pin_write(NRF_GPIO_PIN_MAP(1, 12), 0);
     }
 
+    LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
+    LOG_D("%s sendbuf: %X, recvbuf: %X, length: %d",
+          spi_drv->config->bus_name,
+          (uint32_t)message->send_buf,
+          (uint32_t)message->recv_buf, message->length);
+
     message_length = message->length;
     recv_buf = message->recv_buf;
     send_buf = message->send_buf;
@@ -178,6 +184,10 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         {
             LOG_D("spi transfer error : %d", state);
             message->length = 0;
+        }
+        else
+        {
+            LOG_D("%s transfer done", "spi0");
         }
     }
 
@@ -235,7 +245,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name)
     return result;
 }
 
-int rt_hw_spi_init(void)
+static int rt_hw_spi_init(void)
 {
 		rt_hw_spi_bus_init();
     return RT_EOK;

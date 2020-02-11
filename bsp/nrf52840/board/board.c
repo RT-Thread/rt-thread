@@ -1,4 +1,7 @@
 #include "board.h"
+#include "rt_nrf_uart.h"
+#include "rt_nrf_gpio.h"
+#include "rt_nrf_spi.h"
 #include "app_util_platform.h"
 #include "nordic_common.h"
 #include "nrf_systick.h"
@@ -121,7 +124,6 @@ static void _wakeup_tick_adjust(void)
 static void _sleep_ongo( uint32_t sleep_tick )
 {
     uint32_t enterTime;
-    uint32_t entry_tick;
 
     /* Make sure the SysTick reload value does not overflow the counter. */
     if ( sleep_tick > NRF_RTC_MAXTICKS - EXPECTED_IDLE_TIME_BEFORE_SLEEP )
@@ -144,8 +146,6 @@ static void _sleep_ongo( uint32_t sleep_tick )
         nrf_rtc_event_clear(NRF_RTC_REG, NRF_RTC_EVENT_COMPARE_0);
         nrf_rtc_int_enable(NRF_RTC_REG, NRF_RTC_INT_COMPARE0_MASK);
 
-        entry_tick = rt_tick_get();
-
         __DSB();
 
         if ( sleep_tick > 0 )
@@ -156,16 +156,7 @@ static void _sleep_ongo( uint32_t sleep_tick )
                 uint32_t err_code = sd_app_evt_wait();
                 APP_ERROR_CHECK(err_code);
             }
-            else
 #endif
-            {
-                /* No SD -  we would just block interrupts globally.
-                * BASEPRI cannot be used for that because it would prevent WFE from wake up.
-                */
-                do{
-                    __WFE();
-                } while (0 == (NVIC->ISPR[0] | NVIC->ISPR[1]));
-            }
         }
 
         nrf_rtc_int_disable(NRF_RTC_REG, NRF_RTC_INT_COMPARE0_MASK);
@@ -175,7 +166,6 @@ static void _sleep_ongo( uint32_t sleep_tick )
 
         /* Correct the system ticks */
         {
-
             nrf_rtc_event_clear(NRF_RTC_REG, NRF_RTC_EVENT_TICK);
             nrf_rtc_int_enable (NRF_RTC_REG, NRF_RTC_INT_TICK_MASK);
             /* It is important that we clear pending here so that our corrections are latest and in sync with tick_interrupt handler */
@@ -194,30 +184,27 @@ void rt_hw_system_powersave(void)
 
     if ( sleep_tick >= EXPECTED_IDLE_TIME_BEFORE_SLEEP)
     {
-        // rt_kprintf("sleep entry:%u\n", rt_tick_get());
         _sleep_ongo( sleep_tick );
     }
 }
 
 void rt_hw_board_init(void)
 {
-    // sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
     /* Activate deep sleep mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
     nrf_drv_clock_init();
-    // nrf_drv_clock_hfclk_request(0);
 
     SysTick_Configuration();
 
     rt_thread_idle_sethook(rt_hw_system_powersave);
 
-#ifdef RT_USING_CONSOLE
-    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
-
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
+#endif
+
+#ifdef RT_USING_CONSOLE
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
 

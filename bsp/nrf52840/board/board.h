@@ -2,10 +2,9 @@
 #define _BOARD_H_
 
 #include <rtthread.h>
-
 #include "nrf.h"
 
-#define CHIP_SRAM_END       (0x20000000 + 128*1024)
+#define CHIP_SRAM_END       (0x20000000 + 256*1024)
 
 void rt_hw_board_init(void);
 

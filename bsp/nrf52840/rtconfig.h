@@ -39,7 +39,7 @@
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 1024
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40002
 
@@ -150,9 +150,9 @@
 
 /* WIZnet device configure */
 
-#define WIZ_SPI_DEVICE "spi0"
-#define WIZ_RST_PIN 3
-#define WIZ_IRQ_PIN 4
+#define WIZ_SPI_DEVICE "spi00"
+#define WIZ_RST_PIN 4
+#define WIZ_IRQ_PIN 3
 #define WIZ_USING_DHCP
 #define WIZ_USING_PING
 #define WIZ_DEBUG

@@ -17,6 +17,11 @@
 
 #include <rtthread.h>
 
+#define DBG_TAG                        "drv.ble"
+#define DBG_LVL                        DBG_INFO
+#include <rtdbg.h>
+
+
 
 #define APP_BLE_CONN_CFG_TAG            1                                           /**< A tag identifying the SoftDevice BLE configuration. */
 
@@ -112,12 +117,11 @@ static void nus_data_handler(ble_nus_evt_t * p_evt)
 {
     if (p_evt->type == BLE_NUS_EVT_RX_DATA)
     {
-        rt_kprintf("Received data from phone:\r\n");
+        LOG_I("Received data from phone:");
         for (uint32_t i = 0; i < p_evt->params.rx_data.length; i++)
         {
-           rt_kprintf("0x%x ",p_evt->params.rx_data.p_data[i]);
+           LOG_I("0x%x ",p_evt->params.rx_data.p_data[i]);
         }
-        rt_kprintf("\n");
     }
 }
 /**@snippet [Handling the data received over BLE] */
@@ -192,17 +196,17 @@ static void conn_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-/**@brief Function for putting the chip into sleep mode.
- *
- * @note This function will not return.
- */
-static void sleep_mode_enter(void)
-{
-    uint32_t err_code;
-    // Go to system-off mode (this function will not return; wakeup will cause a reset).
-    err_code = sd_power_system_off();
-    APP_ERROR_CHECK(err_code);
-}
+///**@brief Function for putting the chip into sleep mode.
+// *
+// * @note This function will not return.
+// */
+//static void sleep_mode_enter(void)
+//{
+//    uint32_t err_code;
+//    // Go to system-off mode (this function will not return; wakeup will cause a reset).
+//    err_code = sd_power_system_off();
+//    APP_ERROR_CHECK(err_code);
+//}
 
 
 /**@brief Function for handling advertising events.
@@ -218,15 +222,12 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     switch (ble_adv_evt)
     {
         case BLE_ADV_EVT_FAST:
-             rt_kprintf("BLE_ADV_EVT_FAST\r\n");
             break;
 
         case BLE_ADV_EVT_SLOW:
-             rt_kprintf("BLE_ADV_EVT_SLOW\r\n");
             break;
 
         case BLE_ADV_EVT_IDLE:
-             rt_kprintf("BLE_ADV_EVT_IDLE\r\n");
              err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_SLOW);
              APP_ERROR_CHECK(err_code);
             break;
@@ -248,18 +249,18 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
-            rt_kprintf("Connected\r\n");
+            LOG_I("Connected");
             m_conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
-            rt_kprintf("BLE Disconnected = %d\r\n",p_ble_evt->evt.gap_evt.params.disconnected.reason);        
+            LOG_I("BLE Disconnected = %d",p_ble_evt->evt.gap_evt.params.disconnected.reason);        
             m_conn_handle = BLE_CONN_HANDLE_INVALID;
             break;
 
         case BLE_GAP_EVT_PHY_UPDATE_REQUEST:
         {
-            rt_kprintf("PHY update request.");
+            LOG_I("PHY update request.");
             ble_gap_phys_t const phys =
             {
                 .rx_phys = BLE_GAP_PHY_AUTO,
@@ -283,7 +284,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 
         case BLE_GATTC_EVT_TIMEOUT:
             // Disconnect on GATT Client timeout event.
-            rt_kprintf("GATT Client Timeout.");
+            LOG_I("GATT Client Timeout.");
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gattc_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
@@ -291,7 +292,7 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
 
         case BLE_GATTS_EVT_TIMEOUT:
             // Disconnect on GATT Server timeout event.
-            rt_kprintf("GATT Server Timeout.");
+            LOG_I("GATT Server Timeout.");
             err_code = sd_ble_gap_disconnect(p_ble_evt->evt.gatts_evt.conn_handle,
                                              BLE_HCI_REMOTE_USER_TERMINATED_CONNECTION);
             APP_ERROR_CHECK(err_code);
@@ -336,9 +337,9 @@ void gatt_evt_handler(nrf_ble_gatt_t * p_gatt, nrf_ble_gatt_evt_t const * p_evt)
     if ((m_conn_handle == p_evt->conn_handle) && (p_evt->evt_id == NRF_BLE_GATT_EVT_ATT_MTU_UPDATED))
     {
         m_ble_nus_max_data_len = p_evt->params.att_mtu_effective - OPCODE_LENGTH - HANDLE_LENGTH;
-        rt_kprintf("Data len is set to 0x%X(%d)", m_ble_nus_max_data_len, m_ble_nus_max_data_len);
+        LOG_I("Data len is set to 0x%X(%d)", m_ble_nus_max_data_len, m_ble_nus_max_data_len);
     }
-    rt_kprintf("ATT MTU exchange completed. central 0x%x peripheral 0x%x",
+    LOG_I("ATT MTU exchange completed. central 0x%x peripheral 0x%x",
                   p_gatt->att_mtu_desired_central,
                   p_gatt->att_mtu_desired_periph);
 }
@@ -393,12 +394,12 @@ static void advertising_init(void)
  */
 static void advertising_start(void * p_context)
 {
-    rt_kprintf("advertising_start.....\r\n");
+    LOG_I("advertising_start.....");
     uint32_t err_code = ble_advertising_start(&m_advertising, BLE_ADV_MODE_FAST);
     APP_ERROR_CHECK(err_code);
 }
 
-void app_ble_init(void)
+int app_ble_init(void)
 {
     // Initialize.
     ble_stack_init();
@@ -408,12 +409,14 @@ void app_ble_init(void)
     advertising_init();
     conn_params_init();
 
-    rt_kprintf("RT-Thread for nrf52840 started.\r\n");
+    LOG_I("RT-Thread for nrf52840 started.");
     // Create a RT-Thread task for the BLE stack.
     // The task will run advertising_start() before entering its loop.
     nrf_sdh_rtthread_init(advertising_start, NULL);
-}
 
+		return 0;
+}
+INIT_APP_EXPORT(app_ble_init);
 /**
  * @}
  */

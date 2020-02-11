@@ -295,7 +295,7 @@ void nrfx_gpiote_irq_handler(void)
 
                 if (pin != -1 && nrf_bitmask_bit_is_set(pin, pins_to_check))   //pin  是否置位了      刚开始      pins_to_check是 0 xffffffff 所以一定都置位了       这里的作用是边沿触发时需要
                 {
-                    nrf_gpiote_polarity_t polarity = (nrf_gpiote_polarity_t)((polarity_and_sense >> RT_GPIO_POLARITY_Pos) & 0x03);  //得到极性
+                    nrf_gpiote_polarity_t polarity = (nrf_gpiote_polarity_t)((polarity_and_sense) & 0x03);  //得到极性 >> RT_GPIO_POLARITY_Pos
                     rt_evt_handler_t handler =  pin_irq_hdr_tab[i].hdr;   //得到回调
                     if (handler || (polarity == NRF_GPIOTE_POLARITY_TOGGLE))  //如果有回调或者极性是边沿触发
                     {

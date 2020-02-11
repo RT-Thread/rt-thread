@@ -64,10 +64,6 @@ void rtthread_startup(void)
     /* init scheduler system */
     rt_system_scheduler_init();
 
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_init();
-#endif
-
     /* init application */
     rt_application_init();
 
@@ -86,9 +82,6 @@ void rtthread_startup(void)
 
 int main(void)
 {
-    /* disable interrupt first */
-    // rt_hw_interrupt_disable();
-
     /* startup RT-Thread RTOS */
     rtthread_startup();
 

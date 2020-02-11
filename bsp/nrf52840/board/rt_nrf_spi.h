@@ -15,6 +15,6 @@
 #include "rtdevice.h"
 #include <rthw.h>
 
-int rt_hw_spi_init(void);
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name);
 
 #endif /*__DRV_SPI_H_ */
