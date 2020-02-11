@@ -98,7 +98,7 @@ PendSV_Handler:
     MSR     PRIMASK, r2                             /* if r1 == 0x00, do msr PRIMASK, r2 */
     BX      lr                                      /* if r1 == 0x00, do bx lr */
 
-schedule
+schedule:
     PUSH    {r2}                                    /* store interrupt state */
 
     /* clear rt_thread_switch_interrupt_flag to 0 */
