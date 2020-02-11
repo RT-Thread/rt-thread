@@ -1,1 +1,0 @@
-Place S312 SoftDevice header files in this folder.

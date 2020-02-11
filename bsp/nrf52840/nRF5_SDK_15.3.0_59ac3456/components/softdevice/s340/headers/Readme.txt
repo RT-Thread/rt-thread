@@ -1,1 +1,0 @@
-Place S340 SoftDevice header files in this folder.

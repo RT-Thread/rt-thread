@@ -1,1 +1,0 @@
-Place S332 SoftDevice header files in this folder.

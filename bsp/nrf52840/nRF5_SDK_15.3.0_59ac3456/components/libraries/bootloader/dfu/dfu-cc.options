@@ -1,5 +1,0 @@
-dfu.Hash.hash                       max_size:32
-dfu.SignedCommand.signature         max_size:64
-dfu.InitCommand.sd_req              max_count:16
-dfu.InitCommand.boot_validation     max_count:3
-dfu.BootValidation.bytes            max_size:64

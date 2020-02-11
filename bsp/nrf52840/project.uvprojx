@@ -338,7 +338,7 @@
               <MiscControls>--reduce_paths</MiscControls>
               <Define>NRF52840_XXAA, SWI_DISABLE0, SOFTDEVICE_PRESENT, CONFIG_NFCT_PINS_AS_GPIOS, FLOAT_ABI_HARD, S140, BLE_STACK_SUPPORT_REQD, NRF_SD_BLE_API_VERSION=6, RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\include;applications;.;board;nRF5_SDK_15.3.0_59ac3456;nRF5_SDK_15.3.0_59ac3456\modules\nrfx;nRF5_SDK_15.3.0_59ac3456\modules\nrfx\hal;nRF5_SDK_15.3.0_59ac3456\modules\nrfx\mdk;nRF5_SDK_15.3.0_59ac3456\modules\nrfx\drivers\include;nRF5_SDK_15.3.0_59ac3456\integration\nrfx;nRF5_SDK_15.3.0_59ac3456\integration\nrfx\legacy;nRF5_SDK_15.3.0_59ac3456\integration\nrfx;nRF5_SDK_15.3.0_59ac3456\components;nRF5_SDK_15.3.0_59ac3456\components\toolchain\arm;nRF5_SDK_15.3.0_59ac3456\components\toolchain\cmsis\include;nRF5_SDK_15.3.0_59ac3456\components\device;nRF5_SDK_15.3.0_59ac3456\components\ble;nRF5_SDK_15.3.0_59ac3456\components\ble\common;nRF5_SDK_15.3.0_59ac3456\components\ble\nrf_ble_gatt;nRF5_SDK_15.3.0_59ac3456\components\ble\ble_advertising;nRF5_SDK_15.3.0_59ac3456\components\ble\ble_services\ble_nus;nRF5_SDK_15.3.0_59ac3456\components\ble\ble_link_ctx_manager;nRF5_SDK_15.3.0_59ac3456\components\libraries\util;nRF5_SDK_15.3.0_59ac3456\components\libraries\timer;nRF5_SDK_15.3.0_59ac3456\components\libraries\experimental_section_vars;nRF5_SDK_15.3.0_59ac3456\components\libraries\atomic;nRF5_SDK_15.3.0_59ac3456\components\libraries\atomic_flags;nRF5_SDK_15.3.0_59ac3456\components\libraries\log;nRF5_SDK_15.3.0_59ac3456\components\libraries\log\src;nRF5_SDK_15.3.0_59ac3456\components\libraries\strerror;nRF5_SDK_15.3.0_59ac3456\components\softdevice\common;nRF5_SDK_15.3.0_59ac3456\components\softdevice\s140\headers;nRF5_SDK_15.3.0_59ac3456\components\softdevice\s140\headers\nrf52;startups;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;board;packages\netutils-v1.1.0\ntp;packages\netutils-v1.1.0\telnet;packages\nrf5_sdk-latest;packages\nrf5_sdk-latest\modules\nrfx;packages\nrf5_sdk-latest\modules\nrfx\hal;packages\nrf5_sdk-latest\modules\nrfx\mdk;packages\nrf5_sdk-latest\modules\nrfx\drivers\include;packages\nrf5_sdk-latest\integration\nrfx;packages\nrf5_sdk-latest\integration\nrfx\legacy;packages\nrf5_sdk-latest\integration\nrfx;packages\nrf5_sdk-latest\components;packages\nrf5_sdk-latest\components\toolchain\arm;packages\nrf5_sdk-latest\components\toolchain\cmsis\include;packages\nrf5_sdk-latest\components\device;packages\nrf5_sdk-latest\components\ble;packages\nrf5_sdk-latest\components\ble\common;packages\nrf5_sdk-latest\components\ble\nrf_ble_gatt;packages\nrf5_sdk-latest\components\ble\ble_advertising;packages\nrf5_sdk-latest\components\ble\ble_services\ble_nus;packages\nrf5_sdk-latest\components\ble\ble_link_ctx_manager;packages\nrf5_sdk-latest\components\libraries\util;packages\nrf5_sdk-latest\components\libraries\timer;packages\nrf5_sdk-latest\components\libraries\experimental_section_vars;packages\nrf5_sdk-latest\components\libraries\atomic;packages\nrf5_sdk-latest\components\libraries\atomic_flags;packages\nrf5_sdk-latest\components\libraries\log;packages\nrf5_sdk-latest\components\libraries\log\src;packages\nrf5_sdk-latest\components\libraries\strerror;packages\nrf5_sdk-latest\components\softdevice\common;packages\nrf5_sdk-latest\components\softdevice\s140\headers;packages\nrf5_sdk-latest\components\softdevice\s140\headers\nrf52;packages\wiznet-latest\inc;packages\wiznet-latest\ioLibrary;packages\wiznet-latest\ioLibrary\Ethernet;packages\wiznet-latest\ioLibrary\Internet;startups;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common;..\..\components\net\netdev\include;..\..\components\net\sal_socket\include;..\..\components\net\sal_socket\include\socket;..\..\components\net\sal_socket\include\dfs_net;..\..\components\net\sal_socket\include\dfs_net\sys_select;..\..\components\net\sal_socket\include\socket\sys_socket</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -372,7 +372,7 @@
             <ScatterFile></ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--diag_suppress 6330</Misc>
+            <Misc></Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
@@ -483,9 +483,34 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>rt_nrf_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\uart.c</FilePath>
+              <FilePath>board\rt_nrf_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_nrf_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\rt_nrf_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_nrf_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\rt_nrf_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NetUtils</GroupName>
+          <Files>
+            <File>
+              <FileName>ntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\netutils-v1.1.0\ntp\ntp.c</FilePath>
+            </File>
+            <File>
+              <FileName>telnet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\netutils-v1.1.0\telnet\telnet.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -493,29 +518,24 @@
           <GroupName>nRF_Drivers</GroupName>
           <Files>
             <File>
-              <FileName>nrfx_saadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\modules\nrfx\drivers\src\nrfx_saadc.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_gpiote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\modules\nrfx\drivers\src\nrfx_gpiote.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\modules\nrfx\drivers\src\nrfx_pwm.c</FilePath>
-            </File>
-            <File>
               <FileName>nrfx_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\modules\nrfx\drivers\src\nrfx_clock.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\modules\nrfx\drivers\src\nrfx_clock.c</FilePath>
             </File>
             <File>
               <FileName>nrf_drv_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\integration\nrfx\legacy\nrf_drv_clock.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\integration\nrfx\legacy\nrf_drv_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>nrfx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrf5_sdk-latest\modules\nrfx\drivers\src\nrfx_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>nrf_drv_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nrf5_sdk-latest\integration\nrfx\legacy\nrf_drv_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -525,42 +545,42 @@
             <File>
               <FileName>ble_advdata.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\common\ble_advdata.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\common\ble_advdata.c</FilePath>
             </File>
             <File>
               <FileName>ble_conn_params.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\common\ble_conn_params.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\common\ble_conn_params.c</FilePath>
             </File>
             <File>
               <FileName>ble_conn_state.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\common\ble_conn_state.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\common\ble_conn_state.c</FilePath>
             </File>
             <File>
               <FileName>ble_srv_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\common\ble_srv_common.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\common\ble_srv_common.c</FilePath>
             </File>
             <File>
               <FileName>nrf_ble_gatt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\nrf_ble_gatt\nrf_ble_gatt.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\nrf_ble_gatt\nrf_ble_gatt.c</FilePath>
             </File>
             <File>
               <FileName>ble_nus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\ble_services\ble_nus\ble_nus.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\ble_services\ble_nus\ble_nus.c</FilePath>
             </File>
             <File>
               <FileName>ble_advertising.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\ble_advertising\ble_advertising.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\ble_advertising\ble_advertising.c</FilePath>
             </File>
             <File>
               <FileName>ble_link_ctx_manager.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\ble\ble_link_ctx_manager\ble_link_ctx_manager.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\ble\ble_link_ctx_manager\ble_link_ctx_manager.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -570,57 +590,57 @@
             <File>
               <FileName>nrf_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\queue\nrf_queue.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\queue\nrf_queue.c</FilePath>
             </File>
             <File>
               <FileName>nrf_section_iter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\experimental_section_vars\nrf_section_iter.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\experimental_section_vars\nrf_section_iter.c</FilePath>
             </File>
             <File>
               <FileName>nrf_atomic.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\atomic\nrf_atomic.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\atomic\nrf_atomic.c</FilePath>
             </File>
             <File>
               <FileName>nrf_atflags.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\atomic_flags\nrf_atflags.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\atomic_flags\nrf_atflags.c</FilePath>
             </File>
             <File>
               <FileName>app_timer_rtthread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\timer\app_timer_rtthread.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\timer\app_timer_rtthread.c</FilePath>
             </File>
             <File>
               <FileName>app_error.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\util\app_error.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\util\app_error.c</FilePath>
             </File>
             <File>
               <FileName>app_error_handler_keil.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\util\app_error_handler_keil.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\util\app_error_handler_keil.c</FilePath>
             </File>
             <File>
               <FileName>app_error_weak.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\util\app_error_weak.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\util\app_error_weak.c</FilePath>
             </File>
             <File>
               <FileName>app_util_platform.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\util\app_util_platform.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\util\app_util_platform.c</FilePath>
             </File>
             <File>
               <FileName>nrf_assert.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\util\nrf_assert.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\util\nrf_assert.c</FilePath>
             </File>
             <File>
               <FileName>sdk_mapped_flags.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\libraries\util\sdk_mapped_flags.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\libraries\util\sdk_mapped_flags.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -630,22 +650,77 @@
             <File>
               <FileName>nrf_sdh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\softdevice\common\nrf_sdh.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\softdevice\common\nrf_sdh.c</FilePath>
             </File>
             <File>
               <FileName>nrf_sdh_ble.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\softdevice\common\nrf_sdh_ble.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\softdevice\common\nrf_sdh_ble.c</FilePath>
             </File>
             <File>
               <FileName>nrf_sdh_rtthread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\softdevice\common\nrf_sdh_rtthread.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\softdevice\common\nrf_sdh_rtthread.c</FilePath>
             </File>
             <File>
               <FileName>nrf_sdh_soc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_15.3.0_59ac3456\components\softdevice\common\nrf_sdh_soc.c</FilePath>
+              <FilePath>packages\nrf5_sdk-latest\components\softdevice\common\nrf_sdh_soc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>WIZnet</GroupName>
+          <Files>
+            <File>
+              <FileName>wiz_af_inet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\src\wiz_af_inet.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiz_device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\src\wiz_device.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiz_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\src\wiz_socket.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiz.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\src\wiz.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiz_ping.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\src\wiz_ping.c</FilePath>
+            </File>
+            <File>
+              <FileName>wizchip_conf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\ioLibrary\Ethernet\wizchip_conf.c</FilePath>
+            </File>
+            <File>
+              <FileName>wizchip_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\ioLibrary\Ethernet\wizchip_socket.c</FilePath>
+            </File>
+            <File>
+              <FileName>wizchip_dns.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\ioLibrary\Internet\DNS\wizchip_dns.c</FilePath>
+            </File>
+            <File>
+              <FileName>wizchip_dhcp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\ioLibrary\Internet\DHCP\wizchip_dhcp.c</FilePath>
+            </File>
+            <File>
+              <FileName>w5500.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wiznet-latest\ioLibrary\Ethernet\W5500\w5500.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -695,7 +770,116 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Filesystem</GroupName>
+          <Files>
+            <File>
+              <FileName>dfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_posix.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
+            </File>
+            <File>
+              <FileName>poll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\poll.c</FilePath>
+            </File>
+            <File>
+              <FileName>select.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\src\select.c</FilePath>
+            </File>
+            <File>
+              <FileName>devfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <GroupOption>
+            <CommonProperty>
+              <UseCPPCompiler>0</UseCPPCompiler>
+              <RVCTCodeConst>0</RVCTCodeConst>
+              <RVCTZI>0</RVCTZI>
+              <RVCTOtherData>0</RVCTOtherData>
+              <ModuleSelection>0</ModuleSelection>
+              <IncludeInBuild>1</IncludeInBuild>
+              <AlwaysBuild>0</AlwaysBuild>
+              <GenerateAssemblyFile>0</GenerateAssemblyFile>
+              <AssembleAssemblyFile>0</AssembleAssemblyFile>
+              <PublicsOnly>0</PublicsOnly>
+              <StopOnExitCode>3</StopOnExitCode>
+              <CustomArgument></CustomArgument>
+              <IncludeLibraryModules></IncludeLibraryModules>
+              <ComprImg>0</ComprImg>
+            </CommonProperty>
+            <GroupArmAds>
+              <Cads>
+                <interw>2</interw>
+                <Optim>0</Optim>
+                <oTime>2</oTime>
+                <SplitLS>2</SplitLS>
+                <OneElfS>2</OneElfS>
+                <Strict>2</Strict>
+                <EnumInt>2</EnumInt>
+                <PlainCh>2</PlainCh>
+                <Ropi>2</Ropi>
+                <Rwpi>2</Rwpi>
+                <wLevel>0</wLevel>
+                <uThumb>2</uThumb>
+                <uSurpInc>2</uSurpInc>
+                <uC99>2</uC99>
+                <uGnu>2</uGnu>
+                <useXO>2</useXO>
+                <v6Lang>0</v6Lang>
+                <v6LangP>0</v6LangP>
+                <vShortEn>2</vShortEn>
+                <vShortWch>2</vShortWch>
+                <v6Lto>2</v6Lto>
+                <v6WtE>2</v6WtE>
+                <v6Rtti>2</v6Rtti>
+                <VariousControls>
+                  <MiscControls></MiscControls>
+                  <Define> </Define>
+                  <Undefine> </Undefine>
+                  <IncludePath></IncludePath>
+                </VariousControls>
+              </Cads>
+              <Aads>
+                <interw>2</interw>
+                <Ropi>2</Ropi>
+                <Rwpi>2</Rwpi>
+                <thumb>2</thumb>
+                <SplitLS>2</SplitLS>
+                <SwStkChk>2</SwStkChk>
+                <NoWarn>2</NoWarn>
+                <uSurpInc>2</uSurpInc>
+                <useXO>2</useXO>
+                <uClangAs>2</uClangAs>
+                <VariousControls>
+                  <MiscControls></MiscControls>
+                  <Define></Define>
+                  <Undefine></Undefine>
+                  <IncludePath></IncludePath>
+                </VariousControls>
+              </Aads>
+            </GroupArmAds>
+          </GroupOption>
           <Files>
             <File>
               <FileName>pin.c</FileName>
@@ -706,6 +890,16 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
             </File>
             <File>
               <FileName>completion.c</FileName>
@@ -762,6 +956,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -778,6 +977,11 @@
               <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
             </File>
             <File>
+              <FileName>stdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stdio.c</FilePath>
+            </File>
+            <File>
               <FileName>stubs.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
@@ -786,6 +990,46 @@
               <FileName>time.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>netdev</GroupName>
+          <Files>
+            <File>
+              <FileName>netdev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\netdev\src\netdev.c</FilePath>
+            </File>
+            <File>
+              <FileName>netdev_ipaddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SAL</GroupName>
+          <Files>
+            <File>
+              <FileName>sal_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\src\sal_socket.c</FilePath>
+            </File>
+            <File>
+              <FileName>net_netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_netdb.c</FilePath>
+            </File>
+            <File>
+              <FileName>net_sockets.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\socket\net_sockets.c</FilePath>
+            </File>
+            <File>
+              <FileName>dfs_net.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\net\sal_socket\dfs_net\dfs_net.c</FilePath>
             </File>
           </Files>
         </Group>

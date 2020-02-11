@@ -1,5 +1,4 @@
 #include "board.h"
-#include "uart.h"
 #include "app_util_platform.h"
 #include "nordic_common.h"
 #include "nrf_systick.h"
@@ -212,8 +211,6 @@ void rt_hw_board_init(void)
     SysTick_Configuration();
 
     rt_thread_idle_sethook(rt_hw_system_powersave);
-
-    rt_hw_uart_init();
 
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
