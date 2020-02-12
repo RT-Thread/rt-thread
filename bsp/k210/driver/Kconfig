@@ -14,10 +14,75 @@ config BSP_USING_UART3
     bool "Enable UART3 (GPIO0/1)"
     default n
 
-config BSP_USING_I2C1
-    bool "Enable I2C1 (GPIO0/1)"
+menuconfig BSP_USING_I2C
+    bool "Enable I2C"
     select RT_USING_I2C
     default n
+if BSP_USING_I2C
+    menuconfig BSP_USING_I2C0
+        bool "Enable I2C0"
+        select RT_USING_I2C0
+        default n
+    if BSP_USING_I2C0
+        config BSP_I2C0_CLK_PIN
+            int "i2c0 clk pin number"
+            default 0
+        config BSP_I2C0_SDA_PIN
+            int "i2c0 sda pin number"
+            default 1
+        config I2C0_SLAVE_ADDR
+            hex "i2c0 slave address"
+            default 0x00
+        config I2C0_ADDR_WIDTH
+            int "i2c0 device register width(7 or 10)"
+            default 7
+        config I2C0_CLK_FREQ
+            int "i2c0 clock rate(HZ)"
+            default 200000
+    endif
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1"
+        select RT_USING_I2C1
+        default n
+    if BSP_USING_I2C1
+        config BSP_I2C1_CLK_PIN
+            int "i2c1 clk pin number"
+            default 2
+        config BSP_I2C1_SDA_PIN
+            int "i2c1 sda pin number"
+            default 3
+        config I2C1_SLAVE_ADDR
+            hex "i2c1 slave address"
+            default 0x00
+        config I2C1_ADDR_WIDTH
+            int "i2c1 device register width(7 or 10)"
+            default 7
+        config I2C1_CLK_FREQ
+            int "i2c1 clock rate(HZ)"
+            default 200000
+    endif
+    menuconfig BSP_USING_I2C2
+        bool "Enable I2C2"
+        select RT_USING_I2C2
+        default n
+    if BSP_USING_I2C2
+        config BSP_I2C2_CLK_PIN
+            int "i2c2 clk pin number"
+            default 4
+        config BSP_I2C2_SDA_PIN
+            int "i2c2 sda pin number"
+            default 5
+        config I2C2_SLAVE_ADDR
+            hex "i2c2 slave address"
+            default 0x00
+        config I2C2_ADDR_WIDTH
+            int "i2c2 device register width(7 or 10)"
+            default 7
+        config I2C2_CLK_FREQ
+            int "i2c2 clock rate(HZ)"
+            default 200000
+    endif
+endif
 
 menuconfig BSP_USING_SPI1
     bool "Enable SPI1"

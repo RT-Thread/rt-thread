@@ -15,7 +15,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/gnu-mcu-eclipse/riscv-none-gcc/8.2.0-2.1-20190425-1021/bin'
+    EXEC_PATH   = r'/opt/gnu-mcu-eclipse/riscv-none-gcc/8.2.0-2.2-20190521-0004/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
