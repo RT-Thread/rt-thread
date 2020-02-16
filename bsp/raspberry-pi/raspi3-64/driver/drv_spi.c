@@ -18,6 +18,60 @@
 
 #ifdef RT_USING_SPI
 
+struct rpi_pin_index
+{
+    rt_uint8_t phy_id;
+    rt_uint8_t bcm_id;
+    rt_uint8_t signal_name;
+    rt_uint8_t magic;
+};
+
+//raspi phy id and bcm id
+static struct rpi_pin_index phypin_index[] =
+{
+    {0, 0, 0, 0},
+    {1, 0, 0, 0},
+    {2, 0, 0, 0},
+    {3, BCM_GPIO_PIN_2, RPI_SDA1, PIN_MAGIC},
+    {4, 0, 0, 0},
+    {5, BCM_GPIO_PIN_3, RPI_SCL1, PIN_MAGIC},
+    {6, 0, 0, 0},
+    {7, BCM_GPIO_PIN_4, RPI_GPIO_GCLK,  PIN_MAGIC},
+    {8, BCM_GPIO_PIN_14, RPI_TXD0, PIN_MAGIC},
+    {9, 0, 0, 0},
+    {10, BCM_GPIO_PIN_15, RPI_RXD0, PIN_MAGIC},
+    {11, BCM_GPIO_PIN_17, RPI_GPIO_GEN0,  PIN_MAGIC},
+    {12, BCM_GPIO_PIN_18, RPI_GPIO_GEN1,  PIN_MAGIC},
+    {13, BCM_GPIO_PIN_27, RPI_GPIO_GEN2,  PIN_MAGIC},
+    {14, 0, 0, 0},
+    {15, BCM_GPIO_PIN_22, RPI_GPIO_GEN3,  PIN_MAGIC},
+    {16, BCM_GPIO_PIN_23, RPI_GPIO_GEN4, PIN_MAGIC},
+    {17, 0, 0, 0},
+    {18, BCM_GPIO_PIN_24, RPI_GPIO_GEN5, PIN_MAGIC},
+    {19, BCM_GPIO_PIN_10, RPI_SPI_MOSI, PIN_MAGIC},
+    {20, 0, 0, 0},
+    {21, BCM_GPIO_PIN_9, RPI_SPI_MISO, PIN_MAGIC},
+    {22, BCM_GPIO_PIN_25, RPI_GPIO_GEN6, PIN_MAGIC},
+    {23, BCM_GPIO_PIN_11, RPI_SPI_SCLK, PIN_MAGIC},
+    {24, BCM_GPIO_PIN_8, RPI_SPI_CE0_N, PIN_MAGIC},
+    {25, 0, 0, 0},
+    {26, BCM_GPIO_PIN_7, RPI_SPI_CE1_N, PIN_MAGIC},
+    {27, BCM_GPIO_PIN_0, RPI_SDA0, PIN_MAGIC},
+    {28, BCM_GPIO_PIN_1, RPI_SCL0, PIN_MAGIC},
+    {29, BCM_GPIO_PIN_5, RPI_CAM_CLK, PIN_MAGIC},
+    {30, 0, 0, 0},
+    {31, BCM_GPIO_PIN_6, RPI_LAN_RUN, PIN_MAGIC},
+    {32, BCM_GPIO_PIN_12, 0, PIN_MAGIC},
+    {33, BCM_GPIO_PIN_13, 0, PIN_MAGIC},
+    {34, 0, 0, 0},
+    {35, BCM_GPIO_PIN_19, 0, PIN_MAGIC},
+    {36, BCM_GPIO_PIN_16, RPI_STATUS_LED_N, PIN_MAGIC},
+    {37, BCM_GPIO_PIN_26, 0, PIN_MAGIC},
+    {38, BCM_GPIO_PIN_20, 0, PIN_MAGIC},
+    {39, 0, 0, 0},
+    {40, BCM_GPIO_PIN_21, RPI_CAM_GPIO,  PIN_MAGIC},
+};
+
 
 static rt_uint8_t bcm2835_spi_bit_order = BCM283X_SPI_BIT_ORDER_MSBFIRST;
 static rt_uint8_t bcm2835_byte_reverse_table[] =
@@ -317,10 +371,11 @@ const static struct rt_spi_ops raspi_spi_ops =
 #if defined (BSP_USING_SPI0)
 #define SPI0BUS_NAME  "spi0.0"
 
+struct rt_spi spi0;
 struct rt_spi_bus raspi_spi0_bus =
 {
     .ops = &raspi_spi_ops,
-    .parent.user_data = spi0
+    .parent.user_data = &spi0
 };
 
 struct rt_spi_hw_config raspi_spi0_hw =
@@ -348,11 +403,12 @@ struct rt_spi spi0 =
 
 #if defined (BSP_USING_SPI1)
 #define SPI1BUS_NAME  "spi0.1"
-
+ 
+struct rt_spi spi1;
 struct rt_spi_bus raspi_spi1_bus =
 {
     .ops = &raspi_spi_ops,
-    .parent.user_data = spi1
+    .parent.user_data = &spi1
 };
 
 struct rt_spi_hw_config raspi_spi1_hw =
