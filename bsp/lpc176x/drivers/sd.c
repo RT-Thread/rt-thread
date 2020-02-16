@@ -155,7 +155,7 @@ static bool LPC17xx_SD_Init(void)
     Send a Command to Flash card and get a Response
     cmd:  cmd index
     arg: argument for the cmd
-    return the received response of the commond
+    return the received response of the command
 *****************************************************************************/
 static uint8_t LPC17xx_SD_SendCmd(uint8_t cmd, uint32_t arg)
 {
