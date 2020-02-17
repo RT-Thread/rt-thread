@@ -232,6 +232,6 @@ int aaci_pl041_channel_enable(int channel);
 int aaci_pl041_channel_disable(int channel);
 rt_err_t aaci_pl041_irq_register(int channel, pl041_irq_fun_t fun, void *user_data);
 rt_err_t aaci_pl041_irq_unregister(int channel);
-void aaci_pl041_irq_disable(int channle, rt_uint32_t vector);
-void aaci_pl041_irq_enable(int channle, rt_uint32_t vector);
+void aaci_pl041_irq_disable(int channel, rt_uint32_t vector);
+void aaci_pl041_irq_enable(int channel, rt_uint32_t vector);
 #endif
