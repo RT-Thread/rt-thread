@@ -20,6 +20,8 @@ from utils import xml_indent
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
+from building import *
+
 MODULE_VER_NUM = 0
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
@@ -139,11 +141,7 @@ def IsRttEclipsePathFormat(path):
     
     
 def IsCppProject():
-    with open('.project', mode = 'r') as f:
-        for line in f.readlines():
-            if line.find('org.eclipse.cdt.core.ccnature') != -1:
-                return True
-    return False
+    return GetDepend('RT_USING_CPLUSPLUS')
 
         
 def HandleToolOption(tools, env, project, reset):
