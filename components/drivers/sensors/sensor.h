@@ -195,8 +195,8 @@ struct rt_sensor_data
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
         rt_int32_t           force;         /* Force sensor.        unit: mN          */
-        rt_int32_t           dust;          /* Dust sensor.         unit: ug/m3       */
-        rt_int32_t           eco2;          /* eCO2 sensor.         unit: ppm         */
+        rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
+        rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
     } data;
 };
 
