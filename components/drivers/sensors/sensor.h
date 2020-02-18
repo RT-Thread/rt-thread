@@ -45,6 +45,8 @@ extern "C" {
 #define RT_SENSOR_CLASS_NOISE          (11) /* Noise Loudness    */
 #define RT_SENSOR_CLASS_STEP           (12) /* Step sensor       */
 #define RT_SENSOR_CLASS_FORCE          (13) /* Force sensor      */
+#define RT_SENSOR_CLASS_DUST           (14) /* Dust sensor       */
+#define RT_SENSOR_CLASS_ECO2           (15) /* eCO2 sensor       */
 
 /* Sensor vendor types */
 
@@ -56,6 +58,9 @@ extern "C" {
 #define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
 #define RT_SENSOR_VENDOR_MIRAMEMS      (6)  /* MiraMEMS */
 #define RT_SENSOR_VENDOR_DALLAS        (7)  /* Dallas */
+#define RT_SENSOR_VENDOR_AOSONG        (8)  /* Aosong */
+#define RT_SENSOR_VENDOR_SHARP         (9)  /* Sharp */
+#define RT_SENSOR_VENDOR_SENSIRION     (10) /* Sensirion */
 
 /* Sensor unit types */
 
@@ -190,6 +195,8 @@ struct rt_sensor_data
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
         rt_int32_t           force;         /* Force sensor.        unit: mN          */
+        rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
+        rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
     } data;
 };
 
