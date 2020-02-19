@@ -75,7 +75,7 @@ if RT_USING_AT
             default n
 
         config AT_CMD_MAX_LEN
-            int "The maximum lenght of AT Commands buffer"
+            int "The maximum length of AT Commands buffer"
             default 128
 
     endif
@@ -84,7 +84,7 @@ if RT_USING_AT
         hex
         default 0x10300
         help
-            sfotware module version number
+            software module version number
 
 endif
 
