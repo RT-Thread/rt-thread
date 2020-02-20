@@ -64,7 +64,7 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
-    mmu_init();//初始化mmu
+    mmu_init();
     armv8_map(0, 0, 0x800000, MEM_ATTR_MEMORY);
     armv8_map(0x3f00B000, 0x3f00B000, 0x1000, MEM_ATTR_IO);//timer
     armv8_map(0x3f200000, 0x3f200000, 0x16000, MEM_ATTR_IO);//uart
