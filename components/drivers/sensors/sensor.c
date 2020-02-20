@@ -31,7 +31,9 @@ static char *const sensor_name_str[] =
     "tvoc_",     /* TVOC Level        */
     "noi_",      /* Noise Loudness    */
     "step_",     /* Step sensor       */
-    "forc_"      /* Force sensor      */
+    "forc_",     /* Force sensor      */
+    "dust_",     /* Dust sensor       */
+    "eco2_"      /* eCO2 sensor       */
 };
 
 /* Sensor interrupt correlation function */
