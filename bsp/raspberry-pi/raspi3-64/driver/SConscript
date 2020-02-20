@@ -7,7 +7,6 @@ src     = Split('''
 board.c
 bcm283x.c
 drv_uart.c
-mbox.c
 ''')
 CPPPATH = [cwd]
 
