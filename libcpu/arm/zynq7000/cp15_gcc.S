@@ -114,6 +114,7 @@ rt_cpu_mmu_disable:
 rt_cpu_mmu_enable:
     mrc     p15, #0, r0, c1, c0, #0
     orr     r0, r0, #0x001
+    bic     r0, r0, #2
     mcr     p15, #0, r0, c1, c0, #0    @ set mmu enable bit
     dsb
     bx      lr
