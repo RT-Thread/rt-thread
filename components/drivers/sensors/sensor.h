@@ -58,7 +58,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
 #define RT_SENSOR_VENDOR_MIRAMEMS      (6)  /* MiraMEMS */
 #define RT_SENSOR_VENDOR_DALLAS        (7)  /* Dallas */
-#define RT_SENSOR_VENDOR_AOSONG        (8)  /* Aosong */
+#define RT_SENSOR_VENDOR_ASAIR         (8)  /* Aosong */
 #define RT_SENSOR_VENDOR_SHARP         (9)  /* Sharp */
 #define RT_SENSOR_VENDOR_SENSIRION     (10) /* Sensirion */
 
