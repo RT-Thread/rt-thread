@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,6 @@
  * Date           Author             Notes
  * 2020-02-20     bigmagic           first version
  */
-
 #include <mmu.h>
 #include <stddef.h>
 
@@ -19,21 +18,20 @@ static unsigned long main_tbl[512 * 20] __attribute__((aligned (4096)));
 
 #define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
 
-//映射方式
 #define PMD_TYPE_SECT		(1 << 0)
 
 #define PMD_TYPE_TABLE		(3 << 0)
 
 #define PTE_TYPE_PAGE		(3 << 0)
 
-#define BITS_PER_VA                39
+#define BITS_PER_VA          39
 
 /* Granule size of 4KB is being used */
 #define GRANULE_SIZE_SHIFT         12
 #define GRANULE_SIZE               (1 << GRANULE_SIZE_SHIFT)
 #define XLAT_ADDR_MASK             ((1UL << BITS_PER_VA) - GRANULE_SIZE)
 
-#define PMD_TYPE_MASK		(3 << 0)
+#define PMD_TYPE_MASK		       (3 << 0)
 
 int free_idx = 1;
 
@@ -46,7 +44,8 @@ void mmu_memset(char *dst, char v,  size_t len)
 }
 
 static unsigned long __page_off = 0;
-static unsigned long get_free_page(void) {
+static unsigned long get_free_page(void) 
+{
     __page_off += 512;
     return (unsigned long)(main_tbl + __page_off);
 }
@@ -54,17 +53,17 @@ static unsigned long get_free_page(void) {
 void mmu_init(void)
 {
     unsigned long val64;
-    unsigned long val32; //val32不是uint32_t,val32只是表示相关的那个寄存器是32位的
+    unsigned long val32;
 
     val64 = 0x007f6eUL;
     __asm__ volatile("msr MAIR_EL1, %0\n dsb sy\n"::"r"(val64));
     __asm__ volatile("mrs %0, MAIR_EL1\n dsb sy\n":"=r"(val64));
 
     //TCR_EL1
-    val32 = (16UL << 0)//48 位
-        | (0x0UL << 6)//没有用到
-        | (0x0UL << 7)//使能enable lower half
-        | (0x3UL << 8)//写回模式，没有cahce访问
+    val32 = (16UL << 0)//48bit
+        | (0x0UL << 6)
+        | (0x0UL << 7)
+        | (0x3UL << 8)
         | (0x3UL << 10)//Inner Shareable
         | (0x2UL << 12)
         | (0x0UL << 14)//4K
@@ -91,14 +90,11 @@ void mmu_enable(void)
     unsigned long val64;
     unsigned long val32;
 
-    //关闭指令cache
     __asm__ volatile("mrs %0, SCTLR_EL1\n":"=r"(val64));
     val64 &= ~0x1000; //disable I
     __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\n isb sy\n"::"r"(val64));
 
-    //清除指令cache
     __asm__ volatile("IC IALLUIS\n dsb sy\n isb sy\n");
-    //清除tlb
     __asm__ volatile("tlbi vmalle1\n dsb sy\n isb sy\n");
 
     //SCTLR_EL1, turn on mmu
@@ -107,32 +103,39 @@ void mmu_enable(void)
     __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\nisb sy\n"::"r"(val32));
 }
 
-static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr) {
+static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr) 
+{
     int level;
     unsigned long* cur_lv_tbl = lv0_tbl;
     unsigned long page;
     unsigned long off;
     int level_shift = 39;
 
-    if (va & (0x200000UL - 1)) {
+    if (va & (0x200000UL - 1)) 
+    {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & (0x200000UL - 1)) {
+    if (pa & (0x200000UL - 1)) 
+    {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
-    for (level = 0; level < 2; level++) {
+    for (level = 0; level < 2; level++) 
+    {
         off = (va >> level_shift);
         off &= MMU_LEVEL_MASK;
-        if ((cur_lv_tbl[off] & 1) == 0) {
+        if ((cur_lv_tbl[off] & 1) == 0) 
+        {
             page = get_free_page();
-            if (!page) {
+            if (!page) 
+            {
                 return MMU_MAP_ERROR_NOPAGE;
             }
             mmu_memset((char *)page, 0, 4096);
             cur_lv_tbl[off] = page | 0x3UL;
         }
         page = cur_lv_tbl[off];
-        if (!(page & 0x2)) {
+        if (!(page & 0x2)) 
+        {
             //is block! error!
             return MMU_MAP_ERROR_CONFLICT;
         }
@@ -173,13 +176,10 @@ int armv8_map_2M(unsigned long va, unsigned long pa, int count, unsigned long at
     return 0;
 }
 
-//将表的地址映射到其他的地方去
 static void set_table(uint64_t *pt, uint64_t *table_addr)
 {
 	uint64_t val;
-    //0x607
-
-	val = (0x3UL | (uint64_t)table_addr);//(0x3UL | (uint64_t)table_addr);
+	val = (0x3UL | (uint64_t)table_addr);
 	*pt = val;
 }
 
@@ -208,27 +208,20 @@ static int pte_type(uint64_t *pte)
 static int level2shift(int level)
 {
 	/* Page is 12 bits wide, every level translates 9 bits */
-    //
 	return (12 + 9 * (3 - level));
 }
 
-
-uint64_t *test_table = 0;
-
-
-
-//根据表映射
 static uint64_t *get_level_table(uint64_t *pte)
 {
 	uint64_t *table = (uint64_t *)(*pte & XLAT_ADDR_MASK);
 	
-	if (pte_type(pte) != PMD_TYPE_TABLE) {
+	if (pte_type(pte) != PMD_TYPE_TABLE) 
+    {
 		table = create_table();
 		set_table(pte, table);
 	}
 	return table;
 }
-
 
 static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t attr)
 {
@@ -241,16 +234,19 @@ static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t att
 	int level = 0;
 
 	addr = virt;
-	while (size) {
-		table = &main_tbl[0];//将一级页表的地址赋值
-		for (level = 0; level < 4; level++) {
+	while (size) 
+    {
+		table = &main_tbl[0];
+		for (level = 0; level < 4; level++) 
+        {
 			block_shift = level2shift(level);
             idx = addr >> block_shift;
 			idx = idx%512;
             block_size = (uint64_t)(1L << block_shift);
 			pte = table + idx;
 
-			if (size >= block_size && IS_ALIGNED(addr, block_size)) {
+			if (size >= block_size && IS_ALIGNED(addr, block_size)) 
+            {
                 attr &= 0xfff0000000000ffcUL;
                 if(level != 3)
                 {
