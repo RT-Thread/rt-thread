@@ -590,7 +590,7 @@ RTM_EXPORT(rt_thread_delay_until);
 /**
  * This function will let current thread delay for some milliseconds.
  *
- * @param tick the delay time
+ * @param ms the delay ms time
  *
  * @return RT_EOK
  */
