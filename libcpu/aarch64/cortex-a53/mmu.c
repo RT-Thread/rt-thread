@@ -12,17 +12,17 @@
 
 #define TTBR_CNP    1
 
-typedef unsigned long int	uint64_t;
+typedef unsigned long int    uint64_t;
 
 static unsigned long main_tbl[512 * 20] __attribute__((aligned (4096)));
 
-#define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
+#define IS_ALIGNED(x, a)        (((x) & ((typeof(x))(a) - 1)) == 0)
 
-#define PMD_TYPE_SECT		(1 << 0)
+#define PMD_TYPE_SECT        (1 << 0)
 
-#define PMD_TYPE_TABLE		(3 << 0)
+#define PMD_TYPE_TABLE        (3 << 0)
 
-#define PTE_TYPE_PAGE		(3 << 0)
+#define PTE_TYPE_PAGE        (3 << 0)
 
 #define BITS_PER_VA          39
 
@@ -31,7 +31,7 @@ static unsigned long main_tbl[512 * 20] __attribute__((aligned (4096)));
 #define GRANULE_SIZE               (1 << GRANULE_SIZE_SHIFT)
 #define XLAT_ADDR_MASK             ((1UL << BITS_PER_VA) - GRANULE_SIZE)
 
-#define PMD_TYPE_MASK		       (3 << 0)
+#define PMD_TYPE_MASK               (3 << 0)
 
 int free_idx = 1;
 
@@ -178,9 +178,9 @@ int armv8_map_2M(unsigned long va, unsigned long pa, int count, unsigned long at
 
 static void set_table(uint64_t *pt, uint64_t *table_addr)
 {
-	uint64_t val;
-	val = (0x3UL | (uint64_t)table_addr);
-	*pt = val;
+    uint64_t val;
+    val = (0x3UL | (uint64_t)table_addr);
+    *pt = val;
 }
 
 void mmu_memset2(unsigned char *dst, char v,  int len)
@@ -193,59 +193,59 @@ void mmu_memset2(unsigned char *dst, char v,  int len)
 
 static uint64_t *create_table(void)
 {
-	uint64_t *new_table = (uint64_t *)((unsigned char *)&main_tbl[0] + free_idx * 4096); //+ free_idx * GRANULE_SIZE;
-	/* Mark all entries as invalid */
-	mmu_memset2((unsigned char *)new_table, 0, 4096);
-	free_idx++;
-	return new_table;
+    uint64_t *new_table = (uint64_t *)((unsigned char *)&main_tbl[0] + free_idx * 4096); //+ free_idx * GRANULE_SIZE;
+    /* Mark all entries as invalid */
+    mmu_memset2((unsigned char *)new_table, 0, 4096);
+    free_idx++;
+    return new_table;
 }
 
 static int pte_type(uint64_t *pte)
 {
-	return *pte & PMD_TYPE_MASK;
+    return *pte & PMD_TYPE_MASK;
 }
 
 static int level2shift(int level)
 {
-	/* Page is 12 bits wide, every level translates 9 bits */
-	return (12 + 9 * (3 - level));
+    /* Page is 12 bits wide, every level translates 9 bits */
+    return (12 + 9 * (3 - level));
 }
 
 static uint64_t *get_level_table(uint64_t *pte)
 {
-	uint64_t *table = (uint64_t *)(*pte & XLAT_ADDR_MASK);
-	
-	if (pte_type(pte) != PMD_TYPE_TABLE) 
+    uint64_t *table = (uint64_t *)(*pte & XLAT_ADDR_MASK);
+    
+    if (pte_type(pte) != PMD_TYPE_TABLE) 
     {
-		table = create_table();
-		set_table(pte, table);
-	}
-	return table;
+        table = create_table();
+        set_table(pte, table);
+    }
+    return table;
 }
 
 static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t attr)
 {
-	uint64_t block_size = 0;
-	uint64_t block_shift = 0;
-	uint64_t *pte;
-	uint64_t idx = 0;
-	uint64_t addr = 0;
-	uint64_t *table = 0;
-	int level = 0;
+    uint64_t block_size = 0;
+    uint64_t block_shift = 0;
+    uint64_t *pte;
+    uint64_t idx = 0;
+    uint64_t addr = 0;
+    uint64_t *table = 0;
+    int level = 0;
 
-	addr = virt;
-	while (size) 
+    addr = virt;
+    while (size) 
     {
-		table = &main_tbl[0];
-		for (level = 0; level < 4; level++) 
+        table = &main_tbl[0];
+        for (level = 0; level < 4; level++) 
         {
-			block_shift = level2shift(level);
+            block_shift = level2shift(level);
             idx = addr >> block_shift;
-			idx = idx%512;
+            idx = idx%512;
             block_size = (uint64_t)(1L << block_shift);
-			pte = table + idx;
+            pte = table + idx;
 
-			if (size >= block_size && IS_ALIGNED(addr, block_size)) 
+            if (size >= block_size && IS_ALIGNED(addr, block_size)) 
             {
                 attr &= 0xfff0000000000ffcUL;
                 if(level != 3)
@@ -256,14 +256,14 @@ static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t att
                 {
                     *pte = phys | (attr | 0x3UL);
                 }
-				addr += block_size;
-				phys += block_size;
-				size -= block_size;
-				break;
-			}
-			table = get_level_table(pte);
-		}
-	}
+                addr += block_size;
+                phys += block_size;
+                size -= block_size;
+                break;
+            }
+            table = get_level_table(pte);
+        }
+    }
 }
 
 void armv8_map(unsigned long va, unsigned long pa, unsigned long size, unsigned long attr)
