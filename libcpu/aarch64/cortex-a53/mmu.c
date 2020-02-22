@@ -4,183 +4,270 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2012-01-10     bernard      porting to AM1808
- * 2019-07-28     zdzn         add smp support
+ * Date           Author             Notes
+ * 2020-02-20     bigmagic           first version
  */
+#include <mmu.h>
+#include <stddef.h>
 
-#include "mmu.h"
+#define TTBR_CNP    1
 
-/* dump 2nd level page table */
-void rt_hw_cpu_dump_page_table_2nd(rt_uint32_t *ptb)
+typedef unsigned long int    uint64_t;
+
+static unsigned long main_tbl[512 * 20] __attribute__((aligned (4096)));
+
+#define IS_ALIGNED(x, a)        (((x) & ((typeof(x))(a) - 1)) == 0)
+
+#define PMD_TYPE_SECT        (1 << 0)
+
+#define PMD_TYPE_TABLE        (3 << 0)
+
+#define PTE_TYPE_PAGE        (3 << 0)
+
+#define BITS_PER_VA          39
+
+/* Granule size of 4KB is being used */
+#define GRANULE_SIZE_SHIFT         12
+#define GRANULE_SIZE               (1 << GRANULE_SIZE_SHIFT)
+#define XLAT_ADDR_MASK             ((1UL << BITS_PER_VA) - GRANULE_SIZE)
+
+#define PMD_TYPE_MASK               (3 << 0)
+
+int free_idx = 1;
+
+void mmu_memset(char *dst, char v,  size_t len)
 {
-    int i;
-    int fcnt = 0;
-
-    for (i = 0; i < 256; i++)
+    while (len--)
     {
-        rt_uint32_t pte2 = ptb[i];
-        if ((pte2 & 0x3) == 0)
+        *dst++ = v;
+    }
+}
+
+static unsigned long __page_off = 0;
+static unsigned long get_free_page(void) 
+{
+    __page_off += 512;
+    return (unsigned long)(main_tbl + __page_off);
+}
+
+void mmu_init(void)
+{
+    unsigned long val64;
+    unsigned long val32;
+
+    val64 = 0x007f6eUL;
+    __asm__ volatile("msr MAIR_EL1, %0\n dsb sy\n"::"r"(val64));
+    __asm__ volatile("mrs %0, MAIR_EL1\n dsb sy\n":"=r"(val64));
+
+    //TCR_EL1
+    val32 = (16UL << 0)//48bit
+        | (0x0UL << 6)
+        | (0x0UL << 7)
+        | (0x3UL << 8)
+        | (0x3UL << 10)//Inner Shareable
+        | (0x2UL << 12)
+        | (0x0UL << 14)//4K
+        | (0x0UL << 16)
+        | (0x0UL << 22)
+        | (0x1UL << 23)
+        | (0x2UL << 30)
+        | (0x1UL << 32)
+        | (0x0UL << 35)
+        | (0x0UL << 36)
+        | (0x0UL << 37)
+        | (0x0UL << 38);
+    __asm__ volatile("msr TCR_EL1, %0\n"::"r"(val32));
+    __asm__ volatile("mrs %0, TCR_EL1\n":"=r"(val32));
+
+    __asm__ volatile("msr TTBR0_EL1, %0\n dsb sy\n"::"r"(main_tbl));
+    __asm__ volatile("mrs %0, TTBR0_EL1\n dsb sy\n":"=r"(val64));
+
+    mmu_memset((char *)main_tbl, 0, 4096);
+}
+
+void mmu_enable(void)
+{
+    unsigned long val64;
+    unsigned long val32;
+
+    __asm__ volatile("mrs %0, SCTLR_EL1\n":"=r"(val64));
+    val64 &= ~0x1000; //disable I
+    __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\n isb sy\n"::"r"(val64));
+
+    __asm__ volatile("IC IALLUIS\n dsb sy\n isb sy\n");
+    __asm__ volatile("tlbi vmalle1\n dsb sy\n isb sy\n");
+
+    //SCTLR_EL1, turn on mmu
+    __asm__ volatile("mrs %0, SCTLR_EL1\n":"=r"(val32));
+    val32 |= 0x1005; //enable mmu, I C M
+    __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\nisb sy\n"::"r"(val32));
+}
+
+static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr) 
+{
+    int level;
+    unsigned long* cur_lv_tbl = lv0_tbl;
+    unsigned long page;
+    unsigned long off;
+    int level_shift = 39;
+
+    if (va & (0x200000UL - 1)) 
+    {
+        return MMU_MAP_ERROR_VANOTALIGN;
+    }
+    if (pa & (0x200000UL - 1)) 
+    {
+        return MMU_MAP_ERROR_PANOTALIGN;
+    }
+    for (level = 0; level < 2; level++) 
+    {
+        off = (va >> level_shift);
+        off &= MMU_LEVEL_MASK;
+        if ((cur_lv_tbl[off] & 1) == 0) 
         {
-            if (fcnt == 0)
-                rt_kprintf("    ");
-            rt_kprintf("%04x: ", i);
-            fcnt++;
-            if (fcnt == 16)
+            page = get_free_page();
+            if (!page) 
             {
-                rt_kprintf("fault\n");
-                fcnt = 0;
+                return MMU_MAP_ERROR_NOPAGE;
             }
-            continue;
+            mmu_memset((char *)page, 0, 4096);
+            cur_lv_tbl[off] = page | 0x3UL;
         }
-        if (fcnt != 0)
+        page = cur_lv_tbl[off];
+        if (!(page & 0x2)) 
         {
-            rt_kprintf("fault\n");
-            fcnt = 0;
+            //is block! error!
+            return MMU_MAP_ERROR_CONFLICT;
         }
-
-        rt_kprintf("    %04x: %x: ", i, pte2);
-        if ((pte2 & 0x3) == 0x1)
-        {
-            rt_kprintf("L,ap:%x,xn:%d,texcb:%02x\n",
-                       ((pte2 >> 7) | (pte2 >> 4))& 0xf,
-                       (pte2 >> 15) & 0x1,
-                       ((pte2 >> 10) | (pte2 >> 2)) & 0x1f);
-        }
-        else
-        {
-            rt_kprintf("S,ap:%x,xn:%d,texcb:%02x\n",
-                       ((pte2 >> 7) | (pte2 >> 4))& 0xf, pte2 & 0x1,
-                       ((pte2 >> 4) | (pte2 >> 2)) & 0x1f);
-        }
+        cur_lv_tbl = (unsigned long*)(page & 0x0000fffffffff000UL);
+        level_shift -= 9;
     }
-}
-
-void rt_hw_cpu_dump_page_table(rt_uint32_t *ptb)
-{
-    int i;
-    int fcnt = 0;
-
-    rt_kprintf("page table@%p\n", ptb);
-    for (i = 0; i < 1024*4; i++)
-    {
-        rt_uint32_t pte1 = ptb[i];
-        if ((pte1 & 0x3) == 0)
-        {
-            rt_kprintf("%03x: ", i);
-            fcnt++;
-            if (fcnt == 16)
-            {
-                rt_kprintf("fault\n");
-                fcnt = 0;
-            }
-            continue;
-        }
-        if (fcnt != 0)
-        {
-            rt_kprintf("fault\n");
-            fcnt = 0;
-        }
-
-        rt_kprintf("%03x: %08x: ", i, pte1);
-        if ((pte1 & 0x3) == 0x3)
-        {
-            rt_kprintf("LPAE\n");
-        }
-        else if ((pte1 & 0x3) == 0x1)
-        {
-            rt_kprintf("pte,ns:%d,domain:%d\n",
-                       (pte1 >> 3) & 0x1, (pte1 >> 5) & 0xf);
-            /*
-             *rt_hw_cpu_dump_page_table_2nd((void*)((pte1 & 0xfffffc000)
-             *                               - 0x80000000 + 0xC0000000));
-             */
-        }
-        else if (pte1 & (1 << 18))
-        {
-            rt_kprintf("super section,ns:%d,ap:%x,xn:%d,texcb:%02x\n",
-                       (pte1 >> 19) & 0x1,
-                       ((pte1 >> 13) | (pte1 >> 10))& 0xf,
-                       (pte1 >> 4) & 0x1,
-                       ((pte1 >> 10) | (pte1 >> 2)) & 0x1f);
-        }
-        else
-        {
-            rt_kprintf("section,ns:%d,ap:%x,"
-                       "xn:%d,texcb:%02x,domain:%d\n",
-                       (pte1 >> 19) & 0x1,
-                       ((pte1 >> 13) | (pte1 >> 10))& 0xf,
-                       (pte1 >> 4) & 0x1,
-                       (((pte1 & (0x7 << 12)) >> 10) |
-                        ((pte1 &        0x0c) >>  2)) & 0x1f,
-                       (pte1 >> 5) & 0xf);
-        }
-    }
-}
-
-/* level1 page table, each entry for 1MB memory. */
-volatile static unsigned long MMUTable[4*1024] __attribute__((aligned(16*1024)));
-void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart,
-                      rt_uint32_t vaddrEnd,
-                      rt_uint32_t paddrStart,
-                      rt_uint32_t attr)
-{
-    volatile rt_uint32_t *pTT;
-    volatile int i, nSec;
-    pTT  = (rt_uint32_t *)MMUTable + (vaddrStart >> 20);
-    nSec = (vaddrEnd >> 20) - (vaddrStart >> 20);
-    for(i = 0; i <= nSec; i++)
-    {
-        *pTT = attr | (((paddrStart >> 20) + i) << 20);
-        pTT++;
-    }
-}
-
-unsigned long rt_hw_set_domain_register(unsigned long domain_val)
-{
-#if 0
-    unsigned long old_domain;
-
-    asm volatile ("mrc p15, 0, %0, c3, c0\n" : "=r" (old_domain));
-    asm volatile ("mcr p15, 0, %0, c3, c0\n" : :"r" (domain_val) : "memory");
-
-    return old_domain;
-#else
+    attr &= 0xfff0000000000ffcUL;
+    pa |= (attr | 0x1UL); //block
+    off = (va >> 21);
+    off &= MMU_LEVEL_MASK;
+    cur_lv_tbl[off] = pa;
     return 0;
-#endif
 }
 
-void rt_hw_init_mmu_table()
+int armv8_map_2M(unsigned long va, unsigned long pa, int count, unsigned long attr)
 {
-    /* set page table */
-    /* 4G 1:1 memory */
-    rt_hw_mmu_setmtt(0x00000000, 0x3effffff, 0x00000000, NORMAL_MEM);
-    /* IO memory region */
-    rt_hw_mmu_setmtt(0x3f000000, 0x40010000, 0x3f000000, DEVICE_MEM);
+    int i;
+    int ret;
+
+    if (va & (0x200000 - 1))
+    {
+        return -1;
+    }
+    if (pa & (0x200000 - 1))
+    {
+        return -1;
+    }
+    for (i = 0; i < count; i++)
+    {
+        ret = map_single_page_2M((unsigned long *)main_tbl, va, pa, attr);
+        va += 0x200000;
+        pa += 0x200000;
+        if (ret != 0)
+        {
+            return ret;
+        }
+    }
+    return 0;
 }
 
-void rt_hw_change_mmu_table(rt_uint32_t vaddrStart,
-                      rt_uint32_t size,
-                      rt_uint32_t paddrStart, rt_uint32_t attr)
+static void set_table(uint64_t *pt, uint64_t *table_addr)
 {
-    rt_hw_mmu_setmtt(vaddrStart, vaddrStart+size-1, paddrStart, attr);
+    uint64_t val;
+    val = (0x3UL | (uint64_t)table_addr);
+    *pt = val;
 }
 
-void rt_hw_mmu_init(void)
+void mmu_memset2(unsigned char *dst, char v,  int len)
 {
-    rt_cpu_dcache_clean_flush();
-    rt_cpu_icache_flush();
-    rt_hw_cpu_dcache_disable();
-    rt_hw_cpu_icache_disable();
-    rt_cpu_mmu_disable();
-
-    /*rt_hw_cpu_dump_page_table(MMUTable);*/
-    rt_hw_set_domain_register(0x55555555);
-
-    rt_cpu_tlb_set(MMUTable);
-
-    rt_cpu_mmu_enable();
-
-    rt_hw_cpu_icache_enable();
-    rt_hw_cpu_dcache_enable();
+    while (len--)
+    {
+        *dst++ = v;
+    }
 }
+
+static uint64_t *create_table(void)
+{
+    uint64_t *new_table = (uint64_t *)((unsigned char *)&main_tbl[0] + free_idx * 4096); //+ free_idx * GRANULE_SIZE;
+    /* Mark all entries as invalid */
+    mmu_memset2((unsigned char *)new_table, 0, 4096);
+    free_idx++;
+    return new_table;
+}
+
+static int pte_type(uint64_t *pte)
+{
+    return *pte & PMD_TYPE_MASK;
+}
+
+static int level2shift(int level)
+{
+    /* Page is 12 bits wide, every level translates 9 bits */
+    return (12 + 9 * (3 - level));
+}
+
+static uint64_t *get_level_table(uint64_t *pte)
+{
+    uint64_t *table = (uint64_t *)(*pte & XLAT_ADDR_MASK);
+    
+    if (pte_type(pte) != PMD_TYPE_TABLE) 
+    {
+        table = create_table();
+        set_table(pte, table);
+    }
+    return table;
+}
+
+static void map_region(uint64_t virt, uint64_t phys, uint64_t size, uint64_t attr)
+{
+    uint64_t block_size = 0;
+    uint64_t block_shift = 0;
+    uint64_t *pte;
+    uint64_t idx = 0;
+    uint64_t addr = 0;
+    uint64_t *table = 0;
+    int level = 0;
+
+    addr = virt;
+    while (size) 
+    {
+        table = &main_tbl[0];
+        for (level = 0; level < 4; level++) 
+        {
+            block_shift = level2shift(level);
+            idx = addr >> block_shift;
+            idx = idx%512;
+            block_size = (uint64_t)(1L << block_shift);
+            pte = table + idx;
+
+            if (size >= block_size && IS_ALIGNED(addr, block_size)) 
+            {
+                attr &= 0xfff0000000000ffcUL;
+                if(level != 3)
+                {
+                    *pte = phys | (attr | 0x1UL);
+                }
+                else
+                {
+                    *pte = phys | (attr | 0x3UL);
+                }
+                addr += block_size;
+                phys += block_size;
+                size -= block_size;
+                break;
+            }
+            table = get_level_table(pte);
+        }
+    }
+}
+
+void armv8_map(unsigned long va, unsigned long pa, unsigned long size, unsigned long attr)
+{
+    map_region(va, pa, size, attr);
+}
+
