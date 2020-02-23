@@ -35,56 +35,56 @@ void zr_start(char *path)
 {
     struct zfile *zf;
     rt_uint8_t n;
-	char ch,*p,*q;
-	rt_err_t res = -RT_ERROR;
+    char ch,*p,*q;
+    rt_err_t res = -RT_ERROR;
 
-	zf = rt_malloc(sizeof(struct zfile));
-	if (zf == RT_NULL)
-	{
-	    rt_kprintf("zf: out of memory\r\n");
-		return;
-	}
-	memset(zf, 0, sizeof(struct zfile));
+    zf = rt_malloc(sizeof(struct zfile));
+    if (zf == RT_NULL)
+    {
+        rt_kprintf("zf: out of memory\r\n");
+        return;
+    }
+    memset(zf, 0, sizeof(struct zfile));
     zf->fname = path;
-	zf->fd = -1;
-	res = zrec_files(zf);   
-	p = zf->fname;
-	for (;;)
-	{
-		q = strstr(p,"/");
-		if (q == RT_NULL)  break;
-		p = q+1;
-	}	   
+    zf->fd = -1;
+    res = zrec_files(zf);   
+    p = zf->fname;
+    for (;;)
+    {
+	q = strstr(p,"/");
+	if (q == RT_NULL)  break;
+	p = q+1;
+    }	   
     if (res == RT_EOK)
     {		  
         rt_kprintf("\b\b\bfile: %s                           \r\n",p);
-		rt_kprintf("size: %ld bytes\r\n",zf->bytes_received);
-		rt_kprintf("receive completed.\r\n");
-		close(zf->fd);
-		rt_free(zf->fname);
+	rt_kprintf("size: %ld bytes\r\n",zf->bytes_received);
+	rt_kprintf("receive completed.\r\n");
+	close(zf->fd);
+	rt_free(zf->fname);
     }
     else
     {
         rt_kprintf("\b\b\bfile: %s                           \r\n",p);
-		rt_kprintf("size: 0 bytes\r\n");
-		rt_kprintf("receive failed.\r\n");
-		if (zf->fd >= 0)
-		{
-	        close(zf->fd);
-	        unlink(zf->fname);    /* remove this file */ 
-			rt_free(zf->fname);
-		}	
-    }
-	rt_free(zf);
-	/* waiting,clear console buffer */
-	rt_thread_delay(RT_TICK_PER_SECOND/2);
-	while(1)                     
+	rt_kprintf("size: 0 bytes\r\n");
+	rt_kprintf("receive failed.\r\n");
+	if (zf->fd >= 0)
 	{
-	   n=rt_device_read(shell->device, 0, &ch, 1);
-	   if (n == 0) break;
-	}
+	    close(zf->fd);
+	    unlink(zf->fname);    /* remove this file */ 
+	    rt_free(zf->fname);
+	}	
+    }
+    rt_free(zf);
+    /* waiting,clear console buffer */
+    rt_thread_delay(RT_TICK_PER_SECOND/2);
+    while(1)                     
+    {
+        n=rt_device_read(shell->device, 0, &ch, 1);
+	if (n == 0) break;
+    }
 
-	return ;
+    return ;
 }
 
 /* receiver init, wait for ack */
