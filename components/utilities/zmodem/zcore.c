@@ -273,113 +273,112 @@ void zsend_bin_data(rt_uint8_t *buf, rt_int16_t len, rt_uint8_t frameend)
 /* receive data,with 16bits CRC check */
 static rt_int16_t zrec_data16(rt_uint8_t *buf, rt_uint16_t len)
 {
-	rt_int16_t c,crc_cnt;
-	rt_uint16_t crc;
-	rt_err_t res = -RT_ERROR;
- 	rt_uint8_t *p,flag = 0;
+    rt_int16_t c,crc_cnt;
+    rt_uint16_t crc;
+    rt_err_t res = -RT_ERROR;
+    rt_uint8_t *p,flag = 0;
 
-	p = buf;	
-	crc_cnt = 0;  crc = 0L;   
+    p = buf;	
+    crc_cnt = 0;  crc = 0L;   
     Rxcount = 0; 
-	while(buf <= p+len) 
-	{
-		if ((res = zread_byte()) & ~0377)
-		{
-		    if (res == GOTCRCE || res == GOTCRCG ||
-			    res == GOTCRCQ || res == GOTCRCW)
-			{
-				  c = res;
-				  c = res;
-				  crc = updcrc16(res&0377, crc);
-				  flag = 1;	
-				  continue;	
-			}
-			else if (res == GOTCAN)  return ZCAN;
-			else if (res == TIMEOUT) return TIMEOUT;
-			else return res;
-
-		}
-		else
-		{
-		   if (flag)
-		   {
-		       crc = updcrc16(res, crc); 
-			   crc_cnt++;
-			   if (crc_cnt < 2) continue;
-			   if ((crc & 0xffff))
-			   {
+    while(buf <= p+len) 
+    {
+        if ((res = zread_byte()) & ~0377)
+        {
+            if (res == GOTCRCE || res == GOTCRCG ||
+                res == GOTCRCQ || res == GOTCRCW)
+            {
+                c = res;
+                c = res;
+                crc = updcrc16(res&0377, crc);
+                flag = 1;	
+                continue;	
+            }
+            else if (res == GOTCAN)  return ZCAN;
+            else if (res == TIMEOUT) return TIMEOUT;
+            else return res;
+        }
+        else
+        {
+            if (flag)
+            {
+                crc = updcrc16(res, crc); 
+                crc_cnt++;
+                if (crc_cnt < 2) continue;
+                if ((crc & 0xffff))
+                {
 #ifdef ZDEBUG
-				 	 rt_kprintf("error code: CRC16 error \r\n");
+                    rt_kprintf("error code: CRC16 error \r\n");
 #endif
-					 return -RT_ERROR;
-			   } 
-               return c;
-		   }
-		   else
-		   {
-		      *buf++ = res;
-		      Rxcount++;
-		      crc = updcrc16(res, crc);
-		   }
-		}
-	}
+                    return -RT_ERROR;
+                } 
+                return c;
+            }
+            else
+            {
+                *buf++ = res;
+                Rxcount++;
+                crc = updcrc16(res, crc);
+            }
+        }
+    }
 
-	return -RT_ERROR;
+    return -RT_ERROR;
 }
 
 /* receive data,with 32bits CRC check */
 static rt_int16_t zrec_data32(rt_uint8_t *buf, rt_int16_t len)
 {
-	rt_int16_t c,crc_cnt;
-	rt_uint32_t crc;
-	rt_err_t res = -RT_ERROR;
-	rt_uint8_t *p,flag = 0;
+    rt_int16_t c,crc_cnt;
+    rt_uint32_t crc;
+    rt_err_t res = -RT_ERROR;
+    rt_uint8_t *p,flag = 0;
 
-	crc_cnt = 0;   crc = 0xffffffffL;  
-	Rxcount = 0;  
-	while (buf <= p+len) 
-	{
-		if ((res = zread_byte()) & ~0377)
-		{
-		    if (res == GOTCRCE || res == GOTCRCG ||
-			    res == GOTCRCQ || res == GOTCRCW)
-			{
-				  c = res;
-				  crc = updcrc32(res&0377, crc);
-				  flag = 1;	
-				  continue;	
-			}
-			else if (res == GOTCAN)  return ZCAN;
-			else if (res == TIMEOUT) return TIMEOUT;
-			else return res;
+    crc_cnt = 0;   crc = 0xffffffffL;  
+    Rxcount = 0;  
+    while (buf <= p+len) 
+    {
+        if ((res = zread_byte()) & ~0377)
+        {
+            if (res == GOTCRCE || res == GOTCRCG ||
+                res == GOTCRCQ || res == GOTCRCW)
+            {
+                c = res;
+                crc = updcrc32(res&0377, crc);
+                flag = 1;	
+                continue;	
+            }
+            else if (res == GOTCAN)  return ZCAN;
+            else if (res == TIMEOUT) return TIMEOUT;
+            else return res;
 
-		}
-		else
-		{
-		   if (flag)
-		   {
-		       crc = updcrc32(res, crc); 
-			   crc_cnt++;
-			   if (crc_cnt < 4) continue;
-			   if ((crc & 0xDEBB20E3))
-			   {
+        }
+        else
+        {
+            if (flag)
+            {
+                crc = updcrc32(res, crc); 
+                crc_cnt++;
+                if (crc_cnt < 4) continue;
+                if ((crc & 0xDEBB20E3))
+                {
 #ifdef ZDEBUG
-				 	 rt_kprintf("error code: CRC32 error \r\n");
+                    rt_kprintf("error code: CRC32 error \r\n");
 #endif
-					 return -RT_ERROR;
-			   } 
-               return c;
-		   }
-		   else
-		   {
-		      *buf++ = res;
-		      Rxcount++;
-		      crc = updcrc32(res, crc);
-		   }
-		}
-	}
+                    return -RT_ERROR;
+                } 
+                return c;
+            }
+            else
+            {
+                *buf++ = res;
+                Rxcount++;
+                crc = updcrc32(res, crc);
+            }
+        }
+    }
 
-	return -RT_ERROR;
+    return -RT_ERROR;
 }
 /* receive data,with RLE encoded,32bits CRC check */
 static rt_int16_t zrec_data32r(rt_uint8_t *buf, rt_int16_t len)
