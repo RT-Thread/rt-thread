@@ -780,58 +780,58 @@ static rt_int16_t zget_hex(void)
  */
 rt_int16_t zread_byte(void)
 {
-	register int res;
+    register int res;
 
 again:
-	/* Quick check for non control characters */
-	if ((res = zread_line(100)) & 0140)
-		return res;
-	switch (res) 
-	{
-	case ZDLE:
-		break;
-	case 023:
-	case 0223:
-	case 021:
-	case 0221:
-		goto again;
-	default:
-		return res;
-	}
+    /* Quick check for non control characters */
+    if ((res = zread_line(100)) & 0140)
+        return res;
+    switch (res) 
+    {
+    case ZDLE:
+        break;
+    case 023:
+    case 0223:
+    case 021:
+    case 0221:
+        goto again;
+    default:
+        return res;
+    }
 again2:
-	if ((res = zread_line(100)) < 0)
-		return res;
-	if (res == CAN && (res = zread_line(100)) < 0)
-		return res;
-	if (res == CAN && (res = zread_line(100)) < 0)
-		return res;
-	if (res == CAN && (res = zread_line(100)) < 0)
-		return res;
-	switch (res) 
-	{
-	case CAN:
-		 return GOTCAN;
-	case ZCRCE:
-	case ZCRCG:
-	case ZCRCQ:
-	case ZCRCW:
-		 return (res | GOTOR);
-	case ZRUB0:
-	 	 return 0177;
-	case ZRUB1:
-		 return 0377;
-	case 023:
-	case 0223:
-	case 021:
-	case 0221:
-		 goto again2;
-	default:
-		 if ((res & 0140) ==  0100)
-			return (res ^ 0100);
-		 break;
-	}
+    if ((res = zread_line(100)) < 0)
+        return res;
+    if (res == CAN && (res = zread_line(100)) < 0)
+        return res;
+    if (res == CAN && (res = zread_line(100)) < 0)
+        return res;
+    if (res == CAN && (res = zread_line(100)) < 0)
+        return res;
+    switch (res) 
+    {
+    case CAN:
+        return GOTCAN;
+    case ZCRCE:
+    case ZCRCG:
+    case ZCRCQ:
+    case ZCRCW:
+        return (res | GOTOR);
+    case ZRUB0:
+        return 0177;
+    case ZRUB1:
+        return 0377;
+    case 023:
+    case 0223:
+    case 021:
+    case 0221:
+        goto again2;
+    default:
+        if ((res & 0140) ==  0100)
+            return (res ^ 0100);
+        break;
+    }
 
-	return -RT_ERROR;
+    return -RT_ERROR;
 }
 
 /*
@@ -847,7 +847,7 @@ rt_int16_t zxor_read(void)
         if ((res = zread_line(100)) < 0)
             return res;
         switch (res &= 0177)
-	{
+        {
         case XON:
         case XOFF:
             continue;		
