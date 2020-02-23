@@ -32,8 +32,6 @@ static rt_err_t zget_sync(void);
 static void zsay_bibi(void);
 
 
-
-
 /* start zmodem send process */
 void zs_start(char *path)
 {
