@@ -475,236 +475,234 @@ end:
 }
 rt_int16_t zget_data(rt_uint8_t *buf, rt_uint16_t len)
 {
-	rt_int16_t res = -RT_ERROR;
+    rt_int16_t res = -RT_ERROR;
 
-	if (RxCRC == 0)
-	{
-		 res = zrec_data16(buf,len);
-	}
-	else if (RxCRC == 1)
-	{
-		res = zrec_data32(buf, len);
-	}
-	else if (RxCRC == 2)
-	{
-	    res = zrec_data32r(buf, len);
-	}
+    if (RxCRC == 0)
+    {
+        res = zrec_data16(buf,len);
+    }
+    else if (RxCRC == 1)
+    {
+        res = zrec_data32(buf, len);
+    }
+    else if (RxCRC == 2)
+    {
+        res = zrec_data32r(buf, len);
+    }
 
-	return res;
+    return res;
 }
-/* get type and cmd of header, fix lenght */
+/* get type and cmd of header, fix length */
 rt_int16_t zget_header(rt_uint8_t *hdr)
 {
-	rt_int16_t c,prev_char;
-	rt_uint32_t bit;
-	rt_uint16_t get_can,step_out;
+    rt_int16_t c,prev_char;
+    rt_uint32_t bit;
+    rt_uint16_t get_can,step_out;
 
-	bit = get_device_baud();	             /* get console baud rate */
-	Rxframeind = header_type = 0;
+    bit = get_device_baud();    /* get console baud rate */
+    Rxframeind = header_type = 0;
     step_out = 0;
-	prev_char = 0xff;
-	for (;;)
-	{
-	    c = zread_line(100);
-		switch(c)
-		{
-		case 021:
-		case 0221:
-		     if (prev_char == CAN)   break;
-		     if (prev_char == ZCRCW)  goto start_again;
-		     break;
-	    case RCDO:
-		     goto end;
-		case TIMEOUT:
-			 if (prev_char == CAN) break;
-			 if (prev_char == ZCRCW)
-			 {
-				 c = -RT_ERROR; goto end;
-			 }
-			 goto end;
-		case ZCRCW:
-		     if (prev_char == CAN) goto start_again;
-			 break;
-		case CAN:
+    prev_char = 0xff;
+    for (;;)
+    {
+        c = zread_line(100);
+        switch(c)
+        {
+        case 021:
+        case 0221:
+            if (prev_char == CAN)   break;
+            if (prev_char == ZCRCW)  goto start_again;
+            break;
+        case RCDO:
+            goto end;
+        case TIMEOUT:
+            if (prev_char == CAN) break;
+            if (prev_char == ZCRCW)
+            {
+                c = -RT_ERROR; goto end;
+            }
+            goto end;
+        case ZCRCW:
+            if (prev_char == CAN) goto start_again;
+            break;
+        case CAN:
 get_can:
-		     if (++get_can > 5)
-			 {
-			     c = ZCAN; goto end;
-             }
-			 break;
-		case ZPAD:
-		     if (prev_char == CAN)   break;
-		     if (prev_char == ZCRCW) goto start_again;
-		     step_out = 1;
-			 break;
-		default:
-		     if (prev_char == CAN)   break;
-			 if (prev_char == ZCRCW) goto start_again;
+            if (++get_can > 5)
+            {
+                c = ZCAN; goto end;
+            }
+            break;
+        case ZPAD:
+            if (prev_char == CAN)   break;
+            if (prev_char == ZCRCW) goto start_again;
+            step_out = 1;
+            break;
+        default:
+            if (prev_char == CAN)   break;
+            if (prev_char == ZCRCW) goto start_again;
 start_again:
-		     if (--bit == 0)
-			 {
-			     c = GCOUNT; goto end;
-			 }
-			 get_can = 0;
-			 break;
-		}
-		prev_char = c;
-		if (step_out) break;    /* exit loop */
-	}
-	step_out = get_can = 0;
-	for (;;)
-	{
-	    c = zxor_read();
-		switch(c)
-		{
-		case ZPAD:
-		     break;
-	    case RCDO:
-		case TIMEOUT:
-		     goto end;
-		case ZDLE:
-		     step_out = 1;
-			 break;
-		default:
-		     goto start_again;
-		}
-		if (step_out) break;
-	}
+            if (--bit == 0)
+            {
+                c = GCOUNT; goto end;
+            }
+            get_can = 0;
+            break;
+        }
+        prev_char = c;
+        if (step_out) break;    /* exit loop */
+    }
+    step_out = get_can = 0;
+    for (;;)
+    {
+        c = zxor_read();
+        switch(c)
+        {
+        case ZPAD:
+            break;
+        case RCDO:
+        case TIMEOUT:
+            goto end;
+        case ZDLE:
+            step_out = 1;
+            break;
+        default:
+            goto start_again;
+        }
+        if (step_out) break;
+    }
  
-	Rxframeind = c = zxor_read();
-	switch (c) 
-	{
-	case ZBIN32:
-		 RxCRC = 1;  c = zget_bin_fcs(hdr); break;
-	case ZBINR32:
-		 RxCRC = 2;  c = zget_bin_fcs(hdr); break;
-	case ZBIN:
-		 RxCRC = 0;  c = zget_bin_header(hdr); break;
-	case ZHEX:
-		 RxCRC = 0;  c = zget_hex_header(hdr); break;
-	case CAN:
-		goto get_can;
-	case RCDO:
-	case TIMEOUT:
-		goto end;
-	default:
-		goto start_again;
-	}
+    Rxframeind = c = zxor_read();
+    switch (c) 
+    {
+    case ZBIN32:
+        RxCRC = 1;  c = zget_bin_fcs(hdr); break;
+    case ZBINR32:
+        RxCRC = 2;  c = zget_bin_fcs(hdr); break;
+    case ZBIN:
+        RxCRC = 0;  c = zget_bin_header(hdr); break;
+    case ZHEX:
+        RxCRC = 0;  c = zget_hex_header(hdr); break;
+    case CAN:
+        goto get_can;
+    case RCDO:
+    case TIMEOUT:
+        goto end;
+    default:
+        goto start_again;
+    }
 end:
-	return c;
+    return c;
 }
 
 /* receive a binary header */
 static rt_int16_t zget_bin_header(rt_uint8_t *hdr)
 {
-	rt_int16_t res, i;
-	rt_uint16_t crc;
+    rt_int16_t res, i;
+    rt_uint16_t crc;
 
-	if ((res = zread_byte()) & ~0377)
-		return res;
-	header_type = res;
-	crc = updcrc16(res, 0);
+    if ((res = zread_byte()) & ~0377)
+        return res;
+    header_type = res;
+    crc = updcrc16(res, 0);
 
-	for (i=0;i<4;i++) 
-	{
-		if ((res = zread_byte()) & ~0377)
-			return res;
-		crc = updcrc16(res, crc);
-		*hdr++ = res;
-	}
-	if ((res = zread_byte()) & ~0377)
-		return res;
-	crc = updcrc16(res, crc);
-	if ((res = zread_byte()) & ~0377)
-		return res;
-	crc = updcrc16(res, crc);
-	if (crc & 0xFFFF) 
-	{
-		rt_kprintf("CRC error\n");
-		return -RT_ERROR;
-	}
+    for (i=0;i<4;i++) 
+    {
+        if ((res = zread_byte()) & ~0377)
+            return res;
+        crc = updcrc16(res, crc);
+        *hdr++ = res;
+    }
+    if ((res = zread_byte()) & ~0377)
+        return res;
+    crc = updcrc16(res, crc);
+    if ((res = zread_byte()) & ~0377)
+        return res;
+    crc = updcrc16(res, crc);
+    if (crc & 0xFFFF) 
+    {
+        rt_kprintf("CRC error\n");
+        return -RT_ERROR;
+    }
 
-	return header_type;
+    return header_type;
 }
 
 /* receive a binary header,with 32bits FCS */
 static rt_int16_t zget_bin_fcs(rt_uint8_t *hdr)
 {
-	rt_int16_t res, i;
-	rt_uint32_t crc;
+    rt_int16_t res, i;
+    rt_uint32_t crc;
 
-	if ((res = zread_byte()) & ~0377)
-		return res;
-	header_type = res;
-	crc = 0xFFFFFFFFL; 
-	crc = updcrc32(res, crc);
+    if ((res = zread_byte()) & ~0377)
+        return res;
+    header_type = res;
+    crc = 0xFFFFFFFFL; 
+    crc = updcrc32(res, crc);
 
-	for (i=0;i<4;i++)    /* 4headers */
-	{
-		if ((res = zread_byte()) & ~0377)
-			return res;
-		crc = updcrc32(res, crc);
-		*hdr++ = res;
-
-	}
-	for (i=0;i<4;i++) 	/* 4bytes crc */
-	{
-		if ((res = zread_byte()) & ~0377)
-			return res;
-		crc = updcrc32(res, crc);
-
-	}
-	if (crc != 0xDEBB20E3)       
-	{
+    for (i=0;i<4;i++)    /* 4headers */
+    {
+        if ((res = zread_byte()) & ~0377)
+            return res;
+        crc = updcrc32(res, crc);
+        *hdr++ = res;
+    }
+    for (i=0;i<4;i++) 	/* 4bytes crc */
+    {
+        if ((res = zread_byte()) & ~0377)
+            return res;
+        crc = updcrc32(res, crc);
+    }
+    if (crc != 0xDEBB20E3)       
+    {
 #ifdef ZDEBUG
-		rt_kprintf("CRC error\n");
+        rt_kprintf("CRC error\n");
 #endif
-		return -RT_ERROR;
-	}
+        return -RT_ERROR;
+    }
 
-	return header_type;
+    return header_type;
 }
 
 
 /* receive a hex style header (type and position) */
 rt_int16_t zget_hex_header(rt_uint8_t *hdr)
 {
-	rt_int16_t res,i;
-	rt_uint16_t crc;
+    rt_int16_t res,i;
+    rt_uint16_t crc;
 
-	if ((res = zget_hex()) < 0)
-		return res;
-	header_type = res;
-	crc = updcrc16(res, 0);
+    if ((res = zget_hex()) < 0)
+        return res;
+    header_type = res;
+    crc = updcrc16(res, 0);
 
-	for (i=0;i<4;i++) 
-	{
-		if ((res = zget_hex()) < 0)
-			return res;
-		crc = updcrc16(res, crc);
-		*hdr++ = res;
-	}
-	if ((res = zget_hex()) < 0)
-		return res;
-	crc = updcrc16(res, crc);
-	if ((res = zget_hex()) < 0)
-		return res;
-	crc = updcrc16(res, crc);
-	if (crc & 0xFFFF) 
-	{
+    for (i=0;i<4;i++) 
+    {
+        if ((res = zget_hex()) < 0)
+            return res;
+        crc = updcrc16(res, crc);
+        *hdr++ = res;
+    }
+    if ((res = zget_hex()) < 0)
+        return res;
+    crc = updcrc16(res, crc);
+    if ((res = zget_hex()) < 0)
+        return res;
+    crc = updcrc16(res, crc);
+    if (crc & 0xFFFF) 
+    {
 #ifdef ZDEBUG
-		rt_kprintf("error code : CRC error\r\n"); 
+        rt_kprintf("error code : CRC error\r\n"); 
 #endif
-		return -RT_ERROR;
-	}
-	res = zread_line(100);
-	if (res < 0)
-		return res;
-	res = zread_line(100);
-	if (res < 0)
-		return res;
+        return -RT_ERROR;
+    }
+    res = zread_line(100);
+    if (res < 0)
+        return res;
+    res = zread_line(100);
+    if (res < 0)
+        return res;
 
-	return header_type;
+    return header_type;
 }
 
 /* convert to ascii */
