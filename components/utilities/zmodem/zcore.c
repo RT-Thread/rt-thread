@@ -20,18 +20,18 @@ char ZF0_CMD;		             /* file conversion request */
 char ZF1_CMD;	 	             /* file management request */
 char ZF2_CMD;		             /* file transport request */
 char ZF3_CMD; 
-rt_uint8_t   Rxframeind;		 /* ZBIN ZBIN32, or ZHEX type of frame */
+rt_uint8_t   Rxframeind;             /* ZBIN ZBIN32, or ZHEX type of frame */
 rt_uint16_t  Rxcount;		     /* received count*/
 char header_type;	             /* header type */
 rt_uint8_t   rx_header[4];	     /* received header */
 rt_uint8_t   tx_header[4];	     /* transmitted header */
-rt_uint32_t  Rxpos;		         /* received file position */
-rt_uint32_t  Txpos;		         /* transmitted file position */
+rt_uint32_t  Rxpos;		     /* received file position */
+rt_uint32_t  Txpos;		     /* transmitted file position */
 rt_uint8_t   Txfcs32;		     /* TURE means send binary frames with 32 bit FCS */
-rt_uint8_t   TxCRC;		         /* controls 32 bit CRC being sent */
-rt_uint8_t   RxCRC;		         /* indicates/controls 32 bit CRC being received */			                     
-                                 /* 0 == CRC16,  1 == CRC32,  2 == CRC32 + RLE */
-char Attn[ZATTNLEN+1];	         /* attention string rx sends to tx on err */
+rt_uint8_t   TxCRC;		     /* controls 32 bit CRC being sent */
+rt_uint8_t   RxCRC;		     /* indicates/controls 32 bit CRC being received */			                     
+                                     /* 0 == CRC16,  1 == CRC32,  2 == CRC32 + RLE */
+char Attn[ZATTNLEN+1];	             /* attention string rx sends to tx on err */
 
 void zinit_parameter(void);
 void zsend_bin_header(rt_uint8_t type, rt_uint8_t *hdr);
@@ -61,213 +61,213 @@ void zinit_parameter(void)
     rt_uint8_t i;
 
     ZF0_CMD  = CANFC32|CANFDX|CANOVIO;		/*  not chose CANFC32,CANRLE,although it have been supported */
-	ZF1_CMD  = 0;							    /* fix header length,not support CANVHDR */
-	ZF2_CMD  = 0;
-	ZF3_CMD  = 0;	
-	Rxframeind =0;
-	header_type   = 0;
-	Rxcount  = 0;
-	for (i=0;i<4;i++) rx_header[i] = tx_header[i] = 0;
-	Rxpos    = Txpos = 0;
-	RxCRC    = 0;	
-	Txfcs32  = 0;
+    ZF1_CMD  = 0;				/* fix header length,not support CANVHDR */
+    ZF2_CMD  = 0; 
+    ZF3_CMD  = 0;	
+    Rxframeind =0;
+    header_type   = 0;
+    Rxcount  = 0;
+    for (i=0;i<4;i++) rx_header[i] = tx_header[i] = 0;
+    Rxpos    = Txpos = 0;
+    RxCRC    = 0;	
+    Txfcs32  = 0;
 
-	return ;
+    return ;
 }
 
 /* send binary header */
 void zsend_bin_header(rt_uint8_t type, rt_uint8_t *hdr)
 {
-	rt_uint8_t i;
-	rt_uint32_t crc;
+    rt_uint8_t i;
+    rt_uint32_t crc;
 
-	zsend_byte(ZPAD); 
-	zsend_byte(ZDLE);
-	TxCRC = Txfcs32;
-	if (TxCRC == 0)
-	{
-		zsend_byte(ZBIN);
-		zsend_zdle_char(type);
-		/* add 16bits crc */
-	    crc = 0L;
-	    crc = updcrc16(type, 0);
-		for (i=0;i<4;i++)
-		{
-		    zsend_zdle_char(*hdr);
-		    crc = updcrc16((0377 & *hdr++),crc);
-		}
-    	crc = updcrc16(0,updcrc16(0,crc));
-		zsend_zdle_char(((int)(crc>>8)));
-		zsend_zdle_char(crc);
-	}
-	else if(TxCRC == 1)   
-	{
+    zsend_byte(ZPAD); 
+    zsend_byte(ZDLE);
+    TxCRC = Txfcs32;
+    if (TxCRC == 0)
+    {
+        zsend_byte(ZBIN);
+        zsend_zdle_char(type);
+        /* add 16bits crc */
+        crc = 0L;
+        crc = updcrc16(type, 0);
+        for (i=0;i<4;i++)
+        {
+            zsend_zdle_char(*hdr);
+            crc = updcrc16((0377 & *hdr++),crc);
+        }
+        crc = updcrc16(0,updcrc16(0,crc));
+        zsend_zdle_char(((int)(crc>>8)));
+        zsend_zdle_char(crc);
+    }
+    else if(TxCRC == 1)   
+    {
         zsend_byte(ZBIN32);
-		zsend_zdle_char(type);
-		/* add 32bits crc */
-	    crc = 0xffffffffL; 
-	    crc = updcrc32(type, crc);
+        zsend_zdle_char(type);
+        /* add 32bits crc */
+        crc = 0xffffffffL; 
+        crc = updcrc32(type, crc);
         for (i=0;i<4;i++)
-	    {
-		    zsend_zdle_char(*hdr);
-		    crc = updcrc32((0377 & *hdr++), crc);
-     	}
-	    crc = ~crc;
-	    for (i=0; i<4;i++) 
-	    {
-		    zsend_zdle_char(crc);
-		    crc >>= 8;
-	    }
-	}
-	else if (TxCRC == 2)
-	{
-		zsend_byte(ZBINR32);
-		zsend_zdle_char(type);
-		/* add 32bits crc */
-	    crc = 0xffffffffL; 
-	    crc = updcrc32(type, crc);
+        {
+            zsend_zdle_char(*hdr);
+            crc = updcrc32((0377 & *hdr++), crc);
+        }
+        crc = ~crc;
+        for (i=0; i<4;i++) 
+        {
+            zsend_zdle_char(crc);
+            crc >>= 8;
+        }
+    }
+    else if (TxCRC == 2)
+    {
+        zsend_byte(ZBINR32);
+        zsend_zdle_char(type);
+        /* add 32bits crc */
+        crc = 0xffffffffL; 
+        crc = updcrc32(type, crc);
         for (i=0;i<4;i++)
-	    {
-		    zsend_zdle_char(*hdr);
-		    crc = updcrc32((0377 & *hdr++), crc);
-     	}
-	    crc = ~crc;
-	    for (i=0; i<4;i++) 
-	    {
-		    zsend_zdle_char(crc);
-		    crc >>= 8;
-	    }
-	}
+        {
+            zsend_zdle_char(*hdr);
+            crc = updcrc32((0377 & *hdr++), crc);
+        }
+        crc = ~crc;
+        for (i=0; i<4;i++) 
+        {
+            zsend_zdle_char(crc);
+            crc >>= 8;
+        }
+    }
 
-	return;
+    return;
 }
 
 /* send hex header */
 void zsend_hex_header(rt_uint8_t type, rt_uint8_t *hdr)
 {
-	rt_uint8_t i;
-	rt_uint16_t crc;
+    rt_uint8_t i;
+    rt_uint16_t crc;
 
-	zsend_line(ZPAD); zsend_line(ZPAD); zsend_line(ZDLE);
-	zsend_line(ZHEX);
-	zsend_ascii(type);
-	crc = updcrc16(type, 0);
-	for (i=0; i<4; i++) 
-	{
-		zsend_ascii(*hdr); 
-		crc = updcrc16((0377 & *hdr++), crc);
-	}
-	crc = updcrc16(0,updcrc16(0,crc));
-	zsend_ascii(crc>>8);
-	zsend_ascii(crc);
-	/* send display control cmd */
-	zsend_line(015); zsend_line(0212); 
-	if (type != ZFIN && type != ZACK)
-		zsend_line(021);
-	TxCRC = 0;               /* clear tx crc type */
+    zsend_line(ZPAD); zsend_line(ZPAD); zsend_line(ZDLE);
+    zsend_line(ZHEX);
+    zsend_ascii(type);
+    crc = updcrc16(type, 0);
+    for (i=0; i<4; i++) 
+    {
+        zsend_ascii(*hdr); 
+        crc = updcrc16((0377 & *hdr++), crc);
+    }
+    crc = updcrc16(0,updcrc16(0,crc));
+    zsend_ascii(crc>>8);
+    zsend_ascii(crc);
+    /* send display control cmd */
+    zsend_line(015); zsend_line(0212); 
+    if (type != ZFIN && type != ZACK)
+        zsend_line(021);
+    TxCRC = 0;               /* clear tx crc type */
 
-	return;
+    return;
 }
 
 /* send binary data,with frameend */
 void zsend_bin_data(rt_uint8_t *buf, rt_int16_t len, rt_uint8_t frameend)
 {
     rt_int16_t i,c,tmp;
-	rt_uint32_t crc;
+    rt_uint32_t crc;
 
     if (TxCRC == 0)         /* send binary data with 16bits crc check */
-	{
-		crc = 0x0L;
-		for (i=0;i<len;i++) 
-		{
-			zsend_zdle_char(*buf); 
-			crc = updcrc16((0377 & *buf++), crc);
-		}
-		zsend_byte(ZDLE); zsend_byte(frameend);
-		crc = updcrc16(frameend, crc);
-		crc = updcrc16(0,updcrc16(0,crc));
-		zsend_zdle_char(crc>>8);
-	    zsend_zdle_char(crc);
-	}
-	else if (TxCRC == 1)   /* send binary data with 32 bits crc check */
-	{
-		crc = 0xffffffffL;
-	    for (i=0;i<len;i++) 
-	    {
-		    c = *buf++ & 0377;
-		    zsend_zdle_char(c);
-		    crc = updcrc32(c, crc);
-	    }
-	    zsend_byte(ZDLE); zsend_byte(frameend);
-	    crc = updcrc32(frameend, crc);
-	    crc = ~crc;
-	    for (i=0;i<4;i++) 
-	    {
-		    zsend_zdle_char((int)crc);  crc >>= 8;
-	    }
-	}
-	else if (TxCRC == 2)   /* send binary data with 32bits crc check,RLE encode */
-	{
-	    crc = 0xffffffffL;
+    {
+        crc = 0x0L;
+        for (i=0;i<len;i++) 
+        {
+            zsend_zdle_char(*buf); 
+            crc = updcrc16((0377 & *buf++), crc);
+        }
+        zsend_byte(ZDLE); zsend_byte(frameend);
+        crc = updcrc16(frameend, crc);
+        crc = updcrc16(0,updcrc16(0,crc));
+        zsend_zdle_char(crc>>8);
+        zsend_zdle_char(crc);
+    }
+    else if (TxCRC == 1)   /* send binary data with 32 bits crc check */
+    {
+        crc = 0xffffffffL;
+        for (i=0;i<len;i++) 
+        {
+            c = *buf++ & 0377;
+            zsend_zdle_char(c);
+            crc = updcrc32(c, crc);
+        }
+        zsend_byte(ZDLE); zsend_byte(frameend);
+        crc = updcrc32(frameend, crc);
+        crc = ~crc;
+        for (i=0;i<4;i++) 
+        {
+            zsend_zdle_char((int)crc);  crc >>= 8;
+        }
+    }
+    else if (TxCRC == 2)   /* send binary data with 32bits crc check,RLE encode */
+    {
+        crc = 0xffffffffL;
         tmp = *buf++ & 0377;
-	    for (i = 0; --len >= 0; ++buf)
-		{
-		   if ((c = *buf & 0377) == tmp && i < 126 && len>0) 
-		   {
-			  ++i;  continue;
-		   }
-		   if (i==0)
-		   {
-			   zsend_zdle_char(tmp);
-			   crc = updcrc32(tmp, crc);
-		       if (tmp == ZRESC) 
-			   {
-				   zsend_zdle_char(0100); crc = updcrc32(0100, crc);
-			   }
-			   tmp = c; 
-		   }
-		   else if (i == 1)
-		   {
-		    	if (tmp != ZRESC)
-			    {
-				    zsend_zdle_char(tmp); zsend_zdle_char(tmp);
-				    crc = updcrc32(tmp, crc);
-				    crc = updcrc32(tmp, crc);
-				    i = 0; tmp = c;
-			    }
+        for (i = 0; --len >= 0; ++buf)
+        {
+            if ((c = *buf & 0377) == tmp && i < 126 && len>0) 
+            {
+                ++i;  continue;
+            }
+            if (i==0)
+            {
+                zsend_zdle_char(tmp);
+                crc = updcrc32(tmp, crc);
+                if (tmp == ZRESC) 
+                {
+                    zsend_zdle_char(0100); crc = updcrc32(0100, crc);
+                }
+                tmp = c; 
+            }
+            else if (i == 1)
+            {
+                if (tmp != ZRESC)
+                {
+                    zsend_zdle_char(tmp); zsend_zdle_char(tmp);
+                    crc = updcrc32(tmp, crc);
+                    crc = updcrc32(tmp, crc);
+                    i = 0; tmp = c;
+                }
 
-		   }
-		   else 
-		   {
-			    zsend_zdle_char(ZRESC); crc = updcrc32(ZRESC, crc);
-			    if (tmp == 040 && i < 34)
-			    {
-				    i += 036;
-				    zsend_zdle_char(i); 
-				    crc = updcrc32(i, crc);
-			    }
-			    else 
-				{
-				    i += 0101;
-				    zsend_zdle_char(i); crc = updcrc32(i, crc);
-			     	zsend_zdle_char(tmp); crc = updcrc32(tmp, crc);
-			    }
-			    i = 0; tmp = c; 
-		   }
-	   }
-	   zsend_byte(ZDLE); zsend_byte(frameend);
-	   crc = updcrc32(frameend, crc);
-	   crc = ~crc;
-	   for (i=0;i<4;i++) 
-	   {
-		   zsend_zdle_char(crc);  
-		   crc >>= 8;
-	   }
-	}
-	if (frameend == ZCRCW)
-		zsend_byte(XON);
+            }
+            else 
+            {
+                zsend_zdle_char(ZRESC); crc = updcrc32(ZRESC, crc);
+                if (tmp == 040 && i < 34)
+                {
+                    i += 036;
+                    zsend_zdle_char(i); 
+                    crc = updcrc32(i, crc);
+		}
+                else 
+                {
+                    i += 0101;
+                    zsend_zdle_char(i); crc = updcrc32(i, crc);
+                    zsend_zdle_char(tmp); crc = updcrc32(tmp, crc);
+                }
+	        i = 0; tmp = c; 
+            }
+        }
+        zsend_byte(ZDLE); zsend_byte(frameend);
+        crc = updcrc32(frameend, crc);
+        crc = ~crc;
+        for (i=0;i<4;i++) 
+        {
+            zsend_zdle_char(crc);  
+            crc >>= 8;
+        }
+    }
+    if (frameend == ZCRCW)
+        zsend_byte(XON);
 
-	return;
+    return;
 }
 
 /* receive data,with 16bits CRC check */
@@ -286,7 +286,7 @@ static rt_int16_t zrec_data16(rt_uint8_t *buf, rt_uint16_t len)
         if ((res = zread_byte()) & ~0377)
         {
             if (res == GOTCRCE || res == GOTCRCG ||
-                res == GOTCRCQ || res == GOTCRCW)
+                    res == GOTCRCQ || res == GOTCRCW)
             {
                 c = res;
                 c = res;
