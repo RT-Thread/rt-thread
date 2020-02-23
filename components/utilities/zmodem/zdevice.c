@@ -17,7 +17,7 @@
 
 										  
 rt_uint32_t Line_left  = 0;          /* left number of data in the read line buffer*/ 
-rt_uint32_t Left_sizes = 0;	     /* left file sizes */
+rt_uint32_t Left_sizes = 0;          /* left file sizes */
 rt_uint32_t Baudrate   = BITRATE;    /* console baudrate */
  
 
