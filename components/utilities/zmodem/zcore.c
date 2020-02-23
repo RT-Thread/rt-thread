@@ -710,12 +710,12 @@ rt_int16_t zget_hex_header(rt_uint8_t *hdr)
 /* convert to ascii */
 static void zsend_ascii(rt_uint8_t c)
 {
-	const char hex[] = "0123456789abcdef";
+    const char hex[] = "0123456789abcdef";
 
-	zsend_line(hex[(c&0xF0)>>4]);
-	zsend_line(hex[(c)&0xF]);
+    zsend_line(hex[(c&0xF0)>>4]);
+    zsend_line(hex[(c)&0xF]);
 
-	return;
+    return;
 }
 
 /*
@@ -725,52 +725,52 @@ void zsend_zdle_char(rt_uint16_t ch)
 {
     rt_uint16_t	res;
 
-	res = ch & 0377;
-	switch (res) 
-	{
-	case 0377:
-		zsend_byte(res);
-		break;
-	case ZDLE:
-		zsend_byte(ZDLE);  
-		res ^= 0100;
-		zsend_byte(res);
-		break;
-	case 021: 
-	case 023:
-	case 0221: 
-	case 0223:
-		zsend_byte(ZDLE);  
-		res ^= 0100;  
-		zsend_byte(res);
-		break;
-	default:
-		zsend_byte(res);
-	}
+    res = ch & 0377;
+    switch (res) 
+    {
+    case 0377:
+        zsend_byte(res);
+        break;
+    case ZDLE:
+        zsend_byte(ZDLE);  
+        res ^= 0100;
+        zsend_byte(res);
+        break;
+    case 021: 
+    case 023:
+    case 0221: 
+    case 0223:
+        zsend_byte(ZDLE);  
+        res ^= 0100;  
+        zsend_byte(res);
+        break;
+    default:
+        zsend_byte(res);
+    }
 }
 
 /* decode two lower case hex digits into an 8 bit byte value */
 static rt_int16_t zget_hex(void)
 {
-	rt_int16_t res,n;
+    rt_int16_t res,n;
 
-	if ((res = zxor_read()) < 0)
-		return res;
-	n = res - '0';
-	if (n > 9)
-		n -= ('a' - ':');
-	if (n & ~0x0f)
-		return -RT_ERROR;
-	if ((res = zxor_read()) < 0)
-		return res;
-	res -= '0';
-	if (res > 9)
-		res -= ('a' - ':');
-	if (res & ~0x0f)
-		return -RT_ERROR;
-	res += (n<<4);
+    if ((res = zxor_read()) < 0)
+        return res;
+    n = res - '0';
+    if (n > 9)
+        n -= ('a' - ':');
+    if (n & ~0x0f)
+        return -RT_ERROR;
+    if ((res = zxor_read()) < 0)
+        return res;
+    res -= '0';
+    if (res > 9)
+        res -= ('a' - ':');
+    if (res & ~0x0f)
+        return -RT_ERROR;
+    res += (n<<4);
 
-	return res;
+    return res;
 }
 
 
