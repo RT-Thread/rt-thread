@@ -27,21 +27,21 @@ rt_err_t zmodem_rx_ind(rt_device_t dev, rt_size_t size)
 
 void finsh_rz(void *parameter)
 {
-	char *path;
+    char *path;
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
     rt_uint8_t flag;	
 
-	flag = RT_DEVICE_FLAG_STREAM;
+    flag = RT_DEVICE_FLAG_STREAM;
     zmodem.device->flag &=(~flag);
     rt_sem_init(&(zmodem.zsem), "zsem", 0, 0);
-	path = rt_thread_self()->parameter;
+    path = rt_thread_self()->parameter;
     /* save old rx_indicate	*/
     rx_indicate = zmodem.device->rx_indicate;
     /* set new rx_indicate */
     rt_device_set_rx_indicate(zmodem.device, RT_NULL);
-	/* start receive remote files */
+    /* start receive remote files */
     zr_start(path);
-	zmodem.device->flag |=flag;
+    zmodem.device->flag |=flag;
     /* recovery old rx_indicate	*/
     rt_device_set_rx_indicate(zmodem.device, rx_indicate);
     /* finsh>> */
@@ -49,20 +49,20 @@ void finsh_rz(void *parameter)
 }
 void finsh_sz(void *parameter)
 {
-	char *path;
+    char *path;
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
     rt_uint8_t flag;	
 
-	flag = RT_DEVICE_FLAG_STREAM;
+    flag = RT_DEVICE_FLAG_STREAM;
     zmodem.device->flag &=(~flag);
     rt_sem_init(&(zmodem.zsem), "zsem", 0, 0);
-	path = rt_thread_self()->parameter;
-	/* save old rx_indicate	*/
+    path = rt_thread_self()->parameter;
+    /* save old rx_indicate	*/
     rx_indicate = zmodem.device->rx_indicate;
-	/* set new rx_indicate */
+    /* set new rx_indicate */
     rt_device_set_rx_indicate(zmodem.device, zmodem_rx_ind);
-	zs_start(path);
-	zmodem.device->flag |=flag;
+    zs_start(path);
+    zmodem.device->flag |=flag;
     /* recovery old rx_indicate	*/
     rt_device_set_rx_indicate(zmodem.device, rx_indicate);
     /* finsh>> */
