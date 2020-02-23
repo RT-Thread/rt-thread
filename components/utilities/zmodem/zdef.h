@@ -85,8 +85,8 @@
 #define ZRQNVH	  (ZRRQWN|ZRRQQQ)	/* variable len hdr reqd to access info */
 
 /* Parameters for ZSINIT frame */
-#define ZATTNLEN  32	/* max length of attention string */
-#define ALTCOFF   ZF1	/* offset to alternate canit string, 0 if not used */
+#define ZATTNLEN  32	   /* max length of attention string */
+#define ALTCOFF   ZF1	   /* offset to alternate canit string, 0 if not used */
 
 /* Parameters for ZFILE frame */
 /* Conversion options one of these in ZF0 */
@@ -179,14 +179,14 @@ extern struct zmodemf zmodem;
 
 struct zfile
 {
-	char *fname;
-	rt_int32_t   fd;
-	rt_uint32_t  ctime;
+    char *fname;
+    rt_int32_t   fd;
+    rt_uint32_t  ctime;
     rt_uint32_t  mode;
-	rt_uint32_t  bytes_total;
-	rt_uint32_t  bytes_sent;
-	rt_uint32_t  bytes_received;
-	rt_uint32_t  file_end;
+    rt_uint32_t  bytes_total;
+    rt_uint32_t  bytes_sent;
+    rt_uint32_t  bytes_received;
+    rt_uint32_t  file_end;
 	
 };
 extern struct finsh_shell* shell;
