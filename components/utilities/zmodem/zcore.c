@@ -840,46 +840,46 @@ again2:
  */
 rt_int16_t zxor_read(void)
 {
-	rt_int16_t res;
+    rt_int16_t res;
 
-	for (;;) 
+    for (;;) 
+    {
+        if ((res = zread_line(100)) < 0)
+            return res;
+        switch (res &= 0177)
 	{
-		if ((res = zread_line(100)) < 0)
-			return res;
-		switch (res &= 0177) {
-		case XON:
-		case XOFF:
-			continue;		
-		case '\r':
-		case '\n':
-		case ZDLE:
-		default:
-			return res;
-		}
-	}
-
+        case XON:
+        case XOFF:
+            continue;		
+        case '\r':
+        case '\n':
+        case ZDLE:
+        default:
+            return res;
+        }
+    }
 }
 
 /* put file posistion into the header*/
 void zput_pos(rt_uint32_t pos)
 {
-	tx_header[ZP0] = pos;
-	tx_header[ZP1] = pos>>8;
-	tx_header[ZP2] = pos>>16;
-	tx_header[ZP3] = pos>>24;
+    tx_header[ZP0] = pos;
+    tx_header[ZP1] = pos>>8;
+    tx_header[ZP2] = pos>>16;
+    tx_header[ZP3] = pos>>24;
 
-	return;
+    return;
 }
 
 /* Recover a long integer from a header */
 void zget_pos(rt_uint32_t pos)
 {
-	Rxpos = (rx_header[ZP3] & 0377);
-	Rxpos = (Rxpos << 8) | (rx_header[ZP2] & 0377);
-	Rxpos = (Rxpos << 8) | (rx_header[ZP1] & 0377);
-	Rxpos = (Rxpos << 8) | (rx_header[ZP0] & 0377);
+    Rxpos = (rx_header[ZP3] & 0377);
+    Rxpos = (Rxpos << 8) | (rx_header[ZP2] & 0377);
+    Rxpos = (Rxpos << 8) | (rx_header[ZP1] & 0377);
+    Rxpos = (Rxpos << 8) | (rx_header[ZP0] & 0377);
 
-	return;
+    return;
 }
 
 /* end of zcore.c */
