@@ -383,94 +383,93 @@ static rt_int16_t zrec_data32(rt_uint8_t *buf, rt_int16_t len)
 /* receive data,with RLE encoded,32bits CRC check */
 static rt_int16_t zrec_data32r(rt_uint8_t *buf, rt_int16_t len)
 {
-	rt_int16_t c,crc_cnt;
-	rt_uint32_t crc;
-	rt_err_t res = -RT_ERROR;
-	rt_uint8_t *p,flag = 0;
+    rt_int16_t c,crc_cnt;
+    rt_uint32_t crc;
+    rt_err_t res = -RT_ERROR;
+    rt_uint8_t *p,flag = 0;
 
-	crc_cnt = 0; crc = 0xffffffffL;  
-	Rxcount = 0;  
-	p = buf;
-	while (buf <= p+len) 
-	{
-		if ((res = zread_byte()) & ~0377)
-		{
-		    if (res == GOTCRCE || res == GOTCRCG ||
-			    res == GOTCRCQ || res == GOTCRCW)
-			{
-				  c = res;
-				  crc = updcrc32(res&0377, crc);
-				  flag = 1;	
-				  continue;	
-			}
-			else if (res == GOTCAN)  return ZCAN;
-			else if (res == TIMEOUT) return TIMEOUT;
-			else return res;
+    crc_cnt = 0; crc = 0xffffffffL;  
+    Rxcount = 0;  
+    p = buf;
+    while (buf <= p+len) 
+    {
+        if ((res = zread_byte()) & ~0377)
+        {
+            if (res == GOTCRCE || res == GOTCRCG ||
+                    res == GOTCRCQ || res == GOTCRCW)
+            {
+                c = res;
+                crc = updcrc32(res&0377, crc);
+                flag = 1;	
+                continue;	
+            }
+            else if (res == GOTCAN)  return ZCAN;
+            else if (res == TIMEOUT) return TIMEOUT;
+            else return res;
 
-		}
-		else
-		{
-		   if (flag)
-		   {
-		       crc = updcrc32(res, crc); 
-			   crc_cnt++;
-			   if (crc_cnt < 4) continue;
-			   if ((crc & 0xDEBB20E3))
-			   {
+        }
+        else
+        {
+            if (flag)
+            {
+                crc = updcrc32(res, crc); 
+                crc_cnt++;
+                if (crc_cnt < 4) continue;
+                if ((crc & 0xDEBB20E3))
+                {
 #ifdef ZDEBUG
-				 	 rt_kprintf("error code: CRC32 error \r\n");
+                    rt_kprintf("error code: CRC32 error \r\n");
 #endif
-					 return -RT_ERROR;
-			   } 
-               return c;
-		   }
-		   else
-		   {
-		       crc = updcrc32(res, crc);
-		       switch (c) 
-		       {
-		       case 0:
-			        if (res == ZRESC) 
-			        {
-			 	        c = -1;  continue;
-			        }
-			        *buf++ = res;  
-			        Rxcount++;
-			        continue;
-		       case -1:
-			        if (res >= 040 && res < 0100) 
-			        {
-				        c = res - 035; res = 040;  
-						goto spaces;
-			        }
-			        if (res == 0100) 
-			        {
-				        c = 0;
-				        *buf++ = ZRESC; 
-				        Rxcount++;
-				        continue;
-			        }
-			        c = res;  continue;
-		       default:
-			        c -= 0100;
-			        if (c < 1)
-			 	        goto end;
+                    return -RT_ERROR;
+                } 
+                return c;
+            }
+            else
+            {
+                crc = updcrc32(res, crc);
+                switch (c) 
+                {
+                case 0:
+                    if (res == ZRESC) 
+                    {
+                        c = -1;  continue;
+                    }
+                    *buf++ = res;  
+                    Rxcount++;
+                    continue;
+                case -1:
+                    if (res >= 040 && res < 0100) 
+                    {
+                        c = res - 035; res = 040;  
+                        goto spaces;
+                    }
+                    if (res == 0100) 
+                    {
+                        c = 0;
+                        *buf++ = ZRESC; 
+                        Rxcount++;
+                        continue;
+                    }
+                    c = res;  continue;
+                default:
+                    c -= 0100;
+                    if (c < 1)
+                        goto end;
 spaces:
-			        if ((buf + c) > p+len)
-				        goto end;
-			        while ( --res >= 0)
-			        {
-				        *buf++ = res;
-				        Rxcount++;
-			        }
-			        c = 0;  continue;
-		        }
-		   }
-		}	// if -else
-
-	}
+                    if ((buf + c) > p+len)
+                        goto end;
+                    while ( --res >= 0)
+                    {
+                        *buf++ = res;
+                        Rxcount++;
+                    }
+                    c = 0;  continue;
+                }
+            }
+        }// if -else
+    }
 end:
-	return -RT_ERROR;
+    return -RT_ERROR;
 }
 rt_int16_t zget_data(rt_uint8_t *buf, rt_uint16_t len)
 {
