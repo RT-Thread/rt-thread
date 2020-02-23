@@ -18,16 +18,16 @@
 
 
 /* Frame types */
-#define ZRQINIT	  0	    /* request receive init */
+#define ZRQINIT	  0	/* request receive init */
 #define ZRINIT    1     /* receive init */
-#define ZSINIT    2	    /* send init sequence (optional) */
-#define ZACK      3	    /* ACK to above */
-#define ZFILE     4	    /* file name from sender */
-#define ZSKIP     5	    /* ro sender: skip this file */
-#define ZNAK      6	    /* last packet was garbled */
-#define ZABORT    7	    /* abort batch transfers */
-#define ZFIN      8	    /* finish session */
-#define ZRPOS     9	    /* resume data trans at this position */
+#define ZSINIT    2	/* send init sequence (optional) */
+#define ZACK      3	/* ACK to above */
+#define ZFILE     4	/* file name from sender */
+#define ZSKIP     5	/* ro sender: skip this file */
+#define ZNAK      6	/* last packet was garbled */
+#define ZABORT    7	/* abort batch transfers */
+#define ZFIN      8	/* finish session */
+#define ZRPOS     9	/* resume data trans at this position */
 #define ZDATA     10    /* data packet(s) follow */
 #define ZEOF      11    /* end of file */
 #define ZFERR     12    /* fatal Read or Write error Detected */
@@ -66,8 +66,8 @@
 #define ZP3	      3	    /* high order 8 bits of file position */
 
 /* parameters for ZRINIT header */
-#define ZRPXWN	  8	    /* 9th byte in header contains window size/256 */
-#define ZRPXQQ	  9	    /* 10th to 14th bytes contain quote mask */
+#define ZRPXWN	  8	/* 9th byte in header contains window size/256 */
+#define ZRPXQQ	  9	/* 10th to 14th bytes contain quote mask */
 /* bit Masks for ZRINIT flags byte ZF0 */
 #define CANFDX	  0x01	/* rx can send and receive true FDX */
 #define CANOVIO	  0x02	/* rx can receive data during disk I/O */
@@ -80,7 +80,7 @@
 
 /* bit Masks for ZRINIT flags byte ZF1 */
 #define CANVHDR	  01	/* variable headers OK */
-#define ZRRQWN	  8	    /* receiver specified window size in ZRPXWN */
+#define ZRRQWN	  8	/* receiver specified window size in ZRPXWN */
 #define ZRRQQQ	  16	/* additional control chars to quote in ZRPXQQ	*/
 #define ZRQNVH	  (ZRRQWN|ZRRQQQ)	/* variable len hdr reqd to access info */
 
@@ -94,9 +94,9 @@
 #define ZCNL	  2	   /* convert NL to local end of line convention */
 #define ZCRESUM	  3	   /* resume interrupted file transfer */
 /* management include options, one of these ored in ZF1 */
-#define ZMSKNOLOC 0200 /* skip file if not present at rx */
+#define ZMSKNOLOC 0200     /* skip file if not present at rx */
 /* management options, one of these ored in ZF1 */
-#define ZMMASK	  037  /* mask for the choices below */
+#define ZMMASK	  037      /* mask for the choices below */
 #define ZMNEWL	  1	   /* transfer if source newer or longer */
 #define ZMCRC	  2	   /* transfer if different file CRC or length */
 #define ZMAPND	  3	   /* append contents to existing file (if any) */
@@ -110,8 +110,8 @@
 #define ZTLZW	  1	   /* lempel-Ziv compression */
 #define ZTRLE	  3	   /* run Length encoding */
 /* extended options for ZF3, bit encoded */
-#define ZXSPARS	  64   /* encoding for sparse file operations */
-#define ZCANVHDR  01   /* variable headers OK */
+#define ZXSPARS	  64       /* encoding for sparse file operations */
+#define ZCANVHDR  01       /* variable headers OK */
 /* receiver window size override */
 #define ZRWOVR    4	   /* byte position for receive window override/256 */
 
@@ -121,15 +121,15 @@ extern char Attn[ZATTNLEN+1];	/* Attention string rx sends to tx on err */
 
 /* globals used by ZMODEM functions */
 extern rt_uint8_t  Rxframeind;     /* ZBIN ZBIN32, or ZHEX type of frame */
-extern char header_type;	       /* type of header received */
+extern char header_type;	   /* type of header received */
 extern rt_uint8_t  rx_header[4];   /* received header */
 extern rt_uint8_t  tx_header[4];   /* transmitted header */
-extern rt_uint8_t  Txfcs32;		   /* TRUE means send binary frames with 32 bit FCS */
-extern rt_uint16_t Rxcount;	       /* count of data bytes received */
+extern rt_uint8_t  Txfcs32;        /* TRUE means send binary frames with 32 bit FCS */
+extern rt_uint16_t Rxcount;	   /* count of data bytes received */
 extern rt_uint16_t Rxtimeout;      /* tenths of seconds to wait for something */
-extern rt_uint32_t Rxpos;	       /* received file position */
-extern rt_uint32_t Txpos;	       /* transmitted file position */
-extern rt_uint8_t  Txfcs32;	       /* TURE means send binary frames with 32 bit FCS */
+extern rt_uint32_t Rxpos;	   /* received file position */
+extern rt_uint32_t Txpos;	   /* transmitted file position */
+extern rt_uint8_t  Txfcs32;	   /* TURE means send binary frames with 32 bit FCS */
 
 /* ward Christensen / CP/M parameters - Don't change these! */
 #define ENQ     005
