@@ -1,8 +1,8 @@
-# STM32H747-st-discovery 开发板 BSP 说明
+# STM32H747-ST-DISCOVERY 开发板 BSP 说明
 
 ## 简介
 
-本文档为 SummerGift 为 STM32H747-st-discovery 开发板提供的 BSP (板级支持包) 说明。
+本文档为 [SummerGift](https://github.com/SummerLife) 为 STM32H747-ST-DISCOVERY 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -26,7 +26,7 @@ STM32H747I-DISCO 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板�
 - 常用接口：USB 转串口、以太网接口、arduino 接口等
 - 调试接口，标准 JTAG/SWD
 
-开发板更多详细信息请参考 ST [STM32H743](https://www.st.com/en/evaluation-tools/nucleo-h743zi.html)。
+开发板更多详细信息请参考 ST 官方介绍页面 [STM32H747I-DISCO](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-discovery-kits/stm32h747i-disco.html)。
 
 ## 外设支持
 
@@ -96,11 +96,11 @@ msh >
 
 ## 注意事项
 
-- 调试串口为串口3 映射说明
+- 调试串口为串口 1 映射说明
 
     PA9     ------> USART1_TX
 
-    PA10     ------> USART1_RX 
+    PA10   ------> USART1_RX 
 
 ## 联系人信息
 
