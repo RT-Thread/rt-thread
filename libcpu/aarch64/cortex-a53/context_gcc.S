@@ -13,7 +13,7 @@
  */
 .globl rt_hw_gtimer_enable
 rt_hw_gtimer_enable:
-    MOV X0,#1
+	MOV X0,#1
 	MSR CNTP_CTL_EL0,X0
 	RET
 
