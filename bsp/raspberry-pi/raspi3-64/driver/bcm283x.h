@@ -202,6 +202,16 @@ enum i2c_reason_codes
 #define IRQ_DISABLE_BASIC   HWREG32(IRQ_BASE + 0x24)
 
 /*
+ *  Gtimer IRQ flag
+ */
+#define SYSTEM_TIMER_IRQ_0    (1 << 0)
+#define SYSTEM_TIMER_IRQ_1    (1 << 1)
+#define SYSTEM_TIMER_IRQ_2    (1 << 2)
+#define SYSTEM_TIMER_IRQ_3    (1 << 3)
+
+#define NON_SECURE_TIMER_IRQ    (1 << 1)
+
+/*
  *  System Timer
  */
 #define STIMER_BASE         (PER_BASE  + 0x3000)
