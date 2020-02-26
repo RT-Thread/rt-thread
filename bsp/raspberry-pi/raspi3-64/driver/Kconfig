@@ -25,18 +25,23 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
+        config BSP_USING_CORETIMER
+            bool "Using core timer"
+            select RT_USING_CORETIMER
+            default y
+
         menuconfig BSP_USING_SYSTIMER
             bool "Enable SYSTIMER"
-            select RT_USING_SYSTIMER
+            select BSP_USING_SYSTIMER
             default n
 
-            if  RT_USING_SYSTIMER
-                config RT_USING_SYSTIMER1
-                    bool "Enable sys timer1"
-                    default n
-                config RT_USING_SYSTIMER3
-                    bool "Enable sys timer3"
-                    default n
+        if  BSP_USING_SYSTIMER
+            config RT_USING_SYSTIMER1
+                bool "Enable sys timer1"
+                default n
+            config RT_USING_SYSTIMER3
+                bool "Enable sys timer3"
+                default n
         endif
 
         menuconfig BSP_USING_I2C
