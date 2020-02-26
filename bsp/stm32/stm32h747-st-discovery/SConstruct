@@ -47,13 +47,13 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-stm32_library = 'STM32F7xx_HAL'
+stm32_library = 'STM32H7xx_HAL'
 rtconfig.BSP_LIBRARY_TYPE = stm32_library
 
-# include libraries
+# include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, stm32_library, 'SConscript')))
 
-# include drivers
+# include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
 
 # make a building
