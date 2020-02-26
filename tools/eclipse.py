@@ -22,7 +22,7 @@ from xml.etree.ElementTree import SubElement
 
 from building import *
 
-MODULE_VER_NUM = 0
+MODULE_VER_NUM = 1
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
 
@@ -301,10 +301,12 @@ def HandleToolOption(tools, env, project, reset):
         option = linker_paths_option
         # remove old lib paths
         for item in option.findall('listOptionValue'):
-            option.remove(item)
+            if IsRttEclipsePathFormat(item.get('value')):
+                # clean old configuration
+                option.remove(item)
         # add new old lib paths
         for path in env['LIBPATH']:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': ConverToRttEclipsePathFormat(RelativeProjectPath(env, path).replace('\\', '/'))})
 
     return
 
