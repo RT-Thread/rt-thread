@@ -38,7 +38,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
-        LOG_I("num:%3d, humi:%3d.%d% %, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
+        LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_BARO:
         LOG_I("num:%3d, press:%5d pa, timestamp:%5d", num, sensor_data->data.baro, sensor_data->timestamp);
