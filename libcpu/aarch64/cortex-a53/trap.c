@@ -56,7 +56,8 @@ void rt_hw_trap_error(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
-#define GIC_ACK_INTID_MASK              0x000003ff
+#define GIC_ACK_INTID_MASK              (0x000003ff)
+#define CORE0_IRQ_SOURCE	            (0x40000060)
 
 void rt_hw_trap_irq(void)
 {
@@ -66,43 +67,19 @@ void rt_hw_trap_irq(void)
     extern struct rt_irq_desc isr_table[];
     uint32_t value = 0;
     value = IRQ_PEND_BASIC & 0x3ff;
-#ifdef RT_USING_SMP
-    uint32_t mailbox_data;
-    uint32_t cpu_id = rt_hw_cpu_id();
-    uint32_t int_source = CORE_IRQSOURCE(cpu_id);
-    mailbox_data = IPI_MAILBOX_CLEAR(cpu_id);
-    if (int_source & 0x0f)
+#ifdef BSP_USING_CORETIMER
+    uint32_t int_source = HWREG32(CORE0_IRQ_SOURCE)  & 0x3ff;
+    if (int_source & 0x02)
     {
-        if (int_source & 0x08){
-            isr_func = isr_table[IRQ_ARM_TIMER].handler;
-#ifdef RT_USING_INTERRUPT_INFO
-            isr_table[IRQ_ARM_TIMER].counter++;
-#endif
-            if (isr_func)
-            {
-                param = isr_table[IRQ_ARM_TIMER].param;
-                isr_func(IRQ_ARM_TIMER, param);
-            }
+        isr_func = isr_table[IRQ_ARM_TIMER].handler;
+        #ifdef RT_USING_INTERRUPT_INFO
+                    isr_table[IRQ_ARM_TIMER].counter++;
+        #endif
+        if (isr_func)
+        {
+            param = isr_table[IRQ_ARM_TIMER].param;
+            isr_func(IRQ_ARM_TIMER, param);
         }
-    }
-    if (int_source & 0xf0)
-    {
-        /*it's a ipi interrupt*/
-        if (mailbox_data & 0x1){
-            /* clear mailbox */
-            IPI_MAILBOX_CLEAR(cpu_id) = mailbox_data;    
-            isr_func = isr_table[IRQ_ARM_MAILBOX].handler;
-#ifdef RT_USING_INTERRUPT_INFO
-            isr_table[IRQ_ARM_MAILBOX].counter++;
-#endif
-            if (isr_func)
-            {
-                param = isr_table[IRQ_ARM_MAILBOX].param;
-                isr_func(IRQ_ARM_MAILBOX, param);
-            }
-        }
-        else 
-            CORE_MAILBOX3_CLEAR(cpu_id) = mailbox_data;
     }
 #endif
     /* local interrupt*/
