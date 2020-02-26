@@ -217,9 +217,7 @@ typedef enum
 
 #define SMPS       /*!< Switched mode power supply feature */
 
-#if !defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__ICCARM__)
-#define CORE_CM7
-#endif
+
 
 /**
   * @brief Configuration of the Cortex-M4/ Cortex-M7 Processor and Core Peripherals
