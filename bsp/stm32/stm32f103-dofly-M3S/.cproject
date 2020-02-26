@@ -123,6 +123,7 @@
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usescanffloat.637205035" name="Use float with nano scanf (-u _scanf_float)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usescanffloat" useByScannerDiscovery="false" value="false" valueType="boolean" />
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnosys.1948314201" name="Do not use syscalls (--specs=nosys.specs)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.usenewlibnosys" useByScannerDiscovery="false" value="false" valueType="boolean" />
                 <option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.verbose.273162112" name="Verbose (-v)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.verbose" useByScannerDiscovery="false" value="false" valueType="boolean" />
+                <option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.paths.1399535143" name="Library search path (-L)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.linker.paths" useByScannerDiscovery="false" valueType="libPaths" />
                 <inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.linker.input.262373798" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.linker.input">
                   <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)" />
                   <additionalInput kind="additionalinput" paths="$(LIBS)" />
