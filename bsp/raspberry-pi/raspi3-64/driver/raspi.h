@@ -67,4 +67,10 @@ enum rpi_pin_name
     RPI_GPIO_PIN_NUM,
 };
 
+#define DELAY_MICROS(micros) \
+    do{ \
+ rt_uint32_t compare = STIMER_CLO + micros * 25; \
+ while (STIMER_CLO < compare); \
+    } while (0) \
+
 #endif

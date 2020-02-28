@@ -9,245 +9,290 @@
  * 2019-07-29     zdzn           first version
  */
 
-#include <rtthread.h>
-#include <rthw.h>
-#include <rtdevice.h>
-#include <string.h>
-
 #include "drv_sdio.h"
-#include "interrupt.h"
-#include "drv_gpio.h"
+#include "raspi.h"
 
-#include "bcm283x.h"
-#include <drivers/mmcsd_core.h>
-#include "bcm283x.h"
-
-
-#include <rtdbg.h>
-
-#ifdef RT_USING_SDIO
-#define CONFIG_MMC_USE_DMA
-#define DMA_ALIGN       (32U)
-
-typedef struct EMMCCommand
-{
-    const char* name;
-    unsigned int code;
-    unsigned char resp;
-    unsigned char rca;
-    int delay;
-} EMMCCommand;
-
-static EMMCCommand sdCommandTable[] =
-{
-    {"GO_IDLE_STATE", 0x00000000 | CMD_RSPNS_NO                             , RESP_NO , RCA_NO  ,0},
-    {"ALL_SEND_CID" , 0x02000000 | CMD_RSPNS_136                            , RESP_R2I, RCA_NO  ,0},
-    {"SEND_REL_ADDR", 0x03000000 | CMD_RSPNS_48                             , RESP_R6 , RCA_NO  ,0},
-    {"SET_DSR"      , 0x04000000 | CMD_RSPNS_NO                             , RESP_NO , RCA_NO  ,0},
-    {"SWITCH_FUNC"  , 0x06000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"CARD_SELECT"  , 0x07000000 | CMD_RSPNS_48B                            , RESP_R1b, RCA_YES ,0},
-    {"SEND_IF_COND" , 0x08000000 | CMD_RSPNS_48                             , RESP_R7 , RCA_NO  ,100},
-    {"SEND_CSD"     , 0x09000000 | CMD_RSPNS_136                            , RESP_R2S, RCA_YES ,0},
-    {"SEND_CID"     , 0x0A000000 | CMD_RSPNS_136                            , RESP_R2I, RCA_YES ,0},
-    {"VOLT_SWITCH"  , 0x0B000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"STOP_TRANS"   , 0x0C000000 | CMD_RSPNS_48B                            , RESP_R1b, RCA_NO  ,0},
-    {"SEND_STATUS"  , 0x0D000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_YES ,0},
-    {"GO_INACTIVE"  , 0x0F000000 | CMD_RSPNS_NO                             , RESP_NO , RCA_YES ,0},
-    {"SET_BLOCKLEN" , 0x10000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"READ_SINGLE"  , 0x11000000 | CMD_RSPNS_48 | CMD_IS_DATA   | TM_DAT_DIR_CH, RESP_R1 , RCA_NO  ,0},
-    {"READ_MULTI"   , 0x12000000 | CMD_RSPNS_48 | TM_MULTI_DATA | TM_DAT_DIR_CH, RESP_R1 , RCA_NO  ,0},
-    {"SEND_TUNING"  , 0x13000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"SPEED_CLASS"  , 0x14000000 | CMD_RSPNS_48B                            , RESP_R1b, RCA_NO  ,0},
-    {"SET_BLOCKCNT" , 0x17000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"WRITE_SINGLE" , 0x18000000 | CMD_RSPNS_48 | CMD_IS_DATA   | TM_DAT_DIR_HC, RESP_R1 , RCA_NO  ,0},
-    {"WRITE_MULTI"  , 0x19000000 | CMD_RSPNS_48 | TM_MULTI_DATA | TM_DAT_DIR_HC, RESP_R1 , RCA_NO  ,0},
-    {"PROGRAM_CSD"  , 0x1B000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"SET_WRITE_PR" , 0x1C000000 | CMD_RSPNS_48B                            , RESP_R1b, RCA_NO  ,0},
-    {"CLR_WRITE_PR" , 0x1D000000 | CMD_RSPNS_48B                            , RESP_R1b, RCA_NO  ,0},
-    {"SND_WRITE_PR" , 0x1E000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"ERASE_WR_ST"  , 0x20000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"ERASE_WR_END" , 0x21000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"ERASE"        , 0x26000000 | CMD_RSPNS_48B                            , RESP_R1b, RCA_NO  ,0},
-    {"LOCK_UNLOCK"  , 0x2A000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"APP_CMD"      , 0x37000000 | CMD_RSPNS_NO                             , RESP_NO , RCA_NO  ,100},
-    {"APP_CMD"      , 0x37000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_YES ,0},
-    {"GEN_CMD"      , 0x38000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-
-  // APP commands must be prefixed by an APP_CMD.
-    {"SET_BUS_WIDTH", 0x06000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"SD_STATUS"    , 0x0D000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_YES ,0}, // RCA???
-    {"SEND_NUM_WRBL", 0x16000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"SEND_NUM_ERS" , 0x17000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"SD_SENDOPCOND", 0x29000000 | CMD_RSPNS_48                             , RESP_R3 , RCA_NO  ,1000},
-    {"SET_CLR_DET"  , 0x2A000000 | CMD_RSPNS_48                             , RESP_R1 , RCA_NO  ,0},
-    {"SEND_SCR"     , 0x33000000 | CMD_RSPNS_48 | CMD_IS_DATA | TM_DAT_DIR_CH   , RESP_R1 , RCA_NO  ,0},
+static rt_uint32_t sdCommandTable[] = {
+    SD_CMD_INDEX(0),
+    SD_CMD_RESERVED(1),
+    SD_CMD_INDEX(2) | SD_RESP_R2,
+    SD_CMD_INDEX(3) | SD_RESP_R1,
+    SD_CMD_INDEX(4),
+    SD_CMD_RESERVED(5), //SD_CMD_INDEX(5) | SD_RESP_R4,
+    SD_CMD_INDEX(6) | SD_RESP_R1,
+    SD_CMD_INDEX(7) | SD_RESP_R1b,
+    SD_CMD_INDEX(8) | SD_RESP_R1,
+    SD_CMD_INDEX(9) | SD_RESP_R2,
+    SD_CMD_INDEX(10) | SD_RESP_R2,
+    SD_CMD_INDEX(11) | SD_RESP_R1,
+    SD_CMD_INDEX(12) | SD_RESP_R1b | SD_CMD_TYPE_ABORT,
+    SD_CMD_INDEX(13) | SD_RESP_R1,
+    SD_CMD_RESERVED(14),
+    SD_CMD_INDEX(15),
+    SD_CMD_INDEX(16) | SD_RESP_R1,
+    SD_CMD_INDEX(17) | SD_RESP_R1 | SD_DATA_READ,
+    SD_CMD_INDEX(18) | SD_RESP_R1 | SD_DATA_READ | SD_CMD_MULTI_BLOCK | SD_CMD_BLKCNT_EN,
+    SD_CMD_INDEX(19) | SD_RESP_R1 | SD_DATA_READ,
+    SD_CMD_INDEX(20) | SD_RESP_R1b,
+    SD_CMD_RESERVED(21),
+    SD_CMD_RESERVED(22),
+    SD_CMD_INDEX(23) | SD_RESP_R1,
+    SD_CMD_INDEX(24) | SD_RESP_R1 | SD_DATA_WRITE,
+    SD_CMD_INDEX(25) | SD_RESP_R1 | SD_DATA_WRITE | SD_CMD_MULTI_BLOCK | SD_CMD_BLKCNT_EN,
+    SD_CMD_INDEX(26) | SD_RESP_R1 | SD_DATA_WRITE, //add
+    SD_CMD_INDEX(27) | SD_RESP_R1 | SD_DATA_WRITE,
+    SD_CMD_INDEX(28) | SD_RESP_R1b,
+    SD_CMD_INDEX(29) | SD_RESP_R1b,
+    SD_CMD_INDEX(30) | SD_RESP_R1 | SD_DATA_READ,
+    SD_CMD_RESERVED(31),
+    SD_CMD_INDEX(32) | SD_RESP_R1,
+    SD_CMD_INDEX(33) | SD_RESP_R1,
+    SD_CMD_RESERVED(34),
+    SD_CMD_INDEX(35) | SD_RESP_R1, //add
+    SD_CMD_INDEX(36) | SD_RESP_R1, //add
+    SD_CMD_RESERVED(37),
+    SD_CMD_INDEX(38) | SD_RESP_R1b,
+    SD_CMD_INDEX(39) | SD_RESP_R4, //add
+    SD_CMD_INDEX(40) | SD_RESP_R5, //add
+    SD_CMD_INDEX(41) | SD_RESP_R3, //add, mov from harbote
+    SD_CMD_RESERVED(42) | SD_RESP_R1,
+    SD_CMD_RESERVED(43),
+    SD_CMD_RESERVED(44),
+    SD_CMD_RESERVED(45),
+    SD_CMD_RESERVED(46),
+    SD_CMD_RESERVED(47),
+    SD_CMD_RESERVED(48),
+    SD_CMD_RESERVED(49),
+    SD_CMD_RESERVED(50),
+    SD_CMD_INDEX(51) | SD_RESP_R1 | SD_DATA_READ,
+    SD_CMD_RESERVED(52),
+    SD_CMD_RESERVED(53),
+    SD_CMD_RESERVED(54),
+    SD_CMD_INDEX(55) | SD_RESP_R3,
+    SD_CMD_INDEX(56) | SD_RESP_R1 | SD_CMD_ISDATA,
+    SD_CMD_RESERVED(57),
+    SD_CMD_RESERVED(58),
+    SD_CMD_RESERVED(59),
+    SD_CMD_RESERVED(60),
+    SD_CMD_RESERVED(61),
+    SD_CMD_RESERVED(62),
+    SD_CMD_RESERVED(63)
 };
-
-static rt_err_t sdhci_setwidth(struct sdhci_t * sdhci, rt_uint32_t width);
-static rt_err_t sdhci_setclock(struct sdhci_t * sdhci, rt_uint32_t clock);
-static rt_err_t sdhci_transfer(struct sdhci_t * sdhci, struct sdhci_cmd_t * cmd, struct sdhci_data_t * dat);
 
 static inline rt_uint32_t read32(rt_uint32_t addr)
 {
-    return( *((volatile rt_uint32_t *)(addr)) );
+    return (*((volatile unsigned int*)((rt_uint64_t)addr)));
+    //return (*((volatile rt_uint64_t *)(((long))addr)));
 }
 
 static inline void write32(rt_uint32_t addr, rt_uint32_t value)
 {
-    *((volatile rt_uint32_t *)(addr)) = value;
+    (*((volatile unsigned int*)((rt_uint64_t)addr))) = value;
+    //*((volatile rt_uint64_t *)(((long))addr)) = value;
+}
+
+rt_err_t sd_int(struct sdhci_pdata_t * pdat, unsigned int mask)
+{
+    unsigned int r;
+    unsigned int m = mask | INT_ERROR_MASK;
+    int cnt = 1000000;
+    while (!(read32(pdat->virt + EMMC_INTERRUPT) & (m | INT_ERROR_MASK)) && cnt--)
+        DELAY_MICROS(1);
+    r = read32(pdat->virt + EMMC_INTERRUPT);
+    if (cnt <= 0 || (r & INT_CMD_TIMEOUT) || (r & INT_DATA_TIMEOUT))
+    {
+        write32(pdat->virt + EMMC_INTERRUPT, r);
+        //qemu maybe can not use sdcard
+        //rt_kprintf("send cmd/data timeout wait for %x int: %x, status: %x\n",mask, r, read32(pdat->virt + EMMC_STATUS));
+        //return -RT_ETIMEOUT;
+    }
+    else if (r & INT_ERROR_MASK)
+    {
+        write32(pdat->virt + EMMC_INTERRUPT, r);
+        rt_kprintf("send cmd/data error %x -> %x\n",r, read32(pdat->virt + EMMC_INTERRUPT));
+        return -RT_ERROR;
+    }
+    write32(pdat->virt + EMMC_INTERRUPT, mask);
+    return RT_EOK;
+}
+
+rt_err_t sd_status(struct sdhci_pdata_t * pdat, unsigned int mask)
+{
+    int cnt = 500000;
+    while ((read32(pdat->virt + EMMC_STATUS) & mask) && !(read32(pdat->virt + EMMC_INTERRUPT) & INT_ERROR_MASK) && cnt--)
+        DELAY_MICROS(1);
+    if (cnt <= 0)
+    {
+        return -RT_ETIMEOUT;
+    }
+    else if (read32(pdat->virt + EMMC_INTERRUPT) & INT_ERROR_MASK)
+    {
+        return  -RT_ERROR;
+    } 
+
+    return RT_EOK;
 }
 
 static rt_err_t raspi_transfer_command(struct sdhci_pdata_t * pdat, struct sdhci_cmd_t * cmd)
 {
     rt_uint32_t cmdidx;
-    rt_uint32_t status;
     rt_err_t ret = RT_EOK;
-
-    if(read32(pdat->virt + EMMC_STATUS) & SR_CMD_INHIBIT)
-        write32(pdat->virt + EMMC_CMDTM, 0x0);
-
-    EMMCCommand* cmdtab = &sdCommandTable[cmd->cmdidx];
-
-    cmdidx = cmdtab->code;
-
-    write32(pdat->virt + EMMC_ARG1, cmd->cmdarg);
-    write32(pdat->virt + EMMC_CMDTM, cmdidx);
-
-    do {
-        status = read32(pdat->virt + EMMC_STATUS);
-    } while(!(status & SR_CMD_INHIBIT));
-
-    if(cmd->resptype & RESP_MASK)
+    ret = sd_status(pdat, SR_CMD_INHIBIT);
+    if (ret)
     {
-        cmd->response[0] = read32(pdat->virt + EMMC_RESP0);
-        if(cmd->resptype & RESP_R2)
-        {
-            cmd->response[1] = read32(pdat->virt + EMMC_RESP1);
-            cmd->response[2] = read32(pdat->virt + EMMC_RESP2);
-            cmd->response[3] = read32(pdat->virt + EMMC_RESP3);
-        }
+        rt_kprintf("ERROR: EMMC busy %d\n", ret);
+        return ret;
     }
 
+    cmdidx = sdCommandTable[cmd->cmdidx];
+    if (cmdidx == 0xFFFFFFFF)
+        return -RT_EINVAL;
+    if (cmd->datarw == DATA_READ)
+        cmdidx |= SD_DATA_READ;
+    if (cmd->datarw == DATA_WRITE)
+        cmdidx |= SD_DATA_WRITE;
+    mmcsd_dbg("transfer cmd %x(%d) %x %x\n", cmdidx, cmd->cmdidx, cmd->cmdarg, read32(pdat->virt + EMMC_INTERRUPT));
+    write32(pdat->virt + EMMC_INTERRUPT,read32(pdat->virt + EMMC_INTERRUPT));
+    write32(pdat->virt + EMMC_ARG1, cmd->cmdarg);
+    write32(pdat->virt + EMMC_CMDTM, cmdidx);
+    if (cmd->cmdidx == SD_APP_OP_COND)
+        DELAY_MICROS(1000);
+    else if ((cmd->cmdidx == SD_SEND_IF_COND) || (cmd->cmdidx == APP_CMD))
+        DELAY_MICROS(100);
+    ret = sd_int(pdat, INT_CMD_DONE);
+    if (ret)
+    {
+        return ret;
+    }
+    if (cmd->resptype & RESP_MASK)
+    {
+
+        if (cmd->resptype & RESP_R2)
+        {
+            rt_uint32_t resp[4];
+            resp[0] = read32(pdat->virt + EMMC_RESP0);
+            resp[1] = read32(pdat->virt + EMMC_RESP1);
+            resp[2] = read32(pdat->virt + EMMC_RESP2);
+            resp[3] = read32(pdat->virt + EMMC_RESP3);
+            if (cmd->resptype == RESP_R2)
+            {
+                cmd->response[0] = resp[3]<<8 |((resp[2]>>24)&0xff);
+                cmd->response[1] = resp[2]<<8 |((resp[1]>>24)&0xff);
+                cmd->response[2] = resp[1]<<8 |((resp[0]>>24)&0xff);
+                cmd->response[3] = resp[0]<<8 ;
+            }
+            else
+            {
+                cmd->response[0] = resp[0];
+                cmd->response[1] = resp[1];
+                cmd->response[2] = resp[2];
+                cmd->response[3] = resp[3];
+            }
+        }
+        else
+            cmd->response[0] = read32(pdat->virt + EMMC_RESP0);
+    }
+    mmcsd_dbg("response: %x: %x %x %x %x (%x, %x)\n", cmd->resptype, cmd->response[0], cmd->response[1], cmd->response[2], cmd->response[3], read32(pdat->virt + EMMC_STATUS),read32(pdat->virt + EMMC_INTERRUPT));
     return ret;
 }
 
 static rt_err_t read_bytes(struct sdhci_pdata_t * pdat, rt_uint32_t * buf, rt_uint32_t blkcount, rt_uint32_t blksize)
 {
-    rt_uint32_t * tmp = buf;
-    rt_uint32_t count = blkcount * blksize;
-    rt_uint32_t status, err;
-
-//    status = read32(pdat->virt + PL180_STATUS);
-//    err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT | PL180_STAT_RX_OVERRUN);
-//    while((!err) && (count >= sizeof(rt_uint32_t)))
-//    {
-//        if(status & PL180_STAT_RX_FIFO_AVL)
-//        {
-//            *(tmp) = read32(pdat->virt + PL180_FIFO);
-//            tmp++;
-//            count -= sizeof(rt_uint32_t);
-//        }
-//        status = read32(pdat->virt + PL180_STATUS);
-//        err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT | PL180_STAT_RX_OVERRUN);
-//    }
-//
-//    err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT | PL180_STAT_DAT_BLK_END | PL180_STAT_RX_OVERRUN);
-//    while(!err)
-//    {
-//        status = read32(pdat->virt + PL180_STATUS);
-//        err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT | PL180_STAT_DAT_BLK_END | PL180_STAT_RX_OVERRUN);
-//    }
-//
-//    if(status & PL180_STAT_DAT_TIME_OUT)
-//        return -RT_ERROR;
-//    else if (status & PL180_STAT_DAT_CRC_FAIL)
-//        return -RT_ERROR;
-//    else if (status & PL180_STAT_RX_OVERRUN)
-//        return -RT_ERROR;
-//    write32(pdat->virt + PL180_CLEAR, 0x1DC007FF);
-//
-//    if(count)
-//        return -RT_ERROR;
-
+    int c = 0;
+    rt_err_t ret;
+    int d;
+    while (c < blkcount)
+    {
+        if ((ret = sd_int(pdat, INT_READ_RDY)))
+        {
+            rt_kprintf("timeout happens when reading block %d\n",c);
+            return ret;
+        }
+        for (d=0; d < blksize / 4; d++)
+            if (read32(pdat->virt + EMMC_STATUS) & SR_READ_AVAILABLE)
+                buf[d] = read32(pdat->virt + EMMC_DATA);
+        c++;
+        buf += blksize / 4;
+    }
     return RT_EOK;
 }
 
 static rt_err_t write_bytes(struct sdhci_pdata_t * pdat, rt_uint32_t * buf, rt_uint32_t blkcount, rt_uint32_t blksize)
 {
-    rt_uint32_t * tmp = buf;
-    rt_uint32_t count = blkcount * blksize;
-    rt_uint32_t status, err;
-    int i;
-
-//    status = read32(pdat->virt + PL180_STATUS);
-//    err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT);
-//    while(!err && count)
-//    {
-//        if(status & PL180_STAT_TX_FIFO_HALF)
-//        {
-//            if(count >= 8 * sizeof(rt_uint32_t))
-//            {
-//                for(i = 0; i < 8; i++)
-//                    write32(pdat->virt + PL180_FIFO, *(tmp + i));
-//                tmp += 8;
-//                count -= 8 * sizeof(rt_uint32_t);
-//            }
-//            else
-//            {
-//                while(count >= sizeof(rt_uint32_t))
-//                {
-//                    write32(pdat->virt + PL180_FIFO, *tmp);
-//                    tmp++;
-//                    count -= sizeof(rt_uint32_t);
-//                }
-//            }
-//        }
-//        status = read32(pdat->virt + PL180_STATUS);
-//        err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT);
-//    }
-//
-//    err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT | PL180_STAT_DAT_BLK_END);
-//    while(!err)
-//    {
-//        status = read32(pdat->virt + PL180_STATUS);
-//        err = status & (PL180_STAT_DAT_CRC_FAIL | PL180_STAT_DAT_TIME_OUT | PL180_STAT_DAT_BLK_END);
-//    }
-//
-//    if(status & PL180_STAT_DAT_TIME_OUT)
-//        return -RT_ERROR;
-//    else if (status & PL180_STAT_DAT_CRC_FAIL)
-//        return -RT_ERROR;
-//    write32(pdat->virt + PL180_CLEAR, 0x1DC007FF);
-//
-//    if(count)
-//        return -RT_ERROR;
+    int c = 0;
+    rt_err_t ret;
+    int d;
+    while (c < blkcount)
+    {
+        if ((ret = sd_int(pdat, INT_WRITE_RDY)))
+        {
+            return ret;
+        }
+        for (d=0; d < blksize / 4; d++)
+            write32(pdat->virt + EMMC_DATA, buf[d]);
+        c++;
+        buf += blksize / 4;
+    }
+    if ((ret = sd_int(pdat, INT_DATA_DONE)))
+    {
+        return ret;
+    }
     return RT_EOK;
 }
 
 static rt_err_t raspi_transfer_data(struct sdhci_pdata_t * pdat, struct sdhci_cmd_t * cmd, struct sdhci_data_t * dat)
 {
     rt_uint32_t dlen = (rt_uint32_t)(dat->blkcnt * dat->blksz);
-    rt_uint32_t blksz_bits = dat->blksz - 1;
-    rt_err_t ret = -RT_ERROR;
-
-    write32(pdat->virt + EMMC_BLKSIZECNT, dlen);
-
-    if(dat->flag & DATA_DIR_READ)
+    rt_err_t ret = sd_status(pdat, SR_DAT_INHIBIT);
+    if (ret)
     {
-        write32(pdat->virt + EMMC_STATUS, SR_READ_TRANSFER);
+        rt_kprintf("ERROR: EMMC busy\n");
+        return ret;
+    }
+    if (dat->blkcnt > 1)
+    {
+        struct sdhci_cmd_t newcmd;
+        newcmd.cmdidx = SET_BLOCK_COUNT;
+        newcmd.cmdarg = dat->blkcnt;
+        newcmd.resptype = RESP_R1;
+        ret = raspi_transfer_command(pdat, &newcmd);
+        if (ret) return ret;
+    }
+
+    if(dlen < 512)
+    {
+        write32(pdat->virt + EMMC_BLKSIZECNT, dlen | 1 << 16);
+    }
+    else
+    {
+        write32(pdat->virt + EMMC_BLKSIZECNT, 512 | (dat->blkcnt) << 16);
+    }
+    if (dat->flag & DATA_DIR_READ)
+    {
+        cmd->datarw = DATA_READ;
         ret = raspi_transfer_command(pdat, cmd);
-        if (ret < 0) return ret;
+        if (ret) return ret;
+        mmcsd_dbg("read_block %d, %d\n", dat->blkcnt, dat->blksz );
         ret = read_bytes(pdat, (rt_uint32_t *)dat->buf, dat->blkcnt, dat->blksz);
     }
-    else if(dat->flag & DATA_DIR_WRITE)
+    else if (dat->flag & DATA_DIR_WRITE)
     {
+        cmd->datarw = DATA_WRITE;
         ret = raspi_transfer_command(pdat, cmd);
-        if (ret < 0) return ret;
-        write32(pdat->virt + EMMC_STATUS, SR_WRITE_TRANSFER);
+        if (ret) return ret;
+        mmcsd_dbg("write_block %d, %d", dat->blkcnt, dat->blksz );
         ret = write_bytes(pdat, (rt_uint32_t *)dat->buf, dat->blkcnt, dat->blksz);
     }
-
     return ret;
+}
+
+static rt_err_t sdhci_transfer(struct sdhci_t * sdhci, struct sdhci_cmd_t * cmd, struct sdhci_data_t * dat)
+{
+    struct sdhci_pdata_t * pdat = (struct sdhci_pdata_t *)sdhci->priv;
+    if (!dat)
+        return raspi_transfer_command(pdat, cmd);
+
+    return raspi_transfer_data(pdat, cmd, dat);
 }
 
 static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
@@ -256,17 +301,14 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
     struct sdhci_cmd_t cmd;
     struct sdhci_cmd_t stop;
     struct sdhci_data_t dat;
-
     rt_memset(&cmd, 0, sizeof(struct sdhci_cmd_t));
     rt_memset(&stop, 0, sizeof(struct sdhci_cmd_t));
     rt_memset(&dat, 0, sizeof(struct sdhci_data_t));
 
     cmd.cmdidx = req->cmd->cmd_code;
-    EMMCCommand* cmdtab = &sdCommandTable[cmd.cmdidx];
     cmd.cmdarg = req->cmd->arg;
-    cmd.resptype = cmdtab->resp;
-
-    if(req->data)
+    cmd.resptype =resp_type(req->cmd);
+    if (req->data)
     {
         dat.buf = (rt_uint8_t *)req->data->buf;
         dat.flag = req->data->flags;
@@ -288,41 +330,12 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
     if (req->stop)
     {
         stop.cmdidx = req->stop->cmd_code;
-        cmdtab = &sdCommandTable[cmd.cmdidx];
         stop.cmdarg = req->stop->arg;
-        cmd.resptype = cmdtab->resp;
-
+        cmd.resptype =resp_type(req->stop);
         req->stop->err = sdhci_transfer(sdhci, &stop, RT_NULL);
     }
 
     mmcsd_req_complete(host);
-}
-
-
-static rt_err_t sdhci_transfer(struct sdhci_t * sdhci, struct sdhci_cmd_t * cmd, struct sdhci_data_t * dat)
-{
-    struct sdhci_pdata_t * pdat = (struct sdhci_pdata_t *)sdhci->priv;
-
-    if(!dat)
-        return raspi_transfer_command(pdat, cmd);
-
-    return raspi_transfer_data(pdat, cmd, dat);
-}
-
-
-//#ifdef CONFIG_MMC_USE_DMA
-//#ifdef BSP_USING_SDIO0
-////ALIGN(32) static rt_uint8_t dma_buffer[64 * 1024];
-//static rt_uint8_t dma_buffer[64 * 1024];
-//#endif
-//#endif
-
-
-static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
-{
-    struct sdhci_t * sdhci = (struct sdhci_t *)host->private_data;
-    sdhci_setclock(sdhci, io_cfg->clock);
-    sdhci_setwidth(sdhci, io_cfg->bus_width);
 }
 
 rt_int32_t mmc_card_status(struct rt_mmcsd_host *host)
@@ -344,15 +357,17 @@ static rt_err_t sdhci_setwidth(struct sdhci_t * sdhci, rt_uint32_t width)
 {
     rt_uint32_t temp = 0;
     struct sdhci_pdata_t * pdat = (struct sdhci_pdata_t *)sdhci->priv;
-    temp = read32((pdat->virt + EMMC_CONTROL0));
-    temp |= C0_HCTL_HS_EN;
-    temp |= C0_HCTL_DWITDH;   // always use 4 data lines:
-    write32((pdat->virt + EMMC_CONTROL0), temp);
-
+    if (width == MMCSD_BUS_WIDTH_4)
+    {
+        temp = read32((pdat->virt + EMMC_CONTROL0));
+        temp |= C0_HCTL_HS_EN;
+        temp |= C0_HCTL_DWITDH;   // always use 4 data lines:
+        write32((pdat->virt + EMMC_CONTROL0), temp);
+    }
     return RT_EOK;
 }
 
-static rt_uint32_t sdhci_getdivider( rt_uint32_t sdHostVer, rt_uint32_t freq )
+static rt_uint32_t sdhci_getdivider(rt_uint32_t sdHostVer, rt_uint32_t freq)
 {
     rt_uint32_t divisor;
     rt_uint32_t closest = 41666666 / freq;
@@ -366,7 +381,8 @@ static rt_uint32_t sdhci_getdivider( rt_uint32_t sdHostVer, rt_uint32_t freq )
     else
         divisor = (1 << shiftcount);
 
-    if (divisor <= 2) {
+    if (divisor <= 2)
+    {
         divisor = 2;
         shiftcount = 0;
     }
@@ -384,54 +400,53 @@ static rt_err_t sdhci_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     rt_uint32_t temp = 0;
     rt_uint32_t sdHostVer = 0;
     int count = 100000;
-    struct sdhci_pdata_t * pdat = (struct sdhci_pdata_t *)sdhci->priv;
+    struct sdhci_pdata_t * pdat = (struct sdhci_pdata_t *)(sdhci->priv);
 
-    temp = read32(pdat->virt + EMMC_STATUS);
-    while((temp & (SR_CMD_INHIBIT | SR_DAT_INHIBIT))&&(--count))
-        bcm283x_clo_delayMicros(1);
-
-    if( count <= 0 )
+    while ((read32(pdat->virt + EMMC_STATUS) & (SR_CMD_INHIBIT | SR_DAT_INHIBIT)) && (--count))
+        DELAY_MICROS(1);
+    if (count <= 0)
     {
-        rt_kprintf("EMMC: Set clock: timeout waiting for inhibit flags. Status %08x.\n", temp);
+        rt_kprintf("EMMC: Set clock: timeout waiting for inhibit flags. Status %08x.\n",read32(pdat->virt + EMMC_STATUS));
         return RT_ERROR;
     }
 
     // Switch clock off.
     temp = read32((pdat->virt + EMMC_CONTROL1));
-    temp |= ~C1_CLK_EN;
+    temp &= ~C1_CLK_EN;
     write32((pdat->virt + EMMC_CONTROL1),temp);
-
-    bcm283x_clo_delayMicros(10);
-
+    DELAY_MICROS(10);
     // Request the new clock setting and enable the clock
     temp = read32(pdat->virt + EMMC_SLOTISR_VER);
     sdHostVer = (temp & HOST_SPEC_NUM) >> HOST_SPEC_NUM_SHIFT;
-
     int cdiv = sdhci_getdivider(sdHostVer, clock);
     temp = read32((pdat->virt + EMMC_CONTROL1));
     temp = (temp & 0xffff003f) | cdiv;
     write32((pdat->virt + EMMC_CONTROL1),temp);
-    bcm283x_clo_delayMicros(10);
+    DELAY_MICROS(10);
 
     // Enable the clock.
     temp = read32(pdat->virt + EMMC_CONTROL1);
     temp |= C1_CLK_EN;
     write32((pdat->virt + EMMC_CONTROL1),temp);
-    bcm283x_clo_delayMicros(10);
-
+    DELAY_MICROS(10);
     // Wait for clock to be stable.
     count = 10000;
-    temp = read32(pdat->virt + EMMC_CONTROL1);
-    while( !(temp & C1_CLK_STABLE) && count-- )
-        bcm283x_clo_delayMicros(10);
-
-    if( count <= 0 )
+    while (!(read32(pdat->virt + EMMC_CONTROL1) & C1_CLK_STABLE) && count--)
+        DELAY_MICROS(10);
+    if (count <= 0)
     {
-        rt_kprintf("EMMC: ERROR: failed to get stable clock.\n");
+        rt_kprintf("EMMC: ERROR: failed to get stable clock %d.\n", clock);
         return RT_ERROR;
     }
-
+    mmcsd_dbg("set stable clock %d.\n", clock);
     return RT_EOK;
+}
+
+static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
+{
+    struct sdhci_t * sdhci = (struct sdhci_t *)host->private_data;
+    sdhci_setclock(sdhci, io_cfg->clock);
+    sdhci_setwidth(sdhci, io_cfg->bus_width);
 }
 
 static const struct rt_mmcsd_host_ops ops =
@@ -444,27 +459,67 @@ static const struct rt_mmcsd_host_ops ops =
 
 static void sdmmc_gpio_init()
 {
-    int pin;
-
-    for (pin = BCM_GPIO_PIN_48; pin <= BCM_GPIO_PIN_53; pin++)
-    {
-        bcm283x_gpio_set_pud(pin, BCM283X_GPIO_PUD_UP);
-        bcm283x_gpio_fsel(pin, BCM283X_GPIO_FSEL_ALT3);
-    }
-    bcm283x_gpio_set_pud(pin, BCM283X_GPIO_PUD_UP);
-    bcm283x_gpio_fsel(pin, BCM283X_GPIO_FSEL_INPT);
+//    int pin;
+//    bcm283x_gpio_fsel(47,BCM283X_GPIO_FSEL_INPT);
+//    bcm283x_gpio_set_pud(47, BCM283X_GPIO_PUD_UP);
+//    bcm283x_peri_set_bits(BCM283X_GPIO_BASE + BCM283X_GPIO_GPHEN1, 1<<15, 1<<15);
+//    for (pin = 53; pin >= 48; pin--)
+//    {
+//        bcm283x_gpio_fsel(pin, BCM283X_GPIO_FSEL_ALT3);
+//        bcm283x_gpio_set_pud(pin, BCM283X_GPIO_PUD_UP);
+//    }
 }
+
+static rt_err_t reset_emmc(struct sdhci_pdata_t * pdat){
+    rt_uint32_t temp;
+    int cnt;
+    write32((pdat->virt + EMMC_CONTROL0),0);
+    temp = read32((pdat->virt + EMMC_CONTROL1));
+    temp |= C1_SRST_HC;
+    write32((pdat->virt + EMMC_CONTROL1),temp);
+    cnt = 10000;
+    do
+    {
+        DELAY_MICROS(10);
+    }
+    while ((read32((pdat->virt + EMMC_CONTROL1)) & C1_SRST_HC) && cnt--);
+    if (cnt <= 0)
+    {
+        rt_kprintf("ERROR: failed to reset EMMC\n");
+        return RT_ERROR;
+    }
+    temp = read32((pdat->virt + EMMC_CONTROL1));
+    temp |= C1_CLK_INTLEN | C1_TOUNIT_MAX;
+    write32((pdat->virt + EMMC_CONTROL1),temp);
+    DELAY_MICROS(10);
+    return RT_EOK;
+}
+
+#ifdef RT_MMCSD_DBG
+void dump_registers(struct sdhci_pdata_t * pdat){
+    rt_kprintf("EMMC registers:");
+    int i = EMMC_ARG2;
+    for (; i <= EMMC_CONTROL2; i += 4)
+        rt_kprintf("\t%x:%x\n", i, read32(pdat->virt + i));
+    rt_kprintf("\t%x:%x\n", 0x50, read32(pdat->virt + 0x50));
+    rt_kprintf("\t%x:%x\n", 0x70, read32(pdat->virt + 0x70));
+    rt_kprintf("\t%x:%x\n", 0x74, read32(pdat->virt + 0x74));
+    rt_kprintf("\t%x:%x\n", 0x80, read32(pdat->virt + 0x80));
+    rt_kprintf("\t%x:%x\n", 0x84, read32(pdat->virt + 0x84));
+    rt_kprintf("\t%x:%x\n", 0x88, read32(pdat->virt + 0x88));
+    rt_kprintf("\t%x:%x\n", 0x8c, read32(pdat->virt + 0x8c));
+    rt_kprintf("\t%x:%x\n", 0x90, read32(pdat->virt + 0x90));
+    rt_kprintf("\t%x:%x\n", 0xf0, read32(pdat->virt + 0xf0));
+    rt_kprintf("\t%x:%x\n", 0xfc, read32(pdat->virt + 0xfc));
+}
+#endif
 
 int raspi_sdmmc_init(void)
 {
     rt_uint32_t virt;
-    rt_uint32_t id;
     struct rt_mmcsd_host * host = RT_NULL;
     struct sdhci_pdata_t * pdat = RT_NULL;
     struct sdhci_t * sdhci = RT_NULL;
-
-    rt_kprintf("raspi_sdmmc_init start\n");
-
 #ifdef BSP_USING_SDIO0
     host = mmcsd_alloc_host();
     if (!host)
@@ -481,21 +536,19 @@ int raspi_sdmmc_init(void)
     }
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
 
-    rt_kprintf(">> sdmmc_gpio_init\n");
     sdmmc_gpio_init();
-    rt_kprintf("<< sdmmc_gpio_init\n");
-
     virt = MMC0_BASE_ADDR;
 
     pdat = (struct sdhci_pdata_t *)rt_malloc(sizeof(struct sdhci_pdata_t));
     RT_ASSERT(pdat != RT_NULL);
 
     pdat->virt = (rt_uint32_t)virt;
+    reset_emmc(pdat);
 
     sdhci->name = "sd0";
     sdhci->voltages = VDD_33_34;
     sdhci->width = MMCSD_BUSWIDTH_4;
-    sdhci->clock = 26 * 1000 * 1000;
+    sdhci->clock = 200 * 1000 * 1000;
     sdhci->removeable = RT_TRUE;
 
     sdhci->detect = sdhci_detect;
@@ -503,7 +556,6 @@ int raspi_sdmmc_init(void)
     sdhci->setclock = sdhci_setclock;
     sdhci->transfer = sdhci_transfer;
     sdhci->priv = pdat;
-    //write32(pdat->virt + PL180_POWER, 0xbf);
 
     host->ops = &ops;
     host->freq_min = 400000;
@@ -517,16 +569,20 @@ int raspi_sdmmc_init(void)
 
     host->private_data = sdhci;
 
+    write32((pdat->virt + EMMC_IRPT_EN),0xffffffff);
+    write32((pdat->virt + EMMC_IRPT_MASK),0xffffffff);
+#ifdef RT_MMCSD_DBG
+    dump_registers(pdat);
+#endif
     mmcsd_change(host);
-
+#endif
     return RT_EOK;
 
 err:
-    if(host)  rt_free(host);
-    if(sdhci) rt_free(sdhci);
+    if (host)  rt_free(host);
+    if (sdhci) rt_free(sdhci);
 
     return -RT_EIO;
-#endif
 }
-INIT_APP_EXPORT(raspi_sdmmc_init);
-#endif
+
+INIT_DEVICE_EXPORT(raspi_sdmmc_init);
