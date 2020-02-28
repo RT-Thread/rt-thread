@@ -11,7 +11,6 @@
 #ifndef __CP15_H__
 #define __CP15_H__
 
-#include "bcm283x.h"
 #ifndef   __STATIC_FORCEINLINE
 #define __STATIC_FORCEINLINE     __attribute__((always_inline)) static inline
 #endif

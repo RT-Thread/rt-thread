@@ -5,7 +5,6 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Split('''
 board.c
-bcm283x.c
 drv_uart.c
 ''')
 CPPPATH = [cwd]

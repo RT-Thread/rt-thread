@@ -13,10 +13,6 @@
 
 #include <stdint.h>
 
-#include <rthw.h>
-#include <bcm283x.h>
-
-#define __REG32 HWREG32
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 
