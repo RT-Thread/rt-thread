@@ -21,7 +21,7 @@ extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 
 #define RT_HW_HEAP_BEGIN    (void*)&__bss_end
-#define RT_HW_HEAP_END      (void*)(RT_HW_HEAP_BEGIN + 4 * 1024 * 1024)
+#define RT_HW_HEAP_END      (void*)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024)
 
 void rt_hw_board_init(void);
 
