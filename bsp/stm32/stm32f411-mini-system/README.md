@@ -42,6 +42,7 @@ STM32F411-mini-system 是一款基于 ARM Cortex-M4 内核的开发板，最高�
 | RTC          |     支持     |               支持外部晶振和内部低速时钟                |
 | WDT          |     支持     |                                                         |
 | FLASH        |     支持     | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
+| USB Device   |     支持     |                                                         |
 
 ## 使用说明
 
