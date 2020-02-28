@@ -45,7 +45,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 #define RT_USING_CPU_FFS
 
 /* RT-Thread Components */
@@ -139,11 +139,11 @@
 
 /* system packages */
 
-#define PKG_USING_EMBARC_BSP
-#define PKG_USING_EMBARC_BSP_UPSTREAM_VERSION
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_EMBARC_BSP
+#define PKG_USING_EMBARC_BSP_UPSTREAM_VERSION
 
 /* miscellaneous packages */
 
