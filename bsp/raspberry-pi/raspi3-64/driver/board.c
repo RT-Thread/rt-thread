@@ -93,10 +93,11 @@ void idle_wfi(void)
 void rt_hw_board_init(void)
 {
     mmu_init();
-    armv8_map(0, 0, 0x800000, MEM_ATTR_MEMORY);
-    armv8_map(0x3f00B000, 0x3f00B000, 0x1000, MEM_ATTR_IO);//timer
+    armv8_map(0, 0, 0x6400000, MEM_ATTR_MEMORY);
+    armv8_map(0x3f000000, 0x3f000000, 0x200000, MEM_ATTR_IO);//timer
     armv8_map(0x3f200000, 0x3f200000, 0x16000, MEM_ATTR_IO);//uart
     armv8_map(0x40000000, 0x40000000, 0x1000, MEM_ATTR_IO);//core timer
+    armv8_map(0x3F300000, 0x3F300000, 0x1000, MEM_ATTR_IO);//sdio
     mmu_enable();
     
     /* initialize hardware interrupt */
