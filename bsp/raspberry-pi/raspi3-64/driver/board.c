@@ -17,6 +17,7 @@
 
 #include "cp15.h"
 #include "mmu.h"
+#include "raspi.h"
 
 #ifdef BSP_USING_CORETIMER
 static rt_uint64_t timerStep;

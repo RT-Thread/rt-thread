@@ -11,18 +11,19 @@
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
-#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <rtdebug.h>
-#include <rtdbg.h>
 
-#include "interrupt.h"
-#include "bcm283x.h"
-#include "raspi.h"
 #include "board.h"
+#include "interrupt.h"
+
 
 #define GPIO_IRQ_NUM 3
+
+#define IRQ_GPIO0               49
+#define IRQ_GPIO1               50
+#define IRQ_GPIO2               51
+#define IRQ_GPIO3               52
 
 struct gpio_irq_def
 {
