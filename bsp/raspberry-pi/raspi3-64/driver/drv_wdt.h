@@ -11,16 +11,13 @@
 #ifndef __DRV_WDT_H__
 #define __DRV_WDT_H__
 
-#include <rtdef.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <drivers/watchdog.h>
 
-#include "bcm283x.h"
+#include "board.h"
 
 struct raspi_wdt_driver
 {
-    volatile rt_uint32_t base;
     rt_uint32_t timeout;
 };
 

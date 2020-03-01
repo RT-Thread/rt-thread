@@ -8,30 +8,14 @@
  * 2019-07-29     zdzn           first version
  */
 #include "drv_wdt.h"
+#include "raspi.h"
 
 #ifdef BSP_USING_WDT
-
-#define PM_RSTC				0x1c
-#define PM_RSTS				0x20
-#define PM_WDOG				0x24
-
-#define PM_PASSWORD			0x5a000000
-
-#define PM_WDOG_TIME_SET		0x000fffff
-#define PM_RSTC_WRCFG_CLR		0xffffffcf
-#define PM_RSTS_HADWRH_SET		0x00000040
-#define PM_RSTC_WRCFG_SET		0x00000030
-#define PM_RSTC_WRCFG_FULL_RESET	0x00000020
-#define PM_RSTC_RESET			0x00000102
-#define PM_RSTS_PARTITION_CLR          0xfffffaaa
 
 #define SECS_TO_WDOG_TICKS(x) ((x) << 16)
 #define WDOG_TICKS_TO_SECS(x) ((x) >> 16)
 
-static struct raspi_wdt_driver bcm_wdt =
-{
-    .base = PER_BASE,
-};
+static struct raspi_wdt_driver bcm_wdt;
 
 void raspi_watchdog_init(rt_uint32_t time_init)
 {
@@ -41,21 +25,14 @@ void raspi_watchdog_init(rt_uint32_t time_init)
 void raspi_watchdog_start()
 {
     volatile rt_uint32_t cur;
-    bcm283x_peri_write(bcm_wdt.base + PM_WDOG, PM_PASSWORD
-            | (SECS_TO_WDOG_TICKS(bcm_wdt.timeout) & PM_WDOG_TIME_SET));
-    bcm283x_peri_write(bcm_wdt.base + PM_WDOG, PM_PASSWORD
-            | (SECS_TO_WDOG_TICKS(bcm_wdt.timeout) & PM_WDOG_TIME_SET));
-
-    cur = bcm283x_peri_read(bcm_wdt.base + PM_RSTC);
-
-    bcm283x_peri_write(bcm_wdt.base + PM_RSTC, PM_PASSWORD
-            | (cur & PM_RSTC_WRCFG_CLR) | PM_RSTC_WRCFG_FULL_RESET);
-
+    PM_WDOG = PM_PASSWORD | (SECS_TO_WDOG_TICKS(bcm_wdt.timeout) & PM_WDOG_TIME_SET);
+    cur = PM_RSTC;
+    PM_RSTC = PM_PASSWORD | (cur & PM_RSTC_WRCFG_CLR) | PM_RSTC_WRCFG_FULL_RESET;
 }
 
 void raspi_watchdog_stop()
 {
-    bcm283x_peri_write(bcm_wdt.base + PM_RSTC, PM_PASSWORD | PM_RSTC_RESET);
+    PM_RSTC = PM_PASSWORD | PM_RSTC_RESET;
 }
 
 void raspi_watchdog_clr()
@@ -63,7 +40,7 @@ void raspi_watchdog_clr()
     bcm_wdt.timeout = 0;
 }
 
-void raspi_watchdog_set_timeout( rt_uint32_t timeout_us)
+void raspi_watchdog_set_timeout(rt_uint32_t timeout_us)
 {
     bcm_wdt.timeout = timeout_us;
 }
@@ -75,7 +52,7 @@ rt_uint64_t raspi_watchdog_get_timeout()
 
 rt_uint64_t raspi_watchdog_get_timeleft()
 {
-    rt_uint32_t ret = bcm283x_peri_read(bcm_wdt.base + PM_WDOG);
+    rt_uint32_t ret = PM_WDOG;
     return WDOG_TICKS_TO_SECS(ret & PM_WDOG_TIME_SET);
 }
 
@@ -136,5 +113,28 @@ int rt_hw_wdt_init(void)
     rt_hw_watchdog_register(&raspi_wdg, "wdg", 0, RT_NULL);
     return RT_EOK;
 }
+
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
+
+/**
+ * Reboot
+ */
+int reboot(void)
+{
+    unsigned int r;
+
+    rt_kprintf("reboot system...\n");
+    rt_thread_mdelay(100);
+    // trigger a restart by instructing the GPU to boot from partition 0
+    r = PM_RSTS; r &= ~0xfffffaaa;
+    PM_RSTS = PM_PASSWORD | r;   // boot from partition 0
+    PM_WDOG = PM_PASSWORD | 10;
+    PM_RSTC = PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
+    
+    while (1);
+    
+    return 0;
+}
+MSH_CMD_EXPORT(reboot,reboot system...);
 #endif /*BSP_USING_WDT */
+
