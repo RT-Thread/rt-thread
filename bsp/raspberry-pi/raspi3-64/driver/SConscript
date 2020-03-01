@@ -6,6 +6,7 @@ cwd     = GetCurrentDir()
 src     = Split('''
 board.c
 drv_uart.c
+mbox.c
 ''')
 CPPPATH = [cwd]
 
