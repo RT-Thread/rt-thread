@@ -17,10 +17,6 @@ volatile unsigned int *mbox = (volatile unsigned int *) MBOX_ADDR;
 /**
  * Make a mailbox call. Returns 0 on failure, non-zero on success
  */
-void init_mbox_mmu_map(){
-	rt_hw_change_mmu_table(MBOX_ADDR, 96, MBOX_ADDR, STRONG_ORDER_MEM);
-}
-
 int mbox_call(unsigned char ch, int mmu_enable)
 {
     unsigned int r = (((MBOX_ADDR)&~0xF) | (ch&0xF));
