@@ -105,7 +105,6 @@ menu "Hardware Drivers Config"
     menu "Board Peripheral Drivers"
         menuconfig BSP_USING_HDMI
             bool "Enable HDMI"
-            select BSP_USING_SPI
             default n
 
         if BSP_USING_HDMI
