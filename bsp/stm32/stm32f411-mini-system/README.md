@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-STM32F411-mini-system 是一款基于 ARM Cortex-M4 内核的开发板，最高主频为 100Mhz，该开发板芯片为 STM32F411CE。
+STM32F411-mini-system 是 WeAct 推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 100Mhz，该开发板芯片为 STM32F411CE。
 
 开发板外观如下图所示：
 
@@ -28,6 +28,8 @@ STM32F411-mini-system 是一款基于 ARM Cortex-M4 内核的开发板，最高�
   - 按键: 3 个, USER, BOOT0 and RESET
 - 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口
 - 调试接口: SWD
+
+开发板更多详细信息请参考[STM32F4x1 MiniF4 WeAct](https://github.com/WeActTC/MiniF4-STM32F4x1)
 
 ## 外设支持
 
