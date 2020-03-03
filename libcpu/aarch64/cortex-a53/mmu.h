@@ -20,6 +20,8 @@
 #define MEM_ATTR_MEMORY ((0x1UL << 10) | (0x2UL << 8) | (0x0UL << 6) | (0x1UL << 2))
 #define MEM_ATTR_IO     ((0x1UL << 10) | (0x2UL << 8) | (0x0UL << 6) | (0x2UL << 2))
 
+#define BUS_ADDRESS(phys)	(((phys) & ~0xC0000000)  |  0xC0000000)
+
 void mmu_init(void);
 
 void mmu_enable(void);

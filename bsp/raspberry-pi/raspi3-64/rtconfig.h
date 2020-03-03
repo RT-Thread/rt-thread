@@ -101,6 +101,7 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_HWTIMER
 #define RT_USING_PIN
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 2048
@@ -109,6 +110,7 @@
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_SDIO_DEBUG
+#define RT_USING_WDT
 
 /* Using USB */
 
@@ -193,10 +195,16 @@
 #define RT_USING_UART1
 #define BSP_USING_PIN
 #define BSP_USING_CORETIMER
+#define BSP_USING_SYSTIMER
+#define RT_USING_SYSTIMER1
+#define RT_USING_SYSTIMER3
+#define BSP_USING_WDT
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
 
 /* Board Peripheral Drivers */
 
+#define BSP_USING_HDMI
+#define BSP_USING_HDMI_DISPLAY
 
 #endif
