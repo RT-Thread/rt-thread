@@ -1,8 +1,8 @@
-# STM32F411-mini-system 开发板 BSP 说明
+# stm32f411-weact-MiniF4 开发板 BSP 说明
 
 ## 简介
 
-本文档为 STM32F411-mini-system 开发板提供的 BSP (板级支持包) 说明。
+本文档为 stm32f411-weact-MiniF4 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-STM32F411-mini-system 是 WeAct 推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 100Mhz，该开发板芯片为 STM32F411CE。
+stm32f411-weact-MiniF4 是 WeAct 推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 100Mhz，该开发板芯片为 STM32F411CE。
 
 开发板外观如下图所示：
 
