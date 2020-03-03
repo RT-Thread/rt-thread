@@ -39,6 +39,8 @@ SECTIONS
         *(.glue_7t)
         *(.gnu.linkonce.t*)
 
+        *(COMMON)
+        
         /* section information for finsh shell */
         . = ALIGN(16);
         __fsymtab_start = .;
@@ -108,7 +110,7 @@ SECTIONS
         *(.bss)
         *(.bss.*)
         *(.dynbss)
-        *(COMMON)
+        
         PROVIDE(__bss_end = .);
     }
     _end = .;
