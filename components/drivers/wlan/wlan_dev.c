@@ -150,7 +150,7 @@ rt_err_t rt_wlan_dev_ap_start(struct rt_wlan_device *device, struct rt_wlan_info
     if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
             (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
     {
-        LOG_E("L:%d password or ssid is to long", __LINE__);
+        LOG_E("L:%d password or ssid is too long", __LINE__);
         return -RT_ERROR;
     }
 
