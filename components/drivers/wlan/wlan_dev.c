@@ -102,7 +102,7 @@ rt_err_t rt_wlan_dev_connect(struct rt_wlan_device *device, struct rt_wlan_info 
     if ((password_len > RT_WLAN_PASSWORD_MAX_LENGTH) ||
             (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH))
     {
-        LOG_E("L:%d password or ssid is to long", __LINE__);
+        LOG_E("L:%d password or ssid is too long", __LINE__);
         return -RT_ERROR;
     }
     rt_memset(&sta_info, 0, sizeof(struct rt_sta_info));
@@ -530,7 +530,7 @@ rt_err_t rt_wlan_dev_scan(struct rt_wlan_device *device, struct rt_wlan_info *in
     {
         if (info->ssid.len > RT_WLAN_SSID_MAX_LENGTH)
         {
-            LOG_E("L:%d ssid is to long", __LINE__);
+            LOG_E("L:%d ssid is too long", __LINE__);
             return -RT_EINVAL;
         }
         rt_memcpy(&scan_info.ssid, &info->ssid, sizeof(rt_wlan_ssid_t));
