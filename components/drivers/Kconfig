@@ -89,7 +89,7 @@ config RT_USING_I2C
 
 if RT_USING_I2C
     config RT_I2C_DEBUG
-        bool "Use I2C debug mesage"
+        bool "Use I2C debug message"
         default n
 
     config RT_USING_I2C_BITOPS
@@ -99,7 +99,7 @@ endif
 
 if RT_USING_I2C_BITOPS
     config RT_I2C_BITOPS_DEBUG
-        bool "Use simulate I2C debug mesage"
+        bool "Use simulate I2C debug message"
         default n
 endif
 
@@ -257,11 +257,11 @@ config RT_USING_AUDIO
     
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
-            int "Replay memmory pool block size"
+            int "Replay memory pool block size"
             default 4096
 
         config RT_AUDIO_REPLAY_MP_BLOCK_COUNT
-            int "Replay memmory pool block count"
+            int "Replay memory pool block count"
             default 2
 
         config RT_AUDIO_RECORD_PIPE_SIZE
