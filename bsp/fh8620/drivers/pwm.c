@@ -190,6 +190,7 @@ int fh_pwm_probe(void *priv_data)
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("ERROR: %s rt_device malloc failed\n", __func__);
+        return -RT_EIO;
     }
     
     rt_memset(pwm_dev, 0, sizeof(struct rt_device));
