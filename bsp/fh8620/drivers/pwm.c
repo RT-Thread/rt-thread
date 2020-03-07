@@ -186,12 +186,13 @@ int fh_pwm_probe(void *priv_data)
     PWM_Enable(pwm_obj, RT_FALSE);
 
     pwm_dev = rt_malloc(sizeof(struct rt_device));
-    rt_memset(pwm_dev, 0, sizeof(struct rt_device));
 
     if (pwm_dev == RT_NULL)
     {
         rt_kprintf("ERROR: %s rt_device malloc failed\n", __func__);
     }
+    
+    rt_memset(pwm_dev, 0, sizeof(struct rt_device));
 
     pwm_dev->user_data = &pwm_drv;
     pwm_dev->open =fh_pwm_open;
