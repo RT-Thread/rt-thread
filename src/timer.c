@@ -40,6 +40,10 @@ ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif
 
+#ifdef RT_USING_TIMER_SOFT
+static rt_bool_t timer_idle;
+#endif
+
 #ifdef RT_USING_HOOK
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
@@ -408,7 +412,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
     {
         /* check whether timer thread is ready */
-        if ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+        if (timer_idle && (timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
         {
             /* resume timer thread to check soft timer */
             rt_thread_resume(&timer_thread);
@@ -623,8 +627,10 @@ void rt_soft_timer_check(void)
 
             /* not lock scheduler when performing timeout function */
             rt_exit_critical();
+            timer_idle = RT_FALSE;
             /* call timeout function */
             t->timeout_func(t->parameter);
+            timer_idle = RT_TRUE;
 
             /* re-get tick */
             current_tick = rt_tick_get();
@@ -718,6 +724,7 @@ void rt_system_timer_thread_init(void)
 #ifdef RT_USING_TIMER_SOFT
     int i;
 
+    timer_idle = RT_TRUE;
     for (i = 0;
          i < sizeof(rt_soft_timer_list) / sizeof(rt_soft_timer_list[0]);
          i++)
