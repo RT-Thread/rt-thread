@@ -25,7 +25,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 
 ## 板载资源
 
-- MCU：AT32F403AVGT，主频 240MHz，1024KB FLASH ，96KB可扩展到224KB RAM
+- MCU：AT32F403AVGT7，主频 240MHz，1024KB FLASH ，96KB可扩展到224KB RAM
 - 常用外设
   - LED：3个，（红色PD13、白色PD14、绿色PD15）
   - 按键：1个，KEY_USER（兼具唤醒功能，PA0)
@@ -46,6 +46,16 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | PWM       | 支持     | TMR1/2/3                   |
 | SDIO      | 支持     | SDIO1                      | 
 | WDT       | 支持     |                            |
+
+### IO在板级支持包中的映射情况
+
+| IO号 | 板级包中的定义 |
+| ---- | -------------- |
+| PD13 | LED2           |
+| PD14 | LED3           |
+| PD15 | LED4           |
+| PA9  | USART1_TX      |
+| PA10 | USART1_RX      |
 
 ## 使用说明
 
