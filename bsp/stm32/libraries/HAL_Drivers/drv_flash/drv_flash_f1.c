@@ -154,7 +154,7 @@ int stm32_flash_erase_bank(uint32_t bank, rt_uint32_t addr, size_t size)
     EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
     EraseInitStruct.PageAddress = GetPage(addr);
     EraseInitStruct.NbPages     = (size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
-	EraseInitStruct.Banks       = bank;
+    EraseInitStruct.Banks       = bank;
 	
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK)
     {
@@ -254,7 +254,6 @@ return result;
     return stm32_flash_erase_bank(FLASH_BANK_1, addr, size);
 #endif
 }
-
 
 #if defined(PKG_USING_FAL)
 
