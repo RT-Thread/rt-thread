@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-5      SummerGift   first version
+ * 2020-03-05     redoc        support stm32f103vg
+ *
  */
 
 #include "board.h"
@@ -122,16 +124,17 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 }
 
 /**
- * Erase data on flash.
+ * Erase data on flash with bank.
  * @note This operation is irreversible.
  * @note This operation's units is different which on many chips.
  *
+ * @param bank flash bank
  * @param addr flash address
  * @param size erase bytes size
  *
  * @return result
  */
-int stm32_flash_erase(rt_uint32_t addr, size_t size)
+int stm32_flash_erase_bank(uint32_t bank, rt_uint32_t addr, size_t size)
 {
     rt_err_t result = RT_EOK;
     uint32_t PAGEError = 0;
@@ -151,7 +154,8 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
     EraseInitStruct.PageAddress = GetPage(addr);
     EraseInitStruct.NbPages     = (size + FLASH_PAGE_SIZE - 1) / FLASH_PAGE_SIZE;
-
+	EraseInitStruct.Banks       = bank;
+	
     if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK)
     {
         result = -RT_ERROR;
@@ -166,9 +170,91 @@ __exit:
         return result;
     }
 
-    LOG_D("erase done: addr (0x%p), size %d", (void *)addr, size);
+    log_d("erase done: addr (0x%p), size %d", (void *)addr, size);
     return size;
 }
+
+/**
+ * Erase data on flash .
+ * @note This operation is irreversible.
+ * @note This operation's units is different which on many chips.
+ *
+ * @param addr flash address
+ * @param size erase bytes size
+ *
+ * @return result
+ */
+int stm32_flash_erase(rt_uint32_t addr, size_t size)
+{
+	 rt_err_t result = RT_EOK;
+	
+#if defined(FLASH_BANK2_END)		
+	uint32_t addr_bank1 = 0;
+	uint32_t size_bank1 = 0;
+	uint32_t addr_bank2 = 0;
+	uint32_t size_bank2 = 0;
+	uint8_t  bank1_flag = 0;
+	uint8_t  bank2_flag = 0;
+#endif
+    
+#if defined(FLASH_BANK2_END)	
+	
+	if(addr <= FLASH_BANK1_END)
+	{
+		addr_bank1 = addr;
+		bank1_flag = 1;
+		
+		if((addr + size) > FLASH_BANK1_END)
+		{
+			addr_bank2 = FLASH_BANK1_END + 1;
+			size_bank2 = addr + size - (FLASH_BANK1_END + 1);
+			
+			if(size_bank2)
+			{
+				bank2_flag = 1;
+			}
+			
+			size_bank1 = FLASH_BANK1_END + 1 - addr_bank1;
+		}
+		else
+		{
+			size_bank1 = size;
+		}
+	}
+	else
+	{
+		addr_bank2 = addr;
+		size_bank2 = size;
+		bank1_flag = 0;
+		bank2_flag = 1;
+	}
+	
+	if(bank1_flag)
+	{
+		log_d("bank1: addr (0x%p), size %d", (void *)addr_bank1, size_bank1);
+		
+		if(size_bank1 != stm32_flash_erase_bank(FLASH_BANK_1, addr_bank1, size_bank1))
+		{
+			result = -RT_ERROR;
+		}
+	}
+	
+	if(bank2_flag)
+	{
+		log_d("bank2: addr (0x%p), size %d", (void *)addr_bank2, size_bank2);
+		
+		if(size_bank2 != stm32_flash_erase_bank(FLASH_BANK_2, addr_bank2, size_bank2))
+		{
+			result = -RT_ERROR;
+		}
+	}
+
+	return result;
+#else
+	return stm32_flash_erase_bank(FLASH_BANK_1, addr, size);
+#endif
+}
+
 
 #if defined(PKG_USING_FAL)
 
