@@ -91,6 +91,9 @@ if GetDepend(['BSP_USING_PULSE_ENCODER']):
 if GetDepend(['BSP_USING_USBH']):
     src += ['drv_usbh.c']
 
+if GetDepend('BSP_USING_WIFI'):
+    src = src + ['drv_wlan.c']
+
 src += ['drv_common.c']
 
 path =  [cwd]
