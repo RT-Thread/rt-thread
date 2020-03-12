@@ -11,7 +11,7 @@
  * 2010-05-02     Aozima       update CMSIS to 130
  * 2017-08-02     XiaoYang     porting to LPC54608 bsp
  * 2019-08-05     Magicoe      porting to LPC55S69-EVK bsp
- * 2020-01-01     Karl         Add RT_USING_TFM support
+ * 2020-01-01     Karl         Add PKG_USING_TFM support
  */
 
 #include <rthw.h>
@@ -59,7 +59,7 @@ void rt_hw_board_init()
     SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
 #else  /* VECT_TAB_FLASH  */
 
-#ifdef RT_USING_TFM
+#ifdef PKG_USING_TFM
     /* Set the Vector Table base location at 0x00020000 when RTT with TF-M*/
     SCB->VTOR  = (0x00020000 & NVIC_VTOR_MASK);
 #else
@@ -68,7 +68,7 @@ void rt_hw_board_init()
 #endif
 #endif
 
-#ifndef RT_USING_TFM
+#ifndef PKG_USING_TFM
     /* This init has finished in secure side of TF-M  */
     BOARD_BootClockPLL150M();
 #endif
