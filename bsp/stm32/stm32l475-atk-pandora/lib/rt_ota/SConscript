@@ -1,0 +1,19 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+path = [cwd + '/inc']
+libs = ['']
+libpath = [cwd + '/libs']
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    libs += ['rt_ota_noalgo_0.1.2_stm32l4_gcc']
+elif rtconfig.CROSS_TOOL == 'keil':
+    libs += ['librt_ota_noalgo_0.1.2_stm32l4_keil']
+else:
+    libs += ['librt_ota_noalgo_0.1.2_stm32l4_iar']
+
+group = DefineGroup('rt_ota', src, depend = ['RT_USING_OTA_LIB'], CPPPATH = path, LIBS = libs, LIBPATH = libpath)
+
+Return('group')

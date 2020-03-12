@@ -1,0 +1,10 @@
+menu "External Libraries"
+
+    config RT_USING_WIFI_6181_LIB
+        bool "Using Wifi(AP6181) Library"
+        default n
+
+    config RT_USING_OTA_LIB
+        bool "Using RT-Thrad OTA Library"
+        default n
+endmenu

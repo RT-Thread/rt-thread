@@ -1,0 +1,22 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+LIBS    = []
+LIBPATH = []
+src = []
+
+LIBPATH = [cwd]
+if rtconfig.CROSS_TOOL == 'gcc':
+    LIBS += ['wifi_6181_0.2.6_armcm4_gcc']
+elif rtconfig.CROSS_TOOL == 'keil':
+    LIBS += ['libwifi_6181_0.2.6_armcm4_keil']
+else:
+    LIBS += ['libwifi_6181_0.2.6_armcm4_iar']
+
+path = [cwd]
+
+group = DefineGroup('wifi', src, depend = ['BSP_USING_WIFI'], CPPPATH = path, LIBS = LIBS, LIBPATH = LIBPATH)
+
+Return('group')
