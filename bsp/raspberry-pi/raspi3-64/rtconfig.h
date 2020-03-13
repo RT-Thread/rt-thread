@@ -102,6 +102,9 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_I2C_DEBUG
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 2048
@@ -179,12 +182,6 @@
 
 /* samples: kernel and components samples */
 
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
 #define BCM2836_SOC
 
 /* Hardware Drivers Config */
@@ -198,6 +195,8 @@
 #define BSP_USING_SYSTIMER
 #define RT_USING_SYSTIMER1
 #define RT_USING_SYSTIMER3
+#define BSP_USING_I2C
+#define BSP_USING_I2C1
 #define BSP_USING_WDT
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
