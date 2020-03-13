@@ -31,6 +31,7 @@
 #define WIFI_INIT_THREAD_STACK_SIZE      (1024 * 4)
 #define WIFI_INIT_THREAD_PRIORITY        (RT_THREAD_PRIORITY_MAX/2)
 #define WIFI_INIT_WAIT_TIME              (rt_tick_from_millisecond(100))
+#define WIFI_IRQ_PIN                     GET_PIN(C, 5)
 
 extern int wifi_hw_init(void);
 extern void wwd_thread_notify_irq(void);
@@ -110,9 +111,9 @@ int rt_hw_wlan_get_initialize_status(void)
 
 /**
  * wait milliseconds for wifi low level initialize complete
- * 
+ *
  * time_ms: timeout in milliseconds
- */ 
+ */
 int rt_hw_wlan_wait_init_done(rt_uint32_t time_ms)
 {
     rt_uint32_t time_cnt = 0;
@@ -144,9 +145,9 @@ static void _wiced_irq_handler(void *param)
 static void wifi_init_thread_entry(void *parameter)
 {
     /* set wifi irq handle, must be initialized first */
-    rt_pin_mode(BSP_WIFI_IRQ_PIN, PIN_MODE_INPUT_PULLUP);
-    rt_pin_attach_irq(BSP_WIFI_IRQ_PIN, PIN_IRQ_MODE_RISING_FALLING, _wiced_irq_handler, RT_NULL);
-    rt_pin_irq_enable(BSP_WIFI_IRQ_PIN, PIN_IRQ_ENABLE);
+    rt_pin_mode(WIFI_IRQ_PIN, PIN_MODE_INPUT_PULLUP);
+    rt_pin_attach_irq(WIFI_IRQ_PIN, PIN_IRQ_MODE_RISING_FALLING, _wiced_irq_handler, RT_NULL);
+    rt_pin_irq_enable(WIFI_IRQ_PIN, PIN_IRQ_ENABLE);
 
     /* initialize low level wifi(ap6181) library */
     wifi_hw_init();
@@ -189,7 +190,7 @@ int rt_hw_wlan_init(void)
 }
 
 #ifdef BSP_USING_WIFI_AUTO_INIT
-INIT_APP_EXPORT(rt_hw_wlan_init);
+    INIT_APP_EXPORT(rt_hw_wlan_init);
 #endif
 
 #endif
