@@ -32,7 +32,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE = ' -march=armv8-a -mtune=cortex-a53 -fno-omit-frame-pointer'
+    DEVICE = ' -march=armv8-a -mtune=cortex-a53 -fno-omit-frame-pointer -funwind-tables'
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
