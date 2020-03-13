@@ -122,15 +122,22 @@ static rt_uint32_t stm32_adc_get_channel(rt_uint32_t channel)
     case 15:
         stm32_channel = ADC_CHANNEL_15;
         break;
+#ifdef ADC_CHANNEL_16
     case 16:
         stm32_channel = ADC_CHANNEL_16;
         break;
+#endif
     case 17:
         stm32_channel = ADC_CHANNEL_17;
         break;
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#ifdef ADC_CHANNEL_18
     case 18:
         stm32_channel = ADC_CHANNEL_18;
+        break;
+#endif
+#ifdef ADC_CHANNEL_19
+    case 19:
+        stm32_channel = ADC_CHANNEL_19;
         break;
 #endif
     }
@@ -150,10 +157,22 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
 
     rt_memset(&ADC_ChanConf, 0, sizeof(ADC_ChanConf));
 
-#if defined(SOC_SERIES_STM32F1)
+#ifndef ADC_CHANNEL_16
+    if (channel == 16)
+    {
+        LOG_E("ADC channel must not be 16.");
+        return -RT_ERROR;
+    }
+#endif
+
+/* ADC channel number is up to 17 */
+#if !defined(ADC_CHANNEL_18)
     if (channel <= 17)
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F2)  || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
-        || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+/* ADC channel number is up to 19 */
+#elif defined(ADC_CHANNEL_19)
+    if (channel <= 19)
+/* ADC channel number is up to 18 */
+#else
     if (channel <= 18)
 #endif
     {
@@ -162,10 +181,11 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     }
     else
     {
-#if defined(SOC_SERIES_STM32F1)
+#if !defined(ADC_CHANNEL_18)
         LOG_E("ADC channel must be between 0 and 17.");
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F2)  || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
-        || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+#elif defined(ADC_CHANNEL_19)
+        LOG_E("ADC channel must be between 0 and 19.");
+#else
         LOG_E("ADC channel must be between 0 and 18.");
 #endif
         return -RT_ERROR;
