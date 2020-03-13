@@ -318,8 +318,17 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     * the device to work in 8bit transfer mode. If the
     * mmc switch command returns error then switch to
     * 4bit transfer mode. On success set the corresponding
-    * bus width on the host.
+    * bus width on the host. Meanwhile, mmc core would
+    * bail out early if corresponding bus capable wasn't
+    * set by drivers.
     */
+     if ((!(host->flags & MMCSD_BUSWIDTH_8) &&
+	  ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8) ||
+         (!(host->flags & MMCSD_BUSWIDTH_4) &&
+	  (ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_4 ||
+	  ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8)))
+	     continue;
+
     err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                      EXT_CSD_BUS_WIDTH,
                      ext_csd_bits[idx]);
