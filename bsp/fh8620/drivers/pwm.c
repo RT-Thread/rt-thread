@@ -29,6 +29,7 @@
 #include "interrupt.h"
 #include "board_info.h"
 #include "inc/fh_driverlib.h"
+#include <rtthread.h>
 #include <rtdevice.h>
 #ifdef FH_PWM_DEBUG
 #define PRINT_PWM_DBG(fmt, args...)     \
