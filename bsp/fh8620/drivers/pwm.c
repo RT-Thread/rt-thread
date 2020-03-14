@@ -186,7 +186,7 @@ int fh_pwm_probe(void *priv_data)
 
     PWM_Enable(pwm_obj, RT_FALSE);
 
-    pwm_dev = rt_calloc(sizeof(struct rt_device));
+    pwm_dev = rt_calloc(1,sizeof(struct rt_device));
 
     if (pwm_dev == RT_NULL)
     {
