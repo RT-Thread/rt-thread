@@ -15,9 +15,7 @@ RT-Thread was born in 2006, it is an open source, neutral, and community-based r
 
 RT-Thread is mainly written in C language, easy to understand and easy to port(can be quickly port to a wide range of mainstream MCUs and module chips). It applies object-oriented programming methods to real-time system design, making the code elegant, structured, modular, and very tailorable. 
 
-
 RT-Thread has Standard version and Nano version. For resource-constrained microcontroller (MCU) systems, the NANO kernel version that requires only 3KB Flash and 1.2KB RAM memory resources can be tailored  with easy-to-use tools; And for resource-rich IoT devices, RT-Thread can use the on-line software package management tool, together with system configuration tools, to achieve intuitive and rapid modular cutting, seamlessly import rich software packages, thus achieving complex functions like Android's graphical interface and touch sliding effects, smart voice interaction effects, and so on.
-
 
 ## RT-Thread Architecture
 
@@ -25,7 +23,6 @@ RT-Thread has not only a real-time kernel, but also rich components. Its archite
 
 
 ![architecture](./documentation/figures/architecture.png)
-
 
 
 It includes:
@@ -57,18 +54,17 @@ It includes:
 | Name          | Description                                             |
 | ------------- | ------------------------------------------------------- |
 | BSP          | Board Support Package based on the porting of various development boards |
-| components    | RT-Thread's individual component codes, such as finsh, gui, etc.， |
-| documentation | Related documents, like coding regulation, etc.,        |
+| components    | Components, such as finsh shell, file system, protocol stack etc. |
+| documentation | Related documents, like coding style, doxygen etc.        |
 | examples      | Related sample code                                     |
-| include       | Head file of RT-Thread kernel                           |
-| libcpu        | Porting code for all types of chips. |
-| src           | The source file for the RT-Thread kernel. |
-| tools         | The script file for the RT-Thread command build tool. |
+| include       | Head files of RT-Thread kernel                           |
+| libcpu        | CPU porting code such as ARM/MIPS/RISC-V etc. |
+| src           | The source files for the RT-Thread kernel. |
+| tools         | The script files for the RT-Thread command build tool. |
 
 RT-Thread has now been ported for nearly 90 development boards, most BSPs support MDK, IAR development environment and GCC compiler, and have provided default MDK and IAR project, which allows users to add their own application code directly based on the project. Each BSP has a similar directory structure, and most BSPs provide a README.md file, which is a markdown-format file that contains the basic introduction of BSP, and introduces how to simply start using BSP.
 
-Env is a development tool developed by RT-Thread which provides a build environment, graphical system configuration, and package management capabilities for project based on the RT-Thread operating system. Its built-in `menuconfig` provides an easy-to-use configuration tailoring tool. It can tailor the kernels, components and software packages freely, so that the system can be constructed by building blocks.
-
+Env is a development tool developed by RT-Thread which provides a build environment, text graphical system configuration, and package management capabilities for project based on the RT-Thread operating system. Its built-in `menuconfig` provides an easy-to-use configuration tool. It can tailor the kernels, components and software packages freely, so that the system can be constructed by building blocks.
 
 - [Download Env Tool](https://www.rt-thread.io/download.html?download=Env)
 - [User manual of Env](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md)
@@ -77,7 +73,7 @@ Env is a development tool developed by RT-Thread which provides a build environm
 
 ## Supported Architectures
 
-RT-Thread supports many architectures,and has covered the major architectures in current applications. Architecture and chip manufacturer involved:
+RT-Thread supports many architectures, and has covered the major architectures in current applications. Architecture and chip manufacturer involved:
 
 - **ARM Cortex-M0/M0+**：manufacturers like ST
 - **ARM Cortex-M3**：manufacturers like ST、Winner Micro、MindMotion, ect.
@@ -111,7 +107,6 @@ RT-Thread Studio Demonstration:
 
 ![studio](./documentation/figures/studio.gif)                                                 
 
-
 ## Getting Started
 
 RT-Thread BSP can be compiled directly and downloaded to the corresponding development board for use. In addition, RT-Thread also provides qemu-vexpress-a9 BSP, which can be used without hardware platform. See the getting started guide below for details.
@@ -135,20 +130,17 @@ RT-Thread BSP can be compiled directly and downloaded to the corresponding devel
 
 RT-Thread is an open source software and has been licensed under Apache License Version 2.0 since v3.1.1. License information and copyright information can generally be seen at the beginning of the code:
 
-```
-
- `\* Copyright (c) 2006-2018, RT-Thread Development Team`
-
- `*`
-
- `\* SPDX-License-Identifier: Apache-2.0`
-
+```c
+/* Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * ...
+ */
 ```
 
 To avoid possible future license conflicts, developers need to sign a Contributor License Agreement (CLA) when submitting PR to RT-Thread.
 
 # Community
-
 
 RT-Thread is very grateful for the support from all community developers, and if you have any ideas, suggestions or questions in the process of using RT-Thread, RT-Thread can be reached by the following means, and we are also updating RT-Thread in real time on these channels. At the same time, Any questions can be asked in the [issue section of rtthread-manual-doc](https://github.com/RT-Thread/rtthread-manual-doc/issues). By creating a new issue to describe your questions, community members will answer them.
 
@@ -157,6 +149,3 @@ RT-Thread is very grateful for the support from all community developers, and if
 # Contribution
 
 If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/documentation/contribution_guide/contribution_guide.md).
-
-
-
