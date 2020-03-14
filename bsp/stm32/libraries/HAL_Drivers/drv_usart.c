@@ -172,6 +172,37 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         NVIC_DisableIRQ(uart->config->irq_type);
         /* disable interrupt */
         __HAL_UART_DISABLE_IT(&(uart->handle), UART_IT_RXNE);
+        /* close device */
+#ifdef RT_SERIAL_USING_DMA
+        if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX)
+        {
+            HAL_NVIC_DisableIRQ(uart->config->dma_rx->dma_irq);
+            if (HAL_DMA_Abort(&(uart->dma_rx.handle)) != RT_NULL)
+            {
+                RT_ASSERT(0);
+            }
+            
+            if (HAL_DMA_DeInit(&uart->dma_rx.handle) != HAL_OK)
+            {
+                RT_ASSERT(0);
+            }
+        }
+
+        if (ctrl_arg == RT_DEVICE_FLAG_DMA_TX)
+        {
+            HAL_NVIC_DisableIRQ(uart->config->dma_tx->dma_irq);
+            if (HAL_DMA_Abort(&(uart->dma_tx.handle)) != RT_NULL)
+            {
+                RT_ASSERT(0);
+            }
+
+            if (HAL_DMA_DeInit(&uart->dma_tx.handle) != HAL_OK)
+            {
+                RT_ASSERT(0);
+            }
+        }
+#endif
+
         break;
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
@@ -186,6 +217,14 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         stm32_dma_config(serial, ctrl_arg);
         break;
 #endif
+
+    case RT_DEVICE_CTRL_CLOSE:
+        if (HAL_UART_DeInit(&(uart->handle)) != HAL_OK )
+        {
+            RT_ASSERT(0)
+        }
+        break;
+    
     }
     return RT_EOK;
 }
