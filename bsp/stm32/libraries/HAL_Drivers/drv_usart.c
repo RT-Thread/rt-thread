@@ -184,7 +184,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
                 RT_ASSERT(0);
             }
 
-            if (HAL_DMA_DeInit(&uart->dma_rx.handle) != HAL_OK)
+            if (HAL_DMA_DeInit(&(uart->dma_rx.handle)) != HAL_OK)
             {
                 RT_ASSERT(0);
             }
@@ -192,7 +192,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         else if(ctrl_arg == RT_DEVICE_FLAG_DMA_TX) 
         {
             HAL_NVIC_DisableIRQ(uart->config->dma_tx->dma_irq);
-            if (HAL_DMA_DeInit(&uart->dma_tx.handle) != HAL_OK)
+            if (HAL_DMA_DeInit(&(uart->dma_tx.handle)) != HAL_OK)
             {
                 RT_ASSERT(0);
             }
