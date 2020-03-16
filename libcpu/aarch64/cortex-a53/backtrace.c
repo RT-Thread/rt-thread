@@ -121,11 +121,6 @@ static const char *get_el_str(unsigned int el)
     }
 }
 
-// static char *unwind_get_function_name(void *address)
-// {
-//     return RT_NULL;
-// }
-
 static void unwind_stack(struct frame_record *fr, uintptr_t current_pc, uintptr_t link_register, struct rt_hw_exp_stack *regs)
 {
     uintptr_t call_site;
@@ -179,9 +174,6 @@ static void unwind_stack(struct frame_record *fr, uintptr_t current_pc, uintptr_
         {
             rt_kprintf(backtrace_str, i - 2, el_str, call_site);
         }
-        
-
-        //rt_kprintf("func name is %s\n",unwind_get_function_name(call_site));
 
         fr = adjust_frame_record(fr->parent);
     }
