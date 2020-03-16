@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-10-30     SummerGift   first version
+ * 2020-03-16     SummerGift   add device close feature
  */
 
 #include "board.h"
@@ -21,12 +22,12 @@
 #if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && !defined(BSP_USING_UART3) && \
     !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5) && !defined(BSP_USING_UART6) && \
     !defined(BSP_USING_UART7) && !defined(BSP_USING_UART8) && !defined(BSP_USING_LPUART1)
-    #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
+#error "Please define at least one BSP_USING_UARTx"
+/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 #ifdef RT_SERIAL_USING_DMA
-    static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
+static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
 #endif
 
 enum
@@ -182,7 +183,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
             {
                 RT_ASSERT(0);
             }
-            
+
             if (HAL_DMA_DeInit(&uart->dma_rx.handle) != HAL_OK)
             {
                 RT_ASSERT(0);
@@ -220,7 +221,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
             RT_ASSERT(0)
         }
         break;
-    
+
     }
     return RT_EOK;
 }
@@ -269,12 +270,12 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
-    
+
     if (size == 0)
     {
         return 0;
     }
-    
+
     if (RT_SERIAL_DMA_TX == direction)
     {
         if (HAL_UART_Transmit_DMA(&uart->handle, buf, size) == HAL_OK)
@@ -756,7 +757,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     DMA_HandleTypeDef *DMA_Handle;
     struct dma_config *dma_config;
     struct stm32_uart *uart;
-    
+
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
@@ -816,7 +817,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     DMA_Handle->Init.MemInc              = DMA_MINC_ENABLE;
     DMA_Handle->Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     DMA_Handle->Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-    
+
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
         DMA_Handle->Init.Direction           = DMA_PERIPH_TO_MEMORY;
@@ -827,7 +828,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         DMA_Handle->Init.Direction           = DMA_MEMORY_TO_PERIPH;
         DMA_Handle->Init.Mode                = DMA_NORMAL;
     }
-    
+
     DMA_Handle->Init.Priority            = DMA_PRIORITY_MEDIUM;
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
@@ -855,7 +856,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         CLEAR_BIT(uart->handle.Instance->CR3, USART_CR3_EIE);
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
     }
- 
+
     /* enable irq */
     HAL_NVIC_SetPriority(dma_config->dma_irq, 0, 0);
     HAL_NVIC_EnableIRQ(dma_config->dma_irq);
@@ -900,7 +901,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 /**
   * @brief  Rx Half transfer completed callback
   * @param  huart: UART handle
-  * @note   This example shows a simple way to report end of DMA Rx Half transfer, 
+  * @note   This example shows a simple way to report end of DMA Rx Half transfer,
   *         and you can add your own implementation.
   * @retval None
   */
