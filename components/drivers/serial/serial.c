@@ -790,6 +790,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
     }
 
     serial->ops->control(serial, RT_DEVICE_CTRL_CLOSE, RT_NULL);
+    dev->flag &= ~RT_DEVICE_FLAG_ACTIVATED;
     
 #endif /* RT_SERIAL_USING_DMA */
     return RT_EOK;
