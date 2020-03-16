@@ -191,7 +191,7 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
   }
 
   card->flags |=  CARD_FLAG_HIGHSPEED;
-  card->hs_max_data_rate = 200000000;
+  card->hs_max_data_rate = 52000000;
   
   card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
   card_capacity *= card->card_blksize;
@@ -513,16 +513,10 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
         card->flags |= CARD_FLAG_SDHC;
  
     /* set bus speed */
-    max_data_rate = (unsigned int)-1;
     if (card->flags & CARD_FLAG_HIGHSPEED) 
-    {
-        if (max_data_rate > card->hs_max_data_rate)
-            max_data_rate = card->hs_max_data_rate;
-    } 
-    else if (max_data_rate > card->max_data_rate) 
-    {
+        max_data_rate = card->hs_max_data_rate;
+    else
         max_data_rate = card->max_data_rate;
-    }
 
     mmcsd_set_clock(host, max_data_rate);
 
