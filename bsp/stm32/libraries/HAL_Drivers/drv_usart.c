@@ -172,8 +172,9 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         NVIC_DisableIRQ(uart->config->irq_type);
         /* disable interrupt */
         __HAL_UART_DISABLE_IT(&(uart->handle), UART_IT_RXNE);
-        /* close device */
+
 #ifdef RT_SERIAL_USING_DMA
+        /* disable DMA */
         if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX)
         {
             HAL_NVIC_DisableIRQ(uart->config->dma_rx->dma_irq);
@@ -202,8 +203,8 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
             }
         }
 #endif
-
         break;
+
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
