@@ -36,7 +36,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART2
                 bool "Enable UART2"
                 default n
-                
+
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default n
@@ -55,12 +55,40 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TMR1 channel1 PWM"
                     default n
 
-                config BSP_USING_TMR1_CH2
-                    bool "Enable TMR1 channel2 PWM"
+                config BSP_USING_TMR1_CH4
+                    bool "Enable TMR1 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TMR2
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_TMR2
+                config BSP_USING_TMR2_CH1
+                    bool "Enable TMR2 channel1 PWM"
+                    default n
+
+                config BSP_USING_TMR2_CH2
+                    bool "Enable TMR2 channel2 PWM"
                     default n
             endif
         endif
-	
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+        config BSP_USING_HWTMR3
+            bool "Enable hardware timer3"
+            default n
+        config BSP_USING_HWTMR4
+            bool "Enable hardware timer4"
+            default n
+        config BSP_USING_HWTMR5
+            bool "Enable hardware timer5"
+            default n
+        endif
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -100,6 +128,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
         endif
 
     menuconfig BSP_USING_SDIO
@@ -111,13 +142,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SDIO1"
                 default n
         endif
-
-    config BSP_USING_SRAM
-        bool "Enable SRAM"
-        depends on (SOC_SERIES_AT32F403)
-        default n
-
 endmenu
-
 
 endmenu

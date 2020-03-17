@@ -14,9 +14,9 @@
 #ifdef RT_USING_PWM
 #if !defined(BSP_USING_TMR1_CH1) && !defined(BSP_USING_TMR1_CH2) && \
     !defined(BSP_USING_TMR1_CH3) && !defined(BSP_USING_TMR1_CH4) && \
-    !defined(BSP_USING_TMR2_CH1) && !defined(BSP_USING_TMR2_CH4) && \
-    !defined(BSP_USING_TMR2_CH3) && !defined(BSP_USING_TMR3_CH2) && \
-    !defined(BSP_USING_TMR3_CH1) && !defined(BSP_USING_TMR1_CH4) && \
+    !defined(BSP_USING_TMR2_CH1) && !defined(BSP_USING_TMR2_CH2) && \
+    !defined(BSP_USING_TMR2_CH3) && !defined(BSP_USING_TMR2_CH4) && \
+    !defined(BSP_USING_TMR3_CH1) && !defined(BSP_USING_TMR3_CH2) && \
     !defined(BSP_USING_TMR3_CH3) && !defined(BSP_USING_TMR3_CH4)
 #error "Please define at least one BSP_USING_TMRx_CHx"
 #endif
