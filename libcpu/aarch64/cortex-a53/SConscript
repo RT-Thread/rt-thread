@@ -7,6 +7,7 @@ context_gcc.S
 vector_gcc.S
 entry_point.S
 cpu_gcc.S
+cache.S
 ''')
 CPPPATH = [cwd]
 
