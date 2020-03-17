@@ -12,7 +12,6 @@
 #include <rtdevice.h>
 #include "board.h"
 #include "drv_gpio.h"
-#include "drv_spi.h"
 
 /* defined the LED2 pin: PD13 */
 #define LED2_PIN    GET_PIN(D, 13)
