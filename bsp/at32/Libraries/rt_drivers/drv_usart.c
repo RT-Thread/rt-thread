@@ -12,7 +12,8 @@
 #include "drv_usart.h"
 
 #ifdef RT_USING_SERIAL
-#if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2)
+#if !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) && \
+    !defined(BSP_USING_UART3)
     #error "Please define at least one BSP_USING_UARTx"
     /* this driver can be disabled at menuconfig ¡ú RT-Thread Components ¡ú Device Drivers */
 #endif
@@ -31,6 +32,9 @@ enum {
 #ifdef BSP_USING_UART2
     USART2_INDEX,
 #endif
+#ifdef BSP_USING_UART3
+    USART3_INDEX,
+#endif
 };
 
 static struct at32_usart usart_config[] = {
@@ -43,6 +47,11 @@ static struct at32_usart usart_config[] = {
         { "uart2",
         USART2,
         USART2_IRQn, },
+#endif
+#ifdef BSP_USING_UART3
+        { "uart3",
+        USART3,
+        USART3_IRQn, },
 #endif
 };
 
@@ -218,6 +227,15 @@ void USART2_IRQHandler(void) {
     rt_interrupt_enter();
 
     usart_isr(&usart_config[USART2_INDEX].serial);
+
+    rt_interrupt_leave();
+}
+#endif
+#ifdef BSP_USING_UART3
+void USART3_IRQHandler(void) {
+    rt_interrupt_enter();
+
+    usart_isr(&usart_config[USART3_INDEX].serial);
 
     rt_interrupt_leave();
 }

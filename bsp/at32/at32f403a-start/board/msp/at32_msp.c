@@ -59,6 +59,20 @@ void at32_msp_usart_init(void *Instance)
         GPIO_Init(GPIOA, &GPIO_InitStruct);
     }
 #endif
+#ifdef BSP_USING_UART3
+    if(USART3 == USARTx)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_USART3, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOB, ENABLE);
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_10;
+        GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_11;
+        GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
+#endif
     /* Add others */
 }
 #endif /* BSP_USING_SERIAL */
@@ -149,14 +163,14 @@ void at32_msp_tmr_init(void *Instance)
         /* GPIOA clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA, ENABLE);
 
-        /* GPIOA Configuration:TMR1 Channel1 as alternate function push-pull */
+        /* GPIOA Configuration:TMR1 Channel1 and Channel4 as alternate function push-pull */
         GPIO_InitStructure.GPIO_Pins = GPIO_Pins_8 | GPIO_Pins_11;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
 
         GPIO_Init(GPIOA, &GPIO_InitStructure);
     }
-    
+
     if(TMRx == TMR2)
     {
         /* TMR2 clock enable */
@@ -164,113 +178,30 @@ void at32_msp_tmr_init(void *Instance)
         /* GPIOA clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA, ENABLE);
 
-        /* GPIOA Configuration:TMR1 Channel1 as alternate function push-pull */
-        GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-        GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
-
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
-    }
-    
-    if(TMRx == TMR3)
-    {
-        /* TMR3 clock enable */
-        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
-        /* GPIOA clock enable */
-        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB, ENABLE);
-
-        /* TMR1 Channel1, 2, 3 and 4 as alternate function push-pull */
-        GPIO_InitStructure.GPIO_Pins = GPIO_Pins_6 | GPIO_Pins_7;
-        GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-        GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
-
-        GPIO_Init(GPIOA, &GPIO_InitStructure);
-
+        /* GPIOA Configuration:TMR2 Channel1 and Channel2 as alternate function push-pull */
         GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1;
         GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
 
-        GPIO_Init(GPIOB, &GPIO_InitStructure);
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
     }
     /* Add others */
 }
 #endif /* BSP_USING_PWM */
-
-#if defined (BSP_USING_SRAM)
-void at32_msp_xmc_init(void *Instance)
-{
-    XMC_Bank1_Type *XMC = (XMC_Bank1_Type *)Instance;
-    GPIO_InitType GPIO_InitStructure;
-    (void)XMC; 
-  
-    /* Enable the XMC Clock */
-    RCC_AHBPeriphClockCmd(RCC_AHBPERIPH_XMC, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOD | RCC_APB2PERIPH_GPIOG | RCC_APB2PERIPH_GPIOE |
-                         RCC_APB2PERIPH_GPIOF, ENABLE);
-    /*-- GPIO Configuration ------------------------------------------------------*/
-    /*!< SRAM Data lines configuration */
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_8 | GPIO_Pins_9 |
-                                GPIO_Pins_10 | GPIO_Pins_14 | GPIO_Pins_15;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
-    GPIO_Init(GPIOD, &GPIO_InitStructure); 
-  
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_7 | GPIO_Pins_8 | GPIO_Pins_9 | GPIO_Pins_10 |
-                                GPIO_Pins_11 | GPIO_Pins_12 | GPIO_Pins_13 | GPIO_Pins_14 | 
-                                GPIO_Pins_15;
-    GPIO_Init(GPIOE, &GPIO_InitStructure);
-  
-    /*!< SRAM Address lines configuration */
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | 
-                                GPIO_Pins_4 | GPIO_Pins_5 | GPIO_Pins_12 | GPIO_Pins_13 | 
-                                GPIO_Pins_14 | GPIO_Pins_15;
-    GPIO_Init(GPIOF, &GPIO_InitStructure);
-  
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | 
-                                GPIO_Pins_4 | GPIO_Pins_5;
-    GPIO_Init(GPIOG, &GPIO_InitStructure);
-  
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_11 | GPIO_Pins_12 | GPIO_Pins_13; 
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-   
-    /*!< NOE and NWE configuration */  
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_4 |GPIO_Pins_5;
-    GPIO_Init(GPIOD, &GPIO_InitStructure);
-  
-    /*!< NE3 configuration */
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_10; 
-    GPIO_Init(GPIOG, &GPIO_InitStructure);
-  
-    /*!< NBL0, NBL1 configuration */
-    GPIO_InitStructure.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1; 
-    GPIO_Init(GPIOE, &GPIO_InitStructure); 
-  
-}
-#endif /* BSP_USING_SRAM */
 
 #ifdef BSP_USING_ADC
 void at32_msp_adc_init(void *Instance)
 {
     GPIO_InitType GPIO_InitStruct;
     ADC_Type *ADCx = (ADC_Type *)Instance;
-  
+
 #ifdef BSP_USING_ADC1  
     if(ADCx == ADC1)
     {   
         /* ADC1 & GPIO clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_ADC1 | RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB | RCC_APB2PERIPH_GPIOC,ENABLE);
-      
-        /* Configure ADC Channel as analog input */
-        GPIO_StructInit(&GPIO_InitStruct);
-        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5 | GPIO_Pins_6 | GPIO_Pins_7;
-        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
-        GPIO_Init(GPIOA, &GPIO_InitStruct);
-      
-        GPIO_StructInit(&GPIO_InitStruct);
-        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1;
-        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
-        GPIO_Init(GPIOB, &GPIO_InitStruct);
-      
+		
+        /* Configure ADC Channel as analog input */      
         GPIO_StructInit(&GPIO_InitStruct);
         GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5;
         GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
@@ -285,29 +216,43 @@ void at32_msp_adc_init(void *Instance)
         /* ADC2 & GPIO clock enable */
         RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_ADC2 | RCC_APB2PERIPH_GPIOA | RCC_APB2PERIPH_GPIOB | RCC_APB2PERIPH_GPIOC,ENABLE);
       
-        /* Configure ADC Channel as analog input */
-        GPIO_StructInit(&GPIO_InitStruct);
-        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5 | GPIO_Pins_6 | GPIO_Pins_7;
-        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
-        GPIO_Init(GPIOA, &GPIO_InitStruct);
-      
-        GPIO_StructInit(&GPIO_InitStruct);
-        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1;
-        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
-        GPIO_Init(GPIOB, &GPIO_InitStruct);
-      
+        /* Configure ADC Channel as analog input */      
         GPIO_StructInit(&GPIO_InitStruct);
         GPIO_InitStruct.GPIO_Pins = GPIO_Pins_0 | GPIO_Pins_1 | GPIO_Pins_2 | GPIO_Pins_3 | GPIO_Pins_4 | GPIO_Pins_5;
         GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_ANALOG;
         GPIO_Init(GPIOC, &GPIO_InitStruct);
     }
-#endif  
-
-#ifdef BSP_USING_ADC3  
-    if(ADCx == ADC3)
-    {
-        /* Add others */
-    }
-#endif      
+#endif     
 }
 #endif /* BSP_USING_ADC */
+
+#ifdef BSP_USING_HWTIMER
+void at32_msp_hwtmr_init(void *Instance)
+{
+    TMR_Type *TMRx = (TMR_Type *)Instance;
+
+#ifdef BSP_USING_HWTMR3
+    if(TMRx == TMR3)
+    {
+        /* TMR3 clock enable */
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR3, ENABLE);
+    }
+#endif 
+
+#ifdef BSP_USING_HWTMR4
+    if(TMRx == TMR4)
+    {
+        /* TMR4 clock enable */
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR4, ENABLE);
+    }
+#endif
+
+#ifdef BSP_USING_HWTMR5
+    if(TMRx == TMR5)
+    {
+        /* TMR5 clock enable */
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_TMR5, ENABLE);
+    }
+#endif
+}
+#endif
