@@ -308,6 +308,10 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
         dcd_ep_disable(device->dcd, ep);
         dcd_ep_enable(device->dcd, ep);
     }
+
+    if (func->ops->set_alt != RT_NULL)
+        func->ops->set_alt(func, setup->wIndex & 0xFF, setup->wValue & 0xFF);
+
     dcd_ep0_send_status(device->dcd);
     
     if (intf->handler)
@@ -638,6 +642,7 @@ static rt_err_t _standard_request(struct udevice* device, ureq_t setup)
  */
 static rt_err_t _function_request(udevice_t device, ureq_t setup)
 {
+    uep_t ep;
     uintf_t intf;
     ufunction_t func;
 
@@ -645,16 +650,15 @@ static rt_err_t _function_request(udevice_t device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    /* verify bRequest wValue */
-    if(setup->wIndex > device->curr_cfg->cfg_desc.bNumInterfaces)
-    {
-        rt_usbd_ep0_set_stall(device);
-        return -RT_ERROR;
-    }
-
     switch(setup->request_type & USB_REQ_TYPE_RECIPIENT_MASK)
     {
     case USB_REQ_TYPE_INTERFACE:
+         /* verify bRequest wValue */
+        if((setup->wIndex & 0xFF) > device->curr_cfg->cfg_desc.bNumInterfaces)
+        {
+            rt_usbd_ep0_set_stall(device);
+            return -RT_ERROR;
+        }
         intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, &func);
         if(intf == RT_NULL)
         {
@@ -667,6 +671,16 @@ static rt_err_t _function_request(udevice_t device, ureq_t setup)
         }
         break;
     case USB_REQ_TYPE_ENDPOINT:
+        ep = rt_usbd_find_endpoint(device, &func, setup->wIndex);
+        if(ep == RT_NULL || func->ops->setup == RT_NULL)
+        {
+            rt_kprintf("invalid endpoint or setup func\n");
+            rt_usbd_ep0_set_stall(device);
+        }
+        else
+        {
+            func->ops->setup(func, setup);
+        }
         break;
     default:
         rt_kprintf("unknown function request type\n");
@@ -1876,8 +1890,9 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
 
     while(device->dcd->ep_pool[i].addr != 0xFF)
     {
-        if(device->dcd->ep_pool[i].status == ID_UNASSIGNED && 
-            ep->ep_desc->bmAttributes == device->dcd->ep_pool[i].type && (EP_ADDRESS(ep) & 0x80) == device->dcd->ep_pool[i].dir)
+        if(device->dcd->ep_pool[i].status == ID_UNASSIGNED &&
+           USB_EP_ATTR(ep->ep_desc->bmAttributes) == device->dcd->ep_pool[i].type &&
+           (EP_ADDRESS(ep) & 0x80) == device->dcd->ep_pool[i].dir)
         {
             EP_ADDRESS(ep) |= device->dcd->ep_pool[i].addr;
             ep->id = &device->dcd->ep_pool[i];
