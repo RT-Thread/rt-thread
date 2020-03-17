@@ -939,8 +939,11 @@ static rt_err_t _sof_notify(udevice_t device)
  */
 static rt_err_t _stop_notify(udevice_t device)
 {
-    struct rt_list_node *i;
+    struct rt_list_node *i, *j, *k;
+    uintf_t intf;
     ufunction_t func;
+    ualtsetting_t setting;
+    uep_t ep;
 
     RT_ASSERT(device != RT_NULL);
 
@@ -950,6 +953,17 @@ static rt_err_t _stop_notify(udevice_t device)
          i  = i->next)
     {
         func = (ufunction_t)rt_list_entry(i, struct ufunction, list);
+        for(j = func->intf_list.next; j != &func->intf_list; j = j->next)
+        {
+            intf = (uintf_t)rt_list_entry(j, struct uinterface, list);
+            setting = intf->curr_setting;
+            for(k = setting->ep_list.next; k != &setting->ep_list; k = k->next)
+            {
+                ep = (uep_t)rt_list_entry(k, struct uendpoint, list);
+                dcd_ep_disable(device->dcd, ep);
+            }
+        }
+
         FUNC_DISABLE(func);
     }
 
