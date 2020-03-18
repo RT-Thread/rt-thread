@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,10 +11,10 @@
 #ifndef __DRV_I2C_H__
 #define __DRV_I2C_H__
 
-#include <rthw.h>
 #include <rtdevice.h>
 #include <rtthread.h>
-#include "bcm283x.h"
+
+#include "board.h"
 
 struct raspi_master_config_t
 {

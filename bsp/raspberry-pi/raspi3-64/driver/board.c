@@ -100,6 +100,8 @@ void rt_hw_board_init(void)
     armv8_map(0x40000000, 0x40000000, 0x1000, MEM_ATTR_IO);//core timer
     armv8_map(0x3F300000, 0x3F300000, 0x1000, MEM_ATTR_IO);//sdio
     armv8_map(0xc00000, 0xc00000, 0x1000, MEM_ATTR_IO);//mbox
+    armv8_map(0x3f804000, 0x3f804000, 0x1000, MEM_ATTR_IO);//i2c0
+    armv8_map(0x3f205000, 0x3f205000, 0x1000, MEM_ATTR_IO);//i2c1
     mmu_enable();
     
     /* initialize hardware interrupt */
