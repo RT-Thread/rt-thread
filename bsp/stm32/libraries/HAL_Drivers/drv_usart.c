@@ -921,17 +921,13 @@ static void _dma_tx_complete(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
-    if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma_tx.handle), DMA_IT_TC) != RESET) ||
-            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_tx.handle), DMA_IT_HT) != RESET))
-    {
-        level = rt_hw_interrupt_disable();
-        trans_total_index = __HAL_DMA_GET_COUNTER(&(uart->dma_tx.handle));
-        rt_hw_interrupt_enable(level);
+    level = rt_hw_interrupt_disable();
+    trans_total_index = __HAL_DMA_GET_COUNTER(&(uart->dma_tx.handle));
+    rt_hw_interrupt_enable(level);
 
-        if (trans_total_index == 0)
-        {
-            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
-        }
+    if (trans_total_index == 0)
+    {
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
     }
 }
 
