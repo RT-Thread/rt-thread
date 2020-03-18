@@ -9,6 +9,7 @@
  */
 #include <mmu.h>
 #include <stddef.h>
+#include <rthw.h>
 
 #define TTBR_CNP    1
 
@@ -35,6 +36,13 @@ static unsigned long main_tbl[512 * 20] __attribute__((aligned (4096)));
 
 int free_idx = 1;
 
+void __asm_invalidate_icache_all(void);
+void __asm_flush_dcache_all(void);
+int __asm_flush_l3_cache(void);
+void __asm_flush_dcache_range(unsigned long long start, unsigned long long end);
+void __asm_invalidate_dcache_all(void);
+void __asm_invalidate_icache_all(void);
+
 void mmu_memset(char *dst, char v,  size_t len)
 {
     while (len--)
@@ -48,6 +56,20 @@ static unsigned long get_free_page(void)
 {
     __page_off += 512;
     return (unsigned long)(main_tbl + __page_off);
+}
+
+
+static inline unsigned int get_sctlr(void)
+{
+    unsigned int val;
+    asm volatile("mrs %0, sctlr_el1" : "=r" (val) : : "cc");
+    return val;
+}
+
+static inline void set_sctlr(unsigned int val)
+{
+    asm volatile("msr sctlr_el1, %0" : : "r" (val) : "cc");
+    asm volatile("isb");
 }
 
 void mmu_init(void)
@@ -101,6 +123,9 @@ void mmu_enable(void)
     __asm__ volatile("mrs %0, SCTLR_EL1\n":"=r"(val32));
     val32 |= 0x1005; //enable mmu, I C M
     __asm__ volatile("dmb sy\n msr SCTLR_EL1, %0\nisb sy\n"::"r"(val32));
+    rt_hw_icache_enable();
+    rt_hw_dcache_enable();
+
 }
 
 static int map_single_page_2M(unsigned long* lv0_tbl, unsigned long va, unsigned long pa, unsigned long attr) 
@@ -271,3 +296,72 @@ void armv8_map(unsigned long va, unsigned long pa, unsigned long size, unsigned 
     map_region(va, pa, size, attr);
 }
 
+void rt_hw_dcache_enable(void)
+{
+    if (!(get_sctlr() & CR_M)) 
+    {
+        rt_kprintf("please init mmu!\n");
+    }
+    else
+    {
+        set_sctlr(get_sctlr() | CR_C);
+    }
+}
+
+void rt_hw_dcache_flush_all(void)
+{
+    int ret;
+
+    __asm_flush_dcache_all();
+    ret = __asm_flush_l3_cache();
+    if (ret)
+    {
+        rt_kprintf("flushing dcache returns 0x%x\n", ret);
+    }
+    else
+    {
+        rt_kprintf("flushing dcache successfully.\n");
+    }
+}
+
+void rt_hw_dcache_flush_range(unsigned long start_addr, unsigned long size)
+{
+    __asm_flush_dcache_range(start_addr, start_addr + size);
+}
+void rt_hw_dcache_invalidate_range(unsigned long start_addr,unsigned long size)
+{
+    __asm_flush_dcache_range(start_addr, start_addr + size);
+}
+
+void rt_hw_dcache_invalidate_all(void)
+{
+    __asm_invalidate_dcache_all();
+}
+
+void rt_hw_dcache_disable(void)
+{
+    /* if cache isn't enabled no need to disable */
+    if(!(get_sctlr() & CR_C))
+    {
+        rt_kprintf("need enable cache!\n");
+        return;
+    }
+    set_sctlr(get_sctlr() & ~CR_C);
+}
+
+//icache
+void rt_hw_icache_enable(void)
+{
+    __asm_invalidate_icache_all();
+    set_sctlr(get_sctlr() | CR_I);
+}
+
+void rt_hw_icache_invalidate_all(void)
+{
+    __asm_invalidate_icache_all();
+}
+
+void rt_hw_icache_disable(void)
+{
+    set_sctlr(get_sctlr() & ~CR_I);
+}
