@@ -231,6 +231,11 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
         }
     }
     
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+    
     return size_bank1 + size_bank2;
 #else
     return stm32_flash_erase_bank(FLASH_BANK_1, addr, size);
