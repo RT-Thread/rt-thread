@@ -20,7 +20,7 @@
 
 ![board](figures/board.png)
 
-该开发板常用 ** 板载资源 ** 如下：
+该开发板常用 **板载资源** 如下：
 
 - MCU：STM32F410RBT6，主频 84MHz，128KB FLASH ，32KB RAM。
 - 常用外设
@@ -91,7 +91,7 @@ msh >
 
 4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32 系列 BSP 外设驱动使用教程. md)。
+本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
 ## 注意事项
 
