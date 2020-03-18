@@ -189,7 +189,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
                 RT_ASSERT(0);
             }
         }
-        else if(ctrl_arg == RT_DEVICE_FLAG_DMA_TX) 
+        else if(ctrl_arg == RT_DEVICE_FLAG_DMA_TX)
         {
             HAL_NVIC_DisableIRQ(uart->config->dma_tx->dma_irq);
             if (HAL_DMA_DeInit(&(uart->dma_tx.handle)) != HAL_OK)
@@ -269,6 +269,11 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
+
+    if(buf == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
 
     if (size == 0)
     {
