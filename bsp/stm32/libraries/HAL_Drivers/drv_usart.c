@@ -268,12 +268,8 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
 {
     struct stm32_uart *uart;
     RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(buf != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
-
-    if(buf == RT_NULL)
-    {
-        return -RT_EINVAL;
-    }
 
     if (size == 0)
     {
@@ -293,15 +289,6 @@ static rt_size_t stm32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
     }
     return 0;
 }
-
-static const struct rt_uart_ops stm32_uart_ops =
-{
-    .configure = stm32_configure,
-    .control = stm32_control,
-    .putc = stm32_putc,
-    .getc = stm32_getc,
-    .dma_transmit = stm32_dma_transmit
-};
 
 /**
  * Uart common interrupt process. This need add to uart ISR.
@@ -754,6 +741,94 @@ void LPUART1_DMA_RX_IRQHandler(void)
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_LPUART1_RX_USING_DMA) */
 #endif /* BSP_USING_LPUART1*/
 
+static void stm32_uart_get_dma_config(void)
+{
+#ifdef BSP_USING_UART1
+    uart_obj[UART1_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART1_RX_USING_DMA
+    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart1_dma_rx = UART1_DMA_RX_CONFIG;
+    uart_config[UART1_INDEX].dma_rx = &uart1_dma_rx;
+#endif
+#ifdef BSP_UART1_TX_USING_DMA
+    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart1_dma_tx = UART1_DMA_TX_CONFIG;
+    uart_config[UART1_INDEX].dma_tx = &uart1_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_UART2
+    uart_obj[UART2_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART2_RX_USING_DMA
+    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart2_dma_rx = UART2_DMA_RX_CONFIG;
+    uart_config[UART2_INDEX].dma_rx = &uart2_dma_rx;
+#endif
+#ifdef BSP_UART2_TX_USING_DMA
+    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart2_dma_tx = UART2_DMA_TX_CONFIG;
+    uart_config[UART2_INDEX].dma_tx = &uart2_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_UART3
+    uart_obj[UART3_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART3_RX_USING_DMA
+    uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart3_dma_rx = UART3_DMA_RX_CONFIG;
+    uart_config[UART3_INDEX].dma_rx = &uart3_dma_rx;
+#endif
+#ifdef BSP_UART3_TX_USING_DMA
+    uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart3_dma_tx = UART3_DMA_TX_CONFIG;
+    uart_config[UART3_INDEX].dma_tx = &uart3_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_UART4
+    uart_obj[UART4_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART4_RX_USING_DMA
+    uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart4_dma_rx = UART4_DMA_RX_CONFIG;
+    uart_config[UART4_INDEX].dma_rx = &uart4_dma_rx;
+#endif
+#ifdef BSP_UART4_TX_USING_DMA
+    uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart4_dma_tx = UART4_DMA_TX_CONFIG;
+    uart_config[UART4_INDEX].dma_tx = &uart4_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_UART5
+    uart_obj[UART5_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART5_RX_USING_DMA
+    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart5_dma_rx = UART5_DMA_RX_CONFIG;
+    uart_config[UART5_INDEX].dma_rx = &uart5_dma_rx;
+#endif
+#ifdef BSP_UART5_TX_USING_DMA
+    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart5_dma_tx = UART5_DMA_TX_CONFIG;
+    uart_config[UART5_INDEX].dma_tx = &uart5_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_UART6
+    uart_obj[UART6_INDEX].uart_dma_flag = 0;
+#ifdef BSP_UART6_RX_USING_DMA
+    uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config uart6_dma_rx = UART6_DMA_RX_CONFIG;
+    uart_config[UART6_INDEX].dma_rx = &uart6_dma_rx;
+#endif
+#ifdef BSP_UART6_TX_USING_DMA
+    uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    static struct dma_config uart6_dma_tx = UART6_DMA_TX_CONFIG;
+    uart_config[UART6_INDEX].dma_tx = &uart6_dma_tx;
+#endif
+#endif
+}
+
+
 #ifdef RT_SERIAL_USING_DMA
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
@@ -861,7 +936,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
     }
 
-    /* DMA irq should be set in DMA TX mode, or HAL_UART_TxCpltCallback function will not be called */
+    /* DMA irq should set in DMA TX mode, or HAL_UART_TxCpltCallback function will not be called */
     HAL_NVIC_SetPriority(dma_config->dma_irq, 0, 0);
     HAL_NVIC_EnableIRQ(dma_config->dma_irq);
 
@@ -871,6 +946,8 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     LOG_D("%s dma %s instance: %x", uart->config->name, flag == RT_DEVICE_FLAG_DMA_RX ? "RX" : "TX", DMA_Handle->Instance);
     LOG_D("%s dma config done", uart->config->name);
 }
+
+
 
 /**
   * @brief  UART error callbacks
@@ -952,92 +1029,14 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 }
 #endif  /* RT_SERIAL_USING_DMA */
 
-static void stm32_uart_get_dma_config(void)
+static const struct rt_uart_ops stm32_uart_ops =
 {
-#ifdef BSP_USING_UART1
-    uart_obj[UART1_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART1_RX_USING_DMA
-    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart1_dma_rx = UART1_DMA_RX_CONFIG;
-    uart_config[UART1_INDEX].dma_rx = &uart1_dma_rx;
-#endif
-#ifdef BSP_UART1_TX_USING_DMA
-    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart1_dma_tx = UART1_DMA_TX_CONFIG;
-    uart_config[UART1_INDEX].dma_tx = &uart1_dma_tx;
-#endif
-#endif
-
-#ifdef BSP_USING_UART2
-    uart_obj[UART2_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART2_RX_USING_DMA
-    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart2_dma_rx = UART2_DMA_RX_CONFIG;
-    uart_config[UART2_INDEX].dma_rx = &uart2_dma_rx;
-#endif
-#ifdef BSP_UART2_TX_USING_DMA
-    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart2_dma_tx = UART2_DMA_TX_CONFIG;
-    uart_config[UART2_INDEX].dma_tx = &uart2_dma_tx;
-#endif
-#endif
-
-#ifdef BSP_USING_UART3
-    uart_obj[UART3_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART3_RX_USING_DMA
-    uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart3_dma_rx = UART3_DMA_RX_CONFIG;
-    uart_config[UART3_INDEX].dma_rx = &uart3_dma_rx;
-#endif
-#ifdef BSP_UART3_TX_USING_DMA
-    uart_obj[UART3_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart3_dma_tx = UART3_DMA_TX_CONFIG;
-    uart_config[UART3_INDEX].dma_tx = &uart3_dma_tx;
-#endif
-#endif
-
-#ifdef BSP_USING_UART4
-    uart_obj[UART4_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART4_RX_USING_DMA
-    uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart4_dma_rx = UART4_DMA_RX_CONFIG;
-    uart_config[UART4_INDEX].dma_rx = &uart4_dma_rx;
-#endif
-#ifdef BSP_UART4_TX_USING_DMA
-    uart_obj[UART4_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart4_dma_tx = UART4_DMA_TX_CONFIG;
-    uart_config[UART4_INDEX].dma_tx = &uart4_dma_tx;
-#endif
-#endif
-
-#ifdef BSP_USING_UART5
-    uart_obj[UART5_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART5_RX_USING_DMA
-    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart5_dma_rx = UART5_DMA_RX_CONFIG;
-    uart_config[UART5_INDEX].dma_rx = &uart5_dma_rx;
-#endif
-#ifdef BSP_UART5_TX_USING_DMA
-    uart_obj[UART5_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart5_dma_tx = UART5_DMA_TX_CONFIG;
-    uart_config[UART5_INDEX].dma_tx = &uart5_dma_tx;
-#endif
-#endif
-
-#ifdef BSP_USING_UART6
-    uart_obj[UART6_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART6_RX_USING_DMA
-    uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart6_dma_rx = UART6_DMA_RX_CONFIG;
-    uart_config[UART6_INDEX].dma_rx = &uart6_dma_rx;
-#endif
-#ifdef BSP_UART6_TX_USING_DMA
-    uart_obj[UART6_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart6_dma_tx = UART6_DMA_TX_CONFIG;
-    uart_config[UART6_INDEX].dma_tx = &uart6_dma_tx;
-#endif
-#endif
-}
+    .configure = stm32_configure,
+    .control = stm32_control,
+    .putc = stm32_putc,
+    .getc = stm32_getc,
+    .dma_transmit = stm32_dma_transmit
+};
 
 int rt_hw_usart_init(void)
 {
