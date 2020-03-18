@@ -219,6 +219,7 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
         if(size_bank1 != stm32_flash_erase_bank(FLASH_BANK_1, addr_bank1, size_bank1))
         {
             result = -RT_ERROR;
+            goto __exit;
         }
     }
     
@@ -228,10 +229,12 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
         if(size_bank2 != stm32_flash_erase_bank(FLASH_BANK_2, addr_bank2, size_bank2))
         {
             result = -RT_ERROR;
+            goto __exit;
         }
     }
-    
-    if (result != RT_EOK)
+
+__exit:    
+    if(result != RT_EOK)
     {
         return result;
     }
