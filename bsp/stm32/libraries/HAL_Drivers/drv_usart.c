@@ -861,7 +861,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
     }
 
-    /* enable irq */
+    /* DMA irq should be set in DMA TX mode, or HAL_UART_TxCpltCallback function will not be called */
     HAL_NVIC_SetPriority(dma_config->dma_irq, 0, 0);
     HAL_NVIC_EnableIRQ(dma_config->dma_irq);
 
@@ -936,6 +936,13 @@ static void _dma_tx_complete(struct rt_serial_device *serial)
     }
 }
 
+/**
+  * @brief  HAL_UART_TxCpltCallback
+  * @param  huart: UART handle
+  * @note   This callback can be called by two functions, first in UART_EndTransmit_IT when 
+  *         UART Tx complete and second in UART_DMATransmitCplt function in DMA Circular mode.
+  * @retval None
+  */
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
     struct stm32_uart *uart;
