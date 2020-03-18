@@ -1010,7 +1010,7 @@ udevice_t rt_usbd_device_new(void)
     udevice = (udevice_t)rt_malloc(sizeof(struct udevice));
     if(udevice == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     rt_memset(udevice, 0, sizeof(struct udevice));
@@ -1124,7 +1124,7 @@ uconfig_t rt_usbd_config_new(void)
     cfg = (uconfig_t)rt_malloc(sizeof(struct uconfig));
     if(cfg == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     rt_memset(cfg, 0, sizeof(struct uconfig));
@@ -1163,7 +1163,7 @@ uintf_t rt_usbd_interface_new(udevice_t device, uintf_handler_t handler)
     intf = (uintf_t)rt_malloc(sizeof(struct uinterface));
     if(intf == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     intf->intf_num = device->nr_intf;
@@ -1198,14 +1198,14 @@ ualtsetting_t rt_usbd_altsetting_new(rt_size_t desc_size)
     setting = (ualtsetting_t)rt_malloc(sizeof(struct ualtsetting));
     if(setting == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     /* allocate memory for the desc */
     setting->desc = rt_malloc(desc_size);
     if (setting->desc == RT_NULL)
     {
-        rt_kprintf("alloc desc memery failed\n");
+        rt_kprintf("alloc desc memory failed\n");
         rt_free(setting);
         return RT_NULL;
     }
@@ -1263,7 +1263,7 @@ ufunction_t rt_usbd_function_new(udevice_t device, udev_desc_t dev_desc,
     func = (ufunction_t)rt_malloc(sizeof(struct ufunction));
     if(func == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     func->dev_desc = dev_desc;
@@ -1298,7 +1298,7 @@ uep_t rt_usbd_endpoint_new(uep_desc_t ep_desc, udep_handler_t handler)
     ep = (uep_t)rt_malloc(sizeof(struct uendpoint));
     if(ep == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     ep->ep_desc = ep_desc;
@@ -2204,7 +2204,7 @@ static struct rt_thread usb_thread;
 #define USBD_MQ_MAX_MSG 16
 /* internal of the message queue: every message is associated with a pointer,
  * so in order to recveive USBD_MQ_MAX_MSG messages, we have to allocate more
- * than USBD_MQ_MSG_SZ*USBD_MQ_MAX_MSG memery. */
+ * than USBD_MQ_MSG_SZ*USBD_MQ_MAX_MSG memory. */
 static rt_uint8_t usb_mq_pool[(USBD_MQ_MSG_SZ+sizeof(void*))*USBD_MQ_MAX_MSG];
 
 /**

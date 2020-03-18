@@ -12,12 +12,12 @@
  */
 
 #include <rthw.h>
+#include <board.h>
 #include <rtthread.h>
 
 #include "cp15.h"
 #include "armv8.h"
-
-#include <board.h>
+#include "interrupt.h"
 
 #define MAX_HANDLERS                72
 

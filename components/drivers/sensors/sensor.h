@@ -111,6 +111,8 @@ extern "C" {
 #define  RT_SENSOR_CTRL_SET_POWER      (5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
 #define  RT_SENSOR_CTRL_SELF_TEST      (6)  /* Take a self test */
 
+#define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
+
 struct rt_sensor_info
 {
     rt_uint8_t     type;                    /* The sensor type */

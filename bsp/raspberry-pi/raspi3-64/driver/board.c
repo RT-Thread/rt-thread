@@ -17,6 +17,21 @@
 
 #include "cp15.h"
 #include "mmu.h"
+#include "raspi.h"
+
+#ifdef BSP_USING_CORETIMER
+static rt_uint64_t timerStep;
+#define CORE0_TIMER_IRQ_CTRL    HWREG32(0x40000040)
+
+int rt_hw_get_gtimer_frq(void);
+void rt_hw_set_gtimer_val(rt_uint64_t value);
+void rt_hw_gtimer_enable(void);
+
+void core0_timer_enable_interrupt_controller()
+{
+    CORE0_TIMER_IRQ_CTRL |= NON_SECURE_TIMER_IRQ;
+}
+#endif
 
 #ifdef RT_USING_SMP
 extern void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
@@ -28,15 +43,29 @@ void ipi_handler(){
 
 void rt_hw_timer_isr(int vector, void *parameter)
 {
+#ifdef BSP_USING_CORETIMER
+    rt_hw_set_gtimer_val(timerStep);
+#else
     ARM_TIMER_IRQCLR = 0;
+#endif
     rt_tick_increase();
 }
 
-int rt_hw_timer_init()
+void rt_hw_timer_init(void)
 {
-    __DSB();
     rt_hw_interrupt_install(IRQ_ARM_TIMER, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_ARM_TIMER);
+#ifdef BSP_USING_CORETIMER
+    __ISB();
+    timerStep = rt_hw_get_gtimer_frq();
+    __DSB();
+    timerStep /= RT_TICK_PER_SECOND;
+    
+    rt_hw_gtimer_enable();
+    rt_hw_set_gtimer_val(timerStep);
+    core0_timer_enable_interrupt_controller();
+#else
+    __DSB();
     /* timer_clock = apb_clock/(pre_divider + 1) */
     ARM_TIMER_PREDIV = (250 - 1);
 
@@ -50,7 +79,7 @@ int rt_hw_timer_init()
 
     /* 23-bit counter, enable interrupt, enable timer */
     ARM_TIMER_CTRL   = (1 << 1) | (1 << 5) | (1 << 7);
-    return 0;
+#endif
 }
 
 void idle_wfi(void)
@@ -65,11 +94,14 @@ void idle_wfi(void)
 void rt_hw_board_init(void)
 {
     mmu_init();
-    armv8_map(0, 0, 0x800000, MEM_ATTR_MEMORY);
-    armv8_map(0x3f00B000, 0x3f00B000, 0x1000, MEM_ATTR_IO);//timer
+    armv8_map(0, 0, 0x6400000, MEM_ATTR_MEMORY);
+    armv8_map(0x3f000000, 0x3f000000, 0x200000, MEM_ATTR_IO);//timer
     armv8_map(0x3f200000, 0x3f200000, 0x16000, MEM_ATTR_IO);//uart
+    armv8_map(0x40000000, 0x40000000, 0x1000, MEM_ATTR_IO);//core timer
+    armv8_map(0x3F300000, 0x3F300000, 0x1000, MEM_ATTR_IO);//sdio
+    armv8_map(0xc00000, 0xc00000, 0x1000, MEM_ATTR_IO);//mbox
     mmu_enable();
-
+    
     /* initialize hardware interrupt */
     rt_hw_interrupt_init(); // in libcpu/interrupt.c. Set some data structures, no operation on device
     rt_hw_vector_init();    // in libcpu/interrupt.c. == rt_cpu_vector_set_base((rt_ubase_t)&system_vectors);
@@ -80,7 +112,7 @@ void rt_hw_board_init(void)
     rt_hw_timer_init();
     rt_thread_idle_sethook(idle_wfi);
 
-#ifdef RT_USING_CONSOLE
+    #ifdef RT_USING_CONSOLE
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif /* RT_USING_CONSOLE */

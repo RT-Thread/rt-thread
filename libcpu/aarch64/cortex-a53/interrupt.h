@@ -14,6 +14,8 @@
 #include <rthw.h>
 #include <board.h>
 
+#include "raspi.h"
+
 #define INT_IRQ     0x00
 #define INT_FIQ     0x01
 

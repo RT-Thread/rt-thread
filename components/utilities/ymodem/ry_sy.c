@@ -40,7 +40,7 @@ static enum rym_code _rym_recv_begin(
         rt_kprintf("error creating file: %d\n", err);
         return RYM_CODE_CAN;
     }
-    cctx->flen = atoi((const char *)buf + rt_strnlen((const char *)buf, len - 1));
+    cctx->flen = atoi(1 + (const char *)buf + rt_strnlen((const char *)buf, len - 1));
     if (cctx->flen == 0)
         cctx->flen = -1;
 
