@@ -328,7 +328,8 @@ static void uart_isr(struct rt_serial_device *serial)
         }
         __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
     }
-    else if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) != RESET)
+    else if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) &&
+            (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_TC) != RESET))
     {
         if ((serial->parent.open_flag & RT_DEVICE_FLAG_DMA_TX) != 0)
         {
