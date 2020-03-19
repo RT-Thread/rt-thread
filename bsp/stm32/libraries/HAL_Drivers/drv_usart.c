@@ -334,10 +334,7 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             HAL_UART_IRQHandler(&(uart->handle));
         }
-        else
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
-        }
+        UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
     }
 #endif
     else
