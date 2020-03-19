@@ -26,6 +26,20 @@ rt_hw_set_gtimer_val:
 	RET
 
 /*
+ *get gtimer CNTP_TVAL_EL0 value
+ */
+.globl rt_hw_get_gtimer_val
+rt_hw_get_gtimer_val:
+	MRS X0,CNTP_TVAL_EL0
+	RET
+
+
+.globl rt_hw_get_cntpct_val
+rt_hw_get_cntpct_val:
+	MRS X0, CNTPCT_EL0
+	RET
+
+/*
  *get gtimer frq value
  */
 .globl rt_hw_get_gtimer_frq
