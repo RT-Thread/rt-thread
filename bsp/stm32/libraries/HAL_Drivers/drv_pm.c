@@ -48,8 +48,20 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
         break;
 
     case PM_SLEEP_MODE_DEEP:
-        /* Enter STOP 2 mode  */
-        HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+        /* Disable SysTick interrupt */
+        HAL_SuspendTick();
+        if (pm->run_mode == PM_RUN_MODE_LOW_SPEED)
+        {
+            /* Enter STOP 1 mode  */
+            HAL_PWREx_EnterSTOP1Mode(PWR_STOPENTRY_WFI);
+        }
+        else
+        {
+            /* Enter STOP 2 mode  */
+            HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+        }
+        /* Enable SysTick interrupt */
+        HAL_ResumeTick();
         /* Re-configure the system clock */
         SystemClock_ReConfig(pm->run_mode);
         break;
@@ -96,9 +108,9 @@ static void run(struct rt_pm *pm, uint8_t mode)
     case PM_RUN_MODE_HIGH_SPEED:
     case PM_RUN_MODE_NORMAL_SPEED:
         HAL_PWREx_DisableLowPowerRunMode();
-        SystemClock_80M();
         /* Configure the main internal regulator output voltage (Range1 by default)*/
         HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+        SystemClock_80M();
         break;
     case PM_RUN_MODE_MEDIUM_SPEED:
         HAL_PWREx_DisableLowPowerRunMode();
