@@ -228,7 +228,7 @@ def HandleToolOption(tools, env, project, reset):
         with open('rtconfig_preinc.h', mode = 'w+') as f:
             f.write(file_header)
             for cppdef in CPPDEFINES:
-                f.write("#define " + cppdef + '\n')
+                f.write("#define " + cppdef.replace('=', ' ') + '\n')
             f.write(file_tail)
         #  change the c.compiler.include.files
         files = option.findall('listOptionValue')
