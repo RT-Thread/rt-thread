@@ -49,7 +49,7 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
 
     case PM_SLEEP_MODE_DEEP:
         /* Disable SysTick interrupt */
-        HAL_SuspendTick();
+        SysTick->CTRL &= ~(SysTick_CTRL_TICKINT_Msk);
         if (pm->run_mode == PM_RUN_MODE_LOW_SPEED)
         {
             /* Enter STOP 1 mode  */
@@ -61,7 +61,7 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
             HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
         }
         /* Enable SysTick interrupt */
-        HAL_ResumeTick();
+        SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;
         /* Re-configure the system clock */
         SystemClock_ReConfig(pm->run_mode);
         break;
