@@ -101,12 +101,12 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     RT_ASSERT(cfg != RT_NULL);
 
     uart = rt_container_of(serial, struct stm32_uart, serial);
-
     uart->handle.Instance          = uart->config->Instance;
     uart->handle.Init.BaudRate     = cfg->baud_rate;
     uart->handle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
     uart->handle.Init.Mode         = UART_MODE_TX_RX;
     uart->handle.Init.OverSampling = UART_OVERSAMPLING_16;
+
     switch (cfg->data_bits)
     {
     case DATA_BITS_8:
@@ -119,6 +119,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
         uart->handle.Init.WordLength = UART_WORDLENGTH_8B;
         break;
     }
+
     switch (cfg->stop_bits)
     {
     case STOP_BITS_1:
@@ -131,6 +132,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
         uart->handle.Init.StopBits   = UART_STOPBITS_1;
         break;
     }
+
     switch (cfg->parity)
     {
     case PARITY_NONE:
@@ -146,6 +148,10 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
         uart->handle.Init.Parity     = UART_PARITY_NONE;
         break;
     }
+
+#ifdef RT_SERIAL_USING_DMA
+    uart->dma_rx.last_index = 0;
+#endif
 
     if (HAL_UART_Init(&uart->handle) != HAL_OK)
     {
@@ -826,7 +832,6 @@ static void stm32_uart_get_dma_config(void)
 #endif
 }
 
-
 #ifdef RT_SERIAL_USING_DMA
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 {
@@ -945,8 +950,6 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     LOG_D("%s dma config done", uart->config->name);
 }
 
-
-
 /**
   * @brief  UART error callbacks
   * @param  huart: UART handle
@@ -1046,9 +1049,11 @@ int rt_hw_usart_init(void)
 
     for (int i = 0; i < obj_num; i++)
     {
+        /* init UART object */
         uart_obj[i].config = &uart_config[i];
         uart_obj[i].serial.ops    = &stm32_uart_ops;
         uart_obj[i].serial.config = config;
+
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[i].serial, uart_obj[i].config->name,
                                        RT_DEVICE_FLAG_RDWR
