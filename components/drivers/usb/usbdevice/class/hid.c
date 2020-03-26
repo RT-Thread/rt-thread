@@ -458,9 +458,6 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
 
     struct hid_s *data = (struct hid_s *) func->user_data;
 
-    if(setup->wIndex != 0)
-        return -RT_EIO;
-
     switch (setup->bRequest)
     {
     case USB_REQ_GET_DESCRIPTOR:
