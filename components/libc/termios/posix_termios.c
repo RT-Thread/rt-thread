@@ -12,8 +12,6 @@
 #include <rtthread.h>
 #include <dfs_posix.h>
 
-#include <termios.h>
-
 int tcgetattr(int fd, struct termios *tio)
 {
     /* Get the current serial port settings. */
