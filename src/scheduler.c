@@ -375,7 +375,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, current_thread->name, current_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _rt_scheduler_stack_check(current_thread);
 #endif
 
                 rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
@@ -480,7 +480,7 @@ void rt_schedule(void)
                          RT_NAME_MAX, from_thread->name, from_thread->sp));
 
 #ifdef RT_USING_OVERFLOW_CHECK
-                _rt_scheduler_stack_check(to_thread);
+                _rt_scheduler_stack_check(from_thread);
 #endif
 
                 if (rt_interrupt_nest == 0)
