@@ -49,11 +49,15 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
 
     case PM_SLEEP_MODE_DEEP:
         /* Disable SysTick interrupt */
-        SysTick->CTRL &= ~(SysTick_CTRL_TICKINT_Msk);
+        CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
         if (pm->run_mode == PM_RUN_MODE_LOW_SPEED)
         {
-            /* Enter STOP 1 mode  */
-            HAL_PWREx_EnterSTOP1Mode(PWR_STOPENTRY_WFI);
+            /* Clear LPR bit to back the normal run mode */
+            CLEAR_BIT(PWR->CR1, PWR_CR1_LPR);
+            /* Enter STOP 2 mode  */
+            HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
+            /* Set Regulator parameter to lowpower run mode */
+            SET_BIT(PWR->CR1, PWR_CR1_LPR);
         }
         else
         {
@@ -61,7 +65,7 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
             HAL_PWREx_EnterSTOP2Mode(PWR_STOPENTRY_WFI);
         }
         /* Enable SysTick interrupt */
-        SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;
+        SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
         /* Re-configure the system clock */
         SystemClock_ReConfig(pm->run_mode);
         break;
