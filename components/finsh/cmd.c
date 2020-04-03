@@ -29,6 +29,7 @@
  * 2018-11-22     Jesven       list_thread add smp support
  * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread 
  *                             Provide protection for the "first layer of objects" when list_*
+ * 2020-04-03     chenhui      add clear
  */
 
 #include <rthw.h>
@@ -47,6 +48,16 @@ long hello(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(hello, say hello world);
+
+long clear(void)
+{
+    puts("\x1b[2J\x1b[H");
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT(clear,clear console output);
+MSH_CMD_EXPORT(clear,clear console output);
+
 
 extern void rt_show_version(void);
 long version(void)
