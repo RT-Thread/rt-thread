@@ -11,10 +11,10 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define THREAD_PRIORITY 2
-#define THREAD_STACK_SIZE 512
+#define THREAD_PRIORITY 20
+#define THREAD_STACK_SIZE 396
 #define THREAD_TIMESLICE 5
-#define THREAD_NUM      20
+#define THREAD_NUM      2
 
 /*　Align stack when using static thread　*/
 ALIGN(RT_ALIGN_SIZE)
@@ -36,9 +36,14 @@ static void thread_entry(void *parameter)
 int create_thread_demo(void)
 {
     int i;
+    static char tname[9] = "thread";
+    
     for (i = 0; i < THREAD_NUM; i ++) {
         /* Create static threads */
-        rt_thread_init(&tid[i], "thread", thread_entry, (void *)i, thread_stack[i],
+        tname[6] = i/10 + '0';
+        tname[7] = i%10 + '0';
+        tname[8] = '\0';
+        rt_thread_init(&tid[i], tname, thread_entry, (void *)i, thread_stack[i],
                    THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     }
 
@@ -57,7 +62,7 @@ int main(void)
     create_thread_demo();
 
     while (1) {
-        rt_kprintf("Main thread count: %d\n", count++);
+        //rt_kprintf("Main thread count: %d\n", count++);
         rt_thread_mdelay(1000);
     }
 }
