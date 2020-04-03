@@ -16,6 +16,7 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+#include <mips_fpu.h>
 
 #include "board.h"
 #include "uart.h"
