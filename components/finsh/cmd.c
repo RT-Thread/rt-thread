@@ -29,6 +29,7 @@
  * 2018-11-22     Jesven       list_thread add smp support
  * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread 
  *                             Provide protection for the "first layer of objects" when list_*
+ * 2020-04-03     chenhui      add clear
  */
 
 #include <rthw.h>
