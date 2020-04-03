@@ -955,7 +955,7 @@ do {									\
 
 #define write_32bit_cp0_set1_register(register,value)           \
         __asm__ __volatile__(                                   \
-        "ctc0\t%0,"STR(register)"\n\t"				\
+        "ctc0\t%0,$"STR(register)"\n\t"				\
     "nop"							\
         : : "r" (value));
 
@@ -993,14 +993,14 @@ do {									\
     __asm__ __volatile__(                                   \
     ".set\tpush\n\t"					\
     ".set\treorder\n\t"					\
-        "cfc1\t%0,"STR(source)"\n\t"                            \
+        "cfc1\t%0,$"STR(source)"\n\t"                            \
     ".set\tpop"						\
         : "=r" (__res));                                        \
         __res;})
 
 #define write_32bit_cp1_register(register,value)                \
         __asm__ __volatile__(                                   \
-        "ctc1\t%0,"STR(register)"\n\t"				\
+        "ctc1\t%0,$"STR(register)"\n\t"				\
     "nop"							\
         : : "r" (value));
 
