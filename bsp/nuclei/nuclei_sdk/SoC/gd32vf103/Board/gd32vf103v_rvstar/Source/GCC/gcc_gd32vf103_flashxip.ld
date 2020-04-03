@@ -133,7 +133,6 @@ SECTIONS
     *(.text.startup .text.startup.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
-
   } >flash AT>flash
 
   .rodata : ALIGN(4)
