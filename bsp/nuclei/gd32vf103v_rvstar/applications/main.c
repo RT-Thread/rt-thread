@@ -15,6 +15,7 @@
 #define THREAD_STACK_SIZE 396
 #define THREAD_TIMESLICE 5
 #define THREAD_NUM      2
+//#define APP_DEBUG_PRINT
 
 /*　Align stack when using static thread　*/
 ALIGN(RT_ALIGN_SIZE)
@@ -27,7 +28,9 @@ static void thread_entry(void *parameter)
     rt_uint32_t count = 0;
 
     while (1) {
+#ifdef APP_DEBUG_PRINT
         rt_kprintf("thread %d count: %d\n", (rt_uint32_t)parameter, count++);
+#endif
         rt_thread_mdelay(500);
     }
 }
@@ -62,7 +65,9 @@ int main(void)
     create_thread_demo();
 
     while (1) {
-        //rt_kprintf("Main thread count: %d\n", count++);
+#ifdef APP_DEBUG_PRINT
+        rt_kprintf("Main thread count: %d\n", count++);
+#endif
         rt_thread_mdelay(1000);
     }
 }
