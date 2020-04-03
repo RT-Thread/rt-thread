@@ -48,6 +48,15 @@ long hello(void)
 }
 FINSH_FUNCTION_EXPORT(hello, say hello world);
 
+long clear(void)
+{
+    puts("\x1b[2J\x1b[H");
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT(clear,clear console output);
+MSH_CMD_EXPORT(clear,clear console output);
+
 extern void rt_show_version(void);
 long version(void)
 {
