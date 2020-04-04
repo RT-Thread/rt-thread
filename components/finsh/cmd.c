@@ -51,7 +51,7 @@ FINSH_FUNCTION_EXPORT(hello, say hello world);
 
 long clear(void)
 {
-    puts("\x1b[2J\x1b[H");
+    rt_kprintf("\x1b[2J\x1b[H");
 
     return 0;
 }
