@@ -24,7 +24,7 @@
 #define _ATYPE_		__PTRDIFF_TYPE__
 #define _ATYPE32_	int
 #define _ATYPE64_	__s64
-#ifdef CONFIG_64BIT
+#ifdef ARCH_MIPS64
 #define _CONST64_(x)	x ## L
 #else
 #define _CONST64_(x)	x ## LL
@@ -54,7 +54,7 @@
 #define XPHYSADDR(a)		((_ACAST64_(a)) &			\
 				 _CONST64_(0x000000ffffffffff))
 
-#ifdef CONFIG_64BIT
+#ifdef ARCH_MIPS64
 
 /*
  * Memory segments (64bit kernel mode addresses)
@@ -90,6 +90,14 @@
 #define KSEG2ADDR(a)		(CPHYSADDR(a) | KSEG2BASE)
 #define KSEG3ADDR(a)		(CPHYSADDR(a) | KSEG3BASE)
 
+#define CKUSEG			0x00000000
+#define CKSEG0			0x80000000
+#define CKSEG1			0xa0000000
+#define CKSEG2			0xc0000000
+#define CKSEG3			0xe0000000
+
+#endif
+
 /*
  * Memory segments (32bit kernel mode addresses)
  * These are the traditional names used in the 32-bit universe.
@@ -100,13 +108,7 @@
 #define KSEG2BASE			0xc0000000
 #define KSEG3BASE			0xe0000000
 
-#define CKUSEG			0x00000000
-#define CKSEG0			0x80000000
-#define CKSEG1			0xa0000000
-#define CKSEG2			0xc0000000
-#define CKSEG3			0xe0000000
 
-#endif
 
 /*
  * Cache modes for XKPHYS address conversion macros
