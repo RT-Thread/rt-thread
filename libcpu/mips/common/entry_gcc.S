@@ -15,6 +15,9 @@
 #include <mips.h>
 #include <rtconfig.h>
 
+#include "asm.h"
+#include <rtconfig.h>
+
     .section ".start", "ax"
     .set noreorder
 
@@ -25,27 +28,33 @@ _rtthread_entry:
     .globl  _start
 _start:
 #endif
-    la	ra, _rtthread_entry
+    PTR_LA	ra, _rtthread_entry
 
     /* disable interrupt */
     mtc0	zero, CP0_CAUSE
     mtc0	zero, CP0_STATUS	# Set CPU to disable interrupt.
     ehb
+
+#ifdef ARCH_MIPS64
+    dli		t0, ST0_KX
+    MTC0	t0, CP0_STATUS
+#endif
+
     /* setup stack pointer */
-    la	sp, _system_stack
-    la	gp, _gp
+    PTR_LA	sp, _system_stack
+    PTR_LA	gp, _gp
 
     bal	rt_cpu_early_init
     nop
 
     /* clear bss */
-    la	t0, __bss_start
-    la	t1, __bss_end
+    PTR_LA	t0, __bss_start
+    PTR_LA	t1, __bss_end
+
 _clr_bss_loop:
     sw	zero, 0(t0)
-    bne	t0, t1, _clr_bss_loop
-    addiu	t0, t0, 4
-
+    bne	t1, t0, _clr_bss_loop
+    addu	t0, 4
     /* jump to RT-Thread RTOS */
     jal	rtthread_startup
     nop
