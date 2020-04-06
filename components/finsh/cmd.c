@@ -58,7 +58,6 @@ long clear(void)
 FINSH_FUNCTION_EXPORT(clear,clear console output);
 MSH_CMD_EXPORT(clear,clear console output);
 
-
 extern void rt_show_version(void);
 long version(void)
 {
