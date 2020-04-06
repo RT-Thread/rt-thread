@@ -31,8 +31,8 @@ _start:
     PTR_LA	ra, _rtthread_entry
 
     /* disable interrupt */
-    mtc0	zero, CP0_CAUSE
-    mtc0	zero, CP0_STATUS	# Set CPU to disable interrupt.
+    MTC0	zero, CP0_CAUSE
+    MTC0	zero, CP0_STATUS	# Set CPU to disable interrupt.
     ehb
 
 #ifdef ARCH_MIPS64

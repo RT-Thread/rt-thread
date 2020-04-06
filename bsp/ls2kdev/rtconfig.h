@@ -17,9 +17,11 @@
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 2048
 #define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_PRIO 20
 #define RT_TIMER_THREAD_STACK_SIZE 2048
 #define RT_DEBUG
+#define RT_DEBUG_INIT_CONFIG
+#define RT_DEBUG_INIT 1
 
 /* Inter-Thread communication */
 
@@ -71,12 +73,6 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
 
@@ -93,7 +89,6 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_POSIX
 
 /* Network */
 

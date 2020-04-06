@@ -70,10 +70,10 @@ void rt_hw_board_init(void)
     /* init hardware interrupt */
     rt_hw_interrupt_init();
 
-    #ifdef RT_USING_FPU
+#ifdef RT_USING_FPU
     /* init hardware fpu */
     rt_hw_fpu_init();
-    #endif
+#endif
 
 #ifdef RT_USING_SERIAL
     /* init hardware UART device */
@@ -88,8 +88,7 @@ void rt_hw_board_init(void)
 
     /* init operating system timer */
     rt_hw_timer_init();
-
-
+    
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif

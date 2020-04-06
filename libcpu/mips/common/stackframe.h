@@ -159,11 +159,11 @@
     .endm
 
     .macro	RESTORE_TEMP
-    LONG_L	$24, PT_LO(sp)
+    lw	$24, PT_LO(sp)
     LONG_L	$8, PT_R8(sp)
     LONG_L	$9, PT_R9(sp)
     mtlo	$24
-    LONG_L	$24, PT_HI(sp)
+    lw	$24, PT_HI(sp)
     LONG_L	$10, PT_R10(sp)
     LONG_L	$11, PT_R11(sp)
     mthi	$24

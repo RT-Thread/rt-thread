@@ -261,7 +261,11 @@ symbol		=	value
 #define LONG_SRAV	srav
 
 #define LONG		.word
+#ifdef ARCH_MIPS64
+#define LONGSIZE	8
+#else
 #define LONGSIZE	4
+#endif
 #define LONGMASK	3
 #define LONGLOG		2
 
