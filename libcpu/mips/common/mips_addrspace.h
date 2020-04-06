@@ -75,6 +75,12 @@
 #define CKSEG2ADDR(a)		(CPHYSADDR(a) | CKSEG2)
 #define CKSEG3ADDR(a)		(CPHYSADDR(a) | CKSEG3)
 
+#define KUSEGBASE			0xffffffff00000000
+#define KSEG0BASE			0xffffffff80000000
+#define KSEG1BASE			0xffffffffa0000000
+#define KSEG2BASE			0xffffffffc0000000
+#define KSEG3BASE			0xffffffffe0000000
+
 #else
 
 #define CKSEG0ADDR(a)		(CPHYSADDR(a) | KSEG0BASE)
@@ -96,8 +102,6 @@
 #define CKSEG2			0xc0000000
 #define CKSEG3			0xe0000000
 
-#endif
-
 /*
  * Memory segments (32bit kernel mode addresses)
  * These are the traditional names used in the 32-bit universe.
@@ -108,6 +112,7 @@
 #define KSEG2BASE			0xc0000000
 #define KSEG3BASE			0xe0000000
 
+#endif
 
 
 /*

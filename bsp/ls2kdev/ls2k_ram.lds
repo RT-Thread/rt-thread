@@ -14,7 +14,7 @@ GROUP(-lgcc -lc)
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x80200000 ;
+    . = 0xffffffff82000000 ;
     .text :
     {
         __ebase_entry = .;
