@@ -31,6 +31,7 @@ rt_data_queue_init(struct rt_data_queue *queue,
 
     queue->size = size;
     queue->lwm = lwm;
+    queue->is_init = RT_TRUE;
 
     queue->get_index = 0;
     queue->put_index = 0;
@@ -56,6 +57,11 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     rt_ubase_t  level;
     rt_thread_t thread;
     rt_err_t    result;
+    
+    if(queue->is_init != RT_TRUE)
+    {
+        return RT_ERROR;
+    }
     
     RT_ASSERT(queue != RT_NULL);
 
@@ -145,6 +151,11 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     rt_ubase_t  level;
     rt_thread_t thread;
     rt_err_t    result;
+    
+    if(queue->is_init != RT_TRUE)
+    {
+        return RT_ERROR;
+    }
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(data_ptr != RT_NULL);
@@ -244,6 +255,11 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
                             rt_size_t *size)
 {
     rt_ubase_t  level;
+    
+    if(queue->is_init != RT_TRUE)
+    {
+        return RT_ERROR;
+    }
 
     RT_ASSERT(queue != RT_NULL);
 
@@ -269,6 +285,11 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;
+    
+    if(queue->is_init != RT_TRUE)
+    {
+        return;
+    }
 
     rt_enter_critical();
     /* wakeup all suspend threads */
@@ -325,3 +346,28 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
     rt_schedule();
 }
 RTM_EXPORT(rt_data_queue_reset);
+
+rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
+{
+    rt_ubase_t level;
+
+    if(queue->is_init != RT_TRUE)
+    {
+        return RT_ERROR;
+    }
+    
+    RT_ASSERT(queue != RT_NULL);
+
+    level = rt_hw_interrupt_disable();
+
+    /* wakeup all suspend threads */
+    rt_data_queue_reset(queue);
+
+    queue->is_init = RT_FALSE;
+    rt_free(queue->queue);
+    
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_data_queue_deinit);
