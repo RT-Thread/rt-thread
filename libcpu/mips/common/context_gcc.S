@@ -25,11 +25,11 @@
  */
     .globl rt_hw_context_switch
 rt_hw_context_switch:
-    mtc0    ra, CP0_EPC
+    MTC0    ra, CP0_EPC
     SAVE_ALL
 
-    sw      sp, 0(a0)       /* store sp in preempted tasks TCB */
-    lw      sp, 0(a1)       /* get new task stack pointer */
+    REG_S      sp, 0(a0)       /* store sp in preempted tasks TCB */
+    REG_L      sp, 0(a1)       /* get new task stack pointer */
 
     RESTORE_ALL_AND_RET
 
@@ -39,7 +39,7 @@ rt_hw_context_switch:
  */
     .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
-    lw      sp, 0(a0)       /* get new task stack pointer */
+    REG_L      sp, 0(a0)       /* get new task stack pointer */
     RESTORE_ALL_AND_RET
 
 /*
@@ -50,17 +50,17 @@ rt_hw_context_switch_to:
     .globl rt_interrupt_to_thread
     .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
-    la      t0, rt_thread_switch_interrupt_flag
-    lw      t1, 0(t0)
+    PTR_LA      t0, rt_thread_switch_interrupt_flag
+    REG_L       t1, 0(t0)
     nop
     bnez    t1, _reswitch
     nop
     li      t1, 0x01                       /* set rt_thread_switch_interrupt_flag to 1 */
     sw      t1, 0(t0)
-    la      t0, rt_interrupt_from_thread   /* set rt_interrupt_from_thread */
+    PTR_LA      t0, rt_interrupt_from_thread   /* set rt_interrupt_from_thread */
     sw      a0, 0(t0)
 _reswitch:
-    la      t0, rt_interrupt_to_thread     /* set rt_interrupt_to_thread */
+    PTR_LA      t0, rt_interrupt_to_thread     /* set rt_interrupt_to_thread */
     sw      a1, 0(t0)
     jr      ra
     nop
@@ -78,7 +78,7 @@ mips_irq_handle:
     /* let k0 keep the current context sp */
     move    k0, sp
     /* switch to kernel stack */
-    la      sp, _system_stack
+    PTR_LA  sp, _system_stack
 
     jal     rt_interrupt_enter
     nop
@@ -96,7 +96,7 @@ mips_irq_handle:
     * if rt_thread_switch_interrupt_flag set, jump to
     * rt_hw_context_switch_interrupt_do and do not return
     */
-    la      k0, rt_thread_switch_interrupt_flag
+    PTR_LA  k0, rt_thread_switch_interrupt_flag
     lw      k1, 0(k0)
     beqz    k1, spurious_interrupt
     nop
@@ -106,12 +106,12 @@ mips_irq_handle:
     /*
     * switch to the new thread
     */
-    la      k0, rt_interrupt_from_thread
+    PTR_LA  k0, rt_interrupt_from_thread
     lw      k1, 0(k0)
     nop
     sw      sp, 0(k1)                       /* store sp in preempted task TCB */
 
-    la      k0, rt_interrupt_to_thread
+    PTR_LA  k0, rt_interrupt_to_thread
     lw      k1, 0(k0)
     nop
     lw      sp, 0(k1)                       /* get new task stack pointer */
