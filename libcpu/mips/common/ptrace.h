@@ -67,7 +67,11 @@ struct pt_regs {
 #endif
 
 /* Note: For call stack o32 ABI has 0x8 shadowsoace Here  */
+#ifdef ARCH_MIPS64
 #define PT_R0		(0x0 * LONGSIZE)	/* 0 */
+#else
+#define PT_R0		(0x8 * LONGSIZE)	/* 0 */
+#endif
 #define PT_R1		((PT_R0) + LONGSIZE)	/* 1 */
 #define PT_R2		((PT_R1) + LONGSIZE)	/* 2 */
 #define PT_R3		((PT_R2) + LONGSIZE)	/* 3 */
