@@ -117,14 +117,14 @@ int rt_hw_exception_init(void)
 
 void rt_general_exc_dispatch(struct pt_regs *regs)
 {
-    rt_ubase_t cause, exccode;
+    rt_ubase_t exccode = 0;
 
-    exccode = (cause & CAUSEF_EXCCODE) >> CAUSEB_EXCCODE;
 
     if (exccode == 0) {
         rt_ubase_t status, pending;
         status = read_c0_status();
-        pending = (cause & CAUSEF_IP) & (status & ST0_IM);
+
+        pending =  (CAUSEF_IP) & (status & ST0_IM);
         if (pending & CAUSEF_IP0)
             rt_do_mips_cpu_irq(0);
         if (pending & CAUSEF_IP1)

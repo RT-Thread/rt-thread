@@ -12,6 +12,6 @@
 
 int main(int argc, char** argv)
 {   
-    rt_kprintf("ls2k1000:hello rtthread!\n");
+    rt_kprintf("Hi, this is RT-Thread!!\n");
     return 0;
 }
