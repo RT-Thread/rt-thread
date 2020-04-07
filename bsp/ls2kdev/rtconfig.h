@@ -16,12 +16,7 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 2048
-#define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 20
-#define RT_TIMER_THREAD_STACK_SIZE 2048
 #define RT_DEBUG
-#define RT_DEBUG_INIT_CONFIG
-#define RT_DEBUG_INIT 1
 
 /* Inter-Thread communication */
 
@@ -41,7 +36,7 @@
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x40003
 #define ARCH_MIPS64
