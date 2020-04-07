@@ -1,4 +1,4 @@
-# loogson_pi2 板级支持包说明
+# loongson_pi2 板级支持包说明
 
 ## 1. 简介
 
@@ -19,7 +19,7 @@
 
 环境搭建在Ubuntu上进行，首先下载[mips-sde-elf-gcc][2]。该文件存放在网盘中，提取码为ucb2。
 
-解压到指定的目录，然后修改当前目录下的`rtconfig.py`文件。
+解压到指定的目录，然后修改当前bsp目录下的`rtconfig.py`文件。
 
 ```python
 if  CROSS_TOOL == 'gcc':
@@ -31,15 +31,17 @@ if  CROSS_TOOL == 'gcc':
 
 ## 3.程序运行
 
-首先龙芯派开发板必须先运行[pmon][3]。rt-thread是通过龙芯的pmon引导起来的。
+rt-thread固件目前在龙芯派上推荐使用[pmon][3]通过tftp的方式下载到设备内存中运行。
 
-![2020-04-07_11-53](figures/loongsonpi.png)
+其中龙芯派硬件分布如下图所示：
+
+![loongsonpi](figures/loongsonpi.png)
 
 首先板子接上12V的电源，然后连接串口，该串口为RS232，所以需要RS232转USB线来进行连接。接着连接`LAN0`网口。
 
 初次上电时，需要按下开发板的`START`按键，听到`滴`启动声后可以在控制台看到串口打印信息。通过启动时在控制台不停的按下字符`c`直到进入到pmon控制台。
 
-目前在龙芯派上推荐使用PMON通过tftp的方式下载到设备内存中运行。
+
 
 需要让开发板和主机处于同一网段，利用pmon的tftp进行固件传输。首先查看主机的ip地址，如果`ifconfig`查看ip是`192.168.12.35`。输入以下指令开始运行。
 
@@ -81,7 +83,8 @@ msh >
 ## 5. 联系人信息
 
 维护人：[bernard][4]
-[1]:http://ftp.loongnix.org/loongsonpi/pi_2/doc
+
+[1]: http://ftp.loongnix.org/loongsonpi/pi_2/doc
 [2]: https://pan.baidu.com/s/17dbdOE4NAJ-qEW7drVRq2w
-[3]:http://ftp.loongnix.org/embedd/ls2k/
+[3]: http://ftp.loongnix.org/embedd/ls2k/
 [4]: https://github.com/BernardXiong
