@@ -118,7 +118,7 @@ symbol		=	value
 /*
  * Macros to handle different pointer/register sizes for 32/64-bit code
  */
-#if defined SOC_LS2K1000
+#if defined ARCH_MIPS64
 /*
  * Size of a register
  */
