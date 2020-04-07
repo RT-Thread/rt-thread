@@ -17,7 +17,7 @@
 #define REG_FP	30
 #define REG_RA	31
 
-#ifdef ARCH_MIPS64
+#ifndef ARCH_MIPS64
 #define zero	$0	/* wired zero */
 #define AT	$1	/* assembler temp  - uppercase because of ".set at" */
 #define v0	$2	/* return value */
