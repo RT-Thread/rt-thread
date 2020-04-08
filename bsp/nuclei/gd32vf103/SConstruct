@@ -33,17 +33,11 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 GDB = rtconfig.GDB
-nuclei_sdk_root = rtconfig.NUCLEI_SDK_ROOT
-openocd_cfg = rtconfig.OPENOCD_CFG.replace('\\', '/')
-
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-
-# include libraries
-objs.extend(SConscript(os.path.join(nuclei_sdk_root, 'SConscript')))
-
+openocd_cfg = rtconfig.NUCLEI_SDK_OPENOCD_CFG.replace('\\', '/')
 
 # make a building
 DoBuilding(TARGET, objs)

@@ -10,11 +10,12 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <nuclei_sdk_hal.h>
 
-#define THREAD_PRIORITY 20
+#define THREAD_PRIORITY 19
 #define THREAD_STACK_SIZE 396
 #define THREAD_TIMESLICE 5
-#define THREAD_NUM      2
+#define THREAD_NUM       2
 //#define APP_DEBUG_PRINT
 
 /*　Align stack when using static thread　*/
@@ -32,6 +33,9 @@ static void thread_entry(void *parameter)
         rt_kprintf("thread %d count: %d\n", (rt_uint32_t)parameter, count++);
 #endif
         rt_thread_mdelay(500);
+        if ((rt_uint32_t)parameter < (LEDn-1)) {
+            gd_rvstar_led_toggle((rt_uint32_t)parameter);
+        }
     }
 }
 
@@ -63,12 +67,17 @@ int main(void)
     rt_uint32_t count = 0;
 
     create_thread_demo();
+    for (int i = 0; i < LEDn; i ++) {
+        gd_rvstar_led_init(i);
+    }
+
 
     while (1) {
 #ifdef APP_DEBUG_PRINT
         rt_kprintf("Main thread count: %d\n", count++);
 #endif
         rt_thread_mdelay(1000);
+        gd_rvstar_led_toggle(LED3);
     }
 }
 

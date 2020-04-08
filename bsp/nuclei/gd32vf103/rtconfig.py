@@ -18,10 +18,11 @@ else:
 # 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
-NUCLEI_SDK_ROOT = os.path.abspath("../nuclei_sdk")
-SOC_LIBRARY_ROOT = os.path.join(NUCLEI_SDK_ROOT, "SoC", "gd32vf103")
-LINK_FILE = os.path.join(SOC_LIBRARY_ROOT, "Board", "gd32vf103v_rvstar", "Source", "GCC", "gcc_gd32vf103_flashxip.ld")
-OPENOCD_CFG = os.path.join(SOC_LIBRARY_ROOT, "Board", "gd32vf103v_rvstar", "openocd_gd32vf103.cfg")
+# Fixed configurations below
+NUCLEI_SDK_SOC = "gd32vf103"
+NUCLEI_SDK_BOARD = "gd32vf103v_rvstar"
+NUCLEI_SDK_DOWNLOAD = "flashxip"
+NUCLEI_SDK_CORE = "n205"
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -37,12 +38,10 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = '-march=rv32imac -mabi=ilp32 -mcmodel=medany '
-    CFLAGS  = DEVICE + ' -ffunction-sections -fdata-sections -fno-common '
+    CFLAGS  = ' -ffunction-sections -fdata-sections -fno-common '
     AFLAGS  = CFLAGS
-    LFLAGS  = DEVICE + ' --specs=nano.specs --specs=nosys.specs -nostartfiles -Wl,--gc-sections '
-    LFLAGS += ' -Wl,-cref,-Map=rtthread.map -u _printf_float'
-    LFLAGS += ' -T ' + LINK_FILE
+    LFLAGS  = ' --specs=nano.specs --specs=nosys.specs -nostartfiles -Wl,--gc-sections '
+    LFLAGS += ' -Wl,-cref,-Map=rtthread.map'
     LFLAGS  += ' -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek '
     CPATH   = ''
     LPATH   = ''
