@@ -22,10 +22,11 @@ struct rt_data_item;
 /* data queue implementation */
 struct rt_data_queue
 {
+    rt_uint32_t magic;
+
     rt_uint16_t size;
     rt_uint16_t lwm;
     rt_bool_t   waiting_lwm;
-    rt_bool_t   is_init;
 
     rt_uint16_t get_index;
     rt_uint16_t put_index;

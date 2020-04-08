@@ -13,6 +13,8 @@
 #include <rtdevice.h>
 #include <rthw.h>
 
+#define DATAQUEUE_MAGIC  0xbead0e0e
+
 struct rt_data_item
 {
     const void *data_ptr;
@@ -29,9 +31,9 @@ rt_data_queue_init(struct rt_data_queue *queue,
 
     queue->evt_notify = evt_notify;
 
+    queue->magic = DATAQUEUE_MAGIC;
     queue->size = size;
     queue->lwm = lwm;
-    queue->is_init = RT_TRUE;
 
     queue->get_index = 0;
     queue->put_index = 0;
@@ -58,11 +60,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     rt_thread_t thread;
     rt_err_t    result;
     
-    if(queue->is_init != RT_TRUE)
-    {
-        return RT_ERROR;
-    }
-    
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
 
     result = RT_EOK;
@@ -152,11 +150,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     rt_thread_t thread;
     rt_err_t    result;
     
-    if(queue->is_init != RT_TRUE)
-    {
-        return RT_ERROR;
-    }
-
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(data_ptr != RT_NULL);
     RT_ASSERT(size != RT_NULL);
@@ -256,11 +250,7 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
 {
     rt_ubase_t  level;
     
-    if(queue->is_init != RT_TRUE)
-    {
-        return RT_ERROR;
-    }
-
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
 
     level = rt_hw_interrupt_disable();
@@ -286,11 +276,8 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
     struct rt_thread *thread;
     register rt_ubase_t temp;
     
-    if(queue->is_init != RT_TRUE)
-    {
-        return;
-    }
-
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
+    
     rt_enter_critical();
     /* wakeup all suspend threads */
 
@@ -351,11 +338,7 @@ rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
 {
     rt_ubase_t level;
 
-    if(queue->is_init != RT_TRUE)
-    {
-        return RT_ERROR;
-    }
-    
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
 
     level = rt_hw_interrupt_disable();
@@ -363,7 +346,7 @@ rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
     /* wakeup all suspend threads */
     rt_data_queue_reset(queue);
 
-    queue->is_init = RT_FALSE;
+    queue->magic = 0;
     rt_free(queue->queue);
     
     rt_hw_interrupt_enable(level);
