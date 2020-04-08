@@ -14,14 +14,23 @@
 #ifdef RT_USING_SERIAL
 
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) \
-    && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4) && !defined(BSP_USING_UART5)
+    && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4)
     #error "Please define at least one BSP_USING_UARTx"
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
 enum {
 #ifdef BSP_USING_UART0
-    GDUSART0_INDEX,
+    GDUART0_INDEX,
+#endif
+#ifdef BSP_USING_UART1
+    GDUART1_INDEX,
+#endif
+#ifdef BSP_USING_UART2
+    GDUART2_INDEX,
+#endif
+#ifdef BSP_USING_UART3
+    GDUART3_INDEX,
 #endif
 #ifdef BSP_USING_UART4
     GDUART4_INDEX,
@@ -33,6 +42,21 @@ static struct gd32_uart_config uart_config[] = {
         { "uart0",
         USART0,
         USART0_IRQn, },
+#endif
+#ifdef BSP_USING_UART1
+        { "uart1",
+        USART1,
+        USART1_IRQn, },
+#endif
+#ifdef BSP_USING_UART2
+        { "uart2",
+        USART2,
+        USART2_IRQn, },
+#endif
+#ifdef BSP_USING_UART3
+        { "uart3",
+        USART3,
+        USART3_IRQn, },
 #endif
 #ifdef BSP_USING_UART4
         { "uart4",
@@ -202,7 +226,43 @@ static void usart_isr(struct rt_serial_device *serial) {
 void USART0_IRQHandler(void) {
     rt_interrupt_enter();
 
-    usart_isr(&uart_obj[GDUSART0_INDEX].serial);
+    usart_isr(&uart_obj[GDUART0_INDEX].serial);
+
+    rt_interrupt_leave();
+}
+
+#endif
+
+#ifdef BSP_USING_UART1
+
+void USART1_IRQHandler(void) {
+    rt_interrupt_enter();
+
+    usart_isr(&uart_obj[GDUART1_INDEX].serial);
+
+    rt_interrupt_leave();
+}
+
+#endif
+
+#ifdef BSP_USING_UART2
+
+void USART2_IRQHandler(void) {
+    rt_interrupt_enter();
+
+    usart_isr(&uart_obj[GDUART2_INDEX].serial);
+
+    rt_interrupt_leave();
+}
+
+#endif
+
+#ifdef BSP_USING_UART3
+
+void UART3_IRQHandler(void) {
+    rt_interrupt_enter();
+
+    usart_isr(&uart_obj[GDUART3_INDEX].serial);
 
     rt_interrupt_leave();
 }

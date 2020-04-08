@@ -7,8 +7,8 @@ config SOC_GD32VF103V
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_USART
-        bool "Enable USART (uart4)"
+    config BSP_USING_UART_CONSOLE
+        bool "Enable UART CONSOLE"
         select BSP_USING_UART
         select BSP_USING_UART4
         default y
@@ -21,9 +21,21 @@ menu "On-chip Peripheral Drivers"
         default y
         select RT_USING_SERIAL
         if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default n
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
             config BSP_USING_UART4
                 bool "Enable UART4"
-                default y
+                default n
         endif
 endmenu
 

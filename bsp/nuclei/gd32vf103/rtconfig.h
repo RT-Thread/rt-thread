@@ -167,7 +167,7 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_USART
+#define BSP_USING_UART_CONSOLE
 
 /* On-chip Peripheral Drivers */
 
