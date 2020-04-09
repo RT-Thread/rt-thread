@@ -78,29 +78,37 @@ RTM_EXPORT(bind);
 
 int shutdown(int s, int how)
 {
-    int socket;
+    int error = 0;
+    int socket = -1;
     struct dfs_fd *d;
+
+    socket = dfs_net_getsocket(s);
+    if (socket < 0)
+    {
+        rt_set_errno(-ENOTSOCK);
+        return -1;
+    }
 
     d = fd_get(s);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
-
         return -1;
     }
-
-    socket = dfs_net_getsocket(s);
+    
     if (sal_shutdown(socket, how) == 0)
     {
-        /* socket has been closed, delete it from file system fd */
-        fd_put(d);
-        fd_put(d);
-
-        return 0;
+        error = 0;
     }
+    else
+    {
+        rt_set_errno(-ENOTSOCK);
+        error = -1;
+    }
+    
+    fd_put(d);
 
-    return -1;
-
+    return error;
 }
 RTM_EXPORT(shutdown);
 
@@ -228,7 +236,7 @@ int socket(int domain, int type, int protocol)
 
         rt_set_errno(-ENOMEM);
 
-       return -1;
+        return -1;
     }
 
     /* release the ref-count of fd */
@@ -240,25 +248,39 @@ RTM_EXPORT(socket);
 
 int closesocket(int s)
 {
-    int socket = dfs_net_getsocket(s);
+    int error = 0;
+    int socket = -1;
     struct dfs_fd *d;
 
-    d = fd_get(s);
-    if(!d)
+    socket = dfs_net_getsocket(s);
+    if (socket < 0)
     {
+        rt_set_errno(-ENOTSOCK);
+        return -1;
+    }
+
+    d = fd_get(s);
+    if (d == RT_NULL)
+    {
+        rt_set_errno(-EBADF);
         return -1;
     }
 
     if (sal_closesocket(socket) == 0)
     {
-        /* socket has been closed, delete it from file system fd */
-        fd_put(d);
-        fd_put(d);
-
-        return 0;
+        error = 0;
+    }
+    else
+    {
+        rt_set_errno(-ENOTSOCK);
+        error = -1;
     }
 
-    return -1;
+    /* socket has been closed, delete it from file system fd */
+    fd_put(d);
+    fd_put(d);
+
+    return error;
 }
 RTM_EXPORT(closesocket);
 

@@ -5,14 +5,9 @@ list = os.listdir(cwd)
 objs = []
 
 src = Split('''
-	board.c
-	drv_uart.c
-	''')
-
-if GetDepend(['RT_USING_LWIP']):
-	src += Split('''
-		drv_wifi.c
-		''')
+    board.c
+    drv_uart.c
+    ''')
 
 CPPPATH = [cwd]
 

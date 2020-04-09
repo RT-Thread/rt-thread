@@ -35,11 +35,11 @@ int libc_system_init(void)
         libc_stdio_set_console(dev_console->parent.name, O_WRONLY);
     #endif
     }
-#endif
 
     /* set PATH and HOME */
     putenv("PATH=/bin");
     putenv("HOME=/home");
+#endif
 
 #if defined RT_USING_PTHREADS && !defined RT_USING_COMPONENTS_INIT
     pthread_system_init();

@@ -46,12 +46,19 @@
 #endif
 
 /**
+ * SFUD will support QSPI mode.
+ */
+#ifdef RT_SFUD_USING_QSPI
+#define SFUD_USING_QSPI
+#endif
+
+/**
  * Using probe flash JEDEC ID then query defined supported flash chip information table. @see SFUD_FLASH_CHIP_TABLE
  */
 #ifdef RT_SFUD_USING_FLASH_INFO_TABLE
 #define SFUD_USING_FLASH_INFO_TABLE
 #endif
 
-#define SFUD_FLASH_DEVICE_TABLE {0}
+#define SFUD_FLASH_DEVICE_TABLE {{0}}
 
 #endif /* _SFUD_CFG_H_ */

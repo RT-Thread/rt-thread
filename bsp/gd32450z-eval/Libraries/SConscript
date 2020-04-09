@@ -11,7 +11,7 @@ src += [cwd + '/CMSIS/GD/GD32F4xx/Source/system_gd32f4xx.c']
 
 #add for startup script
 if rtconfig.CROSS_TOOL == 'gcc':
-    src += [cwd + '/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.s']
+    src += [cwd + '/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.S']
 elif rtconfig.CROSS_TOOL == 'keil':
     src += [cwd + '/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
 elif rtconfig.CROSS_TOOL == 'iar':

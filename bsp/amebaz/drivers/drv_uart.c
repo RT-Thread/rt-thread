@@ -22,11 +22,8 @@
  * 2017-05-30     Bernard      the first version
  * 2018-03-15     flyingcys    add amebaz
  */
-
-#include <rthw.h>
-#include <rtthread.h>
-#include <rtdevice.h>
-
+#include <rtl8710b.h>
+#include <serial_api.h>
 #include "board.h"
 #include "drv_uart.h"
 
@@ -37,7 +34,9 @@ struct device_uart
     rt_uint32_t irqno;
 };
 
-#ifdef RT_USING_UART0
+extern int LOGUART_SetBaud(u32 BaudRate);
+
+#ifdef BSP_USING_UART0
 static struct rt_serial_device  serial0;
 static struct device_uart       uart0;
 #endif
@@ -64,7 +63,6 @@ const struct rt_uart_ops _uart_ops =
  */
 static rt_err_t ameba_uart_configure (struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-     rt_uint32_t baud_div;
      struct device_uart * uart;
 
      RT_ASSERT(serial != RT_NULL);
@@ -230,16 +228,16 @@ int rt_hw_uart_init(void)
     struct rt_serial_device *serial;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-#ifdef RT_USING_UART0
+#ifdef BSP_USING_UART0
     {
         struct device_uart      *uart;
         
         serial  = &serial0;
         uart    = &uart0;
-                
+
         /* Init UART Hardware */
         serial_init(&uart->serial, UART_TX, UART_RX);
-        
+
         serial->ops              = &_uart_ops;
         serial->config           = config;
         serial->config.baud_rate = 115200;

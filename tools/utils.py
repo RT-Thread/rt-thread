@@ -24,6 +24,7 @@
 
 import sys
 import os
+import re
 
 def splitall(loc):
     """
@@ -183,14 +184,14 @@ def ProjectInfo(env):
 
     for group in project:
         # get each files
-        if group.has_key('src') and group['src']:
+        if 'src' in group and group['src']:
             FILES += group['src']
 
         # get each include path
-        if group.has_key('CPPPATH') and group['CPPPATH']:
+        if 'CPPPATH' in group and group['CPPPATH']:
             CPPPATH += group['CPPPATH']
 
-    if env.has_key('CPPDEFINES'):
+    if 'CPPDEFINES' in env:
         CPPDEFINES = env['CPPDEFINES']
         CPPDEFINES = ListMap(CPPDEFINES)
 
@@ -243,3 +244,50 @@ def ProjectInfo(env):
     proj['CPPDEFINES']  = CPPDEFINES
 
     return proj
+
+def VersionCmp(ver1, ver2):
+    la=[]
+    if ver1:
+        la = re.split("[. ]", ver1)
+    lb = re.split("[. ]", ver2)
+
+    f = 0
+    if len(la) > len(lb):
+        f = len(la)
+    else:
+        f = len(lb)
+    for i in range(f):
+        try:
+            if int(la[i]) > int(lb[i]):
+                return 1
+            elif int(la[i]) == int(lb[i]):
+                continue
+            else:
+                return -1
+        except (IndexError, ValueError) as e:
+            if len(la) > len(lb):
+                return 1
+            else:
+                return -1
+    return 0
+
+def GCCC99Patch(cflags):
+    import building
+    gcc_version = building.GetDepend('GCC_VERSION')
+    if gcc_version:
+        gcc_version = gcc_version.replace('"', '')
+    if VersionCmp(gcc_version, "4.8.0") == 1:
+        # remove -std=c99 after GCC 4.8.x
+        cflags = cflags.replace('-std=c99', '')
+
+    return cflags
+
+def ReloadModule(module):
+    import sys
+    if sys.version_info.major >= 3:
+        import importlib
+        importlib.reload(module)
+    else:
+        reload(module)
+
+    return

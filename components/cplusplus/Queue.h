@@ -68,7 +68,7 @@ public:
 private:
     struct rt_messagequeue mID;
 
-    char mPool[(sizeof(struct rt_messagequeue)+sizeof(T)) * queue_sz];
+    char mPool[(sizeof(void *) + RT_ALIGN(sizeof(T), RT_ALIGN_SIZE)) * queue_sz];
 };
 
 }

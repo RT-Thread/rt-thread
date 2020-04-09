@@ -15,9 +15,12 @@ if GetDepend('SAL_USING_LWIP'):
 
 if GetDepend('SAL_USING_AT'):
     src += Glob('impl/af_inet_at.c')
-    
+
 if GetDepend('SAL_USING_LWIP') or GetDepend('SAL_USING_AT'):
     CPPPATH += [cwd + '/impl']
+
+if GetDepend('SAL_USING_TLS'):
+    src += Glob('impl/proto_mbedtls.c')
 
 if GetDepend('SAL_USING_POSIX'):
     CPPPATH += [cwd + '/include/dfs_net']

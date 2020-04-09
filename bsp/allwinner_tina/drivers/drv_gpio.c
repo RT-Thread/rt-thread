@@ -27,12 +27,9 @@
 #include "drv_gpio.h"
 #include "interrupt.h"
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "GPIO"
-#define DBG_LEVEL         DBG_WARNING
-#define DBG_COLOR
+#define DBG_TAG  "GPIO"
+#define DBG_LVL  DBG_WARNING
 #include <rtdbg.h>
-
 
 #define readl(addr)           (*(volatile unsigned int *)(addr))
 #define writel(value,addr)    (*(volatile unsigned int *)(addr) = (value))
@@ -53,7 +50,7 @@ int gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
 
     if (func & 0x8)
     {
-        dbg_log(DBG_WARNING, "[line]:%d There is a warning with parameter input\n", __LINE__);
+        LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
         return RT_EINVAL;
     }
 
@@ -65,7 +62,7 @@ int gpio_set_func(enum gpio_port port, enum gpio_pin pin, rt_uint8_t func)
     data |= func << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
     return RT_EOK;
 }
 
@@ -80,7 +77,7 @@ int gpio_set_value(enum gpio_port port, enum gpio_pin pin, rt_uint8_t value)
 
     if (value & 0xE)
     {
-        dbg_log(DBG_WARNING, "[line]:%d There is a warning with parameter input\n", __LINE__);
+        LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
         return RT_EINVAL;
     }
 
@@ -92,7 +89,7 @@ int gpio_set_value(enum gpio_port port, enum gpio_pin pin, rt_uint8_t value)
     data |= value << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
     return RT_EOK;
 }
 
@@ -110,7 +107,7 @@ int gpio_get_value(enum gpio_port port, enum gpio_pin pin)
 
     data = readl(addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
     return (data >> offset) & 0x01;
 }
 
@@ -125,7 +122,7 @@ int gpio_set_pull_mode(enum gpio_port port,  enum gpio_pin pin, enum gpio_pull p
 
     if (pull & 0xC)
     {
-        dbg_log(DBG_WARNING, "[line]:%d There is a warning with parameter input\n", __LINE__);
+        LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
         return RT_EINVAL;
     }
 
@@ -138,7 +135,7 @@ int gpio_set_pull_mode(enum gpio_port port,  enum gpio_pin pin, enum gpio_pull p
     data |= pull << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
     return RT_EOK;
 }
 
@@ -153,7 +150,7 @@ int gpio_set_drive_level(enum gpio_port port, enum gpio_pin pin, enum gpio_drv_l
 
     if (level & 0xC)
     {
-        dbg_log(DBG_WARNING, "[line]:%d There is a warning with parameter input\n", __LINE__);
+        LOG_W("[line]:%d There is a warning with parameter input", __LINE__);
         return RT_EINVAL;
     }
 
@@ -166,7 +163,7 @@ int gpio_set_drive_level(enum gpio_port port, enum gpio_pin pin, enum gpio_drv_l
     data |= level << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
     return RT_EOK;
 }
 
@@ -187,7 +184,7 @@ void gpio_direction_input(enum gpio_port port,  enum gpio_pin pin)
     data |= IO_INPUT << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
 }
 
 void gpio_direction_output(enum gpio_port port, enum gpio_pin pin, int value)
@@ -208,7 +205,7 @@ void gpio_direction_output(enum gpio_port port, enum gpio_pin pin, int value)
     data |= IO_OUTPUT << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
 }
 /*********************************************************
 **   IRQ
@@ -237,7 +234,7 @@ void gpio_select_irq_clock(enum gpio_port port, enum gpio_irq_clock clock)
     data &= ~0x01;
     data |= clock;
     writel(data, addr);
-    dbg_log(DBG_LOG, "[line]:%d addr:%08x data:%08x\n", __LINE__, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d addr:%08x data:%08x", __LINE__, addr, *((rt_uint32_t *)addr));
 }
 
 void gpio_set_debounce(enum gpio_port port, enum gpio_direction_type prescaler)
@@ -253,7 +250,7 @@ void gpio_set_debounce(enum gpio_port port, enum gpio_direction_type prescaler)
     data &= ~(0x07 << 4);
     data |= prescaler << 4;
     writel(data, addr);
-    dbg_log(DBG_LOG, "[line]:%d addr:%08x data:%08x\n", __LINE__, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d addr:%08x data:%08x", __LINE__, addr, *((rt_uint32_t *)addr));
 }
 
 void gpio_irq_enable(enum gpio_port port,  enum gpio_pin pin)
@@ -272,7 +269,7 @@ void gpio_irq_enable(enum gpio_port port,  enum gpio_pin pin)
     data |= 0x1 << offset;
     writel(data, addr);
     gpio_select_irq_clock(port, GPIO_IRQ_HOSC_24MHZ);
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
 }
 
 void gpio_irq_disable(enum gpio_port port,  enum gpio_pin pin)
@@ -292,7 +289,7 @@ void gpio_irq_disable(enum gpio_port port,  enum gpio_pin pin)
     data &= ~(0x1 << offset);
 
     writel(data, addr);
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
 }
 
 void gpio_set_irq_type(enum gpio_port port,  enum gpio_pin pin, enum gpio_irq_type irq_type)
@@ -312,7 +309,7 @@ void gpio_set_irq_type(enum gpio_port port,  enum gpio_pin pin, enum gpio_irq_ty
     data |= irq_type << offset;
     writel(data, addr);
 
-    dbg_log(DBG_LOG, "[line]:%d offset:%d addr:%08x data:%08x\n", __LINE__, offset, addr, *((rt_uint32_t *)addr));
+    LOG_D("[line]:%d offset:%d addr:%08x data:%08x", __LINE__, offset, addr, *((rt_uint32_t *)addr));
 }
 
 static struct gpio_irq_def _g_gpio_irq_tbl[GPIO_PORT_NUM];
@@ -353,7 +350,7 @@ static void gpio_irq_handler(int irq, void *param)
     {
         if ((pend & 0x1) && (irq_def->irq_cb[pin] != RT_NULL))
         {
-            dbg_log(DBG_LOG, "do irq callback...\n", port, pin);
+            LOG_D("do irq callback...", port, pin);
             irq_def->irq_cb[pin](irq_def->irq_arg[pin]);
         }
         pin++;
@@ -452,7 +449,7 @@ static void pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
-        dbg_log(DBG_ERROR, "pin:%d value wrongful\n", pin);
+        LOG_E("pin:%d value wrongful", pin);
         return;
     }
 
@@ -463,7 +460,7 @@ static void pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
-        dbg_log(DBG_ERROR, "pin:%d value wrongful\n", pin);
+        LOG_E("pin:%d value wrongful", pin);
         return;
     }
 
@@ -474,7 +471,7 @@ static int pin_read(struct rt_device *device, rt_base_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
-        dbg_log(DBG_ERROR, "pin:%d value wrongful\n", pin);
+        LOG_E("pin:%d value wrongful", pin);
         return 0;
     }
 
@@ -485,7 +482,7 @@ static rt_err_t pin_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
-        dbg_log(DBG_ERROR, "pin:%d value wrongful\n", pin);
+        LOG_E("pin:%d value wrongful", pin);
         return RT_ERROR;
     }
 
@@ -497,7 +494,7 @@ static rt_err_t pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
-        dbg_log(DBG_ERROR, "pin:%d value wrongful\n", pin);
+        LOG_E("pin:%d value wrongful", pin);
         return RT_ERROR;
     }
 
@@ -510,7 +507,7 @@ rt_err_t pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t ena
 {
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
-        dbg_log(DBG_ERROR, "pin:%d value wrongful\n", pin);
+        LOG_E("pin:%d value wrongful", pin);
         return RT_ERROR;
     }
 

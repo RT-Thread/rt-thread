@@ -13,10 +13,8 @@
 #include <board.h>
 
 #include "armv7.h"
+#include "interrupt.h"
 
-#include "gic.h"
-
-extern struct rt_thread *rt_current_thread;
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
 #endif
@@ -47,6 +45,39 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
 {
+#ifdef RT_USING_FPU
+    {
+        uint32_t ins;
+        uint32_t addr;
+
+        if (regs->cpsr & (1 << 5))
+        {
+            /* thumb mode */
+            addr = regs->pc - 2;
+            ins = (uint32_t)*(uint16_t*)addr;
+            if ((ins & (3 << 11)) != 0)
+            {
+                /* 32 bit ins */
+                ins <<= 16;
+                ins += *(uint16_t*)(addr + 2);
+            }
+        }
+        else
+        {
+            addr = regs->pc - 4;
+            ins = *(uint32_t*)addr;
+        }
+        if ((ins & 0xe00) == 0xa00)
+        {
+            /* float ins */
+            uint32_t val = (1U << 30);
+
+            asm volatile ("vmsr fpexc, %0"::"r"(val):"memory");
+            regs->pc = addr;
+            return;
+        }
+    }
+#endif
     rt_kprintf("undefined instruction:\n");
     rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
@@ -130,48 +161,52 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 void rt_hw_trap_irq(void)
 {
     void *param;
+    int ir;
     rt_isr_handler_t isr_func;
     extern struct rt_irq_desc isr_table[];
 
-    // vectNum = RESERVED[31:13] | CPUID[12:10] | INTERRUPT_ID[9:0]
-    // send ack and get ID source
-    uint32_t vectNum = gic_read_irq_ack();
+    ir = rt_hw_interrupt_get_irq();
 
-    // Check that INT_ID isn't 1023 or 1022 (spurious interrupt)
-    if (vectNum & 0x0200)
+    if (ir == 1023)
     {
-        gic_write_end_of_irq(vectNum);  // send end of irq
+        /* Spurious interrupt */
+        return;
     }
-    else
-    {
-        // copy the local value to the global image of CPUID
-        unsigned cpu = (vectNum >> 10) & 0x7;
-        unsigned irq = vectNum & 0x1FF;
 
-        /* skip warning */
-        cpu = cpu;
-
-        // Call the service routine stored in the handlers array. If there isn't
-        // one for this IRQ, then call the default handler.
-        /* get interrupt service routine */
-        isr_func = isr_table[irq].handler;
+    /* get interrupt service routine */
+    isr_func = isr_table[ir].handler;
 #ifdef RT_USING_INTERRUPT_INFO
-        isr_table[irq].counter++;
+    isr_table[ir].counter++;
 #endif
-        if (isr_func)
-        {
-            /* Interrupt for myself. */
-            param = isr_table[irq].param;
-            /* turn to interrupt service routine */
-            isr_func(irq, param);
-        }
-
-        // Signal the end of the irq.
-        gic_write_end_of_irq(vectNum);
+    if (isr_func)
+    {
+        /* Interrupt for myself. */
+        param = isr_table[ir].param;
+        /* turn to interrupt service routine */
+        isr_func(ir, param);
     }
+
+    /* end of interrupt */
+    rt_hw_interrupt_ack(ir);
 }
 
 void rt_hw_trap_fiq(void)
 {
-    /* TODO */
+    void *param;
+    int ir;
+    rt_isr_handler_t isr_func;
+    extern struct rt_irq_desc isr_table[];
+
+    ir = rt_hw_interrupt_get_irq();
+
+    /* get interrupt service routine */
+    isr_func = isr_table[ir].handler;
+    param = isr_table[ir].param;
+
+    /* turn to interrupt service routine */
+    isr_func(ir, param);
+
+    /* end of interrupt */
+    rt_hw_interrupt_ack(ir);
 }
+

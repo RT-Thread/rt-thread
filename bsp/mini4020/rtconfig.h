@@ -17,6 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 /* #define RT_THREAD_DEBUG */
 
 #define RT_USING_OVERFLOW_CHECK
@@ -63,6 +64,7 @@
 /* SECTION: Device System */
 /* Using Device System */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_IPC
 
 /* SECTION: Console options */
 /* the buffer size of console */

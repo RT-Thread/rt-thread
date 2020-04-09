@@ -216,6 +216,19 @@ extern "C" {
 #define HID_REPORT_ID_GENERAL           5
 #define HID_REPORT_ID_MOUSE             6
 
+/*
+ * Time of usb timeout
+ */
+#ifndef USB_TIMEOUT_BASIC
+#define USB_TIMEOUT_BASIC               (RT_TICK_PER_SECOND)        /* 1s */
+#endif
+#ifndef USB_TIMEOUT_LONG
+#define USB_TIMEOUT_LONG                (RT_TICK_PER_SECOND * 5)    /* 5s */
+#endif
+#ifndef USB_DEBOUNCE_TIME
+#define USB_DEBOUNCE_TIME               (RT_TICK_PER_SECOND / 5)    /* 0.2s */
+#endif
+
 #define uswap_32(x) \
     ((((x) & 0xff000000) >> 24) | \
      (((x) & 0x00ff0000) >>  8) | \

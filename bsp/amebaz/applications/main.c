@@ -15,19 +15,12 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
-/**
- * @addtogroup ameba
- */
-
-/*@{*/
+#include <rtdevice.h>
 
 int main(void)
 {
     rt_kprintf("build time: %s %s\n", __DATE__, __TIME__);
     rt_kprintf("Hello RT-Thread!\n");
-    
+    rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION);
     return 0;
 }
-
-/*@}*/

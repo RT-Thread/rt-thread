@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <string.h>
 
 #include "platform.h"
 #include "encoding.h"
@@ -208,8 +208,7 @@ uintptr_t handle_trap(uintptr_t mcause, uintptr_t epc)
 #endif
   }
   else {
-    write(1, "trap\n", 5);
-    _exit(1 + mcause);
+    rt_kprintf("Unhandled Trap.\n");
   }
   return epc;
 }
@@ -222,7 +221,7 @@ void _init()
   use_pll(0, 0, 1, 31, 1);
   uart_init(115200);
 
-  printf("core freq at %ld Hz\n", get_cpu_freq());
+  rt_kprintf("core freq at %ld Hz\n", get_cpu_freq());
 
   write_csr(mtvec, &trap_entry);
   if (read_csr(misa) & (1 << ('F' - 'A'))) { // if F extension is present

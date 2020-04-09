@@ -16,15 +16,15 @@
 #include <wlan_prot.h>
 #include <wlan_workqueue.h>
 
-#define DBG_ENABLE
+#define DBG_TAG "WLAN.mgnt"
 #ifdef RT_WLAN_MGNT_DEBUG
-#define DBG_LEVEL DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LEVEL DBG_INFO
-#endif
-#define DBG_SECTION_NAME  "WLAN.mgnt"
-#define DBG_COLOR
+#define DBG_LVL DBG_INFO
+#endif /* RT_WLAN_MGNT_DEBUG */
 #include <rtdbg.h>
+
+#ifdef RT_WLAN_MANAGE_ENABLE
 
 #ifndef RT_WLAN_DEVICE
 #define RT_WLAN_DEVICE(__device) ((struct rt_wlan_device *)__device)
@@ -50,13 +50,16 @@
 #define COMPLETE_LOCK()       (rt_mutex_take(&complete_mutex, RT_WAITING_FOREVER))
 #define COMPLETE_UNLOCK()     (rt_mutex_release(&complete_mutex))
 
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 #define TIME_STOP()    (rt_timer_stop(&reconnect_time))
 #define TIME_START()   (rt_timer_start(&reconnect_time))
-
-#define DISCONNECT_RESPONSE_TICK    (2000)
+#else
+#define TIME_STOP()
+#define TIME_START()
+#endif
 
 #if RT_WLAN_EBOX_NUM < 1
-#error "event box num Too little"
+#error "event box num Too few"
 #endif
 
 struct rt_wlan_mgnt_des
@@ -115,8 +118,11 @@ static struct rt_wlan_event_desc event_tab[RT_WLAN_EVT_MAX];
 
 static struct rt_wlan_complete_des *complete_tab[5];
 static struct rt_mutex complete_mutex;
+static struct rt_wlan_info *scan_filter;
 
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 static struct rt_timer reconnect_time;
+#endif
 
 rt_inline int _sta_is_null(void)
 {
@@ -147,9 +153,97 @@ rt_inline rt_bool_t _is_do_connect(void)
     return RT_TRUE;
 }
 
-static void rt_wlan_mgnt_work(void *parameter);
+#ifdef RT_WLAN_WORK_THREAD_ENABLE
 
-static rt_err_t rt_wlan_send_msg(rt_wlan_dev_event_t event, void *buff, int len)
+static rt_bool_t rt_wlan_info_isequ(struct rt_wlan_info *info1, struct rt_wlan_info *info2)
+{
+    rt_bool_t is_equ = 1;
+    rt_uint8_t bssid_zero[RT_WLAN_BSSID_MAX_LENGTH] = { 0 };
+
+    if (is_equ && (info1->security != SECURITY_UNKNOWN) && (info2->security != SECURITY_UNKNOWN))
+    {
+        is_equ &= info2->security == info1->security;
+    }
+    if (is_equ && ((info1->ssid.len > 0) && (info2->ssid.len > 0)))
+    {
+        is_equ &= info1->ssid.len == info2->ssid.len;
+        is_equ &= rt_memcmp(&info2->ssid.val[0], &info1->ssid.val[0], info1->ssid.len) == 0;
+    }
+    if (is_equ && (rt_memcmp(&info1->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)) &&
+       (rt_memcmp(&info2->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)))
+    {
+        is_equ &= rt_memcmp(&info1->bssid[0], &info2->bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0;
+    }
+    if (is_equ && info1->datarate && info2->datarate)
+    {
+        is_equ &= info1->datarate == info2->datarate;
+    }
+    if (is_equ && (info1->channel >= 0) && (info2->channel >= 0))
+    {
+        is_equ &= info1->channel == info2->channel;
+    }
+    if (is_equ && (info1->rssi < 0) && (info2->rssi < 0))
+    {
+        is_equ &= info1->rssi == info2->rssi;
+    }
+    return is_equ;
+}
+
+static void rt_wlan_mgnt_work(void *parameter)
+{
+    struct rt_wlan_msg *msg = parameter;
+    void *user_parameter;
+    rt_wlan_event_handler handler = RT_NULL;
+    struct rt_wlan_buff user_buff = { 0 };
+    rt_base_t level;
+
+    /* Get user callback */
+    if (msg->event < RT_WLAN_EVT_MAX)
+    {
+        level = rt_hw_interrupt_disable();
+        handler = event_tab[msg->event].handler;
+        user_parameter = event_tab[msg->event].parameter;
+        rt_hw_interrupt_enable(level);
+    }
+
+    /* run user callback fun */
+    if (handler)
+    {
+        user_buff.data = msg->buff;
+        user_buff.len = msg->len;
+        RT_WLAN_LOG_D("wlan work thread run user callback, event:%d", msg->event);
+        handler(msg->event, &user_buff, user_parameter);
+    }
+
+    switch (msg->event)
+    {
+    case RT_WLAN_EVT_STA_CONNECTED:
+    {
+        struct rt_wlan_cfg_info cfg_info;
+
+        rt_memset(&cfg_info, 0, sizeof(cfg_info));
+        /* save config */
+        if (rt_wlan_is_connected() == RT_TRUE)
+        {
+            rt_enter_critical();
+            cfg_info.info = _sta_mgnt.info;
+            cfg_info.key = _sta_mgnt.key;
+            rt_exit_critical();
+            RT_WLAN_LOG_D("run save config! ssid:%s len%d", _sta_mgnt.info.ssid.val, _sta_mgnt.info.ssid.len);
+#ifdef RT_WLAN_CFG_ENABLE
+            rt_wlan_cfg_save(&cfg_info);
+#endif
+        }
+        break;
+    }
+    default :
+        break;
+    }
+
+    rt_free(msg);
+}
+
+static rt_err_t rt_wlan_send_to_thread(rt_wlan_event_t event, void *buff, int len)
 {
     struct rt_wlan_msg *msg;
 
@@ -166,7 +260,8 @@ static rt_err_t rt_wlan_send_msg(rt_wlan_dev_event_t event, void *buff, int len)
     msg->event = event;
     if (len != 0)
     {
-        msg->buff = ((char *)msg) + sizeof(struct rt_wlan_msg);
+        msg->buff = (void *)&msg[1];
+        rt_memcpy(msg->buff, buff, len);
         msg->len = len;
     }
 
@@ -179,14 +274,16 @@ static rt_err_t rt_wlan_send_msg(rt_wlan_dev_event_t event, void *buff, int len)
     }
     return RT_EOK;
 }
+#endif
 
 static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info, int timeout)
 {
     struct rt_wlan_info *ptable;
     rt_err_t err = RT_EOK;
     int i, insert = -1;
+    rt_base_t level;
 
-    if (_sta_is_null() || (info == RT_NULL)) return RT_EOK;
+    if (_sta_is_null() || (info == RT_NULL) || (info->ssid.len == 0)) return RT_EOK;
 
     RT_WLAN_LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
                   info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
@@ -194,6 +291,23 @@ static rt_err_t rt_wlan_scan_result_cache(struct rt_wlan_info *info, int timeout
     err = rt_mutex_take(&scan_result_mutex, rt_tick_from_millisecond(timeout));
     if (err != RT_EOK)
         return err;
+
+    /* scanning result filtering */
+    level = rt_hw_interrupt_disable();
+    if (scan_filter)
+    {
+        struct rt_wlan_info _tmp_info = *scan_filter;
+        rt_hw_interrupt_enable(level);
+        if (rt_wlan_info_isequ(&_tmp_info, info) != RT_TRUE)
+        {
+            rt_mutex_release(&scan_result_mutex);
+            return RT_EOK;
+        }
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
 
     /* de-duplicatio */
     for (i = 0; i < scan_result.num; i++)
@@ -383,7 +497,7 @@ static rt_err_t rt_wlan_sta_info_del_all(int timeout)
     sta_info.node = RT_NULL;
     return err;
 }
-
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
 static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
 {
     static rt_uint32_t id = 0;
@@ -415,12 +529,12 @@ static void rt_wlan_auto_connect_run(struct rt_work *work, void *parameter)
 
     if (id >= rt_wlan_cfg_get_num()) id = 0;
 
-    if ((cfg_info.key.len > 0) && (cfg_info.key.len < RT_WLAN_PASSWORD_MAX_LENGTH))
+    if ((cfg_info.key.len > 0) && (cfg_info.key.len <= RT_WLAN_PASSWORD_MAX_LENGTH))
     {
         cfg_info.key.val[cfg_info.key.len] = '\0';
         password = (char *)(&cfg_info.key.val[0]);
     }
-    rt_wlan_connect_adv(&cfg_info.info, password);
+    rt_wlan_connect((char *)cfg_info.info.ssid.val, password);
 exit:
     rt_mutex_release(&mgnt_mutex);
     level = rt_hw_interrupt_disable();
@@ -451,41 +565,10 @@ static void rt_wlan_cyclic_check(void *parameter)
         }
     }
 }
-
-static void rt_wlan_mgnt_work(void *parameter)
-{
-    struct rt_wlan_msg *msg = parameter;
-
-    switch (msg->event)
-    {
-    case RT_WLAN_DEV_EVT_CONNECT:
-    {
-        struct rt_wlan_cfg_info cfg_info;
-
-        /* save config */
-        if (rt_wlan_is_connected() == RT_TRUE)
-        {
-            rt_enter_critical();
-            cfg_info.info = _sta_mgnt.info;
-            cfg_info.key = _sta_mgnt.key;
-            rt_exit_critical();
-            RT_WLAN_LOG_D("run save config! ssid:%s len%d", _sta_mgnt.info.ssid.val, _sta_mgnt.info.ssid.len);
-            rt_wlan_cfg_save(&cfg_info);
-        }
-        break;
-    }
-    default :
-        break;
-    }
-
-    rt_free(msg);
-}
+#endif
 
 static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_event_t event, struct rt_wlan_buff *buff, void *parameter)
 {
-    rt_base_t level;
-    void *user_parameter;
-    rt_wlan_event_handler handler = RT_NULL;
     rt_err_t err = RT_NULL;
     rt_wlan_event_t user_event = RT_WLAN_EVT_MAX;
     int i;
@@ -495,7 +578,7 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
     {
         user_buff = *buff;
     }
-    /* 事件处理 */
+    /* Event Handle */
     switch (event)
     {
     case RT_WLAN_DEV_EVT_CONNECT:
@@ -505,7 +588,6 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECTING;
         user_event = RT_WLAN_EVT_STA_CONNECTED;
         TIME_STOP();
-        rt_wlan_send_msg(event, RT_NULL, 0);
         user_buff.data = &_sta_mgnt.info;
         user_buff.len = sizeof(struct rt_wlan_info);
         RT_WLAN_LOG_I("wifi connect success ssid:%s", &_sta_mgnt.info.ssid.val[0]);
@@ -520,7 +602,10 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         user_event = RT_WLAN_EVT_STA_CONNECTED_FAIL;
         user_buff.data = &_sta_mgnt.info;
         user_buff.len = sizeof(struct rt_wlan_info);
-        TIME_START();
+        if (rt_wlan_get_autoreconnect_mode())
+        {
+            TIME_START();
+        }
         break;
     }
     case RT_WLAN_DEV_EVT_DISCONNECT:
@@ -531,7 +616,10 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         user_event = RT_WLAN_EVT_STA_DISCONNECTED;
         user_buff.data = &_sta_mgnt.info;
         user_buff.len = sizeof(struct rt_wlan_info);
-        TIME_START();
+        if (rt_wlan_get_autoreconnect_mode())
+        {
+            TIME_START();
+        }
         break;
     }
     case RT_WLAN_DEV_EVT_AP_START:
@@ -624,20 +712,30 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
         }
     }
     COMPLETE_UNLOCK();
-    /* Get user callback */
-    if (user_event < RT_WLAN_EVT_MAX)
+#ifdef RT_WLAN_WORK_THREAD_ENABLE
+    rt_wlan_send_to_thread(user_event, RT_NULL, 0);
+#else
     {
-        level = rt_hw_interrupt_disable();
-        handler = event_tab[user_event].handler;
-        user_parameter = event_tab[user_event].parameter;
-        rt_hw_interrupt_enable(level);
-    }
+        void *user_parameter;
+        rt_wlan_event_handler handler = RT_NULL;
+        rt_base_t level;
+        /* Get user callback */
+        if (user_event < RT_WLAN_EVT_MAX)
+        {
+            level = rt_hw_interrupt_disable();
+            handler = event_tab[user_event].handler;
+            user_parameter = event_tab[user_event].parameter;
+            rt_hw_interrupt_enable(level);
+        }
 
-    /* run user callback fun */
-    if (handler)
-    {
-        handler(user_event, &user_buff, user_parameter);
+        /* run user callback fun */
+        if (handler)
+        {
+            RT_WLAN_LOG_D("unknown thread run user callback, event:%d", user_event);
+            handler(user_event, &user_buff, user_parameter);
+        }
     }
+#endif
 }
 
 static struct rt_wlan_complete_des *rt_wlan_complete_create(const char *name)
@@ -737,9 +835,12 @@ rt_err_t rt_wlan_set_mode(const char *dev_name, rt_wlan_mode_t mode)
         RT_WLAN_LOG_E("not find device, set mode failed! name:%s", dev_name);
         return -RT_EIO;
     }
+
+    MGNT_LOCK();
     if (RT_WLAN_DEVICE(device)->mode == mode)
     {
         RT_WLAN_LOG_D("L:%d this device mode is set");
+        MGNT_UNLOCK();
         return RT_EOK;
     }
 
@@ -747,19 +848,21 @@ rt_err_t rt_wlan_set_mode(const char *dev_name, rt_wlan_mode_t mode)
             (RT_WLAN_DEVICE(device)->flags & RT_WLAN_FLAG_AP_ONLY))
     {
         RT_WLAN_LOG_I("this device ap mode only");
+        MGNT_UNLOCK();
         return -RT_ERROR;
     }
     else if ((mode == RT_WLAN_AP) &&
              (RT_WLAN_DEVICE(device)->flags & RT_WLAN_FLAG_STA_ONLY))
     {
         RT_WLAN_LOG_I("this device sta mode only");
+        MGNT_UNLOCK();
         return -RT_ERROR;
     }
+
     /*
      * device == sta  and change to ap,  should deinit
      * device == ap   and change to sta, should deinit
     */
-    MGNT_LOCK();
     if (((mode == RT_WLAN_STATION) && (RT_WLAN_DEVICE(device) == AP_DEVICE())) ||
             ((mode == RT_WLAN_AP) && (RT_WLAN_DEVICE(device) == STA_DEVICE())))
     {
@@ -817,14 +920,30 @@ rt_err_t rt_wlan_set_mode(const char *dev_name, rt_wlan_mode_t mode)
     /* update dev event handle */
     if (up_event_flag == 1)
     {
-        rt_wlan_dev_event_t event;
-        for (event = RT_WLAN_DEV_EVT_INIT_DONE; event < RT_WLAN_DEV_EVT_MAX; event++)
+        if (handler)
         {
-            if (handler)
+            if (mode == RT_WLAN_STATION)
             {
-                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), event, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_CONNECT, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_CONNECT_FAIL, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_DISCONNECT, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_SCAN_REPORT, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_SCAN_DONE, handler, RT_NULL);
             }
-            else
+            else if (mode == RT_WLAN_AP)
+            {
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_AP_START, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_AP_STOP, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_AP_ASSOCIATED, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_AP_DISASSOCIATED, handler, RT_NULL);
+                rt_wlan_dev_register_event_handler(RT_WLAN_DEVICE(device), RT_WLAN_DEV_EVT_AP_ASSOCIATE_FAILED, handler, RT_NULL);
+            }
+        }
+        else
+        {
+            rt_wlan_dev_event_t event;
+            handler = rt_wlan_event_dispatch;
+            for (event = RT_WLAN_DEV_EVT_INIT_DONE; event < RT_WLAN_DEV_EVT_MAX; event++)
             {
                 rt_wlan_dev_unregister_event_handler(RT_WLAN_DEVICE(device), event, handler);
             }
@@ -833,8 +952,11 @@ rt_err_t rt_wlan_set_mode(const char *dev_name, rt_wlan_mode_t mode)
     MGNT_UNLOCK();
 
     /* Mount protocol */
-#ifdef RT_WLAN_DEFAULT_PROT
-    rt_wlan_prot_attach(dev_name, RT_WLAN_DEFAULT_PROT);
+#if defined(RT_WLAN_PROT_ENABLE) && defined(RT_WLAN_DEFAULT_PROT)
+    if (err == RT_EOK)
+    {
+        rt_wlan_prot_attach(dev_name, RT_WLAN_DEFAULT_PROT);
+    }
 #endif
     return err;
 }
@@ -929,6 +1051,7 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
     struct rt_wlan_info info;
     struct rt_wlan_complete_des *complete;
     rt_uint32_t set = 0, recved = 0;
+    rt_uint32_t scan_retry = RT_WLAN_SCAN_RETRY_CNT;
 
     /* sta dev Can't be NULL */
     if (_sta_is_null())
@@ -957,12 +1080,11 @@ rt_err_t rt_wlan_connect(const char *ssid, const char *password)
     /* get info from cache */
     INVALID_INFO(&info);
     MGNT_LOCK();
-    if (rt_wlan_find_best_by_cache(ssid, &info) != RT_TRUE)
+    while (scan_retry-- && rt_wlan_find_best_by_cache(ssid, &info) != RT_TRUE)
     {
         rt_wlan_scan_sync();
-        rt_wlan_find_best_by_cache(ssid, &info);
-        rt_wlan_scan_result_clean();
     }
+    rt_wlan_scan_result_clean();
 
     if (info.ssid.len <= 0)
     {
@@ -1213,10 +1335,13 @@ rt_err_t rt_wlan_get_info(struct rt_wlan_info *info)
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
 
-    rt_enter_critical();
-    *info = _sta_mgnt.info;
-    rt_exit_critical();
-    return RT_EOK;
+    if (rt_wlan_is_connected() == RT_TRUE)
+    {
+        *info = _sta_mgnt.info;
+        info->rssi = rt_wlan_get_rssi();
+        return RT_EOK;
+    }
+    return -RT_ERROR;
 }
 
 int rt_wlan_get_rssi(void)
@@ -1265,6 +1390,7 @@ rt_err_t rt_wlan_start_ap(const char *ssid, const char *password)
     rt_memcpy(&info.ssid.val, ssid, ssid_len);
     info.ssid.len = ssid_len;
     info.channel = 6;
+    info.band = RT_802_11_BAND_2_4GHZ;
 
     /* Initializing events that need to wait */
     MGNT_LOCK();
@@ -1315,7 +1441,10 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
         return -RT_EIO;
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
-    password_len = rt_strlen(password);
+    if (password != RT_NULL)
+    {
+        password_len = rt_strlen(password);
+    }
     if (password_len > RT_WLAN_PASSWORD_MAX_LENGTH)
     {
         RT_WLAN_LOG_E("key is to long! len:%d", password_len);
@@ -1353,16 +1482,16 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
     return err;
 }
 
-int rt_wlan_ap_is_active(void)
+rt_bool_t rt_wlan_ap_is_active(void)
 {
-    int _active = 0;
+    rt_bool_t _active = RT_FALSE;
 
     if (_ap_is_null())
     {
-        return 0;
+        return RT_FALSE;
     }
 
-    _active = _ap_mgnt.state & RT_WLAN_STATE_ACTIVE ? 1 : 0;
+    _active = _ap_mgnt.state & RT_WLAN_STATE_ACTIVE ? RT_TRUE : RT_FALSE;
     RT_WLAN_LOG_D("%s is run active:%s", __FUNCTION__, _active ? "Active" : "Inactive");
     return _active;
 }
@@ -1421,8 +1550,12 @@ rt_err_t rt_wlan_ap_get_info(struct rt_wlan_info *info)
     }
     RT_WLAN_LOG_D("%s is run", __FUNCTION__);
 
-    *info = _ap_mgnt.info;
-    return RT_EOK;
+    if (rt_wlan_ap_is_active() == RT_TRUE)
+    {
+        *info = _ap_mgnt.info;
+        return RT_EOK;
+    }
+    return -RT_ERROR;
 }
 
 /* get sta number  */
@@ -1549,27 +1682,35 @@ rt_country_code_t rt_wlan_ap_get_country(void)
 
 void rt_wlan_config_autoreconnect(rt_bool_t enable)
 {
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
     RT_WLAN_LOG_D("%s is run enable:%d", __FUNCTION__, enable);
 
     MGNT_LOCK();
     if (enable)
     {
+        TIME_START();
         _sta_mgnt.flags |= RT_WLAN_STATE_AUTOEN;
     }
     else
     {
+        TIME_STOP();
         _sta_mgnt.flags &= ~RT_WLAN_STATE_AUTOEN;
     }
     MGNT_UNLOCK();
+#endif
 }
 
 rt_bool_t rt_wlan_get_autoreconnect_mode(void)
 {
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
     rt_bool_t enable = 0;
 
     enable = _sta_mgnt.flags & RT_WLAN_STATE_AUTOEN ? 1 : 0;
     RT_WLAN_LOG_D("%s is run enable:%d", __FUNCTION__, enable);
     return enable;
+#else
+    return RT_FALSE;
+#endif
 }
 
 /* Call the underlying scan function, which is asynchronous.
@@ -1606,6 +1747,9 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     rt_err_t err = RT_EOK;
     struct rt_wlan_complete_des *complete;
     rt_uint32_t set = 0, recved = 0;
+    static struct rt_wlan_info scan_filter_info;
+    rt_base_t level;
+    struct rt_wlan_scan_result *result;
 
     if (_sta_is_null())
     {
@@ -1627,14 +1771,23 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
         return &scan_result;
     }
 
-    /* run scna */
+    /* add scan info filter */
+    if (info)
+    {
+        scan_filter_info = *info;
+        level = rt_hw_interrupt_disable();
+        scan_filter = &scan_filter_info;
+        rt_hw_interrupt_enable(level);
+    }
+
+    /* run scan */
     err = rt_wlan_dev_scan(STA_DEVICE(), info);
     if (err != RT_EOK)
     {
         rt_wlan_complete_delete(complete);
-        RT_WLAN_LOG_E("scna sync fail");
-        MGNT_UNLOCK();
-        return RT_NULL;
+        RT_WLAN_LOG_E("scan sync fail");
+        result = RT_NULL;
+        goto scan_exit;
     }
 
     /* Initializing events that need to wait */
@@ -1646,13 +1799,18 @@ struct rt_wlan_scan_result *rt_wlan_scan_with_info(struct rt_wlan_info *info)
     set = 0x1 << RT_WLAN_DEV_EVT_SCAN_DONE;
     if (!(recved & set))
     {
-        RT_WLAN_LOG_E("scna wait timeout!");
-        MGNT_UNLOCK();
-        return &scan_result;
+        RT_WLAN_LOG_E("scan wait timeout!");
+        result = &scan_result;
+        goto scan_exit;
     }
 
+scan_exit:
     MGNT_UNLOCK();
-    return &scan_result;
+    level = rt_hw_interrupt_disable();
+    scan_filter = RT_NULL;
+    rt_hw_interrupt_enable(level);
+    result = &scan_result;
+    return result;
 }
 
 int rt_wlan_scan_get_info_num(void)
@@ -1703,8 +1861,7 @@ int rt_wlan_scan_find_cache(struct rt_wlan_info *info, struct rt_wlan_info *out_
 {
     int i = 0, count = 0;
     struct rt_wlan_info *scan_info;
-    rt_bool_t is_equ = 1;
-    rt_uint8_t bssid_zero[RT_WLAN_BSSID_MAX_LENGTH] = { 0 };
+    rt_bool_t is_equ;
 
     if ((out_info == RT_NULL) || (info == RT_NULL) || (num <= 0))
     {
@@ -1715,31 +1872,7 @@ int rt_wlan_scan_find_cache(struct rt_wlan_info *info, struct rt_wlan_info *out_
     for (i = 0; (i < scan_result.num) && (count < num); i++)
     {
         scan_info = &scan_result.info[i];
-
-        if (is_equ && (info->security != SECURITY_UNKNOWN))
-        {
-            is_equ &= info->security == scan_info->security;
-        }
-        if (is_equ && ((info->ssid.len > 0) && (info->ssid.len == scan_info->ssid.len)))
-        {
-            is_equ &= rt_memcmp(&info->ssid.val[0], &scan_info->ssid.val[0], scan_info->ssid.len) == 0;
-        }
-        if (is_equ && (rt_memcmp(&info->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)))
-        {
-            is_equ &= rt_memcmp(&info->bssid[0], &scan_info->bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0;
-        }
-        if (is_equ && info->datarate)
-        {
-            is_equ &= info->datarate == scan_info->datarate;
-        }
-        if (is_equ && (info->channel >= 0))
-        {
-            is_equ &= info->channel == scan_info->channel;
-        }
-        if (is_equ && (info->rssi < 0))
-        {
-            is_equ &= info->rssi == scan_info->rssi;
-        }
+        is_equ = rt_wlan_info_isequ(scan_info, info);
         /* Determine whether to find */
         if (is_equ)
         {
@@ -1792,7 +1925,7 @@ rt_err_t rt_wlan_register_event_handler(rt_wlan_event_t event, rt_wlan_event_han
     }
     RT_WLAN_LOG_D("%s is run event:%d", __FUNCTION__, event);
 
-    MGNT_UNLOCK();
+    MGNT_LOCK();
     /* Registering Callbacks */
     level = rt_hw_interrupt_disable();
     event_tab[event].handler = handler;
@@ -1834,8 +1967,6 @@ void rt_wlan_mgnt_unlock(void)
 int rt_wlan_prot_ready_event(struct rt_wlan_device *wlan, struct rt_wlan_buff *buff)
 {
     rt_base_t level;
-    void *user_parameter;
-    rt_wlan_event_handler handler = RT_NULL;
 
     if ((wlan == RT_NULL) || (_sta_mgnt.device != wlan) ||
             (!(_sta_mgnt.state & RT_WLAN_STATE_CONNECT)))
@@ -1848,13 +1979,24 @@ int rt_wlan_prot_ready_event(struct rt_wlan_device *wlan, struct rt_wlan_buff *b
     }
     level = rt_hw_interrupt_disable();
     _sta_mgnt.state |= RT_WLAN_STATE_READY;
-    handler = event_tab[RT_WLAN_EVT_READY].handler;
-    user_parameter = event_tab[RT_WLAN_EVT_READY].parameter;
     rt_hw_interrupt_enable(level);
-    if (handler)
+#ifdef RT_WLAN_WORK_THREAD_ENABLE
+    rt_wlan_send_to_thread(RT_WLAN_EVT_READY, buff->data, buff->len);
+#else
     {
-        handler(RT_WLAN_EVT_READY, buff, user_parameter);
+        void *user_parameter;
+        rt_wlan_event_handler handler = RT_NULL;
+
+        level = rt_hw_interrupt_disable();
+        handler = event_tab[RT_WLAN_EVT_READY].handler;
+        user_parameter = event_tab[RT_WLAN_EVT_READY].parameter;
+        rt_hw_interrupt_enable(level);
+        if (handler)
+        {
+            handler(RT_WLAN_EVT_READY, buff, user_parameter);
+        }
     }
+#endif
     return 0;
 }
 
@@ -1873,10 +2015,15 @@ int rt_wlan_init(void)
         rt_mutex_init(&scan_result_mutex, "scan", RT_IPC_FLAG_FIFO);
         rt_mutex_init(&sta_info_mutex, "sta", RT_IPC_FLAG_FIFO);
         rt_mutex_init(&complete_mutex, "complete", RT_IPC_FLAG_FIFO);
-        rt_timer_init(&reconnect_time, "wifi_tim", rt_wlan_cyclic_check, RT_NULL, DISCONNECT_RESPONSE_TICK, RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
-        rt_timer_start(&reconnect_time);
+#ifdef RT_WLAN_AUTO_CONNECT_ENABLE
+        rt_timer_init(&reconnect_time, "wifi_tim", rt_wlan_cyclic_check, RT_NULL,
+                      rt_tick_from_millisecond(AUTO_CONNECTION_PERIOD_MS),
+                      RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
+#endif
         _init_flag = 1;
     }
     return 0;
 }
 INIT_PREV_EXPORT(rt_wlan_init);
+
+#endif

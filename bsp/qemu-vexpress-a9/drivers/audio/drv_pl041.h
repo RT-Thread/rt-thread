@@ -158,10 +158,10 @@
 #define MAINFR_TXB   (1 << 1)	/* transmit busy */
 #define MAINFR_RXB   (1 << 0)	/* receive busy */
 
-#define PL041_CHANNLE_LEFT_DAC    (0x1 << 3)
-#define PL041_CHANNLE_RIGHT_DAC   (0x1 << 3)
-#define PL041_CHANNLE_LEFT_ADC    (0x1 << 3)
-#define PL041_CHANNLE_RIGHT_ADC   (0x1 << 3)
+#define PL041_CHANNEL_LEFT_DAC    (0x1 << 3)
+#define PL041_CHANNEL_RIGHT_DAC   (0x1 << 3)
+#define PL041_CHANNEL_LEFT_ADC    (0x1 << 3)
+#define PL041_CHANNEL_RIGHT_ADC   (0x1 << 3)
 
 struct reg_pl041
 {
@@ -225,13 +225,13 @@ typedef void (*pl041_irq_fun_t)(rt_uint32_t status, void * user_data);
 rt_err_t aaci_pl041_init(void);
 void aaci_ac97_write(rt_uint16_t reg, rt_uint16_t val);
 rt_uint16_t aaci_ac97_read(rt_uint16_t reg);
-int aaci_pl041_channle_cfg(int channle, pl041_cfg_t cgf);
-int aaci_pl041_channle_write(int channle, rt_uint16_t *buff, int count);
-int aaci_pl041_channle_read(int channle, rt_uint16_t *buff, int count);
-int aaci_pl041_channle_enable(int channle);
-int aaci_pl041_channle_disable(int channle);
-rt_err_t aaci_pl041_irq_register(int channle, pl041_irq_fun_t fun, void *user_data);
-rt_err_t aaci_pl041_irq_unregister(int channle);
-void aaci_pl041_irq_disable(int channle, rt_uint32_t vector);
-void aaci_pl041_irq_enable(int channle, rt_uint32_t vector);
+int aaci_pl041_channel_cfg(int channel, pl041_cfg_t cfg);
+int aaci_pl041_channel_write(int channel, rt_uint16_t *buff, int count);
+int aaci_pl041_channel_read(int channel, rt_uint16_t *buff, int count);
+int aaci_pl041_channel_enable(int channel);
+int aaci_pl041_channel_disable(int channel);
+rt_err_t aaci_pl041_irq_register(int channel, pl041_irq_fun_t fun, void *user_data);
+rt_err_t aaci_pl041_irq_unregister(int channel);
+void aaci_pl041_irq_disable(int channel, rt_uint32_t vector);
+void aaci_pl041_irq_enable(int channel, rt_uint32_t vector);
 #endif

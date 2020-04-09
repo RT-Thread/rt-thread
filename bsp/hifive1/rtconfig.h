@@ -11,12 +11,13 @@
 #define RT_THREAD_PRIORITY_256
 #define RT_THREAD_PRIORITY_MAX 256
 #define RT_TICK_PER_SECOND 100
-#define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
+#define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -45,6 +46,7 @@
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 85
 
 /* C++ features */
 
@@ -63,6 +65,7 @@
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
 #define FINSH_USING_MSH_ONLY
+#define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
@@ -70,21 +73,31 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
+
+/* Using WiFi */
+
 
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
 
-/* Network stack */
+/* Network */
+
+/* Socket abstraction layer */
+
 
 /* light weight TCP/IP stack */
 
 
 /* Modbus master and slave stack */
+
+
+/* AT commands */
 
 
 /* VBUS(Virtual Software BUS) */
@@ -95,11 +108,6 @@
 
 /* RT-Thread online packages */
 
-/* system packages */
-
-/* RT-Thread GUI Engine */
-
-
 /* IoT - internet of things */
 
 
@@ -109,6 +117,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -123,7 +134,18 @@
 /* tools packages */
 
 
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
 /* miscellaneous packages */
+
+
+/* sample package */
+
+/* samples: kernel and components samples */
 
 
 /* example package: hello */

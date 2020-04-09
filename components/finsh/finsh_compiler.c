@@ -890,7 +890,7 @@ int finsh_compiler_run(struct finsh_node* node)
 
     /* clean text segment and vm stack */
     memset(&text_segment[0], 0, sizeof(text_segment));
-    memset(&finsh_vm_stack[0], 0, sizeof(finsh_vm_stack[0]));
+    memset(&finsh_vm_stack[0], 0, sizeof(finsh_vm_stack));
 
     /* reset compile stack pointer and pc */
     finsh_compile_sp = &finsh_vm_stack[0];

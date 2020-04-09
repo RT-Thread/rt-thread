@@ -1,0 +1,9 @@
+config BSP_USING_UART0
+    bool "Using UART0"
+    select RT_USING_SERIAL
+    default y
+
+config BSP_USING_WIFI
+    bool "Using WIFI"
+    select RT_USING_WIFI
+    default y

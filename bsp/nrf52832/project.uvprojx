@@ -7,11 +7,13 @@
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>nRF52832_xxAA</Device>
           <Vendor>Nordic Semiconductor</Vendor>
-          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.12.0</PackID>
+          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.24.1</PackID>
           <PackURL>http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
           <Cpu>IRAM(0x20000000,0x10000) IROM(0x00000000,0x80000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
@@ -179,10 +181,11 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
+            <RvdsMve>0</RvdsMve>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>1</useUlib>
+            <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -319,6 +322,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -329,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--reduce_paths</MiscControls>
-              <Define>NRF52_PAN_12, NRF52_PAN_15, NRF52_PAN_58, SWI_DISABLE0, NRF52_PAN_20, NRF52_PAN_54, NRF52, NRF52_PAN_51, NRF52_PAN_36, RTTHREAD, CONFIG_GPIO_AS_PINRESET, NRF52_PAN_64, NRF52_PAN_55, NRF52_PAN_74, NRF52832_XXAA, NRF52_PAN_31</Define>
+              <Define>NRF52_PAN_55, NRF52_PAN_12, NRF52_PAN_15, NRF52_PAN_58, SWI_DISABLE0, SOFTDEVICE_PRESENT, NRF52_PAN_54, NRF52, BLE_STACK_SUPPORT_REQD, NRF52_PAN_51, NRF52_PAN_36, RTTHREAD, CONFIG_GPIO_AS_PINRESET, NRF52_PAN_64, NRF52_PAN_20, NRF52_PAN_74, NRF52832_XXAA, S132, NRF_SD_BLE_API_VERSION=4, NRF52_PAN_31, RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;nRF5_SDK_13.0.0_04a0bfd/components;nRF5_SDK_13.0.0_04a0bfd/components/device;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/delay;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/uart;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/clock;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/gpiote;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/common;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/hal;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/pwm;nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/saadc;nRF5_SDK_13.0.0_04a0bfd/components/libraries/util;nRF5_SDK_13.0.0_04a0bfd/components/libraries/timer;nRF5_SDK_13.0.0_04a0bfd/components/libraries/fstorage;nRF5_SDK_13.0.0_04a0bfd/components/libraries/experimental_section_vars;nRF5_SDK_13.0.0_04a0bfd/components/libraries/log;nRF5_SDK_13.0.0_04a0bfd/components/libraries/log/src;nRF5_SDK_13.0.0_04a0bfd/components/libraries/strerror;nRF5_SDK_13.0.0_04a0bfd/components/toolchain/cmsis/include;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/drivers/include;../../components/drivers/include</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;board;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\common\softdevice_handler;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers;nRF5_SDK_13.0.0_04a0bfd\components\softdevice\s132\headers\nrf52;nRF5_SDK_13.0.0_04a0bfd\components\ble\common;nRF5_SDK_13.0.0_04a0bfd\components\ble\nrf_ble_gatt;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_advertising;nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_services\ble_nus;startups;nRF5_SDK_13.0.0_04a0bfd\components;nRF5_SDK_13.0.0_04a0bfd\components\device;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\delay;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\uart;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\clock;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\gpiote;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\common;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\hal;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\pwm;nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\saadc;nRF5_SDK_13.0.0_04a0bfd\components\libraries\util;nRF5_SDK_13.0.0_04a0bfd\components\libraries\timer;nRF5_SDK_13.0.0_04a0bfd\components\libraries\fstorage;nRF5_SDK_13.0.0_04a0bfd\components\libraries\experimental_section_vars;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log;nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src;nRF5_SDK_13.0.0_04a0bfd\components\libraries\strerror;nRF5_SDK_13.0.0_04a0bfd\components\toolchain\cmsis\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -373,26 +377,227 @@
       </TargetOption>
       <Groups>
         <Group>
+          <GroupName>Kernel</GroupName>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Applications</GroupName>
           <Files>
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ble_nus_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/ble_nus_app.c</FilePath>
+              <FilePath>applications\ble_nus_app.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Board</GroupName>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BLE_STACK</GroupName>
+          <Files>
+            <File>
+              <FileName>ble_advdata.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\common\ble_advdata.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ble_conn_params.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\common\ble_conn_params.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ble_conn_state.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\common\ble_conn_state.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ble_srv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\common\ble_srv_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>nrf_ble_gatt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\nrf_ble_gatt\nrf_ble_gatt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ble_nus.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_services\ble_nus\ble_nus.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ble_advertising.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\ble\ble_advertising\ble_advertising.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>softdevice_handler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\softdevice\common\softdevice_handler\softdevice_handler.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Startup</GroupName>
+          <Files>
+            <File>
+              <FileName>system_nrf52.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>startups\system_nrf52.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>arm_startup_nrf52.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>startups\arm\arm_startup_nrf52.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -402,237 +607,150 @@
             <File>
               <FileName>nrf_saadc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/hal/nrf_saadc.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\hal\nrf_saadc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_drv_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/common/nrf_drv_common.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\common\nrf_drv_common.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_drv_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/clock/nrf_drv_clock.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\clock\nrf_drv_clock.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_drv_gpiote.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/gpiote/nrf_drv_gpiote.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\gpiote\nrf_drv_gpiote.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_drv_pwm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/pwm/nrf_drv_pwm.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\pwm\nrf_drv_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_drv_saadc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/drivers_nrf/saadc/nrf_drv_saadc.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\drivers_nrf\saadc\nrf_drv_saadc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_log_backend_serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/log/src/nrf_log_backend_serial.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src\nrf_log_backend_serial.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_log_frontend.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/log/src/nrf_log_frontend.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\log\src\nrf_log_frontend.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>app_timer_rtthread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/timer/app_timer_rtthread.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\timer\app_timer_rtthread.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>app_error.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/app_error.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\util\app_error.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>app_error_weak.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/app_error_weak.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\util\app_error_weak.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>app_util_platform.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/app_util_platform.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\util\app_util_platform.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_assert.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/nrf_assert.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\util\nrf_assert.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>sdk_mapped_flags.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/util/sdk_mapped_flags.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\util\sdk_mapped_flags.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>fstorage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/fstorage/fstorage.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\fstorage\fstorage.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>nrf_strerror.c</FileName>
               <FileType>1</FileType>
-              <FilePath>nRF5_SDK_13.0.0_04a0bfd/components/libraries/strerror/nrf_strerror.c</FilePath>
+              <FilePath>nRF5_SDK_13.0.0_04a0bfd\components\libraries\strerror\nrf_strerror.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/signal.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>CORTEX-M4</GroupName>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/cortex-m4/cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/cortex-m4/context_rvds.S</FilePath>
-            </File>
-          </Files>
+          <GroupName>cpu</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -640,51 +758,120 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
+              <FileName>pin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/serial/serial.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/waitqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>

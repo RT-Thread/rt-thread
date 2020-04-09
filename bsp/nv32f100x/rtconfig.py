@@ -11,11 +11,13 @@ if os.getenv('RTT_CC'):
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-    PLATFORM 	= 'gcc'
-    EXEC_PATH 	= 'G:/iot/camera_studio-win32-20160903/camera_studio/tools/arm-2014.05/bin'
+    print('================ERROR============================')
+    print('Not support gcc yet!')
+    print('=================================================')
+    exit(0)
 elif CROSS_TOOL == 'keil':
     print('================ERROR============================')
-    print('Not support iar yet!')
+    print('Not support keil yet!')
     print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':

@@ -33,12 +33,12 @@
 
 struct _nand_dev
 {
-    struct rt_mtd_nand_device * dev;
+    struct rt_mtd_nand_device *dev;
     struct uffs_StorageAttrSt storage;
     uffs_Device uffs_dev;
     uffs_MountTable mount_table;
     char mount_path[UFFS_MOUNT_PATH_MAX];
-    void * data;  /* when uffs use static buf, it will save ptr here */ 
+    void *data;   /* when uffs use static buf, it will save ptr here */
 };
 /* make sure the following struct var had been initilased to 0! */
 static struct _nand_dev nand_part[UFFS_DEVICE_MAX] = {0};
@@ -109,11 +109,11 @@ static URET _device_release(uffs_Device *dev)
 }
 
 static int init_uffs_fs(
-    struct _nand_dev * nand_part)
+    struct _nand_dev *nand_part)
 {
-    uffs_MountTable * mtb;
-    struct rt_mtd_nand_device * nand;
-    struct uffs_StorageAttrSt * flash_storage;
+    uffs_MountTable *mtb;
+    struct rt_mtd_nand_device *nand;
+    struct uffs_StorageAttrSt *flash_storage;
 
     mtb = &nand_part->mount_table;
     nand = nand_part->dev;
@@ -123,7 +123,7 @@ static int init_uffs_fs(
     uffs_setup_storage(flash_storage, nand);
 
     /* register mount table */
-    if(mtb->dev)
+    if (mtb->dev)
     {
         /* set memory allocator for uffs */
 #if CONFIG_USE_SYSTEM_MEMORY_ALLOCATOR > 0
@@ -141,15 +141,15 @@ static int init_uffs_fs(
 }
 
 static int dfs_uffs_mount(
-    struct dfs_filesystem* fs,
+    struct dfs_filesystem *fs,
     unsigned long rwflag,
-    const void* data)
+    const void *data)
 {
     rt_base_t index;
-    uffs_MountTable * mount_part;
-    struct rt_mtd_nand_device * dev;
-    
-    RT_ASSERT(rt_strlen(fs->path) < (UFFS_MOUNT_PATH_MAX-1));
+    uffs_MountTable *mount_part;
+    struct rt_mtd_nand_device *dev;
+
+    RT_ASSERT(rt_strlen(fs->path) < (UFFS_MOUNT_PATH_MAX - 1));
     dev = RT_MTD_NAND_DEVICE(fs->dev_id);
 
     /*1. find a empty entry in partition table */
@@ -184,7 +184,7 @@ static int dfs_uffs_mount(
     return 0;
 }
 
-static int dfs_uffs_unmount(struct dfs_filesystem* fs)
+static int dfs_uffs_unmount(struct dfs_filesystem *fs)
 {
     rt_base_t index;
     int result;
@@ -210,7 +210,7 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
 {
     rt_base_t index;
     rt_uint32_t block;
-    struct rt_mtd_nand_device * mtd;
+    struct rt_mtd_nand_device *mtd;
 
     /*1. find the device index */
     for (index = 0; index < UFFS_DEVICE_MAX; index++)
@@ -226,7 +226,7 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
     }
 
     /*2. then unmount the partition */
-    uffs_Mount(nand_part[index].mount_path);
+    uffs_UnMount(nand_part[index].mount_path);
     mtd = nand_part[index].dev;
 
     /*3. erase all blocks on the partition */
@@ -234,11 +234,13 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
     for (; block <= mtd->block_end; block++)
     {
         rt_mtd_nand_erase_block(mtd, block);
+#if defined(RT_UFFS_USE_CHECK_MARK_FUNCITON)
         if (rt_mtd_nand_check_block(mtd, block) != RT_EOK)
         {
             rt_kprintf("found bad block %d\n", block);
             rt_mtd_nand_mark_badblock(mtd, block);
         }
+#endif
     }
 
     /*4. remount it */
@@ -249,11 +251,11 @@ static int dfs_uffs_mkfs(rt_device_t dev_id)
     return RT_EOK;
 }
 
-static int dfs_uffs_statfs(struct dfs_filesystem* fs,
-                    struct statfs *buf)
+static int dfs_uffs_statfs(struct dfs_filesystem *fs,
+                           struct statfs *buf)
 {
     rt_base_t index;
-    struct rt_mtd_nand_device * mtd = RT_MTD_NAND_DEVICE(fs->dev_id);
+    struct rt_mtd_nand_device *mtd = RT_MTD_NAND_DEVICE(fs->dev_id);
 
     RT_ASSERT(mtd != RT_NULL);
 
@@ -265,24 +267,24 @@ static int dfs_uffs_statfs(struct dfs_filesystem* fs,
     }
     if (index == UFFS_DEVICE_MAX)
         return -ENOENT;
-    
-    buf->f_bsize = mtd->page_size*mtd->pages_per_block;
+
+    buf->f_bsize = mtd->page_size * mtd->pages_per_block;
     buf->f_blocks = (mtd->block_end - mtd->block_start + 1);
-    buf->f_bfree = uffs_GetDeviceFree(&nand_part[index].uffs_dev)/buf->f_bsize ;
-    
+    buf->f_bfree = uffs_GetDeviceFree(&nand_part[index].uffs_dev) / buf->f_bsize ;
+
     return 0;
 }
 
-static int dfs_uffs_open(struct dfs_fd* file)
+static int dfs_uffs_open(struct dfs_fd *file)
 {
     int fd;
     int oflag, mode;
-    char * file_path;
+    char *file_path;
 
     oflag = file->flags;
     if (oflag & O_DIRECTORY)   /* operations about dir */
     {
-        uffs_DIR * dir;
+        uffs_DIR *dir;
 
         if (oflag & O_CREAT)   /* create a dir*/
         {
@@ -291,8 +293,8 @@ static int dfs_uffs_open(struct dfs_fd* file)
         }
         /* open dir */
         file_path = rt_malloc(FILE_PATH_MAX);
-        if(file_path == RT_NULL)
-            return -ENOMEM;         
+        if (file_path == RT_NULL)
+            return -ENOMEM;
 
         if (file->path[0] == '/' && !(file->path[1] == 0))
             rt_snprintf(file_path, FILE_PATH_MAX, "%s/", file->path);
@@ -306,7 +308,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
 
         if (dir == RT_NULL)
         {
-            rt_free(file_path);         
+            rt_free(file_path);
             return uffs_result_to_dfs(uffs_get_error());
         }
         /* save this pointer,will used by  dfs_uffs_getdents*/
@@ -349,7 +351,7 @@ static int dfs_uffs_open(struct dfs_fd* file)
     return 0;
 }
 
-static int dfs_uffs_close(struct dfs_fd* file)
+static int dfs_uffs_close(struct dfs_fd *file)
 {
     int oflag;
     int fd;
@@ -372,12 +374,12 @@ static int dfs_uffs_close(struct dfs_fd* file)
     return uffs_result_to_dfs(uffs_get_error());
 }
 
-static int dfs_uffs_ioctl(struct dfs_fd * file, int cmd, void* args)
+static int dfs_uffs_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
     return -ENOSYS;
 }
 
-static int dfs_uffs_read(struct dfs_fd * file, void* buf, size_t len)
+static int dfs_uffs_read(struct dfs_fd *file, void *buf, size_t len)
 {
     int fd;
     int char_read;
@@ -392,9 +394,9 @@ static int dfs_uffs_read(struct dfs_fd * file, void* buf, size_t len)
     return char_read;
 }
 
-static int dfs_uffs_write(struct dfs_fd* file,
-                   const void* buf,
-                   size_t len)
+static int dfs_uffs_write(struct dfs_fd *file,
+                          const void *buf,
+                          size_t len)
 {
     int fd;
     int char_write;
@@ -410,7 +412,7 @@ static int dfs_uffs_write(struct dfs_fd* file,
     return char_write;
 }
 
-static int dfs_uffs_flush(struct dfs_fd* file)
+static int dfs_uffs_flush(struct dfs_fd *file)
 {
     int fd;
     int result;
@@ -418,7 +420,7 @@ static int dfs_uffs_flush(struct dfs_fd* file)
     fd = (int)(file->data);
 
     result = uffs_flush(fd);
-    if (result < 0 )
+    if (result < 0)
         return uffs_result_to_dfs(uffs_get_error());
     return 0;
 }
@@ -427,18 +429,18 @@ int uffs_seekdir(uffs_DIR *dir, long offset)
 {
     int i = 0;
 
-    while(i < offset)
-    {   
+    while (i < offset)
+    {
         if (uffs_readdir(dir) == RT_NULL)
             return -1;
         i++;
-    } 
+    }
     return 0;
 }
 
 
-static int dfs_uffs_seek(struct dfs_fd* file,
-                  rt_off_t offset)
+static int dfs_uffs_seek(struct dfs_fd *file,
+                         rt_off_t offset)
 {
     int result;
 
@@ -446,17 +448,17 @@ static int dfs_uffs_seek(struct dfs_fd* file,
     if (file->type == FT_DIRECTORY)
     {
         uffs_rewinddir((uffs_DIR *)(file->data));
-        result = uffs_seekdir((uffs_DIR *)(file->data), offset/sizeof(struct dirent));
+        result = uffs_seekdir((uffs_DIR *)(file->data), offset / sizeof(struct dirent));
         if (result >= 0)
         {
-            file->pos = offset; 
+            file->pos = offset;
             return offset;
         }
     }
     else if (file->type == FT_REGULAR)
     {
         result = uffs_seek((int)(file->data), offset, USEEK_SET);
-        if (result >= 0)    
+        if (result >= 0)
             return offset;
     }
 
@@ -465,19 +467,19 @@ static int dfs_uffs_seek(struct dfs_fd* file,
 
 /* return the size of struct dirent*/
 static int dfs_uffs_getdents(
-    struct dfs_fd* file,
-    struct dirent* dirp,
+    struct dfs_fd *file,
+    struct dirent *dirp,
     uint32_t count)
 {
     rt_uint32_t index;
-    char * file_path;
-    struct dirent* d;
-    uffs_DIR* dir;
-    struct uffs_dirent * uffs_d;
-    
-    dir = (uffs_DIR*)(file->data);
+    char *file_path;
+    struct dirent *d;
+    uffs_DIR *dir;
+    struct uffs_dirent *uffs_d;
+
+    dir = (uffs_DIR *)(file->data);
     RT_ASSERT(dir != RT_NULL);
-    
+
     /* round count, count is always 1 */
     count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
     if (count == 0) return -EINVAL;
@@ -486,13 +488,13 @@ static int dfs_uffs_getdents(
     file_path = rt_malloc(FILE_PATH_MAX);
     if (file_path == RT_NULL)
         return -ENOMEM;
-        
+
     index = 0;
     /* usually, the while loop should only be looped only once! */
     while (1)
     {
         struct uffs_stat s;
-        
+
         d = dirp + index;
 
         uffs_d = uffs_readdir(dir);
@@ -507,8 +509,8 @@ static int dfs_uffs_getdents(
         else
             rt_strncpy(file_path, uffs_d->d_name, FILE_PATH_MAX);
 
-        uffs_stat(file_path, &s); 
-        switch(s.st_mode & US_IFMT)   /* file type mark */
+        uffs_stat(file_path, &s);
+        switch (s.st_mode & US_IFMT)  /* file type mark */
         {
         case US_IFREG: /* directory */
             d->d_type = DT_REG;
@@ -533,10 +535,10 @@ static int dfs_uffs_getdents(
         if (index * sizeof(struct dirent) >= count)
             break;
     }
-    
+
     /* free file name buf */
     rt_free(file_path);
-    
+
     if (index == 0)
         return uffs_result_to_dfs(uffs_get_error());
 
@@ -545,7 +547,7 @@ static int dfs_uffs_getdents(
     return index * sizeof(struct dirent);
 }
 
-static int dfs_uffs_unlink(struct dfs_filesystem* fs, const char* path)
+static int dfs_uffs_unlink(struct dfs_filesystem *fs, const char *path)
 {
     int result;
     struct uffs_stat s;
@@ -556,7 +558,7 @@ static int dfs_uffs_unlink(struct dfs_filesystem* fs, const char* path)
         return uffs_result_to_dfs(uffs_get_error());
     }
 
-    switch(s.st_mode & US_IFMT)
+    switch (s.st_mode & US_IFMT)
     {
     case US_IFREG:
         result = uffs_remove(path);
@@ -575,12 +577,12 @@ static int dfs_uffs_unlink(struct dfs_filesystem* fs, const char* path)
 }
 
 static int dfs_uffs_rename(
-    struct dfs_filesystem* fs,
-    const char* oldpath,
-    const char* newpath)
+    struct dfs_filesystem *fs,
+    const char *oldpath,
+    const char *newpath)
 {
     int result;
-    
+
     result = uffs_rename(oldpath, newpath);
     if (result < 0)
         return uffs_result_to_dfs(uffs_get_error());
@@ -588,7 +590,7 @@ static int dfs_uffs_rename(
     return 0;
 }
 
-static int dfs_uffs_stat(struct dfs_filesystem* fs, const char *path, struct stat *st)
+static int dfs_uffs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 {
     int result;
     struct uffs_stat s;
@@ -607,7 +609,7 @@ static int dfs_uffs_stat(struct dfs_filesystem* fs, const char *path, struct sta
     return 0;
 }
 
-static const struct dfs_file_ops dfs_uffs_fops = 
+static const struct dfs_file_ops dfs_uffs_fops =
 {
     dfs_uffs_open,
     dfs_uffs_close,

@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>24</version>
+        <version>22</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -26,30 +26,40 @@
           <state>Debug\List</state>
         </option>
         <option>
+          <name>Variant</name>
+          <version>21</version>
+          <state>39</state>
+        </option>
+        <option>
           <name>GEndianMode</name>
           <state>0</state>
         </option>
         <option>
           <name>Input variant</name>
           <version>3</version>
-          <state>7</state>
+          <state>0</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>No specifier n, no float nor long long, no scan set, no assignment suppressing, without multibyte support.</state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>2</version>
-          <state>7</state>
+          <state>0</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>No specifier a, A, no specifier n, no float nor long long, no flags.</state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>FPU</name>
+          <version>3</version>
+          <state>5</state>
         </option>
         <option>
           <name>OGCoreOrChip</name>
@@ -71,11 +81,11 @@
         </option>
         <option>
           <name>OGProductVersion</name>
-          <state>6.10.1.52170</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -87,11 +97,11 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32F107xC	ST STM32F107xC</state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GEndianModeBE</name>
@@ -124,8 +134,13 @@
           <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
+          <name>GFPUCoreSlave</name>
+          <version>21</version>
+          <state>39</state>
+        </option>
+        <option>
           <name>GBECoreSlave</name>
-          <version>22</version>
+          <version>21</version>
           <state>39</state>
         </option>
         <option>
@@ -140,34 +155,6 @@
           <name>GRuntimeLibThreads</name>
           <state>0</state>
         </option>
-        <option>
-          <name>CoreVariant</name>
-          <version>22</version>
-          <state>39</state>
-        </option>
-        <option>
-          <name>GFPUDeviceSlave</name>
-          <state>STM32F107xC	ST STM32F107xC</state>
-        </option>
-        <option>
-          <name>FPU2</name>
-          <version>0</version>
-          <state>4</state>
-        </option>
-        <option>
-          <name>NrRegs</name>
-          <version>0</version>
-          <state>1</state>
-        </option>
-        <option>
-          <name>NEON</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GFPUCoreSlave2</name>
-          <version>22</version>
-          <state>39</state>
-        </option>
       </data>
     </settings>
     <settings>
@@ -181,7 +168,12 @@
           <name>CCDefines</name>
           <state />
           <state>CONFIG_PLATFORM_8711B</state>
+          <state>CONFIG_BUILD_ROM</state>
+          <state>PLATFORM_RTTHREAD</state>
           <state>__IEEE_LITTLE_ENDIAN</state>
+          <state>RT_USING_DLIBC</state>
+          <state>_DLIB_FILE_DESCRIPTOR</state>
+          <state>_DLIB_THREAD_SUPPORT</state>
           <state>RT_USING_DLIBC</state>
         </option>
         <option>
@@ -312,52 +304,26 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\wlan_ram_map\rom</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\lwip</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\platform</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\include</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\include</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\src</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\libc\rom\string</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal_ext</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\polarssl-1.3.8\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip_dhcpd</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\drivers\wlan</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\portable\IAR\ARM_CM4F</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\rtl_lib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\os</state>
+          <state>$PROJ_DIR$\libraries\smartconfig\inc</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\src\osdep</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\ssl_ram_map\rom</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -644,7 +610,7 @@
         <debug>1</debug>
         <option>
           <name>OOCOutputFormat</name>
-          <version>3</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -821,10 +787,7 @@
         <option>
           <name>IlinkAdditionalLibs</name>
           <state />
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_platform.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_rtlstd.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wlan.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wps.a</state>
+          <state>$PROJ_DIR$\libraries\smartconfig\libs\libsmartconfig_armcm4_iar.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -1018,7 +981,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>24</version>
+        <version>22</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1034,13 +997,18 @@
           <state>Release\List</state>
         </option>
         <option>
+          <name>Variant</name>
+          <version>21</version>
+          <state>0</state>
+        </option>
+        <option>
           <name>GEndianMode</name>
           <state>0</state>
         </option>
         <option>
           <name>Input variant</name>
           <version>3</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>Input description</name>
@@ -1049,7 +1017,7 @@
         <option>
           <name>Output variant</name>
           <version>2</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>Output description</name>
@@ -1057,6 +1025,11 @@
         </option>
         <option>
           <name>GOutputBinary</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>FPU</name>
+          <version>3</version>
           <state>0</state>
         </option>
         <option>
@@ -1079,11 +1052,11 @@
         </option>
         <option>
           <name>OGProductVersion</name>
-          <state>6.10.1.52170</state>
+          <state>7.30.4.8186</state>
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.3.8937</state>
+          <state />
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1095,7 +1068,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state />
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1132,9 +1105,14 @@
           <state />
         </option>
         <option>
+          <name>GFPUCoreSlave</name>
+          <version>21</version>
+          <state>1</state>
+        </option>
+        <option>
           <name>GBECoreSlave</name>
-          <version>22</version>
-          <state>0</state>
+          <version>21</version>
+          <state>1</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -1146,34 +1124,6 @@
         </option>
         <option>
           <name>GRuntimeLibThreads</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>CoreVariant</name>
-          <version>22</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GFPUDeviceSlave</name>
-          <state>Default	None</state>
-        </option>
-        <option>
-          <name>FPU2</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>NrRegs</name>
-          <version>0</version>
-          <state>0</state>
-        </option>
-        <option>
-          <name>NEON</name>
-          <state>0</state>
-        </option>
-        <option>
-          <name>GFPUCoreSlave2</name>
-          <version>22</version>
           <state>0</state>
         </option>
       </data>
@@ -1188,8 +1138,6 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
-          <state>CONFIG_PLATFORM_8711B</state>
-          <state>__IEEE_LITTLE_ENDIAN</state>
           <state>RT_USING_DLIBC</state>
         </option>
         <option>
@@ -1320,52 +1268,26 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\wlan_ram_map\rom</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\lwip</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\platform</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\include</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\include</state>
-          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\src</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\netif</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\libc\rom\string</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\hal_ext</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\polarssl-1.3.8\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\dlib</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip_dhcpd</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\drivers\wlan</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\freertos\freertos_v8.1.2\Source\portable\IAR\ARM_CM4F</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\rtl_lib</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\os</state>
+          <state>$PROJ_DIR$\libraries\smartconfig\inc</state>
+          <state>$PROJ_DIR$\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\drivers\wlan\realtek\src\osdep</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\network\ssl\ssl_ram_map\rom</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\swlib\std_lib\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\include</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\api</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\include</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1652,7 +1574,7 @@
         <debug>0</debug>
         <option>
           <name>OOCOutputFormat</name>
-          <version>3</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -1829,10 +1751,7 @@
         <option>
           <name>IlinkAdditionalLibs</name>
           <state />
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_platform.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_rtlstd.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wlan.a</state>
-          <state>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\bsp\lib\common\IAR\lib_wps.a</state>
+          <state>$PROJ_DIR$\libraries\smartconfig\libs\libsmartconfig_armcm4_iar.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -2017,162 +1936,15 @@
     </settings>
   </configuration>
   <group>
-    <name>Applications</name>
-    <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Drivers</name>
-    <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_wifi.c</name>
-    </file>
-  </group>
-  <group>
-    <name>amebaz_wlan</name>
-    <file>
-      <name>$PROJ_DIR$\drivers\wlan\amebaz_wlan.c</name>
-    </file>
-  </group>
-  <group>
-    <name>rtt_patch</name>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\os\rtthread_service.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\rtl8710b_startup.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\8711b\app_start.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\rtthread_patch\realtek\common\wifi\wifi_conf.c</name>
-    </file>
-  </group>
-  <group>
-    <name>ameba_wifi</name>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_ind.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_util.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\wifi_promisc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\api\wifi\rtw_wpa_supplicant\wpa_supplicant\wifi_eap_config.c</name>
-    </file>
-  </group>
-  <group>
-    <name>mbed</name>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\analogin_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\dma_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\efuse_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\flash_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\gpio_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\gpio_irq_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\i2c_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\i2s_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\nfc_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pinmap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pinmap_common.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\port_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\pwmout_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\rtc_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\serial_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\sleep.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\spi_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\sys_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\timer_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\us_ticker.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\us_ticker_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\wait_api.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\common\mbed\targets\hal\rtl8711b\wdt_api.c</name>
-    </file>
-  </group>
-  <group>
-    <name>os_dep</name>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\os\os_dep\osdep_service.c</name>
-    </file>
-  </group>
-  <group>
-    <name>soc_8711b</name>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\cmsis\device\system_8195a.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\ram_lib\rtl8710b_pinmapcfg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\fwlib\ram_lib\rtl8710b_intfcfg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\ram\rtl_consol.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\app\monitor\ram\monitor.c</name>
-    </file>
-  </group>
-  <group>
     <name>Kernel</name>
     <file>
       <name>$PROJ_DIR$\..\..\src\clock.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\components.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\cpu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\device.c</name>
@@ -2212,13 +1984,34 @@
     </file>
   </group>
   <group>
-    <name>CORTEX-M4</name>
+    <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
     </file>
+  </group>
+  <group>
+    <name>Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\wlan\drv_wifi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\wlan\drv_wlan.c</name>
+    </file>
+  </group>
+  <group>
+    <name>smartconfig</name>
+  </group>
+  <group>
+    <name>cpu</name>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2228,12 +2021,15 @@
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\pin.c</name>
-    </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\serial\serial.c</name>
     </file>
@@ -2247,6 +2043,9 @@
       <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\ringblk_buf.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
     </file>
     <file>
@@ -2256,13 +2055,7 @@
       <name>$PROJ_DIR$\..\..\components\drivers\src\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_cmd.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_dev.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\wlan\wlan_mgnt.c</name>
     </file>
   </group>
   <group>
@@ -2271,49 +2064,16 @@
       <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
     </file>
+  </group>
+  <group>
+    <name>libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_compiler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_error.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_heap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_init.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_node.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_ops.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_parser.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_var.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_vm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\finsh_token.c</name>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\time.c</name>
     </file>
   </group>
   <group>
@@ -2351,116 +2111,119 @@
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\dlib\time.c</name>
-    </file>
   </group>
   <group>
-    <name>LwIP</name>
+    <name>lwIP</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\api_lib.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\arch\sys_arch.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\api_msg.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\api_lib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\err.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\api_msg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\netbuf.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\err.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\netdb.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\netbuf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\netifapi.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\netdb.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\sockets.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\netifapi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\api\tcpip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\sockets.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\arch\sys_arch.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\api\tcpip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\def.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\def.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\dhcp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\dns.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\dns.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\inet_chksum.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\init.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\init.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\memp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\netif.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\memp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\pbuf.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\netif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\raw.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\pbuf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\stats.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\raw.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\sys.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\stats.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\tcp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\sys.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\tcp_in.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\tcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\tcp_out.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\tcp_in.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\timers.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\tcp_out.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\udp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\timeouts.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\autoip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\udp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\icmp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\netif\ethernet.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\igmp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\netif\ethernetif.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\inet.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\netif\lowpan6.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\inet_chksum.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\autoip.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\ip.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\dhcp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\ip_addr.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\etharp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\core\ipv4\ip_frag.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\icmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\netif\etharp.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\igmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\netif\ethernetif.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\net\lwip-1.4.1\src\netif\slipif.c</name>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_addr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\core\ipv4\ip4_frag.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\net\lwip_dhcpd\dhcp_server_raw.c</name>
     </file>
   </group>
 </project>

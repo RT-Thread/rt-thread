@@ -18,6 +18,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 #include "synopsys_emac.h"
+#include "gd32f4xx_enet.h"
+
+/* The state of enet  initialization */
+volatile uint32_t enet_init_state = 0;
 
 /* Global pointers on Tx and Rx descriptor used to track transmit and receive descriptors */
 extern EMAC_DMADESCTypeDef  *DMATxDescToSet;
@@ -28,139 +32,15 @@ extern EMAC_DMADESCTypeDef  *DMARxDescToGet;
   */
 rt_uint32_t EMAC_init(struct rt_synopsys_eth * ETHERNET_MAC, rt_uint32_t SystemCoreClock)
 {
-    rt_uint32_t  value = 0;
+    /*-------------------------------- Reset ethernet -------------------------------*/
+    enet_deinit();
+    enet_software_reset();
 
-    /*-------------------------------- MAC Config ------------------------------*/
-    /*---------------------- ETHERNET MACMIIAR Configuration -------------------*/
-    /* Get the ETHERNET MACMIIAR value */
-    value = ETHERNET_MAC->GAR;
-    /* Clear CSR Clock Range CR[2:0] bits */
-    value &= MACMIIAR_CR_MASK;
+    /* configure the parameters which are usually less cared for enet initialization */
+    enet_initpara_config(HALFDUPLEX_OPTION, ENET_CARRIERSENSE_DISABLE|ENET_RECEIVEOWN_ENABLE|ENET_RETRYTRANSMISSION_DISABLE|ENET_BACKOFFLIMIT_10|ENET_DEFERRALCHECK_DISABLE);
 
-    /* Get hclk frequency value */
-    /* Set CR bits depending on hclk value */
-    if((SystemCoreClock >= 20000000)&&(SystemCoreClock < 35000000))
-    {
-        /* CSR Clock Range between 20-35 MHz */
-        value |= (rt_uint32_t)EMAC_MACMIIAR_CR_Div16;
-    }
-    else if((SystemCoreClock >= 35000000)&&(SystemCoreClock < 60000000))
-    {
-        /* CSR Clock Range between 35-60 MHz */
-        value |= (rt_uint32_t)EMAC_MACMIIAR_CR_Div26;
-    }
-    else if((SystemCoreClock >= 60000000)&&(SystemCoreClock <= 100000000))
-    {
-        /* CSR Clock Range between 60-100 MHz */
-        value |= (rt_uint32_t)EMAC_MACMIIAR_CR_Div42;
-    }
-    else if((SystemCoreClock >= 100000000)&&(SystemCoreClock <= 150000000))
-    {
-        /* CSR Clock Range between 100-150 MHz */
-        value |= (rt_uint32_t)EMAC_MACMIIAR_CR_Div62;
-    }
-    else if((SystemCoreClock >= 150000000)&&(SystemCoreClock <= 250000000))
-    {
-        /* CSR Clock Range between 150-250 MHz */
-        value |= (rt_uint32_t)EMAC_MACMIIAR_CR_Div102;
-    }
-    else /* if((SystemCoreClock >= 250000000)&&(SystemCoreClock <= 300000000)) */
-    {
-        /* CSR Clock Range between 250-300 MHz */
-        value |= (rt_uint32_t)EMAC_MACMIIAR_CR_Div122;
-    }
-    /* Write to ETHERNET MAC MIIAR: Configure the ETHERNET CSR Clock Range */
-    ETHERNET_MAC->GAR = (rt_uint32_t)value;
-
-    /*------------------------ ETHERNET MACCR Configuration --------------------*/
-    /* Get the ETHERNET MACCR value */
-    value = ETHERNET_MAC->MCR;
-    /* Clear WD, PCE, PS, TE and RE bits */
-    value &= MACCR_CLEAR_MASK;
-
-    value |= (rt_uint32_t)(EMAC_Watchdog_Enable |
-                        EMAC_Jabber_Enable |
-                        EMAC_InterFrameGap_96Bit |
-                        EMAC_CarrierSense_Enable |
-                        EMAC_Speed_100M |
-                        EMAC_ReceiveOwn_Enable |
-                        EMAC_LoopbackMode_Disable |
-                        EMAC_Mode_FullDuplex |
-                        EMAC_ChecksumOffload_Enable |
-                        EMAC_RetryTransmission_Disable |
-                        EMAC_AutomaticPadCRCStrip_Disable |
-                        EMAC_BackOffLimit_10 |
-                        EMAC_DeferralCheck_Disable);
-
-    /* Write to ETHERNET MACCR */
-    value |= (1<<15);
-    value &= ~(1<<25);
-    value &= ~(1<<24);
-    ETHERNET_MAC->MCR = (rt_uint32_t)value;
-
-    /*----------------------- ETHERNET MACFFR Configuration --------------------*/
-    /* Write to ETHERNET MACFFR */
-    ETHERNET_MAC->MFFR = (rt_uint32_t)(EMAC_ReceiveAll_Enable |
-                                        EMAC_SourceAddrFilter_Disable |
-                                        EMAC_PassControlFrames_BlockAll |
-                                        EMAC_BroadcastFramesReception_Disable |
-                                        EMAC_DestinationAddrFilter_Normal |
-                                        EMAC_PromiscuousMode_Disable |
-                                        EMAC_MulticastFramesFilter_Perfect |
-                                        EMAC_UnicastFramesFilter_Perfect);
-
-    /*--------------- ETHERNET MACHTHR and MACHTLR Configuration ---------------*/
-    /* Write to ETHERNET MACHTHR */
-    ETHERNET_MAC->MHTRH = 0;
-    /* Write to ETHERNET MACHTLR */
-    ETHERNET_MAC->MHTRL = 0;
-    /*----------------------- ETHERNET MACFCR Configuration --------------------*/
-    /* Get the ETHERNET MACFCR value */
-    value = ETHERNET_MAC->FCR;
-    /* Clear xx bits */
-    value &= MACFCR_CLEAR_MASK;
-
-    value |= (rt_uint32_t)((0 << 16) |
-                        EMAC_ZeroQuantaPause_Disable |
-                        EMAC_PauseLowThreshold_Minus4 |
-                        EMAC_UnicastPauseFrameDetect_Disable |
-                        EMAC_ReceiveFlowControl_Disable |
-                        EMAC_TransmitFlowControl_Disable);
-
-    /* Write to ETHERNET MACFCR */
-    ETHERNET_MAC->FCR = (rt_uint32_t)value;
-    /*----------------------- ETHERNET MACVLANTR Configuration -----------------*/
-    ETHERNET_MAC->VTR = (rt_uint32_t)(EMAC_VLANTagComparison_16Bit |
-                                       0);
-
-    /*-------------------------------- DMA Config ------------------------------*/
-    /*----------------------- ETHERNET DMAOMR Configuration --------------------*/
-    /* Get the ETHERNET DMAOMR value */
-    value = ETHERNET_MAC->OMR;
-    /* Clear xx bits */
-    value &= DMAOMR_CLEAR_MASK;
-
-    value |= (rt_uint32_t)(EMAC_DropTCPIPChecksumErrorFrame_Disable |
-                        EMAC_ReceiveStoreForward_Enable |
-                        EMAC_FlushReceivedFrame_Enable |
-                        EMAC_TransmitStoreForward_Enable |
-                        EMAC_TransmitThresholdControl_64Bytes |
-                        EMAC_ForwardErrorFrames_Disable |
-                        EMAC_ForwardUndersizedGoodFrames_Disable |
-                        EMAC_ReceiveThresholdControl_64Bytes |
-                        EMAC_SecondFrameOperate_Disable);
-
-    /* Write to ETHERNET DMAOMR */
-    ETHERNET_MAC->OMR = (rt_uint32_t)value;
-
-    /*----------------------- ETHERNET DMABMR Configuration --------------------*/
-    ETHERNET_MAC->BMR = (rt_uint32_t)(EMAC_AddressAlignedBeats_Enable |
-                                       EMAC_FixedBurst_Enable |
-                                       EMAC_RxDMABurstLength_32Beat | /* !! if 4xPBL is selected for Tx or Rx it is applied for the other */
-                                       EMAC_TxDMABurstLength_32Beat |
-                                       (0 << 2) |
-                                       EMAC_DMAArbitration_RoundRobin_RxTx_2_1 |
-                                       EMAC_DMABMR_USP); /* Enable use of separate PBL for Rx and Tx */
+    /*-------------------------------- Initialize ENET ------------------------------*/
+    enet_init_state = enet_init(ENET_AUTO_NEGOTIATION, ENET_AUTOCHECKSUM_DROP_FAILFRAMES, ENET_BROADCAST_FRAMES_PASS);
 
     /* Return Ethernet configuration success */
     return EMAC_SUCCESS;
@@ -288,7 +168,7 @@ void EMAC_start(struct rt_synopsys_eth * ETHERNET_MAC)
     /* Enable transmit state machine of the MAC for transmission on the MII */
     EMAC_MACTransmissionCmd(ETHERNET_MAC, RT_TRUE);
     /* Flush Transmit FIFO */
-    EMAC_FlushTransmitFIFO(ETHERNET_MAC);
+    enet_txfifo_flush();
     /* Enable receive state machine of the MAC for reception from the MII */
     EMAC_MACReceptionCmd(ETHERNET_MAC, RT_TRUE);
 

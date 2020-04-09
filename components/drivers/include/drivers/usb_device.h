@@ -17,6 +17,10 @@
 #include <rtthread.h>
 #include "drivers/usb_common.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Vendor ID */
 #ifdef USB_VENDOR_ID
 #define _VENDOR_ID                  USB_VENDOR_ID
@@ -453,4 +457,9 @@ rt_inline void usbd_os_proerty_descriptor_send(ufunction_t func, ureq_t setup, u
     }
     rt_usbd_ep0_write(func->device, data, setup->wLength);
 }
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

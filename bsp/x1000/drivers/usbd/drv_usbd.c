@@ -1,8 +1,13 @@
 /*
- * drv_usbd.c
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  Created on: 2017Äê2ÔÂ1ÈÕ
- *      Author: Urey
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-02-01     Urey         first
+ * 2018-12-20     heyuanjie    fix bugs
+ * 2018-12-25     Zhou Yanjie  modify the coding style 
  */
 
 #include <rtthread.h>
@@ -145,7 +150,7 @@ static  rt_size_t __ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t 
     dwc_ep *pep ;
     RT_DEBUG_LOG(RT_DEBUG_USB,("%s address = %02x,size = %d\n", __func__,address,size));
 
-    pep = __dwc_hdl.dep[address & 0x0F + DWC_EP_OUT_OFS];
+    pep = __dwc_hdl.dep[(address & 0x0F) + DWC_EP_OUT_OFS];
 	pep->ep_state 	= EP_DATA;
 	pep->xfer_len	= size;
 //	pep->xfer_buff  = buffer;
