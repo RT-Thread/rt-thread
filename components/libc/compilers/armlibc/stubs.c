@@ -251,7 +251,7 @@ void _ttywrch(int ch)
 #endif
 }
 
-void _sys_exit(int return_code)
+RT_WEAK void _sys_exit(int return_code)
 {
     /* TODO: perhaps exit the thread which is invoking this function */
     while (1);
@@ -265,12 +265,25 @@ void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
+    struct stat stat;
+    
+    if (fh < STDERR)
+        return -1;
+
+#ifndef RT_USING_DFS
     return -1;
+#else
+    fstat(fh, &stat);
+    return stat.st_size;
+#endif
 }
 
 int _sys_istty(FILEHANDLE fh)
 {
-    return 0;
+    if((STDIN <= fh) && (fh <= STDERR))
+        return 1;
+    else
+        return 0;
 }
 
 int remove(const char *filename)

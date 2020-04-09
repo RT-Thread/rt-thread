@@ -7,6 +7,11 @@
  * Date           Author       Notes
  * 2010-03-22     Bernard      first version
  */
+ 
+#include <rtthread.h>
+
+#if defined(RT_USING_FINSH) && !defined(FINSH_USING_SYMTAB)
+
 #include "finsh.h"
 
 long hello(void);
@@ -22,12 +27,6 @@ long list_msgqueue(void);
 long list_mempool(void);
 long list_timer(void);
 
-#ifdef FINSH_USING_SYMTAB
-struct finsh_syscall *_syscall_table_begin  = NULL;
-struct finsh_syscall *_syscall_table_end    = NULL;
-struct finsh_sysvar *_sysvar_table_begin    = NULL;
-struct finsh_sysvar *_sysvar_table_end      = NULL;
-#else
 struct finsh_syscall _syscall_table[] =
 {
     {"hello", hello},
@@ -62,4 +61,6 @@ struct finsh_syscall *_syscall_table_end   = &_syscall_table[sizeof(_syscall_tab
 
 struct finsh_sysvar *_sysvar_table_begin  = NULL;
 struct finsh_sysvar *_sysvar_table_end    = NULL;
-#endif
+
+#endif /* RT_USING_FINSH && !FINSH_USING_SYMTAB */
+

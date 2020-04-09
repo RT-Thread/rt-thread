@@ -56,6 +56,7 @@ elif rtconfig.PLATFORM == 'mingw':
         odbccp32
         ''')
     TARGET = 'rtthread-win32.' + rtconfig.TARGET_EXT
+    DefaultEnvironment(tools=[])
     env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -72,7 +73,7 @@ else:
     env['CC']=rtconfig.CC
     env.Append(CCFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
-    env.Append(LIBS=['m'])
+    env.Append(LIBS=['winmm'])
 
 # prepare building environment
 
@@ -94,7 +95,7 @@ if GetDepend('RT_USING_MODULE'):
       dest='def',
       action='store_true',
       default=False,
-      help='create rthread.def of rtthread.dll on windows')
+      help='create rtthread.def of rtthread.dll on windows')
     if GetOption('def'):
         if rtconfig.PLATFORM == 'mingw':
             env['LINKFLAGS'] = rtconfig.DEFFILE_LFLAGS

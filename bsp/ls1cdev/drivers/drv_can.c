@@ -1,21 +1,7 @@
 /*
- * File      : drv_can.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2018, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -119,6 +105,7 @@ static rt_err_t setfilter(struct ls1c_bxcan *pbxcan, struct rt_can_filter_config
     }
     return RT_EOK;
 }
+
 static void bxcan0_filter_init(struct rt_can_device *can)
 {
         struct ls1c_bxcan *pbxcan;
@@ -242,13 +229,12 @@ static void bxcan0_hw_init(void)
 #ifdef USING_BXCAN1
 static void bxcan1_hw_init(void)
 {
-    pin_set_purpose(56, PIN_PURPOSE_GPIO);
-    pin_set_purpose(57, PIN_PURPOSE_GPIO);
-    pin_set_remap(56, PIN_REMAP_DEFAULT);
-    pin_set_remap(57, PIN_REMAP_DEFAULT);
+    pin_set_purpose(56, PIN_PURPOSE_OTHER);
+    pin_set_purpose(57, PIN_PURPOSE_OTHER);
+    pin_set_remap(56, PIN_REMAP_THIRD);
+    pin_set_remap(57, PIN_REMAP_THIRD);
 }
 #endif
-
 
 static rt_err_t configure(struct rt_can_device *can, struct can_configure *cfg)
 {
@@ -444,7 +430,7 @@ void ls1c_can0_irqhandler(int irq, void *param)
        rt_kprintf("\r\nCan0 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_DOI) 
+    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI) 
     {
        rt_hw_can_isr(&bxcan0, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan0 int RX OF happened!\r\n");
@@ -484,7 +470,7 @@ void ls1c_can1_irqhandler(int irq, void *param)
        rt_kprintf("\r\nCan1 int TX happened!\r\n");
     }
     /*数据溢出中断*/
-    else if (( status  & CAN_IR_TI) == CAN_IR_DOI) 
+    else if (( status  & CAN_IR_DOI) == CAN_IR_DOI) 
     {
        rt_hw_can_isr(&bxcan1, RT_CAN_EVENT_RXOF_IND);
        rt_kprintf("\r\nCan1 int RX OF happened!\r\n");
@@ -515,7 +501,7 @@ int ls1c_bxcan_init(void)
     rt_kprintf("\r\ncan0 register! \r\n");
     
     rt_hw_interrupt_install(LS1C_CAN0_IRQ,( rt_isr_handler_t)bxcan0data.irq , RT_NULL, "can0");  
-    rt_hw_interrupt_umask(LS1C_CAN0_IRQ); 
+    rt_hw_interrupt_umask(LS1C_CAN0_IRQ);  
 #endif
 #ifdef USING_BXCAN1
     bxcan1.config.baud_rate = CAN250kBaud;

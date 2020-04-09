@@ -1,0 +1,10 @@
+
+config EMSK_USING_UART0
+    bool "Using UART0"
+    select RT_USING_SERIAL
+    default y
+
+config EMSK_USING_UART1
+    bool "Using UART1"
+    select RT_USING_SERIAL
+    default y

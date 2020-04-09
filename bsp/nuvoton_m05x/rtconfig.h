@@ -15,10 +15,11 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
-#define RT_IDEL_HOOK_LIST_SIZE 4
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 /* RT_USING_TIMER_SOFT is not set */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 /* RT_DEBUG_INIT_CONFIG is not set */
 /* RT_DEBUG_THREAD_CONFIG is not set */
 /* RT_DEBUG_SCHEDULER_CONFIG is not set */
@@ -96,6 +97,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_CPUTIME is not set */

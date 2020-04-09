@@ -35,6 +35,7 @@ struct hid_s
 };
 
 /* CustomHID_ConfigDescriptor */
+ALIGN(4)
 const rt_uint8_t _report_desc[]=
 {
 #ifdef RT_USB_DEVICE_HID_KEYBOARD
@@ -239,6 +240,7 @@ const rt_uint8_t _report_desc[]=
 #endif
 }; /* CustomHID_ReportDescriptor */
 
+ALIGN(4)
 static struct udevice_descriptor _dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -258,6 +260,7 @@ static struct udevice_descriptor _dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -273,6 +276,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 
 
 /* hid interface descriptor */
+ALIGN(4)
 const static struct uhid_comm_descriptor _hid_comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -357,7 +361,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
     },
 };
 
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -368,7 +372,7 @@ const static char* _ustring[] =
     "Interface",
 };
 
-static void dump_data(uint8_t *data, rt_size_t size)
+static void dump_data(rt_uint8_t *data, rt_size_t size)
 {
     rt_size_t i;
     for (i = 0; i < size; i++)
@@ -453,9 +457,6 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
     RT_ASSERT(setup != RT_NULL);
 
     struct hid_s *data = (struct hid_s *) func->user_data;
-
-    if(setup->wIndex != 0)
-        return -RT_EIO;
 
     switch (setup->bRequest)
     {

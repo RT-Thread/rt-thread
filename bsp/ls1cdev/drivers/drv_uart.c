@@ -1,21 +1,7 @@
 /*
- * File      : drv_uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -131,7 +117,7 @@ static void uart_irq_handler(int vector, void *param)
 
 }
 
-static const struct rt_uart_ops stm32_uart_ops =
+static const struct rt_uart_ops ls1c_uart_ops =
 {
     ls1c_uart_configure,
     ls1c_uart_control,
@@ -146,7 +132,25 @@ struct rt_uart_ls1c uart2 =
     LS1C_UART2_IRQ,
 };
 struct rt_serial_device serial2;
+#endif /* RT_USING_UART2 */
+
+#if defined(RT_USING_UART1)
+struct rt_uart_ls1c uart1 =
+{
+    LS1C_UART1,
+    LS1C_UART1_IRQ,
+};
+struct rt_serial_device serial1;
 #endif /* RT_USING_UART1 */
+
+#if defined(RT_USING_UART3)
+struct rt_uart_ls1c uart3 =
+{
+    LS1C_UART3,
+    LS1C_UART3_IRQ,
+};
+struct rt_serial_device serial3;
+#endif /* RT_USING_UART3 */
 
 void rt_hw_uart_init(void)
 {
@@ -156,7 +160,7 @@ void rt_hw_uart_init(void)
 #ifdef RT_USING_UART2
     uart = &uart2;
 
-    serial2.ops    = &stm32_uart_ops;
+    serial2.ops    = &ls1c_uart_ops;
     serial2.config = config;
 
     pin_set_purpose(36, PIN_PURPOSE_OTHER);
@@ -166,12 +170,55 @@ void rt_hw_uart_init(void)
 
     rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial2, "UART2");
 
-    /* register UART1 device */
+    /* register UART2 device */
     rt_hw_serial_register(&serial2,
                           "uart2",
                           //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
+#endif /* RT_USING_UART2 */
+
+#ifdef RT_USING_UART1
+    uart = &uart1;
+
+    serial1.ops    = &ls1c_uart_ops;
+    serial1.config = config;
+
+    pin_set_purpose(2, PIN_PURPOSE_OTHER);
+    pin_set_purpose(3, PIN_PURPOSE_OTHER);
+    pin_set_remap(2, PIN_REMAP_FOURTH);
+    pin_set_remap(3, PIN_REMAP_FOURTH);
+
+    rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial1, "UART1");
+
+    /* register UART1 device */
+    rt_hw_serial_register(&serial1,
+                          "uart1",
+                          //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
 #endif /* RT_USING_UART1 */
+
+#ifdef RT_USING_UART3
+    uart = &uart3;
+
+    serial3.ops    = &ls1c_uart_ops;
+    serial3.config = config;
+
+    pin_set_purpose(0, PIN_PURPOSE_OTHER);
+    pin_set_purpose(1, PIN_PURPOSE_OTHER);
+    pin_set_remap(0, PIN_REMAP_FOURTH);
+    pin_set_remap(1, PIN_REMAP_FOURTH);
+
+    rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial3, "UART3");
+
+    /* register UART1 device */
+    rt_hw_serial_register(&serial3,
+                          "uart3",
+                          //RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_DMA_RX,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart);
+#endif /* RT_USING_UART3 */
+
 }
 

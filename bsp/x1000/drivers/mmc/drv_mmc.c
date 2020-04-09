@@ -1,17 +1,14 @@
 /*
- * File      : drv_mmc.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013 - 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-03-09     aozima       the first version
- * 2013-03-29     aozima       support Jz4770.
- * 2013-04-01     aozima       add interrupt support for Jz4770.
+ * 2013-03-29     aozima       support JZ4770.
+ * 2013-04-01     aozima       add interrupt support for JZ4770.
+ * 2019-04-04     Jean-Luc     fix bug in jzmmc_submit_dma.
  */
 
 #include <rthw.h>
@@ -33,12 +30,8 @@
 #define DMA_ALIGN       (32U)
 #define PIO_THRESHOLD       64  /* use pio mode if data length < PIO_THRESHOLD */
 
-#define DEBUG_ENABLE
-#define DEBUG_SECTION_NAME  "SDIO"
-#define DEBUG_LEVEL         DBG_INFO
-// #define DEBUG_LEVEL         DBG_LOG
-#define DEBUG_COLOR
-
+#define DBG_TAG  "SDIO"
+#define DBG_LVL  DBG_INFO
 #include <rtdbg.h>
 
 /*
@@ -107,7 +100,7 @@ static inline int check_error_status(struct jzmmc_host *host, unsigned int statu
 {
     if (status & ERROR_STAT)
     {
-        dbg_log(DBG_LOG, "Error status->0x%08X: cmd=%d\n", status, host->cmd->cmd_code);
+        LOG_D("Error status->0x%08X: cmd=%d", status, host->cmd->cmd_code);
         return -1;
     }
     return 0;
@@ -160,16 +153,16 @@ static int jzmmc_polling_status(struct jzmmc_host *host, unsigned int status)
 
     if (!cnt)
     {
-        dbg_log(DBG_LOG, "polling status(0x%08X) time out, "
-            "op=%d, status=0x%08X\n", status,
+        LOG_D("polling status(0x%08X) time out, "
+            "op=%d, status=0x%08X", status,
             host->cmd->cmd_code, msc_readl(host, MSC_STAT_OFFSET));
         return -1;
     }
 
     if (msc_readl(host, MSC_STAT_OFFSET) & ERROR_STAT)
     {
-        dbg_log(DBG_LOG, "polling status(0x%08X) error, "
-            "op=%d, status=0x%08X\n", status,
+        LOG_D("polling status(0x%08X) error, "
+            "op=%d, status=0x%08X", status,
             host->cmd->cmd_code, msc_readl(host, MSC_STAT_OFFSET));
         return -1;
     }
@@ -220,7 +213,7 @@ static void jzmmc_command_done(struct jzmmc_host *host, struct rt_mmcsd_cmd *cmd
         cmd->resp[0] |= res & 0xff;
     }
 
-    dbg_log(DBG_LOG, "error:%d cmd->resp [%08X, %08X, %08X, %08X]\r\n\r\n",
+    LOG_D("error:%d cmd->resp [%08X, %08X, %08X, %08X]\r\n\r",
              cmd->err,
              cmd->resp[0],
              cmd->resp[1],
@@ -244,7 +237,7 @@ static void jzmmc_data_done(struct jzmmc_host *host)
     {
         jzmmc_stop_dma(host);
         data->bytes_xfered = 0;
-        dbg_log(DBG_LOG, "error when request done\n");
+        LOG_D("error when request done");
     }
 }
 
@@ -279,7 +272,7 @@ rt_inline void jzmmc_submit_dma(struct jzmmc_host *host, struct rt_mmcsd_data *d
     host->dma_desc.nda  = 0;
     host->dma_desc.len  = data->blks * data->blksize;
     host->dma_desc.da   = virt_to_phys(data->buf);
-    host->dma_desc.dcmd = DMACMD_ENDI | DMACMD_LINK; /* only one DMA descriptor */
+    host->dma_desc.dcmd = DMACMD_ENDI; /* only one DMA descriptor */
 
 #ifdef DMA_BUFFER
     if ((uint32_t)(data->buf) & (DMA_ALIGN - 1))
@@ -288,11 +281,11 @@ rt_inline void jzmmc_submit_dma(struct jzmmc_host *host, struct rt_mmcsd_data *d
         host->dma_desc.da   = virt_to_phys(host->_dma_buffer);
         if (data->flags & DATA_DIR_WRITE)
         {
-            dbg_log(DBG_LOG, "%d ->", data->blks * data->blksize);
+            LOG_D("%d ->", data->blks * data->blksize);
             memcpy(host->_dma_buffer, data->buf, data->blks * data->blksize);
             rt_hw_dcache_flush_range((rt_ubase_t)(host->_dma_buffer), data->blks * data->blksize);
 
-            dbg_log(DBG_LOG, "| 0x%08x\n", data->buf);
+            LOG_D("| 0x%08x", data->buf);
         }
     }
     else
@@ -322,7 +315,7 @@ rt_inline void jzmmc_dma_start(struct jzmmc_host *host, struct rt_mmcsd_data *da
 #ifndef DMA_BUFFER
     if ((dma_addr & (DMA_ALIGN - 1)) || (dma_len & (DMA_ALIGN - 1)))
     {
-        dbg_log(DBG_LOG, "DMA align, addr=0x%08x\n", dma_addr);
+        LOG_D("DMA align, addr=0x%08x", dma_addr);
         dmac |= DMAC_ALIGNEN;
         if (dma_addr & (DMA_ALIGN - 1))
         {
@@ -330,7 +323,7 @@ rt_inline void jzmmc_dma_start(struct jzmmc_host *host, struct rt_mmcsd_data *da
         }
     }
 #endif
-    dbg_log(DBG_LOG, "DMA start: nda 0x%08x, da 0x%08x, len 0x%04x, cmd 0x%08x\n", virt_to_phys(&(host->dma_desc)),
+    LOG_D("DMA start: nda 0x%08x, da 0x%08x, len 0x%04x, cmd 0x%08x", virt_to_phys(&(host->dma_desc)),
         host->dma_desc.da, host->dma_desc.len, host->dma_desc.dcmd);
      
     rt_hw_dcache_flush_range((rt_ubase_t)(&(host->dma_desc)), 32);
@@ -366,19 +359,19 @@ static int wait_cmd_response(struct jzmmc_host *host)
 
         if(ret == RT_EOK)
         {
-            dbg_log(DBG_LOG, "wait response OK!\r\n");
+            LOG_D("wait response OK!\r");
         }
         else
         {
             uint32_t value;
 
             value = msc_readl(host, MSC_STAT_OFFSET);
-            dbg_log(DBG_LOG, "stat=0x%08x\n", value);
+            LOG_D("stat=0x%08x", value);
             value = msc_readl(host, MSC_IREG_OFFSET);
-            dbg_log(DBG_LOG, "iflag=0x%08x\n", value);
+            LOG_D("iflag=0x%08x", value);
 
             host->cmd->err = ret;
-            dbg_log(DBG_LOG, "wait END_CMD_RES timeout[uncompletion]\r\n");
+            LOG_D("wait END_CMD_RES timeout[uncompletion]\r");
 
             return -1;
         }
@@ -570,7 +563,7 @@ static void jzmmc_data_start(struct jzmmc_host *host, struct rt_mmcsd_data *data
         }
         else
         {
-            dbg_log(DBG_LOG, "msc status: 0x%08x\n", msc_readl(host, MSC_STAT_OFFSET));
+            LOG_D("msc status: 0x%08x", msc_readl(host, MSC_STAT_OFFSET));
 
             clear_msc_irq(host, IFLG_DATA_TRAN_DONE | IFLG_DMAEND | IFLG_DMA_DATA_DONE | IFLG_TIMEOUT_RES);
             disable_msc_irq(host, IMASK_DMA_DATA_DONE | IMASK_CRC_READ_ERR);
@@ -582,7 +575,7 @@ static void jzmmc_data_start(struct jzmmc_host *host, struct rt_mmcsd_data *data
                 {
                     rt_hw_dcache_invalidate_range((rt_ubase_t)(host->_dma_buffer), data->blks * data->blksize);
                     memcpy(data->buf, host->_dma_buffer, data->blks * data->blksize);
-                    dbg_log(DBG_LOG, "0x%08x <-| %d\n", data->buf, data->blks * data->blksize);
+                    LOG_D("0x%08x <-| %d", data->buf, data->blks * data->blksize);
                 }
                 else
                 {
@@ -630,8 +623,8 @@ static void jzmmc_command_start(struct jzmmc_host *host, struct rt_mmcsd_cmd *cm
         enable_msc_irq(host, imsk);
     }
 
-    dbg_log(DBG_LOG, "dat: 0x%08x\n", host->cmdat);
-    dbg_log(DBG_LOG, "resp type: %d\n", cmd->flags & RESP_MASK);
+    LOG_D("dat: 0x%08x", host->cmdat);
+    LOG_D("resp type: %d", cmd->flags & RESP_MASK);
 
     writel(0xFF, host->hw_base + MSC_RESTO_OFFSET);
     writel(0xFFFFFFFF, host->hw_base + MSC_RDTO_OFFSET);
@@ -661,7 +654,7 @@ static void jzmmc_sdio_request(struct rt_mmcsd_host *mmc, struct rt_mmcsd_req *r
     host->cmd   = req->cmd;
     host->cmdat = 0;
 
-    dbg_log(DBG_LOG, "CMD: %d ARG: %08X\n", req->cmd->cmd_code, req->cmd->arg);
+    LOG_D("CMD: %d ARG: %08X", req->cmd->cmd_code, req->cmd->arg);
     if (host->data)
     {
         direction = (host->data->flags & DATA_DIR_WRITE)? 'w' : 'r';
@@ -688,10 +681,10 @@ static void jzmmc_sdio_request(struct rt_mmcsd_host *mmc, struct rt_mmcsd_req *r
 
     if(host->data)
     {
-        dbg_log(DBG_LOG, "with data, datalen = %d\n", host->data->blksize * host->data->blks);
+        LOG_D("with data, datalen = %d", host->data->blksize * host->data->blks);
         if (host->data->blksize * host->data->blks < PIO_THRESHOLD)
         {
-            dbg_log(DBG_LOG, " pio mode!\n");
+            LOG_D(" pio mode!");
             enable_pio_mode(host);
         }
 
@@ -726,36 +719,36 @@ static void jzmmc_isr(int irqno, void* param)
 
     if(pending_ & IFLG_CRC_RES_ERR)
     {
-        dbg_log(DBG_WARNING, "RES CRC err\n");
+        LOG_W("RES CRC err");
     }
     if(pending_ & IFLG_CRC_READ_ERR)
     {
-        dbg_log(DBG_WARNING, "READ CRC err\n");
+        LOG_W("READ CRC err");
     }
     if(pending_ & IFLG_CRC_WRITE_ERR)
     {
-        dbg_log(DBG_WARNING, "WRITE CRC err\n");
+        LOG_W("WRITE CRC err");
     }
     
     
     if (pending & IFLG_TIMEOUT_RES)
     {
         host->cmd->err = -RT_ETIMEOUT;
-        dbg_log(DBG_LOG, "TIMEOUT\n");
+        LOG_D("TIMEOUT");
     }
     else if (pending & IFLG_CRC_READ_ERR)
     {
         host->cmd->err = -RT_EIO;
-        dbg_log(DBG_WARNING, "CRC READ\n");
+        LOG_W("CRC READ");
     }
     else if (pending & (IFLG_CRC_RES_ERR | IFLG_CRC_WRITE_ERR | IFLG_TIMEOUT_READ))
     {
-        dbg_log(DBG_ERROR, "MSC ERROR, pending=0x%08x\n", pending);
+        LOG_E("MSC ERROR, pending=0x%08x", pending);
     }
 
     if (pending & (IFLG_DMA_DATA_DONE | IFLG_WR_ALL_DONE))
     {
-        dbg_log(DBG_LOG, "msc DMA end!\n");
+        LOG_D("msc DMA end!");
 
         /* disable interrupt */
         rt_hw_interrupt_mask(host->irqno);
@@ -823,17 +816,17 @@ static void jzmmc_sdio_set_iocfg(struct rt_mmcsd_host *host,
     struct jzmmc_host * jz_sdio = host->private_data;
     rt_uint32_t clkdiv;
 
-    dbg_log(DBG_LOG, "set_iocfg clock: %d\n", io_cfg->clock);
+    LOG_D("set_iocfg clock: %d", io_cfg->clock);
 
     if (io_cfg->bus_width == MMCSD_BUS_WIDTH_4)
     {
-        dbg_log(DBG_LOG, "MMC: Setting controller bus width to 4\n");
+        LOG_D("MMC: Setting controller bus width to 4");
         jz_sdio->flags |= MSC_CMDAT_BUS_WIDTH_4BIT;
     }
     else
     {
         jz_sdio->flags &= ~(MSC_CMDAT_BUS_WIDTH_4BIT);
-        dbg_log(DBG_LOG, "MMC: Setting controller bus width to 1\n");
+        LOG_D("MMC: Setting controller bus width to 1");
     }
 
     if (io_cfg->clock)
@@ -866,16 +859,16 @@ static void jzmmc_sdio_set_iocfg(struct rt_mmcsd_host *host,
 
         if (clkrt > 7)
         {
-            dbg_log(DBG_ERROR, "invalid value of CLKRT: "
+            LOG_E("invalid value of CLKRT: "
                 "ios->clock=%d clk_want=%d "
-                "clk_set=%d clkrt=%X,\n",
+                "clk_set=%d clkrt=%X,",
                 io_cfg->clock, clk_want, clk_set, clkrt);
             return;
         }
 
         if (!clkrt)
         {
-            dbg_log(DBG_LOG, "clk_want: %u, clk_set: %luHz\n", io_cfg->clock, clk_get_rate(jz_sdio->clock));
+            LOG_D("clk_want: %u, clk_set: %luHz", io_cfg->clock, clk_get_rate(jz_sdio->clock));
         }
 
         writel(clkrt, jz_sdio->hw_base + MSC_CLKRT_OFFSET);
@@ -905,25 +898,25 @@ static void jzmmc_sdio_set_iocfg(struct rt_mmcsd_host *host,
     switch (io_cfg->power_mode)
     {
     case MMCSD_POWER_OFF:
-        dbg_log(DBG_LOG, "MMCSD_POWER_OFF\r\n");
+        LOG_D("MMCSD_POWER_OFF\r");
         break;
     case MMCSD_POWER_UP:
-        dbg_log(DBG_LOG, "MMCSD_POWER_UP\r\n");
+        LOG_D("MMCSD_POWER_UP\r");
         break;
     case MMCSD_POWER_ON:
-        dbg_log(DBG_LOG, "MMCSD_POWER_ON\r\n");
+        LOG_D("MMCSD_POWER_ON\r");
         jzmmc_hardware_init(jz_sdio);
         // jz_mmc_set_clock(jz_sdio, io_cfg->clock);
         break;
     default:
-        dbg_log(DBG_LOG, "unknown power_mode %d\n", io_cfg->power_mode);
+        LOG_D("unknown power_mode %d", io_cfg->power_mode);
         break;
     }
 }
 
 static rt_int32_t jzmmc_sdio_detect(struct rt_mmcsd_host *host)
 {
-    dbg_log(DBG_LOG, "jz47xx_SD_Detect\n");
+    LOG_D("jz47xx_SD_Detect");
 
     return 0;
 }
@@ -931,7 +924,7 @@ static rt_int32_t jzmmc_sdio_detect(struct rt_mmcsd_host *host)
 static void jzmmc_sdio_enable_sdio_irq(struct rt_mmcsd_host *host,
                                         rt_int32_t enable)
 {
-    dbg_log(DBG_LOG, "jz47xx_sdio_enable_sdio_irq, enable:%d\n", enable);
+    LOG_D("jz47xx_sdio_enable_sdio_irq, enable:%d", enable);
 }
 
 static const struct rt_mmcsd_host_ops ops =

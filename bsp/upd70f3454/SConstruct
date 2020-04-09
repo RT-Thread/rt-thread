@@ -12,6 +12,7 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT 
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -21,8 +22,8 @@ env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 
 if rtconfig.PLATFORM == 'iar':
     env.Replace(CCCOM = ['$CC $CCFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
-    env.Replace(LINKCOM = ['$LINK $SOURCES $LINKFLAGS -f lnk70f3454.xcl -l rtthread.map -Omotorola-s28=$TARGET'])
-    env.Replace(ARFLAGS = '')
+    env.Replace(ARFLAGS = [''])
+    env.Replace(LINKCOM = env["LINKCOM"] + ' --map project.map')
 
 Export('RTT_ROOT')
 Export('rtconfig')

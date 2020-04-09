@@ -26,7 +26,7 @@ void operator delete(void *ptr)
     rt_free(ptr);
 }
 
-void operator delete[] (void *ptr)
+void operator delete[](void *ptr)
 {
     return rt_free(ptr);
 }

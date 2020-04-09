@@ -1,0 +1,16 @@
+from building import *
+import rtconfig
+cwd     = GetCurrentDir()
+src	= ['MM32L3xx/Source/system_MM32L3xx.c']
+CPPPATH = [cwd + '/CMSIS/KEIL_CORE', cwd + '/MM32L3xx/Include',  cwd + '/MM32L3xx/Source', cwd + '/MM32L3xx/HAL_lib/inc']
+
+src += Glob('MM32L3xx/HAL_lib/src/*.c')
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+if rtconfig.CROSS_TOOL == 'keil':
+    src += ['MM32L3xx/Source/KEIL_StartAsm/startup_MM32L3xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += ['MM32L3xx/Source/IAR_StartAsm/startup_MM32L3xx.s']
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

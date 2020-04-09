@@ -11,7 +11,7 @@
 #ifndef SAL_SOCKET_H__
 #define SAL_SOCKET_H__
 
-#include "sal_ipaddr.h"
+#include <arpa/inet.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -97,6 +97,10 @@ typedef uint16_t in_port_t;
 #define MSG_DONTWAIT    0x08    /* Nonblocking i/o for this operation only */
 #define MSG_MORE        0x10    /* Sender will send more */
 
+/* Options for level IPPROTO_IP */
+#define IP_TOS             1
+#define IP_TTL             2
+
 /* Options for level IPPROTO_TCP */
 #define TCP_NODELAY     0x01    /* don't delay send to coalesce packets */
 #define TCP_KEEPALIVE   0x02    /* send KEEPALIVE probes when idle for pcb->keep_idle milliseconds */
@@ -107,12 +111,37 @@ typedef uint16_t in_port_t;
 /* Options and types related to multicast membership */
 #define IP_ADD_MEMBERSHIP  3
 #define IP_DROP_MEMBERSHIP 4
+/* Options and types for UDP multicast traffic handling */
+#define IP_MULTICAST_TTL   5
+#define IP_MULTICAST_IF    6
+#define IP_MULTICAST_LOOP  7
 
 typedef struct ip_mreq
 {
     struct in_addr imr_multiaddr; /* IP multicast address of group */
     struct in_addr imr_interface; /* local IP address of interface */
 } ip_mreq;
+
+/* The Type of Service provides an indication of the abstract parameters of the quality of service desired */
+#define IPTOS_TOS_MASK                 0x1E
+#define IPTOS_TOS(tos)                 ((tos) & IPTOS_TOS_MASK)
+#define IPTOS_LOWDELAY                 0x10
+#define IPTOS_THROUGHPUT               0x08
+#define IPTOS_RELIABILITY              0x04
+#define IPTOS_LOWCOST                  0x02
+#define IPTOS_MINCOST                  IPTOS_LOWCOST
+
+/* The Network Control precedence designation is intended to be used within a network only */
+#define IPTOS_PREC_MASK                0xe0
+#define IPTOS_PREC(tos)                ((tos) & IPTOS_PREC_MASK)
+#define IPTOS_PREC_NETCONTROL          0xe0
+#define IPTOS_PREC_INTERNETCONTROL     0xc0
+#define IPTOS_PREC_CRITIC_ECP          0xa0
+#define IPTOS_PREC_FLASHOVERRIDE       0x80
+#define IPTOS_PREC_FLASH               0x60
+#define IPTOS_PREC_IMMEDIATE           0x40
+#define IPTOS_PREC_PRIORITY            0x20
+#define IPTOS_PREC_ROUTINE             0x00
 
 /* Options for shatdown type */
 #ifndef SHUT_RD
@@ -128,6 +157,7 @@ struct sockaddr
     char           sa_data[14];
 };
 
+#if NETDEV_IPV4
 /* members are in network byte order */
 struct sockaddr_in
 {
@@ -138,6 +168,19 @@ struct sockaddr_in
 #define SIN_ZERO_LEN 8
     char            sin_zero[SIN_ZERO_LEN];
 };
+#endif /* NETDEV_IPV4 */
+
+#if NETDEV_IPV6
+struct sockaddr_in6 
+{
+  uint8_t         sin6_len;      /* length of this structure    */
+  sa_family_t     sin6_family;   /* AF_INET6                    */
+  in_port_t       sin6_port;     /* Transport layer port #      */
+  uint32_t        sin6_flowinfo; /* IPv6 flow information       */
+  struct in6_addr sin6_addr;     /* IPv6 address                */
+  uint32_t        sin6_scope_id; /* Set of interfaces for scope */
+};
+#endif /* NETDEV_IPV6 */
 
 struct sockaddr_storage
 {
@@ -145,9 +188,9 @@ struct sockaddr_storage
     sa_family_t    ss_family;
     char           s2_data1[2];
     uint32_t       s2_data2[3];
-#if SAL_IPV6
-    u32_t          s2_data3[3];
-#endif /* SAL_IPV6 */
+#if NETDEV_IPV6
+    uint32_t       s2_data3[3];
+#endif /* NETDEV_IPV6 */
 };
 
 int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen);

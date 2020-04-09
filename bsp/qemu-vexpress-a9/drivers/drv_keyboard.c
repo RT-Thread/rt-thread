@@ -6,10 +6,7 @@
 #include "interrupt.h"
 #include "drv_keyboard.h"
 
-#define DBG_LEVEL DBG_LOG
-// #define DBG_ENABLE
-#define DBG_COLOR
-
+#define DBG_LVL DBG_INFO
 #include "rtdbg.h"
 
 #define KEYBOARD_ADDRESS    (0x10006000)
@@ -196,47 +193,47 @@ static void keyboard_report_event(void * device, rt_uint32_t flag, rt_uint8_t da
     {
         if (map[i].data == data)
         {
-            dbg_log(DBG_LOG,"KEY info:\n");
+            LOG_D("KEY info:");
             if (flag & KBD_CAPS_LOCK)
             {
-                dbg_log(DBG_LOG,"CAPS:LOCK\n");
+                LOG_D("CAPS:LOCK");
             }
             else
             {
-                dbg_log(DBG_LOG,"CAPS:UNLOCK\n");
+                LOG_D("CAPS:UNLOCK");
             }
 
             if (flag & KBD_LEFT_SHIFT)
             {
                 mod |= RTGUI_KMOD_LSHIFT;
-                dbg_log(DBG_LOG,"SHIFT:LEFT\n");
+                LOG_D("SHIFT:LEFT");
             }
             else if (flag & KBD_RIGHT_SHIFT)
             {
                 mod |= RTGUI_KMOD_RSHIFT;
-                dbg_log(DBG_LOG,"SHIFT:RIGHT\n");
+                LOG_D("SHIFT:RIGHT");
             }
             else
             {
-                dbg_log(DBG_LOG,"SHIFT:NULL\n");
+                LOG_D("SHIFT:NULL");
             }
 
             if (flag & KBD_LEFT_CTRL)
             {
                 mod |= RTGUI_KMOD_LCTRL;
-                dbg_log(DBG_LOG,"CTRL:LEFT\n");
+                LOG_D("CTRL:LEFT");
             }
             else if (flag & KBD_RIGHT_CTRL)
             {
                 mod |= RTGUI_KMOD_RCTRL;
-                dbg_log(DBG_LOG,"CTRL:RIGHT\n");
+                LOG_D("CTRL:RIGHT");
             }
             else
             {
-                dbg_log(DBG_LOG,"CTRL:NULL\n");
+                LOG_D("CTRL:NULL");
             }
 
-            dbg_log(DBG_LOG,"flag:0x%08x value:0x%x key:%s status:%s\n", \
+            LOG_D("flag:0x%08x value:0x%x key:%s status:%s", \
                 flag, data, map[i].normal_key, press ==0 ? "UP" : "DOWN");
             find_key = 1;
             break;
@@ -244,7 +241,7 @@ static void keyboard_report_event(void * device, rt_uint32_t flag, rt_uint8_t da
     }
     if (find_key == 0)
     {
-        dbg_log(DBG_LOG,"flag:0x%08x value:0x%x key:%s status:%s\n", \
+        LOG_D("flag:0x%08x value:0x%x key:%s status:%s", \
             flag, data, "UNKNOWN", press ==0 ? "UP" : "DOWN");
         return;
     }
@@ -435,14 +432,14 @@ int rt_hw_keyboard_init(void)
     
     if(((id >> 12) & 0xff) != 0x41 || (id & 0xfff) != 0x050)
     {
-        dbg_log(DBG_ERROR, "read id fail id:0x%08x\n", id);
+        LOG_E("read id fail id:0x%08x", id);
         return RT_ERROR;
     }
 
     pdat = rt_malloc(sizeof(struct keyboard_pl050_pdata_t));
     if(!pdat)
     {
-        dbg_log(DBG_ERROR, "malloc memory\n", id);
+        LOG_E("malloc memory failed");
         return RT_ERROR;
     }
     rt_memset(pdat, 0, sizeof(struct keyboard_pl050_pdata_t));

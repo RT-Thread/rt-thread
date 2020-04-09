@@ -1,31 +1,15 @@
-Import('RTT_ROOT')
-Import('rtconfig')
+# RT-Thread building script for bridge
+
+import os
 from building import *
 
-comm = rtconfig.ARCH + '/common'
-path = rtconfig.ARCH + '/' + rtconfig.CPU
-ASFLAGS = ''
+Import('rtconfig')
 
-# The set of source files associated with this SConscript file.
-if rtconfig.PLATFORM == 'armcc':
-	src = Glob(path + '/*.c') + Glob(path + '/*_rvds.S') + Glob(comm + '/*.c')
+cwd   = GetCurrentDir()
+group = []
+list  = os.listdir(cwd)
 
-if rtconfig.PLATFORM == 'gcc':
-	src = Glob(path + '/*.c') + Glob(path + '/*_gcc.S') + Glob(comm + '/*.c') + Glob(path + '/*_init.S')
-
-if rtconfig.PLATFORM == 'iar':
-	src = Glob(path + '/*.c') + Glob(path + '/*_iar.S') + Glob(comm + '/*.c')
-
-if rtconfig.PLATFORM == 'cl':
-	src = Glob(path + '/*.c')
-
-if rtconfig.PLATFORM == 'mingw':
-	src = Glob(path + '/*.c')
-
-if rtconfig.PLATFORM == 'armcc' and rtconfig.ARCH == 'arm' and rtconfig.CPU == 'arm926':
-    ASFLAGS = ' --cpreproc'
-    
-CPPPATH = [RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/' + rtconfig.CPU, RTT_ROOT + '/libcpu/' + rtconfig.ARCH + '/common']
-group = DefineGroup(rtconfig.CPU.upper(), src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+if rtconfig.ARCH in list:
+    group = group + SConscript(os.path.join(rtconfig.ARCH, 'SConscript'))
 
 Return('group')

@@ -14,12 +14,12 @@
 #include "dlmodule.h"
 #include "dlelf.h"
 
+#if defined(RT_USING_POSIX)
 #include <dfs_posix.h>
+#endif
 
-#define DBG_SECTION_NAME    "DLMD"
-#define DBG_ENABLE          // enable debug macro
-#define DBG_LEVEL           DBG_INFO
-#define DBG_COLOR
+#define DBG_TAG    "DLMD"
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
 
 static struct rt_module_symtab *_rt_module_symtab_begin = RT_NULL;
@@ -421,11 +421,14 @@ struct rt_dlmodule *rt_module_self(void)
 
 struct rt_dlmodule* dlmodule_load(const char* filename)
 {
-    int fd, length = 0;
+#if defined(RT_USING_POSIX)
+    int fd = -1, length = 0;
+#endif
     rt_err_t ret = RT_EOK;
     rt_uint8_t *module_ptr = RT_NULL;
     struct rt_dlmodule *module = RT_NULL;
 
+#if defined(RT_USING_POSIX)
     fd = open(filename, O_RDONLY, 0);
     if (fd >= 0)
     {
@@ -444,6 +447,13 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
         close(fd);
         fd = -1;
     }
+    else
+    {
+        goto __exit;
+    }
+#endif
+
+    if (!module_ptr) goto __exit;
 
     /* check ELF header */
     if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
@@ -510,7 +520,9 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     return module;
 
 __exit:
+#if defined(RT_USING_POSIX)
     if (fd >= 0) close(fd);
+#endif
     if (module_ptr) rt_free(module_ptr);
     if (module) dlmodule_destroy(module);
 
@@ -555,6 +567,184 @@ struct rt_dlmodule* dlmodule_exec(const char* pgname, const char* cmd, int cmd_s
 
     return module;
 }
+
+#if defined(RT_USING_CUSTOM_DLMODULE)
+struct rt_dlmodule* dlmodule_load_custom(const char* filename, struct rt_dlmodule_ops* ops)
+{
+#if defined(RT_USING_POSIX)
+    int fd = -1, length = 0;
+#endif
+    rt_err_t ret = RT_EOK;
+    rt_uint8_t *module_ptr = RT_NULL;
+    struct rt_dlmodule *module = RT_NULL;
+
+    if (ops)
+    {
+        RT_ASSERT(ops->load);
+        RT_ASSERT(ops->unload);
+        module_ptr = ops->load(filename);
+    }
+#if defined(RT_USING_POSIX)
+    else
+    {
+        fd = open(filename, O_RDONLY, 0);
+        if (fd >= 0)
+        {
+            length = lseek(fd, 0, SEEK_END);
+            lseek(fd, 0, SEEK_SET);
+
+            if (length == 0) goto __exit;
+
+            module_ptr = (uint8_t*) rt_malloc (length);
+            if (!module_ptr) goto __exit;
+
+            if (read(fd, module_ptr, length) != length)
+                goto __exit;
+
+            /* close file and release fd */
+            close(fd);
+            fd = -1;
+        }
+        else
+        {
+            goto __exit;
+        }
+    }
+#endif
+
+    if (!module_ptr) goto __exit;
+
+    /* check ELF header */
+    if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
+        rt_memcmp(elf_module->e_ident, ELFMAG, SELFMAG) != 0)
+    {
+        rt_kprintf("Module: magic error\n");
+        goto __exit;
+    }
+
+    /* check ELF class */
+    if (elf_module->e_ident[EI_CLASS] != ELFCLASS32)
+    {
+        rt_kprintf("Module: ELF class error\n");
+        goto __exit;
+    }
+
+    module = dlmodule_create();
+    if (!module) goto __exit;
+
+    /* set the name of module */
+    _dlmodule_set_name(module, filename);
+
+    LOG_D("rt_module_load: %.*s", RT_NAME_MAX, module->parent.name);
+
+    if (elf_module->e_type == ET_REL)
+    {
+        ret = dlmodule_load_relocated_object(module, module_ptr);
+    }
+    else if (elf_module->e_type == ET_DYN)
+    {
+        ret = dlmodule_load_shared_object(module, module_ptr);
+    }
+    else
+    {
+        rt_kprintf("Module: unsupported elf type\n");
+        goto __exit;
+    }
+
+    /* check return value */
+    if (ret != RT_EOK) goto __exit;
+
+    /* release module data */
+    if (ops)
+    {
+        ops->unload(module_ptr);
+    }
+    else
+    {
+        rt_free(module_ptr);
+    }
+
+    /* increase module reference count */
+    module->nref ++;
+
+    /* deal with cache */
+#ifdef RT_USING_CACHE
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, module->mem_space, module->mem_size);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, module->mem_space, module->mem_size);
+#endif
+
+    /* set module initialization and cleanup function */
+    module->init_func = dlsym(module, "module_init");
+    module->cleanup_func = dlsym(module, "module_cleanup");
+    module->stat = RT_DLMODULE_STAT_INIT;
+    /* do module initialization */
+    if (module->init_func)
+    {
+        module->init_func(module);
+    }
+
+    return module;
+
+__exit:
+#if defined(RT_USING_POSIX)
+    if (fd >= 0) close(fd);
+#endif
+    if (module_ptr)
+    {
+        if (ops)
+        {
+            ops->unload(module_ptr);
+        }
+        else
+        {
+            rt_free(module_ptr);
+        }
+    }
+
+    if (module) dlmodule_destroy(module);
+
+    return RT_NULL;
+}
+
+struct rt_dlmodule* dlmodule_exec_custom(const char* pgname, const char* cmd, int cmd_size, struct rt_dlmodule_ops* ops)
+{
+    struct rt_dlmodule *module = RT_NULL;
+
+    module = dlmodule_load_custom(pgname, ops);
+    if (module)
+    {
+        if (module->entry_addr)
+        {
+            /* exec this module */
+            rt_thread_t tid;
+
+            module->cmd_line = rt_strdup(cmd);
+
+            /* check stack size and priority */
+            if (module->priority > RT_THREAD_PRIORITY_MAX) module->priority = RT_THREAD_PRIORITY_MAX - 1;
+            if (module->stack_size < 2048 || module->stack_size > (1024 * 32)) module->stack_size = 2048;
+
+            tid = rt_thread_create(module->parent.name, _dlmodule_thread_entry, (void*)module, 
+                module->stack_size, module->priority, 10);
+            if (tid)
+            {
+                tid->module_id = module;
+                module->main_thread = tid;
+
+                rt_thread_startup(tid);
+            }
+            else
+            {
+                /* destory dl module */
+                dlmodule_destroy(module);
+                module = RT_NULL;
+            }
+        }
+    }
+
+    return module;
+}
+#endif
 
 void dlmodule_exit(int ret_code)
 {

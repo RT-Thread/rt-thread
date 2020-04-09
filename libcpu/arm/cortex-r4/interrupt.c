@@ -86,7 +86,7 @@ void rt_hw_interrupt_umask(int vector)
  * @return the old handler
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-									void *param, char *name)
+									void *param, const char *name)
 {
 	rt_isr_handler_t old_handler = RT_NULL;
 

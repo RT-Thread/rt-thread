@@ -37,7 +37,7 @@ def GenerateCFiles(env):
     if not os.path.exists('.vscode'):
         os.mkdir('.vscode')
 
-    vsc_file = file('.vscode/c_cpp_properties.json', 'wb')
+    vsc_file = open('.vscode/c_cpp_properties.json', 'w')
     if vsc_file:
         info = utils.ProjectInfo(env)
 
@@ -64,13 +64,13 @@ def GenerateCFiles(env):
         json_obj = {}
         json_obj['configurations'] = [config_obj]
 
-        vsc_file.write(json.dumps(json_obj, indent=4))
+        vsc_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
         vsc_file.close()
 
     return
 
 def GenerateVSCode(env):
-    print('Update setting files for VSCode...'),
+    print('Update setting files for VSCode...')
     GenerateCFiles(env)
     print('Done!')
 

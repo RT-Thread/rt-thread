@@ -295,15 +295,16 @@
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
-          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
           <state>$PROJ_DIR$\Libraries\StdDriver\inc</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
@@ -1218,15 +1219,16 @@
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include</state>
-          <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
-          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
           <state>$PROJ_DIR$\Libraries\StdDriver\inc</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\posix</state>
@@ -1847,6 +1849,54 @@
     </settings>
   </configuration>
   <group>
+    <name>Kernel</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\components.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\cpu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\signal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
     <name>Applications</name>
     <file>
       <name>$PROJ_DIR$\applications\application.c</name>
@@ -1964,58 +2014,7 @@
     </file>
   </group>
   <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\signal.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>CORTEX-M4</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
-    </file>
+    <name>cpu</name>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2024,6 +2023,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
     </file>
   </group>
   <group>
@@ -2041,6 +2046,9 @@
       <name>$PROJ_DIR$\..\..\components\drivers\src\pipe.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\src\ringblk_buf.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\src\ringbuffer.c</name>
     </file>
     <file>
@@ -2056,20 +2064,14 @@
       <name>$PROJ_DIR$\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\symbol.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\finsh\msh.c</name>
     </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\components\finsh\msh_file.c</name>
-    </file>
+  </group>
+  <group>
+    <name>libc</name>
   </group>
   <group>
     <name>lwIP</name>

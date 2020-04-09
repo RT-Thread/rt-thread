@@ -1,0 +1,16 @@
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    CPPDEFINES = ['__START=entry']
+else:
+    CPPDEFINES = []
+    
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

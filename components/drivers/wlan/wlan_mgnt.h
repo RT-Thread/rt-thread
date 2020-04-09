@@ -37,6 +37,14 @@ extern "C" {
 #define RT_WLAN_EBOX_NUM           (10)
 #endif
 
+#ifndef RT_WLAN_SCAN_RETRY_CNT
+#define RT_WLAN_SCAN_RETRY_CNT      (3)
+#endif
+
+#ifndef AUTO_CONNECTION_PERIOD_MS
+#define AUTO_CONNECTION_PERIOD_MS (2000)
+#endif
+
 /*state fot station*/
 #define RT_WLAN_STATE_CONNECT     (1UL << 0)
 #define RT_WLAN_STATE_CONNECTING  (1UL << 1)
@@ -97,7 +105,7 @@ int rt_wlan_get_rssi(void);
  */
 rt_err_t rt_wlan_start_ap(const char *ssid, const char *password);
 rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password);
-int rt_wlan_ap_is_active(void);
+rt_bool_t rt_wlan_ap_is_active(void);
 rt_err_t rt_wlan_ap_stop(void);
 rt_err_t rt_wlan_ap_get_info(struct rt_wlan_info *info);
 int rt_wlan_ap_get_sta_num(void);

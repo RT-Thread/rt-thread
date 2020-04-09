@@ -24,7 +24,7 @@ extern "C" {
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * rt_container_of - return the member address of ptr, if the type of ptr is the
@@ -306,7 +306,7 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 #define rt_slist_tail_entry(ptr, type, member) \
     rt_slist_entry(rt_slist_tail(ptr), type, member)
 
-/*@}*/
+/**@}*/
 
 #ifdef __cplusplus
 }

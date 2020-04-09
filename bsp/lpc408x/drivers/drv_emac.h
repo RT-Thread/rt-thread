@@ -1,19 +1,15 @@
 /*
- * File      : drv_emac.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009-2013 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-05-19     Bernard      porting from LPC17xx drivers.
  */
 
-#ifndef __DRV_EMAC_H__
-#define __DRV_EMAC_H__
+#ifndef DRV_EMAC_H__
+#define DRV_EMAC_H__
 
 #include "board.h"
 
@@ -23,7 +19,6 @@
 #define ETH_FRAG_SIZE       1536        /* Packet Fragment size 1536 Bytes   */
 
 #define ETH_MAX_FLEN        1536        /* Max. Ethernet Frame Size          */
-
 
 /* MAC Configuration Register 1 */
 #define MAC1_REC_EN         0x00000001  /* Receive Enable                    */
@@ -286,6 +281,6 @@
 #define DP83848C_DEF_ADR    0x0F00      /* Default PHY device address        */
 #define DP83848C_ID         0x20005C90  /* PHY Identifier                    */
 
-int lpc_emac_hw_init(void);
+int rt_hw_emac_init(void);
 
-#endif
+#endif  /* DRV_EMAC_H__ */

@@ -70,13 +70,13 @@ static rt_size_t rt_udisk_read(rt_device_t dev, rt_off_t pos, void* buffer,
     rt_err_t ret;
     struct uhintf* intf;
     struct ustor_data* data;
-    int timeout = 500;
+    int timeout = USB_TIMEOUT_LONG;
 
     /* check parameter */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    if(size > 4096) timeout = 800;
+    if(size > 4096) timeout *= 2;
 
     data = (struct ustor_data*)dev->user_data;
     intf = data->intf;
@@ -108,13 +108,13 @@ static rt_size_t rt_udisk_write (rt_device_t dev, rt_off_t pos, const void* buff
     rt_err_t ret;
     struct uhintf* intf;
     struct ustor_data* data;
-    int timeout = 500;
+    int timeout = USB_TIMEOUT_LONG;
 
     /* check parameter */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    if(size * SECTOR_SIZE > 4096) timeout = 800;
+    if(size * SECTOR_SIZE > 4096) timeout *= 2;
 
     data = (struct ustor_data*)dev->user_data;
     intf = data->intf;
@@ -293,7 +293,7 @@ rt_err_t rt_udisk_run(struct uhintf* intf)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("read partition table\n"));
 
     /* get the partition table */
-    ret = rt_usbh_storage_read10(intf, sector, 0, 1, 500);
+    ret = rt_usbh_storage_read10(intf, sector, 0, 1, USB_TIMEOUT_LONG);
     if(ret != RT_EOK)
     {
         rt_kprintf("read parition table error\n");

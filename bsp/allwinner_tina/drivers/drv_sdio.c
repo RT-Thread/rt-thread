@@ -32,13 +32,12 @@
 #include "drv_gpio.h"
 #include "drv_clock.h"
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "MMC"
-// #define DBG_LEVEL DBG_LOG    
-// #define DBG_LEVEL DBG_INFO   
-#define DBG_LEVEL DBG_WARNING
-// #define DBG_LEVEL DBG_ERROR  
-#define DBG_COLOR
+
+#define DBG_TAG  "MMC"
+// #define DBG_LVL DBG_LOG    
+// #define DBG_LVL DBG_INFO   
+#define DBG_LVL DBG_WARNING
+// #define DBG_LVL DBG_ERROR  
 #include <rtdbg.h>
 
 #ifdef RT_USING_SDIO
@@ -99,7 +98,7 @@ static void mmc_delay_us(int us)
 
 static void mmc_dump_errinfo(unsigned int err)
 {
-    dbg_log(DBG_ERROR, "[err]:0x%08x, %s%s%s%s%s%s%s%s%s%s%s\n",
+    LOG_E("[err]:0x%08x, %s%s%s%s%s%s%s%s%s%s%s",
                err,
                err & SDXC_RespErr     ? " RE"     : "",
                err & SDXC_RespCRCErr  ? " RCE"    : "",
@@ -130,7 +129,7 @@ static int mmc_update_clk(tina_mmc_t mmc)
     }
     if (!timeout)
     {
-        dbg_log(DBG_ERROR, "mmc update clk failed\n");
+        LOG_E("mmc update clk failed");
         return -RT_ERROR;
     }
     /* clean interrupt */
@@ -189,8 +188,8 @@ static rt_err_t mmc_trans_data_by_dma(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
             pdes[des_idx].buf_addr_ptr2 = (unsigned long)&pdes[des_idx+1];
         }
 
-        dbg_log(DBG_LOG, "frag %d, remain %d, des[%d](%08x): " \
-            "[0] = %08x, [1] = %08x, [2] = %08x, [3] = %08x\n", \
+        LOG_D("frag %d, remain %d, des[%d](%08x): " \
+            "[0] = %08x, [1] = %08x, [2] = %08x, [3] = %08x", \
             i, remain, des_idx, (unsigned int)&pdes[des_idx],
             (unsigned int)((unsigned int*)&pdes[des_idx])[0], (unsigned int)((unsigned int*)&pdes[des_idx])[1],
             (unsigned int)((unsigned int*)&pdes[des_idx])[2], (unsigned int)((unsigned int*)&pdes[des_idx])[3]);
@@ -243,7 +242,7 @@ static rt_err_t mmc_trans_data_by_cpu(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
 
             if (timeout <= 0)
             {
-                dbg_log(DBG_ERROR, "write data by cpu failed status:0x%08x\n", mmc->star_reg);
+                LOG_E("write data by cpu failed status:0x%08x", mmc->star_reg);
                 return -RT_ERROR;
             }
             mmc->fifo_reg = buff[i];
@@ -258,7 +257,7 @@ static rt_err_t mmc_trans_data_by_cpu(tina_mmc_t mmc, struct mmc_xfe_des *xfe)
 
             if (timeout <= 0)
             {
-                dbg_log(DBG_ERROR, "read data by cpu failed status:0x%08x\n", mmc->star_reg);
+                LOG_E("read data by cpu failed status:0x%08x", mmc->star_reg);
                 return -RT_ERROR;
             }
             buff[i] = mmc->fifo_reg;
@@ -279,7 +278,7 @@ static rt_err_t mmc_config_clock(tina_mmc_t mmc, int clk)
     mmc->ckcr_reg = rval;
     if (mmc_update_clk(mmc) != RT_EOK)
     {
-        dbg_log(DBG_ERROR, "clk update fail line:%d\n", __LINE__);
+        LOG_E("clk update fail line:%d", __LINE__);
         return -RT_ERROR;
     }
 
@@ -298,7 +297,7 @@ static rt_err_t mmc_config_clock(tina_mmc_t mmc, int clk)
     mmc->ckcr_reg = rval;
     if(mmc_update_clk(mmc) != RT_EOK)
     {
-        dbg_log(DBG_ERROR, "clk update fail line:%d\n", __LINE__);
+        LOG_E("clk update fail line:%d", __LINE__);
         return -RT_ERROR;
     }
 
@@ -307,12 +306,12 @@ static rt_err_t mmc_config_clock(tina_mmc_t mmc, int clk)
 
 static rt_err_t mmc_set_ios(tina_mmc_t mmc, int clk, int bus_width)
 {
-    dbg_log(DBG_LOG, "mmc set io bus width:%d clock:%d\n", \
+    LOG_D("mmc set io bus width:%d clock:%d", \
         (bus_width == MMCSD_BUS_WIDTH_8 ? 8 : (bus_width == MMCSD_BUS_WIDTH_4 ? 4 : 1)), clk);
     /* change clock */
     if (clk && (mmc_config_clock(mmc, clk) != RT_EOK))
     {
-        dbg_log(DBG_ERROR, "update clock failed\n");
+        LOG_E("update clock failed");
         return -RT_ERROR;
     }
 
@@ -349,13 +348,13 @@ static int mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_cmd *cmd)
     status = mmc->star_reg;
     while (status & (1 << 9))
     {
-        dbg_log(DBG_LOG, "note: check card busy\n");
+        LOG_D("note: check card busy");
 
         status = mmc->star_reg;
         if (!timeout--)
         {
             err = -1;
-            dbg_log(DBG_ERROR, "mmc cmd12 busy timeout data:0x%08x\n", status);
+            LOG_E("mmc cmd12 busy timeout data:0x%08x", status);
             return err;
         }
         mmc_delay_us(1);
@@ -397,7 +396,7 @@ static int mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_cmd *cmd)
         mmc->bycr_reg = bytecnt;
     }
 
-    dbg_log(DBG_LOG, "cmd %d(0x%08x), arg 0x%08x\n", cmd->cmd_code, cmdval | cmd->cmd_code, cmd->arg);
+    LOG_D("cmd %d(0x%08x), arg 0x%08x", cmd->cmd_code, cmdval | cmd->cmd_code, cmd->arg);
     mmc->cagr_reg = cmd->arg;
     if (!data)
     {
@@ -412,7 +411,7 @@ static int mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_cmd *cmd)
      */
     if (data)
     {
-        dbg_log(DBG_LOG, "mmc trans data %d bytes addr:0x%08x\n", bytecnt, data);
+        LOG_D("mmc trans data %d bytes addr:0x%08x", bytecnt, data);
 #ifdef CONFIG_MMC_USE_DMA
         if (bytecnt > 64)
         {
@@ -478,13 +477,13 @@ static int mmc_send_cmd(struct rt_mmcsd_host *host, struct rt_mmcsd_cmd *cmd)
         cmd->resp[2] = mmc->resp1_reg;
         cmd->resp[1] = mmc->resp2_reg;
         cmd->resp[0] = mmc->resp3_reg;
-        dbg_log(DBG_LOG, "mmc resp 0x%08x 0x%08x 0x%08x 0x%08x\n",
+        LOG_D("mmc resp 0x%08x 0x%08x 0x%08x 0x%08x",
                   cmd->resp[0], cmd->resp[1], cmd->resp[2], cmd->resp[3]);
     }
     else
     {
         cmd->resp[0] = mmc->resp0_reg;
-        dbg_log(DBG_LOG, "mmc resp 0x%08x\n", cmd->resp[0]);
+        LOG_D("mmc resp 0x%08x", cmd->resp[0]);
     }
 
 out:
@@ -516,16 +515,16 @@ out:
             mmc->gctl_reg = mmc->gctl_reg | 0x80000000;
             mmc->dbgc_reg = 0xdeb;
             timeout = 1000;
-            dbg_log(DBG_LOG, "Read remain data\n");
+            LOG_D("Read remain data");
             while (mmc->bbcr_reg < 512)
             {
                 unsigned int tmp = mmc->fifo_reg;
                 tmp = tmp;
-                dbg_log(DBG_LOG, "Read data 0x%08x, bbcr 0x%04x\n", tmp, mmc->bbcr_reg);
+                LOG_D("Read data 0x%08x, bbcr 0x%04x", tmp, mmc->bbcr_reg);
                 mmc_delay_us(1);
                 if (!(timeout--))
                 {
-                    dbg_log(DBG_ERROR, "Read remain data timeout\n");
+                    LOG_E("Read remain data timeout");
                     break;
                 }
             }
@@ -536,7 +535,7 @@ out:
 
         mmc_update_clk(mmc);
         cmd->err = -RT_ETIMEOUT;
-        dbg_log(DBG_ERROR, "mmc cmd %d err\n", cmd->cmd_code);
+        LOG_E("mmc cmd %d err", cmd->cmd_code);
     }
 
     mmc->gctl_reg &= ~(0x1 << 4);
@@ -744,13 +743,13 @@ int tina_sdio_init(void)
         host = mmcsd_alloc_host();
         if (!host)
         {
-            dbg_log(DBG_ERROR, "alloc host failed\n");
+            LOG_E("alloc host failed");
             goto err;
         }
 
         if (rt_sem_init(&_sdio_drv.rt_sem, "sdio_sem", RT_NULL, RT_IPC_FLAG_FIFO))
         {
-            dbg_log(DBG_ERROR, "sem init failed\n");
+            LOG_E("sem init failed");
             goto err;
         }
         _sdio_drv.mmc_des = (tina_mmc_t)MMC0_BASE_ADDR;

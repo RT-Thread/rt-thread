@@ -16,6 +16,10 @@
 #include "drivers/usb_device.h"
 #include "mstorage.h"
 
+#ifdef RT_USING_DFS_MNTTABLE
+#include "dfs_fs.h"
+#endif
+
 #ifdef RT_USB_DEVICE_MSTORAGE
 
 enum STAT
@@ -68,6 +72,7 @@ struct mstorage
     struct rt_device_blk_geometry geometry;    
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -87,6 +92,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -101,7 +107,7 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 
-
+ALIGN(4)
 const static struct umass_descriptor _mass_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
@@ -148,6 +154,7 @@ const static struct umass_descriptor _mass_desc =
     },
 };
 
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -170,6 +177,7 @@ static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw);
 
+ALIGN(4)
 static struct scsi_cmd cmd_data[] =
 {
     {SCSI_TEST_UNIT_READY, _test_unit_ready, 6,  FIXED,       0, DIR_NONE},
@@ -951,7 +959,7 @@ static rt_err_t _function_enable(ufunction_t func)
     struct mstorage *data;
     RT_ASSERT(func != RT_NULL);
     RT_DEBUG_LOG(RT_DEBUG_USB, ("Mass storage function enabled\n"));
-    data = (struct mstorage*)func->user_data;   
+    data = (struct mstorage*)func->user_data;
 
     data->disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
     if(data->disk == RT_NULL)
@@ -959,6 +967,10 @@ static rt_err_t _function_enable(ufunction_t func)
         rt_kprintf("no data->disk named %s\n", RT_USB_MSTORAGE_DISK_NAME);
         return -RT_ERROR;
     }
+
+#ifdef RT_USING_DFS_MNTTABLE
+    dfs_unmount_device(data->disk);
+#endif
 
     if(rt_device_open(data->disk, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
@@ -1025,6 +1037,9 @@ static rt_err_t _function_disable(ufunction_t func)
     if(data->disk != RT_NULL)
     {
         rt_device_close(data->disk);
+#ifdef RT_USING_DFS_MNTTABLE
+        dfs_mount_device(data->disk);
+#endif
         data->disk = RT_NULL;
     }
     

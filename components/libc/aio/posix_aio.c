@@ -170,7 +170,7 @@ static void aio_read_work(struct rt_work* work, void* work_data)
     if (len <= 0)
         cb->aio_result = errno;
     else 
-        cb->aio_result = 0;
+        cb->aio_result = len;
     rt_hw_interrupt_enable(level);
 
     return ;
@@ -321,6 +321,7 @@ static void aio_write_work(struct rt_work* work, void* work_data)
 
     return;
 }
+
 /**
  * The aio_write() function shall write aiocbp->aio_nbytes to the file associated 
  * with aiocbp->aio_fildes from the buffer pointed to by aiocbp->aio_buf. The 

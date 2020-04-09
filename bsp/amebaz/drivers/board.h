@@ -17,7 +17,17 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include "rtl8710b.h"
+#ifdef _LITTLE_ENDIAN
+#undef _LITTLE_ENDIAN
+#endif
+
+#ifdef SECTION
+#undef SECTION
+#endif
+
+#include <rthw.h>
+#include <rtthread.h>
+#include <rtdevice.h>
 
 void rt_hw_board_init(void);
 

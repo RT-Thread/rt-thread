@@ -34,6 +34,8 @@ rt_err_t rt_spi_bus_register(struct rt_spi_bus       *bus,
     bus->ops = ops;
     /* initialize owner */
     bus->owner = RT_NULL;
+    /* set bus mode */
+    bus->mode = RT_SPI_BUS_MODE_SPI;
 
     return RT_EOK;
 }

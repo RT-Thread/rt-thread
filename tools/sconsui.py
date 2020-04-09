@@ -198,7 +198,7 @@ class SconsUI():
         
         setting_path = os.path.join(home, '.rtt_scons')
         if os.path.exists(setting_path):
-            setting = file(os.path.join(home, '.rtt_scons'))
+            setting = open(os.path.join(home, '.rtt_scons'))
             for line in setting:
                 line = line.replace('\n', '')
                 line = line.replace('\r', '')
@@ -215,7 +215,7 @@ class SconsUI():
             setting.close()
 
         # set  RT-Thread Root Directory according environ
-        if os.environ.has_key('RTT_ROOT'):
+        if 'RTT_ROOT' in os.environ:
             self.RTTRoot.set_path(os.environ['RTT_ROOT'])
         
         if self.RTTRoot.get_path() == '':
@@ -268,7 +268,7 @@ class SconsUI():
         else:
             home = os.environ['HOME']
 
-        setting = file(os.path.join(home, '.rtt_scons'), 'wb+')
+        setting = open(os.path.join(home, '.rtt_scons'), 'w+')
         # current comiler 
         # line = '%s=%s\n' % ('compiler', self.compilers.get()))
         line = '%s=%s\n' % ('compiler', 'iar')

@@ -1,73 +1,34 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-11-20     Bernard    the first version
+ * 2018-11-22     Jesven     add rt_hw_spin_lock
+ *                           add rt_hw_spin_unlock
+ *                           add smp ipi init
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 
 #include "board.h"
+#include "drv_timer.h"
 
-#define TIMER_LOAD(hw_base)             __REG32(hw_base + 0x00)
-#define TIMER_VALUE(hw_base)            __REG32(hw_base + 0x04)
-#define TIMER_CTRL(hw_base)             __REG32(hw_base + 0x08)
-#define TIMER_CTRL_ONESHOT              (1 << 0)
-#define TIMER_CTRL_32BIT                (1 << 1)
-#define TIMER_CTRL_DIV1                 (0 << 2)
-#define TIMER_CTRL_DIV16                (1 << 2)
-#define TIMER_CTRL_DIV256               (2 << 2)
-#define TIMER_CTRL_IE                   (1 << 5)        /* Interrupt Enable (versatile only) */
-#define TIMER_CTRL_PERIODIC             (1 << 6)
-#define TIMER_CTRL_ENABLE               (1 << 7)
+#include <mmu.h>
 
-#define TIMER_INTCLR(hw_base)           __REG32(hw_base + 0x0c)
-#define TIMER_RIS(hw_base)              __REG32(hw_base + 0x10)
-#define TIMER_MIS(hw_base)              __REG32(hw_base + 0x14)
-#define TIMER_BGLOAD(hw_base)           __REG32(hw_base + 0x18)
+struct mem_desc platform_mem_desc[] = {
+    {0x10000000, 0x50000000, 0x10000000, DEVICE_MEM},
+    {0x60000000, 0xe0000000, 0x60000000, NORMAL_MEM}
+};
+
+const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
 
 #define SYS_CTRL                        __REG32(REALVIEW_SCTL_BASE)
 
-#define TIMER_HW_BASE                   REALVIEW_TIMER2_3_BASE
-
-static void rt_hw_timer_isr(int vector, void *param)
-{
-    rt_tick_increase();
-    /* clear interrupt */
-    TIMER_INTCLR(TIMER_HW_BASE) = 0x01;
-}
-
-int rt_hw_timer_init(void)
-{
-    rt_uint32_t val;
-
-    SYS_CTRL |= REALVIEW_REFCLK;
-
-    /* Setup Timer0 for generating irq */
-    val = TIMER_CTRL(TIMER_HW_BASE);
-    val &= ~TIMER_CTRL_ENABLE;
-    val |= (TIMER_CTRL_32BIT | TIMER_CTRL_PERIODIC | TIMER_CTRL_IE);
-    TIMER_CTRL(TIMER_HW_BASE) = val;
-
-    TIMER_LOAD(TIMER_HW_BASE) = 1000;
-
-    /* enable timer */
-    TIMER_CTRL(TIMER_HW_BASE) |= TIMER_CTRL_ENABLE;
-
-    rt_hw_interrupt_install(IRQ_PBA8_TIMER2_3, rt_hw_timer_isr, RT_NULL, "tick");
-    rt_hw_interrupt_umask(IRQ_PBA8_TIMER2_3);
-
-    return 0;
-}
-INIT_BOARD_EXPORT(rt_hw_timer_init);
+extern void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
 
 void idle_wfi(void)
 {
@@ -79,13 +40,18 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
-    /* initialzie hardware interrupt */
+    /* initialize hardware interrupt */
     rt_hw_interrupt_init();
+    /* initialize system heap */
     rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
     rt_thread_idle_sethook(idle_wfi);
-}
 
+#ifdef RT_USING_SMP
+    /* install IPI handle */
+    rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
+#endif
+}

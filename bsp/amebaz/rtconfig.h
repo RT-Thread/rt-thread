@@ -11,15 +11,15 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_TIMER_THREAD_STACK_SIZE 1024
+#define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -45,6 +45,9 @@
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
 
@@ -62,6 +65,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -70,13 +74,28 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_USING_PIN
+#define RT_SERIAL_USING_DMA
+
+/* Using WiFi */
+
 #define RT_USING_WIFI
-#define RT_USING_WLAN_STA
-#define RT_USING_WLAN_AP
-#define WIFI_DEVICE_STA_NAME "w0"
-#define WIFI_DEVICE_AP_NAME "ap"
+#define RT_WLAN_DEVICE_STA_NAME "wlan0"
+#define RT_WLAN_DEVICE_AP_NAME "wlan1"
+#define RT_WLAN_DEFAULT_PROT "lwip"
+#define RT_WLAN_SCAN_WAIT_MS 10000
+#define RT_WLAN_CONNECT_WAIT_MS 10000
+#define RT_WLAN_SSID_MAX_LENGTH 32
+#define RT_WLAN_PASSWORD_MAX_LENGTH 32
+#define RT_WLAN_SCAN_SORT
+#define RT_WLAN_CFG_INFO_MAX 3
+#define RT_WLAN_WORKQUEUE_THREAD_NAME "wlan_job"
+#define RT_WLAN_WORKQUEUE_THREAD_SIZE 2048
+#define RT_WLAN_WORKQUEUE_THREAD_PRIO 22
+#define RT_WLAN_DEV_EVENT_NUM 2
+#define RT_WLAN_DEBUG
+#define RT_WLAN_CMD_DEBUG
 
 /* Using USB */
 
@@ -85,12 +104,15 @@
 
 #define RT_USING_LIBC
 
-/* Network stack */
+/* Network */
+
+/* Socket abstraction layer */
+
 
 /* light weight TCP/IP stack */
 
 #define RT_USING_LWIP
-#define RT_USING_LWIP141
+#define RT_USING_LWIP202
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -129,6 +151,12 @@
 /* Modbus master and slave stack */
 
 
+/* AT commands */
+
+#define LWIP_USING_DHCPD
+#define DHCPD_SERVER_IP "192.168.169.1"
+#define DHCPD_USING_ROUTER
+
 /* VBUS(Virtual Software BUS) */
 
 
@@ -146,6 +174,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -173,12 +204,27 @@
 
 /* sample package */
 
+/* samples: kernel and components samples */
+
 
 /* example package: hello */
 
 
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* Test Packages of RealThread */
+
+
 /* Env config */
 
-#define RT_USING_UART0
+
+/* External Libraries */
+
+#define RT_USING_SMARTCONFIG_LIB
+#define BSP_USING_WIFI
 
 #endif

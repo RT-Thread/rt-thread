@@ -1,0 +1,27 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Glob('GD32E230_standard_peripheral/Source/*.c')
+src += [cwd + '/CMSIS/GD/GD32E230/Source/system_gd32e230.c']
+
+#add for startup script
+if rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/CMSIS/GD/GD32E230/Source/ARM/startup_gd32e230.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/CMSIS/GD/GD32E230/Source/IAR/startup_gd32e230.s']
+
+path = [
+    cwd + '/CMSIS/GD/GD32E230/Include',
+    cwd + '/CMSIS',
+    cwd + '/GD32E230_standard_peripheral/Include',]
+
+CPPDEFINES = ['GD32E230']
+
+group = DefineGroup('GD32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

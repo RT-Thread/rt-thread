@@ -12,10 +12,10 @@
     <abs_offset>0xb020</abs_offset>  
   </pass> 
   <pass>    
-    <range>CODE 0x10005000 0x10005A6B</range>    
+    <range>CODE 0x10005000 0x10005A9B</range>    
     <loader>$PROJ_DIR$\packages\realtek_ameba-latest\sdk-ameba-v4.0b_without_NDA_GCC_V1.0.0\component\soc\realtek\8711b\misc\iar_utility\common\flashloader\FlashRTL8195aMP.flash</loader>      
     <abs_offset>0xb000</abs_offset>    
     <args>--concat</args>    
   </pass>    
-  <ignore>CODE 0x10005a6c 0x1003dfff</ignore> 
+  <ignore>CODE 0x10005a9c 0x1003dfff</ignore> 
 </flash_board> 

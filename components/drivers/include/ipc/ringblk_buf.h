@@ -84,6 +84,8 @@ rt_size_t rt_rbb_get_buf_size(rt_rbb_t rbb);
 rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size);
 void rt_rbb_blk_put(rt_rbb_blk_t block);
 rt_rbb_blk_t rt_rbb_blk_get(rt_rbb_t rbb);
+rt_size_t rt_rbb_blk_size(rt_rbb_blk_t block);
+rt_uint8_t *rt_rbb_blk_buf(rt_rbb_blk_t block);
 void rt_rbb_blk_free(rt_rbb_t rbb, rt_rbb_blk_t block);
 
 /* rbb block queue API */

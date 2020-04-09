@@ -66,6 +66,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial" default="true" />
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 #define RT_USING_HOOK
 #define RT_USING_CPU_USAGE
 /* SECTION: Console options */

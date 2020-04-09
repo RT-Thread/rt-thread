@@ -180,6 +180,15 @@ struct rndis_reset_msg
     rt_uint32_t	Reserved;
 };
 
+/* Remote NDIS Soft Reset Response */
+struct rndis_reset_cmplt
+{
+    rt_uint32_t	MessageType;
+    rt_uint32_t	MessageLength;
+    rt_uint32_t	Status;
+    rt_uint32_t	AddressingReset;
+};
+
 /* Remote NDIS Indicate Status Message */
 struct rndis_indicate_status_msg
 {

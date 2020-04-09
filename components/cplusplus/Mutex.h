@@ -21,7 +21,7 @@ namespace rtthread {
 class Mutex {
 public:
     /** Create and Initialize a Mutex object */
-    Mutex(const char* name = "mutex");
+    Mutex(const char *name = "mutex");
     ~Mutex();
 
     /** Wait until a Mutex becomes available.

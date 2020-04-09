@@ -1,25 +1,32 @@
 /*
  * File      : dhcp_server_raw.c
  *             A simple DHCP server implementation
- *
- * This file is part of RT-Thread RTOS
  * COPYRIGHT (C) 2011-2018, Shanghai Real-Thread Technology Co., Ltd
  * http://www.rt-thread.com
+ * All rights reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
  *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
+ * 
  * Change Logs:
  * Date           Author       Notes
  * 2014-04-01     Ren.Haibo    the first version
@@ -89,6 +96,10 @@
 
 #define LWIP_NETIF_LOCK(...)
 #define LWIP_NETIF_UNLOCK(...)
+
+#ifndef DHCP_SERVER_PORT
+#define DHCP_SERVER_PORT 67
+#endif
 
 /**
 * The dhcp client node struct.
@@ -655,6 +666,7 @@ dhcp_server_start(struct netif *netif, ip4_addr_t *start, ip4_addr_t *end)
     return ERR_OK;
 }
 
+extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
 
 void dhcpd_start(const char *netif_name)
 {
@@ -690,8 +702,6 @@ void dhcpd_start(const char *netif_name)
 
     if (1)
     {
-        extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
-
         dhcp_stop(netif);
 
         set_if(netif_name, DHCPD_SERVER_IP, "0.0.0.0", "255.255.255.0");
@@ -739,4 +749,83 @@ _exit:
     return;
 }
 
+void dhcpd_stop(const char *netif_name)
+{
+    struct dhcp_server *dhcp_server, *server_node;
+    struct netif *netif = netif_list;
+    struct dhcp_client_node *node, *next;
 
+    DEBUG_PRINTF("%s: %s\r\n", __FUNCTION__, netif_name);
+
+    LWIP_NETIF_LOCK();
+    if (strlen(netif_name) > sizeof(netif->name))
+    {
+        DEBUG_PRINTF("network interface name too long!\r\n");
+        goto _exit;
+    }
+
+    while (netif != RT_NULL)
+    {
+        if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+            break;
+
+        netif = netif->next;
+        if (netif == RT_NULL)
+        {
+            DEBUG_PRINTF("network interface: %s not found!\r\n", netif_name);
+            break;
+        }
+    }
+
+    if (netif == RT_NULL)
+    {
+        goto _exit;
+    }
+
+    /* If this netif alreday use the dhcp server. */
+    for (dhcp_server = lw_dhcp_server; dhcp_server != NULL; dhcp_server = dhcp_server->next)
+    {
+        if (dhcp_server->netif == netif)
+        {
+            break;
+        }
+    }
+    if (dhcp_server == RT_NULL)
+    {
+        goto _exit;
+    }
+
+    /* remove dhcp server */
+    if (dhcp_server == lw_dhcp_server)
+    {
+        lw_dhcp_server = lw_dhcp_server->next;
+    }
+    else
+    {
+        server_node = lw_dhcp_server;
+        while (server_node->next && server_node->next != dhcp_server)
+        {
+            server_node = server_node->next;
+        }
+        if (server_node->next != RT_NULL)
+        {
+            server_node->next = server_node->next->next;
+        }
+    }
+
+    udp_disconnect(dhcp_server->pcb);
+    udp_remove(dhcp_server->pcb);
+
+    /* remove all client node */
+    for (node = dhcp_server->node_list; node != NULL; node = next)
+    {
+        next = node->next;
+        mem_free(node);
+    }
+
+    mem_free(dhcp_server);
+    set_if(netif_name, "0.0.0.0", "0.0.0.0", "0.0.0.0");
+
+_exit:
+    LWIP_NETIF_UNLOCK();
+}

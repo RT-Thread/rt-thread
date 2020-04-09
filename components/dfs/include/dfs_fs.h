@@ -1,27 +1,13 @@
 /*
- * File      : dfs_fs.h
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
  */
- 
+
 #ifndef __DFS_FS_H__
 #define __DFS_FS_H__
 
@@ -74,7 +60,7 @@ struct dfs_partition
     uint8_t type;        /* file system type */
     off_t  offset;       /* partition start offset */
     size_t size;         /* partition size */
-    rt_sem_t lock;  
+    rt_sem_t lock;
 };
 
 /* mount table */
@@ -89,11 +75,11 @@ struct dfs_mount_tbl
 
 int dfs_register(const struct dfs_filesystem_ops *ops);
 struct dfs_filesystem *dfs_filesystem_lookup(const char *path);
-const char* dfs_filesystem_get_mounted_path(struct rt_device* device);
+const char *dfs_filesystem_get_mounted_path(struct rt_device *device);
 
 int dfs_filesystem_get_partition(struct dfs_partition *part,
-                                      uint8_t         *buf,
-                                      uint32_t        pindex);
+                                 uint8_t         *buf,
+                                 uint32_t        pindex);
 
 int dfs_mount(const char *device_name,
               const char *path,
@@ -104,6 +90,8 @@ int dfs_unmount(const char *specialfile);
 
 int dfs_mkfs(const char *fs_name, const char *device_name);
 int dfs_statfs(const char *path, struct statfs *buffer);
+int dfs_mount_device(rt_device_t dev);
+int dfs_unmount_device(rt_device_t dev);
 
 #ifdef __cplusplus
 }

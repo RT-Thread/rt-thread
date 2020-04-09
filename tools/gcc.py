@@ -23,7 +23,7 @@
 
 import os
 import re
-import platform 
+import platform
 
 def GetGCCRoot(rtconfig):
     exec_path = rtconfig.EXEC_PATH
@@ -32,7 +32,10 @@ def GetGCCRoot(rtconfig):
     if prefix.endswith('-'):
         prefix = prefix[:-1]
 
-    root_path = os.path.join(exec_path, '..', prefix)
+    if exec_path == '/usr/bin':
+        root_path = os.path.join('/usr/lib', prefix)
+    else:
+        root_path = os.path.join(exec_path, '..', prefix)
 
     return root_path
 
@@ -43,6 +46,24 @@ def CheckHeader(rtconfig, filename):
     if os.path.isfile(fn):
         return True
 
+    # Usually the cross compiling gcc toolchain has directory as:
+    #
+    # bin
+    # lib
+    # share
+    # arm-none-eabi
+    #    bin
+    #    include
+    #    lib
+    #    share
+    prefix = rtconfig.PREFIX
+    if prefix.endswith('-'):
+        prefix = prefix[:-1]
+
+    fn = os.path.join(root, prefix, 'include', filename)
+    if os.path.isfile(fn):
+        return True
+
     return False
 
 def GetNewLibVersion(rtconfig):
@@ -50,18 +71,19 @@ def GetNewLibVersion(rtconfig):
     root = GetGCCRoot(rtconfig)
 
     if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
-        f = file(os.path.join(root, 'include', '_newlib_version.h'))
+        f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            f.close()
     elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
-        f = file(os.path.join(root, 'include', 'newlib.h'))
+        f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
         if f:
             for line in f:
                 if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
-
+            f.close()
     return version
 
 def GCCResult(rtconfig, str):
@@ -76,18 +98,18 @@ def GCCResult(rtconfig, str):
 
     gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
 
-    # use temp file to get more information 
-    f = file('__tmp.c', 'w')
+    # use temp file to get more information
+    f = open('__tmp.c', 'w')
     if f:
         f.write(str)
         f.close()
 
-        # '-fdirectives-only', 
+        # '-fdirectives-only',
         if(platform.system() == 'Windows'):
             child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         else:
             child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        
+
         stdout, stderr = child.communicate()
 
         # print(stdout)
@@ -103,7 +125,8 @@ def GCCResult(rtconfig, str):
         stdc = '1989'
         posix_thread = 0
 
-        for line in stdout.split('\n'):
+        for line in stdout.split(b'\n'):
+            line = line.decode()
             if re.search('fd_set', line):
                 have_fdset = 1
 
@@ -125,7 +148,7 @@ def GCCResult(rtconfig, str):
 
             if re.findall('pthread_create', line):
                 posix_thread = 1
-    
+
         if have_fdset:
             result += '#define HAVE_FDSET 1\n'
 
@@ -139,7 +162,7 @@ def GCCResult(rtconfig, str):
             result += '#define HAVE_SIGVAL 1\n'
 
         if version:
-            result += '#define GCC_VERSION "%s"\n' % version
+            result += '#define GCC_VERSION_STR "%s"\n' % version
 
         result += '#define STDC "%s"\n' % stdc
 
@@ -147,7 +170,6 @@ def GCCResult(rtconfig, str):
             result += '#define LIBC_POSIX_THREADS 1\n'
 
         os.remove('__tmp.c')
-
     return result
 
 def GenerateGCCConfig(rtconfig):
@@ -187,7 +209,7 @@ def GenerateGCCConfig(rtconfig):
     cc_header += GCCResult(rtconfig, str)
     cc_header += '\n#endif\n'
 
-    cc_file = file('cconfig.h', 'w')
+    cc_file = open('cconfig.h', 'w')
     if cc_file:
         cc_file.write(cc_header)
         cc_file.close()
