@@ -9,9 +9,9 @@
  * 2019-11-01     wangyq        update libraries
  */
 
-#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <rtdbg.h>
 #include "board.h"
 #include "drv_i2c.h"
 #include <ald_i2c.h>
@@ -84,7 +84,7 @@ static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
         {
             if (ald_i2c_master_recv(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -92,7 +92,7 @@ static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
         {
             if (ald_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -101,7 +101,7 @@ static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    i2c_dbg("send stop condition\n");
+    LOG_E("send stop condition\n");
 
     return ret;
 }
