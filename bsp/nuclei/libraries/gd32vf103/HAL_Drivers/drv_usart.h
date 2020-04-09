@@ -3,7 +3,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "board.h"
+#include <drv_config.h>
 
 /* gd32 config class */
 struct gd32_uart_config

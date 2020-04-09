@@ -32,12 +32,28 @@ env['ASCOM'] = env['ASPPCOM']
 Export('RTT_ROOT')
 Export('rtconfig')
 
+SDK_ROOT = os.path.abspath('./')
+
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
+else:
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+
+SDK_LIB = libraries_path_prefix
+Export('SDK_LIB')
+
 GDB = rtconfig.GDB
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
+bsp_library_type = 'gd32vf103'
+rtconfig.BSP_LIBRARY_TYPE = bsp_library_type
+
 openocd_cfg = rtconfig.NUCLEI_SDK_OPENOCD_CFG.replace('\\', '/')
+
+# include hal drivers
+objs.extend(SConscript(os.path.join(libraries_path_prefix, bsp_library_type, 'HAL_Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

@@ -37,6 +37,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART4"
                 default n
         endif
+
 endmenu
 
 menu "Board extended module Drivers"
