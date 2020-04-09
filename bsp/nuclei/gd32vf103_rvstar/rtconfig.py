@@ -47,7 +47,7 @@ if PLATFORM == 'gcc':
     LPATH   = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O2 -ggdb'
+        CFLAGS += ' -O0 -ggdb'
         AFLAGS += ' -ggdb'
     else:
         CFLAGS += ' -O2 -Os'
