@@ -488,7 +488,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
     case RT_TIMER_CTRL_SET_PERIODIC:
         timer->parent.flag |= RT_TIMER_FLAG_PERIODIC;
         break;
-    /* zhaoshimin 20191204 add query the timer state */    
+
     case RT_TIMER_CTRL_GET_STATE:
         if(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
         {
