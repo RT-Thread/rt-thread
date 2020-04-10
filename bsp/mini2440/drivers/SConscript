@@ -8,7 +8,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 src = Split("""
 board.c
 led.c
-console.c
+uart.c
 """)
 
 if GetDepend('RT_USING_DFS'):
@@ -18,7 +18,7 @@ if GetDepend('RT_USING_LWIP'):
 	src += ['dm9000.c']
 
 if GetDepend('RT_USING_RTGUI'):
-    	src += ['touch.c', 'key.c', 'calibration.c']
+    	src += ['touch.c', 'key.c']
 
 if GetDepend('RT_USING_FTK'):
     	src += ['touch.c', 'key.c']
