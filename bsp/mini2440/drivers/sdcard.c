@@ -550,7 +550,7 @@ static rt_size_t rt_sdcard_write(rt_device_t dev,
     return size;
 }
 
-void rt_hw_sdcard_init(void)
+int rt_hw_sdcard_init(void)
 {
     rt_uint8_t i, status;
     rt_uint8_t *sector;
@@ -574,7 +574,7 @@ void rt_hw_sdcard_init(void)
         {
             rt_kprintf("allocate partition sector buffer failed\n");
 
-            return;
+            return RT_ERROR;
         }
         status = sd_readblock(0, sector);
         if (status == RT_EOK)
@@ -637,12 +637,15 @@ void rt_hw_sdcard_init(void)
         /* release sector buffer */
         rt_free(sector);
 
-        return;
+        return RT_ERROR; 
     }
     else
     {
         rt_kprintf("sdcard init failed\n");
     }
+
+    return RT_EOK;
 }
 
+INIT_BOARD_EXPORT(rt_hw_sdcard_init);
 #endif

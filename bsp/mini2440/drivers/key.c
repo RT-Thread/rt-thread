@@ -79,7 +79,7 @@ static void rt_hw_key_isr(void)
 /**
  * This function is only for QEMU emulation
  */
-static void rt_key_handler(int vector)
+static void rt_key_handler(int vector, void *param)
 {
 	INTSUBMSK |= (BIT_SUB_RXD1);
 

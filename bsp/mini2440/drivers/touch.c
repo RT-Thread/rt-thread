@@ -349,7 +349,7 @@ static void s3c2410_intc_stylus_updown(void)
 	SUBSRCPND |= BIT_SUB_TC;
 }
 
-static void rt_touch_handler(int irqno)
+static void rt_touch_handler(int irqno, void *param)
 {
 	if (SUBSRCPND & BIT_SUB_ADC)
 	{
