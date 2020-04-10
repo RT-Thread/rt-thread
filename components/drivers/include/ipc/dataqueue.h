@@ -22,6 +22,8 @@ struct rt_data_item;
 /* data queue implementation */
 struct rt_data_queue
 {
+    rt_uint32_t magic;
+
     rt_uint16_t size;
     rt_uint16_t lwm;
     rt_bool_t   waiting_lwm;
@@ -57,5 +59,6 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
                             const void          **data_ptr,
                             rt_size_t            *size);
 void rt_data_queue_reset(struct rt_data_queue *queue);
+rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue);
 
 #endif
