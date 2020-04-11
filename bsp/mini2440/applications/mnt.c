@@ -6,17 +6,16 @@
 
 int mnt_init(void)
 {
-
-    if(dfs_mount(RT_NULL, "/", "ram", 0, dfs_ramfs_create(rt_malloc(1024),1024)) == 0)
-    {
-        rt_kprintf("RAM file system initializated!\n");
-    }
-    else
-    {
-        rt_kprintf("RAM file system initializate failed!\n");
-    }
-
-    return 0;
+	if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+	{
+		rt_kprintf("File System initialized!\n");
+	}
+	else
+	{
+		rt_kprintf("File System initialzation failed!\n");
+	}
+   
+	return RT_EOK;
 }
 INIT_ENV_EXPORT(mnt_init);
 #endif
