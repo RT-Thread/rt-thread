@@ -26,7 +26,7 @@ typedef void (*rt_touch_calibration_func_t)(rt_uint16_t x, rt_uint16_t y);
 
 typedef void (*rt_touch_eventpost_func_t)(void *, struct rt_touch_event *);
 
-void rtgui_touch_hw_init(void);
+int rtgui_touch_hw_init(void);
 
 #endif
 

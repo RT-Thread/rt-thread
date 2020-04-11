@@ -5,9 +5,24 @@
 
 #include "led.h"
 
+#ifdef PKG_USING_GUIENGINE
+#include <rtgui/driver.h>
+#endif
+
 int main(void)
 {
-    printf("hello rt-thread\n");
+	rt_device_t device;
+
+	printf("hello rt-thread\n");
+
+#ifdef PKG_USING_GUIENGINE
+	device = rt_device_find("lcd");
+	if (device)
+	{
+		rtgui_graphic_set_device(device);
+	}
+#endif
+
 
     while (1)
     {
