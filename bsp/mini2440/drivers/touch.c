@@ -16,13 +16,14 @@
 #include <rtthread.h>
 #include <s3c24x0.h>
 
-#ifdef RT_USING_RTGUI
+#ifdef PKG_USING_GUIENGINE
 #include <rtgui/rtgui_system.h>
 #include <rtgui/rtgui_server.h>
 #include <rtgui/event.h>
 #endif
 
-#include "lcd.h"
+#define TOUCH_SWAP_XY
+
 #include "touch.h"
 
 /* ADCCON Register Bits */
@@ -108,7 +109,7 @@ struct rtgui_touch_device
 };
 static struct rtgui_touch_device *touch = RT_NULL;
 
-#ifdef RT_USING_RTGUI
+#ifdef PKG_USING_GUIENGINE
 static void report_touch_input(int updown)
 {
 	struct rtgui_event_mouse emouse;
@@ -124,6 +125,12 @@ static void report_touch_input(int updown)
 	{
 		ts.xp = ts.xp / ts.count;
 		ts.yp = ts.yp / ts.count;;
+
+	#ifdef TOUCH_SWAP_XY
+		ts.xp = ts.xp + ts.yp;
+		ts.yp = ts.xp - ts.yp;
+		ts.xp = ts.xp - ts.yp;
+	#endif
 
 		if ((touch->calibrating == RT_TRUE) && (touch->calibration_func != RT_NULL))
 		{
@@ -446,7 +453,7 @@ static rt_err_t rtgui_touch_control(rt_device_t dev, int cmd, void *args)
 	return RT_EOK;
 }
 
-void rtgui_touch_hw_init(void)
+int rtgui_touch_hw_init(void)
 {
 	rt_err_t result = RT_FALSE;
 	rt_device_t device = RT_NULL;
@@ -454,7 +461,7 @@ void rtgui_touch_hw_init(void)
 
 	touch = (struct rtgui_touch_device *)rt_malloc(sizeof(struct rtgui_touch_device));
 	if (touch == RT_NULL)
-		return; /* no memory yet */
+		return -RT_ERROR; /* no memory yet */
 
 	/* clear device structure */
 	rt_memset(&(touch->parent), 0, sizeof(struct rt_device));
@@ -473,17 +480,19 @@ void rtgui_touch_hw_init(void)
 	touch->parent.user_data = RT_NULL;
 
 	device = rt_device_find("lcd");
-	if (device == RT_NULL)
-		return; /* no this device */	
+	if (device == RT_NULL) 
+	{
+		rt_kprintf("No lcd found\n");
+		return -RT_ERROR; /* no this device */	
+	}
 
 	/* get graphic device info */
 	result = rt_device_control(device, RTGRAPHIC_CTRL_GET_INFO, &info);
 	if (result != RT_EOK)
 	{
-
 		/* get device information failed */
-
-		return;
+		rt_kprintf("Get graphic device info failed\n");
+		return -RT_ERROR;
 	}
 
 	touch->width = info.width;
@@ -495,4 +504,8 @@ void rtgui_touch_hw_init(void)
 
 	/* register touch device to RT-Thread */
 	rt_device_register(&(touch->parent), "touch", RT_DEVICE_FLAG_RDWR);
+
+	return RT_EOK;
 }
+
+INIT_PREV_EXPORT(rtgui_touch_hw_init);

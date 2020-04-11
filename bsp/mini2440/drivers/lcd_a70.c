@@ -15,7 +15,6 @@
 #include <rtthread.h>
 #include <s3c24x0.h>
 
-#include "lcd.h"
 
 /* LCD driver for A7' */
 #define LCD_WIDTH 800
@@ -223,10 +222,11 @@ static rt_err_t rt_lcd_control (rt_device_t dev, int cmd, void *args)
 	return RT_EOK;
 }
 
-void rt_hw_lcd_init(void)
+int rt_hw_lcd_init(void)
 {
 	rt_device_t lcd = rt_malloc(sizeof(struct rt_device));
-	if (lcd == RT_NULL) return; /* no memory yet */
+	if (lcd == RT_NULL) 
+            return -RT_ERROR; /* no memory yet */
 
 	_lcd_info.bits_per_pixel = 16;
 	_lcd_info.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB565P;
@@ -246,3 +246,4 @@ void rt_hw_lcd_init(void)
 	rt_device_register(lcd, "lcd", RT_DEVICE_FLAG_RDWR);
 }
 
+INIT_BOARD_EXPORT(rt_hw_lcd_init);
