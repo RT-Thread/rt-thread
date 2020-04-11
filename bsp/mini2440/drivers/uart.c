@@ -50,21 +50,35 @@ static rt_err_t s3c2440_serial_configure(struct rt_serial_device *serial, struct
 static rt_err_t s3c2440_serial_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
 	struct hw_uart_device *uart;
+    int mask;
 
     RT_ASSERT(serial != RT_NULL); 
     uart = (struct hw_uart_device *)serial->parent.user_data;
+
+    if(uart->irqno == INTUART0)
+    {
+        mask = BIT_SUB_RXD0;
+    }
+    else if(uart->irqno == INTUART1)
+    {
+        mask = BIT_SUB_RXD1;
+    }
+    else
+    {
+        mask = BIT_SUB_RXD2;
+    }
 
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
-        INTSUBMSK |= BIT_SUB_RXD0;
+        INTSUBMSK |= mask;
 		
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        INTSUBMSK &= ~(BIT_SUB_RXD0);
+        INTSUBMSK &= ~mask;
         break;
     }
 
@@ -162,6 +176,11 @@ static struct hw_uart_device _hwserial2 = {
 
 int rt_hw_uart_init(void)
 {
+    /* UART0  UART1 UART2 port configure */
+    GPHCON |= 0xAAAA;
+    /* PULLUP is disable */
+    GPHUP |= 0xFFF;
+
     /* register UART0 device */
     rt_hw_serial_register(&_serial0, "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, &_hwserial0);
     rt_hw_interrupt_install(_hwserial0.irqno, rt_hw_uart_isr, &_serial0, "uart0");
