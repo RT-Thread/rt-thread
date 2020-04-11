@@ -574,7 +574,7 @@ int rt_hw_sdcard_init(void)
         {
             rt_kprintf("allocate partition sector buffer failed\n");
 
-            return RT_ERROR;
+            return -1;
         }
         status = sd_readblock(0, sector);
         if (status == RT_EOK)
@@ -637,7 +637,7 @@ int rt_hw_sdcard_init(void)
         /* release sector buffer */
         rt_free(sector);
 
-        return RT_ERROR; 
+        return -1; 
     }
     else
     {

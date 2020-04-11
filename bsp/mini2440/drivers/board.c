@@ -125,11 +125,4 @@ void rt_hw_board_init(void)
 #endif
 
 }
-
-#ifdef RT_USING_MODULE
-int rt_system_module_init(void)
-{
-    return 0;
-}
-#endif
 /*@}*/

@@ -642,6 +642,8 @@ int rt_hw_dm9000_init()
 	/* instal interrupt */
 	rt_hw_interrupt_install(INTEINT4_7, INTEINT4_7_handler, RT_NULL, "EINT4_7");
 	rt_hw_interrupt_umask(INTEINT4_7);
+
+	return RT_EOK;
 }
 
 INIT_DEVICE_EXPORT(rt_hw_dm9000_init);
