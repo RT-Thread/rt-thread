@@ -330,6 +330,11 @@ rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
     if (pipe->fifo == RT_NULL)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            rt_mutex_release(&(pipe->lock));
+            return -RT_ENOMEM;
+        }
     }
 
     rt_mutex_release(&(pipe->lock));
