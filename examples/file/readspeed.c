@@ -1,15 +1,12 @@
 /*
- * File      : readspeed.c
- * This file is part of RT-TestCase in RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2010-02-10     Bernard      first version
+ * 2020-04-12     Jianjia Ma   add msh cmd
  */
 
 #include <rtthread.h>
@@ -34,7 +31,6 @@ void readspeed(const char* filename, int block_size)
     {
         rt_kprintf("no memory\n");
         close(fd);
-
         return;
     }
 
@@ -61,4 +57,31 @@ void readspeed(const char* filename, int block_size)
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(readspeed, perform file read test);
-#endif
+
+#ifdef FINSH_USING_MSH
+static void cmd_readspeed(int argc, char *argv[])
+{
+    char* filename;
+    int block_size;
+
+    if(argc == 3)
+    {
+        filename = argv[1];
+        block_size = atoi(argv[2]);
+    }
+    else if(argc == 2)
+    {
+        filename = argv[1];
+        block_size = 512;
+    }
+    else
+    {
+       rt_kprintf("Usage:\nreadspeed [file_path] [block_size]\n");
+       rt_kprintf("readspeed [file_path] with default block size 512\n");
+       return;
+    }
+    readspeed(filename, block_size);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_readspeed, __cmd_readspeed, test file system read speed);
+#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */
