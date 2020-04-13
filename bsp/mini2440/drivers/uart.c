@@ -196,7 +196,7 @@ int rt_hw_uart_init(void)
     rt_hw_interrupt_install(_hwserial2.irqno, rt_hw_uart_isr, &_serial2, "uart2");
     rt_hw_interrupt_umask(INTUART2);
 
-    return 0;
+    return RT_EOK;
 }
 
 INIT_BOARD_EXPORT(rt_hw_uart_init);
