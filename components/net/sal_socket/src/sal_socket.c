@@ -917,7 +917,6 @@ int sal_socket(int domain, int type, int protocol)
     socket = socket_new();
     if (socket < 0)
     {
-        socket_delete(socket);
         return -1;
     }
 
