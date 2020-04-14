@@ -10,7 +10,7 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
+#define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
@@ -20,6 +20,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 #define RT_DEBUG_INIT_CONFIG
 #define RT_DEBUG_INIT 1
 
@@ -71,7 +72,6 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
-#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -88,8 +88,9 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_RTC
+#define RT_USING_PIN
 
 /* Using USB */
 
