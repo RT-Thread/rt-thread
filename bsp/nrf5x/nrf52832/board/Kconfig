@@ -1,0 +1,22 @@
+menu "Hardware Drivers Config"
+
+config SOC_NRF52832
+    bool
+    select RT_USING_COMPONENTS_INIT
+    # select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+
+endmenu
+
+endmenu
