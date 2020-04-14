@@ -10,7 +10,7 @@
 
 | 硬件 | 描述 |
 | ---  | --- |
-| 内核 | nuclei n205 |
+| 内核 | Nuclei N205 |
 | 架构 | 32-bit RV32IMAC |
 | 主频 | 108 MHz |
 
@@ -18,7 +18,7 @@
 
 ### 安装工具链
 
-请根据[安装Nuclei RISC-V GCC Toolchain和OpenOCD](https://doc.nucleisys.com/nuclei_sdk/quickstart.html#setup-tools-and-environment) 来安装依赖的工具链。
+请根据[安装Nuclei RISC-V GCC Toolchain和OpenOCD](https://doc.nucleisys.com/nuclei_sdk/quickstart.html#setup-tools-and-environment) 来安装依赖的工具。
 
 ### 添加环境变量
 
@@ -26,17 +26,31 @@
 
 #### Windows
 
-假设工具安装在 **D:\Software\Nuclei**目录下，则可以修改系统环境变量**PATH**,
+假设工具安装在 **D:\Software\Nuclei**目录下, 则可以修改系统环境变量**PATH**,
 将**D:\Software\Nuclei\gcc\bin;D:\Software\Nuclei\openocd\bin;**增加到**PATH**中。
+
+或者在ENV工具命令行中运行
+
+~~~cmd
+set PATH=D:\Software\Nuclei\gcc\bin;D:\Software\Nuclei\openocd\bin;%PATH%
+~~~
 
 #### Linux
 
-假设工具安装在 **~/Software/Nuclei**目录下，通过在Linux的``.bashrc``增加如下一行代码
+假设工具安装在 **~/Software/Nuclei**目录下, 通过在Linux的``.bashrc``增加如下一行代码
 来添加环境变量。
 
 ~~~bash
 export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 ~~~
+
+或者在ENV工具命令行中运行
+
+~~~bash
+export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
+~~~
+
+**注意**: 对应的RISC-V GCC和OPENOCD的路径请替换成自己安装的路径。
 
 ## 烧写及执行
 
@@ -46,7 +60,7 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 下载好[RT-Thread](https://github.com/RT-Thread/rt-thread)的代码和[ENV工具](https://www.rt-thread.org/document/site/tutorial/env-video/)以后。
 
-按照ENV工具的教程，在**rt-thread\bsp\nuclei\gd32vf103_rvstar**目录打开ENV工具命令行。
+按照ENV工具的教程, 在**rt-thread\bsp\nuclei\gd32vf103_rvstar**目录打开ENV工具命令行。
 
 **注意**: 请确保Nuclei GCC和Nuclei OpenOCD的路径设置正确无误。
 
@@ -57,7 +71,7 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 ### 下载程序
 
-在保证程序能够正常编译后，在相同ENV终端执行``scons --run upload``进行代码的下载。
+在保证程序能够正常编译后, 在相同ENV终端执行``scons --run upload``进行代码的下载。
 
 正常下载的输出如下:
 
@@ -91,7 +105,7 @@ Quit anyway? (y or n) [answered Y; input not from terminal]
 Remote communication error.  Target disconnected.: Success.
 ~~~
 
-下载程序之后，连接串口(115200-N-8-1)，可以看到 RT-Thread 的输出信息：
+下载程序之后, 连接串口(115200-N-8-1), 可以看到 RT-Thread 的输出信息：
 
 ```
 initialize rti_board_start:0 done
@@ -125,7 +139,7 @@ msh />
 
 ### 调试程序
 
-在保证程序编译成功后，在相同ENV终端执行``scons --run debug``进行代码在命令行下进行GDB调试。
+在保证程序编译成功后, 在相同ENV终端执行``scons --run debug``进行代码在命令行下进行GDB调试。
 
 正常的调试输出如下：
 
@@ -173,8 +187,8 @@ Breakpoint 1, thread_entry (parameter=0x0) at applications\main.c:35
 
 * https://doc.nucleisys.com/nuclei_sdk/quickstart.html#debug-application
 
-为了更方便的进行调试，也可以下载**Nuclei Studio**集成开发环境，创建一个Debug Configuration，选择编译好的
-ELF文件，然后配置OPENOCD和GDB即可，OPENOCD配置文件路径为**bsp\nuclei\gd32vf103_rvstar\packages\nuclei_sdk-latest\SoC\gd32vf103\Board\gd32vf103v_rvstar\openocd_gd32vf103.cfg**
+为了更方便的进行调试, 也可以下载**Nuclei Studio**集成开发环境, 创建一个Debug Configuration, 选择编译好的
+ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nuclei\gd32vf103_rvstar\packages\nuclei_sdk-latest\SoC\gd32vf103\Board\gd32vf103v_rvstar\openocd_gd32vf103.cfg**
 
 
 ## 驱动支持情况
@@ -186,7 +200,7 @@ ELF文件，然后配置OPENOCD和GDB即可，OPENOCD配置文件路径为**bsp\
 **注:**
 
 - 适配RT-Thread的驱动框架的代码在 [../libraries/gd32vf103/HAL_Drivers](../libraries/gd32vf103/HAL_Drivers)目录下。
-- 如果有开发者想适配更多的驱动，请在对应目录下增加驱动适配支持。
+- 如果有开发者想适配更多的驱动, 请在对应目录下增加驱动适配支持。
 
 ## 联系人信息
 
