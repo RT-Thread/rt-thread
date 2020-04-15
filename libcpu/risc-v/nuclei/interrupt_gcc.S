@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020/03/26     Huaqi        First Nuclei RISC-V porting implementation
+ * 2020/03/26     hqfang       First Nuclei RISC-V porting implementation
  */
 
 #include "riscv_encoding.h"

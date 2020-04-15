@@ -11,19 +11,18 @@
 #include "riscv_encoding.h"
 
 #ifndef __riscv_32e
-#define portRegNum          30
+#define RT_SAVED_REGNUM         30
 #else
-#define portRegNum          14
+#define RT_SAVED_REGNUM         14
 #endif
 
-#define portCONTEXT_SIZE    ( portRegNum * REGBYTES )
+#define RT_CONTEXT_SIZE         (RT_SAVED_REGNUM * REGBYTES)
 
     .extern rt_interrupt_from_thread
     .extern rt_interrupt_to_thread
 
 
 .section    .text
-
 
 
 /*
@@ -51,7 +50,7 @@ rt_hw_context_switch_to:
     LOAD t0,  0  * REGBYTES(sp)
     csrw CSR_MEPC, t0
     /* Pop mstatus from stack and set it */
-    LOAD t0,  (portRegNum - 1)  * REGBYTES(sp)
+    LOAD t0,  (RT_SAVED_REGNUM - 1)  * REGBYTES(sp)
     csrw CSR_MSTATUS, t0
     /* Interrupt still disable here */
     /* Restore Registers from Stack */
@@ -86,14 +85,14 @@ rt_hw_context_switch_to:
     LOAD x31, 28 * REGBYTES(sp)
 #endif
 
-    addi sp, sp, portCONTEXT_SIZE
+    addi sp, sp, RT_CONTEXT_SIZE
 
     mret
 
 .align 2
 .global eclic_msip_handler
 eclic_msip_handler:
-    addi sp, sp, -portCONTEXT_SIZE
+    addi sp, sp, -RT_CONTEXT_SIZE
     STORE x1,  1  * REGBYTES(sp)    /* RA */
     STORE x5,  2  * REGBYTES(sp)
     STORE x6,  3  * REGBYTES(sp)
@@ -126,7 +125,7 @@ eclic_msip_handler:
 #endif
     /* Push mstatus to stack */
     csrr t0, CSR_MSTATUS
-    STORE t0,  (portRegNum - 1)  * REGBYTES(sp)
+    STORE t0,  (RT_SAVED_REGNUM - 1)  * REGBYTES(sp)
 
     /* Push additional registers */
 
@@ -137,7 +136,7 @@ eclic_msip_handler:
     csrr t0, CSR_MEPC
     STORE t0, 0(sp)
 
-    jal xPortTaskSwitch
+    jal rt_hw_taskswitch
 
     /* Switch task context */
     LOAD t0, rt_interrupt_to_thread
@@ -146,10 +145,11 @@ eclic_msip_handler:
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
     csrw CSR_MEPC, t0
+
     /* Pop additional registers */
 
     /* Pop mstatus from stack and set it */
-    LOAD t0,  (portRegNum - 1)  * REGBYTES(sp)
+    LOAD t0,  (RT_SAVED_REGNUM - 1)  * REGBYTES(sp)
     csrw CSR_MSTATUS, t0
     /* Interrupt still disable here */
     /* Restore Registers from Stack */
@@ -184,5 +184,5 @@ eclic_msip_handler:
     LOAD x31, 28 * REGBYTES(sp)
 #endif
 
-    addi sp, sp, portCONTEXT_SIZE
+    addi sp, sp, RT_CONTEXT_SIZE
     mret

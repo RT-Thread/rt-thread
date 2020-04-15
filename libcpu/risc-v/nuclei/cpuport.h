@@ -6,7 +6,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020/03/26     Huaqi        Nuclei RISC-V Core porting code.
+ * 2020/03/26     hqfang       Nuclei RISC-V Core porting code.
  */
 
 #ifndef __CPUPORT_H__
@@ -20,16 +20,18 @@ extern "C" {
 #endif
 
 /* Scheduler utilities. */
-#define portYIELD() 															\
-{																				\
-	/* Set a software interrupt(SWI) request to request a context switch. */    \
-	SysTimer_SetSWIRQ();                                                        \
-	/* Barriers are normally not required but do ensure the code is completely	\
-	within the specified behaviour for the architecture. */						\
-	__RWMB();										                            \
-	__FENCE_I();										                        \
+#define RT_YIELD()                                                              \
+{                                                                               \
+    /* Set a software interrupt(SWI) request to request a context switch. */    \
+    SysTimer_SetSWIRQ();                                                        \
+    /* Barriers are normally not required but do ensure the code is completely  \
+    within the specified behaviour for the architecture. */                     \
+    __RWMB();                                                                   \
+    __FENCE_I();                                                                \
 }
 
+extern void rt_hw_ticksetup(void);
+extern void rt_hw_taskswitch(void);
 
 #ifdef __cplusplus
 }
