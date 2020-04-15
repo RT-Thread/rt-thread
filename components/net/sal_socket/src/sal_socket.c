@@ -924,6 +924,7 @@ int sal_socket(int domain, int type, int protocol)
     sock = sal_get_socket(socket);
     if (sock == RT_NULL)
     {
+        socket_delete(socket);
         return -1;
     }
 
@@ -956,7 +957,7 @@ int sal_socket(int domain, int type, int protocol)
         sock->user_data = (void *) proto_socket;
         return sock->socket;
     }
-
+    socket_delete(socket);
     return -1;
 }
 
