@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author          Notes
- * 2020-04-02     Huaqi Fang      first version
+ * 2020-04-02     hqfang          first version
  *
  */
 

@@ -47,13 +47,16 @@ GDB = rtconfig.GDB
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-bsp_library_type = 'gd32vf103'
+bsp_library_type = rtconfig.NUCLEI_SDK_SOC
 rtconfig.BSP_LIBRARY_TYPE = bsp_library_type
 
 openocd_cfg = rtconfig.NUCLEI_SDK_OPENOCD_CFG.replace('\\', '/')
 
 # include hal drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, bsp_library_type, 'HAL_Drivers', 'SConscript')))
+hal_sconscript = os.path.join(libraries_path_prefix, bsp_library_type, 'HAL_Drivers', 'SConscript')
+
+if os.path.isfile(hal_sconscript):
+    objs.extend(SConscript(hal_sconscript))
 
 # make a building
 DoBuilding(TARGET, objs)

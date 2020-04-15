@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-07-23     tyustli      first version
+ * 2020-04-15     hqfang       first version
  */
 
 #include <rtthread.h>
@@ -28,12 +28,14 @@ static void thread_entry(void *parameter)
 {
     rt_uint32_t count = 0;
 
-    while (1) {
+    while (1)
+    {
 #ifdef APP_DEBUG_PRINT
         rt_kprintf("thread %d count: %d\n", (rt_uint32_t)parameter, count++);
 #endif
         rt_thread_mdelay(500);
-        if ((rt_uint32_t)parameter < (LEDn-1)) {
+        if ((rt_uint32_t)parameter < (LEDn - 1))
+        {
             gd_rvstar_led_toggle((rt_uint32_t)parameter);
         }
     }
@@ -44,18 +46,20 @@ int create_thread_demo(void)
 {
     int i;
     static char tname[9] = "thread";
-    
-    for (i = 0; i < THREAD_NUM; i ++) {
+
+    for (i = 0; i < THREAD_NUM; i ++)
+    {
         /* Create static threads */
-        tname[6] = i/10 + '0';
-        tname[7] = i%10 + '0';
+        tname[6] = i / 10 + '0';
+        tname[7] = i % 10 + '0';
         tname[8] = '\0';
         rt_thread_init(&tid[i], tname, thread_entry, (void *)i, thread_stack[i],
-                   THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
+                       THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     }
 
     /* Startup threads  */
-    for (i = 0; i < THREAD_NUM; i ++) {
+    for (i = 0; i < THREAD_NUM; i ++)
+    {
         rt_thread_startup(&tid[i]);
     }
 
@@ -67,12 +71,14 @@ int main(void)
     rt_uint32_t count = 0;
 
     create_thread_demo();
-    for (int i = 0; i < LEDn; i ++) {
+    for (int i = 0; i < LEDn; i ++)
+    {
         gd_rvstar_led_init(i);
     }
 
 
-    while (1) {
+    while (1)
+    {
 #ifdef APP_DEBUG_PRINT
         rt_kprintf("Main thread count: %d\n", count++);
 #endif
