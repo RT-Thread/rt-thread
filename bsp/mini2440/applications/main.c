@@ -11,16 +11,16 @@
 
 int main(void)
 {
-	rt_device_t device;
+    rt_device_t device;
 
-	printf("hello rt-thread\n");
+    printf("hello rt-thread\n");
 
 #ifdef PKG_USING_GUIENGINE
-	device = rt_device_find("lcd");
-	if (device)
-	{
-		rtgui_graphic_set_device(device);
-	}
+    device = rt_device_find("lcd");
+    if (device)
+    {
+        rtgui_graphic_set_device(device);
+    }
 #endif
 
 
