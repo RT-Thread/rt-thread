@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     勤为本       first version
+ */
+
 // 龙芯1c外设寄存器
 
 
@@ -125,9 +135,22 @@
 
 
 // 串口寄存器
-#define LS1C_UART0_BASE                     (0xbfe40000)
+#define LS1C_UART00_BASE                    (0xbfe40000)
+#define LS1C_UART01_BASE                    (0xbfe41000)
 #define LS1C_UART1_BASE                     (0xbfe44000)
 #define LS1C_UART2_BASE                     (0xbfe48000)
+#define LS1C_UART3_BASE                     (0xbfe4c000)
+#define LS1C_UART4_BASE                     (0xbfe4c400)
+#define LS1C_UART5_BASE                     (0xbfe4c500)
+#define LS1C_UART6_BASE                     (0xbfe4c600)
+#define LS1C_UART7_BASE                     (0xbfe4c700)
+#define LS1C_UART8_BASE                     (0xbfe4c800)
+#define LS1C_UART9_BASE                     (0xbfe4c900)
+#define LS1C_UART10_BASE                    (0xbfe4ca00)
+#define LS1C_UART11_BASE                    (0xbfe4cb00)
+
+//RTC寄存器
+#define LS1C_RTC_BASE                       (0xbfe64024)
 
 
 #endif

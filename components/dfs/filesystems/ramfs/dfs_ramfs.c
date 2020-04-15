@@ -1,21 +1,7 @@
 /*
- * File      : dfs_ramfs.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -35,14 +21,14 @@ int dfs_ramfs_mount(struct dfs_filesystem *fs,
                     unsigned long          rwflag,
                     const void            *data)
 {
-    struct dfs_ramfs* ramfs;
+    struct dfs_ramfs *ramfs;
 
     if (data == NULL)
         return -EIO;
 
     ramfs = (struct dfs_ramfs *)data;
     fs->data = ramfs;
-    
+
     return RT_EOK;
 }
 
@@ -62,8 +48,8 @@ int dfs_ramfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
     RT_ASSERT(buf != NULL);
 
     buf->f_bsize  = 512;
-    buf->f_blocks = ramfs->memheap.pool_size/512;
-    buf->f_bfree  = ramfs->memheap.available_size/512;
+    buf->f_blocks = ramfs->memheap.pool_size / 512;
+    buf->f_bfree  = ramfs->memheap.available_size / 512;
 
     return RT_EOK;
 }
@@ -133,7 +119,7 @@ int dfs_ramfs_write(struct dfs_fd *fd, const void *buf, size_t count)
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
 
-    dirent = (struct ramfs_dirent*)fd->data;
+    dirent = (struct ramfs_dirent *)fd->data;
     RT_ASSERT(dirent != NULL);
 
     ramfs = dirent->fs;
@@ -274,7 +260,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
     file->size = dirent->size;
     if (file->flags & O_APPEND)
         file->pos = file->size;
-    else 
+    else
         file->pos = 0;
 
     return 0;
@@ -395,7 +381,7 @@ int dfs_ramfs_rename(struct dfs_filesystem *fs,
     return RT_EOK;
 }
 
-static const struct dfs_file_ops _ram_fops = 
+static const struct dfs_file_ops _ram_fops =
 {
     dfs_ramfs_open,
     dfs_ramfs_close,
@@ -432,7 +418,7 @@ int dfs_ramfs_init(void)
 }
 INIT_COMPONENT_EXPORT(dfs_ramfs_init);
 
-struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
+struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 {
     struct dfs_ramfs *ramfs;
     rt_uint8_t *data_ptr;
@@ -449,10 +435,11 @@ struct dfs_ramfs* dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
     if (result != RT_EOK)
         return NULL;
     /* detach this memheap object from the system */
-    rt_object_detach((rt_object_t)&(ramfs->memheap));
+    rt_object_detach((rt_object_t) & (ramfs->memheap));
 
     /* initialize ramfs object */
     ramfs->magic = RAMFS_MAGIC;
+    ramfs->memheap.parent.type = RT_Object_Class_MemHeap | RT_Object_Class_Static;
 
     /* initialize root directory */
     memset(&(ramfs->root), 0x00, sizeof(ramfs->root));

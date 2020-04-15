@@ -1,26 +1,7 @@
 /*
- *  Virtual machine of finsh shell.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -94,28 +75,6 @@ void finsh_syscall_append(const char* name, syscall_func func)
             global_syscall_list = item;
         }
     }
-}
-#endif
-
-#if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
-struct finsh_syscall* finsh_syscall_next(struct finsh_syscall* call)
-{
-    unsigned int *ptr;
-    ptr = (unsigned int*) (call + 1);
-    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _syscall_table_end))
-        ptr ++;
-
-    return (struct finsh_syscall*)ptr;
-}
-
-struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call)
-{
-    unsigned int *ptr;
-    ptr = (unsigned int*) (call + 1);
-    while ((*ptr == 0) && ((unsigned int*)ptr < (unsigned int*) _sysvar_table_end))
-        ptr ++;
-
-    return (struct finsh_sysvar*)ptr;
 }
 #endif
 

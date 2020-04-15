@@ -1,21 +1,7 @@
 /*
- * File      : posix_aio.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -184,7 +170,7 @@ static void aio_read_work(struct rt_work* work, void* work_data)
     if (len <= 0)
         cb->aio_result = errno;
     else 
-        cb->aio_result = 0;
+        cb->aio_result = len;
     rt_hw_interrupt_enable(level);
 
     return ;
@@ -335,6 +321,7 @@ static void aio_write_work(struct rt_work* work, void* work_data)
 
     return;
 }
+
 /**
  * The aio_write() function shall write aiocbp->aio_nbytes to the file associated 
  * with aiocbp->aio_fildes from the buffer pointed to by aiocbp->aio_buf. The 

@@ -14,13 +14,12 @@ elif rtconfig.CROSS_TOOL == 'keil':
 elif rtconfig.CROSS_TOOL == 'iar':
     src += ['CM3/DeviceSupport/NXP/LPC17xx/startup/iar/startup_LPC17xx.s']
 
-CPPPATH = [cwd + '/CM3/DeviceSupport/NXP/LPC17xx/']
+CPPPATH = [cwd + '/CM3/DeviceSupport/NXP/LPC17xx/',
+    cwd + '/CMSIS/Include']
 
 if GetDepend(['RT_USING_BSP_CMSIS']):
     CPPPATH += [cwd + '/CM3/CoreSupport']
     src += ['CM3/CoreSupport/core_cm3.c']
-elif GetDepend(['RT_USING_RTT_CMSIS']):
-    CPPPATH += [RTT_ROOT + '/components/CMSIS/Include']
 
 group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
 

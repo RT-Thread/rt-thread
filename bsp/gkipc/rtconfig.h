@@ -14,6 +14,7 @@
 #define RT_THREAD_PRIORITY_MAX 256
 #define RT_TICK_PER_SECOND 100
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 #define RT_USING_OVERFLOW_CHECK
 #define RT_DEBUG_INIT 0
 #define RT_DEBUG_THREAD 0
@@ -114,6 +115,7 @@
 
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 /* RT_USING_CAN is not set */
 /* RT_USING_HWTIMER is not set */
 /* RT_USING_CPUTIME is not set */

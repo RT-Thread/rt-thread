@@ -102,6 +102,7 @@ void rt_hw_interrupt_mask(int vector)
 }
 
 /**
+
  * This function will un-mask a interrupt.
  * @param vector the interrupt number
  */
@@ -132,7 +133,7 @@ void rt_hw_interrupt_umask(int vector)
  * @return old handler
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, char *name)
+        void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
     rt_uint32_t pend_addr, en_addr, data;
@@ -167,7 +168,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     return old_handler;
 }
 
-void rt_interrupt_dispatch(void)
+void rt_interrupt_dispatch(rt_uint32_t fiq_irq)
 {
     void *param;
     int vector;

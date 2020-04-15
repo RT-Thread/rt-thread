@@ -1,24 +1,10 @@
 /*
- * File      :hw_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       	Notes
+ * Date           Author           Notes
  * 2018-01-04     Sundm75        the first version
  */
 
@@ -40,31 +26,31 @@ rt_size_t rt_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                           rt_uint32_t               num)
 {
     struct ls1c_i2c_bus * i2c_bus = (struct ls1c_i2c_bus *)bus;
-	ls1c_i2c_info_t i2c_info;  
+    ls1c_i2c_info_t i2c_info;  
     struct rt_i2c_msg *msg;
     int i;
     rt_int32_t ret = RT_EOK;
     i2c_info.clock = 50000;       // 50kb/s  
-	i2c_info.I2Cx  = i2c_bus->u32Module;
-	i2c_init(&i2c_info);
-	
+    i2c_info.I2Cx  = i2c_bus->u32Module;
+    i2c_init(&i2c_info);
+    
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
         if (msg->flags == RT_I2C_RD)
         {
-			i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_READ);  
-			i2c_receive_ack(&i2c_info); 
-			i2c_receive_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);  
-			i2c_send_stop(&i2c_info);   
-		 }
+            i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_READ);  
+            i2c_receive_ack(&i2c_info); 
+            i2c_receive_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);  
+            i2c_send_stop(&i2c_info);   
+         }
         else if(msg->flags == RT_I2C_WR)
         {
-			i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_WRITE);  
-			i2c_receive_ack(&i2c_info);  
-			i2c_send_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);  
-			i2c_send_stop(&i2c_info);  
-		}
+            i2c_send_start_and_addr(&i2c_info, msg->addr, LS1C_I2C_DIRECTION_WRITE);  
+            i2c_receive_ack(&i2c_info);  
+            i2c_send_data(&i2c_info, (rt_uint8_t *)msg->buf, msg->len);  
+            i2c_send_stop(&i2c_info);  
+        }
         ret++;
     }
     return ret;

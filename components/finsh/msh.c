@@ -1,26 +1,7 @@
 /*
- *  RT-Thread module shell implementation.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2013, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -28,6 +9,9 @@
  * 2014-01-03     Bernard      msh can execute module.
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
+#include <rtthread.h>
+
+#ifdef FINSH_USING_MSH
 
 #include "msh.h"
 #include <finsh.h>
@@ -37,7 +21,14 @@
 #include <dfs_posix.h>
 #endif
 
-#define RT_FINSH_ARG_MAX    10
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
+#ifndef FINSH_ARG_MAX
+#define FINSH_ARG_MAX    8
+#endif
+
 typedef int (*cmd_function_t)(int argc, char **argv);
 
 #ifdef FINSH_USING_MSH
@@ -61,7 +52,6 @@ static int msh_exit(int argc, char **argv)
 {
     /* return to finsh shell mode */
     __msh_state = RT_FALSE;
-
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_exit, __cmd_exit, return to RT-Thread shell mode.);
@@ -99,7 +89,38 @@ int msh_help(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(msh_help, __cmd_help, RT-Thread shell help.);
 
-static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
+int cmd_ps(int argc, char **argv)
+{
+    extern long list_thread(void);
+    extern int list_module(void);
+
+#ifdef RT_USING_MODULE
+    if ((argc == 2) && (strcmp(argv[1], "-m") == 0))
+        list_module();
+    else
+#endif
+        list_thread();
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_ps, __cmd_ps, List threads in the system.);
+
+#ifdef RT_USING_HEAP
+int cmd_free(int argc, char **argv)
+{
+    extern void list_mem(void);
+    extern void list_memheap(void);
+
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+    list_memheap();
+#else
+    list_mem();
+#endif
+    return 0;
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_free, __cmd_free, Show the memory usage in the system.);
+#endif
+
+static int msh_split(char *cmd, rt_size_t length, char *argv[FINSH_ARG_MAX])
 {
     char *ptr;
     rt_size_t position;
@@ -118,7 +139,7 @@ static int msh_split(char *cmd, rt_size_t length, char *argv[RT_FINSH_ARG_MAX])
             ptr ++; position ++;
         }
 
-        if(argc >= RT_FINSH_ARG_MAX)
+        if(argc >= FINSH_ARG_MAX)
         {
             rt_kprintf("Too many args ! We only Use:\n");
             for(i = 0; i < argc; i++)
@@ -251,7 +272,7 @@ int msh_exec_module(const char *cmd_line, int size)
     {
         /* found program */
         close(fd);
-        rt_module_exec_cmd(pg_name, cmd_line, size);
+        dlmodule_exec(pg_name, cmd_line, size);
         ret = 0;
     }
     else
@@ -284,7 +305,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     int argc;
     rt_size_t cmd0_size = 0;
     cmd_function_t cmd_func;
-    char *argv[RT_FINSH_ARG_MAX];
+    char *argv[FINSH_ARG_MAX];
 
     RT_ASSERT(cmd);
     RT_ASSERT(retp);
@@ -310,6 +331,44 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     return 0;
 }
 
+#if defined(RT_USING_LWP) && defined(RT_USING_DFS)
+static int _msh_exec_lwp(char *cmd, rt_size_t length)
+{
+    int argc;
+    int cmd0_size = 0;
+    char *argv[FINSH_ARG_MAX];
+    int fd = -1;
+    char *pg_name;
+
+    extern int exec(char*, int, char**);
+
+    /* find the size of first command */
+    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+        cmd0_size ++;
+    if (cmd0_size == 0)
+        return -1;
+
+    /* split arguments */
+    rt_memset(argv, 0x00, sizeof(argv));
+    argc = msh_split(cmd, length, argv);
+    if (argc == 0)
+        return -1;
+
+    pg_name = argv[0];
+    /* try to open program */
+    fd = open(pg_name, O_RDONLY, 0);
+
+    if (fd < 0)
+        return -1;
+
+    /* found program */
+    close(fd);
+    exec(pg_name, argc, argv);
+
+    return 0;
+}
+#endif
+
 int msh_exec(char *cmd, rt_size_t length)
 {
     int cmd_ret;
@@ -327,12 +386,19 @@ int msh_exec(char *cmd, rt_size_t length)
     /* Exec sequence:
      * 1. built-in command
      * 2. module(if enabled)
-     * 3. chdir to the directry(if possible)
      */
     if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
     {
         return cmd_ret;
     }
+#ifdef RT_USING_DFS
+#ifdef DFS_USING_WORKDIR
+    if (msh_exec_script(cmd, length) == 0)
+    {
+        return 0;
+    }
+#endif
+
 #ifdef RT_USING_MODULE
     if (msh_exec_module(cmd, length) == 0)
     {
@@ -340,17 +406,12 @@ int msh_exec(char *cmd, rt_size_t length)
     }
 #endif
 
-#if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
-    if (msh_exec_script(cmd, length) == 0)
+#ifdef RT_USING_LWP
+    if (_msh_exec_lwp(cmd, length) == 0)
     {
         return 0;
     }
-
-    /* change to this directory */
-    if (chdir(cmd) == 0)
-    {
-        return 0;
-    }
+#endif
 #endif
 
     /* truncate the cmd at the first space. */
@@ -405,8 +466,8 @@ void msh_auto_complete_path(char *path)
     ptr = path;
     for (;;)
     {
-        if (*ptr == '/') index = ptr + 1; 
-        if (!*ptr) break; 
+        if (*ptr == '/') index = ptr + 1;
+        if (!*ptr) break;
 
         ptr ++;
     }
@@ -583,3 +644,4 @@ void msh_auto_complete(char *prefix)
 }
 #endif
 
+#endif /* FINSH_USING_MSH */

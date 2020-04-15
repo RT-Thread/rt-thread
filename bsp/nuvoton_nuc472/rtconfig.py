@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-nuc472.map -T ldscripts/mem.ld -T ldscripts/libs.ld -T ldscripts/sections.ld '
+    LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread-nuc472.map -T ldscripts/sections.ld '
 
     CPATH = ''
     LPATH = ''

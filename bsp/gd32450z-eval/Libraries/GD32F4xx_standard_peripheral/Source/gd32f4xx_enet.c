@@ -31,6 +31,16 @@ uint8_t rx_buff[ENET_RXBUF_NUM][ENET_RXBUF_SIZE];           /*!< ENET receive bu
 #pragma data_alignment=4
 uint8_t tx_buff[ENET_TXBUF_NUM][ENET_TXBUF_SIZE];           /*!< ENET transmit buffer */
 
+#elif defined ( __GNUC__ )
+__attribute__((aligned(4)))
+enet_descriptors_struct  rxdesc_tab[ENET_RXBUF_NUM];        /*!< ENET RxDMA descriptor */
+__attribute__((aligned(4)))
+enet_descriptors_struct  txdesc_tab[ENET_TXBUF_NUM];        /*!< ENET TxDMA descriptor */
+__attribute__((aligned(4)))
+uint8_t rx_buff[ENET_RXBUF_NUM][ENET_RXBUF_SIZE];           /*!< ENET receive buffer */
+__attribute__((aligned(4)))
+uint8_t tx_buff[ENET_TXBUF_NUM][ENET_TXBUF_SIZE];           /*!< ENET transmit buffer */
+
 #endif /* __CC_ARM */
 
 /* global transmit and receive descriptors pointers */

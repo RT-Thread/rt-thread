@@ -1,21 +1,7 @@
 /*
- * File      : core.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -274,18 +260,20 @@ rt_err_t rt_usbh_detach_instance(uinst_t device)
     }
     
     /* free configration descriptor */
-    for(i=0; i<device->cfg_desc->bNumInterfaces; i++)
-    {
-        if(device->intf[i] == RT_NULL) continue;
-        if(device->intf[i]->drv == RT_NULL) continue;
+    if (device->cfg_desc) {
+        for (i = 0; i < device->cfg_desc->bNumInterfaces; i++)
+        {
+            if (device->intf[i] == RT_NULL) continue;
+            if (device->intf[i]->drv == RT_NULL) continue;
 
-        RT_ASSERT(device->intf[i]->device == device);
+            RT_ASSERT(device->intf[i]->device == device);
 
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("free interface instance %d\n", i));
-        rt_usbh_class_driver_disable(device->intf[i]->drv, (void*)device->intf[i]);
-        rt_free(device->intf[i]);
+            RT_DEBUG_LOG(RT_DEBUG_USB, ("free interface instance %d\n", i));
+            rt_usbh_class_driver_disable(device->intf[i]->drv, (void*)device->intf[i]);
+            rt_free(device->intf[i]);
+        }
+        rt_free(device->cfg_desc);
     }
-    if(device->cfg_desc) rt_free(device->cfg_desc);
     
     rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_out);
     rt_usb_hcd_free_pipe(device->hcd,device->pipe_ep0_in);
@@ -315,7 +303,7 @@ rt_err_t rt_usbh_get_descriptor(uinst_t device, rt_uint8_t type, void* buffer,
     int nbytes)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
     
     RT_ASSERT(device != RT_NULL);
 
@@ -349,7 +337,7 @@ rt_err_t rt_usbh_get_descriptor(uinst_t device, rt_uint8_t type, void* buffer,
 rt_err_t rt_usbh_set_address(uinst_t device)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
     
     RT_ASSERT(device != RT_NULL);
 
@@ -385,7 +373,7 @@ rt_err_t rt_usbh_set_address(uinst_t device)
 rt_err_t rt_usbh_set_configure(uinst_t device, int config)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
     /* check parameter */
     RT_ASSERT(device != RT_NULL);
@@ -419,7 +407,7 @@ rt_err_t rt_usbh_set_configure(uinst_t device, int config)
 rt_err_t rt_usbh_set_interface(uinst_t device, int intf)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
     /* check parameter */
     RT_ASSERT(device != RT_NULL);
@@ -450,7 +438,7 @@ rt_err_t rt_usbh_set_interface(uinst_t device, int intf)
 rt_err_t rt_usbh_clear_feature(uinst_t device, int endpoint, int feature)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
     /* check parameter */
     RT_ASSERT(device != RT_NULL);

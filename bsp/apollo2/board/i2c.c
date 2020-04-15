@@ -25,7 +25,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "am_mcu_apollo.h"
-#include "board.h"
 
 /* I2C0 */
 #define AM_I2C0_IOM_INST    0
@@ -42,6 +41,14 @@
 #define I2C2_GPIO_CFG_SCK   AM_HAL_PIN_27_M2SCL
 #define I2C2_GPIO_SDA       25
 #define I2C2_GPIO_CFG_SDA   AM_HAL_PIN_25_M2SDA
+
+/* I2C3 */
+#define AM_I2C3_IOM_INST    3
+
+#define I2C3_GPIO_SCL       42
+#define I2C3_GPIO_CFG_SCK   AM_HAL_PIN_42_M3SCL
+#define I2C3_GPIO_SDA       43
+#define I2C3_GPIO_CFG_SDA   AM_HAL_PIN_43_M3SDA
 
 /* I2C4 */
 #define AM_I2C4_IOM_INST    4
@@ -76,7 +83,7 @@ rt_size_t rt_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     struct am_i2c_bus * am_i2c_bus = (struct am_i2c_bus *)bus;
     struct rt_i2c_msg *msg;
     int i;
-    rt_int32_t ret = RT_EOK;
+    rt_uint32_t msg_len = 0;
 
     for (i = 0; i < num; i++)
     {
@@ -84,16 +91,16 @@ rt_size_t rt_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         if (msg->flags == RT_I2C_RD)
         {
             am_hal_iom_i2c_read(am_i2c_bus->u32Module, msg->addr, (uint32_t *)msg->buf, msg->len, AM_HAL_IOM_RAW);
+            msg_len += msg->len;
         }
         else if(msg->flags == RT_I2C_WR)
         {
             am_hal_iom_i2c_write(am_i2c_bus->u32Module, msg->addr, (uint32_t *)msg->buf, msg->len, AM_HAL_IOM_RAW);
+            msg_len += (msg->len - 1);
         }
-
-        ret++;
     }
 
-    return ret;
+    return msg_len;
 }
 
 rt_err_t rt_i2c_bus_control(struct rt_i2c_bus_device *bus,
@@ -136,7 +143,7 @@ static struct am_i2c_bus am_i2c_bus_0 =
 #ifdef RT_USING_I2C1
 static struct am_i2c_bus am_i2c_bus_1 = 
 {
-    {0},
+    {1},
     AM_I2C1_IOM_INST
 };
 #endif
@@ -144,7 +151,7 @@ static struct am_i2c_bus am_i2c_bus_1 =
 #ifdef RT_USING_I2C2
 static struct am_i2c_bus am_i2c_bus_2 = 
 {
-    {1},
+    {2},
     AM_I2C2_IOM_INST
 };
 #endif
@@ -152,7 +159,7 @@ static struct am_i2c_bus am_i2c_bus_2 =
 #ifdef RT_USING_I2C3
 static struct am_i2c_bus am_i2c_bus_3 = 
 {
-    {2},
+    {3},
     AM_I2C3_IOM_INST
 };
 #endif
@@ -160,7 +167,7 @@ static struct am_i2c_bus am_i2c_bus_3 =
 #ifdef RT_USING_I2C4
 static struct am_i2c_bus am_i2c_bus_4 = 
 {
-    {3},
+    {4},
     AM_I2C4_IOM_INST
 };
 #endif
@@ -203,6 +210,23 @@ int rt_i2c_init(void)
     rt_i2c_bus_device_register(&am_i2c->parent, "i2c2");
 #endif
 
+#ifdef RT_USING_I2C3
+    /* init i2c gpio */
+    am_hal_gpio_pin_config(I2C3_GPIO_SCL, I2C3_GPIO_CFG_SCK | AM_HAL_GPIO_PULL6K);
+    am_hal_gpio_pin_config(I2C3_GPIO_SDA, I2C3_GPIO_CFG_SDA | AM_HAL_GPIO_PULL6K);
+
+    /* Initialize IOM 3 in I2C mode at 400KHz */
+    am_hal_iom_pwrctrl_enable(AM_I2C3_IOM_INST);
+    g_sIOMConfig.ui32ClockFrequency = AM_HAL_IOM_400KHZ;
+    am_hal_iom_config(AM_I2C3_IOM_INST, &g_sIOMConfig);
+    am_hal_iom_enable(AM_I2C3_IOM_INST);
+
+    /* init i2c bus device */
+    am_i2c = &am_i2c_bus_3;
+    am_i2c->parent.ops = &am_i2c_ops;
+    rt_i2c_bus_device_register(&am_i2c->parent, "i2c3");
+#endif
+
 #ifdef RT_USING_I2C4
     /* init i2c gpio */
     am_hal_gpio_pin_config(I2C4_GPIO_SCL, I2C4_GPIO_CFG_SCK | AM_HAL_GPIO_PULL6K);
@@ -220,7 +244,7 @@ int rt_i2c_init(void)
     rt_i2c_bus_device_register(&am_i2c->parent, "i2c4");
 #endif
 
-    rt_kprintf("i2c_init!\n");
+    //rt_kprintf("i2c_init!\n");
 
     return 0;
 }

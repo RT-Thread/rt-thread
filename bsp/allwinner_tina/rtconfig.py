@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH        ='arm'
-CPU         ='R6'
+CPU         ='arm9'
 CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):

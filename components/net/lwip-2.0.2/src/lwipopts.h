@@ -57,35 +57,175 @@
 
 /* ---------- Debug options ---------- */
 #ifdef LWIP_DEBUG
+#ifdef RT_LWIP_SYS_DEBUG
+#define SYS_DEBUG                   LWIP_DBG_ON
+#else
 #define SYS_DEBUG                   LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_ETHARP_DEBUG
+#define ETHARP_DEBUG                LWIP_DBG_ON
+#else
 #define ETHARP_DEBUG                LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_PPP_DEBUG
+#define PPP_DEBUG                   LWIP_DBG_ON
+#else
 #define PPP_DEBUG                   LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_MEM_DEBUG
+#define MEM_DEBUG                   LWIP_DBG_ON
+#else
 #define MEM_DEBUG                   LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_MEMP_DEBUG
+#define MEMP_DEBUG                  LWIP_DBG_ON
+#else
 #define MEMP_DEBUG                  LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_PBUF_DEBUG
+#define PBUF_DEBUG                  LWIP_DBG_ON
+#else
 #define PBUF_DEBUG                  LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_API_LIB_DEBUG
+#define API_LIB_DEBUG               LWIP_DBG_ON
+#else
 #define API_LIB_DEBUG               LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_API_MSG_DEBUG
+#define API_MSG_DEBUG               LWIP_DBG_ON
+#else
 #define API_MSG_DEBUG               LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCPIP_DEBUG
+#define TCPIP_DEBUG                 LWIP_DBG_ON
+#else
 #define TCPIP_DEBUG                 LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_NETIF_DEBUG
+#define NETIF_DEBUG                 LWIP_DBG_ON
+#else
 #define NETIF_DEBUG                 LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_SOCKETS_DEBUG
+#define SOCKETS_DEBUG               LWIP_DBG_ON
+#else
 #define SOCKETS_DEBUG               LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_DNS_DEBUG
+#define DNS_DEBUG                   LWIP_DBG_ON
+#else
 #define DNS_DEBUG                   LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_AUTOIP_DEBUG
+#define AUTOIP_DEBUG                LWIP_DBG_ON
+#else
 #define AUTOIP_DEBUG                LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_DHCP_DEBUG
+#define DHCP_DEBUG                  LWIP_DBG_ON
+#else
 #define DHCP_DEBUG                  LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_IP_DEBUG
+#define IP_DEBUG                    LWIP_DBG_ON
+#else
 #define IP_DEBUG                    LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_IP_REASS_DEBUG
+#define IP_REASS_DEBUG              LWIP_DBG_ON
+#else
 #define IP_REASS_DEBUG              LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_ICMP_DEBUG
+#define ICMP_DEBUG                  LWIP_DBG_ON
+#else
 #define ICMP_DEBUG                  LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_IGMP_DEBUG
+#define IGMP_DEBUG                  LWIP_DBG_ON
+#else
 #define IGMP_DEBUG                  LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_UDP_DEBUG
+#define UDP_DEBUG                   LWIP_DBG_ON
+#else
 #define UDP_DEBUG                   LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_DEBUG
+#define TCP_DEBUG                   LWIP_DBG_ON
+#else
 #define TCP_DEBUG                   LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_INPUT_DEBUG
+#define TCP_INPUT_DEBUG             LWIP_DBG_ON
+#else
 #define TCP_INPUT_DEBUG             LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_OUTPUT_DEBUG
+#define TCP_OUTPUT_DEBUG            LWIP_DBG_ON
+#else
 #define TCP_OUTPUT_DEBUG            LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_RTO_DEBUG
+#define TCP_RTO_DEBUG               LWIP_DBG_ON
+#else
 #define TCP_RTO_DEBUG               LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_CWND_DEBUG
+#define TCP_CWND_DEBUG              LWIP_DBG_ON
+#else
 #define TCP_CWND_DEBUG              LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_WND_DEBUG
+#define TCP_WND_DEBUG               LWIP_DBG_ON
+#else
 #define TCP_WND_DEBUG               LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_FR_DEBUG
+#define TCP_FR_DEBUG                LWIP_DBG_ON
+#else
 #define TCP_FR_DEBUG                LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_QLEN_DEBUG
+#define TCP_QLEN_DEBUG              LWIP_DBG_ON
+#else
 #define TCP_QLEN_DEBUG              LWIP_DBG_OFF
+#endif
+
+#ifdef RT_LWIP_TCP_RST_DEBUG
+#define TCP_RST_DEBUG               LWIP_DBG_ON
+#else
 #define TCP_RST_DEBUG               LWIP_DBG_OFF
 #endif
+
+#endif /* LWIP_DEBUG */
 
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
@@ -243,6 +383,18 @@
 #define ARP_TABLE_SIZE              10
 #define ARP_QUEUEING                1
 
+/* ---------- Checksum options ---------- */
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+#define CHECKSUM_GEN_IP                 0
+#define CHECKSUM_GEN_UDP                0
+#define CHECKSUM_GEN_TCP                0
+#define CHECKSUM_GEN_ICMP               0
+#define CHECKSUM_CHECK_IP               0
+#define CHECKSUM_CHECK_UDP              0
+#define CHECKSUM_CHECK_TCP              0
+#define CHECKSUM_CHECK_ICMP             0
+#endif
+
 /* ---------- IP options ---------- */
 /* Define IP_FORWARD to 1 if you wish to have the ability to forward
    IP packets across network interfaces. If you are going to run lwIP
@@ -322,6 +474,7 @@
 #define MEMP_STATS                  1
 #define PBUF_STATS                  1
 #define SYS_STATS                   1
+#define MIB2_STATS                  1
 #endif /* LWIP_STATS */
 
 /* ---------- PPP options ---------- */
@@ -379,6 +532,13 @@
 #endif
 
 /**
+ * LWIP_NETIF_HOSTNAME==1: Support netif hostname
+ */
+#ifndef LWIP_NETIF_HOSTNAME
+#define LWIP_NETIF_HOSTNAME             1
+#endif
+
+/**
  * LWIP_NETIF_API==1: Support netif api (in netifapi.c)
  */
 #ifndef LWIP_NETIF_API
@@ -405,7 +565,7 @@
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.
  * (only used if you use sockets.c)
  */
-#ifdef RT_USING_DFS_NET
+#ifdef SAL_USING_POSIX
 #define LWIP_COMPAT_SOCKETS             0
 #else
 #ifndef LWIP_COMPAT_SOCKETS

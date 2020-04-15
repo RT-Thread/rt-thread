@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #ifndef PIPE_H__
 #define PIPE_H__
 
@@ -16,6 +24,7 @@
 struct rt_pipe_device
 {
     struct rt_device parent;
+    rt_bool_t is_named;
 
     /* ring buffer in pipe device */
     struct rt_ringbuffer *fifo;
@@ -32,5 +41,5 @@ struct rt_pipe_device
 typedef struct rt_pipe_device rt_pipe_t;
 
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz);
-
+int rt_pipe_delete(const char *name);
 #endif /* PIPE_H__ */

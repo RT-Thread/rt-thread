@@ -1,0 +1,16 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('*.cpp')
+asm_src = Split('''
+context_gcc.S
+vector_gcc.S
+entry_point.S
+cpu_gcc.S
+cache.S
+''')
+CPPPATH = [cwd]
+
+group = DefineGroup('cpu', src + asm_src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

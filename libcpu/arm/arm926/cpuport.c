@@ -1,21 +1,7 @@
 /*
- * File      : cpu.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -37,30 +23,30 @@ rt_inline rt_uint32_t cp15_rd(void)
 {
     rt_uint32_t i;
 
-    __asm volatile("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+    __asm volatile("mrc p15, 0, %0, c1, c0, 0":"=r"(i));
     return i;
 }
 
 rt_inline void cache_enable(rt_uint32_t bit)
 {
     __asm volatile(\
-                         "mrc  p15,0,r0,c1,c0,0\n\t"    \
-                         "orr  r0,r0,%0\n\t"            \
-                         "mcr  p15,0,r0,c1,c0,0"        \
-                         :                              \
-                         :"r" (bit)                     \
-                         :"memory");
+                   "mrc  p15,0,r0,c1,c0,0\n\t"    \
+                   "orr  r0,r0,%0\n\t"            \
+                   "mcr  p15,0,r0,c1,c0,0"        \
+                   :                              \
+                   : "r"(bit)                     \
+                   : "memory");
 }
 
 rt_inline void cache_disable(rt_uint32_t bit)
 {
     __asm volatile(\
-                         "mrc  p15,0,r0,c1,c0,0\n\t"    \
-                         "bic  r0,r0,%0\n\t"            \
-                         "mcr  p15,0,r0,c1,c0,0"        \
-                         :                              \
-                         :"r" (bit)                     \
-                         :"memory");
+                   "mrc  p15,0,r0,c1,c0,0\n\t"    \
+                   "bic  r0,r0,%0\n\t"            \
+                   "mcr  p15,0,r0,c1,c0,0"        \
+                   :                              \
+                   : "r"(bit)                     \
+                   : "memory");
 }
 #endif
 
@@ -166,7 +152,7 @@ void rt_hw_cpu_reset()
     rt_kprintf("Restarting system...\n");
     machine_reset();
 
-    while(1);    /* loop forever and wait for reset to happen */
+    while (1);   /* loop forever and wait for reset to happen */
 
     /* NEVER REACHED */
 }
@@ -220,21 +206,7 @@ int __rt_ffs(int value)
 #elif defined(__GNUC__) || defined(__ICCARM__)
 int __rt_ffs(int value)
 {
-    register rt_uint32_t x;
-
-    if (value == 0)
-        return value;
-
-    __asm
-    (
-        "rsb %[temp], %[val], #0\n"
-        "and %[temp], %[temp], %[val]\n"
-        "clz %[temp], %[temp]\n"
-        "rsb %[temp], %[temp], #32\n"
-        :[temp] "=r"(x)
-        :[val] "r"(value)
-    );
-    return x;
+    return __builtin_ffs(value);
 }
 #endif
 

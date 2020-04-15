@@ -1,21 +1,7 @@
 /*
- * File      : mem.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,6 +11,7 @@
  * 2010-07-13     Bernard      fix RT_ALIGN issue found by kuronca
  * 2010-10-14     Bernard      fix rt_realloc issue when realloc a NULL pointer.
  * 2017-07-14     armink       fix rt_realloc issue when new size is 0
+ * 2018-10-02     Bernard      Add 64bit support
  */
 
 /*
@@ -111,11 +98,18 @@ struct heap_mem
     /* magic and used flag */
     rt_uint16_t magic;
     rt_uint16_t used;
+#ifdef ARCH_CPU_64BIT
+    rt_uint32_t resv;
+#endif
 
     rt_size_t next, prev;
 
 #ifdef RT_USING_MEMTRACE
+#ifdef ARCH_CPU_64BIT
+    rt_uint8_t thread[8];
+#else
     rt_uint8_t thread[4];   /* thread name */
+#endif
 #endif
 };
 
@@ -125,7 +119,12 @@ static rt_uint8_t *heap_ptr;
 /** the last entry, always unused! */
 static struct heap_mem *heap_end;
 
+#ifdef ARCH_CPU_64BIT
+#define MIN_SIZE 24
+#else
 #define MIN_SIZE 12
+#endif
+
 #define MIN_SIZE_ALIGNED     RT_ALIGN(MIN_SIZE, RT_ALIGN_SIZE)
 #define SIZEOF_STRUCT_MEM    RT_ALIGN(sizeof(struct heap_mem), RT_ALIGN_SIZE)
 
@@ -205,8 +204,8 @@ static void plug_holes(struct heap_mem *mem)
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     struct heap_mem *mem;
-    rt_uint32_t begin_align = RT_ALIGN((rt_uint32_t)begin_addr, RT_ALIGN_SIZE);
-    rt_uint32_t end_align = RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_ALIGN_SIZE);
+    rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
+    rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -220,7 +219,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     else
     {
         rt_kprintf("mem init, error begin address 0x%x, and end address 0x%x\n",
-                   (rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
+                   (rt_ubase_t)begin_addr, (rt_ubase_t)end_addr);
 
         return;
     }
@@ -229,7 +228,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     heap_ptr = (rt_uint8_t *)begin_align;
 
     RT_DEBUG_LOG(RT_DEBUG_MEM, ("mem init, heap begin address 0x%x, size %d\n",
-                                (rt_uint32_t)heap_ptr, mem_size_aligned));
+                                (rt_ubase_t)heap_ptr, mem_size_aligned));
 
     /* initialize the start of the heap */
     mem        = (struct heap_mem *)heap_ptr;
@@ -275,10 +274,10 @@ void *rt_malloc(rt_size_t size)
     rt_size_t ptr, ptr2;
     struct heap_mem *mem, *mem2;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     if (size == 0)
         return RT_NULL;
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
 
     if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
         RT_DEBUG_LOG(RT_DEBUG_MEM, ("malloc size %d, but align to %d\n",
@@ -388,14 +387,14 @@ void *rt_malloc(rt_size_t size)
             }
 
             rt_sem_release(&heap_sem);
-            RT_ASSERT((rt_uint32_t)mem + SIZEOF_STRUCT_MEM + size <= (rt_uint32_t)heap_end);
-            RT_ASSERT((rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
-            RT_ASSERT((((rt_uint32_t)mem) & (RT_ALIGN_SIZE - 1)) == 0);
+            RT_ASSERT((rt_ubase_t)mem + SIZEOF_STRUCT_MEM + size <= (rt_ubase_t)heap_end);
+            RT_ASSERT((rt_ubase_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM) % RT_ALIGN_SIZE == 0);
+            RT_ASSERT((((rt_ubase_t)mem) & (RT_ALIGN_SIZE - 1)) == 0);
 
             RT_DEBUG_LOG(RT_DEBUG_MEM,
                          ("allocate memory at 0x%x, size: %d\n",
-                          (rt_uint32_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM),
-                          (rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
+                          (rt_ubase_t)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM),
+                          (rt_ubase_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
             RT_OBJECT_HOOK_CALL(rt_malloc_hook,
                                 (((void *)((rt_uint8_t *)mem + SIZEOF_STRUCT_MEM)), size));
@@ -490,6 +489,12 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         {
             ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
         }
+        
+        if (mem2 < lfree)
+        {
+            /* the splited struct is now the lowest */
+            lfree = mem2;
+        }
 
         plug_holes(mem2);
 
@@ -527,8 +532,6 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 {
     void *p;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     /* allocate 'count' objects of size 'size' */
     p = rt_malloc(count * size);
 
@@ -550,11 +553,12 @@ void rt_free(void *rmem)
 {
     struct heap_mem *mem;
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-
     if (rmem == RT_NULL)
         return;
-    RT_ASSERT((((rt_uint32_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
+
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    RT_ASSERT((((rt_ubase_t)rmem) & (RT_ALIGN_SIZE - 1)) == 0);
     RT_ASSERT((rt_uint8_t *)rmem >= (rt_uint8_t *)heap_ptr &&
               (rt_uint8_t *)rmem < (rt_uint8_t *)heap_end);
 
@@ -573,8 +577,8 @@ void rt_free(void *rmem)
 
     RT_DEBUG_LOG(RT_DEBUG_MEM,
                  ("release memory 0x%x, size: %d\n",
-                  (rt_uint32_t)rmem,
-                  (rt_uint32_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
+                  (rt_ubase_t)rmem,
+                  (rt_ubase_t)(mem->next - ((rt_uint8_t *)mem - heap_ptr))));
 
 
     /* protect the heap from concurrent access */
@@ -639,14 +643,14 @@ FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
 int memcheck(void)
 {
     int position;
-    rt_uint32_t level;
+    rt_ubase_t level;
     struct heap_mem *mem;
     level = rt_hw_interrupt_disable();
     for (mem = (struct heap_mem *)heap_ptr; mem != heap_end; mem = (struct heap_mem *)&heap_ptr[mem->next])
     {
-        position = (rt_uint32_t)mem - (rt_uint32_t)heap_ptr;
+        position = (rt_ubase_t)mem - (rt_ubase_t)heap_ptr;
         if (position < 0) goto __exit;
-        if (position > mem_size_aligned) goto __exit;
+        if (position > (int)mem_size_aligned) goto __exit;
         if (mem->magic != HEAP_MAGIC) goto __exit;
         if (mem->used != 0 && mem->used != 1) goto __exit;
     }
@@ -679,7 +683,7 @@ int memtrace(int argc, char **argv)
     rt_kprintf("\n--memory item information --\n");
     for (mem = (struct heap_mem *)heap_ptr; mem != heap_end; mem = (struct heap_mem *)&heap_ptr[mem->next])
     {
-        int position = (rt_uint32_t)mem - (rt_uint32_t)heap_ptr;
+        int position = (rt_ubase_t)mem - (rt_ubase_t)heap_ptr;
         int size;
 
         rt_kprintf("[0x%08x - ", mem);

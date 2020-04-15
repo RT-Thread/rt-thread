@@ -1,20 +1,7 @@
 /*
- * File      : drv_sd.c
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -407,6 +394,22 @@ rt_err_t mci_hw_init(const char *device_name)
         rt_kprintf("SD_Init failed!\n");
         return -RT_ERROR;
     }
+	
+	/*
+	follow the page: https://community.nxp.com/thread/454769
+	
+	The issue concerns sdmmc library bug (I finally solved) in SD_Init() in the file sdmmc/src/fsl_sd.c:SD_SelectBusTiming() 
+	calls SD_SwitchFunction() which sets block size to 64bytes (512bits).Therefore SD_SetBlockSize(card, FSL_SDMMC_DEFAULT_BLOCK_SIZE)
+	should be called again before SD_Init() exits.
+	*/
+	
+	if (kStatus_Success != SDMMC_SetBlockSize(_mci_device->card.host.base, _mci_device->card.host.transfer, FSL_SDMMC_DEFAULT_BLOCK_SIZE))
+	{
+        SD_Deinit(&_mci_device->card);
+        memset(&_mci_device->card, 0U, sizeof(_mci_device->card));
+        rt_kprintf("SD_Init failed!\n");
+        return -RT_ERROR;		
+	}
 
     /* initialize mutex lock */
     rt_mutex_init(&_mci_device->lock, device_name, RT_IPC_FLAG_FIFO);

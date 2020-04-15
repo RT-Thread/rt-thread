@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -287,16 +287,20 @@ am_hal_clkgen_int_clear(uint32_t ui32Interrupt)
 //!     AM_HAL_CLKGEN_OSC_LFRC
 //!     AM_HAL_CLKGEN_OSC_XT
 //!
-//! @return 0 None.
+//! @return None.
 //
 //*****************************************************************************
 void
 am_hal_clkgen_osc_start(uint32_t ui32OscFlags)
 {
-    //
-    // Start the oscillator(s).
-    //
-    AM_REG(CLKGEN, OCTRL) &= ~ui32OscFlags;
+    if ( ui32OscFlags & (AM_HAL_CLKGEN_OSC_LFRC | AM_HAL_CLKGEN_OSC_XT) )
+    {
+        //
+        // Start the oscillator(s).
+        // Note that these bits are cleared in order to enable the oscillator.
+        //
+        AM_REG(CLKGEN, OCTRL) &= ~ui32OscFlags;
+    }
 }
 
 //*****************************************************************************
@@ -318,10 +322,14 @@ am_hal_clkgen_osc_start(uint32_t ui32OscFlags)
 void
 am_hal_clkgen_osc_stop(uint32_t ui32OscFlags)
 {
-    //
-    // Stop the oscillator(s).
-    //
-    AM_REG(CLKGEN, OCTRL) |= ui32OscFlags;
+    if ( ui32OscFlags & (AM_HAL_CLKGEN_OSC_LFRC | AM_HAL_CLKGEN_OSC_XT) )
+    {
+        //
+        // Stop the oscillator(s).
+        // Note that these bits are set in order to stop the oscillator.
+        //
+        AM_REG(CLKGEN, OCTRL) |= ui32OscFlags;
+    }
 }
 
 //*****************************************************************************

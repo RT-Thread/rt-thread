@@ -1,11 +1,7 @@
 /*
- * File      : stack.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -54,12 +50,19 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0xdeadbeef;                  /* r2 */
     *(--stk) = 0xdeadbeef;                  /* r1 */
     *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
-
     /* cpsr */
     if ((rt_uint32_t)tentry & 0x01)
         *(--stk) = SVCMODE | 0x20;          /* thumb mode */
     else
         *(--stk) = SVCMODE;                 /* arm mode   */
+
+#ifdef RT_USING_LWP
+    *(--stk) = 0;       /* user lr */
+    *(--stk) = 0;       /* user sp*/
+#endif
+#ifdef RT_USING_FPU
+    *(--stk) = 0;       /* not use fpu*/
+#endif
 
     /* return task's current stack address */
     return (rt_uint8_t *)stk;

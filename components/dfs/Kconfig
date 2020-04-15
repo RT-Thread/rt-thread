@@ -2,6 +2,7 @@ menu "Device virtual file system"
 
 config RT_USING_DFS
     bool "Using device virtual file system"
+    select RT_USING_MUTEX
     default y
     help
         The device file system is a light weight virtual file system.
@@ -12,23 +13,34 @@ if RT_USING_DFS
         default y
 
     config DFS_FILESYSTEMS_MAX
-        int "The maximal number of mounted file system"        
+        int "The maximal number of mounted file system"
         default 4 if RT_USING_DFS_NFS
-        default 2 
+        default 2
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
         default 4 if RT_USING_DFS_NFS
-        default 2 
+        default 2
 
     config DFS_FD_MAX
         int "The maximal number of opened files"
-        default 16 if RT_USING_DFS_NFS
-        default 4
+        default 16
+
+    config RT_USING_DFS_MNTTABLE
+        bool "Using mount table for file system"
+        default n
+        help
+            User can use mount table for automatically mount, for example:
+                const struct dfs_mount_tbl mount_table[] =
+                {
+                    {"flash0", "/", "elm", 0, 0},
+                    {0}
+                };
+            The mount_table must be terminated with NULL.
 
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"
-        default y
+        default n
         help
             FatFs is a generic FAT/exFAT file system module for small embedded systems.
 
@@ -40,11 +52,11 @@ if RT_USING_DFS
 
         config RT_DFS_ELM_WORD_ACCESS
             bool "Using RT_DFS_ELM_WORD_ACCESS"
-            default y   
+            default y
 
-        choice 
+        choice
             prompt "Support long file name"
-            default RT_DFS_ELM_USE_LFN_0
+            default RT_DFS_ELM_USE_LFN_3
 
             config RT_DFS_ELM_USE_LFN_0
                 bool "0: LFN disable"
@@ -95,34 +107,13 @@ if RT_USING_DFS
         bool "Using devfs for device objects"
         default y
 
-    config RT_USING_DFS_NET
-        bool "Enable BSD socket operated by file system API"
-        select RT_USING_LWIP
-        select RT_USING_POSIX
-        default n
-        help
-            Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
-
-    if RT_USING_DFS_NET
-        config HAVE_SYS_SELECT_H
-            bool "Toolchains/libc have provided sys/select.h"
-            default n
-            help
-                Toolchains/libc have provided sys/select.h file, therefore, disable the sys/select.h in RT-Thread.
-
-        config HAVE_SYS_SOCKET_H
-            bool "Toolchains/libc have provided sys/socket.h"
-            default n
-            help
-                Toolchains/libc have provided sys/socket.h file, therefore, disable the sys/socket.h in RT-Thread.
-    endif
-
     config RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
         default n
 
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"
+        select RT_USING_MEMHEAP
         default n
 
     config RT_USING_DFS_UFFS
@@ -131,7 +122,7 @@ if RT_USING_DFS
         default n
 
     if RT_USING_DFS_UFFS
-        choice 
+        choice
             prompt "UFFS ECC mode"
             default RT_UFFS_ECC_MODE_1
 
@@ -164,7 +155,7 @@ if RT_USING_DFS
 
     config RT_USING_DFS_NFS
         bool "Using NFS v3 client file system"
-        select RT_USING_LWIP
+        depends on RT_USING_LWIP
         default n
 
     if RT_USING_DFS_NFS

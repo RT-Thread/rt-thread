@@ -1,21 +1,7 @@
 /*
- * File      : pthread_internal.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -44,6 +30,10 @@ struct _pthread_key_data
 };
 typedef struct _pthread_key_data _pthread_key_data_t;
 
+#ifndef PTHREAD_NUM_MAX
+#define PTHREAD_NUM_MAX 32
+#endif
+
 #define PTHREAD_MAGIC   0x70746873
 struct _pthread_data
 {
@@ -70,17 +60,7 @@ struct _pthread_data
 };
 typedef struct _pthread_data _pthread_data_t;
 
-rt_inline _pthread_data_t *_pthread_get_data(pthread_t thread)
-{
-    _pthread_data_t *ptd;
-    RT_ASSERT(thread != RT_NULL);
-
-    ptd = (_pthread_data_t *)thread->user_data;
-    RT_ASSERT(ptd != RT_NULL);
-    RT_ASSERT(ptd->magic == PTHREAD_MAGIC);
-
-    return ptd;
-}
+_pthread_data_t *_pthread_get_data(pthread_t thread);
 
 int clock_time_to_tick(const struct timespec *time);
 

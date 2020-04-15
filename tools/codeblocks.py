@@ -73,7 +73,7 @@ def CBProject(target, script, program):
     
     root = tree.getroot()
     
-    out = file(target, 'wb')
+    out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>\n')
     
     ProjectFiles = []
@@ -90,7 +90,7 @@ def CBProject(target, script, program):
 
     # SECTION 2. 
     # write head include path
-    if building.Env.has_key('CPPPATH'):
+    if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
         paths  = set()
         for path in cpp_path:
@@ -108,12 +108,13 @@ def CBProject(target, script, program):
 
         for macro in building.Env.get('CPPDEFINES', []):
             Add = SubElement(elem, 'Add')
-            Add.set('option', "-D"+macro)
+            for d in macro:
+                Add.set('option', "-D"+d)
         
         # write link flags
     '''
         # write lib dependence 
-        if building.Env.has_key('LIBS'):
+        if 'LIBS' in building.Env:
             for elem in tree.iter(tag='Tool'):
                 if elem.attrib['Name'] == 'VCLinkerTool':
                     break
@@ -122,7 +123,7 @@ def CBProject(target, script, program):
             elem.set('AdditionalDependencies', libs)
     
         # write lib include path
-        if building.Env.has_key('LIBPATH'):
+        if 'LIBPATH' in building.Env:
             lib_path = building.Env['LIBPATH']
             paths  = set()
             for path in lib_path:

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project Name="rt-thread" Version="1">
+  <Dependencies Name="Debug"/>
+  <Description/>
+  <Dependencies Name="BuildSet"/>
+  <BuildConfigs>
+    <BuildConfig Name="BuildSet">
+      <Target>
+        <ROMBank Selected="1">
+          <ROM1>
+            <InUse>yes</InUse>
+            <Start>0x10000000</Start>
+            <Size>0x40000</Size>
+          </ROM1>
+          <ROM2>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM2>
+          <ROM3>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM3>
+          <ROM4>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM4>
+          <ROM5>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+          </ROM5>
+        </ROMBank>
+        <RAMBank>
+          <RAM1>
+            <InUse>yes</InUse>
+            <Start>0x20000000</Start>
+            <Size>0x18000</Size>
+            <Init>yes</Init>
+          </RAM1>
+          <RAM2>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM2>
+          <RAM3>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM3>
+          <RAM4>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM4>
+          <RAM5>
+            <InUse>no</InUse>
+            <Start/>
+            <Size/>
+            <Init>yes</Init>
+          </RAM5>
+        </RAMBank>
+        <CPU>ck802</CPU>
+        <UseMiniLib>yes</UseMiniLib>
+        <Endian>little</Endian>
+        <UseHardFloat>no</UseHardFloat>
+        <UseEnhancedLRW>no</UseEnhancedLRW>
+      </Target>
+      <Output>
+        <OutputName>$(ProjectName)</OutputName>
+        <Type>Executable</Type>
+        <CreateHexFile>yes</CreateHexFile>
+        <Preprocessor>yes</Preprocessor>
+        <Disasm>yes</Disasm>
+        <CallGraph>yes</CallGraph>
+        <Map>yes</Map>
+      </Output>
+      <User>
+        <BeforeCompile>
+          <RunUserProg>no</RunUserProg>
+          <UserProgName/>
+        </BeforeCompile>
+        <BeforeMake>
+          <RunUserProg>no</RunUserProg>
+          <UserProgName/>
+        </BeforeMake>
+        <AfterMake>
+          <RunUserProg>no</RunUserProg>
+          <UserProgName/>
+        </AfterMake>
+      </User>
+      <Compiler>
+        <Define>RT_USING_MINILIBC</Define>
+        <Undefine/>
+        <Optim>None (-O0)</Optim>
+        <DebugLevel>Maximum (-g3)</DebugLevel>
+        <IncludePath>applications;.;drivers;libraries\include;libraries\common\aes;libraries\common\aes;libraries\common\crc;libraries\common\dmac;libraries\common\eflash;libraries\common\gpio;libraries\common\iic;libraries\common\pwm;libraries\common\rsa;libraries\common\rtc;libraries\common\sha;libraries\common\spi;libraries\common\timer;libraries\common\trng;libraries\common\usart;libraries\common\wdt;..\..\include;..\..\libcpu\c-sky\ck802;..\..\libcpu\c-sky\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\minilibc</IncludePath>
+        <OtherFlags> -c -mistack -ffunction-sections</OtherFlags>
+        <Verbose>no</Verbose>
+        <Ansi>no</Ansi>
+        <Syntax>no</Syntax>
+        <Pedantic>no</Pedantic>
+        <PedanticErr>no</PedanticErr>
+        <InhibitWarn>no</InhibitWarn>
+        <AllWarn>yes</AllWarn>
+        <WarnErr>no</WarnErr>
+        <OneElfS>no</OneElfS>
+        <Fstrict>no</Fstrict>
+      </Compiler>
+      <Asm>
+        <Define>CONFIG_CKCPU_MMU=0</Define>
+        <Undefine/>
+        <IncludePath>applications;.;drivers;libraries\include;libraries\common\aes;libraries\common\aes;libraries\common\crc;libraries\common\dmac;libraries\common\eflash;libraries\common\gpio;libraries\common\iic;libraries\common\pwm;libraries\common\rsa;libraries\common\rtc;libraries\common\sha;libraries\common\spi;libraries\common\timer;libraries\common\trng;libraries\common\usart;libraries\common\wdt;..\..\include;..\..\libcpu\c-sky\ck802;..\..\libcpu\c-sky\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\minilibc</IncludePath>
+        <OtherFlags/>
+        <DebugLevel>gdwarf2</DebugLevel>
+      </Asm>
+      <Linker>
+        <Garbage>yes</Garbage>
+        <LDFile>$(ProjectPath)\gcc_csky.ld</LDFile>
+        <LibName/>
+        <LibPath/>
+        <OtherFlags/>
+        <AutoLDFile>no</AutoLDFile>
+      </Linker>
+      <Debug>
+        <LoadApplicationAtStartup>yes</LoadApplicationAtStartup>
+        <Connector>ICE</Connector>
+        <StopAt>yes</StopAt>
+        <StopAtText>main</StopAtText>
+        <InitFile/>
+        <AutoRun>no</AutoRun>
+        <ResetType>Hard Reset</ResetType>
+        <SoftResetVal>0</SoftResetVal>
+        <ResetAfterLoad>no</ResetAfterLoad>
+        <ConfigICE>
+          <IP>localhost</IP>
+          <PORT>1025</PORT>
+          <Clock>12000</Clock>
+          <Delay>10</Delay>
+          <DDC>yes</DDC>
+          <TRST>no</TRST>
+          <Connect>Normal</Connect>
+          <ResetType>Soft Reset</ResetType>
+          <SoftResetVal>0</SoftResetVal>
+          <RTOSType>Bare Metal</RTOSType>
+          <DownloadToFlash>no</DownloadToFlash>
+          <ResetAfterConnect>yes</ResetAfterConnect>
+        </ConfigICE>
+        <ConfigSIM>
+          <SIMTarget>soccfg/cskyv2/smart_v3_802_cfg.xml</SIMTarget>
+          <OtherFlags/>
+          <NoGraphic>no</NoGraphic>
+          <Log>yes</Log>
+        </ConfigSIM>
+      </Debug>
+      <Flash>
+        <InitFile/>
+        <Erase>Erase Sectors</Erase>
+        <Algorithms Path=""/>
+        <Program>yes</Program>
+        <Verify>no</Verify>
+        <ResetAndRun>no</ResetAndRun>
+      </Flash>
+    </BuildConfig>
+  </BuildConfigs>
+  <VirtualDirectory Name="Applications">
+    <File Name="applications/main.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Drivers">
+    <File Name="drivers/board.c"/>
+    <File Name="drivers/board_coretimer.c"/>
+    <File Name="drivers/board_uart.c"/>
+    <File Name="drivers/isr.c"/>
+    <File Name="drivers/pinmux.c"/>
+    <File Name="drivers/system.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="libraries">
+    <File Name="libraries/startup_gcc.S"/>
+    <File Name="libraries/common/aes/ck_aes.c"/>
+    <File Name="libraries/common/crc/ck_crc.c"/>
+    <File Name="libraries/common/dmac/ck_dmac.c"/>
+    <File Name="libraries/common/eflash/ck_eflash.c"/>
+    <File Name="libraries/common/pwm/ck_pwm.c"/>
+    <File Name="libraries/common/rsa/ck_rsa.c"/>
+    <File Name="libraries/common/sha/ck_sha.c"/>
+    <File Name="libraries/common/trng/ck_trng.c"/>
+    <File Name="libraries/common/timer/dw_timer.c"/>
+    <File Name="libraries/common/gpio/dw_gpio.c"/>
+    <File Name="libraries/common/spi/dw_spi.c"/>
+    <File Name="libraries/common/iic/dw_iic.c"/>
+    <File Name="libraries/common/usart/dw_usart.c"/>
+    <File Name="libraries/common/wdt/dw_wdt.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="Kernel">
+    <File Name="../../src/clock.c"/>
+    <File Name="../../src/components.c"/>
+    <File Name="../../src/device.c"/>
+    <File Name="../../src/idle.c"/>
+    <File Name="../../src/ipc.c"/>
+    <File Name="../../src/irq.c"/>
+    <File Name="../../src/kservice.c"/>
+    <File Name="../../src/mem.c"/>
+    <File Name="../../src/mempool.c"/>
+    <File Name="../../src/object.c"/>
+    <File Name="../../src/scheduler.c"/>
+    <File Name="../../src/signal.c"/>
+    <File Name="../../src/thread.c"/>
+    <File Name="../../src/timer.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="CK802">
+    <File Name="../../libcpu/c-sky/ck802/core_ck802.c"/>
+    <File Name="../../libcpu/c-sky/ck802/stack_ck802.c"/>
+    <File Name="../../libcpu/c-sky/ck802/contex_ck802_gcc.S"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="DeviceDrivers">
+    <File Name="../../components/drivers/misc/pin.c"/>
+    <File Name="../../components/drivers/serial/serial.c"/>
+    <File Name="../../components/drivers/src/completion.c"/>
+    <File Name="../../components/drivers/src/dataqueue.c"/>
+    <File Name="../../components/drivers/src/pipe.c"/>
+    <File Name="../../components/drivers/src/ringbuffer.c"/>
+    <File Name="../../components/drivers/src/waitqueue.c"/>
+    <File Name="../../components/drivers/src/workqueue.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="finsh">
+    <File Name="../../components/finsh/shell.c"/>
+    <File Name="../../components/finsh/symbol.c"/>
+    <File Name="../../components/finsh/cmd.c"/>
+    <File Name="../../components/finsh/msh.c"/>
+    <File Name="../../components/finsh/msh_cmd.c"/>
+    <File Name="../../components/finsh/msh_file.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="libc">
+    <File Name="../../components/libc/compilers/minilibc/ctype.c"/>
+    <File Name="../../components/libc/compilers/minilibc/math.c"/>
+    <File Name="../../components/libc/compilers/minilibc/qsort.c"/>
+    <File Name="../../components/libc/compilers/minilibc/rand.c"/>
+    <File Name="../../components/libc/compilers/minilibc/stdlib.c"/>
+    <File Name="../../components/libc/compilers/minilibc/string.c"/>
+    <File Name="../../components/libc/compilers/minilibc/time.c"/>
+  </VirtualDirectory>
+  <DebugSessions>
+    <watchExpressions/>
+    <memoryExpressions>;;;</memoryExpressions>
+    <statistics>;;MHZ</statistics>
+  </DebugSessions>
+</Project>

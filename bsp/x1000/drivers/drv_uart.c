@@ -285,11 +285,14 @@ void rt_hw_uart_init(void)
         strcpy(uart->name, "uart2");
 
 #ifdef CONFIG_SYS_UART2_PD
+        gpio_set_func(GPIO_PORT_C,GPIO_Pin_31,GPIO_INPUT | GPIO_PULL);
         gpio_set_func(GPIO_PORT_D,GPIO_Pin_4,GPIO_FUNC_0);
         gpio_set_func(GPIO_PORT_D,GPIO_Pin_5,GPIO_FUNC_0);
 #else
         //USE JTAG IO for UART2
-        gpio_set_func(GPIO_PORT_C,GPIO_Pin_31,GPIO_FUNC_1);
+        gpio_set_func(GPIO_PORT_D,GPIO_Pin_4,GPIO_INPUT | GPIO_PULL);
+        gpio_set_func(GPIO_PORT_D,GPIO_Pin_5,GPIO_INPUT | GPIO_PULL);
+        gpio_set_func(GPIO_PORT_C,GPIO_Pin_31,GPIO_FUNC_1 | GPIO_PULL);
 #endif
 
         serial->ops              = &_uart_ops;

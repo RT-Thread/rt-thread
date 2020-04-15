@@ -102,6 +102,6 @@ typedef struct tina_intc *tina_intc_t;
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, char *name);
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, const char *name);
 
 #endif /* __INTERRUPT_H__ */

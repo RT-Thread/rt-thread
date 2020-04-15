@@ -1,22 +1,7 @@
 /*
- * File      : cp15_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
- * http://www.rt-thread.org
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,6 +15,11 @@ rt_cpu_get_smp_id:
 
 .globl rt_cpu_vector_set_base
 rt_cpu_vector_set_base:
+    /* clear SCTRL.V to customize the vector address */
+    mrc     p15, #0, r1, c1, c0, #0
+    bic     r1, #(1 << 13)
+    mcr     p15, #0, r1, c1, c0, #0
+    /* set up the vector address */
     mcr     p15, #0, r0, c12, c0, #0
     dsb
     bx      lr
@@ -51,7 +41,7 @@ rt_hw_cpu_icache_enable:
 _FLD_MAX_WAY:
    .word  0x3ff
 _FLD_MAX_IDX:
-   .word  0x7ff
+   .word  0x7fff
 
 .globl rt_cpu_dcache_clean_flush
 rt_cpu_dcache_clean_flush:
@@ -97,6 +87,14 @@ finished:
     dsb
     isb
     pop     {r4-r11}
+    bx      lr
+
+.globl rt_cpu_icache_flush
+rt_cpu_icache_flush:
+    mov r0, #0
+    mcr p15, 0, r0, c7, c5, 0       @ I+BTB cache invalidate
+    dsb
+    isb
     bx      lr
 
 .globl rt_hw_cpu_dcache_disable

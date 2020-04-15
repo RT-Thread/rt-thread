@@ -1,1 +1,0 @@
-lib-${CONFIG_FB_FTLCDC100}	+= font.o lcd.o

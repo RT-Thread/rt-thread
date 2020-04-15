@@ -11,25 +11,50 @@ if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 
 # cross_tool provides the cross compiler
-# EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-    print('================ERROR============================')
-    print('Not support gcc yet!')
-    print('=================================================')
     PLATFORM    = 'gcc'
+    EXEC_PATH   = r'D:/toolchain/gnu_tools_arm_embedded/5.4_2016q3/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM 	= 'iar'
-    EXEC_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    EXEC_PATH 	= r'D:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 
-if PLATFORM == 'armcc':
+if PLATFORM == 'gcc':
+    # tool-chains
+    PREFIX = 'arm-none-eabi-'
+    CC = PREFIX + 'gcc'
+    AS = PREFIX + 'gcc'
+    AR = PREFIX + 'ar'
+    LINK = PREFIX + 'gcc'
+    TARGET_EXT = 'elf'
+    SIZE = PREFIX + 'size'
+    OBJDUMP = PREFIX + 'objdump'
+    OBJCPY = PREFIX + 'objcopy'
+	
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -Dgcc' # -D' + PART_TYPE
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-gd32.map,-cref,-u,Reset_Handler -T gd32_rom.ld'
+
+    CPATH = ''
+    LPATH = ''
+
+    if BUILD == 'debug':
+        CFLAGS += ' -O0 -gdwarf-2 -g'
+        AFLAGS += ' -gdwarf-2'
+    else:
+        CFLAGS += ' -O2'
+
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+
+elif PLATFORM == 'armcc':
     # toolchains
     CC = 'armcc'
     AS = 'armasm'

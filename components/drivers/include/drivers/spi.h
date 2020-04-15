@@ -1,21 +1,7 @@
 /*
- * File      : spi.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,8 +22,8 @@ extern "C"{
 #define RT_SPI_CPOL     (1<<1)                             /* bit[1]:CPOL, clock polarity */
 /**
  * At CPOL=0 the base value of the clock is zero
- *  - For CPHA=0, data are captured on the clock's rising edge (low¡úhigh transition)
- *    and data are propagated on a falling edge (high¡úlow clock transition).
+ *  - For CPHA=0, data are captured on the clock's rising edge (low->high transition)
+ *    and data are propagated on a falling edge (high->low clock transition).
  *  - For CPHA=1, data are captured on the clock's falling edge and data are
  *    propagated on a rising edge.
  * At CPOL=1 the base value of the clock is one (inversion of CPOL=0)
@@ -57,7 +43,10 @@ extern "C"{
 #define RT_SPI_MODE_2       (RT_SPI_CPOL | 0)              /* CPOL = 1, CPHA = 0 */
 #define RT_SPI_MODE_3       (RT_SPI_CPOL | RT_SPI_CPHA)    /* CPOL = 1, CPHA = 1 */
 
-#define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB)
+#define RT_SPI_MODE_MASK    (RT_SPI_CPHA | RT_SPI_CPOL | RT_SPI_MSB | RT_SPI_SLAVE)
+
+#define RT_SPI_BUS_MODE_SPI         (1<<0)       
+#define RT_SPI_BUS_MODE_QSPI        (1<<1)       
 
 #define RT_SPI_CS_HIGH  (1<<4)                             /* Chipselect active high */
 #define RT_SPI_NO_CS    (1<<5)                             /* No chipselect */
@@ -94,6 +83,7 @@ struct rt_spi_ops;
 struct rt_spi_bus
 {
     struct rt_device parent;
+    rt_uint8_t mode;
     const struct rt_spi_ops *ops;
 
     struct rt_mutex lock;
@@ -118,7 +108,57 @@ struct rt_spi_device
     struct rt_spi_bus *bus;
 
     struct rt_spi_configuration config;
+    void   *user_data;
 };
+
+struct rt_qspi_message
+{
+    struct rt_spi_message parent;
+
+    /* instruction stage */
+    struct
+    {
+        rt_uint8_t content;
+        rt_uint8_t qspi_lines;
+    } instruction;
+
+    /* address and alternate_bytes stage */
+    struct
+    {
+        rt_uint32_t content;
+        rt_uint8_t size;
+        rt_uint8_t qspi_lines;
+    } address, alternate_bytes;
+
+    /* dummy_cycles stage */
+    rt_uint32_t dummy_cycles;
+
+    /* number of lines in qspi data stage, the other configuration items are in parent */
+    rt_uint8_t qspi_data_lines;
+};
+
+struct rt_qspi_configuration
+{
+    struct rt_spi_configuration parent;
+    /* The size of medium */
+    rt_uint32_t medium_size;
+    /* double data rate mode */
+    rt_uint8_t ddr_mode;
+    /* the data lines max width which QSPI bus supported, such as 1, 2, 4 */
+    rt_uint8_t qspi_dl_width ;
+};
+
+struct rt_qspi_device
+{ 
+    struct rt_spi_device parent;
+
+    struct rt_qspi_configuration config;
+
+    void (*enter_qspi_mode)(struct rt_qspi_device *device);
+
+    void (*exit_qspi_mode)(struct rt_qspi_device *device);
+};
+
 #define SPI_DEVICE(dev) ((struct rt_spi_device *)(dev))
 
 /* register a SPI bus */
@@ -267,6 +307,61 @@ rt_inline void rt_spi_message_append(struct rt_spi_message *list,
     list->next = message;
     message->next = RT_NULL;
 }
+
+/**
+ * This function can set configuration on QSPI device.
+ *
+ * @param device the QSPI device attached to QSPI bus.
+ * @param cfg the configuration pointer.
+ *
+ * @return the actual length of transmitted.
+ */
+rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configuration *cfg);
+
+/**
+ * This function can register a SPI bus for QSPI mode.
+ *
+ * @param bus the SPI bus for QSPI mode.
+ * @param name The name of the spi bus.
+ * @param ops the SPI bus instance to be registered.
+ *
+ * @return the actual length of transmitted.
+ */
+rt_err_t rt_qspi_bus_register(struct rt_spi_bus *bus, const char *name, const struct rt_spi_ops *ops);
+
+/**
+ * This function transmits data to QSPI device.
+ *
+ * @param device the QSPI device attached to QSPI bus.
+ * @param message the message pointer.
+ *
+ * @return the actual length of transmitted.
+ */
+rt_size_t rt_qspi_transfer_message(struct rt_qspi_device  *device, struct rt_qspi_message *message);
+
+/**
+ * This function can send data then receive data from QSPI device
+ *
+ * @param device the QSPI device attached to QSPI bus.
+ * @param send_buf the buffer to be transmitted to QSPI device.
+ * @param send_length the number of data to be transmitted.
+ * @param recv_buf the buffer to be recivied from QSPI device.
+ * @param recv_length the data to be recivied.
+ *
+ * @return the status of transmit.
+ */
+rt_err_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *send_buf, rt_size_t send_length,void *recv_buf, rt_size_t recv_length);
+
+/**
+ * This function can send data to QSPI device
+ *
+ * @param device the QSPI device attached to QSPI bus.
+ * @param send_buf the buffer to be transmitted to QSPI device.
+ * @param send_length the number of data to be transmitted.
+ *
+ * @return the status of transmit.
+ */
+rt_err_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_size_t length);
 
 #ifdef __cplusplus
 }

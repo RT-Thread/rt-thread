@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -24,6 +20,15 @@
 #include <epit.h>
 #include <cortex_a.h>
 
+#include <mmu.h>
+
+struct mem_desc platform_mem_desc[] = {
+    {0x00000000, 0x80000000, 0x00000000, DEVICE_MEM},
+    {0x80000000, 0xFFF00000, 0x80000000, NORMAL_MEM}
+};
+
+const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
+
 static void rt_hw_timer_isr(int vector, void *param)
 {
     rt_tick_increase();
@@ -36,17 +41,17 @@ int rt_hw_timer_init(void)
 
     // Make sure the timer is off.
     HW_ARMGLOBALTIMER_CONTROL.B.TIMER_ENABLE = 0;
-    
+
     HW_ARMGLOBALTIMER_CONTROL.B.FCR0 =1;
-    
+
     HW_ARMGLOBALTIMER_CONTROL.B.FCR1 =0;
-    
+
     HW_ARMGLOBALTIMER_CONTROL.B.DBG_ENABLE =0;
-    
+
     // Clear counter.
     HW_ARMGLOBALTIMER_COUNTER_HI_WR(0);
     HW_ARMGLOBALTIMER_COUNTER_LO_WR(0);
-    
+
     // Now turn on the timer.
     HW_ARMGLOBALTIMER_CONTROL.B.TIMER_ENABLE = 1;
 

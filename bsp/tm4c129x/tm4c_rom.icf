@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// blinky.icf - Linker configuration file for blinky.
+// tm4c_room.icf - Linker configuration file for RT-Thread BSP.
 //
 // Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
@@ -53,7 +53,7 @@ define block RTT_INIT_FUNC with fixed order { readonly section .rti_fn* };
 // Indicate that the read/write values should be initialized by copying from
 // flash.
 //
-initialize by copy { readwrite , RTT_INIT_FUNC };
+initialize by copy { readwrite };
 
 //
 // Indicate that the noinit values should be left alone.  This includes the
@@ -70,7 +70,7 @@ place at start of FLASH { readonly section .intvec };
 //
 // Place the remainder of the read-only items into flash.
 //
-place in FLASH { readonly };
+place in FLASH { readonly, block RTT_INIT_FUNC };
 
 //
 // Place the RAM vector table at the start of SRAM.

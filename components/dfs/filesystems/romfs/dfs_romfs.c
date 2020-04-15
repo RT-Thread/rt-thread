@@ -1,21 +1,7 @@
 /*
- * File      : dfs_romfs.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -119,7 +105,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
                 if (dirent[index].type == ROMFS_DIRENT_DIR)
                 {
                     /* enter directory */
-                    dirent = (struct romfs_dirent*)dirent[index].data;
+                    dirent = (struct romfs_dirent *)dirent[index].data;
                     found = 1;
                     break;
                 }
@@ -240,7 +226,7 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 
     st->st_dev = 0;
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-    S_IWUSR | S_IWGRP | S_IWOTH;
+                  S_IWUSR | S_IWGRP | S_IWOTH;
 
     if (dirent->type == ROMFS_DIRENT_DIR)
     {

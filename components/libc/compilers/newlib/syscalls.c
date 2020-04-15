@@ -1,17 +1,39 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <reent.h>
 #include <sys/errno.h>
 #include <sys/time.h>
+#include <stdio.h>
+
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
 #endif
 
-#ifdef RT_USING_PTHREADS 
+#ifdef RT_USING_PTHREADS
 #include <pthread.h>
 #endif
 
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
+
 /* Reentrant versions of system calls.  */
+
+#ifndef _REENT_ONLY
+int *
+__errno ()
+{
+  return _rt_errno();
+}
+#endif
 
 int
 _close_r(struct _reent *ptr, int fd)
@@ -126,7 +148,7 @@ _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 #endif
 }
 
-_ssize_t 
+_ssize_t
 _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
@@ -206,7 +228,7 @@ _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
-    if (fd == 0)
+    if (fileno(stdout) == fd)
     {
         rt_device_t console;
 
@@ -372,58 +394,29 @@ void *_calloc_r (struct _reent *ptr, size_t size, size_t len)
     return result;
 }
 
-void 
+void
 _free_r (struct _reent *ptr, void *addr)
 {
     rt_free (addr);
 }
 
 void
-_exit (int status)
+exit (int status)
 {
 #ifdef RT_USING_MODULE
-    rt_module_t module;
-
-    module = rt_module_self();
-    if (module != RT_NULL)
+    if (dlmodule_self())
     {
-        struct rt_list_node *list;
-        struct rt_object *object;
-
-        rt_enter_critical();
-        
-        /* delete all threads in the module */
-        list = &module->module_object[RT_Object_Class_Thread].object_list;
-        while (list->next != list)
-        {
-            object = rt_list_entry(list->next, struct rt_object, list);
-            if (rt_object_is_systemobject(object) == RT_TRUE)
-            {
-                /* detach static object */
-                rt_thread_detach((rt_thread_t)object);
-            }
-            else
-            {
-                /* delete dynamic object */
-                rt_thread_delete((rt_thread_t)object);
-            }
-        }
-        /* delete main thread */
-        rt_thread_delete(module->module_thread);
-        rt_exit_critical();
-
-        /* re-schedule */
-        rt_schedule();
+        dlmodule_exit(status);
     }
 #endif
-    
+
     rt_kprintf("thread:%s exit with %d\n", rt_thread_self()->name, status);
     RT_ASSERT(0);
 
     while (1);
 }
 
-void 
+void
 _system(const char *s)
 {
     /* not support this call */
@@ -448,4 +441,19 @@ void abort(void)
     }
 
     while (1);
+}
+
+uid_t getuid(void)
+{
+    return 0;
+}
+
+mode_t umask(mode_t mask)
+{
+    return 022;
+}
+
+int flock(int fd, int operation)
+{
+    return 0;
 }

@@ -1,9 +1,19 @@
+config ARCH_CPU_64BIT
+    bool
+
 config ARCH_ARM
     bool
+
+config RT_USING_CPU_FFS
+    bool
+    default n
 
 config ARCH_ARM_CORTEX_M
     bool
     select ARCH_ARM
+
+config ARCH_ARM_CORTEX_FPU
+    bool
 
 config ARCH_ARM_CORTEX_M0
     bool
@@ -12,6 +22,7 @@ config ARCH_ARM_CORTEX_M0
 config ARCH_ARM_CORTEX_M3
     bool
     select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
 
 config ARCH_ARM_MPU
     bool
@@ -20,10 +31,12 @@ config ARCH_ARM_MPU
 config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_M7
     bool
     select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_R
     bool
@@ -64,6 +77,9 @@ config ARCH_ARM_CORTEX_A9
 config ARCH_MIPS
     bool
 
+config ARCH_MIPS64
+    bool
+
 config ARCH_MIPS_XBURST
     bool
     select ARCH_MIPS
@@ -80,8 +96,32 @@ config ARCH_POWERPC
 config ARCH_RISCV
     bool
 
+config ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV32
+    select ARCH_RISCV
+    bool
+
+config ARCH_RISCV64
+    select ARCH_RISCV
+    select ARCH_CPU_64BIT
+    bool
+
 config ARCH_IA32
     bool
 
+config ARCH_TIDSP
+    bool
+
+config ARCH_TIDSP_C28X
+    bool
+    select ARCH_TIDSP
+    select ARCH_CPU_STACK_GROWS_UPWARD
+
 config ARCH_HOST_SIMULATOR
     bool
+
+config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n

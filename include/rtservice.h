@@ -1,21 +1,7 @@
 /*
- * File      : rtservice.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -38,7 +24,7 @@ extern "C" {
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * rt_container_of - return the member address of ptr, if the type of ptr is the
@@ -141,6 +127,24 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
     rt_container_of(node, type, member)
 
 /**
+ * rt_list_for_each - iterate over a list
+ * @pos:    the rt_list_t * to use as a loop cursor.
+ * @head:   the head for your list.
+ */
+#define rt_list_for_each(pos, head) \
+    for (pos = (head)->next; pos != (head); pos = pos->next)
+
+/**
+ * rt_list_for_each_safe - iterate over a list safe against removal of list entry
+ * @pos:    the rt_list_t * to use as a loop cursor.
+ * @n:      another rt_list_t * to use as temporary storage
+ * @head:   the head for your list.
+ */
+#define rt_list_for_each_safe(pos, n, head) \
+    for (pos = (head)->next, n = pos->next; pos != (head); \
+        pos = n, n = pos->next)
+
+/**
  * rt_list_for_each_entry  -   iterate over list of given type
  * @pos:    the type * to use as a loop cursor.
  * @head:   the head for your list.
@@ -230,6 +234,23 @@ rt_inline rt_slist_t *rt_slist_remove(rt_slist_t *l, rt_slist_t *n)
     return l;
 }
 
+rt_inline rt_slist_t *rt_slist_first(rt_slist_t *l)
+{
+    return l->next;
+}
+
+rt_inline rt_slist_t *rt_slist_tail(rt_slist_t *l)
+{
+    while (l->next) l = l->next;
+
+    return l;
+}
+
+rt_inline rt_slist_t *rt_slist_next(rt_slist_t *n)
+{
+    return n->next;
+}
+
 rt_inline int rt_slist_isempty(rt_slist_t *l)
 {
     return l->next == RT_NULL;
@@ -245,12 +266,20 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
     rt_container_of(node, type, member)
 
 /**
+ * rt_slist_for_each - iterate over a single list
+ * @pos:    the rt_slist_t * to use as a loop cursor.
+ * @head:   the head for your single list.
+ */
+#define rt_slist_for_each(pos, head) \
+    for (pos = (head)->next; pos != RT_NULL; pos = pos->next)
+
+/**
  * rt_slist_for_each_entry  -   iterate over single list of given type
  * @pos:    the type * to use as a loop cursor.
  * @head:   the head for your single list.
  * @member: the name of the list_struct within the struct.
  */
-#define rt_slist_fore_each_entry(pos, head, member) \
+#define rt_slist_for_each_entry(pos, head, member) \
     for (pos = rt_slist_entry((head)->next, typeof(*pos), member); \
          &pos->member != (RT_NULL); \
          pos = rt_slist_entry(pos->member.next, typeof(*pos), member))
@@ -266,7 +295,18 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 #define rt_slist_first_entry(ptr, type, member) \
     rt_slist_entry((ptr)->next, type, member)
 
-/*@}*/
+/**
+ * rt_slist_tail_entry - get the tail element from a slist
+ * @ptr:    the slist head to take the element from.
+ * @type:   the type of the struct this is embedded in.
+ * @member: the name of the slist_struct within the struct.
+ *
+ * Note, that slist is expected to be not empty.
+ */
+#define rt_slist_tail_entry(ptr, type, member) \
+    rt_slist_entry(rt_slist_tail(ptr), type, member)
+
+/**@}*/
 
 #ifdef __cplusplus
 }

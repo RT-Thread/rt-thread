@@ -70,6 +70,10 @@ config FINSH_USING_MSH_DEFAULT
 config FINSH_USING_MSH_ONLY
     bool "Only using module shell"
     default n
+
+config FINSH_ARG_MAX
+    int "The command arg num for shell"
+    default 10
 endif
 
 endif

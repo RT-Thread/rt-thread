@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -479,7 +479,7 @@ am_hal_gpio_int_register(uint32_t ui32GPIONumber,
 //!
 //! This function gets the state of one GPIO polarity bit.
 //!
-//! @note When the bit is a one the interrupt polarity is rising edge.
+//! @note When the bit is a zero the interrupt polarity is rising edge.
 //!
 //! @return the current polarity.
 //

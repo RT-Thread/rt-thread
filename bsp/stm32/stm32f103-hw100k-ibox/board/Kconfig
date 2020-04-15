@@ -1,0 +1,231 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F103ZE
+    bool
+    select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_RS485_OR_RS232
+        bool "Enable RS485/RS232 (uart4 be shared)"
+        select BSP_USING_UART4
+        default n
+    config BSP_USING_ETH
+        bool "Enable Ethernet Driver (spi2)"
+        default n
+        select PKG_USING_WIZNET
+        select WIZNET_DEVICE_EXTERN_CONFIG
+        select BSP_USING_SPI2
+        if BSP_USING_ETH
+            if WIZNET_DEVICE_EXTERN_CONFIG
+                config WIZ_SPI_DEVICE
+                    string
+                    default "spi20"
+
+                config WIZ_RST_PIN
+                    int
+                    default 56
+
+                config WIZ_IRQ_PIN
+                    int
+                    default 57
+            endif
+
+            config EXTERNAL_PHY_ADDRESS
+                hex
+                default 0x00
+
+        endif
+    config BSP_USING_LORA
+        bool "Enable LoRa Driver (spi1)"
+        default n
+        select PKG_USING_SX12XX
+        select SX12XX_DEVICE_EXTERN_CONFIG
+        select BSP_USING_SPI1
+        if BSP_USING_LORA
+            if SX12XX_DEVICE_EXTERN_CONFIG
+            config SX12XX_SPI_DEVICE
+                string "SPI device name"
+                default "spi10"
+
+            config SX12XX_RST_PIN
+                int "Reset PIN number"
+                default 7
+
+            config SX12XX_DO0_PIN
+                int "DO0 PIN number"
+                default 103
+
+            config SX12XX_DO1_PIN
+                int "DO1 PIN number"
+                default 104
+
+            config SX12XX_DO2_PIN
+                int "DO2 PIN number"
+                default 105
+
+            config SX12XX_DO3_PIN
+                int "DO3 PIN number"
+                default 106
+
+            config SX12XX_DO4_PIN
+                int "DO4 PIN number"
+                default 107
+
+            config SX12XX_DO5_PIN
+                int "DO5 PIN number"
+                default 108
+
+            endif
+
+        endif
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+        endif
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 0 144
+                default 22
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 0 144
+                default 23
+        endif
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+    source "../libraries/HAL_Drivers/Kconfig"
+    
+endmenu
+
+menu "Board extended module Drivers"
+    config BSP_USING_WIFI_OR_GPRS
+        bool "Enable WIFI/GPRS (uart3 be shared)"
+        select BSP_USING_UART3
+        default n
+endmenu
+
+endmenu

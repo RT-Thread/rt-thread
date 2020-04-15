@@ -1,21 +1,7 @@
 /*
- * File      : mstorage.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,6 +15,10 @@
 #include <rtservice.h>
 #include "drivers/usb_device.h"
 #include "mstorage.h"
+
+#ifdef RT_USING_DFS_MNTTABLE
+#include "dfs_fs.h"
+#endif
 
 #ifdef RT_USB_DEVICE_MSTORAGE
 
@@ -82,6 +72,7 @@ struct mstorage
     struct rt_device_blk_geometry geometry;    
 };
 
+ALIGN(4)
 static struct udevice_descriptor dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -101,6 +92,7 @@ static struct udevice_descriptor dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -115,45 +107,54 @@ static struct usb_qualifier_descriptor dev_qualifier =
 };
 
 
-
+ALIGN(4)
 const static struct umass_descriptor _mass_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x01,
-    USB_CLASS_MASS_STORAGE,
-    0x06,
-    0x50,
-    0x00,
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x01,
+        USB_CLASS_MASS_STORAGE,
+        0x06,
+        0x50,
+        0x00,
+    },
 #endif
-    USB_DESC_LENGTH_INTERFACE,  //bLength;
-    USB_DESC_TYPE_INTERFACE,    //type;
-    USB_DYNAMIC,                //bInterfaceNumber;
-    0x00,                       //bAlternateSetting;
-    0x02,                       //bNumEndpoints
-    USB_CLASS_MASS_STORAGE,     //bInterfaceClass;
-    0x06,                       //bInterfaceSubClass;
-    0x50,                       //bInterfaceProtocol;
-    0x00,                       //iInterface;
+    {
+        USB_DESC_LENGTH_INTERFACE,  //bLength;
+        USB_DESC_TYPE_INTERFACE,    //type;
+        USB_DYNAMIC,                //bInterfaceNumber;
+        0x00,                       //bAlternateSetting;
+        0x02,                       //bNumEndpoints
+        USB_CLASS_MASS_STORAGE,     //bInterfaceClass;
+        0x06,                       //bInterfaceSubClass;
+        0x50,                       //bInterfaceProtocol;
+        0x00,                       //iInterface;
+    },
 
-    USB_DESC_LENGTH_ENDPOINT,   //bLength;
-    USB_DESC_TYPE_ENDPOINT,     //type;
-    USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
-    USB_EP_ATTR_BULK,           //bmAttributes;
-    USB_DYNAMIC,                //wMaxPacketSize;
-    0x00,                       //bInterval;
+    {
+        USB_DESC_LENGTH_ENDPOINT,   //bLength;
+        USB_DESC_TYPE_ENDPOINT,     //type;
+        USB_DYNAMIC | USB_DIR_OUT,  //bEndpointAddress;
+        USB_EP_ATTR_BULK,           //bmAttributes;
+        USB_DYNAMIC,                //wMaxPacketSize;
+        0x00,                       //bInterval;
+    },
 
-    USB_DESC_LENGTH_ENDPOINT,   //bLength;
-    USB_DESC_TYPE_ENDPOINT,     //type;
-    USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
-    USB_EP_ATTR_BULK,           //bmAttributes;
-    USB_DYNAMIC,                //wMaxPacketSize;
-    0x00,                       //bInterval;
+    {
+        USB_DESC_LENGTH_ENDPOINT,   //bLength;
+        USB_DESC_TYPE_ENDPOINT,     //type;
+        USB_DYNAMIC | USB_DIR_IN,   //bEndpointAddress;
+        USB_EP_ATTR_BULK,           //bmAttributes;
+        USB_DYNAMIC,                //wMaxPacketSize;
+        0x00,                       //bInterval;
+    },
 };
 
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -176,6 +177,7 @@ static rt_size_t _read_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _write_10(ufunction_t func, ustorage_cbw_t cbw);
 static rt_size_t _verify_10(ufunction_t func, ustorage_cbw_t cbw);
 
+ALIGN(4)
 static struct scsi_cmd cmd_data[] =
 {
     {SCSI_TEST_UNIT_READY, _test_unit_ready, 6,  FIXED,       0, DIR_NONE},
@@ -751,8 +753,8 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
         return RT_FALSE;
     }
 
-    if((cbw->dflags & USB_DIR_IN) && cmd->dir == DIR_OUT ||
-        !(cbw->dflags & USB_DIR_IN) && cmd->dir == DIR_IN)
+    if(((cbw->dflags & USB_DIR_IN) && (cmd->dir == DIR_OUT)) ||
+        (!(cbw->dflags & USB_DIR_IN) && (cmd->dir == DIR_IN)))
     {
         rt_kprintf("dir error\n");
         return RT_FALSE;
@@ -957,7 +959,7 @@ static rt_err_t _function_enable(ufunction_t func)
     struct mstorage *data;
     RT_ASSERT(func != RT_NULL);
     RT_DEBUG_LOG(RT_DEBUG_USB, ("Mass storage function enabled\n"));
-    data = (struct mstorage*)func->user_data;   
+    data = (struct mstorage*)func->user_data;
 
     data->disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
     if(data->disk == RT_NULL)
@@ -965,6 +967,10 @@ static rt_err_t _function_enable(ufunction_t func)
         rt_kprintf("no data->disk named %s\n", RT_USB_MSTORAGE_DISK_NAME);
         return -RT_ERROR;
     }
+
+#ifdef RT_USING_DFS_MNTTABLE
+    dfs_unmount_device(data->disk);
+#endif
 
     if(rt_device_open(data->disk, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
@@ -1031,6 +1037,9 @@ static rt_err_t _function_disable(ufunction_t func)
     if(data->disk != RT_NULL)
     {
         rt_device_close(data->disk);
+#ifdef RT_USING_DFS_MNTTABLE
+        dfs_mount_device(data->disk);
+#endif
         data->disk = RT_NULL;
     }
     
@@ -1114,5 +1123,16 @@ ufunction_t rt_usbd_function_mstorage_create(udevice_t device)
 
     return func;
 }
+struct udclass msc_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_mstorage_create
+};
+
+int rt_usbd_msc_class_register(void)
+{
+    rt_usbd_class_register(&msc_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_msc_class_register);
 
 #endif

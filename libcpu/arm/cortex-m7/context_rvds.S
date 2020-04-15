@@ -1,11 +1,7 @@
 ;/*
-; * File      : context_rvds.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2009, RT-Thread Development Team
+; * Copyright (c) 2006-2018, RT-Thread Development Team
 ; *
-; * The license and distribution terms for this file may be
-; * found in the file LICENSE in this distribution or at
-; * http://www.rt-thread.org/license/LICENSE
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -13,6 +9,7 @@
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
 ; * 2013-06-18     aozima       add restore MSP feature.
 ; * 2013-06-23     aozima       support lazy stack optimized.
+; * 2018-07-24     aozima       enhancement hard fault exception handler.
 ; */
 
 ;/**
@@ -227,7 +224,22 @@ HardFault_Handler    PROC
 MemManage_Handler
 
     ; get current context
-    MRS     r0, psp                 ; get fault thread stack pointer
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MRSEQ   r0, msp                 ; [2]=0 ==> Z=1, get fault context from handler.
+    MRSNE   r0, psp                 ; [2]=1 ==> Z=0, get fault context from thread.
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+    IF      {FPU} != "SoftVFP"
+    STMFD   r0!, {lr}               ; push dummy for flag
+    ENDIF
+    STMFD   r0!, {lr}               ; push exec_return register
+
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MSREQ   msp, r0                 ; [2]=0 ==> Z=1, update stack pointer to MSP.
+    MSRNE   psp, r0                 ; [2]=1 ==> Z=0, update stack pointer to PSP.
+
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
     POP     {lr}

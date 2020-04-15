@@ -1,21 +1,7 @@
 /*
- * File      : pipe.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012-2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -33,6 +19,7 @@
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
+    int rc = 0;
     rt_device_t device;
     rt_pipe_t *pipe;
 
@@ -45,6 +32,11 @@ static int pipe_fops_open(struct dfs_fd *fd)
     if (device->ref_count == 0)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            rc = -RT_ENOMEM;
+            goto __exit;
+        }
     }
 
     switch (fd->flags & O_ACCMODE)
@@ -62,9 +54,10 @@ static int pipe_fops_open(struct dfs_fd *fd)
     }
     device->ref_count ++;
 
+__exit:
     rt_mutex_release(&(pipe->lock));
 
-    return 0;
+    return rc;
 }
 
 static int pipe_fops_close(struct dfs_fd *fd)
@@ -104,12 +97,19 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
-        rt_ringbuffer_destroy(pipe->fifo);
+        if (pipe->fifo != RT_NULL)
+            rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
 
     rt_mutex_release(&(pipe->lock));
+
+    if (device->ref_count == 0 && pipe->is_named == RT_FALSE)
+    {
+        /* delete the unamed pipe */
+        rt_pipe_delete(device->parent.name);
+    }
 
     return 0;
 }
@@ -323,18 +323,29 @@ static const struct dfs_file_ops pipe_fops =
 rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
+    rt_err_t ret = RT_EOK;
 
-    if (device == RT_NULL) return -RT_EINVAL;
+    if (device == RT_NULL)
+    {
+        ret = -RT_EINVAL;
+        goto __exit;
+    }
+    
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     if (pipe->fifo == RT_NULL)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            ret = -RT_ENOMEM;
+        }
     }
 
     rt_mutex_release(&(pipe->lock));
 
-    return RT_EOK;
+__exit:
+    return ret;
 }
 
 rt_err_t  rt_pipe_close  (rt_device_t device)
@@ -416,30 +427,47 @@ rt_err_t  rt_pipe_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops pipe_ops = 
+{
+    RT_NULL,
+    rt_pipe_open,
+    rt_pipe_close,
+    rt_pipe_read,
+    rt_pipe_write,
+    rt_pipe_control,
+};
+#endif
+
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
 {
     rt_pipe_t *pipe;
     rt_device_t dev;
 
-    pipe = rt_malloc(sizeof(rt_pipe_t));
+    pipe = (rt_pipe_t *)rt_malloc(sizeof(rt_pipe_t));
     if (pipe == RT_NULL) return RT_NULL;
 
     rt_memset(pipe, 0, sizeof(rt_pipe_t));
+    pipe->is_named = RT_TRUE; /* initialize as a named pipe */
     rt_mutex_init(&(pipe->lock), name, RT_IPC_FLAG_FIFO);
-    rt_list_init(&(pipe->reader_queue));
-    rt_list_init(&(pipe->writer_queue));
+    rt_wqueue_init(&(pipe->reader_queue));
+    rt_wqueue_init(&(pipe->writer_queue));
 
     RT_ASSERT(bufsz < 0xFFFF);
     pipe->bufsz = bufsz;
 
     dev = &(pipe->parent);
     dev->type = RT_Device_Class_Pipe;
+#ifdef RT_USING_DEVICE_OPS
+    dev->ops         = &pipe_ops;
+#else
     dev->init        = RT_NULL;
     dev->open        = rt_pipe_open;
     dev->read        = rt_pipe_read;
     dev->write       = rt_pipe_write;
     dev->close       = rt_pipe_close;
     dev->control     = rt_pipe_control;
+#endif
 
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;
@@ -515,6 +543,7 @@ int pipe(int fildes[2])
         return -1;
     }
 
+    pipe->is_named = RT_FALSE; /* unamed pipe */
     rt_snprintf(dev_name, sizeof(dev_name), "/dev/%s", dname);
     fildes[0] = open(dev_name, O_RDONLY, 0);
     if (fildes[0] < 0)
@@ -525,7 +554,7 @@ int pipe(int fildes[2])
     fildes[1] = open(dev_name, O_WRONLY, 0);
     if (fildes[1] < 0)
     {
-        close(fildes[1]);
+        close(fildes[0]);
         return -1;
     }
 

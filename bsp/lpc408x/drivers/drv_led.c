@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include "board.h"
 
@@ -114,7 +122,7 @@ static rt_err_t rt_led_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-int rt_led_hw_init(void)
+int rt_hw_led_init(void)
 {
     led.parent.type         = RT_Device_Class_Char;
     led.parent.rx_indicate  = RT_NULL;
@@ -133,7 +141,8 @@ int rt_led_hw_init(void)
     rt_led_init(&led.parent);
     return 0;
 }
-INIT_DEVICE_EXPORT(rt_led_hw_init);
+INIT_DEVICE_EXPORT(rt_hw_led_init);
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void led_test(rt_uint32_t led_num, rt_uint32_t value)

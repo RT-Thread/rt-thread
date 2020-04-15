@@ -1,5 +1,3 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()

@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -55,30 +55,6 @@
 // Global Variables
 //
 //*****************************************************************************
-
-//*****************************************************************************
-//
-//! @brief Delays for a desired amount of microseconds.
-//!
-//! @note - This function is based on the similar function in am_util_delay.c,
-//! please see that module for implementation details. It was necessary to
-//! duplicate it here to avoid having to update every example to include the
-//! am_util_delay.c module in its build.
-//!
-//! @returns None
-//
-//*****************************************************************************
-void
-am_hal_itm_delay_us(uint32_t ui32MicroSeconds)
-{
-    uint32_t ui32Iterations = ui32MicroSeconds *
-                              (am_hal_clkgen_sysclk_get() / 3000000);
-
-    //
-    // Call the BOOTROM cycle delay function
-    //
-    am_hal_flash_delay(ui32Iterations);
-}
 
 //*****************************************************************************
 //
@@ -118,7 +94,7 @@ am_hal_itm_enable(void)
     AM_REGVAL(AM_REG_ITM_TER_O) = 0xffffffff;
 
     //
-    // Write to the ITM control and status register (don't enable yet).
+    // Write to the ITM control and status register.
     //
     AM_REGVAL(AM_REG_ITM_TCR_O) =
         AM_WRITE_SM(AM_REG_ITM_TCR_ATB_ID, 0x15)      |
@@ -129,6 +105,7 @@ am_hal_itm_enable(void)
         AM_WRITE_SM(AM_REG_ITM_TCR_SYNC_ENABLE, 0)    |
         AM_WRITE_SM(AM_REG_ITM_TCR_TS_ENABLE, 0)      |
         AM_WRITE_SM(AM_REG_ITM_TCR_ITM_ENABLE, 1);
+
 }
 
 //*****************************************************************************
@@ -203,7 +180,7 @@ am_hal_itm_not_busy(void)
     //
     // wait for 50us for the data to flush out
     //
-    am_hal_itm_delay_us(50);
+    am_hal_flash_delay(FLASH_CYCLES_US(50));
 }
 
 //*****************************************************************************

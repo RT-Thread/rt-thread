@@ -17,6 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 #define RT_DEBUG_MODULE 0
 
 #define RT_USING_OVERFLOW_CHECK
@@ -175,7 +176,5 @@
 /* #define RTGUI_IMAGE_XPM */
 /* #define RTGUI_IMAGE_BMP */
 
-#define RT_USING_LIBDL
-#define RT_USING_MODULE
-#define MODULE_USING_386
+// #define RT_USING_MODULE
 #endif

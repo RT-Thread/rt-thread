@@ -1,21 +1,11 @@
 /*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
  * File      : slab.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -227,9 +217,9 @@ struct memusage
 };
 static struct memusage *memusage = RT_NULL;
 #define btokup(addr)    \
-    (&memusage[((rt_uint32_t)(addr) - heap_start) >> RT_MM_PAGE_BITS])
+    (&memusage[((rt_ubase_t)(addr) - heap_start) >> RT_MM_PAGE_BITS])
 
-static rt_uint32_t heap_start, heap_end;
+static rt_ubase_t heap_start, heap_end;
 
 /* page allocator */
 struct rt_page_head
@@ -285,7 +275,7 @@ void rt_page_free(void *addr, rt_size_t npages)
     struct rt_page_head **prev;
 
     RT_ASSERT(addr != RT_NULL);
-    RT_ASSERT((rt_uint32_t)addr % RT_MM_PAGE_SIZE == 0);
+    RT_ASSERT((rt_ubase_t)addr % RT_MM_PAGE_SIZE == 0);
     RT_ASSERT(npages != 0);
 
     n = (struct rt_page_head *)addr;
@@ -358,13 +348,13 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* align begin and end addr to page */
-    heap_start = RT_ALIGN((rt_uint32_t)begin_addr, RT_MM_PAGE_SIZE);
-    heap_end   = RT_ALIGN_DOWN((rt_uint32_t)end_addr, RT_MM_PAGE_SIZE);
+    heap_start = RT_ALIGN((rt_ubase_t)begin_addr, RT_MM_PAGE_SIZE);
+    heap_end   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_MM_PAGE_SIZE);
 
     if (heap_start >= heap_end)
     {
         rt_kprintf("rt_system_heap_init, wrong address[0x%x - 0x%x]\n",
-                   (rt_uint32_t)begin_addr, (rt_uint32_t)end_addr);
+                   (rt_ubase_t)begin_addr, (rt_ubase_t)end_addr);
 
         return;
     }
@@ -401,17 +391,17 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
     memusage = rt_page_alloc(limsize / RT_MM_PAGE_SIZE);
 
     RT_DEBUG_LOG(RT_DEBUG_SLAB, ("memusage 0x%x, size 0x%x\n",
-                                 (rt_uint32_t)memusage, limsize));
+                                 (rt_ubase_t)memusage, limsize));
 }
 
 /*
  * Calculate the zone index for the allocation request size and set the
  * allocation request size to that particular zone's chunk size.
  */
-rt_inline int zoneindex(rt_uint32_t *bytes)
+rt_inline int zoneindex(rt_size_t *bytes)
 {
     /* unsigned for shift opt */
-    rt_uint32_t n = (rt_uint32_t) * bytes;
+    rt_ubase_t n = (rt_ubase_t)(*bytes);
 
     if (n < 128)
     {
@@ -496,11 +486,6 @@ void *rt_malloc(rt_size_t size)
     if (size == 0)
         return RT_NULL;
 
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-        return rt_module_malloc(size);
-#endif
-
     /*
      * Handle large allocations directly.  There should not be very many of
      * these so performance is not a big issue.
@@ -522,7 +507,7 @@ void *rt_malloc(rt_size_t size)
                      ("malloc a large memory 0x%x, page cnt %d, kup %d\n",
                       size,
                       size >> RT_MM_PAGE_BITS,
-                      ((rt_uint32_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
+                      ((rt_ubase_t)chunk - heap_start) >> RT_MM_PAGE_BITS));
 
         /* lock heap */
         rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
@@ -625,7 +610,7 @@ void *rt_malloc(rt_size_t size)
             rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
             RT_DEBUG_LOG(RT_DEBUG_SLAB, ("alloc a new zone: 0x%x\n",
-                                         (rt_uint32_t)z));
+                                         (rt_ubase_t)z));
 
             /* set message usage */
             for (off = 0, kup = btokup(z); off < zone_page_cnt; off ++)
@@ -705,16 +690,11 @@ void *rt_realloc(void *ptr, rt_size_t size)
         return RT_NULL;
     }
 
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-        return rt_module_realloc(ptr, size);
-#endif
-
     /*
      * Get the original allocation's zone.  If the new request winds up
      * using the same chunk size we do not have to do anything.
      */
-    kup = btokup((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
+    kup = btokup((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
     if (kup->type == PAGE_TYPE_LARGE)
     {
         rt_size_t osize;
@@ -729,7 +709,7 @@ void *rt_realloc(void *ptr, rt_size_t size)
     }
     else if (kup->type == PAGE_TYPE_SMALL)
     {
-        z = (slab_zone *)(((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK) -
+        z = (slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
                           kup->size * RT_MM_PAGE_SIZE);
         RT_ASSERT(z->z_magic == ZALLOC_SLAB_MAGIC);
 
@@ -800,32 +780,23 @@ void rt_free(void *ptr)
 
     RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
 
-#ifdef RT_USING_MODULE
-    if (rt_module_self() != RT_NULL)
-    {
-        rt_module_free(rt_module_self(), ptr);
-
-        return;
-    }
-#endif
-
     /* get memory usage */
 #if RT_DEBUG_SLAB
     {
-        rt_uint32_t addr = ((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
+        rt_ubase_t addr = ((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
                      ("free a memory 0x%x and align to 0x%x, kup index %d\n",
-                      (rt_uint32_t)ptr,
-                      (rt_uint32_t)addr,
-                      ((rt_uint32_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
+                      (rt_ubase_t)ptr,
+                      (rt_ubase_t)addr,
+                      ((rt_ubase_t)(addr) - heap_start) >> RT_MM_PAGE_BITS));
     }
 #endif
 
-    kup = btokup((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK);
+    kup = btokup((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK);
     /* release large allocation */
     if (kup->type == PAGE_TYPE_LARGE)
     {
-        rt_uint32_t size;
+        rt_ubase_t size;
 
         /* lock heap */
         rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
@@ -840,7 +811,7 @@ void rt_free(void *ptr)
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB,
                      ("free large memory block 0x%x, page count %d\n",
-                      (rt_uint32_t)ptr, size));
+                      (rt_ubase_t)ptr, size));
 
         /* free this page */
         rt_page_free(ptr, size);
@@ -852,7 +823,7 @@ void rt_free(void *ptr)
     rt_sem_take(&heap_sem, RT_WAITING_FOREVER);
 
     /* zone case. get out zone. */
-    z = (slab_zone *)(((rt_uint32_t)ptr & ~RT_MM_PAGE_MASK) -
+    z = (slab_zone *)(((rt_ubase_t)ptr & ~RT_MM_PAGE_MASK) -
                       kup->size * RT_MM_PAGE_SIZE);
     RT_ASSERT(z->z_magic == ZALLOC_SLAB_MAGIC);
 
@@ -886,7 +857,7 @@ void rt_free(void *ptr)
         slab_zone **pz;
 
         RT_DEBUG_LOG(RT_DEBUG_SLAB, ("free zone 0x%x\n",
-                                     (rt_uint32_t)z, z->z_zoneindex));
+                                     (rt_ubase_t)z, z->z_zoneindex));
 
         /* remove zone from zone array list */
         for (pz = &zone_array[z->z_zoneindex]; z != *pz; pz = &(*pz)->z_next)

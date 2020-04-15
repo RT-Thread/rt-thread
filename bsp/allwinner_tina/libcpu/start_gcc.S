@@ -48,7 +48,7 @@ _vector_reset:
 _vector_undef:
     .word vector_undef
 _vector_swi:
-    .word vector_swi
+    .word SVC_Handler
 _vector_pabt:
     .word vector_pabt
 _vector_dabt:
@@ -314,7 +314,9 @@ rt_hw_context_switch_interrupt_do:
     str     lr, [r0, #14*4]
 .endm
 
-    .align  5
+    .align 5
+.weak SVC_Handler
+SVC_Handler:
 vector_swi:
     push_svc_reg
     bl      rt_hw_trap_swi

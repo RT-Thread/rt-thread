@@ -8,7 +8,7 @@ cwd     = os.path.join(str(Dir('#')), 'drivers')
 src = Split("""
 board.c
 led.c
-console.c
+uart.c
 """)
 
 if GetDepend('RT_USING_DFS'):
@@ -17,16 +17,13 @@ if GetDepend('RT_USING_DFS'):
 if GetDepend('RT_USING_LWIP'):
 	src += ['dm9000.c']
 
-if GetDepend('RT_USING_RTGUI'):
-    	src += ['touch.c', 'key.c', 'calibration.c']
-
-if GetDepend('RT_USING_FTK'):
-    	src += ['touch.c', 'key.c']
+if GetDepend('PKG_USING_GUIENGINE'):
+    src += ['touch.c', 'key.c']
 
 if GetDepend('RT_USING_RTI'):
-    	src += ['rti_stub.c']
+    src += ['rti_stub.c']
 		
-if GetDepend('RT_USING_RTGUI') or GetDepend('RT_USING_FTK'):
+if GetDepend('PKG_USING_GUIENGINE'):
 	if rtconfig.RT_USING_LCD_TYPE == 'PNL_A70':
 		src += ['lcd_a70.c']
 	elif rtconfig.RT_USING_LCD_TYPE == 'PNL_N35':

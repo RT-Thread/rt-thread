@@ -1,7 +1,7 @@
 /*
  * This file is part of the Serial Flash Universal Driver Library.
  *
- * Copyright (c) 2016, Armink, <armink.ztl@gmail.com>
+ * Copyright (c) 2016-2018, Armink, <armink.ztl@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -74,6 +74,23 @@ size_t sfud_get_device_num(void);
  * @return flash device table pointer
  */
 const sfud_flash *sfud_get_device_table(void);
+
+#ifdef SFUD_USING_QSPI
+/**
+ * Enbale the fast read mode in QSPI flash mode. Default read mode is normal SPI mode.
+ *
+ * it will find the appropriate fast-read instruction to replace the read instruction(0x03)
+ * fast-read instruction @see SFUD_FLASH_EXT_INFO_TABLE
+ *
+ * @note When Flash is in QSPI mode, the method must be called after sfud_device_init().
+ *
+ * @param flash flash device
+ * @param data_line_width the data lines max width which QSPI bus supported, such as 1, 2, 4
+ *
+ * @return result
+ */
+sfud_err sfud_qspi_fast_read_enable(sfud_flash *flash, uint8_t data_line_width);
+#endif /* SFUD_USING_QSPI */
 
 /**
  * read flash data

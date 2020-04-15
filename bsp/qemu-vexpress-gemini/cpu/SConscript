@@ -1,0 +1,17 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src	= Glob('*.c')
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM == 'iar':
+        src += Glob('*_iar.S')
+elif rtconfig.PLATFORM == 'gcc':
+        src += Glob('*_gcc.S')
+elif rtconfig.PLATFORM == 'armcc':
+        src += Glob('*_rvds.S')
+
+group = DefineGroup('AM335x', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

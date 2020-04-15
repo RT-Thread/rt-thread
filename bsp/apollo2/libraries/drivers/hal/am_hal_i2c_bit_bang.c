@@ -41,7 +41,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -133,7 +133,7 @@ static am_hal_i2c_bit_bang_priv_t am_hal_i2c_bit_bang_priv;
 // Wait for any stretched clock to go high
 // If it times out - return failure
 //
-static bool
+static __inline bool
 i2c_pull_and_wait_scl_hi(void)
 {
     // Maximum time to wait for clock stretching
@@ -165,7 +165,7 @@ i2c_pull_and_wait_scl_hi(void)
 //! returns None.
 //
 //*****************************************************************************
-am_hal_i2c_bit_bang_enum_t
+am_hal_i2c_bit_bang_enum_e
 am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
                          uint32_t sda_gpio_number)
 {
@@ -192,7 +192,7 @@ am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
     //
     // Set up SCK GPIO configuration bi-direction, input
     //
-    am_hal_gpio_pin_config(sck_gpio_number, AM_HAL_PIN_OPENDRAIN);
+    am_hal_gpio_pin_config(sck_gpio_number, AM_HAL_PIN_OPENDRAIN | AM_HAL_GPIO_INPEN);
 
     //
     // Set SDA GPIO data bit high so we aren't pulling down the data line
@@ -201,7 +201,7 @@ am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
     //
     // Set up SDA GPIO configuration bi-direction, input
     //
-    am_hal_gpio_pin_config(sda_gpio_number, AM_HAL_PIN_OPENDRAIN);
+    am_hal_gpio_pin_config(sda_gpio_number, AM_HAL_PIN_OPENDRAIN | AM_HAL_GPIO_INPEN);
 
     // Now make sure we have control of the clock line
     //
@@ -284,7 +284,7 @@ am_hal_i2c_bit_bang_init(uint32_t sck_gpio_number,
 //! returns the byte received
 //
 //*****************************************************************************
-static am_hal_i2c_bit_bang_enum_t
+static __inline am_hal_i2c_bit_bang_enum_e
 i2c_receive_byte(uint8_t *pRxByte, bool bNack)
 {
     int i;
@@ -389,7 +389,7 @@ i2c_receive_byte(uint8_t *pRxByte, bool bNack)
 //!     }
 //
 //*****************************************************************************
-static am_hal_i2c_bit_bang_enum_t
+static __inline am_hal_i2c_bit_bang_enum_e
 i2c_send_byte(uint8_t one_byte)
 {
     int i;
@@ -478,13 +478,13 @@ i2c_send_byte(uint8_t one_byte)
 //! returns ENUM{AM_HAL_I2C_BIT_BANG_SUCCESS,AM_HAL_I2C_BIT_BANG_ADDRESS_NAKED}
 //
 //*****************************************************************************
-am_hal_i2c_bit_bang_enum_t
+am_hal_i2c_bit_bang_enum_e
 am_hal_i2c_bit_bang_receive(uint8_t address, uint32_t number_of_bytes,
                             uint8_t *pData, uint8_t ui8Offset,
                             bool bUseOffset, bool bNoStop)
 {
     uint32_t ui32I;
-    am_hal_i2c_bit_bang_enum_t status = AM_HAL_I2C_BIT_BANG_SUCCESS;
+    am_hal_i2c_bit_bang_enum_e status = AM_HAL_I2C_BIT_BANG_SUCCESS;
 
 
     if (i2c_pull_and_wait_scl_hi())
@@ -617,13 +617,13 @@ am_hal_i2c_bit_bang_receive(uint8_t address, uint32_t number_of_bytes,
 //!               AM_HAL_I2C_BIT_BANG_ADDRESS_NAKED}
 //
 //*****************************************************************************
-am_hal_i2c_bit_bang_enum_t
+am_hal_i2c_bit_bang_enum_e
 am_hal_i2c_bit_bang_send(uint8_t address, uint32_t number_of_bytes,
                          uint8_t *pData, uint8_t ui8Offset,
                          bool bUseOffset, bool bNoStop)
 {
     uint32_t ui32I;
-    am_hal_i2c_bit_bang_enum_t status;
+    am_hal_i2c_bit_bang_enum_e status;
     bool data_naked = false;
 
     if (i2c_pull_and_wait_scl_hi())

@@ -1,21 +1,7 @@
 /*
- * File      : dataqueue.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,6 +12,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
+
+#define DATAQUEUE_MAGIC  0xbead0e0e
 
 struct rt_data_item
 {
@@ -43,6 +31,7 @@ rt_data_queue_init(struct rt_data_queue *queue,
 
     queue->evt_notify = evt_notify;
 
+    queue->magic = DATAQUEUE_MAGIC;
     queue->size = size;
     queue->lwm = lwm;
 
@@ -71,6 +60,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     rt_thread_t thread;
     rt_err_t    result;
     
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
 
     result = RT_EOK;
@@ -159,7 +149,8 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     rt_ubase_t  level;
     rt_thread_t thread;
     rt_err_t    result;
-
+    
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(data_ptr != RT_NULL);
     RT_ASSERT(size != RT_NULL);
@@ -258,7 +249,8 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
                             rt_size_t *size)
 {
     rt_ubase_t  level;
-
+    
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
     RT_ASSERT(queue != RT_NULL);
 
     level = rt_hw_interrupt_disable();
@@ -283,7 +275,9 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;
-
+    
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
+    
     rt_enter_critical();
     /* wakeup all suspend threads */
 
@@ -339,3 +333,24 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
     rt_schedule();
 }
 RTM_EXPORT(rt_data_queue_reset);
+
+rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
+{
+    rt_ubase_t level;
+
+    RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
+    RT_ASSERT(queue != RT_NULL);
+
+    level = rt_hw_interrupt_disable();
+
+    /* wakeup all suspend threads */
+    rt_data_queue_reset(queue);
+
+    queue->magic = 0;
+    rt_free(queue->queue);
+    
+    rt_hw_interrupt_enable(level);
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_data_queue_deinit);

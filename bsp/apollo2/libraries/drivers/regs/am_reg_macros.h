@@ -1,6 +1,7 @@
 //*****************************************************************************
 //
-//! @file am_reg_macros.h
+//  am_reg_macros.h
+//! @file
 //!
 //! @brief Helper macros for using hardware registers.
 //
@@ -37,7 +38,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -106,10 +107,15 @@ extern "C"
 // Register access macros for single-instance modules
 // AM_REG  - Write a register of a module.
 // AM_BFW  - Write a value to a bitfield of a register.
-// AM_BFWe - Use a defined enum value to write a value to a bitfield.
+// AM_BFWe - Use a defined enum value to write a value to a register bitfield.
 // AM_BFR  - Read a bitfield value from a register.
-// AM_BFM  - Read and mask a bitfield, but leave the value in its bit position.
-//           (Useful for comparing with enums.)
+// AM_BFM  - Read and mask a bitfield from a register, but leave the value in
+//           its bit position. Useful for comparing with enums.
+//
+// AM_BFV  - Move a value to a bitfield.  This macro is used for creating a
+//           value, it does not modify any register.
+// AM_BFX  - Extract the value of a bitfield from a 32-bit value, such as that
+//           read from a register. Does not read or modify any register.
 //
 //*****************************************************************************
 #define AM_REG(module, reg)                                                   \
@@ -139,16 +145,19 @@ extern "C"
 //*****************************************************************************
 //
 // Register access macros for multi-instance modules
+// AM_REGADDRn - Calc the register address inside a multiple instance module.
 // AM_REGn - Write a register of a multiple instance module.
 // AM_BFWn - Write a value to a bitfield of a register in a multiple instance.
 // AM_BFWen - Use a defined enum value to write a value to a bitfield of a
 //            register in a multiple instance.
 // AM_BFRn - Read a bitfield value from a register in a multiple instance.
-// AM_BFMn - Read a bitfield, but leave the value in its bitfield position.
 // AM_BFMn - Read and mask a bitfield, but leave the value in its bit position.
 //           (Useful for comparing with enums.)
 //
 //*****************************************************************************
+#define AM_REGADDRn(module, instance, reg)                                    \
+      (AM_REG_##module##n(instance) + AM_REG_##module##_##reg##_O)
+
 #define AM_REGn(module, instance, reg)                                        \
     AM_REGVAL(AM_REG_##module##n(instance) + AM_REG_##module##_##reg##_O)
 
@@ -187,9 +196,9 @@ extern "C"
 //                no operator to simply write the value atomically.
 // AM_REGa_SET  - Set bits in a single instance module according to the mask.
 // AM_REGa_CLR  - Clear bits in a single instance module according to the mask.
-// AM_REGna     - Multiple module version of AM_REGa.
-// AM_REGna_SET - Multiple instance version of AM_REGa_SET.
-// AM_REGna_CLR - Multiple instance version of AM_REGa_CLR.
+// AM_REGan     - Multiple module version of AM_REGa.
+// AM_REGan_SET - Multiple instance version of AM_REGa_SET.
+// AM_REGan_CLR - Multiple instance version of AM_REGa_CLR.
 // AM_BFWa   - Write a value to a register bitfield.
 // AM_BFWae  - Use a defined enum value to write a value to a bitfield.
 // AM_BFWan  - Write a value to a bitfield of a register in a multiple instance.

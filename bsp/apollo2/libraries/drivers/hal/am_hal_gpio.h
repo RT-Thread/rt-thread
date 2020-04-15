@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -119,13 +119,22 @@
 
 //*****************************************************************************
 //
-// Output options
+// Output options (OUTCFG)
 //
 //*****************************************************************************
 #define AM_HAL_GPIO_OUT_DISABLE     ((0x0 << 1) << CFGVAL_GPIOCFG_S)
 #define AM_HAL_GPIO_OUT_PUSHPULL    ((0x1 << 1) << CFGVAL_GPIOCFG_S)
 #define AM_HAL_GPIO_OUT_OPENDRAIN   ((0x2 << 1) << CFGVAL_GPIOCFG_S)
 #define AM_HAL_GPIO_OUT_3STATE      ((0x3 << 1) << CFGVAL_GPIOCFG_S)
+
+//*****************************************************************************
+//
+// Special options for IOM0 and IOM4 clocks.
+// For 24MHz operation, a special enable must be selected. The 24MHZ select is
+// selected via bit0 of OUTCFG (which is, in a way,an alias of OUT_PUSHPULL).
+//
+//*****************************************************************************
+#define AM_HAL_GPIO_24MHZ_ENABLE    ((0x1 << 1) << CFGVAL_GPIOCFG_S)
 
 //*****************************************************************************
 //
@@ -498,13 +507,13 @@
 //! @return None.
 //
 //*****************************************************************************
-#define am_hal_gpio_int_polarity_bit_set(ui32PinNumber, ui32Polarity)         \
-    if ( (uint32_t)(ui32PinNumber) < AM_HAL_GPIO_MAX_PADS )                   \
+#define am_hal_gpio_int_polarity_bit_set(ui32BitNum, ui32Polarity)            \
+    if ( (uint32_t)(ui32BitNum) < AM_HAL_GPIO_MAX_PADS )                      \
     {                                                                         \
         AM_CRITICAL_BEGIN_ASM                                                 \
                                                                               \
         AM_REGn(GPIO, 0, PADKEY) = AM_REG_GPIO_PADKEY_KEYVAL;                 \
-        AM_HAL_GPIO_POL_W(ui32PinNumber, ui32Polarity);                       \
+        AM_HAL_GPIO_POL_W(ui32BitNum, ui32Polarity);                          \
         AM_REGn(GPIO, 0, PADKEY) = 0;                                         \
                                                                               \
         AM_CRITICAL_END_ASM                                                   \

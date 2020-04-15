@@ -1,544 +1,593 @@
 /*
- * File      : wlan_cmd.c
- *             Wi-Fi common commands
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2016, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016-03-12     Bernard      first version
+ * 2018-08-13     tyx          the first version
  */
 
 #include <rtthread.h>
-#include <wlan_dev.h>
+#include <wlan_mgnt.h>
+#include <wlan_cfg.h>
+#include <wlan_prot.h>
 
-#include <finsh.h>
+#if defined(RT_WLAN_MANAGE_ENABLE) && defined(RT_WLAN_MSH_CMD_ENABLE)
 
-#include <lwip/dhcp.h>
-#include "wlan_cmd.h"
-
-#ifdef LWIP_USING_DHCPD
-#include <dhcp_server.h>
-#endif
-
-struct rt_wlan_info info;
-static char wifi_ssid[32]    = {0};
-static char wifi_key[32]     = {0};
-static int network_mode      = WIFI_STATION;
-
-#ifndef WIFI_SETTING_FN
-#define WIFI_SETTING_FN     "/appfs/setting.json"
-#endif
-
-#ifndef WIFI_DEVICE_STA_NAME
-#define WIFI_DEVICE_STA_NAME    "w0"
-#endif
-#ifndef WIFI_DEVICE_AP_NAME
-#define WIFI_DEVICE_AP_NAME    "ap"
-#endif
-
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#ifdef PKG_USING_CJSON
-#include <cJSON_util.h>
-#endif
-
-int wifi_get_mode(void)
+struct wifi_cmd_des
 {
-    return network_mode;
-}
+    const char *cmd;
+    int (*fun)(int argc, char *argv[]);
+};
 
-int wifi_set_mode(int mode)
+static int wifi_help(int argc, char *argv[]);
+static int wifi_scan(int argc, char *argv[]);
+static int wifi_status(int argc, char *argv[]);
+static int wifi_join(int argc, char *argv[]);
+static int wifi_ap(int argc, char *argv[]);
+static int wifi_list_sta(int argc, char *argv[]);
+static int wifi_disconnect(int argc, char *argv[]);
+static int wifi_ap_stop(int argc, char *argv[]);
+
+#ifdef RT_WLAN_CMD_DEBUG
+/* just for debug  */
+static int wifi_debug(int argc, char *argv[]);
+static int wifi_debug_save_cfg(int argc, char *argv[]);
+static int wifi_debug_dump_cfg(int argc, char *argv[]);
+static int wifi_debug_clear_cfg(int argc, char *argv[]);
+static int wifi_debug_dump_prot(int argc, char *argv[]);
+static int wifi_debug_set_mode(int argc, char *argv[]);
+static int wifi_debug_set_prot(int argc, char *argv[]);
+static int wifi_debug_set_autoconnect(int argc, char *argv[]);
+#endif
+
+/* cmd table */
+static const struct wifi_cmd_des cmd_tab[] =
 {
-    network_mode = mode;
+    {"scan", wifi_scan},
+    {"help", wifi_help},
+    {"status", wifi_status},
+    {"join", wifi_join},
+    {"ap", wifi_ap},
+    {"list_sta", wifi_list_sta},
+    {"disc", wifi_disconnect},
+    {"ap_stop", wifi_ap_stop},
+    {"smartconfig", RT_NULL},
+#ifdef RT_WLAN_CMD_DEBUG
+    {"-d", wifi_debug},
+#endif
+};
 
-    return network_mode;
-}
-
-int wifi_set_setting(const char* ssid, const char* pwd)
+#ifdef RT_WLAN_CMD_DEBUG
+/* debug cmd table */
+static const struct wifi_cmd_des debug_tab[] =
 {
-    if (!ssid) return -1;
+    {"save_cfg", wifi_debug_save_cfg},
+    {"dump_cfg", wifi_debug_dump_cfg},
+    {"clear_cfg", wifi_debug_clear_cfg},
+    {"dump_prot", wifi_debug_dump_prot},
+    {"mode", wifi_debug_set_mode},
+    {"prot", wifi_debug_set_prot},
+    {"auto", wifi_debug_set_autoconnect},
+};
+#endif
 
-    strncpy(wifi_ssid, ssid, sizeof(wifi_ssid));
-    wifi_ssid[sizeof(wifi_ssid) - 1] = '\0';
-
-    if (pwd)
-    {
-        strncpy(wifi_key, pwd, sizeof(wifi_key));
-        wifi_key[sizeof(wifi_key) - 1] = '\0';
-    }
-    else wifi_key[0] = '\0';
-
+static int wifi_help(int argc, char *argv[])
+{
+    rt_kprintf("wifi\n");
+    rt_kprintf("wifi help\n");
+    rt_kprintf("wifi scan [SSID]\n");
+    rt_kprintf("wifi join [SSID] [PASSWORD]\n");
+    rt_kprintf("wifi ap SSID [PASSWORD]\n");
+    rt_kprintf("wifi disc\n");
+    rt_kprintf("wifi ap_stop\n");
+    rt_kprintf("wifi status\n");
+    rt_kprintf("wifi smartconfig\n");
+#ifdef RT_WLAN_CMD_DEBUG
+    rt_kprintf("wifi -d debug command\n");
+#endif
     return 0;
 }
 
-#ifdef PKG_USING_CJSON
-int wifi_read_cfg(const char* filename)
+static int wifi_status(int argc, char *argv[])
 {
-    int fd;
-    cJSON *json = RT_NULL;
+    int rssi;
+    struct rt_wlan_info info;
 
-    fd = open(filename,O_RDONLY, 0);
-    if(fd < 0)
+    if (argc > 2)
+        return -1;
+
+    if (rt_wlan_is_connected() == 1)
     {
-        /* no setting file */
+        rssi = rt_wlan_get_rssi();
+        rt_wlan_get_info(&info);
+        rt_kprintf("Wi-Fi STA Info\n");
+        rt_kprintf("SSID : %-.32s\n", &info.ssid.val[0]);
+        rt_kprintf("MAC Addr: %02x:%02x:%02x:%02x:%02x:%02x\n", info.bssid[0],
+                   info.bssid[1],
+                   info.bssid[2],
+                   info.bssid[3],
+                   info.bssid[4],
+                   info.bssid[5]);
+        rt_kprintf("Channel: %d\n", info.channel);
+        rt_kprintf("DataRate: %dMbps\n", info.datarate / 1000000);
+        rt_kprintf("RSSI: %d\n", rssi);
+    }
+    else
+    {
+        rt_kprintf("wifi disconnected!\n");
+    }
+
+    if (rt_wlan_ap_is_active() == 1)
+    {
+        rt_wlan_ap_get_info(&info);
+        rt_kprintf("Wi-Fi AP Info\n");
+        rt_kprintf("SSID : %-.32s\n", &info.ssid.val[0]);
+        rt_kprintf("MAC Addr: %02x:%02x:%02x:%02x:%02x:%02x\n", info.bssid[0],
+                   info.bssid[1],
+                   info.bssid[2],
+                   info.bssid[3],
+                   info.bssid[4],
+                   info.bssid[5]);
+        rt_kprintf("Channel: %d\n", info.channel);
+        rt_kprintf("DataRate: %dMbps\n", info.datarate / 1000000);
+        rt_kprintf("hidden: %s\n", info.hidden ? "Enable" : "Disable");
+    }
+    else
+    {
+        rt_kprintf("wifi ap not start!\n");
+    }
+    rt_kprintf("Auto Connect status:%s!\n", (rt_wlan_get_autoreconnect_mode() ? "Enable" : "Disable"));
+    return 0;
+}
+
+static int wifi_scan(int argc, char *argv[])
+{
+    struct rt_wlan_scan_result *scan_result = RT_NULL;
+    struct rt_wlan_info *info = RT_NULL;
+    struct rt_wlan_info filter;
+
+    if (argc > 3)
+        return -1;
+
+    if (argc == 3)
+    {
+        INVALID_INFO(&filter);
+        SSID_SET(&filter, argv[2]);
+        info = &filter;
+    }
+
+    /* clean scan result */
+    rt_wlan_scan_result_clean();
+    /* scan ap info */
+    scan_result = rt_wlan_scan_with_info(info);
+    if (scan_result)
+    {
+        int index, num;
+        char *security;
+
+        num = scan_result->num;
+        rt_kprintf("             SSID                      MAC            security    rssi chn Mbps\n");
+        rt_kprintf("------------------------------- -----------------  -------------- ---- --- ----\n");
+        for (index = 0; index < num; index ++)
+        {
+            rt_kprintf("%-32.32s", &scan_result->info[index].ssid.val[0]);
+            rt_kprintf("%02x:%02x:%02x:%02x:%02x:%02x  ",
+                       scan_result->info[index].bssid[0],
+                       scan_result->info[index].bssid[1],
+                       scan_result->info[index].bssid[2],
+                       scan_result->info[index].bssid[3],
+                       scan_result->info[index].bssid[4],
+                       scan_result->info[index].bssid[5]
+                      );
+            switch (scan_result->info[index].security)
+            {
+            case SECURITY_OPEN:
+                security = "OPEN";
+                break;
+            case SECURITY_WEP_PSK:
+                security = "WEP_PSK";
+                break;
+            case SECURITY_WEP_SHARED:
+                security = "WEP_SHARED";
+                break;
+            case SECURITY_WPA_TKIP_PSK:
+                security = "WPA_TKIP_PSK";
+                break;
+            case SECURITY_WPA_AES_PSK:
+                security = "WPA_AES_PSK";
+                break;
+            case SECURITY_WPA2_AES_PSK:
+                security = "WPA2_AES_PSK";
+                break;
+            case SECURITY_WPA2_TKIP_PSK:
+                security = "WPA2_TKIP_PSK";
+                break;
+            case SECURITY_WPA2_MIXED_PSK:
+                security = "WPA2_MIXED_PSK";
+                break;
+            case SECURITY_WPS_OPEN:
+                security = "WPS_OPEN";
+                break;
+            case SECURITY_WPS_SECURE:
+                security = "WPS_SECURE";
+                break;
+            default:
+                security = "UNKNOWN";
+                break;
+            }
+            rt_kprintf("%-14.14s ", security);
+            rt_kprintf("%-4d ", scan_result->info[index].rssi);
+            rt_kprintf("%3d ", scan_result->info[index].channel);
+            rt_kprintf("%4d\n", scan_result->info[index].datarate / 1000000);
+        }
+        rt_wlan_scan_result_clean();
+    }
+    else
+    {
+        rt_kprintf("wifi scan result is null\n");
+    }
+    return 0;
+}
+
+static int wifi_join(int argc, char *argv[])
+{
+    const char *ssid = RT_NULL;
+    const char *key = RT_NULL;
+    struct rt_wlan_cfg_info cfg_info;
+
+    rt_memset(&cfg_info, 0, sizeof(cfg_info));
+    if (argc ==  2)
+    {
+#ifdef RT_WLAN_CFG_ENABLE
+        /* get info to connect */
+        if (rt_wlan_cfg_read_index(&cfg_info, 0) == 1)
+        {
+            ssid = (char *)(&cfg_info.info.ssid.val[0]);
+            if (cfg_info.key.len)
+                key = (char *)(&cfg_info.key.val[0]);
+        }
+        else
+#endif
+        {
+            rt_kprintf("not find connect info\n");
+        }
+    }
+    else if (argc == 3)
+    {
+        /* ssid */
+        ssid = argv[2];
+    }
+    else if (argc == 4)
+    {
+        ssid = argv[2];
+        /* password */
+        key = argv[3];
+    }
+    else
+    {
+        return -1;
+    }
+    rt_wlan_connect(ssid, key);
+    return 0;
+}
+
+static int wifi_ap(int argc, char *argv[])
+{
+    const char *ssid = RT_NULL;
+    const char *key = RT_NULL;
+
+    if (argc == 3)
+    {
+        ssid = argv[2];
+    }
+    else if (argc == 4)
+    {
+        ssid = argv[2];
+        key = argv[3];
+    }
+    else
+    {
         return -1;
     }
 
-    if (fd >= 0)
-    {
-        int length;
-
-        length = lseek(fd, 0, SEEK_END);
-        if (length)
-        {
-            char *json_str = (char *) rt_malloc (length);
-            if (json_str)
-            {
-                lseek(fd, 0, SEEK_SET);
-                read(fd, json_str, length);
-
-                json = cJSON_Parse(json_str);
-                rt_free(json_str);
-            }
-        }
-        close(fd);
-    }
-
-    if (json)
-    {
-        cJSON *wifi = cJSON_GetObjectItem(json, "wifi");
-        cJSON *ssid = cJSON_GetObjectItem(wifi, "SSID");
-        cJSON *key  = cJSON_GetObjectItem(wifi, "Key");
-        cJSON *mode = cJSON_GetObjectItem(wifi, "Mode");
-
-        if (ssid)
-        {
-            memset(wifi_ssid, 0x0, sizeof(wifi_ssid));
-            rt_strncpy(wifi_ssid, ssid->valuestring, sizeof(wifi_ssid) - 1);
-        }
-
-        if (key)
-        {
-            memset(wifi_key, 0x0, sizeof(wifi_key));
-            rt_strncpy(wifi_key, key->valuestring, sizeof(wifi_key) - 1);
-        }
-
-        if (mode)
-        {
-            network_mode = mode->valueint;
-        }
-
-        cJSON_Delete(json);
-    }
-
+    rt_wlan_start_ap(ssid, key);
     return 0;
 }
 
-int wifi_save_cfg(const char* filename)
+static int wifi_list_sta(int argc, char *argv[])
 {
-    int fd;
-    cJSON *json = RT_NULL;
+    struct rt_wlan_info *sta_info;
+    int num, i;
 
-    fd = open(filename, O_RDONLY, 0);
-    if (fd >= 0)
+    if (argc > 2)
+        return -1;
+    num = rt_wlan_ap_get_sta_num();
+    sta_info = rt_malloc(sizeof(struct rt_wlan_info) * num);
+    if (sta_info == RT_NULL)
     {
-        int length;
-
-        length = lseek(fd, 0, SEEK_END);
-        if (length)
-        {
-            char *json_str = (char *) rt_malloc (length);
-            if (json_str)
-            {
-                lseek(fd, 0, SEEK_SET);
-                read(fd, json_str, length);
-
-                json = cJSON_Parse(json_str);
-                rt_free(json_str);
-            }
-        }
-        close(fd);
-    }
-    else
-    {
-        /* create a new setting.json */
-        fd = open(filename, O_WRONLY | O_TRUNC, 0);
-        if (fd >= 0)
-        {
-            json = cJSON_CreateObject();
-            if (json)
-            {
-                cJSON *wifi = cJSON_CreateObject();
-
-                if (wifi)
-                {
-                    char *json_str;
-
-                    cJSON_AddItemToObject(json, "wifi", wifi);
-                    cJSON_AddStringToObject(wifi, "SSID", wifi_ssid);
-                    cJSON_AddStringToObject(wifi, "Key", wifi_key);
-                    cJSON_AddNumberToObject(wifi, "Mode", network_mode);
-
-                    json_str = cJSON_Print(json);
-                    if (json_str)
-                    {
-                        write(fd, json_str, rt_strlen(json_str));
-                        cJSON_free(json_str);
-                    }
-                }
-            }
-        }
-        close(fd);
-
+        rt_kprintf("num:%d\n", num);
         return 0;
     }
-
-    if (json)
+    rt_wlan_ap_get_sta_info(sta_info, num);
+    rt_kprintf("num:%d\n", num);
+    for (i = 0; i < num; i++)
     {
-        cJSON *wifi = cJSON_GetObjectItem(json, "wifi");
-        if (!wifi)
-        {
-            wifi = cJSON_CreateObject();
-            cJSON_AddItemToObject(json, "wifi", wifi);
-        }
+        rt_kprintf("sta mac  %02x:%02x:%02x:%02x:%02x:%02x\n",
+                   sta_info[i].bssid[0], sta_info[i].bssid[1], sta_info[i].bssid[2],
+                   sta_info[i].bssid[3], sta_info[i].bssid[4], sta_info[i].bssid[5]);
+    }
+    rt_free(sta_info);
+    return 0;
+}
 
-        if (cJSON_GetObjectItem(wifi, "SSID"))cJSON_ReplaceItemInObject(wifi, "SSID", cJSON_CreateString(wifi_ssid));
-        else cJSON_AddStringToObject(wifi, "SSID", wifi_ssid);
-        if (cJSON_GetObjectItem(wifi, "Key")) cJSON_ReplaceItemInObject(wifi, "Key", cJSON_CreateString(wifi_key));
-        else cJSON_AddStringToObject(wifi, "Key", wifi_key);
-        if (cJSON_GetObjectItem(wifi, "Mode")) cJSON_ReplaceItemInObject(wifi, "Mode", cJSON_CreateNumber(network_mode));
-        else cJSON_AddNumberToObject(wifi, "Mode", network_mode);
-
-        fd = open(filename, O_WRONLY | O_TRUNC, 0);
-        if (fd >= 0)
-        {
-            char *json_str = cJSON_Print(json);
-            if (json_str)
-            {
-                write(fd, json_str, rt_strlen(json_str));
-                cJSON_free(json_str);
-            }
-            close(fd);
-        }
-        cJSON_Delete(json);
+static int wifi_disconnect(int argc, char *argv[])
+{
+    if (argc != 2)
+    {
+        return -1;
     }
 
+    rt_wlan_disconnect();
     return 0;
 }
-#endif
 
-int wifi_save_setting(void)
+static int wifi_ap_stop(int argc, char *argv[])
 {
-    #ifdef PKG_USING_CJSON
-    wifi_save_cfg(WIFI_SETTING_FN);
-    #endif
-
-    return 0;
-}
-#endif
-
-int wifi_softap_setup_netif(struct netif *netif)
-{
-    if (netif)
+    if (argc != 2)
     {
-        ip_addr_t *ip;
-        ip_addr_t addr;
-
-#ifdef RT_LWIP_DHCP
-        /* Stop DHCP Client */
-        dhcp_stop(netif);
-#endif
-
-        /* set ipaddr, gw, netmask */
-        ip = (ip_addr_t *)&addr;
-
-        /* set ip address */
-        if (ipaddr_aton("192.168.169.1", &addr))
-        {
-            netif_set_ipaddr(netif, ip);
-        }
-
-        /* set gateway address */
-        if ( ipaddr_aton("192.168.169.1", &addr))
-        {
-            netif_set_gw(netif, ip);
-        }
-
-        /* set netmask address */
-        if ( ipaddr_aton("255.255.255.0", &addr))
-        {
-            netif_set_netmask(netif, ip);
-        }
-
-        netif_set_up(netif);
-
-#ifdef LWIP_USING_DHCPD
-        {
-            char name[8];
-            memset(name, 0, sizeof(name));
-            strncpy(name, netif->name, sizeof(name)>sizeof(netif->name)? sizeof(netif->name) : sizeof(name));
-            dhcpd_start(name);
-        }
-#endif
+        return -1;
     }
 
+    rt_wlan_ap_stop();
     return 0;
 }
 
-int wifi_default(void)
+#ifdef RT_WLAN_CMD_DEBUG
+/* just for debug */
+static int wifi_debug_help(int argc, char *argv[])
 {
-    int result = 0;
-    struct rt_wlan_device *wlan;
+    rt_kprintf("save_cfg ssid [password]\n");
+    rt_kprintf("dump_cfg\n");
+    rt_kprintf("clear_cfg\n");
+    rt_kprintf("dump_prot\n");
+    rt_kprintf("mode sta/ap dev_name\n");
+    rt_kprintf("prot lwip dev_name\n");
+    rt_kprintf("auto enable/disable\n");
+    return 0;
+}
 
-    #ifdef PKG_USING_CJSON
-    /* read default setting for wifi */
-    wifi_read_cfg(WIFI_SETTING_FN);
-    #endif
+static int wifi_debug_save_cfg(int argc, char *argv[])
+{
+    struct rt_wlan_cfg_info cfg_info;
+    int len;
+    char *ssid = RT_NULL, *password = RT_NULL;
 
-    if (network_mode == WIFI_STATION)
+    rt_memset(&cfg_info, 0, sizeof(cfg_info));
+    INVALID_INFO(&cfg_info.info);
+    if (argc == 2)
     {
-        /* get wlan device */
-        wlan = (struct rt_wlan_device*)rt_device_find(WIFI_DEVICE_STA_NAME);
-        if (!wlan)
-        {
-            rt_kprintf("no wlan:%s device\n", WIFI_DEVICE_STA_NAME);
-            return -1;
-        }
-
-        /* wifi station */
-        rt_wlan_info_init(&info, WIFI_STATION, SECURITY_WPA2_MIXED_PSK, wifi_ssid);
-        result =rt_wlan_init(wlan, WIFI_STATION);
-        if (result == RT_EOK)
-        {
-            result = rt_wlan_connect(wlan, &info, wifi_key);
-        }
+        ssid = argv[1];
+    }
+    else if (argc == 3)
+    {
+        ssid = argv[1];
+        password = argv[2];
     }
     else
     {
-        /* wifi AP */
-        /* get wlan device */
-        wlan = (struct rt_wlan_device*)rt_device_find(WIFI_DEVICE_AP_NAME);
-        if (!wlan)
-        {
-            rt_kprintf("no wlan:%s device\n", WIFI_DEVICE_AP_NAME);
-            return -1;
-        }
-
-        rt_wlan_info_init(&info, WIFI_AP, SECURITY_WPA2_AES_PSK, wifi_ssid);
-        info.channel = 11;
-
-        /* wifi soft-AP */
-        result =rt_wlan_init(wlan, WIFI_AP);
-        if (result == RT_EOK)
-        {
-            result = rt_wlan_softap(wlan, &info, wifi_key);
-        }
+        return -1;
     }
 
-    return result;
+    if (ssid != RT_NULL)
+    {
+        len = rt_strlen(ssid);
+        if (len > RT_WLAN_SSID_MAX_LENGTH)
+        {
+            rt_kprintf("ssid is to long");
+            return 0;
+        }
+        rt_memcpy(&cfg_info.info.ssid.val[0], ssid, len);
+        cfg_info.info.ssid.len = len;
+    }
+
+    if (password != RT_NULL)
+    {
+        len = rt_strlen(password);
+        if (len > RT_WLAN_PASSWORD_MAX_LENGTH)
+        {
+            rt_kprintf("password is to long");
+            return 0;
+        }
+        rt_memcpy(&cfg_info.key.val[0], password, len);
+        cfg_info.key.len = len;
+    }
+#ifdef RT_WLAN_CFG_ENABLE
+    rt_wlan_cfg_save(&cfg_info);
+#endif
+    return 0;
 }
 
-static void wifi_usage(void)
+static int wifi_debug_dump_cfg(int argc, char *argv[])
 {
-    rt_kprintf("wifi help     - Help information\n");
-    rt_kprintf("wifi cfg SSID PASSWORD - Setting your router AP ssid and pwd\n");
-    rt_kprintf("wifi          - Do the default wifi action\n");
-    rt_kprintf("wifi wlan_dev scan\n");
-    rt_kprintf("wifi wlan_dev join SSID PASSWORD\n");
-    rt_kprintf("wifi wlan_dev ap SSID [PASSWORD]\n");    
-    rt_kprintf("wifi wlan_dev up\n");
-    rt_kprintf("wifi wlan_dev down\n");
-    rt_kprintf("wifi wlan_dev rssi\n");
-    rt_kprintf("wifi wlan_dev status\n");
-}
-
-int wifi(int argc, char** argv)
-{
-    struct rt_wlan_device *wlan;
-
     if (argc == 1)
     {
-        wifi_default();
-        return 0;
+#ifdef RT_WLAN_CFG_ENABLE
+        rt_wlan_cfg_dump();
+#endif
     }
-
-    if (strcmp(argv[1], "help") == 0)
+    else
     {
-        wifi_usage();
-        return 0;
+        return -1;
     }
+    return 0;
+}
 
-    if (strcmp(argv[1], "cfg") == 0)
+static int wifi_debug_clear_cfg(int argc, char *argv[])
+{
+    if (argc == 1)
     {
-        /* configure wifi setting */
-        memset(wifi_ssid, 0x0, sizeof(wifi_ssid));
-        rt_strncpy(wifi_ssid, argv[2], sizeof(wifi_ssid) - 1);
-
-        memset(wifi_key, 0x0, sizeof(wifi_key));
-        rt_strncpy(wifi_key, argv[3], sizeof(wifi_key) - 1);
-
-        network_mode = WIFI_STATION;
-
-        #ifdef PKG_USING_CJSON
-        wifi_save_cfg(WIFI_SETTING_FN);
-        #endif
-
-        return 0;
+#ifdef RT_WLAN_CFG_ENABLE
+        rt_wlan_cfg_delete_all();
+        rt_wlan_cfg_cache_save();
+#endif
     }
-
-    /* get wlan device */
-    wlan = (struct rt_wlan_device*)rt_device_find(argv[1]);
-    if (!wlan)
+    else
     {
-        rt_kprintf("no wlan:%s device\n", argv[1]);
-        return 0;
+        return -1;
     }
+    return 0;
+}
+
+static int wifi_debug_dump_prot(int argc, char *argv[])
+{
+    if (argc == 1)
+    {
+        rt_wlan_prot_dump();
+    }
+    else
+    {
+        return -1;
+    }
+    return 0;
+}
+
+static int wifi_debug_set_mode(int argc, char *argv[])
+{
+    rt_wlan_mode_t mode;
+
+    if (argc != 3)
+        return -1;
+
+    if (rt_strcmp("sta", argv[1]) == 0)
+    {
+        mode = RT_WLAN_STATION;
+    }
+    else if (rt_strcmp("ap", argv[1]) == 0)
+    {
+        mode = RT_WLAN_AP;
+    }
+    else if (rt_strcmp("none", argv[1]) == 0)
+    {
+        mode = RT_WLAN_NONE;
+    }
+    else
+        return -1;
+
+    rt_wlan_set_mode(argv[2], mode);
+    return 0;
+}
+
+static int wifi_debug_set_prot(int argc, char *argv[])
+{
+    if (argc != 3)
+    {
+        return -1;
+    }
+
+    rt_wlan_prot_attach(argv[2], argv[1]);
+    return 0;
+}
+
+static int wifi_debug_set_autoconnect(int argc, char *argv[])
+{
+    if (argc == 2)
+    {
+        if (rt_strcmp(argv[1], "enable") == 0)
+            rt_wlan_config_autoreconnect(RT_TRUE);
+        else if (rt_strcmp(argv[1], "disable") == 0)
+            rt_wlan_config_autoreconnect(RT_FALSE);
+    }
+    else
+    {
+        return -1;
+    }
+    return 0;
+}
+
+static int wifi_debug(int argc, char *argv[])
+{
+    int i, result = 0;
+    const struct wifi_cmd_des *run_cmd = RT_NULL;
 
     if (argc < 3)
     {
-        wifi_usage();
+        wifi_debug_help(0, RT_NULL);
         return 0;
     }
 
-    if (strcmp(argv[2], "join") == 0)
+    for (i = 0; i < sizeof(debug_tab) / sizeof(debug_tab[0]); i++)
     {
-        rt_wlan_init(wlan, WIFI_STATION);
-        network_mode = WIFI_STATION;
-
-        /* TODO: use easy-join to replace */
-        rt_wlan_info_init(&info, WIFI_STATION, SECURITY_WPA2_MIXED_PSK, argv[3]);
-        rt_wlan_connect(wlan, &info, argv[4]);
-    }
-    else if (strcmp(argv[2], "up") == 0)
-    {
-        /* the key was saved in wlan device */
-        rt_wlan_connect(wlan, RT_NULL, wlan->key);
-    }
-    else if (strcmp(argv[2], "down") == 0)
-    {
-        rt_wlan_disconnect(wlan);
-    }
-    else if (strcmp(argv[2], "scan") == 0)
-    {
-        struct rt_wlan_info *infos;
-
-        infos = (struct rt_wlan_info*)rt_malloc(sizeof(struct rt_wlan_info) * 12);
-        if (infos)
+        if (rt_strcmp(debug_tab[i].cmd, argv[2]) == 0)
         {
-            int index, num;
-
-            memset(infos, 0x0, sizeof(struct rt_wlan_info) * 12);
-            num = rt_wlan_scan(wlan, infos, 12);
-
-            for (index = 0; index < num; index ++)
-            {
-                rt_kprintf("----Wi-Fi AP[%d] Information----\n", index);
-                rt_kprintf("SSID: %-.32s\n", infos[index].ssid);
-                rt_kprintf("rssi: %d\n", infos[index].rssi);
-                rt_kprintf(" chn: %d\n", infos[index].channel);
-                rt_kprintf("rate: %d\n", infos[index].datarate);
-                rt_kprintf("\n");
-            }
-
-            /* de-initialize info */
-            for (index = 0; index < num; index ++)
-            {
-                rt_wlan_info_deinit(&infos[index]);
-            }
-            rt_free(infos);
+            run_cmd = &debug_tab[i];
+            break;
         }
     }
-    else if (strcmp(argv[2], "rssi") == 0)
+
+    if (run_cmd == RT_NULL)
     {
-        int rssi;
-
-        rssi = rt_wlan_get_rssi(wlan);
-        rt_kprintf("rssi=%d\n", rssi);
-    }
-    else if (strcmp(argv[2], "ap") == 0)
-    {
-        rt_err_t result = RT_EOK;
-
-        if (argc == 4)
-        {
-            // open soft-AP
-            rt_wlan_info_init(&info, WIFI_AP, SECURITY_OPEN, argv[3]);
-            info.channel = 11;
-
-            result =rt_wlan_init(wlan, WIFI_AP);
-            /* start soft ap */
-            result = rt_wlan_softap(wlan, &info, NULL);
-            if (result == RT_EOK)
-            {
-                network_mode = WIFI_AP;
-            }
-        }
-        else if (argc == 5)
-        {
-            // WPA2 with password
-            rt_wlan_info_init(&info, WIFI_AP, SECURITY_WPA2_AES_PSK, argv[3]);
-            info.channel = 11;
-
-            result =rt_wlan_init(wlan, WIFI_AP);
-            /* start soft ap */
-            result = rt_wlan_softap(wlan, &info, argv[4]);
-            if (result == RT_EOK)
-            {
-                network_mode = WIFI_AP;
-            }            
-        }
-        else
-        {
-            wifi_usage();
-        }
-        
-        if (result != RT_EOK)
-        {
-            rt_kprintf("wifi start failed! result=%d\n", result);
-        }
-    }
-    else if (strcmp(argv[2], "status") == 0)
-    {
-        int rssi;
-
-        if (netif_is_link_up(wlan->parent.netif))
-        {
-            rssi = rt_wlan_get_rssi(wlan);
-
-            rt_kprintf("Wi-Fi AP: %-.32s\n", wlan->info->ssid);
-            rt_kprintf("MAC Addr: %02x:%02x:%02x:%02x:%02x:%02x\n", wlan->info->bssid[0],
-                    wlan->info->bssid[1],
-                    wlan->info->bssid[2],
-                    wlan->info->bssid[3],
-                    wlan->info->bssid[4],
-                    wlan->info->bssid[5]);
-            rt_kprintf(" Channel: %d\n", wlan->info->channel);
-            rt_kprintf("DataRate: %dMbps\n", wlan->info->datarate/1000);
-            rt_kprintf("    RSSI: %d\n", rssi);
-        }
-        else
-        {
-            rt_kprintf("wifi disconnected!\n");
-        }
-
+        wifi_debug_help(0, RT_NULL);
         return 0;
     }
 
+    if (run_cmd->fun != RT_NULL)
+    {
+        result = run_cmd->fun(argc - 2, &argv[2]);
+    }
+
+    if (result)
+    {
+        wifi_debug_help(argc - 2, &argv[2]);
+    }
     return 0;
 }
-MSH_CMD_EXPORT(wifi, wifi command);
+#endif
+
+static int wifi_msh(int argc, char *argv[])
+{
+    int i, result = 0;
+    const struct wifi_cmd_des *run_cmd = RT_NULL;
+
+    if (argc == 1)
+    {
+        wifi_help(argc, argv);
+        return 0;
+    }
+
+    /* find fun */
+    for (i = 0; i < sizeof(cmd_tab) / sizeof(cmd_tab[0]); i++)
+    {
+        if (rt_strcmp(cmd_tab[i].cmd, argv[1]) == 0)
+        {
+            run_cmd = &cmd_tab[i];
+            break;
+        }
+    }
+
+    /* not find fun, print help */
+    if (run_cmd == RT_NULL)
+    {
+        wifi_help(argc, argv);
+        return 0;
+    }
+
+    /* run fun */
+    if (run_cmd->fun != RT_NULL)
+    {
+        result = run_cmd->fun(argc, argv);
+    }
+
+    if (result)
+    {
+        wifi_help(argc, argv);
+    }
+    return 0;
+}
+
+#if defined(RT_USING_FINSH) && defined(FINSH_USING_MSH)
+FINSH_FUNCTION_EXPORT_ALIAS(wifi_msh, __cmd_wifi, wifi command.);
+#endif
+
+#endif

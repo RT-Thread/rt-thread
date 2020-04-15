@@ -1,21 +1,7 @@
 /*
- * File      : select.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -27,6 +13,25 @@
 
 #include <dfs_poll.h>
 #include <dfs_select.h>
+
+#ifdef RT_USING_POSIX
+
+static void fdszero(fd_set *set, int nfds)
+{
+    fd_mask *m;
+    int n;
+
+    /*
+      The 'sizeof(fd_set)' of the system space may differ from user space,
+      so the actual size of the 'fd_set' is determined here with the parameter 'nfds'
+    */
+    m = (fd_mask *)set;
+    for (n = 0; n < nfds; n += (sizeof(fd_mask) * 8))
+    {
+        rt_memset(m, 0, sizeof(fd_mask));
+        m ++;
+    }
+}
 
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
@@ -113,17 +118,17 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     /* Now set up the return values */
     if (readfds)
     {
-        memset(readfds, 0, sizeof(fd_set));
+        fdszero(readfds, nfds);
     }
 
     if (writefds)
     {
-        memset(writefds, 0, sizeof(fd_set));
+        fdszero(writefds, nfds);
     }
 
     if (exceptfds)
     {
-        memset(exceptfds, 0, sizeof(fd_set));
+        fdszero(exceptfds, nfds);
     }
 
     /* Convert the poll descriptor list back into selects 3 bitsets */
@@ -175,3 +180,4 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     return ret;
 }
 
+#endif 

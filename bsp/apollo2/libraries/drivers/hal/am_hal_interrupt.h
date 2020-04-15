@@ -44,16 +44,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_INTERRUPT_H
 #define AM_HAL_INTERRUPT_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 //*****************************************************************************
 //
 //! @name ISR number macros.
@@ -66,6 +62,7 @@ extern "C"
 //
 // Hardware interrupts
 //
+#define AM_HAL_INTERRUPT_MAX                (47)    //AM_HAL_INTERRUPT_SOFTWARE3
 #define AM_HAL_INTERRUPT_RESET              1
 #define AM_HAL_INTERRUPT_NMI                2
 #define AM_HAL_INTERRUPT_HARDFAULT          3
@@ -130,6 +127,10 @@ extern "C"
 //*****************************************************************************
 #define AM_HAL_INTERRUPT_PRIORITY(n)        (((uint32_t)(n) & 0x7) << 5)
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 //*****************************************************************************
 //
 // External function definitions

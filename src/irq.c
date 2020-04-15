@@ -1,27 +1,14 @@
 /*
- * File      : irq.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2006-02-24     Bernard      first version
  * 2006-05-03     Bernard      add IRQ_DEBUG
  * 2016-08-09     ArdaFu       add interrupt enter and leave hook.
+ * 2018-11-22     Jesven       rt_interrupt_get_nest function add disable irq
  */
 
 #include <rthw.h>
@@ -62,7 +49,11 @@ void rt_interrupt_leave_sethook(void (*hook)(void))
 
 /**@{*/
 
-volatile rt_uint8_t rt_interrupt_nest;
+#ifdef RT_USING_SMP
+#define rt_interrupt_nest rt_cpu_self()->irq_nest
+#else
+volatile rt_uint8_t rt_interrupt_nest = 0;
+#endif
 
 /**
  * This function will be invoked by BSP, when enter interrupt service routine
@@ -114,9 +105,15 @@ RTM_EXPORT(rt_interrupt_leave);
  *
  * @return the number of nested interrupts.
  */
-rt_uint8_t rt_interrupt_get_nest(void)
+RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
 {
-    return rt_interrupt_nest;
+    rt_uint8_t ret;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    ret = rt_interrupt_nest;
+    rt_hw_interrupt_enable(level);
+    return ret;
 }
 RTM_EXPORT(rt_interrupt_get_nest);
 

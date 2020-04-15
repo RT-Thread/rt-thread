@@ -1,7 +1,9 @@
 /*
  * File      : hid.c
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2018, RT-Thread Development Team
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * Change Logs:
  * Date           Author       Notes
  * 2017-03-13     Urey         the first version
@@ -33,6 +35,7 @@ struct hid_s
 };
 
 /* CustomHID_ConfigDescriptor */
+ALIGN(4)
 const rt_uint8_t _report_desc[]=
 {
 #ifdef RT_USB_DEVICE_HID_KEYBOARD
@@ -129,6 +132,34 @@ const rt_uint8_t _report_desc[]=
     USAGE_MAXIMUM(1),   0x65,
     INPUT(1),           0x00,
     END_COLLECTION(0),
+#if RT_USB_DEVICE_HID_KEYBOARD_NUMBER>3
+    USAGE_PAGE(1),      0x01,
+    USAGE(1),           0x06,
+    COLLECTION(1),      0x01,
+    REPORT_ID(1),       HID_REPORT_ID_KEYBOARD4,
+
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0xE0,
+    USAGE_MAXIMUM(1),   0xE7,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x01,
+    REPORT_SIZE(1),     0x01,
+    REPORT_COUNT(1),    0x08,
+    INPUT(1),           0x02,
+    REPORT_COUNT(1),    0x01,
+    REPORT_SIZE(1),     0x08,
+    INPUT(1),           0x01,
+
+    REPORT_COUNT(1),    0x06,
+    REPORT_SIZE(1),     0x08,
+    LOGICAL_MINIMUM(1), 0x00,
+    LOGICAL_MAXIMUM(1), 0x65,
+    USAGE_PAGE(1),      0x07,
+    USAGE_MINIMUM(1),   0x00,
+    USAGE_MAXIMUM(1),   0x65,
+    INPUT(1),           0x00,
+    END_COLLECTION(0),
+#endif
 #endif
 #endif
 #endif
@@ -209,6 +240,7 @@ const rt_uint8_t _report_desc[]=
 #endif
 }; /* CustomHID_ReportDescriptor */
 
+ALIGN(4)
 static struct udevice_descriptor _dev_desc =
 {
     USB_DESC_LENGTH_DEVICE,     //bLength;
@@ -228,6 +260,7 @@ static struct udevice_descriptor _dev_desc =
 };
 
 //FS and HS needed
+ALIGN(4)
 static struct usb_qualifier_descriptor dev_qualifier =
 {
     sizeof(dev_qualifier),          //bLength
@@ -243,78 +276,92 @@ static struct usb_qualifier_descriptor dev_qualifier =
 
 
 /* hid interface descriptor */
+ALIGN(4)
 const static struct uhid_comm_descriptor _hid_comm_desc =
 {
 #ifdef RT_USB_DEVICE_COMPOSITE
     /* Interface Association Descriptor */
-    USB_DESC_LENGTH_IAD,
-    USB_DESC_TYPE_IAD,
-    USB_DYNAMIC,
-    0x01,
-    0x03,                       /* bInterfaceClass: HID */
+    {
+        USB_DESC_LENGTH_IAD,
+        USB_DESC_TYPE_IAD,
+        USB_DYNAMIC,
+        0x01,
+        0x03,                       /* bInterfaceClass: HID */
 #if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
-    USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+        USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
 #else
-    USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+        USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
 #endif
 #if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
-    USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #elif !defined(RT_USB_DEVICE_HID_MOUSE)
-    USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+        USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #else
-    USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+        USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #endif
-    0x00,
+        0x00,
+    },
 #endif
-
     /* Interface Descriptor */
-    USB_DESC_LENGTH_INTERFACE,
-    USB_DESC_TYPE_INTERFACE,
-    USB_DYNAMIC,                /* bInterfaceNumber: Number of Interface */
-    0x00,                       /* bAlternateSetting: Alternate setting */
-    0x02,                       /* bNumEndpoints */
-    0x03,                       /* bInterfaceClass: HID */
+    {
+        USB_DESC_LENGTH_INTERFACE,
+        USB_DESC_TYPE_INTERFACE,
+        USB_DYNAMIC,                /* bInterfaceNumber: Number of Interface */
+        0x00,                       /* bAlternateSetting: Alternate setting */
+        0x02,                       /* bNumEndpoints */
+        0x03,                       /* bInterfaceClass: HID */
 #if defined(RT_USB_DEVICE_HID_KEYBOARD)||defined(RT_USB_DEVICE_HID_MOUSE)
-    USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+        USB_HID_SUBCLASS_BOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
 #else
-    USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+        USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
 #endif
 #if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
-    USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #elif !defined(RT_USB_DEVICE_HID_MOUSE)
-    USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+        USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #else
-    USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+        USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #endif
-    0,                          /* iInterface: Index of string descriptor */
+        0,                          /* iInterface: Index of string descriptor */
+    },
 
     /* HID Descriptor */
-    HID_DESCRIPTOR_SIZE,        /* bLength: HID Descriptor size */
-    HID_DESCRIPTOR_TYPE,        /* bDescriptorType: HID */
-    0x0110,                     /* bcdHID: HID Class Spec release number */
-    0x00,                       /* bCountryCode: Hardware target country */
-    0x01,                       /* bNumDescriptors: Number of HID class descriptors to follow */
-    0x22,                       /* bDescriptorType */
-    sizeof(_report_desc),       /* wItemLength: Total length of Report descriptor */
+    {
+        HID_DESCRIPTOR_SIZE,        /* bLength: HID Descriptor size */
+        HID_DESCRIPTOR_TYPE,        /* bDescriptorType: HID */
+        0x0110,                     /* bcdHID: HID Class Spec release number */
+        0x00,                       /* bCountryCode: Hardware target country */
+        0x01,                       /* bNumDescriptors: Number of HID class descriptors to follow */
+        {
+            {
+                0x22,                       /* bDescriptorType */
+                sizeof(_report_desc),       /* wItemLength: Total length of Report descriptor */
+            },
+        },
+    },
 
     /* Endpoint Descriptor IN */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_IN,
-    USB_EP_ATTR_INT,
-    0x40,
-    0x01,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_IN,
+        USB_EP_ATTR_INT,
+        0x40,
+        0x01,
+    },
 
     /* Endpoint Descriptor OUT */
-    USB_DESC_LENGTH_ENDPOINT,
-    USB_DESC_TYPE_ENDPOINT,
-    USB_DYNAMIC | USB_DIR_OUT,
-    USB_EP_ATTR_INT,
-    0x40,
-    0x01,
+    {
+        USB_DESC_LENGTH_ENDPOINT,
+        USB_DESC_TYPE_ENDPOINT,
+        USB_DYNAMIC | USB_DIR_OUT,
+        USB_EP_ATTR_INT,
+        0x40,
+        0x01,
+    },
 };
 
-
+ALIGN(4)
 const static char* _ustring[] =
 {
     "Language",
@@ -325,7 +372,7 @@ const static char* _ustring[] =
     "Interface",
 };
 
-static void dump_data(uint8_t *data, rt_size_t size)
+static void dump_data(rt_uint8_t *data, rt_size_t size)
 {
     rt_size_t i;
     for (i = 0; i < size; i++)
@@ -411,9 +458,6 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
 
     struct hid_s *data = (struct hid_s *) func->user_data;
 
-    if(setup->wIndex != 0)
-        return -RT_EIO;
-
     switch (setup->bRequest)
     {
     case USB_REQ_GET_DESCRIPTOR:
@@ -452,12 +496,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         rt_usbd_ep0_read(func->device, data->report_buf, setup->wLength, _hid_set_report_callback);
         break;
     case USB_HID_REQ_SET_IDLE:
-    {
-        int duration = (setup->wValue >> 8);
-        int report_id = (setup->wValue & 0xFF);
-
         dcd_ep0_send_status(func->device->dcd);
-    }
         break;
     case USB_HID_REQ_SET_PROTOCOL:
         data->protocol = setup->wValue;
@@ -592,14 +631,33 @@ static void hid_thread_entry(void* parameter)
 		HID_Report_Received(&report);
 	}
 }
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops hid_device_ops =
+{
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    _hid_write,
+    RT_NULL,
+};
+#endif
+
 static rt_uint8_t hid_mq_pool[(sizeof(struct hid_report)+sizeof(void*))*8];
 static void rt_usb_hid_init(struct ufunction *func)
 {
     struct hid_s *hiddev;
     hiddev = (struct hid_s *)func->user_data;
     rt_memset(&hiddev->parent, 0, sizeof(hiddev->parent));
+
+#ifdef RT_USING_DEVICE_OPS
+    hiddev->parent.ops   = &hid_device_ops;
+#else
     hiddev->parent.write = _hid_write;
-	hiddev->func = func;
+#endif
+    hiddev->func = func;
+
     rt_device_register(&hiddev->parent, "hidd", RT_DEVICE_FLAG_RDWR);
     rt_mq_init(&hiddev->hid_mq, "hiddmq", hid_mq_pool, sizeof(struct hid_report),
                             sizeof(hid_mq_pool), RT_IPC_FLAG_FIFO);
@@ -674,5 +732,15 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
     rt_usb_hid_init(func);
     return func;
 }
+struct udclass hid_class = 
+{
+    .rt_usbd_function_create = rt_usbd_function_hid_create
+};
 
+int rt_usbd_hid_class_register(void)
+{
+    rt_usbd_class_register(&hid_class);
+    return 0;
+}
+INIT_PREV_EXPORT(rt_usbd_hid_class_register);
 #endif /* RT_USB_DEVICE_HID */

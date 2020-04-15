@@ -1,202 +1,140 @@
 /*
- * File      : mips_regs.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016年9月7日     Urey         the first version
+ * 2019-12-04     Jiaxun Yang  Initial version
  */
 
 #ifndef _MIPS_REGS_H_
 #define _MIPS_REGS_H_
+#include <rtconfig.h>
+#define REG_A0	4
+#define REG_SP	29
+#define REG_GP	28
+#define REG_FP	30
+#define REG_RA	31
 
+#ifndef ARCH_MIPS64
+#define zero	$0	/* wired zero */
+#define AT	$1	/* assembler temp  - uppercase because of ".set at" */
+#define v0	$2	/* return value */
+#define v1	$3
+#define a0	$4	/* argument registers */
+#define a1	$5
+#define a2	$6
+#define a3	$7
+#define t0	$8	/* caller saved */
+#define t1	$9
+#define t2	$10
+#define t3	$11
+#define t4	$12
+#define ta0	$12
+#define t5	$13
+#define ta1	$13
+#define t6	$14
+#define ta2	$14
+#define t7	$15
+#define ta3	$15
+#define s0	$16	/* callee saved */
+#define s1	$17
+#define s2	$18
+#define s3	$19
+#define s4	$20
+#define s5	$21
+#define s6	$22
+#define s7	$23
+#define t8	$24	/* caller saved */
+#define t9	$25
+#define jp	$25	/* PIC jump register */
+#define k0	$26	/* kernel scratch */
+#define k1	$27
+#define gp	$28	/* global pointer */
+#define sp	$29	/* stack pointer */
+#define fp	$30	/* frame pointer */
+#define s8	$30	/* same like fp! */
+#define ra	$31	/* return address */
 
-#if !defined(__ASSEMBLY__) && !defined(ASSEMBLY)
-#include <rtdef.h>
+#else
 
-#define MIPS_REG_NR             32
-typedef struct {
-    rt_uint32_t  regs[MIPS_REG_NR];                             	/*  32 个通用目的寄存器         */
-    rt_uint32_t  CP0Status;                                        	/*  CP0 协处理器状态寄存器      */
-    rt_uint32_t  CP0DataHI;                                        	/*  除数高位寄存器              */
-    rt_uint32_t  CP0DataLO;                                        	/*  除数低位寄存器              */
-    rt_uint32_t  CP0BadVAddr;                                      	/*  出错地址寄存器              */
-    rt_uint32_t  CP0Cause;                                         	/*  产生中断或者异常查看的寄存器*/
-    rt_uint32_t  CP0EPC;                                           	/*  程序计数器寄存器			*/
-} mips_reg_ctx;
+#define zero	$0	/* wired zero */
+#define AT	$at	/* assembler temp - uppercase because of ".set at" */
+#define v0	$2	/* return value - caller saved */
+#define v1	$3
+#define a0	$4	/* argument registers */
+#define a1	$5
+#define a2	$6
+#define a3	$7
+#define a4	$8	/* arg reg 64 bit; caller saved in 32 bit */
+#define ta0	$8
+#define a5	$9
+#define ta1	$9
+#define a6	$10
+#define ta2	$10
+#define a7	$11
+#define ta3	$11
+#define t0	$12	/* caller saved */
+#define t1	$13
+#define t2	$14
+#define t3	$15
+#define s0	$16	/* callee saved */
+#define s1	$17
+#define s2	$18
+#define s3	$19
+#define s4	$20
+#define s5	$21
+#define s6	$22
+#define s7	$23
+#define t8	$24	/* caller saved */
+#define t9	$25	/* callee address for PIC/temp */
+#define jp	$25	/* PIC jump register */
+#define k0	$26	/* kernel temporary */
+#define k1	$27
+#define gp	$28	/* global pointer - caller saved for PIC */
+#define sp	$29	/* stack pointer */
+#define fp	$30	/* frame pointer */
+#define s8	$30	/* callee saved */
+#define ra	$31	/* return address */
 
-#define MIPS_ARG_REG_NR         4
-typedef struct
-{
-	rt_uint32_t  args[MIPS_ARG_REG_NR];                              /*  4 个参数寄存器              */
-} mips_arg_ctx;
+#endif
 
-struct linkctx
-{
-	rt_uint32_t id;
-	struct linkctx *next;
-};
+#define fv0	$f0	 /* return value */
+#define fv0f	$f1
+#define fv1	$f2
+#define fv1f	$f3
+#define fa0	$f12	 /* argument registers */
+#define fa0f	$f13
+#define fa1	$f14
+#define fa1f	$f15
+#define ft0	$f4	 /* caller saved */
+#define ft0f	$f5
+#define ft1	$f6
+#define ft1f	$f7
+#define ft2	$f8
+#define ft2f	$f9
+#define ft3	$f10
+#define ft3f	$f11
+#define ft4	$f16
+#define ft4f	$f17
+#define ft5	$f18
+#define ft5f	$f19
+#define fs0	$f20	 /* callee saved */
+#define fs0f	$f21
+#define fs1	$f22
+#define fs1f	$f23
+#define fs2	$f24
+#define fs2f	$f25
+#define fs3	$f26
+#define fs3f	$f27
+#define fs4	$f28
+#define fs4f	$f29
+#define fs5	$f30
+#define fs5f	$f31
 
-struct fpctx
-{
-  struct linkctx link;
-  rt_uint32_t fcsr;
-  rt_uint32_t reserved;
-};
+#define fcr31	$31	 /* FPU status register */
 
-
-struct fp32ctx
-{
-  struct fpctx fp;
-  union
-    {
-      double d[16];	/* even doubles */
-      float s[32];	/* even singles, padded */
-    };
-};
-
-struct fp64ctx
-{
-  struct fpctx fp;
-  union
-    {
-      double d[32];	/* even doubles, followed by odd doubles */
-      float s[64];	/* even singles, followed by odd singles, padded */
-    };
-};
-
-#endif /* !defined(__ASSEMBLY__) && !defined(ASSEMBLY) */
-
-#define MIPS_STK_CTX_WORD_SIZE			38
-#define SZREG			4
-/*********************************************************************************************************
-  MIPS 的寄存器索引
-*********************************************************************************************************/
-#define REG_ZERO                0                                       /*  wired zero                  */
-#define REG_AT                  1                                       /*  assembler temp              */
-#define REG_V0                  2                                       /*  return reg 0                */
-#define REG_V1                  3                                       /*  return reg 1                */
-#define REG_A0                  4                                       /*  arg reg 0                   */
-#define REG_A1                  5                                       /*  arg reg 1                   */
-#define REG_A2                  6                                       /*  arg reg 2                   */
-#define REG_A3                  7                                       /*  arg reg 3                   */
-#define REG_T0                  8                                       /*  caller saved 0              */
-#define REG_T1                  9                                       /*  caller saved 1              */
-#define REG_T2                  10                                      /*  caller saved 2              */
-#define REG_T3                  11                                      /*  caller saved 3              */
-#define REG_T4                  12                                      /*  caller saved 4              */
-#define REG_T5                  13                                      /*  caller saved 5              */
-#define REG_T6                  14                                      /*  caller saved 6              */
-#define REG_T7                  15                                      /*  caller saved 7              */
-#define REG_S0                  16                                      /*  callee saved 0              */
-#define REG_S1                  17                                      /*  callee saved 1              */
-#define REG_S2                  18                                      /*  callee saved 2              */
-#define REG_S3                  19                                      /*  callee saved 3              */
-#define REG_S4                  20                                      /*  callee saved 4              */
-#define REG_S5                  21                                      /*  callee saved 5              */
-#define REG_S6                  22                                      /*  callee saved 6              */
-#define REG_S7                  23                                      /*  callee saved 7              */
-#define REG_T8                  24                                      /*  caller saved 8              */
-#define REG_T9                  25                                      /*  caller saved 9              */
-#define REG_K0                  26                                      /*  kernel temp 0               */
-#define REG_K1                  27                                      /*  kernel temp 1               */
-#define REG_GP                  28                                      /*  global pointer              */
-#define REG_SP                  29                                      /*  stack pointer               */
-#define REG_S8                  30                                      /*  callee saved 8              */
-#define REG_FP                  REG_S8                                  /*  callee saved 8              */
-#define REG_RA                  31                                      /*  return address              */
-
-#define STK_CTX_SIZE            (MIPS_STK_CTX_WORD_SIZE * SZREG)
-#define STK_OFFSET_SR           ((32 + 0) * SZREG)
-#define STK_OFFSET_HI           ((32 + 1) * SZREG)
-#define STK_OFFSET_LO           ((32 + 2) * SZREG)
-#define STK_OFFSET_BADVADDR     ((32 + 3) * SZREG)
-#define STK_OFFSET_CAUSE        ((32 + 4) * SZREG)
-#define STK_OFFSET_EPC          ((32 + 5) * SZREG)
-
-#define STK_OFFSET_LAST         ((MIPS_STK_CTX_WORD_SIZE - 1) * SZREG)
-
-#define FP32CTX_CSR	((SZREG)*2)
-#define FP64CTX_CSR	((SZREG)*2)
-
-#define LINKCTX_ID      ((SZREG)*0)
-#define LINKCTX_NEXT    ((SZREG)*1)
-#define LINKCTX_TYPE_MSA        0x004D5341
-#define LINKCTX_TYPE_FP32       0x46503332
-#define LINKCTX_TYPE_FP64       0x46503634
-#define LINKCTX_TYPE_FMSA       0x463D5341
-#define LINKCTX_TYPE_DSP        0x00445350
-#define LINKCTX_TYPE_STKSWP     0x53574150
-#define LINKCTX_TYPE_XPA	0x00585041
-
-#define FP32CTX_0	((SZREG)*4)
-#define FP32CTX_2	(FP32CTX_0 + (1 * 8))
-#define FP32CTX_4	(FP32CTX_0 + (2 * 8))
-#define FP32CTX_6	(FP32CTX_0 + (3 * 8))
-#define FP32CTX_8	(FP32CTX_0 + (4 * 8))
-#define FP32CTX_10	(FP32CTX_0 + (5 * 8))
-#define FP32CTX_12	(FP32CTX_0 + (6 * 8))
-#define FP32CTX_14	(FP32CTX_0 + (7 * 8))
-#define FP32CTX_16	(FP32CTX_0 + (8 * 8))
-#define FP32CTX_18	(FP32CTX_0 + (9 * 8))
-#define FP32CTX_20	(FP32CTX_0 + (10 * 8))
-#define FP32CTX_22	(FP32CTX_0 + (11 * 8))
-#define FP32CTX_24	(FP32CTX_0 + (12 * 8))
-#define FP32CTX_26	(FP32CTX_0 + (13 * 8))
-#define FP32CTX_28	(FP32CTX_0 + (14 * 8))
-#define FP32CTX_30	(FP32CTX_0 + (15 * 8))
-#define FP32CTX_SIZE	(FP32CTX_30 + (17 * 8))
-
-#define FP64CTX_0	((SZREG)*4)
-#define FP64CTX_2	(FP64CTX_0 + (1 * 8))
-#define FP64CTX_4	(FP64CTX_0 + (2 * 8))
-#define FP64CTX_6	(FP64CTX_0 + (3 * 8))
-#define FP64CTX_8	(FP64CTX_0 + (4 * 8))
-#define FP64CTX_10	(FP64CTX_0 + (5 * 8))
-#define FP64CTX_12	(FP64CTX_0 + (6 * 8))
-#define FP64CTX_14	(FP64CTX_0 + (7 * 8))
-#define FP64CTX_16	(FP64CTX_0 + (8 * 8))
-#define FP64CTX_18	(FP64CTX_0 + (9 * 8))
-#define FP64CTX_20	(FP64CTX_0 + (10 * 8))
-#define FP64CTX_22	(FP64CTX_0 + (11 * 8))
-#define FP64CTX_24	(FP64CTX_0 + (12 * 8))
-#define FP64CTX_26	(FP64CTX_0 + (13 * 8))
-#define FP64CTX_28	(FP64CTX_0 + (14 * 8))
-#define FP64CTX_30	(FP64CTX_0 + (15 * 8))
-#define FP64CTX_1	(FP64CTX_30 + (1 * 8))
-#define FP64CTX_3	(FP64CTX_30 + (2 * 8))
-#define FP64CTX_5	(FP64CTX_30 + (3 * 8))
-#define FP64CTX_7	(FP64CTX_30 + (4 * 8))
-#define FP64CTX_9	(FP64CTX_30 + (5 * 8))
-#define FP64CTX_11	(FP64CTX_30 + (6 * 8))
-#define FP64CTX_13	(FP64CTX_30 + (7 * 8))
-#define FP64CTX_15	(FP64CTX_30 + (8 * 8))
-#define FP64CTX_17	(FP64CTX_30 + (9 * 8))
-#define FP64CTX_19	(FP64CTX_30 + (10 * 8))
-#define FP64CTX_21	(FP64CTX_30 + (11 * 8))
-#define FP64CTX_23	(FP64CTX_30 + (12 * 8))
-#define FP64CTX_25	(FP64CTX_30 + (13 * 8))
-#define FP64CTX_27	(FP64CTX_30 + (14 * 8))
-#define FP64CTX_29	(FP64CTX_30 + (15 * 8))
-#define FP64CTX_31	(FP64CTX_30 + (16 * 8))
-#define FP64CTX_SIZE	(FP64CTX_31 + (17 * 8))
-
-#define FPCTX_SIZE()	(mips_getsr() & ST0_FR ? FP64CTX_SIZE : FP32CTX_SIZE)
 
 /*
  * The following macros are especially useful for __asm__
@@ -284,75 +222,128 @@ struct fp64ctx
 /*
  * Coprocessor 1 (FPU) register names
  */
-#define CP1_REVISION   $0
-#define CP1_STATUS     $31
+#define CP1_REVISION	$0
+#define CP1_UFR		$1
+#define CP1_UNFR	$4
+#define CP1_FCCR	$25
+#define CP1_FEXR	$26
+#define CP1_FENR	$28
+#define CP1_STATUS	$31
+
+
+/*
+ * Bits in the MIPS32/64 coprocessor 1 (FPU) revision register.
+ */
+#define MIPS_FPIR_S		(_ULCAST_(1) << 16)
+#define MIPS_FPIR_D		(_ULCAST_(1) << 17)
+#define MIPS_FPIR_PS		(_ULCAST_(1) << 18)
+#define MIPS_FPIR_3D		(_ULCAST_(1) << 19)
+#define MIPS_FPIR_W		(_ULCAST_(1) << 20)
+#define MIPS_FPIR_L		(_ULCAST_(1) << 21)
+#define MIPS_FPIR_F64		(_ULCAST_(1) << 22)
+#define MIPS_FPIR_HAS2008	(_ULCAST_(1) << 23)
+#define MIPS_FPIR_UFRP		(_ULCAST_(1) << 28)
+#define MIPS_FPIR_FREP		(_ULCAST_(1) << 29)
+
+/*
+ * Bits in the MIPS32/64 coprocessor 1 (FPU) condition codes register.
+ */
+#define MIPS_FCCR_CONDX_S	0
+#define MIPS_FCCR_CONDX		(_ULCAST_(255) << MIPS_FCCR_CONDX_S)
+#define MIPS_FCCR_COND0_S	0
+#define MIPS_FCCR_COND0		(_ULCAST_(1) << MIPS_FCCR_COND0_S)
+#define MIPS_FCCR_COND1_S	1
+#define MIPS_FCCR_COND1		(_ULCAST_(1) << MIPS_FCCR_COND1_S)
+#define MIPS_FCCR_COND2_S	2
+#define MIPS_FCCR_COND2		(_ULCAST_(1) << MIPS_FCCR_COND2_S)
+#define MIPS_FCCR_COND3_S	3
+#define MIPS_FCCR_COND3		(_ULCAST_(1) << MIPS_FCCR_COND3_S)
+#define MIPS_FCCR_COND4_S	4
+#define MIPS_FCCR_COND4		(_ULCAST_(1) << MIPS_FCCR_COND4_S)
+#define MIPS_FCCR_COND5_S	5
+#define MIPS_FCCR_COND5		(_ULCAST_(1) << MIPS_FCCR_COND5_S)
+#define MIPS_FCCR_COND6_S	6
+#define MIPS_FCCR_COND6		(_ULCAST_(1) << MIPS_FCCR_COND6_S)
+#define MIPS_FCCR_COND7_S	7
+#define MIPS_FCCR_COND7		(_ULCAST_(1) << MIPS_FCCR_COND7_S)
+
+/*
+ * Bits in the MIPS32/64 coprocessor 1 (FPU) enables register.
+ */
+#define MIPS_FENR_FS_S		2
+#define MIPS_FENR_FS		(_ULCAST_(1) << MIPS_FENR_FS_S)
 
 /*
  * FPU Status Register Values
  */
-/*
- * Status Register Values
- */
+#define FPU_CSR_COND_S	23					/* $fcc0 */
+#define FPU_CSR_COND	(_ULCAST_(1) << FPU_CSR_COND_S)
 
-#define FPU_CSR_FLUSH   0x01000000      /* flush denormalised results to 0 */
-#define FPU_CSR_COND    0x00800000      /* $fcc0 */
-#define FPU_CSR_COND0   0x00800000      /* $fcc0 */
-#define FPU_CSR_COND1   0x02000000      /* $fcc1 */
-#define FPU_CSR_COND2   0x04000000      /* $fcc2 */
-#define FPU_CSR_COND3   0x08000000      /* $fcc3 */
-#define FPU_CSR_COND4   0x10000000      /* $fcc4 */
-#define FPU_CSR_COND5   0x20000000      /* $fcc5 */
-#define FPU_CSR_COND6   0x40000000      /* $fcc6 */
-#define FPU_CSR_COND7   0x80000000      /* $fcc7 */
+#define FPU_CSR_FS_S	24		/* flush denormalised results to 0 */
+#define FPU_CSR_FS	(_ULCAST_(1) << FPU_CSR_FS_S)
+
+#define FPU_CSR_FO      0x00400000
+#define FPU_CSR_FN      0x00200000
+
+#define FPU_CSR_CONDX_S	25					/* $fcc[7:1] */
+#define FPU_CSR_CONDX	(_ULCAST_(127) << FPU_CSR_CONDX_S)
+#define FPU_CSR_COND1_S	25					/* $fcc1 */
+#define FPU_CSR_COND1	(_ULCAST_(1) << FPU_CSR_COND1_S)
+#define FPU_CSR_COND2_S	26					/* $fcc2 */
+#define FPU_CSR_COND2	(_ULCAST_(1) << FPU_CSR_COND2_S)
+#define FPU_CSR_COND3_S	27					/* $fcc3 */
+#define FPU_CSR_COND3	(_ULCAST_(1) << FPU_CSR_COND3_S)
+#define FPU_CSR_COND4_S	28					/* $fcc4 */
+#define FPU_CSR_COND4	(_ULCAST_(1) << FPU_CSR_COND4_S)
+#define FPU_CSR_COND5_S	29					/* $fcc5 */
+#define FPU_CSR_COND5	(_ULCAST_(1) << FPU_CSR_COND5_S)
+#define FPU_CSR_COND6_S	30					/* $fcc6 */
+#define FPU_CSR_COND6	(_ULCAST_(1) << FPU_CSR_COND6_S)
+#define FPU_CSR_COND7_S	31					/* $fcc7 */
+#define FPU_CSR_COND7	(_ULCAST_(1) << FPU_CSR_COND7_S)
+
+/*
+ * Bits 22:20 of the FPU Status Register will be read as 0,
+ * and should be written as zero.
+ */
+#define FPU_CSR_RSVD	(_ULCAST_(7) << 20)
+
+#define FPU_CSR_ABS2008	(_ULCAST_(1) << 19)
+#define FPU_CSR_NAN2008	(_ULCAST_(1) << 18)
 
 /*
  * X the exception cause indicator
  * E the exception enable
  * S the sticky/flag bit
 */
-#define FPU_CSR_ALL_X   0x0003f000
-#define FPU_CSR_UNI_X   0x00020000
-#define FPU_CSR_INV_X   0x00010000
-#define FPU_CSR_DIV_X   0x00008000
-#define FPU_CSR_OVF_X   0x00004000
-#define FPU_CSR_UDF_X   0x00002000
-#define FPU_CSR_INE_X   0x00001000
+#define FPU_CSR_ALL_X	0x0003f000
+#define FPU_CSR_UNI_X	0x00020000
+#define FPU_CSR_INV_X	0x00010000
+#define FPU_CSR_DIV_X	0x00008000
+#define FPU_CSR_OVF_X	0x00004000
+#define FPU_CSR_UDF_X	0x00002000
+#define FPU_CSR_INE_X	0x00001000
 
-#define FPU_CSR_ALL_E   0x00000f80
-#define FPU_CSR_INV_E   0x00000800
-#define FPU_CSR_DIV_E   0x00000400
-#define FPU_CSR_OVF_E   0x00000200
-#define FPU_CSR_UDF_E   0x00000100
-#define FPU_CSR_INE_E   0x00000080
+#define FPU_CSR_ALL_E	0x00000f80
+#define FPU_CSR_INV_E	0x00000800
+#define FPU_CSR_DIV_E	0x00000400
+#define FPU_CSR_OVF_E	0x00000200
+#define FPU_CSR_UDF_E	0x00000100
+#define FPU_CSR_INE_E	0x00000080
 
-#define FPU_CSR_ALL_S   0x0000007c
-#define FPU_CSR_INV_S   0x00000040
-#define FPU_CSR_DIV_S   0x00000020
-#define FPU_CSR_OVF_S   0x00000010
-#define FPU_CSR_UDF_S   0x00000008
-#define FPU_CSR_INE_S   0x00000004
+#define FPU_CSR_ALL_S	0x0000007c
+#define FPU_CSR_INV_S	0x00000040
+#define FPU_CSR_DIV_S	0x00000020
+#define FPU_CSR_OVF_S	0x00000010
+#define FPU_CSR_UDF_S	0x00000008
+#define FPU_CSR_INE_S	0x00000004
 
-/* rounding mode */
-#define FPU_CSR_RN      0x0     /* nearest */
-#define FPU_CSR_RZ      0x1     /* towards zero */
-#define FPU_CSR_RU      0x2     /* towards +Infinity */
-#define FPU_CSR_RD      0x3     /* towards -Infinity */
-
-
-/*
- * Values for PageMask register
- */
-#ifdef CONFIG_CPU_VR41XX
-
-/* Why doesn't stupidity hurt ... */
-
-#define PM_1K		0x00000000
-#define PM_4K		0x00001800
-#define PM_16K		0x00007800
-#define PM_64K		0x0001f800
-#define PM_256K		0x0007f800
-
-#else
+/* Bits 0 and 1 of FPU Status Register specify the rounding mode */
+#define FPU_CSR_RM	0x00000003
+#define FPU_CSR_RN	0x0	/* nearest */
+#define FPU_CSR_RZ	0x1	/* towards zero */
+#define FPU_CSR_RU	0x2	/* towards +Infinity */
+#define FPU_CSR_RD	0x3	/* towards -Infinity */
 
 #define PM_4K		0x00000000
 #define PM_16K		0x00006000
@@ -364,7 +355,6 @@ struct fp64ctx
 #define PM_64M		0x07ffe000
 #define PM_256M		0x1fffe000
 
-#endif
 
 /*
  * Values used for computation of new tlb entries
@@ -440,38 +430,6 @@ struct fp64ctx
 #define ST0_IL			(_ULCAST_(1) << 23)
 #define ST0_DL			(_ULCAST_(1) << 24)
 
-/*
- * Bitfields in the TX39 family CP0 Configuration Register 3
- */
-#define TX39_CONF_ICS_SHIFT	19
-#define TX39_CONF_ICS_MASK	0x00380000
-#define TX39_CONF_ICS_1KB 	0x00000000
-#define TX39_CONF_ICS_2KB 	0x00080000
-#define TX39_CONF_ICS_4KB 	0x00100000
-#define TX39_CONF_ICS_8KB 	0x00180000
-#define TX39_CONF_ICS_16KB 	0x00200000
-
-#define TX39_CONF_DCS_SHIFT	16
-#define TX39_CONF_DCS_MASK	0x00070000
-#define TX39_CONF_DCS_1KB 	0x00000000
-#define TX39_CONF_DCS_2KB 	0x00010000
-#define TX39_CONF_DCS_4KB 	0x00020000
-#define TX39_CONF_DCS_8KB 	0x00030000
-#define TX39_CONF_DCS_16KB 	0x00040000
-
-#define TX39_CONF_CWFON 	0x00004000
-#define TX39_CONF_WBON  	0x00002000
-#define TX39_CONF_RF_SHIFT	10
-#define TX39_CONF_RF_MASK	0x00000c00
-#define TX39_CONF_DOZE		0x00000200
-#define TX39_CONF_HALT		0x00000100
-#define TX39_CONF_LOCK		0x00000080
-#define TX39_CONF_ICE		0x00000020
-#define TX39_CONF_DCE		0x00000010
-#define TX39_CONF_IRSIZE_SHIFT	2
-#define TX39_CONF_IRSIZE_MASK	0x0000000c
-#define TX39_CONF_DRSIZE_SHIFT	0
-#define TX39_CONF_DRSIZE_MASK	0x00000003
 
 /*
  * Status register bits available in all MIPS CPUs.
@@ -729,77 +687,77 @@ struct fp64ctx
 
 #define __read_32bit_c0_register(source, sel)				\
 ({ int __res;								\
-	if (sel == 0)							\
-		__asm__ __volatile__(					\
-			"mfc0\t%0, " #source "\n\t"			\
-			: "=r" (__res));				\
-	else								\
-		__asm__ __volatile__(					\
-			".set\tmips32\n\t"				\
-			"mfc0\t%0, " #source ", " #sel "\n\t"		\
-			".set\tmips0\n\t"				\
-			: "=r" (__res));				\
-	__res;								\
+    if (sel == 0)							\
+        __asm__ __volatile__(					\
+            "mfc0\t%0, " #source "\n\t"			\
+            : "=r" (__res));				\
+    else								\
+        __asm__ __volatile__(					\
+            ".set\tmips32\n\t"				\
+            "mfc0\t%0, " #source ", " #sel "\n\t"		\
+            ".set\tmips0\n\t"				\
+            : "=r" (__res));				\
+    __res;								\
 })
 
 #define __read_64bit_c0_register(source, sel)				\
 ({ unsigned long __res;							\
-	if (sel == 0)							\
-		__asm__ __volatile__(					\
-			".set\tmips3\n\t"				\
-			"dmfc0\t%0, " #source "\n\t"			\
-			".set\tmips0"					\
-			: "=r" (__res));				\
-	else								\
-		__asm__ __volatile__(					\
-			".set\tmips64\n\t"				\
-			"dmfc0\t%0, " #source ", " #sel "\n\t"		\
-			".set\tmips0"					\
-			: "=r" (__res));				\
-	__res;								\
+    if (sel == 0)							\
+        __asm__ __volatile__(					\
+            ".set\tmips3\n\t"				\
+            "dmfc0\t%0, " #source "\n\t"			\
+            ".set\tmips0"					\
+            : "=r" (__res));				\
+    else								\
+        __asm__ __volatile__(					\
+            ".set\tmips64\n\t"				\
+            "dmfc0\t%0, " #source ", " #sel "\n\t"		\
+            ".set\tmips0"					\
+            : "=r" (__res));				\
+    __res;								\
 })
 
 #define __write_32bit_c0_register(register, sel, value)			\
 do {									\
-	if (sel == 0)							\
-		__asm__ __volatile__(					\
-			"mtc0\t%z0, " #register "\n\t"			\
-			: : "Jr" (value));				\
-	else								\
-		__asm__ __volatile__(					\
-			".set\tmips32\n\t"				\
-			"mtc0\t%z0, " #register ", " #sel "\n\t"	\
-			".set\tmips0"					\
-			: : "Jr" (value));				\
+    if (sel == 0)							\
+        __asm__ __volatile__(					\
+            "mtc0\t%z0, " #register "\n\t"			\
+            : : "Jr" (value));				\
+    else								\
+        __asm__ __volatile__(					\
+            ".set\tmips32\n\t"				\
+            "mtc0\t%z0, " #register ", " #sel "\n\t"	\
+            ".set\tmips0"					\
+            : : "Jr" (value));				\
 } while (0)
 
 #define __write_64bit_c0_register(register, sel, value)			\
 do {									\
-	if (sel == 0)							\
-		__asm__ __volatile__(					\
-			".set\tmips3\n\t"				\
-			"dmtc0\t%z0, " #register "\n\t"			\
-			".set\tmips0"					\
-			: : "Jr" (value));				\
-	else								\
-		__asm__ __volatile__(					\
-			".set\tmips64\n\t"				\
-			"dmtc0\t%z0, " #register ", " #sel "\n\t"	\
-			".set\tmips0"					\
-			: : "Jr" (value));				\
+    if (sel == 0)							\
+        __asm__ __volatile__(					\
+            ".set\tmips3\n\t"				\
+            "dmtc0\t%z0, " #register "\n\t"			\
+            ".set\tmips0"					\
+            : : "Jr" (value));				\
+    else								\
+        __asm__ __volatile__(					\
+            ".set\tmips64\n\t"				\
+            "dmtc0\t%z0, " #register ", " #sel "\n\t"	\
+            ".set\tmips0"					\
+            : : "Jr" (value));				\
 } while (0)
 
 #define __read_ulong_c0_register(reg, sel)				\
-	((sizeof(unsigned long) == 4) ?					\
-	__read_32bit_c0_register(reg, sel) :				\
-	__read_64bit_c0_register(reg, sel))
+    ((sizeof(unsigned long) == 4) ?					\
+    __read_32bit_c0_register(reg, sel) :				\
+    __read_64bit_c0_register(reg, sel))
 
 #define __write_ulong_c0_register(reg, sel, val)			\
 do {									\
-	if (sizeof(unsigned long) == 4)					\
-		__write_32bit_c0_register(reg, sel, val);		\
-	else								\
-		__write_64bit_c0_register(reg, sel, val);		\
+    if (sizeof(unsigned long) == 4)					\
+        __write_32bit_c0_register(reg, sel, val);		\
+    else								\
+        __write_64bit_c0_register(reg, sel, val);		\
 } while (0)
 
 /*
@@ -808,59 +766,59 @@ do {									\
  */
 #define __read_64bit_c0_split(source, sel)				\
 ({									\
-	unsigned long long val;						\
-	unsigned long flags;						\
-									\
-	local_irq_save(flags);						\
-	if (sel == 0)							\
-		__asm__ __volatile__(					\
-			".set\tmips64\n\t"				\
-			"dmfc0\t%M0, " #source "\n\t"			\
-			"dsll\t%L0, %M0, 32\n\t"			\
-			"dsrl\t%M0, %M0, 32\n\t"			\
-			"dsrl\t%L0, %L0, 32\n\t"			\
-			".set\tmips0"					\
-			: "=r" (val));					\
-	else								\
-		__asm__ __volatile__(					\
-			".set\tmips64\n\t"				\
-			"dmfc0\t%M0, " #source ", " #sel "\n\t"		\
-			"dsll\t%L0, %M0, 32\n\t"			\
-			"dsrl\t%M0, %M0, 32\n\t"			\
-			"dsrl\t%L0, %L0, 32\n\t"			\
-			".set\tmips0"					\
-			: "=r" (val));					\
-	local_irq_restore(flags);					\
-									\
-	val;								\
+    unsigned long long val;						\
+    unsigned long flags;						\
+                                    \
+    local_irq_save(flags);						\
+    if (sel == 0)							\
+        __asm__ __volatile__(					\
+            ".set\tmips64\n\t"				\
+            "dmfc0\t%M0, " #source "\n\t"			\
+            "dsll\t%L0, %M0, 32\n\t"			\
+            "dsrl\t%M0, %M0, 32\n\t"			\
+            "dsrl\t%L0, %L0, 32\n\t"			\
+            ".set\tmips0"					\
+            : "=r" (val));					\
+    else								\
+        __asm__ __volatile__(					\
+            ".set\tmips64\n\t"				\
+            "dmfc0\t%M0, " #source ", " #sel "\n\t"		\
+            "dsll\t%L0, %M0, 32\n\t"			\
+            "dsrl\t%M0, %M0, 32\n\t"			\
+            "dsrl\t%L0, %L0, 32\n\t"			\
+            ".set\tmips0"					\
+            : "=r" (val));					\
+    local_irq_restore(flags);					\
+                                    \
+    val;								\
 })
 
 #define __write_64bit_c0_split(source, sel, val)			\
 do {									\
-	unsigned long flags;						\
-									\
-	local_irq_save(flags);						\
-	if (sel == 0)							\
-		__asm__ __volatile__(					\
-			".set\tmips64\n\t"				\
-			"dsll\t%L0, %L0, 32\n\t"			\
-			"dsrl\t%L0, %L0, 32\n\t"			\
-			"dsll\t%M0, %M0, 32\n\t"			\
-			"or\t%L0, %L0, %M0\n\t"				\
-			"dmtc0\t%L0, " #source "\n\t"			\
-			".set\tmips0"					\
-			: : "r" (val));					\
-	else								\
-		__asm__ __volatile__(					\
-			".set\tmips64\n\t"				\
-			"dsll\t%L0, %L0, 32\n\t"			\
-			"dsrl\t%L0, %L0, 32\n\t"			\
-			"dsll\t%M0, %M0, 32\n\t"			\
-			"or\t%L0, %L0, %M0\n\t"				\
-			"dmtc0\t%L0, " #source ", " #sel "\n\t"		\
-			".set\tmips0"					\
-			: : "r" (val));					\
-	local_irq_restore(flags);					\
+    unsigned long flags;						\
+                                    \
+    local_irq_save(flags);						\
+    if (sel == 0)							\
+        __asm__ __volatile__(					\
+            ".set\tmips64\n\t"				\
+            "dsll\t%L0, %L0, 32\n\t"			\
+            "dsrl\t%L0, %L0, 32\n\t"			\
+            "dsll\t%M0, %M0, 32\n\t"			\
+            "or\t%L0, %L0, %M0\n\t"				\
+            "dmtc0\t%L0, " #source "\n\t"			\
+            ".set\tmips0"					\
+            : : "r" (val));					\
+    else								\
+        __asm__ __volatile__(					\
+            ".set\tmips64\n\t"				\
+            "dsll\t%L0, %L0, 32\n\t"			\
+            "dsrl\t%L0, %L0, 32\n\t"			\
+            "dsll\t%M0, %M0, 32\n\t"			\
+            "or\t%L0, %L0, %M0\n\t"				\
+            "dmtc0\t%L0, " #source ", " #sel "\n\t"		\
+            ".set\tmips0"					\
+            : : "r" (val));					\
+    local_irq_restore(flags);					\
 } while (0)
 
 #define read_c0_index()		__read_32bit_c0_register($0, 0)
@@ -905,6 +863,9 @@ do {									\
 #define write_c0_cause(val)	__write_32bit_c0_register($13, 0, val)
 
 #define read_c0_prid()		__read_32bit_c0_register($15, 0)
+
+#define read_c0_ebase()		__read_32bit_c0_register($15, 1)
+#define write_c0_ebase(val)	__write_32bit_c0_register($15, 1, val)
 
 #define read_c0_config()	__read_32bit_c0_register($16, 0)
 #define read_c0_config1()	__read_32bit_c0_register($16, 1)
@@ -1001,20 +962,20 @@ do {									\
 #define read_32bit_cp0_register(source)                         \
 ({ int __res;                                                   \
         __asm__ __volatile__(                                   \
-	".set\tpush\n\t"					\
-	".set\treorder\n\t"					\
+    ".set\tpush\n\t"					\
+    ".set\treorder\n\t"					\
         "mfc0\t%0,"STR(source)"\n\t"                            \
-	".set\tpop"						\
+    ".set\tpop"						\
         : "=r" (__res));                                        \
         __res;})
 
 #define read_32bit_cp0_set1_register(source)                    \
 ({ int __res;                                                   \
         __asm__ __volatile__(                                   \
-	".set\tpush\n\t"					\
-	".set\treorder\n\t"					\
+    ".set\tpush\n\t"					\
+    ".set\treorder\n\t"					\
         "cfc0\t%0,"STR(source)"\n\t"                            \
-	".set\tpop"						\
+    ".set\tpop"						\
         : "=r" (__res));                                        \
         __res;})
 
@@ -1033,13 +994,13 @@ do {									\
 #define write_32bit_cp0_register(register,value)                \
         __asm__ __volatile__(                                   \
         "mtc0\t%0,"STR(register)"\n\t"				\
-	"nop"							\
+    "nop"							\
         : : "r" (value));
 
 #define write_32bit_cp0_set1_register(register,value)           \
         __asm__ __volatile__(                                   \
-        "ctc0\t%0,"STR(register)"\n\t"				\
-	"nop"							\
+        "ctc0\t%0,$"STR(register)"\n\t"				\
+    "nop"							\
         : : "r" (value));
 
 #define write_64bit_cp0_register(register,value)                \
@@ -1055,16 +1016,16 @@ do {									\
 #define read_mips32_cp0_config1()                               \
 ({ int __res;                                                   \
         __asm__ __volatile__(                                   \
-	".set\tnoreorder\n\t"                                   \
-	".set\tnoat\n\t"                                        \
-	"#.set\tmips64\n\t"					\
-	"#mfc0\t$1, $16, 1\n\t"					\
-	"#.set\tmips0\n\t"					\
-     	".word\t0x40018001\n\t"                                 \
-	"move\t%0,$1\n\t"                                       \
-	".set\tat\n\t"                                          \
-	".set\treorder"                                         \
-	:"=r" (__res));                                         \
+    ".set\tnoreorder\n\t"                                   \
+    ".set\tnoat\n\t"                                        \
+    "#.set\tmips64\n\t"					\
+    "#mfc0\t$1, $16, 1\n\t"					\
+    "#.set\tmips0\n\t"					\
+         ".word\t0x40018001\n\t"                                 \
+    "move\t%0,$1\n\t"                                       \
+    ".set\tat\n\t"                                          \
+    ".set\treorder"                                         \
+    :"=r" (__res));                                         \
         __res;})
 
 #endif
@@ -1073,45 +1034,51 @@ do {									\
  */
 #define read_32bit_cp1_register(source)                         \
 ({ int __res;                                                   \
-	__asm__ __volatile__(                                   \
-	".set\tpush\n\t"					\
-	".set\treorder\n\t"					\
-        "cfc1\t%0,"STR(source)"\n\t"                            \
-	".set\tpop"						\
+    __asm__ __volatile__(                                   \
+    ".set\tpush\n\t"					\
+    ".set\treorder\n\t"					\
+        "cfc1\t%0,$"STR(source)"\n\t"                            \
+    ".set\tpop"						\
         : "=r" (__res));                                        \
         __res;})
+
+#define write_32bit_cp1_register(register,value)                \
+        __asm__ __volatile__(                                   \
+        "ctc1\t%0,$"STR(register)"\n\t"				\
+    "nop"							\
+        : : "r" (value));
 
 /* TLB operations. */
 static inline void tlb_probe(void)
 {
-	__asm__ __volatile__(
-		".set noreorder\n\t"
-		"tlbp\n\t"
-		".set reorder");
+    __asm__ __volatile__(
+        ".set noreorder\n\t"
+        "tlbp\n\t"
+        ".set reorder");
 }
 
 static inline void tlb_read(void)
 {
-	__asm__ __volatile__(
-		".set noreorder\n\t"
-		"tlbr\n\t"
-		".set reorder");
+    __asm__ __volatile__(
+        ".set noreorder\n\t"
+        "tlbr\n\t"
+        ".set reorder");
 }
 
 static inline void tlb_write_indexed(void)
 {
-	__asm__ __volatile__(
-		".set noreorder\n\t"
-		"tlbwi\n\t"
-		".set reorder");
+    __asm__ __volatile__(
+        ".set noreorder\n\t"
+        "tlbwi\n\t"
+        ".set reorder");
 }
 
 static inline void tlb_write_random(void)
 {
-	__asm__ __volatile__(
-		".set noreorder\n\t"
-		"tlbwr\n\t"
-		".set reorder");
+    __asm__ __volatile__(
+        ".set noreorder\n\t"
+        "tlbwr\n\t"
+        ".set reorder");
 }
 
 /*
@@ -1121,38 +1088,38 @@ static inline void tlb_write_random(void)
 static inline unsigned int					\
 set_c0_##name(unsigned int set)					\
 {								\
-	unsigned int res;					\
-								\
-	res = read_c0_##name();					\
-	res |= set;						\
-	write_c0_##name(res);					\
-								\
-	return res;						\
+    unsigned int res;					\
+                                \
+    res = read_c0_##name();					\
+    res |= set;						\
+    write_c0_##name(res);					\
+                                \
+    return res;						\
 }								\
-								\
+                                \
 static inline unsigned int					\
 clear_c0_##name(unsigned int clear)				\
 {								\
-	unsigned int res;					\
-								\
-	res = read_c0_##name();					\
-	res &= ~clear;						\
-	write_c0_##name(res);					\
-								\
-	return res;						\
+    unsigned int res;					\
+                                \
+    res = read_c0_##name();					\
+    res &= ~clear;						\
+    write_c0_##name(res);					\
+                                \
+    return res;						\
 }								\
-								\
+                                \
 static inline unsigned int					\
 change_c0_##name(unsigned int change, unsigned int new)		\
 {								\
-	unsigned int res;					\
-								\
-	res = read_c0_##name();					\
-	res &= ~change;						\
-	res |= (new & change);					\
-	write_c0_##name(res);					\
-								\
-	return res;						\
+    unsigned int res;					\
+                                \
+    res = read_c0_##name();					\
+    res &= ~change;						\
+    res |= (new & change);					\
+    write_c0_##name(res);					\
+                                \
+    return res;						\
 }
 
 __BUILD_SET_C0(status,CP0_STATUS)
@@ -1162,6 +1129,17 @@ __BUILD_SET_C0(config,CP0_CONFIG)
 #define set_cp0_status(x)	set_c0_status(x)
 #define set_cp0_cause(x)	set_c0_cause(x)
 #define set_cp0_config(x)	set_c0_config(x)
+
+#define read_c1_status()	read_32bit_cp1_register(31)
+#define write_c1_status(x)	write_32bit_cp1_register(31, x)
+
+#define readb(reg)		(*((volatile unsigned char *) (reg)))
+#define readw(reg)		(*((volatile unsigned short *) (reg)))
+#define readl(reg)		(*((volatile unsigned int *) (reg)))
+
+#define writeb(data, reg)	((*((volatile unsigned char *)(reg))) = (unsigned char)(data))
+#define writew(data, reg)	((*((volatile unsigned short *)(reg))) = (unsigned short)(data))
+#define writel(data, reg)	((*((volatile unsigned int *)(reg))) = (unsigned int)(data))
 
 #endif /* !__ASSEMBLY__ */
 

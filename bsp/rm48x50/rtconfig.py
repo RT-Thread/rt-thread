@@ -14,6 +14,10 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= 'C:/Keil'
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
+    exit(0)
 elif CROSS_TOOL == 'iar':
     print('================ERROR============================')
     print('Not support IAR yet!')

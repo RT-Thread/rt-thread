@@ -38,7 +38,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_REG_GPIO_H
@@ -1348,7 +1348,7 @@
 #define AM_REG_GPIO_PADREGB_PAD7FNCSEL_SLWIR3LB      0x30000000
 #define AM_REG_GPIO_PADREGB_PAD7FNCSEL_M1nCE1        0x38000000
 
-// Pad 7 drive strentgh
+// Pad 7 drive strength
 #define AM_REG_GPIO_PADREGB_PAD7STRNG_S              26
 #define AM_REG_GPIO_PADREGB_PAD7STRNG_M              0x04000000
 #define AM_REG_GPIO_PADREGB_PAD7STRNG(n)             (((uint32_t)(n) << 26) & 0x04000000)
@@ -1514,7 +1514,7 @@
 #define AM_REG_GPIO_PADREGC_PAD11FNCSEL_UART0RX      0x30000000
 #define AM_REG_GPIO_PADREGC_PAD11FNCSEL_PDM_DATA     0x38000000
 
-// Pad 11 drive strentgh
+// Pad 11 drive strength
 #define AM_REG_GPIO_PADREGC_PAD11STRNG_S             26
 #define AM_REG_GPIO_PADREGC_PAD11STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGC_PAD11STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -1673,7 +1673,7 @@
 #define AM_REG_GPIO_PADREGD_PAD15FNCSEL_SWDIO        0x30000000
 #define AM_REG_GPIO_PADREGD_PAD15FNCSEL_SWO          0x38000000
 
-// Pad 15 drive strentgh
+// Pad 15 drive strength
 #define AM_REG_GPIO_PADREGD_PAD15STRNG_S             26
 #define AM_REG_GPIO_PADREGD_PAD15STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGD_PAD15STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -1814,7 +1814,7 @@
 #define AM_REG_GPIO_PADREGE_PAD19FNCSEL_UART1RX      0x30000000
 #define AM_REG_GPIO_PADREGE_PAD19FNCSEL_I2S_BCLK     0x38000000
 
-// Pad 19 drive strentgh
+// Pad 19 drive strength
 #define AM_REG_GPIO_PADREGE_PAD19STRNG_S             26
 #define AM_REG_GPIO_PADREGE_PAD19STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGE_PAD19STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -1955,7 +1955,7 @@
 #define AM_REG_GPIO_PADREGF_PAD23FNCSEL_TCTB1        0x30000000
 #define AM_REG_GPIO_PADREGF_PAD23FNCSEL_UNDEF7       0x38000000
 
-// Pad 23 drive strentgh
+// Pad 23 drive strength
 #define AM_REG_GPIO_PADREGF_PAD23STRNG_S             26
 #define AM_REG_GPIO_PADREGF_PAD23STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGF_PAD23STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -2112,7 +2112,7 @@
 #define AM_REG_GPIO_PADREGG_PAD27FNCSEL_M2SCKLB      0x30000000
 #define AM_REG_GPIO_PADREGG_PAD27FNCSEL_M2SCLLB      0x38000000
 
-// Pad 27 drive strentgh
+// Pad 27 drive strength
 #define AM_REG_GPIO_PADREGG_PAD27STRNG_S             26
 #define AM_REG_GPIO_PADREGG_PAD27STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGG_PAD27STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -2262,7 +2262,7 @@
 #define AM_REG_GPIO_PADREGH_PAD31FNCSEL_UNDEF6       0x30000000
 #define AM_REG_GPIO_PADREGH_PAD31FNCSEL_UNDEF7       0x38000000
 
-// Pad 31 drive strentgh
+// Pad 31 drive strength
 #define AM_REG_GPIO_PADREGH_PAD31STRNG_S             26
 #define AM_REG_GPIO_PADREGH_PAD31STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGH_PAD31STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -2403,7 +2403,7 @@
 #define AM_REG_GPIO_PADREGI_PAD35FNCSEL_UA0RTS       0x30000000
 #define AM_REG_GPIO_PADREGI_PAD35FNCSEL_M3nCE2       0x38000000
 
-// Pad 35 drive strentgh
+// Pad 35 drive strength
 #define AM_REG_GPIO_PADREGI_PAD35STRNG_S             26
 #define AM_REG_GPIO_PADREGI_PAD35STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGI_PAD35STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -2553,7 +2553,7 @@
 #define AM_REG_GPIO_PADREGJ_PAD39FNCSEL_M4SCKLB      0x30000000
 #define AM_REG_GPIO_PADREGJ_PAD39FNCSEL_M4SCLLB      0x38000000
 
-// Pad 39 drive strentgh
+// Pad 39 drive strength
 #define AM_REG_GPIO_PADREGJ_PAD39STRNG_S             26
 #define AM_REG_GPIO_PADREGJ_PAD39STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGJ_PAD39STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -2703,7 +2703,7 @@
 #define AM_REG_GPIO_PADREGK_PAD43FNCSEL_SLMISOLB     0x30000000
 #define AM_REG_GPIO_PADREGK_PAD43FNCSEL_SLSDALB      0x38000000
 
-// Pad 43 drive strentgh
+// Pad 43 drive strength
 #define AM_REG_GPIO_PADREGK_PAD43STRNG_S             26
 #define AM_REG_GPIO_PADREGK_PAD43STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGK_PAD43STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)
@@ -2869,7 +2869,7 @@
 #define AM_REG_GPIO_PADREGL_PAD47FNCSEL_M4nCE5       0x30000000
 #define AM_REG_GPIO_PADREGL_PAD47FNCSEL_SLWIR3LB     0x38000000
 
-// Pad 47 drive strentgh
+// Pad 47 drive strength
 #define AM_REG_GPIO_PADREGL_PAD47STRNG_S             26
 #define AM_REG_GPIO_PADREGL_PAD47STRNG_M             0x04000000
 #define AM_REG_GPIO_PADREGL_PAD47STRNG(n)            (((uint32_t)(n) << 26) & 0x04000000)

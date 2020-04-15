@@ -1,21 +1,7 @@
 /*
- * File      : dfs.h
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -95,6 +81,12 @@ struct dirent
     char d_name[DFS_PATH_MAX];   /* The null-terminated file name */
 };
 
+struct dfs_fdtable
+{
+    uint32_t maxfd;
+    struct dfs_fd **fds;
+};
+
 /* Initialization of dfs */
 int dfs_init(void);
 
@@ -109,6 +101,8 @@ int fd_new(void);
 struct dfs_fd *fd_get(int fd);
 void fd_put(struct dfs_fd *fd);
 int fd_is_open(const char *pathname);
+
+struct dfs_fdtable *dfs_fdtable_get(void);
 
 #ifdef __cplusplus
 }

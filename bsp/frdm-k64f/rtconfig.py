@@ -63,18 +63,17 @@ elif PLATFORM == 'armcc':
     LINK = 'armlink'
     TARGET_EXT = 'axf'
 
-    DEVICE = ' --device DARMSTM'
-    CFLAGS = DEVICE + ' --apcs=interwork'
+    DEVICE = ' --cpu Cortex-M4.fp '
+    CFLAGS = DEVICE + ' --c99 --apcs=interwork'
     AFLAGS = DEVICE
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread-k64f.map --scatter MK64F.sct'
 
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
+    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
 
-    EXEC_PATH += '/arm/bin40/'
+    EXEC_PATH += '/ARM/ARMCC/bin'
 
     if BUILD == 'debug':
-        CFLAGS += ' --c99 -g -O0'
+        CFLAGS += ' -g -O0'
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'

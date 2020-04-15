@@ -525,3 +525,89 @@ rt_err_t bus_software_reset_enalbe(enum bus_gate bus)
     return RT_EOK;
 }
 
+rt_err_t mmc_set_clk(enum mmc_clk_id clk_id, int hz)
+{
+    unsigned int pll, pll_hz, div, n, oclk_dly, sclk_dly;
+    volatile rt_uint32_t *mmc_clk = (clk_id == SDMMC0) ? \
+        (&CCU->sdmmc0_clk) : (&CCU->sdmmc1_clk);
+
+    if (hz < 0)
+    {
+        return RT_EINVAL;
+    }
+
+    if (hz == 0)
+    {
+        *mmc_clk &= ~(0x1 << 31);
+        return RT_EOK;
+    }
+    
+    if (hz <= 24000000)
+    {
+        pll = (0x0 << 24);
+        pll_hz = 24000000;
+    }
+    else
+    {
+        pll = (0x1 << 24);
+        pll_hz = periph_get_pll_clk();
+    }
+
+    div = pll_hz / hz;
+    if (pll_hz % hz)
+    {
+        div++;
+    }
+
+    n = 0;
+    while (div > 16)
+    {
+        n++;
+        div = (div + 1) / 2;
+    }
+
+    if (n > 3)
+    {
+        return -1;
+    }
+
+    /* determine delays */
+    if (hz <= 400000)
+    {
+        oclk_dly = 0;
+        sclk_dly = 0;
+    }
+    else if (hz <= 25000000)
+    {
+        oclk_dly = 0;
+        sclk_dly = 5;
+    }
+    else if (hz <= 50000000)
+    {
+        oclk_dly = 3;
+        sclk_dly = 4;
+    }
+    else
+    {
+        /* hz > 50000000 */
+        oclk_dly = 1;
+        sclk_dly = 4;
+    }
+    
+    *mmc_clk = (0x1 << 31) | pll | (sclk_dly << 20) | \
+           (n << 16) | (oclk_dly << 8) | (div - 1);
+
+    return RT_EOK;
+}
+
+rt_err_t dram_gate_clk_enable(enum dram_gate dram_gate)
+{
+    CCU->dram_gating |= (0x01 << dram_gate);
+    return RT_EOK;
+}
+
+rt_err_t dram_gate_clk_disable(enum dram_gate dram_gate)
+{
+    CCU->dram_gating &= ~(0x01 << dram_gate);
+    return RT_EOK;
+}

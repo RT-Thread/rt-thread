@@ -1,21 +1,7 @@
 /*
- * File      : core.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -36,7 +22,7 @@ static rt_list_t device_list;
 static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_size_t rt_usbd_ep_read_prepare(udevice_t device, uep_t ep, void *buffer, rt_size_t size);
 static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep);
-static rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep);
+rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep);
 
 /**
  * This function will handle get_device_descriptor bRequest.
@@ -208,7 +194,18 @@ static rt_err_t _get_descriptor(struct udevice* device, ureq_t setup)
             _get_string_descriptor(device, setup);
             break;
         case USB_DESC_TYPE_DEVICEQUALIFIER:
-            _get_qualifier_descriptor(device, setup);
+            /* If a full-speed only device (with a device descriptor version number equal to 0200H) receives a
+            GetDescriptor() request for a device_qualifier, it must respond with a request error. The host must not make
+            a request for an other_speed_configuration descriptor unless it first successfully retrieves the
+            device_qualifier descriptor. */
+            if(device->dcd->device_is_hs)
+            {
+                _get_qualifier_descriptor(device, setup);
+            }
+            else
+            {
+                rt_usbd_ep0_set_stall(device);
+            }
             break;
         case USB_DESC_TYPE_OTHERSPEED:
             _get_config_descriptor(device, setup);
@@ -240,7 +237,8 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
 {
     rt_uint8_t value;
     uintf_t intf;
-
+    ufunction_t func;
+    
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
@@ -254,12 +252,17 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
     }
 
     /* find the specified interface and its alternate setting */
-    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, RT_NULL);
+    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, &func);
     value = intf->curr_setting->intf_desc->bAlternateSetting;
 
     /* send the interface alternate setting to endpoint 0*/
     rt_usbd_ep0_write(device, &value, 1);
 
+    if (intf->handler)
+    {
+        intf->handler(func, setup);
+    }
+    
     return RT_EOK;
 }
 
@@ -273,6 +276,7 @@ static rt_err_t _get_interface(struct udevice* device, ureq_t setup)
  */
 static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
 {
+    ufunction_t func;
     uintf_t intf;
     uep_t ep;
     struct rt_list_node* i;
@@ -291,7 +295,7 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
     }
         
     /* find the specified interface */
-    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, RT_NULL);
+    intf = rt_usbd_find_interface(device, setup->wIndex & 0xFF, &func);
 
     /* set alternate setting to the interface */
     rt_usbd_set_altsetting(intf, setup->wValue & 0xFF);
@@ -305,6 +309,11 @@ static rt_err_t _set_interface(struct udevice* device, ureq_t setup)
         dcd_ep_enable(device->dcd, ep);
     }
     dcd_ep0_send_status(device->dcd);
+    
+    if (intf->handler)
+    {
+        intf->handler(func, setup);
+    }
     
     return RT_EOK;
 }
@@ -955,6 +964,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
     RT_ASSERT(device->dcd != RT_NULL);
     RT_ASSERT(ep != RT_NULL);    
 
+    rt_enter_critical();
     maxpacket = EP_MAXPACKET(ep);
     if(ep->request.remain_size >= maxpacket)
     {
@@ -968,7 +978,7 @@ static rt_size_t rt_usbd_ep_write(udevice_t device, uep_t ep, void *buffer, rt_s
             ep->request.remain_size);
         ep->request.remain_size = 0;
     }
-
+    rt_exit_critical();
     return size;
 }
 
@@ -997,10 +1007,10 @@ udevice_t rt_usbd_device_new(void)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_new\n"));
 
     /* allocate memory for the object */
-    udevice = rt_malloc(sizeof(struct udevice));
+    udevice = (udevice_t)rt_malloc(sizeof(struct udevice));
     if(udevice == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     rt_memset(udevice, 0, sizeof(struct udevice));
@@ -1111,10 +1121,10 @@ uconfig_t rt_usbd_config_new(void)
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_config_new\n"));
 
     /* allocate memory for the object */
-    cfg = rt_malloc(sizeof(struct uconfig));
+    cfg = (uconfig_t)rt_malloc(sizeof(struct uconfig));
     if(cfg == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     rt_memset(cfg, 0, sizeof(struct uconfig));
@@ -1153,7 +1163,7 @@ uintf_t rt_usbd_interface_new(udevice_t device, uintf_handler_t handler)
     intf = (uintf_t)rt_malloc(sizeof(struct uinterface));
     if(intf == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     intf->intf_num = device->nr_intf;
@@ -1188,14 +1198,14 @@ ualtsetting_t rt_usbd_altsetting_new(rt_size_t desc_size)
     setting = (ualtsetting_t)rt_malloc(sizeof(struct ualtsetting));
     if(setting == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     /* allocate memory for the desc */
     setting->desc = rt_malloc(desc_size);
     if (setting->desc == RT_NULL)
     {
-        rt_kprintf("alloc desc memery failed\n");
+        rt_kprintf("alloc desc memory failed\n");
         rt_free(setting);
         return RT_NULL;
     }
@@ -1253,7 +1263,7 @@ ufunction_t rt_usbd_function_new(udevice_t device, udev_desc_t dev_desc,
     func = (ufunction_t)rt_malloc(sizeof(struct ufunction));
     if(func == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     func->dev_desc = dev_desc;
@@ -1288,7 +1298,7 @@ uep_t rt_usbd_endpoint_new(uep_desc_t ep_desc, udep_handler_t handler)
     ep = (uep_t)rt_malloc(sizeof(struct uendpoint));
     if(ep == RT_NULL)
     {
-        rt_kprintf("alloc memery failed\n");
+        rt_kprintf("alloc memory failed\n");
         return RT_NULL;
     }
     ep->ep_desc = ep_desc;
@@ -1490,9 +1500,10 @@ uep_t rt_usbd_find_endpoint(udevice_t device, ufunction_t* pfunc, rt_uint8_t ep_
  */
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
 {
-    struct rt_list_node *i, *j, *k;
+    struct rt_list_node *i, *j, *k, *m;
     ufunction_t func;
     uintf_t intf;
+    ualtsetting_t altsetting;
     uep_t ep;
 
     RT_DEBUG_LOG(RT_DEBUG_USB, ("rt_usbd_device_add_config\n"));
@@ -1514,22 +1525,26 @@ rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg)
             intf = (uintf_t)rt_list_entry(j, struct uinterface, list);
             cfg->cfg_desc.bNumInterfaces++;
 
-            /* allocate address for every endpoint in the interface alternate setting */
-            for(k=intf->curr_setting->ep_list.next;
-                    k!=&intf->curr_setting->ep_list; k=k->next)
+            for(k=intf->setting_list.next; k!=&intf->setting_list;k=k->next)
             {
-                ep = (uep_t)rt_list_entry(k, struct uendpoint, list);
-                if(rt_usbd_ep_assign(device, ep) != RT_EOK)
-                {
-                    rt_kprintf("endpoint assign error\n");
-                }
-            }
+                altsetting = (ualtsetting_t)rt_list_entry(k, struct ualtsetting, list);
 
-            /* construct complete configuration descriptor */
-            rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - USB_DESC_LENGTH_CONFIG], 
-                        (void*)intf->curr_setting->desc,
-                        intf->curr_setting->desc_size);
-            cfg->cfg_desc.wTotalLength += intf->curr_setting->desc_size;
+                /* allocate address for every endpoint in the interface alternate setting */
+                for(m=altsetting->ep_list.next; m!=&altsetting->ep_list; m=m->next)
+                {
+                    ep = (uep_t)rt_list_entry(m, struct uendpoint, list);
+                    if(rt_usbd_ep_assign(device, ep) != RT_EOK)
+                    {
+                        rt_kprintf("endpoint assign error\n");
+                    }
+                }
+
+                /* construct complete configuration descriptor */
+                rt_memcpy((void*)&cfg->cfg_desc.data[cfg->cfg_desc.wTotalLength - USB_DESC_LENGTH_CONFIG],
+                            (void*)altsetting->desc,
+                            altsetting->desc_size);
+                cfg->cfg_desc.wTotalLength += altsetting->desc_size;
+            }
         }
     }
 
@@ -1864,7 +1879,7 @@ static rt_err_t rt_usbd_ep_assign(udevice_t device, uep_t ep)
     return -RT_ERROR;
 }
 
-static rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep)
+rt_err_t rt_usbd_ep_unassign(udevice_t device, uep_t ep)
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->dcd != RT_NULL);    
@@ -2055,7 +2070,7 @@ rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size)
 
     ep0 = &device->dcd->ep0;
     ep0->request.size = size;
-    ep0->request.buffer = buffer;
+    ep0->request.buffer = (rt_uint8_t *)buffer;
     ep0->request.remain_size = size;
     if(size >= ep0->id->maxpacket)
     {
@@ -2081,7 +2096,7 @@ rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size,
     RT_ASSERT(buffer != RT_NULL);
 
     ep0 = &device->dcd->ep0;
-    ep0->request.buffer = buffer;    
+    ep0->request.buffer = (rt_uint8_t *)buffer;    
     ep0->request.remain_size = size;
     ep0->rx_indicate = rx_ind;
     if(size >= ep0->id->maxpacket)
@@ -2189,7 +2204,7 @@ static struct rt_thread usb_thread;
 #define USBD_MQ_MAX_MSG 16
 /* internal of the message queue: every message is associated with a pointer,
  * so in order to recveive USBD_MQ_MAX_MSG messages, we have to allocate more
- * than USBD_MQ_MSG_SZ*USBD_MQ_MAX_MSG memery. */
+ * than USBD_MQ_MSG_SZ*USBD_MQ_MAX_MSG memory. */
 static rt_uint8_t usb_mq_pool[(USBD_MQ_MSG_SZ+sizeof(void*))*USBD_MQ_MAX_MSG];
 
 /**

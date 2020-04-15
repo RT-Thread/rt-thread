@@ -376,7 +376,7 @@
 		</Unit>
 		<Unit filename="..\..\libcpu\mips\common\cache.h" />
 		<Unit filename="..\..\libcpu\mips\common\exception.h" />
-		<Unit filename="..\..\libcpu\mips\common\mips.inc" />
+		<Unit filename="..\..\libcpu\mips\common\mips_def.h" />
 		<Unit filename="..\..\libcpu\mips\common\mipscfg.h" />
 		<Unit filename="..\..\libcpu\mips\common\mipsregs.h" />
 		<Unit filename="..\..\libcpu\mips\common\stackframe.h" />
@@ -412,10 +412,6 @@
 		<Unit filename="..\..\src\mempool.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\..\src\module.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\..\src\module.h" />
 		<Unit filename="..\..\src\object.c">
 			<Option compilerVar="CC" />
 		</Unit>

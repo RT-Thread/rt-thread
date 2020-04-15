@@ -1,0 +1,59 @@
+from building import *
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+objs = []
+
+src = Split('''
+        board.c
+        drv_uart.c
+        drv_flash.c
+        pin_map.c
+        ''')
+
+if GetDepend(['BSP_USING_ADC']):
+        src += ['drv_adc.c']
+
+if GetDepend(['BSP_USING_WIFI']):
+        src += ['drv_wifi.c']
+
+if GetDepend('BSP_USING_PIN'):
+    src += ['drv_pin.c']
+
+if GetDepend('BSP_USING_HWTIMER'):
+    src += ['drv_hw_timer.c']
+
+if GetDepend('BSP_USING_SOFT_I2C'):
+    src += ['drv_soft_i2c.c']
+
+if GetDepend('BSP_USING_I2C'):
+    src += ['drv_i2c.c']
+
+if GetDepend('BSP_USING_SPI'):
+    src += ['drv_spi.c']
+
+if GetDepend('BSP_USING_PWM'):
+    src += ['drv_pwm.c']
+
+if GetDepend('BSP_USING_RTC'):
+    src += ['drv_rtc.c']
+
+if GetDepend('BSP_USING_WDT'):
+    src += ['drv_wdt.c']
+
+if GetDepend('BSP_USING_STANDBY'):
+    src += ['drv_standby.c']
+
+if GetDepend('BSP_USING_CRYPTO'):
+    src += ['drv_crypto.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+objs = objs + group
+Return('objs')

@@ -1,21 +1,7 @@
 /*
- * File      : hub.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -132,7 +118,7 @@ void rt_usbh_root_hub_disconnect_handler(struct uhcd *hcd, rt_uint8_t port)
 rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer, rt_size_t nbytes)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -165,7 +151,7 @@ rt_err_t rt_usbh_hub_get_descriptor(struct uinstance* device, rt_uint8_t *buffer
 rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint32_t* buffer)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
     
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -198,7 +184,7 @@ rt_err_t rt_usbh_hub_get_status(struct uinstance* device, rt_uint32_t* buffer)
 rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, rt_uint32_t* buffer)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
     
     /* parameter check */
     RT_ASSERT(hub != RT_NULL);
@@ -240,7 +226,7 @@ rt_err_t rt_usbh_hub_get_port_status(uhub_t hub, rt_uint16_t port, rt_uint32_t* 
 rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_t feature)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(hub != RT_NULL);
@@ -249,7 +235,7 @@ rt_err_t rt_usbh_hub_clear_port_feature(uhub_t hub, rt_uint16_t port, rt_uint16_
     if(hub->is_roothub)
     {
         root_hub_ctrl(hub->hcd, port, RH_CLEAR_PORT_FEATURE, 
-            (void*)feature);
+            (void*)(rt_uint32_t)feature);
         return RT_EOK;
     }
 
@@ -281,7 +267,7 @@ rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
     rt_uint16_t feature)
 {
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
         
     /* parameter check */
     RT_ASSERT(hub != RT_NULL);
@@ -290,7 +276,7 @@ rt_err_t rt_usbh_hub_set_port_feature(uhub_t hub, rt_uint16_t port,
     if(hub->is_roothub)
     {
         root_hub_ctrl(hub->hcd, port, RH_SET_PORT_FEATURE, 
-            (void*)feature);
+            (void*)(rt_uint32_t)feature);
         return RT_EOK;
     }
 
@@ -359,6 +345,9 @@ rt_err_t rt_usbh_hub_port_debounce(uhub_t hub, rt_uint16_t port)
     int i = 0, times = 20;
     rt_uint32_t pstatus;
     rt_bool_t connect = RT_TRUE;
+    int delayticks = USB_DEBOUNCE_TIME / times;
+    if (delayticks < 1)
+        delayticks = 1;
 
     /* parameter check */
     RT_ASSERT(hub != RT_NULL);
@@ -374,7 +363,7 @@ rt_err_t rt_usbh_hub_port_debounce(uhub_t hub, rt_uint16_t port)
             break;
         }
         
-        rt_thread_delay(1);
+        rt_thread_delay(delayticks);
     }        
 
     if(connect) return RT_EOK;
@@ -413,7 +402,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
         RT_DEBUG_LOG(RT_DEBUG_USB, ("port %d status 0x%x\n", i + 1, pstatus));
 
         /* check port status change */
-        if ((pstatus & PORT_CCSC)) 
+        if (pstatus & PORT_CCSC) 
         {        
             /* clear port status change feature */
             rt_usbh_hub_clear_port_feature(hub, i + 1, PORT_FEAT_C_CONNECTION);
@@ -442,6 +431,7 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
             device->speed = (pstatus & PORT_LSDA) ? 1 : 0;
             device->parent_hub = hub;    
             device->hcd = hub->hcd;
+            device->port = i + 1;
             hub->child[i] = device;
 
             /* reset usb roothub port */
@@ -466,7 +456,7 @@ static void rt_usbh_hub_irq(void* context)
 {
     upipe_t pipe;
     uhub_t hub;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
     
     RT_ASSERT(context != RT_NULL);
     
@@ -502,12 +492,12 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 {
     int i = 0;
     rt_err_t ret = RT_EOK;
-    uep_desc_t ep_desc;
+    uep_desc_t ep_desc = RT_NULL;
     uhub_t hub;
     struct uinstance* device;
     struct uhintf* intf = (struct uhintf*)arg;
-    upipe_t pipe_in;
-    int timeout = 300;
+    upipe_t pipe_in = RT_NULL;
+    int timeout = USB_TIMEOUT_LONG;
     /* paremeter check */
     RT_ASSERT(intf != RT_NULL);
     
@@ -518,6 +508,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 
     /* create a hub instance */
     hub = rt_malloc(sizeof(struct uhub));
+    RT_ASSERT(hub != RT_NULL);
     rt_memset(hub, 0, sizeof(struct uhub));
     
     /* make interface instance's user data point to hub instance */

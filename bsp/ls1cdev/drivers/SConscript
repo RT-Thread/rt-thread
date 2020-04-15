@@ -1,13 +1,9 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
+src = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 
 CPPPATH = [cwd]
-
-
-if GetDepend('RT_USING_RTGUI') == False:
-    SrcRemove(src, 'touch.c')
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

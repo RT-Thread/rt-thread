@@ -33,14 +33,14 @@ static rt_base_t mtd_gd25_read_id(struct rt_mtd_nor_device *device)
     return (rt_uint32_t)flash->id;
 }
 
-static rt_size_t mtd_gd25_read(struct rt_mtd_nor_device *device, rt_off_t position, rt_uint8_t *data, rt_size_t size)
+static rt_size_t mtd_gd25_read(struct rt_mtd_nor_device *device, rt_off_t position, rt_uint8_t *data, rt_uint32_t size)
 {
     struct sfc_flash *flash = (struct sfc_flash *)device;
 
     return sfc_norflash_read(flash,position,data,size);
 }
 
-static rt_size_t mtd_gd25_write(struct rt_mtd_nor_device *device, rt_off_t position, const rt_uint8_t *data, rt_size_t size)
+static rt_size_t mtd_gd25_write(struct rt_mtd_nor_device *device, rt_off_t position, const rt_uint8_t *data, rt_uint32_t size)
 {
     struct sfc_flash *flash = (struct sfc_flash *)device;
 

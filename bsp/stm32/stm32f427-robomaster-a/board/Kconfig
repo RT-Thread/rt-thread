@@ -1,0 +1,149 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F427II
+    bool
+    select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART6
+                bool "Enable UART6 (debug usart)"
+                default y
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+            config BSP_UART7_RX_USING_DMA
+                bool "Enable UART7 RX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
+            config BSP_UART8_RX_USING_DMA
+                bool "Enable UART8 RX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART1
+                bool "Enable UART1 (DBUS)"
+                default n
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            default n
+            select RT_USING_CAN
+            if BSP_USING_CAN
+                config BSP_USING_CAN1
+                    bool "using CAN1"
+                    default n
+                config BSP_USING_CAN2
+                    bool "using CAN2"
+                    default n
+        endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM12
+                bool "Enable timer12 output pwm"
+                default n
+                if BSP_USING_PWM12
+                    config BSP_USING_PWM12_CH1
+                        bool "Enable PWM12 channel1(buzzer) "
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM4
+                bool "Enable timer4 output pwm"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_USING_PWM4_CH1
+                        bool "Enable PWM4 channel1"
+                        default n
+                    config BSP_USING_PWM4_CH2
+                        bool "Enable PWM4 channel2"
+                        default n
+                    config BSP_USING_PWM4_CH3
+                        bool "Enable PWM4 channel3"
+                        default n
+                    config BSP_USING_PWM4_CH4
+                        bool "Enable PWM4 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM5
+                bool "Enable timer5 output pwm"
+                default n
+                if BSP_USING_PWM5
+                    config BSP_USING_PWM5_CH1
+                        bool "Enable PWM5 channel1"
+                        default n
+                    config BSP_USING_PWM5_CH2
+                        bool "Enable PWM5 channel2"
+                        default n
+                    config BSP_USING_PWM5_CH3
+                        bool "Enable PWM5 channel3"
+                        default n
+                    config BSP_USING_PWM5_CH4
+                        bool "Enable PWM5 channel4"
+                        default n
+                endif
+        endif
+
+    source "../libraries/HAL_Drivers/Kconfig"    
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+endmenu

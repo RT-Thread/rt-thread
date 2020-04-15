@@ -1,0 +1,27 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+drv_usart.c
+""")
+
+CPPPATH = [cwd]
+
+# add spi drivers.
+if GetDepend('RT_USING_SPI'):
+    src += ['drv_spi.c']
+    
+# add i2c drivers.
+if GetDepend('RT_USING_I2C'):
+    src += ['drv_i2c.c']
+
+# add pin drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

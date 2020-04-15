@@ -30,7 +30,7 @@
 extern rt_uint32_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
-struct rt_irq_desc irq_desc[MAX_HANDLERS]; 
+struct rt_irq_desc irq_desc[MAX_HANDLERS];
 
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
@@ -101,17 +101,17 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector, void *param)
     rt_uint32_t isr, pio, irq_n;
     void *parameter;
 
-    if (vector == AT91SAM9260_ID_PIOA) 
+    if (vector == AT91SAM9260_ID_PIOA)
     {
         pio = AT91_PIOA;
         irq_n = AIC_IRQS;
     }
-    else if (vector == AT91SAM9260_ID_PIOB) 
+    else if (vector == AT91SAM9260_ID_PIOB)
     {
         pio = AT91_PIOB;
         irq_n = AIC_IRQS + 32;
     }
-    else if (vector == AT91SAM9260_ID_PIOC) 
+    else if (vector == AT91SAM9260_ID_PIOC)
     {
         pio = AT91_PIOC;
         irq_n = AIC_IRQS + 32*2;
@@ -119,9 +119,9 @@ rt_isr_handler_t at91_gpio_irq_handle(rt_uint32_t vector, void *param)
     else
         return RT_NULL;
     isr = at91_sys_read(pio+PIO_ISR) & at91_sys_read(pio+PIO_IMR);
-    while (isr) 
+    while (isr)
     {
-        if (isr & 1) 
+        if (isr & 1)
         {
             parameter = irq_desc[irq_n].param;
             irq_desc[irq_n].handler(irq_n, parameter);
@@ -175,7 +175,7 @@ static void at91_gpio_irq_init()
 {
     int i, idx;
     char *name[] = {"PIOA", "PIOB", "PIOC"};
-    
+
     at91_sys_write(AT91_PIOA+PIO_IDR, 0xffffffff);
     at91_sys_write(AT91_PIOB+PIO_IDR, 0xffffffff);
     at91_sys_write(AT91_PIOC+PIO_IDR, 0xffffffff);
@@ -183,11 +183,13 @@ static void at91_gpio_irq_init()
     idx = AT91SAM9260_ID_PIOA;
     for (i = 0; i < 3; i++)
     {
-        rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, name[i]);
         irq_desc[idx].handler = (rt_isr_handler_t)at91_gpio_irq_handle;
         irq_desc[idx].param = RT_NULL;
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, name[i]);
         irq_desc[idx].counter = 0;
-        idx++;
+#endif
+		idx++;
     }
 
     rt_hw_interrupt_umask(AT91SAM9260_ID_PIOA);
@@ -203,7 +205,7 @@ void rt_hw_interrupt_init(void)
 {
     register rt_uint32_t idx;
     rt_uint32_t *priority = at91sam9260_default_irq_priority;
-    
+
     at91_extern_irq = (1UL << AT91SAM9260_ID_IRQ0) | (1UL << AT91SAM9260_ID_IRQ1)
             | (1UL << AT91SAM9260_ID_IRQ2);
 
@@ -213,10 +215,12 @@ void rt_hw_interrupt_init(void)
     /* init exceptions table */
     for(idx=0; idx < MAX_HANDLERS; idx++)
     {
-        rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, "default");
         irq_desc[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
         irq_desc[idx].param = RT_NULL;
-		irq_desc[idx].counter = 0;
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_snprintf(irq_desc[idx].name, RT_NAME_MAX - 1, "default");
+        irq_desc[idx].counter = 0;
+#endif
     }
 
     at91_gpio_irq_init();
@@ -234,15 +238,15 @@ static void at91_gpio_irq_mask(int irq)
 
     bank = (irq - AIC_IRQS)>>5;
 
-    if (bank == 0) 
+    if (bank == 0)
     {
         pio = AT91_PIOA;
     }
-    else if (bank == 1) 
+    else if (bank == 1)
     {
         pio = AT91_PIOB;
     }
-    else if (bank == 2) 
+    else if (bank == 2)
     {
         pio = AT91_PIOC;
     }
@@ -258,7 +262,7 @@ static void at91_gpio_irq_mask(int irq)
  */
 void rt_hw_interrupt_mask(int irq)
 {
-    if (irq >= AIC_IRQS) 
+    if (irq >= AIC_IRQS)
     {
         at91_gpio_irq_mask(irq);
     }
@@ -275,15 +279,15 @@ static void at91_gpio_irq_umask(int irq)
 
     bank = (irq - AIC_IRQS)>>5;
 
-    if (bank == 0) 
+    if (bank == 0)
     {
         pio = AT91_PIOA;
     }
-    else if (bank == 1) 
+    else if (bank == 1)
     {
         pio = AT91_PIOB;
     }
-    else if (bank == 2) 
+    else if (bank == 2)
     {
         pio = AT91_PIOC;
     }
@@ -299,7 +303,7 @@ static void at91_gpio_irq_umask(int irq)
  */
 void rt_hw_interrupt_umask(int irq)
 {
-    if (irq >= AIC_IRQS) 
+    if (irq >= AIC_IRQS)
     {
         at91_gpio_irq_umask(irq);
     }
@@ -319,7 +323,7 @@ void rt_hw_interrupt_umask(int irq)
  * @return old handler
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, 
-                                    void *param, char *name)
+                                    void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
@@ -328,10 +332,12 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         old_handler = irq_desc[vector].handler;
         if (handler != RT_NULL)
         {
-            rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
             irq_desc[vector].handler = (rt_isr_handler_t)handler;
             irq_desc[vector].param = param;
+#ifdef RT_USING_INTERRUPT_INFO
+            rt_snprintf(irq_desc[vector].name, RT_NAME_MAX - 1, "%s", name);
 			irq_desc[vector].counter = 0;
+#endif
         }
     }
 
@@ -353,15 +359,15 @@ static int at91_aic_set_type(unsigned irq, unsigned type)
         srctype = AT91_AIC_SRCTYPE_RISING;
         break;
     case IRQ_TYPE_LEVEL_LOW:
-        // only supported on external interrupts 
-        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))     
+        // only supported on external interrupts
+        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))
             srctype = AT91_AIC_SRCTYPE_LOW;
         else
             return -1;
         break;
     case IRQ_TYPE_EDGE_FALLING:
-        // only supported on external interrupts 
-        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))     
+        // only supported on external interrupts
+        if ((irq == AT91_ID_FIQ) || is_extern_irq(irq))
             srctype = AT91_AIC_SRCTYPE_FALLING;
         else
             return -1;
@@ -409,7 +415,7 @@ void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)
 void list_irq(void)
 {
 	int irq;
-	
+
 	rt_kprintf("number\tcount\tname\n");
 	for (irq = 0; irq < MAX_HANDLERS; irq++)
 	{

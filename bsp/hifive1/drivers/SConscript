@@ -7,10 +7,6 @@ cwd = os.path.join(str(Dir('#')), 'drivers')
 # add the general drvers.
 src = Glob("*.c")
 
-# add Ethernet drvers.
-#if GetDepend('RT_USING_LED'):
-#    src += ['led.c']
-
 CPPPATH = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)

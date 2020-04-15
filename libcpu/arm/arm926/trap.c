@@ -1,21 +1,7 @@
 /*
- * File      : trap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -55,14 +41,18 @@ struct rt_hw_register
     rt_uint32_t cpsr;
     rt_uint32_t ORIG_r0;
 };
-
+static rt_err_t (*rt_exception_hook)(void *context) = RT_NULL;
+void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
+{
+    rt_exception_hook = exception_handle;
+}
 /**
  * this function will show registers of CPU
  *
  * @param regs the registers point
  */
 
-void rt_hw_show_register (struct rt_hw_register *regs)
+void rt_hw_show_register(struct rt_hw_register *regs)
 {
     rt_kprintf("Execption:\n");
     rt_kprintf("r00:0x%08x r01:0x%08x r02:0x%08x r03:0x%08x\n",
@@ -88,6 +78,13 @@ void rt_hw_show_register (struct rt_hw_register *regs)
  */
 void rt_hw_trap_udef(struct rt_hw_register *regs)
 {
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
+
+        result = rt_exception_hook(regs);
+        if (result == RT_EOK) return;
+    }
     rt_hw_show_register(regs);
 
     rt_kprintf("undefined instruction\n");
@@ -110,6 +107,13 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
  */
 void rt_hw_trap_swi(struct rt_hw_register *regs)
 {
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
+
+        result = rt_exception_hook(regs);
+        if (result == RT_EOK) return;
+    }
     rt_hw_show_register(regs);
 
     rt_kprintf("software interrupt\n");
@@ -126,6 +130,13 @@ void rt_hw_trap_swi(struct rt_hw_register *regs)
  */
 void rt_hw_trap_pabt(struct rt_hw_register *regs)
 {
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
+
+        result = rt_exception_hook(regs);
+        if (result == RT_EOK) return;
+    }
     rt_hw_show_register(regs);
 
     rt_kprintf("prefetch abort\n");
@@ -147,6 +158,13 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_register *regs)
 {
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
+
+        result = rt_exception_hook(regs);
+        if (result == RT_EOK) return;
+    }
     rt_hw_show_register(regs);
 
     rt_kprintf("data abort\n");
@@ -167,55 +185,26 @@ void rt_hw_trap_dabt(struct rt_hw_register *regs)
  */
 void rt_hw_trap_resv(struct rt_hw_register *regs)
 {
+    if (rt_exception_hook != RT_NULL)
+    {
+        rt_err_t result;
+
+        result = rt_exception_hook(regs);
+        if (result == RT_EOK) return;
+    }
     rt_kprintf("not used\n");
     rt_hw_show_register(regs);
     rt_hw_cpu_shutdown();
 }
 
-extern struct rt_irq_desc irq_desc[];
-extern rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq);
-extern void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id);
-    
-void rt_hw_trap_irq()
+extern void rt_interrupt_dispatch(rt_uint32_t fiq_irq);
+
+void rt_hw_trap_irq(void)
 {
-    rt_isr_handler_t isr_func;
-    rt_uint32_t irq;
-    void *param;
-
-    /* get irq number */
-    irq = rt_hw_interrupt_get_active(INT_IRQ);
-
-    /* get interrupt service routine */
-    isr_func = irq_desc[irq].handler;
-    param = irq_desc[irq].param;
-
-    /* turn to interrupt service routine */
-    isr_func(irq, param);
-
-    rt_hw_interrupt_ack(INT_IRQ, irq);
-#ifdef RT_USING_INTERRUPT_INFO
-    irq_desc[irq].counter ++;
-#endif
+    rt_interrupt_dispatch(INT_IRQ);
 }
 
-void rt_hw_trap_fiq()
+void rt_hw_trap_fiq(void)
 {
-    rt_isr_handler_t isr_func;
-    rt_uint32_t irq;
-    void *param;
-
-    /* get irq number */
-    irq = rt_hw_interrupt_get_active(INT_FIQ);
-
-    /* get interrupt service routine */
-    isr_func = irq_desc[irq].handler;
-    param = irq_desc[irq].param;
-
-    /* turn to interrupt service routine */
-    isr_func(irq, param);
-
-    rt_hw_interrupt_ack(INT_FIQ, irq);
-#ifdef RT_USING_INTERRUPT_INFO
-    irq_desc[irq].counter ++;
-#endif
+    rt_interrupt_dispatch(INT_FIQ);
 }

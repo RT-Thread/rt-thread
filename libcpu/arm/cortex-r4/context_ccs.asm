@@ -1,14 +1,10 @@
 ;/*
-; * File      : context_ccs.asm
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2006, RT-Thread Development Team
+; * Copyright (c) 2006-2018, RT-Thread Development Team
 ; *
-; * The license and distribution terms for this file may be
-; * found in the file LICENSE in this distribution or at
-; * http://www.rt-thread.org/license/LICENSE
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
-; * Date       Author       Notes
+; * Date           Author       Notes
 ; * 2009-01-20     Bernard      first version
 ; * 2011-07-22     Bernard      added thumb mode porting
 ; * 2013-05-24     Grissiom     port to CCS

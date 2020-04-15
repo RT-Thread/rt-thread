@@ -1,1 +1,0 @@
-lib-${CONFIG_FTSSP010}		:= sspd_ac97.o sspd_rts.o

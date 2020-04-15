@@ -1,21 +1,7 @@
 /*
- * File      : spi_wifi_rw009.c
- * This file is part of RT-Thread RTOS
- * Copyright by Shanghai Real-Thread Electronic Technology Co.,Ltd
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -629,6 +615,18 @@ static void spi_wifi_data_thread_entry(void *parameter)
     }
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops rw009_ops =
+{
+    rw009_wifi_init,
+    rw009_wifi_open,
+    rw009_wifi_close,
+    rw009_wifi_read,
+    rw009_wifi_write,
+    rw009_wifi_control
+};
+#endif
+
 rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
 {
     /* align and struct size check. */
@@ -654,12 +652,16 @@ rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
         rt_spi_configure(rw009_wifi_device.rt_spi_device, &cfg);
     }
 
+#ifdef RT_USING_DEVICE_OPS
+    rw009_wifi_device.parent.parent.ops        = &rw009_ops;
+#else
     rw009_wifi_device.parent.parent.init       = rw009_wifi_init;
     rw009_wifi_device.parent.parent.open       = rw009_wifi_open;
     rw009_wifi_device.parent.parent.close      = rw009_wifi_close;
     rw009_wifi_device.parent.parent.read       = rw009_wifi_read;
     rw009_wifi_device.parent.parent.write      = rw009_wifi_write;
     rw009_wifi_device.parent.parent.control    = rw009_wifi_control;
+#endif
     rw009_wifi_device.parent.parent.user_data  = RT_NULL;
 
     rw009_wifi_device.parent.eth_rx     = rw009_wifi_rx;

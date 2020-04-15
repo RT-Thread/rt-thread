@@ -38,7 +38,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_REG_CLKGEN_H
@@ -66,7 +66,6 @@
 #define AM_REG_CLKGEN_CCTRL_O                        0x00000018
 #define AM_REG_CLKGEN_STATUS_O                       0x0000001C
 #define AM_REG_CLKGEN_HFADJ_O                        0x00000020
-#define AM_REG_CLKGEN_HFVAL_O                        0x00000024
 #define AM_REG_CLKGEN_CLOCKEN_O                      0x00000028
 #define AM_REG_CLKGEN_CLOCKEN2_O                     0x0000002C
 #define AM_REG_CLKGEN_CLOCKEN3_O                     0x00000030
@@ -389,16 +388,6 @@
 #define AM_REG_CLKGEN_HFADJ_HFADJEN(n)               (((uint32_t)(n) << 0) & 0x00000001)
 #define AM_REG_CLKGEN_HFADJ_HFADJEN_DIS              0x00000000
 #define AM_REG_CLKGEN_HFADJ_HFADJEN_EN               0x00000001
-
-//*****************************************************************************
-//
-// CLKGEN_HFVAL - HFADJ readback
-//
-//*****************************************************************************
-// Current HFTUNE value
-#define AM_REG_CLKGEN_HFVAL_HFTUNERB_S               0
-#define AM_REG_CLKGEN_HFVAL_HFTUNERB_M               0x000007FF
-#define AM_REG_CLKGEN_HFVAL_HFTUNERB(n)              (((uint32_t)(n) << 0) & 0x000007FF)
 
 //*****************************************************************************
 //

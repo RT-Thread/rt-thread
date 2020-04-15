@@ -42,16 +42,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 #ifndef AM_HAL_MCUCTRL_H
 #define AM_HAL_MCUCTRL_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 //
 // Deprecate the am_hal_mcuctrl_bucks_enable() and disable() functions.
@@ -187,6 +182,11 @@ typedef struct
     uint32_t ui32SYS;
 }
 am_hal_mcuctrl_fault_t;
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 //*****************************************************************************
 //

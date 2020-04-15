@@ -1,26 +1,7 @@
 /*
- *  shell implementation for finsh shell.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -44,12 +25,10 @@
 #endif
 
 #define FINSH_OPTION_ECHO   0x01
-#if defined(FINSH_USING_MSH) || (defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR))
+
 #define FINSH_PROMPT        finsh_get_prompt()
 const char* finsh_get_prompt(void);
-#else
-#define FINSH_PROMPT        "finsh>>"
-#endif
+int finsh_set_prompt(const char * prompt);
 
 #ifdef FINSH_USING_HISTORY
     #ifndef FINSH_HISTORY_LINES
@@ -86,6 +65,7 @@ struct finsh_shell
     enum input_stat stat;
 
     rt_uint8_t echo_mode:1;
+    rt_uint8_t prompt_mode: 1;
 
 #ifdef FINSH_USING_HISTORY
     rt_uint16_t current_history;
@@ -99,10 +79,10 @@ struct finsh_shell
 #endif
 
     char line[FINSH_CMD_SIZE];
-    rt_uint8_t line_position;
-    rt_uint8_t line_curpos;
+    rt_uint16_t line_position;
+    rt_uint16_t line_curpos;
 
-#ifndef RT_USING_POSIX
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
     rt_device_t device;
 #endif
 
@@ -117,6 +97,9 @@ rt_uint32_t finsh_get_echo(void);
 int finsh_system_init(void);
 void finsh_set_device(const char* device_name);
 const char* finsh_get_device(void);
+
+rt_uint32_t finsh_get_prompt_mode(void);
+void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
 
 #ifdef FINSH_USING_AUTH
 rt_err_t finsh_set_password(const char *password);

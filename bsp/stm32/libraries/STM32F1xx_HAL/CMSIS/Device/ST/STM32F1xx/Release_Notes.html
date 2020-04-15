@@ -1,0 +1,852 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="File-List" href="Release_Notes%20%28package%29_files/filelist.xml">
+<link rel="Edit-Time-Data" href="Release_Notes%20%28package%29_files/editdata.mso"><!--[if !mso]> <style> v\:* {behavior:url(#default#VML);} o\:* {behavior:url(#default#VML);} w\:* {behavior:url(#default#VML);} .shape {behavior:url(#default#VML);} </style> <![endif]--><title>Release Notes for STM32L1xx CMSIS</title><!--[if gte mso 9]><xml> <o:DocumentProperties> <o:Author>STMicroelectronics</o:Author> <o:LastAuthor>tguilhot</o:LastAuthor> <o:Revision>145</o:Revision> <o:TotalTime>461</o:TotalTime> <o:Created>2009-02-27T19:26:00Z</o:Created> <o:LastSaved>2010-12-13T14:14:00Z</o:LastSaved> <o:Pages>1</o:Pages> <o:Words>358</o:Words> <o:Characters>2045</o:Characters> <o:Company>STMicroelectronics</o:Company> <o:Lines>17</o:Lines> <o:Paragraphs>4</o:Paragraphs> <o:CharactersWithSpaces>2399</o:CharactersWithSpaces> <o:Version>11.9999</o:Version> </o:DocumentProperties> </xml><![endif]--><!--[if gte mso 9]><xml> <w:WordDocument> <w:View>Normal</w:View> <w:SpellingState>Clean</w:SpellingState> <w:GrammarState>Clean</w:GrammarState> <w:ValidateAgainstSchemas/> <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid> <w:IgnoreMixedContent>false</w:IgnoreMixedContent> <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText> <w:Compatibility> <w:UseFELayout/> </w:Compatibility> <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel> </w:WordDocument> </xml><![endif]--><!--[if gte mso 9]><xml> <w:LatentStyles DefLockedState="false" LatentStyleCount="156"> </w:LatentStyles> </xml><![endif]-->
+
+
+
+<style>
+<!--
+/* Font Definitions */
+@font-face
+{font-family:Wingdings;
+panose-1:5 0 0 0 0 0 0 0 0 0;
+mso-font-charset:2;
+mso-generic-font-family:auto;
+mso-font-pitch:variable;
+mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+{font-family:"MS Mincho";
+panose-1:2 2 6 9 4 2 5 8 3 4;
+mso-font-alt:"Arial Unicode MS";
+mso-font-charset:128;
+mso-generic-font-family:roman;
+mso-font-format:other;
+mso-font-pitch:fixed;
+mso-font-signature:1 134676480 16 0 131072 0;}
+@font-face
+{font-family:Verdana;
+panose-1:2 11 6 4 3 5 4 4 2 4;
+mso-font-charset:0;
+mso-generic-font-family:swiss;
+mso-font-pitch:variable;
+mso-font-signature:536871559 0 0 0 415 0;}
+@font-face
+{font-family:"\@MS Mincho";
+panose-1:0 0 0 0 0 0 0 0 0 0;
+mso-font-charset:128;
+mso-generic-font-family:roman;
+mso-font-format:other;
+mso-font-pitch:fixed;
+mso-font-signature:1 134676480 16 0 131072 0;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+{mso-style-parent:"";
+margin:0cm;
+margin-bottom:.0001pt;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+h1
+{mso-margin-top-alt:auto;
+margin-right:0cm;
+mso-margin-bottom-alt:auto;
+margin-left:0cm;
+mso-pagination:widow-orphan;
+mso-outline-level:1;
+font-size:24.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"MS Mincho";
+font-weight:bold;}
+h2
+{mso-style-next:Normal;
+margin-top:12.0pt;
+margin-right:0cm;
+margin-bottom:3.0pt;
+margin-left:0cm;
+mso-pagination:widow-orphan;
+page-break-after:avoid;
+mso-outline-level:2;
+font-size:14.0pt;
+font-family:Arial;
+mso-fareast-font-family:"MS Mincho";
+font-weight:bold;
+font-style:italic;}
+h3
+{mso-margin-top-alt:auto;
+margin-right:0cm;
+mso-margin-bottom-alt:auto;
+margin-left:0cm;
+mso-pagination:widow-orphan;
+mso-outline-level:3;
+font-size:13.5pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"MS Mincho";
+font-weight:bold;}
+a:link, span.MsoHyperlink
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+{color:blue;
+text-decoration:underline;
+text-underline:single;}
+p
+{mso-margin-top-alt:auto;
+margin-right:0cm;
+mso-margin-bottom-alt:auto;
+margin-left:0cm;
+mso-pagination:widow-orphan;
+font-size:12.0pt;
+font-family:"Times New Roman";
+mso-fareast-font-family:"Times New Roman";}
+@page Section1
+{size:612.0pt 792.0pt;
+margin:72.0pt 90.0pt 72.0pt 90.0pt;
+mso-header-margin:36.0pt;
+mso-footer-margin:36.0pt;
+mso-paper-source:0;}
+div.Section1
+{page:Section1;}
+/* List Definitions */
+@list l0
+{mso-list-id:1315182333;
+mso-list-template-ids:555131286;}
+@list l0:level1
+{mso-level-tab-stop:36.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level2
+{mso-level-tab-stop:72.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level3
+{mso-level-tab-stop:108.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level4
+{mso-level-tab-stop:144.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level5
+{mso-level-tab-stop:180.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level6
+{mso-level-tab-stop:216.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level7
+{mso-level-tab-stop:252.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level8
+{mso-level-tab-stop:288.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l0:level9
+{mso-level-tab-stop:324.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l1
+{mso-list-id:2024673066;
+mso-list-template-ids:154433278;}
+@list l1:level1
+{mso-level-number-format:bullet;
+mso-level-text:\F0A7;
+mso-level-tab-stop:36.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;
+mso-ansi-font-size:10.0pt;
+font-family:Wingdings;}
+@list l1:level2
+{mso-level-number-format:bullet;
+mso-level-text:\F0B7;
+mso-level-tab-stop:72.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;
+mso-ansi-font-size:10.0pt;
+font-family:Symbol;}
+@list l1:level3
+{mso-level-number-format:bullet;
+mso-level-text:\F0B0;
+mso-level-tab-stop:108.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;
+font-family:Symbol;}
+@list l1:level4
+{mso-level-tab-stop:144.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l1:level5
+{mso-level-tab-stop:180.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l1:level6
+{mso-level-tab-stop:216.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l1:level7
+{mso-level-tab-stop:252.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l1:level8
+{mso-level-tab-stop:288.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l1:level9
+{mso-level-tab-stop:324.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2
+{mso-list-id:2095200852;
+mso-list-type:hybrid;
+mso-list-template-ids:-391638944 67698693 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l2:level1
+{mso-level-number-format:bullet;
+mso-level-text:\F0A7;
+mso-level-tab-stop:36.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;
+font-family:Wingdings;}
+@list l2:level2
+{mso-level-tab-stop:72.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level3
+{mso-level-tab-stop:108.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level4
+{mso-level-tab-stop:144.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level5
+{mso-level-tab-stop:180.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level6
+{mso-level-tab-stop:216.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level7
+{mso-level-tab-stop:252.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level8
+{mso-level-tab-stop:288.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+@list l2:level9
+{mso-level-tab-stop:324.0pt;
+mso-level-number-position:left;
+text-indent:-18.0pt;}
+ol
+{margin-bottom:0cm;}
+ul
+{margin-bottom:0cm;}
+-->
+</style><!--[if gte mso 10]> <style> /* Style Definitions */ table.MsoNormalTable {mso-style-name:"Table Normal"; mso-tstyle-rowband-size:0; mso-tstyle-colband-size:0; mso-style-noshow:yes; mso-style-parent:""; mso-padding-alt:0cm 5.4pt 0cm 5.4pt; mso-para-margin:0cm; mso-para-margin-bottom:.0001pt; mso-pagination:widow-orphan; font-size:10.0pt; font-family:"Times New Roman"; mso-fareast-font-family:"Times New Roman"; mso-ansi-language:#0400; mso-fareast-language:#0400; mso-bidi-language:#0400;} </style> <![endif]-->
+<style type="disc">
+</style><!--[if gte mso 9]><xml> <o:shapedefaults v:ext="edit" spidmax="45058"/> </xml><![endif]--><!--[if gte mso 9]><xml> <o:shapelayout v:ext="edit"> <o:idmap v:ext="edit" data="1"/> </o:shapelayout></xml><![endif]--><meta content="MCD Application Team" name="author"></head>
+<body link="blue" vlink="blue">
+<div class="Section1">
+<p class="MsoNormal"><span style="font-family: Arial;"><o:p><br>
+</o:p></span></p>
+<div align="center">
+<table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+<tbody>
+<tr>
+<td style="padding: 0cm;" valign="top">
+<table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" cellspacing="0" width="900">
+<tbody>
+          <tr>
+            <td style="vertical-align: top;"><span style="font-size: 8pt; font-family: Arial; color: blue;"><a href="../../../../../Release_Notes.html">Back to Release page</a></span></td>
+          </tr>
+<tr style="">
+<td style="padding: 1.5pt;">
+<h1 style="margin-bottom: 18pt; text-align: center;" align="center"><span style="font-size: 20pt; font-family: Verdana; color: rgb(51, 102, 255);">Release
+Notes for STM32F10x CMSIS</span><span style="font-size: 20pt; font-family: Verdana;"><o:p></o:p></span></h1>
+<p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: Arial; color: black;">Copyright 2016 STMicroelectronics</span><span style="color: black;"><u1:p></u1:p><o:p></o:p></span></p>
+<p class="MsoNormal" style="text-align: center;" align="center"><span style="font-size: 10pt; font-family: Arial; color: black;"><img style="border: 0px solid ; width: 86px; height: 65px;" src="../../../../../_htmresc/logo.bmp" id="_x0000_i1025" alt=""></span><span style="font-size: 10pt;"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="MsoNormal"><span style="font-family: Arial; display: none;"><o:p>&nbsp;</o:p></span></p>
+<table class="MsoNormalTable" style="width: 675pt;" border="0" cellpadding="0" width="900">
+<tbody>
+<tr>
+<td style="padding: 0cm;" valign="top">
+<span style="font-family: &quot;Times New Roman&quot;;"></span>
+<h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="History"></a><span style="font-size: 12pt; color: white;">Update History</span></h2>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.3.1 / 26-June-2019 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b></p>
+            <ul>
+              <li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix </span><span style="font-size: 10pt; font-family: Verdana;">MISRA C 2012 Compilation errors: update to use </span><span style="font-size: 10pt; font-family: Verdana;">"UL" postfix for bits mask definitions(_Msk) and memory/peripheral base addresses</span></li>
+              <li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Fix wrong initialization value for "SystemCoreClock" in System_stm32f1xx.c file<br>
+</span></li>
+
+              <li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Update gcc linker file template to be aligned with AC6 linker file template</span></li><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">stm32f1xx.h</span></li><ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">Align ErrorStatus typedef to common error handling<br></span></li></ul><li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">TIM:</span></li>
+              <ul>
+<li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Update IS_TIM_SLAVE_INSTANCE() macro to add reference to TIM9 instance</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span><br>
+</li>
+              </ul>
+              <li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-size: 10pt; font-family: Verdana;">SDMMC:</span></li>
+              <ul>
+                <li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Re</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">move SDIO_TypeDef() structure, SDIO_BASE define and SDIO Bits definitions : feature not available on all devices <br>
+except <span style="font-weight: bold;">STM32F103xE</span> and </span><span style="font-family: Verdana,sans-serif; font-size: 10pt; font-weight: bold;">STM32F103xG</span></li>
+              </ul>
+              <li class="MsoNormal" style="margin: 4.5pt 0in; font-size: 12pt; font-family: &quot;Times New Roman&quot;; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">USB:</span></li>
+              <ul>
+                <li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new PCD/HCD macros:</span></li>
+                <ul>
+                  <li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_PCD_ALL_INSTANCE()</span></li>
+                  <li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_HCD_ALL_INSTANCE()</span></li>
+                </ul>
+              </ul>
+              <li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">SPI:</span></li>
+              <ul>
+                <li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new SPI_CRC_ERROR_WORKAROUND_FEATURE define to enable SPI CRC workaround feature for <span style="font-weight: bold;">STM32F101xE/STM32F103xE</span> devices <br>
+                  </span></li>
+              </ul>
+            </ul>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.3.0 / 09-October-2018 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b></p><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add missing IS_TIM_SYNCHRO_INSTANCE macro definition&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">to check TIM SYNCHRO feature instance support.</span></li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.2.0 / 31-March-2017 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b></p><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Use _Pos and _Mask macros for all Bit Definitions</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Remove Core-CM3 bit definitions from CMSIS devices drivers:&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">duplicated</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> with bit definitions in core_cm3.h.</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">General updates in header files to support LL drivers</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"></span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Remove TIM&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">SMCR OCCS and TIM CCER CC4NP</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;"> bit definitions<br></span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new USART defines: USART_CR1_OVER8 and USART_CR3_ONEBIT<br></span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add I2C_DR_DR bit definition</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new I2C macros: </span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_SMBUS_ALL_INSTANCE</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new LL I2S defines:&nbsp;</span><span style="font-family: Verdana,sans-serif; font-size: 10pt;">SPI_I2S_SUPPORT and I2S2_I2S3_CLOCK_FEATURE</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Rename DAC instance to DAC1<br></span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Rename&nbsp;PWR_CR_PLS_<span style="font-weight: bold;">XXX</span> to&nbsp;PWR_CR_PLS_LEV<span style="font-weight: bold;">X</span></span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add RCC LL defines</span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">RCC_HSE_MIN</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">RCC_HSE_MAX</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">RCC_MAX_FREQUENCY</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">RCC_PLL_SUPPORT</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">RCC_PLLI2S_SUPPORT<br></span></li></ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">Add new TIM macros to check TIM feature instance support:</span></li><ul><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_COUNTER_MODE_SELECT_INSTANCE()</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_ADVANCED_INSTANCE</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_ETR_INSTANCE</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_HALL_SENSOR_INTERFACE_INSTANCE</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_32B_COUNTER_INSTANCE</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_BREAK_INSTANCE()</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_CCXN_INSTANCE()</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_REPETITION_COUNTER_INSTANCE()</span></li><li class="MsoNormal" style="margin-top: 4.5pt; margin-bottom: 4.5pt; color: black;"><span style="font-family: Verdana,sans-serif; font-size: 10pt;">IS_TIM_COMMUTATION_EVENT_INSTANCE()</span></li></ul></ul></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.1.0 / 29-April-2016 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes</span></u></b></p><ul style="list-style-type: square;"><li>Add _Pos and _Msk defines to be used with _VAL2FLD(field, value) and _FLD2VAL(field, value).&nbsp;</li><ul><li>The previous naming are kept for backward compatibility.<span style="font-size: 10pt; font-family: Verdana;"></span></li></ul><li><span style="font-size: 10pt; font-family: Verdana;">RCC: Add define RCC_CFGR_MCOSEL for compatibility across all STM32 series.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">ADC: Add define ADC_MULTIMODE_SUPPORT for devices supporting the ADC multimode feature.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">ADC: Add define ADC_SR_EOS and ADC_SR_JEOS for compatibility accross all STM32 series.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">stm32f1xx.h:
+Replace __STM32F1xx_CMSIS_DEVICE_VERSION_MAIN by
+__STM32F1_CMSIS_VERSION_MAIN for MISRA compliancy on define length name.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">Add APBPrescTable constant to list APB prescalers values.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">Add FLASHSIZE_BASE for the FLASH Size register base address.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">Add UID_BASE for the unique device ID register base address.<br></span></li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.0.2 / 18-December-2015 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li><span style="font-size: 10pt; font-family: Verdana;">FLASH: Add FLASH_OBR_DATA0 and FLASH_OBR_DATA1 for FLASH_OBR register.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">WWDG: Align bit name across all STM32 families.</span></li><ul><li><span style="font-size: 10pt; font-family: Verdana;">WWDG_CR_T0 renmaed to WWDG_CR_T_0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">WWDG_CFR_W0 renamed to WWDG_CFR_W_0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">WWDG_CFR_WDGTB0 renamed to WWDG_CFR_WDGTB_0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">WWDG_CFR_WDGTB1 renamed to WWDG_CFR_WDGTB_1.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">Aliases are created for backward compatibilities.</span></li></ul><li>Interrupt: Add HardFault_IRQn with value -13.</li><li>EXTI:<span style="font-size: 10pt; font-family: Verdana;">: Align bit name across all STM32 families.</span></li><ul><li><span style="font-size: 10pt; font-family: Verdana;">EXTI_IMR_MR0 renamed to EXTI_IMR_IM0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">EXTI_EMR_MR0 renamed to EXTI_EMR_EM0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">EXTI_RTSR_TR0 renamed to EXTI_RTSR_RT0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">EXTI_FTSR_TR0 renamed to EXTI_FTSR_FT0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">EXTI_SWIER_SWIER0 renamed to EXTI_SWIER_SWI0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">EXTI_PR_PR0 renamed to EXTI_PR_PIF0.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">Aliases are created for backward compatibilities.</span></li></ul><li><span style="font-size: 10pt; font-family: Verdana;">USB OTG: Remove USB_OTG_GCCFG_NOVBUSSENS from USB_OTG_GCCFG as this feature is not present in F1 devices.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">USB_OTG: Remove USB_OTG_GCCFG_I2CPADEN from USB_OTG_GCCFG</span><span style="font-size: 10pt; font-family: Verdana;"> as this feature is not present in F1 devices.</span></li><li><span style="font-size: 10pt; font-family: Verdana;">ADC: Add the notion of common instance for compatibility with other STM32 families.<br></span></li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.0.1 / 31-July-2015 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li><span style="font-size: 10pt; font-family: Verdana;">Remove __IO or __I on constant table declaration (AHBPrescTable in system_stm32f1xx.c) due to issue with </span>mbed C++ code. The table content was filled with random value at initialization phase.</li><li>uint8_t alignment done on CMSIS CRC registers structure.</li><li>Removing
+definition of FLASH_WRP1_WRP1, FLASH_WRP1_nWRP1, FLASH_WRP2_WRP2,
+FLASH_WRP2_nWRP2, FLASH_WRP3_WRP3 and FLASH_WRP3_nWRP3 for product
+STM32F101x6, STM32F102x6 and STM32F103x6. Those defines are not
+applicable to those products.</li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 180px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V4.0.0 / 16-December-2014 <o:p></o:p></span></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+
+
+
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+
+
+
+            
+            
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+
+            <span style="font-size: 10pt; font-family: Verdana;"></span>
+            
+            
+            
+
+
+
+
+            
+            
+            
+            <ul style="list-style-type: square;"><li><span style="font-size: 10pt; font-family: Verdana;">Update
+based on STM32Cube specification<br>
+</span></li><li style="font-weight: bold;"><span style="font-size: 10pt; font-family: Verdana;">This version has to be used only with </span><span style="font-size: 10pt; font-family: Verdana;">STM32CubeF1</span><span style="font-size: 10pt; font-family: Verdana;"> based development</span></li></ul><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 167px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V3.6.3 / 10-April-2014<o:p></o:p></span></h3>
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+
+
+
+
+
+            
+            
+            
+            
+            
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Update startup files for EWARM toolchain to cope with compiler enhancement of the V7.10 version.</span></li></ul>
+
+
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 167px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V3.6.2 / 28-February-2013<o:p></o:p></span></h3>
+
+            
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+
+            
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm32f10x.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Change <span style="font-style: italic;">#define FLASH_ACR_LATENCY ((uint8_t)<span style="font-weight: bold;">0x03</span>)</span> by <span style="font-style: italic;">#define FLASH_ACR_LATENCY ((uint8_t)<span style="font-weight: bold;">0x07</span>)</span></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Remove '<span style="font-weight: bold;">,</span>' from <span style="font-style: italic;">#define&nbsp; DMA_CCR7_PSIZE&nbsp; <span style="font-weight: bold;">,</span>&nbsp; ((uint16_t)0x0300)</span></span></li></ul></ul>
+<h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 167px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V3.6.1 / 09-March-2012<o:p></o:p></span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">All source files:&nbsp;license disclaimer text update and add link to the License file on ST Internet.</span></li></ul><span style="font-size: 10pt; font-family: Verdana;"></span><h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 167px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V3.6.0 / 27-January-2012<o:p></o:p></span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Update directory structure&nbsp;to be compliant&nbsp;with CMSIS V2.1</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">All source files: update disclaimer to add reference to the&nbsp;new license agreement</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">stm32f10x.h</span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Add define for Cortex-M3 revision&nbsp;<span style="font-style: italic;">__CM3_REV</span></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Allow
+modification of&nbsp;some constants by the application code, definition of
+these constants is now bracketed by &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span style="font-style: italic;">#if !defined</span><span style="font-style: italic;"></span>. The concerned constant are <span style="font-style: italic;">HSE_VALUE</span>, <span style="font-style: italic;">HSI_VALUE</span> and <span style="font-style: italic;">HSE_STARTUP_TIMEOUT</span></span><span style="font-size: 10pt; font-family: Verdana;"></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Add missing bits definition for&nbsp;<span style="font-style: italic;">DAC CR</span> register</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Add missing bits definition for <span style="font-style: italic;">FSMC BTR1, BTR2, BTR3, BWTR1, BWTR2, BWTR3 and BWTR4</span> registers</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Definition for </span><span style="font-size: 10pt; font-family: Verdana;">Flash keys moved from stm32f10x_flash.c to stm32f10x.h<br></span></li></ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Add startup file for <span style="font-style: italic;">TASKING</span> toolchain</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana; text-decoration: underline; font-style: italic;">V3.5.0 (based CMSIS V1.3) vs. V3.6.0 (based on CMSIS V2.1)</span><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline; font-style: italic;">&nbsp;compatibility update</span></span></li><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;"></span><span style="font-size: 10pt; font-family: Verdana;">Due to the </span><span style="font-size: 10pt; font-family: Verdana;"> directory structure </span><span style="font-size: 10pt; font-family: Verdana;">difference between&nbsp;CMSIS V1.3 and&nbsp;V2.1, when migrating a project based on STM32F10x drivers V3.5.0 to </span><span style="font-size: 10pt; font-family: Verdana;">V3.6.0 </span><span style="font-size: 10pt; font-family: Verdana;">you need to perform the following update:</span></li></ul><ul><ul><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">In
+the compiler preprocessor, remove CortexM3 CMSIS include path. CortexM3
+CMSIS files are included by default in your development toolchain</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">Remove core_cm3.c file (if it is used).&nbsp;Almost of CortexM3 CMSIS function are provided as intrinsic by the compiler</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">In the compiler preprocessor, update&nbsp;path of&nbsp;</span><span style="font-size: 10pt; font-family: Verdana; font-style: italic;">STM32F10x</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;"> CMSIS</span> <span style="font-style: italic;">include</span> files from &nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">Libraries\CMSIS\CM3\DeviceSupport\ST\</span></span><span style="font-size: 10pt; font-family: Verdana; font-style: italic;">STM32F10x </span><span style="font-size: 10pt; font-family: Verdana;">to</span><span style="font-size: 10pt; font-family: Verdana; font-style: italic;">&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">Libraries\CMSIS\Device\ST\STM32F10x\Include</span><span style="font-style: italic;"></span></span><span style="font-size: 10pt; font-family: Verdana; font-style: italic;"></span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;">In the project settings, update path of <span style="font-style: italic;">startup_stm32f10x_xx.s</span> file&nbsp;from</span><span style="font-size: 10pt; font-family: Verdana;"> Libraries\CMSIS\CM3\DeviceSupport\ST\</span><span style="font-size: 10pt; font-family: Verdana; font-style: italic;">STM32F10x</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">\startup\&#8221;Compiler&#8221;</span> to </span><span style="font-size: 10pt; font-family: Verdana; font-style: italic;">Libraries\CMSIS\Device\ST\STM32F10x\Source\Templates\&#8221;Compiler&#8221;</span></li></ul></ul></ul><div style="margin-left: 40px;"><div style="margin-left: 80px;"><span style="font-size: 10pt; font-family: Verdana;">where, "Compiler" refer to arm, gcc_ride7, iar, TASKING or TrueSTUDIO</span><br></div><span style="font-size: 10pt; font-family: Verdana;"></span></div>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 500pt; width: 167px;"><span style="font-size: 10pt; font-family: Arial; color: white;">V3.5.0 / 11-March-2011<o:p></o:p></span></h3>
+            <p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt;"><b style=""><u><span style="font-size: 10pt; font-family: Verdana; color: black;">Main
+Changes<o:p></o:p></span></u></b></p>
+
+            <ul style="margin-top: 0cm;" type="square"><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">stm32f10x.h
+</span>and <span style="font-style: italic;">startup_stm32f10x_hd_vl.s</span> files: remove the FSMC interrupt
+definition for STM32F10x High-density Value line devices.<br>
+</span></li><li class="MsoNormal" style="color: black; margin-top: 4.5pt; margin-bottom: 4.5pt;"><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">system_stm32f10x.c</span> file&nbsp;provided within the CMSIS folder. <br>
+</span></li></ul>
+
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 558.05pt;"><span style="font-size: 10pt; font-family: Arial; color: white;">3.4.0
+- 10/15/2010</span></h3>
+
+            <ol><li><b><i><span style="font-size: 10pt; font-family: Verdana;">General</span></i></b></li></ol>
+
+            <ul style="margin-top: 0in;" type="disc"><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add support
+for&nbsp;<b>STM32F10x High-density Value line devices</b>.</span></li></ul>
+            <ol start="2"><li><b><i><span style="font-size: 10pt; font-family: Verdana;">STM32F10x CMSIS Device Peripheral Access Layer </span></i></b></li></ol>
+
+
+            
+            <ul style="margin-top: 0in;" type="disc"><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Cortex-M3 Device Peripheral Access Layer Header File:</span> <span style="font-weight: bold; font-style: italic;">stm32f10x.h</span></span><br>
+              </li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Update to support High-density Value line devices</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add new define <span style="font-style: italic;">STM32F10X_HD_VL</span></span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">RCC, AFIO, FSMC bits definition updated</span></li></ul><li class="MsoNormal" style="">
+
+                  <span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">All
+STM32 devices definitions are commented by default. User has to select the
+appropriate device before starting else an error will be signaled on compile
+time.</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">Add new IRQs definitions inside the IRQn_Type enumeration for STM23 High-density Value line devices.</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;">"<span style="font-weight: bold;">bool</span>" type removed.</span><br>
+                  <span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;;"></span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Cortex-M3 Device Peripheral Access Layer System Files:</span> <span style="font-weight: bold; font-style: italic;">system_stm32f10x.h and system_stm32f10x.c</span></span><br>
+                <span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;">"system_stm32f10x.c" </span><span style="font-weight: bold;"></span>moved to to "<span style="font-weight: bold; font-style: italic;">STM32F10x_StdPeriph_Template</span>" directory. This file is also moved to each example directory under "<span style="font-weight: bold; font-style: italic;">STM32F10x_StdPeriph_Examples</span>".</span><br>
+<span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;"></span></span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">SystemInit_ExtMemCtl() </span>function: update to support High-density Value line devices.</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add "<span style="font-style: italic;">VECT_TAB_SRAM</span>" inside "</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;">system_stm32f10x.c</span></span><span style="font-size: 10pt; font-family: Verdana;">"
+to select if the user want to place the Vector Table in internal SRAM.
+An additional define is also to specify the Vector Table offset "<span style="font-style: italic;">VECT_TAB_OFFSET</span>".<br>
+                  </span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS startup files:</span></span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;">startup_stm32f10x_xx.s</span></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add three
+startup files for STM32 High-density Value line devices:
+                  <span style="font-weight: bold; font-style: italic;">startup_stm32f10x_hd_vl.s</span></span></li></ul></ul>
+            <h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 558.05pt;"><span style="font-size: 10pt; font-family: Arial; color: white;">3.3.0
+- 04/16/2010</span></h3>
+
+<ol><li><b><i><span style="font-size: 10pt; font-family: Verdana;">General</span></i></b></li></ol>
+<ul style="margin-top: 0in;" type="disc"><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add support
+for&nbsp;<b>STM32F10x XL-density devices</b>.</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add startup files for TrueSTUDIO toolchain<br></span></li></ul><ol start="2"><li><b><i><span style="font-size: 10pt; font-family: Verdana;">STM32F10x CMSIS Device Peripheral Access Layer </span></i></b></li></ol>
+
+            <ul style="margin-top: 0in;" type="disc"><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Cortex-M3 Device Peripheral Access Layer Header File:</span> <span style="font-weight: bold; font-style: italic;">stm32f10x.h</span></span><br>
+              </li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Update to support XL-density devices</span><span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add new define <span style="font-style: italic;">STM32F10X_XL</span></span></li></ul><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add new IRQs for&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;">TIM9..14</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Update FLASH_TypeDef structure</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add new IP instances TIM9..14</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">RCC, AFIO, DBGMCU bits definition updated</span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Correct IRQs definition for MD-, LD-, MD_VL- and LD_VL-density devices&nbsp;(remove&nbsp;comma "," at the end of enum list)<br></span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Cortex-M3 Device Peripheral Access Layer System Files:</span> <span style="font-weight: bold; font-style: italic;">system_stm32f10x.h and system_stm32f10x.c</span></span><br>
+                <span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">SystemInit_ExtMemCtl() </span>function: update to support XL-density devices</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">SystemInit()</span> function: swap the order of SetSysClock() and SystemInit_ExtMemCtl() functions.&nbsp;</span><span style="font-size: 10pt; font-family: Verdana;"><br>
+                  </span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS startup files:</span><span style="font-weight: bold; font-style: italic;"></span><span style="font-style: italic;"><span style="font-weight: bold;"></span></span></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">add three
+startup files for STM32 XL-density&nbsp;devices:
+                  <span style="font-weight: bold; font-style: italic;">startup_stm32f10x_xl.s</span></span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold;">startup_stm32f10x_md_vl.s</span> for RIDE7: add USART3 IRQ&nbsp;Handler (was missing in&nbsp;previous version)</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add startup files for TrueSTUDIO toolchain</span></li></ul></ul><span style="font-size: 10pt; font-family: Verdana;"><span style="font-weight: bold; font-style: italic;"></span></span>
+<h3 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; margin-right: 558.05pt;"><span style="font-size: 10pt; font-family: Arial; color: white;">3.2.0
+- 03/01/2010</span></h3>
+<ol style="margin-top: 0in;" start="1" type="1"><li class="MsoNormal" style=""><b><i><span style="font-size: 10pt; font-family: Verdana;">General</span></i></b><i><span style="font-size: 10pt; font-family: Verdana;"></span></i><i><span style="font-size: 10pt;"><o:p></o:p></span></i></li></ol>
+<ul style="margin-top: 0in;" type="disc"><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">STM32F10x CMSIS files updated to <span style="font-weight: bold;">CMSIS V1.30</span> release</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Directory structure updated to be aligned with CMSIS V1.30<br>
+                </span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add support
+for&nbsp;<b>STM32 Low-density Value line (STM32F100x4/6) and
+Medium-density Value line (STM32F100x8/B) devices</b>.&nbsp;</span><span style="font-size: 10pt;"><o:p></o:p></span></li></ul>
+<ol style="margin-top: 0in;" start="2" type="1"><li class="MsoNormal" style=""><b><i><span style="font-size: 10pt; font-family: Verdana;">CMSIS Core Peripheral Access Layer</span></i></b></li></ol>
+            <ul><li><b><i><span style="font-size: 10pt; font-family: Verdana;"></span></i></b><span style="font-size: 10pt; font-family: Verdana;"> Refer to <a href="../../../../../../../../CMSIS_changes.htm" target="_blank">CMSIS changes</a></span></li></ul>
+            <ol style="margin-top: 0in; list-style-type: decimal;" start="3"><li class="MsoNormal" style=""><b><i><span style="font-size: 10pt; font-family: Verdana;">STM32F10x CMSIS Device Peripheral Access Layer </span></i></b><b><i><span style="font-size: 10pt;"><o:p></o:p></span></i></b></li></ol>
+
+            <ul style="margin-top: 0in;" type="disc"><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Cortex-M3 Device Peripheral Access Layer Header File:</span> <span style="font-weight: bold; font-style: italic;">stm32f10x.h</span></span><br>
+              </li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Update
+the stm32f10x.h file to support new Value line devices features: CEC
+peripheral, new General purpose timers TIM15, TIM16 and TIM17.</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Peripherals Bits definitions updated to be in line with Value line devices available features.<br>
+                  </span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">HSE_Value,
+HSI_Value and HSEStartup_TimeOut changed to upper case: HSE_VALUE,
+HSI_VALUE and HSE_STARTUP_TIMEOUT. Old names are kept for legacy
+purposes.<br>
+                  </span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Cortex-M3 Device Peripheral Access Layer System Files:</span> <span style="font-weight: bold; font-style: italic;">system_stm32f10x.h and system_stm32f10x.c</span></span><br>
+                <span style="font-size: 10pt; font-family: Verdana;"></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">SystemFrequency variable name changed to SystemCoreClock</span><br>
+                  <span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;"></span></span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;">Default
+                  </span></span><span style="font-size: 10pt; font-family: Verdana;">SystemCoreClock</span><span style="font-size: 10pt; font-family: Verdana;"><span style="font-style: italic;"> is changed to 24MHz when Value line devices are selected and to 72MHz on other devices.</span></span><span style="font-size: 10pt;"><o:p></o:p></span><span style="font-size: 10pt; font-family: Verdana;"> <br>
+                  </span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">All while(1) loop were removed from all clock setting functions. User has to handle the HSE startup failure.<br>
+                  </span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Additional function <span style="font-weight: bold; font-style: italic;">void SystemCoreClockUpdate (void)</span> is provided.<br>
+                  </span></li></ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;"><span style="text-decoration: underline;">STM32F10x CMSIS Startup files:</span> <span style="font-weight: bold; font-style: italic;">startup_stm32f10x_xx.s</span></span></li><ul><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add new
+startup files for STM32 Low-density Value line devices:
+                  <span style="font-weight: bold; font-style: italic;">startup_stm32f10x_ld_vl.s</span></span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">Add new startup
+files for STM32 Medium-density Value line devices:
+                  <span style="font-weight: bold; font-style: italic;">startup_stm32f10x_md_vl.s</span></span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">SystemInit() function is called from startup file (startup_stm32f10x_xx.s) before to branch to application main.<br>
+To reconfigure the default setting of SystemInit() function, refer to system_stm32f10x.c file <br>
+</span></li><li class="MsoNormal" style=""><span style="font-size: 10pt; font-family: Verdana;">GNU startup file for Low density devices (startup_stm32f10x_ld.s) is updated to fix compilation errors.<br>
+</span></li></ul></ul>
+
+
+<h2 style="background: rgb(51, 102, 255) none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial;"><a name="License"></a><span style="font-size: 12pt; color: white;">License<o:p></o:p></span></h2>
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;">Licensed under MCD-ST Liberty SW License Agreement V2, (the "License"); You may not use this&nbsp;</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;">package</span><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"> except in compliance with the License. You may obtain a copy of the License at:<br><br></span></p><div style="text-align: center;"><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a target="_blank" href="http://www.st.com/software_license_agreement_liberty_v2">http://www.st.com/software_license_agreement_liberty_v2</a></span><br><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"></span></div><span style="font-size: 10pt; font-family: &quot;Verdana&quot;,&quot;sans-serif&quot;; color: black;"><br>Unless
+required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, <br>WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
+the License for the specific language governing permissions and
+limitations under the License.</span>
+<div class="MsoNormal" style="text-align: center;" align="center"><span style="color: black;">
+<hr align="center" size="2" width="100%"></span></div>
+<p class="MsoNormal" style="margin: 4.5pt 0cm 4.5pt 18pt; text-align: center;" align="center"><span style="font-size: 10pt; font-family: Verdana; color: black;">For
+complete documentation on </span><span style="font-size: 10pt; font-family: Verdana;">STM32<span style="color: black;">&nbsp;Microcontrollers
+visit </span><u><span style="color: blue;"><a href="http://www.st.com/internet/mcu/class/1734.jsp" target="_blank">www.st.com/STM32</a></span></u></span><span style="color: black;"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="MsoNormal"><span style="font-size: 10pt;"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="MsoNormal"><o:p>&nbsp;</o:p></p>
+</div></body></html>

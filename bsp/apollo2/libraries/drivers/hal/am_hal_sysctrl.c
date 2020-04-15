@@ -42,7 +42,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 //
-// This is part of revision 1.2.9 of the AmbiqSuite Development Package.
+// This is part of revision 1.2.11 of the AmbiqSuite Development Package.
 //
 //*****************************************************************************
 
@@ -731,8 +731,6 @@ am_hal_sysctrl_buck_update_complete(void)
 static void
 am_hal_sysctrl_buckA_ctimer_isr(void)
 {
-    volatile uint32_t ui32BuckTimer = g_ui32BuckTimer - 1;
-
     //
     // Begin critical section.
     // Although a relatively long time, the following 2us delay is critically
@@ -792,8 +790,6 @@ am_hal_sysctrl_buckA_ctimer_isr(void)
 static void
 am_hal_sysctrl_buckB_ctimer_isr(void)
 {
-    volatile uint32_t ui32BuckTimer = g_ui32BuckTimer - 1;
-
     //
     // Begin critical section.
     // Although a relatively long time, the following 2us delay is critically

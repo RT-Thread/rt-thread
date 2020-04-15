@@ -1,61 +1,47 @@
 /*
- * File      : ls1c_spi.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-10-23     ÇÚÎª±¾       first version
+ * 2017-10-23     å‹¤ä¸ºæœ¬       first version
  */
 
-// Ó²¼şspi½Ó¿ÚµÄÍ·ÎÄ¼ş
+// ç¡¬ä»¶spiæ¥å£çš„å¤´æ–‡ä»¶
 
 #ifndef __OPENLOONGSON_SPI_H
 #define __OPENLOONGSON_SPI_H
 
 
-// SPIÄ£¿é±àºÅ
+// SPIæ¨¡å—ç¼–å·
 #define LS1C_SPI_0                      (0)
 #define LS1C_SPI_1                      (1)
 
-// Æ¬Ñ¡
+// ç‰‡é€‰
 #define LS1C_SPI_CS_0                   (0)
 #define LS1C_SPI_CS_1                   (1)
 #define LS1C_SPI_CS_2                   (2)
 #define LS1C_SPI_CS_3                   (3)
 
-// Ê±ÖÓ¼«ĞÔºÍÏàÎ»
+// æ—¶é’Ÿææ€§å’Œç›¸ä½
 #define SPI_CPOL_1                      (1)
 #define SPI_CPOL_0                      (0)
 #define SPI_CPHA_1                      (1)
 #define SPI_CPHA_0                      (0)
 
 
-// ¼Ä´æÆ÷Æ«ÒÆ
-#define LS1C_SPI_SPCR_OFFSET                (0)     // ¿ØÖÆ¼Ä´æÆ÷
-#define LS1C_SPI_SPSR_OFFSET                (1)     // ×´Ì¬¼Ä´æÆ÷
-#define LS1C_SPI_TxFIFO_OFFSET              (2)     // ·¢ËÍµÄÊı¾İ¼Ä´æÆ÷£¬Óë½ÓÊÕÊı¾İ¼Ä´æÆ÷µÄÆ«ÒÆÏàÍ¬
-#define LS1C_SPI_RxFIFO_OFFSET              (2)     // ½ÓÊÕµÄÊı¾İ¼Ä´æÆ÷£¬Óë·¢ËÍÊı¾İ¼Ä´æÆ÷µÄÆ«ÒÆÏàÍ¬
-#define LS1C_SPI_SPER_OFFSET                (3)     // Íâ²¿¼Ä´æÆ÷
-#define LS1C_SPI_SFC_PARAM_OFFSET           (4)     // ²ÎÊı¿ØÖÆ¼Ä´æÆ÷
-#define LS1C_SPI_SFC_SOFTCS_OFFSET          (5)     // Æ¬Ñ¡¿ØÖÆ¼Ä´æÆ÷
-#define LS1C_SPI_SFC_TIMING_OFFSET          (6)     // Ê±Ğò¿ØÖÆ¼Ä´æÆ÷
+// å¯„å­˜å™¨åç§»
+#define LS1C_SPI_SPCR_OFFSET                (0)     // æ§åˆ¶å¯„å­˜å™¨
+#define LS1C_SPI_SPSR_OFFSET                (1)     // çŠ¶æ€å¯„å­˜å™¨
+#define LS1C_SPI_TxFIFO_OFFSET              (2)     // å‘é€çš„æ•°æ®å¯„å­˜å™¨ï¼Œä¸æ¥æ”¶æ•°æ®å¯„å­˜å™¨çš„åç§»ç›¸åŒ
+#define LS1C_SPI_RxFIFO_OFFSET              (2)     // æ¥æ”¶çš„æ•°æ®å¯„å­˜å™¨ï¼Œä¸å‘é€æ•°æ®å¯„å­˜å™¨çš„åç§»ç›¸åŒ
+#define LS1C_SPI_SPER_OFFSET                (3)     // å¤–éƒ¨å¯„å­˜å™¨
+#define LS1C_SPI_SFC_PARAM_OFFSET           (4)     // å‚æ•°æ§åˆ¶å¯„å­˜å™¨
+#define LS1C_SPI_SFC_SOFTCS_OFFSET          (5)     // ç‰‡é€‰æ§åˆ¶å¯„å­˜å™¨
+#define LS1C_SPI_SFC_TIMING_OFFSET          (6)     // æ—¶åºæ§åˆ¶å¯„å­˜å™¨
 
-// ¼Ä´æÆ÷SPCRÖĞµÄÎ»Óò
+// å¯„å­˜å™¨SPCRä¸­çš„ä½åŸŸ
 #define LS1C_SPI_SPCR_SPIE_BIT              (7)
 #define LS1C_SPI_SPCR_SPIE_MASK             (0x01 << LS1C_SPI_SPCR_SPIE_BIT)
 #define LS1C_SPI_SPCR_SPE_BIT               (6)
@@ -67,75 +53,75 @@
 #define LS1C_SPI_SPCR_SPR_BIT               (0)
 #define LS1C_SPI_SPCR_SPR_MASK              (0x03 << LS1C_SPI_SPCR_SPR_BIT)
 
-// ¼Ä´æÆ÷SPSRÖĞµÄÎ»Óò
+// å¯„å­˜å™¨SPSRä¸­çš„ä½åŸŸ
 #define LS1C_SPI_SPSR_SPIF_BIT              (7)
 #define LS1C_SPI_SPSR_SPIF_MASK             (0x01 << LS1C_SPI_SPSR_SPIF_BIT)
 #define LS1C_SPI_SPSR_WCOL_BIT              (6)
 #define LS1C_SPI_SPSR_WCOL_MASK             (0x01 << LS1C_SPI_SPSR_WCOL_BIT)
 
-// ¼Ä´æÆ÷SPERÖĞµÄÎ»Óò
+// å¯„å­˜å™¨SPERä¸­çš„ä½åŸŸ
 #define LS1C_SPI_SPER_SPRE_BIT              (0)
 #define LS1C_SPI_SPER_SPRE_MASK             (0x3 << LS1C_SPI_SPER_SPRE_BIT)
 
-// ¼Ä´æÆ÷SFC_SOFTCSµÄÎ»Óò
+// å¯„å­˜å™¨SFC_SOFTCSçš„ä½åŸŸ
 #define LS1C_SPI_SFC_SOFTCS_CSN_BIT         (4)
 #define LS1C_SPI_SFC_SOFTCS_CSN_MASK        (0x0f << LS1C_SPI_SFC_SOFTCS_CSN_BIT)
 #define LS1C_SPI_SFC_SOFTCS_CSEN_BIT        (0)
 #define LS1C_SPI_SFC_SOFTCS_CSEN_MASK       (0x0f << LS1C_SPI_SFC_SOFTCS_CSEN_BIT)
 
-// ·¢ËÍ³¬Ê±µÄÃÅÏŞÖµ
+// å‘é€è¶…æ—¶çš„é—¨é™å€¼
 #define LS1C_SPI_TX_TIMEOUT                 (20000)
 
 
 
 /*
- * »ñÈ¡Ö¸¶¨SPIÄ£¿éµÄ»ùµØÖ·
- * @SPIx SPIÄ£¿éµÄ±àºÅ
+ * è·å–æŒ‡å®šSPIæ¨¡å—çš„åŸºåœ°å€
+ * @SPIx SPIæ¨¡å—çš„ç¼–å·
  */
-inline void *ls1c_spi_get_base(unsigned char SPIx);
+void *ls1c_spi_get_base(unsigned char SPIx);
 
 
 /*
- * ÉèÖÃÊ±ÖÓ
- * @spi_base »ùµØÖ·
- * @max_hz ×î´óÆµÂÊ£¬µ¥Î»hz
+ * è®¾ç½®æ—¶é’Ÿ
+ * @spi_base åŸºåœ°å€
+ * @max_hz æœ€å¤§é¢‘ç‡ï¼Œå•ä½hz
  */
 void ls1c_spi_set_clock(void *spi_base, unsigned long max_hz);
 
 
 /*
- * ÉèÖÃÍ¨ĞÅÄ£Ê½(Ê±ÖÓ¼«ĞÔºÍÏàÎ»)
- * @spi_base »ùµØÖ·
- * @cpol Ê±ÖÓ¼«ĞÔ
- * @cpha Ê±ÖÓÏàÎ»
+ * è®¾ç½®é€šä¿¡æ¨¡å¼(æ—¶é’Ÿææ€§å’Œç›¸ä½)
+ * @spi_base åŸºåœ°å€
+ * @cpol æ—¶é’Ÿææ€§
+ * @cpha æ—¶é’Ÿç›¸ä½
  */
 void ls1c_spi_set_mode(void *spi_base, unsigned char cpol, unsigned char cpha);
 
 
 /*
- * ÉèÖÃÖ¸¶¨Æ¬Ñ¡ÎªÖ¸¶¨×´Ì¬
- * @spi_base »ùµØÖ·
- * @cs Æ¬Ñ¡
- * @new_status Æ¬Ñ¡Òı½ÅµÄĞÂ×´Ì¬£¬È¡ÖµÎª0»ò1£¬¼´¸ßµçÆ½»òµÍµçÆ½
+ * è®¾ç½®æŒ‡å®šç‰‡é€‰ä¸ºæŒ‡å®šçŠ¶æ€
+ * @spi_base åŸºåœ°å€
+ * @cs ç‰‡é€‰
+ * @new_status ç‰‡é€‰å¼•è„šçš„æ–°çŠ¶æ€ï¼Œå–å€¼ä¸º0æˆ–1ï¼Œå³é«˜ç”µå¹³æˆ–ä½ç”µå¹³
  */
 void ls1c_spi_set_cs(void *spi_base, unsigned char cs, int new_status);
 
 
 /*
- * Í¨¹ıÖ¸¶¨SPI·¢ËÍ½ÓÊÕÒ»¸ö×Ö½Ú
- * ×¢Òâ£¬ÔÚ¶àÈÎÎñµÄÏµÍ³ÖĞ£¬´Ëº¯ÊıĞèÒª»¥³â¡£
- * ¼´±£Ö¤ÔÚºÍÄ³¸ö´ÓÉè±¸ÊÕ·¢Ä³¸ö×Ö½ÚµÄ¹ı³ÌÖĞ£¬²»ÄÜ±»ÇĞ»»µ½ÆäËüÈÎÎñÍ¬Ê±ÓëÁíÍâµÄÔÚÍ¬Ò»¸öSPI×ÜÏßÉÏµÄ´ÓÉè±¸Í¨ĞÅ
- * ÒòÎªÁúĞ¾1cµÄÃ¿Â·SPIÉÏ¿ÉÄÜ½ÓÓĞ²»Í¬µÄ´ÓÉè±¸£¬Í¨ĞÅÆµÂÊ¡¢Ä£Ê½µÈ¿ÉÄÜ²»Í¬
- * @spi_base »ùµØÖ·
- * @tx_ch ´ı·¢ËÍµÄÊı¾İ
- * @ret ÊÕµ½µÄÊı¾İ
+ * é€šè¿‡æŒ‡å®šSPIå‘é€æ¥æ”¶ä¸€ä¸ªå­—èŠ‚
+ * æ³¨æ„ï¼Œåœ¨å¤šä»»åŠ¡çš„ç³»ç»Ÿä¸­ï¼Œæ­¤å‡½æ•°éœ€è¦äº’æ–¥ã€‚
+ * å³ä¿è¯åœ¨å’ŒæŸä¸ªä»è®¾å¤‡æ”¶å‘æŸä¸ªå­—èŠ‚çš„è¿‡ç¨‹ä¸­ï¼Œä¸èƒ½è¢«åˆ‡æ¢åˆ°å…¶å®ƒä»»åŠ¡åŒæ—¶ä¸å¦å¤–çš„åœ¨åŒä¸€ä¸ªSPIæ€»çº¿ä¸Šçš„ä»è®¾å¤‡é€šä¿¡
+ * å› ä¸ºé¾™èŠ¯1cçš„æ¯è·¯SPIä¸Šå¯èƒ½æ¥æœ‰ä¸åŒçš„ä»è®¾å¤‡ï¼Œé€šä¿¡é¢‘ç‡ã€æ¨¡å¼ç­‰å¯èƒ½ä¸åŒ
+ * @spi_base åŸºåœ°å€
+ * @tx_ch å¾…å‘é€çš„æ•°æ®
+ * @ret æ”¶åˆ°çš„æ•°æ®
  */
 unsigned char ls1c_spi_txrx_byte(void *spi_base, unsigned char tx_ch);
 
 
 /*
- * ´òÓ¡Ö¸¶¨SPIÄ£¿éµÄËùÓĞ¼Ä´æÆ÷µÄÖµ
- * @spi_base »ùµØÖ·
+ * æ‰“å°æŒ‡å®šSPIæ¨¡å—çš„æ‰€æœ‰å¯„å­˜å™¨çš„å€¼
+ * @spi_base åŸºåœ°å€
  */
 void ls1c_spi_print_all_regs_info(void *spi_base);
 

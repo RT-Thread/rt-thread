@@ -1,11 +1,7 @@
 /*
- * File      : mass.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -194,7 +190,7 @@ rt_err_t rt_usbh_storage_get_max_lun(struct uhintf* intf, rt_uint8_t* max_lun)
 {
     struct uinstance* device;    
     struct urequest setup;
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
     if(intf == RT_NULL)
     {
@@ -244,7 +240,7 @@ rt_err_t rt_usbh_storage_reset(struct uhintf* intf)
 {
     struct urequest setup;
     struct uinstance* device;    
-    int timeout = 100;
+    int timeout = USB_TIMEOUT_BASIC;
 
     /* parameter check */
     if(intf == RT_NULL)
@@ -381,7 +377,7 @@ rt_err_t rt_usbh_storage_write10(struct uhintf* intf, rt_uint8_t *buffer,
 rt_err_t rt_usbh_storage_request_sense(struct uhintf* intf, rt_uint8_t* buffer)
 {
     struct ustorage_cbw cmd;
-    int timeout = 200;
+    int timeout = USB_TIMEOUT_LONG;
 
     /* parameter check */
     if(intf == RT_NULL)
@@ -417,7 +413,7 @@ rt_err_t rt_usbh_storage_request_sense(struct uhintf* intf, rt_uint8_t* buffer)
 rt_err_t rt_usbh_storage_test_unit_ready(struct uhintf* intf)
 {
     struct ustorage_cbw cmd;
-    int timeout = 200;
+    int timeout = USB_TIMEOUT_LONG;
 
     /* parameter check */
     if(intf == RT_NULL)
@@ -453,7 +449,7 @@ rt_err_t rt_usbh_storage_test_unit_ready(struct uhintf* intf)
 rt_err_t rt_usbh_storage_inquiry(struct uhintf* intf, rt_uint8_t* buffer)
 {
     struct ustorage_cbw cmd;
-    int timeout = 200;
+    int timeout = USB_TIMEOUT_LONG;
     
     /* parameter check */
     if(intf == RT_NULL)
@@ -490,7 +486,7 @@ rt_err_t rt_usbh_storage_inquiry(struct uhintf* intf, rt_uint8_t* buffer)
 rt_err_t rt_usbh_storage_get_capacity(struct uhintf* intf, rt_uint8_t* buffer)
 {
     struct ustorage_cbw cmd;
-    int timeout = 200;
+    int timeout = USB_TIMEOUT_LONG;
 
     /* parameter check */
     if(intf == RT_NULL)

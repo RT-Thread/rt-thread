@@ -104,21 +104,19 @@ void OSTick_Handler( void )
 {
     uint32_t diff;
 
+	/* enter interrupt */
+    rt_interrupt_enter();
     diff = _tick_distance();
 
     while((diff--) > 0)
     {
         if (rt_thread_self() != RT_NULL)
         {
-        	/* enter interrupt */
-        	rt_interrupt_enter();
-
-        	rt_tick_increase();
-
-        	/* leave interrupt */
-        	rt_interrupt_leave();
+          rt_tick_increase();
         }
     }
+    /* leave interrupt */
+    rt_interrupt_leave();
 }
 
 static void _wakeup_tick_adjust(void)

@@ -1,11 +1,7 @@
 /*
- * File      : rndis.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -182,6 +178,15 @@ struct rndis_reset_msg
     rt_uint32_t	MessageType;
     rt_uint32_t	MessageLength;
     rt_uint32_t	Reserved;
+};
+
+/* Remote NDIS Soft Reset Response */
+struct rndis_reset_cmplt
+{
+    rt_uint32_t	MessageType;
+    rt_uint32_t	MessageLength;
+    rt_uint32_t	Status;
+    rt_uint32_t	AddressingReset;
 };
 
 /* Remote NDIS Indicate Status Message */

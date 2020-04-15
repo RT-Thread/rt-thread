@@ -1,4 +1,14 @@
-// Ò»Ğ©³£ÓÃµÄ¡¢¹²ÓÃµÄ½Ó¿Ú
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     å‹¤ä¸ºæœ¬       first version
+ */
+
+// ä¸€äº›å¸¸ç”¨çš„ã€å…±ç”¨çš„æ¥å£
 
 #ifndef __OPENLOONGSON_PUBLIC_H
 #define __OPENLOONGSON_PUBLIC_H
@@ -7,7 +17,7 @@
 #include <stdio.h>
 
 
-// pmonÌá¹©µÄ´òÓ¡º¯Êı£¬¼ûmain()º¯Êı
+// pmonæä¾›çš„æ‰“å°å‡½æ•°ï¼Œè§main()å‡½æ•°
 struct callvectors {
 	int     (*open) (char *, int, int);
 	int     (*close) (int);
@@ -35,58 +45,58 @@ typedef enum
 }BOOL;
 
 /*
- * ½«Ö¸¶¨¼Ä´æÆ÷µÄÖ¸¶¨Î»ÖÃ1
- * @reg ¼Ä´æÆ÷µØÖ·
- * @bit ĞèÒªÖÃ1µÄÄÇÒ»bit
+ * å°†æŒ‡å®šå¯„å­˜å™¨çš„æŒ‡å®šä½ç½®1
+ * @reg å¯„å­˜å™¨åœ°å€
+ * @bit éœ€è¦ç½®1çš„é‚£ä¸€bit
  */
 void reg_set_one_bit(volatile unsigned int *reg, unsigned int bit);
 
 
 /*
- * ½«Ö¸¶¨¼Ä´æÆ÷µÄÖ¸¶¨Î»ÇåÁã
- * @reg ¼Ä´æÆ÷µØÖ·
- * @bit ĞèÒªÇåÁãµÄÄÇÒ»bit
+ * å°†æŒ‡å®šå¯„å­˜å™¨çš„æŒ‡å®šä½æ¸…é›¶
+ * @reg å¯„å­˜å™¨åœ°å€
+ * @bit éœ€è¦æ¸…é›¶çš„é‚£ä¸€bit
  */
 void reg_clr_one_bit(volatile unsigned int *reg, unsigned int bit);
 
 
 /*
- * »ñÈ¡Ö¸¶¨¼Ä´æÆ÷µÄÖ¸¶¨Î»µÄÖµ
- * @reg ¼Ä´æÆ÷µØÖ·
- * @bit ĞèÒª¶ÁÈ¡ÖµµÄÄÇÒ»bit
- * @ret Ö¸¶¨Î»µÄÖµ
+ * è·å–æŒ‡å®šå¯„å­˜å™¨çš„æŒ‡å®šä½çš„å€¼
+ * @reg å¯„å­˜å™¨åœ°å€
+ * @bit éœ€è¦è¯»å–å€¼çš„é‚£ä¸€bit
+ * @ret æŒ‡å®šä½çš„å€¼
  */
 unsigned int reg_get_bit(volatile unsigned int *reg, unsigned int bit);
 
 
 /*
- * Ïò¼Ä´æÆ÷ÖĞĞ´Èë8bit(Ò»¸ö×Ö½Ú)Êı¾İ
- * @data ´ıĞ´ÈëµÄÊı¾İ
- * @addr ¼Ä´æÆ÷µØÖ·
+ * å‘å¯„å­˜å™¨ä¸­å†™å…¥8bit(ä¸€ä¸ªå­—èŠ‚)æ•°æ®
+ * @data å¾…å†™å…¥çš„æ•°æ®
+ * @addr å¯„å­˜å™¨åœ°å€
  */
 void reg_write_8(unsigned char data, volatile unsigned char *addr);
 
 
 /*
- * ´Ó¼Ä´æÆ÷¶Á³ö8bit(Ò»¸ö×Ö½Ú)Êı¾İ
- * @addr ¼Ä´æÆ÷µØÖ·
- * @ret ¶Á³öµÄÊı¾İ
+ * ä»å¯„å­˜å™¨è¯»å‡º8bit(ä¸€ä¸ªå­—èŠ‚)æ•°æ®
+ * @addr å¯„å­˜å™¨åœ°å€
+ * @ret è¯»å‡ºçš„æ•°æ®
  */
 unsigned char reg_read_8(volatile unsigned char *addr);
 
 
 /*
- * Ïò¼Ä´æÆ÷ÖĞĞ´Ò»¸ö32bitµÄÊı¾İ
- * @data ´ıĞ´ÈëµÄÊı¾İ
- * @addr ¼Ä´æÆ÷µØÖ·
+ * å‘å¯„å­˜å™¨ä¸­å†™ä¸€ä¸ª32bitçš„æ•°æ®
+ * @data å¾…å†™å…¥çš„æ•°æ®
+ * @addr å¯„å­˜å™¨åœ°å€
  */
 void reg_write_32(unsigned int data, volatile unsigned int *addr);
 
 
 /*
- * ´Ó¼Ä´æÆ÷¶Á³öÒ»¸ö32bitÊı¾İ
- * @addr ¼Ä´æÆ÷µØÖ·
- * @ret ¶Á³öµÄÊı¾İ
+ * ä»å¯„å­˜å™¨è¯»å‡ºä¸€ä¸ª32bitæ•°æ®
+ * @addr å¯„å­˜å™¨åœ°å€
+ * @ret è¯»å‡ºçš„æ•°æ®
  */
 unsigned int reg_read_32(volatile unsigned int *addr);
 

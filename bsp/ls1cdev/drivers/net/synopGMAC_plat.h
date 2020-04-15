@@ -1,33 +1,7 @@
-/**\file
- *  This file serves as the wrapper for the platform/OS dependent functions
- *  It is needed to modify these functions accordingly based on the platform and the
- *  OS. Whenever the synopsys GMAC driver ported on to different platform, this file
- *  should be handled at most care.
- *  The corresponding function definitions for non-inline functions are available in 
- *  synopGMAC_plat.c file.
- * \internal
- * -------------------------------------REVISION HISTORY---------------------------
- * Synopsys 				01/Aug/2007		 	   Created
- */
-
 /*
- * File      : synopGMAC_plat.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) chinesebear
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -65,14 +39,6 @@
 typedef int bool;
 //typedef unsigned long dma_addr_t;
 
-//sw
-/* write/read MMIO register */
-#define writeb(val, addr) (*(volatile u8*)(addr) = (val))
-#define writew(val, addr) (*(volatile u16*)(addr) = (val))
-#define writel(val, addr) (*(volatile u32*)(addr) = (val))
-#define readb(addr) (*(volatile u8*)(addr))
-#define readw(addr) (*(volatile u16*)(addr))
-#define readl(addr) (*(volatile u32*)(addr))
 
 
 #define KUSEG_ADDR              0x0
@@ -117,8 +83,8 @@ typedef int bool;
 */
 
 //sw: nothing to display
-#define TR0(fmt, args...) rt_kprintf(fmt, ##args)		
-#define TR(fmt, args...)  rt_kprintf(fmt, ##args) 
+#define TR0(fmt, args...) //rt_kprintf(fmt, ##args)		
+#define TR(fmt, args...)  //rt_kprintf(fmt, ##args) 
 //#define TR rt_kprintf
 
 //typedef int bool;

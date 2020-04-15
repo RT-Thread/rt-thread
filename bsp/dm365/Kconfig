@@ -1,0 +1,56 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config SOC_DM365
+    bool    
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+comment "BSP configure"
+
+config RT_USING_GPIO_DEVICE
+    bool "Using GPIO"
+    default y    
+
+config RT_USING_I2C_CONTROL
+    bool "Using I2C control"
+    select RT_USING_I2C
+    default y
+    
+config RT_USING_SDIO_CONTROL
+    bool "Using SDIO control"
+    select RT_USING_SDIO
+    default y
+
+config RT_USING_SPI_CONTROL
+    bool "Using SPI control"
+    depends on RT_USING_SPI
+    default y 
+
+config RT_USING_EMAC
+    bool "Using EMAC control"
+    depends on RT_USING_LWIP
+    default y
+
+config RT_MMU_PTE_SIZE
+    int "The first page table for MMU"
+    default 4096
+

@@ -1,21 +1,7 @@
 /*
- * File      : devfs.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -111,7 +97,7 @@ int dfs_device_fs_close(struct dfs_fd *file)
 
         root_dirent = (struct device_dirent *)file->data;
         RT_ASSERT(root_dirent != RT_NULL);
-        
+
         /* release dirent */
         rt_free(root_dirent);
         return RT_EOK;
@@ -147,7 +133,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         struct rt_object_information *information;
         struct device_dirent *root_dirent;
         rt_uint32_t count = 0;
-        
+
         /* lock scheduler */
         rt_enter_critical();
 
@@ -159,8 +145,8 @@ int dfs_device_fs_open(struct dfs_fd *file)
             count ++;
         }
 
-        root_dirent = (struct device_dirent *)rt_malloc(sizeof(struct device_dirent) + 
-            count * sizeof(rt_device_t));
+        root_dirent = (struct device_dirent *)rt_malloc(sizeof(struct device_dirent) +
+                      count * sizeof(rt_device_t));
         if (root_dirent != RT_NULL)
         {
             root_dirent->devices = (rt_device_t *)(root_dirent + 1);
@@ -179,7 +165,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
 
         /* set data */
         file->data = root_dirent;
-        
+
         return RT_EOK;
     }
 
@@ -192,7 +178,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
     {
         /* use device fops */
         file->fops = device->fops;
-        file->data = (void*)device;
+        file->data = (void *)device;
 
         /* use fops */
         if (file->fops->open)
@@ -228,7 +214,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
         st->st_dev = 0;
 
         st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-            S_IWUSR | S_IWGRP | S_IWOTH;
+                      S_IWUSR | S_IWGRP | S_IWOTH;
         st->st_mode &= ~S_IFREG;
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
 
@@ -247,7 +233,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
             st->st_dev = 0;
 
             st->st_mode = S_IRUSR | S_IRGRP | S_IROTH |
-                S_IWUSR | S_IWGRP | S_IWOTH;
+                          S_IWUSR | S_IWGRP | S_IWOTH;
 
             if (dev_id->type == RT_Device_Class_Char)
                 st->st_mode |= S_IFCHR;
@@ -307,7 +293,7 @@ static int dfs_device_fs_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     return mask;
 }
 
-static const struct dfs_file_ops _device_fops = 
+static const struct dfs_file_ops _device_fops =
 {
     dfs_device_fs_open,
     dfs_device_fs_close,
@@ -320,7 +306,7 @@ static const struct dfs_file_ops _device_fops =
     dfs_device_fs_poll,
 };
 
-static const struct dfs_filesystem_ops _device_fs = 
+static const struct dfs_filesystem_ops _device_fs =
 {
     "devfs",
     DFS_FS_FLAG_DEFAULT,

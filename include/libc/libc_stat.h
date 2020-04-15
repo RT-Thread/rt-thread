@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef LIBC_STAT_H__
 #define LIBC_STAT_H__
 

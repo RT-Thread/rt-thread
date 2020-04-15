@@ -1,11 +1,7 @@
 /*
- * File      : drv_emac.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009-2013 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -463,7 +459,7 @@ struct pbuf *lpc_emac_rx(rt_device_t dev)
     return p;
 }
 
-int lpc_emac_hw_init(void)
+int rt_hw_emac_init(void)
 {
     rt_event_init(&tx_event, "tx_event", RT_IPC_FLAG_FIFO);
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
@@ -494,7 +490,7 @@ int lpc_emac_hw_init(void)
     eth_device_init(&(lpc_emac_device.parent), "e0");
     return 0;
 }
-INIT_DEVICE_EXPORT(lpc_emac_hw_init);
+INIT_DEVICE_EXPORT(rt_hw_emac_init);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>

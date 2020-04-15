@@ -1,19 +1,41 @@
 import os
 
+import uuid
+def get_mac_address(): 
+    mac=uuid.UUID(int = uuid.getnode()).hex[-12:] 
+    return "#define AUTOMAC".join([str(int(e/2) + 1) + '  0x' + mac[e:e+2] + '\n' for e in range(5,11,2)])
+
+header = '''
+#ifndef __MAC_AUTO_GENERATE_H__
+#define __MAC_AUTO_GENERATE_H__
+
+/* Automatically generated file; DO NOT EDIT. */
+/* mac configure file for RT-Thread qemu */
+
+#define AUTOMAC0  0x52
+#define AUTOMAC1  0x54
+#define AUTOMAC2  0x00
+#define AUTOMAC'''
+
+end = '''
+#endif
+'''
+
+automac_h_fn = os.path.join(os.path.dirname(__file__), 'drivers', 'automac.h')
+with open(automac_h_fn, 'w') as f:
+    f.write(header + get_mac_address() + end)
+
 # toolchains options
 ARCH='arm'
-CPU='vexpress-a9'
+CPU='cortex-a'
 CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
-if  CROSS_TOOL == 'gcc':
-    PLATFORM    = 'gcc'
-    EXEC_PATH   = '/opt/gcc-arm-none-eabi-4_8-2014q1_gri/bin'
-elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
-    EXEC_PATH   = 'C:/Keil'
+# only support GNU GCC compiler.
+PLATFORM    = 'gcc'
+EXEC_PATH   = '/usr/bin'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -32,10 +54,11 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
+    STRIP = PREFIX + 'strip'
 
     DEVICE = ' -march=armv7-a -marm -msoft-float'
     CFLAGS = DEVICE + ' -Wall'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ -I.'
     LINK_SCRIPT = 'link.lds'
     LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors'+\
                       ' -T %s' % LINK_SCRIPT
@@ -52,52 +75,13 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2'
 
-    CXXFLAGS = CFLAGS
+    CXXFLAGS = CFLAGS + ' -Woverloaded-virtual -fno-exceptions -fno-rtti'
+
+    M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
+    M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+                                    ' -shared -fPIC -nostartfiles -nostdlib -static-libgcc'
+    M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' +\
                   SIZE + ' $TARGET \n'
-
-elif PLATFORM == 'armcc':
-    # toolchains
-    CC = 'armcc'
-    CXX = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
-    TARGET_EXT = 'axf'
-
-    DEVICE = ' --device DARMP'
-    CFLAGS = DEVICE + ' --apcs=interwork'
-    AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter rtthread.sct'
-
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
-    LFLAGS += ' --libpath ' + EXEC_PATH + '/ARM/RV31/LIB'
-
-    EXEC_PATH += '/arm/bin40/'
-
-    if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
-        AFLAGS += ' -g'
-    else:
-        CFLAGS += ' -O2'
-
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
-
-elif PLATFORM == 'iar':
-    # toolchains
-    CC = 'iccarm'
-    AS = 'iasmarm'
-    AR = 'iarchive'
-    LINK = 'ilinkarm'
-    TARGET_EXT = 'out'
-
-    DEVICE = ' --cpu DARMP'
-
-    CFLAGS = ''
-    AFLAGS = ''
-    LFLAGS = ' --config rtthread.icf'
-
-    EXEC_PATH += '/arm/bin/'
-    RT_USING_MINILIBC = False
-    POST_ACTION = ''
