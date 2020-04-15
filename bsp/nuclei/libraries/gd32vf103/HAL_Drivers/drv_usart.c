@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-07-23     tyustli      first version
- * 2020-04-02     fanghuaqi    Modified for Nuclei
+ * 2020-04-02     hqfang       modified for Nuclei
  */
 
 #include <drv_usart.h>
@@ -19,7 +19,8 @@
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
-enum {
+enum
+{
 #ifdef BSP_USING_UART0
     GDUART0_INDEX,
 #endif
@@ -37,38 +38,50 @@ enum {
 #endif
 };
 
-static struct gd32_uart_config uart_config[] = {
+static struct gd32_uart_config uart_config[] =
+{
 #ifdef BSP_USING_UART0
-        { "uart0",
+    {
+        "uart0",
         USART0,
-        USART0_IRQn, },
+        USART0_IRQn,
+    },
 #endif
 #ifdef BSP_USING_UART1
-        { "uart1",
+    {
+        "uart1",
         USART1,
-        USART1_IRQn, },
+        USART1_IRQn,
+    },
 #endif
 #ifdef BSP_USING_UART2
-        { "uart2",
+    {
+        "uart2",
         USART2,
-        USART2_IRQn, },
+        USART2_IRQn,
+    },
 #endif
 #ifdef BSP_USING_UART3
-        { "uart3",
+    {
+        "uart3",
         USART3,
-        USART3_IRQn, },
+        USART3_IRQn,
+    },
 #endif
 #ifdef BSP_USING_UART4
-        { "uart4",
+    {
+        "uart4",
         UART4,
-        UART4_IRQn, },
+        UART4_IRQn,
+    },
 #endif
 };
 
 static struct gd32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
 
 static rt_err_t gd32_configure(struct rt_serial_device *serial,
-        struct serial_configure *cfg) {
+                               struct serial_configure *cfg)
+{
     struct gd32_uart *usart_obj;
     struct gd32_uart_config *usart;
     RT_ASSERT(serial != RT_NULL);
@@ -81,7 +94,8 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial,
     usart_deinit(usart->uart_base);
     usart_baudrate_set(usart->uart_base, cfg->baud_rate);
 
-    switch (cfg->data_bits) {
+    switch (cfg->data_bits)
+    {
     case DATA_BITS_8:
         usart_word_length_set(usart->uart_base, USART_WL_8BIT);
         break;
@@ -94,7 +108,8 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial,
         break;
     }
 
-    switch (cfg->stop_bits) {
+    switch (cfg->stop_bits)
+    {
     case STOP_BITS_1:
         usart_stop_bit_set(usart->uart_base, USART_STB_1BIT);
         break;
@@ -106,7 +121,8 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial,
         break;
     }
 
-    switch (cfg->parity) {
+    switch (cfg->parity)
+    {
     case PARITY_NONE:
         usart_parity_config(usart->uart_base, USART_PM_NONE);
         break;
@@ -130,7 +146,8 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial,
 }
 
 static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd,
-        void *arg) {
+                             void *arg)
+{
     struct gd32_uart *usart_obj;
     struct gd32_uart_config *usart;
 
@@ -139,7 +156,8 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd,
     usart = usart_obj->config;
     RT_ASSERT(usart != RT_NULL);
 
-    switch (cmd) {
+    switch (cmd)
+    {
     case RT_DEVICE_CTRL_CLR_INT:
         ECLIC_DisableIRQ(usart->irqn);
         usart_interrupt_disable(usart->uart_base, USART_INT_RBNE);
@@ -154,7 +172,8 @@ static rt_err_t gd32_control(struct rt_serial_device *serial, int cmd,
     return RT_EOK;
 }
 
-static int gd32_putc(struct rt_serial_device *serial, char ch) {
+static int gd32_putc(struct rt_serial_device *serial, char ch)
+{
     struct gd32_uart *usart_obj;
     struct gd32_uart_config *usart;
 
@@ -169,7 +188,8 @@ static int gd32_putc(struct rt_serial_device *serial, char ch) {
     return 1;
 }
 
-static int gd32_getc(struct rt_serial_device *serial) {
+static int gd32_getc(struct rt_serial_device *serial)
+{
     int ch;
     struct gd32_uart *usart_obj;
     struct gd32_uart_config *usart;
@@ -180,7 +200,8 @@ static int gd32_getc(struct rt_serial_device *serial) {
     RT_ASSERT(usart != RT_NULL);
 
     ch = -1;
-    if (RESET != usart_flag_get(usart->uart_base, USART_FLAG_RBNE)) {
+    if (RESET != usart_flag_get(usart->uart_base, USART_FLAG_RBNE))
+    {
         ch = usart_data_receive(usart->uart_base) & 0xff;
     }
 
@@ -188,10 +209,12 @@ static int gd32_getc(struct rt_serial_device *serial) {
 }
 
 static const struct rt_uart_ops gd32_uart_ops = { gd32_configure, gd32_control,
-        gd32_putc, gd32_getc,
-        RT_NULL };
+           gd32_putc, gd32_getc,
+           RT_NULL
+};
 
-static void usart_isr(struct rt_serial_device *serial) {
+static void usart_isr(struct rt_serial_device *serial)
+{
     struct gd32_uart *usart_obj;
     struct gd32_uart_config *usart;
 
@@ -202,20 +225,26 @@ static void usart_isr(struct rt_serial_device *serial) {
 
     if ((usart_interrupt_flag_get(usart->uart_base, USART_INT_FLAG_RBNE)
             != RESET)
-            && (RESET != usart_flag_get(usart->uart_base, USART_FLAG_RBNE))) {
+            && (RESET != usart_flag_get(usart->uart_base, USART_FLAG_RBNE)))
+    {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
         usart_interrupt_flag_clear(usart->uart_base, USART_INT_FLAG_RBNE);
         usart_flag_clear(usart->uart_base, USART_FLAG_RBNE);
-    } else {
-        if (usart_flag_get(usart->uart_base, USART_FLAG_CTSF) != RESET) {
+    }
+    else
+    {
+        if (usart_flag_get(usart->uart_base, USART_FLAG_CTSF) != RESET)
+        {
             usart_flag_clear(usart->uart_base, USART_FLAG_CTSF);
         }
 
-        if (usart_flag_get(usart->uart_base, USART_FLAG_LBDF) != RESET) {
+        if (usart_flag_get(usart->uart_base, USART_FLAG_LBDF) != RESET)
+        {
             usart_flag_clear(usart->uart_base, USART_FLAG_LBDF);
         }
 
-        if (usart_flag_get(usart->uart_base, USART_FLAG_TC) != RESET) {
+        if (usart_flag_get(usart->uart_base, USART_FLAG_TC) != RESET)
+        {
             usart_flag_clear(usart->uart_base, USART_FLAG_TC);
         }
     }
@@ -223,7 +252,8 @@ static void usart_isr(struct rt_serial_device *serial) {
 
 #ifdef BSP_USING_UART0
 
-void USART0_IRQHandler(void) {
+void USART0_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     usart_isr(&uart_obj[GDUART0_INDEX].serial);
@@ -235,7 +265,8 @@ void USART0_IRQHandler(void) {
 
 #ifdef BSP_USING_UART1
 
-void USART1_IRQHandler(void) {
+void USART1_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     usart_isr(&uart_obj[GDUART1_INDEX].serial);
@@ -247,7 +278,8 @@ void USART1_IRQHandler(void) {
 
 #ifdef BSP_USING_UART2
 
-void USART2_IRQHandler(void) {
+void USART2_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     usart_isr(&uart_obj[GDUART2_INDEX].serial);
@@ -259,7 +291,8 @@ void USART2_IRQHandler(void) {
 
 #ifdef BSP_USING_UART3
 
-void UART3_IRQHandler(void) {
+void UART3_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     usart_isr(&uart_obj[GDUART3_INDEX].serial);
@@ -271,7 +304,8 @@ void UART3_IRQHandler(void) {
 
 #ifdef BSP_USING_UART4
 
-void UART4_IRQHandler(void) {
+void UART4_IRQHandler(void)
+{
     rt_interrupt_enter();
 
     usart_isr(&uart_obj[GDUART4_INDEX].serial);
@@ -281,7 +315,8 @@ void UART4_IRQHandler(void) {
 
 #endif
 
-int rt_hw_usart_init(void) {
+int rt_hw_usart_init(void)
+{
     rt_size_t obj_num;
     int index;
 
@@ -289,7 +324,8 @@ int rt_hw_usart_init(void) {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
-    for (index = 0; index < obj_num; index++) {
+    for (index = 0; index < obj_num; index++)
+    {
         /* init UART object */
         uart_obj[index].config = &uart_config[index];
         uart_obj[index].serial.ops = &gd32_uart_ops;
@@ -297,9 +333,9 @@ int rt_hw_usart_init(void) {
 
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[index].serial,
-                uart_obj[index].config->name,
-                RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX
-                        | RT_DEVICE_FLAG_INT_TX, &uart_obj[index]);
+                                       uart_obj[index].config->name,
+                                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX
+                                       | RT_DEVICE_FLAG_INT_TX, &uart_obj[index]);
         RT_ASSERT(result == RT_EOK);
     }
 

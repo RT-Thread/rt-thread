@@ -5,9 +5,9 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-04-08     Huaqi             first version
+ * 2020-04-08     hqfang            first version
  */
- 
+
 #ifndef __DRV_CONFIG_H__
 #define __DRV_CONFIG_H__
 
