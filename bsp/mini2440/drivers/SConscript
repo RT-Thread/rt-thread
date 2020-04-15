@@ -27,7 +27,7 @@ if GetDepend('RT_MINI2440_LCD_X35'):
     src += ['lcd_x35.c']
 
 if GetDepend('PKG_USING_GUIENGINE'):
-	src += ['touch.c']
+    src += ['touch.c']
 
 if GetDepend('RT_USING_SDIO'):
     src += ['s3cmci.c']
