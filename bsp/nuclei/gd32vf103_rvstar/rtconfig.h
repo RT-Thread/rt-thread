@@ -47,7 +47,6 @@
 #define RT_VER_NUM 0x40003
 #define ARCH_RISCV
 #define ARCH_RISCV32
-#define ARCH_NUCLEI
 
 /* RT-Thread Components */
 

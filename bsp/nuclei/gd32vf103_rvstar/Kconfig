@@ -21,7 +21,6 @@ source "board/Kconfig"
 
 config SOC_GD32VF103
     bool
-    select ARCH_NUCLEI
     select ARCH_RISCV32
     select PKG_USING_NUCLEI_SDK
     select RT_USING_COMPONENTS_INIT
