@@ -17,7 +17,7 @@
 
 Windows环境下推荐使用[env工具][1]进行编译。
 
-首先下载Linux上的gcc工具，版本为gcc-arm-8.3选择aarch64-elf就可以。
+首先下载windows上的aarch64的gcc交叉编译工具，版本为gcc-arm-8.3选择aarch64-elf就可以。
 
 将推荐将gcc解压到`\env\tools\gnu_gcc\arm_gcc`目录下。
 
