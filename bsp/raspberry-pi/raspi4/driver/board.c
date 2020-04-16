@@ -75,10 +75,6 @@ void rt_hw_board_init(void)
     rt_hw_interrupt_init(); // in libcpu/interrupt.c. Set some data structures, no operation on device
     rt_hw_vector_init();    // in libcpu/interrupt.c. == rt_cpu_vector_set_base((rt_ubase_t)&system_vectors);
 
-    /* initialize timer for os tick */
-    rt_hw_timer_init();
-    rt_thread_idle_sethook(idle_wfi);
-
     /* initialize uart */
     rt_hw_uart_init();      // driver/drv_uart.c
 #ifdef RT_USING_CONSOLE
@@ -91,6 +87,9 @@ void rt_hw_board_init(void)
     rt_kprintf("heap: 0x%08x - 0x%08x\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
+        /* initialize timer for os tick */
+    rt_hw_timer_init();
+    rt_thread_idle_sethook(idle_wfi);
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

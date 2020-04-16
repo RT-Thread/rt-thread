@@ -1,6 +1,7 @@
 #ifndef __RASPI4_H__
 #define __RASPI4_H__
 
+#define ARM_GIC_NR_IRQS     512
 #define INTC_BASE   0xff800000
 #define GIC_V2_DISTRIBUTOR_BASE     (INTC_BASE + 0x00041000)
 #define GIC_V2_CPU_INTERFACE_BASE   (INTC_BASE + 0x00042000)
