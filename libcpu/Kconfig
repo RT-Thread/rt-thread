@@ -105,10 +105,6 @@ config ARCH_RISCV64
     select ARCH_CPU_64BIT
     bool
 
-config ARCH_NUCLEI
-    select ARCH_RISCV
-    bool
-
 config ARCH_IA32
     bool
 
