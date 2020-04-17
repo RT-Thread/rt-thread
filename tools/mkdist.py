@@ -345,6 +345,13 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
+    # copy nuclei bsp libiary files
+    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'nuclei':
+        print("=> copy nuclei bsp library")
+        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+        library_dir  = os.path.join(dist_dir, 'libraries')
+        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
+
     # do bsp special dist handle
     if 'dist_handle' in Env:
         print("=> start dist handle")
