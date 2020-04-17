@@ -12,6 +12,7 @@
 #define BOARD_H__
 
 #include <stdint.h>
+#include "iomap.h"
 
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
@@ -22,4 +23,3 @@ extern unsigned char __bss_end;
 void rt_hw_board_init(void);
 
 #endif
-
