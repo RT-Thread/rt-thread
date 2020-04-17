@@ -9,13 +9,13 @@ if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
 if CROSS_TOOL == 'gcc':
-    PLATFORM 	= 'gcc'
-    EXEC_PATH 	= 'D:/Software/Nuclei/gcc/bin'
+    PLATFORM  = 'gcc'
+    EXEC_PATH = 'D:/Software/Nuclei/gcc/bin'
 else:
     print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
 
 # if os.getenv('RTT_EXEC_PATH'):
-# 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+#     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
 # Fixed configurations below

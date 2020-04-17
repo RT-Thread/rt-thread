@@ -1,13 +1,13 @@
 # for module compiling
 import os
 Import('RTT_ROOT')
+from building import *
 
-cwd = str(Dir('#'))
+cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
 ASFLAGS = ' -I' + cwd
-
 
 for d in list:
     path = os.path.join(cwd, d)
