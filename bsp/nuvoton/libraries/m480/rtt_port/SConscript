@@ -1,0 +1,11 @@
+﻿# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd]
+
+group = DefineGroup('m480_rttport', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

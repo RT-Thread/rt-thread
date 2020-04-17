@@ -1,0 +1,20 @@
+﻿# RT-Thread building script for component
+
+from building import *
+
+
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+src = Split("""
+NuClockConfig/nutool_modclkcfg.c
+NuPinConfig/nutool_pincfg.c
+""")
+
+src += Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd, cwd + '/NuClockConfig', cwd + '/NuPinConfig']
+
+group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
