@@ -1,9 +1,5 @@
 import os
 
-# panel options
-# 'PNL_A70','PNL_N35', 'PNL_T35' , 'PNL_X35'
-RT_USING_LCD_TYPE = 'PNL_T35'
-
 # toolchains options
 ARCH     = 'arm'
 CPU      = 's3c24x0'
