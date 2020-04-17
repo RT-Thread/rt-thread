@@ -155,7 +155,7 @@ RT-Thread系统完全开源，3.1.0 及以前的版本遵循 GPL V2 + 开源许�
 
 ```
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  */
