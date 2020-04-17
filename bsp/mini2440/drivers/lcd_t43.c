@@ -1,41 +1,35 @@
 /*
- * File      : lcd_t35.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2010-01-01     bernard      first version from QiuYi's driver
+ * 2020-04-12     Jonne        first version from 4.3 inch lcd(480x272)
  */
-
 #include <rtthread.h>
 #include <s3c24x0.h>
 
-
 /* LCD driver for N3'5 */
-#define LCD_WIDTH 240
-#define LCD_HEIGHT 320
+#define LCD_WIDTH 480
+#define LCD_HEIGHT 272
 #define LCD_PIXCLOCK 4
 
-#define LCD_RIGHT_MARGIN 36
-#define LCD_LEFT_MARGIN 19
-#define LCD_HSYNC_LEN 5
+#define LCD_RIGHT_MARGIN 2
+#define LCD_LEFT_MARGIN 2
+#define LCD_HSYNC_LEN 41
 
-#define LCD_UPPER_MARGIN 1
-#define LCD_LOWER_MARGIN 5
-#define LCD_VSYNC_LEN 1
+#define LCD_UPPER_MARGIN 2
+#define LCD_LOWER_MARGIN 2
+#define LCD_VSYNC_LEN 10
 
 #define LCD_XSIZE  LCD_WIDTH
 #define LCD_YSIZE  LCD_HEIGHT
 #define SCR_XSIZE  LCD_WIDTH
 #define SCR_YSIZE  LCD_HEIGHT
 
-#define RT_HW_LCD_WIDTH     LCD_WIDTH
-#define RT_HW_LCD_HEIGHT    LCD_HEIGHT
+#define RT_HW_LCD_WIDTH         LCD_WIDTH
+#define RT_HW_LCD_HEIGHT        LCD_HEIGHT
 
 #define MVAL        (13)
 #define MVAL_USED   (0)     //0=each frame   1=rate by MVAL
@@ -180,11 +174,11 @@ static rt_err_t rt_lcd_init (rt_device_t dev)
 #define M5D(n)  ((n)&0x1fffff)
 #define LCD_ADDR ((rt_uint32_t)_rt_framebuffer)
     LCDCON1 = (LCD_PIXCLOCK << 8) | (3 <<  5) | (12 << 1);
-    LCDCON2 = (LCD_UPPER_MARGIN << 24) | ((LCD_HEIGHT - 1) << 14) | (LCD_LOWER_MARGIN << 6) | (LCD_VSYNC_LEN << 0);
-    LCDCON3 = (LCD_RIGHT_MARGIN << 19) | ((LCD_WIDTH  - 1) <<  8) | (LCD_LEFT_MARGIN << 0);
-    LCDCON4 = (13 <<  8) | (LCD_HSYNC_LEN << 0);
+    LCDCON2 = ((LCD_UPPER_MARGIN - 1) << 24) | ((LCD_HEIGHT - 1) << 14) | ((LCD_LOWER_MARGIN - 1) << 6) | ((LCD_VSYNC_LEN - 1) << 0);
+    LCDCON3 = ((LCD_RIGHT_MARGIN - 1) << 19) | ((LCD_WIDTH  - 1) <<  8) | ((LCD_LEFT_MARGIN - 1) << 0);
+    LCDCON4 = (13 <<  8) | ((LCD_HSYNC_LEN - 1) << 0);
 #if !defined(LCD_CON5)
-    #define LCD_CON5 ((1<<11) | (1 << 9) | (1 << 8) | (1 << 3) | (1 << 0))
+    #define LCD_CON5 ((1<<11) | (0<<10) | (1<<9) | (1<<8) | (1<<0))
 #endif
     LCDCON5   =  LCD_CON5;
 
