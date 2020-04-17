@@ -1,0 +1,24 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+
+gic400_group = Split('''
+gic_pl400.c
+''')
+
+gic500_group = Split('''
+gic_pl500.c
+''')
+
+src = ()
+if GetDepend('BSP_USING_GIC400'):
+	src = gic400_group
+if GetDepend('BSP_USING_GIC500'):
+	src = gic500_group
+
+group = DefineGroup('gic', src, depend = ['BSP_USING_GIC'], CPPPATH = CPPPATH)
+
+Return('group')
