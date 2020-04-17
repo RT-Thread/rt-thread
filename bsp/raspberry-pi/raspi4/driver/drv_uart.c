@@ -16,12 +16,6 @@
 #include "drv_uart.h"
 #include "drv_gpio.h"
 
-#define UART0_BASE            (0xFE000000 + 0x00201000)
-#define PL011_BASE            UART0_BASE
-#define IRQ_PL011             (121 + 32)
-
-#define UART_REFERENCE_CLOCK 48000000
-
 struct hw_uart_device
 {
     rt_ubase_t hw_base;
