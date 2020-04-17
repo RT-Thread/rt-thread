@@ -25,7 +25,7 @@ void tcp_senddata(const char *url, int port, int length)
     if(RT_NULL == buffer_ptr)
     {
         /* 申请内存失败 */
-        rt_kprintf("Not enough memory\n");
+        rt_kprintf("No memory\n");
         return;        
     }
     
