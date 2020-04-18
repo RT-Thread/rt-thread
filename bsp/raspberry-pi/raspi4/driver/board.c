@@ -18,10 +18,6 @@
 #include "mmu.h"
 
 static rt_uint64_t timerStep;
-// 0x40, 0x44, 0x48, 0x4c: Core 0~3 Timers interrupt control
-#define CORE0_TIMER_IRQ_CTRL    HWREG32(0xFF800040)
-#define TIMER_IRQ               30
-#define NON_SECURE_TIMER_IRQ    (1 << 1)
 
 int rt_hw_get_gtimer_frq(void);
 void rt_hw_set_gtimer_val(rt_uint64_t value);
@@ -29,7 +25,7 @@ int rt_hw_get_gtimer_val(void);
 int rt_hw_get_cntpct_val(void);
 void rt_hw_gtimer_enable(void);
 
-void core0_timer_enable_interrupt_controller()
+void core0_timer_enable_interrupt_controller(void)
 {
     CORE0_TIMER_IRQ_CTRL |= NON_SECURE_TIMER_IRQ;
 }
