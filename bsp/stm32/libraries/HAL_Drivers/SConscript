@@ -72,10 +72,10 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
     src += ['drv_flash/drv_flash_l4.c']
-	
+
 if GetDepend('RT_USING_HWCRYPTO'):
     src += ['drv_crypto.c']
-	
+
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 
@@ -90,6 +90,9 @@ if GetDepend(['BSP_USING_PULSE_ENCODER']):
 
 if GetDepend(['BSP_USING_OSPI']):
     src += ['drv_ospi.c']
+
+if GetDepend(['BSP_USING_USBH']):
+    src += ['drv_usbh.c']
 
 src += ['drv_common.c']
 

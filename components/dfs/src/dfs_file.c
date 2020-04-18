@@ -369,8 +369,7 @@ int dfs_file_stat(const char *path, struct stat *buf)
 
     if ((fs = dfs_filesystem_lookup(fullpath)) == NULL)
     {
-        LOG_E(
-                "can't find mounted filesystem on this path:%s", fullpath);
+        LOG_E("can't find mounted filesystem on this path:%s", fullpath);
         rt_free(fullpath);
 
         return -ENOENT;
@@ -399,8 +398,7 @@ int dfs_file_stat(const char *path, struct stat *buf)
         if (fs->ops->stat == NULL)
         {
             rt_free(fullpath);
-            LOG_E(
-                    "the filesystem didn't implement this function");
+            LOG_E("the filesystem didn't implement this function");
 
             return -ENOSYS;
         }
@@ -565,7 +563,7 @@ void ls(const char *pathname)
                     }
                     else
                     {
-                        rt_kprintf("%-25lu\n", stat.st_size);
+                        rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
                     }
                 }
                 else

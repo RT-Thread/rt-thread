@@ -344,13 +344,13 @@ ext:
 
 
 uffs_FlashOps g_femu_ops_ecc_hw_auto = {
-	femu_hw_auto_InitFlash,				// InitFlash()
-	femu_ReleaseFlash,					// ReleaseFlash()
-	NULL,								// ReadPage()
+	femu_hw_auto_InitFlash,			// InitFlash()
+	femu_ReleaseFlash,			// ReleaseFlash()
+	NULL,					// ReadPage()
 	femu_hw_auto_ReadPageWithLayout,	// ReadPageWithLayout()
-	NULL,								// WritePage()
-	femu_hw_auto_WritePageWithLayout,	// WirtePageWithLayout()
-	NULL,						// IsBadBlock(), let UFFS take care of it.
-	NULL,						// MarkBadBlock(), let UFFS take care of it.
+	NULL,					// WritePage()
+	femu_hw_auto_WritePageWithLayout,	// WritePageWithLayout()
+	NULL,					// IsBadBlock(), let UFFS take care of it.
+	NULL,					// MarkBadBlock(), let UFFS take care of it.
 	femu_EraseBlock,			// EraseBlock()
 };

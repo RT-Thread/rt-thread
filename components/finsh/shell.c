@@ -15,7 +15,7 @@
  * 2011-02-23     Bernard      fix variable section end issue of finsh shell
  *                             initialization when use GNU GCC compiler.
  * 2016-11-26     armink       add password authentication
- * 2018-07-02     aozima       add custome prompt support.
+ * 2018-07-02     aozima       add custom prompt support.
  */
 
 #include <rthw.h>

@@ -19,6 +19,7 @@
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
+    int rc = 0;
     rt_device_t device;
     rt_pipe_t *pipe;
 
@@ -31,6 +32,11 @@ static int pipe_fops_open(struct dfs_fd *fd)
     if (device->ref_count == 0)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            rc = -RT_ENOMEM;
+            goto __exit;
+        }
     }
 
     switch (fd->flags & O_ACCMODE)
@@ -48,9 +54,10 @@ static int pipe_fops_open(struct dfs_fd *fd)
     }
     device->ref_count ++;
 
+__exit:
     rt_mutex_release(&(pipe->lock));
 
-    return 0;
+    return rc;
 }
 
 static int pipe_fops_close(struct dfs_fd *fd)
@@ -90,7 +97,8 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
-        rt_ringbuffer_destroy(pipe->fifo);
+        if (pipe->fifo != RT_NULL)
+            rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
@@ -315,18 +323,29 @@ static const struct dfs_file_ops pipe_fops =
 rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
+    rt_err_t ret = RT_EOK;
 
-    if (device == RT_NULL) return -RT_EINVAL;
+    if (device == RT_NULL)
+    {
+        ret = -RT_EINVAL;
+        goto __exit;
+    }
+    
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     if (pipe->fifo == RT_NULL)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            ret = -RT_ENOMEM;
+        }
     }
 
     rt_mutex_release(&(pipe->lock));
 
-    return RT_EOK;
+__exit:
+    return ret;
 }
 
 rt_err_t  rt_pipe_close  (rt_device_t device)
