@@ -31,6 +31,16 @@ EXEC_PATH = r'E:/env_released_1.1.2/env/tools/gnu_gcc/arm_gcc/gcc-arm-8.3-2019.0
 
 然后在`bsp\raspberry-pi\raspi3-64\`下输入scons编译即可。
 
+**window环境搭建注意**
+
+下载完成`gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf.tar.xz`交叉编译工具链后，最好采用7-zip解压工具进行两次解压。
+确保解压目录下的`/bin/aarch64-elf-ld.exe`文件的size不为0。
+否则编译会出现如下错误:
+
+```
+collect2.exe:fatal error:CreateProcess:No such file or directory
+```
+
 ### 2.2 Linux上的环境搭建
 
 Linux下推荐使用[gcc工具][2]。Linux版本下gcc版本可采用`gcc-arm-8.3-2019.03-x86_64-aarch64-elf`。

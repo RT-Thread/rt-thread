@@ -17,8 +17,6 @@
 #include "board.h"
 #include "interrupt.h"
 
-#define GPIO_BASE (0xFE000000 + 0x00200000)
-
 #define GPIO_REG_GPFSEL0(BASE)             HWREG32(BASE + 0x00)
 #define GPIO_REG_GPFSEL1(BASE)             HWREG32(BASE + 0x04)
 #define GPIO_REG_GPFSEL2(BASE)             HWREG32(BASE + 0x08)
