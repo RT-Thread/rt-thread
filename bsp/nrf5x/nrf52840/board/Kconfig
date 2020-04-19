@@ -2,8 +2,9 @@ menu "Hardware Drivers Config"
 
 config SOC_NRF52840
     bool
+	config SOC_NRF52840
     select RT_USING_COMPONENTS_INIT
-    # select RT_USING_USER_MAIN
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
