@@ -25,23 +25,24 @@
 #include <shell.h>
 #endif
 
-void rt_init_thread_entry(void* parameter)
+#include <nrf_gpio.h>
+#define DK_BOARD_LED_1  13
+
+int main(void)
 {
-    extern rt_err_t ble_init(void);
+    int count = 1;
+    nrf_gpio_cfg_output(DK_BOARD_LED_1);
 
-    ble_init();
-}
+    while (count++)
+    {
+        nrf_gpio_pin_set(DK_BOARD_LED_1);
+        rt_thread_mdelay(500);
+        
+        nrf_gpio_pin_clear(DK_BOARD_LED_1);
+        rt_thread_mdelay(500);
 
-int rt_application_init(void)
-{
-    rt_thread_t tid;
-
-    tid = rt_thread_create("init", rt_init_thread_entry, RT_NULL, 1024,
-                            RT_THREAD_PRIORITY_MAX / 3, 20);
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
-
-    return 0;
+    }
+    return RT_EOK;
 }
 
 

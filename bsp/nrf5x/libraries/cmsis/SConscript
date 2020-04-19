@@ -8,13 +8,10 @@ cwd = GetCurrentDir()
 src = Split("""
 """)
 
-if GetDepend(['BSP_USING_UART']):
-    src += ['drv_uart.c']
-
 # src += ['drv_common.c']
 
-path =  [cwd]
+path =  [cwd + '/include']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = path)
 
 Return('group')

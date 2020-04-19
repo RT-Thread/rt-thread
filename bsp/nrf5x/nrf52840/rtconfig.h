@@ -46,6 +46,9 @@
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
+#define RT_USING_USER_MAIN
+#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_PRIORITY 10
 
 /* C++ features */
 
@@ -74,7 +77,6 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
@@ -138,8 +140,8 @@
 
 /* peripheral libraries and drivers */
 
-#define PKG_USING_NRF5X_SDK
-#define PKG_USING_NRF5X_SDK_LATEST_VERSION
+#define PKG_USING_NRFX
+#define PKG_USING_NRFX_V210
 
 /* miscellaneous packages */
 
@@ -153,11 +155,9 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_JLINK_TO_USART
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
 
