@@ -29,7 +29,7 @@ NUCLEO-L010RB 开发板是 ST 官方推出的一款基于 ARM Cortex-M0+ 内核�
 	- 20KB RAM
 	- 512 byte EEPROM
 - 常用外设
-  - LED：3个，USB communication(LD1 双色),power LED(LD3 红色),user LED(LD2 黄色)
+  - LED：3个，USB communication(LD1 双色)，power LED(LD3 红色)，user LED(LD2 黄色)
   - 按键：1个，B1（兼具唤醒功能，PC13），B2（RESET）
 - 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口；arduino 接口等
 - 调试接口：标准 SWD
