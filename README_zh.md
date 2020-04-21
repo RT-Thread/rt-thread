@@ -89,7 +89,7 @@ RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主�
 
 - MIPS32：如芯片制造商loongson、Ingenic
 
-- RISC-V：如芯片制造商Hifive、Kendryte
+- RISC-V：如芯片制造商Hifive、Kendryte、[芯来Nuclei](https://nucleisys.com/)
 
 - ARC：如芯片制造商SYNOPSYS
 
