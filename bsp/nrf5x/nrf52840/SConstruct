@@ -50,5 +50,8 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
 
+# include cmsis
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'cmsis', 'SConscript')))
+
 # make a building
 DoBuilding(TARGET, objs)
