@@ -214,15 +214,6 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
-    # copy at32 bsp libiary files
-    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'at32':
-        print("=> copy at32 bsp library")
-        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
-        library_dir  = os.path.join(dist_dir, 'Libraries')
-        bsp_copy_files(os.path.join(library_path, 'rt_drivers'), os.path.join(library_dir, 'rt_drivers'))
-        bsp_copy_files(os.path.join(library_path, 'AT32_Std_Driver'), os.path.join(library_dir, 'AT32_Std_Driver'))
-        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
-
     # do bsp special dist handle
     if 'dist_handle' in Env:
         print("=> start dist handle")
@@ -352,15 +343,6 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, rttide = None):
         library_dir  = os.path.join(dist_dir, 'libraries')
         bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
         bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
-        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
-
-    # copy at32 bsp libiary files
-    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'at32':
-        print("=> copy at32 bsp library")
-        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
-        library_dir  = os.path.join(dist_dir, 'Libraries')
-        bsp_copy_files(os.path.join(library_path, 'rt_drivers'), os.path.join(library_dir, 'rt_drivers'))
-        bsp_copy_files(os.path.join(library_path, 'AT32_Std_Driver'), os.path.join(library_dir, 'AT32_Std_Driver'))
         shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
 
     # copy nuclei bsp libiary files
