@@ -273,7 +273,7 @@ def VersionCmp(ver1, ver2):
 
 def GCCC99Patch(cflags):
     import building
-    gcc_version = building.GetDepend('GCC_VERSION')
+    gcc_version = building.GetDepend('GCC_VERSION_STR')
     if gcc_version:
         gcc_version = gcc_version.replace('"', '')
     if VersionCmp(gcc_version, "4.8.0") == 1:
