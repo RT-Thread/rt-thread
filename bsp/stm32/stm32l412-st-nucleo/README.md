@@ -86,7 +86,7 @@ USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.0 build Jan  9 2020
+ / | \     4.0.3 build Apr 24 2020
  2006 - 2020 Copyright by rt-thread team
 msh >
 ```
