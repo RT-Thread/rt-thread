@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32L432KC
+config SOC_STM32L412RB
     bool
     select SOC_SERIES_STM32L4
     select RT_USING_COMPONENTS_INIT
