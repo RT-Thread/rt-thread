@@ -422,6 +422,7 @@ static rt_err_t rt_can_close(struct rt_device *dev)
         tx_fifo = (struct rt_can_tx_fifo *)can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
+        rt_sem_detach(&(tx_fifo->sem));
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
         can->can_tx = RT_NULL;
