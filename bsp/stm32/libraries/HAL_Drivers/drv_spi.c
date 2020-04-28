@@ -257,7 +257,10 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
 
-    __HAL_SPI_ENABLE(spi_handle);
+    if(cfg->mode & RT_SPI_NO_CS)
+    {
+        __HAL_SPI_ENABLE(spi_handle);
+    }
 
     LOG_D("%s init done", spi_drv->config->bus_name);
     return RT_EOK;
