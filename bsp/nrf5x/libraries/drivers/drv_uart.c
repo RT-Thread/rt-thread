@@ -1,59 +1,83 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-04-28     xckhmf       Modify for <nrfx>
+ *
+ */
 #include <rtdevice.h>
 #include <nrfx_uart.h>
 #include "drv_uart.h"
 
-static struct rt_serial_device _serial0_0;
-static void uart_event_hander(nrfx_uart_event_t const *p_event,void *p_context);
+#ifdef BSP_USING_UART
 
 typedef struct
 {
     struct rt_serial_device *serial;
     nrfx_uart_t uart;
+    uint8_t rx_byte;
+    uint16_t rx_length;
     uint32_t rx_pin;
     uint32_t tx_pin;
     nrfx_uart_event_handler_t event_handler;
-} UART_CFG_T;
+} drv_uart_cfg_t;
 
-
-UART_CFG_T uart0 = {
+#ifdef BSP_USING_UART0
+static struct rt_serial_device _serial_0;
+static void uart0_event_hander(nrfx_uart_event_t const *p_event,void *p_context);
+drv_uart_cfg_t m_uart0_cfg = {
     .uart = NRFX_UART_INSTANCE(0),
-#ifdef RT_USING_CONSOLE
-    .rx_pin = 8,
-    .tx_pin = 6,
-    .event_handler = uart_event_hander,
-#else
-    .rx_pin = 19,
-    .tx_pin = 20
-#endif
+    .rx_byte = 0,
+    .rx_length = 0,
+    .rx_pin = BSP_UART0_RX_PIN,
+    .tx_pin = BSP_UART0_TX_PIN,
+    .event_handler = uart0_event_hander
 };
-UART_CFG_T *working_cfg = RT_NULL;
+#endif  /* BSP_USING_UART0 */
 
-static void uart_event_hander(nrfx_uart_event_t const *p_event,void *p_context)
-{
-    
+#ifdef BSP_USING_UART1
+    #error <nrfx_uart> not support UART1. Use UART0 instead.
+#endif  /* BSP_USING_UART1 */
+
+#ifdef BSP_USING_UART0
+static void uart0_event_hander(nrfx_uart_event_t const *p_event,void *p_context)
+{   
     if (p_event->type == NRFX_UART_EVT_RX_DONE)
     {
-        rt_hw_serial_isr(working_cfg->serial, RT_SERIAL_EVENT_RX_IND);
+        if(p_event->data.rxtx.bytes == 1)
+        {
+            m_uart0_cfg.rx_length = p_event->data.rxtx.bytes;
+            
+            /* rx_byte equal p_data  */
+            //m_uart0_cfg.rx_byte = *(p_event->data.rxtx.p_data); 
+            
+            rt_hw_serial_isr(m_uart0_cfg.serial, RT_SERIAL_EVENT_RX_IND);
+        }
+        nrfx_uart_rx(&(m_uart0_cfg.uart),&m_uart0_cfg.rx_byte,1);
     }
     if (p_event->type == NRFX_UART_EVT_TX_DONE)
     {
-        
+        /* @TODO:[RT_DEVICE_FLAG_INT_TX]*/
     }
 }
+#endif  /* BSP_USING_UART0 */
 
 static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    nrfx_uart_config_t config = NRFX_UART_DEFAULT_CONFIG(uart0.tx_pin,uart0.rx_pin);
-    UART_CFG_T *instance = &uart0;
+    nrfx_uart_config_t config = NRFX_UART_DEFAULT_CONFIG(BSP_UART0_TX_PIN,BSP_UART0_RX_PIN);
+    drv_uart_cfg_t *instance = RT_NULL;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-
-    if (serial->parent.user_data != RT_NULL)
+  
+    if (serial->parent.user_data == RT_NULL)
     {
-        instance = (UART_CFG_T*)serial->parent.user_data;
+        return -RT_ERROR;
     }
-
+    instance = (drv_uart_cfg_t*)serial->parent.user_data;
     nrfx_uart_uninit(&(instance->uart));
 
     switch (cfg->baud_rate)
@@ -83,28 +107,23 @@ static rt_err_t _uart_cfg(struct rt_serial_device *serial, struct serial_configu
     config.hal_cfg.hwfc = NRF_UART_HWFC_DISABLED;
     config.pselrxd = instance->rx_pin;
     config.pseltxd = instance->tx_pin;
-
+    
     nrfx_uart_init(&(instance->uart), &config, instance->event_handler);
-    
-    nrf_uart_int_enable(instance->uart.p_reg, NRF_UART_INT_MASK_RXDRDY | NRF_UART_INT_MASK_RXTO | NRF_UART_INT_MASK_ERROR);
+    nrfx_uart_rx(&(instance->uart),&(instance->rx_byte),1);
     nrf_uart_int_disable(instance->uart.p_reg, NRF_UART_INT_MASK_TXDRDY);
-    
-    nrfx_uart_rx_enable(&(instance->uart));
-    
-    working_cfg = instance;
     return RT_EOK;
 }
 
 static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    UART_CFG_T *instance = working_cfg;
-
+    drv_uart_cfg_t *instance = NULL;
     RT_ASSERT(serial != RT_NULL);
 
-    if (serial->parent.user_data != RT_NULL)
+    if (serial->parent.user_data == RT_NULL)
     {
-        instance = (UART_CFG_T*)serial->parent.user_data;
+        return -RT_ERROR;
     }
+    instance = (drv_uart_cfg_t*)serial->parent.user_data;
 
     switch (cmd)
     {
@@ -129,10 +148,7 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
         break;
 
     case RT_DEVICE_CTRL_PIN:
-        if (working_cfg != instance)
-        {
-            _uart_cfg(instance->serial, &(instance->serial->config));
-        }
+        _uart_cfg(instance->serial, &(instance->serial->config));
         break;
 
     case RT_DEVICE_POWERSAVE:
@@ -152,13 +168,13 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
 
 static int _uart_putc(struct rt_serial_device *serial, char c)
 {
-    UART_CFG_T *instance = working_cfg;
+    drv_uart_cfg_t *instance = NULL;
     int rtn = 1;
     RT_ASSERT(serial != RT_NULL);
 
     if (serial->parent.user_data != RT_NULL)
     {
-        instance = (UART_CFG_T*)serial->parent.user_data;
+        instance = (drv_uart_cfg_t*)serial->parent.user_data;
     }
 
     nrf_uart_event_clear(instance->uart.p_reg, NRF_UART_EVENT_TXDRDY);
@@ -171,23 +187,21 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
     return rtn;
 }
 
-/* 
-    @note: this function is invaild ,the cause of the problem is [nrfx_uart.c - line 340] 
-*/
 static int _uart_getc(struct rt_serial_device *serial)
 {
     int ch = -1;
-    UART_CFG_T *instance = working_cfg;
-
+    drv_uart_cfg_t *instance = NULL;
     RT_ASSERT(serial != RT_NULL);
 
     if (serial->parent.user_data != RT_NULL)
     {
-        instance = (UART_CFG_T*)serial->parent.user_data;
+        instance = (drv_uart_cfg_t*)serial->parent.user_data;
+    }  
+    if(instance->rx_length)
+    {
+        ch = instance->rx_byte;
+        instance->rx_length--;
     }
-    
-    ch = (int)(nrf_uart_rxd_get(instance->uart.p_reg));
-    
     return ch;
 }
 
@@ -202,11 +216,14 @@ void rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-    config.bufsz = RT_SERIAL_RB_BUFSZ;
-    _serial0_0.config = config;
-    _serial0_0.ops = &_uart_ops;
-    uart0.serial = &_serial0_0;
+#ifdef BSP_USING_UART0
+    _serial_0.config = config;
+    _serial_0.ops = &_uart_ops;
+    m_uart0_cfg.serial = &_serial_0;
+    rt_hw_serial_register(&_serial_0, "uart0", \
+                            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,  &m_uart0_cfg);
+#endif  /* BSP_USING_UART0 */
 
-    rt_hw_serial_register(&_serial0_0, "uart0", RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,  &uart0);
 }
 
+#endif /* BSP_USING_UART */
