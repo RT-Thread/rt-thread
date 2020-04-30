@@ -116,6 +116,8 @@
 
 /* Using USB */
 
+#define RT_USING_USB_HOST
+#define RT_USBD_THREAD_STACK_SZ 4096
 
 /* POSIX layer and C standard library */
 

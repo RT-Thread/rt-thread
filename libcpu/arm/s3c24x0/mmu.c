@@ -11,6 +11,7 @@
 
 #include <rtthread.h>
 #include "s3c24x0.h"
+#include "mmu.h"
 
 #define _MMUTT_STARTADDRESS	 0x33FF0000
 
@@ -164,6 +165,34 @@ void mmu_invalidate_tlb()
 void mmu_invalidate_icache()
 {
 	asm volatile ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
+}
+
+void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+    unsigned int ptr;
+
+    ptr = buffer & ~(CACHE_LINE_SIZE - 1);   
+
+    while (ptr < buffer + size)
+    {  
+        asm volatile("mcr p15, 0, %0, c7, c10, 1": :"r"(ptr));
+
+        ptr += CACHE_LINE_SIZE;
+    }
+}
+
+void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
+{
+    unsigned int ptr;
+
+    ptr = buffer & ~(CACHE_LINE_SIZE - 1);   
+
+    while (ptr < buffer + size)
+    {
+        asm volatile("mcr p15, 0, %0, c7, c6, 1": :"r"(ptr));
+
+        ptr += CACHE_LINE_SIZE;
+    }
 }
 #endif
 

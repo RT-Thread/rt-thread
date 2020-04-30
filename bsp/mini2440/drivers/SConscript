@@ -32,6 +32,9 @@ if GetDepend('PKG_USING_GUIENGINE'):
 if GetDepend('RT_USING_SDIO'):
     src += ['s3cmci.c']
 
+if GetDepend('RT_USING_USB_HOST'):
+    src += ['ohci_s3c.c']
+
 
 CPPPATH = [cwd]
 
