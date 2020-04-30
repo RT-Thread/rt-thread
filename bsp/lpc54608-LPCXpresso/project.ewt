@@ -2355,19 +2355,19 @@
     <group>
         <name>CPlusPlus</name>
         <file>
-            <name>$PROJ_DIR$\..\..\components\cplusplus\crt.cpp</name>
+            <name>$PROJ_DIR$\..\..\components\cplusplus\cxx_crt.cpp</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\components\cplusplus\crt_init.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\components\cplusplus\Mutex.cpp</name>
+            <name>$PROJ_DIR$\..\..\components\cplusplus\cxx_Mutex.cpp</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\components\cplusplus\Semaphore.cpp</name>
+            <name>$PROJ_DIR$\..\..\components\cplusplus\cxx_Semaphore.cpp</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\components\cplusplus\Thread.cpp</name>
+            <name>$PROJ_DIR$\..\..\components\cplusplus\cxx_Thread.cpp</name>
         </file>
     </group>
     <group>
