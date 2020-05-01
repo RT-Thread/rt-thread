@@ -1,0 +1,49 @@
+menu "Hardware Drivers Config"
+
+config SOC_NRF52840
+    bool
+    config SOC_NRF52840
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_JLINK_TO_USART
+        bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
+        select BSP_USING_UART
+        select BSP_USING_UART0
+        default y
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y 
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_PIN
+                        int "uart0 rx pin number"
+                        range 0 31
+                        default 8
+                    config BSP_UART0_TX_PIN
+                        int "uart0 tx pin number"
+                        range 0 31
+                        default 6
+                endif
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+        endif
+endmenu
+
+endmenu
