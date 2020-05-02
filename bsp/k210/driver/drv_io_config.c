@@ -63,6 +63,18 @@ static struct io_config
 #endif
 #endif
 
+#ifdef BSP_USING_UART1
+    IOCONFIG(BSP_UART1_TXD_PIN, FUNC_UART1_TX),
+    IOCONFIG(BSP_UART1_RXD_PIN, FUNC_UART1_RX),
+#endif
+#ifdef BSP_USING_UART2
+    IOCONFIG(BSP_UART2_TXD_PIN, FUNC_UART2_TX),
+    IOCONFIG(BSP_UART2_RXD_PIN, FUNC_UART2_RX),
+#endif
+#ifdef BSP_USING_UART3
+    IOCONFIG(BSP_UART3_TXD_PIN, FUNC_UART3_TX),
+    IOCONFIG(BSP_UART3_RXD_PIN, FUNC_UART3_RX),
+#endif
 };
 
 static int print_io_config()
@@ -89,7 +101,15 @@ int io_config_init(void)
     sysctl_set_power_mode(SYSCTL_POWER_BANK0, SYSCTL_POWER_V18);
     sysctl_set_power_mode(SYSCTL_POWER_BANK1, SYSCTL_POWER_V18);
     sysctl_set_power_mode(SYSCTL_POWER_BANK2, SYSCTL_POWER_V18);
-    
+#ifdef BSP_USING_UART2
+    // for IO-27/28
+    sysctl_set_power_mode(SYSCTL_POWER_BANK4, SYSCTL_POWER_V33);
+#endif
+#if  defined(BSP_USING_UART1) || defined(BSP_USING_UART3)
+    // for IO-20~23
+    sysctl_set_power_mode(SYSCTL_POWER_BANK3, SYSCTL_POWER_V33);
+#endif
+
     for(i = 0; i < count; i++)
     {
         fpioa_set_function(io_config[i].io_num, io_config[i].func);

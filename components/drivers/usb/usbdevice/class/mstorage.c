@@ -426,7 +426,7 @@ static rt_size_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw)
 
     data = (struct mstorage*)func->user_data;   
     buf = data->ep_in->buffer;    
-    sector_count = data->geometry.sector_count;
+    sector_count = data->geometry.sector_count - 1; /* Last Logical Block Address */
     sector_size = data->geometry.bytes_per_sector;
 
     buf[0] = sector_count >> 24;
