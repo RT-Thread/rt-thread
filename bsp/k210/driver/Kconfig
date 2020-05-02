@@ -2,17 +2,44 @@ config BSP_USING_UART_HS
     bool "Enable High Speed UART"
     default y
 
-config BSP_USING_UART1
-    bool "Enable UART1 (GPIO0/1)"
-    default n
+menu "General Purpose UARTs"
 
-config BSP_USING_UART2
-    bool "Enable UART2 (GPIO0/1)"
+menuconfig BSP_USING_UART1
+    bool "Enable UART1"
     default n
+    if BSP_USING_UART1
+        config BSP_UART1_TXD_PIN
+            int "uart1 TXD pin number"
+            default 20
+        config BSP_UART1_RXD_PIN
+            int "uart1 RXD pin number"
+            default 21
+    endif
 
-config BSP_USING_UART3
-    bool "Enable UART3 (GPIO0/1)"
+menuconfig BSP_USING_UART2
+    bool "Enable UART2"
     default n
+    if BSP_USING_UART2
+        config BSP_UART2_TXD_PIN
+            int "uart2 TXD pin number"
+            default 28
+        config BSP_UART2_RXD_PIN
+            int "uart2 RXD pin number"
+            default 27
+    endif
+
+menuconfig BSP_USING_UART3
+    bool "Enable UART3"
+    default n
+    if BSP_USING_UART3
+        config BSP_UART3_TXD_PIN
+            int "uart3 TXD pin number"
+            default 22
+        config BSP_UART3_RXD_PIN
+            int "uart3 RXD pin number"
+            default 23
+    endif
+endmenu
 
 config BSP_USING_I2C1
     bool "Enable I2C1 (GPIO0/1)"

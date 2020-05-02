@@ -155,10 +155,13 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_JLINK_TO_USART
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_UART0_RX_PIN 8
+#define BSP_UART0_TX_PIN 6
 
 #endif
