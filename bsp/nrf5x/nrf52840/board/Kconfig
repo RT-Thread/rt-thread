@@ -44,6 +44,30 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1"
                 default n
         endif
+	menu "On-chip flash config"
+		config MCU_FLASH_START_ADDRESS  
+			hex "MCU FLASH START ADDRESS"
+			default 0x00000000
+			
+		config MCU_FLASH_SIZE_KB  
+			int "MCU FLASH SIZE, MAX size 1024 KB"
+			range 1 1024
+			default 1024		
+			
+		config MCU_SRAM_START_ADDRESS 
+			hex "MCU RAM START ADDRESS"
+			default 0x20000000
+			
+		config MCU_SRAM_SIZE_KB 
+			int "MCU RAM SIZE, MAX size 256 KB"
+			range 1 256
+			default 256
+			
+		config MCU_FLASH_PAGE_SIZE 
+			hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
+			range 0x1000 0x1000
+			default 0x1000
+	endmenu
 endmenu
 
 endmenu
