@@ -323,7 +323,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
 
-    if (HAL_TIM_PWM_Init(tim) != HAL_OK)
+    if (HAL_TIM_Base_Init(tim) != HAL_OK)   
     {
         LOG_E("%s pwm init failed", device->name);
         result = -RT_ERROR;
