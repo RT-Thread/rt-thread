@@ -13,8 +13,6 @@
 #include "nrfx_nvmc.h"
 
 #ifdef BSP_USING_ON_CHIP_FLASH
-//#include "drv_config.h"
-#include "drv_flash.h"
 
 #if defined(PKG_USING_FAL)
 #include "fal.h"
@@ -163,8 +161,6 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
 
-const struct fal_flash_dev mcu_onchip_flash = {"mcu_onchip", MCU_FLASH_START_ADDRESS, MCU_FLASH_SIZE, MCU_FLASH_PAGE_SIZE, {NULL, fal_flash_read, fal_flash_write, fal_flash_erase} };
-
 static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size)
 {
     return mcu_flash_read(mcu_onchip_flash.addr + offset, buf, size);
@@ -179,6 +175,14 @@ static int fal_flash_erase(long offset, size_t size)
 {
     return mcu_flash_erase(mcu_onchip_flash.addr + offset, size);
 }
-
+const struct fal_flash_dev mcu_onchip_flash =
+{
+    .name       = ON_CHIP_FLASH_DEV_NAME,
+    .addr       = MCU_FLASH_START_ADDRESS,
+    .len        = MCU_FLASH_SIZE,
+    .blk_size   = MCU_FLASH_PAGE_SIZE,
+    .ops        = {NULL, fal_flash_read, fal_flash_write, fal_flash_erase},
+    .write_gran = 8
+};
 #endif
 #endif /* BSP_USING_ON_CHIP_FLASH */
