@@ -94,12 +94,128 @@ msh >
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32 系列 BSP 外设驱动使用教程. md)。
 
+# QEMU使用说明
+
+在没有硬件开发板情况下，为便于使用和调试验证一定的功能，可以使用QEMU 模拟器来 实现 。
+
+目前此版本 QEMU 模拟器 支持 GPIO , UART 外设(作为控制台) 及 文件系统 验证功能 ，使用vscode 进行 相关调试开发 。
+
+QEMU 的使用可参考文档中心 [QEMU调试](https://www.rt-thread.org/document/site/tutorial/qemu-network/qemu_vscode/qemu_vscode/)
+
+目前QEMU 版本是基于[xPack QEMU Arm v2.8.0-8](https://github.com/xpack-dev-tools/qemu-arm-xpack/releases/)
+
+# QEMU使用步骤
+
+## QEMU环境下载及配置
+
+1. 开发者目前需要下载对应的QEMU 可执行环境，[下载地址](https://gitee.com/Gerryfan/qemu_gnu_armeclipse)
+
+2. 将下载下来的xPacks 文件夹放在磁盘上一个位置,示例是放在ENV 工具的的QEMU 文夹夹下 `E:\env\tools\qemu`
+
+3. 复制 bsp/qemu-vexpress-a9  中的 .vscode 文件夹，qemu.bat  qemu-dbg.bat 
+
+4. 修改 qemu.bat 中 ` E:\env\tools\qemu\xPacks\@xpack-dev-tools\qemu-arm\2.8.0-8.1\.content\bin\qemu-system-gnuarmeclipse --board NUCLEO-F411RE --image rtthread.elf -sd sd.bin `
+
+5. 修改qemu-dbg.bat `start E:\env\tools\qemu\xPacks\@xpack-dev-tools\qemu-arm\2.8.0-8.1\.content\bin\qemu-system-gnuarmeclipse  --board NUCLEO-F411RE --mcu STM32F411RE  --image rtthread.elf  -S -s -sd sd.bin`
+
+6. 将rtconfig.py 中 浮点相关编译选项改为 软实现 `-mfloat-abi=soft`  。
+
+7. 注释掉 board.c 中 SystemClock_Config(void)  函数中内容 ，使其成为空函数，因为目前版本qemu 暂不支持时钟配置。
+
+   
+
+   ## 编译及运行
+
+   1. 在ENV 工具中 使用 `scons `  命令编译。
+   2. 编译成功后，在ENV 工具中输入 `qemu.bat` 命令 开始运行 qemu ,显示效果为 绿色LED 灯 周期性闪烁 。
+
+   ![qemu_led](./figures/qemu_led.png)
+
+# QEMU进阶使用
+
+1. scode 调试功能 可参考 文档中心的 [**使用VS Code调试RT-Thread**](https://www.rt-thread.org/document/site/tutorial/qemu-network/qemu_vscode/qemu_vscode/)
+
+2. 在 main.c 中 增加如下代码 可实现 按键中断触发控制 LED 亮灭 。
+
+   ```
+   /* defined the KEY pin: PC13 */
+   #define USER_KEY_PIN           GET_PIN(C,13)
+   void irq_callback(void *args)
+   {
+           rt_kprintf("user key is pressed \n");
+           if(rt_pin_read(LED0_PIN) == PIN_LOW)
+             rt_pin_write(LED0_PIN,PIN_HIGH);
+           else
+           {
+               rt_pin_write(LED0_PIN,PIN_LOW);
+           }
+           
+   }
+   rt_pin_mode(USER_KEY_PIN, PIN_MODE_INPUT_PULLUP);
+   rt_pin_attach_irq(USER_KEY_PIN,PIN_IRQ_MODE_FALLING,irq_callback,(void *)USER_KEY_PIN);
+    rt_pin_irq_enable(USER_KEY_PIN,PIN_IRQ_ENABLE);
+   ```
+
+3. 文件系统使用及测试。
+
+   ① 复制 bsp/qemu-vexpress-a9   drivers 文件夹下 drv_sdio.c drv_sdio.h SConscript  三个文件到  新建文件夹drivers 下 。
+
+   ② 复制 bsp/qemu-vexpress-a9  applications 文件夹下 mnt.c 到 applications 下 。
+
+   ③ 修改 applications 下 SConscript , 将 src 下 增加 mnt.c 。
+
+   ④ 修改 board 下 Kconfig 文件 ，在最后增加 qemu 相关 配置
+
+   ```
+   menu "Board extended module Drivers"
+   
+   endmenu
+   
+   menu "Board USE QEMU"
+       config BSP_USING_SDCARD
+   
+           bool "Enable SDCARD (pl180)"
+   
+           select RT_USING_SDIO
+   
+           select RT_USING_DFS
+   
+           select RT_USING_DFS_ELMFAT
+   
+           default n
+   
+   endmenu 
+   
+   endmenu
+   ```
+
+   ⑤ ENV 工具下 配置 使能 `BSP_USING_SDCARD `   保存后 ，使用 `Scons `  命令编译。
+
+   ⑥ ENV 工具下 运行 `qemu.bat`  显示如下 结果：
+
+   ```
+    \ | /
+   - RT -     Thread Operating System
+    / | \     4.0.3 build May  3 2020
+    2006 - 2020 Copyright by rt-thread team
+   [I/SDIO] SD card capacity 65536 KB.
+   file system initialization done!
+   msh />
+   ```
+
+   
+
+   
+
+   
+
 ## 注意事项
 
-暂无
+1. qemu sd 设备 目前qemu  模拟的不是 真实的stm32 sdio 设备 ， qemu  中 sd 卡设备  参考的是 qemu-vexpress-a9 的实现方式 。
 
 ## 联系人信息
 
 维护人:
 
 - [misonyo](https://github.com/misonyo) ，邮箱：<misonyo@foxmail.com>
+- [XiaojieFan](https://github.com/XiaojieFan) ，邮箱：[dingo1688@126.com](mailto:dingo1688@126.com)
