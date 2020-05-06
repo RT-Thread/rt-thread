@@ -5,6 +5,9 @@ ARCH='risc-v'
 CPU='nuclei'
 CROSS_TOOL='gcc'
 
+# bsp lib config
+BSP_LIBRARY_TYPE = None
+
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
@@ -18,7 +21,9 @@ else:
 #     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
+
 # Fixed configurations below
+NUCLEI_SDK_OPENOCD_CFG = "type in your config"
 NUCLEI_SDK_SOC = "gd32vf103"
 NUCLEI_SDK_BOARD = "gd32vf103v_rvstar"
 NUCLEI_SDK_DOWNLOAD = "flashxip"
@@ -56,3 +61,10 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+
+def dist_handle(BSP_ROOT):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT)
