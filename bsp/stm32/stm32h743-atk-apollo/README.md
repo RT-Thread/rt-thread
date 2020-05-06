@@ -117,7 +117,7 @@ msh >
 
 ## 注意事项
 
-暂无
+1. 使用UART2 DMA模式时，HEAP的CACHE策略设置了WT模式，所以在使用rt_device_read读取数据之前必须调用用SCB_InvalidateDCache_by_Addr或者SCB_InvalidateDCache，已确保读取到数据的正确性。
 
 ## 联系人信息
 
