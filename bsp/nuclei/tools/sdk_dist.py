@@ -10,10 +10,9 @@ def dist_do_building(BSP_ROOT):
     import rtconfig
 
     dist_dir  = os.path.join(BSP_ROOT, 'dist', os.path.basename(BSP_ROOT))
-    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
-    library_dir  = os.path.join(dist_dir, 'Libraries')
-    print("=> copy bsp drivers")
-    bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
-    print("=> copy bsp library")
+    library_dir  = os.path.join(dist_dir, 'libraries')
+
+    print("=> copy nuclei bsp library")
+    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+    library_dir  = os.path.join(dist_dir, 'libraries')
     bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE), os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
-    shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
