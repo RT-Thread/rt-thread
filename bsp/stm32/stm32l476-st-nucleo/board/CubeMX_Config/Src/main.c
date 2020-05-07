@@ -66,6 +66,8 @@ ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
 
+LPTIM_HandleTypeDef hlptim1;
+
 RTC_HandleTypeDef hrtc;
 
 SPI_HandleTypeDef hspi1;
@@ -97,6 +99,7 @@ static void MX_TIM17_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
 static void MX_ADC3_Init(void);
+static void MX_LPTIM1_Init(void);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
@@ -146,6 +149,7 @@ int main(void)
   MX_ADC1_Init();
   MX_ADC2_Init();
   MX_ADC3_Init();
+  MX_LPTIM1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -208,8 +212,9 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_USART2
-                              |RCC_PERIPHCLK_ADC;
+                              |RCC_PERIPHCLK_LPTIM1|RCC_PERIPHCLK_ADC;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+  PeriphClkInit.Lptim1ClockSelection = RCC_LPTIM1CLKSOURCE_PCLK;
   PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_PLLSAI1;
   PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
   PeriphClkInit.PLLSAI1.PLLSAI1Source = RCC_PLLSOURCE_HSI;
@@ -407,6 +412,40 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 2 */
 
   /* USER CODE END ADC3_Init 2 */
+
+}
+
+/**
+  * @brief LPTIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM1_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM1_Init 0 */
+
+  /* USER CODE END LPTIM1_Init 0 */
+
+  /* USER CODE BEGIN LPTIM1_Init 1 */
+
+  /* USER CODE END LPTIM1_Init 1 */
+  hlptim1.Instance = LPTIM1;
+  hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim1.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  hlptim1.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
+  hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
+  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM1_Init 2 */
+
+  /* USER CODE END LPTIM1_Init 2 */
 
 }
 
