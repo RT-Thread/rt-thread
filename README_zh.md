@@ -108,7 +108,7 @@ RT-Thread主要支持的IDE/编译器包括：
 
 - IAR
 
-- Gcc
+- GCC
 
 - RT-Thread Studio
 
