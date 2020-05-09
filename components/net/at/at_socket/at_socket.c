@@ -744,7 +744,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         goto __exit;
     }
 
-    /* if the socket type is UDP, nead to connect socket first */
+    /* if the socket type is UDP, need to connect socket first */
     if (from && sock->type == AT_SOCKET_UDP && sock->state == AT_SOCKET_OPEN)
     {
         ip_addr_t remote_addr;
