@@ -145,7 +145,8 @@ static rt_size_t _rym_read_data(
 static rt_err_t _rym_send_packet(
     struct rym_ctx *ctx,
     enum rym_code code,
-    rt_uint8_t index, rt_uint16_t pack_size)
+    rt_uint8_t index,
+    rt_uint16_t pack_size)
 {
     rt_uint16_t send_crc;
     rt_uint8_t index_inv = ~index;
