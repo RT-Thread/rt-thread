@@ -8,6 +8,7 @@
  * Date           Author       Notes
  * 2013-04-14     Grissiom     initial implementation
  * 2019-12-09     Steven Liu   add YMODEM send protocol
+ * 2020-05-11     redoccheng   add group size select(128/1024)
  */
 
 #include <rthw.h>
@@ -144,25 +145,25 @@ static rt_size_t _rym_read_data(
 static rt_err_t _rym_send_packet(
     struct rym_ctx *ctx,
     enum rym_code code,
-    rt_uint8_t index)
+    rt_uint8_t index, rt_uint16_t pack_size)
 {
     rt_uint16_t send_crc;
     rt_uint8_t index_inv = ~index;
     rt_size_t writelen = 0;
 
-    send_crc = CRC16(ctx->buf + 3, _RYM_SOH_PKG_SZ - 5);
+    send_crc = CRC16(ctx->buf + 3, pack_size - 5);
     ctx->buf[0] = code;
     ctx->buf[1] = index;
     ctx->buf[2] = index_inv;
-    ctx->buf[131] = (rt_uint8_t)(send_crc >> 8);
-    ctx->buf[132] = (rt_uint8_t)send_crc & 0xff;
+    ctx->buf[pack_size - 2] = (rt_uint8_t)(send_crc >> 8);
+    ctx->buf[pack_size - 1] = (rt_uint8_t)send_crc & 0xff;
 
     do
     {
         writelen += rt_device_write(ctx->dev, 0, ctx->buf + writelen,
-                                    _RYM_SOH_PKG_SZ - writelen);
+                                    pack_size - writelen);
     }
-    while (writelen < _RYM_SOH_PKG_SZ);
+    while (writelen < pack_size);
 
     return RT_EOK;
 }
@@ -279,7 +280,7 @@ static rt_err_t _rym_do_send_handshake(
         return -RYM_ERR_CODE;
 
     code = RYM_CODE_SOH;
-    _rym_send_packet(ctx, code, index);
+    _rym_send_packet(ctx, code, index, data_sz);
 
     rt_device_set_rx_indicate(ctx->dev, _rym_rx_ind);
     getc_ack = _rym_getchar(ctx);
@@ -402,16 +403,20 @@ static rt_err_t _rym_do_send_trans(struct rym_ctx *ctx)
     rt_uint32_t index = 1;
     rt_uint8_t getc_ack;
 
+#if defined (RYM_SIZE_1024)
+    data_sz = _RYM_STX_PKG_SZ;
+    code = RYM_CODE_STX;    
+#else
     data_sz = _RYM_SOH_PKG_SZ;
+    code = RYM_CODE_SOH;
+#endif    
 
     while (1)
     {
-        if (ctx->on_data && ctx->on_data(ctx, ctx->buf + 3, data_sz - 5) != RYM_CODE_SOH)
+        if (ctx->on_data && ctx->on_data(ctx, ctx->buf + 3, data_sz - 5) != code)
             return -RYM_ERR_CODE;
 
-        code = RYM_CODE_SOH;
-
-        _rym_send_packet(ctx, code, index);
+        _rym_send_packet(ctx, code, index, data_sz);
         index++;
         rt_device_set_rx_indicate(ctx->dev, _rym_rx_ind);
 
@@ -530,7 +535,7 @@ static rt_err_t _rym_do_send_fin(struct rym_ctx *ctx)
 
     code = RYM_CODE_SOH;
 
-    _rym_send_packet(ctx, code, index);
+    _rym_send_packet(ctx, code, index, data_sz);
 
     ctx->stage = RYM_STAGE_FINISHED;
 
