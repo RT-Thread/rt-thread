@@ -5,6 +5,15 @@ config RT_USING_RYM
     default n
 
     if RT_USING_RYM
+        choice
+            prompt "Choose the size of the group"
+            default RYM_SIZE_128
+            config RYM_SIZE_128
+                bool "128 bytes"
+            config RYM_SIZE_1024
+                bool "1024 bytes"
+        endchoice
+        
         config YMODEM_USING_CRC_TABLE
         bool "Enable CRC Table in Ymodem"
         default n
