@@ -92,6 +92,7 @@ if GetDepend(['BSP_USING_USBH']):
     src += ['drv_usbh.c']
 
 src += ['drv_common.c']
+src += ['sbrk.c']
 
 path =  [cwd]
 path += [cwd + '/config']
