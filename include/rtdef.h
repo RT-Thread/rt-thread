@@ -27,6 +27,7 @@
  * 2018-12-28     armink       change version number to v3.1.2
  * 2019-03-14     armink       change version number to v3.1.3
  * 2019-06-12     armink       change version number to v3.1.4
+ * 2020-05-14     armink       change version number to v3.1.5
  */
 
 #ifndef __RT_DEF_H__
