@@ -90,6 +90,7 @@ env:
   - RTT_BSP='stm32/stm32f410-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f411-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f411-weact-MiniF4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f413-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f427-robomaster-a' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-armfly-v6' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
