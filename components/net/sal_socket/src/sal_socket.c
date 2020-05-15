@@ -679,7 +679,7 @@ int sal_shutdown(int socket, int how)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* shutdown operation not nead to check network interface status */
+    /* shutdown operation not need to check network interface status */
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, shutdown);
 
@@ -970,7 +970,7 @@ int sal_closesocket(int socket)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* clsoesocket operation not nead to vaild network interface status */
+    /* clsoesocket operation not need to vaild network interface status */
     /* valid the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, socket);
 

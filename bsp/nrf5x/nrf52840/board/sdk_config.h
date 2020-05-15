@@ -2902,7 +2902,7 @@
 // <e> NRFX_QSPI_ENABLED - nrfx_qspi - QSPI peripheral driver
 //==========================================================
 #ifndef NRFX_QSPI_ENABLED
-#define NRFX_QSPI_ENABLED 0
+#define NRFX_QSPI_ENABLED 1
 #endif
 // <o> NRFX_QSPI_CONFIG_SCK_DELAY - tSHSL, tWHSL and tSHWL in number of 16 MHz periods (62.5 ns).  <0-255> 
 
@@ -3010,7 +3010,7 @@
 #define NRFX_QSPI_PIN_IO3 NRF_QSPI_PIN_NOT_CONNECTED
 #endif
 
-// <o> NRFX_QSPI_CONFIG_IRQ_PRIORITY  - Interrupt priority
+// <o> NRFX_QSPI_DEFAULT_CONFIG_IRQ_PRIORITY  - Interrupt priority
  
 // <0=> 0 (highest) 
 // <1=> 1 
@@ -3021,8 +3021,8 @@
 // <6=> 6 
 // <7=> 7 
 
-#ifndef NRFX_QSPI_CONFIG_IRQ_PRIORITY
-#define NRFX_QSPI_CONFIG_IRQ_PRIORITY 6
+#ifndef NRFX_QSPI_DEFAULT_CONFIG_IRQ_PRIORITY
+#define NRFX_QSPI_DEFAULT_CONFIG_IRQ_PRIORITY 6
 #endif
 
 // </e>
@@ -11687,7 +11687,11 @@
 // </h> 
 //==========================================================
 
-
+// <e> NRFX_NVMC_ENABLED - nrfx_nvmc - NVMC peripheral driver
+//==========================================================
+#ifndef NRFX_NVMC_ENABLED
+#define NRFX_NVMC_ENABLED 1
+#endif
 // </e>
 
 // </h> 
