@@ -87,7 +87,9 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
     LOG_D("set rtc time.");
     HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR1, BKUP_REG_DATA);
+
 #ifdef SOC_SERIES_STM32F1
+    /* F1 series does't save year/month/date datas. so keep those datas to bkp reg */
     HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR2, RTC_DateStruct.Year);
     HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR3, RTC_DateStruct.Month);
     HAL_RTCEx_BKUPWrite(&RTC_Handler, RTC_BKP_DR4, RTC_DateStruct.Date);
@@ -120,12 +122,21 @@ static void rt_rtc_init(void)
 
 #ifdef SOC_SERIES_STM32F1
 /* update RTC_BKP_DRx*/
-static void rt_rtc_bkp_update(void)
+static void rt_rtc_f1_bkp_update(void)
 {
     RTC_DateTypeDef RTC_DateStruct = {0};
 
     HAL_PWR_EnableBkUpAccess();
     __HAL_RCC_BKP_CLK_ENABLE();
+
+    RTC_DateStruct.Year    = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR2);
+    RTC_DateStruct.Month   = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR3);
+    RTC_DateStruct.Date    = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR4);
+    RTC_DateStruct.WeekDay = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR5);
+    if (HAL_RTC_SetDate(&RTC_Handler, &RTC_DateStruct, RTC_FORMAT_BIN) != HAL_OK)
+    {
+        Error_Handler();
+    }
 
     HAL_RTC_GetDate(&RTC_Handler, &RTC_DateStruct, RTC_FORMAT_BIN);
     if (HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR4) != RTC_DateStruct.Date)
@@ -201,17 +212,8 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #ifdef SOC_SERIES_STM32F1
     else
     {
-        RTC_DateTypeDef RTC_DateStruct = {0};
-
-        RTC_DateStruct.Year    = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR2);
-        RTC_DateStruct.Month   = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR3);
-        RTC_DateStruct.Date    = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR4);
-        RTC_DateStruct.WeekDay = HAL_RTCEx_BKUPRead(&RTC_Handler, RTC_BKP_DR5);
-        if (HAL_RTC_SetDate(&RTC_Handler, &RTC_DateStruct, RTC_FORMAT_BIN) != HAL_OK)
-        {
-            Error_Handler();
-        }
-        rt_rtc_bkp_update();
+        /* F1 series need update by bkp reg datas */
+        rt_rtc_f1_bkp_update();
     }
 #endif
 
