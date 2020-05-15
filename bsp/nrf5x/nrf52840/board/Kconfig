@@ -2,17 +2,52 @@ menu "Hardware Drivers Config"
 
 config SOC_NRF52840
     bool
-	config SOC_NRF52840
+    config SOC_NRF52840
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
     config BSP_USING_JLINK_TO_USART
-        bool "Enable JLINK TO USART (uart0)"
+        bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
         select BSP_USING_UART
         select BSP_USING_UART0
         default y
+
+    menuconfig BSP_USING_QSPI_FLASH
+        select PKG_USING_FAL
+        bool "Enable QSPI FLASH(MX25R64 8MB)"
+        default n
+
+        if BSP_USING_QSPI_FLASH
+            config BSP_QSPI_SCK_PIN
+                int "QSPI SCK pin number"
+                range 0 31
+                default 19
+            config BSP_QSPI_CSN_PIN
+                int "QSPI CSN pin number"
+                range 0 31
+                default 17
+            config BSP_QSPI_IO0_PIN
+                int "QSPI IO0 pin number"
+                range 0 31
+                default 20
+            config BSP_QSPI_IO1_PIN
+                int "QSPI IO1 pin number"
+                range 0 31
+                default 21
+            config BSP_QSPI_IO2_PIN
+                int "QSPI IO2 pin number"
+                range 0 31
+                default 22
+            config BSP_QSPI_IO3_PIN
+                int "QSPI IO3 pin number"
+                range 0 31
+                default 23
+            config QSPI_FLASH_SIZE_KB 
+                int "QSPI FLASH SIZE, DEFAULT size 8192 KB"
+                default 8192
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -30,11 +65,52 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART0
                 bool "Enable UART0"
                 default y 
-
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_PIN
+                        int "uart0 rx pin number"
+                        range 0 31
+                        default 8
+                    config BSP_UART0_TX_PIN
+                        int "uart0 tx pin number"
+                        range 0 31
+                        default 6
+                endif
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default n
-		endif
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        select PKG_USING_FAL
+        bool "Enable on-chip FLASH"
+        default n
+
+    menu "On-chip flash config"
+
+        
+        config MCU_FLASH_START_ADDRESS  
+            hex "MCU FLASH START ADDRESS"
+            default 0x00000000
+
+        config MCU_FLASH_SIZE_KB  
+            int "MCU FLASH SIZE, MAX size 1024 KB"
+            range 1 1024
+            default 1024		
+
+        config MCU_SRAM_START_ADDRESS 
+            hex "MCU RAM START ADDRESS"
+            default 0x20000000
+
+        config MCU_SRAM_SIZE_KB 
+            int "MCU RAM SIZE, MAX size 256 KB"
+            range 1 256
+            default 256
+
+        config MCU_FLASH_PAGE_SIZE 
+            hex "MCU FLASH PAGE SIZE, please not change,nrfx default is 0x1000"
+            range 0x1000 0x1000
+            default 0x1000
+	endmenu
 endmenu
 
 endmenu

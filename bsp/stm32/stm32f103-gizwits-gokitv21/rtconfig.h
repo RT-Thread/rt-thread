@@ -39,7 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -82,12 +82,6 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
-
 /* Using USB */
 
 
@@ -103,9 +97,6 @@
 
 
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -170,6 +161,7 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_UART2
 
 /* Board extended module Drivers */
 
