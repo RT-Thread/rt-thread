@@ -1,0 +1,49 @@
+mainmenu "RT-Thread Project Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+config BOARD_MINI2440
+    bool
+    select ARCH_ARM_ARM9
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+choice
+    prompt "Lcd for mini2440"
+    default RT_MINI2440_LCD_T35
+    depends on PKG_USING_GUIENGINE
+
+    config RT_MINI2440_LCD_A70
+        bool "A70"
+
+    config RT_MINI2440_LCD_T43
+        bool "T43"
+    
+    config RT_MINI2440_LCD_N35
+        bool "N35"
+    
+    config RT_MINI2440_LCD_T35
+        bool "T35"
+
+    config RT_MINI2440_LCD_X35
+        bool "X35"
+endchoice
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+

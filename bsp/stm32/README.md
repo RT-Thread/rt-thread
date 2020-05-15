@@ -1,3 +1,4 @@
+
 # STM32 BSP 说明
 
 STM32 系列 BSP 目前支持情况如下表所示：
@@ -43,6 +44,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32h743-st-nucleo](stm32h743-st-nucleo) | ST 官方 STM32H743-nucleo 开发板 |
 | [stm32h747-st-discovery](stm32h747-st-discovery) | ST 官方 STM32H747I-discovery 开发板 |
 | **L0 系列** |  |
+| [stm32l010-st-nucleo](stm32l010-st-nucleo) | ST 官方 STM32L010-nucleo 开发板 |
 | [stm32l053-st-nucleo](stm32l053-st-nucleo) | ST 官方 STM32L053-nucleo 开发板 |
 | **L4 系列** |  |
 | [stm32l4r9-st-eval](stm32l4r9-st-eval) | ST 官方 STM32L4R9I-EVAL 开发板 |

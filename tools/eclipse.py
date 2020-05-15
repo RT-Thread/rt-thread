@@ -109,12 +109,12 @@ def ExcludeFiles(infiles, files):
 def ExcludePaths(rootpath, paths):
     ret = []
 
-    files = os.listdir(rootpath)
+    files = os.listdir(OSPath(rootpath))
     for file in files:
         if file.startswith('.'):
             continue
 
-        fullname = os.path.join(rootpath, file)
+        fullname = os.path.join(OSPath(rootpath), file)
 
         if os.path.isdir(fullname):
             # print(fullname)
