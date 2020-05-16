@@ -137,7 +137,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     if (cfg->mode & RT_SPI_NO_CS)
     {
-        spi_handle->Init.NSS = SPI_NSS_SOFT;
+        spi_handle->Init.NSS = SPI_NSS_HARD_OUTPUT;
     }
     else
     {
