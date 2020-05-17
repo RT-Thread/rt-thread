@@ -34,6 +34,12 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
         default n
+    config BSP_USING_SDMMC
+        bool "Enable SDMMC (SD card)"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
 
 endmenu
 
@@ -133,7 +139,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
-	
+
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
