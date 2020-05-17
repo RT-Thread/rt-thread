@@ -1,0 +1,27 @@
+config SOC_FAMILY_AT32
+    bool
+
+config SOC_SERIES_AT32F403
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
+config SOC_SERIES_AT32F413
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
+config SOC_SERIES_AT32F415
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
+config SOC_SERIES_AT32F403A
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
+config SOC_SERIES_AT32F407
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32

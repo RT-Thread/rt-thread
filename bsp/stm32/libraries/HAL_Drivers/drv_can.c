@@ -688,9 +688,9 @@ void CAN1_SCE_IRQHandler(void)
         drv_can1.device.status.ackerrcnt++;
         if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
             rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK1))
             rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK2))
             rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
@@ -806,11 +806,11 @@ void CAN2_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         drv_can2.device.status.ackerrcnt++;
-        if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
             rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK1))
             rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK2))
             rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:

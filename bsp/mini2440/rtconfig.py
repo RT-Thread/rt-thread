@@ -1,22 +1,18 @@
 import os
 
-# panel options
-# 'PNL_A70','PNL_N35', 'PNL_T35' , 'PNL_X35'
-RT_USING_LCD_TYPE = 'PNL_T35'
-
 # toolchains options
 ARCH     = 'arm'
 CPU      = 's3c24x0'
 TextBase = '0x30000000'
 
-CROSS_TOOL 	= 'keil'
+CROSS_TOOL 	= 'gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM 	= 'gcc'
-    EXEC_PATH 	= 'C:/Program Files/CodeSourcery/Sourcery G++ Lite/bin'
+    EXEC_PATH 	= '/opt/gcc-arm-none-eabi-6_2-2016q4/bin'
 elif CROSS_TOOL == 'keil':
     PLATFORM 	= 'armcc'
     EXEC_PATH 	= 'C:/Keil'
@@ -43,11 +39,20 @@ if PLATFORM == 'gcc':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
+    STRIP = PREFIX + 'strip'
 
     DEVICE = ' -mcpu=arm920t'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread_mini2440.map,-cref,-u,_start  -nostartfiles -T mini2440_ram.ld' + ' -Ttext ' + TextBase
+
+    # module setting 
+    CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
+    M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
+    M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+                                    ' -shared -fPIC -nostartfiles -static-libgcc'
+    M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
     CPATH = ''
     LPATH = ''

@@ -52,6 +52,10 @@ int mpu_init(void)
     /* Enable the MPU */
     HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 
+    /* Enable CACHE */
+    SCB_EnableICache();
+    SCB_EnableDCache();
+    
     return 0;
 
 }

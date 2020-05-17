@@ -11,6 +11,10 @@
 #ifndef CLOCK_TIME_H__
 #define CLOCK_TIME_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* posix clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
@@ -40,5 +44,9 @@
 int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

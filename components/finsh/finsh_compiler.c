@@ -191,7 +191,7 @@ static int finsh_compile(struct finsh_node* node)
         case FINSH_NODE_VALUE_NULL:
         case FINSH_NODE_VALUE_STRING:
             finsh_code_byte(FINSH_OP_LD_DWORD);
-            finsh_code_dword((uint32_t)node->value.ptr);
+            finsh_code_dword((rt_ubase_t)node->value.ptr);
             break;
 
         /* arithmetic operation */
@@ -890,7 +890,7 @@ int finsh_compiler_run(struct finsh_node* node)
 
     /* clean text segment and vm stack */
     memset(&text_segment[0], 0, sizeof(text_segment));
-    memset(&finsh_vm_stack[0], 0, sizeof(finsh_vm_stack[0]));
+    memset(&finsh_vm_stack[0], 0, sizeof(finsh_vm_stack));
 
     /* reset compile stack pointer and pc */
     finsh_compile_sp = &finsh_vm_stack[0];

@@ -17,7 +17,7 @@
 
 Windows环境下推荐使用[env工具][1]进行编译。
 
-首先下载Linux上的gcc工具，版本为gcc-arm-8.3选择aarch64-elf就可以。
+首先下载windows上的aarch64的gcc交叉编译工具，版本为gcc-arm-8.3选择aarch64-elf就可以。
 
 将推荐将gcc解压到`\env\tools\gnu_gcc\arm_gcc`目录下。
 
@@ -30,6 +30,16 @@ EXEC_PATH = r'E:/env_released_1.1.2/env/tools/gnu_gcc/arm_gcc/gcc-arm-8.3-2019.0
 ```
 
 然后在`bsp\raspberry-pi\raspi3-64\`下输入scons编译即可。
+
+**window环境搭建注意**
+
+下载完成`gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf.tar.xz`交叉编译工具链后，最好采用7-zip解压工具进行两次解压。
+确保解压目录下的`/bin/aarch64-elf-ld.exe`文件的size不为0。
+否则编译会出现如下错误:
+
+```
+collect2.exe:fatal error:CreateProcess:No such file or directory
+```
 
 ### 2.2 Linux上的环境搭建
 

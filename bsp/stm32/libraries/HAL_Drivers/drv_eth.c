@@ -19,7 +19,7 @@
 
 /*
 * Emac driver uses CubeMX tool to generate emac and phy's configuration,
-* the configuration files can be found in CubeMX_Config floder.
+* the configuration files can be found in CubeMX_Config folder.
 */
 
 /* debug option */
@@ -248,7 +248,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
 
     /* Prepare transmit descriptors to give to DMA */
     /* TODO Optimize data send speed*/
-    LOG_D("transmit frame lenth :%d", framelength);
+    LOG_D("transmit frame length :%d", framelength);
 
     /* wait for unlocked */
     while (EthHandle.Lock == HAL_LOCKED);

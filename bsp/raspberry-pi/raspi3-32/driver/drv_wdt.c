@@ -114,4 +114,26 @@ int rt_hw_wdt_init(void)
 }
 
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
+
+/**
+ * Reboot
+ */
+int reboot(void)
+{
+    unsigned int r;
+
+    rt_kprintf("reboot system...\n");
+    rt_thread_mdelay(100);
+    // trigger a restart by instructing the GPU to boot from partition 0
+    r = PM_RSTS; r &= ~0xfffffaaa;
+    PM_RSTS = PM_PASSWORD | r;   // boot from partition 0
+    PM_WDOG = PM_PASSWORD | 10;
+    PM_RSTC = PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
+    
+    while (1);
+    
+    return 0;
+}
+MSH_CMD_EXPORT(reboot,reboot system...);
+
 #endif /*BSP_USING_WDT */

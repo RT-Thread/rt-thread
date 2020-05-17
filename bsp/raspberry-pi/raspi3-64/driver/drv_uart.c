@@ -12,10 +12,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#include "raspi.h"
 #include "board.h"
 #include "drv_uart.h"
-
-#include <rtdevice.h>
 
 #define AUX_BASE            (0x3F000000 + 0x215000)
 
@@ -34,20 +33,19 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
 
     if (uart->hw_base == AUX_BASE)
     {
-    	rt_uint32_t value;
+        rt_uint32_t value;
 
         /* GPIO function set */
-        value = GPIO_GPFSEL1;
-        value &= ~(7<<12); /* GPIO14 */
-        value |=    2<<12 ; /* ALT5 */
-        value &= ~(7<<15); /* GPIO15 */
-        value |=    2<<15 ; /* ALT5 */
-        GPIO_GPFSEL1 = value;
+        value = BCM283X_GPIO_GPFSEL(1);
+        value &= ~(7 << 12); /* GPIO14 */
+        value |= 2 << 12 ; /* ALT5 */
+        value &= ~(7 << 15); /* GPIO15 */
+        value |= 2 << 15 ; /* ALT5 */
+        BCM283X_GPIO_GPFSEL(1) = value;
 
-        /* PullUD disable */
-        GPIO_GPPUD = 0;
-        GPIO_GPPUDCLK0 = (1 << 14) | (1 << 15);
-        GPIO_GPPUDCLK0 = 0;
+        BCM283X_GPIO_GPPUD = 0;
+        BCM283X_GPIO_GPPUDCLK(0) = (1 << 14) | (1 << 15);
+        BCM283X_GPIO_GPPUDCLK(0) = 0;
 
         AUX_ENABLES(uart->hw_base)      = 1;    /* Enable UART1 */
         AUX_MU_IER_REG(uart->hw_base)   = 0;    /* Disable interrupt */
