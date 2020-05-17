@@ -433,35 +433,11 @@ void SDMMC1_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-void HAL_SD_MspInit(SD_HandleTypeDef * hsd)
-{
-    GPIO_InitTypeDef GPIO_Initure;
-
-    __HAL_RCC_SDMMC1_CLK_ENABLE();
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-
-    /* PC8,9,10,11,12 */
-    GPIO_Initure.Pin=GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
-    GPIO_Initure.Mode=GPIO_MODE_AF_PP;
-    GPIO_Initure.Pull=GPIO_NOPULL;
-    GPIO_Initure.Speed=GPIO_SPEED_FREQ_HIGH;
-    GPIO_Initure.Alternate=GPIO_AF12_SDIO1;
-    HAL_GPIO_Init(GPIOC,&GPIO_Initure);
-
-    /* PD2 */
-    GPIO_Initure.Pin=GPIO_PIN_2;
-    HAL_GPIO_Init(GPIOD,&GPIO_Initure);
-
-    HAL_NVIC_SetPriority(SDMMC1_IRQn, 2, 0);
-    HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
-}
-
 int rt_hw_sdio_init(void)
 {
     struct stm32_sdio_des sdio_des;
     SD_HandleTypeDef hsd;
-
+    hsd.Instance = SDMMC1;
     HAL_SD_MspInit(&hsd);
 
     host = sdio_host_create(&sdio_des);
