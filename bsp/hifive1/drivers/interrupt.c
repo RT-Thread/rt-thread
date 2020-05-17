@@ -93,7 +93,7 @@ void rt_hw_interrupt_init(void)
 
 rt_uint32_t rt_hw_interrupt_get_active(rt_uint32_t fiq_irq)
 {
-    return (rt_uint32_t)PLIC_claim_interrupt(&g_plic);;
+    return (rt_uint32_t)PLIC_claim_interrupt(&g_plic);
 }
 
 void rt_hw_interrupt_ack(rt_uint32_t fiq_irq, rt_uint32_t id)

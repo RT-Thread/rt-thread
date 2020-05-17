@@ -25,6 +25,11 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
+        config BSP_USING_CORETIMER
+            bool "Using core timer"
+            select RT_USING_CORETIMER
+            default y
+
         menuconfig BSP_USING_SYSTIMER
             bool "Enable SYSTIMER"
             select BSP_USING_SYSTIMER
@@ -58,12 +63,17 @@ menu "Hardware Drivers Config"
             select RT_USING_SPI
             default n
         
-        if BSP_USING_SPI
-            config BSP_USING_SPI0
-                bool "Enable SPI0"
+        if BSP_USING_SPI   
+            config BSP_USING_SPI0_BUS
+                bool "Enable SPI0 BUS"
                 default n
-            config BSP_USING_SPI1
-                bool "Enable SPI1"
+            config BSP_USING_SPI0_DEVICE0
+                bool "Enable SPI0 DEVICE0"
+                select BSP_USING_SPI0_BUS
+                default n
+            config BSP_USING_SPI0_DEVICE1
+                bool "Enable SPI0 DEVICE1"
+                select BSP_USING_SPI0_BUS
                 default n
         endif
 
@@ -100,7 +110,6 @@ menu "Hardware Drivers Config"
     menu "Board Peripheral Drivers"
         menuconfig BSP_USING_HDMI
             bool "Enable HDMI"
-            select BSP_USING_SPI
             default n
 
         if BSP_USING_HDMI

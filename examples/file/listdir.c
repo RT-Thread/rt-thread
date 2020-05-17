@@ -1,22 +1,19 @@
 /*
- * File      : listdir.c
- * This file is part of RT-TestCase in RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2010-02-10     Bernard      first version
+ * 2020-04-12     Jianjia Ma   add msh cmd
  */
 #include <rtthread.h>
 #include <dfs_posix.h>
 
-static char fullpath[256];
 void list_dir(const char* path)
 {
+    char * fullpath;
 	DIR *dir;
 
 	dir = opendir(path);
@@ -24,6 +21,13 @@ void list_dir(const char* path)
 	{
 		struct dirent* dirent;
 		struct stat s;
+
+	    fullpath = rt_malloc(256);
+	    if (fullpath == RT_NULL)
+	    {
+	        rt_kprintf("no memory\n");
+	        return;
+	    }
 
 		do
 		{
@@ -35,7 +39,7 @@ void list_dir(const char* path)
 			rt_sprintf(fullpath, "%s/%s", path, dirent->d_name);
 
 			stat(fullpath, &s);
-			if ( s.st_mode & DFS_S_IFDIR )
+			if ( s.st_mode & S_IFDIR )
 			{
 				rt_kprintf("%s\t\t<DIR>\n", dirent->d_name);
 			}
@@ -47,10 +51,34 @@ void list_dir(const char* path)
 
 		closedir(dir);
 	}
-	else rt_kprintf("open %s directory failed\n", path);
+	else
+	{
+	    rt_kprintf("open %s directory failed\n", path);
+	}
+
+	rt_free(fullpath);
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(list_dir, list directory);
-#endif
+
+#ifdef FINSH_USING_MSH
+static void cmd_list_dir(int argc, char *argv[])
+{
+    char* filename;
+
+    if(argc == 2)
+    {
+        filename = argv[1];
+    }
+    else
+    {
+        rt_kprintf("Usage: list_dir [file_path]\n");
+        return;
+    }
+    list_dir(filename);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_list_dir, __cmd_list_dir, list directory);
+#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */

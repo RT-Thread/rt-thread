@@ -370,7 +370,7 @@ RTM_EXPORT(rt_strstr);
  *
  * @return the result
  */
-rt_uint32_t rt_strcasecmp(const char *a, const char *b)
+rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
     int ca, cb;
 

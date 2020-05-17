@@ -555,6 +555,54 @@ int dfs_mount_device(rt_device_t dev)
   rt_kprintf("can't find device:%s to be mounted.\n", dev->parent.name);
   return -RT_ERROR;
 }
+
+int dfs_unmount_device(rt_device_t dev)
+{
+    struct dfs_filesystem *iter;
+    struct dfs_filesystem *fs = NULL;
+
+    /* lock filesystem */
+    dfs_lock();
+
+    for (iter = &filesystem_table[0];
+            iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+    {
+        /* check if the PATH is mounted */
+        if ((iter->dev_id->parent.name != NULL)
+            && (strcmp(iter->dev_id->parent.name, dev->parent.name) == 0))
+        {
+            fs = iter;
+            break;
+        }
+    }
+
+    if (fs == NULL ||
+        fs->ops->unmount == NULL ||
+        fs->ops->unmount(fs) < 0)
+    {
+        goto err1;
+    }
+
+    /* close device, but do not check the status of device */
+    if (fs->dev_id != NULL)
+        rt_device_close(fs->dev_id);
+
+    if (fs->path != NULL)
+        rt_free(fs->path);
+
+    /* clear this filesystem table entry */
+    memset(fs, 0, sizeof(struct dfs_filesystem));
+
+    dfs_unlock();
+
+    return 0;
+
+err1:
+    dfs_unlock();
+
+    return -1;
+}
+
 #endif
 
 #ifdef RT_USING_FINSH

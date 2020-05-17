@@ -19,10 +19,10 @@
 
 /*@{*/
 
-extern rt_uint32_t __ebase_entry;
-rt_uint32_t rt_interrupt_from_thread;
-rt_uint32_t rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrupt_flag;
+extern rt_ubase_t __ebase_entry;
+rt_ubase_t rt_interrupt_from_thread;
+rt_ubase_t rt_interrupt_to_thread;
+rt_ubase_t rt_thread_switch_interrupt_flag;
 
 rt_base_t rt_hw_interrupt_disable(void)
 {
@@ -101,7 +101,10 @@ static void install_default_exception_handler(void)
 
 int rt_hw_exception_init(void)
 {
-    rt_uint32_t ebase = (rt_uint32_t)&__ebase_entry;
+    rt_ubase_t ebase = (rt_ubase_t)&__ebase_entry;
+#ifdef ARCH_MIPS64
+    ebase |= 0xffffffff00000000;
+#endif
     write_c0_ebase(ebase);
     clear_c0_status(ST0_BEV | ST0_ERL | ST0_EXL);
     clear_c0_status(ST0_IM | ST0_IE);
@@ -114,14 +117,14 @@ int rt_hw_exception_init(void)
 
 void rt_general_exc_dispatch(struct pt_regs *regs)
 {
-    rt_uint32_t cause, exccode;
+    rt_ubase_t exccode = 0;
 
-    exccode = (cause & CAUSEF_EXCCODE) >> CAUSEB_EXCCODE;
 
     if (exccode == 0) {
-        rt_uint32_t status, pending;
+        rt_ubase_t status, pending;
         status = read_c0_status();
-        pending = (cause & CAUSEF_IP) & (status & ST0_IM);
+
+        pending =  (CAUSEF_IP) & (status & ST0_IM);
         if (pending & CAUSEF_IP0)
             rt_do_mips_cpu_irq(0);
         if (pending & CAUSEF_IP1)

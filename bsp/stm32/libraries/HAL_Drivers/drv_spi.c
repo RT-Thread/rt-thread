@@ -8,6 +8,7 @@
  * 2018-11-5      SummerGift   first version
  * 2018-12-11     greedyhao    Porting for stm32f7xx
  * 2019-01-03     zylx         modify DMA initialization and spixfer function
+ * 2020-01-15     whj4674672   Porting for stm32h7xx
  */
 
 #include "board.h"
@@ -136,7 +137,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     if (cfg->mode & RT_SPI_NO_CS)
     {
-        spi_handle->Init.NSS = SPI_NSS_SOFT;
+        spi_handle->Init.NSS = SPI_NSS_HARD_OUTPUT;
     }
     else
     {
@@ -147,6 +148,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     SPI_APB_CLOCK = HAL_RCC_GetPCLK1Freq();
+#elif defined(SOC_SERIES_STM32H7)
+    SPI_APB_CLOCK = HAL_RCC_GetSysClockFreq();
 #else
     SPI_APB_CLOCK = HAL_RCC_GetPCLK2Freq();
 #endif
@@ -205,6 +208,20 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->State = HAL_SPI_STATE_RESET;
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
     spi_handle->Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
+#elif defined(SOC_SERIES_STM32H7)
+    spi_handle->Init.Mode                       = SPI_MODE_MASTER;
+    spi_handle->Init.NSS                        = SPI_NSS_SOFT;
+    spi_handle->Init.NSSPMode                   = SPI_NSS_PULSE_DISABLE;
+    spi_handle->Init.NSSPolarity                = SPI_NSS_POLARITY_LOW;
+    spi_handle->Init.CRCPolynomial              = 7;
+    spi_handle->Init.TxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+    spi_handle->Init.RxCRCInitializationPattern = SPI_CRC_INITIALIZATION_ALL_ZERO_PATTERN;
+    spi_handle->Init.MasterSSIdleness           = SPI_MASTER_SS_IDLENESS_00CYCLE;
+    spi_handle->Init.MasterInterDataIdleness    = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
+    spi_handle->Init.MasterReceiverAutoSusp     = SPI_MASTER_RX_AUTOSUSP_DISABLE;
+    spi_handle->Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE;
+    spi_handle->Init.IOSwap                     = SPI_IO_SWAP_DISABLE;
+    spi_handle->Init.FifoThreshold              = SPI_FIFO_THRESHOLD_08DATA;
 #endif
 
     if (HAL_SPI_Init(spi_handle) != HAL_OK)
@@ -239,8 +256,6 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 0, 1);
         HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
     }
-
-    __HAL_SPI_ENABLE(spi_handle);
 
     LOG_D("%s init done", spi_drv->config->bus_name);
     return RT_EOK;

@@ -16,6 +16,10 @@
 #include "drivers/usb_device.h"
 #include "mstorage.h"
 
+#ifdef RT_USING_DFS_MNTTABLE
+#include "dfs_fs.h"
+#endif
+
 #ifdef RT_USB_DEVICE_MSTORAGE
 
 enum STAT
@@ -422,7 +426,7 @@ static rt_size_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw)
 
     data = (struct mstorage*)func->user_data;   
     buf = data->ep_in->buffer;    
-    sector_count = data->geometry.sector_count;
+    sector_count = data->geometry.sector_count - 1; /* Last Logical Block Address */
     sector_size = data->geometry.bytes_per_sector;
 
     buf[0] = sector_count >> 24;
@@ -955,7 +959,7 @@ static rt_err_t _function_enable(ufunction_t func)
     struct mstorage *data;
     RT_ASSERT(func != RT_NULL);
     RT_DEBUG_LOG(RT_DEBUG_USB, ("Mass storage function enabled\n"));
-    data = (struct mstorage*)func->user_data;   
+    data = (struct mstorage*)func->user_data;
 
     data->disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
     if(data->disk == RT_NULL)
@@ -963,6 +967,10 @@ static rt_err_t _function_enable(ufunction_t func)
         rt_kprintf("no data->disk named %s\n", RT_USB_MSTORAGE_DISK_NAME);
         return -RT_ERROR;
     }
+
+#ifdef RT_USING_DFS_MNTTABLE
+    dfs_unmount_device(data->disk);
+#endif
 
     if(rt_device_open(data->disk, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
@@ -1029,6 +1037,9 @@ static rt_err_t _function_disable(ufunction_t func)
     if(data->disk != RT_NULL)
     {
         rt_device_close(data->disk);
+#ifdef RT_USING_DFS_MNTTABLE
+        dfs_mount_device(data->disk);
+#endif
         data->disk = RT_NULL;
     }
     
