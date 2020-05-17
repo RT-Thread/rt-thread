@@ -322,6 +322,15 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
+    
+#if defined(SOC_STM32F103C8TX)
+    if (HAL_TIM_Base_Init(tim) != HAL_OK)
+    {
+        LOG_E("%s init time base unit failed", device->name);
+        result = -RT_ERROR;
+        goto __exit;
+    }
+#endif
 
     if (HAL_TIM_PWM_Init(tim) != HAL_OK)
     {
