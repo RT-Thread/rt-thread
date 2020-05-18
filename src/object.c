@@ -291,6 +291,8 @@ int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers
 
         pointers[index] = object;
         index ++;
+
+        if (index >= maxlen) break;
     }
     rt_hw_interrupt_enable(level);
 
