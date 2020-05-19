@@ -22,7 +22,7 @@ from xml.etree.ElementTree import SubElement
 
 from building import *
 
-MODULE_VER_NUM = 2
+MODULE_VER_NUM = 3
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
 
