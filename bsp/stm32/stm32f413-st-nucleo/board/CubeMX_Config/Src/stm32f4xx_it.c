@@ -1,7 +1,7 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32l4xx_it.c
+  * @file    stm32f4xx_it.c
   * @brief   Interrupt Service Routines.
   ******************************************************************************
   *
@@ -35,7 +35,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32l4xx_it.h"
+#include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -123,7 +123,7 @@ void MemManage_Handler(void)
 }
 
 /**
-  * @brief This function handles Prefetch fault, memory access fault.
+  * @brief This function handles Pre-fetch fault, memory access fault.
   */
 void BusFault_Handler(void)
 {
@@ -206,10 +206,10 @@ void SysTick_Handler(void)
 }
 
 /******************************************************************************/
-/* STM32L4xx Peripheral Interrupt Handlers                                    */
+/* STM32F4xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
 /* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32l4xx.s).                    */
+/* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
