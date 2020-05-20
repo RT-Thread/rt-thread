@@ -39,9 +39,21 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
 
-if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+if GetDepend(['RT_USING_PM']):
     src += ['drv_pm.c']
-    src += ['drv_lptim.c']
+    src += ['drv_pmtim.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32F0']):
+    src += ['drv_pmhw/drv_pmhw_f0.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32F1']):
+    src += ['drv_pmhw/drv_pmhw_f1.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32F4']):
+    src += ['drv_pmhw/drv_pmhw_f4.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+    src += ['drv_pmhw/drv_pmhw_l4.c']
 
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']

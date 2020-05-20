@@ -58,7 +58,7 @@ if GetDepend(['RT_USING_ADC']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c']
 
-if GetDepend(['RT_USING_RTC']):
+if GetDepend(['RT_USING_RTC']) or GetDepend(['RT_USING_PM']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.c']
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c']
 
@@ -81,6 +81,9 @@ if GetDepend(['RT_USING_MTD_NOR']):
 
 if GetDepend(['RT_USING_MTD_NAND']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_nand.c']
+
+if GetDepend(['RT_USING_PM']):
+    src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_lptim.c']
 
 if GetDepend(['BSP_USING_FMC']):
     src += ['STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fmc.c']

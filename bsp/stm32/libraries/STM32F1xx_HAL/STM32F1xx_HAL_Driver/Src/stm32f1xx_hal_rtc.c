@@ -703,6 +703,9 @@ __weak void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
 HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)
 {
   uint32_t counter_time = 0U, counter_alarm = 0U;
+#if defined(RT_USING_PM)
+  uint32_t multi = 1U;
+#endif
 
   /* Check input parameters */
   if ((hrtc == NULL) || (sTime == NULL))
@@ -712,6 +715,10 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 
   /* Check the parameters */
   assert_param(IS_RTC_FORMAT(Format));
+
+#if defined(RT_USING_PM)
+  multi = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_RTC) / (hrtc->Instance->PRLL + 1U);
+#endif
 
   /* Process Locked */
   __HAL_LOCK(hrtc);
@@ -738,6 +745,9 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
                     ((uint32_t)(RTC_Bcd2ToByte(sTime->Minutes)) * 60U) + \
                     ((uint32_t)(RTC_Bcd2ToByte(sTime->Seconds))));
   }
+#if defined(RT_USING_PM)
+  counter_time *= multi;
+#endif
 
   /* Write time counter in RTC registers */
   if (RTC_WriteTimeCounter(hrtc, counter_time) != HAL_OK)
@@ -764,7 +774,11 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
       if (counter_alarm < counter_time)
       {
         /* Add 1 day to alarm counter*/
+#if defined(RT_USING_PM)
+        counter_alarm += (uint32_t)(24U * 3600U * multi);
+#else
         counter_alarm += (uint32_t)(24U * 3600U);
+#endif
 
         /* Write new Alarm counter in RTC registers */
         if (RTC_WriteAlarmCounter(hrtc, counter_alarm) != HAL_OK)
@@ -802,6 +816,9 @@ HAL_StatusTypeDef HAL_RTC_SetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTime, uint32_t Format)
 {
   uint32_t counter_time = 0U, counter_alarm = 0U, days_elapsed = 0U, hours = 0U;
+#if defined(RT_USING_PM)
+  uint32_t multi = 1U;
+#endif
 
   /* Check input parameters */
   if ((hrtc == NULL) || (sTime == NULL))
@@ -818,13 +835,23 @@ HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
     return HAL_ERROR;
   }
 
+#if defined(RT_USING_PM)
+  multi = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_RTC) / (hrtc->Instance->PRLL + 1U);
+#endif
+
   /* Read the time counter*/
   counter_time = RTC_ReadTimeCounter(hrtc);
 
   /* Fill the structure fields with the read parameters */
+#if defined(RT_USING_PM)
+  hours = (counter_time / multi) / 3600U;
+  sTime->Minutes  = (uint8_t)(((counter_time / multi) % 3600U) / 60U);
+  sTime->Seconds  = (uint8_t)(((counter_time / multi) % 3600U) % 60U);
+#else
   hours = counter_time / 3600U;
   sTime->Minutes  = (uint8_t)((counter_time % 3600U) / 60U);
   sTime->Seconds  = (uint8_t)((counter_time % 3600U) % 60U);
+#endif
 
   if (hours >= 24U)
   {
@@ -850,7 +877,11 @@ HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
     }
 
     /* Set updated time in decreasing counter by number of days elapsed */
+#if defined(RT_USING_PM)
+    counter_time -= (days_elapsed * 24U * 3600U * multi);
+#else
     counter_time -= (days_elapsed * 24U * 3600U);
+#endif
 
     /* Write time counter in RTC registers */
     if (RTC_WriteTimeCounter(hrtc, counter_time) != HAL_OK)
@@ -913,6 +944,9 @@ HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
 HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDate, uint32_t Format)
 {
   uint32_t counter_time = 0U, counter_alarm = 0U, hours = 0U;
+#if defined(RT_USING_PM)
+  uint32_t multi = 1U;
+#endif
 
   /* Check input parameters */
   if ((hrtc == NULL) || (sDate == NULL))
@@ -922,6 +956,10 @@ HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDat
 
   /* Check the parameters */
   assert_param(IS_RTC_FORMAT(Format));
+
+#if defined(RT_USING_PM)
+  multi = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_RTC) / (hrtc->Instance->PRLL + 1U);
+#endif
 
   /* Process Locked */
   __HAL_LOCK(hrtc);
@@ -960,11 +998,19 @@ HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDat
   counter_time = RTC_ReadTimeCounter(hrtc);
 
   /* Fill the structure fields with the read parameters */
+#if defined(RT_USING_PM)
+  hours = (counter_time / multi) / 3600U;
+#else
   hours = counter_time / 3600U;
+#endif
   if (hours > 24U)
   {
     /* Set updated time in decreasing counter by number of days elapsed */
+#if defined(RT_USING_PM)
+    counter_time -= ((hours / 24U) * 24U * 3600U * multi);
+#else
     counter_time -= ((hours / 24U) * 24U * 3600U);
+#endif
     /* Write time counter in RTC registers */
     if (RTC_WriteTimeCounter(hrtc, counter_time) != HAL_OK)
     {
@@ -986,7 +1032,11 @@ HAL_StatusTypeDef HAL_RTC_SetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDat
       if (counter_alarm < counter_time)
       {
         /* Add 1 day to alarm counter*/
+#if defined(RT_USING_PM)
+        counter_alarm += (uint32_t)(24U * 3600U * multi);
+#else
         counter_alarm += (uint32_t)(24U * 3600U);
+#endif
 
         /* Write new Alarm counter in RTC registers */
         if (RTC_WriteAlarmCounter(hrtc, counter_alarm) != HAL_OK)
@@ -1092,6 +1142,9 @@ HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDat
 HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sAlarm, uint32_t Format)
 {
   uint32_t counter_alarm = 0U, counter_time;
+#if defined(RT_USING_PM)
+  uint32_t multi = 1U;
+#endif
   RTC_TimeTypeDef stime = {0U};
 
   /* Check input parameters */
@@ -1103,6 +1156,10 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
   /* Check the parameters */
   assert_param(IS_RTC_FORMAT(Format));
   assert_param(IS_RTC_ALARM(sAlarm->Alarm));
+
+#if defined(RT_USING_PM)
+  multi = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_RTC) / (hrtc->Instance->PRLL + 1U);
+#endif
 
   /* Process Locked */
   __HAL_LOCK(hrtc);
@@ -1149,7 +1206,11 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
   }
 
   /* Write Alarm counter in RTC registers */
+#if defined(RT_USING_PM)
+  if (RTC_WriteAlarmCounter(hrtc, counter_alarm * multi) != HAL_OK)
+#else
   if (RTC_WriteAlarmCounter(hrtc, counter_alarm) != HAL_OK)
+#endif
   {
     /* Set RTC state */
     hrtc->State = HAL_RTC_STATE_ERROR;
@@ -1184,6 +1245,9 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sA
 HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef *sAlarm, uint32_t Format)
 {
   uint32_t counter_alarm = 0U, counter_time;
+#if defined(RT_USING_PM)
+  uint32_t multi = 1U;
+#endif
   RTC_TimeTypeDef stime = {0U};
 
   /* Check input parameters */
@@ -1195,6 +1259,10 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   /* Check the parameters */
   assert_param(IS_RTC_FORMAT(Format));
   assert_param(IS_RTC_ALARM(sAlarm->Alarm));
+
+#if defined(RT_USING_PM)
+  multi = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_RTC) / (hrtc->Instance->PRLL + 1U);
+#endif
 
   /* Process Locked */
   __HAL_LOCK(hrtc);
@@ -1241,7 +1309,11 @@ HAL_StatusTypeDef HAL_RTC_SetAlarm_IT(RTC_HandleTypeDef *hrtc, RTC_AlarmTypeDef 
   }
 
   /* Write alarm counter in RTC registers */
+#if defined(RT_USING_PM)
+  if (RTC_WriteAlarmCounter(hrtc, counter_alarm * multi) != HAL_OK)
+#else
   if (RTC_WriteAlarmCounter(hrtc, counter_alarm) != HAL_OK)
+#endif
   {
     /* Set RTC state */
     hrtc->State = HAL_RTC_STATE_ERROR;

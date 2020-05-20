@@ -19,6 +19,8 @@ STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cec.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
 """)
 
+CPPDEFINES = ['USE_HAL_DRIVER']
+
 if GetDepend(['RT_USING_PIN']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c']
     
@@ -53,9 +55,13 @@ if GetDepend(['RT_USING_ADC']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c']
 
-if GetDepend(['RT_USING_RTC']):
+if GetDepend(['RT_USING_RTC']) or GetDepend(['RT_USING_PM']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc_ex.c']
+
+if GetDepend(['RT_USING_PM']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_rtc.c']
+    CPPDEFINES += ['USE_FULL_LL_DRIVER']
 
 if GetDepend(['RT_USING_WDT']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_iwdg.c']
@@ -86,7 +92,6 @@ path = [cwd + '/CMSIS/Device/ST/STM32F1xx/Include',
     cwd + '/STM32F1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
 
-CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

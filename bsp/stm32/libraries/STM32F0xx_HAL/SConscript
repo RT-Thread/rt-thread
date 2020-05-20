@@ -60,7 +60,7 @@ if GetDepend(['RT_USING_ADC']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_adc_ex.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_adc.c']
     
-if GetDepend(['RT_USING_RTC']):
+if GetDepend(['RT_USING_RTC']) or GetDepend(['RT_USING_PM']):
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rtc_ex.c']
     src += ['STM32F0xx_HAL_Driver/Src/stm32f0xx_ll_rtc.c']

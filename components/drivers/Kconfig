@@ -8,7 +8,7 @@ if RT_USING_DEVICE_IPC
     config RT_PIPE_BUFSZ
         int "Set pipe buffer size"
         default 512
-    
+
     config RT_USING_SYSTEM_WORKQUEUE
         bool "Using system default workqueue"
         default n
@@ -129,9 +129,48 @@ config RT_USING_MTD_NAND
         default n
     endif
 
-config RT_USING_PM
+menuconfig RT_USING_PM
     bool "Using Power Management device drivers"
     default n
+
+    if RT_USING_PM
+        config RT_PM_TIM_USING_RTC_ALARM
+            bool "Using RTC ALARM to hold a long STOP time"
+            depends on !(SOC_SERIES_STM32F1 || SOC_SERIES_STM32F2 || \
+                         SOC_STM32L100C6 || SOC_STM32L100R8 || SOC_STM32L100RB || \
+                         SOC_STM32L151C6 || SOC_STM32L151R6 || SOC_STM32L151C8 || \
+                         SOC_STM32L151R8 || SOC_STM32L151V8 || SOC_STM32L151CB || \
+                         SOC_STM32L151RB || SOC_STM32L151VB)
+            default n
+
+        config RT_PM_USING_INTERNAL_WAKEUP
+            bool "Wakeup from STOP mode use only internal interrupt to keep the second time base"
+            depends on SOC_SERIES_STM32F2 || \
+                       SOC_STM32L100C6 || SOC_STM32L100R8 || SOC_STM32L100RB || \
+                       SOC_STM32L151C6 || SOC_STM32L151R6 || SOC_STM32L151C8 || \
+                       SOC_STM32L151R8 || SOC_STM32L151V8 || SOC_STM32L151CB || \
+                       SOC_STM32L151RB || SOC_STM32L151VB
+            default n
+
+        if (SOC_SERIES_STM32F2 || SOC_SERIES_STM32F4 || SOC_SERIES_STM32F7)
+            choice
+                prompt "Select VDD ranges"
+                default RT_PM_USING_VDD_2P7_3P6
+
+                config RT_PM_USING_VDD_2P7_3P6
+                bool "VDD range 2.7V-3.6V"
+
+                config RT_PM_USING_VDD_2P4_2P7
+                bool "VDD range 2.4V-2.7V"
+
+                config RT_PM_USING_VDD_2P1_2P4
+                bool "VDD range 2.1V-2.4V"
+
+                config RT_PM_USING_VDD_1P7_2P1
+                bool "VDD range 1.7V-2.1V"
+            endchoice
+        endif
+    endif
 
 config RT_USING_RTC
     bool "Using RTC device drivers"
@@ -194,7 +233,7 @@ config RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
 
-    if RT_USING_SPI  
+    if RT_USING_SPI
         config RT_USING_QSPI
             bool "Enable QSPI mode"
             default n
@@ -218,7 +257,7 @@ config RT_USING_SPI
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
-                
+
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
@@ -254,7 +293,7 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
-    
+
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memory pool block size"
