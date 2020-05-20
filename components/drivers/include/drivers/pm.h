@@ -64,7 +64,7 @@ enum
     "High Speed",               \
     "Normal Speed",             \
     "Medium Speed",             \
-    "Low Mode",                 \
+    "Low Speed",                \
 }
 
 #else /* PM_HAS_CUSTOM_CONFIG */
