@@ -564,7 +564,7 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-	/* check the network interface is up status  zhaoshimin add 20200509*/
+    /* check the network interface is up status */
     SAL_NETDEV_IS_UP(sock->netdev);
 
     /* check the network interface socket operations */

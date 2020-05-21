@@ -138,7 +138,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 
                 mask = f->fops->poll(f, req);
 
-                /* dealwith the device return error -1 zhaoshimin 20200509*/
+                /* dealwith the device return error -1*/
                 if (mask < 0)
                 {   
                     fd_put(f);
@@ -180,7 +180,7 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
             ret = do_pollfd(pf, &pt->req);
             if(ret < 0)
             {
-                /*dealwith the device return error -1  zhaoshimin 20200509*/
+                /*dealwith the device return error -1  */
                 pt->req._proc = RT_NULL;
                 return ret;
             }
