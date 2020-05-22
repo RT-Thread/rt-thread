@@ -34,8 +34,6 @@
 #define ADDR_FLASH_SECTOR_7     ((rt_uint32_t)0x080E0000) /* Base address of Sector 7, 128 Kbytes */
 #define ADDR_FLASH_SECTOR_8     ((rt_uint32_t)0x08100000) /* Base address of Sector 8, 128 Kbytes */
 
-
-
 #define FLASH_SECTOR_0             0U       /* Sector Number 0   */
 #define FLASH_SECTOR_1             1U       /* Sector Number 1   */
 #define FLASH_SECTOR_2             2U       /* Sector Number 2   */
@@ -53,15 +51,14 @@
   */
 static void GetSector(rt_uint32_t Address,uint32_t* bank,uint32_t* sector)
 {
-  
 #if defined (FLASH_OPTCR_nDBANK)
     FLASH_OBProgramInitTypeDef OBInit;
     uint32_t nbank = 0;
 
-    //get duel bank ability:nDBANK(Bit29)
+    /* get duel bank ability:nDBANK(Bit29) */
     HAL_FLASHEx_OBGetConfig(&OBInit);
     nbank = ((OBInit.USERConfig & 0x20000000U) >> 29);
-    //1:single bank mode
+    /* 1:single bank mode */
     if (1 == nbank)
     {  
         if ((Address < ADDR_FLASH_SECTOR_1) && (Address >= ADDR_FLASH_SECTOR_0))
@@ -113,24 +110,24 @@ static void GetSector(rt_uint32_t Address,uint32_t* bank,uint32_t* sector)
             sector = FLASH_SECTOR_11;
         }
     }
-    else  //0:dual bank mode
+    else  /* 0:dual bank mode */
     {
         LOG_E("rtthread doesn't support duel bank mode yet!");
         RT_ASSERT(0);
     }
-#else //no dual bank ability	
-	*sector = (Address&0xffffff)/FLASH_SIZE_GRANULARITY_128K;
-	if(*sector>7)
-	{
-		*bank = FLASH_BANK_1;
-		*sector = *sector/2;
-	}
-	else
-	*bank = FLASH_BANK_2;
-		
+#else /* no dual bank ability */	
+    *sector = (Address&0xffffff)/FLASH_SIZE_GRANULARITY_128K;
+    if(*sector>7)
+    {
+        *bank = FLASH_BANK_1;
+        *sector = *sector/2;
+    }
+    else
+    {
+        *bank = FLASH_BANK_2;
+    }
 #endif
 }
-
 
 /**
  * Read data from flash.
@@ -251,10 +248,10 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
 
     /* Get the 1st sector to erase */
     GetSector(addr,&bank,&FirstSector);
-    /* Get the number of sector to erase from 1st sector*/
+    /* Get the number of sector to erase from 1st sector */
     GetSector(addr + size,0,&NbOfSectors);
     NbOfSectors = NbOfSectors - FirstSector + 1;
-    /* Fill EraseInit structure*/
+    /* Fill EraseInit structure */
     EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
     EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
     EraseInitStruct.Sector        = FirstSector;
@@ -281,14 +278,9 @@ __exit:
 }
 
 #if defined(PKG_USING_FAL)
-
-
 static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size);
-
 static int fal_flash_write_128k(long offset, const rt_uint8_t *buf, size_t size);
-
 static int fal_flash_erase_128k(long offset, size_t size);
-
 const struct fal_flash_dev stm32_onchip_flash_128k = { "onchip_flash_128k", STM32_FLASH_START_ADRESS, FLASH_SIZE_GRANULARITY_128K, (128 * 1024), {NULL, fal_flash_read_128k, fal_flash_write_128k, fal_flash_erase_128k} };
 
 static int fal_flash_read_128k(long offset, rt_uint8_t *buf, size_t size)

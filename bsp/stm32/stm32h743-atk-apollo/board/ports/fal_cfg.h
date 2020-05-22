@@ -9,14 +9,13 @@
  * 2020-5-17      yufanyufan77 support H7
  */
 
-#ifndef _FAL_CFG_H_
-#define _FAL_CFG_H_
+#ifndef __FAL_CFG_H__
+#define __FAL_CFG_H__
 
 #include <rtthread.h>
 #include <board.h>
 
-#define FLASH_SIZE_GRANULARITY_128K  (16 * 128 * 1024)
-
+#define FLASH_SIZE_GRANULARITY_128K   (16 * 128 * 1024)
 #define STM32_FLASH_START_ADRESS_128K (0x8000000)
 
 extern const struct fal_flash_dev stm32_onchip_flash_128k;
