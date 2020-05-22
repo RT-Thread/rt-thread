@@ -9,7 +9,7 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
-rtconfig.AFLAGS += ' -I' + str(Dir('#'))
+rtconfig.AFLAGS += ' -I' + str(Dir('#')) + ' -I ' + RTT_ROOT + '/libcpu/mips/common/'
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
