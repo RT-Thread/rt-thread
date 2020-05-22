@@ -633,9 +633,13 @@ void rt_memory_info(rt_uint32_t *total,
 
 void list_mem(void)
 {
-    rt_kprintf("total memory: %d\n", mem_size_aligned);
-    rt_kprintf("used memory : %d\n", used_mem);
-    rt_kprintf("maximum allocated memory: %d\n", max_mem);
+    rt_kprintf("    %8s%8s%8s%10s%10s\n", "Total","Used","Free","UsedMax","FreeMin");
+	rt_kprintf("Mem:%8d%8d%8d%10d%10d\n", 
+																				mem_size_aligned,
+																				used_mem,
+																				mem_size_aligned - used_mem,
+																				max_mem,
+																				mem_size_aligned - max_mem);
 }
 FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)
 
