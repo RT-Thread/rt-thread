@@ -14,7 +14,6 @@
 #include "rtdevice.h"
 #include <rthw.h>
 #include <drv_common.h>
-//#include "drv_dma.h"
 #include <string.h>
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
@@ -51,8 +50,10 @@
      SDMMC_STA_DTIMEOUT  | SDMMC_STA_CTIMEOUT | \
      SDMMC_STA_DCRCFAIL | SDMMC_STA_CCRCFAIL)
 
-//#define SDIO_MASKR_ALL                      (0x17E00FFF)
-#define SDIO_MASKR_ALL                      (0x11C003FF)
+#define SDIO_MASKR_ALL \
+    (SDMMC_MASK_CCRCFAILIE | SDMMC_MASK_DCRCFAILIE | SDMMC_MASK_CTIMEOUTIE |\
+	 SDMMC_MASK_TXUNDERRIE | SDMMC_MASK_RXOVERRIE | SDMMC_MASK_CMDRENDIE | \
+	  SDMMC_MASK_CMDSENTIE | SDMMC_MASK_DATAENDIE | SDMMC_MASK_ACKTIMEOUTIE)
 
 #define HW_SDIO_DATATIMEOUT                 (0xFFFFFFFFU)
 
