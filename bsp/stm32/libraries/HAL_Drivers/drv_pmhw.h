@@ -40,20 +40,21 @@ extern "C" {
   #define RT_PM_TIM_USING_RTC_WAKEUPTIM_NOSSR
 #endif
 
-extern rt_uint32_t pm_hwtim_get_countfreq(void);
-extern rt_uint32_t pm_hwtim_get_tick_max(void);
-extern rt_uint32_t pm_hwtim_get_current_tick(void);
-extern rt_err_t pm_hwtim_start(rt_uint32_t load);
-extern void pm_hwtim_stop(void);
+void stm32_sleep(struct rt_pm *pm, rt_uint8_t mode);
+void stm32_run(struct rt_pm *pm, rt_uint8_t mode);
 
-extern void pm_hw_sleep(struct rt_pm *pm, rt_uint8_t mode);
-extern void pm_hw_run(struct rt_pm *pm, rt_uint8_t mode);
+rt_uint32_t stm32_pmtim_get_countfreq(void);
+rt_uint32_t stm32_pmtim_get_tick_max(void);
+rt_uint32_t stm32_pmtim_get_current_tick(void);
+rt_err_t stm32_pmtim_start(rt_uint32_t load);
+void stm32_pmtim_stop(void);
 
-extern void pm_system_clock_high(void);
-extern void pm_system_clock_normal(void);
-extern void pm_system_clock_medium(void);
-extern void pm_system_clock_low(void);
-extern rt_uint16_t pm_run_freq[PM_RUN_MODE_MAX][2];
+void stm32_systemclock_high(void);
+void stm32_systemclock_normal(void);
+void stm32_systemclock_medium(void);
+void stm32_systemclock_low(void);
+
+extern rt_uint16_t stm32_run_freq[PM_RUN_MODE_MAX][2];
 
 #ifdef __cplusplus
 }

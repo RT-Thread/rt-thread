@@ -101,27 +101,9 @@ static rt_uint32_t get_rtc_clk_freq(void)
 #endif
 
 /**
- * This function get the count clock of LPTIM or RTC
- *
- * @return the count clock frequency in Hz
- */
-RT_WEAK rt_uint32_t PM_GetCounterFreq(void)
-{
-#if defined(RT_PM_TIM_USING_LPTIM)
-    return LPTIM1_clk_freq >> ((LPTIM1->CFGR & LPTIM_CFGR_PRESC) >> LPTIM_CFGR_PRESC_Pos);
-#elif defined(RT_PM_TIM_USING_RTC_ALARM_SSR)
-    return RTC_clk_freq / (((RTC->PRER & RTC_PRER_PREDIV_A) >> RTC_PRER_PREDIV_A_Pos) + 1U);
-#elif defined(RT_PM_TIM_USING_RTC_ALARM_F1)
-    return RTC_clk_freq / (RTC->PRLL + 1U);
-#else
-    return RTC_clk_freq / 16U;
-#endif /* defined(RT_PM_TIM_USING_LPTIM) */
-}
-
-/**
  * This function initialize the LPTIM or RTC
  */
-RT_WEAK int PM_TimerInit(void)
+RT_WEAK int stm32_pm_timer_init(void)
 {
 #ifdef RT_PM_TIM_USING_LPTIM
     LptimHandle.Instance = LPTIM1;
@@ -193,7 +175,7 @@ RT_WEAK int PM_TimerInit(void)
     RtcAlarm.AlarmTime.SubSeconds = 0x0;
     RtcAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
     RtcAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-    RtcAlarm.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY | RTC_ALARMMASK_HOURS;
+    RtcAlarm.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
     RtcAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_NONE;
     RtcAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
     RtcAlarm.AlarmDateWeekDay = 0x1;
@@ -229,7 +211,7 @@ RT_WEAK int PM_TimerInit(void)
 /**
  * This function initialize the PM hwtim
  */
-int pm_hwtim_init(void)
+int stm32_pmtim_init(void)
 {
 #ifdef RT_PM_TIM_USING_LPTIM
     LptimHandle.Instance = LPTIM1;
@@ -242,19 +224,19 @@ int pm_hwtim_init(void)
     RTC_clk_freq = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_RTC);
   #endif
 #endif
-    return PM_TimerInit();
+    return stm32_pm_timer_init();
 }
-INIT_DEVICE_EXPORT(pm_hwtim_init);
+INIT_DEVICE_EXPORT(stm32_pmtim_init);
 
 #ifdef BSP_USING_ONCHIP_RTC
 /**
  * This function re-initialize the RTC on app initialization
  */
-int app_rtc_init(void)
+int stm32_rtc_reinit(void)
 {
-    return PM_TimerInit();
+    return stm32_pm_timer_init();
 }
-INIT_APP_EXPORT(app_rtc_init);
+INIT_APP_EXPORT(stm32_rtc_reinit);
 #endif /* BSP_USING_ONCHIP_RTC */
 
 /**
@@ -276,17 +258,17 @@ static void get_rtc_time(RTC_TimeTypeDef *time)
     datetmpreg = RTC->DR;
     if (HAL_RCC_GetPCLK1Freq() < RTC_clk_freq * 7U)
     {
-#if defined(SOC_SERIES_STM32F2)
-        st = time->Seconds;
-#else
+#if defined(RTC_SSR_SS)
         st = time->SubSeconds;
+#else
+        st = time->Seconds;
 #endif
         HAL_RTC_GetTime(&RtcHandle, time, RTC_FORMAT_BIN);
         datetmpreg = RTC->DR;
-#if defined(SOC_SERIES_STM32F2)
-        if (st != time->Seconds)
-#else
+#if defined(RTC_SSR_SS)
         if (st != time->SubSeconds)
+#else
+        if (st != time->Seconds)
 #endif
         {
             HAL_RTC_GetTime(&RtcHandle, time, RTC_FORMAT_BIN);
@@ -302,7 +284,7 @@ static void get_rtc_time(RTC_TimeTypeDef *time)
  *
  * @return the count vlaue
  */
-rt_uint32_t pm_hwtim_get_current_tick(void)
+rt_uint32_t stm32_pmtim_get_current_tick(void)
 {
 #if defined(RT_PM_TIM_USING_LPTIM)
 
@@ -346,10 +328,10 @@ rt_uint32_t pm_hwtim_get_current_tick(void)
 
     get_rtc_time(&cur_time);
 
-    seconds = cur_time.Minutes * 60U + cur_time.Seconds;
-    lastseconds = Last_time.Minutes * 60U + Last_time.Seconds;
+    seconds = cur_time.Hours * 3600U + cur_time.Minutes * 60U + cur_time.Seconds;
+    lastseconds = Last_time.Hours * 3600U + Last_time.Minutes * 60U + Last_time.Seconds;
     if (seconds < lastseconds)
-        seconds = 3600U + seconds - lastseconds;
+        seconds = 24U * 3600U + seconds - lastseconds;
     else
         seconds = seconds - lastseconds;
 
@@ -367,28 +349,36 @@ rt_uint32_t pm_hwtim_get_current_tick(void)
 }
 
 /**
- * This function get the PM-TIM's frequency
+ * This function get the count clock frequency of LPTIM or RTC
  *
- * @return the frequency (Hz)
+ * @return the count clock frequency in Hz
  */
-rt_uint32_t pm_hwtim_get_countfreq(void)
+RT_WEAK rt_uint32_t stm32_pmtim_get_countfreq(void)
 {
-    return PM_GetCounterFreq();
+#if defined(RT_PM_TIM_USING_LPTIM)
+    return LPTIM1_clk_freq >> ((LPTIM1->CFGR & LPTIM_CFGR_PRESC) >> LPTIM_CFGR_PRESC_Pos);
+#elif defined(RT_PM_TIM_USING_RTC_ALARM_SSR)
+    return RTC_clk_freq / (((RTC->PRER & RTC_PRER_PREDIV_A) >> RTC_PRER_PREDIV_A_Pos) + 1U);
+#elif defined(RT_PM_TIM_USING_RTC_ALARM_F1)
+    return RTC_clk_freq / (RTC->PRLL + 1U);
+#else
+    return RTC_clk_freq / 16U;
+#endif /* defined(RT_PM_TIM_USING_LPTIM) */
 }
 
 /**
- * This function get the max value that LPTIM can count
+ * This function get the max value that LPTIM or RTC can count
  *
  * @return the max count
  */
-rt_uint32_t pm_hwtim_get_tick_max(void)
+rt_uint32_t stm32_pmtim_get_tick_max(void)
 {
 #if defined(RT_PM_TIM_USING_LPTIM) || defined(RT_PM_TIM_USING_RTC_WAKEUPTIM)
     return (0xFFFF);
 #elif defined(RT_PM_TIM_USING_RTC_ALARM_F1)
     return (0xFFFFFF);
 #else
-    return 3600U * (((RTC->PRER & RTC_PRER_PREDIV_S) >> RTC_PRER_PREDIV_S_Pos) + 1U) - 1U;
+    return 24U * 3600U * (((RTC->PRER & RTC_PRER_PREDIV_S) >> RTC_PRER_PREDIV_S_Pos) + 1U) - 1U;
 #endif
 }
 
@@ -399,7 +389,7 @@ rt_uint32_t pm_hwtim_get_tick_max(void)
  *
  * @return RT_EOK
  */
-rt_err_t pm_hwtim_start(rt_uint32_t reload)
+rt_err_t stm32_pmtim_start(rt_uint32_t reload)
 {
 #if defined(RT_PM_TIM_USING_LPTIM)
 
@@ -423,10 +413,12 @@ rt_err_t pm_hwtim_start(rt_uint32_t reload)
 
     rt_uint32_t seconds = 0;
     rt_uint32_t minutes = 0;
+    rt_uint32_t hours = 0;
     rt_int32_t timeout = 0;
 
     get_rtc_time(&Last_time);
 
+    hours = Last_time.Hours;
     seconds = Last_time.Seconds;
     minutes = Last_time.Minutes;
 
@@ -441,6 +433,10 @@ rt_err_t pm_hwtim_start(rt_uint32_t reload)
         seconds ++;
     }
 
+    hours += seconds / 3600U;
+    seconds = seconds % 3600U;
+    if (hours >= 24U)
+        hours -= 24U;
     minutes += seconds / 60U;
     seconds = seconds % 60U;
     if (minutes >= 60U)
@@ -448,6 +444,7 @@ rt_err_t pm_hwtim_start(rt_uint32_t reload)
 
     RtcAlarm.AlarmTime.Seconds = seconds;
     RtcAlarm.AlarmTime.Minutes = minutes;
+    RtcAlarm.AlarmTime.Hours = hours;
     RtcAlarm.AlarmTime.SubSeconds = (rt_uint32_t)timeout;
 
     HAL_RTC_DeactivateAlarm(&RtcHandle, RTC_ALARM_A);
@@ -471,7 +468,7 @@ rt_err_t pm_hwtim_start(rt_uint32_t reload)
 /**
  * This function stop LPTIM or RTC
  */
-void pm_hwtim_stop(void)
+void stm32_pmtim_stop(void)
 {
 #if defined(RT_PM_TIM_USING_LPTIM)
 

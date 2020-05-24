@@ -23,7 +23,7 @@
  */
 static rt_tick_t stm32_pm_tick_from_os_tick(rt_tick_t tick)
 {
-    rt_uint32_t freq = pm_hwtim_get_countfreq();
+    rt_uint32_t freq = stm32_pmtim_get_countfreq();
 
     return (freq * tick / RT_TICK_PER_SECOND);
 }
@@ -40,7 +40,7 @@ static rt_tick_t stm32_os_tick_from_pm_tick(rt_uint32_t tick)
     static rt_uint32_t os_tick_remain = 0;
     rt_uint32_t ret, freq;
 
-    freq = pm_hwtim_get_countfreq();
+    freq = stm32_pmtim_get_countfreq();
     ret = (tick * RT_TICK_PER_SECOND + os_tick_remain) / freq;
 
     os_tick_remain += (tick * RT_TICK_PER_SECOND);
@@ -50,41 +50,41 @@ static rt_tick_t stm32_os_tick_from_pm_tick(rt_uint32_t tick)
 }
 
 /**
- * This function start the timer of pm
+ * This function start the PM timer
  *
  * @param pm Pointer to power manage structure
  * @param timeout How many OS Ticks that MCU can sleep
  */
-static void pm_timer_start(struct rt_pm *pm, rt_uint32_t timeout)
+static void stm32_pm_timer_start(struct rt_pm *pm, rt_uint32_t timeout)
 {
     RT_ASSERT(pm != RT_NULL);
     RT_ASSERT(timeout > 0);
 
     if (timeout != RT_TICK_MAX)
     {
-        /* Convert OS Tick to pmtimer timeout value */
+        /* Convert OS Tick to PM timer timeout value */
         timeout = stm32_pm_tick_from_os_tick(timeout);
-        if (timeout > pm_hwtim_get_tick_max())
+        if (timeout > stm32_pmtim_get_tick_max())
         {
-            timeout = pm_hwtim_get_tick_max();
+            timeout = stm32_pmtim_get_tick_max();
         }
 
         /* Enter PM_TIMER_MODE */
-        pm_hwtim_start(timeout);
+        stm32_pmtim_start(timeout);
     }
 }
 
 /**
- * This function stop the timer of pm
+ * This function stop the PM timer
  *
  * @param pm Pointer to power manage structure
  */
-static void pm_timer_stop(struct rt_pm *pm)
+static void stm32_pm_timer_stop(struct rt_pm *pm)
 {
     RT_ASSERT(pm != RT_NULL);
 
-    /* Reset pmtimer status */
-    pm_hwtim_stop();
+    /* Reset PM timer status */
+    stm32_pmtim_stop();
 }
 
 /**
@@ -94,13 +94,13 @@ static void pm_timer_stop(struct rt_pm *pm)
  *
  * @return OS Ticks
  */
-static rt_tick_t pm_timer_get_tick(struct rt_pm *pm)
+static rt_tick_t stm32_pm_timer_get_tick(struct rt_pm *pm)
 {
     rt_uint32_t timer_tick;
 
     RT_ASSERT(pm != RT_NULL);
 
-    timer_tick = pm_hwtim_get_current_tick();
+    timer_tick = stm32_pmtim_get_current_tick();
 
     return stm32_os_tick_from_pm_tick(timer_tick);
 }
@@ -112,11 +112,11 @@ int drv_pm_hw_init(void)
 {
     static const struct rt_pm_ops _ops =
     {
-        pm_hw_sleep,
-        pm_hw_run,
-        pm_timer_start,
-        pm_timer_stop,
-        pm_timer_get_tick
+        stm32_sleep,
+        stm32_run,
+        stm32_pm_timer_start,
+        stm32_pm_timer_stop,
+        stm32_pm_timer_get_tick
     };
 
     rt_uint8_t timer_mask = 0;

@@ -61,7 +61,7 @@
   #define FLASH_LATENCY_MAX_NUMS      5U
 #endif
 
-struct PM_RCC_conf
+struct rcc_conf_struct
 {
     rt_uint32_t mode;
     rt_uint32_t sysclk_source;
@@ -80,18 +80,18 @@ struct PM_RCC_conf
     rt_uint32_t msi_range;
     rt_bool_t low_pow_run_en;
 };
-static struct PM_RCC_conf _pm_conf[PM_RUN_MODE_MAX] = {0};
+static struct rcc_conf_struct _rcc_conf[PM_RUN_MODE_MAX] = {0};
 
-static struct PM_RCC_Osc
+static struct osc_conf_struct
 {
     rt_uint32_t init;
     rt_uint32_t osc_type;
     rt_uint32_t osc_freq;
 }
-_pm_osc = {0};
+_osc_conf = {0};
 
-static void (* _pm_set_sysclock[PM_RUN_MODE_MAX])(void) = {0};
-static const rt_uint32_t _pm_volt_scale_tab[PM_POW_VOLT_SCALE_NUMS][3] =
+static void (* _set_sysclock[PM_RUN_MODE_MAX])(void) = {0};
+static const rt_uint32_t _volt_scale_tab[PM_POW_VOLT_SCALE_NUMS][3] =
 {
     /* voltage range, frequency step for flash latency, max HCLK */
 #if defined(PWR_CR5_R1MODE)
@@ -104,12 +104,12 @@ static const rt_uint32_t _pm_volt_scale_tab[PM_POW_VOLT_SCALE_NUMS][3] =
     {PWR_REGULATOR_VOLTAGE_SCALE1,       16U,  80U},
 #endif
 };
-static const rt_uint16_t _pm_msi_range_tab[PM_MSI_RANGE_MAX_NUMS] =
+static const rt_uint16_t _msi_range_tab[PM_MSI_RANGE_MAX_NUMS] =
 {
     100U, 200U, 400U, 800U, 1000U, 2000U, 4000U, 8000U, 16000U, 24000U, 32000U, 48000U
 };
 
-RT_WEAK rt_uint16_t pm_run_freq[PM_RUN_MODE_MAX][2] =
+RT_WEAK rt_uint16_t stm32_run_freq[PM_RUN_MODE_MAX][2] =
 {
     /* The actual frequency is 1/divisor MHz, divisor = {1, 1000} */
     /* {sysclk frequency, divisor} */
@@ -177,9 +177,9 @@ static rt_uint32_t find_msi_range(rt_uint32_t freq, rt_uint32_t *rp)
     rt_uint32_t i;
     for (i = 0U; i < PM_MSI_RANGE_MAX_NUMS; i++)
     {
-        if ((_pm_msi_range_tab[i] >= freq) || (i == PM_MSI_RANGE_MAX_NUMS - 1U))
+        if ((_msi_range_tab[i] >= freq) || (i == PM_MSI_RANGE_MAX_NUMS - 1U))
         {
-            freq = _pm_msi_range_tab[i];
+            freq = _msi_range_tab[i];
             *rp = i << RCC_CR_MSIRANGE_Pos;
             break;
         }
@@ -208,20 +208,20 @@ static rt_uint32_t find_flash_latency(rt_uint32_t freq, rt_uint32_t fs)
  *
  * @return SYSCLK or HCLK frequency (MHz)
  */
-static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_base, rt_uint32_t freq_hclk)
+static rt_uint16_t clock_tree_config(struct rcc_conf_struct *conf, rt_uint32_t freq_base, rt_uint32_t freq_hclk)
 {
     rt_uint32_t freq, freq_div, div, divm, divr, divq, mul, fs, i, freq_vco = 0U;
     rt_bool_t find = RT_FALSE;
     rt_bool_t usbclk_use_pll = RT_TRUE;
 
-    freq_div = pm_run_freq[conf->mode][1];
+    freq_div = stm32_run_freq[conf->mode][1];
 
     RT_ASSERT(conf != RT_NULL && freq_hclk > 0);
     RT_ASSERT(freq_div == 1U || freq_div == 1000U);
 
     freq = freq_base = freq_base / 1000U * freq_div;
 
-    if (_pm_osc.osc_type == RCC_OSCILLATORTYPE_MSI)
+    if (_osc_conf.osc_type == RCC_OSCILLATORTYPE_MSI)
     {
         find_msi_range(freq_base * 1000U / freq_div, &conf->msi_range);
     }
@@ -233,10 +233,10 @@ static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_b
 
 #if defined(RCC_PLLSAI1_SUPPORT) && (defined(USB_OTG_FS) || defined(USB)) && !defined(PWR_CR5_R1MODE)
         /* Not STM32L4+ */
-        if (_pm_conf[PM_RUN_MODE_NORMAL_SPEED].clk48_source == RCC_USBCLKSOURCE_PLLSAI1)
+        if (_rcc_conf[PM_RUN_MODE_NORMAL_SPEED].clk48_source == RCC_USBCLKSOURCE_PLLSAI1)
         {
             /* Get the PLLM divider */
-            divm = conf->pllm = _pm_conf[PM_RUN_MODE_NORMAL_SPEED].pllm;
+            divm = conf->pllm = _rcc_conf[PM_RUN_MODE_NORMAL_SPEED].pllm;
 
             while (1)
             {
@@ -259,7 +259,7 @@ static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_b
                     freq = freq_vco / divr;
                     conf->plln = mul;
                     conf->pllr = divr & 0xfe;
-                    conf->pllq = _pm_conf[PM_RUN_MODE_NORMAL_SPEED].pllq;
+                    conf->pllq = _rcc_conf[PM_RUN_MODE_NORMAL_SPEED].pllq;
                     conf->ahb_div = RCC_SYSCLK_DIV1;
 
                     break;
@@ -382,7 +382,7 @@ static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_b
             conf->ahb_div = RCC_SYSCLK_DIV1;
         }
 #if defined(RCC_PLLP_SUPPORT)
-        conf->pllp = _pm_conf[PM_RUN_MODE_NORMAL_SPEED].pllp;
+        conf->pllp = _rcc_conf[PM_RUN_MODE_NORMAL_SPEED].pllp;
 #endif
     }
     else
@@ -397,7 +397,7 @@ static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_b
         freq = find_msi_range(freq_hclk, &conf->msi_range);
         conf->ahb_div = RCC_SYSCLK_DIV1;
 
-        pm_run_freq[conf->mode][1] = freq_div;
+        stm32_run_freq[conf->mode][1] = freq_div;
 
         /* Configure the Low-power Run mode */
         if ((freq / freq_div) <= OSC_CONF_LOW_POW_RUN_FREQ)
@@ -416,15 +416,15 @@ static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_b
     (void)usbclk_use_pll;
 
     /* Find voltage scales range */
-    conf->volt_scale = _pm_volt_scale_tab[PM_POW_VOLT_SCALE_NUMS - 1U][0];
-    fs = _pm_volt_scale_tab[0][1];
+    conf->volt_scale = _volt_scale_tab[PM_POW_VOLT_SCALE_NUMS - 1U][0];
+    fs = _volt_scale_tab[0][1];
     for (i = 0; i < PM_POW_VOLT_SCALE_NUMS; i++)
     {
-        if ((freq / freq_div) <= _pm_volt_scale_tab[i][2])
+        if ((freq / freq_div) <= _volt_scale_tab[i][2])
         {
-            conf->volt_scale = _pm_volt_scale_tab[i][0];
+            conf->volt_scale = _volt_scale_tab[i][0];
             /* frequency step for flash latency */
-            fs = _pm_volt_scale_tab[i][1];
+            fs = _volt_scale_tab[i][1];
             break;
         }
     }
@@ -434,11 +434,11 @@ static rt_uint16_t pm_hw_clk_config(struct PM_RCC_conf *conf, rt_uint32_t freq_b
     return (rt_uint16_t)freq;
 }
 
-static int pm_rcc_conf_init(void)
+static int rcc_conf_init(void)
 {
     rt_uint32_t mode = PM_RUN_MODE_NORMAL_SPEED;
-    struct PM_RCC_conf *conf = &_pm_conf[mode];
-    struct PM_RCC_Osc *osc = &_pm_osc;
+    struct rcc_conf_struct *conf = &_rcc_conf[mode];
+    struct osc_conf_struct *osc = &_osc_conf;
 
     if (!osc->init)
     {
@@ -469,7 +469,7 @@ static int pm_rcc_conf_init(void)
             {
                 conf->msi_range = __HAL_RCC_GET_MSI_RANGE();
                 osc->osc_type = RCC_OSCILLATORTYPE_MSI;
-                osc->osc_freq = _pm_msi_range_tab[conf->msi_range >> RCC_CR_MSIRANGE_Pos];
+                osc->osc_freq = _msi_range_tab[conf->msi_range >> RCC_CR_MSIRANGE_Pos];
             }
             break;
         case RCC_SYSCLKSOURCE_STATUS_HSI:    /* HSI used as system clock source */
@@ -484,7 +484,7 @@ static int pm_rcc_conf_init(void)
             conf->sysclk_source = RCC_SYSCLKSOURCE_MSI;
             conf->msi_range = __HAL_RCC_GET_MSI_RANGE();
             osc->osc_type = RCC_OSCILLATORTYPE_MSI;
-            osc->osc_freq = _pm_msi_range_tab[conf->msi_range >> RCC_CR_MSIRANGE_Pos];
+            osc->osc_freq = _msi_range_tab[conf->msi_range >> RCC_CR_MSIRANGE_Pos];
             break;
         }
 
@@ -510,39 +510,39 @@ static int pm_rcc_conf_init(void)
         conf->latency = FLASH->ACR & FLASH_ACR_LATENCY;
         conf->volt_scale = HAL_PWREx_GetVoltageRange();
 
-        /* Initialize the _pm_conf[] arrays */
+        /* Initialize the _rcc_conf[] arrays */
         for (mode = PM_RUN_MODE_HIGH_SPEED; mode < PM_RUN_MODE_MAX; mode++)
         {
-            conf = &_pm_conf[mode];
+            conf = &_rcc_conf[mode];
             conf->mode = mode;
 
             switch (mode)
             {
             case PM_RUN_MODE_HIGH_SPEED:
-                _pm_set_sysclock[mode] = pm_system_clock_high;
-                if (pm_run_freq[mode][0] > pm_run_freq[PM_RUN_MODE_NORMAL_SPEED][0])
+                _set_sysclock[mode] = stm32_systemclock_high;
+                if (stm32_run_freq[mode][0] > stm32_run_freq[PM_RUN_MODE_NORMAL_SPEED][0])
                 {
                     conf->pll_state = RCC_PLL_ON;
-                    pm_run_freq[mode][0] = pm_hw_clk_config(conf, osc->osc_freq, pm_run_freq[mode][0]);
+                    stm32_run_freq[mode][0] = clock_tree_config(conf, osc->osc_freq, stm32_run_freq[mode][0]);
                 }
                 else
                 {
-                    rt_memcpy(conf, &_pm_conf[PM_RUN_MODE_NORMAL_SPEED], sizeof(struct PM_RCC_conf));
-                    pm_run_freq[mode][0] = pm_run_freq[PM_RUN_MODE_NORMAL_SPEED][0];
+                    rt_memcpy(conf, &_rcc_conf[PM_RUN_MODE_NORMAL_SPEED], sizeof(struct rcc_conf_struct));
+                    stm32_run_freq[mode][0] = stm32_run_freq[PM_RUN_MODE_NORMAL_SPEED][0];
                 }
                 break;
             case PM_RUN_MODE_NORMAL_SPEED:
-                _pm_set_sysclock[mode] = pm_system_clock_normal;
+                _set_sysclock[mode] = stm32_systemclock_normal;
                 break;
             case PM_RUN_MODE_MEDIUM_SPEED:
-                _pm_set_sysclock[mode] = pm_system_clock_medium;
+                _set_sysclock[mode] = stm32_systemclock_medium;
                 conf->pll_state = RCC_PLL_ON;
-                pm_run_freq[mode][0] = pm_hw_clk_config(conf, osc->osc_freq, pm_run_freq[mode][0]);
+                stm32_run_freq[mode][0] = clock_tree_config(conf, osc->osc_freq, stm32_run_freq[mode][0]);
                 break;
             case PM_RUN_MODE_LOW_SPEED:
-                _pm_set_sysclock[mode] = pm_system_clock_low;
+                _set_sysclock[mode] = stm32_systemclock_low;
                 conf->pll_state = RCC_PLL_OFF;
-                pm_run_freq[mode][0] = pm_hw_clk_config(conf, osc->osc_freq, pm_run_freq[mode][0]);
+                stm32_run_freq[mode][0] = clock_tree_config(conf, osc->osc_freq, stm32_run_freq[mode][0]);
                 break;
             default:
                 RT_ASSERT(0);
@@ -555,10 +555,10 @@ static int pm_rcc_conf_init(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(pm_rcc_conf_init);
+INIT_DEVICE_EXPORT(rcc_conf_init);
 
 /* System Clock Configuration */
-static void systemclock_run(struct PM_RCC_conf *conf)
+static void systemclock_run(struct rcc_conf_struct *conf)
 {
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -578,14 +578,14 @@ static void systemclock_run(struct PM_RCC_conf *conf)
     }
 #endif
 
-    if ((conf->pll_state == RCC_PLL_ON && _pm_osc.osc_type == RCC_OSCILLATORTYPE_HSE)
+    if ((conf->pll_state == RCC_PLL_ON && _osc_conf.osc_type == RCC_OSCILLATORTYPE_HSE)
             || conf->sysclk_source == RCC_SYSCLKSOURCE_HSE)
     {
         RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
         RCC_OscInitStruct.HSEState = RCC_HSE_ON;
         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     }
-    else if ((conf->pll_state == RCC_PLL_ON && _pm_osc.osc_type == RCC_OSCILLATORTYPE_HSI)
+    else if ((conf->pll_state == RCC_PLL_ON && _osc_conf.osc_type == RCC_OSCILLATORTYPE_HSI)
              || conf->sysclk_source == RCC_SYSCLKSOURCE_HSI)
     {
         RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
@@ -654,11 +654,11 @@ static void systemclock_run(struct PM_RCC_conf *conf)
 #endif
 }
 
-static void sysclock_msi_on(rt_uint32_t mode)
+static void systemclock_msi_on(rt_uint32_t mode)
 {
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-    struct PM_RCC_conf *conf = &_pm_conf[mode];
+    struct rcc_conf_struct *conf = &_rcc_conf[mode];
     rt_uint32_t freq, sysclk_source;
     rt_uint32_t latency = FLASH_LATENCY_0;
 
@@ -666,7 +666,7 @@ static void sysclock_msi_on(rt_uint32_t mode)
     if (sysclk_source == RCC_SYSCLKSOURCE_STATUS_MSI ||
         (sysclk_source == RCC_SYSCLKSOURCE_STATUS_PLLCLK && __HAL_RCC_GET_PLL_OSCSOURCE() == RCC_PLLSOURCE_MSI))
     {
-        freq = _pm_msi_range_tab[conf->msi_range >> RCC_CR_MSIRANGE_Pos] / 1000U;
+        freq = _msi_range_tab[conf->msi_range >> RCC_CR_MSIRANGE_Pos] / 1000U;
         RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_MSI;
     }
     else
@@ -684,18 +684,18 @@ static void sysclock_msi_on(rt_uint32_t mode)
 
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK;
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    latency = find_flash_latency(freq, _pm_volt_scale_tab[conf->volt_scale][1]);
+    latency = find_flash_latency(freq, _volt_scale_tab[conf->volt_scale][1]);
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, latency) != HAL_OK)
     {
         Error_Handler();
     }
 }
 
-static void sysclock_msi_off(rt_uint32_t mode)
+static void systemclock_msi_off(rt_uint32_t mode)
 {
-    if (_pm_osc.osc_type != RCC_OSCILLATORTYPE_HSI && _pm_conf[mode].sysclk_source != RCC_SYSCLKSOURCE_HSI)
+    if (_osc_conf.osc_type != RCC_OSCILLATORTYPE_HSI && _rcc_conf[mode].sysclk_source != RCC_SYSCLKSOURCE_HSI)
         __HAL_RCC_HSI_DISABLE();
-    else if (_pm_osc.osc_type != RCC_OSCILLATORTYPE_MSI && _pm_conf[mode].sysclk_source != RCC_SYSCLKSOURCE_MSI)
+    else if (_osc_conf.osc_type != RCC_OSCILLATORTYPE_MSI && _rcc_conf[mode].sysclk_source != RCC_SYSCLKSOURCE_MSI)
         __HAL_RCC_MSI_DISABLE();
 }
 
@@ -705,37 +705,37 @@ static void sysclock_msi_off(rt_uint32_t mode)
   * @param  None
   * @retval None
   */
-static void sysclock_reconfig(rt_uint32_t mode)
+static void systemclock_reconfig(rt_uint32_t mode)
 {
-    if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_MSI && _pm_conf[mode].sysclk_source == RCC_SYSCLKSOURCE_MSI)
+    if (__HAL_RCC_GET_SYSCLK_SOURCE() == RCC_SYSCLKSOURCE_STATUS_MSI && _rcc_conf[mode].sysclk_source == RCC_SYSCLKSOURCE_MSI)
         return;
 
-    sysclock_msi_on(mode);
-    _pm_set_sysclock[mode]();
+    systemclock_msi_on(mode);
+    _set_sysclock[mode]();
 }
 
 /* System Clock Configuration On High Speed */
-RT_WEAK void pm_system_clock_high(void)
+RT_WEAK void stm32_systemclock_high(void)
 {
-    systemclock_run(&_pm_conf[PM_RUN_MODE_HIGH_SPEED]);
+    systemclock_run(&_rcc_conf[PM_RUN_MODE_HIGH_SPEED]);
 }
 
 /* System Clock Configuration On Normal Speed */
-RT_WEAK void pm_system_clock_normal(void)
+RT_WEAK void stm32_systemclock_normal(void)
 {
-    systemclock_run(&_pm_conf[PM_RUN_MODE_NORMAL_SPEED]);
+    systemclock_run(&_rcc_conf[PM_RUN_MODE_NORMAL_SPEED]);
 }
 
 /* System Clock Configuration On Medium Speed */
-RT_WEAK void pm_system_clock_medium(void)
+RT_WEAK void stm32_systemclock_medium(void)
 {
-    systemclock_run(&_pm_conf[PM_RUN_MODE_MEDIUM_SPEED]);
+    systemclock_run(&_rcc_conf[PM_RUN_MODE_MEDIUM_SPEED]);
 }
 
 /* System Clock Configuration On Low Speed */
-RT_WEAK void pm_system_clock_low(void)
+RT_WEAK void stm32_systemclock_low(void)
 {
-    systemclock_run(&_pm_conf[PM_RUN_MODE_LOW_SPEED]);
+    systemclock_run(&_rcc_conf[PM_RUN_MODE_LOW_SPEED]);
 }
 
 /* --------------------- PM oscillator end --------------------- */
@@ -754,7 +754,7 @@ static void uart_console_reconfig(void)
  *
  * @param pm pointer to power manage structure
  */
-void pm_hw_sleep(struct rt_pm *pm, rt_uint8_t mode)
+void stm32_sleep(struct rt_pm *pm, rt_uint8_t mode)
 {
     switch (mode)
     {
@@ -811,7 +811,7 @@ void pm_hw_sleep(struct rt_pm *pm, rt_uint8_t mode)
         /* Enable SysTick interrupt */
         SET_BIT(SysTick->CTRL, (rt_uint32_t)SysTick_CTRL_TICKINT_Msk);
         /* Re-configure the system clock */
-        sysclock_reconfig(pm->run_mode);
+        systemclock_reconfig(pm->run_mode);
         break;
 
     case PM_SLEEP_MODE_STANDBY:
@@ -832,41 +832,41 @@ void pm_hw_sleep(struct rt_pm *pm, rt_uint8_t mode)
     }
 }
 
-void pm_hw_run(struct rt_pm *pm, rt_uint8_t mode)
+void stm32_run(struct rt_pm *pm, rt_uint8_t mode)
 {
     static rt_uint32_t last_mode;
     static char *run_str[] = PM_RUN_MODE_NAMES;
-    struct PM_RCC_conf sconf = _pm_conf[mode];
+    struct rcc_conf_struct sconf = _rcc_conf[mode];
 
     if (mode == last_mode)
         return;
 
-    if (pm_run_freq[mode][0] != pm_run_freq[last_mode][0])
+    if (stm32_run_freq[mode][0] != stm32_run_freq[last_mode][0])
     {
-        if (_pm_conf[last_mode].low_pow_run_en && !sconf.low_pow_run_en)
+        if (_rcc_conf[last_mode].low_pow_run_en && !sconf.low_pow_run_en)
         {
             /* Disable the Low-power Run mode */
             HAL_PWREx_DisableLowPowerRunMode();
         }
 
-        sysclock_msi_on(last_mode);
+        systemclock_msi_on(last_mode);
 
         if (mode < last_mode)
         {
             /* Frequency increase */
             HAL_PWREx_ControlVoltageScaling(sconf.volt_scale);
 
-            _pm_set_sysclock[mode]();
+            _set_sysclock[mode]();
         }
         else
         {
             /* Frequency reduce */
-            _pm_set_sysclock[mode]();
+            _set_sysclock[mode]();
 
             HAL_PWREx_ControlVoltageScaling(sconf.volt_scale);
         }
 
-        if (sconf.volt_scale == PWR_REGULATOR_VOLTAGE_SCALE2 || _pm_osc.osc_type == RCC_OSCILLATORTYPE_MSI)
+        if (sconf.volt_scale == PWR_REGULATOR_VOLTAGE_SCALE2 || _osc_conf.osc_type == RCC_OSCILLATORTYPE_MSI)
         {
             /* Configure the wake up from stop clock to MSI */
             __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
@@ -883,7 +883,7 @@ void pm_hw_run(struct rt_pm *pm, rt_uint8_t mode)
             HAL_PWREx_EnableLowPowerRunMode();
         }
 
-        sysclock_msi_off(mode);
+        systemclock_msi_off(mode);
 
 #if defined(RT_USING_SERIAL)
         /* Re-Configure the UARTs */
@@ -897,9 +897,9 @@ void pm_hw_run(struct rt_pm *pm, rt_uint8_t mode)
 
     last_mode = mode;
     rt_kprintf("switch to %s mode, frequency = %d %sHz\n",
-               run_str[mode], pm_run_freq[mode][0], (pm_run_freq[mode][1] == 1) ? "M" : "K");
+               run_str[mode], stm32_run_freq[mode][0], (stm32_run_freq[mode][1] == 1) ? "M" : "K");
 
-    if ((pm_run_freq[mode][0] / pm_run_freq[mode][1]) > OSC_CONF_SYS_FREQ_MAX)
+    if ((stm32_run_freq[mode][0] / stm32_run_freq[mode][1]) > OSC_CONF_SYS_FREQ_MAX)
         rt_kprintf("warning: The frequency has over than %d MHz\n", OSC_CONF_SYS_FREQ_MAX);
 }
 
