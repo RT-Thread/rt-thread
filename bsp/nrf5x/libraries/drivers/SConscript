@@ -17,6 +17,9 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += ['drv_qspi_flash.c']
 
+if GetDepend(['BSP_USING_SPI']):
+    src += ['drv_spi.c']
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
