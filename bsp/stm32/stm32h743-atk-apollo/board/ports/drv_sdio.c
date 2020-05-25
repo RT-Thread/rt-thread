@@ -5,11 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-05-23    liuduanfei   first version
+ * 2020-05-23     liuduanfei   first version
  */
 
 #include "board.h"
 #include "drv_sdio.h"
+#include <dfs_fs.h>
 
 #ifdef BSP_USING_SDMMC
 
@@ -193,11 +194,9 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     /* data pre configuration */
     if (data != RT_NULL)
     {
-		
         SCB_CleanInvalidateDCache();
 
         reg_cmd |= SDMMC_CMD_CMDTRANS;
-
         hw_sdio->mask &= ~(SDMMC_MASK_CMDRENDIE | SDMMC_MASK_CMDSENTIE);
         hw_sdio->dtimer = HW_SDIO_DATATIMEOUT;
         hw_sdio->dlen = data->blks * data->blksize;
@@ -231,7 +230,6 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
             cmd->err = -RT_ERROR;
         }
     }
-
 
     /* data post configuration */
     if (data != RT_NULL)
@@ -451,9 +449,6 @@ int rt_hw_sdio_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdio_init);
-
-
-#include <dfs_fs.h>
 
 int mnt_init(void)
 {
