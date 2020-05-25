@@ -28,7 +28,7 @@ if GetDepend('RT_USING_SFUD'):
     if rtconfig.CROSS_TOOL == 'gcc':
         LOCAL_CCFLAGS += ' -std=c99'
     elif rtconfig.CROSS_TOOL == 'keil':
-        LOCAL_CCFLAGS += ' --c99'
+        LOCAL_CCFLAGS += ' '
 
 src += src_device
 
