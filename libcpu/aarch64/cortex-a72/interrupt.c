@@ -13,7 +13,6 @@
 #include <gic_pl400.h>
 #include <board.h>
 #include <armv8.h>
-#include "iomap.h"
 
 #define MAX_HANDLERS                256
 #define GIC_ACK_INTID_MASK          0x000003ff
