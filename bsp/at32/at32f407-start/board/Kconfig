@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_AT32F403AVGT7
+config SOC_AT32F407VGT7
     bool
-    select SOC_SERIES_AT32F403A
+    select SOC_SERIES_AT32F407
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
@@ -23,6 +23,12 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select PHY_USING_LAN8720A
 
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
