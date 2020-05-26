@@ -11,16 +11,13 @@
 
 ## 2. 编译说明
 
-Linux下推荐使用[gcc工具][2]。Linux版本下gcc版本可采用`gcc-arm-8.3-2019.03-x86_64-aarch64-elf`。
-
-将工具链解压到指定目录,并修改当前bsp下的`EXEC_PATH`为自定义gcc目录。
+推荐使用[env工具](https://www.rt-thread.org/page/download.html)，可以在console下进入到`bsp\raspberry-pi\raspi4-32`目录中，运行以下命令：
 
 ```
-PLATFORM    = 'gcc'
-EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'  
+scons
 ```
 
-直接进入`bsp\raspberry-pi\raspi4`，输入scons编译即可。
+来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、kernel7.img文件。
 
 
 ## 3. 执行
@@ -47,18 +44,19 @@ EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
 
 ```
 enable_uart=1
-arm_64bit=1
-kernel=rtthread.bin
+arm_64bit=0
+kernel_addr=0x8000
+kernel=kernel7.img
 ```
 
 按上面的方法做好SD卡后，插入树莓派4，通电可以在串口上看到如下所示的输出信息：
 
 ```text
-heap: 0x000c9350 - 0x040c9350
+heap: 0x00044270 - 0x04044270
 
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Apr 16 2020
+ / | \     4.0.3 build May 25 2020
  2006 - 2020 Copyright by rt-thread team
 Hi, this is RT-Thread!!
 msh />

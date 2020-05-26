@@ -42,7 +42,7 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x40003
-#define ARCH_CPU_64BIT
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -153,12 +153,6 @@
 
 
 /* samples: kernel and components samples */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define BCM2711_SOC
 
