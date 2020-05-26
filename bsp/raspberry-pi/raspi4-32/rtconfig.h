@@ -40,7 +40,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40003
 #define ARCH_ARMV8
 
@@ -162,6 +162,8 @@
 
 #define BSP_USING_UART
 #define RT_USING_UART0
+#define RT_USING_UART3
+#define RT_USING_UART4
 #define BSP_USING_GIC
 #define BSP_USING_GIC400
 #define BSP_USING_PIN
