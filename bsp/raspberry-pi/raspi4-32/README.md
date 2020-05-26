@@ -47,6 +47,7 @@ enable_uart=1
 arm_64bit=0
 kernel_addr=0x8000
 kernel=kernel7.img
+core_freq=250
 ```
 
 按上面的方法做好SD卡后，插入树莓派4，通电可以在串口上看到如下所示的输出信息：
@@ -66,7 +67,7 @@ msh />
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | UART0|
+| UART | 支持 | UART0,UART2,UART3,UART4,UART5 |
 
 ## 5. 联系人信息
 

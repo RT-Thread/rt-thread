@@ -11,8 +11,24 @@
 /* base address */
 #define PER_BASE                    (0xFE000000)
 
+//gpio offset
+#define GPIO_BASE_OFFSET            (0x00200000)
+
+//pl011 offset
+#define PL011_UART0_BASE_OFFSET     (0x00201000)
+#define PL011_UART2_BASE_OFFSET     (0x00201400)
+#define PL011_UART3_BASE_OFFSET     (0x00201600)
+#define PL011_UART4_BASE_OFFSET     (0x00201800)
+#define PL011_UART5_BASE_OFFSET     (0x00201A00)
+
+//pactl cs offset
+#define PACTL_CS_OFFSET             (0x00204E00)
+
+//aux offset
+#define AUX_BASE_OFFSET             (0x00215000)
+
 /* GPIO */
-#define GPIO_BASE                   (PER_BASE + 0x00200000)
+#define GPIO_BASE                   (PER_BASE + GPIO_BASE_OFFSET)
 
 /* Timer (ARM side) */
 #define ARM_TIMER_IRQ       (64)
@@ -28,10 +44,42 @@
 #define ARM_TIMER_CNTR      HWREG32(ARM_TIMER_BASE + 0x420)
 
 /* UART PL011 */
-#define UART0_BASE                  (PER_BASE + 0x00201000)
-#define PL011_BASE                  UART0_BASE
-#define IRQ_PL011                   (96 + 57)
+#define UART0_BASE                  (PER_BASE + PL011_UART0_BASE_OFFSET)
+#define UART2_BASE                  (PER_BASE + PL011_UART2_BASE_OFFSET)
+#define UART3_BASE                  (PER_BASE + PL011_UART3_BASE_OFFSET)
+#define UART4_BASE                  (PER_BASE + PL011_UART4_BASE_OFFSET)
+#define UART5_BASE                  (PER_BASE + PL011_UART5_BASE_OFFSET)
+#define IRQ_AUX_UART                (96 + 29)
 #define UART_REFERENCE_CLOCK        (48000000)
+
+/* AUX */
+#define AUX_BASE                    (PER_BASE + AUX_BASE_OFFSET)
+#define IRQ_PL011                   (96 + 57)
+
+/* Peripheral IRQ OR-ing */
+#define PACTL_CS                    HWREG32((PER_BASE + PACTL_CS_OFFSET))
+typedef enum {
+    IRQ_SPI0 = 0x00000000,
+    IRQ_SPI1 = 0x00000002,
+    IRQ_SPI2 = 0x00000004,
+    IRQ_SPI3 = 0x00000008,
+    IRQ_SPI4 = 0x00000010,
+    IRQ_SPI5 = 0x00000020,
+    IRQ_SPI6 = 0x00000040,
+    IRQ_I2C0 = 0x00000100,
+    IRQ_I2C1 = 0x00000200,
+    IRQ_I2C2 = 0x00000400,
+    IRQ_I2C3 = 0x00000800,
+    IRQ_I2C4 = 0x00001000,
+    IRQ_I2C5 = 0x00002000,
+    IRQ_I2C6 = 0x00004000,
+    IRQ_I2C7 = 0x00008000,
+    IRQ_UART5 = 0x00010000,
+    IRQ_UART4 = 0x00020000,
+    IRQ_UART3 = 0x00040000,
+    IRQ_UART2 = 0x00080000,
+    IRQ_UART0 = 0x00100000
+} PACTL_CS_VAL;
 
 // 0x40, 0x44, 0x48, 0x4c: Core 0~3 Timers interrupt control
 #define CORE0_TIMER_IRQ_CTRL        HWREG32(0xFF800040)

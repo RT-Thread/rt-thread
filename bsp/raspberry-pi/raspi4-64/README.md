@@ -81,6 +81,7 @@ EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
 enable_uart=1
 arm_64bit=1
 kernel=rtthread.bin
+core_freq=250
 ```
 
 按上面的方法做好SD卡后，插入树莓派4，通电可以在串口上看到如下所示的输出信息：
