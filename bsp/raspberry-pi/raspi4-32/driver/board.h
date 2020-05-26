@@ -12,7 +12,7 @@
 #define BOARD_H__
 
 #include <stdint.h>
-#include "iomap.h"
+#include "raspi4.h"
 
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;

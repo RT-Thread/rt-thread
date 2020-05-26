@@ -18,7 +18,7 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 
-config BCM2836_SOC
+config BCM2711_SOC
     bool
     select ARCH_ARMV8
     select RT_USING_COMPONENTS_INIT
