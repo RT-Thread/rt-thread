@@ -215,7 +215,6 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     /* wait completed */
     rthw_sdio_wait_completed(sdio);
 
-
     /* Waiting for data to be sent to completion */
     if (data != RT_NULL)
     {
