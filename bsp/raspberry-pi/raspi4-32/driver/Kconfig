@@ -14,6 +14,22 @@ menu "Hardware Drivers Config"
                 config RT_USING_UART0
                 bool "Enabel UART 0"
                 default y
+
+                config RT_USING_UART1
+                bool "Enabel UART 1"
+                default n
+
+                config RT_USING_UART3
+                bool "Enabel UART 3"
+                default n
+
+                config RT_USING_UART4
+                bool "Enabel UART 4"
+                default n
+
+                config RT_USING_UART5
+                bool "Enabel UART 5"
+                default n
             endif
             
         menuconfig BSP_USING_GIC
