@@ -90,8 +90,8 @@ typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* boolean type definitions */
-#define RT_TRUE                         1               /**< boolean true  */
 #define RT_FALSE                        0               /**< boolean fails */
+#define RT_TRUE                         (!RT_FALSE)     /**< boolean true  */
 
 /**@}*/
 
