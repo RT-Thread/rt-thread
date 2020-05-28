@@ -1,12 +1,12 @@
-# AT32F403A AT-START 开发板 BSP 说明
+# AT32F407 AT-START 开发板 BSP 说明
 
 ## 简介
 
-AT32F403A AT-START是雅特力推出的一款AT32F403A系列的评估板，其搭载的MCU主要资源参数如下：
+AT32F407 AT-START是雅特力推出的一款AT32F407系列的评估板，其搭载的MCU主要资源参数如下：
 
 | 硬件      | 描述          |
 | --------- | ------------- |
-| 芯片型号  | AT32F403AVGT7 |
+| 芯片型号  | AT32F407VGT7  |
 | CPU       | ARM Cortex M4 |
 | 主频      | 240M          |
 | 片内SRAM  | 96K可扩展224K |
@@ -14,7 +14,7 @@ AT32F403A AT-START是雅特力推出的一款AT32F403A系列的评估板，其�
 
 ## 编译说明
 
-AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以下是具体版本信息：
+AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以下是具体版本信息：
 
 | IDE/编译器 | 已测试版本                   |
 | ---------- | ---------------------------- |
@@ -25,7 +25,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 
 ## 板载资源
 
-- MCU：AT32F403AVGT7，主频 240MHz，1024KB FLASH ，96KB可扩展到224KB RAM
+- MCU：AT32F407VGT7，主频 240MHz，1024KB FLASH ，96KB可扩展到224KB RAM
 - 常用外设
   - LED：3个，（红色PD13、白色PD14、绿色PD15）
   - 按键：1个，KEY_USER（兼具唤醒功能，PA0)
@@ -48,6 +48,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | SDIO      | 支持     | SDIO1                      |
 | WDT       | 支持     |                            |
 | RTC       | 支持     |                            |
+| ETH       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 
@@ -88,6 +89,13 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | PC3  | ADC1/2_IN13    |
 | PC4  | ADC1/2_IN14    |
 | PC5  | ADC1/2_IN15    |
+| PB11 | ETH_RMII_TX_EN |
+| PB12 | ETH_RMII_TX0   |
+| PB13 | ETH_RMII_TX1   |
+| PD8  | ETH_RMII_RX_DV |
+| PD9  | ETH_RMII_RXD0  |
+| PD10 | ETH_RMII_RXD1  |
+| PA1  | ETH_RMII_REF_CLK |
 
 ## 使用说明
 
@@ -122,6 +130,8 @@ msh />
 ```
 
 ## 注意事项
+
+AT32F407使用Ethernet且PHY时钟由MCO输出提供时，主频最好采用200Mhz。
 
 可在雅特力官方网站进行所需资料下载，如Keil_v5/Keil_v4/IAR等pack安装包和AT-START开发板原理图等（www.arterytek.com）
 
