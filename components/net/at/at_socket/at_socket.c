@@ -404,6 +404,9 @@ static struct at_socket *alloc_socket(void)
     return alloc_socket_by_device(device);
 }
 
+static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz);
+static void at_closed_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz);
+
 int at_socket(int domain, int type, int protocol)
 {
     struct at_socket *sock = RT_NULL;
@@ -437,6 +440,10 @@ int at_socket(int domain, int type, int protocol)
     }
     sock->type = socket_type;
     sock->state = AT_SOCKET_OPEN;
+
+    /* set AT socket receive data callback function */
+    sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
+    sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
 
     return sock->socket;
 }
@@ -703,10 +710,6 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
 
     sock->state = AT_SOCKET_CONNECT;
 
-    /* set AT socket receive data callback function */
-    sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-    sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
-
 __exit:
 
     if (result < 0)
@@ -744,7 +747,7 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         goto __exit;
     }
 
-    /* if the socket type is UDP, nead to connect socket first */
+    /* if the socket type is UDP, need to connect socket first */
     if (from && sock->type == AT_SOCKET_UDP && sock->state == AT_SOCKET_OPEN)
     {
         ip_addr_t remote_addr;
@@ -760,9 +763,6 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             goto __exit;
         }
         sock->state = AT_SOCKET_CONNECT;
-        /* set AT socket receive data callback function */
-        sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-        sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
     }
 
     /* receive packet list last transmission of remaining data */
@@ -924,9 +924,6 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
                 goto __exit;
             }
             sock->state = AT_SOCKET_CONNECT;
-            /* set AT socket receive data callback function */
-            sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-            sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
         }
 
         if ((len = sock->ops->at_send(sock, (char *) data, size, sock->type)) < 0)

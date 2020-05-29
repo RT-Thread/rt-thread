@@ -47,6 +47,7 @@ AT32F403A-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以
 | HWTIMER   | 支持     | TMR3/4/5                   |
 | SDIO      | 支持     | SDIO1                      |
 | WDT       | 支持     |                            |
+| RTC       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
 

@@ -205,20 +205,6 @@ void clear_line(fb_t *fb, const int line)
 
 }
 
-void clear(fb_t *fb, const uint32_t color)
-{
-
-    uint32_t *addr = (uint32_t*) fb->addr;
-    uint32_t i;
-    for (i = 0; i < (fb->height * fb->width); i++)
-    {
-        *addr++ = color;
-    }
-    fb->x = 0;
-    fb->y = 0;
-
-}
-
 void fb_draw_char(fb_t *fb, char s)
 {
     unsigned char* addr = (unsigned char*) fb->addr;
