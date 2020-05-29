@@ -226,8 +226,8 @@ int gettimeofday(struct timeval *tp, void *ignore)
         tp->tv_usec = 0;
     }
 #else
-    tv->tv_sec = 0;
-    tv->tv_usec = 0;
+    tp->tv_sec = 0;
+    tp->tv_usec = 0;
 #endif
 
     return time;
