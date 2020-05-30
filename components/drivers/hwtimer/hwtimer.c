@@ -255,6 +255,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
 
         *((struct rt_hwtimer_info*)args) = *timer->info;
     }
+    break;
     case HWTIMER_CTRL_MODE_SET:
     {
         rt_hwtimer_mode_t *m;
