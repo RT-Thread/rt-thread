@@ -1186,6 +1186,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
     {
         /* no waiting */
         thread->error = -RT_ETIMEOUT;
+        
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+        
+        return -RT_ETIMEOUT;
     }
     else
     {
