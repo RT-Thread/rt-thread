@@ -80,6 +80,79 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    config BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_PIN
+        default y
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 bus"
+                default y
+            if BSP_USING_SPI0
+                config BSP_SPI0_SCK_PIN
+                    int "SPI0 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI0_MOSI_PIN
+                    int "SPI0 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI0_MISO_PIN
+                    int "SPI0 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI0_SS_PIN
+                    int "SPI0 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1 bus"
+                default n
+            if BSP_USING_SPI1
+                config BSP_SPI1_SCK_PIN
+                    int "SPI0 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI1_MOSI_PIN
+                    int "SPI0 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI1_MISO_PIN
+                    int "SPI0 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI1_SS_PIN
+                    int "SPI0 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 bus"
+                default n
+            if BSP_USING_SPI2
+                config BSP_SPI2_SCK_PIN
+                    int "SPI0 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPI2_MOSI_PIN
+                    int "SPI0 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPI2_MISO_PIN
+                    int "SPI0 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPI2_SS_PIN
+                    int "SPI0 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+        endif
     config BSP_USING_ON_CHIP_FLASH
         select PKG_USING_FAL
         bool "Enable on-chip FLASH"
@@ -87,7 +160,6 @@ menu "On-chip Peripheral Drivers"
 
     menu "On-chip flash config"
 
-        
         config MCU_FLASH_START_ADDRESS  
             hex "MCU FLASH START ADDRESS"
             default 0x00000000
