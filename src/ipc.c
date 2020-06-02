@@ -184,6 +184,31 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
     return RT_EOK;
 }
 
+/**
+ * This function will get the highest priority from the specified
+ * list of threads
+ *
+ * @param list of the threads
+ *
+ * @return the highest priority
+ */
+rt_uint8_t rt_ipc_get_highest_priority(rt_list_t *list)
+{
+    struct rt_list_node *n;
+    struct rt_thread *sthread;
+    rt_uint8_t priority = RT_THREAD_PRIORITY_MAX - 1;
+
+    for (n = list->next; n != list; n = n->next)
+    {
+        sthread = rt_list_entry(n, struct rt_thread, tlist);
+
+        priority = priority < sthread->current_priority ?
+                    priority :
+                    sthread->current_priority;
+    }
+    return priority;
+}
+
 #ifdef RT_USING_SEMAPHORE
 /**
  * This function will initialize a semaphore and put it under control of
@@ -792,6 +817,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     register rt_base_t temp;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
+    rt_uint8_t max_priority = RT_THREAD_PRIORITY_MAX - 1;
 
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
@@ -852,6 +878,13 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             /* set new owner and priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
+
+            max_priority = rt_ipc_get_highest_priority(&mutex->parent.suspend_thread);
+            if (thread->current_priority != max_priority) {
+                rt_thread_control(thread,
+                        RT_THREAD_CTRL_CHANGE_PRIORITY,
+                        &(max_priority));
+            }
             mutex->hold ++;
 
             /* resume thread */
