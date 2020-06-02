@@ -611,7 +611,9 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
                 }
                 else
                 {
-                    rt_usbd_ep_set_stall(func->device, data->ep_in);                    
+                    //rt_kprintf("warning:in stall path but not stall\n");
+                    /* FIXME: Disable the operation or the disk cannot work. */
+                    //rt_usbd_ep_set_stall(func->device, data->ep_in);
                 }
                 data->csw_response.data_reside = 0;
             }
@@ -714,6 +716,19 @@ static void _cb_len_calc(ufunction_t func, struct scsi_cmd* cmd,
             break;
         case FIXED:
             data->cb_data_size = cmd->data_size;
+            break;
+        default:      
+            break;
+        }
+    }
+    
+    //workaround: for stability in full-speed mode
+    else if(cmd->cmd_len == 12)
+    {
+        switch(cmd->type)
+        {
+        case COUNT:
+            data->cb_data_size = cbw->cb[4]; 
             break;
         default:      
             break;
