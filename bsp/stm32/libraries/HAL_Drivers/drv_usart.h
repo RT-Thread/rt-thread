@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018.10.30     SummerGift   first version
- * 2019.03.05     whj4674672   add stm32h7
+ * 2019.03.05     whj4674672   add stm32h7 
  */
 
 #ifndef __DRV_USART_H__
@@ -21,7 +21,7 @@
 int rt_hw_usart_init(void);
 
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)
+    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)||defined(SOC_SERIES_STM32L1)
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
 #elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7)
 #define DMA_INSTANCE_TYPE              DMA_Stream_TypeDef
@@ -29,7 +29,7 @@ int rt_hw_usart_init(void);
 
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F2) \
     || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) \
-    || defined(SOC_SERIES_STM32G4)
+    || defined(SOC_SERIES_STM32G4)||defined(SOC_SERIES_STM32L1)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
 #elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_IT
@@ -50,7 +50,7 @@ struct stm32_uart
 {
     UART_HandleTypeDef handle;
     struct stm32_uart_config *config;
-
+    
 #ifdef RT_SERIAL_USING_DMA
     struct
     {
