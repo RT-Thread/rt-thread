@@ -62,7 +62,7 @@ _reset:
     b continue
 
 overHyped: /* Get out of HYP mode */
-    ldr r1, =continue
+    adr r1, continue
     msr ELR_hyp, r1
     mrs r1, cpsr_all
     and r1, r1, #0x1f    ;@ CPSR_MODE_MASK
