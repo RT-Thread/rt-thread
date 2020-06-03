@@ -389,6 +389,7 @@ static int rcc_conf_init(void)
         conf->apb2_div = RCC->CFGR & RCC_CFGR_PPRE2;
         conf->latency = FLASH->ACR & FLASH_ACR_LATENCY;
         conf->volt_scale = HAL_PWREx_GetVoltageRange();
+        stm32_run_freq[mode][0] = HAL_RCC_GetSysClockFreq() / 1000000U;
 
         /* Initialize the _rcc_conf[] arrays */
         for (mode = PM_RUN_MODE_HIGH_SPEED; mode < PM_RUN_MODE_MAX; mode++)

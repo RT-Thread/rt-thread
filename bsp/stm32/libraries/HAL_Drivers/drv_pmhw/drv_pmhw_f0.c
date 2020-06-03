@@ -295,6 +295,7 @@ static int rcc_conf_init(void)
 #if defined(RCC_CFGR3_USBSW_HSI48) && (defined(RT_USING_USB_HOST) || defined(RT_USING_USB_DEVICE))
         conf->clk48_source = RCC->CFGR3 & RCC_CFGR3_USBSW;
 #endif
+        stm32_run_freq[mode][0] = HAL_RCC_GetSysClockFreq() / 1000000U;
 
         /* Initialize the _rcc_conf[] arrays */
         for (mode = PM_RUN_MODE_HIGH_SPEED; mode < PM_RUN_MODE_MAX; mode++)

@@ -336,6 +336,7 @@ static int rcc_conf_init(void)
 #else
         conf->latency = (rt_uint32_t)FLASH_LATENCY_0;
 #endif
+        stm32_run_freq[mode][0] = HAL_RCC_GetSysClockFreq() / 1000000U;
 
         /* Initialize the _rcc_conf[] arrays */
         for (mode = PM_RUN_MODE_HIGH_SPEED; mode < PM_RUN_MODE_MAX; mode++)
