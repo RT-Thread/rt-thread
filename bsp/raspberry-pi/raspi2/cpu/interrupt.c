@@ -29,7 +29,13 @@ rt_uint32_t rt_interrupt_from_thread;
 rt_uint32_t rt_interrupt_to_thread;
 rt_uint32_t rt_thread_switch_interrupt_flag;
 
+extern void rt_cpu_vector_set_base(unsigned int addr);
 extern int system_vectors;
+
+void rt_hw_vector_init(void)
+{
+    rt_cpu_vector_set_base((unsigned int)&system_vectors);
+}
 
 static void default_isr_handler(int vector, void *param)
 {
