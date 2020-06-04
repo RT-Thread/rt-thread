@@ -211,7 +211,8 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-        NVIC_EnableIRQ(uart->config->irq_type);
+        HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0); 
+        HAL_NVIC_EnableIRQ(uart->config->irq_type);
         /* enable interrupt */
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_RXNE);
         break;
