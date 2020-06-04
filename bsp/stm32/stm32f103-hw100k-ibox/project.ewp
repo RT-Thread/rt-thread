@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>28</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -43,7 +43,7 @@
         </option>
         <option>
           <name>OGCoreOrChip</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelect</name>
@@ -65,7 +65,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>8.11.1.13270</state>
+          <state>8.40.1.21529</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state>STM32F103ZE	ST STM32F103ZE</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -85,7 +85,7 @@
         </option>
         <option>
           <name>GEndianModeBE</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGBufferedTerminalOutput</name>
@@ -111,11 +111,11 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
+          <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
+          <version>27</version>
           <state>38</state>
         </option>
         <option>
@@ -132,12 +132,12 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
+          <version>27</version>
           <state>38</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>Default	None</state>
+          <state>STM32F103ZE	ST STM32F103ZE</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -155,7 +155,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
+          <version>27</version>
           <state>38</state>
         </option>
         <option>
@@ -195,13 +195,26 @@
           <name>GenLocaleDisplayOnly</name>
           <state />
         </option>
+        <option>
+          <name>DSPExtension</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZoneModes</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>34</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -469,6 +482,10 @@
           <name>IccRTTI2</name>
           <state>0</state>
         </option>
+        <option>
+          <name>OICompilerExtraOption</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -689,7 +706,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>20</version>
+        <version>23</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -1001,6 +1018,30 @@
           <name>IlinkLocaleSelect</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkTrustzoneImportLibraryOut</name>
+          <state>###Unitialized###</state>
+        </option>
+        <option>
+          <name>OILinkExtraOption</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -1040,7 +1081,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>28</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1145,7 +1186,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
+          <version>27</version>
           <state>38</state>
         </option>
         <option>
@@ -1162,7 +1203,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
+          <version>27</version>
           <state>38</state>
         </option>
         <option>
@@ -1185,7 +1226,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
+          <version>27</version>
           <state>38</state>
         </option>
         <option>
@@ -1225,13 +1266,26 @@
           <name>GenLocaleDisplayOnly</name>
           <state />
         </option>
+        <option>
+          <name>DSPExtension</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZoneModes</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>34</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1499,6 +1553,10 @@
           <name>IccRTTI2</name>
           <state>0</state>
         </option>
+        <option>
+          <name>OICompilerExtraOption</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -1719,7 +1777,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>20</version>
+        <version>23</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2031,6 +2089,30 @@
           <name>IlinkLocaleSelect</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkTrustzoneImportLibraryOut</name>
+          <state>###Unitialized###</state>
+        </option>
+        <option>
+          <name>OILinkExtraOption</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -2067,9 +2149,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\device.c</name>
@@ -2265,9 +2344,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cec.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sram.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c</name>
