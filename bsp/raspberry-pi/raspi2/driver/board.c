@@ -26,6 +26,7 @@
 
 #include "board.h"
 #include "drv_uart.h"
+#include "cp15.h"
 
 void rt_hw_timer_isr(int vector, void *parameter)
 {
@@ -65,7 +66,7 @@ void rt_hw_board_init(void)
 {
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
-    vector_copy();
+    rt_hw_vector_init();
 
     /* initialize uart */
     rt_hw_uart_init();
@@ -82,7 +83,7 @@ void rt_hw_board_init(void)
 #endif
 
     /* initialize timer for os tick */
-    // rt_hw_timer_init();
+    rt_hw_timer_init();
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
