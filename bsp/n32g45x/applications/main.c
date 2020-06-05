@@ -32,6 +32,7 @@
  *
  * @copyright Copyright (c) 2019, Nations Technologies Inc. All rights reserved.
  */
+ 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "main.h"
@@ -39,40 +40,24 @@
 #include <stdint.h>
 #include "drv_gpio.h"
 
-
-
-
-
 /**
  * @brief  Main program.
  */
  
- /* defined the LED2 pin: PD13 */
+ /* defined the LED2 pin: PA8 */
 #define LED2_PIN    GET_PIN(A, 8)
-/* defined the LED3 pin: PD14 */
 
- 
- 
- 
 int main(void)
 {
-	  uint32_t Speed = 200;
+    uint32_t Speed = 200;
     /* set PA8 pin mode to output */
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
     while (1)
     {
         rt_pin_write(LED2_PIN, PIN_LOW);
         rt_thread_mdelay(Speed);
-				rt_pin_write(LED2_PIN, PIN_HIGH);
-			  rt_thread_mdelay(Speed);
+        rt_pin_write(LED2_PIN, PIN_HIGH);
+        rt_thread_mdelay(Speed);
     }
-
-
-
-
-
-
 }
-/**
- * @}
- */
+
