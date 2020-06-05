@@ -366,6 +366,7 @@ static void systemclock_run(struct rcc_conf_struct *conf)
     else
     {
         RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+        RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
         RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
     }
 
@@ -416,6 +417,7 @@ static void systemclock_msi_on(rt_uint32_t mode)
     {
         RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
         RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+        RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
         RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;  /* No update on PLL */
         if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
         {
