@@ -317,22 +317,23 @@ static rt_uint16_t clock_tree_config(struct rcc_conf_struct *conf, rt_uint32_t f
                         break;
 
                     /* Get the PLLM divider */
-                    for (divm = OSC_CONF_PLLM_DIV_MIN; divm <= OSC_CONF_PLLM_DIV_MAX; divm++)
+                    for (divm = OSC_CONF_PLLM_DIV_MAX; divm >= OSC_CONF_PLLM_DIV_MIN; divm--)
                     {
                         freq = freq_base / divm;
-                        if (freq > OSC_CONF_PLLM_FREQ_MAX || div / divm > OSC_CONF_PLLR_DIV_MAX
-                                || freq * mul > OSC_CONF_PLL_VCO_FREQ_MAX)
-                            continue;
+                        freq_vco = freq * mul;
                         if (freq < OSC_CONF_PLLM_FREQ_MIN || div / divm < OSC_CONF_PLLR_DIV_MIN
-                                || freq * mul < OSC_CONF_PLL_VCO_FREQ_MIN)
+                                || freq_vco < OSC_CONF_PLL_VCO_FREQ_MIN)
+                            continue;
+                        if (freq > OSC_CONF_PLLM_FREQ_MAX || div / divm > OSC_CONF_PLLR_DIV_MAX
+                                || freq_vco > OSC_CONF_PLL_VCO_FREQ_MAX)
                             break;
 
                         if (div % divm == 0)
                         {
-                            divr = freq * mul / freq_hclk;
+                            divr = freq_vco / freq_hclk;
                             /* Get the PLLQ divider */
 #if (defined(USB_OTG_FS) || defined(USB)) && (defined(RT_USING_USB_HOST) || defined(RT_USING_USB_DEVICE))
-                            divq = freq * mul / 48U;
+                            divq = freq_vco / 48U;
                             if (divq > OSC_CONF_PLLQ_DIV_MAX)
                                 continue;
                             if (divq < OSC_CONF_PLLQ_DIV_MIN)
@@ -373,7 +374,7 @@ static rt_uint16_t clock_tree_config(struct rcc_conf_struct *conf, rt_uint32_t f
                 }
             }
 
-            freq = freq_base * mul / (divm * divr);
+            freq = freq_vco / divr;
 
             conf->pllm = divm;
             conf->plln = mul;
@@ -503,6 +504,12 @@ static int rcc_conf_init(void)
   #endif
 #endif
         }
+#if defined(RCC_PLLP_SUPPORT)
+        else
+        {
+            conf->pllp = RCC_PLLP_DIV7;
+        }
+#endif
 #if defined(USB_OTG_FS) || defined(USB)
         conf->clk48_source = RCC->CCIPR & RCC_CCIPR_CLK48SEL;
 #endif
