@@ -26,36 +26,12 @@ int main(void)
     int count = 1;
 	/* set LED1 pin mode to output */
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
-    /* set LED2 pin mode to output */
-    rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
-	/* set LED3 pin mode to output */
-    rt_pin_mode(LED3_PIN, PIN_MODE_OUTPUT);
-	/* set USER KEY pin mode to input */
-    rt_pin_mode(KEY_PIN, PIN_MODE_INPUT_PULLDOWN);
 
     while (count++)
     {
-		if(rt_pin_read(KEY_PIN))
-		{
-			rt_pin_write(LED1_PIN, PIN_HIGH);
-			rt_pin_write(LED2_PIN, PIN_LOW);
-			rt_pin_write(LED3_PIN, PIN_LOW);
-			rt_thread_mdelay(500);
-			rt_pin_write(LED1_PIN, PIN_LOW);
-			rt_pin_write(LED2_PIN, PIN_HIGH);
-			rt_pin_write(LED3_PIN, PIN_LOW);
-			rt_thread_mdelay(500);
-			rt_pin_write(LED1_PIN, PIN_LOW);
-			rt_pin_write(LED2_PIN, PIN_LOW);
-			rt_pin_write(LED3_PIN, PIN_HIGH);
-			rt_thread_mdelay(500);
-		}
-		else
-		{
-			rt_pin_write(LED1_PIN, PIN_LOW);
-			rt_pin_write(LED2_PIN, PIN_LOW);
-			rt_pin_write(LED3_PIN, PIN_LOW);
-		}
+		rt_pin_write(LED1_PIN, PIN_HIGH);
+		rt_thread_mdelay(500);
+		rt_pin_write(LED1_PIN, PIN_LOW);
     }
 
     return RT_EOK;
