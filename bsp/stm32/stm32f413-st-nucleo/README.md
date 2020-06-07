@@ -24,7 +24,7 @@
 
 - MCU：STM32F413ZH，主频 100MHz，1536KB FLASH ，320KB RAM
 - 常用外设
-  - LED：8个，user LED [SB2跳帽需连接](黄色，PB0，LD1；蓝色，PB7，LD2；红色，PB14，LD3), USB communication (LD4), over current (LD5), power LED (黄色，LD6), USB FAULT (LD7), VBUS (LD8)。
+  - LED：8个，user LED [JP5跳帽需连接](黄色，PB0，LD1；蓝色，PB7，LD2；红色，PB14，LD3), USB communication (LD4), over current (LD5), power LED (黄色，LD6), USB FAULT (LD7), VBUS (LD8)。
   - 按键：2个，B1（USER，PC13），B2（RESET）
 - 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口等。
 - 调试接口，板载 ST-LINK/V2-1 调试器。
@@ -86,7 +86,7 @@
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，在SB2跳帽连接时，当按下用户按键USER KEY时，观察开发板上 LD1、LD2、LD2 的运行效果，三个LED会顺序周期性交替闪烁。
+下载程序成功之后，系统会自动运行，在JP5跳帽连接时，当按下用户按键USER KEY时，观察开发板上 LD1、LD2、LD2 的运行效果，三个LED会顺序周期性交替闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
