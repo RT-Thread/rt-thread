@@ -38,6 +38,108 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0"
+                default n
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+        endif
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable TIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_HWTIMER0
+                bool "Enable TIMER0"
+                default n
+            config BSP_USING_HWTIMER1
+                bool "Enable TIMER1"
+                default n
+            config BSP_USING_HWTIMER2
+                bool "Enable TIMER2"
+                default n
+            config BSP_USING_HWTIMER3
+                bool "Enable TIMER3"
+                default n
+            config BSP_USING_HWTIMER4
+                bool "Enable TIMER4"
+                default n
+            config BSP_USING_HWTIMER5
+                bool "Enable TIMER5"
+                default n
+            config BSP_USING_HWTIMER6
+                bool "Enable TIMER6"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0"
+                default n
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_WDT
+        bool "Enable WDT"
+        default n
+        select RT_USING_WDT
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        default n
+        select RT_USING_RTC
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+            config BSP_USING_PWM2
+                bool "Enable PWM2"
+                default n
+            config BSP_USING_PWM3
+                bool "Enable PWM3"
+                default n
+            config BSP_USING_PWM4
+                bool "Enable PWM4"
+                default n
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"

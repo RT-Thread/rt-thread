@@ -195,12 +195,34 @@ ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nu
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | RV-STAR板载串口是UART4 |
+| UART | 支持 | RV-STAR板载串口是UART4, 默认使能 |
+| GPIO | 支持 | 默认使能，支持中断控制 |
+| SPI | 支持 | 默认关闭 |
+| I2C | 支持 | 默认关闭 |
+| HWTIMER | 支持 | 默认关闭 |
+| PWM | 支持 | 默认关闭 |
+| WDT | 支持 | 默认关闭 |
+| RTC | 支持 | 默认关闭 |
+| ADC | 支持 | 默认关闭 |
+
+由于针对不同的外设接口GPIO的pinux配置不一样，开发者需要根据自己的需求
+在 `board/board.c` 中的 `rt_hw_drivers_init`入口函数中使用到这个子函数
+中进行功能适配。
+
+例如需要将I2C1的SCL和SDA配置在PB10和PB11，则配置代码在`rt_hw_i2c_drvinit`
+函数中，则需要进行如下设定。
+
+~~~c
+/* Configure PB10 PB11 (I2C1 SCL SDA) as alternate function  */
+gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_10 | GPIO_PIN_11);
+~~~
 
 **注:**
 
 - 适配RT-Thread的驱动框架的代码在 [../libraries/gd32vf103/HAL_Drivers](../libraries/gd32vf103/HAL_Drivers)目录下。
 - 如果有开发者想适配更多的驱动, 请在对应目录下增加驱动适配支持。
+- GD32VF103的驱动适配开关在 `menuconfig -> Hardware Drivers Config -> On-chip Peripheral Drivers` 可以找到。
+- HWTIMER和PWM都是采用的TIMER模块进行功能实现，所以在使用驱动时，请务必注意不要重叠使用相同模块。
 
 ## 联系人信息
 

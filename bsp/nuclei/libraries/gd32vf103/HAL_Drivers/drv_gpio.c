@@ -337,8 +337,11 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     const struct pin_irq_map *irqmap;
     rt_base_t level;
     rt_int32_t irqindex = -1;
+    rt_uint8_t portsrc = 0, pinsrc = 0;
     exti_trig_type_enum trigger_mode;
 
+    portsrc = pin >> 4;
+    pinsrc = pin % 16;
     index = get_pin(pin);
     if (index == RT_NULL)
     {
@@ -378,8 +381,9 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             rt_hw_interrupt_enable(level);
             return RT_EINVAL;
         }
+
         /* connect EXTI line to  GPIO pin */
-        gpio_exti_source_select(index->gpio, index->pin);
+        gpio_exti_source_select(portsrc, pinsrc);
 
         /* configure EXTI line */
         exti_init((exti_line_enum)(index->pin), EXTI_INTERRUPT, trigger_mode);
@@ -390,6 +394,8 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         ECLIC_SetLevelIRQ(irqmap->irqno, 1);
         ECLIC_EnableIRQ(irqmap->irqno);
         pin_irq_enable_mask |= irqmap->pinbit;
+
+        exti_interrupt_enable((exti_line_enum)(index->pin));
 
         rt_hw_interrupt_enable(level);
     }
@@ -405,6 +411,7 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             if (!(pin_irq_enable_mask & (GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9)))
             {
                 ECLIC_DisableIRQ(irqmap->irqno);
+                exti_interrupt_disable((exti_line_enum)(index->pin));
             }
         }
         else if ((irqmap->pinbit >= GPIO_PIN_10) && (irqmap->pinbit <= GPIO_PIN_15))
@@ -412,11 +419,13 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             if (!(pin_irq_enable_mask & (GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15)))
             {
                 ECLIC_DisableIRQ(irqmap->irqno);
+                exti_interrupt_disable((exti_line_enum)(index->pin));
             }
         }
         else
         {
             ECLIC_DisableIRQ(irqmap->irqno);
+            exti_interrupt_disable((exti_line_enum)(index->pin));
         }
     }
     else
@@ -515,6 +524,7 @@ int rt_hw_pin_init(void)
     rcu_periph_clock_enable(RCU_AF);
     return rt_device_pin_register("pin", &_gd32_pin_ops, RT_NULL);
 }
-INIT_BOARD_EXPORT(rt_hw_pin_init);
+
+INIT_DEVICE_EXPORT(rt_hw_pin_init);
 
 #endif /* RT_USING_PIN */
