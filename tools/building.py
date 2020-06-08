@@ -675,8 +675,17 @@ def DefineGroup(name, src, depend, **parameters):
             MergeGroup(g, group)
             return objs
 
+    def PriorityInsertGroup(groups, group):
+        length = len(groups)
+        for i in range(0, length):
+            if cmp(groups[i]['name'].lower(), group['name'].lower()) > 0:
+                groups.insert(i, group)
+                return
+        groups.append(group)
+
     # add a new group
-    Projects.append(group)
+    #Projects.append(group)
+    PriorityInsertGroup(Projects, group)
 
     return objs
 
