@@ -29,8 +29,9 @@
 | ECAP | RT_Device_Class_Miscellaneous | |
 | HSOTG | RT_Device_Class_USBHost/RT_Device_Class_USBDevice | |
 | HSUSBD | RT_Device_Class_USBDevice | |
+| USBH | RT_Device_Class_USBHost | |
+| HSUSBH | RT_Device_Class_USBHost | |
 | I2S | RT_Device_Class_Sound/RT_Device_Class_Pipe |  |
-| OTG | RT_Device_Class_USBHost/RT_Device_Class_USBDevice | |
 | QEI | RT_Device_Class_Miscellaneous | |
 | QSPI | RT_Device_Class_SPIBUS |  |
 | SCUART | RT_Device_Class_Char |  |
