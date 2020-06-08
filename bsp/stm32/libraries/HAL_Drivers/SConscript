@@ -52,6 +52,9 @@ if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32F1']):
 if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32F4']):
     src += ['drv_pmhw/drv_pmhw_f4.c']
 
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32G0']):
+    src += ['drv_pmhw/drv_pmhw_g0.c']
+
 if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
     src += ['drv_pmhw/drv_pmhw_l4.c']
 

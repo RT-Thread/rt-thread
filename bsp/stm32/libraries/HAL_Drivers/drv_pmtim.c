@@ -118,9 +118,15 @@ RT_WEAK int stm32_pm_timer_init(void)
         return -1;
     }
 
+#if defined(STM32G071xx) || defined(STM32G081xx)
+    NVIC_ClearPendingIRQ(TIM6_DAC_LPTIM1_IRQn);
+    NVIC_SetPriority(TIM6_DAC_LPTIM1_IRQn, 0);
+    NVIC_EnableIRQ(TIM6_DAC_LPTIM1_IRQn);
+#else
     NVIC_ClearPendingIRQ(LPTIM1_IRQn);
     NVIC_SetPriority(LPTIM1_IRQn, 0);
     NVIC_EnableIRQ(LPTIM1_IRQn);
+#endif
 
     return 0;
 #else
