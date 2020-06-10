@@ -499,7 +499,11 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
         rt_kprintf("malloc netif failed\n");
         return -RT_ERROR;
     }
+#if LWIP_NETIF_HOSTNAME
+    rt_memset(netif, 0, sizeof(struct netif) + LWIP_HOSTNAME_LEN);	
+#else
     rt_memset(netif, 0, sizeof(struct netif));
+#endif
 
     /* set netif */
     dev->netif = netif;
