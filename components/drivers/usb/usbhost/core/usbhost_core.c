@@ -162,6 +162,10 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
 
     /* alloc memory for configuration descriptor */
     device->cfg_desc = (ucfg_desc_t)rt_malloc(cfg_desc.wTotalLength);
+    if(device->cfg_desc == RT_NULL)
+    {
+        return RT_ENOMEM;
+    }
     rt_memset(device->cfg_desc, 0, cfg_desc.wTotalLength);
 
     /* get full configuration descriptor */
@@ -219,6 +223,10 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
         {
             /* allocate memory for interface device */
             device->intf[i] = (struct uhintf*)rt_malloc(sizeof(struct uhintf));
+            if(device->intf[i] == RT_NULL)
+            {
+                return RT_ENOMEM;
+            }
             device->intf[i]->drv = drv;
             device->intf[i]->device = device;
             device->intf[i]->intf_desc = intf_desc;
