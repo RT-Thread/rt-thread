@@ -36,32 +36,30 @@ extern void _init(void);
 
 void rt_hw_spi_drvinit(void)
 {
-    // rcu_periph_clock_enable(RCU_GPIOA);
-    // rcu_periph_clock_enable(RCU_GPIOE);
-    // rcu_periph_clock_enable(RCU_AF);
-    // /* Configure PA5 PA6 PA7 (SPI0 SCK MISO MOSI) as alternate function  */
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
-    // gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
-    // /* Configure PE2 PE3 PE4 (CS OLED_DC OLED_RES ) as output  */
-    // gpio_init(GPIOE, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4);
-
-    // rcu_periph_clock_enable(RCU_GPIOB);
-
-    // /* SPI1_SCK(PB13), SPI1_MISO(PB14) and SPI1_MOSI(PB15) GPIO pin configuration */
-    // gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13 | GPIO_PIN_15);
-    // gpio_init(GPIOB, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_14);
-    // /* SPI1_CS(PB12) GPIO pin configuration */
-    // gpio_init(GPIOB, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_12);
+    /* Comments below are sample configuration code for 
+     * Configure PA5 PA6 PA7 (SPI0 SCK MISO MOSI) as alternate function
+     * gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
+     * gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
+     */
 }
 
 void rt_hw_adc_drvinit(void)
 {
-
+    /* Comments below are sample configuration code for 
+     * Configure PA0, PA3 as analog mode
+     * gpio_init(GPIOA, GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, GPIO_PIN_0|GPIO_PIN_3);
+     */
 }
 
 void rt_hw_gpio_drvinit(void)
 {
-
+    // Clock on all the GPIOs and AF
+    rcu_periph_clock_enable(RCU_GPIOA);
+    rcu_periph_clock_enable(RCU_GPIOB);
+    rcu_periph_clock_enable(RCU_GPIOC);
+    rcu_periph_clock_enable(RCU_GPIOD);
+    rcu_periph_clock_enable(RCU_GPIOE);
+    rcu_periph_clock_enable(RCU_AF);
 }
 
 void rt_hw_hwtimer_drvinit(void)
@@ -71,31 +69,19 @@ void rt_hw_hwtimer_drvinit(void)
 
 void rt_hw_i2c_drvinit(void)
 {
-    // rcu_periph_clock_enable(RCU_GPIOB);
-    // rcu_periph_clock_enable(RCU_AF);
-    // /* Configure PB10 PB11 (I2C1 SCL SDA) as alternate function  */
-    // gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_10 | GPIO_PIN_11);
-    // /* Configure PB6 PB7 (I2C0 SCL SDA) as alternate function  */
-    // gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_6 | GPIO_PIN_7);
+    /* Comments below are sample configuration code for 
+     * Configure PB10 PB11 (I2C1 SCL SDA) as alternate function
+     * gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_10 | GPIO_PIN_11);
+     */
 }
 
 void rt_hw_pwm_drvinit(void)
 {
-    // rcu_periph_clock_enable(RCU_GPIOA);
-    // rcu_periph_clock_enable(RCU_GPIOB);
-    // rcu_periph_clock_enable(RCU_AF);
-
-    /* Configure PA0 PA1 PA2 PA3(TIMER1 CH0 CH1 CH2 CH3) as alternate function */
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0);
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_2);
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_3);
-
-    /* Configure PA6 PA7 PB0 PB1(TIMER2 CH0 CH1 CH2 CH3) as alternate function */
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
-    // gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_7);
-    // gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0);
-    // gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
+    /* Comments below are sample configuration code for 
+     * Configure PA6 PA7 PB0 PB1(TIMER2 CH0 CH1 CH2 CH3) as alternate function
+     * gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6 | GPIO_PIN_7);
+     * gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1);
+     */
 }
 
 void rt_hw_rtc_drvinit(void)
@@ -107,12 +93,11 @@ void rt_hw_uart_drvinit(void)
 {
     // Debug UART4 GPIO pins are already initialized in nuclei_sdk
 
-    // rcu_periph_clock_enable(RCU_GPIOC);
-    // rcu_periph_clock_enable(RCU_AF);
-
-    // /* Configure PC10 PC11(UART3 TX RX) as alternate function */
-    // gpio_init(GPIOC, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_10);
-    // gpio_init(GPIOC, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_11);
+    /* Comments below are sample configuration code for 
+     * Configure PC10 PC11(UART3 TX RX) as alternate function
+     * gpio_init(GPIOC, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_10);
+     * gpio_init(GPIOC, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_11);
+     */
 }
 
 void rt_hw_wdt_drvinit(void)
