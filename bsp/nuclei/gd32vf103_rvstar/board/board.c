@@ -32,23 +32,21 @@ extern void *_heap_end;
  */
 extern void _init(void);
 
-// Check pin assignment here https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html
+/* 
+ * - Check MCU pin assignment here https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html
+ * - If you changed menuconfig to use different peripherals such as SPI, ADC, GPIO,
+ *   HWTIMER, I2C, PWM, UART, WDT, RTC, please add or change related pinmux configuration
+ *   code in functions(rt_hw_*_drvinit) below
+ */
 
 void rt_hw_spi_drvinit(void)
 {
-    /* Comments below are sample configuration code for 
-     * Configure PA5 PA6 PA7 (SPI0 SCK MISO MOSI) as alternate function
-     * gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
-     * gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
-     */
+
 }
 
 void rt_hw_adc_drvinit(void)
 {
-    /* Comments below are sample configuration code for 
-     * Configure PA0, PA3 as analog mode
-     * gpio_init(GPIOA, GPIO_MODE_AIN, GPIO_OSPEED_50MHZ, GPIO_PIN_0|GPIO_PIN_3);
-     */
+
 }
 
 void rt_hw_gpio_drvinit(void)
@@ -69,19 +67,12 @@ void rt_hw_hwtimer_drvinit(void)
 
 void rt_hw_i2c_drvinit(void)
 {
-    /* Comments below are sample configuration code for 
-     * Configure PB10 PB11 (I2C1 SCL SDA) as alternate function
-     * gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_10 | GPIO_PIN_11);
-     */
+
 }
 
 void rt_hw_pwm_drvinit(void)
 {
-    /* Comments below are sample configuration code for 
-     * Configure PA6 PA7 PB0 PB1(TIMER2 CH0 CH1 CH2 CH3) as alternate function
-     * gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6 | GPIO_PIN_7);
-     * gpio_init(GPIOB, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_0 | GPIO_PIN_1);
-     */
+
 }
 
 void rt_hw_rtc_drvinit(void)
@@ -91,13 +82,8 @@ void rt_hw_rtc_drvinit(void)
 
 void rt_hw_uart_drvinit(void)
 {
-    // Debug UART4 GPIO pins are already initialized in nuclei_sdk
+    /* Notice: Debug UART4 GPIO pins are already initialized in nuclei_sdk */
 
-    /* Comments below are sample configuration code for 
-     * Configure PC10 PC11(UART3 TX RX) as alternate function
-     * gpio_init(GPIOC, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_10);
-     * gpio_init(GPIOC, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_11);
-     */
 }
 
 void rt_hw_wdt_drvinit(void)
