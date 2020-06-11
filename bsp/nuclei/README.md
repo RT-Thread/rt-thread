@@ -3,8 +3,8 @@
 This directory provided support for [Nuclei RISC-V Processor](https://nucleisys.com/) based board, currently
 we mainly provided the following support package.
 
-| **BSP**                   | **Development Board Name** |
-|:------------------------- |:-------------------------- |
+| **BSP**                              | **Development Board Name**                                                                                                  |
+| :----------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
 | [gd32vf103_rvstar](gd32vf103_rvstar) | [Nuclei RV-STAR Arduino Compatible Development Board](https://www.riscv-mcu.com/quickstart-quickstart-index-u-RV_STAR.html) |
 
 **If you want to learn more about Nuclei Processors, please click the following links:**

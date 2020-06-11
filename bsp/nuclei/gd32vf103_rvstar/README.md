@@ -2,17 +2,17 @@
 
 ## 简介
 
-**RVSTAR开发板** 是由芯来科技公司推出的基于采用芯来科技RISC-V架构处理器芯片的GD32VF103的开发板。
+**RVSTAR开发板** 是由[芯来科技Nuclei](https://nucleisys.com/)公司推出的基于采用芯来科技RISC-V架构处理器芯片的GD32VF103的开发板。
 
 更多关于 **RVSTAR开发板** 开发板的详细资料请参见 [RVSTAR开发板快速入门](https://www.rvmcu.com/quickstart-quickstart-index-u-RV_STAR.html)
 
 ### 板载资源
 
-| 硬件 | 描述 |
-| ---  | --- |
-| 内核 | Nuclei N205 |
+| 硬件 | 描述            |
+| ---- | --------------- |
+| 内核 | Nuclei N205     |
 | 架构 | 32-bit RV32IMAC |
-| 主频 | 108 MHz |
+| 主频 | 108 MHz         |
 
 ## 工具安装
 
@@ -75,27 +75,28 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 正常下载的输出如下:
 
-~~~
+~~~bat
+57856@DESKTOP-4LATIEU D:\workspace\Sourcecode\rt-thread\bsp\nuclei\gd32vf103_rvstar
+> scons --run upload
 scons: Reading SConscript files ...
 Supported downloaded modes for board gd32vf103v_rvstar are flashxip, chosen downloaded mode is flashxip
 Upload application rtthread.elf using openocd and gdb
 riscv-nuclei-elf-gdb rtthread.elf -ex "set remotetimeout 240"                     -ex "target remote | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/gd32vf103_rvstar/packages/nuclei_sdk-latest/SoC/gd32vf103/Board/gd32vf103v_rvstar/openocd_gd32vf103.cfg"                     --batch -ex "monitor halt" -ex "monitor flash protect 0 0 last off" -ex "load"                     -ex "monitor resume" -ex "monitor shutdown" -ex "quit"
 D:\Software\Nuclei\gcc\bin\riscv-nuclei-elf-gdb.exe: warning: Couldn't determine a path for the index cache directory.
-
 Nuclei OpenOCD, 64-bit Open On-Chip Debugger 0.10.0+dev-00014-g0eae03214 (2019-12-12-07:43)
 Licensed under GNU GPL v2
 For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
-rt_thread_idle_entry (parameter=0x0) at D:\workspace\Sourcecode\rt-thread\src\idle.c:251
-251                 if (idle_hook_list[i] != RT_NULL)
+rt_assert_handler (ex_string=ex_string@entry=0x800ab10 "0", func=func@entry=0x800ac14 <__FUNCTION__.3090> "rt_sem_take", line=line@entry=363) at D:\workspace\Sourcecode\rt-thread\src\kservice.c:1371
+1371                while (dummy == 0);
 cleared protection for sectors 0 through 127 on flash bank 0
 
 Loading section .init, size 0x264 lma 0x8000000
-Loading section .text, size 0x140de lma 0x8000280
-Loading section .rodata, size 0x37c0 lma 0x8014360
-Loading section .data, size 0x404 lma 0x8017b20
-Start address 0x800015c, load size 98054
-Transfer rate: 8 KB/sec, 10894 bytes/write.
+Loading section .text, size 0xa646 lma 0x8000280
+Loading section .rodata, size 0x2a80 lma 0x800a8c8
+Loading section .data, size 0x350 lma 0x800d348
+Start address 0x800015c, load size 54906
+Transfer rate: 6 KB/sec, 9151 bytes/write.
 shutdown command invoked
 A debugging session is active.
 
@@ -112,38 +113,55 @@ initialize rti_board_start:0 done
 
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.3 build Apr  9 2020
+ / | \     4.0.3 build Jun  9 2020
  2006 - 2020 Copyright by rt-thread team
 do components initialization.
 initialize rti_board_end:0 done
-initialize dfs_init:0 done
+initialize rt_work_sys_workqueue_init:0 done
+initialize rt_hw_pin_init:0 done
 initialize libc_system_init:0 done
 initialize finsh_system_init:0 done
-msh />
+msh >
 ```
 
 在串口终端(我这里使用的是TeraTerm)输入``ps``即可查看当前线程工作情况:
 
 ~~~
-msh />ps
+msh >ps
 thread   pri  status      sp     stack size max used left tick  error
 -------- ---  ------- ---------- ----------  ------  ---------- ---
-thread01  19  suspend 0x00000158 0x0000018c    87%   0x00000005 000
-thread00  19  suspend 0x00000158 0x0000018c    87%   0x00000005 000
-tshell    20  running 0x00000258 0x00001000    18%   0x00000004 000
-tidle0    31  ready   0x000000a8 0x0000018c    59%   0x0000000e 000
-timer      4  suspend 0x000000f8 0x00000200    49%   0x00000009 000
-main      10  suspend 0x00000168 0x00000800    36%   0x00000006 000
-msh />
+tshell    20  running 0x000000f8 0x00000800    21%   0x00000008 000
+sys_work  23  suspend 0x00000098 0x00000800    07%   0x0000000a 000
+tidle0    31  ready   0x000000b8 0x0000018c    46%   0x00000013 000
+timer      4  suspend 0x00000098 0x00000200    29%   0x00000009 000
+msh >list_device
+device           type         ref count
+-------- -------------------- ----------
+pin      Miscellaneous Device 0
+uart4    Character Device     2
+msh >version
+
+ \ | /
+- RT -     Thread Operating System
+ / | \     4.0.3 build Jun 11 2020
+ 2006 - 2020 Copyright by rt-thread team
+msh >free
+total memory: 14208
+used memory : 5248
+maximum allocated memory: 6424
 ~~~
 
 ### 调试程序
+
+#### 命令行GDB调试
 
 在保证程序编译成功后, 在相同ENV终端执行``scons --run debug``进行代码在命令行下进行GDB调试。
 
 正常的调试输出如下：
 
-~~~
+~~~bat
+57856@DESKTOP-4LATIEU D:\workspace\Sourcecode\rt-thread\bsp\nuclei\gd32vf103_rvstar
+> scons --run debug
 scons: Reading SConscript files ...
 Supported downloaded modes for board gd32vf103v_rvstar are flashxip, chosen downloaded mode is flashxip
 Debug application rtthread.elf using openocd and gdb
@@ -165,45 +183,72 @@ Find the GDB manual and other documentation resources online at:
 For help, type "help".
 Type "apropos word" to search for commands related to "word"...
 Reading symbols from rtthread.elf...
-Remote debugging using | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/gd32vf103_rvstar/packages/nuclei_sdk-latest/SoC/gd32vf103/Board/gd32vf103v_rvstar/openocd_gd32vf103.cfg Nuclei OpenOCD, 64-bit Open On-Chip Debugger 0.10.0+dev-00014-g0eae03214 (2019-12-12-07:43)
+Remote debugging using | openocd --pipe -f D:/workspace/Sourcecode/rt-thread/bsp/nuclei/gd32vf103_rvstar/packages/nuclei_sdk-latest/SoC/gd32vf103/Board/gd32vf103v_rvstar/openocd_gd32vf103.cfg
+Nuclei OpenOCD, 64-bit Open On-Chip Debugger 0.10.0+dev-00014-g0eae03214 (2019-12-12-07:43)
 Licensed under GNU GPL v2
 For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
-rt_thread_idle_entry (parameter=0x0) at D:\workspace\Sourcecode\rt-thread\src\idle.c:249
-249             for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
-(gdb)
-(gdb) b main.c:35
-Breakpoint 1 at 0x8000290: file applications\main.c, line 35.
+0x080011ca in rt_thread_idle_excute () at D:\workspace\Sourcecode\rt-thread\src\idle.c:153
+153         while (_has_defunct_thread())
+(gdb) b irq_entry
+Breakpoint 1 at 0x8003840: file D:\workspace\Sourcecode\rt-thread\libcpu\risc-v\nuclei\interrupt_gcc.S, line 190.
 (gdb) c
 Continuing.
 Note: automatically using hardware breakpoints for read-only addresses.
 
-Breakpoint 1, thread_entry (parameter=0x0) at applications\main.c:35
-35              rt_thread_mdelay(500);
-(gdb)
+Breakpoint 1, irq_entry () at D:\workspace\Sourcecode\rt-thread\libcpu\risc-v\nuclei\interrupt_gcc.S:190
+190         SAVE_CONTEXT
+(gdb) c
 ~~~
 
 调试例子参见如下文档:
 
 * https://doc.nucleisys.com/nuclei_sdk/quickstart.html#debug-application
 
-为了更方便的进行调试, 也可以下载**Nuclei Studio**集成开发环境, 创建一个Debug Configuration, 选择编译好的
-ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nuclei\gd32vf103_rvstar\packages\nuclei_sdk-latest\SoC\gd32vf103\Board\gd32vf103v_rvstar\openocd_gd32vf103.cfg**
+#### Nuclei Studio IDE调试
 
+为了更方便的进行图形化调试, 也可以下载并使用[**Nuclei Studio IDE**](https://nucleisys.com/download.php)集成开发环境.
+
+1. 打开Nuclei Studio IDE, 创建一个名为**Nuclei_RT-Thread**的**C Project**，Project Type选择**Empty Project**,
+   Toolchain选择**RISC-V Cross GCC**, 然后点击**Finish**.
+
+   ![Create A RISC-V C Project](doc/images/create_c_project.png)
+
+2. 选中**rt-thread**的代码目录，然后鼠标左键拖到Nuclei Studio中创建好的**Nuclei_RT-Thread**工程中，选择
+   **Link to files and folders**, 点击**OK**, 就将**rt-thread**的代码拖到了工程中并创建软链接，注意这里建立的工程
+   仅用于调试，不可以用于编译，编译请使用上文中提到的`scons`命令。
+
+   ![Drop and link RT-Thread source code](doc/images/link_rtthread_code.png)
+
+3. 创建一个OpenOCD Debugging Configuration, 选择编译好的ELF文件, 并选定**Disable auto build**, 如下图所示:
+
+   ![Create OpenOCD Debugging Configuration](doc/images/create_gdb_cfg.png)
+
+4. 然后打开**Debugger**Tab, 配置好OPENOCD的配置文件路径, 其中OPENOCD配置文件路径为
+*bsp\nuclei\gd32vf103_rvstar\packages\nuclei_sdk-latest\SoC\gd32vf103\Board\gd32vf103v_rvstar\openocd_gd32vf103.cfg*，
+   请在配置时使用完整绝对路径，根据自己文件所在目录来提供。配置完毕后，点击 **Debug**，开始下载调试。
+
+   ![Configure OpenOCD configuration file](doc/images/config_openocd_cfg.png)
+
+5. 最终调试界面如下所示
+
+   ![Debug in Nuclei Studio IDE](doc/images/start_debug_in_ide.png)
+
+6. 上面步骤中的路径请根据自己的环境进行调整，调试时请确保开发板正常连接到电脑，并且调试器驱动安装正确。
 
 ## 驱动支持情况
 
-| 驱动 | 支持情况  |  备注  |
-| ------ | ----  | :------:  |
-| UART | 支持 | RV-STAR板载串口是UART4, 默认使能 |
-| GPIO | 支持 | 默认使能，支持中断控制 |
-| SPI | 支持 | 默认关闭 |
-| I2C | 支持 | 默认关闭 |
-| HWTIMER | 支持 | 默认关闭 |
-| PWM | 支持 | 默认关闭 |
-| WDT | 支持 | 默认关闭 |
-| RTC | 支持 | 默认关闭 |
-| ADC | 支持 | 默认关闭 |
+| 驱动    | 支持情况 |               备注               |
+| ------- | -------- | :------------------------------: |
+| UART    | 支持     | RV-STAR板载串口是UART4, 默认使能 |
+| GPIO    | 支持     |      默认使能，支持中断控制      |
+| SPI     | 支持     |             默认关闭             |
+| I2C     | 支持     |             默认关闭             |
+| HWTIMER | 支持     |             默认关闭             |
+| PWM     | 支持     |             默认关闭             |
+| WDT     | 支持     |             默认关闭             |
+| RTC     | 支持     |             默认关闭             |
+| ADC     | 支持     |             默认关闭             |
 
 ### 适配开发板Pinmux
 
