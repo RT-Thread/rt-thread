@@ -205,19 +205,40 @@ ELF文件, 然后配置OPENOCD和GDB即可, OPENOCD配置文件路径为**bsp\nu
 | RTC | 支持 | 默认关闭 |
 | ADC | 支持 | 默认关闭 |
 
-由于针对不同的外设接口GPIO的pinux配置不一样，开发者需要根据自己的需求
-在 `board/board.c` 中的 `rt_hw_drivers_init`入口函数中使用到这个子函数
-中进行功能适配。
+### 适配开发板Pinmux
 
-例如需要将I2C1的SCL和SDA配置在PB10和PB11，则配置代码在`rt_hw_i2c_drvinit`
-函数中，则需要进行如下设定。
+如果需要使用到其他的外设驱动，则首先需要运行`menuconfig`命令，在
+`Hardware Drivers Config -> On-chip Peripheral Drivers`中使能对应的外设接口，
+但是由于针对不同的外设接口GPIO的pinux配置不一样，开发者仍需要根据自己的需求
+在 `board/board.c` 中的 `rt_hw_drivers_init`入口函数中找到需要使用到的子函数，
+并在对应的子函数中进行功能适配。
+
+**使用举例**
+
+* I2C外设Pinmux
+
+如果需要将I2C1的SCL和SDA配置在PB10和PB11，首先需要在menuconfig中将I2C1使能，然后
+更改board.c中`rt_hw_i2c_drvinit`函数，并进行如下设定。
 
 ~~~c
 /* Configure PB10 PB11 (I2C1 SCL SDA) as alternate function  */
 gpio_init(GPIOB, GPIO_MODE_AF_OD, GPIO_OSPEED_50MHZ, GPIO_PIN_10 | GPIO_PIN_11);
 ~~~
 
-**注:**
+* SPI外设Pinmux
+
+如果需要将SPI0的SCK MISO和MOSI配置在PA5, PA6和PA7，首先需要在menuconfig中将SPI0使能，
+然后更改board.c中的`rt_hw_spi_drvinit`函数，并进行如下设定。
+
+~~~c
+/* Configure PA5 PA6 PA7 (SPI0 SCK MISO MOSI) as alternate function */
+gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5 | GPIO_PIN_7);
+gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
+~~~
+
+* 其余类似的外设也是如上做适配处理
+
+### 注意
 
 - 适配RT-Thread的驱动框架的代码在 [../libraries/gd32vf103/HAL_Drivers](../libraries/gd32vf103/HAL_Drivers)目录下。
 - 如果有开发者想适配更多的驱动, 请在对应目录下增加驱动适配支持。
