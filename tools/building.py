@@ -28,6 +28,7 @@ import os
 import sys
 import string
 import utils
+import operator
 
 from SCons.Script import *
 from utils import _make_path_relative
@@ -678,13 +679,12 @@ def DefineGroup(name, src, depend, **parameters):
     def PriorityInsertGroup(groups, group):
         length = len(groups)
         for i in range(0, length):
-            if cmp(groups[i]['name'].lower(), group['name'].lower()) > 0:
+            if operator.gt(groups[i]['name'].lower(), group['name'].lower()):
                 groups.insert(i, group)
                 return
         groups.append(group)
 
     # add a new group
-    #Projects.append(group)
     PriorityInsertGroup(Projects, group)
 
     return objs
