@@ -210,8 +210,6 @@ rt_size_t gd32_spi_transmit(rt_uint32_t spi_periph, const void *send_buf, void *
         }
         idx ++;
     }
-    // Wait for transmission complete
-    // while(SET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TRANS));
 
     return length;
 }
