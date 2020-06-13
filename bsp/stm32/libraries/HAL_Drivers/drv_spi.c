@@ -11,12 +11,13 @@
  * 2020-01-15     whj4674672   Porting for stm32h7xx
  */
 
+#include <rtthread.h>
+#include <rtdevice.h>
 #include "board.h"
 
 #ifdef RT_USING_SPI
 
 #if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6)
-/* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 
 #include "drv_spi.h"
 #include "drv_config.h"
@@ -278,7 +279,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
     struct stm32_hw_spi_cs *cs = device->parent.user_data;
 
-    if (message->cs_take)
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS))
     {
         HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_RESET);
     }
@@ -333,6 +334,12 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             {
                 state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, 1000);
             }
+
+            if (message->cs_release && (device->config.mode & RT_SPI_3WIRE))
+            {
+                /* release the CS by disable SPI when using 3 wires SPI */
+                __HAL_SPI_DISABLE(spi_handle);
+            }
         }
         else
         {
@@ -343,6 +350,8 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
             }
             else
             {
+                /* clear the old error flag */
+                __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
                 state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, 1000);
             }
         }
@@ -364,7 +373,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
         while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
     }
 
-    if (message->cs_release)
+    if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS))
     {
         HAL_GPIO_WritePin(cs->GPIOx, cs->GPIO_Pin, GPIO_PIN_SET);
     }
