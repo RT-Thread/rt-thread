@@ -117,8 +117,8 @@ static void udpclient_test(int argc, char** argv)
         {
             if (started)
             {
-                LOG_I("The tcpclient has started!");
-                LOG_I("Please stop tcpclient firstly, by: tcpclient --stop");
+                LOG_I("The udpclient has started!");
+                LOG_I("Please stop udpclient firstly, by: udpclient --stop");
                 return;
             }
 
