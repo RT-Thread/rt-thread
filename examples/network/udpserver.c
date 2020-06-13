@@ -163,8 +163,8 @@ static void udpserver_test(int argc, char** argv)
         {
             if (started)
             {
-                LOG_I("The tcpclient has started!");
-                LOG_I("Please stop tcpclient firstly, by: tcpclient --stop");
+                LOG_I("The udpserver has started!");
+                LOG_I("Please stop udpserver firstly, by: udpserver --stop");
                 return;
             }
 
