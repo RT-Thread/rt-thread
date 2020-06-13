@@ -295,7 +295,7 @@ const static struct rt_device_ops flash_device_ops =
  *
  * @return probed SPI flash device, probe failed will return RT_NULL
  */
-rt_spi_flash_device_t rt_sfud_flash_probe_ext(const char *spi_flash_dev_name, const char *spi_dev_name,
+rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
         struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg)
 {
     rt_spi_flash_device_t rtt_dev = RT_NULL;
@@ -427,11 +427,11 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 {
     struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
 #ifndef SFUD_USING_QSPI
-    return rt_sfud_flash_probe_ext(spi_flash_dev_name, spi_dev_name, &cfg, RT_NULL);
+    return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, RT_NULL);
 #else
     struct rt_qspi_configuration qspi_cfg = RT_SFUD_DEFAULT_QSPI_CFG;
 
-    return rt_sfud_flash_probe_ext(spi_flash_dev_name, spi_dev_name, &cfg, &qspi_cfg);
+    return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, &qspi_cfg);
 #endif
 }
 

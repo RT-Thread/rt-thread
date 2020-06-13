@@ -36,7 +36,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
  *
  * @return probed SPI flash device, probe failed will return RT_NULL
  */
-rt_spi_flash_device_t rt_sfud_flash_probe_ext(const char *spi_flash_dev_name, const char *spi_dev_name,
+rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
         struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg);
 
 /**
