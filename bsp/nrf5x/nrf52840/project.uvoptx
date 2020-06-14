@@ -165,6 +165,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>rt_pin_irq_hdr</ItemText>
         </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>m_cb</ItemText>
+        </Ww>
       </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>

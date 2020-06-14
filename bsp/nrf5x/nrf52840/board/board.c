@@ -3,6 +3,7 @@
 #include <nrfx_systick.h>
 
 #include "board.h"
+#include "drv_gpio.h"
 #include "drv_uart.h"
 
 void SysTick_Configuration(void)

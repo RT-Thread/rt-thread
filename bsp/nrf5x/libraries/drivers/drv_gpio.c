@@ -174,7 +174,7 @@ static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static nrfx_gpiote_evt_handler_t pin_irq_hdr(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+static void pin_irq_hdr(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
 	int i;
 	int irq_quantity;
@@ -264,6 +264,8 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 			return RT_EOK;
 		case NRFX_ERROR_NO_MEM:
 			return RT_ENOMEM;
+		default:
+			return RT_ERROR;
 	}
 }
 
@@ -356,7 +358,7 @@ int rt_hw_pin_init(void)
 {
 	nrfx_err_t err_code;
 
-  err_code = rt_device_pin_register("pin", &_nrf5x_pin_ops, RT_NULL);
+  err_code = (nrfx_err_t)rt_device_pin_register("pin", &_nrf5x_pin_ops, RT_NULL);
 	err_code = nrfx_gpiote_init(NRFX_GPIOTE_CONFIG_IRQ_PRIORITY);
 	
 	switch(err_code) 
@@ -365,6 +367,8 @@ int rt_hw_pin_init(void)
 			return RT_EINVAL;
 		case NRFX_SUCCESS:
 			return RT_EOK;
+		default:
+			return RT_ERROR;;
 	}
 	
 }
