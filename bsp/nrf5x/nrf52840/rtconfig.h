@@ -155,7 +155,6 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_JLINK_TO_USART
 
 /* On-chip Peripheral Drivers */
 
@@ -163,5 +162,13 @@
 #define BSP_USING_UART0
 #define BSP_UART0_RX_PIN 8
 #define BSP_UART0_TX_PIN 6
+
+/* On-chip flash config */
+
+#define MCU_FLASH_START_ADDRESS 0x00000000
+#define MCU_FLASH_SIZE_KB 1024
+#define MCU_SRAM_START_ADDRESS 0x20000000
+#define MCU_SRAM_SIZE_KB 256
+#define MCU_FLASH_PAGE_SIZE 0x1000
 
 #endif
