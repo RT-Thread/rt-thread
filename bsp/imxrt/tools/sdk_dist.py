@@ -5,10 +5,13 @@ cwd_path = os.getcwd()
 sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 
 # BSP dist function
-def dist_do_building(BSP_ROOT, dist_dir):
+def dist_do_building(BSP_ROOT, dist_dir=None):
     from mkdist import bsp_copy_files
     import rtconfig
     
+    if dist_dir is None:
+        dist_dir  = os.path.join(BSP_ROOT, 'dist', os.path.basename(BSP_ROOT))
+
     print("=> copy imxrt bsp library")
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
     library_dir  = os.path.join(dist_dir, 'libraries')
