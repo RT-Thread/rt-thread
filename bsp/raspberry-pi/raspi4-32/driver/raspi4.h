@@ -29,6 +29,11 @@
 
 /* GPIO */
 #define GPIO_BASE                   (PER_BASE + GPIO_BASE_OFFSET)
+#define GPIO_IRQ_NUM                (3)   //40 pin mode
+#define IRQ_GPIO0                   (96 + 49) //bank0 (0 to 27)
+#define IRQ_GPIO1                   (96 + 50) //bank1 (28 to 45)
+#define IRQ_GPIO2                   (96 + 51) //bank2 (46 to 57)
+#define IRQ_GPIO3                   (96 + 52) //bank3
 
 /* Timer (ARM side) */
 #define ARM_TIMER_IRQ       (64)
