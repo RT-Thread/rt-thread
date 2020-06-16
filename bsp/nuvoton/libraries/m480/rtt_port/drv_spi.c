@@ -2,27 +2,7 @@
 *
 * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of Nuvoton Technology Corp. nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
 * Date            Author           Notes
@@ -31,18 +11,22 @@
 ******************************************************************************/
 #include <rtconfig.h>
 
-#if defined(BSP_USING_SPI)
+#if defined(BSP_USING_SPI) || defined(BSP_USING_QSPI)
 #include <rthw.h>
 #include <rtdevice.h>
 #include <rtdef.h>
 
-#include <NuMicro.h>
-#include <nu_bitutil.h>
+#include <drv_spi.h>
 
-#if defined(BSP_USING_SPI_PDMA)
+#if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA)
     #include <drv_pdma.h>
 #endif
 /* Private define ---------------------------------------------------------------*/
+
+#ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD
+    #define NU_SPI_USE_PDMA_MIN_THRESHOLD 128
+#endif
+
 enum
 {
     SPI_START = -1,
@@ -62,41 +46,28 @@ enum
 };
 
 /* Private typedef --------------------------------------------------------------*/
-struct nu_spi
-{
-    struct rt_spi_bus dev;
-    char *name;
-    SPI_T *spi_base;
-    struct rt_spi_configuration configuration;
-    uint32_t dummy;
-#if defined(BSP_USING_SPI_PDMA)
-    int16_t pdma_perp_tx;
-    int8_t  pdma_chanid_tx;
-    int16_t pdma_perp_rx;
-    int8_t  pdma_chanid_rx;
-    rt_sem_t m_psSemBus;
-#endif
-};
-typedef struct nu_spi *spi_t;
 
 /* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 static void nu_spi_transmission_with_poll(struct nu_spi *spi_bus,
         uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
 static int nu_spi_register_bus(struct nu_spi *spi_bus, const char *name);
-static void nu_spi_drain_rxfifo(SPI_T *spi_base);
+static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_err_t nu_spi_bus_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
 
-#if defined(BSP_USING_SPI_PDMA)
+#if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA)
     static void nu_pdma_spi_rx_cb(void *pvUserData, uint32_t u32EventFilter);
     static void nu_pdma_spi_tx_cb(void *pvUserData, uint32_t u32EventFilter);
     static rt_err_t nu_pdma_spi_rx_config(struct nu_spi *spi_bus, uint8_t *pu8Buf, int32_t i32RcvLen, uint8_t bytes_per_word);
     static rt_err_t nu_pdma_spi_tx_config(struct nu_spi *spi_bus, const uint8_t *pu8Buf, int32_t i32SndLen, uint8_t bytes_per_word);
     static rt_size_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word);
-    static rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus);
 #endif
 /* Public functions -------------------------------------------------------------*/
+void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int length, uint8_t bytes_per_word);
+void nu_spi_drain_rxfifo(SPI_T *spi_base);
 
+#if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA)
+    rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus);
+#endif
 
 /* Private variables ------------------------------------------------------------*/
 static struct rt_spi_ops nu_spi_poll_ops =
@@ -266,7 +237,7 @@ exit_nu_spi_bus_configure:
     return -(ret);
 }
 
-#if defined(BSP_USING_SPI_PDMA)
+#if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA)
 static void nu_pdma_spi_rx_cb(void *pvUserData, uint32_t u32EventFilter)
 {
     struct nu_spi *spi_bus;
@@ -425,7 +396,7 @@ static rt_size_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *sen
     return result;
 }
 
-static rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus)
+rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus)
 {
     /* Allocate SPI_TX nu_dma channel */
     if ((spi_bus->pdma_chanid_tx = nu_pdma_channel_allocate(spi_bus->pdma_perp_tx)) < 0)
@@ -447,10 +418,9 @@ exit_nu_hw_spi_pdma_allocate:
 
     return -(RT_ERROR);
 }
+#endif /* #if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA) */
 
-#endif
-
-static void nu_spi_drain_rxfifo(SPI_T *spi_base)
+void nu_spi_drain_rxfifo(SPI_T *spi_base)
 {
     while (SPI_IS_BUSY(spi_base));
 
@@ -590,14 +560,17 @@ static void nu_spi_transmission_with_poll(struct nu_spi *spi_bus,
     }
 }
 
-static void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int length, uint8_t bytes_per_word)
+void nu_spi_transfer(struct nu_spi *spi_bus, uint8_t *tx, uint8_t *rx, int length, uint8_t bytes_per_word)
 {
+    RT_ASSERT(spi_bus != RT_NULL);
+
 #if defined(BSP_USING_SPI_PDMA)
     /* DMA transfer constrains */
     if ((spi_bus->pdma_chanid_rx >= 0) &&
             (!(uint32_t)tx % bytes_per_word) &&
             (!(uint32_t)rx % bytes_per_word) &&
-            (bytes_per_word != 3))
+            (bytes_per_word != 3) &&
+            (length >= NU_SPI_USE_PDMA_MIN_THRESHOLD))
         nu_spi_pdma_transmit(spi_bus, tx, rx, length, bytes_per_word);
     else
         nu_spi_transmission_with_poll(spi_bus, tx, rx, length, bytes_per_word);
@@ -617,7 +590,7 @@ static rt_uint32_t nu_spi_bus_xfer(struct rt_spi_device *device, struct rt_spi_m
     RT_ASSERT(message != RT_NULL);
 
     spi_bus = (struct nu_spi *) device->bus;
-    configuration = &spi_bus->configuration;
+    configuration = (struct rt_spi_configuration *)&spi_bus->configuration;
     bytes_per_word = configuration->data_width / 8;
 
     if ((message->length % bytes_per_word) != 0)

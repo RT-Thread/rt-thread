@@ -1,21 +1,23 @@
-/*
- * Copyright (c) 2006-2018, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2018-11-16    bluebear233   first version
- */
+/**************************************************************************//**
+*
+* @copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
+*
+* SPDX-License-Identifier: Apache-2.0
+*
+* Change Logs:
+* Date            Author       Notes
+* 2020-1-16       Wayne        First version
+*
+******************************************************************************/
 
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 2048k   /* 2048K flash */
+    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 512k    /* 512K flash */
     DATA (rw) : ORIGIN = 0x20000000, LENGTH = 160k    /* 160K sram */
 }
 ENTRY(Reset_Handler)
-_system_stack_size = 0x400;
+_system_stack_size = 0x1000;
 
 SECTIONS
 {

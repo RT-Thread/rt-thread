@@ -2,27 +2,7 @@
 *
 * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of Nuvoton Technology Corp. nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
 * Date            Author           Notes
@@ -106,26 +86,6 @@ static void nu_timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
         uint32_t timer_clk;
         struct rt_hwtimer_info *info = &nu_timer_info;
 
-#ifdef BSP_USING_TIMER0
-        SYS_ResetModule(TMR0_RST);
-        CLK_EnableModuleClock(TMR0_MODULE);
-#endif
-
-#ifdef BSP_USING_TIMER1
-        SYS_ResetModule(TMR1_RST);
-        CLK_EnableModuleClock(TMR1_MODULE);
-#endif
-
-#ifdef BSP_USING_TIMER2
-        SYS_ResetModule(TMR2_RST);
-        CLK_EnableModuleClock(TMR2_MODULE);
-#endif
-
-#ifdef BSP_USING_TIMER3
-        SYS_ResetModule(TMR3_RST);
-        CLK_EnableModuleClock(TMR3_MODULE);
-#endif
-
         timer_clk = TIMER_GetModuleClock(nu_timer->timer_periph);
         info->maxfreq = timer_clk;
         info->minfreq = timer_clk / 256;
@@ -138,22 +98,6 @@ static void nu_timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
         NVIC_DisableIRQ(nu_timer->IRQn);
         TIMER_DisableInt(nu_timer->timer_periph);
         TIMER_Close(nu_timer->timer_periph);
-
-#ifdef BSP_USING_TIMER0
-        CLK_DisableModuleClock(TMR0_MODULE);
-#endif
-
-#ifdef BSP_USING_TIMER1
-        CLK_DisableModuleClock(TMR1_MODULE);
-#endif
-
-#ifdef BSP_USING_TIMER2
-        CLK_DisableModuleClock(TMR2_MODULE);
-#endif
-
-#ifdef BSP_USING_TIMER3
-        CLK_DisableModuleClock(TMR3_MODULE);
-#endif
     }
 }
 
@@ -267,6 +211,8 @@ int rt_hw_timer_init(void)
     {
         rt_kprintf("timer0 register failed\n");
     }
+    SYS_ResetModule(TMR0_RST);
+    CLK_EnableModuleClock(TMR0_MODULE);
 #endif
 
 #ifdef BSP_USING_TIMER1
@@ -279,6 +225,8 @@ int rt_hw_timer_init(void)
     {
         rt_kprintf("timer1 register failed\n");
     }
+    SYS_ResetModule(TMR1_RST);
+    CLK_EnableModuleClock(TMR1_MODULE);
 #endif
 
 #ifdef BSP_USING_TIMER2
@@ -291,6 +239,8 @@ int rt_hw_timer_init(void)
     {
         rt_kprintf("timer2 register failed\n");
     }
+    SYS_ResetModule(TMR2_RST);
+    CLK_EnableModuleClock(TMR2_MODULE);
 #endif
 
 #ifdef BSP_USING_TIMER3
@@ -303,6 +253,8 @@ int rt_hw_timer_init(void)
     {
         rt_kprintf("timer3 register failed\n");
     }
+    SYS_ResetModule(TMR3_RST);
+    CLK_EnableModuleClock(TMR3_MODULE);
 #endif
 
     return ret;

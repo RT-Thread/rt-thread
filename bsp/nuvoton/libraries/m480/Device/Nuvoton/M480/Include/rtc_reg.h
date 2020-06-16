@@ -3,7 +3,8 @@
  * @version  V1.00
  * @brief    RTC register definition header file
  *
- * @copyright (C) 2017 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #ifndef __RTC_REG_H__
 #define __RTC_REG_H__

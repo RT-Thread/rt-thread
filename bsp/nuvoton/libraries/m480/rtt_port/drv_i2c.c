@@ -2,27 +2,7 @@
 *
 * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of Nuvoton Technology Corp. nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
 * Date            Author         Notes
@@ -43,6 +23,20 @@
 #define DBG_LEVEL DBG_ERROR
 #define DBG_COLOR
 #include <rtdbg.h>
+
+const rt_uint32_t u32I2C_MASTER_STATUS_START                  = 0x08UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_REPEAT_START           = 0x10UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK   = 0x18UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_NACK  = 0x20UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_TRANSMIT_DATA_ACK      = 0x28UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_TRANSMIT_DATA_NACK     = 0x30UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_ARBITRATION_LOST       = 0x38UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_RECEIVE_ADDRESS_ACK    = 0x40UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_RECEIVE_ADDRESS_NACK   = 0x48UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_RECEIVE_DATA_ACK       = 0x50UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_RECEIVE_DATA_NACK      = 0x58UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_BUS_ERROR              = 0x00UL;
+const rt_uint32_t u32I2C_MASTER_STATUS_BUS_RELEASED           = 0xF8UL;
 
 /* Private typedef --------------------------------------------------------------*/
 typedef struct _nu_i2c_bus
@@ -142,42 +136,42 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t *nu_i2c,
         addr1 = 0xf0 | ((msg->addr >> 7) & 0x06);
         addr2 = msg->addr & 0xff;
 
-        LOG_D("addr1: %d, addr2: %d\n", addr1, addr2);
+        LOG_D("address1: %d, address2: %d\n", addr1, addr2);
 
         ret = nu_i2c_send_data(nu_i2c, addr1);
-        if (ret != RT_EOK) //for timeout conditrion
+        if (ret != RT_EOK) /* for timeout condition */
             return -RT_EIO;
 
-        if ((I2C_GET_STATUS(nu_i2c->I2C) != 0x18) && !ignore_nack)
+        if ((I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK) && !ignore_nack)
         {
-            LOG_E("NACK: sending first addr\n");
+            LOG_E("NACK: sending first address failed\n");
 
             return -RT_EIO;
         }
 
         ret = nu_i2c_send_data(nu_i2c,  addr2);
-        if (ret != RT_EOK) //for timeout conditrion
+        if (ret != RT_EOK) /* for timeout condition */
             return -RT_EIO;
 
-        if ((I2C_GET_STATUS(nu_i2c->I2C) != 0x18) && !ignore_nack)
+        if ((I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK) && !ignore_nack)
         {
-            LOG_E("NACK: sending second addr\n");
+            LOG_E("NACK: sending second address failed\n");
 
             return -RT_EIO;
         }
 
         if (flags & RT_I2C_RD)
         {
-            LOG_D("send repeated start condition\n");
+            LOG_D("send repeated START signal\n");
 
             I2C_SET_CONTROL_REG(nu_i2c->I2C, I2C_CTL_STA_SI);
             ret = nu_i2c_wait_ready_with_timeout(nu_i2c);
-            if (ret != RT_EOK) //for timeout conditrion
+            if (ret != RT_EOK) /* for timeout condition */
                 return -RT_EIO;
 
-            if ((I2C_GET_STATUS(nu_i2c->I2C) != 0x10) && !ignore_nack)
+            if ((I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_REPEAT_START) && !ignore_nack)
             {
-                LOG_E("sending repeated START fail\n");
+                LOG_E("sending repeated START failed\n");
 
                 return -RT_EIO;
             }
@@ -185,12 +179,12 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t *nu_i2c,
             addr1 |= 0x01;
 
             ret = nu_i2c_send_data(nu_i2c,  addr1);
-            if (ret != RT_EOK) //for timeout conditrion
+            if (ret != RT_EOK) /* for timeout condition */
                 return -RT_EIO;
 
-            if ((I2C_GET_STATUS(nu_i2c->I2C) != 0x40) && !ignore_nack)
+            if ((I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_RECEIVE_ADDRESS_ACK) && !ignore_nack)
             {
-                LOG_E("NACK: sending repeated addr\n");
+                LOG_E("NACK: sending read address failed\n");
 
                 return -RT_EIO;
             }
@@ -205,13 +199,14 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t *nu_i2c,
 
         /* Send device address */
         ret = nu_i2c_send_data(nu_i2c,  addr1); /* Send Address */
-        if (ret != RT_EOK) //for timeout conditrion
+        if (ret != RT_EOK) /* for timeout condition */
             return -RT_EIO;
 
-        if ((I2C_GET_STATUS(nu_i2c->I2C) != ((flags & RT_I2C_RD) ? 0x40 : 0x18))
-                && !ignore_nack)
+        if (   (I2C_GET_STATUS(nu_i2c->I2C)
+            != ((flags & RT_I2C_RD) ? u32I2C_MASTER_STATUS_RECEIVE_ADDRESS_ACK : u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK))
+            && !ignore_nack)
         {
-            LOG_E("sending addr fail\n");
+            LOG_E("sending address failed\n");
             return -RT_EIO;
         }
     }
@@ -237,15 +232,15 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
     nu_i2c->I2C->CTL0 |= I2C_CTL0_STA_Msk | I2C_CTL0_SI_Msk;
     ret = nu_i2c_wait_ready_with_timeout(nu_i2c);
-    if (ret != RT_EOK) //for timeout conditrion
+    if (ret != RT_EOK) /* for timeout condition */
     {
         rt_set_errno(-RT_ETIMEOUT);
         return 0;
     }
-    if (I2C_GET_STATUS(nu_i2c->I2C) != 0x08) /* Send START */
+    if (I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_START)
     {
         i = 0;
-        LOG_E("Send START Fail");
+        LOG_E("Send START Failed");
         return i;
     }
 
@@ -260,10 +255,10 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             {
                 I2C_SET_CONTROL_REG(nu_i2c->I2C, I2C_CTL_STA_SI);
                 ret = nu_i2c_wait_ready_with_timeout(nu_i2c);
-                if (ret != RT_EOK) //for timeout conditrion
+                if (ret != RT_EOK) /* for timeout conditrion */
                     break;
 
-                if (I2C_GET_STATUS(nu_i2c->I2C) != 0x10) /* Send repeat START */
+                if (I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_REPEAT_START)
                 {
                     i = 0;
                     LOG_E("Send repeat START Fail");
@@ -297,12 +292,12 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 }
 
                 ret = nu_i2c_wait_ready_with_timeout(nu_i2c);
-                if (ret != RT_EOK) //for timeout conditrion
+                if (ret != RT_EOK) /* for timeout condition */
                     break;
 
                 if (nu_i2c->I2C->CTL0 & I2C_CTL_AA)
                 {
-                    if (I2C_GET_STATUS(nu_i2c->I2C) != 0x50) /*Master Receive Data ACK*/
+                    if (I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_RECEIVE_DATA_ACK)
                     {
                         i = 0;
                         break;
@@ -310,7 +305,7 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 }
                 else
                 {
-                    if (I2C_GET_STATUS(nu_i2c->I2C) != 0x58) /*Master Receive Data NACK*/
+                    if (I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_RECEIVE_DATA_NACK)
                     {
                         i = 0;
                         break;
@@ -326,10 +321,10 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             {
                 /* Send register number and MSB of data */
                 ret = nu_i2c_send_data(nu_i2c, (uint8_t)(nu_i2c->msg[i].buf[cnt_data]));
-                if (ret != RT_EOK) //for timeout conditrion
+                if (ret != RT_EOK) /* for timeout condition */
                     break;
 
-                if (I2C_GET_STATUS(nu_i2c->I2C) != 0x28
+                if (I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_TRANSMIT_DATA_ACK
                         && !ignore_nack
                    ) /* Send aata and get Ack */
                 {
@@ -342,8 +337,8 @@ static rt_size_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
     I2C_STOP(nu_i2c->I2C);
 
-    RT_ASSERT(I2C_GET_STATUS(nu_i2c->I2C) == 0xF8);
-    if (I2C_GET_STATUS(nu_i2c->I2C) != 0xF8) /* Bus Free*/
+    RT_ASSERT(I2C_GET_STATUS(nu_i2c->I2C) == u32I2C_MASTER_STATUS_BUS_RELEASED);
+    if (I2C_GET_STATUS(nu_i2c->I2C) != u32I2C_MASTER_STATUS_BUS_RELEASED)
     {
         i = 0;
     }
@@ -362,7 +357,6 @@ int rt_hw_i2c_init(void)
 #if   defined(BSP_USING_I2C0)
     SYS_UnlockReg();
     /* Enable I2C0 clock */
-    CLK_EnableModuleClock(I2C0_MODULE);
     SYS_ResetModule(I2C0_RST);
     SYS_LockReg();
     nu_i2c_configure(&nu_i2c0);
@@ -373,7 +367,6 @@ int rt_hw_i2c_init(void)
 #if   defined(BSP_USING_I2C1)
     SYS_UnlockReg();
     /* Enable I2C1 clock */
-    CLK_EnableModuleClock(I2C1_MODULE);
     SYS_ResetModule(I2C1_RST);
     SYS_LockReg();
     nu_i2c_configure(&nu_i2c1);
@@ -384,7 +377,6 @@ int rt_hw_i2c_init(void)
 #if   defined(BSP_USING_I2C2)
     SYS_UnlockReg();
     /* Enable I2C2 clock */
-    CLK_EnableModuleClock(I2C2_MODULE);
     SYS_ResetModule(I2C2_RST);
     SYS_LockReg();
     nu_i2c_configure(&nu_i2c2);

@@ -2,289 +2,344 @@
 *
 * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of Nuvoton Technology Corp. nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
-* Date            Author       Notes
-* 2020-2-6        YH           First version
+* Date            Author           Notes
+* 2020-5-19       YHKuo            First version
 *
 ******************************************************************************/
-
 #include <rtconfig.h>
 
-#ifdef RT_USING_SPI
+#if defined(BSP_USING_QSPI)
+#include <rthw.h>
+#include <rtdef.h>
 
-#include <rtdevice.h>
-#include <NuMicro.h>
+#include <drv_spi.h>
 
 /* Private define ---------------------------------------------------------------*/
-#define USING_QSPI0
-
-/* Private Typedef --------------------------------------------------------------*/
-struct nu_qspi
+enum
 {
-    struct rt_spi_bus dev;
-    struct rt_spi_configuration configuration;
-    QSPI_T *spi_base;
-    rt_uint8_t init_gpio: 1;
+    QSPI_START = -1,
+#if defined(BSP_USING_QSPI0)
+    QSPI0_IDX,
+#endif
+#if defined(BSP_USING_QSPI1)
+    QSPI1_IDX,
+#endif
+    QSPI_CNT
 };
 
-/* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
-                                      struct rt_spi_configuration *configuration);
-static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device,
-                                    struct rt_spi_message *message);
+/* Private typedef --------------------------------------------------------------*/
 
-/* Private Variables ------------------------------------------------------------*/
+/* Private functions ------------------------------------------------------------*/
+static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
+static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static int nu_qspi_register_bus(struct nu_spi *qspi_bus, const char *name);
+
+/* Public functions -------------------------------------------------------------*/
+
+/* Private variables ------------------------------------------------------------*/
 static struct rt_spi_ops nu_qspi_poll_ops =
 {
     .configure = nu_qspi_bus_configure,
     .xfer      = nu_qspi_bus_xfer,
 };
 
-#ifdef USING_QSPI0
-static struct nu_qspi qspi0 =
+static struct nu_spi nu_qspi_arr [] =
 {
-    .spi_base = QSPI0,
-};
+#if defined(BSP_USING_QSPI0)
+    {
+        .name = "qspi0",
+        .spi_base = (SPI_T *)QSPI0,
+
+#if defined(BSP_USING_QSPI_PDMA)
+#if defined(BSP_USING_QSPI0_PDMA)
+        .pdma_perp_tx = PDMA_QSPI0_TX,
+        .pdma_perp_rx = PDMA_QSPI0_RX,
+#else
+        .pdma_perp_tx = NU_PDMA_UNUSED,
+        .pdma_perp_rx = NU_PDMA_UNUSED,
 #endif
+#endif
+    },
+#endif
+#if defined(BSP_USING_QSPI1)
+    {
+        .name = "qspi1",
+        .spi_base = (SPI_T *)QSPI1,
+
+#if defined(BSP_USING_QSPI_PDMA)
+#if defined(BSP_USING_QSPI1_PDMA)
+        .pdma_perp_tx = PDMA_QSPI1_TX,
+        .pdma_perp_rx = PDMA_QSPI1_RX,
+#else
+        .pdma_perp_tx = NU_PDMA_UNUSED,
+        .pdma_perp_rx = NU_PDMA_UNUSED,
+#endif
+#endif
+    },
+#endif
+    {0}
+}; /* qspi nu_qspi */
 
 static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
                                       struct rt_spi_configuration *configuration)
 {
-
-    struct nu_qspi *spi;
-    uint32_t u32QSPIMode;
+    struct nu_spi *spi_bus;
+    uint32_t u32SPIMode;
     uint32_t u32BusClock;
-    rt_uint8_t init_bus;
+    rt_err_t ret = RT_EOK;
 
-    spi = (struct nu_qspi *) device->bus;
-    init_bus = 0;
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(configuration != RT_NULL);
 
-    if (!spi->init_gpio)
+    spi_bus = (struct nu_spi *) device->bus;
+
+    /* Check mode */
+    switch (configuration->mode & RT_SPI_MODE_3)
     {
-        spi->init_gpio = 1;
-        init_bus = 1;
-
-        if (spi->spi_base == QSPI0)
-        {
-            /* Select PCLK0 as the clock source of QSPI0 */
-            CLK_SetModuleClock(QSPI0_MODULE, CLK_CLKSEL2_QSPI0SEL_PLL,
-                               MODULE_NoMsk);
-
-            /* Enable QSPI0 peripheral clock */
-            CLK_EnableModuleClock(QSPI0_MODULE);
-
-            /* Setup QSPI0 multi-function pins */
-            SYS->GPC_MFPL &= ~(SYS_GPC_MFPL_PC0MFP_Msk | SYS_GPC_MFPL_PC1MFP_Msk
-                               | SYS_GPC_MFPL_PC2MFP_Msk | SYS_GPC_MFPL_PC3MFP_Msk);
-            SYS->GPC_MFPL |= SYS_GPC_MFPL_PC0MFP_QSPI0_MOSI0 | SYS_GPC_MFPL_PC1MFP_QSPI0_MISO0
-                             | SYS_GPC_MFPL_PC2MFP_QSPI0_CLK | SYS_GPC_MFPL_PC3MFP_QSPI0_SS;
-
-            /* Enable SPI0 clock pin (PC2) schmitt trigger */
-            PC->SMTEN |= GPIO_SMTEN_SMTEN2_Msk;
-        }
+    case RT_SPI_MODE_0:
+        u32SPIMode = SPI_MODE_0;
+        break;
+    case RT_SPI_MODE_1:
+        u32SPIMode = SPI_MODE_1;
+        break;
+    case RT_SPI_MODE_2:
+        u32SPIMode = SPI_MODE_2;
+        break;
+    case RT_SPI_MODE_3:
+        u32SPIMode = SPI_MODE_3;
+        break;
+    default:
+        ret = RT_EIO;
+        goto exit_nu_qspi_bus_configure;
     }
 
-    if (rt_memcmp(configuration, &spi->configuration, sizeof(*configuration)) != 0)
+    /* Check data width */
+    if (!(configuration->data_width == 8  ||
+            configuration->data_width == 16 ||
+            configuration->data_width == 24 ||
+            configuration->data_width == 32))
     {
-        rt_memcpy(&spi->configuration, configuration, sizeof(*configuration));
-        init_bus = 1;
+        ret = RT_EINVAL;
+        goto exit_nu_qspi_bus_configure;
     }
 
-    if (init_bus)
+    /* Try to set clock and get actual spi bus clock */
+    u32BusClock = QSPI_SetBusClock((QSPI_T *)spi_bus->spi_base, configuration->max_hz);
+    if (configuration->max_hz > u32BusClock)
     {
-        switch (configuration->mode & RT_SPI_MODE_3)
+        rt_kprintf("%s clock max frequency is %dHz (!= %dHz)\n", spi_bus->name, u32BusClock, configuration->max_hz);
+        configuration->max_hz = u32BusClock;
+    }
+
+    /* Need to initialize new configuration? */
+    if (rt_memcmp(configuration, &spi_bus->configuration, sizeof(struct rt_spi_configuration)) != 0)
+    {
+        rt_memcpy(&spi_bus->configuration, configuration, sizeof(struct rt_spi_configuration));
+
+        QSPI_Open((QSPI_T *)spi_bus->spi_base, SPI_MASTER, u32SPIMode, configuration->data_width, u32BusClock);
+
+        if (configuration->mode & RT_SPI_CS_HIGH)
         {
-        case RT_SPI_MODE_0:
-            u32QSPIMode = QSPI_MODE_0;
-            break;
-        case RT_SPI_MODE_1:
-            u32QSPIMode = QSPI_MODE_1;
-            break;
-        case RT_SPI_MODE_2:
-            u32QSPIMode = QSPI_MODE_2;
-            break;
-        case RT_SPI_MODE_3:
-            u32QSPIMode = QSPI_MODE_3;
-            break;
-        default:
-            RT_ASSERT(0);
-        }
-
-        u32BusClock = configuration->max_hz;
-        if (u32BusClock > 50 * 1000 * 1000)
-        {
-            u32BusClock = 50 * 1000 * 1000;
-        }
-
-        QSPI_Open(spi->spi_base, QSPI_MASTER, u32QSPIMode, configuration->data_width, u32BusClock);
-
-        QSPI_EnableAutoSS(spi->spi_base, QSPI_SS, QSPI_SS_ACTIVE_LOW);
-
-        if (configuration->mode & RT_SPI_MSB)
-        {
-            QSPI_SET_MSB_FIRST(spi->spi_base);
+            /* Set CS pin to LOW */
+            SPI_SET_SS_LOW(spi_bus->spi_base);
         }
         else
         {
-            QSPI_SET_LSB_FIRST(spi->spi_base);
+            /* Set CS pin to HIGH */
+            SPI_SET_SS_HIGH(spi_bus->spi_base);
+        }
+
+        if (configuration->mode & RT_SPI_MSB)
+        {
+            /* Set sequence to MSB first */
+            SPI_SET_MSB_FIRST(spi_bus->spi_base);
+        }
+        else
+        {
+            /* Set sequence to LSB first */
+            SPI_SET_LSB_FIRST(spi_bus->spi_base);
         }
     }
 
-    return RT_EOK;
+    /* Clear SPI RX FIFO */
+    nu_spi_drain_rxfifo(spi_bus->spi_base);
+
+exit_nu_qspi_bus_configure:
+
+    return -(ret);
 }
 
-/**
- * @brief SPI bus polling
- * @param dev : The pointer of the specified QSPI module.
- * @param send_addr : Source address
- * @param recv_addr : Destination address
- * @param length    : Data length
- */
-static void qspi_transmission_with_poll(struct nu_qspi *spi_bus,
-                                        const uint8_t *send_addr, uint8_t *recv_addr, int length)
+#if defined(RT_SFUD_USING_QSPI)
+static int nu_qspi_mode_config(struct nu_spi *qspi_bus, uint8_t *tx, uint8_t *rx, int qspi_lines)
 {
-    QSPI_T *spi_base = spi_bus->spi_base;
-
-    // Write
-    if (send_addr != RT_NULL && recv_addr == RT_NULL)
+    QSPI_T *qspi_base = (QSPI_T *)qspi_bus->spi_base;
+    if (qspi_lines > 1)
     {
-        while (length--)
+        if (tx)
         {
-            // Wait QSPI TX send data
-            while (QSPI_GET_TX_FIFO_FULL_FLAG(spi_base));
-
-            // Input data to QSPI TX
-            QSPI_WRITE_TX(spi_base, *send_addr++);
-        }
-
-        // Wait QSPI transmission done
-        while (QSPI_IS_BUSY(spi_base));
-    }
-    // Read&Write
-    else if (send_addr != RT_NULL && recv_addr != RT_NULL)
-    {
-        // Clear QSPI RX FIFO
-        if (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
-        {
-            QSPI_ClearRxFIFO(spi_base);
-            while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base));
-        }
-
-        while (length--)
-        {
-            // Wait QSPI TX send data
-            while (QSPI_GET_TX_FIFO_FULL_FLAG(spi_base));
-
-            // Input data to QSPI TX
-            QSPI_WRITE_TX(spi_base, *send_addr++);
-
-            // Read RX data
-            while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
+            switch (qspi_lines)
             {
-                *recv_addr++ = QSPI_READ_RX(spi_base);
+            case 2:
+                QSPI_ENABLE_DUAL_OUTPUT_MODE(qspi_base);
+                break;
+            case 4:
+                QSPI_ENABLE_QUAD_OUTPUT_MODE(qspi_base);
+                break;
             }
         }
-
-        // Wait QSPI transmission done
-        while (QSPI_IS_BUSY(spi_base))
+        else
         {
-            while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
+            switch (qspi_lines)
             {
-                *recv_addr++ = QSPI_READ_RX(spi_base);
+            case 2:
+                QSPI_ENABLE_DUAL_INPUT_MODE(qspi_base);
+                break;
+            case 4:
+                QSPI_ENABLE_QUAD_INPUT_MODE(qspi_base);
+                break;
             }
         }
     }
-    // Read
     else
     {
-        // Clear QSPI RX FIFO
-        if (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
-        {
-            QSPI_ClearRxFIFO(spi_base);
-            while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base));
-        }
-
-        while (length--)
-        {
-            // Wait QSPI TX send data
-            while (QSPI_GET_TX_FIFO_FULL_FLAG(spi_base));
-
-            // Input data to QSPI TX
-            QSPI_WRITE_TX(spi_base, 0x00);
-
-            // Read RX data
-            while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
-            {
-                *recv_addr++ = QSPI_READ_RX(spi_base);
-            }
-        }
-
-        // Wait QSPI transmission done
-        while (QSPI_IS_BUSY(spi_base))
-        {
-            while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
-            {
-                *recv_addr++ = QSPI_READ_RX(spi_base);
-            }
-        }
-
-        while (!QSPI_GET_RX_FIFO_EMPTY_FLAG(spi_base))
-        {
-            *recv_addr++ = QSPI_READ_RX(spi_base);
-        }
+        QSPI_DISABLE_DUAL_MODE(qspi_base);
+        QSPI_DISABLE_QUAD_MODE(qspi_base);
     }
+    return qspi_lines;
 }
+#endif
 
 static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    struct nu_qspi *spi;
+    struct nu_spi *qspi_bus;
+    struct rt_qspi_configuration *qspi_configuration;
+#if defined(RT_SFUD_USING_QSPI)
+    struct rt_qspi_message *qspi_message;
+    int last = 1;
+#endif
+    uint8_t bytes_per_word;
+    QSPI_T *qspi_base;
+    int len = 0;
 
-    spi = (struct nu_qspi *) device->bus;
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(message != RT_NULL);
 
-    if (message->cs_take)
+    qspi_bus = (struct nu_spi *) device->bus;
+    qspi_base = (QSPI_T *)qspi_bus->spi_base;
+    qspi_configuration = &qspi_bus->configuration;
+
+    bytes_per_word = qspi_configuration->parent.data_width / 8;
+
+    if (message->cs_take && !(qspi_configuration->parent.mode & RT_SPI_NO_CS))
     {
-        QSPI_SET_SS_LOW(spi->spi_base);
+        if (qspi_configuration->parent.mode & RT_SPI_CS_HIGH)
+        {
+            QSPI_SET_SS_HIGH(qspi_base);
+        }
+        else
+        {
+            QSPI_SET_SS_LOW(qspi_base);
+        }
     }
 
-    if (message->length > 0)
+#if defined(RT_SFUD_USING_QSPI)
+    qspi_message = (struct rt_qspi_message *)message;
+
+    /* Command + Address + Dummy + Data */
+    /* Command stage */
+    if (qspi_message->instruction.content != 0)
     {
-        qspi_transmission_with_poll(spi, message->send_buf,
-                                    message->recv_buf, message->length);
+        last = nu_qspi_mode_config(qspi_bus, (uint8_t *) &qspi_message->instruction.content, RT_NULL, qspi_message->instruction.qspi_lines);
+        nu_spi_transfer((struct nu_spi *)qspi_bus,
+                        (uint8_t *) &qspi_message->instruction.content,
+                        RT_NULL,
+                        1,
+                        1);
     }
 
-    if (message->cs_release)
+    /* Address stage */
+    if (qspi_message->address.size != 0)
     {
-        QSPI_SET_SS_HIGH(spi->spi_base);
+        uint32_t u32ReversedAddr = 0;
+        uint32_t u32AddrNumOfByte = qspi_message->address.size / 8;
+        switch (u32AddrNumOfByte)
+        {
+        case 1:
+            u32ReversedAddr = (qspi_message->address.content & 0xff);
+            break;
+        case 2:
+            nu_set16_be((uint8_t *)&u32ReversedAddr, qspi_message->address.content);
+            break;
+        case 3:
+            nu_set24_be((uint8_t *)&u32ReversedAddr, qspi_message->address.content);
+            break;
+        case 4:
+            nu_set32_be((uint8_t *)&u32ReversedAddr, qspi_message->address.content);
+            break;
+        default:
+            RT_ASSERT(0);
+            break;
+        }
+        last = nu_qspi_mode_config(qspi_bus, (uint8_t *)&u32ReversedAddr, RT_NULL, qspi_message->address.qspi_lines);
+        nu_spi_transfer((struct nu_spi *)qspi_bus,
+                        (uint8_t *) &u32ReversedAddr,
+                        RT_NULL,
+                        u32AddrNumOfByte,
+                        1);
     }
 
-    return message->length;
+    /* Dummy_cycles stage */
+    if (qspi_message->dummy_cycles != 0)
+    {
+        qspi_bus->dummy = 0xff;
+
+        last = nu_qspi_mode_config(qspi_bus, (uint8_t *) &qspi_bus->dummy, RT_NULL, last);
+        nu_spi_transfer((struct nu_spi *)qspi_bus,
+                        (uint8_t *) &qspi_bus->dummy,
+                        RT_NULL,
+                        qspi_message->dummy_cycles / (8 / last),
+                        1);
+    }
+
+    /* Data stage */
+    nu_qspi_mode_config(qspi_bus, (uint8_t *) message->send_buf, (uint8_t *) message->recv_buf, qspi_message->qspi_data_lines);
+#endif //#if defined(RT_SFUD_USING_QSPI)
+
+    if (message->length != 0)
+    {
+        nu_spi_transfer((struct nu_spi *)qspi_bus,
+                        (uint8_t *) message->send_buf,
+                        (uint8_t *) message->recv_buf,
+                        message->length,
+                        bytes_per_word);
+        len = message->length;
+    }
+    else
+    {
+        len = 1;
+    }
+
+    if (message->cs_release && !(qspi_configuration->parent.mode & RT_SPI_NO_CS))
+    {
+        if (qspi_configuration->parent.mode & RT_SPI_CS_HIGH)
+        {
+            QSPI_SET_SS_LOW(qspi_base);
+        }
+        else
+        {
+            QSPI_SET_SS_HIGH(qspi_base);
+        }
+    }
+
+    return len;
 }
 
-static int nu_qspi_register_bus(struct nu_qspi *spi_bus, const char *name)
+static int nu_qspi_register_bus(struct nu_spi *qspi_device, const char *name)
 {
-    return rt_spi_bus_register(&spi_bus->dev, name, &nu_qspi_poll_ops);
+    return rt_qspi_bus_register(&qspi_device->dev, name, &nu_qspi_poll_ops);
 }
 
 /**
@@ -292,13 +347,61 @@ static int nu_qspi_register_bus(struct nu_qspi *spi_bus, const char *name)
  */
 static int rt_hw_qspi_init(void)
 {
-#ifdef USING_QSPI0
-    nu_qspi_register_bus(&qspi0, "qspi0");
+    int i;
+
+    for (i = (QSPI_START + 1); i < QSPI_CNT; i++)
+    {
+        nu_qspi_register_bus(&nu_qspi_arr[i], nu_qspi_arr[i].name);
+#if defined(BSP_USING_QSPI_PDMA)
+        nu_qspi_arr[i].pdma_chanid_tx = -1;
+        nu_qspi_arr[i].pdma_chanid_rx = -1;
+        if ((nu_qspi_arr[i].pdma_perp_tx != NU_PDMA_UNUSED) && (nu_qspi_arr[i].pdma_perp_rx != NU_PDMA_UNUSED))
+        {
+            if (nu_hw_spi_pdma_allocate(&nu_qspi_arr[i]) != RT_EOK)
+            {
+                rt_kprintf("Failed to allocate DMA channels for %s. We will use poll-mode for this bus.\n", nu_qspi_arr[i].name);
+            }
+        }
 #endif
+    }
 
     return 0;
 }
-
 INIT_DEVICE_EXPORT(rt_hw_qspi_init);
-#endif
 
+rt_err_t nu_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
+{
+    struct rt_qspi_device *qspi_device = RT_NULL;
+    rt_err_t result = RT_EOK;
+
+    RT_ASSERT(bus_name != RT_NULL);
+    RT_ASSERT(device_name != RT_NULL);
+    RT_ASSERT(data_line_width == 1 || data_line_width == 2 || data_line_width == 4);
+
+    qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
+    if (qspi_device == RT_NULL)
+    {
+        rt_kprintf("no memory, qspi bus attach device failed!\n");
+        result = -RT_ENOMEM;
+        goto __exit;
+    }
+
+    qspi_device->enter_qspi_mode = enter_qspi_mode;
+    qspi_device->exit_qspi_mode = exit_qspi_mode;
+    qspi_device->config.qspi_dl_width = data_line_width;
+
+    result = rt_spi_bus_attach_device(&qspi_device->parent, device_name, bus_name, RT_NULL);
+
+__exit:
+    if (result != RT_EOK)
+    {
+        if (qspi_device)
+        {
+            rt_free(qspi_device);
+        }
+    }
+
+    return  result;
+}
+
+#endif //#if defined(BSP_USING_QSPI)

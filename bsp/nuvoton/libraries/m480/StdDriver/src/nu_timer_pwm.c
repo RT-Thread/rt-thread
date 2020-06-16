@@ -2,7 +2,8 @@
  * @file     timer_pwm.c
  * @brief    M480 Timer PWM Controller(Timer PWM) driver source file
  *
- * @copyright (C) 2017 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2016-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include "NuMicro.h"
 

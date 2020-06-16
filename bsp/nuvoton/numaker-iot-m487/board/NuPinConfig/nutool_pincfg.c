@@ -4,6 +4,7 @@
  * @Date     2020/04/08-17:46:57
  * @brief    NuMicro generated code file
  *
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 
@@ -153,6 +154,24 @@ void nutool_pincfg_init_i2c2(void)
 void nutool_pincfg_deinit_i2c2(void)
 {
     SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD1MFP_Msk | SYS_GPD_MFPL_PD0MFP_Msk);
+
+    return;
+}
+
+void nutool_pincfg_init_i2s0(void)
+{
+    SYS->GPF_MFPH &= ~(SYS_GPF_MFPH_PF10MFP_Msk | SYS_GPF_MFPH_PF9MFP_Msk | SYS_GPF_MFPH_PF8MFP_Msk);
+    SYS->GPF_MFPH |= (SYS_GPF_MFPH_PF10MFP_I2S0_BCLK | SYS_GPF_MFPH_PF9MFP_I2S0_MCLK | SYS_GPF_MFPH_PF8MFP_I2S0_DI);
+    SYS->GPF_MFPL &= ~(SYS_GPF_MFPL_PF7MFP_Msk | SYS_GPF_MFPL_PF6MFP_Msk);
+    SYS->GPF_MFPL |= (SYS_GPF_MFPL_PF7MFP_I2S0_DO | SYS_GPF_MFPL_PF6MFP_I2S0_LRCK);
+
+    return;
+}
+
+void nutool_pincfg_deinit_i2s0(void)
+{
+    SYS->GPF_MFPH &= ~(SYS_GPF_MFPH_PF10MFP_Msk | SYS_GPF_MFPH_PF9MFP_Msk | SYS_GPF_MFPH_PF8MFP_Msk);
+    SYS->GPF_MFPL &= ~(SYS_GPF_MFPL_PF7MFP_Msk | SYS_GPF_MFPL_PF6MFP_Msk);
 
     return;
 }
@@ -448,6 +467,7 @@ void nutool_pincfg_init(void)
     nutool_pincfg_init_i2c0();
     nutool_pincfg_init_i2c1();
     nutool_pincfg_init_i2c2();
+    nutool_pincfg_init_i2s0();
     nutool_pincfg_init_ice();
     nutool_pincfg_init_pa();
     nutool_pincfg_init_pb();
@@ -478,6 +498,7 @@ void nutool_pincfg_deinit(void)
     nutool_pincfg_deinit_i2c0();
     nutool_pincfg_deinit_i2c1();
     nutool_pincfg_deinit_i2c2();
+    nutool_pincfg_deinit_i2s0();
     nutool_pincfg_deinit_ice();
     nutool_pincfg_deinit_pa();
     nutool_pincfg_deinit_pb();

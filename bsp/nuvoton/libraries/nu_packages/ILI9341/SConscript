@@ -7,6 +7,7 @@ group = []
 src = Split("""
 lcd_ili9341.c
 """)
+CPPPATH = [cwd]
 
 if GetDepend('NU_PKG_USING_ILI9341_EBI'):
     src += Glob('ili9341_ebi.c')
@@ -14,7 +15,8 @@ if GetDepend('NU_PKG_USING_ILI9341_EBI'):
 if GetDepend('NU_PKG_USING_ILI9341_SPI'):
     src += Glob('ili9341_spi.c')
 
-CPPPATH = [cwd]
-group = DefineGroup('nu_pkgs_ili9341', src, depend = [''], CPPPATH = CPPPATH)
+if GetDepend('NU_PKG_USING_ILI9341'):
+    group = DefineGroup('nu_pkgs_ili9341', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
+    

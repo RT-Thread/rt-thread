@@ -3,7 +3,8 @@
  * @version  V3.0
  * @brief    M480 series USCI I2C(UI2C) driver header file
  *
- * @copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2016-2020 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #ifndef __NU_USCI_I2C_H__
 #define __NU_USCI_I2C_H__

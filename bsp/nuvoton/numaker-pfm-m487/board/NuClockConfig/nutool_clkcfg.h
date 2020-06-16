@@ -1,9 +1,10 @@
 /****************************************************************************
  * @file     nutool_clkcfg.h
  * @version  V1.05
- * @Date     2020/04/15-11:28:38 
+ * @Date     2020/04/15-11:28:38
  * @brief    NuMicro generated code file
  *
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 

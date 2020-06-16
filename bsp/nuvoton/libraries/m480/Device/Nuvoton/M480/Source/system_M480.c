@@ -3,8 +3,9 @@
  * @version  V1.000
  * @brief    CMSIS Cortex-M4 Core Peripheral Access Layer Source File for M480
  *
- * @copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
-*****************************************************************************/
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
+ *****************************************************************************/
 
 #include "NuMicro.h"
 

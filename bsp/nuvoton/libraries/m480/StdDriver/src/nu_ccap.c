@@ -3,7 +3,8 @@
  * @version  V1.00
  * @brief    M480 Series CCAP Driver Source File
  *
- * @copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2016-2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 
 #include "NuMicro.h"

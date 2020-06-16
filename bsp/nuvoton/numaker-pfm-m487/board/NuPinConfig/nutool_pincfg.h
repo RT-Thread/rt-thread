@@ -1,9 +1,10 @@
 /****************************************************************************
  * @file     nutool_pincfg.h
  * @version  V1.20
- * @Date     2020/03/31-18:17:49
+ * @Date     2020/05/27-17:17:14 
  * @brief    NuMicro generated code file
  *
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 
@@ -14,10 +15,10 @@
 extern "C"
 {
 #endif
+void nutool_pincfg_init_bpwm0(void);
+void nutool_pincfg_deinit_bpwm0(void);
 void nutool_pincfg_init_can0(void);
 void nutool_pincfg_deinit_can0(void);
-void nutool_pincfg_init_clko(void);
-void nutool_pincfg_deinit_clko(void);
 void nutool_pincfg_init_eadc0(void);
 void nutool_pincfg_deinit_eadc0(void);
 void nutool_pincfg_init_ebi(void);

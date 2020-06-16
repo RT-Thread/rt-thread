@@ -1,9 +1,10 @@
 /****************************************************************************
  * @file     nutool_pincfg.c
  * @version  V1.20
- * @Date     2020/04/08-18:03:24
+ * @Date     2020/05/27-17:17:14 
  * @brief    NuMicro generated code file
  *
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 
@@ -12,6 +13,21 @@ MCU:M487JIDAE(LQFP144)
 ********************/
 
 #include "M480.h"
+
+void nutool_pincfg_init_bpwm0(void)
+{
+    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD12MFP_Msk);
+    SYS->GPD_MFPH |= (SYS_GPD_MFPH_PD12MFP_BPWM0_CH5);
+
+    return;
+}
+
+void nutool_pincfg_deinit_bpwm0(void)
+{
+    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD12MFP_Msk);
+
+    return;
+}
 
 void nutool_pincfg_init_can0(void)
 {
@@ -90,9 +106,6 @@ void nutool_pincfg_init_emac(void)
     SYS->GPE_MFPH &= ~(SYS_GPE_MFPH_PE12MFP_Msk | SYS_GPE_MFPH_PE11MFP_Msk | SYS_GPE_MFPH_PE10MFP_Msk | SYS_GPE_MFPH_PE9MFP_Msk | SYS_GPE_MFPH_PE8MFP_Msk);
     SYS->GPE_MFPH |= (SYS_GPE_MFPH_PE12MFP_EMAC_RMII_TXEN | SYS_GPE_MFPH_PE11MFP_EMAC_RMII_TXD1 | SYS_GPE_MFPH_PE10MFP_EMAC_RMII_TXD0 | SYS_GPE_MFPH_PE9MFP_EMAC_RMII_MDIO | SYS_GPE_MFPH_PE8MFP_EMAC_RMII_MDC);
 
-    /* Enable high slew rate on all RMII TX output pins */
-    GPIO_SetSlewCtl(PE, BIT10 | BIT11 | BIT12, GPIO_SLEWCTL_HIGH);
-
     return;
 }
 
@@ -126,9 +139,6 @@ void nutool_pincfg_init_i2c1(void)
     SYS->GPB_MFPL &= ~(SYS_GPB_MFPL_PB1MFP_Msk | SYS_GPB_MFPL_PB0MFP_Msk);
     SYS->GPB_MFPL |= (SYS_GPB_MFPL_PB1MFP_I2C1_SCL | SYS_GPB_MFPL_PB0MFP_I2C1_SDA);
 
-    /* Pull-up on PB.0/PB.1 */
-    GPIO_SetPullCtl(PB, BIT0 | BIT1, GPIO_PUSEL_PULL_UP);
-
     return;
 }
 
@@ -143,9 +153,6 @@ void nutool_pincfg_init_i2c2(void)
 {
     SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD1MFP_Msk | SYS_GPD_MFPL_PD0MFP_Msk);
     SYS->GPD_MFPL |= (SYS_GPD_MFPL_PD1MFP_I2C2_SCL | SYS_GPD_MFPL_PD0MFP_I2C2_SDA);
-
-    /* Pull-up on PB.0/PB.1 */
-    GPIO_SetPullCtl(PD, BIT0 | BIT1, GPIO_PUSEL_PULL_UP);
 
     return;
 }
@@ -197,10 +204,6 @@ void nutool_pincfg_init_pa(void)
     SYS->GPA_MFPL &= ~(SYS_GPA_MFPL_PA3MFP_Msk | SYS_GPA_MFPL_PA2MFP_Msk | SYS_GPA_MFPL_PA1MFP_Msk | SYS_GPA_MFPL_PA0MFP_Msk);
     SYS->GPA_MFPL |= (SYS_GPA_MFPL_PA3MFP_GPIO | SYS_GPA_MFPL_PA2MFP_GPIO | SYS_GPA_MFPL_PA1MFP_GPIO | SYS_GPA_MFPL_PA0MFP_GPIO);
 
-    /* ADV.SRAM Set A16/A17/A18(GPA.9/GPA.10/GPA.11) level to low. We use first piece. */
-    GPIO_SetMode(PA, BIT9 | BIT10 | BIT11, GPIO_MODE_OUTPUT);
-    PA9 = PA10 = PA11 = 0;
-
     return;
 }
 
@@ -244,8 +247,8 @@ void nutool_pincfg_deinit_pc(void)
 
 void nutool_pincfg_init_pd(void)
 {
-    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD12MFP_Msk | SYS_GPD_MFPH_PD10MFP_Msk);
-    SYS->GPD_MFPH |= (SYS_GPD_MFPH_PD12MFP_GPIO | SYS_GPD_MFPH_PD10MFP_GPIO);
+    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD10MFP_Msk);
+    SYS->GPD_MFPH |= (SYS_GPD_MFPH_PD10MFP_GPIO);
     SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD3MFP_Msk | SYS_GPD_MFPL_PD2MFP_Msk);
     SYS->GPD_MFPL |= (SYS_GPD_MFPL_PD3MFP_GPIO | SYS_GPD_MFPL_PD2MFP_GPIO);
 
@@ -254,7 +257,7 @@ void nutool_pincfg_init_pd(void)
 
 void nutool_pincfg_deinit_pd(void)
 {
-    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD12MFP_Msk | SYS_GPD_MFPH_PD10MFP_Msk);
+    SYS->GPD_MFPH &= ~(SYS_GPD_MFPH_PD10MFP_Msk);
     SYS->GPD_MFPL &= ~(SYS_GPD_MFPL_PD3MFP_Msk | SYS_GPD_MFPL_PD2MFP_Msk);
 
     return;
@@ -436,7 +439,7 @@ void nutool_pincfg_init(void)
     //SYS->GPB_MFPL = 0x00330199;
     //SYS->GPC_MFPH = 0x0E066003;
     //SYS->GPC_MFPL = 0x33444444;
-    //SYS->GPD_MFPH = 0x02302022;
+    //SYS->GPD_MFPH = 0x02392022;
     //SYS->GPD_MFPL = 0x00000066;
     //SYS->GPE_MFPH = 0x22033333;
     //SYS->GPE_MFPL = 0x33223322;
@@ -447,6 +450,7 @@ void nutool_pincfg_init(void)
     //SYS->GPH_MFPH = 0x00002222;
     //SYS->GPH_MFPL = 0x00000444;
 
+    nutool_pincfg_init_bpwm0();
     nutool_pincfg_init_can0();
     nutool_pincfg_init_eadc0();
     nutool_pincfg_init_ebi();
@@ -476,6 +480,7 @@ void nutool_pincfg_init(void)
 
 void nutool_pincfg_deinit(void)
 {
+    nutool_pincfg_deinit_bpwm0();
     nutool_pincfg_deinit_can0();
     nutool_pincfg_deinit_eadc0();
     nutool_pincfg_deinit_ebi();

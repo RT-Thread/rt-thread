@@ -5,7 +5,8 @@
  *           This file contains all the peripheral register's definitions,
  *           bits definitions and memory mapping for NuMicro M480 MCU.
  *
- * @copyright (C) 2017-2019 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 /**
   \mainpage NuMicro M480 Driver Reference Guide
@@ -44,7 +45,7 @@
   *
   * <b>Copyright Notice</b>
   *
-  * Copyright (C) 2017-2019 Nuvoton Technology Corp. All rights reserved.
+  * Copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
   */
 #ifndef __M480_H__
 #define __M480_H__

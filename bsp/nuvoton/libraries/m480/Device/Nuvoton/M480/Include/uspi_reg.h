@@ -3,7 +3,8 @@
  * @version  V1.00
  * @brief    USPI register definition header file
  *
- * @copyright (C) 2017 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2017-2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #ifndef __USPI_REG_H__
 #define __USPI_REG_H__

@@ -4,6 +4,7 @@
  * @Date     2020/04/15-11:28:38
  * @brief    NuMicro generated code file
  *
+ * SPDX-License-Identifier: Apache-2.0
  * Copyright (C) 2013-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 
@@ -1035,7 +1036,7 @@ void nutool_modclkcfg_init(void)
 #if defined(BSP_USING_I2C2)
     nutool_modclkcfg_init_i2c2();
 #endif
-#if defined(BSP_USING_I2S0)
+#if defined(BSP_USING_I2S)
     nutool_modclkcfg_init_i2s0();
 #endif
 #if defined(BSP_USING_FMC)
@@ -1044,7 +1045,7 @@ void nutool_modclkcfg_init(void)
 #if defined(BSP_USING_OPA)
     nutool_modclkcfg_init_opa();
 #endif
-#if defined(BSP_USING_OTG)
+#if defined(BSP_USING_OTG) || defined(BSP_USING_USBH)
     nutool_modclkcfg_init_otg();
 #endif
 #if defined(BSP_USING_PDMA)
@@ -1062,47 +1063,44 @@ void nutool_modclkcfg_init(void)
 #if defined(BSP_USING_RTC)
     nutool_modclkcfg_init_rtc();
 #endif
-#if defined(BSP_USING_SC0)
+#if defined(BSP_USING_SCUART0)
     nutool_modclkcfg_init_sc0();
 #endif
-#if defined(BSP_USING_SC1)
+#if defined(BSP_USING_SCUART1)
     nutool_modclkcfg_init_sc1();
 #endif
-#if defined(BSP_USING_SC2)
+#if defined(BSP_USING_SCUART2)
     nutool_modclkcfg_init_sc2();
 #endif
 #if defined(BSP_USING_SDH0)
     nutool_modclkcfg_init_sdh0();
 #endif
-#if defined(BSP_USING_SDH0)
+#if defined(BSP_USING_SDH1)
     nutool_modclkcfg_init_sdh1();
 #endif
-#if defined(BSP_USING_SPI0)
+#if defined(BSP_USING_SPI0) || defined(BSP_USING_SPII2S0)
     nutool_modclkcfg_init_spi0();
 #endif
-#if defined(BSP_USING_SPI1)
+#if defined(BSP_USING_SPI1) || defined(BSP_USING_SPII2S1)
     nutool_modclkcfg_init_spi1();
 #endif
-#if defined(BSP_USING_SPI2)
+#if defined(BSP_USING_SPI2) || defined(BSP_USING_SPII2S2)
     nutool_modclkcfg_init_spi2();
 #endif
-#if defined(BSP_USING_SPI3)
+#if defined(BSP_USING_SPI3) || defined(BSP_USING_SPII2S3)
     nutool_modclkcfg_init_spi3();
 #endif
-#if defined(BSP_USING_SPIM)
-    nutool_modclkcfg_init_spim();
-#endif
     nutool_modclkcfg_init_systick();
-#if defined(BSP_USING_TIMER0)
+#if defined(BSP_USING_TMR0)
     nutool_modclkcfg_init_tmr0();
 #endif
-#if defined(BSP_USING_TIMER1)
+#if defined(BSP_USING_TMR1)
     nutool_modclkcfg_init_tmr1();
 #endif
-#if defined(BSP_USING_TIMER2)
+#if defined(BSP_USING_TMR2)
     nutool_modclkcfg_init_tmr2();
 #endif
-#if defined(BSP_USING_TIMER3)
+#if defined(BSP_USING_TMR3)
     nutool_modclkcfg_init_tmr3();
 #endif
 #if defined(BSP_USING_UART0)
@@ -1123,10 +1121,10 @@ void nutool_modclkcfg_init(void)
 #if defined(BSP_USING_UART5)
     nutool_modclkcfg_init_uart5();
 #endif
-#if defined(BSP_USING_USBD)
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
     nutool_modclkcfg_init_usbd();
 #endif
-#if defined(BSP_USING_USBH)
+#if defined(BSP_USING_USBH) || defined(BSP_USING_HSUSBH)
     nutool_modclkcfg_init_usbh();
 #endif
 #if defined(BSP_USING_USCI0)

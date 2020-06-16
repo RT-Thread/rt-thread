@@ -3,7 +3,8 @@
  * @version  V1.00
  * @brief    M480 series Timer PWM Controller(Timer PWM) driver header file
  *
- * @copyright (C) 2017 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2016-2020 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #ifndef __NU_TIMER_PWM_H__
 #define __NU_TIMER_PWM_H__
@@ -338,14 +339,14 @@ extern "C"
   *
   * @param[in]  timer       The pointer of the specified Timer module. It could be TIMER0, TIMER1, TIMER2, TIMER3.
   *
-  * @param[in]  ch          Enable specified channel output function. Valid values are:
+  * @param[in]  ch          Enable specified channel output function. Valid values are the combination of:
   *                             - \ref TPWM_CH0
   *                             - \ref TPWM_CH1
   *
   * @return     None
   *
   * @details    This macro is used to enable output function of specified output pins.
-  * @note       If the corresponding bit in u32ChMask parameter is 0, then output function will be disabled in this channel.
+  * @note       If the corresponding bit in ch parameter is 0, then output function will be disabled in this channel.
   * \hideinitializer
   */
 #define TPWM_ENABLE_OUTPUT(timer, ch)  ((timer)->PWMPOEN = (ch))
@@ -355,14 +356,14 @@ extern "C"
   *
   * @param[in]  timer       The pointer of the specified Timer module. It could be TIMER0, TIMER1, TIMER2, TIMER3.
   *
-  * @param[in]  ch          Set specified channel output is inversed or not. Valid values are:
+  * @param[in]  ch          Set specified channel output is inversed or not. Valid values are the combination of:
   *                             - \ref TPWM_CH0
   *                             - \ref TPWM_CH1
   *
   * @return     None
   *
   * @details    This macro is used to enable output inverse of specified output pins.
-  * @note       If u32ChMask parameter is 0, then output inverse function will be disabled.
+  * @note       If ch parameter is 0, then output inverse function will be disabled.
   * \hideinitializer
   */
 #define TPWM_SET_OUTPUT_INVERSE(timer, ch)  ((timer)->PWMPOLCTL = (ch))
@@ -372,7 +373,7 @@ extern "C"
   *
   * @param[in]  timer   The pointer of the specified Timer module. It could be TIMER0, TIMER1, TIMER2, TIMER3.
   *
-  * @param[in]  ch       Enable specified channel output mask function. Valid values are:
+  * @param[in]  ch       Enable specified channel output mask function. Valid values are the combination of:
   *                             - \ref TPWM_CH0
   *                             - \ref TPWM_CH1
   *
@@ -381,7 +382,7 @@ extern "C"
   * @return     None
   *
   * @details    This macro is used to enable output function of specified output pins.
-  * @note       If u32ChMask parameter is 0, then output mask function will be disabled.
+  * @note       If ch parameter is 0, then output mask function will be disabled.
   * \hideinitializer
   */
 #define TPWM_SET_MASK_OUTPUT(timer, ch, level) do {(timer)->PWMMSKEN = (ch); (timer)->PWMMSK = (level); }while(0)

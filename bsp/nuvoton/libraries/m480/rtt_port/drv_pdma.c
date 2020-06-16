@@ -2,27 +2,7 @@
 *
 * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of Nuvoton Technology Corp. nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
 * Date            Author           Notes
@@ -530,7 +510,9 @@ static void nu_pdma_channel_memctrl_fill(nu_pdma_memctrl_t eMemCtl, uint32_t *pu
     }
 }
 
-rt_err_t nu_pdma_transfer(int i32ChannID, uint32_t u32DataWidth, uint32_t u32AddrSrc, uint32_t u32AddrDst, int32_t i32Length, uint32_t u32IdleTimeout_us)
+/* This is for Scatter-gather DMA. */
+rt_err_t nu_pdma_desc_setup(int i32ChannID, nu_pdma_desc_t dma_desc, uint32_t u32DataWidth, uint32_t u32AddrSrc,
+                            uint32_t u32AddrDst, int32_t i32TransferCnt, nu_pdma_desc_t next)
 {
     nu_pdma_periph_ctl_t *psPeriphCtl = NULL;
 
@@ -539,56 +521,96 @@ rt_err_t nu_pdma_transfer(int i32ChannID, uint32_t u32DataWidth, uint32_t u32Add
 
     rt_err_t ret = RT_EINVAL;
 
-    if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
-        goto exit_nu_pdma_transfer;
+    if (!dma_desc)
+        goto exit_nu_pdma_desc_setup;
+    else if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
+        goto exit_nu_pdma_desc_setup;
     else if (!(u32DataWidth == 8 || u32DataWidth == 16 || u32DataWidth == 32))
-        goto exit_nu_pdma_transfer;
+        goto exit_nu_pdma_desc_setup;
     else if ((u32AddrSrc % (u32DataWidth / 8)) || (u32AddrDst % (u32DataWidth / 8)))
-        goto exit_nu_pdma_transfer;
+        goto exit_nu_pdma_desc_setup;
 
     psPeriphCtl = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos].m_spPeripCtl;
 
     nu_pdma_channel_memctrl_fill(psPeriphCtl->m_eMemCtl, &u32SrcCtl, &u32DstCtl);
 
+    dma_desc->CTL = ((i32TransferCnt - 1) << PDMA_DSCT_CTL_TXCNT_Pos) |
+                    ((u32DataWidth == 8) ? PDMA_WIDTH_8 : (u32DataWidth == 16) ? PDMA_WIDTH_16 : PDMA_WIDTH_32) |
+                    u32SrcCtl |
+                    u32DstCtl |
+                    PDMA_OP_BASIC;
+
+    dma_desc->SA = u32AddrSrc;
+    dma_desc->DA = u32AddrDst;
+    dma_desc->NEXT = 0;  /* Terminating node by default. */
+
+    if (psPeriphCtl->m_u32Peripheral == PDMA_MEM)
+    {
+        /* For M2M transfer */
+        dma_desc->CTL |= (PDMA_REQ_BURST | PDMA_BURST_32);
+    }
+    else
+    {
+        /* For P2M and M2P transfer */
+        dma_desc->CTL |= (PDMA_REQ_SINGLE);
+    }
+
+    if (next)
+    {
+        /* Link to Next and modify to scatter-gather DMA mode. */
+        dma_desc->CTL = (dma_desc->CTL & ~PDMA_DSCT_CTL_OPMODE_Msk) | PDMA_OP_SCATTER;
+        dma_desc->NEXT = (uint32_t)next - (PDMA->SCATBA);
+    }
+
+    ret = RT_EOK;
+
+exit_nu_pdma_desc_setup:
+
+    return -(ret);
+}
+
+static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_desc_t head, uint32_t u32IdleTimeout_us)
+{
     PDMA_DisableTimeout(PDMA,  1 << i32ChannID);
 
-    PDMA_SetTransferCnt(PDMA,
-                        i32ChannID,
-                        (u32DataWidth == 8) ? PDMA_WIDTH_8 : (u32DataWidth == 16) ? PDMA_WIDTH_16 : PDMA_WIDTH_32,
-                        i32Length);
-
-    PDMA_SetTransferAddr(PDMA,
-                         i32ChannID, // Channel ID
-                         u32AddrSrc, // Source address
-                         u32SrcCtl,  // Source address is incremental or fixed
-                         u32AddrDst, // Destination address
-                         u32DstCtl); // Destination address is incremental or fixed
-
-    PDMA_SetBurstType(PDMA,
-                      i32ChannID,
-                      PDMA_REQ_SINGLE,    // Single mode
-                      0); // Burst size
-
-    PDMA_EnableInt(PDMA,   i32ChannID, PDMA_INT_TRANS_DONE);    // Interrupt type
+    PDMA_EnableInt(PDMA, i32ChannID, PDMA_INT_TRANS_DONE);
 
     nu_pdma_timeout_set(i32ChannID, u32IdleTimeout_us);
 
+    /* Set scatter-gather mode and head */
     PDMA_SetTransferMode(PDMA,
                          i32ChannID,
-                         psPeriphCtl->m_u32Peripheral,
-                         0,
-                         0);
+                         u32Peripheral,
+                         (head != NULL) ? 1 : 0,
+                         (uint32_t)head);
 
-    /* Memory to memory transfer */
-    if (psPeriphCtl->m_u32Peripheral == PDMA_MEM)
-    {
-        PDMA_SetBurstType(PDMA,
-                          i32ChannID,
-                          PDMA_REQ_BURST, /* Burst mode */
-                          PDMA_BURST_32); /* Burst size */
-
+    /* If peripheral is M2M, trigger it. */
+    if (u32Peripheral == PDMA_MEM)
         PDMA_Trigger(PDMA, i32ChannID);
-    }
+}
+
+rt_err_t nu_pdma_transfer(int i32ChannID, uint32_t u32DataWidth, uint32_t u32AddrSrc, uint32_t u32AddrDst, int32_t i32TransferCnt, uint32_t u32IdleTimeout_us)
+{
+    rt_err_t ret = RT_EINVAL;
+
+    nu_pdma_periph_ctl_t *psPeriphCtl = NULL;
+
+    if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
+        goto exit_nu_pdma_transfer;
+
+    psPeriphCtl = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos].m_spPeripCtl;
+
+    ret = nu_pdma_desc_setup(i32ChannID,
+                             &PDMA->DSCT[i32ChannID],
+                             u32DataWidth,
+                             u32AddrSrc,
+                             u32AddrDst,
+                             i32TransferCnt,
+                             NULL);
+    if (ret != RT_EOK)
+        goto exit_nu_pdma_transfer;
+
+    _nu_pdma_transfer(i32ChannID, psPeriphCtl->m_u32Peripheral, NULL, u32IdleTimeout_us);
 
     ret = RT_EOK;
 
@@ -597,6 +619,26 @@ exit_nu_pdma_transfer:
     return -(ret);
 }
 
+rt_err_t nu_pdma_sg_transfer(int i32ChannID, nu_pdma_desc_t head, uint32_t u32IdleTimeout_us)
+{
+    rt_err_t ret = RT_EINVAL;
+    nu_pdma_periph_ctl_t *psPeriphCtl = NULL;
+
+    if (!head)
+        goto exit_nu_pdma_sg_transfer;
+    else if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
+        goto exit_nu_pdma_sg_transfer;
+
+    psPeriphCtl = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos].m_spPeripCtl;
+
+    _nu_pdma_transfer(i32ChannID, psPeriphCtl->m_u32Peripheral, head, u32IdleTimeout_us);
+
+    ret = RT_EOK;
+
+exit_nu_pdma_sg_transfer:
+
+    return -(ret);
+}
 
 void PDMA_IRQHandler(void)
 {
@@ -699,23 +741,6 @@ static void nu_pdma_memfun_actor_init(void)
         nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_FIFO);
     }
 }
-
-#if 0
-static void nu_pdma_memfun_actor_fini(void)
-{
-    int i = 0 ;
-    for (i = 0; i < nu_pdma_memfun_actor_maxnum; i++)
-    {
-        if (nu_pdma_memfun_actor_arr[i].m_i32ChannID != -(RT_ERROR))
-            nu_pdma_channel_free(nu_pdma_memfun_actor_arr[i].m_i32ChannID);
-
-        if (nu_pdma_memfun_actor_arr[i].m_psSemMemFun)
-            rt_sem_delete(nu_pdma_memfun_actor_arr[i].m_psSemMemFun);
-    }
-    rt_mutex_delete(nu_pdma_memfun_actor_pool_lock);
-    rt_sem_delete(nu_pdma_memfun_actor_pool_sem);
-}
-#endif
 
 static void nu_pdma_memfun_cb(void *pvUserData, uint32_t u32Events)
 {

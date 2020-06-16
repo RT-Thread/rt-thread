@@ -3,7 +3,8 @@
  * @version  V1.0
  * @brief    M480 Series CLK Driver Header File
  *
- * @copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2016-2020 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #ifndef __NU_CLK_H__
 #define __NU_CLK_H__
@@ -363,7 +364,7 @@ extern "C"
 #define PDMA_MODULE      ((0UL<<30)|(MODULE_NoMsk<<28)|(MODULE_NoMsk<<25)|(MODULE_NoMsk<<20)|(MODULE_NoMsk<<18)|(MODULE_NoMsk<<10)|(MODULE_NoMsk<<5)|(1UL<<0))  /*!< PDMA Module \hideinitializer */
 #define ISP_MODULE       ((0UL<<30)|(MODULE_NoMsk<<28)|(MODULE_NoMsk<<25)|(MODULE_NoMsk<<20)|(MODULE_NoMsk<<18)|(MODULE_NoMsk<<10)|(MODULE_NoMsk<<5)|(2UL<<0))  /*!< ISP Module \hideinitializer */
 #define EBI_MODULE       ((0UL<<30)|(MODULE_NoMsk<<28)|(MODULE_NoMsk<<25)|(MODULE_NoMsk<<20)|(MODULE_NoMsk<<18)|(MODULE_NoMsk<<10)|(MODULE_NoMsk<<5)|(3UL<<0))  /*!< EBI Module \hideinitializer */
-#define USBH_MODULE      ((0UL<<30)|(MODULE_NoMsk<<28)|(MODULE_NoMsk<<25)|(MODULE_NoMsk<<20)|(MODULE_NoMsk<<18)|(MODULE_NoMsk<<10)|(MODULE_NoMsk<<5)|(16UL<<0)) /*!< USBH Module \hideinitializer */
+#define USBH_MODULE      ((0UL<<30)|(0UL<<28)         |(0x1UL<<25)       |(8UL<<20)         |(0UL<<18)         |(0xFUL<<10)       |(4UL<<5)         |(16UL<<0)) /*!< USBH Module \hideinitializer */
 #define EMAC_MODULE      ((0UL<<30)|(MODULE_NoMsk<<28)|(MODULE_NoMsk<<25)|(MODULE_NoMsk<<20)|(2UL<<18)         |(0xFFUL<<10)      |(16UL<<5)        |(5UL<<0))  /*!< EMAC Module \hideinitializer */
 #define SDH0_MODULE      ((0UL<<30)|(0UL<<28)         |(0x3UL<<25)       |(20UL<<20)        |(0UL<<18)         |(0xFFUL<<10)      |(24UL<<5)        |(6UL<<0))  /*!< SDH0 Module \hideinitializer */
 #define CRC_MODULE       ((0UL<<30)|(MODULE_NoMsk<<28)|(MODULE_NoMsk<<25)|(MODULE_NoMsk<<20)|(MODULE_NoMsk<<18)|(MODULE_NoMsk<<10)|(MODULE_NoMsk<<5)|(7UL<<0))  /*!< CRC Module \hideinitializer */

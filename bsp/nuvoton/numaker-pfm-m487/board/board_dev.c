@@ -2,27 +2,7 @@
 *
 * @copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
 *
-* Redistribution and use in source and binary forms, with or without modification,
-* are permitted provided that the following conditions are met:
-*   1. Redistributions of source code must retain the above copyright notice,
-*      this list of conditions and the following disclaimer.
-*   2. Redistributions in binary form must reproduce the above copyright notice,
-*      this list of conditions and the following disclaimer in the documentation
-*      and/or other materials provided with the distribution.
-*   3. Neither the name of Nuvoton Technology Corp. nor the names of its contributors
-*      may be used to endorse or promote products derived from this software
-*      without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* SPDX-License-Identifier: Apache-2.0
 *
 * Change Logs:
 * Date            Author       Notes
@@ -31,16 +11,93 @@
 ******************************************************************************/
 
 #include <rtdevice.h>
+#include <drv_gpio.h>
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
 #if defined(RT_USING_SFUD)
-    static struct rt_spi_device spi_device;
     #include "spi_flash.h"
     #include "spi_flash_sfud.h"
 #endif
+
+#include "drv_qspi.h"
+
+#define W25X_REG_READSTATUS    (0x05)
+#define W25X_REG_READSTATUS2   (0x35)
+#define W25X_REG_WRITEENABLE   (0x06)
+#define W25X_REG_WRITESTATUS   (0x01)
+#define W25X_REG_QUADENABLE    (0x02)
+
+static rt_uint8_t SpiFlash_ReadStatusReg(struct rt_qspi_device *qspi_device)
+{
+    rt_uint8_t u8Val;
+    rt_uint8_t w25x_txCMD1 = W25X_REG_READSTATUS;
+    rt_qspi_send_then_recv(qspi_device, &w25x_txCMD1, 1, &u8Val, 1);
+
+    return u8Val;
+}
+
+static rt_uint8_t SpiFlash_ReadStatusReg2(struct rt_qspi_device *qspi_device)
+{
+    rt_uint8_t u8Val;
+    rt_uint8_t w25x_txCMD1 = W25X_REG_READSTATUS2;
+    rt_qspi_send_then_recv(qspi_device, &w25x_txCMD1, 1, &u8Val, 1);
+
+    return u8Val;
+}
+
+static void SpiFlash_WriteStatusReg(struct rt_qspi_device *qspi_device, uint8_t u8Value1, uint8_t u8Value2)
+{
+    rt_uint8_t w25x_txCMD1;
+    rt_uint8_t u8Val[3];
+
+    w25x_txCMD1 = W25X_REG_WRITEENABLE;
+    rt_qspi_send(qspi_device, &w25x_txCMD1, 1);
+
+    u8Val[0] = W25X_REG_WRITESTATUS;
+    u8Val[1] = u8Value1;
+    u8Val[2] = u8Value2;
+    rt_qspi_send(qspi_device, &u8Val, 3);
+}
+
+static void SpiFlash_WaitReady(struct rt_qspi_device *qspi_device)
+{
+    volatile uint8_t u8ReturnValue;
+
+    do
+    {
+        u8ReturnValue = SpiFlash_ReadStatusReg(qspi_device);
+        u8ReturnValue = u8ReturnValue & 1;
+    }
+    while (u8ReturnValue != 0);   // check the BUSY bit
+}
+
+static void SpiFlash_EnterQspiMode(struct rt_qspi_device *qspi_device)
+{
+    uint8_t u8Status1 = SpiFlash_ReadStatusReg(qspi_device);
+    uint8_t u8Status2 = SpiFlash_ReadStatusReg2(qspi_device);
+
+    u8Status2 |= W25X_REG_QUADENABLE;
+    SpiFlash_WriteStatusReg(qspi_device, u8Status1, u8Status2);
+    SpiFlash_WaitReady(qspi_device);
+}
+
+static void SpiFlash_ExitQspiMode(struct rt_qspi_device *qspi_device)
+{
+    uint8_t u8Status1 = SpiFlash_ReadStatusReg(qspi_device);
+    uint8_t u8Status2 = SpiFlash_ReadStatusReg2(qspi_device);
+
+    u8Status2 &= ~W25X_REG_QUADENABLE;
+    SpiFlash_WriteStatusReg(qspi_device, u8Status1, u8Status2);
+    SpiFlash_WaitReady(qspi_device);
+}
+
 static int rt_hw_spiflash_init(void)
 {
-    rt_spi_bus_attach_device(&spi_device, "qspi01", "qspi0", RT_NULL);
+    /* Here, we use Dual I/O to drive the SPI flash by default. */
+    /* If you want to use Quad I/O, you can modify to 4 from 2 and crossover D2/D3 pin of SPI flash. */
+    if (nu_qspi_bus_attach_device("qspi0", "qspi01", 2, SpiFlash_EnterQspiMode, SpiFlash_ExitQspiMode) != RT_EOK)
+        return -1;
+
 #if defined(RT_USING_SFUD)
     if (rt_sfud_flash_probe("flash0", "qspi01") == RT_NULL)
     {
@@ -137,6 +194,8 @@ int rt_hw_ili9341_port(void)
         EBI->CTL2 |= EBI_CTL2_CACCESS_Msk;
         EBI->TCTL2 |= (EBI_TCTL2_WAHDOFF_Msk | EBI_TCTL2_RAHDOFF_Msk);
         break;
+    default:
+        return -1;
     }
 
     if (rt_hw_lcd_ili9341_ebi_init(EBI_BANK0_BASE_ADDR + BOARD_USING_ILI9341_EBI_PORT * EBI_MAX_SIZE) != RT_EOK)
@@ -157,3 +216,77 @@ int rt_hw_ili9341_port(void)
 }
 INIT_COMPONENT_EXPORT(rt_hw_ili9341_port);
 #endif /* BOARD_USING_LCD_ILI9341 */
+
+#if defined(BOARD_USING_NAU88L25) && defined(NU_PKG_USING_NAU88L25)
+#include <acodec_nau88l25.h>
+S_NU_NAU88L25_CONFIG sCodecConfig =
+{
+    .i2c_bus_name = "i2c2",
+
+    .i2s_bus_name = "sound0",
+
+    .pin_phonejack_en = NU_GET_PININDEX(NU_PE, 13),
+
+    .pin_phonejack_det = 0,
+};
+
+int rt_hw_nau88l25_port(void)
+{
+    if (nu_hw_nau88l25_init(&sCodecConfig) != RT_EOK)
+        return -1;
+
+    return 0;
+}
+INIT_COMPONENT_EXPORT(rt_hw_nau88l25_port);
+#endif /* BOARD_USING_NAU88L25 */
+
+#if defined(BOARD_USING_BUZZER)
+
+#define BPWM_DEV_NAME       "bpwm0"
+#define BPWM_DEV_CHANNEL    (5)
+
+static void PlayRingTone(void)
+{
+    struct rt_device_pwm *bpwm_dev;
+    rt_uint32_t period;
+    int i, j;
+
+    period = 1000;
+
+    if ((bpwm_dev = (struct rt_device_pwm *)rt_device_find(BPWM_DEV_NAME)) != RT_NULL)
+    {
+        rt_pwm_set(bpwm_dev, BPWM_DEV_CHANNEL, period, period);
+        rt_pwm_enable(bpwm_dev, BPWM_DEV_CHANNEL);
+
+        for (j = 0; j < 5; j++)
+        {
+            for (i = 0; i < 10; i++)
+            {
+                rt_pwm_set(bpwm_dev, BPWM_DEV_CHANNEL, period, period);
+                rt_thread_mdelay(50);
+
+                rt_pwm_set(bpwm_dev, BPWM_DEV_CHANNEL, period, period/2);
+                rt_thread_mdelay(50);
+            }
+
+            /* Mute 2 seconds */
+            rt_pwm_set(bpwm_dev, BPWM_DEV_CHANNEL, period, period);
+            rt_thread_mdelay(2000);
+        }
+        rt_pwm_disable(bpwm_dev, BPWM_DEV_CHANNEL);
+    }
+    else
+    {
+        rt_kprintf("Can't find %s\n", BPWM_DEV_NAME);
+    }
+}
+
+int buzzer_test(void)
+{
+    PlayRingTone();
+    return 0;
+}
+#ifdef FINSH_USING_MSH
+    MSH_CMD_EXPORT(buzzer_test, Buzzer - Play ring tone);
+#endif
+#endif /* BOARD_USING_BUZZER */

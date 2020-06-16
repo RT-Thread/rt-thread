@@ -3,7 +3,8 @@
  * @version  V1.00
  * @brief    M480 series BPWM driver source file
  *
- * @copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ * @copyright (C) 2016-2020 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include "NuMicro.h"
 
@@ -312,7 +313,7 @@ void BPWM_DisableADCTrigger(BPWM_T *bpwm, uint32_t u32ChannelNum)
  */
 void BPWM_ClearADCTriggerFlag(BPWM_T *bpwm, uint32_t u32ChannelNum, uint32_t u32Condition)
 {
-    (bpwm)->STATUS = (BPWM_STATUS_EADCTRGn_Msk << u32ChannelNum);
+    (bpwm)->STATUS = (BPWM_STATUS_EADCTRG0_Msk << u32ChannelNum);
 }
 
 /**
@@ -327,7 +328,7 @@ void BPWM_ClearADCTriggerFlag(BPWM_T *bpwm, uint32_t u32ChannelNum, uint32_t u32
  */
 uint32_t BPWM_GetADCTriggerFlag(BPWM_T *bpwm, uint32_t u32ChannelNum)
 {
-    return (((bpwm)->STATUS & (BPWM_STATUS_EADCTRGn_Msk << u32ChannelNum)) ? 1UL : 0UL);
+    return (((bpwm)->STATUS & (BPWM_STATUS_EADCTRG0_Msk << u32ChannelNum)) ? 1UL : 0UL);
 }
 
 /**
@@ -457,8 +458,8 @@ void BPWM_ClearCaptureIntFlag(BPWM_T *bpwm, uint32_t u32ChannelNum, uint32_t u32
  */
 uint32_t BPWM_GetCaptureIntFlag(BPWM_T *bpwm, uint32_t u32ChannelNum)
 {
-    return (((((bpwm)->CAPIF & (BPWM_CAPIF_CAPFIFn_Msk << u32ChannelNum)) ? 1UL : 0UL) << 1) | \
-            (((bpwm)->CAPIF & (BPWM_CAPIF_CAPRIFn_Msk << u32ChannelNum)) ? 1UL : 0UL));
+    return (((((bpwm)->CAPIF & (BPWM_CAPIF_CAPFIF0_Msk << u32ChannelNum)) ? 1UL : 0UL) << 1) | \
+            (((bpwm)->CAPIF & (BPWM_CAPIF_CAPRIF0_Msk << u32ChannelNum)) ? 1UL : 0UL));
 }
 /**
  * @brief Enable duty interrupt of selected channel
@@ -503,7 +504,7 @@ void BPWM_DisableDutyInt(BPWM_T *bpwm, uint32_t u32ChannelNum)
  */
 void BPWM_ClearDutyIntFlag(BPWM_T *bpwm, uint32_t u32ChannelNum)
 {
-    (bpwm)->INTSTS = (BPWM_INTSTS_CMPUIFn_Msk | BPWM_INTSTS_CMPDIFn_Msk) << u32ChannelNum;
+    (bpwm)->INTSTS = (BPWM_INTSTS_CMPUIF0_Msk | BPWM_INTSTS_CMPDIF0_Msk) << u32ChannelNum;
 }
 
 /**
@@ -519,7 +520,7 @@ void BPWM_ClearDutyIntFlag(BPWM_T *bpwm, uint32_t u32ChannelNum)
  */
 uint32_t BPWM_GetDutyIntFlag(BPWM_T *bpwm, uint32_t u32ChannelNum)
 {
-    return ((((bpwm)->INTSTS & ((BPWM_INTSTS_CMPDIFn_Msk | BPWM_INTSTS_CMPUIFn_Msk) << u32ChannelNum))) ? 1UL : 0UL);
+    return ((((bpwm)->INTSTS & ((BPWM_INTSTS_CMPDIF0_Msk | BPWM_INTSTS_CMPUIF0_Msk) << u32ChannelNum))) ? 1UL : 0UL);
 }
 
 /**

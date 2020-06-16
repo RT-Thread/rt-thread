@@ -39,9 +39,9 @@ Support GCC, MDK4, MDK5, IAR IDE/compilers. More information of these compiler v
 
 | IDE/Compiler  | Tested version            |
 | ---------- | ---------------------------- |
-| MDK4       | 4.73                         |
+| MDK4       | 4.76                         |
 | MDK5       | 5.26.2                       |
-| IAR        | 6.5                          |
+| IAR        | 8.2                          |
 | GCC        | GCC 5.4.1 20160919 (release) |
 
 Notice: Please install Nu-Link_Keil_Driver or Nu-Link_IAR_Driver for development.
