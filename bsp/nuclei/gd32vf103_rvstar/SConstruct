@@ -24,7 +24,8 @@ DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
-    AR = rtconfig.AR, ARFLAGS = '-rc',
+    CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc', LIBS = rtconfig.LIBS,
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env['ASCOM'] = env['ASPPCOM']
@@ -50,7 +51,11 @@ objs = PrepareBuilding(env, RTT_ROOT)
 bsp_library_type = rtconfig.NUCLEI_SDK_SOC
 rtconfig.BSP_LIBRARY_TYPE = bsp_library_type
 
-openocd_cfg = rtconfig.NUCLEI_SDK_OPENOCD_CFG.replace('\\', '/')
+if hasattr(rtconfig, 'NUCLEI_SDK_OPENOCD_CFG'):
+    openocd_cfg = rtconfig.NUCLEI_SDK_OPENOCD_CFG.replace('\\', '/')
+else:
+    print("ERROR: Nuclei SDK package is not yet downloaded, please execute <pkgs --update> in command line first!")
+    exit(0)
 
 # include hal drivers
 hal_sconscript = os.path.join(libraries_path_prefix, bsp_library_type, 'HAL_Drivers', 'SConscript')
