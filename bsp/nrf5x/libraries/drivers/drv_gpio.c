@@ -5,8 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2018-11-06     balanceTWK        first version
- * 2019-04-23     WillianChan       Fix GPIO serial number disorder
+ * 2020-06-16     guohp1128        		first version
  */
 
 #include "drv_gpio.h"

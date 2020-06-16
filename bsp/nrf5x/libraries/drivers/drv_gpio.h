@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2018-11-06     balanceTWK        first version
+ * 2020-06-16     guohp1128         first version
  */
 
 #ifndef __DRV_GPIO_H__
