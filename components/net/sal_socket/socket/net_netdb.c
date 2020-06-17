@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-02-17     Bernard      First version
- * 2108-05-24     ChenYong     Add socket abstraction layer
+ * 2018-05-24     ChenYong     Add socket abstraction layer
  */
 
 #include <rtthread.h>
