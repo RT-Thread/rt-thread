@@ -1,0 +1,26 @@
+# RT-Thread building script for component
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+libs = ['']
+libpath = [cwd + '/lib']
+cpppath = [cwd + '/inc']
+
+if GetDepend('BSP_USE_STDDRIVER_SOURCE'):
+	src = Glob('*src/*.c') + Glob('src/*.cpp')
+	group = DefineGroup('m480_stddriver', src, depend = [''], CPPPATH = cpppath)
+else:
+	if rtconfig.CROSS_TOOL == 'keil':
+		if GetOption('target') == 'mdk4':
+			libs += ['libstddriver_keil4']
+		if GetOption('target') == 'mdk5':
+			libs += ['libstddriver_keil']
+	elif rtconfig.CROSS_TOOL == 'gcc':
+		libs += ['libstddriver_gcc']
+	else:
+		libs += ['libstddriver_iar']
+	group = DefineGroup('m480_stddriver', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
+
+Return('group')
