@@ -298,6 +298,10 @@ config RT_USING_LWIP
             int "Enable SO_RCVBUF processing"
             default 1
 
+        config LWIP_SO_LINGER
+            int "Enable SO_LINGER processing"
+            default 0
+
         config RT_LWIP_NETIF_LOOPBACK
             bool "Enable netif loopback"
             default n
