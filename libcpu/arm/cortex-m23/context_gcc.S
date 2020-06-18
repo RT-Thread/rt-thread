@@ -137,7 +137,7 @@ pendsv_exit:
     /* restore interrupt */
     MSR     PRIMASK, R2
 
-    MOVS    R0, #0x04
+    MOVS    R0, #0x03
     RSBS    R0, R0, #0x00
     BX      R0
 /*
