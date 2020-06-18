@@ -45,7 +45,7 @@
 #define S32_F "ld"
 #define X32_F "lx"
 
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME)
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else
