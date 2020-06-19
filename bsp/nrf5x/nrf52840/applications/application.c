@@ -25,24 +25,24 @@
 #include <shell.h>
 #endif
 
-#include <nrf_gpio.h>
+#include <drv_gpio.h>
 #define DK_BOARD_LED_1  13
 
 int main(void)
 {
-    int count = 1;
-    nrf_gpio_cfg_output(DK_BOARD_LED_1);
-
-    while (count++)
-    {
-        nrf_gpio_pin_set(DK_BOARD_LED_1);
-        rt_thread_mdelay(500);
-        
-        nrf_gpio_pin_clear(DK_BOARD_LED_1);
-        rt_thread_mdelay(500);
-
-    }
-    return RT_EOK;
+    int count = 1; 
+	rt_pin_mode(DK_BOARD_LED_1, PIN_MODE_OUTPUT);
+	
+	while (count++)
+	{	
+	    rt_pin_write(DK_BOARD_LED_1, PIN_HIGH);
+		rt_thread_mdelay(500);
+		
+		rt_pin_write(DK_BOARD_LED_1, PIN_LOW);
+		rt_thread_mdelay(500);
+								
+	}
+	return RT_EOK;
 }
 
 
