@@ -5,8 +5,9 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-06-16     guohp1128        	first version
+ * 2020-06-16     guohp1128         first version
  */
+
 
 #include "drv_gpio.h"
 
