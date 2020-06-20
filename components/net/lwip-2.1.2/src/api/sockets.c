@@ -470,6 +470,25 @@ tryget_socket(int fd)
 }
 
 /**
+ * Same as tryget_socket but a global routine.
+ *
+ * @param fd externally used socket index
+ * @return struct lwip_sock for the socket or NULL if not found
+ */
+struct lwip_sock *
+lwip_tryget_socket(int fd)
+{
+  struct lwip_sock *sock = tryget_socket_unconn(fd);
+  if (sock != NULL) {
+    if (sock->conn) {
+      return sock;
+    }
+    done_socket(sock);
+  }
+  return NULL;
+}
+
+/**
  * Map a externally used socket index to the internal socket representation.
  *
  * @param fd externally used socket index
@@ -530,6 +549,9 @@ alloc_socket(struct netconn *newconn, int accepted)
       sockets[i].sendevent  = (NETCONNTYPE_GROUP(newconn->type) == NETCONN_TCP ? (accepted != 0) : 1);
       sockets[i].errevent   = 0;
 #endif /* LWIP_SOCKET_SELECT || LWIP_SOCKET_POLL */
+#ifdef SAL_USING_POSIX
+      rt_wqueue_init(&sockets[i].wait_head);
+#endif
       return i + LWIP_SOCKET_OFFSET;
     }
     SYS_ARCH_UNPROTECT(lev);

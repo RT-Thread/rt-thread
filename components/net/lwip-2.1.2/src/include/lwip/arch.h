@@ -196,7 +196,9 @@ typedef uintptr_t mem_ptr_t;
 #define LWIP_NO_UNISTD_H 0
 #endif
 #if !LWIP_NO_UNISTD_H
-#include <unistd.h>
+#include "sys/types.h"
+#else
+typedef int ssize_t;
 #endif
 #else /* SSIZE_MAX */
 typedef int ssize_t;
