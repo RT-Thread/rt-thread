@@ -1,0 +1,196 @@
+/* SPDX-License-Identifier: GPL-2.0+ OR BSD-3-Clause*/
+/*
+ * Copyright (C) 2020, STMicroelectronics - All Rights Reserved
+ * Author: STM32CubeMX code generation for STMicroelectronics.
+ */
+
+/* For more information on Device Tree configuration, please refer to
+ * https://wiki.st.com/stm32mpu/wiki/Category:Device_tree_configuration
+ */
+
+#include <dt-bindings/clock/stm32mp1-clksrc.h>
+#include "stm32mp15-mx.dtsi"
+
+#include "stm32mp157-u-boot.dtsi"
+#include "stm32mp15-ddr.dtsi"
+
+/* USER CODE BEGIN includes */
+/* USER CODE END includes */
+
+/ {
+
+	/* USER CODE BEGIN root */
+	aliases {
+		i2c3 = &i2c4;
+		mmc0 = &sdmmc1;
+	};
+	config {
+		u-boot,boot-led = "heartbeat";
+		u-boot,error-led = "error";
+		st,adc_usb_pd = <&adc1 18>, <&adc1 19>;
+		st,fastboot-gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+		st,stm32prog-gpios = <&gpioa 14 GPIO_ACTIVE_LOW>;
+	};
+	led {
+		red {
+			label = "error";
+			gpios = <&gpioa 13 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+			status = "okay";
+		};
+
+		blue {
+			default-state = "on";
+		};
+	};
+	/* USER CODE END root */
+
+	clocks {
+		u-boot,dm-pre-reloc;
+
+		/* USER CODE BEGIN clocks */
+		/* USER CODE END clocks */
+
+		clk_lsi: clk-lsi {
+			u-boot,dm-pre-reloc;
+			status = "disabled";
+
+			/* USER CODE BEGIN clk_lsi */
+			/* USER CODE END clk_lsi */
+		};
+
+		clk_hsi: clk-hsi {
+			u-boot,dm-pre-reloc;
+
+			/* USER CODE BEGIN clk_hsi */
+			/* USER CODE END clk_hsi */
+		};
+
+		clk_csi: clk-csi {
+			u-boot,dm-pre-reloc;
+			status = "disabled";
+
+			/* USER CODE BEGIN clk_csi */
+			/* USER CODE END clk_csi */
+		};
+
+		clk_lse: clk-lse {
+			u-boot,dm-pre-reloc;
+			st,drive = < LSEDRV_MEDIUM_HIGH >;
+
+			/* USER CODE BEGIN clk_lse */
+			/* USER CODE END clk_lse */
+		};
+
+		clk_hse: clk-hse {
+			u-boot,dm-pre-reloc;
+			st,digbypass;
+
+			/* USER CODE BEGIN clk_hse */
+			/* USER CODE END clk_hse */
+		};
+	};
+
+}; /*root*/
+
+&rcc {
+	u-boot,dm-pre-reloc;
+	st,clksrc = <
+		CLK_MPU_PLL1P
+		CLK_AXI_PLL2P
+		CLK_MCU_PLL3P
+		CLK_PLL12_HSE
+		CLK_PLL3_HSE
+		CLK_PLL4_HSE
+		CLK_RTC_LSE
+		CLK_MCO1_DISABLED
+		CLK_MCO2_DISABLED
+	>;
+	st,clkdiv = <
+		1 		/*MPU*/
+		0 		/*AXI*/
+		0 		/*MCU*/
+		1 		/*APB1*/
+		1 		/*APB2*/
+		1 		/*APB3*/
+		1 		/*APB4*/
+		2 		/*APB5*/
+		23 		/*RTC*/
+		0 		/*MCO1*/
+		0 		/*MCO2*/
+	>;
+	st,pkcs = <
+		CLK_CKPER_DISABLED
+		CLK_ETH_DISABLED
+		CLK_SDMMC12_DISABLED
+		CLK_STGEN_HSE
+		CLK_USBPHY_DISABLED
+		CLK_SPI2S1_DISABLED
+		CLK_SPI2S23_DISABLED
+		CLK_SPI45_PCLK2
+		CLK_SPI6_DISABLED
+		CLK_I2C46_DISABLED
+		CLK_SDMMC3_DISABLED
+		CLK_ADC_DISABLED
+		CLK_CEC_DISABLED
+		CLK_I2C12_DISABLED
+		CLK_I2C35_DISABLED
+		CLK_UART1_DISABLED
+		CLK_UART24_HSI
+		CLK_UART35_DISABLED
+		CLK_UART6_DISABLED
+		CLK_UART78_DISABLED
+		CLK_SPDIF_DISABLED
+		CLK_SAI1_DISABLED
+		CLK_SAI2_DISABLED
+		CLK_SAI3_DISABLED
+		CLK_SAI4_DISABLED
+		CLK_LPTIM1_DISABLED
+		CLK_LPTIM23_DISABLED
+		CLK_LPTIM45_DISABLED
+	>;
+	pll2:st,pll@1 {
+		cfg = < 2 65 1 0 0 PQR(1,0,1) >;
+		frac = < 0x1400 >;
+		u-boot,dm-pre-reloc;
+	};
+	pll3:st,pll@2 {
+		cfg = < 1 33 1 16 36 PQR(1,0,0) >;
+		frac = < 0x1a04 >;
+		u-boot,dm-pre-reloc;
+	};
+};
+
+&rcc{
+	u-boot,dm-pre-reloc;
+
+	/* USER CODE BEGIN rcc */
+	/* USER CODE END rcc */
+};
+
+/* USER CODE BEGIN addons */
+&pmic {
+	u-boot,dm-pre-reloc;
+};
+
+&v3v3 {
+	regulator-always-on;
+};
+
+&uart4_pins_mx {
+	u-boot,dm-pre-reloc;
+	pins1 {
+		u-boot,dm-pre-reloc;
+		/* pull-up on rx to avoid floating level */
+		bias-pull-up;
+	};
+	pins2 {
+		u-boot,dm-pre-reloc;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+/* USER CODE END addons */
+

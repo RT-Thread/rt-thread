@@ -1,0 +1,27 @@
+var structGICDistributor__Type =
+[
+    [ "CLRSPI_NSR", "structGICDistributor__Type.html#a2f584d3fbeaa355faf234f2ee57d1168", null ],
+    [ "CLRSPI_SR", "structGICDistributor__Type.html#ab487e4a8684b8a77357c6c20cf71dead", null ],
+    [ "CPENDSGIR", "structGICDistributor__Type.html#a644a70cf4c12093c0277ce01f194b69b", null ],
+    [ "CTLR", "structGICDistributor__Type.html#a6ca67d9838ab3425864207c3a0399bd7", null ],
+    [ "ICACTIVER", "structGICDistributor__Type.html#ac0fd4c1ad19b5a332e403bb9966ba967", null ],
+    [ "ICENABLER", "structGICDistributor__Type.html#a390fa9f2f460951b2c6094932d890807", null ],
+    [ "ICFGR", "structGICDistributor__Type.html#a9b306a630388c795d3cd32fc2e23a2b5", null ],
+    [ "ICPENDR", "structGICDistributor__Type.html#a0155cb4637845258e4ee76cd93cca2a6", null ],
+    [ "IGROUPR", "structGICDistributor__Type.html#a6a9effdd633c6e75651d9f53caace306", null ],
+    [ "IGRPMODR", "structGICDistributor__Type.html#ae9eeb19ca95d0b95828f1f98700b5689", null ],
+    [ "IIDR", "structGICDistributor__Type.html#acebf65dae4cb82cd3c7deeefca9c9722", null ],
+    [ "IPRIORITYR", "structGICDistributor__Type.html#a08fa902293567e85dc6398dab58afaa9", null ],
+    [ "IROUTER", "structGICDistributor__Type.html#a73e0c679e5f45710deea474ab0d39cdb", null ],
+    [ "ISACTIVER", "structGICDistributor__Type.html#a5eb8e1ef5a88293e2759c41f6057ccc4", null ],
+    [ "ISENABLER", "structGICDistributor__Type.html#a1da3a2066b64644a0bb8a3066075ba87", null ],
+    [ "ISPENDR", "structGICDistributor__Type.html#a1c15cd75ce30d8946792e2a1a19556a5", null ],
+    [ "ITARGETSR", "structGICDistributor__Type.html#a6f1b07d48d3a9199f2effec8492f721c", null ],
+    [ "NSACR", "structGICDistributor__Type.html#a644abefb7064e434db20cc6dab5fe5f1", null ],
+    [ "SETSPI_NSR", "structGICDistributor__Type.html#afbdd372578e2cd6f998320282cc8ed25", null ],
+    [ "SETSPI_SR", "structGICDistributor__Type.html#ad55a8644bc95caf8bf53e1407ec9ed0c", null ],
+    [ "SGIR", "structGICDistributor__Type.html#a6ac65c4a5394926cc9518753a00d4da1", null ],
+    [ "SPENDSGIR", "structGICDistributor__Type.html#ae40b4a50d9766c2bbf57441f68094f41", null ],
+    [ "STATUSR", "structGICDistributor__Type.html#ae24f260e27065660a2059803293084f2", null ],
+    [ "TYPER", "structGICDistributor__Type.html#a405823d97dc90dd9d397a3980e2cd207", null ]
+];

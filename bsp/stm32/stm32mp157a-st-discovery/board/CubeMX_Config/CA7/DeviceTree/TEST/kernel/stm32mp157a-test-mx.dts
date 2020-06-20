@@ -1,0 +1,363 @@
+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+/*
+ * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+ * Author: STM32CubeMX code generation for STMicroelectronics.
+ */
+
+/* For more information on Device Tree configuration, please refer to
+ * https://wiki.st.com/stm32mpu/wiki/Category:Device_tree_configuration
+ */
+
+/dts-v1/;
+#include "stm32mp157c.dtsi"
+#include "stm32mp157cac-pinctrl.dtsi"
+#include "stm32mp157c-m4-srm.dtsi"
+
+/* USER CODE BEGIN includes */
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/mfd/st,stpmic1.h>
+#include <dt-bindings/rtc/rtc-stm32.h>
+/* USER CODE END includes */
+
+/ {
+	model = "STMicroelectronics STM32MP157A-DK1 STM32CubeMX board";
+	compatible = "st,stm32mp157a-test-mx", "st,stm32mp157";
+
+	memory@c0000000 {
+		reg = <0xc0000000 0x20000000>;
+
+		/* USER CODE BEGIN memory */
+		/* USER CODE END memory */
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		/* USER CODE BEGIN reserved-memory */
+
+		retram: retram@0x38000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x38000000 0x10000>;
+			no-map;
+		};
+
+		mcuram: mcuram@0x30000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x30000000 0x40000>;
+			no-map;
+		};
+
+		mcuram2: mcuram2@0x10000000 {
+			compatible = "shared-dma-pool";
+			reg = <0x10000000 0x40000>;
+			no-map;
+		};
+
+		vdev0vring0: vdev0vring0@10040000 {
+			compatible = "shared-dma-pool";
+			reg = <0x10040000 0x2000>;
+			no-map;
+		};
+
+		vdev0vring1: vdev0vring1@10042000 {
+			compatible = "shared-dma-pool";
+			reg = <0x10042000 0x2000>;
+			no-map;
+		};
+
+		vdev0buffer: vdev0buffer@10044000 {
+			compatible = "shared-dma-pool";
+			reg = <0x10044000 0x4000>;
+			no-map;
+		};
+		/* USER CODE END reserved-memory */
+
+		gpu_reserved: gpu@d4000000 {
+			reg = <0xd4000000 0x4000000>;
+			no-map;
+		};
+	};
+
+	/* USER CODE BEGIN root */
+	aliases {
+		ethernet0 = &ethernet0;
+		serial0 = &uart4;
+		serial1 = &usart3;
+		serial2 = &uart7;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	sram: sram@10050000 {
+		compatible = "mmio-sram";
+		reg = <0x10050000 0x10000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0 0x10050000 0x10000>;
+
+		dma_pool: dma_pool@0 {
+			reg = <0x0 0x10000>;
+			pool;
+		};
+	};
+
+	led {
+		compatible = "gpio-leds";
+		blue {
+			label = "heartbeat";
+			gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "heartbeat";
+			default-state = "off";
+		};
+	};
+
+	sound {
+		compatible = "audio-graph-card";
+		label = "STM32MP1-DK";
+		routing =
+			"Playback" , "MCLK",
+			"Capture" , "MCLK",
+			"MICL" , "Mic Bias";
+		dais = <&sai2a_port &sai2b_port &i2s2_port>;
+		status = "okay";
+	};
+
+	usb_phy_tuning: usb-phy-tuning {
+		st,hs-dc-level = <2>;
+		st,fs-rftime-tuning;
+		st,hs-rftime-reduction;
+		st,hs-current-trim = <15>;
+		st,hs-impedance-trim = <1>;
+		st,squelch-level = <3>;
+		st,hs-rx-offset = <2>;
+		st,no-lsfs-sc;
+	};
+
+	/* USER CODE END root */
+
+	clocks {
+		/* USER CODE BEGIN clocks */
+		/* USER CODE END clocks */
+
+		clk_lsi: clk-lsi {
+			clock-frequency = <32000>;
+		};
+
+		clk_hsi: clk-hsi {
+			clock-frequency = <64000000>;
+		};
+
+		clk_csi: clk-csi {
+			clock-frequency = <4000000>;
+		};
+
+		clk_lse: clk-lse {
+			clock-frequency = <32768>;
+		};
+
+		clk_hse: clk-hse {
+			clock-frequency = <24000000>;
+		};
+	};
+
+}; /*root*/
+
+&pinctrl {
+	u-boot,dm-pre-reloc;
+
+	m4_spi5_pins_mx: m4_spi5_mx-0 {
+		pins {
+			pinmux = <STM32_PINMUX('F', 7, RSVD)>, /* SPI5_SCK */
+					 <STM32_PINMUX('F', 9, RSVD)>; /* SPI5_MOSI */
+		};
+	};
+
+	m4_tim4_pwm_pins_mx: m4_tim4_pwm_mx-0 {
+		pins {
+			pinmux = <STM32_PINMUX('D', 13, RSVD)>; /* TIM4_CH2 */
+		};
+	};
+
+	m4_uart4_pins_mx: m4_uart4_mx-0 {
+		pins {
+			pinmux = <STM32_PINMUX('B', 2, RSVD)>, /* UART4_RX */
+					 <STM32_PINMUX('G', 11, RSVD)>; /* UART4_TX */
+		};
+	};
+
+	/* USER CODE BEGIN pinctrl */
+	/* USER CODE END pinctrl */
+};
+
+&pinctrl_z {
+	u-boot,dm-pre-reloc;
+
+	/* USER CODE BEGIN pinctrl_z */
+	/* USER CODE END pinctrl_z */
+};
+
+&m4_rproc{
+	/*Restriction: "memory-region" property is not managed - please to use User-Section if needed*/
+	mboxes = <&ipcc 2>;
+	mbox-names = "shutdown";
+	recovery;
+	status = "okay";
+
+	/* USER CODE BEGIN m4_rproc */
+	interrupt-parent = <&exti>;
+	interrupts = <68 1>;
+	interrupt-names = "wdg";
+	wakeup-source;
+	/* USER CODE END m4_rproc */
+
+	m4_system_resources{
+		status = "okay";
+
+		/* USER CODE BEGIN m4_system_resources */
+		/* USER CODE END m4_system_resources */
+	};
+};
+
+&bsec{
+	status = "okay";
+
+	/* USER CODE BEGIN bsec */
+	/* USER CODE END bsec */
+};
+
+&hsem{
+	status = "okay";
+
+	/* USER CODE BEGIN hsem */
+	/* USER CODE END hsem */
+};
+
+&ipcc{
+	status = "okay";
+
+	/* USER CODE BEGIN ipcc */
+	/* USER CODE END ipcc */
+};
+
+&m4_spi5{
+	pinctrl-names = "default";
+	pinctrl-0 = <&m4_spi5_pins_mx>;
+	status = "okay";
+
+	/* USER CODE BEGIN m4_spi5 */
+	/* USER CODE END m4_spi5 */
+};
+
+&m4_timers14{
+	status = "okay";
+
+	/* USER CODE BEGIN m4_timers14 */
+	/* USER CODE END m4_timers14 */
+};
+
+&m4_timers16{
+	status = "okay";
+
+	/* USER CODE BEGIN m4_timers16 */
+	/* USER CODE END m4_timers16 */
+};
+
+&m4_timers17{
+	status = "okay";
+
+	/* USER CODE BEGIN m4_timers17 */
+	/* USER CODE END m4_timers17 */
+};
+
+&m4_timers4{
+	pinctrl-names = "default";
+	pinctrl-0 = <&m4_tim4_pwm_pins_mx>;
+	status = "okay";
+
+	/* USER CODE BEGIN m4_timers4 */
+	/* USER CODE END m4_timers4 */
+};
+
+&m4_uart4{
+	pinctrl-names = "default";
+	pinctrl-0 = <&m4_uart4_pins_mx>;
+	status = "okay";
+
+	/* USER CODE BEGIN m4_uart4 */
+	/* USER CODE END m4_uart4 */
+};
+
+&pwr{
+	status = "okay";
+
+	/* USER CODE BEGIN pwr */
+	pwr-regulators {
+		vdd-supply = <&vdd>;
+		vdd_3v3_usbfs-supply = <&vdd_usb>;
+	};
+	/* USER CODE END pwr */
+};
+
+&rcc{
+	u-boot,dm-pre-reloc;
+	status = "okay";
+
+	/* USER CODE BEGIN rcc */
+	/* USER CODE END rcc */
+};
+
+&rtc{
+	status = "okay";
+
+	/* USER CODE BEGIN rtc */
+	/* USER CODE END rtc */
+};
+
+&tamp{
+	status = "okay";
+
+	/* USER CODE BEGIN tamp */
+	/* USER CODE END tamp */
+};
+
+&vrefbuf{
+	status = "okay";
+
+	/* USER CODE BEGIN vrefbuf */
+	regulator-min-microvolt = <2500000>;
+	regulator-max-microvolt = <2500000>;
+	vdda-supply = <&vdd>;
+	/* USER CODE END vrefbuf */
+};
+
+/* USER CODE BEGIN addons */
+&m4_rproc {
+memory-region = <&retram>, <&mcuram>, <&mcuram2>, <&vdev0vring0>,
+		<&vdev0vring1>, <&vdev0buffer>;
+};
+
+&adc {
+	status = "disabled";
+};
+
+&cpu0{
+	cpu-supply = <&vddcore>;
+};
+
+&cpu1{
+	cpu-supply = <&vddcore>;
+};
+
+&dma1 {
+	sram = <&dma_pool>;
+};
+
+&dma2 {
+	sram = <&dma_pool>;
+};
+/* USER CODE END addons */
+

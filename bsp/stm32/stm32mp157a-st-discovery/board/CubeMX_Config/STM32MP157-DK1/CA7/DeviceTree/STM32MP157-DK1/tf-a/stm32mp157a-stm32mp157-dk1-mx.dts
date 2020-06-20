@@ -1,0 +1,236 @@
+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause) */
+/*
+ * Copyright (C) STMicroelectronics 2020 - All Rights Reserved
+ * Author: STM32CubeMX code generation for STMicroelectronics.
+ */
+
+/* For more information on Device Tree configuration, please refer to
+ * https://wiki.st.com/stm32mpu/wiki/Category:Device_tree_configuration
+ */
+
+/dts-v1/;
+#include <dt-bindings/clock/stm32mp1-clksrc.h>
+#include "stm32mp15-mx.dtsi"
+
+#include "stm32mp157c.dtsi"
+#include "stm32mp157cac-pinctrl.dtsi"
+#include "stm32mp15-ddr.dtsi"
+#include "stm32mp157c-security.dtsi"
+
+/* USER CODE BEGIN includes */
+#include <dt-bindings/power/stm32mp1-power.h>
+/* USER CODE END includes */
+
+/ {
+	model = "STMicroelectronics STM32MP157A-DK1 STM32CubeMX board";
+	compatible = "st,stm32mp157a-stm32mp157-dk1-mx", "st,stm32mp157";
+
+	/* USER CODE BEGIN root */
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	aliases {
+		serial0 = &uart4;
+		serial1 = &usart3;
+		serial2 = &uart7;
+		gpio0 = &gpioa;
+		gpio1 = &gpiob;
+		gpio2 = &gpioc;
+		gpio3 = &gpiod;
+		gpio4 = &gpioe;
+		gpio5 = &gpiof;
+		gpio6 = &gpiog;
+		gpio7 = &gpioh;
+		gpio8 = &gpioi;
+		gpio25 = &gpioz;
+		i2c3 = &i2c4;
+	};
+	/* USER CODE END root */
+
+	clocks {
+		/* USER CODE BEGIN clocks */
+		/* USER CODE END clocks */
+
+		clk_lse: clk-lse {
+			st,drive = < LSEDRV_MEDIUM_HIGH >;
+
+			/* USER CODE BEGIN clk_lse */
+			/* USER CODE END clk_lse */
+		};
+
+		clk_hse: clk-hse {
+			st,digbypass;
+
+			/* USER CODE BEGIN clk_hse */
+			/* USER CODE END clk_hse */
+		};
+	};
+
+}; /*root*/
+
+&pinctrl {
+	/* USER CODE BEGIN pinctrl */
+	/* USER CODE END pinctrl */
+};
+
+&pinctrl_z {
+	/* USER CODE BEGIN pinctrl_z */
+	/* USER CODE END pinctrl_z */
+};
+
+&rcc {
+	st,csi-cal;
+	st,hsi-cal;
+	st,cal-sec = <60>;
+	st,clksrc = <
+		CLK_MPU_PLL1P
+		CLK_AXI_PLL2P
+		CLK_MCU_PLL3P
+		CLK_PLL12_HSE
+		CLK_PLL3_HSE
+		CLK_PLL4_HSE
+		CLK_RTC_LSE
+		CLK_MCO1_DISABLED
+		CLK_MCO2_DISABLED
+	>;
+	st,clkdiv = <
+		1 		/*MPU*/
+		0 		/*AXI*/
+		0 		/*MCU*/
+		1 		/*APB1*/
+		1 		/*APB2*/
+		1 		/*APB3*/
+		1 		/*APB4*/
+		2 		/*APB5*/
+		23 		/*RTC*/
+		0 		/*MCO1*/
+		0 		/*MCO2*/
+	>;
+	st,pkcs = <
+		CLK_CKPER_DISABLED
+		CLK_ETH_DISABLED
+		CLK_SDMMC12_DISABLED
+		CLK_STGEN_HSE
+		CLK_USBPHY_DISABLED
+		CLK_SPI2S1_DISABLED
+		CLK_SPI2S23_DISABLED
+		CLK_SPI45_DISABLED
+		CLK_SPI6_DISABLED
+		CLK_I2C46_DISABLED
+		CLK_SDMMC3_DISABLED
+		CLK_ADC_DISABLED
+		CLK_CEC_DISABLED
+		CLK_I2C12_DISABLED
+		CLK_I2C35_DISABLED
+		CLK_UART1_DISABLED
+		CLK_UART24_HSI
+		CLK_UART35_DISABLED
+		CLK_UART6_DISABLED
+		CLK_UART78_DISABLED
+		CLK_SPDIF_DISABLED
+		CLK_SAI1_DISABLED
+		CLK_SAI2_DISABLED
+		CLK_SAI3_DISABLED
+		CLK_SAI4_DISABLED
+		CLK_LPTIM1_DISABLED
+		CLK_LPTIM23_DISABLED
+		CLK_LPTIM45_DISABLED
+	>;
+	pll2:st,pll@1 {
+		cfg = < 2 65 1 0 0 PQR(1,0,1) >;
+		frac = < 0x1400 >;
+	};
+	pll3:st,pll@2 {
+		cfg = < 1 33 1 16 36 PQR(1,0,0) >;
+		frac = < 0x1a04 >;
+	};
+};
+
+&bsec{
+	status = "okay";
+	secure-status = "okay";
+
+	/* USER CODE BEGIN bsec */
+	board_id: board_id@ec {
+		reg = <0xec 0x4>;
+		st,non-secure-otp;
+	};
+	/* USER CODE END bsec */
+};
+
+&pwr{
+	status = "okay";
+	secure-status = "okay";
+
+	/* USER CODE BEGIN pwr */
+	system_suspend_supported_soc_modes = <
+		STM32_PM_CSLEEP_RUN
+		STM32_PM_CSTOP_ALLOW_LP_STOP
+		STM32_PM_CSTOP_ALLOW_STANDBY_DDR_SR
+	>;
+	system_off_soc_mode = <STM32_PM_CSTOP_ALLOW_STANDBY_DDR_OFF>;
+
+	pwr-regulators {
+		vdd-supply = <&vdd>;
+	};
+	/* USER CODE END pwr */
+};
+
+&rcc{
+	status = "okay";
+	secure-status = "okay";
+
+	/* USER CODE BEGIN rcc */
+	/* USER CODE END rcc */
+};
+
+&rtc{
+	status = "okay";
+	secure-status = "okay";
+
+	/* USER CODE BEGIN rtc */
+	/* USER CODE END rtc */
+};
+
+&tamp{
+	status = "okay";
+	secure-status = "okay";
+
+	/* USER CODE BEGIN tamp */
+	/* USER CODE END tamp */
+};
+
+/* USER CODE BEGIN addons */
+/delete-node/ &qspi_bk1_pins_a;
+/delete-node/ &qspi_bk2_pins_a;
+/delete-node/ &qspi_clk_pins_a;
+/delete-node/ &sdmmc1_b4_pins_a;
+/delete-node/ &sdmmc1_dir_pins_a;
+/delete-node/ &sdmmc1_dir_pins_b;
+/delete-node/ &sdmmc2_b4_pins_a;
+/delete-node/ &sdmmc2_d47_pins_a;
+/delete-node/ &uart4_pins_a;
+/delete-node/ &uart7_pins_a;
+/delete-node/ &usart3_pins_a;
+/delete-node/ &usart3_pins_b;
+/delete-node/ &i2c4_pins_a;
+&nvmem_layout {
+	nvmem-cells = <&part_number_otp>,
+		      <&monotonic_otp>,
+		      <&nand_otp>,
+		      <&uid_otp>,
+		      <&package_otp>,
+		      <&hw2_otp>,
+		      <&board_id>;
+
+	nvmem-cell-names = "part_number_otp",
+			   "monotonic_otp",
+			   "nand_otp",
+			   "uid_otp",
+			   "package_otp",
+			   "hw2_otp",
+			   "board_id";
+};
+/* USER CODE END addons */
+

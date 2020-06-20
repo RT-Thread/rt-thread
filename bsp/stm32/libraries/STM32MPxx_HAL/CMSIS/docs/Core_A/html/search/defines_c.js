@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['ve_5fa9_5fmp_5faaci_5fbase',['VE_A9_MP_AACI_BASE',['../ARMCA9_8h.html#a06ba050a1192b25ec6fbb79d6108d2ed',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fclcd_5fbase',['VE_A9_MP_CLCD_BASE',['../ARMCA9_8h.html#a628c63b1e4c2656100a00d883ab5e824',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fdap_5fbase',['VE_A9_MP_DAP_BASE',['../ARMCA9_8h.html#a63a986e5aa2a284f9509b5e91df630dd',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fdram_5fbase',['VE_A9_MP_DRAM_BASE',['../ARMCA9_8h.html#a49c91ca86e9eab3aaa8c8f3fbd2b9855',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fdvi_5fbase',['VE_A9_MP_DVI_BASE',['../ARMCA9_8h.html#abab45916f8216aee2f417e6b041a1a74',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fethernet_5fbase',['VE_A9_MP_ETHERNET_BASE',['../ARMCA9_8h.html#a338e6b0eddbed74bd8dfcf8be8df004c',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fflash_5fbase0',['VE_A9_MP_FLASH_BASE0',['../ARMCA9_8h.html#a292d4e6da76cde7f721581917f45a756',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fflash_5fbase1',['VE_A9_MP_FLASH_BASE1',['../ARMCA9_8h.html#a51e7ad7d4be59e4a47f4199c08a52f35',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fgic_5fdistributor_5fbase',['VE_A9_MP_GIC_DISTRIBUTOR_BASE',['../ARMCA9_8h.html#abf58e5b4c2424101181e4e90b013565f',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fgic_5finterface_5fbase',['VE_A9_MP_GIC_INTERFACE_BASE',['../ARMCA9_8h.html#a2281d069db0154b71d2307b151151624',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fkmi0_5fbase',['VE_A9_MP_KMI0_BASE',['../ARMCA9_8h.html#abb9205ff2f6f411938d3443f0cc65b4d',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fmmci_5fbase',['VE_A9_MP_MMCI_BASE',['../ARMCA9_8h.html#a4c93715226810aa05b1475cae477a9d1',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fperiph_5fbase',['VE_A9_MP_PERIPH_BASE',['../ARMCA9_8h.html#ad22dea20bcb552bd05691f62ff5e5799',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fpl310_5fbase',['VE_A9_MP_PL310_BASE',['../ARMCA9_8h.html#adb063e35f3d63c35ce856561df8cedb4',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fprivate_5ftimer',['VE_A9_MP_PRIVATE_TIMER',['../ARMCA9_8h.html#a02dee9c2055176f0f8b39f84188662dc',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5frtc_5fbase',['VE_A9_MP_RTC_BASE',['../ARMCA9_8h.html#a56ccb39193acdd89d79c794bc3d46dd8',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fserial_5fbase',['VE_A9_MP_SERIAL_BASE',['../ARMCA9_8h.html#ae59ea495994a48af31e09af0001c65c6',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fsram_5fbase',['VE_A9_MP_SRAM_BASE',['../ARMCA9_8h.html#af0e04a3bf444617de5e6f1a4132bb33a',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fsystem_5freg_5fbase',['VE_A9_MP_SYSTEM_REG_BASE',['../ARMCA9_8h.html#a6be1b1510ebbf938f10c195c2aae50ed',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5ftimer_5fbase',['VE_A9_MP_TIMER_BASE',['../ARMCA9_8h.html#a3dd8c7208925d87eda25e9059e7b5bca',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fuart4_5fbase',['VE_A9_MP_UART4_BASE',['../ARMCA9_8h.html#a21aa9ad15aa6749c03cadf2dd895aae3',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fuart_5fbase',['VE_A9_MP_UART_BASE',['../ARMCA9_8h.html#a74740d1654250a51685800d03e3dc1a0',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fusb_5fbase',['VE_A9_MP_USB_BASE',['../ARMCA9_8h.html#a8ce6f3127699b175000437b9fd22224c',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fvram_5fbase',['VE_A9_MP_VRAM_BASE',['../ARMCA9_8h.html#adab8c737342be2fc972b2bc39bdf134d',1,'ARMCA9.h']]],
+  ['ve_5fa9_5fmp_5fwdt_5fbase',['VE_A9_MP_WDT_BASE',['../ARMCA9_8h.html#a4d2806a167111f24a4e26764c667db46',1,'ARMCA9.h']]]
+];

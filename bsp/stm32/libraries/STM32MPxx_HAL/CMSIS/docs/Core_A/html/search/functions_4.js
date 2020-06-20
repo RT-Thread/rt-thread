@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['l1c_5fcleandcacheall',['L1C_CleanDCacheAll',['../group__L1__cache__functions.html#ga70359d824bf26f376e3d7cb9c787da27',1,'core_ca.h']]],
+  ['l1c_5fcleandcachemva',['L1C_CleanDCacheMVA',['../group__L1__cache__functions.html#ga9eb6f0a7c9c04cc49efd964eb59ba26f',1,'core_ca.h']]],
+  ['l1c_5fcleaninvalidatecache',['L1C_CleanInvalidateCache',['../group__L1__cache__functions.html#ga30d7632156a30a3b75064f6d15b8f850',1,'core_ca.h']]],
+  ['l1c_5fcleaninvalidatedcacheall',['L1C_CleanInvalidateDCacheAll',['../group__L1__cache__functions.html#ga92b5babf7317abe3815f61a2731735c3',1,'core_ca.h']]],
+  ['l1c_5fcleaninvalidatedcachemva',['L1C_CleanInvalidateDCacheMVA',['../group__L1__cache__functions.html#ga7646a5e01b529566968f393e485f46a2',1,'core_ca.h']]],
+  ['l1c_5fdisablebtac',['L1C_DisableBTAC',['../group__L1__cache__functions.html#gab8695cf1f4a7f3789b93c41dc4eeb51d',1,'core_ca.h']]],
+  ['l1c_5fdisablecaches',['L1C_DisableCaches',['../group__L1__cache__functions.html#ga320ef6fd1dd65f2f82e64c096a4994a6',1,'core_ca.h']]],
+  ['l1c_5fenablebtac',['L1C_EnableBTAC',['../group__L1__cache__functions.html#gaa5fb36b4496e64472849f7811970c581',1,'core_ca.h']]],
+  ['l1c_5fenablecaches',['L1C_EnableCaches',['../group__L1__cache__functions.html#gaff8a4966eff1ada5cba80f2b689446db',1,'core_ca.h']]],
+  ['l1c_5finvalidatebtac',['L1C_InvalidateBTAC',['../group__L1__cache__functions.html#gad0d732293be6a928db184b59aadc1979',1,'core_ca.h']]],
+  ['l1c_5finvalidatedcacheall',['L1C_InvalidateDCacheAll',['../group__L1__cache__functions.html#gae895f75c4f3539058232f555d79e5df3',1,'core_ca.h']]],
+  ['l1c_5finvalidatedcachemva',['L1C_InvalidateDCacheMVA',['../group__L1__cache__functions.html#ga9209853937940991daf70edd6bc633fe',1,'core_ca.h']]],
+  ['l1c_5finvalidateicacheall',['L1C_InvalidateICacheAll',['../group__L1__cache__functions.html#gac932810cfe83f087590859010972645e',1,'core_ca.h']]],
+  ['l2c_5fcleaninvallbyway',['L2C_CleanInvAllByWay',['../group__L2__cache__functions.html#gabd0a9b10926537fa283c0bb30d54abc7',1,'core_ca.h']]],
+  ['l2c_5fcleaninvpa',['L2C_CleanInvPa',['../group__L2__cache__functions.html#gaaff11c6afa9eaacb4cdfcfe5c36f57eb',1,'core_ca.h']]],
+  ['l2c_5fcleanpa',['L2C_CleanPa',['../group__L2__cache__functions.html#ga242f6fa13f33e7d5cdd7d92935d52f5f',1,'core_ca.h']]],
+  ['l2c_5fdisable',['L2C_Disable',['../group__L2__cache__functions.html#ga66767e7f30f52d72de72231b2d6abd34',1,'core_ca.h']]],
+  ['l2c_5fenable',['L2C_Enable',['../group__L2__cache__functions.html#ga720c36b4cd1d6c070ed0d2c49cffd7e1',1,'core_ca.h']]],
+  ['l2c_5fgetid',['L2C_GetID',['../group__L2__cache__functions.html#ga75af64212e1d3d0b3ade860c365e95b3',1,'core_ca.h']]],
+  ['l2c_5fgettype',['L2C_GetType',['../group__L2__cache__functions.html#ga0c334fa25720d77e78cfa187bdf833be',1,'core_ca.h']]],
+  ['l2c_5finvallbyway',['L2C_InvAllByWay',['../group__L2__cache__functions.html#ga5b0ea2db52d137b5531ce568479c9d17',1,'core_ca.h']]],
+  ['l2c_5finvpa',['L2C_InvPa',['../group__L2__cache__functions.html#ga4cf213e72c97776def35ab8223face82',1,'core_ca.h']]],
+  ['l2c_5fsync',['L2C_Sync',['../group__L2__cache__functions.html#ga164c59c55e2d18bf8a94dc91c0f4ce68',1,'core_ca.h']]]
+];

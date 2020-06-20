@@ -1,0 +1,15 @@
+"D:\1_software\Iar\arm\bin\armproc.dll" 
+
+"D:\1_software\Iar\arm\bin\armstlink2.dll" 
+
+"D:\3_work\GitRepositories\rt-thread\bsp\stm32\stm32mp157a-st-discovery\build\iar\Exe\project.out" 
+
+--plugin="D:\1_software\Iar\arm\bin\armbat.dll" 
+
+--device_macro="D:\1_software\Iar\arm\config\debugger\ST\STM32MP1_M4.dmac" 
+
+--device_macro="D:\1_software\Iar\arm\config\debugger\ST\STM32MP1_Trace.dmac" 
+
+
+
+
