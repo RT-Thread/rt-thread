@@ -23,7 +23,7 @@
 
 #define __NRF5X_PIN(index, gpio, gpio_index)                                \
     {                                                                       \
-        index, NRF_P##gpio, gpio_index                            \
+        index, NRF_P##gpio, gpio_index                            			\
     }
 
 #define __NRF5X_PIN_RESERVE                                                 \
@@ -38,7 +38,6 @@ struct pin_index
     NRF_GPIO_Type *gpio;//NRF_P0 or NRF_P1
     uint32_t pin;
 };
-
 
 static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value);
 static int nrf5x_pin_read(rt_device_t dev, rt_base_t pin);
