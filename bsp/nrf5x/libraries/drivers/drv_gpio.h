@@ -23,7 +23,7 @@
 
 #define __NRF5X_PIN(index, gpio, gpio_index)                                \
     {                                                                       \
-        index, NRF_P##gpio, gpio_index                            			\
+        index, NRF_P##gpio, gpio_index                                      \
     }
 
 #define __NRF5X_PIN_RESERVE                                                 \

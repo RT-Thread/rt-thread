@@ -75,12 +75,12 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-	{-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
 };
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
-/*pin: the number of pins*/
+/* pin: the number of pins */
 static const struct pin_index *get_pin(uint8_t pin)
 {
     const struct pin_index *index;
@@ -108,8 +108,8 @@ static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     {
         return;
     }
-	
-	nrf_gpio_pin_write(pin, value);
+    
+    nrf_gpio_pin_write(pin, value);
 }
 
 static int nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
@@ -142,28 +142,28 @@ static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     if (mode == PIN_MODE_OUTPUT)
     {
-		/* output setting */
-		nrf_gpio_cfg_output(pin);
+        /* output setting */
+        nrf_gpio_cfg_output(pin);
     }
     else if (mode == PIN_MODE_INPUT)
     {
         /* input setting: not pull. */
-		nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_NOPULL);
+        nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_NOPULL);
     }
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
-		nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLUP);
+        nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLUP);
     }
     else if (mode == PIN_MODE_INPUT_PULLDOWN)
     {
         /* input setting: pull down. */
-		nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLDOWN);
+        nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLDOWN);
     }
     else if (mode == PIN_MODE_OUTPUT_OD)
     {
         /* output setting: od. */
-		nrf_gpio_cfg(
+        nrf_gpio_cfg(
         pin,
         NRF_GPIO_PIN_DIR_OUTPUT,
         NRF_GPIO_PIN_INPUT_DISCONNECT,
@@ -175,172 +175,172 @@ static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
 static void pin_irq_hdr(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 {
-	int i;
-	int irq_quantity;
-	
-	irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
-	for(i = 0; i < irq_quantity; i++)
-	{
-		if(pin_irq_hdr_tab[i].pin == pin)
-		{
-			pin_irq_hdr_tab[i].hdr(pin_irq_hdr_tab[i].args);
-		}
-	}
+    int i;
+    int irq_quantity;
+    
+    irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
+    for(i = 0; i < irq_quantity; i++)
+    {
+        if(pin_irq_hdr_tab[i].pin == pin)
+        {
+            pin_irq_hdr_tab[i].hdr(pin_irq_hdr_tab[i].args);
+        }
+    }
 }
 
-/*	args = true : hi_accuracy(IN_EVENT)
+/*  args = true : hi_accuracy(IN_EVENT)
  *  args = false: lo_accuracy(PORT_EVENT)
  */
 static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                      rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
-	const struct pin_index *index;
-	rt_int32_t irqindex = -1;
-	rt_base_t level;
-	nrfx_err_t err_code;
-	int i;
-	int irq_quantity;
-	
-	index = get_pin(pin);
-	if (index == RT_NULL)
-	{
-		return RT_ENOSYS;
-	}
-	
-	irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
-	for(i = 0; i < irq_quantity; i++)
-	{
-		if(pin_irq_hdr_tab[i].pin != -1)
-		{
-			irqindex = -1;
-			continue;
-		}
-		else
-		{
-			irqindex = i;
-			break;
-		}
-	}
-	if(irqindex == -1)
-	{
-		return RT_ENOMEM;
-	}
-	
-	level = rt_hw_interrupt_disable();  
-	pin_irq_hdr_tab[irqindex].pin  = pin;
-	pin_irq_hdr_tab[irqindex].hdr  = hdr;
-	pin_irq_hdr_tab[irqindex].mode = mode;
-	pin_irq_hdr_tab[irqindex].args = args;
-	
+    const struct pin_index *index;
+    rt_int32_t irqindex = -1;
+    rt_base_t level;
+    nrfx_err_t err_code;
+    int i;
+    int irq_quantity;
+    
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return RT_ENOSYS;
+    }
+    
+    irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
+    for(i = 0; i < irq_quantity; i++)
+    {
+        if(pin_irq_hdr_tab[i].pin != -1)
+        {
+            irqindex = -1;
+            continue;
+        }
+        else
+        {
+            irqindex = i;
+            break;
+        }
+    }
+    if(irqindex == -1)
+    {
+        return RT_ENOMEM;
+    }
+    
+    level = rt_hw_interrupt_disable();  
+    pin_irq_hdr_tab[irqindex].pin  = pin;
+    pin_irq_hdr_tab[irqindex].hdr  = hdr;
+    pin_irq_hdr_tab[irqindex].mode = mode;
+    pin_irq_hdr_tab[irqindex].args = args;
+    
   if(mode == PIN_IRQ_MODE_RISING)
-	{
-		nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(args);
-		inConfig.pull = NRF_GPIO_PIN_PULLDOWN;  
-		err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
-	}
-		
-	else if(mode == PIN_IRQ_MODE_FALLING)
-	{
-		nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_HITOLO(args);
-		inConfig.pull = NRF_GPIO_PIN_PULLUP;  
-		err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
-	}
-	
-	else if(mode == PIN_IRQ_MODE_RISING_FALLING)
-	{
-		nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_TOGGLE(args);
-		inConfig.pull = NRF_GPIO_PIN_PULLUP;
-		err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
-	}
-	
-	rt_hw_interrupt_enable(level);
-	
-	switch(err_code) 
-	{
-		case NRFX_ERROR_BUSY:
-			return RT_EBUSY;
-		case NRFX_SUCCESS:
-			return RT_EOK;
-		case NRFX_ERROR_NO_MEM:
-			return RT_ENOMEM;
-		default:
-			return RT_ERROR;
-	}
+    {
+        nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(args);
+        inConfig.pull = NRF_GPIO_PIN_PULLDOWN;  
+        err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
+    }
+        
+    else if(mode == PIN_IRQ_MODE_FALLING)
+    {
+        nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_HITOLO(args);
+        inConfig.pull = NRF_GPIO_PIN_PULLUP;  
+        err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
+    }
+    
+    else if(mode == PIN_IRQ_MODE_RISING_FALLING)
+    {
+        nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_TOGGLE(args);
+        inConfig.pull = NRF_GPIO_PIN_PULLUP;
+        err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
+    }
+    
+    rt_hw_interrupt_enable(level);
+    
+    switch(err_code) 
+    {
+        case NRFX_ERROR_BUSY:
+            return RT_EBUSY;
+        case NRFX_SUCCESS:
+            return RT_EOK;
+        case NRFX_ERROR_NO_MEM:
+            return RT_ENOMEM;
+        default:
+            return RT_ERROR;
+    }
 }
 
 static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 {
-	const struct pin_index *index;
-	rt_base_t level;
-	int i;
-	int irq_quantity;
+    const struct pin_index *index;
+    rt_base_t level;
+    int i;
+    int irq_quantity;
 
     index = get_pin(pin);
     if (index == RT_NULL)
     {
         return RT_ENOSYS;
     }
-		
-	irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
-	for(i = 0; i < irq_quantity; i++)
-	{
-		if(pin_irq_hdr_tab[i].pin == pin)
-		{
-			level = rt_hw_interrupt_disable();
-			pin_irq_hdr_tab[i].pin  = -1;
-			pin_irq_hdr_tab[i].hdr  = RT_NULL;
-			pin_irq_hdr_tab[i].mode = 0;
-			pin_irq_hdr_tab[i].args = RT_NULL;
-			nrfx_gpiote_in_uninit(pin);
-			rt_hw_interrupt_enable(level);
-			break;
-		}
-	}
-	if(i >= irq_quantity)
-	{
-		return RT_ENOSYS;
-	}
-	return RT_EOK;
+        
+    irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
+    for(i = 0; i < irq_quantity; i++)
+    {
+        if(pin_irq_hdr_tab[i].pin == pin)
+        {
+            level = rt_hw_interrupt_disable();
+            pin_irq_hdr_tab[i].pin  = -1;
+            pin_irq_hdr_tab[i].hdr  = RT_NULL;
+            pin_irq_hdr_tab[i].mode = 0;
+            pin_irq_hdr_tab[i].args = RT_NULL;
+            nrfx_gpiote_in_uninit(pin);
+            rt_hw_interrupt_enable(level);
+            break;
+        }
+    }
+    if(i >= irq_quantity)
+    {
+        return RT_ENOSYS;
+    }
+    return RT_EOK;
 }
 
 static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                                      rt_uint32_t enabled)
 {
     const struct pin_index *index;  
-	rt_base_t level;
-	int i;
-	int irq_quantity;
-	
-	index = get_pin(pin);
-	if (index == RT_NULL)
-	{
-		return RT_ENOSYS;
-	}
-	
-	irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
-	for(i = 0; i < irq_quantity; i++)
-	{
-		if(pin_irq_hdr_tab[i].pin == pin)
-		{
-			level = rt_hw_interrupt_disable();
-			if(enabled == PIN_IRQ_ENABLE)
-			{
-				nrfx_gpiote_in_event_enable(pin,enabled);
-			}
-			else if(enabled == PIN_IRQ_DISABLE)
-			{
-				nrfx_gpiote_in_event_disable(pin);
-			}
-			rt_hw_interrupt_enable(level);
-			break;
-		}
-	}
-	
-	if(i >= irq_quantity)
-	{
-		return RT_ENOSYS;
-	}
-	return RT_EOK;
+    rt_base_t level;
+    int i;
+    int irq_quantity;
+
+    index = get_pin(pin);
+    if (index == RT_NULL)
+    {
+        return RT_ENOSYS;
+    }
+
+    irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
+    for(i = 0; i < irq_quantity; i++)
+    {
+        if(pin_irq_hdr_tab[i].pin == pin)
+        {
+            level = rt_hw_interrupt_disable();
+            if(enabled == PIN_IRQ_ENABLE)
+            {
+                nrfx_gpiote_in_event_enable(pin,enabled);
+            }
+            else if(enabled == PIN_IRQ_DISABLE)
+            {
+                nrfx_gpiote_in_event_disable(pin);
+            }
+            rt_hw_interrupt_enable(level);
+            break;
+        }
+    }
+    
+    if(i >= irq_quantity)
+    {
+        return RT_ENOSYS;
+    }
+    return RT_EOK;
 }
 
 const static struct rt_pin_ops _nrf5x_pin_ops =
@@ -355,21 +355,21 @@ const static struct rt_pin_ops _nrf5x_pin_ops =
 
 int rt_hw_pin_init(void)
 {
-	nrfx_err_t err_code;
+    nrfx_err_t err_code;
 
-	err_code = (nrfx_err_t)rt_device_pin_register("pin", &_nrf5x_pin_ops, RT_NULL);
-	err_code = nrfx_gpiote_init(NRFX_GPIOTE_CONFIG_IRQ_PRIORITY);
-	
-	switch(err_code) 
-	{
-		case NRFX_ERROR_INVALID_STATE:
-			return RT_EINVAL;
-		case NRFX_SUCCESS:
-			return RT_EOK;
-		default:
-			return RT_ERROR;;
-	}
-	
+    err_code = (nrfx_err_t)rt_device_pin_register("pin", &_nrf5x_pin_ops, RT_NULL);
+    err_code = nrfx_gpiote_init(NRFX_GPIOTE_CONFIG_IRQ_PRIORITY);
+    
+    switch(err_code) 
+    {
+        case NRFX_ERROR_INVALID_STATE:
+            return RT_EINVAL;
+        case NRFX_SUCCESS:
+            return RT_EOK;
+        default:
+            return RT_ERROR;;
+    }
+    
 }
 
 #endif /* RT_USING_PIN */
