@@ -1,211 +1,157 @@
 /*
-******************************************************************************
-**
-**  File        : LinkerScript.ld
-**
-**  Abstract    : Linker script for STM32MP1 series
-**
-**                Set heap size, stack size and stack location according
-**                to application requirements.
-**
-**                Set memory bank area and size if external memory is used.
-**
-**  Target      : STMicroelectronics STM32
-**
-**  Distribution: The file is distributed â€œas is,â€� without any warranty
-**                of any kind.
-**
-*****************************************************************************
-** @attention
-**
-** <h2><center>&copy; Copyright (c) 2019 STMicroelectronics. 
-** All rights reserved.</center></h2>
-**
-** This software component is licensed by ST under BSD 3-Clause license,
-** the License; You may not use this file except in compliance with the 
-** License. You may obtain a copy of the License at:
-**                       opensource.org/licenses/BSD-3-Clause
-**
-*****************************************************************************
-*/
+ * linker script for STM32F4xx with GNU ld
+ * bernard.xiong 2009-10-14
+ */
 
-/* Entry Point */
-ENTRY(Reset_Handler)
-
-/* Highest address of the user mode stack */
-_estack = 0x10040000;    /* end of RAM */
-
-_Min_Heap_Size = 0x200 ;      /* required amount of heap  */
-_Min_Stack_Size = 0x400 ; /* required amount of stack */
-
-/* Memories definition */
+/* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-  m_interrupts (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000298
-  m_text       (RX)  : ORIGIN = 0x10000000, LENGTH = 0x00020000
-  m_data       (RW)  : ORIGIN = 0x10020000, LENGTH = 0x00020000
-  m_ipc_shm    (RW)  : ORIGIN = 0x10040000, LENGTH = 0x00008000
+  ROM (rx) : ORIGIN = 0x10000000, LENGTH = 256k /* 256KB flash */
+  RAM (rw) : ORIGIN = 0x10040000, LENGTH = 128k /* 128K sram */
 }
+ENTRY(Reset_Handler)
+_system_stack_size = 0x200;
 
- /* Symbols needed for OpenAMP to enable rpmsg */
-__OPENAMP_region_start__  = ORIGIN(m_ipc_shm);
-__OPENAMP_region_end__ = ORIGIN(m_ipc_shm)+LENGTH(m_ipc_shm);
-
-/* Sections */
 SECTIONS
 {
-  /* The startup code into ROM memory */
-  .isr_vector :
-  {
-    . = ALIGN(4);
-    KEEP(*(.isr_vector)) /* Startup code */
-    . = ALIGN(4);
-  } > m_interrupts
- 
+    .text :
+    {
+        . = ALIGN(4);
+        _stext = .;
+        KEEP(*(.isr_vector))            /* Startup code */
 
-  /* The program code and other data into ROM memory */
-  .text :
-  {
-    . = ALIGN(4);
-    *(.text)           /* .text sections (code) */
-    *(.text*)          /* .text* sections (code) */
-    *(.glue_7)         /* glue arm to thumb code */
-    *(.glue_7t)        /* glue thumb to arm code */
-    *(.eh_frame)
+        . = ALIGN(4);
+        *(.text)                        /* remaining code */
+        *(.text.*)                      /* remaining code */
+        *(.rodata)                      /* read-only data (constants) */
+        *(.rodata*)
+        *(.glue_7)
+        *(.glue_7t)
+        *(.gnu.linkonce.t*)
 
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
 
-    
-		/* section information for initial. */
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+
+        /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
-        KEEP(*(SORT(.rti_fn.*)))
+        KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
-        
-     . = ALIGN(4);
-     KEEP (*(.init))
-     KEEP (*(.fini))  
-    
-    . = ALIGN(4);
-    _etext = .;        /* define a global symbols at end of code */
-  } > m_text
 
-  /* Constant data into ROM memory*/
-  .rodata :
-  {
-    . = ALIGN(4);
-    *(.rodata)         /* .rodata sections (constants, strings, etc.) */
-    *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
-    . = ALIGN(4);
-  } > m_text
+        . = ALIGN(4);
 
-  .ARM.extab   : { 
-  	. = ALIGN(4);
-  	*(.ARM.extab* .gnu.linkonce.armextab.*)
-  	. = ALIGN(4);
-  } > m_text
-  
-  .ARM : {
-    . = ALIGN(4);
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+
+        _etext = .;
+    } > ROM = 0
+
+    /* .ARM.exidx is sorted, so has to go in its own output section.  */
     __exidx_start = .;
-    *(.ARM.exidx*)
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+
+        /* This is used by the startup in order to initialize the .data secion */
+        _sidata = .;
+    } > ROM
     __exidx_end = .;
-    . = ALIGN(4);
-  } > m_text
 
-  .preinit_array     :
-  {
-    . = ALIGN(4);
-    PROVIDE_HIDDEN (__preinit_array_start = .);
-    KEEP (*(.preinit_array*))
-    PROVIDE_HIDDEN (__preinit_array_end = .);
-    . = ALIGN(4);
-  } > m_text
-  
-  .init_array :
-  {
-    . = ALIGN(4);
-    PROVIDE_HIDDEN (__init_array_start = .);
-    KEEP (*(SORT(.init_array.*)))
-    KEEP (*(.init_array*))
-    PROVIDE_HIDDEN (__init_array_end = .);
-    . = ALIGN(4);
-  } > m_text
-  
-  .fini_array :
-  {
-    . = ALIGN(4);
-    PROVIDE_HIDDEN (__fini_array_start = .);
-    KEEP (*(SORT(.fini_array.*)))
-    KEEP (*(.fini_array*))
-    PROVIDE_HIDDEN (__fini_array_end = .);
-    . = ALIGN(4);
-  } > m_text
+    /* .data section which is used for initialized data */
 
-  /* Used by the startup to initialize data */
-  __DATA_ROM = .;
-  _sidata = LOADADDR(.data);
+    .data : AT (_sidata)
+    {
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _sdata = . ;
 
-  /* Initialized data sections */
-  .data :  AT(__DATA_ROM)
-  {
-    . = ALIGN(4);
-    _sdata = .;        /* create a global symbol at data start */
-    *(.data)           /* .data sections */
-    *(.data*)          /* .data* sections */
+        *(.data)
+        *(.data.*)
+        *(.gnu.linkonce.d*)
 
-    . = ALIGN(4);
-    _edata = .;        /* define a global symbol at data end */
-  } > m_data
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
 
-  __DATA_END = __DATA_ROM + (_edata - _sdata);
-  text_end = ORIGIN(m_text) + LENGTH(m_text);
-  ASSERT(__DATA_END <= text_end, "region m_text overflowed with text and data")
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .data secion */
+        _edata = . ;
+    } >RAM
 
-  .resource_table :
-  {
-    . = ALIGN(4);
-    KEEP (*(.resource_table*))
-    . = ALIGN(4);
-  } > m_data
-  
+    .stack : 
+    {
+        . = ALIGN(4);
+        _sstack = .;
+        . = . + _system_stack_size;
+        . = ALIGN(4);
+        _estack = .;
+    } >RAM
 
-  /* Uninitialized data section into RAM memory */
-  . = ALIGN(4);
-  .bss :
-  {
-    /* This is used by the startup in order to initialize the .bss secion */
-    _sbss = .;         /* define a global symbol at bss start */
-    __bss_start__ = _sbss;
-    *(.bss)
-    *(.bss*)
-    *(COMMON)
+    __bss_start = .;
+    .bss :
+    {
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .bss secion */
+        _sbss = .;
 
-    . = ALIGN(4);
-    _ebss = .;         /* define a global symbol at bss end */
-    __bss_end__ = _ebss;
-  } > m_data
+        *(.bss)
+        *(.bss.*)
+        *(COMMON)
 
-  /* User_heap_stack section, used to check that there is enough RAM left */
-  ._user_heap_stack :
-  {
-    . = ALIGN(8);
-    PROVIDE ( end = . );
-    PROVIDE ( _end = . );
-    . = . + _Min_Heap_Size;
-    . = . + _Min_Stack_Size;
-    . = ALIGN(8);
-  } > m_data
+        . = ALIGN(4);
+        /* This is used by the startup in order to initialize the .bss secion */
+        _ebss = . ;
+        
+        *(.bss.init)
+    } > RAM
+    __bss_end = .;
 
-  
+    _end = .;
 
-  /* Remove information from the compiler libraries */
-  /DISCARD/ :
-  {
-    libc.a ( * )
-    libm.a ( * )
-    libgcc.a ( * )
-  }
-
-  .ARM.attributes 0 : { *(.ARM.attributes) }
-
+    /* Stabs debugging sections.  */
+    .stab          0 : { *(.stab) }
+    .stabstr       0 : { *(.stabstr) }
+    .stab.excl     0 : { *(.stab.excl) }
+    .stab.exclstr  0 : { *(.stab.exclstr) }
+    .stab.index    0 : { *(.stab.index) }
+    .stab.indexstr 0 : { *(.stab.indexstr) }
+    .comment       0 : { *(.comment) }
+    /* DWARF debug sections.
+     * Symbols in the DWARF debugging sections are relative to the beginning
+     * of the section so we begin them at 0.  */
+    /* DWARF 1 */
+    .debug          0 : { *(.debug) }
+    .line           0 : { *(.line) }
+    /* GNU DWARF 1 extensions */
+    .debug_srcinfo  0 : { *(.debug_srcinfo) }
+    .debug_sfnames  0 : { *(.debug_sfnames) }
+    /* DWARF 1.1 and DWARF 2 */
+    .debug_aranges  0 : { *(.debug_aranges) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    /* DWARF 2 */
+    .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
+    .debug_abbrev   0 : { *(.debug_abbrev) }
+    .debug_line     0 : { *(.debug_line) }
+    .debug_frame    0 : { *(.debug_frame) }
+    .debug_str      0 : { *(.debug_str) }
+    .debug_loc      0 : { *(.debug_loc) }
+    .debug_macinfo  0 : { *(.debug_macinfo) }
+    /* SGI/MIPS DWARF 2 extensions */
+    .debug_weaknames 0 : { *(.debug_weaknames) }
+    .debug_funcnames 0 : { *(.debug_funcnames) }
+    .debug_typenames 0 : { *(.debug_typenames) }
+    .debug_varnames  0 : { *(.debug_varnames) }
 }
