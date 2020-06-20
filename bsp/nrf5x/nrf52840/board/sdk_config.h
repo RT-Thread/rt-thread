@@ -11694,7 +11694,7 @@
 #endif
 // </e>
 
-// </h> 
+// </h>
 //==========================================================
 #ifndef NRFX_SYSTICK_ENABLED
 #define NRFX_SYSTICK_ENABLED 1

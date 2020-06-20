@@ -8,7 +8,6 @@
  * 2020-06-16     guohp1128         first version
  */
 
-
 #include "drv_gpio.h"
 
 #ifdef RT_USING_PIN
@@ -47,16 +46,16 @@ static const struct pin_index pins[] =
     __NRF5X_PIN(29,  0, 29),
     __NRF5X_PIN(30,  0, 30),
     __NRF5X_PIN(31,  0, 31),
-    __NRF5X_PIN(32,  1, 0),
-    __NRF5X_PIN(33,  1, 1),
-    __NRF5X_PIN(34,  1, 2),
-    __NRF5X_PIN(35,  1, 3),
-    __NRF5X_PIN(36,  1, 4),
-    __NRF5X_PIN(37,  1, 5),
-    __NRF5X_PIN(38,  1, 6),
-    __NRF5X_PIN(39,  1, 7),
-    __NRF5X_PIN(40,  1, 8),
-    __NRF5X_PIN(41,  1, 9),
+    __NRF5X_PIN(32,  1, 0 ),
+    __NRF5X_PIN(33,  1, 1 ),
+    __NRF5X_PIN(34,  1, 2 ),
+    __NRF5X_PIN(35,  1, 3 ),
+    __NRF5X_PIN(36,  1, 4 ),
+    __NRF5X_PIN(37,  1, 5 ),
+    __NRF5X_PIN(38,  1, 6 ),
+    __NRF5X_PIN(39,  1, 7 ),
+    __NRF5X_PIN(40,  1, 8 ),
+    __NRF5X_PIN(41,  1, 9 ),
     __NRF5X_PIN(42,  1, 10),
     __NRF5X_PIN(43,  1, 11),
     __NRF5X_PIN(44,  1, 12),
@@ -65,7 +64,7 @@ static const struct pin_index pins[] =
     __NRF5X_PIN(47,  1, 15),
 };
 
-/* EVENTS_IN[n](n=0..7), EVENTS_PORT */
+/* EVENTS_IN[n](n=0..7) and EVENTS_PORT */
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
 {
     {-1, 0, RT_NULL, RT_NULL},
@@ -76,12 +75,12 @@ static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
-		{-1, 0, RT_NULL, RT_NULL},
+	{-1, 0, RT_NULL, RT_NULL},
 };
 
 #define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
-/*pin: 引脚编号*/
+/*pin: the number of pins*/
 static const struct pin_index *get_pin(uint8_t pin)
 {
     const struct pin_index *index;
@@ -143,7 +142,7 @@ static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 
     if (mode == PIN_MODE_OUTPUT)
     {
-        /* output setting */
+		/* output setting */
 		nrf_gpio_cfg_output(pin);
     }
     else if (mode == PIN_MODE_INPUT)
@@ -154,17 +153,17 @@ static void nrf5x_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     else if (mode == PIN_MODE_INPUT_PULLUP)
     {
         /* input setting: pull up. */
-        nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLUP);
+		nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLUP);
     }
     else if (mode == PIN_MODE_INPUT_PULLDOWN)
     {
         /* input setting: pull down. */
-        nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLDOWN);
+		nrf_gpio_cfg_input(pin, NRF_GPIO_PIN_PULLDOWN);
     }
     else if (mode == PIN_MODE_OUTPUT_OD)
     {
         /* output setting: od. */
-         nrf_gpio_cfg(
+		nrf_gpio_cfg(
         pin,
         NRF_GPIO_PIN_DIR_OUTPUT,
         NRF_GPIO_PIN_INPUT_DISCONNECT,
@@ -189,13 +188,13 @@ static void pin_irq_hdr(nrfx_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
 	}
 }
 
-/*args = true : hi_accuracy(IN_EVENT)
-	args = false: lo_accuracy(PORT_EVENT)
-*/
+/*	args = true : hi_accuracy(IN_EVENT)
+ *  args = false: lo_accuracy(PORT_EVENT)
+ */
 static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
                                      rt_uint32_t mode, void (*hdr)(void *args), void *args)
 {
-  const struct pin_index *index;
+	const struct pin_index *index;
 	rt_int32_t irqindex = -1;
 	rt_base_t level;
 	nrfx_err_t err_code;
@@ -205,7 +204,7 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 	index = get_pin(pin);
 	if (index == RT_NULL)
 	{
-			return RT_ENOSYS;
+		return RT_ENOSYS;
 	}
 	
 	irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
@@ -228,29 +227,29 @@ static rt_err_t nrf5x_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
 	}
 	
 	level = rt_hw_interrupt_disable();  
-	pin_irq_hdr_tab[irqindex].pin = pin;
-	pin_irq_hdr_tab[irqindex].hdr = hdr;
+	pin_irq_hdr_tab[irqindex].pin  = pin;
+	pin_irq_hdr_tab[irqindex].hdr  = hdr;
 	pin_irq_hdr_tab[irqindex].mode = mode;
 	pin_irq_hdr_tab[irqindex].args = args;
 	
   if(mode == PIN_IRQ_MODE_RISING)
 	{
 		nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_LOTOHI(args);
-		inConfig.pull=NRF_GPIO_PIN_PULLDOWN;  
+		inConfig.pull = NRF_GPIO_PIN_PULLDOWN;  
 		err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
 	}
 		
 	else if(mode == PIN_IRQ_MODE_FALLING)
 	{
 		nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_HITOLO(args);
-		inConfig.pull=NRF_GPIO_PIN_PULLUP;  
+		inConfig.pull = NRF_GPIO_PIN_PULLUP;  
 		err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
 	}
 	
 	else if(mode == PIN_IRQ_MODE_RISING_FALLING)
 	{
 		nrfx_gpiote_in_config_t inConfig = NRFX_GPIOTE_CONFIG_IN_SENSE_TOGGLE(args);
-		inConfig.pull=NRF_GPIO_PIN_PULLUP;
+		inConfig.pull = NRF_GPIO_PIN_PULLUP;
 		err_code = nrfx_gpiote_in_init(pin, &inConfig, pin_irq_hdr);
 	}
 	
@@ -288,8 +287,8 @@ static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 		if(pin_irq_hdr_tab[i].pin == pin)
 		{
 			level = rt_hw_interrupt_disable();
-			pin_irq_hdr_tab[i].pin = -1;
-			pin_irq_hdr_tab[i].hdr = RT_NULL;
+			pin_irq_hdr_tab[i].pin  = -1;
+			pin_irq_hdr_tab[i].hdr  = RT_NULL;
 			pin_irq_hdr_tab[i].mode = 0;
 			pin_irq_hdr_tab[i].args = RT_NULL;
 			nrfx_gpiote_in_uninit(pin);
@@ -307,7 +306,7 @@ static rt_err_t nrf5x_pin_dettach_irq(struct rt_device *device, rt_int32_t pin)
 static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                                      rt_uint32_t enabled)
 {
-  const struct pin_index *index;  
+    const struct pin_index *index;  
 	rt_base_t level;
 	int i;
 	int irq_quantity;
@@ -315,7 +314,7 @@ static rt_err_t nrf5x_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 	index = get_pin(pin);
 	if (index == RT_NULL)
 	{
-			return RT_ENOSYS;
+		return RT_ENOSYS;
 	}
 	
 	irq_quantity = ITEM_NUM(pin_irq_hdr_tab);
@@ -358,7 +357,7 @@ int rt_hw_pin_init(void)
 {
 	nrfx_err_t err_code;
 
-  err_code = (nrfx_err_t)rt_device_pin_register("pin", &_nrf5x_pin_ops, RT_NULL);
+	err_code = (nrfx_err_t)rt_device_pin_register("pin", &_nrf5x_pin_ops, RT_NULL);
 	err_code = nrfx_gpiote_init(NRFX_GPIOTE_CONFIG_IRQ_PRIORITY);
 	
 	switch(err_code) 
