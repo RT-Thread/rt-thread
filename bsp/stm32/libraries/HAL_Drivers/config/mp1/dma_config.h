@@ -18,8 +18,6 @@
 extern "C" {
 #endif
 
-
-
 /* DMA2 stream0 */
 #if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
 #define SPI1_DMA_RX_IRQHandler           DMA2_Stream0_IRQHandler
