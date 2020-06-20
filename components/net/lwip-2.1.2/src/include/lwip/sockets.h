@@ -489,6 +489,7 @@ typedef struct fd_set
 #define LWIP_SELECT_MAXNFDS FD_SETSIZE
 #endif /* FD_SET */
 
+#if LWIP_SOCKET_SELECT
 /* poll-related defines and types */
 /* @todo: find a better way to guard the definition of these defines and types if already defined */
 #if !defined(POLLIN) && !defined(POLLOUT)
@@ -510,6 +511,7 @@ struct pollfd
   short events;
   short revents;
 };
+#endif
 #endif
 
 /** LWIP_TIMEVAL_PRIVATE: if you want to use the struct timeval provided
