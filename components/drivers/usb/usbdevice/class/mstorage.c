@@ -78,9 +78,9 @@ static struct udevice_descriptor dev_desc =
     USB_DESC_LENGTH_DEVICE,     //bLength;
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    USB_CLASS_MASS_STORAGE,     //bDeviceClass;
-    0x06,                       //bDeviceSubClass;
-    0x50,                       //bDeviceProtocol;
+    0x00,                       //bDeviceClass;
+    0x00,                       //bDeviceSubClass;
+    0x00,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
     _PRODUCT_ID,                //idProduct;
@@ -98,9 +98,9 @@ static struct usb_qualifier_descriptor dev_qualifier =
     sizeof(dev_qualifier),          //bLength
     USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
-    USB_CLASS_MASS_STORAGE,         //bDeviceClass
-    0x06,                           //bDeviceSubClass
-    0x50,                           //bDeviceProtocol
+    0x00,                           //bDeviceClass
+    0x00,                           //bDeviceSubClass
+    0x00,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
     0x01,                           //bNumConfigurations
     0,
