@@ -13,6 +13,26 @@
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
+#include <rthw.h>
+
+struct gpio_irq_def
+{
+    void  *irq_arg[32];
+    void (*irq_cb[32])(void *param);
+    rt_uint8_t irq_type[32];
+    rt_uint8_t state[32];
+};
+
+struct loongson_gpio {
+    rt_uint64_t GPIO0_OEN;
+    rt_uint64_t GPIO1_OEN;    /* Reserved */
+    rt_uint64_t GPIO0_O;
+    rt_uint64_t GPIO1_O;      /* Reserved */
+    rt_uint64_t GPIO0_I;
+    rt_uint64_t GPIO1_I;      /* Reserved */
+    rt_uint64_t GPIO0_INTEN;
+    rt_uint64_t GPIO1_INTEN;  /* Reserved */
+};
 
 int loongson_pin_init(void);
 
