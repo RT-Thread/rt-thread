@@ -28,7 +28,7 @@ struct rt_uart_ls2k
     rt_uint32_t IRQ;
 };
 
-static rt_err_t mipssim_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t ls2k_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct rt_uart_ls2k *uart_dev = RT_NULL;
 
@@ -48,7 +48,7 @@ static rt_err_t mipssim_uart_configure(struct rt_serial_device *serial, struct s
     return RT_EOK;
 }
 
-static rt_err_t mipssim_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t ls2k_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct rt_uart_ls2k *uart_dev = RT_NULL;
 
@@ -88,7 +88,7 @@ static rt_bool_t uart_is_transmit_empty(struct rt_uart_ls2k *uart_dev)
     }
 }
 
-static int mipssim_uart_putc(struct rt_serial_device *serial, char c)
+static int ls2k_uart_putc(struct rt_serial_device *serial, char c)
 {
     struct rt_uart_ls2k *uart_dev = RT_NULL;
 
@@ -104,7 +104,7 @@ static int mipssim_uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-static int mipssim_uart_getc(struct rt_serial_device *serial)
+static int ls2k_uart_getc(struct rt_serial_device *serial)
 {
     struct rt_uart_ls2k *uart_dev = RT_NULL;
 
@@ -141,18 +141,18 @@ static void uart_irq_handler(int vector, void *param)
 
 }
 
-static const struct rt_uart_ops mipssim_uart_ops =
+static const struct rt_uart_ops ls2k_uart_ops =
 {
-    mipssim_uart_configure,
-    mipssim_uart_control,
-    mipssim_uart_putc,
-    mipssim_uart_getc,
+    ls2k_uart_configure,
+    ls2k_uart_control,
+    ls2k_uart_putc,
+    ls2k_uart_getc,
 };
 
 struct rt_uart_ls2k uart_dev0 =
 {
-    (void *)UART0_BASE,
-    4,
+    (void *)UARTx_BASE(0),
+    LS2K_UART_0_1_2_3_IRQ,
 };
 struct rt_serial_device serial;
 
@@ -164,7 +164,7 @@ void rt_hw_uart_init(void)
 
     uart = &uart_dev0;
 
-    serial.ops    = &mipssim_uart_ops;
+    serial.ops    = &ls2k_uart_ops;
     serial.config = config;
 
     rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial, "UART");

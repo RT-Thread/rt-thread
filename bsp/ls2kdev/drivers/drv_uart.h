@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-04-05     bigmagic     Initial version
+ * 2020-04-05     bigmagic     Initial version
  */
 
 #ifndef _DRV_UART_H__
