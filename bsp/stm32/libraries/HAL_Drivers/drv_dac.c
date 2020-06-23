@@ -22,7 +22,6 @@ static DAC_HandleTypeDef dac_config[] =
 #ifdef BSP_USING_DAC1
     DAC1_CONFIG,
 #endif
-
 };
 
 struct stm32_dac
