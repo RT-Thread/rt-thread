@@ -329,6 +329,12 @@ static void sensor(int argc, char **argv)
             case RT_SENSOR_VENDOR_SENSIRION:
                 rt_kprintf("vendor    :Sensirion\n");
                 break;
+            case RT_SENSOR_VENDOR_TI:
+                rt_kprintf("vendor    :Texas Instruments\n");
+                break;
+            case RT_SENSOR_VENDOR_PLANTOWER:
+                rt_kprintf("vendor    :Plantower\n");
+                break;
         }
         rt_kprintf("model     :%s\n", info.model);
         switch (info.unit)

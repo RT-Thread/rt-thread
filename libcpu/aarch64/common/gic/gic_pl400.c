@@ -14,7 +14,6 @@
 
 #include "gic_pl400.h"
 #include "cp15.h"
-#include "iomap.h"
 
 #define ARM_GIC_MAX_NR 1
 struct arm_gic

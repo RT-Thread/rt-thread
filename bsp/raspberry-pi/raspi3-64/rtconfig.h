@@ -47,6 +47,7 @@
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40003
 #define ARCH_CPU_64BIT
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 

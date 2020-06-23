@@ -66,7 +66,7 @@ typedef uintptr_t mem_ptr_t;
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
 #endif
 
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME)
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else

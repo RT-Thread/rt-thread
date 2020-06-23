@@ -338,6 +338,9 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread));
 
+    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
+        return RT_EOK;
+
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
@@ -436,6 +439,9 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread) == RT_FALSE);
+
+    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
+        return RT_EOK;
 
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {

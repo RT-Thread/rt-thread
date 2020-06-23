@@ -16,7 +16,7 @@
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1) && !defined(BSP_USING_UART2) \
     && !defined(BSP_USING_UART3) && !defined(BSP_USING_UART4)
     #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
+    /* this driver can be disabled at menuconfig -> Hardware Drivers Config -> On-chip Peripheral Drivers -> Enable UART */
 #endif
 
 enum
@@ -64,8 +64,8 @@ static struct gd32_uart_config uart_config[] =
 #ifdef BSP_USING_UART3
     {
         "uart3",
-        USART3,
-        USART3_IRQn,
+        UART3,
+        UART3_IRQn,
     },
 #endif
 #ifdef BSP_USING_UART4
@@ -137,7 +137,7 @@ static rt_err_t gd32_configure(struct rt_serial_device *serial,
         break;
     }
     usart_hardware_flow_rts_config(usart->uart_base, USART_RTS_DISABLE);
-    usart_hardware_flow_cts_config(usart->uart_base, USART_RTS_DISABLE);
+    usart_hardware_flow_cts_config(usart->uart_base, USART_CTS_DISABLE);
     usart_receive_config(usart->uart_base, USART_RECEIVE_ENABLE);
     usart_transmit_config(usart->uart_base, USART_TRANSMIT_ENABLE);
     usart_enable(usart->uart_base);
@@ -319,6 +319,22 @@ int rt_hw_usart_init(void)
 {
     rt_size_t obj_num;
     int index;
+
+#ifdef BSP_USING_UART0
+    rcu_periph_clock_enable(RCU_USART0);
+#endif
+#ifdef BSP_USING_UART1
+    rcu_periph_clock_enable(RCU_USART1);
+#endif
+#ifdef BSP_USING_UART2
+    rcu_periph_clock_enable(RCU_USART2);
+#endif
+#ifdef BSP_USING_UART3
+    rcu_periph_clock_enable(RCU_UART3);
+#endif
+#ifdef BSP_USING_UART4
+    rcu_periph_clock_enable(RCU_UART4);
+#endif
 
     obj_num = sizeof(uart_obj) / sizeof(struct gd32_uart);
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;

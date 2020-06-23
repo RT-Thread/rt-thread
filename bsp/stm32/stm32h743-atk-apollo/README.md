@@ -60,6 +60,7 @@
 | USB Device        |   暂不支持   |                                       |
 | USB Host          |   暂不支持   |                                       |
 | IWG               |     支持     |                                       |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 
 ## 使用说明
 
@@ -118,6 +119,7 @@ msh >
 ## 注意事项
 
 1. 使用UART2 DMA模式时，HEAP的CACHE策略设置了WT模式，所以在使用rt_device_read读取数据之前必须调用用SCB_InvalidateDCache_by_Addr或者SCB_InvalidateDCache，已确保读取到数据的正确性。
+2. 使用FAL操作片内FLASH，每次读写必须是32字节的整数倍。
 
 ## 联系人信息
 

@@ -17,10 +17,6 @@
 #include <dfs_posix.h>
 #endif
 
-#ifdef RT_USING_PTHREADS
-#include <pthread.h>
-#endif
-
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif

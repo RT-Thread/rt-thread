@@ -13,6 +13,8 @@ config SOC_MIMXRT1064DVL6A
     bool
     select SOC_MIMXRT1064_SERIES
     select BSP_USING_4MFLASH
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "On-chip Peripheral Drivers"

@@ -17,7 +17,11 @@
 
 ## 2. 编译说明
 
-环境搭建在Ubuntu上进行，首先下载[mips-sde-elf-gcc][2]。该文件存放在网盘中，提取码为ucb2。
+环境搭建在**Ubuntu**上进行，首先下载[mips-sde-elf-gcc][2]。该文件存放在网盘中，提取码为ucb2。
+
+**windows**上环境搭建可以下载如下工具链：
+
+[mips-2015.05-19-mips-sde-elf.exe](https://sourcery.mentor.com/GNUToolchain/package13851/public/mips-sde-elf/mips-2015.05-19-mips-sde-elf.exe)
 
 解压到指定的目录，然后修改当前bsp目录下的`rtconfig.py`文件。
 
@@ -27,7 +31,13 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH   = "/opt/mips-2015.05-19-mips-sde-elf-i686-pc-linux-gnu/mips-2015.05/bin/"
 ```
 
-然后在控制台输入`scons`即可，可以生成`rtthread.elf`、`rtthread.bin`文件，其中`rtthread.elf`是下载到开发板上的程序。
+如果不想修改`rtconfig.py`可以尝试第二种办法：
+
+安装好工具链后，假设工具链安装在`D:\mgc\embedded\codebench`目录下。使用env工具，打开console后，进入到命令行环境中，需要手动设置工具链的环境变量`RTT_EXEC_PATH`：
+
+    set RTT_EXEC_PATH=D:\mgc\embedded\codebench\bin
+
+使用env工具，可以在console下进入到`bsp/ls2kdev`目录中，然后在控制台输入`scons`即可，可以生成`rtthread.elf`、`rtthread.bin`文件，其中`rtthread.elf`是下载到开发板上的程序。
 
 ## 3.程序运行
 
