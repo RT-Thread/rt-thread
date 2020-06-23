@@ -108,14 +108,14 @@ Hello RT-Thread!
 4.  wwdg 设备会在喂狗前触发中断，LD5 会在中断中不停的闪烁；
 5. 在终端输入 `wwdg_sample` ，获取 wwdg 设备 Finsh 命令；
 6. `wwdg_sample run` 开启 wwdg 设备；
-7. wwdg_sample set [0 - 7] 设置 wwdg 设备分频率；
+7. `wwdg_sample set` 设置 wwdg 设备分频率；
 8. 通过调整 wwdg 设备分频率，开发板上 LD5 会有不同的闪烁频率。
 
 ##### 2. DAC
 
-	1. 在 bsp 下打开 env 工具；
- 	2. 输入`menuconfig`命令， 进入 Hardware Drivers config 打开 dac，保存并退出；
- 	3. 输入  `scons --target=iar` 命令重新生成工程；
+1. 在 bsp 下打开 env 工具；
+2. 输入`menuconfig`命令， 进入 Hardware Drivers config 打开 dac，保存并退出；
+3. 输入  `scons --target=iar` 命令重新生成工程；
 
 ###### Finsh
 
@@ -133,7 +133,7 @@ msh />dac enable 1
 dac1 channel 1 enables success
 ```
 
-设置 DAC 设备某个通道的数据可以使用命令 dac write` 后面跟通道号。
+设置 DAC 设备某个通道的数据可以使用命令 `dac write` 后面跟通道号。
 
 ```c
 msh />dac write 1 1000
