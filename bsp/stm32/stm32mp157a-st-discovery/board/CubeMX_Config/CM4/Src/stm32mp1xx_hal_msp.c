@@ -23,6 +23,7 @@
 #include "main.h"
 /* USER CODE BEGIN Includes */
 #include "stpmic.h"
+#include "rtconfig.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
