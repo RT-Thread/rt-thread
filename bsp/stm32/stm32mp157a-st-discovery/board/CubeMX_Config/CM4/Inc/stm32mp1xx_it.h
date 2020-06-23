@@ -56,8 +56,14 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
+void WWDG1_IRQHandler(void);
+void LPTIM1_IRQHandler(void);
 void IPCC_RX1_IRQHandler(void);
 void IPCC_TX1_IRQHandler(void);
+void LPTIM2_IRQHandler(void);
+void LPTIM3_IRQHandler(void);
+void LPTIM4_IRQHandler(void);
+void LPTIM5_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

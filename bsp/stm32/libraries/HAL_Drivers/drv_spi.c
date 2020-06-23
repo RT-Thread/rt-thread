@@ -9,6 +9,7 @@
  * 2018-12-11     greedyhao    Porting for stm32f7xx
  * 2019-01-03     zylx         modify DMA initialization and spixfer function
  * 2020-01-15     whj4674672   Porting for stm32h7xx
+ * 2020-06-18     thread-liu   Porting for stm32mp1xx
  */
 
 #include <rtthread.h>
@@ -190,7 +191,11 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     }
 
     LOG_D("sys freq: %d, pclk2 freq: %d, SPI limiting freq: %d, BaudRatePrescaler: %d",
+#if defined(SOC_SERIES_STM32MP1)
+          HAL_RCC_GetSystemCoreClockFreq(),
+#else
           HAL_RCC_GetSysClockFreq(),
+#endif
           SPI_APB_CLOCK,
           cfg->max_hz,
           spi_handle->Init.BaudRatePrescaler);
@@ -209,7 +214,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->State = HAL_SPI_STATE_RESET;
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
     spi_handle->Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
-#elif defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
     spi_handle->Init.Mode                       = SPI_MODE_MASTER;
     spi_handle->Init.NSS                        = SPI_NSS_SOFT;
     spi_handle->Init.NSSPMode                   = SPI_NSS_PULSE_DISABLE;
@@ -414,7 +419,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_rx.Instance = spi_config[i].dma_rx->Instance;
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             spi_bus_obj[i].dma.handle_rx.Init.Channel = spi_config[i].dma_rx->channel;
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1)
             spi_bus_obj[i].dma.handle_rx.Init.Request = spi_config[i].dma_rx->request;
 #endif
             spi_bus_obj[i].dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
@@ -424,7 +429,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
             spi_bus_obj[i].dma.handle_rx.Init.Mode                = DMA_NORMAL;
             spi_bus_obj[i].dma.handle_rx.Init.Priority            = DMA_PRIORITY_HIGH;
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1)
             spi_bus_obj[i].dma.handle_rx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
             spi_bus_obj[i].dma.handle_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
             spi_bus_obj[i].dma.handle_rx.Init.MemBurst            = DMA_MBURST_INC4;
@@ -441,6 +446,10 @@ static int rt_hw_spi_bus_init(void)
                 SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
                 /* Delay after an RCC peripheral clock enabling */
                 tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
+#elif defined(SOC_SERIES_STM32MP1) 
+                __HAL_RCC_DMAMUX_CLK_ENABLE(); 
+                SET_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_rx->dma_rcc);
+                tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_rx->dma_rcc);
 #endif
                 UNUSED(tmpreg); /* To avoid compiler warnings */
             }
@@ -452,7 +461,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_tx.Instance = spi_config[i].dma_tx->Instance;
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
             spi_bus_obj[i].dma.handle_tx.Init.Channel = spi_config[i].dma_tx->channel;
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1)
             spi_bus_obj[i].dma.handle_tx.Init.Request = spi_config[i].dma_tx->request;
 #endif
             spi_bus_obj[i].dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
@@ -462,7 +471,7 @@ static int rt_hw_spi_bus_init(void)
             spi_bus_obj[i].dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
             spi_bus_obj[i].dma.handle_tx.Init.Mode                = DMA_NORMAL;
             spi_bus_obj[i].dma.handle_tx.Init.Priority            = DMA_PRIORITY_LOW;
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1)
             spi_bus_obj[i].dma.handle_tx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
             spi_bus_obj[i].dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
             spi_bus_obj[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
@@ -479,6 +488,10 @@ static int rt_hw_spi_bus_init(void)
                 SET_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
                 /* Delay after an RCC peripheral clock enabling */
                 tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
+#elif defined(SOC_SERIES_STM32MP1)
+                __HAL_RCC_DMAMUX_CLK_ENABLE(); 
+                SET_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_tx->dma_rcc);
+                tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_tx->dma_rcc);
 #endif
                 UNUSED(tmpreg); /* To avoid compiler warnings */
             }

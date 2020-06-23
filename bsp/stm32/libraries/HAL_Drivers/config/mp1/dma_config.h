@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-01-02     zylx         first version
  * 2019-01-08     SummerGift   clean up the code
+ * 2020-06-20     thread-liu   add stm32mp1
  */
 
 #ifndef __DMA_CONFIG_H__
@@ -19,12 +20,12 @@ extern "C" {
 #endif
 
 /* DMA2 stream0 */
-#if defined(BSP_SPI1_RX_USING_DMA) && !defined(SPI1_RX_DMA_INSTANCE)
-#define SPI1_DMA_RX_IRQHandler           DMA2_Stream0_IRQHandler
-#define SPI1_RX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
-#define SPI1_RX_DMA_INSTANCE             DMA2_Stream0
-#define SPI1_RX_DMA_CHANNEL              DMA_REQUEST_SPI1_RX
-#define SPI1_RX_DMA_IRQ                  DMA2_Stream0_IRQn
+#if defined(BSP_UART3_RX_USING_DMA) && !defined(UART3_RX_DMA_INSTANCE)
+#define UART3_RX_DMA_IRQHandler          DMA2_Stream0_IRQHandler
+#define UART3_RX_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
+#define UART3_RX_DMA_INSTANCE            DMA2_Stream0
+#define UART3_RX_DMA_CHANNEL             DMA_REQUEST_USART3_RX
+#define UART3_RX_DMA_IRQ                 DMA2_Stream0_IRQn
 #elif defined(BSP_SPI4_RX_USING_DMA) && !defined(SPI4_RX_DMA_INSTANCE)
 #define SPI4_DMA_RX_IRQHandler           DMA2_Stream0_IRQHandler
 #define SPI4_RX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
@@ -40,12 +41,12 @@ extern "C" {
 #endif
     
 /* DMA2 stream1 */
-#if defined(BSP_SPI1_TX_USING_DMA) && !defined(SPI1_TX_DMA_INSTANCE)
-#define SPI1_DMA_TX_IRQHandler           DMA2_Stream1_IRQHandler
-#define SPI1_TX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
-#define SPI1_TX_DMA_INSTANCE             DMA2_Stream1
-#define SPI1_TX_DMA_CHANNEL              DMA_REQUEST_SPI1_RX
-#define SPI1_TX_DMA_IRQ                  DMA2_Stream1_IRQn
+#if defined(BSP_UART3_TX_USING_DMA) && !defined(BSP_UART3_TX_USING_INSTANCE)
+#define UART3_TX_DMA_IRQHandler           DMA2_Stream1_IRQHandler
+#define UART3_TX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
+#define UART3_TX_DMA_INSTANCE             DMA2_Stream1
+#define UART3_TX_DMA_CHANNEL              DMA_REQUEST_USART3_TX
+#define UART3_TX_DMA_IRQ                  DMA2_Stream1_IRQn
 #elif defined(BSP_SPI4_TX_USING_DMA) && !defined(SPI4_TX_DMA_INSTANCE)
 #define SPI4_DMA_TX_IRQHandler           DMA2_Stream1_IRQHandler
 #define SPI4_TX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
