@@ -130,7 +130,7 @@ rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second)
 }
 
 #ifdef RTC_SYNC_USING_NTP
-static void ntp_sync_thread_enrty(void *param)
+static void ntp_sync_thread_entry(void *param)
 {
     extern time_t ntp_sync_to_rtc(const char *host_name);
     /* first sync delay for network connect */
@@ -153,7 +153,7 @@ int rt_rtc_ntp_sync_init(void)
         return 0;
     }
 
-    thread = rt_thread_create("ntp_sync", ntp_sync_thread_enrty, RT_NULL, 1536, 26, 2);
+    thread = rt_thread_create("ntp_sync", ntp_sync_thread_entry, RT_NULL, 1536, 26, 2);
     if (thread)
     {
         rt_thread_startup(thread);
