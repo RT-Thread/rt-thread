@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-#if (defined(BSP_USING_SOFT_I2C) && defined(BSP_USING_GPIO))
+#if (defined(BSP_USING_SOFT_I2C) && defined(BSP_USING_GPIO) && defined(RT_USING_I2C_BITOPS) && defined(RT_USING_I2C) && defined(RT_USING_PIN))
 
 #include <rtthread.h>
 #include <rthw.h>
@@ -251,4 +251,4 @@ int rt_soft_i2c_init(void)
 }
 INIT_BOARD_EXPORT(rt_soft_i2c_init);
 
-#endif //(defined(BSP_USING_SOFT_I2C) && defined(BSP_USING_GPIO))
+#endif //#if (defined(BSP_USING_SOFT_I2C) && defined(BSP_USING_GPIO) && defined(RT_USING_I2C_BITOPS) && defined(RT_USING_I2C) && defined(RT_USING_PIN))

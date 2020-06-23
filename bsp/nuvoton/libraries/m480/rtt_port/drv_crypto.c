@@ -13,7 +13,8 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_CRYPTO) || defined(BSP_USING_TRNG) || defined(BSP_USING_CRC)
+#if ((defined(BSP_USING_CRYPTO) || defined(BSP_USING_TRNG) || defined(BSP_USING_CRC)) && defined(RT_USING_HWCRYPTO))
+
 #include <string.h>
 
 #include <rtdevice.h>
@@ -838,4 +839,4 @@ int nu_hwcrypto_device_init(void)
 }
 INIT_DEVICE_EXPORT(nu_hwcrypto_device_init);
 
-#endif //#if defined(BSP_USING_CRYPTO) || defined(BSP_USING_TRNG) || defined(BSP_USING_CRC) 
+#endif //#if ((defined(BSP_USING_CRYPTO) || defined(BSP_USING_TRNG) || defined(BSP_USING_CRC)) && defined(RT_USING_HWCRYPTO))

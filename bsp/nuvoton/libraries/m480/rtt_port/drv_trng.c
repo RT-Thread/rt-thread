@@ -12,9 +12,10 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_TRNG)
+#if (defined(BSP_USING_TRNG) && defined(RT_HWCRYPTO_USING_RNG))
 
 #include <rtdevice.h>
+#include <stdlib.h>
 #include "NuMicro.h"
 
 #define NU_CRYPTO_TRNG_NAME "nu_TRNG"
@@ -78,5 +79,4 @@ rt_uint32_t nu_trng_rand(struct hwcrypto_rng *ctx)
     return nu_trng_run();
 }
 
-
-#endif
+#endif //#if (defined(BSP_USING_TRNG) && defined(RT_HWCRYPTO_USING_RNG))

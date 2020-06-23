@@ -56,7 +56,7 @@ int nu_fmc_read(long addr, uint8_t *buf, size_t size)
 {
     size_t read_size = 0;
     uint32_t addr_end = addr + size;
-    uint32_t isp_rdata;
+    uint32_t isp_rdata = 0;
     rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
     SYS_UnlockReg();
 
@@ -96,7 +96,7 @@ int nu_fmc_write(long addr, const uint8_t *buf, size_t size)
 {
     size_t write_size = 0;
     uint32_t addr_end = addr + size;
-    uint32_t isp_rdata;
+    uint32_t isp_rdata = 0;
 
     rt_mutex_take(g_mutex_fmc, RT_WAITING_FOREVER);
     SYS_UnlockReg();

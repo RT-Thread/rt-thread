@@ -53,13 +53,13 @@ static  rt_err_t nu_capture_get_pulsewidth(struct rt_inputcapture_device *inputc
 
 
 /* Private variables ------------------------------------------------------------*/
-#if (BSP_USING_BPWM_CAPTURE0_CHMSK!=0)
+#if (BSP_USING_BPWM0_CAPTURE_CHMSK!=0)
 static const char *nu_bpwm0_device_name[BPWM_CHANNEL_NUM] = { "bpwm0i0", "bpwm0i1", "bpwm0i2", "bpwm0i3", "bpwm0i4", "bpwm0i5"};
 static nu_capture_t *nu_bpwm0_capture[BPWM_CHANNEL_NUM] = {0};
 static nu_bpwm_dev_t nu_bpwm0_dev = {.bpwm_base = BPWM0};
 #endif
 
-#if (BSP_USING_BPWM_CAPTURE1_CHMSK!=0)
+#if (BSP_USING_BPWM1_CAPTURE_CHMSK!=0)
 static const char *nu_bpwm1_device_name[BPWM_CHANNEL_NUM] = { "bpwm1i0", "bpwm1i1", "bpwm1i2", "bpwm1i3", "bpwm1i4", "bpwm1i5"};
 static nu_capture_t *nu_bpwm1_capture[BPWM_CHANNEL_NUM] = {0};
 static nu_bpwm_dev_t nu_bpwm1_dev = {.bpwm_base = BPWM1};
@@ -118,48 +118,48 @@ void bpwm_interrupt_handler(nu_capture_t *nu_capture[], uint32_t u32ChMsk)
     }
 }
 
-#if (BSP_USING_BPWM_CAPTURE0_CHMSK!=0)
+#if (BSP_USING_BPWM0_CAPTURE_CHMSK!=0)
 void BPWM0_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    bpwm_interrupt_handler(nu_bpwm0_capture, BSP_USING_BPWM_CAPTURE0_CHMSK);
+    bpwm_interrupt_handler(nu_bpwm0_capture, BSP_USING_BPWM0_CAPTURE_CHMSK);
 
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif  //(BSP_USING_BPWM_CAPTURE0_CHMSK!=0)
+#endif  //(BSP_USING_BPWM0_CAPTURE_CHMSK!=0)
 
-#if (BSP_USING_BPWM_CAPTURE1_CHMSK!=0)
+#if (BSP_USING_BPWM1_CAPTURE_CHMSK!=0)
 void BPWM1_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
 
-    bpwm_interrupt_handler(nu_bpwm1_capture, BSP_USING_BPWM_CAPTURE1_CHMSK);
+    bpwm_interrupt_handler(nu_bpwm1_capture, BSP_USING_BPWM1_CAPTURE_CHMSK);
 
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif  //(BSP_USING_BPWM_CAPTURE1_CHMSK!=0)
+#endif  //(BSP_USING_BPWM1_CAPTURE_CHMSK!=0)
 
 static rt_err_t nu_capture_get_pulsewidth(struct rt_inputcapture_device *inputcapture, rt_uint32_t *pulsewidth_us)
 {
     rt_err_t ret = RT_EOK;
     nu_capture_t *nu_capture;
-    float u32TempCnt;
+    float fTempCnt;
 
     nu_capture = (nu_capture_t *)inputcapture;
 
     if (nu_capture->u32CurrentFallingCnt)
     {
         if (nu_capture->u32CurrentFallingCnt > nu_capture->u32LastRisingCnt)
-            u32TempCnt = nu_capture->u32CurrentFallingCnt - nu_capture->u32LastRisingCnt;
+            fTempCnt = nu_capture->u32CurrentFallingCnt - nu_capture->u32LastRisingCnt;
         else    /* Overrun case */
-            u32TempCnt = nu_capture->u32CurrentFallingCnt + (0x10000 - nu_capture->u32LastRisingCnt);
+            fTempCnt = nu_capture->u32CurrentFallingCnt + (0x10000 - nu_capture->u32LastRisingCnt);
 
-        *pulsewidth_us = u32TempCnt * nu_capture->bpwm_dev->fUsPerTick;
+        *pulsewidth_us = fTempCnt * nu_capture->bpwm_dev->fUsPerTick;
         nu_capture->input_data_level = RT_FALSE;
         nu_capture->u32LastFallingCnt = nu_capture->u32CurrentFallingCnt;
         nu_capture->u32CurrentFallingCnt = 0;
@@ -167,11 +167,11 @@ static rt_err_t nu_capture_get_pulsewidth(struct rt_inputcapture_device *inputca
     else if (nu_capture->u32CurrentRisingCnt)
     {
         if (nu_capture->u32CurrentRisingCnt > nu_capture->u32LastFallingCnt)
-            u32TempCnt = nu_capture->u32CurrentRisingCnt - nu_capture->u32LastFallingCnt;
+            fTempCnt = nu_capture->u32CurrentRisingCnt - nu_capture->u32LastFallingCnt;
         else    /* Overrun case */
-            u32TempCnt = nu_capture->u32CurrentRisingCnt + (0x10000 - nu_capture->u32LastFallingCnt);
+            fTempCnt = nu_capture->u32CurrentRisingCnt + (0x10000 - nu_capture->u32LastFallingCnt);
 
-        *pulsewidth_us = u32TempCnt * nu_capture->bpwm_dev->fUsPerTick;
+        *pulsewidth_us = fTempCnt * nu_capture->bpwm_dev->fUsPerTick;
         nu_capture->input_data_level = RT_TRUE;
         nu_capture->u32LastRisingCnt = nu_capture->u32CurrentRisingCnt;
         nu_capture->u32CurrentRisingCnt = 0;
@@ -309,21 +309,21 @@ static int nu_bpwm_capture_device_init(void)
 {
     for (int i = 0; i < BPWM_CHANNEL_NUM; i++)
     {
-#if (BSP_USING_BPWM_CAPTURE0_CHMSK!=0)
-        if (BSP_USING_BPWM_CAPTURE0_CHMSK & (0x1 << i))
+#if (BSP_USING_BPWM0_CAPTURE_CHMSK!=0)
+        if (BSP_USING_BPWM0_CAPTURE_CHMSK & (0x1 << i))
         {
             nu_bpwm0_capture[i] = (nu_capture_t *)rt_malloc(sizeof(nu_capture_t));
             bpwm_init(nu_bpwm0_capture[i], i, &nu_bpwm0_dev, nu_bpwm0_device_name[i], BPWM0_IRQn);
         }
-#endif //#if (BSP_USING_BPWM_CAPTURE0_CHMSK!=0)
+#endif //#if (BSP_USING_BPWM0_CAPTURE_CHMSK!=0)
 
-#if (BSP_USING_BPWM_CAPTURE1_CHMSK!=0)
-        if (BSP_USING_BPWM_CAPTURE1_CHMSK & (0x1 << i))
+#if (BSP_USING_BPWM1_CAPTURE_CHMSK!=0)
+        if (BSP_USING_BPWM1_CAPTURE_CHMSK & (0x1 << i))
         {
             nu_bpwm1_capture[i] = (nu_capture_t *)rt_malloc(sizeof(nu_capture_t));
             bpwm_init(nu_bpwm1_capture[i], i, &nu_bpwm1_dev, nu_bpwm1_device_name[i], BPWM1_IRQn);
         }
-#endif //#if (BSP_USING_BPWM_CAPTURE1_CHMSK!=0)
+#endif //#if (BSP_USING_BPWM1_CAPTURE_CHMSK!=0)
     }
 
     return 0;

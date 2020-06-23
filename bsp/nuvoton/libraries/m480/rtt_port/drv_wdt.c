@@ -296,7 +296,7 @@ static rt_err_t wdt_init(rt_watchdog_t *dev)
 
 static uint32_t wdt_get_working_hz(void)
 {
-    uint32_t clk, hz;
+    uint32_t clk, hz = 0;
 
     clk = wdt_get_module_clock();
 
@@ -312,6 +312,9 @@ static uint32_t wdt_get_working_hz(void)
 
     case CLK_CLKSEL1_WDTSEL_HCLK_DIV2048:
         hz = CLK_GetHCLKFreq() / 2048;
+        break;
+
+    default:
         break;
     }
 

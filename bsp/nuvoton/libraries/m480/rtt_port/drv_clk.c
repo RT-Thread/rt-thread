@@ -203,7 +203,13 @@ static void pm_run(struct rt_pm *pm, rt_uint8_t mode)
 
 static void hw_timer_init(void)
 {
-    /* Assign and initialise a hardware timer for pm usage */
+    /* Assign a hardware timer for pm usage. */
+    SYS_UnlockReg();
+    CLK_SetModuleClock(PM_TIMER_MODULE, PM_TIMER_SEL_LXT, MODULE_NoMsk);
+    CLK_EnableModuleClock(PM_TIMER_MODULE);
+    SYS_LockReg();
+
+    /* Initialise timer and enable wakeup function. */
     TIMER_Open(PM_TIMER, TIMER_CONTINUOUS_MODE, 1);
     TIMER_SET_PRESCALE_VALUE(PM_TIMER, 0);
     TIMER_EnableInt(PM_TIMER);

@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_UI2C)
+#if (defined(BSP_USING_UI2C) && defined(RT_USING_I2C))
 
 #include <rtdevice.h>
 #include <NuMicro.h>
@@ -378,4 +378,4 @@ int rt_hw_ui2c_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_ui2c_init);
 
-#endif //#if defined(BSP_USING_UI2C)
+#endif //#if (defined(BSP_USING_UI2C) && defined(RT_USING_I2C))
