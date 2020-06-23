@@ -118,16 +118,17 @@ config RT_USING_LWIP
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
 
-            config RT_USING_LWIP210
-                bool "lwIP v2.1.0"
+	    config RT_USING_LWIP212
+                bool "lwIP v2.1.2"
+
         endchoice
 
-        if (RT_USING_LWIP210 || RT_USING_LWIP202)
+        if (RT_USING_LWIP202 || RT_USING_LWIP212)
             config RT_USING_LWIP_IPV6
                 bool "IPV6 protocol"
                 default n
                 select NETDEV_USING_IPV6
-                select NETDEV_IPV6_SCOPES if RT_USING_LWIP210
+                select NETDEV_IPV6_SCOPES if RT_USING_LWIP212
         endif
 
         config RT_LWIP_IGMP

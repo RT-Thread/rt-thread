@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-11-06     balanceTWK        first version
+ * 2020-06-16     thread-liu        add stm32mp1 
  */
 
 #ifndef __DRV_GPIO_H__
@@ -16,9 +17,14 @@
 
 #define __STM32_PORT(port)  GPIO##port##_BASE
 
+#if defined(SOC_SERIES_STM32MP1)
+#define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x1000UL) )) + PIN)
+#else
 #define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
 #define GET_GPIO_PORT(PIN) (GPIO_TypeDef *)( GPIOA_BASE + (uint32_t) ( PIN >> 4 ) * 0x0400UL ) 
-#define GET_GPIO_PIN(PIN) (rt_uint16_t)( 1 << ( PIN & 0x0F ) )
+#define GET_GPIO_PIN(PIN)  (rt_uint16_t)( 1 << ( PIN & 0x0F ) )
+#endif
+
 
 #define __STM32_PIN(index, gpio, gpio_index)                                \
     {                                                                       \

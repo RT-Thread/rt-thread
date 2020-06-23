@@ -104,6 +104,9 @@ extern "C" {
 #include "h7/sdio_config.h"
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
+#elif  defined(SOC_SERIES_STM32MP1)
+#include "mp1/dma_config.h"
+#include "mp1/uart_config.h"
 #endif
 
 #ifdef __cplusplus
