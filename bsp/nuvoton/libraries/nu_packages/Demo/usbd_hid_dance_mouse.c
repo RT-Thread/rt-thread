@@ -36,7 +36,7 @@ static void usb_thread_entry(void *parameter)
 {
     int8_t i8MouseTable[] = { -16, -16, -16, 0, 16, 16, 16, 0};
     uint8_t u8MouseIdx = 0;
-    uint8_t u8MoveLen, u8MouseMode = 1;
+    uint8_t u8MoveLen=0, u8MouseMode = 1;
     uint8_t pu8Buf[4];
 
     rt_device_t device = (rt_device_t)parameter;

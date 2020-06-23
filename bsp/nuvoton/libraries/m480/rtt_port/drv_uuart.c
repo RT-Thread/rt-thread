@@ -333,7 +333,8 @@ static rt_err_t nu_pdma_uuart_rx_config(struct rt_serial_device *serial, uint8_t
 
 static void nu_pdma_uuart_rx_cb(void *pvOwner, uint32_t u32Events)
 {
-    rt_size_t recv_len, transferred_rxbyte = 0;
+    rt_size_t recv_len = 0;
+    rt_size_t transferred_rxbyte = 0;
     struct rt_serial_device *serial = (struct rt_serial_device *)pvOwner;
     nu_uuart_t puuart = (nu_uuart_t)serial;
     RT_ASSERT(serial != RT_NULL);
@@ -498,10 +499,10 @@ static rt_err_t nu_uuart_control(struct rt_serial_device *serial, int cmd, void 
         else if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX) /* Disable DMA-RX */
         {
             /* Disable Receive Line interrupt & Stop DMA RX transfer. */
+            flag = UUART_RLS_INT_MASK;
             nu_pdma_channel_terminate(((nu_uuart_t)serial)->pdma_chanid_rx);
             UUART_PDMA_DISABLE(uuart_base, UUART_PDMACTL_RXPDMAEN_Msk);
             UUART_DisableInt(uuart_base, flag);
-
         }
         break;
 

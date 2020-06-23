@@ -15,6 +15,7 @@
 
 #include <rtdevice.h>
 #include <NuMicro.h>
+#include <drv_pdma.h>
 
 #if !defined(NU_I2S_DMA_FIFO_SIZE)
     #define NU_I2S_DMA_FIFO_SIZE (2048)
@@ -42,8 +43,8 @@ typedef enum
 
 typedef enum
 {
-    NuAcodecRole_Master,
-    NuAcodecRole_Slave,
+    NU_ACODEC_ROLE_MASTER,
+    NU_ACODEC_ROLE_SLAVE,
 } E_NU_ACODEC_ROLE;
 
 typedef struct
@@ -74,7 +75,7 @@ struct nu_i2s_dai
     int8_t  pdma_chanid;
     rt_uint8_t *fifo;
     int16_t  fifo_block_idx;
-    DSCT_T pdma_descs[NU_I2S_DMA_BUF_BLOCK_NUMBER];
+    nu_pdma_desc_t pdma_descs[NU_I2S_DMA_BUF_BLOCK_NUMBER];
 };
 typedef struct nu_i2s_dai *nu_i2s_dai_t;
 

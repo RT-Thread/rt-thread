@@ -13,8 +13,13 @@
 #ifndef __DRV_PDMA_H__
 #define __DRV_PDMA_H__
 
+#include <rtconfig.h>
 #include <rtthread.h>
 #include <NuMicro.h>
+
+#ifndef NU_PDMA_SGTBL_POOL_SIZE
+    #define NU_PDMA_SGTBL_POOL_SIZE (16)
+#endif
 
 #define NU_PDMA_CAP_NONE    (0 << 0)
 
@@ -24,6 +29,8 @@
 #define NU_PDMA_EVENT_ALL               (NU_PDMA_EVENT_ABORT | NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT)
 #define NU_PDMA_EVENT_MASK              NU_PDMA_EVENT_ALL
 #define NU_PDMA_UNUSED                  (-1)
+
+#define NU_PDMA_SG_LIMITED_DISTANCE     ((PDMA_DSCT_NEXT_NEXT_Msk>>PDMA_DSCT_NEXT_NEXT_Pos)+1)
 
 typedef enum
 {
@@ -53,6 +60,9 @@ nu_pdma_cb_handler_t nu_pdma_callback_hijack(int i32ChannID, nu_pdma_cb_handler_
 // For scatter-gather DMA
 rt_err_t nu_pdma_desc_setup(int i32ChannID, nu_pdma_desc_t dma_desc, uint32_t u32DataWidth, uint32_t u32AddrSrc, uint32_t u32AddrDst, int32_t TransferCnt, nu_pdma_desc_t next);
 rt_err_t nu_pdma_sg_transfer(int i32ChannID, nu_pdma_desc_t head, uint32_t u32IdleTimeout_us);
+rt_err_t nu_pdma_sgtbls_allocate(nu_pdma_desc_t *ppsSgtbls, int num);
+void nu_pdma_sgtbls_free(nu_pdma_desc_t *ppsSgtbls, int num);
+
 
 // For memory actor
 void *nu_pdma_memcpy(void *dest, void *src, unsigned int count);

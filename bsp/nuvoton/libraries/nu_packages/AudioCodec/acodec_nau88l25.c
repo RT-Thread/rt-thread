@@ -40,7 +40,7 @@ static rt_err_t nau88l25_mixer_query(rt_uint32_t ui32Units, rt_uint32_t *ui32Val
 nu_acodec_ops nu_acodec_ops_nau88l25 =
 {
     .name = "NAU88L25",
-    .role = NuAcodecRole_Master,
+    .role = NU_ACODEC_ROLE_MASTER,
     .config = { // Default settings.
         .samplerate = 48000,
         .channels = 2,
@@ -299,7 +299,7 @@ static rt_err_t nau88l25_init(void)
     I2C_WriteNAU88L25(REG_SAR_CTRL,  RES_SEL_70K_OHMS | COMP_SPEED_1US | SAMPLE_SPEED_4US);
     I2C_WriteNAU88L25(REG_I2S_PCM_CTRL1,  AIFMT0_STANDI2S);
 
-    if (nu_acodec_ops_nau88l25.role == NuAcodecRole_Master)
+    if (nu_acodec_ops_nau88l25.role == NU_ACODEC_ROLE_MASTER)
     {
         I2C_WriteNAU88L25(REG_I2S_PCM_CTRL2,  LRC_DIV_DIV32 | ADCDAT0_OE | MS0_MASTER | BLCKDIV_DIV8);   //301A:Master 3012:Slave
     }

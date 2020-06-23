@@ -561,7 +561,8 @@ static rt_err_t nu_pdma_uart_rx_config(struct rt_serial_device *serial, uint8_t 
 
 static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
 {
-    rt_size_t recv_len, transferred_rxbyte = 0;
+    rt_size_t recv_len=0;
+	  rt_size_t transferred_rxbyte = 0;
     struct rt_serial_device *serial = (struct rt_serial_device *)pvOwner;
     nu_uart_t puart = (nu_uart_t)serial;
     RT_ASSERT(serial != RT_NULL);
@@ -661,6 +662,8 @@ static rt_size_t nu_uart_dma_transmit(struct rt_serial_device *serial, rt_uint8_
     }
     else if (direction == RT_SERIAL_DMA_RX)
     {
+        UART_DISABLE_INT(uart_base, UART_INTEN_RLSIEN_Msk);
+        UART_PDMA_DISABLE(uart_base, UART_INTEN_RXPDMAEN_Msk);
         // If config.bufsz = 0, serial will trigger once.
         ((nu_uart_t)serial)->rxdma_trigger_len = size;
         ((nu_uart_t)serial)->rx_write_offset = 0;
@@ -728,9 +731,11 @@ static rt_err_t nu_uart_control(struct rt_serial_device *serial, int cmd, void *
         else if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX) /* Disable DMA-RX */
         {
             /* Disable Receive Line interrupt & Stop DMA RX transfer. */
+#if defined(RT_SERIAL_USING_DMA)
             nu_pdma_channel_terminate(((nu_uart_t)serial)->pdma_chanid_rx);
             UART_DISABLE_INT(uart_base, UART_INTEN_RLSIEN_Msk);
             UART_PDMA_DISABLE(uart_base, UART_INTEN_RXPDMAEN_Msk);
+#endif
         }
         break;
 

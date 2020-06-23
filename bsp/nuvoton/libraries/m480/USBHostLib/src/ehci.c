@@ -918,7 +918,7 @@ static int visit_qtd(qTD_T *qtd)
 static void scan_asynchronous_list()
 {
     QH_T    *qh, *qh_tmp;
-    qTD_T   *q_pre, *qtd, *qtd_tmp;
+    qTD_T   *q_pre=NULL, *qtd, *qtd_tmp;
     UTR_T   *utr;
 
     qh =  QH_PTR(_H_qh->HLink);

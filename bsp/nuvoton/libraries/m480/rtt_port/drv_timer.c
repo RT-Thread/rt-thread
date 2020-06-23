@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_TIMER)
+#if (defined(BSP_USING_TIMER) && defined(RT_USING_HWTIMER))
 
 #include <rtdevice.h>
 #include <NuMicro.h>
@@ -322,4 +322,4 @@ void TMR3_IRQHandler(void)
 }
 #endif
 
-#endif //#if defined(BSP_USING_TIMER)
+#endif //#if (defined(BSP_USING_TIMER) && defined(RT_USING_HWTIMER))

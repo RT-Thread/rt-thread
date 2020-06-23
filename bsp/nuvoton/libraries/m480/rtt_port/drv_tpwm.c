@@ -13,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_TPWM)
+#if (defined(BSP_USING_TPWM) && defined(RT_USING_PWM))
 
 #define LOG_TAG                 "drv.tpwm"
 #define DBG_ENABLE
@@ -163,6 +163,8 @@ static rt_err_t nu_tpwm_control(struct rt_device_pwm *tpwm_dev, int cmd, void *a
         return nu_tpwm_set(tpwm_dev, tpwm_config);
     case PWM_CMD_GET:
         return nu_tpwm_get(tpwm_dev, tpwm_config);
+    default:
+        break;
     }
     return -(RT_EINVAL);
 }
@@ -232,4 +234,4 @@ int rt_hw_tpwm_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_tpwm_init);
 
-#endif //if defined(BSP_USING_TPWM)
+#endif //#if (defined(BSP_USING_TPWM) && defined(RT_USING_PWM))

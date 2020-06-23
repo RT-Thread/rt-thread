@@ -19,12 +19,12 @@
 /* Private define ---------------------------------------------------------------*/
 
 /* convert the real year and month value to the format of struct tm. */
-#define CONV_TO_TM_YEAR(year)           (year - 1900)
-#define CONV_TO_TM_MON(mon)             (mon - 1)
+#define CONV_TO_TM_YEAR(year)           ((year) - 1900)
+#define CONV_TO_TM_MON(mon)             ((mon) - 1)
 
 /* convert the tm_year and tm_mon from struct tm to the real value. */
-#define CONV_FROM_TM_YEAR(tm_year)      (tm_year + 1900)
-#define CONV_FROM_TM_MON(tm_mon)        (tm_mon + 1)
+#define CONV_FROM_TM_YEAR(tm_year)      ((tm_year) + 1900)
+#define CONV_FROM_TM_MON(tm_mon)        ((tm_mon) + 1)
 
 /* rtc date upper bound reaches the year of 2099. */
 #define RTC_TM_UPPER_BOUND                                              \
@@ -49,29 +49,24 @@
 /* Private typedef --------------------------------------------------------------*/
 
 /* Private functions ------------------------------------------------------------*/
-
-/* Redundant entries                                                    */
-/* static rt_err_t nu_rtc_init(rt_device_t dev);                        */
-/* static rt_err_t nu_rtc_open(rt_device_t dev, rt_uint16_t oflag);     */
-/* static rt_err_t nu_rtc_close(rt_device_t dev);                       */
 static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args);
 
 #if defined (NU_RTC_SUPPORT_IO_RW)
-    static rt_size_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    static rt_size_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+static rt_size_t nu_rtc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+static rt_size_t nu_rtc_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
 #endif
 
 static rt_err_t nu_rtc_is_date_valid(const time_t *const t);
 static void nu_rtc_init(void);
 
 #if defined(RT_USING_ALARM)
-    static void nu_rtc_alarm_reset(void);
+static void nu_rtc_alarm_reset(void);
 #endif
 
 /* Public functions -------------------------------------------------------------*/
 #if defined (NU_RTC_SUPPORT_MSH_CMD)
-    extern rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
-    extern rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
+extern rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day);
+extern rt_err_t set_time(rt_uint32_t hour, rt_uint32_t minute, rt_uint32_t second);
 #endif
 
 /* Private variables ------------------------------------------------------------*/
@@ -82,7 +77,9 @@ static void nu_rtc_init(void)
 {
     /* hw rtc initialise */
     RTC_Open(NULL);
-    RTC_DisableInt(RTC_INTEN_TICKIEN_Msk | RTC_INTEN_ALMIEN_Msk | RTC_INTEN_TAMP0IEN_Msk);
+    RTC_DisableInt(RTC_INTEN_ALMIEN_Msk | RTC_INTEN_TICKIEN_Msk | RTC_INTEN_TAMP0IEN_Msk |
+                   RTC_INTEN_TAMP1IEN_Msk | RTC_INTEN_TAMP2IEN_Msk | RTC_INTEN_TAMP3IEN_Msk |
+                   RTC_INTEN_TAMP4IEN_Msk | RTC_INTEN_TAMP5IEN_Msk);
 
 #if defined(RT_USING_ALARM)
 
@@ -97,15 +94,22 @@ static void nu_rtc_init(void)
 /* Reset alarm settings to avoid the unwanted values remain in rtc registers. */
 static void nu_rtc_alarm_reset(void)
 {
-    RTC_WaitAccessEnable();
+    S_RTC_TIME_DATA_T alarm;
 
     /* Reset alarm time and calendar. */
-    RTC->TALM = 0;
-    RTC->CALM = 0;
+    alarm.u32Year       = RTC_YEAR2000;
+    alarm.u32Month      = 0;
+    alarm.u32Day        = 0;
+    alarm.u32Hour       = 0;
+    alarm.u32Minute     = 0;
+    alarm.u32Second     = 0;
+    alarm.u32TimeScale  = RTC_CLOCK_24;
+
+    RTC_SetAlarmDateAndTime(&alarm);
 
     /* Reset alarm time mask and calendar mask. */
-    RTC->CAMSK = 0;
-    RTC->TAMSK = 0;
+    RTC_SetAlarmDateMask(0, 0, 0, 0, 0, 0);
+    RTC_SetAlarmTimeMask(0, 0, 0, 0, 0, 0);
 
     /* Clear alarm flag for safe */
     RTC_CLEAR_ALARM_INT_FLAG();
@@ -144,23 +148,6 @@ int rt_hw_rtc_init(void)
     return (int)ret;
 }
 INIT_BOARD_EXPORT(rt_hw_rtc_init);
-
-
-/* Redundant device.init() entry.                                       */
-/* static rt_err_t nu_rtc_init(rt_device_t dev)                         */
-/* {                                                                    */
-/*     return RT_EOK;                                                   */
-/* }                                                                    */
-/* Redundant device.open() entry.                                       */
-/* static rt_err_t nu_rtc_open(rt_device_t dev, rt_uint16_t oflag)      */
-/* {                                                                    */
-/*     return RT_EOK;                                                   */
-/* }                                                                    */
-/* Redundant device.close() entry.                                      */
-/* static rt_err_t nu_rtc_close(rt_device_t dev)                        */
-/* {                                                                    */
-/*     return RT_EOK;                                                   */
-/* }                                                                    */
 
 
 #if defined (NU_RTC_SUPPORT_IO_RW)
@@ -354,7 +341,7 @@ void RTC_IRQHandler(void)
     {
         RTC_CLEAR_ALARM_INT_FLAG();
 
-        /* Send an alarm event to notify rt-thread alarm serive. */
+        /* Send an alarm event to notify rt-thread alarm service. */
         rt_alarm_update(&device_rtc, NULL);
     }
 #endif

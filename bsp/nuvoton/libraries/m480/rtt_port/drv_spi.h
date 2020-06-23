@@ -17,6 +17,10 @@
 #include <NuMicro.h>
 #include <nu_bitutil.h>
 
+#if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA)
+    #include <drv_pdma.h>
+#endif
+
 struct nu_spi
 {
     struct rt_spi_bus dev;

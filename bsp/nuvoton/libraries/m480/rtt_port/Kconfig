@@ -19,6 +19,11 @@ config SOC_SERIES_M480
             int "Specify maximum mem actor for memfun"
             range 1 4
             default 4
+
+            config  NU_PDMA_SGTBL_POOL_SIZE
+            int "Specify maximum scatter-gather pool size"
+            range 1 32
+            default 16
         endif
 
     config BSP_USING_FMC
@@ -34,6 +39,7 @@ config SOC_SERIES_M480
     menuconfig BSP_USING_CLK
         bool "Enable CLK"
         select RT_USING_PM
+        select BSP_USING_TMR
         default y
         help
             Choose this option if you need CLK/PM function.

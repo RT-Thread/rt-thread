@@ -12,7 +12,8 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_CRC)
+#if (defined(BSP_USING_CRC) && defined(RT_HWCRYPTO_USING_CRC))
+
 #include <string.h>
 
 #include <rtdevice.h>
@@ -130,5 +131,4 @@ rt_uint32_t nu_crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, rt_siz
     return crc_result ^ 0x00 ^ ctx->crc_cfg.xorout;
 }
 
-
-#endif
+#endif //#if (defined(BSP_USING_CRC) && defined(RT_HWCRYPTO_USING_CRC))

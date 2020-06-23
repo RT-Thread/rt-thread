@@ -611,6 +611,10 @@ typedef struct
      * |        |          |0 = 12 MHz internal high speed RC oscillator (HIRC) clock is not stable or disabled.
      * |        |          |1 = 12 MHz internal high speed RC oscillator (HIRC) clock is stable and enabled.
      * |        |          |Note: This bit is read only.
+     * |[6]     |HIRC48MSTB|HIRC 48MHz Clock Source Stable Flag (Read Only)
+     * |        |          |0 = 48 MHz internal high speed RC oscillator (HIRC) clock is not stable or disabled.
+     * |        |          |1 = 48 MHz internal high speed RC oscillator (HIRC) clock is stable and enabled.
+     * |        |          |Note: This bit is read only.
      * |[7]     |CLKSFAIL  |Clock Switching Fail Flag (Read Only)
      * |        |          |This bit is updated when software switches system clock source
      * |        |          |If switch target clock is stable, this bit will be set to 0
@@ -1481,6 +1485,9 @@ typedef struct
 
 #define CLK_STATUS_HIRCSTB_Pos           (4)                                               /*!< CLK_T::STATUS: HIRCSTB Position        */
 #define CLK_STATUS_HIRCSTB_Msk           (0x1ul << CLK_STATUS_HIRCSTB_Pos)                 /*!< CLK_T::STATUS: HIRCSTB Mask            */
+
+#define CLK_STATUS_HIRC48MSTB_Pos        (6)                                               /*!< CLK_T::STATUS: HIRC48MSTB Position     */
+#define CLK_STATUS_HIRC48MSTB_Msk        (0x1ul << CLK_STATUS_HIRC48MSTB_Pos)              /*!< CLK_T::STATUS: HIRC48MSTB Mask         */
 
 #define CLK_STATUS_CLKSFAIL_Pos          (7)                                               /*!< CLK_T::STATUS: CLKSFAIL Position       */
 #define CLK_STATUS_CLKSFAIL_Msk          (0x1ul << CLK_STATUS_CLKSFAIL_Pos)                /*!< CLK_T::STATUS: CLKSFAIL Mask           */

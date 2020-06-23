@@ -18,9 +18,7 @@
 
 #include <drv_spi.h>
 
-#if defined(BSP_USING_SPI_PDMA) || defined(BSP_USING_QSPI_PDMA)
-    #include <drv_pdma.h>
-#endif
+
 /* Private define ---------------------------------------------------------------*/
 
 #ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD

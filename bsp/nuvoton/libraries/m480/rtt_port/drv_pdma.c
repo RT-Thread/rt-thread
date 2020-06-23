@@ -23,8 +23,10 @@
 // RT_DEV_NAME_PREFIX pdma
 
 #ifndef NU_PDMA_MEMFUN_ACTOR_MAX
-    #define NU_PDMA_MEMFUN_ACTOR_MAX 4
+    #define NU_PDMA_MEMFUN_ACTOR_MAX (4)
 #endif
+
+#define NU_PDMA_SG_TBL_MAXSIZE         (NU_PDMA_SG_LIMITED_DISTANCE/sizeof(DSCT_T))
 
 #define NU_PDMA_CH_MAX (PDMA_CH_MAX)     /* Specify maximum channels of PDMA */
 #define NU_PDMA_CH_Pos (0)               /* Specify first channel number of PDMA */
@@ -174,6 +176,11 @@ static const nu_pdma_periph_ctl_t g_nu_pdma_peripheral_ctl_pool[ ] =
 
 static struct nu_pdma_memfun_actor nu_pdma_memfun_actor_arr[NU_PDMA_MEMFUN_ACTOR_MAX];
 
+/* SG table pool */
+static DSCT_T nu_pdma_sgtbl_arr[NU_PDMA_SGTBL_POOL_SIZE] = { 0 };
+static uint32_t nu_pdma_sgtbl_token[RT_ALIGN(NU_PDMA_SGTBL_POOL_SIZE, 32) / 32];
+static rt_mutex_t g_mutex_sg = RT_NULL;
+
 static int nu_pdma_peripheral_set(uint32_t u32PeriphType)
 {
     int idx = 0;
@@ -198,10 +205,15 @@ static void nu_pdma_periph_ctrl_fill(int i32ChannID, int i32CtlPoolIdx)
 
 static void nu_pdma_init(void)
 {
+    int latest = 0;
     if (nu_pdma_inited)
         return;
 
     g_mutex_res = rt_mutex_create("pdmalock", RT_IPC_FLAG_FIFO);
+    RT_ASSERT(g_mutex_res != RT_NULL);
+
+    g_mutex_sg = rt_mutex_create("sgtbles", RT_IPC_FLAG_FIFO);
+    RT_ASSERT(g_mutex_sg != RT_NULL);
 
     nu_pdma_chn_mask = ~NU_PDMA_CH_Msk;
     rt_memset(nu_pdma_chn_arr, 0x00, sizeof(nu_pdma_chn_t));
@@ -211,6 +223,16 @@ static void nu_pdma_init(void)
     /* Initialize PDMA setting */
     PDMA_Open(PDMA, NU_PDMA_CH_Msk);
     PDMA_Close(PDMA);
+
+    rt_memset(&nu_pdma_sgtbl_arr[0], 0x00, sizeof(nu_pdma_sgtbl_arr));
+
+    /* Assign first SG table address as PDMA SG table base address */
+    PDMA->SCATBA = (uint32_t)&nu_pdma_sgtbl_arr[0];
+
+    /* Initializa token pool. */
+    rt_memset(&nu_pdma_sgtbl_token[0], 0xff, sizeof(nu_pdma_sgtbl_token));
+    latest = NU_PDMA_SGTBL_POOL_SIZE / 32;
+    nu_pdma_sgtbl_token[latest] ^= ~((1 << (NU_PDMA_SGTBL_POOL_SIZE % 32)) - 1) ;
 
     nu_pdma_inited = 1;
 }
@@ -507,6 +529,8 @@ static void nu_pdma_channel_memctrl_fill(nu_pdma_memctrl_t eMemCtl, uint32_t *pu
         *pu32SrcCtl = PDMA_SAR_INC;
         *pu32DstCtl = PDMA_DAR_INC;
         break;
+    default:
+        break;
     }
 }
 
@@ -569,6 +593,119 @@ exit_nu_pdma_desc_setup:
     return -(ret);
 }
 
+static int nu_pdma_sgtbls_token_allocate(void)
+{
+    int idx, i;
+
+    int pool_size = sizeof(nu_pdma_sgtbl_token) / sizeof(uint32_t);
+
+    for (i = 0; i < pool_size; i++)
+    {
+        if ((idx = nu_ctz(nu_pdma_sgtbl_token[i])) != 32)
+        {
+            nu_pdma_sgtbl_token[i] &= ~(1 << idx);
+            idx += i * 32;
+            return idx;
+        }
+    }
+
+    /* No available */
+    return -1;
+}
+
+static void nu_pdma_sgtbls_token_free(nu_pdma_desc_t psSgtbls)
+{
+    int idx = (int)(psSgtbls - &nu_pdma_sgtbl_arr[0]);
+    RT_ASSERT(idx >= 0);
+    RT_ASSERT((idx + 1) <= NU_PDMA_SGTBL_POOL_SIZE);
+    nu_pdma_sgtbl_token[idx / 32] |= (1 << (idx % 32));
+}
+
+rt_err_t nu_pdma_sgtbls_allocate(nu_pdma_desc_t *ppsSgtbls, int num)
+{
+    int i, j, idx;
+
+    RT_ASSERT(ppsSgtbls != NULL);
+    RT_ASSERT(num <= NU_PDMA_SG_TBL_MAXSIZE);
+
+    rt_mutex_take(g_mutex_sg, RT_WAITING_FOREVER);
+
+    for (i = 0; i < num; i++)
+    {
+        ppsSgtbls[i] = NULL;
+        /* Get token. */
+        if ((idx = nu_pdma_sgtbls_token_allocate()) < 0)
+        {
+            rt_kprintf("No available sgtbl.\n");
+            goto fail_nu_pdma_sgtbls_allocate;
+        }
+
+        ppsSgtbls[i] = (nu_pdma_desc_t)&nu_pdma_sgtbl_arr[idx];
+    }
+
+    rt_mutex_release(g_mutex_sg);
+
+    return RT_EOK;
+
+fail_nu_pdma_sgtbls_allocate:
+
+    /* Release allocated tables. */
+    for (j = 0; j < i; j++)
+    {
+        if (ppsSgtbls[j] != NULL)
+        {
+            nu_pdma_sgtbls_token_free(ppsSgtbls[j]);
+        }
+        ppsSgtbls[j] = NULL;
+    }
+
+    rt_mutex_release(g_mutex_sg);
+    return -RT_ERROR;
+}
+
+void nu_pdma_sgtbls_free(nu_pdma_desc_t *ppsSgtbls, int num)
+{
+    int i;
+
+    RT_ASSERT(ppsSgtbls != NULL);
+    RT_ASSERT(num <= NU_PDMA_SG_TBL_MAXSIZE);
+
+    rt_mutex_take(g_mutex_sg, RT_WAITING_FOREVER);
+
+    for (i = 0; i < num; i++)
+    {
+        if (ppsSgtbls[i] != NULL)
+        {
+            nu_pdma_sgtbls_token_free(ppsSgtbls[i]);
+        }
+        ppsSgtbls[i] = NULL;
+    }
+
+    rt_mutex_release(g_mutex_sg);
+}
+
+static rt_err_t nu_pdma_sgtbls_valid(nu_pdma_desc_t head)
+{
+    uint32_t node_addr;
+    nu_pdma_desc_t node = head;
+
+    do
+    {
+        node_addr = (uint32_t)node;
+        if ((node_addr < PDMA->SCATBA) || (node_addr - PDMA->SCATBA) >= NU_PDMA_SG_LIMITED_DISTANCE)
+        {
+            rt_kprintf("The distance is over %d between 0x%08x and 0x%08x. \n", NU_PDMA_SG_LIMITED_DISTANCE, PDMA->SCATBA, node);
+            rt_kprintf("Please use nu_pdma_sgtbl_allocate to allocate valid sg-table.\n");
+            return RT_ERROR;
+        }
+
+        node = (nu_pdma_desc_t)(node->NEXT + PDMA->SCATBA);
+
+    } while (((uint32_t)node != PDMA->SCATBA) && (node != head));
+
+     return RT_EOK;
+}
+
 static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_desc_t head, uint32_t u32IdleTimeout_us)
 {
     PDMA_DisableTimeout(PDMA,  1 << i32ChannID);
@@ -627,6 +764,8 @@ rt_err_t nu_pdma_sg_transfer(int i32ChannID, nu_pdma_desc_t head, uint32_t u32Id
     if (!head)
         goto exit_nu_pdma_sg_transfer;
     else if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
+        goto exit_nu_pdma_sg_transfer;
+    else if ( (ret=nu_pdma_sgtbls_valid(head)) != RT_EOK ) /* Check SG-tbls. */
         goto exit_nu_pdma_sg_transfer;
 
     psPeriphCtl = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos].m_spPeripCtl;

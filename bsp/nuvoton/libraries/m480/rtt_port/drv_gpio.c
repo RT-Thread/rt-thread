@@ -12,7 +12,7 @@
 
 #include <rtconfig.h>
 
-#if defined(BSP_USING_GPIO)
+#if (defined(BSP_USING_GPIO) && defined(RT_USING_PIN))
 
 #include <rtdevice.h>
 #include <rthw.h>
@@ -226,7 +226,7 @@ static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     uint32_t u32IntAttribs;
     rt_int32_t irqindex;
     rt_err_t ret = RT_EOK;
-	
+
     if (nu_port_check(pin))
         return -(RT_ERROR);
 
@@ -253,6 +253,8 @@ static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
             u32IntAttribs = GPIO_INT_HIGH;
         else if (pin_irq_hdr_tab[irqindex].mode == PIN_IRQ_MODE_LOW_LEVEL)
             u32IntAttribs = GPIO_INT_LOW;
+        else
+            goto exit_nu_gpio_irq_enable;
 
         GPIO_EnableInt(PORT, NU_GET_PINS(pin), u32IntAttribs);
 
@@ -314,7 +316,7 @@ void GPB_IRQHandler(void)
 void GPC_IRQHandler(void)
 {
     rt_uint32_t int_status;
-   
+
     rt_interrupt_enter();
 
     int_status = PC->INTSRC;
@@ -372,7 +374,7 @@ void GPG_IRQHandler(void)
     int_status = PG->INTSRC;
     pin_irq_hdr(int_status, NU_PG);
     PG->INTSRC = int_status;
-	
+
     rt_interrupt_leave();
 }
 
@@ -389,4 +391,4 @@ void GPH_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#endif //#if defined(BSP_USING_GPIO)
+#endif //#if (defined(BSP_USING_GPIO) && defined(RT_USING_PIN))

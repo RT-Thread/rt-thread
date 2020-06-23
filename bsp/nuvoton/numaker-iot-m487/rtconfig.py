@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections -Wuninitialized'
 
     if BUILD == 'debug':
         DEVICE = DEVICE + ' -DDEBUG'

@@ -180,6 +180,9 @@ static rt_err_t nu_spii2s_pdma_sc_config(nu_i2s_t psNuSPII2s, E_NU_I2S_DAI dai)
         u32Src = (uint32_t)&spii2s_base->RX;
         u32Dst = (uint32_t)&psNuSPII2sDai->fifo[0];
         break;
+
+    default:
+        return -RT_EINVAL;
     }
 
     result = nu_pdma_callback_register(psNuSPII2sDai->pdma_chanid,
@@ -192,17 +195,17 @@ static rt_err_t nu_spii2s_pdma_sc_config(nu_i2s_t psNuSPII2s, E_NU_I2S_DAI dai)
     {
         /* Setup dma descriptor entry */
         result = nu_pdma_desc_setup(psNuSPII2sDai->pdma_chanid,    // Channel ID
-                                    &psNuSPII2sDai->pdma_descs[i], // this descriptor
+                                    psNuSPII2sDai->pdma_descs[i], // this descriptor
                                     32, // 32-bits
                                     (dai == NU_I2S_DAI_PLAYBACK) ? u32Src + (i * NU_I2S_DMA_BUF_BLOCK_SIZE) : u32Src, //Memory or RXFIFO
                                     (dai == NU_I2S_DAI_PLAYBACK) ? u32Dst : u32Dst + (i * NU_I2S_DMA_BUF_BLOCK_SIZE), //TXFIFO or Memory
                                     (int32_t)NU_I2S_DMA_BUF_BLOCK_SIZE / 4,   // Transfer count
-                                    &psNuSPII2sDai->pdma_descs[(i + 1) % NU_I2S_DMA_BUF_BLOCK_NUMBER]); // Next descriptor
+                                    psNuSPII2sDai->pdma_descs[(i + 1) % NU_I2S_DMA_BUF_BLOCK_NUMBER]); // Next descriptor
         RT_ASSERT(result == RT_EOK);
     }
 
     /* Assign head descriptor */
-    result = nu_pdma_sg_transfer(psNuSPII2sDai->pdma_chanid, &psNuSPII2sDai->pdma_descs[0], 0);
+    result = nu_pdma_sg_transfer(psNuSPII2sDai->pdma_chanid, psNuSPII2sDai->pdma_descs[0], 0);
     RT_ASSERT(result == RT_EOK);
 
     return result;
@@ -270,7 +273,7 @@ static rt_err_t nu_spii2s_dai_setup(nu_i2s_t psNuSPII2s, struct rt_audio_configu
             goto exit_nu_spii2s_dai_setup;
 
         SPII2S_Open(spii2s_base,
-                    (psNuSPII2s->AcodecOps->role == NuAcodecRole_Master) ? SPII2S_MODE_SLAVE : SPII2S_MODE_MASTER,
+                    (psNuSPII2s->AcodecOps->role == NU_ACODEC_ROLE_MASTER) ? SPII2S_MODE_SLAVE : SPII2S_MODE_MASTER,
                     pconfig->samplerate,
                     (((pconfig->samplebits / 8) - 1) << SPI_I2SCTL_WDWIDTH_Pos),
                     (pconfig->channels == 1) ? SPII2S_MONO : SPII2S_STEREO,
@@ -632,6 +635,7 @@ int rt_hw_spii2s_init(void)
             psNuSPII2sDai->pdma_chanid = -1;
             psNuSPII2sDai->fifo_block_idx = 0;
             RT_ASSERT(nu_hw_spii2s_pdma_allocate(psNuSPII2sDai) == RT_EOK);
+            RT_ASSERT(nu_pdma_sgtbls_allocate(&psNuSPII2sDai->pdma_descs[0], NU_I2S_DMA_BUF_BLOCK_NUMBER) == RT_EOK);
         }
 
         /* Register ops of audio device */

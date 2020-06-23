@@ -312,6 +312,60 @@ void EPWM_DisableADCTrigger(EPWM_T *epwm, uint32_t u32ChannelNum)
 }
 
 /**
+ * @brief Enable and configure trigger ADC prescale
+ * @param[in] epwm The pointer of the specified EPWM module
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @param[in] u32Prescale ADC prescale. Valid values are between 0 to 0xF.
+ * @param[in] u32PrescaleCnt ADC prescale counter. Valid values are between 0 to 0xF.
+ * @retval 0 Success.
+ * @retval -1 Failed.
+ * @details This function is used to enable and configure trigger ADC prescale.
+ * @note User can configure only when ADC trigger prescale is disabled.
+ * @note ADC prescale counter must less than ADC prescale.
+ */
+int32_t EPWM_EnableADCTriggerPrescale(EPWM_T *epwm, uint32_t u32ChannelNum, uint32_t u32Prescale, uint32_t u32PrescaleCnt)
+{
+    /* User can write only when PSCENn(n = 0 ~ 5) is 0 */
+    if ((epwm)->EADCPSCCTL & (1UL << u32ChannelNum))
+        return (-1);
+
+    if(u32ChannelNum < 4UL)
+    {
+        (epwm)->EADCPSC0 = ((epwm)->EADCPSC0 & ~((EPWM_EADCPSC0_EADCPSC0_Msk) << (u32ChannelNum << 3))) | \
+                           (u32Prescale << (u32ChannelNum << 3));
+        (epwm)->EADCPSCNT0 = ((epwm)->EADCPSCNT0 & ~((EPWM_EADCPSCNT0_PSCNT0_Msk) << (u32ChannelNum << 3))) | \
+                             (u32PrescaleCnt << (u32ChannelNum << 3));
+    }
+    else
+    {
+        (epwm)->EADCPSC1 = ((epwm)->EADCPSC1 & ~((EPWM_EADCPSC1_EADCPSC4_Msk) << ((u32ChannelNum - 4UL) << 3))) | \
+                           (u32Prescale << ((u32ChannelNum - 4UL) << 3));
+        (epwm)->EADCPSCNT1 = ((epwm)->EADCPSCNT1 & ~((EPWM_EADCPSCNT1_PSCNT4_Msk) << ((u32ChannelNum - 4UL) << 3))) | \
+                           (u32PrescaleCnt << ((u32ChannelNum - 4UL) << 3));
+    }
+
+    (epwm)->EADCPSCCTL |= EPWM_EADCPSCCTL_PSCEN0_Msk << u32ChannelNum;
+
+    return 0;
+}
+
+/**
+ * @brief Disable Trigger ADC prescale function
+ * @param[in] epwm The pointer of the specified EPWM module
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5
+ * @return None
+ * @details This function is used to disable trigger ADC prescale.
+ */
+void EPWM_DisableADCTriggerPrescale(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->EADCPSCCTL &= ~(EPWM_EADCPSCCTL_PSCEN0_Msk << u32ChannelNum);
+}
+
+/**
  * @brief Clear selected channel trigger ADC flag
  * @param[in] epwm The pointer of the specified EPWM module
  *                - EPWM0 : EPWM Group 0
@@ -1454,6 +1508,186 @@ uint32_t EPWM_GetWrapAroundFlag(EPWM_T *epwm, uint32_t u32ChannelNum)
 void EPWM_ClearWrapAroundFlag(EPWM_T *epwm, uint32_t u32ChannelNum)
 {
     (epwm)->STATUS = (EPWM_STATUS_CNTMAXF0_Msk << u32ChannelNum);
+}
+
+/**
+ * @brief Enable fault detect of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @param[in] u32AfterPrescaler Fault Detect Clock Source is from prescaler output. Valid values are TRUE (after prescaler) or FALSE (before prescaler).
+ * @param[in] u32ClkSel Fault Detect Clock Select.
+ *              - \ref EPWM_FDCTL_FDCKSEL_CLK_DIV_1
+ *              - \ref EPWM_FDCTL_FDCKSEL_CLK_DIV_2
+ *              - \ref EPWM_FDCTL_FDCKSEL_CLK_DIV_4
+ *              - \ref EPWM_FDCTL_FDCKSEL_CLK_DIV_8
+ * @return None
+ * @details This function is used to enable fault detect of selected channel.
+ */
+void EPWM_EnableFaultDetect(EPWM_T *epwm, uint32_t u32ChannelNum, uint32_t u32AfterPrescaler, uint32_t u32ClkSel)
+{
+    (epwm)->FDEN = ((epwm)->FDEN & ~(EPWM_FDEN_FDCKS0_Msk << (u32ChannelNum))) | \
+                   ((EPWM_FDEN_FDEN0_Msk | ((u32AfterPrescaler) << EPWM_FDEN_FDCKS0_Pos)) << (u32ChannelNum));
+    (epwm)->FDCTL[(u32ChannelNum)] = ((epwm)->FDCTL[(u32ChannelNum)] & ~EPWM_FDCTL0_FDCKSEL_Msk) | (u32ClkSel);
+}
+
+/**
+ * @brief Disable fault detect of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to disable fault detect of selected channel.
+ */
+void EPWM_DisableFaultDetect(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDEN &= ~(EPWM_FDEN_FDEN0_Msk << (u32ChannelNum));
+}
+
+/**
+ * @brief Enable fault detect output of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to enable fault detect output of selected channel.
+ */
+void EPWM_EnableFaultDetectOutput(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDEN &= ~(EPWM_FDEN_FDODIS0_Msk << (u32ChannelNum));
+}
+
+/**
+ * @brief Disable fault detect output of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to disable fault detect output of selected channel.
+ */
+void EPWM_DisableFaultDetectOutput(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDEN |= (EPWM_FDEN_FDODIS0_Msk << (u32ChannelNum));
+}
+
+/**
+ * @brief Enable fault detect deglitch function of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @param[in] u32DeglitchSmpCycle Deglitch Sampling Cycle. Valid values are between 0~7.
+ * @return None
+ * @details This function is used to enable fault detect deglitch function of selected channel.
+ */
+void EPWM_EnableFaultDetectDeglitch(EPWM_T *epwm, uint32_t u32ChannelNum, uint32_t u32DeglitchSmpCycle)
+{
+    (epwm)->FDCTL[(u32ChannelNum)] = ((epwm)->FDCTL[(u32ChannelNum)] & (~EPWM_FDCTL0_DGSMPCYC_Msk)) | \
+                                      (EPWM_FDCTL0_FDDGEN_Msk | ((u32DeglitchSmpCycle) << EPWM_FDCTL0_DGSMPCYC_Pos));
+}
+
+/**
+ * @brief Disable fault detect deglitch function of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to disable fault detect deglitch function of selected channel.
+ */
+void EPWM_DisableFaultDetectDeglitch(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDCTL[(u32ChannelNum)] &= ~EPWM_FDCTL0_FDDGEN_Msk;
+}
+
+/**
+ * @brief Enable fault detect mask function of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @param[in] u32MaskCnt Transition mask counter. Valid values are between 0~0x7F.
+ * @return None
+ * @details This function is used to enable fault detect mask function of selected channel.
+ */
+void EPWM_EnableFaultDetectMask(EPWM_T *epwm, uint32_t u32ChannelNum, uint32_t u32MaskCnt)
+{
+    (epwm)->FDCTL[(u32ChannelNum)] = ((epwm)->FDCTL[(u32ChannelNum)] & (~EPWM_FDCTL0_TRMSKCNT_Msk)) | (EPWM_FDCTL0_FDMSKEN_Msk | (u32MaskCnt));
+}
+
+/**
+ * @brief Disable fault detect mask function of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to disable fault detect mask function of selected channel.
+ */
+void EPWM_DisableFaultDetectMask(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDCTL[(u32ChannelNum)] &= ~EPWM_FDCTL0_FDMSKEN_Msk;
+}
+
+/**
+ * @brief Enable fault detect interrupt of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to enable fault detect interrupt of selected channel.
+ */
+void EPWM_EnableFaultDetectInt(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDIEN |= (EPWM_FDIEN_FDIEN0_Msk << (u32ChannelNum));
+}
+
+/**
+ * @brief Disable fault detect interrupt of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to disable fault detect interrupt of selected channel.
+ */
+void EPWM_DisableFaultDetectInt(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDIEN &= ~(EPWM_FDIEN_FDIEN0_Msk << (u32ChannelNum));
+}
+
+/**
+ * @brief Clear fault detect interrupt of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @return None
+ * @details This function is used to clear fault detect interrupt of selected channel.
+ */
+void EPWM_ClearFaultDetectInt(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    (epwm)->FDSTS = (EPWM_FDSTS_FDIF0_Msk << (u32ChannelNum));
+}
+
+/**
+ * @brief Get fault detect interrupt of selected channel.
+ * @param[in] epwm The pointer of the specified EPWM module.
+ *                - EPWM0 : EPWM Group 0
+ *                - EPWM1 : EPWM Group 1
+ * @param[in] u32ChannelNum EPWM channel number. Valid values are between 0~5.
+ * @retval 0 Fault detect interrupt did not occur.
+ * @retval 1 Fault detect interrupt occurred.
+ * @details This function is used to Get fault detect interrupt of selected channel.
+ */
+uint32_t EPWM_GetFaultDetectInt(EPWM_T *epwm, uint32_t u32ChannelNum)
+{
+    return (((epwm)->FDSTS & (EPWM_FDSTS_FDIF0_Msk << (u32ChannelNum))) ? 1UL : 0UL);
 }
 
 /*@}*/ /* end of group EPWM_EXPORTED_FUNCTIONS */
