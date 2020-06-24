@@ -81,7 +81,7 @@ static rt_uint32_t stm32_dac_get_channel(rt_uint32_t channel)
 static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     uint32_t dac_channel;
-    DAC_ChannelConfTypeDef dac_ChanConf;	
+    DAC_ChannelConfTypeDef DAC_ChanConf;	
     DAC_HandleTypeDef *stm32_dac_handler;
    
     RT_ASSERT(device != RT_NULL);
@@ -89,7 +89,7 @@ static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t ch
 
     stm32_dac_handler = device->parent.user_data;
 
-    rt_memset(&dac_ChanConf, 0, sizeof(dac_ChanConf));
+    rt_memset(&DAC_ChanConf, 0, sizeof(DAC_ChanConf));
     
 #if defined(SOC_SERIES_STM32MP1)
     if (channel <= 2 && channel > 0)
@@ -105,11 +105,11 @@ static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t ch
 #endif  
     
 #if defined(SOC_SERIES_STM32MP1)
-    dac_ChanConf.DAC_Trigger=DAC_TRIGGER_NONE;             
-    dac_ChanConf.DAC_OutputBuffer=DAC_OUTPUTBUFFER_DISABLE;
+    DAC_ChanConf.DAC_Trigger=DAC_TRIGGER_NONE;             
+    DAC_ChanConf.DAC_OutputBuffer=DAC_OUTPUTBUFFER_DISABLE;
 #endif    
     /* config dac out channel*/
-    if (HAL_DAC_ConfigChannel(stm32_dac_handler, &dac_ChanConf, dac_channel) != HAL_OK)
+    if (HAL_DAC_ConfigChannel(stm32_dac_handler, &DAC_ChanConf, dac_channel) != HAL_OK)
     {
         LOG_D("Config dac out channel Error!\n");
         return -RT_ERROR;
