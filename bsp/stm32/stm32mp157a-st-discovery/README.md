@@ -35,25 +35,25 @@ STM32MP157A-DK1 是 ST 推出的一款基于双 Cortex-A7  + Cortex-M4 内核的
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注** |
-| :----------- | :----------: | :------: |
-| USB 转串口   |     支持     |          |
-| SD卡         |   暂不支持   |          |
-| 以太网       |   暂不支持   |          |
-| 音频接口     |   暂不支持   |          |
-| **片上外设** | **支持情况** | **备注** |
-| GPIO         |     支持     |          |
-| UART         |     支持     |  UART4   |
-| EXTI         |     支持     |          |
-| SPI          |   暂不支持   |          |
-| TIM          |   暂不支持   |          |
-| LPTIM        |   暂不支持   |          |
-| I2C          |   暂不支持   |          |
-| ADC          |   暂不支持   |          |
-| DAC          |   暂不支持   |          |
-| WWDG         |   暂不支持   |          |
-| USB Device   |   暂不支持   |          |
-| USB Host     |   暂不支持   |          |
+| **板载外设** | **支持情况** |     **备注**     |
+| :----------- | :----------: | :--------------: |
+| USB 转串口   |     支持     |                  |
+| SD卡         |   暂不支持   |                  |
+| 以太网       |   暂不支持   |                  |
+| 音频接口     |   暂不支持   |                  |
+| **片上外设** | **支持情况** |     **备注**     |
+| GPIO         |     支持     |                  |
+| UART         |     支持     | UART4 (ST-Link)  |
+| EXTI         |     支持     |                  |
+| SPI          |     支持     |                  |
+| TIM          |     支持     |                  |
+| LPTIM        |     支持     |                  |
+| I2C          |     支持     | 软件、硬件都支持 |
+| ADC          |     支持     |                  |
+| DAC          |     支持     |                  |
+| WWDG         |     支持     |                  |
+| USB Device   |   暂不支持   |                  |
+| USB Host     |   暂不支持   |                  |
 
 
 ## 使用说明
@@ -99,6 +99,64 @@ STM32MP157A-DK1 是 ST 推出的一款基于双 Cortex-A7  + Cortex-M4 内核的
 msh >
 Hello RT-Thread!
 ```
+#### 驱动使用
+##### 1. WWDG
+
+1. 在 bsp 下打开 env 工具；
+2. 输入 `menuconfig` 命令， 进入 Hardware Drivers config 打开 wwdg，保存并退出；
+3. 输入 `scons --target=iar` 命令重新生成工程；
+4.  wwdg 设备会在喂狗前触发中断，LD5 会在中断中不停的闪烁；
+5. 在终端输入 `wwdg_sample` ，获取 wwdg 设备 Finsh 命令；
+6. `wwdg_sample run` 开启 wwdg 设备；
+7. `wwdg_sample set` 设置 wwdg 设备分频率；
+8. 通过调整 wwdg 设备分频率，开发板上 LD5 会有不同的闪烁频率。
+
+##### 2. DAC
+
+1. 在 bsp 下打开 env 工具；
+2. 输入`menuconfig`命令， 进入 Hardware Drivers config 打开 dac，保存并退出；
+3. 输入  `scons --target=iar` 命令重新生成工程；
+
+###### Finsh
+
+在使用设备前，需要先查找设备是否存在，可以使用命令 `dac probe` 后面跟注册的 DAC 设备的名称。如下所示：
+
+```c
+msh />dac probe dac1
+probe dac1 success
+```
+
+使能设备的某个通道可以使用命令 `dac enable` 后面跟通道号。
+
+```c
+msh />dac enable 1
+dac1 channel 1 enables success
+```
+
+设置 DAC 设备某个通道的数据可以使用命令 `dac write` 后面跟通道号。
+
+```c
+msh />dac write 1 1000
+dac1 channel 1 write value is 1000
+```
+
+关闭设备的某个通道可以使用命令 `dac disable` 后面跟通道号。
+
+```c
+msh />dac disable 1
+dac1 channel 1 disable success
+```
+#### 3. LPTIM
+
+1. 在 bsp 下打开 env 工具；
+2. 输入 `menuconfig` 命令， 进入 Hardware Drivers config 打开 lptim，保存并退出；
+3. 输入 `scons --target=iar` 命令重新生成工程；
+4. lptim 设备计时溢出时会触发中断，中断会打印字符串 `"hello rt-thread!"`；
+5. 在终端输入 `lptim_sample` ，获取 lptim 设备 Finsh 命令；
+6. `lptim_sample run` 开启 lptim 设备；
+7. `lptim_sample set` 设置 lptim 设备分频率。
+
+
 ### 进阶使用
 
 此 BSP 默认只开启了 GPIO 和 串口4 的功能，如果需更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
@@ -125,5 +183,5 @@ Hello RT-Thread!
 
 维护人:
 
-- [liukang](liukang@rt-thread.com) 
+- [liukang](https://github.com/thread-liu) 
 

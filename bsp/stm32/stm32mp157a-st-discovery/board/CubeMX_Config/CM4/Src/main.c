@@ -43,7 +43,15 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc2;
 
+DAC_HandleTypeDef hdac1;
+
 IPCC_HandleTypeDef hipcc;
+
+LPTIM_HandleTypeDef hlptim1;
+LPTIM_HandleTypeDef hlptim2;
+LPTIM_HandleTypeDef hlptim3;
+LPTIM_HandleTypeDef hlptim4;
+LPTIM_HandleTypeDef hlptim5;
 
 SPI_HandleTypeDef hspi5;
 
@@ -53,6 +61,9 @@ TIM_HandleTypeDef htim16;
 TIM_HandleTypeDef htim17;
 
 UART_HandleTypeDef huart4;
+UART_HandleTypeDef huart3;
+
+WWDG_HandleTypeDef hwwdg1;
 
 /* USER CODE BEGIN PV */
 
@@ -70,6 +81,14 @@ static void MX_TIM16_Init(void);
 static void MX_TIM17_Init(void);
 static void MX_UART4_Init(void);
 static void MX_ADC2_Init(void);
+static void MX_DAC1_Init(void);
+static void MX_LPTIM1_Init(void);
+static void MX_LPTIM2_Init(void);
+static void MX_LPTIM3_Init(void);
+static void MX_LPTIM4_Init(void);
+static void MX_LPTIM5_Init(void);
+static void MX_USART3_UART_Init(void);
+static void MX_WWDG1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -126,6 +145,14 @@ int main(void)
   MX_TIM17_Init();
   MX_UART4_Init();
   MX_ADC2_Init();
+  MX_DAC1_Init();
+  MX_LPTIM1_Init();
+  MX_LPTIM2_Init();
+  MX_LPTIM3_Init();
+  MX_LPTIM4_Init();
+  MX_LPTIM5_Init();
+  MX_USART3_UART_Init();
+  MX_WWDG1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -251,8 +278,8 @@ static void MX_ADC2_Init(void)
   /** Common config 
   */
   hadc2.Instance = ADC2;
-  hadc2.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV4;
-  hadc2.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc2.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV2;
+  hadc2.Init.Resolution = ADC_RESOLUTION_16B;
   hadc2.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc2.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc2.Init.LowPowerAutoWait = DISABLE;
@@ -288,6 +315,48 @@ static void MX_ADC2_Init(void)
 }
 
 /**
+  * @brief DAC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_DAC1_Init(void)
+{
+
+  /* USER CODE BEGIN DAC1_Init 0 */
+
+  /* USER CODE END DAC1_Init 0 */
+
+  DAC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN DAC1_Init 1 */
+
+  /* USER CODE END DAC1_Init 1 */
+  /** DAC Initialization 
+  */
+  hdac1.Instance = DAC1;
+  if (HAL_DAC_Init(&hdac1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** DAC channel OUT1 config 
+  */
+  sConfig.DAC_HighFrequency = DAC_HIGH_FREQUENCY_INTERFACE_MODE_DISABLE;
+  sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_DISABLE;
+  sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
+  if (HAL_DAC_ConfigChannel(&hdac1, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN DAC1_Init 2 */
+
+  /* USER CODE END DAC1_Init 2 */
+
+}
+
+/**
   * @brief IPCC Initialization Function
   * @param None
   * @retval None
@@ -310,6 +379,170 @@ static void MX_IPCC_Init(void)
   /* USER CODE BEGIN IPCC_Init 2 */
 
   /* USER CODE END IPCC_Init 2 */
+
+}
+
+/**
+  * @brief LPTIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM1_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM1_Init 0 */
+
+  /* USER CODE END LPTIM1_Init 0 */
+
+  /* USER CODE BEGIN LPTIM1_Init 1 */
+
+  /* USER CODE END LPTIM1_Init 1 */
+  hlptim1.Instance = LPTIM1;
+  hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim1.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  hlptim1.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
+  hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
+  if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM1_Init 2 */
+
+  /* USER CODE END LPTIM1_Init 2 */
+
+}
+
+/**
+  * @brief LPTIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM2_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM2_Init 0 */
+
+  /* USER CODE END LPTIM2_Init 0 */
+
+  /* USER CODE BEGIN LPTIM2_Init 1 */
+
+  /* USER CODE END LPTIM2_Init 1 */
+  hlptim2.Instance = LPTIM2;
+  hlptim2.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim2.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim2.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim2.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim2.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim2.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  hlptim2.Init.Input1Source = LPTIM_INPUT1SOURCE_GPIO;
+  hlptim2.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
+  if (HAL_LPTIM_Init(&hlptim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM2_Init 2 */
+
+  /* USER CODE END LPTIM2_Init 2 */
+
+}
+
+/**
+  * @brief LPTIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM3_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM3_Init 0 */
+
+  /* USER CODE END LPTIM3_Init 0 */
+
+  /* USER CODE BEGIN LPTIM3_Init 1 */
+
+  /* USER CODE END LPTIM3_Init 1 */
+  hlptim3.Instance = LPTIM3;
+  hlptim3.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim3.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim3.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim3.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim3.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim3.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  if (HAL_LPTIM_Init(&hlptim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM3_Init 2 */
+
+  /* USER CODE END LPTIM3_Init 2 */
+
+}
+
+/**
+  * @brief LPTIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM4_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM4_Init 0 */
+
+  /* USER CODE END LPTIM4_Init 0 */
+
+  /* USER CODE BEGIN LPTIM4_Init 1 */
+
+  /* USER CODE END LPTIM4_Init 1 */
+  hlptim4.Instance = LPTIM4;
+  hlptim4.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim4.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim4.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim4.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim4.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim4.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  if (HAL_LPTIM_Init(&hlptim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM4_Init 2 */
+
+  /* USER CODE END LPTIM4_Init 2 */
+
+}
+
+/**
+  * @brief LPTIM5 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPTIM5_Init(void)
+{
+
+  /* USER CODE BEGIN LPTIM5_Init 0 */
+
+  /* USER CODE END LPTIM5_Init 0 */
+
+  /* USER CODE BEGIN LPTIM5_Init 1 */
+
+  /* USER CODE END LPTIM5_Init 1 */
+  hlptim5.Instance = LPTIM5;
+  hlptim5.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
+  hlptim5.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
+  hlptim5.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
+  hlptim5.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
+  hlptim5.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
+  hlptim5.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
+  if (HAL_LPTIM_Init(&hlptim5) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPTIM5_Init 2 */
+
+  /* USER CODE END LPTIM5_Init 2 */
 
 }
 
@@ -564,6 +797,84 @@ static void MX_UART4_Init(void)
 }
 
 /**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart3.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetTxFifoThreshold(&huart3, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_SetRxFifoThreshold(&huart3, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_UARTEx_DisableFifoMode(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
+  * @brief WWDG1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_WWDG1_Init(void)
+{
+
+  /* USER CODE BEGIN WWDG1_Init 0 */
+
+  /* USER CODE END WWDG1_Init 0 */
+
+  /* USER CODE BEGIN WWDG1_Init 1 */
+
+  /* USER CODE END WWDG1_Init 1 */
+  hwwdg1.Instance = WWDG1;
+  hwwdg1.Init.Prescaler = WWDG_PRESCALER_8;
+  hwwdg1.Init.Window = 64;
+  hwwdg1.Init.Counter = 64;
+  hwwdg1.Init.EWIMode = WWDG_EWI_DISABLE;
+  if (HAL_WWDG_Init(&hwwdg1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN WWDG1_Init 2 */
+
+  /* USER CODE END WWDG1_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -574,8 +885,9 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 

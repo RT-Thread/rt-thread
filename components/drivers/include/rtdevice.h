@@ -103,6 +103,10 @@ extern "C" {
 #include "drivers/adc.h"
 #endif
 
+#ifdef RT_USING_DAC
+#include "drivers/dac.h"
+#endif
+
 #ifdef RT_USING_PWM
 #include "drivers/rt_drv_pwm.h"
 #endif
