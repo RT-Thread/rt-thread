@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2020-06-05     thread-liu   first version
  */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>

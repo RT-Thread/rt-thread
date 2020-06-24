@@ -57,6 +57,12 @@
 
 /* External variables --------------------------------------------------------*/
 extern IPCC_HandleTypeDef hipcc;
+extern LPTIM_HandleTypeDef hlptim1;
+extern LPTIM_HandleTypeDef hlptim2;
+extern LPTIM_HandleTypeDef hlptim3;
+extern LPTIM_HandleTypeDef hlptim4;
+extern LPTIM_HandleTypeDef hlptim5;
+extern WWDG_HandleTypeDef hwwdg1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -198,6 +204,34 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles Window watchdog interrupt.
+  */
+void WWDG1_IRQHandler(void)
+{
+  /* USER CODE BEGIN WWDG1_IRQn 0 */
+
+  /* USER CODE END WWDG1_IRQn 0 */
+  HAL_WWDG_IRQHandler(&hwwdg1);
+  /* USER CODE BEGIN WWDG1_IRQn 1 */
+
+  /* USER CODE END WWDG1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPTIM1 global interrupt.
+  */
+void LPTIM1_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPTIM1_IRQn 0 */
+
+  /* USER CODE END LPTIM1_IRQn 0 */
+  HAL_LPTIM_IRQHandler(&hlptim1);
+  /* USER CODE BEGIN LPTIM1_IRQn 1 */
+
+  /* USER CODE END LPTIM1_IRQn 1 */
+}
+
+/**
   * @brief This function handles IPCC RX1 occupied interrupt.
   */
 void IPCC_RX1_IRQHandler(void)
@@ -223,6 +257,62 @@ void IPCC_TX1_IRQHandler(void)
   /* USER CODE BEGIN IPCC_TX1_IRQn 1 */
 
   /* USER CODE END IPCC_TX1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPTIM2 global interrupt.
+  */
+void LPTIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPTIM2_IRQn 0 */
+
+  /* USER CODE END LPTIM2_IRQn 0 */
+  HAL_LPTIM_IRQHandler(&hlptim2);
+  /* USER CODE BEGIN LPTIM2_IRQn 1 */
+
+  /* USER CODE END LPTIM2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPTIM3 global interrupt.
+  */
+void LPTIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPTIM3_IRQn 0 */
+
+  /* USER CODE END LPTIM3_IRQn 0 */
+  HAL_LPTIM_IRQHandler(&hlptim3);
+  /* USER CODE BEGIN LPTIM3_IRQn 1 */
+
+  /* USER CODE END LPTIM3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPTIM4 global interrupt.
+  */
+void LPTIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPTIM4_IRQn 0 */
+
+  /* USER CODE END LPTIM4_IRQn 0 */
+  HAL_LPTIM_IRQHandler(&hlptim4);
+  /* USER CODE BEGIN LPTIM4_IRQn 1 */
+
+  /* USER CODE END LPTIM4_IRQn 1 */
+}
+
+/**
+  * @brief This function handles LPTIM5 global interrupt.
+  */
+void LPTIM5_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPTIM5_IRQn 0 */
+
+  /* USER CODE END LPTIM5_IRQn 0 */
+  HAL_LPTIM_IRQHandler(&hlptim5);
+  /* USER CODE BEGIN LPTIM5_IRQn 1 */
+
+  /* USER CODE END LPTIM5_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
