@@ -52,7 +52,7 @@ static rt_err_t stm32_dac_disabled(struct rt_dac_device *device, rt_uint32_t cha
     stm32_dac_handler = device->parent.user_data;
     
 #if defined(SOC_SERIES_STM32MP1)
-        HAL_DAC_Stop(stm32_dac_handler, channel);
+    HAL_DAC_Stop(stm32_dac_handler, channel);
 #endif
     
     return RT_EOK;
