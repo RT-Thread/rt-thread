@@ -27,8 +27,8 @@
 #define HEAP_ALIGNMENT          4       /* heap alignment */
 
 #define FINSH_GET16(x)    (*(x)) | (*((x)+1) << 8)
-#define FINSH_GET32(x)    (rt_uint32_t)(*(x)) | ((rt_uint32_t)*((x)+1) << 8) | \
-    ((rt_uint32_t)*((x)+2) << 16) | ((rt_uint32_t)*((x)+3) << 24)
+#define FINSH_GET32(x)    (rt_ubase_t)(*(x)) | ((rt_ubase_t)*((x)+1) << 8) | \
+    ((rt_ubase_t)*((x)+2) << 16) | ((rt_ubase_t)*((x)+3) << 24)
 
 #define FINSH_SET16(x, v)           \
     do                              \

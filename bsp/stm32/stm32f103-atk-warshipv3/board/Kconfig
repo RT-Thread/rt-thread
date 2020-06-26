@@ -34,6 +34,19 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC1
         default n 
 
+    config BSP_USING_EXT_SRAM
+        bool "Enable external sram"
+        default n
+        help
+             Chip name is IS62WV51216, 1Mbytes static RAMs organized as 512K words by 16bits.
+
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD (sdio)"
+        select BSP_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -201,6 +214,11 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
+        default n
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
         default n
 
     menuconfig BSP_USING_PULSE_ENCODER

@@ -431,6 +431,7 @@ struct rt_object_information
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
 #define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
 #define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
+#define RT_TIMER_CTRL_GET_STATE         0x4             /**< get timer run state active or deactive*/
 
 #ifndef RT_TIMER_SKIP_LIST_LEVEL
 #define RT_TIMER_SKIP_LIST_LEVEL          1
@@ -622,7 +623,7 @@ struct rt_thread
     void        *lwp;
 #endif
 
-    rt_uint32_t user_data;                             /**< private user data beyond this thread */
+    rt_ubase_t user_data;                             /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
@@ -897,6 +898,7 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
 #define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
 #define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
+#define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
 
 #define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */

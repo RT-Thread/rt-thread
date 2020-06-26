@@ -26,6 +26,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART3
         default n
+    
+    config BSP_USING_SRAM
+        bool "Enable SRAM"
+        select BSP_USING_EXT_FMC_IO
+        select BSP_USING_FMC
+        default n
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q128 spi1)"
@@ -326,7 +332,14 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
+    
+    config BSP_USING_EXT_FMC_IO
+        bool
+        default n
 
+    config BSP_USING_FMC
+        bool
+        default n
  source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu

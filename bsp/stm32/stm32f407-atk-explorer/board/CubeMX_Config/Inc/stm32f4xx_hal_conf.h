@@ -48,7 +48,7 @@
 /* #define HAL_NAND_MODULE_ENABLED   */
 /* #define HAL_NOR_MODULE_ENABLED   */
 /* #define HAL_PCCARD_MODULE_ENABLED   */
-/* #define HAL_SRAM_MODULE_ENABLED   */
+#define HAL_SRAM_MODULE_ENABLED
 /* #define HAL_SDRAM_MODULE_ENABLED   */
 /* #define HAL_HASH_MODULE_ENABLED   */
 /* #define HAL_I2C_MODULE_ENABLED   */
@@ -69,7 +69,7 @@
 /* #define HAL_SMBUS_MODULE_ENABLED   */
 /* #define HAL_WWDG_MODULE_ENABLED   */
 #define HAL_PCD_MODULE_ENABLED
-#define HAL_HCD_MODULE_ENABLED
+/* #define HAL_HCD_MODULE_ENABLED   */
 /* #define HAL_DSI_MODULE_ENABLED   */
 /* #define HAL_QSPI_MODULE_ENABLED   */
 /* #define HAL_QSPI_MODULE_ENABLED   */

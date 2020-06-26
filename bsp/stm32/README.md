@@ -1,3 +1,4 @@
+
 # STM32 BSP 说明
 
 STM32 系列 BSP 目前支持情况如下表所示：
@@ -41,7 +42,9 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **H7 系列** |  |
 | [stm32h743-atk-apollo](stm32h743-atk-apollo) | 正点原子 h743 阿波罗开发板 |
 | [stm32h743-st-nucleo](stm32h743-st-nucleo) | ST 官方 STM32H743-nucleo 开发板 |
+| [stm32h747-st-discovery](stm32h747-st-discovery) | ST 官方 STM32H747I-discovery 开发板 |
 | **L0 系列** |  |
+| [stm32l010-st-nucleo](stm32l010-st-nucleo) | ST 官方 STM32L010-nucleo 开发板 |
 | [stm32l053-st-nucleo](stm32l053-st-nucleo) | ST 官方 STM32L053-nucleo 开发板 |
 | **L4 系列** |  |
 | [stm32l4r9-st-eval](stm32l4r9-st-eval) | ST 官方 STM32L4R9I-EVAL 开发板 |
@@ -50,6 +53,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l475-st-discovery](stm32l475-st-discovery) | ST 官方 stm32l475-discovery 开发板 |
 | [stm32l476-st-nucleo](stm32l476-st-nucleo) | ST 官方 STM32L476-nucleo 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
+| **MP1 系列** |  |
+| [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-ST-Discovery Kit 开发板 |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 

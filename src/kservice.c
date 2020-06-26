@@ -370,7 +370,7 @@ RTM_EXPORT(rt_strstr);
  *
  * @return the result
  */
-rt_uint32_t rt_strcasecmp(const char *a, const char *b)
+rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
     int ca, cb;
 
@@ -538,7 +538,7 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2019 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2020 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 

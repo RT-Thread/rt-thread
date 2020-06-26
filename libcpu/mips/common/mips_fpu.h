@@ -18,7 +18,7 @@
  * init hardware FPU
  */
 #ifdef RT_USING_FPU
-inline void rt_hw_fpu_init(void)
+rt_inline void rt_hw_fpu_init(void)
 {
     rt_uint32_t c0_status = 0;
     rt_uint32_t c1_status = 0;
@@ -38,7 +38,7 @@ inline void rt_hw_fpu_init(void)
     return ;
 }
 #else
-    inline void rt_hw_fpu_init(void){} /* Do nothing */
+    rt_inline void rt_hw_fpu_init(void){} /* Do nothing */
 #endif
 
 #endif

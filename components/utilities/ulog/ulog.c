@@ -396,7 +396,7 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 #if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
         backend->output(backend, level, tag, is_raw, log, size);
 #else
-        if (backend->support_color)
+        if (backend->support_color || is_raw)
         {
             backend->output(backend, level, tag, is_raw, log, size);
         }

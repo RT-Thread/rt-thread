@@ -610,7 +610,7 @@ RTM_EXPORT(mmcsd_wait_cd_changed);
 
 void mmcsd_change(struct rt_mmcsd_host *host)
 {
-    rt_mb_send(&mmcsd_detect_mb, (rt_uint32_t)host);
+    rt_mb_send(&mmcsd_detect_mb, (rt_ubase_t)host);
 }
 
 void mmcsd_detect(void *param)
@@ -649,7 +649,7 @@ void mmcsd_detect(void *param)
                     if (init_sd(host, ocr))
                         mmcsd_power_off(host);
                     mmcsd_host_unlock(host);
-                    rt_mb_send(&mmcsd_hotpluge_mb, (rt_uint32_t)host);
+                    rt_mb_send(&mmcsd_hotpluge_mb, (rt_ubase_t)host);
                     continue;
                 }
                 
@@ -662,7 +662,7 @@ void mmcsd_detect(void *param)
                     if (init_mmc(host, ocr))
                         mmcsd_power_off(host);
                     mmcsd_host_unlock(host);
-                    rt_mb_send(&mmcsd_hotpluge_mb, (rt_uint32_t)host);
+                    rt_mb_send(&mmcsd_hotpluge_mb, (rt_ubase_t)host);
                     continue;
                 }
                 mmcsd_host_unlock(host);
@@ -683,7 +683,7 @@ void mmcsd_detect(void *param)
             		host->card = RT_NULL;
             	}
             	mmcsd_host_unlock(host);
-            	rt_mb_send(&mmcsd_hotpluge_mb, (rt_uint32_t)host);
+            	rt_mb_send(&mmcsd_hotpluge_mb, (rt_ubase_t)host);
             }
         }
     }

@@ -74,7 +74,13 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config ARCH_ARMV8
+    bool
+
 config ARCH_MIPS
+    bool
+
+config ARCH_MIPS64
     bool
 
 config ARCH_MIPS_XBURST

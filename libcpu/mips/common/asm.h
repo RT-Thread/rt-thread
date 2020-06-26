@@ -14,6 +14,7 @@
 #ifndef __ASM_H__
 #define __ASM_H__
 
+#include <rtconfig.h>
 /*
  * LEAF - declare leaf routine
  */
@@ -117,7 +118,94 @@ symbol		=	value
 /*
  * Macros to handle different pointer/register sizes for 32/64-bit code
  */
+#if defined ARCH_MIPS64
+/*
+ * Size of a register
+ */
+#define SZREG	8
 
+/*
+ * Use the following macros in assemblercode to load/store registers,
+ * pointers etc.
+ */
+#define REG_S		sd
+#define REG_L		ld
+#define REG_SUBU	dsubu
+#define REG_ADDU	daddu
+
+/*
+ * How to add/sub/load/store/shift C int variables.
+ */
+#define INT_ADD		dadd
+#define INT_ADDU	daddu
+#define INT_ADDI	daddi
+#define INT_ADDIU	daddiu
+#define INT_SUB		dsub
+#define INT_SUBU	dsubu
+#define INT_L		ld
+#define INT_S		sd
+#define INT_SLL		dsll
+#define INT_SLLV	dsllv
+#define INT_SRL		dsrl
+#define INT_SRLV	dsrlv
+#define INT_SRA		dsra
+#define INT_SRAV	dsrav
+
+/*
+ * Use the following macros in assemblercode to load/store registers,
+ * pointers etc.
+ */
+#define LONG_ADD	dadd
+#define LONG_ADDU	daddu
+#define LONG_ADDI	daddi
+#define LONG_ADDIU	daddiu
+#define LONG_SUB	dsub
+#define LONG_SUBU	dsubu
+#define LONG_L		ld
+#define LONG_S		sd
+#define LONG_SP		sdp
+#define LONG_SLL	dsll
+#define LONG_SLLV	dsllv
+#define LONG_SRL	dsrl
+#define LONG_SRLV	dsrlv
+#define LONG_SRA	dsra
+#define LONG_SRAV	dsrav
+
+#define LONG		.dword
+#define LONGSIZE	8
+#define LONGMASK	7
+#define LONGLOG		3
+
+/*
+ * How to add/sub/load/store/shift pointers.
+ */
+#define PTR_ADD		dadd
+#define PTR_ADDU	daddu
+#define PTR_ADDI	daddi
+#define PTR_ADDIU	daddiu
+#define PTR_SUB		dsub
+#define PTR_SUBU	dsubu
+#define PTR_L		ld
+#define PTR_S		sd
+#define PTR_LA		dla
+#define PTR_LI		dli
+#define PTR_SLL		dsll
+#define PTR_SLLV	dsllv
+#define PTR_SRL		dsrl
+#define PTR_SRLV	dsrlv
+#define PTR_SRA		dsra
+#define PTR_SRAV	dsrav
+
+#define PTR_SCALESHIFT	3
+
+#define PTR		.dword
+#define PTRSIZE		8
+#define PTRLOG		3
+
+#define MFC0		dmfc0
+#define MTC0		dmtc0
+
+#else
 /*
  * Size of a register
  */
@@ -173,7 +261,11 @@ symbol		=	value
 #define LONG_SRAV	srav
 
 #define LONG		.word
+#ifdef ARCH_MIPS64
+#define LONGSIZE	8
+#else
 #define LONGSIZE	4
+#endif
 #define LONGMASK	3
 #define LONGLOG		2
 
@@ -211,6 +303,7 @@ symbol		=	value
 #define MFC0		mfc0
 #define MTC0		mtc0
 
+#endif
 
 #define SSNOP		sll zero, zero, 1
 

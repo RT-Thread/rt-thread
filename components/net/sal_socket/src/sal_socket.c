@@ -564,6 +564,9 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
+    /* check the network interface is up status */
+    SAL_NETDEV_IS_UP(sock->netdev);
+
     /* check the network interface socket operations */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, accept);
 
@@ -679,7 +682,7 @@ int sal_shutdown(int socket, int how)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* shutdown operation not nead to check network interface status */
+    /* shutdown operation not need to check network interface status */
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, shutdown);
 
@@ -924,6 +927,7 @@ int sal_socket(int domain, int type, int protocol)
     sock = sal_get_socket(socket);
     if (sock == RT_NULL)
     {
+        socket_delete(socket);
         return -1;
     }
 
@@ -956,7 +960,7 @@ int sal_socket(int domain, int type, int protocol)
         sock->user_data = (void *) proto_socket;
         return sock->socket;
     }
-
+    socket_delete(socket);
     return -1;
 }
 
@@ -969,7 +973,7 @@ int sal_closesocket(int socket)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* clsoesocket operation not nead to vaild network interface status */
+    /* clsoesocket operation not need to vaild network interface status */
     /* valid the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, socket);
 

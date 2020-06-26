@@ -1087,7 +1087,7 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
             }
         }
 
-        /* if the response time is more than NETDEV_PING_DELAY, no nead to delay */
+        /* if the response time is more than NETDEV_PING_DELAY, no need to delay */
         delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
         rt_thread_delay(delay_tick);
     }
