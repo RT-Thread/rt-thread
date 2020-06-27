@@ -37,25 +37,25 @@
 
 | **板载外设** | **支持情况** | **备注**                              |
 | :------------ | :----------: | :-----------------------------------: |
-|STLINK TO USART|     支持    |              	UART3              	|
+|STLINK TO USART|     支持    |                  UART3                 |
 
 | **片上外设** | **支持情况** |               **备注**                |
 | :------------ | :----------: | :-----------------------------------: |
-| GPIO         |     支持     | 								 	|
-| UART         |     支持     |              UART2/3	            |
-| SPI          |     支持     |              SPI2		            |
-| I2C          |     支持     |              I2C1(软件模拟)         |
-| TIMER        |     支持     |              TIM11/13/14			|
-| PWM          |     支持     |              PWM2_CH4		        |
-| ADC          |     支持     |              ADC1_IN5		        |
-| RTC          |     支持     | 	支持外部晶振和内部低速时钟 		|
-| WDT          |     支持     |     		独立看门狗              |
-| Onchip Flash |     支持     |             片上Flash               |
-| USB OTG_FS   |     支持     |     	OTGFS as USB device         |
-| Onchip Flash |     支持     |             片上Flash               |
-| USB Device   |     支持     |     	OTGFS as USB device         |
-| RNG 		   |     支持     |   	Random Number Generator     	|
-| UDID		   |     支持     |     Unique Device Identifier	    |
+| GPIO         |     支持     |                                        |
+| UART         |     支持     |              UART2/3                   |
+| SPI          |     支持     |              SPI2                      |
+| I2C          |     支持     |              I2C1(软件模拟)            |
+| TIMER        |     支持     |              TIM11/13/14               |
+| PWM          |     支持     |              PWM2_CH4                  |
+| ADC          |     支持     |              ADC1_IN5                  |
+| RTC          |     支持     |     支持外部晶振和内部低速时钟         |
+| WDT          |     支持     |             独立看门狗                 |
+| Onchip Flash |     支持     |             片上Flash                  |
+| USB OTG_FS   |     支持     |         OTGFS as USB device            |
+| Onchip Flash |     支持     |             片上Flash                  |
+| USB Device   |     支持     |         OTGFS as USB device            |
+| RNG          |     支持     |       Random Number Generator          |
+| UDID         |     支持     |     Unique Device Identifier           |
 
 ## 使用说明
 
