@@ -562,7 +562,7 @@ static rt_err_t nu_pdma_uart_rx_config(struct rt_serial_device *serial, uint8_t 
 static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
 {
     rt_size_t recv_len=0;
-	  rt_size_t transferred_rxbyte = 0;
+    rt_size_t transferred_rxbyte = 0;
     struct rt_serial_device *serial = (struct rt_serial_device *)pvOwner;
     nu_uart_t puart = (nu_uart_t)serial;
     RT_ASSERT(serial != RT_NULL);
