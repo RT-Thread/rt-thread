@@ -368,6 +368,7 @@ static void finsh_wait_auth(void)
         }
     }
 }
+MSH_CMD_EXPORT_ALIAS(finsh_wait_auth, lock, lock shell for relogin);
 #endif /* FINSH_USING_AUTH */
 
 static void shell_auto_complete(char *prefix)
