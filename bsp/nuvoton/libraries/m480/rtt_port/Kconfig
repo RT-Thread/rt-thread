@@ -11,7 +11,7 @@ config SOC_SERIES_M480
         default n
 
     menuconfig BSP_USING_PDMA
-        bool "Enable PDMA"
+        bool "Enable Peripheral Direct Memory Access Controller(PDMA)"
         default y
 
         if BSP_USING_PDMA
@@ -27,17 +27,17 @@ config SOC_SERIES_M480
         endif
 
     config BSP_USING_FMC
-        bool "Enable FMC"
+        bool "Enable Flash Memory Controller(FMC)"
         select PKG_USING_FAL
         default n
 
     config BSP_USING_GPIO
-        bool "Enable GPIO"
+        bool "Enable General Purpose I/O(GPIO)"
         select RT_USING_PIN
         default y
 
     menuconfig BSP_USING_CLK
-        bool "Enable CLK"
+        bool "Enable Clock Controller(CLK)"
         select RT_USING_PM
         select BSP_USING_TMR
         default y
@@ -52,7 +52,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_EMAC
-        bool "Enable EMAC"
+        bool "Enable Ethernet MAC Controller(EMAC)"
         select RT_USING_LWIP
         select RT_USING_NETDEV
 
@@ -69,7 +69,7 @@ config SOC_SERIES_M480
             depends on NU_EMAC_PDMA_MEMCOPY
 
     menuconfig BSP_USING_RTC
-        bool "Enable RTC"
+        bool "Enable Real Time Clock(RTC)"
         select RT_USING_RTC
 
         config NU_RTC_SUPPORT_IO_RW
@@ -81,7 +81,7 @@ config SOC_SERIES_M480
             depends on BSP_USING_RTC && RT_USING_RTC
 
     menuconfig BSP_USING_EADC
-        bool "Enable EADC"
+        bool "Enable Enhanced Analog-to-Digital Converter(EADC)"
 
         config BSP_USING_EADC0
             bool "Enable EADC0"
@@ -92,7 +92,7 @@ config SOC_SERIES_M480
             depends on BSP_USING_EADC && RT_USING_ADC
 
     menuconfig BSP_USING_TMR
-        bool "Enable TIMER"
+        bool "Enable Timer Controller(TIMER)"
 
         config BSP_USING_TIMER
             bool
@@ -229,7 +229,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_UART
-        bool "Enable UART"
+        bool "Enable Universal Asynchronous Receiver/Transmitters(UART)"
         select RT_USING_SERIAL
 
         if BSP_USING_UART
@@ -323,7 +323,7 @@ config SOC_SERIES_M480
        endif
 
     menuconfig BSP_USING_I2C
-        bool "Enable I2C"
+        bool "Enable I2C Serial Interface Controller(I2C)"
         select RT_USING_I2C
 
         if BSP_USING_I2C
@@ -338,7 +338,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_USCI
-        bool "Enable USCI"
+        bool "Enable Universal Serial Control Interface Controller(USCI)"
 
     if BSP_USING_USCI
 
@@ -442,7 +442,7 @@ config SOC_SERIES_M480
     endif
 
     menuconfig BSP_USING_SDH
-        bool "Enable SDH"
+        bool "Enable Secure Digital Host Controller(SDH)"
         select RT_USING_DFS
 
         if BSP_USING_SDH
@@ -462,7 +462,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_CAN
-        bool "Enable CAN"
+        bool "Enable Controller Area Network(CAN)"
         select RT_USING_CAN
 
         if BSP_USING_CAN
@@ -474,7 +474,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_BPWM
-        bool "Enable BPWM"
+        bool "Enable Basic PWM Generator and Capture Timer(BPWM)"
         select RT_USING_PWM
 
         if BSP_USING_BPWM
@@ -531,7 +531,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_EPWM
-        bool "Enable EPWM"
+        bool "Enable EPWM Generator and Capture Timer(EPWM)"
 
         if BSP_USING_EPWM
 
@@ -587,7 +587,7 @@ config SOC_SERIES_M480
        endif
 
     menuconfig BSP_USING_SPI
-       bool "Enable SPI"
+       bool "Enable Serial Peripheral Interface(SPI)"
        select RT_USING_SPI
 
        if BSP_USING_SPI
@@ -710,7 +710,7 @@ config SOC_SERIES_M480
          endif
 
     config BSP_USING_I2S
-        bool "Enable I2S"
+        bool "Enable I2S Controller(I2S)"
         select RT_USING_AUDIO
 
     if BSP_USING_I2S || BSP_USING_SPII2S
@@ -721,7 +721,7 @@ config SOC_SERIES_M480
     endif
 
     menuconfig BSP_USING_QSPI
-        bool "Enable QSPI"
+        bool "Enable Quad Serial Peripheral Interface(QSPI)"
         select RT_USING_SPI
         select RT_USING_QSPI
 
@@ -742,7 +742,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_SCUART
-        bool "Enable SCUART"
+        bool "Enable Smart Card Host Interface - UART(SCUART)"
 
            if BSP_USING_SCUART
            config BSP_USING_SCUART0
@@ -756,7 +756,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_ECAP
-        bool "Enable ECAP"
+        bool "Enable Enhanced Input Capture Timer(ECAP)"
 
          if BSP_USING_ECAP
 
@@ -789,7 +789,7 @@ config SOC_SERIES_M480
        endif
 
     menuconfig BSP_USING_QEI
-        bool "Enable QEI"
+        bool "Enable Quadrature Encoder Interface(QEI)"
 
         if BSP_USING_QEI
             config BSP_USING_QEI0
@@ -802,7 +802,7 @@ config SOC_SERIES_M480
         endif
 
     menuconfig BSP_USING_CRYPTO
-        bool "Enable CRPT"
+        bool "Enable Cryptographic Accelerator(CRYPTO)"
         select RT_USING_HWCRYPTO
         select RT_HWCRYPTO_USING_AES
         select RT_HWCRYPTO_USING_AES_ECB
@@ -840,13 +840,13 @@ config SOC_SERIES_M480
         endif
 
         config BSP_USING_TRNG
-            bool "Enable TRNG"
+            bool "Enable True Random Number Generator(TRNG)"
             select BSP_USING_CRYPTO
             select RT_USING_HWCRYPTO
             select RT_HWCRYPTO_USING_RNG
 
         menuconfig BSP_USING_CRC
-            bool "Enable CRC"
+            bool "Enable Cyclic Redundancy Check Generator(CRC)"
             select BSP_USING_CRYPTO
             select RT_USING_HWCRYPTO
             select RT_HWCRYPTO_USING_CRC
@@ -905,33 +905,33 @@ config SOC_SERIES_M480
         endif
 
     config BSP_USING_WDT
-        bool "Enable WDT"
+        bool "Enable Watchdog Timer(WDT)"
         select RT_USING_WDT
         default y
 
     config BSP_USING_EBI
-        bool "Enable EBI"
+        bool "Enable External Bus Interface(EBI)"
         default n
 
     config BSP_USING_USBD
-        bool "Enable USBD"
+        bool "Enable Full-Speed USB Device Controller(USBD)"
         select RT_USING_USB_DEVICE
 
     config BSP_USING_HSUSBD
-        bool "Enable HSUSBD"
+        bool "Enable High-Speed USB Device Controller(HSUSBD)"
         select RT_USING_USB_DEVICE
 
     config BSP_USING_USBH
-        bool "Enable USBH"
+        bool "Enable Full-Speed USB Host Controller(USBH)"
         select RT_USING_USB_HOST
         select RT_USBH_MSTORAGE
 
     config BSP_USING_HSUSBH
-        bool "Enable HSUSBH"
+        bool "Enable High-Speed USB Host Controller(HSUSBH)"
         select RT_USING_USB_HOST
         select RT_USBH_MSTORAGE
 
     config BSP_USING_HSOTG
-        bool "Enable HSOTG"
+        bool "Enable High-Speed USB On-The-Go(HSOTG)"
         select BSP_USING_HSUSBH
         select BSP_USING_HSUSBD

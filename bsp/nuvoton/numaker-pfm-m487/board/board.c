@@ -40,7 +40,7 @@ void rt_hw_board_init(void)
     /* Init all pin function setting */
     nutool_pincfg_init();
 
-    /* Configurate SysTick */
+    /* Configure SysTick */
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
     /* Update System Core Clock */
@@ -104,11 +104,9 @@ void rt_hw_cpu_reset(void)
     SYS->IPRST0 |= SYS_IPRST0_CHIPRST_Msk;
 }
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-static void reboot(uint8_t argc, char **argv)
+int reboot(int argc, char** argv)
 {
     rt_hw_cpu_reset();
+    return 0;
 }
-FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
-#endif /* RT_USING_FINSH */
+MSH_CMD_EXPORT(reboot, Reboot System);
