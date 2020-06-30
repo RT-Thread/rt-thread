@@ -3,24 +3,26 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-src = []
-libs = ['']
-libpath = [cwd + '/lib']
+libs = []
+src = Glob('*src/*.c') + Glob('src/*.cpp')
 cpppath = [cwd + '/inc']
+libpath = [cwd + '/lib']
 
-if GetDepend('BSP_USE_STDDRIVER_SOURCE'):
-	src = Glob('*src/*.c') + Glob('src/*.cpp')
+if not GetDepend('BSP_USE_STDDRIVER_SOURCE'):
+	if rtconfig.CROSS_TOOL == 'keil':
+		if GetOption('target') == 'mdk5' and os.path.isfile('./lib/libstddriver_keil.lib'):
+			libs += ['libstddriver_keil']
+		elif GetOption('target') == 'mdk4' and os.path.isfile('./lib/libstddriver_keil4.lib'):
+			libs += ['libstddriver_keil4']
+	elif rtconfig.CROSS_TOOL == 'gcc' and os.path.isfile('./lib/libstddriver_gcc.a'):
+		libs += ['libstddriver_gcc']
+	elif os.path.isfile('./lib/libstddriver_iar.a'):
+		libs += ['libstddriver_iar']    
+
+if not libs:
 	group = DefineGroup('m480_stddriver', src, depend = [''], CPPPATH = cpppath)
 else:
-	if rtconfig.CROSS_TOOL == 'keil':
-		if GetOption('target') == 'mdk4':
-			libs += ['libstddriver_keil4']
-		if GetOption('target') == 'mdk5':
-			libs += ['libstddriver_keil']
-	elif rtconfig.CROSS_TOOL == 'gcc':
-		libs += ['libstddriver_gcc']
-	else:
-		libs += ['libstddriver_iar']
+	src = []
 	group = DefineGroup('m480_stddriver', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
 
 Return('group')
