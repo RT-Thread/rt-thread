@@ -10,7 +10,7 @@ src = Split("""
 
 if GetDepend(['RT_USING_PIN']):
     src += ['drv_gpio.c']
-    
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['drv_usart.c']
 
@@ -35,7 +35,7 @@ if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
 
 if GetDepend(['RT_USING_ADC']):
     src += Glob('drv_adc.c')
-    
+
 if GetDepend(['RT_USING_DAC']):
     src += Glob('drv_dac.c')
 
@@ -57,6 +57,9 @@ if GetDepend('BSP_USING_LCD_MIPI'):
 
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32G0']):
+    src += ['drv_flash/drv_flash_g0.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F0']):
     src += ['drv_flash/drv_flash_f0.c']
