@@ -1,12 +1,19 @@
-#ifndef _ADC_CONFIG_H_
-#define _ADC_CONFIG_H_
+/*
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-06-27     AHTYDHD      the first version
+ */
 
-
+#ifndef __ADC_CONFIG_H__
+#define __ADC_CONFIG_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 #ifdef BSP_USING_ADC0
 #ifndef ADC0_CONFIG
@@ -36,10 +43,10 @@ extern "C" {
 #endif /* ADC1_CONFIG */
 #endif /* BSP_USING_ADC1 */		
 				
-	
 #ifdef __cplusplus
 }
 #endif
 
+#endif /*__ADC_CONFIG_H__*/
 
-#endif /*_ADC_CONFIG_H_*/
+/************************** end of file ******************/
