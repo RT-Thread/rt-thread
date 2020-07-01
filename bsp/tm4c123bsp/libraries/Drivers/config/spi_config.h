@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-06-27     AHTYDHD      the first version
+ */
+
 #ifndef __SPI_CONFIG_H__
 #define __SPI_CONFIG_H__
 
@@ -16,7 +26,6 @@ extern "C" {
     }
 #endif /* SPI0_BUS_CONFIG */
 #endif /* BSP_USING_SPI0 */
-
 
 #ifdef BSP_USING_SPI1
 #ifndef SPI1_BUS_CONFIG
@@ -38,7 +47,6 @@ extern "C" {
 #endif /* SPI2_BUS_CONFIG */
 #endif /* BSP_USING_SPI2 */
     
-
 #ifdef BSP_USING_SPI3
 #ifndef SPI3_BUS_CONFIG
 #define SPI3_BUS_CONFIG                             \
@@ -54,3 +62,5 @@ extern "C" {
 #endif
 
 #endif /*__SPI_CONFIG_H__ */
+
+/************************** end of file ******************/

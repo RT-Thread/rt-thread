@@ -1,5 +1,15 @@
-#ifndef __DRV_SPI_H_
-#define __DRV_SPI_H_
+/*
+ * Copyright (c) 2006-2019, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-06-27     AHTYDHD      the first version
+ */
+
+#ifndef __DRV_SPI_H__
+#define __DRV_SPI_H__
 
 #include <rtdevice.h>
 #include <rthw.h>
@@ -16,7 +26,7 @@ struct tm4c123_hw_spi_cs
 struct tm4c123_spi_config
 {
     uint32_t   base;
-    char *     bus_name;
+    char      *bus_name;
 };
 
 /* tm4c123 spi dirver class */
@@ -24,7 +34,6 @@ struct tm4c123_spi
 {
     struct tm4c123_spi_config *config;
     struct rt_spi_configuration *cfg;
-
     struct rt_spi_bus spi_bus;
 };
 
@@ -35,11 +44,6 @@ struct tm4c123_spi_device
     char *device_name;
 };
 
-#define SPI_USING_RX_DMA_FLAG   (1<<0)
-#define SPI_USING_TX_DMA_FLAG   (1<<1)
+#endif /*__DRV_SPI_H__ */
 
-#endif /*__DRV_SPI_H_ */
-
-
-
-
+/************************** end of file ******************/
