@@ -53,6 +53,7 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
     if (bus != RT_NULL && bus->type == RT_Device_Class_SPIBUS)
     {
         device->bus = (struct rt_spi_bus *)bus;
+        device->bus->owner = device;
 
         /* initialize spidev device */
         result = rt_spidev_device_init(device, name);
