@@ -41,6 +41,7 @@ env:
   - RTT_BSP='lm3s8962' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm3s9b9x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm4f232' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='tm4c123bsp' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='tm4c129x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc43xx/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc176x' RTT_TOOL_CHAIN='sourcery-arm'
