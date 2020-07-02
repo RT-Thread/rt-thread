@@ -1,6 +1,3 @@
-#ifndef _DRV_ADC_H_
-#define _DRV_ADC_H_
-
 /*
  * Copyright (c) 2006-2019, RT-Thread Development Team
  *
@@ -10,6 +7,9 @@
  * Date           Author       Notes
  * 2020-06-27     AHTYDHD      the first version
  */
+
+#ifndef __DRV_ADC_H__
+#define __DRV_ADC_H__
 
 #include<stdint.h>
 #include<rtthread.h>
@@ -26,6 +26,6 @@ struct tm4c123_adc_config
     uint32_t    sequencepriority;
 };
 
-#endif /*_DRV_ADC_H_*/
+#endif /*__DRV_ADC_H__*/
 
 /************************** end of file ******************/

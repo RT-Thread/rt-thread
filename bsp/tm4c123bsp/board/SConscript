@@ -27,6 +27,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 
 CPPDEFINES = ['PART_TM4C123GH6PM']
 CPPDEFINES += ['TARGET_IS_TM4C123_RB1']
-CPPDEFINES += ['rvmdk']
+if rtconfig.CROSS_TOOL == 'keil':
+    CPPDEFINES += ['rvmdk']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 Return('group')
