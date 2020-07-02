@@ -22,8 +22,8 @@ extern "C" {
         .name                    ="adc0",       \
         .adcbase                 = ADC0_BASE,    \
         .channel                 = 0 ,           \
-		.sequence                = 2 ,           \
-		.trigermode              = ADC_TRIGGER_PROCESSOR,   \
+        .sequence                = 2 ,           \
+        .trigermode              = ADC_TRIGGER_PROCESSOR,   \
         .sequencepriority        = 0             \
     }
 #endif /* ADC0_CONFIG */
@@ -36,13 +36,13 @@ extern "C" {
         .name                    = "adc1",       \
         .adcbase                 = ADC1_BASE,    \
         .channel                 = 0     ,        \
-		.sequence                = 3     ,        \
-		.syncMode                = ADC_TRIGGER_PROCESSOR,   \
+        .sequence                = 3     ,        \
+        .syncMode                = ADC_TRIGGER_PROCESSOR,   \
         .sequencepriority        = 0              \
     }
 #endif /* ADC1_CONFIG */
-#endif /* BSP_USING_ADC1 */		
-				
+#endif /* BSP_USING_ADC1 */
+
 #ifdef __cplusplus
 }
 #endif
