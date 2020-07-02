@@ -39,7 +39,7 @@ SECTIONS
         _etext = .;
     } > FLASH
 
-    .data : AT(ADDR(.text) + SIZEOF(.text))
+    .data : AT(ADDR(.iplt) )
     {
         _data = .;
         _ldata = LOADADDR (.data);

@@ -23,8 +23,7 @@ struct tm4c123_uart_config
     uint32_t    uartbase;
     uint32_t    baudrate;
     uint32_t    mode;
-    //struct dma_config *dma_rx;
-    //struct dma_config *dma_tx;
+
 };
 
 /* tm4c123 uart dirver class */

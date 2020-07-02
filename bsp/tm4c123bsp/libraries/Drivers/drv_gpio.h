@@ -8,8 +8,8 @@
  * 2020-06-27     AHTYDHD      the first version
  */
 
-#ifndef _DRV_GPIO_H_
-#define _DRV_GPIO_H_
+#ifndef __DRV_GPIO_H__
+#define __DRV_GPIO_H__
 
 #include <stdint.h>
 #include <rtthread.h>
@@ -34,6 +34,6 @@ struct pin_index
 
 extern int rt_hw_pin_init(void);
 
-#endif  /*_DRV_GPIO_H_*/
+#endif  /*__DRV_GPIO_H__*/
 
 /************************** end of file ******************/
