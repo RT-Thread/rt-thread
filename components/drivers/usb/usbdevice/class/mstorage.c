@@ -78,9 +78,9 @@ static struct udevice_descriptor dev_desc =
     USB_DESC_LENGTH_DEVICE,     //bLength;
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    0x00,                       //bDeviceClass;
-    0x00,                       //bDeviceSubClass;
-    0x00,                       //bDeviceProtocol;
+    USB_CLASS_MASS_STORAGE,     //bDeviceClass;
+    0x06,                       //bDeviceSubClass;
+    0x50,                       //bDeviceProtocol;
     0x40,                       //bMaxPacketSize0;
     _VENDOR_ID,                 //idVendor;
     _PRODUCT_ID,                //idProduct;
@@ -98,9 +98,9 @@ static struct usb_qualifier_descriptor dev_qualifier =
     sizeof(dev_qualifier),          //bLength
     USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
-    0x00,                           //bDeviceClass
-    0x00,                           //bDeviceSubClass
-    0x00,                           //bDeviceProtocol
+    USB_CLASS_MASS_STORAGE,         //bDeviceClass
+    0x06,                           //bDeviceSubClass
+    0x50,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
     0x01,                           //bNumConfigurations
     0,
@@ -610,8 +610,11 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
                     rt_usbd_ep_set_stall(func->device, data->ep_out);
                 }
                 else
-                {
-                    rt_usbd_ep_set_stall(func->device, data->ep_in);                    
+                {   
+                    //rt_kprintf("warning:in stall path but not stall\n");
+                    
+                    /* FIXME: Disable the operation or the disk cannot work. */
+                    //rt_usbd_ep_set_stall(func->device, data->ep_in);                    
                 }
                 data->csw_response.data_reside = 0;
             }
@@ -719,9 +722,22 @@ static void _cb_len_calc(ufunction_t func, struct scsi_cmd* cmd,
             break;
         }
     }
+    
+    //workaround: for stability in full-speed mode
+    else if(cmd->cmd_len == 12)
+    {
+        switch(cmd->type)
+        {
+        case COUNT:
+            data->cb_data_size = cbw->cb[4]; 
+            break;
+        default:      
+            break;
+        }
+    }
     else
     {
-//        rt_kprintf("cmd_len error %d\n", cmd->cmd_len);      
+        rt_kprintf("cmd_len error %d\n", cmd->cmd_len);      
     }
 }
 
@@ -737,7 +753,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     data = (struct mstorage*)func->user_data;   
     if(cmd->cmd_len != cbw->cb_len)
     {
-  //      rt_kprintf("cb_len error\n");
+        rt_kprintf("cb_len error\n");
         cmd->cmd_len = cbw->cb_len;
     }
 
@@ -768,7 +784,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     
     if(cbw->xfer_len < data->cb_data_size)
     {
- //       rt_kprintf("xfer_len < data_size\n");
+        rt_kprintf("xfer_len < data_size\n");
         data->cb_data_size = cbw->xfer_len;
         data->csw_response.status = 1;
     }
