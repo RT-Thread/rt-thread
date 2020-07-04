@@ -134,6 +134,7 @@ typedef enum {
 } GPIO_PUPD_FUNC;
 
 void prev_raspi_pin_mode(GPIO_PIN pin, GPIO_FUNC mode);
+void prev_raspi_pin_write(GPIO_PIN pin, int pin_value);
 int rt_hw_gpio_init(void);
 
 #endif /* __DRV_GPIO_H__ */
