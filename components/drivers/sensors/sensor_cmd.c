@@ -384,6 +384,12 @@ static void sensor(int argc, char **argv)
             case RT_SENSOR_UNIT_MN:
                 rt_kprintf("unit      :mN\n");
                 break;
+            case RT_SENSOR_UNIT_PPM:
+                rt_kprintf("unit      :ppm\n");
+                break;
+            case RT_SENSOR_UNIT_PPB:
+                rt_kprintf("unit      :ppb\n");
+                break;
         }
         rt_kprintf("range_max :%d\n", info.range_max);
         rt_kprintf("range_min :%d\n", info.range_min);
