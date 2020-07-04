@@ -63,6 +63,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_SENSIRION     (10) /* Sensirion */
 #define RT_SENSOR_VENDOR_TI            (11) /* Texas Instruments */
 #define RT_SENSOR_VENDOR_PLANTOWER     (12) /* Plantower */
+#define RT_SENSOR_VENDOR_AMS           (13) /* ams AG */
 
 
 /* Sensor unit types */
