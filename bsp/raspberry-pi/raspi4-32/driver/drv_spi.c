@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author         Notes
- * 2020-06-22     bigmagic           first version
+ * Date           Author          Notes
+ * 2020-06-22     bigmagic        first version
  */
 #include <rtthread.h>
 #include <rthw.h>
@@ -147,6 +147,7 @@ static rt_err_t spi_transfernb(struct raspi_spi_hw_config *hwcfg, rt_uint8_t* tb
     while (!(SPI_REG_CS(hwcfg->hw_base) & SPI_CS_DONE));
     /* Set TA = 0, and also set the barrier */
     SPI_REG_CS(hwcfg->hw_base) |= (0 & SPI_CS_TA);
+
     return RT_EOK;
 }
 
@@ -293,4 +294,3 @@ int rt_hw_spi_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_spi_init);
-
