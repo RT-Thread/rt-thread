@@ -684,11 +684,13 @@ static void sf(uint8_t argc, char **argv) {
                 addr = 0;
                 size = sfud_dev->chip.capacity;
                 uint32_t start_time, time_cast;
-                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = SFUD_WRITE_MAX_PAGE_SIZE;
+                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = SFUD_WRITE_MAX_PAGE_SIZE, cur_op_size;
                 uint8_t *write_data = rt_malloc(write_size), *read_data = rt_malloc(read_size);
 
                 if (write_data && read_data) {
-                    rt_memset(write_data, 0x55, write_size);
+                    for (i = 0; i < write_size; i ++) {
+                        write_data[i] = i & 0xFF;
+                    }
                     /* benchmark testing */
                     rt_kprintf("Erasing the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
@@ -704,7 +706,12 @@ static void sf(uint8_t argc, char **argv) {
                     rt_kprintf("Writing the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
                     for (i = 0; i < size; i += write_size) {
-                        result = sfud_write(sfud_dev, addr + i, write_size, write_data);
+                        if (i + write_size <= size) {
+                            cur_op_size = write_size;
+                        } else {
+                            cur_op_size = size - i;
+                        }
+                        result = sfud_write(sfud_dev, addr + i, cur_op_size, write_data);
                         if (result != SFUD_SUCCESS) {
                             rt_kprintf("Writing %s failed, already wr for %lu bytes, write %d each time\n", sfud_dev->name, i, write_size);
                             break;
@@ -722,12 +729,13 @@ static void sf(uint8_t argc, char **argv) {
                     start_time = rt_tick_get();
                     for (i = 0; i < size; i += read_size) {
                         if (i + read_size <= size) {
-                            result = sfud_read(sfud_dev, addr + i, read_size, read_data);
+                            cur_op_size = read_size;
                         } else {
-                            result = sfud_read(sfud_dev, addr + i, size - i, read_data);
+                            cur_op_size = size - i;
                         }
+                        result = sfud_read(sfud_dev, addr + i, cur_op_size, read_data);
                         /* data check */
-                        if (memcmp(write_data, read_data, read_size))
+                        if (memcmp(write_data, read_data, cur_op_size))
                         {
                             rt_kprintf("Data check ERROR! Please check you flash by other command.\n");
                             result = SFUD_ERR_READ;
