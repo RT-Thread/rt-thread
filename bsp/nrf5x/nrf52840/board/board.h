@@ -2,7 +2,7 @@
 #define _BOARD_H_
 
 #include <rtthread.h>
-
+#include <rthw.h>
 #include "nrf.h"
 
 #define MCU_FLASH_SIZE MCU_FLASH_SIZE_KB*1024
