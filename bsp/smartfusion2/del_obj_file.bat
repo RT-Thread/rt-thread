@@ -12,6 +12,11 @@ del *.map /s
 del *.lst /s
 del *.dep /s
 del *.build_log.htm /s
-del *.bak
+del *.bak /s
+del *.sct /s
+del *.axf /s
+
+del JLinkLog.txt /s
+del SConscript /s
 
 echo 编译产生的其他文件已经删除
