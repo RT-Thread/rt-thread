@@ -20,13 +20,7 @@
 #define _SYSTICK_CALIB  (*(rt_uint32_t *)(_SCB_BASE + 0xC))
 #define _SYSTICK_PRI    (*(rt_uint8_t  *)(0xE000ED23UL))
 
-// Updates the variable SystemCoreClock and must be called 
-// whenever the core clock is changed during program execution.
 extern void SystemCoreClockUpdate(void);
-
-// Holds the system core clock, which is the system clock 
-// frequency supplied to the SysTick timer and the processor 
-// core clock.
 extern uint32_t SystemCoreClock;
 
 static uint32_t _SysTick_Config(rt_uint32_t ticks)
@@ -66,14 +60,16 @@ void rt_hw_board_init()
     
     /* System Tick Configuration */
     _SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
-    
+
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-//#ifdef RT_USING_CONSOLE
-//    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-//#endif
+
+#ifdef RT_USING_CONSOLE
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+    
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
     rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
 #endif
