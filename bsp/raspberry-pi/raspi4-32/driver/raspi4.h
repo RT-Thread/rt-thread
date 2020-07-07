@@ -61,6 +61,18 @@
 #define AUX_BASE                    (PER_BASE + AUX_BASE_OFFSET)
 #define IRQ_PL011                   (96 + 57)
 
+/* SPI */
+#define SPI_0_BASE_OFFSET     (0x00204000)
+#define SPI_3_BASE_OFFSET     (0x00204600)
+#define SPI_4_BASE_OFFSET     (0x00204800)
+#define SPI_5_BASE_OFFSET     (0x00204A00)
+#define SPI_6_BASE_OFFSET     (0x00204C00)
+
+#define SPI_0_BASE            (PER_BASE + SPI_0_BASE_OFFSET)
+#define SPI_3_BASE            (PER_BASE + SPI_3_BASE_OFFSET)
+#define SPI_4_BASE            (PER_BASE + SPI_4_BASE_OFFSET)
+#define SPI_5_BASE            (PER_BASE + SPI_5_BASE_OFFSET)
+#define SPI_6_BASE            (PER_BASE + SPI_6_BASE_OFFSET)
 /* Peripheral IRQ OR-ing */
 #define PACTL_CS                    HWREG32((PER_BASE + PACTL_CS_OFFSET))
 typedef enum {

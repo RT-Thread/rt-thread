@@ -120,6 +120,34 @@ void prev_raspi_pin_mode(GPIO_PIN pin, GPIO_FUNC mode)
     raspi_set_pin_state(fselnum, gpfsel);
 }
 
+void prev_raspi_pin_write(GPIO_PIN pin, int pin_value)
+{
+    uint32_t num = pin / 32;
+
+    if(num == 0)
+    {
+        if(pin_value == 1)
+        {
+            GPIO_REG_GPSET0(GPIO_BASE) = 1 << (pin % 32);
+        }
+        else
+        {
+            GPIO_REG_GPCLR0(GPIO_BASE) = 1 << (pin % 32);
+        }
+    }
+    else
+    {
+        if(pin_value == 1)
+        {
+            GPIO_REG_GPSET1(GPIO_BASE) = 1 << (pin % 32);
+        }
+        else
+        {
+            GPIO_REG_GPCLR1(GPIO_BASE) = 1 << (pin % 32);
+        }
+    }
+}
+
 static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
 {
     GPIO_FUNC raspi_mode = OUTPUT;
@@ -149,30 +177,7 @@ static void raspi_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
 
 static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
 {
-    uint32_t num = pin / 32;
-
-    if(num == 0)
-    {
-        if(value == 0)
-        {
-            GPIO_REG_GPSET0(GPIO_BASE) = 1 << (pin % 32);
-        }
-        else
-        {
-            GPIO_REG_GPCLR0(GPIO_BASE) = 1 << (pin % 32);
-        }
-    }
-    else
-    {
-        if(value == 0)
-        {
-            GPIO_REG_GPSET1(GPIO_BASE) = 1 << (pin % 32);
-        }
-        else
-        {
-            GPIO_REG_GPCLR1(GPIO_BASE) = 1 << (pin % 32);
-        }
-    }
+    prev_raspi_pin_write(pin, value);
 }
 
 static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
