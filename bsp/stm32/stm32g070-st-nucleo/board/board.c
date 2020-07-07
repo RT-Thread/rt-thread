@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-7-1        NU-LL   first version
+ * 2020-7-1       NU-LL        first version
  */
 
 #include "board.h"
