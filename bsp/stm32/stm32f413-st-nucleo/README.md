@@ -24,7 +24,7 @@
 
 - MCU：STM32F413ZH，主频 100MHz，1536KB FLASH ，320KB RAM
 - 常用外设
-  - LED：8个，user LED (绿色，PC9，LD1；蓝色，PB7，LD2；红色，PB14，LD3), USB communication (LD4), over current (LD5), power LED (黄色，LD6), USB FAULT (LD7), VBUS (LD8)。
+  - LED：8个，user LED (JP5跳帽需连接)(黄色，PB0，LD1；蓝色，PB7，LD2；红色，PB14，LD3), USB communication (LD4), over current (LD5), power LED (黄色，LD6), USB FAULT (LD7), VBUS (LD8)。
   - 按键：2个，B1（USER，PC13），B2（RESET）
 - 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口等。
 - 调试接口，板载 ST-LINK/V2-1 调试器。
@@ -35,12 +35,27 @@
 
 本 BSP 目前对外设的支持情况如下：
 
+| **板载外设** | **支持情况** | **备注**                              |
+| :------------ | :----------: | :-----------------------------------: |
+|STLINK TO USART|     支持    |                  UART3                 |
+
 | **片上外设** | **支持情况** |               **备注**                |
 | :------------ | :----------: | :-----------------------------------: |
-| GPIO         |     支持     | 								 	|
-| UART         |     支持     |              UART2,UART3            |
-| Onchip Flash |     支持     |                                     |
-| USB Device   |     支持     |                                     |
+| GPIO         |     支持     |                                        |
+| UART         |     支持     |              UART2/3                   |
+| SPI          |     支持     |              SPI2                      |
+| I2C          |     支持     |              I2C1(软件模拟)            |
+| TIMER        |     支持     |              TIM11/13/14               |
+| PWM          |     支持     |              PWM2_CH4                  |
+| ADC          |     支持     |              ADC1_IN5                  |
+| RTC          |     支持     |     支持外部晶振和内部低速时钟         |
+| WDT          |     支持     |             独立看门狗                 |
+| Onchip Flash |     支持     |             片上Flash                  |
+| USB OTG_FS   |     支持     |         OTGFS as USB device            |
+| Onchip Flash |     支持     |             片上Flash                  |
+| USB Device   |     支持     |         OTGFS as USB device            |
+| RNG          |     支持     |       Random Number Generator          |
+| UDID         |     支持     |     Unique Device Identifier           |
 
 ## 使用说明
 
@@ -67,11 +82,11 @@
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 xxx 仿真器下载程序，在通过 xxx 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 板载ST-LINK 仿真器下载程序，在通过 Micro USB线 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LD2 的运行效果，蓝色 LD2 会周期性闪烁。
+下载程序成功之后，系统会自动运行，在JP5跳帽连接时，观察开发板上LD1的运行效果，黄色LED会周期性闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
@@ -84,7 +99,7 @@ msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口 3 的功能，更多高级功能需要利用 ENV 工具对 BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 UART3 的功能，更多高级功能需要利用 ENV 工具对 BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 

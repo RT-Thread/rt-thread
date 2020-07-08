@@ -2180,6 +2180,9 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\watchdog\watchdog.c</name>
+    </file>
   </group>
   <group>
     <name>finsh</name>
@@ -2251,6 +2254,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_iwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_wwdg.c</name>
     </file>
   </group>
 </project>
