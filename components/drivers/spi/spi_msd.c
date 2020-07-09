@@ -73,34 +73,14 @@ static rt_err_t MSD_take_owner(struct rt_spi_device *spi_device)
 
 static rt_bool_t rt_tick_timeout(rt_tick_t tick_start, rt_tick_t tick_long)
 {
-    rt_tick_t tick_end = tick_start + tick_long;
-    rt_tick_t tick_now = rt_tick_get();
-    rt_bool_t result = RT_FALSE;
-
-    if (tick_end >= tick_start)
+    if (rt_tick_get() - tick_start >= tick_long)
     {
-        if (tick_now >= tick_end)
-        {
-            result = RT_TRUE;
-        }
-        else
-        {
-            result = RT_FALSE;
-        }
+        return RT_TRUE;
     }
     else
     {
-        if ((tick_now < tick_start) && (tick_now >= tick_end))
-        {
-            result = RT_TRUE;
-        }
-        else
-        {
-            result = RT_FALSE;
-        }
+        return RT_FALSE;
     }
-
-    return result;
 }
 
 static uint8_t crc7(const uint8_t *buf, int len)
