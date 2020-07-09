@@ -22,7 +22,7 @@ from xml.etree.ElementTree import SubElement
 
 from building import *
 
-MODULE_VER_NUM = 3
+MODULE_VER_NUM = 4
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
 
@@ -348,12 +348,13 @@ def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
     coll_dirs = CollectPaths(project['DIRS'])
-    all_paths = [OSPath(path) for path in coll_dirs]
+    all_paths_temp = [OSPath(path) for path in coll_dirs]
+    all_paths = []
 
-    # remove unused path
-    for path in all_paths:
-        if not path.startswith(rtt_root) and not path.startswith(bsp_root):
-            all_paths.remove(path)
+    # add used path
+    for path in all_paths_temp:
+        if path.startswith(rtt_root) or path.startswith(bsp_root):
+            all_paths.append(path)
 
     if bsp_root.startswith(rtt_root):
         # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub
