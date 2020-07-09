@@ -1,0 +1,165 @@
+menu "Hardware Drivers Config"
+
+config SOC_AT32F403AVGT7
+    bool
+    select SOC_SERIES_AT32F403A
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SERIAL
+        bool "Enable USART (uart1)"
+        select BSP_USING_UART
+        select BSP_USING_UART1
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+        if BSP_USING_RTC
+            choice
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_TMR1
+            bool "Enable timer1 output PWM"
+            default n
+            if BSP_USING_TMR1
+                config BSP_USING_TMR1_CH1
+                    bool "Enable TMR1 channel1 PWM"
+                    default n
+
+                config BSP_USING_TMR1_CH4
+                    bool "Enable TMR1 channel4 PWM"
+                    default n
+            endif
+        menuconfig BSP_USING_TMR2
+            bool "Enable timer2 output PWM"
+            default n
+            if BSP_USING_TMR2
+                config BSP_USING_TMR2_CH1
+                    bool "Enable TMR2 channel1 PWM"
+                    default n
+
+                config BSP_USING_TMR2_CH2
+                    bool "Enable TMR2 channel2 PWM"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+        config BSP_USING_HWTMR3
+            bool "Enable hardware timer3"
+            default n
+        config BSP_USING_HWTMR4
+            bool "Enable hardware timer4"
+            default n
+        config BSP_USING_HWTMR5
+            bool "Enable hardware timer5"
+            default n
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 0 63
+                default 22
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 0 63
+                default 23
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+        endif
+
+    menuconfig BSP_USING_SDIO
+        bool "Enable SDIO"
+        default n
+        select RT_USING_SDIO
+        if BSP_USING_SDIO
+            config BSP_USING_SDIO1
+                bool "Enable SDIO1"
+                default n
+        endif
+endmenu
+
+endmenu

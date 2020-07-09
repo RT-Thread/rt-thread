@@ -1,31 +1,19 @@
 /*
- * File      : dfs_file.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
  * 2011-12-08     Bernard      Merges rename patch from iamcacy.
  * 2015-05-27     Bernard      Fix the fd clear issue.
+ * 2019-01-24     Bernard      Remove file repeatedly open check.
  */
 
 #include <dfs.h>
 #include <dfs_file.h>
+#include <dfs_private.h>
 
 /**
  * @addtogroup FileApi
@@ -49,44 +37,46 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     int result;
 
     /* parameter check */
-    if (fd == RT_NULL)
-        return -DFS_STATUS_EINVAL;
+    if (fd == NULL)
+        return -EINVAL;
 
     /* make sure we have an absolute path */
-    fullpath = dfs_normalize_path(RT_NULL, path);
-    if (fullpath == RT_NULL)
+    fullpath = dfs_normalize_path(NULL, path);
+    if (fullpath == NULL)
     {
-        return -1;
+        return -ENOMEM;
     }
 
-    dfs_log(DFS_DEBUG_INFO, ("open file:%s", fullpath));
+    LOG_D("open file:%s", fullpath);
 
     /* find filesystem */
     fs = dfs_filesystem_lookup(fullpath);
-    if (fs == RT_NULL)
+    if (fs == NULL)
     {
         rt_free(fullpath); /* release path */
 
-        return -DFS_STATUS_ENOENT;
+        return -ENOENT;
     }
 
-    dfs_log(DFS_DEBUG_INFO, ("open in filesystem:%s", fs->ops->name));
-    fd->fs = fs;
+    LOG_D("open in filesystem:%s", fs->ops->name);
+    fd->fs    = fs;             /* set file system */
+    fd->fops  = fs->ops->fops;  /* set file ops */
 
     /* initialize the fd item */
     fd->type  = FT_REGULAR;
     fd->flags = flags;
     fd->size  = 0;
     fd->pos   = 0;
+    fd->data  = fs;
 
     if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
     {
-        if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+        if (dfs_subdir(fs->path, fullpath) == NULL)
             fd->path = rt_strdup("/");
         else
             fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
         rt_free(fullpath);
-        dfs_log(DFS_DEBUG_INFO, ("Actual file path: %s\n", fd->path));
+        LOG_D("Actual file path: %s", fd->path);
     }
     else
     {
@@ -94,34 +84,34 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     }
 
     /* specific file system open routine */
-    if (fs->ops->open == RT_NULL)
+    if (fd->fops->open == NULL)
     {
         /* clear fd */
         rt_free(fd->path);
-        fd->path = RT_NULL;
+        fd->path = NULL;
 
-        return -DFS_STATUS_ENOSYS;
+        return -ENOSYS;
     }
 
-    if ((result = fs->ops->open(fd)) < 0)
+    if ((result = fd->fops->open(fd)) < 0)
     {
         /* clear fd */
         rt_free(fd->path);
-        fd->path = RT_NULL;
+        fd->path = NULL;
 
-        dfs_log(DFS_DEBUG_INFO, ("open failed"));
+        LOG_D("%s open failed", fullpath);
 
         return result;
     }
 
     fd->flags |= DFS_F_OPEN;
-    if (flags & DFS_O_DIRECTORY)
+    if (flags & O_DIRECTORY)
     {
         fd->type = FT_DIRECTORY;
         fd->flags |= DFS_F_DIRECTORY;
     }
 
-    dfs_log(DFS_DEBUG_INFO, ("open successful"));
+    LOG_D("open successful");
     return 0;
 }
 
@@ -136,15 +126,18 @@ int dfs_file_close(struct dfs_fd *fd)
 {
     int result = 0;
 
-    if (fd != RT_NULL && fd->fs->ops->close != RT_NULL)
-        result = fd->fs->ops->close(fd);
+    if (fd == NULL)
+        return -ENXIO;
+
+    if (fd->fops->close != NULL)
+        result = fd->fops->close(fd);
 
     /* close fd error, return */
     if (result < 0)
         return result;
 
     rt_free(fd->path);
-    fd->path = RT_NULL;
+    fd->path = NULL;
 
     return result;
 }
@@ -160,16 +153,33 @@ int dfs_file_close(struct dfs_fd *fd)
  */
 int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
 {
-    struct dfs_filesystem *fs;
+    if (fd == NULL)
+        return -EINVAL;
 
-    if (fd == RT_NULL || fd->type != FT_REGULAR)
-        return -DFS_STATUS_EINVAL;
+    /* regular file system fd */
+    if (fd->type == FT_REGULAR)
+    {
+        switch (cmd)
+        {
+        case F_GETFL:
+            return fd->flags; /* return flags */
+        case F_SETFL:
+            {
+                int flags = (int)(rt_base_t)args;
+                int mask  = O_NONBLOCK | O_APPEND;
 
-    fs = fd->fs;
-    if (fs->ops->ioctl != RT_NULL)
-        return fs->ops->ioctl(fd, cmd, args);
+                flags &= mask;
+                fd->flags &= ~mask;
+                fd->flags |= flags;
+            }
+            return 0;
+        }
+    }
 
-    return -DFS_STATUS_ENOSYS;
+    if (fd->fops->ioctl != NULL)
+        return fd->fops->ioctl(fd, cmd, args);
+
+    return -ENOSYS;
 }
 
 /**
@@ -182,19 +192,17 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
  *
  * @return the actual read data bytes or 0 on end of file or failed.
  */
-int dfs_file_read(struct dfs_fd *fd, void *buf, rt_size_t len)
+int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
 {
-    struct dfs_filesystem *fs;
     int result = 0;
 
-    if (fd == RT_NULL)
-        return -DFS_STATUS_EINVAL;
+    if (fd == NULL)
+        return -EINVAL;
 
-    fs = (struct dfs_filesystem *)fd->fs;
-    if (fs->ops->read == RT_NULL)
-        return -DFS_STATUS_ENOSYS;
+    if (fd->fops->read == NULL)
+        return -ENOSYS;
 
-    if ((result = fs->ops->read(fd, buf, len)) < 0)
+    if ((result = fd->fops->read(fd, buf, len)) < 0)
         fd->flags |= DFS_F_EOF;
 
     return result;
@@ -209,19 +217,16 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, rt_size_t len)
  *
  * @return the read dirent, others on failed.
  */
-int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, rt_size_t nbytes)
+int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, size_t nbytes)
 {
-    struct dfs_filesystem *fs;
-
     /* parameter check */
-    if (fd == RT_NULL || fd->type != FT_DIRECTORY)
-        return -DFS_STATUS_EINVAL;
+    if (fd == NULL || fd->type != FT_DIRECTORY)
+        return -EINVAL;
 
-    fs = (struct dfs_filesystem *)fd->fs;
-    if (fs->ops->getdents != RT_NULL)
-        return fs->ops->getdents(fd, dirp, nbytes);
+    if (fd->fops->getdents != NULL)
+        return fd->fops->getdents(fd, dirp, nbytes);
 
-    return -DFS_STATUS_ENOSYS;
+    return -ENOSYS;
 }
 
 /**
@@ -238,31 +243,31 @@ int dfs_file_unlink(const char *path)
     struct dfs_filesystem *fs;
 
     /* Make sure we have an absolute path */
-    fullpath = dfs_normalize_path(RT_NULL, path);
-    if (fullpath == RT_NULL)
+    fullpath = dfs_normalize_path(NULL, path);
+    if (fullpath == NULL)
     {
-        return -DFS_STATUS_EINVAL;
+        return -EINVAL;
     }
 
     /* get filesystem */
-    if ((fs = dfs_filesystem_lookup(fullpath)) == RT_NULL)
+    if ((fs = dfs_filesystem_lookup(fullpath)) == NULL)
     {
-        result = -DFS_STATUS_ENOENT;
+        result = -ENOENT;
         goto __exit;
     }
 
     /* Check whether file is already open */
     if (fd_is_open(fullpath) == 0)
     {
-        result = -DFS_STATUS_EBUSY;
+        result = -EBUSY;
         goto __exit;
     }
 
-    if (fs->ops->unlink != RT_NULL)
+    if (fs->ops->unlink != NULL)
     {
         if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
         {
-            if (dfs_subdir(fs->path, fullpath) == RT_NULL)
+            if (dfs_subdir(fs->path, fullpath) == NULL)
                 result = fs->ops->unlink(fs, "/");
             else
                 result = fs->ops->unlink(fs, dfs_subdir(fs->path, fullpath));
@@ -270,7 +275,7 @@ int dfs_file_unlink(const char *path)
         else
             result = fs->ops->unlink(fs, fullpath);
     }
-    else result = -DFS_STATUS_ENOSYS;
+    else result = -ENOSYS;
 
 __exit:
     rt_free(fullpath);
@@ -286,18 +291,15 @@ __exit:
  *
  * @return the actual written data length.
  */
-int dfs_file_write(struct dfs_fd *fd, const void *buf, rt_size_t len)
+int dfs_file_write(struct dfs_fd *fd, const void *buf, size_t len)
 {
-    struct dfs_filesystem *fs;
+    if (fd == NULL)
+        return -EINVAL;
 
-    if (fd == RT_NULL)
-        return -DFS_STATUS_EINVAL;
+    if (fd->fops->write == NULL)
+        return -ENOSYS;
 
-    fs = fd->fs;
-    if (fs->ops->write == RT_NULL)
-        return -DFS_STATUS_ENOSYS;
-
-    return fs->ops->write(fd, buf, len);
+    return fd->fops->write(fd, buf, len);
 }
 
 /**
@@ -309,16 +311,13 @@ int dfs_file_write(struct dfs_fd *fd, const void *buf, rt_size_t len)
  */
 int dfs_file_flush(struct dfs_fd *fd)
 {
-    struct dfs_filesystem *fs;
+    if (fd == NULL)
+        return -EINVAL;
 
-    if (fd == RT_NULL)
-        return -DFS_STATUS_EINVAL;
+    if (fd->fops->flush == NULL)
+        return -ENOSYS;
 
-    fs = fd->fs;
-    if (fs->ops->flush == RT_NULL)
-        return -DFS_STATUS_ENOSYS;
-
-    return fs->ops->flush(fd);
+    return fd->fops->flush(fd);
 }
 
 /**
@@ -329,20 +328,17 @@ int dfs_file_flush(struct dfs_fd *fd)
  *
  * @return the current position after seek.
  */
-int dfs_file_lseek(struct dfs_fd *fd, rt_off_t offset)
+int dfs_file_lseek(struct dfs_fd *fd, off_t offset)
 {
     int result;
-    struct dfs_filesystem *fs = fd->fs;
 
-    if (fd == RT_NULL)
-        return -DFS_STATUS_EINVAL;
-    fs = fd->fs;
-    if (fs == RT_NULL)
-        return -DFS_STATUS_EINVAL;
-    if (fs->ops->lseek == RT_NULL)
-        return -DFS_STATUS_ENOSYS;
+    if (fd == NULL)
+        return -EINVAL;
 
-    result = fs->ops->lseek(fd, offset);
+    if (fd->fops->lseek == NULL)
+        return -ENOSYS;
+
+    result = fd->fops->lseek(fd, offset);
 
     /* update current position */
     if (result >= 0)
@@ -365,30 +361,29 @@ int dfs_file_stat(const char *path, struct stat *buf)
     char *fullpath;
     struct dfs_filesystem *fs;
 
-    fullpath = dfs_normalize_path(RT_NULL, path);
-    if (fullpath == RT_NULL)
+    fullpath = dfs_normalize_path(NULL, path);
+    if (fullpath == NULL)
     {
         return -1;
     }
 
-    if ((fs = dfs_filesystem_lookup(fullpath)) == RT_NULL)
+    if ((fs = dfs_filesystem_lookup(fullpath)) == NULL)
     {
-        dfs_log(DFS_DEBUG_ERROR,
-                ("can't find mounted filesystem on this path:%s", fullpath));
+        LOG_E("can't find mounted filesystem on this path:%s", fullpath);
         rt_free(fullpath);
 
-        return -DFS_STATUS_ENOENT;
+        return -ENOENT;
     }
 
     if ((fullpath[0] == '/' && fullpath[1] == '\0') ||
-        (dfs_subdir(fs->path, fullpath) == RT_NULL))
+        (dfs_subdir(fs->path, fullpath) == NULL))
     {
         /* it's the root directory */
         buf->st_dev   = 0;
 
-        buf->st_mode  = DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-                        DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
-        buf->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+        buf->st_mode  = S_IRUSR | S_IRGRP | S_IROTH |
+                        S_IWUSR | S_IWGRP | S_IWOTH;
+        buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
 
         buf->st_size    = 0;
         buf->st_mtime   = 0;
@@ -396,17 +391,16 @@ int dfs_file_stat(const char *path, struct stat *buf)
         /* release full path */
         rt_free(fullpath);
 
-        return DFS_STATUS_OK;
+        return RT_EOK;
     }
     else
     {
-        if (fs->ops->stat == RT_NULL)
+        if (fs->ops->stat == NULL)
         {
             rt_free(fullpath);
-            dfs_log(DFS_DEBUG_ERROR,
-                    ("the filesystem didn't implement this function"));
+            LOG_E("the filesystem didn't implement this function");
 
-            return -DFS_STATUS_ENOSYS;
+            return -ENOSYS;
         }
 
         /* get the real file path and get file stat */
@@ -435,21 +429,21 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
     struct dfs_filesystem *oldfs, *newfs;
     char *oldfullpath, *newfullpath;
 
-    result = DFS_STATUS_OK;
-    newfullpath = RT_NULL;
-    oldfullpath = RT_NULL;
+    result = RT_EOK;
+    newfullpath = NULL;
+    oldfullpath = NULL;
 
-    oldfullpath = dfs_normalize_path(RT_NULL, oldpath);
-    if (oldfullpath == RT_NULL)
+    oldfullpath = dfs_normalize_path(NULL, oldpath);
+    if (oldfullpath == NULL)
     {
-        result = -DFS_STATUS_ENOENT;
+        result = -ENOENT;
         goto __exit;
     }
 
-    newfullpath = dfs_normalize_path(RT_NULL, newpath);
-    if (newfullpath == RT_NULL)
+    newfullpath = dfs_normalize_path(NULL, newpath);
+    if (newfullpath == NULL)
     {
-        result = -DFS_STATUS_ENOENT;
+        result = -ENOENT;
         goto __exit;
     }
 
@@ -458,9 +452,9 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
 
     if (oldfs == newfs)
     {
-        if (oldfs->ops->rename == RT_NULL)
+        if (oldfs->ops->rename == NULL)
         {
-            result = -DFS_STATUS_ENOSYS;
+            result = -ENOSYS;
         }
         else
         {
@@ -475,7 +469,7 @@ int dfs_file_rename(const char *oldpath, const char *newpath)
     }
     else
     {
-        result = -DFS_STATUS_EXDEV;
+        result = -EXDEV;
     }
 
 __exit:
@@ -483,6 +477,35 @@ __exit:
     rt_free(newfullpath);
 
     /* not at same file system, return EXDEV */
+    return result;
+}
+
+/**
+ * this function is will cause the regular file referenced by fd
+ * to be truncated to a size of precisely length bytes.
+ *
+ * @param fd the file descriptor.
+ * @param length the length to be truncated.
+ *
+ * @return the status of truncated.
+ */
+int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
+{
+    int result;
+
+    /* fd is null or not a regular file system fd, or length is invalid */
+    if (fd == NULL || fd->type != FT_REGULAR || length < 0)
+        return -EINVAL;
+
+    if (fd->fops->ioctl == NULL)
+        return -ENOSYS;
+
+    result = fd->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
+
+    /* update current size */
+    if (result == 0)
+        fd->size = length;
+
     return result;
 }
 
@@ -497,8 +520,8 @@ void ls(const char *pathname)
     int length;
     char *fullpath, *path;
 
-    fullpath = RT_NULL;
-    if (pathname == RT_NULL)
+    fullpath = NULL;
+    if (pathname == NULL)
     {
 #ifdef DFS_USING_WORKDIR
         /* open current working directory */
@@ -506,7 +529,7 @@ void ls(const char *pathname)
 #else
         path = rt_strdup("/");
 #endif
-        if (path == RT_NULL)
+        if (path == NULL)
             return ; /* out of memory */
     }
     else
@@ -515,39 +538,40 @@ void ls(const char *pathname)
     }
 
     /* list directory */
-    if (dfs_file_open(&fd, path, DFS_O_DIRECTORY) == 0)
+    if (dfs_file_open(&fd, path, O_DIRECTORY) == 0)
     {
         rt_kprintf("Directory %s:\n", path);
         do
         {
-            rt_memset(&dirent, 0, sizeof(struct dirent));
+            memset(&dirent, 0, sizeof(struct dirent));
             length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
             if (length > 0)
             {
-                rt_memset(&stat, 0, sizeof(struct stat));
+                memset(&stat, 0, sizeof(struct stat));
 
                 /* build full path for each file */
                 fullpath = dfs_normalize_path(path, dirent.d_name);
-                if (fullpath == RT_NULL)
+                if (fullpath == NULL)
                     break;
 
                 if (dfs_file_stat(fullpath, &stat) == 0)
                 {
                     rt_kprintf("%-20s", dirent.d_name);
-                    if ( DFS_S_ISDIR(stat.st_mode))
+                    if (S_ISDIR(stat.st_mode))
                     {
                         rt_kprintf("%-25s\n", "<DIR>");
                     }
                     else
                     {
-                        rt_kprintf("%-25lu\n", stat.st_size);
+                        rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
                     }
                 }
                 else
                     rt_kprintf("BAD file: %s\n", dirent.d_name);
                 rt_free(fullpath);
             }
-        }while(length > 0);
+        }
+        while (length > 0);
 
         dfs_file_close(&fd);
     }
@@ -555,7 +579,7 @@ void ls(const char *pathname)
     {
         rt_kprintf("No such directory\n");
     }
-    if (pathname == RT_NULL)
+    if (pathname == NULL)
         rt_free(path);
 }
 FINSH_FUNCTION_EXPORT(ls, list directory contents);
@@ -569,12 +593,12 @@ void rm(const char *filename)
 }
 FINSH_FUNCTION_EXPORT(rm, remove files or directories);
 
-void cat(const char* filename)
+void cat(const char *filename)
 {
-    rt_uint32_t length;
+    uint32_t length;
     char buffer[81];
 
-    if (dfs_file_open(&fd, filename, DFS_O_RDONLY) < 0)
+    if (dfs_file_open(&fd, filename, O_RDONLY) < 0)
     {
         rt_kprintf("Open %s failed\n", filename);
 
@@ -583,13 +607,14 @@ void cat(const char* filename)
 
     do
     {
-        rt_memset(buffer, 0, sizeof(buffer));
-        length = dfs_file_read(&fd, buffer, sizeof(buffer)-1 );
+        memset(buffer, 0, sizeof(buffer));
+        length = dfs_file_read(&fd, buffer, sizeof(buffer) - 1);
         if (length > 0)
         {
             rt_kprintf("%s", buffer);
         }
-    }while (length > 0);
+    }
+    while (length > 0);
 
     dfs_file_close(&fd);
 }
@@ -602,22 +627,22 @@ static void copyfile(const char *src, const char *dst)
     rt_uint8_t *block_ptr;
     rt_int32_t read_bytes;
 
-    block_ptr = rt_malloc(BUF_SZ);
-    if (block_ptr == RT_NULL)
+    block_ptr = (rt_uint8_t *)rt_malloc(BUF_SZ);
+    if (block_ptr == NULL)
     {
         rt_kprintf("out of memory\n");
 
         return;
     }
 
-    if (dfs_file_open(&src_fd, src, DFS_O_RDONLY) < 0)
+    if (dfs_file_open(&src_fd, src, O_RDONLY) < 0)
     {
         rt_free(block_ptr);
         rt_kprintf("Read %s failed\n", src);
 
         return;
     }
-    if (dfs_file_open(&fd, dst, DFS_O_WRONLY | DFS_O_CREAT) < 0)
+    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT) < 0)
     {
         rt_free(block_ptr);
         dfs_file_close(&src_fd);
@@ -642,7 +667,8 @@ static void copyfile(const char *src, const char *dst)
                 break;
             }
         }
-    } while (read_bytes > 0);
+    }
+    while (read_bytes > 0);
 
     dfs_file_close(&src_fd);
     dfs_file_close(&fd);
@@ -650,13 +676,13 @@ static void copyfile(const char *src, const char *dst)
 }
 
 extern int mkdir(const char *path, mode_t mode);
-static void copydir(const char * src, const char * dst)
+static void copydir(const char *src, const char *dst)
 {
     struct dirent dirent;
     struct stat stat;
     int length;
-
-    if (dfs_file_open(&fd, src, DFS_O_DIRECTORY) < 0)
+    struct dfs_fd cpfd;
+    if (dfs_file_open(&cpfd, src, O_DIRECTORY) < 0)
     {
         rt_kprintf("open %s failed\n", src);
         return ;
@@ -664,37 +690,38 @@ static void copydir(const char * src, const char * dst)
 
     do
     {
-        rt_memset(&dirent, 0, sizeof(struct dirent));
-        length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
+        memset(&dirent, 0, sizeof(struct dirent));
+
+        length = dfs_file_getdents(&cpfd, &dirent, sizeof(struct dirent));
         if (length > 0)
         {
-            char * src_entry_full = RT_NULL;
-            char * dst_entry_full = RT_NULL;
+            char *src_entry_full = NULL;
+            char *dst_entry_full = NULL;
 
             if (strcmp(dirent.d_name, "..") == 0 || strcmp(dirent.d_name, ".") == 0)
                 continue;
 
             /* build full path for each file */
-            if ((src_entry_full = dfs_normalize_path(src, dirent.d_name)) == RT_NULL)
+            if ((src_entry_full = dfs_normalize_path(src, dirent.d_name)) == NULL)
             {
                 rt_kprintf("out of memory!\n");
                 break;
             }
-            if ((dst_entry_full = dfs_normalize_path(dst, dirent.d_name)) == RT_NULL)
+            if ((dst_entry_full = dfs_normalize_path(dst, dirent.d_name)) == NULL)
             {
                 rt_kprintf("out of memory!\n");
                 rt_free(src_entry_full);
                 break;
             }
 
-            rt_memset(&stat, 0, sizeof(struct stat));
+            memset(&stat, 0, sizeof(struct stat));
             if (dfs_file_stat(src_entry_full, &stat) != 0)
             {
                 rt_kprintf("open file: %s failed\n", dirent.d_name);
                 continue;
             }
 
-            if (DFS_S_ISDIR(stat.st_mode))
+            if (S_ISDIR(stat.st_mode))
             {
                 mkdir(dst_entry_full, 0);
                 copydir(src_entry_full, dst_entry_full);
@@ -706,15 +733,16 @@ static void copydir(const char * src, const char * dst)
             rt_free(src_entry_full);
             rt_free(dst_entry_full);
         }
-    }while(length > 0);
+    }
+    while (length > 0);
 
-    dfs_file_close(&fd);
+    dfs_file_close(&cpfd);
 }
 
 static const char *_get_path_lastname(const char *path)
 {
-    char * ptr;
-    if ((ptr = strrchr(path, '/')) == RT_NULL)
+    char *ptr;
+    if ((ptr = (char *)strrchr(path, '/')) == NULL)
         return path;
 
     /* skip the '/' then return */
@@ -733,7 +761,7 @@ void copy(const char *src, const char *dst)
 #define FLAG_DST_NON_EXSIT 0x00
 
     struct stat stat;
-    rt_uint32_t flag = 0;
+    uint32_t flag = 0;
 
     /* check the staus of src and dst */
     if (dfs_file_stat(src, &stat) < 0)
@@ -741,7 +769,7 @@ void copy(const char *src, const char *dst)
         rt_kprintf("copy failed, bad %s\n", src);
         return;
     }
-    if (DFS_S_ISDIR(stat.st_mode))
+    if (S_ISDIR(stat.st_mode))
         flag |= FLAG_SRC_IS_DIR;
     else
         flag |= FLAG_SRC_IS_FILE;
@@ -752,7 +780,7 @@ void copy(const char *src, const char *dst)
     }
     else
     {
-        if (DFS_S_ISDIR(stat.st_mode))
+        if (S_ISDIR(stat.st_mode))
             flag |= FLAG_DST_IS_DIR;
         else
             flag |= FLAG_DST_IS_FILE;
@@ -770,7 +798,7 @@ void copy(const char *src, const char *dst)
     {
         if (flag & FLAG_DST_IS_DIR)
         {
-            char * fdst;
+            char *fdst;
             fdst = dfs_normalize_path(dst, _get_path_lastname(src));
             if (fdst == NULL)
             {
@@ -789,7 +817,7 @@ void copy(const char *src, const char *dst)
     {
         if (flag & FLAG_DST_IS_DIR)
         {
-            char * fdst;
+            char *fdst;
             fdst = dfs_normalize_path(dst, _get_path_lastname(src));
             if (fdst == NULL)
             {

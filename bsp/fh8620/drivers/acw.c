@@ -745,7 +745,7 @@ void reset_dma_buff(enum audio_type type, struct fh_audio_cfg *audio_config)
 }
 
 
-static rt_err_t fh_audio_ioctl(rt_device_t dev, rt_uint8_t cmd, void *arg)
+static rt_err_t fh_audio_ioctl(rt_device_t dev, int cmd, void *arg)
 {
     struct fh_audio_cfg_arg *cfg;
 

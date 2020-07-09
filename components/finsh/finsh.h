@@ -1,11 +1,7 @@
 /*
- * File      : finsh.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -15,11 +11,7 @@
 #define __FINSH_H__
 
 #include <rtthread.h>
-
-#if defined(_MSC_VER)
-#pragma section("FSymTab$f",read)
-#pragma section("VSymTab",read)
-#endif
+#include "finsh_api.h"
 
 /* -- the beginning of option -- */
 #define FINSH_NAME_MAX          16      /* max length of identifier */
@@ -35,8 +27,8 @@
 #define HEAP_ALIGNMENT          4       /* heap alignment */
 
 #define FINSH_GET16(x)    (*(x)) | (*((x)+1) << 8)
-#define FINSH_GET32(x)    (rt_uint32_t)(*(x)) | ((rt_uint32_t)*((x)+1) << 8) | \
-    ((rt_uint32_t)*((x)+2) << 16) | ((rt_uint32_t)*((x)+3) << 24)
+#define FINSH_GET32(x)    (rt_ubase_t)(*(x)) | ((rt_ubase_t)*((x)+1) << 8) | \
+    ((rt_ubase_t)*((x)+2) << 16) | ((rt_ubase_t)*((x)+3) << 24)
 
 #define FINSH_SET16(x, v)           \
     do                              \
@@ -56,96 +48,54 @@
 
 /* -- the end of option -- */
 
-#if defined(RT_USING_NEWLIB) || defined (RT_USING_MINILIBC)
-#include <sys/types.h>
-#include <string.h>
-#else
-typedef unsigned char  u_char;
-typedef unsigned short u_short;
-typedef unsigned long  u_long;
-
-#if !defined(__CC_ARM)             && \
-    !defined(__IAR_SYSTEMS_ICC__)  && \
-    !defined(__ADSPBLACKFIN__)     && \
-    !defined(_MSC_VER)
-
-/* only for GNU GCC */
-
-#if !(defined(__GNUC__) && defined(__x86_64__))
-typedef unsigned int size_t;
-#else
+/* std header file */
 #include <stdio.h>
-#endif
-
-#ifndef NULL
-#define NULL RT_NULL
-#endif
-
-#else
-/* use libc of armcc */
 #include <ctype.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
-#endif
-#endif
 
-#define FINSH_VERSION_MAJOR			1
-#define FINSH_VERSION_MINOR			0
+#define FINSH_VERSION_MAJOR         1
+#define FINSH_VERSION_MINOR         0
 
 /**
  * @addtogroup finsh
  */
 /*@{*/
-#define FINSH_ERROR_OK              0   /**< No error 			*/
-#define FINSH_ERROR_INVALID_TOKEN	1	/**< Invalid token 		*/
-#define FINSH_ERROR_EXPECT_TYPE		2	/**< Expect a type 		*/
-#define FINSH_ERROR_UNKNOWN_TYPE	3	/**< Unknown type 		*/
-#define FINSH_ERROR_VARIABLE_EXIST	4	/**< Variable exist 	*/
-#define FINSH_ERROR_EXPECT_OPERATOR	5	/**< Expect a operator 	*/
-#define FINSH_ERROR_MEMORY_FULL		6	/**< Memory full 		*/
-#define FINSH_ERROR_UNKNOWN_OP		7 	/**< Unknown operator 	*/
-#define FINSH_ERROR_UNKNOWN_NODE	8	/**< Unknown node 		*/
-#define FINSH_ERROR_EXPECT_CHAR		9	/**< Expect a character */
-#define FINSH_ERROR_UNEXPECT_END	10	/**< Unexpect end 		*/
-#define FINSH_ERROR_UNKNOWN_TOKEN	11	/**< Unknown token 		*/
-#define FINSH_ERROR_NO_FLOAT		12	/**< Float not supported */
-#define FINSH_ERROR_UNKNOWN_SYMBOL	13	/**< Unknown symbol 	*/
-#define FINSH_ERROR_NULL_NODE		14	/**< Null node 			*/
+#define FINSH_ERROR_OK              0   /**< No error           */
+#define FINSH_ERROR_INVALID_TOKEN   1   /**< Invalid token      */
+#define FINSH_ERROR_EXPECT_TYPE     2   /**< Expect a type      */
+#define FINSH_ERROR_UNKNOWN_TYPE    3   /**< Unknown type       */
+#define FINSH_ERROR_VARIABLE_EXIST  4   /**< Variable exist     */
+#define FINSH_ERROR_EXPECT_OPERATOR 5   /**< Expect a operator  */
+#define FINSH_ERROR_MEMORY_FULL     6   /**< Memory full        */
+#define FINSH_ERROR_UNKNOWN_OP      7   /**< Unknown operator   */
+#define FINSH_ERROR_UNKNOWN_NODE    8   /**< Unknown node       */
+#define FINSH_ERROR_EXPECT_CHAR     9   /**< Expect a character */
+#define FINSH_ERROR_UNEXPECT_END    10  /**< Unexpect end       */
+#define FINSH_ERROR_UNKNOWN_TOKEN   11  /**< Unknown token      */
+#define FINSH_ERROR_NO_FLOAT        12  /**< Float not supported */
+#define FINSH_ERROR_UNKNOWN_SYMBOL  13  /**< Unknown symbol     */
+#define FINSH_ERROR_NULL_NODE       14  /**< Null node          */
 /*@}*/
-
-typedef long (*syscall_func)();
-
-/* system call table */
-struct finsh_syscall
-{
-	const char*		name;		/* the name of system call */
-#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-	const char*		desc;		/* description of system call */
-#endif
-	syscall_func func;		/* the function address of system call */
-};
 
 /* system call item */
 struct finsh_syscall_item
 {
-	struct finsh_syscall_item* next;	/* next item */
-	struct finsh_syscall syscall;		/* syscall */
+    struct finsh_syscall_item* next;    /* next item */
+    struct finsh_syscall syscall;       /* syscall */
 };
-extern struct finsh_syscall *_syscall_table_begin, *_syscall_table_end;
 extern struct finsh_syscall_item *global_syscall_list;
-
-/* find out system call, which should be implemented in user program */
-struct finsh_syscall* finsh_syscall_lookup(const char* name);
 
 /* system variable table */
 struct finsh_sysvar
 {
-	const char*		name;		/* the name of variable */
+    const char*     name;       /* the name of variable */
 #if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
-	const char* 	desc;		/* description of system variable */
+    const char*     desc;       /* description of system variable */
 #endif
-	u_char		 type;		/* the type of variable */
-	void*		 var ;		/* the address of variable */
+    uint8_t      type;      /* the type of variable */
+    void*        var ;      /* the address of variable */
 };
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
@@ -161,8 +111,8 @@ struct finsh_sysvar* finsh_sysvar_next(struct finsh_sysvar* call);
 /* system variable item */
 struct finsh_sysvar_item
 {
-	struct finsh_sysvar_item *next;		/* next item */
-	struct finsh_sysvar sysvar;			/* system variable */
+    struct finsh_sysvar_item *next;     /* next item */
+    struct finsh_sysvar sysvar;         /* system variable */
 };
 extern struct finsh_sysvar *_sysvar_table_begin, *_sysvar_table_end;
 extern struct finsh_sysvar_item* global_sysvar_list;
@@ -170,243 +120,60 @@ extern struct finsh_sysvar_item* global_sysvar_list;
 /* find out system variable, which should be implemented in user program */
 struct finsh_sysvar* finsh_sysvar_lookup(const char* name);
 
-#ifdef FINSH_USING_SYMTAB
-
-#ifdef __TI_COMPILER_VERSION__
-#define __TI_FINSH_EXPORT_FUNCTION(f)  PRAGMA(DATA_SECTION(f,"FSymTab"))
-#define __TI_FINSH_EXPORT_VAR(v)       PRAGMA(DATA_SECTION(v,"VSymTab"))
-#endif
-
-    #ifdef FINSH_USING_DESCRIPTION
-        #ifdef _MSC_VER
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const char __fsym_##cmd##_desc[] = #desc;           \
-                __declspec(allocate("FSymTab$f"))                   \
-                const struct finsh_syscall __fsym_##cmd =           \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    __fsym_##cmd##_desc,    \
-                    (syscall_func)&name     \
-                };
-            #pragma comment(linker, "/merge:FSymTab=mytext")
-
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                const char __vsym_##name##_desc[] = #desc;          \
-                __declspec(allocate("VSymTab"))                     \
-                const struct finsh_sysvar __vsym_##name =           \
-                {                           \
-                    __vsym_##name##_name,   \
-                    __vsym_##name##_desc,   \
-                    type,                   \
-                    (void*)&name            \
-                };
-
-        #elif defined(__TI_COMPILER_VERSION__)
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                __TI_FINSH_EXPORT_FUNCTION(__fsym_##cmd);           \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const char __fsym_##cmd##_desc[] = #desc;           \
-                const struct finsh_syscall __fsym_##cmd =           \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    __fsym_##cmd##_desc,    \
-                    (syscall_func)&name     \
-                };
-
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                __TI_FINSH_EXPORT_VAR(__vsym_##name);               \
-                const char __vsym_##name##_name[] = #name;          \
-                const char __vsym_##name##_desc[] = #desc;          \
-                const struct finsh_sysvar __vsym_##name =           \
-                {                           \
-                    __vsym_##name##_name,   \
-                    __vsym_##name##_desc,   \
-                    type,                   \
-                    (void*)&name            \
-                };
-            
-        #else
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;   \
-                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;  \
-                const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    __fsym_##cmd##_desc,    \
-                    (syscall_func)&name     \
-                };
-
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name; \
-                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc; \
-                const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
-                {                           \
-                    __vsym_##name##_name,   \
-                    __vsym_##name##_desc,   \
-                    type,                   \
-                    (void*)&name            \
-                };
-
-        #endif
-    #else
-        #ifdef _MSC_VER
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                __declspec(allocate("FSymTab$f"))                   \
-                const struct finsh_syscall __fsym_##cmd =           \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    (syscall_func)&name     \
-                };
-            #pragma comment(linker, "/merge:FSymTab=mytext")
-
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                __declspec(allocate("VSymTab")) const struct finsh_sysvar __vsym_##name = \
-                {                           \
-                    __vsym_##name##_name,   \
-                    type,                   \
-                    (void*)&name            \
-                };
-
-        #elif defined(__TI_COMPILER_VERSION__)
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                __TI_FINSH_EXPORT_FUNCTION(__fsym_##cmd);           \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const struct finsh_syscall __fsym_##cmd =           \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    (syscall_func)&name     \
-                };
-
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                __TI_FINSH_EXPORT_VAR(__vsym_##name);               \
-                const char __vsym_##name##_name[] = #name;          \
-                const struct finsh_sysvar __vsym_##name =           \
-                {                           \
-                    __vsym_##name##_name,   \
-                    type,                   \
-                    (void*)&name            \
-                };
-            
-        #else
-            #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)      \
-                const char __fsym_##cmd##_name[] = #cmd;            \
-                const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
-                {                           \
-                    __fsym_##cmd##_name,    \
-                    (syscall_func)&name     \
-                };
-
-            #define FINSH_VAR_EXPORT(name, type, desc)              \
-                const char __vsym_##name##_name[] = #name;          \
-                const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
-                {                           \
-                    __vsym_##name##_name,   \
-                    type,                   \
-                    (void*)&name            \
-                };
-
-        #endif  
-    #endif /* end of FINSH_USING_DESCRIPTION */
-#endif /* end of FINSH_USING_SYMTAB */
-
-/**
- * @ingroup finsh
- *
- * This macro exports a system function to finsh shell.
- *
- * @param name the name of function.
- * @param desc the description of function, which will show in help.
- */
-#define FINSH_FUNCTION_EXPORT(name, desc)   \
-    FINSH_FUNCTION_EXPORT_CMD(name, name, desc)
-
-/**
- * @ingroup finsh
- *
- * This macro exports a system function with an alias name to finsh shell.
- *
- * @param name the name of function.
- * @param alias the alias name of function.
- * @param desc the description of function, which will show in help.
- */
-#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)  \
-        FINSH_FUNCTION_EXPORT_CMD(name, alias, desc)
-
-/**
- * @ingroup finsh
- *
- * This macro exports a command to module shell.
- *
- * @param command the name of command.
- * @param desc the description of command, which will show in help.
- */
-#ifdef FINSH_USING_MSH
-#define MSH_CMD_EXPORT(command, desc)   \
-    FINSH_FUNCTION_EXPORT_CMD(command, __cmd_##command, desc)
-#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)  \
-    FINSH_FUNCTION_EXPORT_ALIAS(command, __cmd_##alias, desc)
-#else
-#define MSH_CMD_EXPORT(command, desc)
-#define MSH_CMD_EXPORT_ALIAS(command, alias, desc)
-#endif
 
 struct finsh_token
 {
-	char eof;
-	char replay;
+    char eof;
+    char replay;
 
-	int  position;
-	u_char current_token;
+    int  position;
+    uint8_t current_token;
 
-	union {
-		char char_value;
-		int int_value;
-		long long_value;
-	} value;
-	u_char string[FINSH_STRING_MAX];
+    union {
+        char char_value;
+        int int_value;
+        long long_value;
+    } value;
+    uint8_t string[FINSH_STRING_MAX];
 
-	u_char* line;
+    uint8_t* line;
 };
 
-#define FINSH_IDTYPE_VAR		0x01
-#define FINSH_IDTYPE_SYSVAR		0x02
-#define FINSH_IDTYPE_SYSCALL	0x04
-#define FINSH_IDTYPE_ADDRESS	0x08
+#define FINSH_IDTYPE_VAR        0x01
+#define FINSH_IDTYPE_SYSVAR     0x02
+#define FINSH_IDTYPE_SYSCALL    0x04
+#define FINSH_IDTYPE_ADDRESS    0x08
 struct finsh_node
 {
-	u_char node_type;	/* node node_type */
-	u_char data_type;	/* node data node_type */
-	u_char idtype;		/* id node information */
+    uint8_t node_type;  /* node node_type */
+    uint8_t data_type;  /* node data node_type */
+    uint8_t idtype;     /* id node information */
 
-	union {			/* value node */
-		char 	char_value;
-		short 	short_value;
-		int 	int_value;
-		long 	long_value;
-		void* 	ptr;
-	} value;
-	union
-	{
-		/* point to variable identifier or function identifier */
-		struct finsh_var	*var;
-		struct finsh_sysvar	*sysvar;
-		struct finsh_syscall*syscall;
-	}id;
+    union {         /* value node */
+        char    char_value;
+        short   short_value;
+        int     int_value;
+        long    long_value;
+        void*   ptr;
+    } value;
+    union
+    {
+        /* point to variable identifier or function identifier */
+        struct finsh_var    *var;
+        struct finsh_sysvar *sysvar;
+        struct finsh_syscall*syscall;
+    }id;
 
-	/* sibling and child node */
-	struct finsh_node *sibling, *child;
+    /* sibling and child node */
+    struct finsh_node *sibling, *child;
 };
 
 struct finsh_parser
 {
-	u_char* parser_string;
+    uint8_t* parser_string;
 
     struct finsh_token token;
-	struct finsh_node* root;
+    struct finsh_node* root;
 };
 
 /**
@@ -415,21 +182,21 @@ struct finsh_parser
  * The basic data type in finsh shell
  */
 enum finsh_type {
-	finsh_type_unknown = 0, /**< unknown data type */
-	finsh_type_void,		/**< void  			*/
-	finsh_type_voidp,		/**< void pointer  	*/
-	finsh_type_char,		/**< char  			*/
-	finsh_type_uchar,		/**< unsigned char  */
-	finsh_type_charp,		/**< char pointer  	*/
-	finsh_type_short,		/**< short  		*/
-	finsh_type_ushort,		/**< unsigned short */
-	finsh_type_shortp,		/**< short pointer  */
-	finsh_type_int,			/**< int 			*/
-	finsh_type_uint,		/**< unsigned int 	*/
-	finsh_type_intp,		/**< int pointer 	*/
-	finsh_type_long,		/**< long 			*/
-	finsh_type_ulong,		/**< unsigned long 	*/
-	finsh_type_longp		/**< long pointer 	*/
+    finsh_type_unknown = 0, /**< unknown data type */
+    finsh_type_void,        /**< void           */
+    finsh_type_voidp,       /**< void pointer   */
+    finsh_type_char,        /**< char           */
+    finsh_type_uchar,       /**< unsigned char  */
+    finsh_type_charp,       /**< char pointer   */
+    finsh_type_short,       /**< short          */
+    finsh_type_ushort,      /**< unsigned short */
+    finsh_type_shortp,      /**< short pointer  */
+    finsh_type_int,         /**< int            */
+    finsh_type_uint,        /**< unsigned int   */
+    finsh_type_intp,        /**< int pointer    */
+    finsh_type_long,        /**< long           */
+    finsh_type_ulong,       /**< unsigned long  */
+    finsh_type_longp        /**< long pointer   */
 };
 
 /* init finsh environment */
@@ -455,9 +222,9 @@ struct finsh_var* finsh_var_lookup(const char* name);
 long finsh_stack_bottom(void);
 
 /* get error number of finsh */
-u_char finsh_errno(void);
+uint8_t finsh_errno(void);
 /* get error string */
-const char* finsh_error_string(u_char type);
+const char* finsh_error_string(uint8_t type);
 
 #ifdef RT_USING_HEAP
 /**
@@ -477,6 +244,6 @@ void finsh_syscall_append(const char* name, syscall_func func);
  * @param type the data type of system variable
  * @param addr the address of system variable
  */
-void finsh_sysvar_append(const char* name, u_char type, void* addr);
+void finsh_sysvar_append(const char* name, uint8_t type, void* addr);
 #endif
 #endif

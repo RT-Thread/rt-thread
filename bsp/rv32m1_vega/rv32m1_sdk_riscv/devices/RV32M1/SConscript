@@ -1,0 +1,22 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+system_RV32M1_ri5cy.c
+drivers/fsl_clock.c
+drivers/fsl_common.c
+drivers/fsl_lpuart.c
+drivers/fsl_gpio.c
+drivers/fsl_msmc.c
+drivers/fsl_usdhc.c
+drivers/fsl_intmux.c
+gcc/startup_RV32M1_ri5cy.S
+''')
+CPPPATH = [cwd, cwd + '/../../RISCV', cwd + '/drivers', cwd + '/utilities']
+CPPDEFINES = ['CPU_RV32M1_ri5cy', 'SDK_DEBUGCONSOLE=0']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

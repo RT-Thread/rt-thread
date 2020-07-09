@@ -28,7 +28,7 @@ extern rt_err_t eth_system_device_init(void);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 
 /**
@@ -51,7 +51,7 @@ extern int  rt_application_init(void);
 extern rt_err_t rt_hw_serial_init(void);
 #endif
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 #endif
 
 void led_flash()

@@ -17,7 +17,6 @@
 #include <rthw.h>
 
 #include <bsp.h>
-extern char rt_keyboard_getc(void);
 
 /**
  * @addtogroup QEMU
@@ -45,13 +44,11 @@ void rt_serial_init(void)
  */
 char rt_serial_getc(void)
 {
-	return rt_keyboard_getc();
 
-#if 0
 	while(!(inb(COM1+COMSTATUS) & COMDATA));
 	
 	return inb(COM1+COMREAD);
-#endif
+
 }
 
 /**

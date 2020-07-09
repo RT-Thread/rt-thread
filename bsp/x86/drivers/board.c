@@ -71,5 +71,4 @@ void reboot(void)
 }
 FINSH_FUNCTION_EXPORT(reboot, reboot PC)
 #endif
-
 /*@}*/

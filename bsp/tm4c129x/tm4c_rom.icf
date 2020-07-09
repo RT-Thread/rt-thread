@@ -1,8 +1,8 @@
 //*****************************************************************************
 //
-// blinky.icf - Linker configuration file for blinky.
+// tm4c_room.icf - Linker configuration file for RT-Thread BSP.
 //
-// Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 // Texas Instruments (TI) is supplying this software for use solely and
@@ -18,7 +18,7 @@
 // CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 // 
-// This is part of revision 2.1.0.12573 of the DK-TM4C129X Firmware Package.
+// This is part of revision 2.1.4.178 of the DK-TM4C129X Firmware Package.
 //
 //*****************************************************************************
 
@@ -45,6 +45,11 @@ define region SRAM = mem:[from 0x20000000 to 0x2003ffff];
 define block HEAP with alignment = 8, size = 0x00000000 { };
 
 //
+// Define a block for RT-Thread components initialization
+//
+define block RTT_INIT_FUNC with fixed order { readonly section .rti_fn* };
+
+//
 // Indicate that the read/write values should be initialized by copying from
 // flash.
 //
@@ -65,7 +70,7 @@ place at start of FLASH { readonly section .intvec };
 //
 // Place the remainder of the read-only items into flash.
 //
-place in FLASH { readonly };
+place in FLASH { readonly, block RTT_INIT_FUNC };
 
 //
 // Place the RAM vector table at the start of SRAM.
@@ -76,6 +81,7 @@ place at start of SRAM { section VTABLE };
 // Place all read/write items into SRAM.
 //
 place in SRAM { readwrite, block HEAP };
+
 keep { section FSymTab };
 keep { section VSymTab };
 keep { section .rti_fn* };

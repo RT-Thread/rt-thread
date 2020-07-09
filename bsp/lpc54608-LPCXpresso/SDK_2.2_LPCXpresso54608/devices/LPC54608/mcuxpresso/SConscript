@@ -1,0 +1,26 @@
+from building import *
+Import('rtconfig')
+
+# handle softfp or hard
+flags = rtconfig.CFLAGS.split(' ')
+softfp = 'softfp'
+for item in flags:
+    if item.find('-mfloat-abi='):
+        if item.find('hard'):
+            softfp = 'hard'
+        else:
+            softfp = 'softfp'
+
+cwd = GetCurrentDir()
+src = Split('''
+startup_LPC54608.c
+''')
+
+if softfp == 'softfp':
+    LIBS = ['fsl_power_lib_softabi']
+else:
+    LIBS = ['fsl_power_lib']
+
+group = DefineGroup('CMSIS', src, depend = [''], LIBS=LIBS, LIBPATH=[cwd])
+
+Return('group')

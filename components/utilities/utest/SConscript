@@ -1,0 +1,8 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+group   = DefineGroup('utest', src, depend = ['RT_USING_UTEST'], CPPPATH = CPPPATH)
+
+Return('group')

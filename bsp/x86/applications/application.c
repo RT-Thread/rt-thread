@@ -1,100 +1,86 @@
-/** File      : application.c
+/*
+ * File      : application.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Develop Team
+ * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
  *
-
-* Change Logs:
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Change Logs:
  * Date           Author       Notes
- * 2006-09-15     QiuYi        the first version
+ * 2009-01-05     Bernard      the first version
  */
-
-/**
- * @addtogroup QEMU
- */
-
-/*@{*/
 
 #include <rtthread.h>
 
-ALIGN(RT_ALIGN_SIZE)
-static char thread_led1_stack[1024];
-struct rt_thread thread_led1;
-static void rt_thread_entry_led1(void *parameter)
+#ifdef RT_USING_DFS
+#include <dfs_fs.h>
+#include <dfs.h>
+#include "floppy.h"
+#ifdef RT_USING_MODULE
+#include <rtm.h>
+#endif
+extern int elm_init(void);
+#endif
+
+/* components initialization for simulator */
+void components_init(void)
 {
-    unsigned int count=0;
+#ifdef RT_USING_DFS
+	rt_floppy_init();
+	/* initialize the device file system */
+	dfs_init();
 
-    while (1)
+#ifdef RT_USING_DFS_ELMFAT
+	/* initialize the elm chan FatFS file system*/
+	elm_init();
+#endif
+
+#ifdef RT_USING_MODULE
+	rt_system_dlmodule_init();
+#endif
+#endif
+}
+void rt_init_thread_entry(void *parameter)
+{
+    components_init();
+
+    /* File system Initialization */
+#ifdef RT_USING_DFS
     {
-        /* led1 on */
-#ifndef RT_USING_FINSH
-        rt_kprintf("led1 on,count : %d\r\n",count);
-#endif
-        count ++;
-        /* sleep 0.5 second and switch to other thread */
-        rt_thread_delay(RT_TICK_PER_SECOND / 2);
 
-        /* led1 off */
-#ifndef RT_USING_FINSH
-        rt_kprintf("led1 off\r\n");
+#ifdef RT_USING_DFS_ELMFAT
+        /* mount sd card fatfs as root directory */
+        if (dfs_mount("floppy", "/", "elm", 0, 0) == 0)
+            rt_kprintf("fatfs initialized!\n");
+        else
+            rt_kprintf("fatfs initialization failed!\n");
 #endif
-        rt_thread_delay(RT_TICK_PER_SECOND / 2);
     }
+#endif
 }
 
-ALIGN(RT_ALIGN_SIZE)
-static char thread_led2_stack[1024];
-struct rt_thread thread_led2;
-void rt_thread_entry_led2(void *parameter)
+int rt_application_init()
 {
-    unsigned int count=0;
+    rt_thread_t tid;
 
-    while (1)
-    {
-        /* led2 on */
-#ifndef RT_USING_FINSH
-        rt_kprintf("led2 on,count : %d\r\n",count);
-#endif
-        count ++;
-        rt_thread_delay(RT_TICK_PER_SECOND);
+    tid = rt_thread_create("init",
+                           rt_init_thread_entry, RT_NULL,
+                           2048, RT_THREAD_PRIORITY_MAX / 3, 20);
 
-        /* led2 off */
-#ifndef RT_USING_FINSH
-        rt_kprintf("led2 off\r\n");
-#endif
-        rt_thread_delay(RT_TICK_PER_SECOND);
-    }
-}
-
-/**
- * This function will be invoked to initalize user application when system
- * startup.
- */
-
-int rt_application_init(void)
-{
-    // init led1 thread
-    rt_thread_init(&thread_led1,
-                   "led1",
-                   rt_thread_entry_led1,
-                   RT_NULL,
-                   &thread_led1_stack[0],
-                   sizeof(thread_led1_stack),11,5);
-    rt_thread_startup(&thread_led1);
-
-    // init led2 thread
-    rt_thread_init(&thread_led2,
-                   "led2",
-                   rt_thread_entry_led2,
-                   RT_NULL,
-                   &thread_led2_stack[0],
-                   sizeof(thread_led2_stack),12,5);
-    rt_thread_startup(&thread_led2);
+    if (tid != RT_NULL)
+        rt_thread_startup(tid);
 
     return 0;
 }
-
-/*@}*/

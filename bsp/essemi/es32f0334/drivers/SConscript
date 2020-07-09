@@ -1,0 +1,54 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split('''
+board.c
+''')
+
+# add gpio code
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+# add serial driver code
+if  GetDepend('BSP_USING_UART0') or GetDepend('BSP_USING_UART1'):
+    src += ['drv_uart.c']
+
+# add spi driver code
+if  GetDepend('BSP_USING_SPI0') or GetDepend('BSP_USING_SPI1'):
+    src += ['drv_spi.c']
+
+# add i2c driver code
+if  GetDepend('BSP_USING_I2C0') or GetDepend('BSP_USING_I2C1'):
+    src += ['drv_i2c.c']
+
+# add spi flash driver code
+if GetDepend('BSP_USING_SPI_FLASH'):
+    src += ['drv_spiflash.c']
+
+# add pwm driver code
+if GetDepend('BSP_USING_PWM0') or GetDepend('BSP_USING_PWM1') or GetDepend('BSP_USING_PWM2') or GetDepend('BSP_USING_PWM3'):
+    src += ['drv_pwm.c']
+
+# add hwtimer driver code
+if GetDepend('BSP_USING_HWTIMER0') or GetDepend('BSP_USING_HWTIMER1') or GetDepend('BSP_USING_HWTIMER2') or GetDepend('BSP_USING_HWTIMER3'):
+    src += ['drv_hwtimer.c']
+
+# add rtc driver code
+if GetDepend(['BSP_USING_RTC']):
+    src += ['drv_rtc.c']
+
+# add pm driver code
+if GetDepend(['BSP_USING_PM']):
+    src += ['drv_pm.c']
+    src += ['drv_lptim.c']
+
+# add adc driver code
+if GetDepend(['BSP_USING_ADC']):
+    src += ['drv_adc.c']
+
+CPPPATH = [cwd]
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

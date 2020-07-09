@@ -68,6 +68,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 // <bool name="RT_USING_UART0_0" description="Using UART0_0" default="true" />
 #define RT_USING_UART0_0
 // <bool name="RT_USING_UART0_1" description="Using UART0_1" default="false" />
@@ -154,7 +155,7 @@
 // <item description="LFN1">2</item>
 // </integer>
 #define RT_DFS_ELM_USE_LFN	1
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
 #define RT_DFS_ELM_MAX_LFN	64
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
@@ -170,8 +171,6 @@
 
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
 // #define RT_USING_CMSIS_OS
-// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
-#define RT_USING_RTT_CMSIS
 // <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
 // #define RT_USING_BSP_CMSIS
 

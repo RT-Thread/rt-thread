@@ -1,11 +1,7 @@
 /*
- * File      : app.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -19,9 +15,14 @@
  */
 /*@{*/
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 #ifdef RT_USING_DFS
 /* dfs init */
-#include <dfs_init.h>
+#include <dfs.h>
 /* dfs filesystem:FAT filesystem init */
 #include <dfs_fat.h>
 /* dfs filesystem:EFS filesystem init */
@@ -41,16 +42,31 @@
 /* thread phase init */
 void rt_init_thread_entry(void *parameter)
 {
+#ifdef RT_USING_DEVICE
+#ifdef RT_USING_DFS
+    /* init sd card */
+    rt_hw_sdcard_init();
+#endif
+
+#ifdef RT_USING_LWIP
+    eth_system_device_init();
+    /* init ethernetif device */
+    rt_hw_dm9000_init();
+#endif
+
+    /* init hardware serial device */
+    rt_hw_serial_init();
+#endif
+
     /* Filesystem Initialization */
 #ifdef RT_USING_DFS
     {
         /* init the device filesystem */
         dfs_init();
-        /* init the efsl filesystam*/
-        efsl_init();
+        elm_init();
 
         /* mount sd card fat partition 1 as root directory */
-        if (dfs_mount("sd0", "/", "efs", 0, 0) == 0)
+        if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
             rt_kprintf("File System initialized!\n");
         else
             rt_kprintf("File System init failed!\n");
@@ -67,6 +83,10 @@ void rt_init_thread_entry(void *parameter)
         rt_kprintf("TCP/IP initialized!\n");
     }
 #endif
+
+#ifdef RT_USING_FINSH
+    finsh_system_init();
+#endif
 }
 
 /************** LED BLINK *******************/
@@ -78,53 +98,53 @@ void rt_init_thread_entry(void *parameter)
 
 ALIGN(4) char thread_led1_stack[512];
 struct rt_thread thread_led1;
-void thread_led1_entry(void* parameter)
+void thread_led1_entry(void *parameter)
 {
-    unsigned int count=0;
+    unsigned int count = 0;
 
     IO1DIR |= LED1;
-    while(1)
+    while (1)
     {
         /* led1 on */
         IO1CLR = LED1;
 #ifndef RT_USING_FINSH
-        rt_kprintf("led1 on, count : %d\r\n",count);
+        rt_kprintf("led1 on, count : %d\r\n", count);
 #endif
         count++;
-        rt_thread_delay( RT_TICK_PER_SECOND/3 ); /* delay 0.3s */
+        rt_thread_delay(RT_TICK_PER_SECOND / 3); /* delay 0.3s */
 
         /* led1 off */
         IO1SET = LED1;
 #ifndef RT_USING_FINSH
         rt_kprintf("led1 off\r\n");
 #endif
-        rt_thread_delay( RT_TICK_PER_SECOND/3 );
+        rt_thread_delay(RT_TICK_PER_SECOND / 3);
     }
 }
 
 ALIGN(4) char thread_led2_stack[512];
 struct rt_thread thread_led2;
-void thread_led2_entry(void* parameter)
+void thread_led2_entry(void *parameter)
 {
-    unsigned int count=0;
+    unsigned int count = 0;
 
     IO1DIR |= LED2;
-    while(1)
+    while (1)
     {
         /* led2 on */
         IO1CLR = LED2;
 #ifndef RT_USING_FINSH
-        rt_kprintf("led2 on, count : %d\r\n",count);
+        rt_kprintf("led2 on, count : %d\r\n", count);
 #endif
         count++;
-        rt_thread_delay( RT_TICK_PER_SECOND/2 ); /* delay 0.5s */
+        rt_thread_delay(RT_TICK_PER_SECOND / 2); /* delay 0.5s */
 
         /* led2 off */
         IO1SET = LED2;
 #ifndef RT_USING_FINSH
         rt_kprintf("led1 off\r\n");
 #endif
-        rt_thread_delay( RT_TICK_PER_SECOND/2 );
+        rt_thread_delay(RT_TICK_PER_SECOND / 2);
     }
 }
 /************** LED BLINK *******************/

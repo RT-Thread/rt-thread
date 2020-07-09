@@ -3,18 +3,36 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-core/core.c
+core/usbdevice_core.c
 core/usbdevice.c
 """)
 
 if GetDepend('RT_USB_DEVICE_CDC'):
 	src += Glob('class/cdc_vcom.c')
+	
+if GetDepend('RT_USB_DEVICE_HID'):
+    src += Glob('class/hid.c')
 
 if GetDepend('RT_USB_DEVICE_MSTORAGE'):
 	src += Glob('class/mstorage.c')
 
+if GetDepend('RT_USB_DEVICE_ECM'):
+	src += Glob('class/ecm.c')
+
+if GetDepend('RT_USB_DEVICE_RNDIS'):
+	src += Glob('class/rndis.c')
+
+if GetDepend('RT_USB_DEVICE_WINUSB'):
+	src += Glob('class/winusb.c')
+	
+if GetDepend('RT_USB_DEVICE_AUDIO_MIC'):
+	src += Glob('class/audio_mic.c')
+
+if GetDepend('RT_USB_DEVICE_AUDIO_SPEAKER'):
+	src += Glob('class/audio_speaker.c')
+
 CPPPATH = [cwd]
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_USB_DEVICE'], CPPPATH = CPPPATH)
+group = DefineGroup('rt_usbd', src, depend = ['RT_USING_USB_DEVICE'], CPPPATH = CPPPATH)
 
 Return('group')

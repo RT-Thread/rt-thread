@@ -10,17 +10,17 @@ if os.getenv('RTT_CC'):
 	CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
-    print '================ERROR============================'
-    print 'Not support gcc yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support gcc yet!')
+    print('=================================================')
     exit(0)
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation_0'
+	EXEC_PATH = 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation_0'
 elif CROSS_TOOL == 'keil':
-    print '================ERROR============================'
-    print 'Not support keil yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support keil yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -66,8 +66,6 @@ elif PLATFORM == 'iar':
 
     DEVICE = '--cpu V850'
 
-    EXEC_PATH = IAR_PATH + '/v850/bin'
-
     AFLAGS = '-s+'
     AFLAGS = ' -v1'
 #    AFLAGS += ' -M<>' 
@@ -76,17 +74,17 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -DDATA_MODEL_TINY'
     AFLAGS += ' -w+'
     AFLAGS += ' -r'
-    AFLAGS += ' -I"' + IAR_PATH + '/v850/INC"'
+    AFLAGS += ' -I"' + EXEC_PATH + '/v850/INC"'
 
     LFLAGS = '-xms'
-    LFLAGS += ' -I"' + IAR_PATH + '/v850/LIB"' 
+    LFLAGS += ' -I"' + EXEC_PATH + '/v850/LIB"' 
     LFLAGS += ' -rt' 
     LFLAGS += ' -s __program_start' 
     LFLAGS += ' -D_CSTACK_SIZE=1000' 
-    LFLAGS += ' "' + IAR_PATH + '/v850/LIB/dl85nn1.r85"'
+    LFLAGS += ' "' + EXEC_PATH + '/v850/LIB/dl85nn1.r85"'
     LFLAGS += ' -D_HEAP_SIZE=0' 
 
-#    LFLAGS += ' "' + IAR_PATH + '/v850/lib/CLIB/clm16cfnffwc.r34"' 
+#    LFLAGS += ' "' + EXEC_PATH + '/v850/lib/CLIB/clm16cfnffwc.r34"' 
 #   LFLAGS += ' -e_small_write=_formatted_write' 
 #    LFLAGS += ' -e_medium_read=_formatted_read'
 
@@ -99,13 +97,15 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --no_unroll' 
     CFLAGS += ' --no_inline' 
     CFLAGS += ' --no_code_motion' 
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/v850/LIB/dl85nn1.h"'
-    CFLAGS += ' -I"' + IAR_PATH + '/v850/INC"'
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/v850/LIB/dl85nn1.h"'
+    CFLAGS += ' -I"' + EXEC_PATH + '/v850/INC"'
     CFLAGS += ' --no_tbaa' 
     CFLAGS += ' --debug' 
     CFLAGS += ' --lock_regs 0' 
     CFLAGS += ' --migration_preprocessor_extensions' 
     CFLAGS += ' -e' 
     CFLAGS += ' -Ol'
+	
+	EXEC_PATH = EXEC_PATH + '/v850/bin'
 
     POST_ACTION = ''

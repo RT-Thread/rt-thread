@@ -2,7 +2,7 @@
  *
  * blinky.ld - Linker configuration file for blinky.
  *
- * Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
+ * Copyright (c) 2013-2017 Texas Instruments Incorporated.  All rights reserved.
  * Software License Agreement
  * 
  * Texas Instruments (TI) is supplying this software for use solely and
@@ -18,24 +18,24 @@
  * CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
  * DAMAGES, FOR ANY REASON WHATSOEVER.
  * 
- * This is part of revision 2.1.0.12573 of the DK-TM4C129X Firmware Package.
+ * This is part of revision 2.1.4.178 of the DK-TM4C129X Firmware Package.
  *
  *****************************************************************************/
 
 MEMORY
 {
-    CODE (rx) : ORIGIN = 0x00000000, LENGTH = 0x00100000
+    CODE (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00100000
     DATA (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00040000
 }
+
 ENTRY(ResetISR)
-_system_stack_size = 0x100;
+_system_stack_size = 0x200;
 
 SECTIONS
 {
     .text :
     {
         . = ALIGN(4);
-        _stext = .;
         KEEP(*(.isr_vector))            /* Startup code */
         . = ALIGN(4);
         *(.text)                        /* remaining code */
@@ -57,35 +57,46 @@ SECTIONS
         __vsymtab_end = .;
         . = ALIGN(4);
 
-        /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
         . = ALIGN(4);
 
+        PROVIDE(__ctors_start__ = .);
+        /* old GCC version uses .ctors */
+        KEEP(*(SORT(.ctors.*)))
+        KEEP(*(.ctors))
+        /* new GCC version uses .init_array */
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
         . = ALIGN(4);
         _etext = .;
     } > CODE = 0
 
-    /* .ARM.exidx is sorted, so has to go in its own output section.  */
-    __exidx_start = .;
-    .ARM.exidx :
-    {
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    .ARM.extab : 
+    { 
+        *(.ARM.extab*) 
 
+        . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _sidata = .;
     } > CODE
-    __exidx_end = .;
 
     /* .data section which is used for initialized data */
-
     .data : AT (_sidata)
     {
         . = ALIGN(4);
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
+
+        . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
-        _data = . ;
+        _sdata = . ;
 
         *(.data)
         *(.data.*)
@@ -94,7 +105,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >DATA
+    } > DATA
 
     .stack : 
     {
@@ -108,7 +119,7 @@ SECTIONS
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
-        _bss = .;
+        _sbss = .;
 
         *(.bss)
         *(.bss.*)
@@ -116,8 +127,7 @@ SECTIONS
 
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */
-        _ebss = . ;
-        
+        _ebss = . ;        
         *(.bss.init)
     } > DATA
     __bss_end = .;

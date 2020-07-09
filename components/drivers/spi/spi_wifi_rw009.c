@@ -1,26 +1,13 @@
 /*
- * File      : spi_wifi_rw009.c
- * This file is part of RT-Thread RTOS
- * Copyright by Shanghai Real-Thread Electronic Technology Co.,Ltd
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2014-07-31     aozima       the first version
  * 2014-09-18     aozima       update command & response.
+ * 2017-07-28     armink       fix auto reconnect feature
  */
 
 #include <rtthread.h>
@@ -165,6 +152,8 @@ static void resp_handler(struct rw009_wifi *wifi_device, struct rw009_resp *resp
         }
         else
         {
+            wifi_device->active = 1;
+            eth_device_linkchange(&wifi_device->parent, RT_FALSE);
             WIFI_DEBUG("RW009_CMD_EASY_JOIN result: %d\n", resp->result );
         }
 
@@ -527,7 +516,7 @@ static rt_size_t rw009_wifi_write(rt_device_t dev, rt_off_t pos, const void *buf
     return 0;
 }
 
-static rt_err_t rw009_wifi_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rw009_wifi_control(rt_device_t dev, int cmd, void *args)
 {
     struct rw009_wifi *wifi_device = (struct rw009_wifi *)dev;
     rt_err_t result = RT_EOK;
@@ -626,6 +615,18 @@ static void spi_wifi_data_thread_entry(void *parameter)
     }
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops rw009_ops =
+{
+    rw009_wifi_init,
+    rw009_wifi_open,
+    rw009_wifi_close,
+    rw009_wifi_read,
+    rw009_wifi_write,
+    rw009_wifi_control
+};
+#endif
+
 rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
 {
     /* align and struct size check. */
@@ -651,12 +652,16 @@ rt_err_t rt_hw_wifi_init(const char *spi_device_name, wifi_mode_t mode)
         rt_spi_configure(rw009_wifi_device.rt_spi_device, &cfg);
     }
 
+#ifdef RT_USING_DEVICE_OPS
+    rw009_wifi_device.parent.parent.ops        = &rw009_ops;
+#else
     rw009_wifi_device.parent.parent.init       = rw009_wifi_init;
     rw009_wifi_device.parent.parent.open       = rw009_wifi_open;
     rw009_wifi_device.parent.parent.close      = rw009_wifi_close;
     rw009_wifi_device.parent.parent.read       = rw009_wifi_read;
     rw009_wifi_device.parent.parent.write      = rw009_wifi_write;
     rw009_wifi_device.parent.parent.control    = rw009_wifi_control;
+#endif
     rw009_wifi_device.parent.parent.user_data  = RT_NULL;
 
     rw009_wifi_device.parent.eth_rx     = rw009_wifi_rx;

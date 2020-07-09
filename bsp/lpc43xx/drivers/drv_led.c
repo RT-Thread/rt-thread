@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include "board.h"
 #include "drv_led.h"
@@ -117,7 +125,7 @@ static rt_size_t rt_led_write(rt_device_t dev, rt_off_t pos,
     return index;
 }
 
-static rt_err_t rt_led_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_led_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev == &led.parent);
 

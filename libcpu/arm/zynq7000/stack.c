@@ -1,11 +1,7 @@
 /*
- * File      : stack.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -31,21 +27,23 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 {
     rt_uint32_t *stk;
 
+    stack_addr += sizeof(rt_uint32_t);
+    stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
     stk      = (rt_uint32_t *)stack_addr;
-    *(stk)   = (rt_uint32_t)tentry;         /* entry point */
+    *(--stk) = (rt_uint32_t)tentry;         /* entry point */
     *(--stk) = (rt_uint32_t)texit;          /* lr */
-    *(--stk) = 0;                           /* r12 */
-    *(--stk) = 0;                           /* r11 */
-    *(--stk) = 0;                           /* r10 */
-    *(--stk) = 0;                           /* r9 */
-    *(--stk) = 0;                           /* r8 */
-    *(--stk) = 0;                           /* r7 */
-    *(--stk) = 0;                           /* r6 */
-    *(--stk) = 0;                           /* r5 */
-    *(--stk) = 0;                           /* r4 */
-    *(--stk) = 0;                           /* r3 */
-    *(--stk) = 0;                           /* r2 */
-    *(--stk) = 0;                           /* r1 */
+    *(--stk) = 0xdeadbeef;                  /* r12 */
+    *(--stk) = 0xdeadbeef;                  /* r11 */
+    *(--stk) = 0xdeadbeef;                  /* r10 */
+    *(--stk) = 0xdeadbeef;                  /* r9 */
+    *(--stk) = 0xdeadbeef;                  /* r8 */
+    *(--stk) = 0xdeadbeef;                  /* r7 */
+    *(--stk) = 0xdeadbeef;                  /* r6 */
+    *(--stk) = 0xdeadbeef;                  /* r5 */
+    *(--stk) = 0xdeadbeef;                  /* r4 */
+    *(--stk) = 0xdeadbeef;                  /* r3 */
+    *(--stk) = 0xdeadbeef;                  /* r2 */
+    *(--stk) = 0xdeadbeef;                  /* r1 */
     *(--stk) = (rt_uint32_t)parameter;      /* r0 : argument */
 
     /* cpsr */

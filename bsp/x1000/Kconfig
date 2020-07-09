@@ -1,0 +1,35 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+# you can change the RTT_ROOT default "../.." to your rtthread_root,
+# example : default "F:/git_repositories/rt-thread"
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config BOARD_X1000_REALBOARD
+    bool 
+    select ARCH_MIPS_XBURST
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config RT_USING_HARD_FLOAT
+    bool "Enable Hardware Float Unit"
+    default y
+
+source "$BSP_DIR/drivers/Kconfig"

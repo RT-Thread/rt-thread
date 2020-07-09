@@ -150,8 +150,10 @@ __cs3_interrupt_vector_cortex_m:
     .section .cs3.reset,"x",%progbits
     .thumb_func
     .globl  __cs3_reset_cortex_m
+    .globl  _start
     .type   __cs3_reset_cortex_m, %function
 __cs3_reset_cortex_m:
+_start:
     .fnstart
     LDR     R0, =SystemInit
     BLX     R0

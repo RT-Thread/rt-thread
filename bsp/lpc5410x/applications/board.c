@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -19,12 +15,6 @@
 
 #include "board.h"
 #include "drv_uart.h"
-
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
-
-
 
 /**
  * This is the timer interrupt service routine.
@@ -41,9 +31,6 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-
-
-
 /**
  * This function will initial LPC54xx board.
  */
@@ -58,7 +45,7 @@ void rt_hw_board_init()
     /* Set the Vector Table base location at 0x00000000 */
     SCB->VTOR  = (0x00000000 & NVIC_VTOR_MASK);
 #endif
-		SystemCoreClockUpdate();
+    SystemCoreClockUpdate();
     /* init systick  1 systick = 1/(100M / 100) 100¸ösystick = 1s*/
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
@@ -68,29 +55,17 @@ void rt_hw_board_init()
     rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
-#if LPC_EXT_SDRAM == 1
-    lpc_sdram_hw_init();
-    mpu_init();
-#endif
-
 #ifdef RT_USING_COMPONENTS_INIT
     /* initialization board with RT-Thread Components */
     rt_components_board_init();
 #endif
 }
 
-
 /* initialization for system heap */
 int rt_hw_board_heap_init(void)
 {
 #ifdef RT_USING_HEAP
-#if LPC_EXT_SDRAM
-#include "drv_sram.h"
-    rt_system_heap_init((void *)LPC_EXT_SDRAM_BEGIN, (void *)LPC_EXT_SDRAM_END);
-    sram_init();
-#else
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
-#endif
 #endif
 
     return 0;

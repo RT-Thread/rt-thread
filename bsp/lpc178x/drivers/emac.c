@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_pinsel.h"
 #include "emac.h"
@@ -370,7 +378,7 @@ static rt_size_t lpc17xx_emac_write (rt_device_t dev, rt_off_t pos, const void* 
 	return 0;
 }
 
-static rt_err_t lpc17xx_emac_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t lpc17xx_emac_control(rt_device_t dev, int cmd, void *args)
 {
 	switch (cmd)
 	{

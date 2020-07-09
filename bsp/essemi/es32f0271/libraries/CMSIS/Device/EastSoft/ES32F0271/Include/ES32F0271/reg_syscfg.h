@@ -1,0 +1,215 @@
+/**
+  **************************************************************************************
+  * @file    REG_SYSCFG.h
+  * @brief   SYSCFG Head File
+  *
+  * @version V0.01
+  * @date    12/5/2018
+  * @author  Eastsoft MCU Software Team
+  * @note
+  *
+  * Copyright (C) 2018 Shanghai Eastsoft Microelectronics Co., Ltd. ALL rights reserved.
+  *
+  **************************************************************************************
+  */
+
+#ifndef __SYSCFG_H__
+#define __SYSCFG_H__
+
+
+/******************************************************************************/
+/*                              设备特殊寄存器结构定义                        */
+/******************************************************************************/
+
+/*   允许匿名结构和匿名联合    */
+/* #pragma anon_unions */
+
+/****************** Bit definition for SYSCFG_REMAP register ************************/
+
+#define  SYSCFG_REMAP_REALMOD_POSS  10U 
+#define  SYSCFG_REMAP_REALMOD_POSE  11U 
+#define  SYSCFG_REMAP_REALMOD_MSK  BITS(SYSCFG_REMAP_REALMOD_POSS,SYSCFG_REMAP_REALMOD_POSE)
+
+#define  SYSCFG_REMAP_EFBASE_POSS  4U 
+#define  SYSCFG_REMAP_EFBASE_POSE  7U 
+#define  SYSCFG_REMAP_EFBASE_MSK  BITS(SYSCFG_REMAP_EFBASE_POSS,SYSCFG_REMAP_EFBASE_POSE)
+
+#define  SYSCFG_REMAP_MEMMOD_POSS  2U 
+#define  SYSCFG_REMAP_MEMMOD_POSE  3U 
+#define  SYSCFG_REMAP_MEMMOD_MSK  BITS(SYSCFG_REMAP_MEMMOD_POSS,SYSCFG_REMAP_MEMMOD_POSE)
+
+#define  SYSCFG_REMAP_REMAP_POS  0U 
+#define  SYSCFG_REMAP_REMAP_MSK  BIT(SYSCFG_REMAP_REMAP_POS)
+
+/****************** Bit definition for SYSCFG_TRIM register ************************/
+
+#define  SYSCFG_TRIM_CNT_POSS  20U 
+#define  SYSCFG_TRIM_CNT_POSE  31U 
+#define  SYSCFG_TRIM_CNT_MSK  BITS(SYSCFG_TRIM_CNT_POSS,SYSCFG_TRIM_CNT_POSE)
+
+#define  SYSCFG_TRIM_FAIL_POS  18U 
+#define  SYSCFG_TRIM_FAIL_MSK  BIT(SYSCFG_TRIM_FAIL_POS)
+
+#define  SYSCFG_TRIM_NOEQU_POS  17U 
+#define  SYSCFG_TRIM_NOEQU_MSK  BIT(SYSCFG_TRIM_NOEQU_POS)
+
+#define  SYSCFG_TRIM_BUSY_POS  16U 
+#define  SYSCFG_TRIM_BUSY_MSK  BIT(SYSCFG_TRIM_BUSY_POS)
+
+#define  SYSCFG_TRIM_HRCTRIM_POSS  8U 
+#define  SYSCFG_TRIM_HRCTRIM_POSE  15U 
+#define  SYSCFG_TRIM_HRCTRIM_MSK  BITS(SYSCFG_TRIM_HRCTRIM_POSS,SYSCFG_TRIM_HRCTRIM_POSE)
+
+#define  SYSCFG_TRIM_TSRC_POS  1U 
+#define  SYSCFG_TRIM_TSRC_MSK  BIT(SYSCFG_TRIM_TSRC_POS)
+
+#define  SYSCFG_TRIM_TRIM_POS  0U 
+#define  SYSCFG_TRIM_TRIM_MSK  BIT(SYSCFG_TRIM_TRIM_POS)
+
+/****************** Bit definition for SYSCFG_IRSEL register ************************/
+
+#define  SYSCFG_IRSEL_PLR_POS  8U 
+#define  SYSCFG_IRSEL_PLR_MSK  BIT(SYSCFG_IRSEL_PLR_POS)
+
+#define  SYSCFG_IRSEL_SEL2_POSS  4U 
+#define  SYSCFG_IRSEL_SEL2_POSE  7U 
+#define  SYSCFG_IRSEL_SEL2_MSK  BITS(SYSCFG_IRSEL_SEL2_POSS,SYSCFG_IRSEL_SEL2_POSE)
+
+#define  SYSCFG_IRSEL_SEL1_POSS  0U 
+#define  SYSCFG_IRSEL_SEL1_POSE  3U 
+#define  SYSCFG_IRSEL_SEL1_MSK  BITS(SYSCFG_IRSEL_SEL1_POSS,SYSCFG_IRSEL_SEL1_POSE)
+
+/****************** Bit definition for SYSCFG_CFG register ************************/
+
+#define  SYSCFG_CFG_DBGH_EN_POSS  16U 
+#define  SYSCFG_CFG_DBGH_EN_POSE  31U 
+#define  SYSCFG_CFG_DBGH_EN_MSK  BITS(SYSCFG_CFG_DBGH_EN_POSS,SYSCFG_CFG_DBGH_EN_POSE)
+
+#define  SYSCFG_CFG_PVD_LCK_POS  14U 
+#define  SYSCFG_CFG_PVD_LCK_MSK  BIT(SYSCFG_CFG_PVD_LCK_POS)
+
+#define  SYSCFG_CFG_CSS_LCK_POS  13U 
+#define  SYSCFG_CFG_CSS_LCK_MSK  BIT(SYSCFG_CFG_CSS_LCK_POS)
+
+#define  SYSCFG_CFG_CPU_LCK_POS  12U 
+#define  SYSCFG_CFG_CPU_LCK_MSK  BIT(SYSCFG_CFG_CPU_LCK_POS)
+
+#define  SYSCFG_CFG_VTST_POSS  8U 
+#define  SYSCFG_CFG_VTST_POSE  9U 
+#define  SYSCFG_CFG_VTST_MSK  BITS(SYSCFG_CFG_VTST_POSS,SYSCFG_CFG_VTST_POSE)
+
+#define  SYSCFG_CFG_NRSTREQ_POS  7U 
+#define  SYSCFG_CFG_NRSTREQ_MSK  BIT(SYSCFG_CFG_NRSTREQ_POS)
+
+#define  SYSCFG_CFG_CURRGEN_POS  5U 
+#define  SYSCFG_CFG_CURRGEN_MSK  BIT(SYSCFG_CFG_CURRGEN_POS)
+
+#define  SYSCFG_CFG_TEMPEN_POS  4U 
+#define  SYSCFG_CFG_TEMPEN_MSK  BIT(SYSCFG_CFG_TEMPEN_POS)
+
+#define  SYSCFG_CFG_VREFEN_POS  3U 
+#define  SYSCFG_CFG_VREFEN_MSK  BIT(SYSCFG_CFG_VREFEN_POS)
+
+#define  SYSCFG_CFG_VRLS_POSS  0U 
+#define  SYSCFG_CFG_VRLS_POSE  2U 
+#define  SYSCFG_CFG_VRLS_MSK  BITS(SYSCFG_CFG_VRLS_POSS,SYSCFG_CFG_VRLS_POSE)
+
+/****************** Bit definition for SYSCFG_PWCON register ************************/
+
+#define  SYSCFG_PWCON_IOLOCK_POS  23U 
+#define  SYSCFG_PWCON_IOLOCK_MSK  BIT(SYSCFG_PWCON_IOLOCK_POS)
+
+#define  SYSCFG_PWCON_BGTRIM_POSS  17U 
+#define  SYSCFG_PWCON_BGTRIM_POSE  20U 
+#define  SYSCFG_PWCON_BGTRIM_MSK  BITS(SYSCFG_PWCON_BGTRIM_POSS,SYSCFG_PWCON_BGTRIM_POSE)
+
+#define  SYSCFG_PWCON_HRCLOCK_POS  16U 
+#define  SYSCFG_PWCON_HRCLOCK_MSK  BIT(SYSCFG_PWCON_HRCLOCK_POS)
+
+#define  SYSCFG_PWCON_HRCTRIM_POSS  8U 
+#define  SYSCFG_PWCON_HRCTRIM_POSE  15U 
+#define  SYSCFG_PWCON_HRCTRIM_MSK  BITS(SYSCFG_PWCON_HRCTRIM_POSS,SYSCFG_PWCON_HRCTRIM_POSE)
+
+#define  SYSCFG_PWCON_LOSCDRV_POSS  5U 
+#define  SYSCFG_PWCON_LOSCDRV_POSE  7U 
+#define  SYSCFG_PWCON_LOSCDRV_MSK  BITS(SYSCFG_PWCON_LOSCDRV_POSS,SYSCFG_PWCON_LOSCDRV_POSE)
+
+#define  SYSCFG_PWCON_PVDEN_POS  4U 
+#define  SYSCFG_PWCON_PVDEN_MSK  BIT(SYSCFG_PWCON_PVDEN_POS)
+
+#define  SYSCFG_PWCON_PVLS_POSS  0U 
+#define  SYSCFG_PWCON_PVLS_POSE  3U 
+#define  SYSCFG_PWCON_PVLS_MSK  BITS(SYSCFG_PWCON_PVLS_POSS,SYSCFG_PWCON_PVLS_POSE)
+
+/****************** Bit definition for SYSCFG_WKCON register ************************/
+
+#define  SYSCFG_WKCON_WKCLR_POS  31U 
+#define  SYSCFG_WKCON_WKCLR_MSK  BIT(SYSCFG_WKCON_WKCLR_POS)
+
+#define  SYSCFG_WKCON_LPLS_POSS  28U 
+#define  SYSCFG_WKCON_LPLS_POSE  30U 
+#define  SYSCFG_WKCON_LPLS_MSK  BITS(SYSCFG_WKCON_LPLS_POSS,SYSCFG_WKCON_LPLS_POSE)
+
+#define  SYSCFG_WKCON_WKEG_POSS  16U 
+#define  SYSCFG_WKCON_WKEG_POSE  27U 
+#define  SYSCFG_WKCON_WKEG_MSK  BITS(SYSCFG_WKCON_WKEG_POSS,SYSCFG_WKCON_WKEG_POSE)
+
+#define  SYSCFG_WKCON_WKEN_POSS  0U 
+#define  SYSCFG_WKCON_WKEN_POSE  11U 
+#define  SYSCFG_WKCON_WKEN_MSK  BITS(SYSCFG_WKCON_WKEN_POSS,SYSCFG_WKCON_WKEN_POSE)
+
+/****************** Bit definition for SYSCFG_WKSTAT register ************************/
+
+#define  SYSCFG_WKSTAT_FLAG_POS  16U 
+#define  SYSCFG_WKSTAT_FLAG_MSK  BIT(SYSCFG_WKSTAT_FLAG_POS)
+
+#define  SYSCFG_WKSTAT_FG_POSS  0U 
+#define  SYSCFG_WKSTAT_FG_POSE  11U 
+#define  SYSCFG_WKSTAT_FG_MSK  BITS(SYSCFG_WKSTAT_FG_POSS,SYSCFG_WKSTAT_FG_POSE)
+
+/****************** Bit definition for SYSCFG_BKREG0 register ************************/
+
+#define  SYSCFG_BKREG0_BKREG0_POSS  0U 
+#define  SYSCFG_BKREG0_BKREG0_POSE  31U 
+#define  SYSCFG_BKREG0_BKREG0_MSK  BITS(SYSCFG_BKREG0_BKREG0_POSS,SYSCFG_BKREG0_BKREG0_POSE)
+
+/****************** Bit definition for SYSCFG_BKREG1 register ************************/
+
+#define  SYSCFG_BKREG1_BKREG1_POSS  0U 
+#define  SYSCFG_BKREG1_BKREG1_POSE  31U 
+#define  SYSCFG_BKREG1_BKREG1_MSK  BITS(SYSCFG_BKREG1_BKREG1_POSS,SYSCFG_BKREG1_BKREG1_POSE)
+
+/****************** Bit definition for SYSCFG_BKREG2 register ************************/
+
+#define  SYSCFG_BKREG2_BKREG2_POSS  0U 
+#define  SYSCFG_BKREG2_BKREG2_POSE  31U 
+#define  SYSCFG_BKREG2_BKREG2_MSK  BITS(SYSCFG_BKREG2_BKREG2_POSS,SYSCFG_BKREG2_BKREG2_POSE)
+
+/****************** Bit definition for SYSCFG_BKREG3 register ************************/
+
+#define  SYSCFG_BKREG3_BKREG3_POSS  0U 
+#define  SYSCFG_BKREG3_BKREG3_POSE  29U 
+#define  SYSCFG_BKREG3_BKREG3_MSK  BITS(SYSCFG_BKREG3_BKREG3_POSS,SYSCFG_BKREG3_BKREG3_POSE)
+
+typedef struct
+{
+  __O uint32_t REMAP;
+  __O uint32_t TRIM;
+  __IO uint32_t IRSEL;
+  uint32_t RESERVED0[12] ;
+  __IO uint32_t CFG;
+  __IO uint32_t PWCON;
+  uint32_t RESERVED1 ;
+  __IO uint32_t WKCON;
+  __I uint32_t WKSTAT;
+  __IO uint32_t BKREG0;
+  __IO uint32_t BKREG1;
+  __IO uint32_t BKREG2;
+  __IO uint32_t BKREG3;
+} SYSCFG_TypeDef;
+
+
+
+
+
+#endif

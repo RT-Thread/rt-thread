@@ -79,7 +79,7 @@ static void rt_hw_key_isr(void)
 /**
  * This function is only for QEMU emulation
  */
-static void rt_key_handler(int vector)
+static void rt_key_handler(int vector, void *param)
 {
 	INTSUBMSK |= (BIT_SUB_RXD1);
 
@@ -201,7 +201,7 @@ static rt_size_t rt_key_read (rt_device_t dev, rt_off_t pos, void* buffer, rt_si
 	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static rt_err_t rt_key_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_key_control(rt_device_t dev, int cmd, void *args)
 {
 	return RT_EOK;
 }

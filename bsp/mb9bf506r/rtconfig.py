@@ -19,7 +19,7 @@ elif CROSS_TOOL == 'keil':
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
+	EXEC_PATH 	= 'C:/Program Files/IAR Systems/Embedded Workbench 6.0 Evaluation'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -33,7 +33,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-fm3.map,-cref,-u,Reset_Handler -T rtthread-mb9bf506.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-fm3.map,-cref,-u,Reset_Handler -T rtthread-mb9bf506.ld -nostartfiles'
 
     CPATH = ''
     LPATH = ''
@@ -101,7 +101,7 @@ elif PLATFORM == 'iar':
     CFLAGS += ' --cpu=Cortex-M3' 
     CFLAGS += ' -e' 
     CFLAGS += ' --fpu=None'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
+    CFLAGS += ' --dlib_config "' + EXEC_PATH + '/arm/INC/c/DLib_Config_Normal.h"'    
     CFLAGS += ' -Ol'    
     CFLAGS += ' --use_c++_inline'    
         
@@ -111,11 +111,11 @@ elif PLATFORM == 'iar':
     AFLAGS += ' -r' 
     AFLAGS += ' --cpu Cortex-M3' 
     AFLAGS += ' --fpu None' 
-    AFLAGS += ' -I"' + IAR_PATH + '/arm/INC"'
+    AFLAGS += ' -I"' + EXEC_PATH + '/arm/INC"'
 
     LFLAGS = ' --config rtthread-mb9bf506.icf'
     LFLAGS += ' --semihosting' 
     LFLAGS += ' --entry __iar_program_start'    
 
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
+    EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool.exe --srec --verbose $TARGET rtthread.srec' 

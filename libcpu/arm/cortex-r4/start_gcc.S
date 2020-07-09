@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 @-------------------------------------------------------------------------------
 @ sys_core.asm
 @
@@ -28,6 +36,7 @@
 .globl stack_start
 .globl stack_top
 
+.align 3
 stack_start:
 .rept (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + FIQ_Stack_Size + IRQ_Stack_Size)
 .byte 0

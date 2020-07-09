@@ -17,7 +17,8 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
-#define RT_THREAD_DEBUG
+#define RT_DEBUG_COLOR
+#define RT_DEBUG_MODULE 0
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -69,6 +70,8 @@
 
 /* SECTION: finsh, a C-Express shell */
 #define RT_USING_FINSH
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_ONLY
 /* Using symbol table */
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
@@ -99,8 +102,6 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 //#define RT_USING_LWIP
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 /* Enable UDP protocol*/
@@ -175,4 +176,5 @@
 /* #define RTGUI_IMAGE_XPM */
 /* #define RTGUI_IMAGE_BMP */
 
+// #define RT_USING_MODULE
 #endif

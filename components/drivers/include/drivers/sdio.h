@@ -1,21 +1,7 @@
 /*
- * File      : sdio.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -43,6 +29,7 @@ extern "C" {
 #define  SDIO_CCCR_REV_1_00 0   /* CCCR/FBR Version 1.00 */
 #define  SDIO_CCCR_REV_1_10 1   /* CCCR/FBR Version 1.10 */
 #define  SDIO_CCCR_REV_1_20 2   /* CCCR/FBR Version 1.20 */
+#define  SDIO_CCCR_REV_3_00 3   /* CCCR/FBR Version 2.00 */
 
 #define  SDIO_SDIO_REV_1_00 0   /* SDIO Spec Version 1.00 */
 #define  SDIO_SDIO_REV_1_10 1   /* SDIO Spec Version 1.10 */
@@ -228,6 +215,8 @@ rt_int32_t sdio_detach_irq(struct rt_sdio_function *func);
 void sdio_irq_wakeup(struct rt_mmcsd_host *host);
 rt_int32_t sdio_enable_func(struct rt_sdio_function *func);
 rt_int32_t sdio_disable_func(struct rt_sdio_function *func);
+void sdio_set_drvdata(struct rt_sdio_function *func, void *data);
+void* sdio_get_drvdata(struct rt_sdio_function *func);
 rt_int32_t sdio_set_block_size(struct rt_sdio_function *func,
                                rt_uint32_t              blksize);
 rt_int32_t sdio_register_driver(struct rt_sdio_driver *driver);

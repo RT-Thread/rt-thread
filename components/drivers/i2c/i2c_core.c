@@ -1,21 +1,7 @@
 /*
- * File      : i2c_core.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
@@ -23,6 +9,14 @@
  */
 
 #include <rtdevice.h>
+
+#define DBG_TAG               "I2C"
+#ifdef RT_I2C_DEBUG
+#define DBG_LVL               DBG_LOG
+#else
+#define DBG_LVL               DBG_INFO
+#endif
+#include <rtdbg.h>
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name)
@@ -35,7 +29,7 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
 
     res = rt_i2c_bus_device_device_init(bus, bus_name);
 
-    i2c_dbg("I2C bus [%s] registered\n", bus_name);
+    LOG_I("I2C bus [%s] registered", bus_name);
 
     return res;
 }
@@ -46,7 +40,7 @@ struct rt_i2c_bus_device *rt_i2c_bus_device_find(const char *bus_name)
     rt_device_t dev = rt_device_find(bus_name);
     if (dev == RT_NULL || dev->type != RT_Device_Class_I2CBUS)
     {
-        i2c_dbg("I2C bus %s not exist\n", bus_name);
+        LOG_E("I2C bus %s not exist", bus_name);
 
         return RT_NULL;
     }
@@ -67,9 +61,9 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 #ifdef RT_I2C_DEBUG
         for (ret = 0; ret < num; ret++)
         {
-            i2c_dbg("msgs[%d] %c, addr=0x%02x, len=%d%s\n", ret,
-                    (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
-                    msgs[ret].addr, msgs[ret].len);
+            LOG_D("msgs[%d] %c, addr=0x%02x, len=%d", ret,
+                  (msgs[ret].flags & RT_I2C_RD) ? 'R' : 'W',
+                  msgs[ret].addr, msgs[ret].len);
         }
 #endif
 
@@ -81,7 +75,7 @@ rt_size_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
     }
     else
     {
-        i2c_dbg("I2C bus operation not supported\n");
+        LOG_E("I2C bus operation not supported");
 
         return 0;
     }
@@ -93,11 +87,11 @@ rt_size_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
                              const rt_uint8_t         *buf,
                              rt_uint32_t               count)
 {
-    rt_size_t ret;
+    rt_err_t ret;
     struct rt_i2c_msg msg;
 
     msg.addr  = addr;
-    msg.flags = flags & RT_I2C_ADDR_10BIT;
+    msg.flags = flags;
     msg.len   = count;
     msg.buf   = (rt_uint8_t *)buf;
 
@@ -112,13 +106,12 @@ rt_size_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count)
 {
-    rt_size_t ret;
+    rt_err_t ret;
     struct rt_i2c_msg msg;
     RT_ASSERT(bus != RT_NULL);
 
     msg.addr   = addr;
-    msg.flags  = flags & RT_I2C_ADDR_10BIT;
-    msg.flags |= RT_I2C_RD;
+    msg.flags  = flags | RT_I2C_RD;
     msg.len    = count;
     msg.buf    = buf;
 

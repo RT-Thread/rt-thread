@@ -32,6 +32,8 @@ import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
+import utils
+
 fs_encoding = sys.getfilesystemencoding()
 
 #reference
@@ -123,16 +125,16 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
             ObjName.text = ''.join('$(IntDir)'+objpath+'\\')
 
 def VS_add_HeadFiles(program, elem, project_path):
-    building.source_ext = []
-    building.source_ext = ["h"]
+    utils.source_ext = []
+    utils.source_ext = ["h"]
     for item in program:
-        building.walk_children(item)    
-    building.source_list.sort()
-    # print building.source_list
+        utils.walk_children(item)    
+    utils.source_list.sort()
+    # print utils.source_list
     ItemGroup = SubElement(elem, 'ItemGroup')
 
     filter_h_ItemGroup = SubElement(filter_project, 'ItemGroup')
-    for f in building.source_list:
+    for f in utils.source_list:
         path = _make_path_relative(project_path, f)
         File = SubElement(ItemGroup, 'ClInclude')
         File.set('Include', path.decode(fs_encoding))
@@ -166,7 +168,7 @@ def VS2012Project(target, script, program):
     VS_add_HeadFiles(program, elem, project_path)
 
     # write head include path
-    if building.Env.has_key('CPPPATH'):
+    if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
         paths = set()
         for path in cpp_path:
@@ -183,7 +185,7 @@ def VS2012Project(target, script, program):
             break
 
     # write cppdefinitons flags
-    if building.Env.has_key('CPPDEFINES'):
+    if 'CPPDEFINES' in building.Env:
         for elem in tree.iter(tag='PreprocessorDefinitions'):
             definitions = ';'.join(building.Env['CPPDEFINES']) + ';%(PreprocessorDefinitions)'
             elem.text = definitions
@@ -191,7 +193,7 @@ def VS2012Project(target, script, program):
     # write link flags
 
     # write lib dependence (Link)
-    if building.Env.has_key('LIBS'):
+    if 'LIBS' in building.Env:
         for elem in tree.iter(tag='AdditionalDependencies'):
             libs_with_extention = [i+'.lib' for i in building.Env['LIBS']]
             libs = ';'.join(libs_with_extention) + ';%(AdditionalDependencies)'
@@ -199,7 +201,7 @@ def VS2012Project(target, script, program):
             break
 
     # write lib include path
-    if building.Env.has_key('LIBPATH'):
+    if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
         paths  = set()
         for path in lib_path:

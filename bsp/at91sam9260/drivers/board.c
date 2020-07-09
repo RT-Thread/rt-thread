@@ -32,6 +32,18 @@
  * @addtogroup at91sam9260
  */
 /*@{*/
+#if defined(__CC_ARM)
+extern int Image$$ER_ZI$$ZI$$Limit;
+#define HEAP_BEGIN  (&Image$$ER_ZI$$ZI$$Limit)
+#elif (defined (__GNUC__))
+extern unsigned char __bss_end__;
+#define HEAP_BEGIN  (&__bss_end__)
+#elif (defined (__ICCARM__))
+#pragma section=".noinit"
+#define HEAP_BEGIN  (__section_end(".noinit"))
+#endif
+
+#define HEAP_END    (((rt_uint32_t)HEAP_BEGIN & (0xF0 << 24)) + (32 << 20))
 
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_clock_init(void);
@@ -45,8 +57,8 @@ static struct mem_desc at91_mem_desc[] = {
 	{ 0x00000000, 0xFFFFFFFF, 0x00000000, RW_NCNB },     /* None cached for 4G memory */
 	{ 0x20000000, 0x24000000-1, 0x20000000, RW_CB },     /* 64M cached SDRAM memory */
 	{ 0x00000000, 0x100000, 0x20000000, RW_CB },         /* isr vector table */
-	{ 0x90000000, 0x90400000 - 1, 0x00200000, RW_NCNB }, /* 4K SRAM0 + 4k SRAM1 */
-	{ 0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB }   /* 64M none-cached SDRAM memory */
+	{ 0x90000000, 0x90400000-1, 0x00200000, RW_NCNB },   /* 4K SRAM0@2M + 4k SRAM1@3M + 16k UHP@5M */
+	{ 0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB }    /* 64M none-cached SDRAM memory */
 };
 
 
@@ -138,26 +150,122 @@ static void at91sam926x_pit_init(void)
  	writel(0xffff, AT91SAM9260_BASE_TC0 + AT91_TC_CV);
  }
 
+#define RXRDY			0x01
+#define TXRDY			(1 << 1)
+#define BPS			115200	/* serial baudrate */
+
+typedef struct uartport
+{
+	volatile rt_uint32_t CR;
+	volatile rt_uint32_t MR;
+	volatile rt_uint32_t IER;
+	volatile rt_uint32_t IDR;
+	volatile rt_uint32_t IMR;
+	volatile rt_uint32_t CSR;
+	volatile rt_uint32_t RHR;
+	volatile rt_uint32_t THR;
+	volatile rt_uint32_t BRGR;
+	volatile rt_uint32_t RTOR;
+	volatile rt_uint32_t TTGR;
+	volatile rt_uint32_t reserved0[5];
+	volatile rt_uint32_t FIDI;
+	volatile rt_uint32_t NER;
+	volatile rt_uint32_t reserved1;
+	volatile rt_uint32_t IFR;
+	volatile rt_uint32_t reserved2[44];
+	volatile rt_uint32_t RPR;
+	volatile rt_uint32_t RCR;
+	volatile rt_uint32_t TPR;
+	volatile rt_uint32_t TCR;
+	volatile rt_uint32_t RNPR;
+	volatile rt_uint32_t RNCR;
+	volatile rt_uint32_t TNPR;
+	volatile rt_uint32_t TNCR;
+	volatile rt_uint32_t PTCR;
+	volatile rt_uint32_t PTSR;
+}uartport;
+
+#define CIDR FIDI
+#define EXID NER
+#define FNR  reserved1
+
+#define DBGU	((struct uartport *)AT91SAM9260_BASE_DBGU)
+
+static void at91_usart_putc(char c)
+{
+    while (!(DBGU->CSR & TXRDY));
+	DBGU->THR = c;
+}
+
+/**
+ * This function is used to display a string on console, normally, it's
+ * invoked by rt_kprintf
+ *
+ * @param str the displayed string
+ */
+void rt_hw_console_output(const char* str)
+{
+	while (*str)
+	{
+		if (*str=='\n')
+		{
+			at91_usart_putc('\r');
+		}
+
+		at91_usart_putc(*str++);
+	}
+}
+
+static void rt_hw_console_init(void)
+{
+	int div;
+	int mode = 0;
+
+	DBGU->CR = AT91_US_RSTTX | AT91_US_RSTRX | 
+	       AT91_US_RXDIS | AT91_US_TXDIS;
+	mode |= AT91_US_USMODE_NORMAL | AT91_US_USCLKS_MCK | 
+		AT91_US_CHMODE_NORMAL;
+	mode |= AT91_US_CHRL_8;
+	mode |= AT91_US_NBSTOP_1;
+	mode |= AT91_US_PAR_NONE;
+	DBGU->MR = mode;
+	div = (clk_get_rate(clk_get("mck")) / 16 + BPS/2) / BPS;
+	DBGU->BRGR = div;
+	DBGU->CR = AT91_US_RXEN | AT91_US_TXEN;
+}
+
+
 /**
  * This function will init at91sam9260 board
  */
 void rt_hw_board_init()
 {
-	/* initialize mmu */
-	rt_hw_mmu_init(at91_mem_desc, sizeof(at91_mem_desc)/sizeof(at91_mem_desc[0]));
-		/* initialize hardware interrupt */
-	rt_hw_interrupt_init();
 	/* initialize the system clock */
 	rt_hw_clock_init();
 
-	/* initialize uart */
-	rt_hw_uart_init();
+	/* initialize console */
+	rt_hw_console_init();
+
+	/* initialize mmu */
+	rt_hw_mmu_init(at91_mem_desc, sizeof(at91_mem_desc)/sizeof(at91_mem_desc[0]));
+
+	/* initialize hardware interrupt */
+	rt_hw_interrupt_init();
+
+	/* initialize early device */
+#ifdef RT_USING_COMPONENTS_INIT
+	rt_components_board_init();
+#endif
+#ifdef RT_USING_CONSOLE
 	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-
-
-
+#endif
 	/* initialize timer0 */
 	rt_hw_timer_init();
+
+/* initialize board */
+#ifdef RT_USING_HEAP
+	rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
 
 }
 

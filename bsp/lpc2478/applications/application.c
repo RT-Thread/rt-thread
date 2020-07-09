@@ -1,11 +1,7 @@
 /*
- * File      : app.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -14,13 +10,23 @@
 
 #include <rtthread.h>
 
+#ifdef RT_USING_FINSH
+#include <shell.h>
+#include <finsh.h>
+#endif
+
 /**
  * @addtogroup LPC2478
  */
 /*@{*/
 int rt_application_init()
 {
-	return 0;
+#ifdef RT_USING_FINSH
+    /* init finsh */
+    finsh_system_init();
+#endif
+
+    return 0;
 }
 
 /*@}*/

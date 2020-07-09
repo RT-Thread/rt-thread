@@ -1,21 +1,7 @@
 /*
- * File      : arm_entry_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -130,13 +116,8 @@ __check_vfp_instruction:
 	mov pc,	lr				@ CP7
 	mov pc,	lr				@ CP8
 	mov pc,	lr				@ CP9
-#ifdef RT_USING_VFP
-	b	vfp_entry			@ CP10 VFP
-	b	vfp_entry			@ CP11 VFP
-#else
 	mov pc,	lr				@ CP10 VFP
 	mov pc,	lr				@ CP11 VFP
-#endif
 	mov pc,	lr				@ CP12
 	mov pc,	lr				@ CP13
 	mov pc,	lr				@ CP14 DEBUG

@@ -363,7 +363,7 @@
               <MiscControls />
               <Define>PART_TM4C129XNCZAD</Define>
               <Undefine />
-              <IncludePath>libraries;libraries/inc;libraries/driverlib;applications;.;drivers;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/drivers/include;../../components/drivers/include;../../components/finsh;../../components/net/lwip-1.4.1/src;../../components/net/lwip-1.4.1/src/include;../../components/net/lwip-1.4.1/src/include/ipv4;../../components/net/lwip-1.4.1/src/arch/include;../../components/net/lwip-1.4.1/src/include/netif</IncludePath>
+              <IncludePath>libraries;libraries/inc;libraries/driverlib;drivers;applications;.;../../include;../../libcpu/arm/cortex-m4;../../libcpu/arm/common;../../components/drivers/include;../../components/drivers/include;../../components/finsh;../../components/net/lwip-1.4.1/src;../../components/net/lwip-1.4.1/src/include;../../components/net/lwip-1.4.1/src/include/ipv4;../../components/net/lwip-1.4.1/src/arch/include;../../components/net/lwip-1.4.1/src/include/netif</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -631,30 +631,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Applications</GroupName>
-          <Files>
-            <File>
-              <FileName>application.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
@@ -668,6 +644,23 @@
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers/drv_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>application.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/application.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications/board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -759,6 +752,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../src/signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../src/thread.c</FilePath>
@@ -842,16 +842,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>portal.c</FileName>
+              <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/portal.c</FilePath>
+              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ringbuffer.c</FileName>
+              <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+              <FilePath>../../components/drivers/src/waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>

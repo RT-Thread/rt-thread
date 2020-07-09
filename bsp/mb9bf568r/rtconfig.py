@@ -16,9 +16,9 @@ elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armcc'
     EXEC_PATH   = 'C:/Keil_MDK_471'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-' + BOARD_NAME + '.map,-cref,-u,Reset_Handler -T rtthread-' + BOARD_NAME + '.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-' + BOARD_NAME + '.map,-cref,-u,Reset_Handler -T rtthread-' + BOARD_NAME + '.ld -nostartfiles'
 
     CPATH = ''
     LPATH = ''

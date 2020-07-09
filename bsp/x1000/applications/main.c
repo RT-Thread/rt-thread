@@ -1,7 +1,7 @@
 /*
- * File      : _main.c
+ * File      : main.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,14 +19,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-11-19     Urey         the first version
+ * 2017-11-8      Tangyuxin    first version
  */
-#include <stdio.h>
-#include <stdlib.h>
+
+#include <rtthread.h>
 
 int main(int argc, char** argv)
-{
-    printf("Hello RT-Thread!\n");
-
+{   
     return 0;
 }

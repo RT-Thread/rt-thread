@@ -1,26 +1,10 @@
 /*
  *  VMM startup file.
  *
- * COPYRIGHT (C) 2013-2014, Shanghai Real-Thread Technology Co., Ltd
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *  Maintainer: bernard.xiong <bernard.xiong at gmail.com>
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2013-2014, Real-Thread Information Technology Ltd
+ * All rights reserved
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -39,14 +23,6 @@ extern void rt_hw_interrupt_init(void);
 extern void rt_application_init(void);
 
 void vmm_entry(struct vmm_entry_param* param) SECTION(".vmm_init");
-
-#ifdef RT_USING_LOGTRACE
-#include <log_trace.h>
-static struct log_trace_session _lgs = {
-    .id  = {.name = "vmm"},
-    .lvl = LOG_TRACE_LEVEL_VERBOSE,
-};
-#endif
 
 struct rt_thread vmm_thread SECTION(".bss.share.vmm");
 extern rt_uint8_t vmm_stack_start;
@@ -137,15 +113,6 @@ void vmm_entry(struct vmm_entry_param *param)
 
     /* init board */
     rt_hw_board_init();
-
-#ifdef RT_USING_LOGTRACE
-    /* Some parts of VMM use log_trace, so we need to init it right after
-     * board_init. */
-    log_trace_init();
-    log_trace_set_device(RT_CONSOLE_DEVICE_NAME);
-
-    log_trace_register_session(&_lgs);
-#endif
 
     /* show version */
     rt_show_version();

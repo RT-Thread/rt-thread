@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #ifndef EN28J60_H_INCLUDED
 #define EN28J60_H_INCLUDED
 
@@ -121,112 +129,118 @@
 #define PHLCON           0x14
 
 // ENC28J60 ERXFCON Register Bit Definitions
-#define ERXFCON_UCEN     0x80
-#define ERXFCON_ANDOR    0x40
-#define ERXFCON_CRCEN    0x20
-#define ERXFCON_PMEN     0x10
-#define ERXFCON_MPEN     0x08
-#define ERXFCON_HTEN     0x04
-#define ERXFCON_MCEN     0x02
-#define ERXFCON_BCEN     0x01
+#define ERXFCON_UCEN        0x80
+#define ERXFCON_ANDOR       0x40
+#define ERXFCON_CRCEN       0x20
+#define ERXFCON_PMEN        0x10
+#define ERXFCON_MPEN        0x08
+#define ERXFCON_HTEN        0x04
+#define ERXFCON_MCEN        0x02
+#define ERXFCON_BCEN        0x01
 // ENC28J60 EIE Register Bit Definitions
-#define EIE_INTIE        0x80
-#define EIE_PKTIE        0x40
-#define EIE_DMAIE        0x20
-#define EIE_LINKIE       0x10
-#define EIE_TXIE         0x08
-#define EIE_WOLIE        0x04
-#define EIE_TXERIE       0x02
-#define EIE_RXERIE       0x01
+#define EIE_INTIE           0x80
+#define EIE_PKTIE           0x40
+#define EIE_DMAIE           0x20
+#define EIE_LINKIE          0x10
+#define EIE_TXIE            0x08
+#define EIE_WOLIE           0x04
+#define EIE_TXERIE          0x02
+#define EIE_RXERIE          0x01
 // ENC28J60 EIR Register Bit Definitions
-#define EIR_PKTIF        0x40
-#define EIR_DMAIF        0x20
-#define EIR_LINKIF       0x10
-#define EIR_TXIF         0x08
-#define EIR_WOLIF        0x04
-#define EIR_TXERIF       0x02
-#define EIR_RXERIF       0x01
+#define EIR_PKTIF           0x40
+#define EIR_DMAIF           0x20
+#define EIR_LINKIF          0x10
+#define EIR_TXIF            0x08
+#define EIR_WOLIF           0x04
+#define EIR_TXERIF          0x02
+#define EIR_RXERIF          0x01
 // ENC28J60 ESTAT Register Bit Definitions
-#define ESTAT_INT        0x80
-#define ESTAT_LATECOL    0x10
-#define ESTAT_RXBUSY     0x04
-#define ESTAT_TXABRT     0x02
-#define ESTAT_CLKRDY     0x01
+#define ESTAT_INT           0x80
+#define ESTAT_LATECOL       0x10
+#define ESTAT_RXBUSY        0x04
+#define ESTAT_TXABRT        0x02
+#define ESTAT_CLKRDY        0x01
 // ENC28J60 ECON2 Register Bit Definitions
-#define ECON2_AUTOINC    0x80
-#define ECON2_PKTDEC     0x40
-#define ECON2_PWRSV      0x20
-#define ECON2_VRPS       0x08
+#define ECON2_AUTOINC       0x80
+#define ECON2_PKTDEC        0x40
+#define ECON2_PWRSV         0x20
+#define ECON2_VRPS          0x08
 // ENC28J60 ECON1 Register Bit Definitions
-#define ECON1_TXRST      0x80
-#define ECON1_RXRST      0x40
-#define ECON1_DMAST      0x20
-#define ECON1_CSUMEN     0x10
-#define ECON1_TXRTS      0x08
-#define ECON1_RXEN       0x04
-#define ECON1_BSEL1      0x02
-#define ECON1_BSEL0      0x01
+#define ECON1_TXRST         0x80
+#define ECON1_RXRST         0x40
+#define ECON1_DMAST         0x20
+#define ECON1_CSUMEN        0x10
+#define ECON1_TXRTS         0x08
+#define ECON1_RXEN          0x04
+#define ECON1_BSEL1         0x02
+#define ECON1_BSEL0         0x01
 // ENC28J60 MACON1 Register Bit Definitions
-#define MACON1_LOOPBK    0x10
-#define MACON1_TXPAUS    0x08
-#define MACON1_RXPAUS    0x04
-#define MACON1_PASSALL   0x02
-#define MACON1_MARXEN    0x01
+#define MACON1_LOOPBK       0x10
+#define MACON1_TXPAUS       0x08
+#define MACON1_RXPAUS       0x04
+#define MACON1_PASSALL      0x02
+#define MACON1_MARXEN       0x01
 // ENC28J60 MACON2 Register Bit Definitions
-#define MACON2_MARST     0x80
-#define MACON2_RNDRST    0x40
-#define MACON2_MARXRST   0x08
-#define MACON2_RFUNRST   0x04
-#define MACON2_MATXRST   0x02
-#define MACON2_TFUNRST   0x01
+#define MACON2_MARST        0x80
+#define MACON2_RNDRST       0x40
+#define MACON2_MARXRST      0x08
+#define MACON2_RFUNRST      0x04
+#define MACON2_MATXRST      0x02
+#define MACON2_TFUNRST      0x01
 // ENC28J60 MACON3 Register Bit Definitions
-#define MACON3_PADCFG2   0x80
-#define MACON3_PADCFG1   0x40
-#define MACON3_PADCFG0   0x20
-#define MACON3_TXCRCEN   0x10
-#define MACON3_PHDRLEN   0x08
-#define MACON3_HFRMLEN   0x04
-#define MACON3_FRMLNEN   0x02
-#define MACON3_FULDPX    0x01
+#define MACON3_PADCFG2      0x80
+#define MACON3_PADCFG1      0x40
+#define MACON3_PADCFG0      0x20
+#define MACON3_TXCRCEN      0x10
+#define MACON3_PHDRLEN      0x08
+#define MACON3_HFRMLEN      0x04
+#define MACON3_FRMLNEN      0x02
+#define MACON3_FULDPX       0x01
 // ENC28J60 MACON4 Register Bit Definitions
-#define	MACON4_DEFER	(1<<6)
-#define	MACON4_BPEN		(1<<5)
-#define	MACON4_NOBKOFF	(1<<4)
+#define MACON4_DEFER        (1<<6)
+#define MACON4_BPEN         (1<<5)
+#define MACON4_NOBKOFF      (1<<4)
 // ENC28J60 MICMD Register Bit Definitions
-#define MICMD_MIISCAN    0x02
-#define MICMD_MIIRD      0x01
+#define MICMD_MIISCAN       0x02
+#define MICMD_MIIRD         0x01
 // ENC28J60 MISTAT Register Bit Definitions
-#define MISTAT_NVALID    0x04
-#define MISTAT_SCAN      0x02
-#define MISTAT_BUSY      0x01
+#define MISTAT_NVALID       0x04
+#define MISTAT_SCAN         0x02
+#define MISTAT_BUSY         0x01
 // ENC28J60 PHY PHCON1 Register Bit Definitions
-#define PHCON1_PRST      0x8000
-#define PHCON1_PLOOPBK   0x4000
-#define PHCON1_PPWRSV    0x0800
-#define PHCON1_PDPXMD    0x0100
+#define PHCON1_PRST         0x8000
+#define PHCON1_PLOOPBK      0x4000
+#define PHCON1_PPWRSV       0x0800
+#define PHCON1_PDPXMD       0x0100
 // ENC28J60 PHY PHSTAT1 Register Bit Definitions
-#define PHSTAT1_PFDPX    0x1000
-#define PHSTAT1_PHDPX    0x0800
-#define PHSTAT1_LLSTAT   0x0004
-#define PHSTAT1_JBSTAT   0x0002
+#define PHSTAT1_PFDPX       0x1000
+#define PHSTAT1_PHDPX       0x0800
+#define PHSTAT1_LLSTAT      0x0004
+#define PHSTAT1_JBSTAT      0x0002
 /* ENC28J60 PHY PHSTAT2 Register Bit Definitions */
-#define PHSTAT2_TXSTAT	(1 << 13)
-#define PHSTAT2_RXSTAT	(1 << 12)
-#define PHSTAT2_COLSTAT	(1 << 11)
-#define PHSTAT2_LSTAT	(1 << 10)
-#define PHSTAT2_DPXSTAT	(1 << 9)
-#define PHSTAT2_PLRITY	(1 << 5)
+#define PHSTAT2_TXSTAT      (1 << 13)
+#define PHSTAT2_RXSTAT      (1 << 12)
+#define PHSTAT2_COLSTAT     (1 << 11)
+#define PHSTAT2_LSTAT       (1 << 10)
+#define PHSTAT2_DPXSTAT     (1 << 9)
+#define PHSTAT2_PLRITY      (1 << 5)
 // ENC28J60 PHY PHCON2 Register Bit Definitions
-#define PHCON2_FRCLINK   0x4000
-#define PHCON2_TXDIS     0x2000
-#define PHCON2_JABBER    0x0400
-#define PHCON2_HDLDIS    0x0100
+#define PHCON2_FRCLINK      0x4000
+#define PHCON2_TXDIS        0x2000
+#define PHCON2_JABBER       0x0400
+#define PHCON2_HDLDIS       0x0100
+/* ENC28J60 PHY PHIE Register Bit Definitions */
+#define PHIE_PLNKIE         (1 << 4)
+#define PHIE_PGEIE          (1 << 1)
+/* ENC28J60 PHY PHIR Register Bit Definitions */
+#define PHIR_PLNKIF         (1 << 4)
+#define PHIR_PGEIF          (1 << 1)
 
 // ENC28J60 Packet Control Byte Bit Definitions
-#define PKTCTRL_PHUGEEN  0x08
-#define PKTCTRL_PPADEN   0x04
-#define PKTCTRL_PCRCEN   0x02
-#define PKTCTRL_POVERRIDE 0x01
+#define PKTCTRL_PHUGEEN     0x08
+#define PKTCTRL_PPADEN      0x04
+#define PKTCTRL_PCRCEN      0x02
+#define PKTCTRL_POVERRIDE   0x01
 
 /* ENC28J60 Transmit Status Vector */
 #define TSV_TXBYTECNT           0
@@ -290,40 +304,40 @@
 #define MAX_TX_PACKAGE_SIZE    (1536)
 
 // start with recbuf at 0/
-#define RXSTART_INIT	0x0
+#define RXSTART_INIT    0x0
 // receive buffer end
-#define RXSTOP_INIT		(0x1FFF - MAX_TX_PACKAGE_SIZE*2) - 1
+#define RXSTOP_INIT     (0x1FFF - MAX_TX_PACKAGE_SIZE*2) - 1
 // start TX buffer at 0x1FFF-0x0600, pace for one full ethernet frame (~1500 bytes)
 
-#define TXSTART_INIT	(0x1FFF - MAX_TX_PACKAGE_SIZE*2)
+#define TXSTART_INIT    (0x1FFF - MAX_TX_PACKAGE_SIZE*2)
 // stp TX buffer at end of mem
-#define TXSTOP_INIT		0x1FFF
+#define TXSTOP_INIT     0x1FFF
 
 // max frame length which the conroller will accept:
-#define MAX_FRAMELEN	1518
+#define MAX_FRAMELEN    1518
 
 #define MAX_ADDR_LEN    6
 
 struct net_device
 {
-	/* inherit from ethernet device */
-	struct eth_device parent;
+    /* inherit from ethernet device */
+    struct eth_device parent;
 
-	/* interface address info. */
-	rt_uint8_t  dev_addr[MAX_ADDR_LEN]; /* hw address	*/
+    /* interface address info. */
+    rt_uint8_t  dev_addr[MAX_ADDR_LEN]; /* hw address   */
 
-	rt_uint8_t emac_rev;
-	rt_uint8_t phy_rev;
-	rt_uint8_t phy_pn;
-	rt_uint32_t phy_id;
+    rt_uint8_t emac_rev;
+    rt_uint8_t phy_rev;
+    rt_uint8_t phy_pn;
+    rt_uint32_t phy_id;
 
-	/* spi device */
-	struct rt_spi_device * spi_device;
-	struct rt_mutex lock;
+    /* spi device */
+    struct rt_spi_device *spi_device;
+    struct rt_mutex lock;
 };
 
 /* export function */
-extern rt_err_t enc28j60_attach(const char * spi_device_name);
+extern rt_err_t enc28j60_attach(const char *spi_device_name);
 extern void enc28j60_isr(void);
 
 #endif // EN28J60_H_INCLUDED

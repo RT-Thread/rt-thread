@@ -20,10 +20,6 @@
 #include <rtthread.h>
 #include "board.h"
 
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif  /* RT_USING_COMPONENTS_INIT */
-
 void rt_init_thread_entry(void *parameter)
 {
 #ifdef RT_USING_COMPONENTS_INIT

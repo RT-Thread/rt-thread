@@ -1,11 +1,7 @@
 /*
- * File      : context_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009 - 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date         Author    Notes
@@ -26,7 +22,7 @@
 	.equ 	SCB_VTOR, 0xE000ED08            /* Vector Table Offset Register */
 	.equ 	NVIC_INT_CTRL, 0xE000ED04       /* interrupt control state register */
 	.equ 	NVIC_SHPR3, 0xE000ED20          /* system priority register (3) */
-	.equ 	NVIC_PENDSV_PRI, 0x00FF0000     /* PendSV priority value (lowest) */
+	.equ 	NVIC_PENDSV_PRI, 0xFFFF0000     /* PendSV and SysTick priority value (lowest) */
 	.equ 	NVIC_PENDSVSET, 0x10000000      /* value to trigger PendSV exception */
 
 /*
@@ -163,7 +159,7 @@ rt_hw_context_switch_to:
     MOVS    R0, #1
     STR     R0, [R1]
 
-    /* set the PendSV exception priority */
+    /* set the PendSV and SysTick exception priority */
     LDR     R0, =NVIC_SHPR3
     LDR     R1, =NVIC_PENDSV_PRI
     LDR     R2, [R0,#0x00]       /* read */
@@ -181,7 +177,8 @@ rt_hw_context_switch_to:
     NOP
     MSR     MSP, R0
 
-    CPSIE   I                       /* enable interrupts at processor level */
+    /* enable interrupts at processor level */
+    CPSIE   I
 
     /* never reach here! */
 

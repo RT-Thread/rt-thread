@@ -1,21 +1,7 @@
 /*
- * File      : can.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -235,7 +221,7 @@ struct rt_can_msg
     rt_uint32_t rsv : 1;
     rt_uint32_t len : 8;
     rt_uint32_t priv : 8;
-    rt_uint32_t hdr : 8;
+    rt_int32_t hdr : 8;
     rt_uint32_t reserved : 8;
     rt_uint8_t data[8];
 };
@@ -266,7 +252,7 @@ struct rt_can_rx_fifo
 
 #define RT_CAN_EVENT_RX_IND         0x01    /* Rx indication */
 #define RT_CAN_EVENT_TX_DONE        0x02    /* Tx complete   */
-#define RT_CAN_EVENT_TX_FAIL        0x03    /* Tx complete   */
+#define RT_CAN_EVENT_TX_FAIL        0x03    /* Tx fail   */
 #define RT_CAN_EVENT_RX_TIMEOUT     0x05    /* Rx timeout    */
 #define RT_CAN_EVENT_RXOF_IND       0x06    /* Rx overflow */
 
@@ -280,7 +266,7 @@ struct rt_can_sndbxinx_list
 struct rt_can_tx_fifo
 {
     struct rt_can_sndbxinx_list *buffer;
-    struct rt_completion completion;
+    struct rt_semaphore sem;
     struct rt_list_node freelist;
 };
 
@@ -292,7 +278,7 @@ struct rt_can_ops
     int (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
 };
 
-rt_err_t rt_hw_can_register(struct rt_can_device *can,
+rt_err_t rt_hw_can_register(struct rt_can_device    *can,
                             const char              *name,
                             const struct rt_can_ops *ops,
                             void                    *data);

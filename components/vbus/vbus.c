@@ -1,26 +1,7 @@
 /*
- * VMM Bus
- *
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
- *      http://www.rt-thread.com
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -40,38 +21,11 @@
 #define RT_VBUS_RB_LOW_TICK   (RT_VMM_RB_BLK_NR * 2 / 3)
 #define RT_VBUS_RB_TICK_STEP  (100)
 
-#ifndef RT_USING_LOGTRACE
 /* console could be run on vbus. If we log on it, there will be oops. */
 #define vbus_debug(...)
 #define vbus_verbose(...)
 #define vbus_info(...)
 #define vbus_error(...)
-#else // have RT_USING_LOGTRACE
-#include <log_trace.h>
-
-#if defined(log_session_lvl)
-/* Define log_trace_session as const so the compiler could optimize some log
- * out. */
-const static struct log_trace_session _lgs = {
-    .id  = {.name = "vbus"},
-    .lvl = LOG_TRACE_LEVEL_VERBOSE,
-};
-
-#define vbus_debug(fmt, ...)   log_session_lvl(&_lgs, LOG_TRACE_LEVEL_DEBUG,   fmt, ##__VA_ARGS__)
-#define vbus_verbose(fmt, ...) log_session_lvl(&_lgs, LOG_TRACE_LEVEL_VERBOSE, fmt, ##__VA_ARGS__)
-#define vbus_info(fmt, ...)    log_session_lvl(&_lgs, LOG_TRACE_LEVEL_INFO,    fmt, ##__VA_ARGS__)
-#define vbus_error(fmt, ...)   log_session_lvl(&_lgs, LOG_TRACE_LEVEL_ERROR,    fmt, ##__VA_ARGS__)
-#else
-static struct log_trace_session _lgs = {
-    .id  = {.name = "vbus"},
-    .lvl = LOG_TRACE_LEVEL_VERBOSE,
-};
-#define vbus_debug(fmt, ...)   log_session(&_lgs, LOG_TRACE_DEBUG""fmt, ##__VA_ARGS__)
-#define vbus_verbose(fmt, ...) log_session(&_lgs, LOG_TRACE_VERBOSE""fmt, ##__VA_ARGS__)
-#define vbus_info(fmt, ...)    log_session(&_lgs, LOG_TRACE_INFO""fmt, ##__VA_ARGS__)
-#define vbus_error(fmt, ...)   log_session(&_lgs, LOG_TRACE_ERROR""fmt, ##__VA_ARGS__)
-#endif
-#endif // RT_USING_LOGTRACE
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(ar)     (sizeof(ar)/sizeof(ar[0]))
@@ -1176,10 +1130,6 @@ void rt_vbus_isr(int irqnr, void *param)
 int rt_vbus_init(void *outr, void *inr)
 {
     int i;
-
-#ifdef RT_USING_LOGTRACE
-    log_trace_register_session(&_lgs);
-#endif
 
     if (outr > inr)
     {

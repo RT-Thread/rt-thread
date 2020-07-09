@@ -1,11 +1,7 @@
 /*
- * File      : drv_uart.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013, RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -14,6 +10,7 @@
 
 
 #include "drv_uart.h"
+#include "fsl_uart.h"
 
 static struct rt_serial_device _k64_serial;  //abstracted serial for RTT
 
@@ -118,16 +115,16 @@ static rt_err_t _configure(struct rt_serial_device *serial, struct serial_config
 
         reg_C4 = (unsigned char)(reg_BRFA & 0x001F);
 
-        SIM_SOPT5 &= ~ SIM_SOPT5_UART0RXSRC(0);
-        SIM_SOPT5 |= SIM_SOPT5_UART0RXSRC(0);
-        SIM_SOPT5 &= ~ SIM_SOPT5_UART0TXSRC(0);
-        SIM_SOPT5 |= SIM_SOPT5_UART0TXSRC(0);
+        SIM->SOPT5 &= ~ SIM_SOPT5_UART0RXSRC(0);
+        SIM->SOPT5 |= SIM_SOPT5_UART0RXSRC(0);
+        SIM->SOPT5 &= ~ SIM_SOPT5_UART0TXSRC(0);
+        SIM->SOPT5 |= SIM_SOPT5_UART0TXSRC(0);
 
         // set UART0 clock
         // Enable UART gate clocking
         // Enable PORTE gate clocking
-        SIM_SCGC4 |= SIM_SCGC4_UART0_MASK;
-        SIM_SCGC5 |= SIM_SCGC5_PORTB_MASK;
+        CLOCK_EnableClock(kCLOCK_Uart0);
+        CLOCK_EnableClock(kCLOCK_PortB);
 
         // set UART0 pin
         PORTB->PCR[16] &= ~(3UL <<  8);

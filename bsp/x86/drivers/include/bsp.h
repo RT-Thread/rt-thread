@@ -74,7 +74,16 @@ extern "C" {
 #define INTTIMER0			0
 #define INTKEYBOARD			1
 #define INTUART0_RX			4
-
+#define	CLOCK_IRQ	0
+#define	KEYBOARD_IRQ	1
+#define	CASCADE_IRQ	2	/* cascade enable for 2nd AT controller */
+#define	ETHER_IRQ	3	/* default ethernet interrupt vector */
+#define	SECONDARY_IRQ	3	/* RS232 interrupt vector for port 2 */
+#define	RS232_IRQ	4	/* RS232 interrupt vector for port 1 */
+#define	XT_WINI_IRQ	5	/* xt winchester */
+#define	FLOPPY_IRQ	6	/* floppy disk */
+#define	PRINTER_IRQ	7
+#define	AT_WINI_IRQ	14	/* at winchester */
 /* I/O Addresses of the two 8259A programmable interrupt controllers */
 #define IO_PIC1 			0x20 	/* Master(IRQs 0-7) */
 #define IO_PIC2 			0xa0	/* Slave(IRQs 8-15) */
@@ -101,6 +110,16 @@ extern "C" {
 #define	KBSTATP				0x64	/* kbd controller status port(I) */
 #define	KBS_DIB				0x01	/* kbd data in buffer */
 #define	KBDATAP				0x60	/* kbd data port(I) */
+/* AT keyboard */
+/* 8042 ports */
+#define	KB_DATA		0x60	/* I/O port for keyboard data
+					Read : Read Output Buffer 
+					Write: Write Input Buffer(8042 Data&8048 Command) */
+#define	KB_CMD		0x64	/* I/O port for keyboard command
+					Read : Read Status Register
+					Write: Write Input Buffer(8042 Command) */
+#define	LED_CODE	0xED
+#define	KB_ACK		0xFA
 
 /*******************************************************************/
 /* Serial Register */

@@ -4,7 +4,8 @@ ENTRY(entry)
 SECTIONS
 {
     . = 0x20000000;
-
+    entry = .;
+	
     . = ALIGN(4);
     .text : 
     {

@@ -1,0 +1,29 @@
+# RT-Thread building script for component
+
+Import('rtconfig')
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+
+src  = Glob('peri_driver/*/*.c')
+src += Glob('common/board/*.c')
+src += Glob('common/chip/*.c')
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    print("not gcc startup file")
+    exit(0)
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/common/startup/keil_startup_lpc82x.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/common/startup/iar_startup_lpc82x.s']
+
+CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board', 
+			cwd + '/common/chip', cwd + '/common/CMSIS']
+					
+CPPDEFINES = ['CORE_M0PLUS']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

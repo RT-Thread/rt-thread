@@ -1,141 +1,172 @@
-/* RT-Thread config file */
-#ifndef __RTTHREAD_CFG_H__
-#define __RTTHREAD_CFG_H__
+#ifndef RT_CONFIG_H__
+#define RT_CONFIG_H__
 
-/* RT_NAME_MAX*/
-#define RT_NAME_MAX		8
+/* Automatically generated file; DO NOT EDIT. */
+/* RT-Thread Project Configuration */
 
-/* RT_ALIGN_SIZE*/
-#define RT_ALIGN_SIZE	4
+/* RT-Thread Kernel */
 
-/* PRIORITY_MAX */
-#define RT_THREAD_PRIORITY_MAX	32
-
-/* Tick per Second */
-#define RT_TICK_PER_SECOND	100
-
-/* SECTION: RT_DEBUG */
-/* Thread Debug */
-#define RT_DEBUG
-#define RT_THREAD_DEBUG
-
+#define RT_NAME_MAX 8
+#define RT_ALIGN_SIZE 4
+#define RT_THREAD_PRIORITY_32
+#define RT_THREAD_PRIORITY_MAX 32
+#define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
-
-/* Using Hook */
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
+#define IDLE_THREAD_STACK_SIZE 256
+#define RT_DEBUG
+#define RT_DEBUG_COLOR
 
-/* Using Software Timer */
-/* #define RT_USING_TIMER_SOFT */
-#define RT_TIMER_THREAD_PRIO		4
-#define RT_TIMER_THREAD_STACK_SIZE	512
-#define RT_TIMER_TICK_PER_SECOND	10
+/* Inter-Thread communication */
 
-/* SECTION: IPC */
-/* Using Semaphore*/
 #define RT_USING_SEMAPHORE
-
-/* Using Mutex */
 #define RT_USING_MUTEX
-
-/* Using Event */
 #define RT_USING_EVENT
-
-/* Using MailBox */
 #define RT_USING_MAILBOX
-
-/* Using Message Queue */
 #define RT_USING_MESSAGEQUEUE
 
-/* SECTION: Memory Management */
-/* Using Memory Pool Management*/
-#define RT_USING_MEMPOOL
+/* Memory Management */
 
-/* Using Dynamic Heap Management */
+#define RT_USING_MEMPOOL
+#define RT_USING_SMALL_MEM
 #define RT_USING_HEAP
 
-/* Using Small MM */
-#define RT_USING_SMALL_MEM
+/* Kernel Device Object */
 
-/* SECTION: Device System */
-/* Using Device System */
 #define RT_USING_DEVICE
-#define RT_USING_UART1
-
-/* SECTION: Console options */
 #define RT_USING_CONSOLE
-/* the buffer size of console*/
-#define RT_CONSOLEBUF_SIZE	128
+#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_VER_NUM 0x40001
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M3
 
-/* SECTION: finsh, a C-Express shell */
+/* RT-Thread Components */
+
+
+/* C++ features */
+
+
+/* Command shell */
+
 #define RT_USING_FINSH
-/* Using symbol table */
+#define FINSH_THREAD_NAME "tshell"
+#define FINSH_USING_HISTORY
+#define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
+#define FINSH_THREAD_PRIORITY 20
+#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_CMD_SIZE 80
+#define FINSH_USING_MSH
+#define FINSH_USING_MSH_DEFAULT
+#define FINSH_ARG_MAX 10
 
-/* SECTION: device filesystem */
-/* #define RT_USING_DFS */ 
+/* Device virtual file system */
+
+#define RT_USING_DFS
+#define DFS_USING_WORKDIR
+#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FD_MAX 4
 #define RT_USING_DFS_ELMFAT
-#define RT_DFS_ELM_REENTRANT
+
+/* elm-chan's FatFs, Generic FAT Filesystem Module */
+
+#define RT_DFS_ELM_CODE_PAGE 437
 #define RT_DFS_ELM_WORD_ACCESS
-#define RT_DFS_ELM_DRIVES			1
-#define RT_DFS_ELM_USE_LFN			2
-#define RT_DFS_ELM_MAX_LFN			255
-#define RT_DFS_ELM_MAX_SECTOR_SIZE  512
+#define RT_DFS_ELM_USE_LFN_0
+#define RT_DFS_ELM_USE_LFN 0
+#define RT_DFS_ELM_MAX_LFN 255
+#define RT_DFS_ELM_DRIVES 1
+#define RT_DFS_ELM_MAX_SECTOR_SIZE 512
+#define RT_DFS_ELM_REENTRANT
+#define RT_USING_DFS_DEVFS
 
-/* the max number of mounted filesystem */
-#define DFS_FILESYSTEMS_MAX			2
-/* the max number of opened files 		*/
-#define DFS_FD_MAX					4
+/* Device Drivers */
 
-/* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
-/* Enable ICMP protocol*/
-#define RT_LWIP_ICMP
-/* Enable UDP protocol*/
-#define RT_LWIP_UDP
-/* Enable TCP protocol*/
-#define RT_LWIP_TCP
-/* Enable DNS */
-#define RT_LWIP_DNS
+#define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
+#define RT_USING_PIN
+#define RT_USING_RTC
 
-/* the number of simulatenously active TCP connections*/
-#define RT_LWIP_TCP_PCB_NUM	5
+/* Using WiFi */
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+/* Using USB */
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
 
-/* tcp thread options */
-#define RT_LWIP_TCPTHREAD_PRIORITY		12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE		4
-#define RT_LWIP_TCPTHREAD_STACKSIZE		1024
+/* POSIX layer and C standard library */
 
-/* ethernet if thread options */
-#define RT_LWIP_ETHTHREAD_PRIORITY		15
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE		4
-#define RT_LWIP_ETHTHREAD_STACKSIZE		512
+#define RT_USING_LIBC
+#define RT_USING_POSIX
 
-// <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
-// #define RT_USING_CMSIS_OS
-// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
-#define RT_USING_RTT_CMSIS
-// <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
-// #define RT_USING_BSP_CMSIS
+/* Network */
+
+/* Socket abstraction layer */
+
+
+/* light weight TCP/IP stack */
+
+
+/* Modbus master and slave stack */
+
+
+/* AT commands */
+
+
+/* VBUS(Virtual Software BUS) */
+
+
+/* Utilities */
+
+
+/* ARM CMSIS */
+
+
+/* RT-Thread online packages */
+
+/* IoT - internet of things */
+
+
+/* Wi-Fi */
+
+/* Marvell WiFi */
+
+
+/* Wiced WiFi */
+
+
+/* IoT Cloud */
+
+
+/* security packages */
+
+
+/* language packages */
+
+
+/* multimedia packages */
+
+
+/* tools packages */
+
+
+/* system packages */
+
+
+/* peripheral libraries and drivers */
+
+
+/* miscellaneous packages */
+
+
+/* samples: kernel and components samples */
+
+#define SOC_STM32F2
+#define RT_USING_UART1
 
 #endif

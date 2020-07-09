@@ -11,7 +11,7 @@
 #include "stm32f2x7_eth_conf.h"
 
 #define STM32_ETH_DEBUG		0
-#define CHECKSUM_BY_HARDWARE
+//#define CHECKSUM_BY_HARDWARE /* don't ues hardware checksum. */
 
 /* MII and RMII mode selection, for STM322xG-EVAL Board(MB786) RevB ***********/
 //#define MII_MODE       
@@ -178,7 +178,7 @@ static rt_size_t rt_stm32_eth_write (rt_device_t dev, rt_off_t pos, const void* 
 	return 0;
 }
 
-static rt_err_t rt_stm32_eth_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_stm32_eth_control(rt_device_t dev, int cmd, void *args)
 {
 	switch(cmd)
 	{

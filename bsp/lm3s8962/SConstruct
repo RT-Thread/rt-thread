@@ -12,6 +12,7 @@ from building import *
 
 TARGET = 'rtthread-lm3s.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
 	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
 	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -23,7 +24,7 @@ Export('RTT_ROOT')
 Export('rtconfig')
 
 # prepare building environment
-objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+objs = PrepareBuilding(env, RTT_ROOT)
 
 # make a building
 DoBuilding(TARGET, objs)

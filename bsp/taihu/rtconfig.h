@@ -76,8 +76,6 @@
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* #define RT_USING_LWIP */
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 /* Enable UDP protocol*/

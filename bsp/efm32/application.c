@@ -34,8 +34,6 @@
 #include <board.h>
 
 #if defined(RT_USING_DFS)
-/* dfs init */
-#include <dfs_init.h>
 /* dfs filesystem:ELM filesystem init */
 #include <dfs_elm.h>
 /* dfs Filesystem APIs */
@@ -150,7 +148,7 @@ static rt_bool_t pic_view_event_handler(rtgui_object_t *object, rtgui_event_t *e
             rt_kprintf("APP err: no image found!\n");
         }
 
-		rtgui_dc_end_drawing(dc);
+		rtgui_dc_end_drawing(dc, RT_TRUE);
 	}
 
 	return result;

@@ -1,29 +1,17 @@
 /*
- * File      : dfs_posix.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2009-05-27     Yi.qiu       The first version
+ * 2018-02-07     Bernard      Change the 3rd parameter of open/fcntl/ioctl to '...'
  */
 
 #include <dfs.h>
 #include <dfs_posix.h>
+#include "dfs_private.h"
 
 /**
  * @addtogroup FsPosixApi
@@ -37,11 +25,10 @@
  *
  * @param file the path name of file.
  * @param flags the file open flags.
- * @param mode ignored parameter
  *
  * @return the non-negative integer on successful open, others for failed.
  */
-int open(const char *file, int flags, int mode)
+int open(const char *file, int flags, ...)
 {
     int fd, result;
     struct dfs_fd *d;
@@ -50,7 +37,7 @@ int open(const char *file, int flags, int mode)
     fd = fd_new();
     if (fd < 0)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
         return -1;
     }
@@ -89,9 +76,9 @@ int close(int fd)
     struct dfs_fd *d;
 
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -123,7 +110,7 @@ RTM_EXPORT(close);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(read, (int fd, void *buf, size_t len))
 #else
 int read(int fd, void *buf, size_t len)
@@ -134,9 +121,9 @@ int read(int fd, void *buf, size_t len)
 
     /* get the fd */
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -167,7 +154,7 @@ RTM_EXPORT(read);
  *
  * @return the actual written data buffer length.
  */
-#ifdef RT_USING_NEWLIB
+#if defined(RT_USING_NEWLIB) && defined(_EXFUN)
 _READ_WRITE_RETURN_TYPE _EXFUN(write, (int fd, const void *buf, size_t len))
 #else
 int write(int fd, const void *buf, size_t len)
@@ -178,9 +165,9 @@ int write(int fd, const void *buf, size_t len)
 
     /* get the fd */
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -217,29 +204,29 @@ off_t lseek(int fd, off_t offset, int whence)
     struct dfs_fd *d;
 
     d = fd_get(fd);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
 
     switch (whence)
     {
-    case DFS_SEEK_SET:
+    case SEEK_SET:
         break;
 
-    case DFS_SEEK_CUR:
+    case SEEK_CUR:
         offset += d->pos;
         break;
 
-    case DFS_SEEK_END:
+    case SEEK_END:
         offset += d->size;
         break;
 
     default:
         fd_put(d);
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return -1;
     }
@@ -247,7 +234,7 @@ off_t lseek(int fd, off_t offset, int whence)
     if (offset < 0)
     {
         fd_put(d);
-        rt_set_errno(-DFS_STATUS_EINVAL);
+        rt_set_errno(-EINVAL);
 
         return -1;
     }
@@ -278,11 +265,11 @@ RTM_EXPORT(lseek);
  *
  * note: the old and new file name must be belong to a same file system.
  */
-int rename(const char *old, const char *new)
+int rename(const char *old_file, const char *new_file)
 {
     int result;
 
-    result = dfs_file_rename(old, new);
+    result = dfs_file_rename(old_file, new_file);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -357,9 +344,9 @@ int fstat(int fildes, struct stat *buf)
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -367,12 +354,12 @@ int fstat(int fildes, struct stat *buf)
     /* it's the root directory */
     buf->st_dev = 0;
 
-    buf->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-                   DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+    buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
+                   S_IWUSR | S_IWGRP | S_IWOTH;
     if (d->type == FT_DIRECTORY)
     {
-        buf->st_mode &= ~DFS_S_IFREG;
-        buf->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+        buf->st_mode &= ~S_IFREG;
+        buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
     buf->st_size    = d->size;
@@ -380,7 +367,7 @@ int fstat(int fildes, struct stat *buf)
 
     fd_put(d);
 
-    return DFS_STATUS_OK;
+    return RT_EOK;
 }
 RTM_EXPORT(fstat);
 #endif
@@ -402,9 +389,9 @@ int fsync(int fildes)
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
         return -1;
     }
 
@@ -427,30 +414,108 @@ RTM_EXPORT(fsync);
  * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
  * set to indicate the error.
  */
-int ioctl(int fildes, unsigned long cmd, void *data)
+int fcntl(int fildes, int cmd, ...)
 {
-	int ret;
+    int ret = -1;
     struct dfs_fd *d;
 
     /* get the fd */
     d = fd_get(fildes);
-    if (d == RT_NULL)
+    if (d)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        void *arg;
+        va_list ap;
+
+        va_start(ap, cmd);
+        arg = va_arg(ap, void *);
+        va_end(ap);
+
+        ret = dfs_file_ioctl(d, cmd, arg);
+        fd_put(d);
+    }
+    else ret = -EBADF;
+
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        ret = -1;
+    }
+
+    return ret;
+}
+RTM_EXPORT(fcntl);
+
+/**
+ * this function is a POSIX compliant version, which shall perform a variety of
+ * control functions on devices.
+ *
+ * @param fildes the file description
+ * @param cmd the specified command
+ * @param data represents the additional information that is needed by this
+ * specific device to perform the requested function.
+ *
+ * @return 0 on successful completion. Otherwise, -1 shall be returned and errno
+ * set to indicate the error.
+ */
+int ioctl(int fildes, int cmd, ...)
+{
+    void *arg;
+    va_list ap;
+
+    va_start(ap, cmd);
+    arg = va_arg(ap, void *);
+    va_end(ap);
+
+    /* we use fcntl for this API. */
+    return fcntl(fildes, cmd, arg);
+}
+RTM_EXPORT(ioctl);
+
+/**
+ *
+ * this function is a POSIX compliant version, which cause the regular file
+ * referenced by fd to be truncated to a size of precisely length bytes.
+ * @param fd the file descriptor.
+ * @param length the length to be truncated.
+ *
+ * @return Upon successful completion, ftruncate() shall return 0;
+ * otherwise, -1 shall be returned and errno set to indicate the error.
+ */
+int ftruncate(int fd, off_t length)
+{
+    int result;
+    struct dfs_fd *d;
+
+    d = fd_get(fd);
+    if (d == NULL)
+    {
+        rt_set_errno(-EBADF);
+
         return -1;
     }
 
-	ret = dfs_file_ioctl(d, cmd, data);
-	if (ret != DFS_STATUS_OK)
-	{
-		rt_set_errno(ret);
-		ret = -1;
-	}
+    if (length < 0)
+    {
+        fd_put(d);
+        rt_set_errno(-EINVAL);
+
+        return -1;
+    }
+    result = dfs_file_ftruncate(d, length);
+    if (result < 0)
+    {
+        fd_put(d);
+        rt_set_errno(result);
+
+        return -1;
+    }
+
+    /* release the ref-count of fd */
     fd_put(d);
 
-	return ret;
+    return 0;
 }
-RTM_EXPORT(ioctl);
+RTM_EXPORT(ftruncate);
 
 /**
  * this function is a POSIX compliant version, which will return the
@@ -494,14 +559,14 @@ int mkdir(const char *path, mode_t mode)
     fd = fd_new();
     if (fd == -1)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
         return -1;
     }
 
     d = fd_get(fd);
 
-    result = dfs_file_open(d, path, DFS_O_DIRECTORY | DFS_O_CREAT);
+    result = dfs_file_open(d, path, O_DIRECTORY | O_CREAT);
 
     if (result < 0)
     {
@@ -561,31 +626,32 @@ DIR *opendir(const char *name)
     int fd, result;
     DIR *t;
 
-    t = RT_NULL;
+    t = NULL;
 
     /* allocate a fd */
     fd = fd_new();
     if (fd == -1)
     {
-        rt_set_errno(-DFS_STATUS_ENOMEM);
+        rt_set_errno(-ENOMEM);
 
-        return RT_NULL;
+        return NULL;
     }
     d = fd_get(fd);
 
-    result = dfs_file_open(d, name, DFS_O_RDONLY | DFS_O_DIRECTORY);
+    result = dfs_file_open(d, name, O_RDONLY | O_DIRECTORY);
     if (result >= 0)
     {
         /* open successfully */
         t = (DIR *) rt_malloc(sizeof(DIR));
-        if (t == RT_NULL)
+        if (t == NULL)
         {
             dfs_file_close(d);
             fd_put(d);
         }
         else
         {
-            rt_memset(t, 0, sizeof(DIR));
+            memset(t, 0, sizeof(DIR));
+
             t->fd = fd;
         }
         fd_put(d);
@@ -598,7 +664,7 @@ DIR *opendir(const char *name)
     fd_put(d);
     rt_set_errno(result);
 
-    return RT_NULL;
+    return NULL;
 }
 RTM_EXPORT(opendir);
 
@@ -617,16 +683,16 @@ struct dirent *readdir(DIR *d)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
-        return RT_NULL;
+        rt_set_errno(-EBADF);
+        return NULL;
     }
 
     if (d->num)
     {
-        struct dirent* dirent_ptr;
-        dirent_ptr = (struct dirent*)&d->buf[d->cur];
+        struct dirent *dirent_ptr;
+        dirent_ptr = (struct dirent *)&d->buf[d->cur];
         d->cur += dirent_ptr->d_reclen;
     }
 
@@ -634,14 +700,14 @@ struct dirent *readdir(DIR *d)
     {
         /* get a new entry */
         result = dfs_file_getdents(fd,
-                                   (struct dirent*)d->buf,
+                                   (struct dirent *)d->buf,
                                    sizeof(d->buf) - 1);
         if (result <= 0)
         {
             fd_put(fd);
             rt_set_errno(result);
 
-            return RT_NULL;
+            return NULL;
         }
 
         d->num = result;
@@ -650,7 +716,7 @@ struct dirent *readdir(DIR *d)
 
     fd_put(fd);
 
-    return (struct dirent *)(d->buf+d->cur);
+    return (struct dirent *)(d->buf + d->cur);
 }
 RTM_EXPORT(readdir);
 
@@ -668,9 +734,9 @@ long telldir(DIR *d)
     long result;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return 0;
     }
@@ -694,9 +760,9 @@ void seekdir(DIR *d, off_t offset)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return ;
     }
@@ -719,9 +785,9 @@ void rewinddir(DIR *d)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return ;
     }
@@ -747,9 +813,9 @@ int closedir(DIR *d)
     struct dfs_fd *fd;
 
     fd = fd_get(d->fd);
-    if (fd == RT_NULL)
+    if (fd == NULL)
     {
-        rt_set_errno(-DFS_STATUS_EBADF);
+        rt_set_errno(-EBADF);
 
         return -1;
     }
@@ -785,7 +851,7 @@ int chdir(const char *path)
     char *fullpath;
     DIR *d;
 
-    if (path == RT_NULL)
+    if (path == NULL)
     {
         dfs_lock();
         rt_kprintf("%s\n", working_directory);
@@ -794,24 +860,24 @@ int chdir(const char *path)
         return 0;
     }
 
-    if (rt_strlen(path) > DFS_PATH_MAX)
+    if (strlen(path) > DFS_PATH_MAX)
     {
-        rt_set_errno(-DFS_STATUS_ENOTDIR);
+        rt_set_errno(-ENOTDIR);
 
         return -1;
     }
 
     fullpath = dfs_normalize_path(NULL, path);
-    if (fullpath == RT_NULL)
+    if (fullpath == NULL)
     {
-        rt_set_errno(-DFS_STATUS_ENOTDIR);
+        rt_set_errno(-ENOTDIR);
 
         return -1; /* build path failed */
     }
 
     dfs_lock();
     d = opendir(fullpath);
-    if (d == RT_NULL)
+    if (d == NULL)
     {
         rt_free(fullpath);
         /* this is a not exist directory */
@@ -840,6 +906,25 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
 #endif
 
 /**
+ * this function is a POSIX compliant version, which shall check the file named
+ * by the pathname pointed to by the path argument for accessibility according
+ * to the bit pattern contained in amode.
+ *
+ * @param path the specified file/dir path.
+ * @param amode the value is either the bitwise-inclusive OR of the access
+ * permissions to be checked (R_OK, W_OK, X_OK) or the existence test (F_OK).
+ */
+int access(const char *path, int amode)
+{
+    struct stat sb;
+    if (stat(path, &sb) < 0)
+        return -1; /* already sets errno */
+
+    /* ignore R_OK,W_OK,X_OK condition */
+    return 0;
+}
+
+/**
  * this function is a POSIX compliant version, which will return current
  * working directory.
  *
@@ -851,9 +936,9 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
 char *getcwd(char *buf, size_t size)
 {
 #ifdef DFS_USING_WORKDIR
-    rt_enter_critical();
-    rt_strncpy(buf, working_directory, size);
-    rt_exit_critical();
+    dfs_lock();
+    strncpy(buf, working_directory, size);
+    dfs_unlock();
 #else
     rt_kprintf(NO_WORKING_DIR);
 #endif

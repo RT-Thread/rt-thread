@@ -17,6 +17,7 @@
 #define RT_TICK_PER_SECOND	100
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
 // #define RT_THREAD_DEBUG
 // <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
@@ -140,7 +141,7 @@
 // <item description="ASCII only (Valid for non LFN cfg.)">1</item>
 // </integer>
 #define RT_DFS_ELM_CODE_PAGE 437
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
 #define RT_DFS_ELM_MAX_LFN	64
 // <bool name="RT_USING_DFS_YAFFS2" description="Using YAFFS2" default="false" />
 // #define RT_USING_DFS_YAFFS2
@@ -191,26 +192,15 @@
 // <integer name="RT_LWIP_ETHTHREAD_STACKSIZE" description="the stack size of ethnetif thread" default="512" />
 #define RT_LWIP_ETHTHREAD_STACKSIZE	512
 // <ipaddr name="RT_LWIP_IPADDR" description="IP address of device" default="192.168.1.30" />
-#define RT_LWIP_IPADDR0 192
-#define RT_LWIP_IPADDR1 168
-#define RT_LWIP_IPADDR2 1
-#define RT_LWIP_IPADDR3 30
+#define RT_LWIP_IPADDR "192.168.1.30"
 // <ipaddr name="RT_LWIP_GWADDR" description="Gateway address of device" default="192.168.1.1" />
-#define RT_LWIP_GWADDR0 192
-#define RT_LWIP_GWADDR1 168
-#define RT_LWIP_GWADDR2 1
-#define RT_LWIP_GWADDR3 1
+#define RT_LWIP_GWADDR  "192.168.1.1"
 // <ipaddr name="RT_LWIP_MSKADDR" description="Mask address of device" default="255.255.255.0" />
-#define RT_LWIP_MSKADDR0 255
-#define RT_LWIP_MSKADDR1 255
-#define RT_LWIP_MSKADDR2 255
-#define RT_LWIP_MSKADDR3 0
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 // </section>
 
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
 // #define RT_USING_CMSIS_OS
-// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
-#define RT_USING_RTT_CMSIS
 // <bool name="RT_USING_BSP_CMSIS" description="Using CMSIS in BSP" default="true" />
 // #define RT_USING_BSP_CMSIS
 

@@ -1,21 +1,7 @@
 /*
- * File      : can.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
@@ -41,10 +27,15 @@ static rt_err_t rt_can_init(struct rt_device *dev)
     /* initialize rx/tx */
     can->can_rx = RT_NULL;
     can->can_tx = RT_NULL;
+#ifdef RT_CAN_USING_HDR
+    can->hdr = RT_NULL;
+#endif
 
     /* apply configuration */
     if (can->ops->configure)
         result = can->ops->configure(can, &can->config);
+    else
+        result = -RT_ENOSYS;
 
     return result;
 }
@@ -67,7 +58,7 @@ rt_inline int _can_int_rx(struct rt_can_device *can, struct rt_can_msg *data, in
     {
         rt_base_t level;
 #ifdef RT_CAN_USING_HDR
-        rt_int32_t hdr;
+        rt_int8_t hdr;
 #endif /*RT_CAN_USING_HDR*/
         struct rt_can_msg_list *listmsg = RT_NULL;
 
@@ -154,20 +145,11 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         rt_uint32_t result;
         struct rt_can_sndbxinx_list *tx_tosnd = RT_NULL;
 
+        rt_sem_take(&(tx_fifo->sem), RT_WAITING_FOREVER);
         level = rt_hw_interrupt_disable();
-        if (!rt_list_isempty(&tx_fifo->freelist))
-        {
-            tx_tosnd = rt_list_entry(tx_fifo->freelist.next, struct rt_can_sndbxinx_list, list);
-            RT_ASSERT(tx_tosnd != RT_NULL);
-            rt_list_remove(&tx_tosnd->list);
-        }
-        else
-        {
-            rt_hw_interrupt_enable(level);
-
-            rt_completion_wait(&(tx_fifo->completion), RT_WAITING_FOREVER);
-            continue;
-        }
+        tx_tosnd = rt_list_entry(tx_fifo->freelist.next, struct rt_can_sndbxinx_list, list);
+        RT_ASSERT(tx_tosnd != RT_NULL);
+        rt_list_remove(&tx_tosnd->list);
         rt_hw_interrupt_enable(level);
 
         no = ((rt_uint32_t)tx_tosnd - (rt_uint32_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
@@ -178,6 +160,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
             level = rt_hw_interrupt_disable();
             rt_list_insert_after(&tx_fifo->freelist, &tx_tosnd->list);
             rt_hw_interrupt_enable(level);
+            rt_sem_release(&(tx_fifo->sem));
             continue;
         }
 
@@ -191,8 +174,8 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
             rt_list_remove(&tx_tosnd->list);
         }
         rt_list_insert_before(&tx_fifo->freelist, &tx_tosnd->list);
-        rt_completion_done(&(tx_fifo->completion));
         rt_hw_interrupt_enable(level);
+        rt_sem_release(&(tx_fifo->sem));
 
         if (result == RT_CAN_SND_RESULT_OK)
         {
@@ -280,7 +263,7 @@ rt_inline int _can_int_tx_priv(struct rt_can_device *can, const struct rt_can_ms
 static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     struct rt_can_device *can;
-
+    char tmpname[16];
     RT_ASSERT(dev != RT_NULL);
     can = (struct rt_can_device *)dev;
 
@@ -315,7 +298,7 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             can->can_rx = rx_fifo;
 
             dev->open_flag |= RT_DEVICE_FLAG_INT_RX;
-            /* configure low level device */
+            /* open can rx interrupt */
             can->ops->control(can, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_RX);
         }
     }
@@ -333,7 +316,7 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
 
             tx_fifo->buffer = (struct rt_can_sndbxinx_list *)(tx_fifo + 1);
             rt_memset(tx_fifo->buffer, 0,
-                      can->config.sndboxnumber * sizeof(struct rt_can_sndbxinx_list));
+                    can->config.sndboxnumber * sizeof(struct rt_can_sndbxinx_list));
             rt_list_init(&tx_fifo->freelist);
             for (i = 0;  i < can->config.sndboxnumber; i++)
             {
@@ -341,11 +324,13 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
                 rt_completion_init(&(tx_fifo->buffer[i].completion));
                 tx_fifo->buffer[i].result = RT_CAN_SND_RESULT_OK;
             }
-            rt_completion_init(&(tx_fifo->completion));
+
+            rt_sprintf(tmpname, "%stl", dev->parent.name);
+            rt_sem_init(&(tx_fifo->sem), tmpname, can->config.sndboxnumber, RT_IPC_FLAG_FIFO);
             can->can_tx = tx_fifo;
 
             dev->open_flag |= RT_DEVICE_FLAG_INT_TX;
-            /* configure low level device */
+            /* open can tx interrupt */
             can->ops->control(can, RT_DEVICE_CTRL_SET_INT, (void *)RT_DEVICE_FLAG_INT_TX);
         }
     }
@@ -425,7 +410,8 @@ static rt_err_t rt_can_close(struct rt_device *dev)
 
         rt_free(rx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
-        /* configure low level device */
+        can->can_rx = RT_NULL;
+        /* clear can rx interrupt */
         can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }
 
@@ -436,9 +422,11 @@ static rt_err_t rt_can_close(struct rt_device *dev)
         tx_fifo = (struct rt_can_tx_fifo *)can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
+        rt_sem_detach(&(tx_fifo->sem));
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
-        /* configure low level device */
+        can->can_tx = RT_NULL;
+        /* clear can tx interrupt */
         can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
     }
 
@@ -496,12 +484,13 @@ static rt_size_t rt_can_write(struct rt_device *dev,
 }
 
 static rt_err_t rt_can_control(struct rt_device *dev,
-                               rt_uint8_t        cmd,
+                               int              cmd,
                                void             *args)
 {
     struct rt_can_device *can;
     rt_err_t res;
 
+    res = RT_EOK;
     RT_ASSERT(dev != RT_NULL);
     can = (struct rt_can_device *)dev;
 
@@ -519,8 +508,9 @@ static rt_err_t rt_can_control(struct rt_device *dev,
 
     case RT_DEVICE_CTRL_CONFIG:
         /* configure device */
-        can->ops->configure(can, (struct can_configure *)args);
+        res = can->ops->configure(can, (struct can_configure *)args);
         break;
+
     case RT_CAN_CMD_SET_PRIV:
         /* configure device */
         if ((rt_uint32_t)args != can->config.privmode)
@@ -531,18 +521,23 @@ static rt_err_t rt_can_control(struct rt_device *dev,
 
             res = can->ops->control(can, cmd, args);
             if (res != RT_EOK) return res;
-
             tx_fifo = (struct rt_can_tx_fifo *) can->can_tx;
             if (can->config.privmode)
             {
-                rt_completion_done(&(tx_fifo->completion));
-
                 for (i = 0;  i < can->config.sndboxnumber; i++)
                 {
-		    level = rt_hw_interrupt_disable();
-                    rt_list_remove(&tx_fifo->buffer[i].list);
+                    level = rt_hw_interrupt_disable();
+                    if(rt_list_isempty(&tx_fifo->buffer[i].list))
+                    {
+                        rt_sem_release(&(tx_fifo->sem));
+                    }
+                    else
+                    {
+                        rt_list_remove(&tx_fifo->buffer[i].list);
+                    }
                     rt_hw_interrupt_enable(level);
                 }
+
             }
             else
             {
@@ -556,7 +551,6 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                     rt_hw_interrupt_enable(level);
                 }
             }
-            return RT_EOK;
         }
         break;
 
@@ -573,74 +567,73 @@ static rt_err_t rt_can_control(struct rt_device *dev,
             return res;
         }
 
+        struct rt_can_filter_config *pfilter;
+        struct rt_can_filter_item *pitem;
+        rt_uint32_t count;
+        rt_base_t level;
+
+        pfilter = (struct rt_can_filter_config *)args;
+        RT_ASSERT(pfilter);
+        count = pfilter->count;
+        pitem = pfilter->items;
+        if (pfilter->actived)
         {
-            struct rt_can_filter_config *pfilter;
-            struct rt_can_filter_item *pitem;
-            rt_uint32_t count;
-            rt_base_t level;
-
-            pfilter = (struct rt_can_filter_config *)args;
-            count = pfilter->count;
-            pitem = pfilter->items;
-            if (pfilter->actived)
+            while (count)
             {
-                while (count)
+                if (pitem->hdr >= can->config.maxhdr || pitem->hdr < 0)
                 {
-                    if (pitem->hdr >= can->config.maxhdr || pitem->hdr < 0)
-                    {
-                        count--;
-                        pitem++;
-                        continue;
-                    }
+                    count--;
+                    pitem++;
+                    continue;
+                }
 
+                level = rt_hw_interrupt_disable();
+                if (!can->hdr[pitem->hdr].connected)
+                {
+                    rt_hw_interrupt_enable(level);
+                    rt_memcpy(&can->hdr[pitem->hdr].filter, pitem,
+                              sizeof(struct rt_can_filter_item));
                     level = rt_hw_interrupt_disable();
-                    if (!can->hdr[pitem->hdr].connected)
+                    can->hdr[pitem->hdr].connected = 1;
+                    can->hdr[pitem->hdr].msgs = 0;
+                    rt_list_init(&can->hdr[pitem->hdr].list);
+                }
+                rt_hw_interrupt_enable(level);
+
+                count--;
+                pitem++;
+            }
+        }
+        else
+        {
+            while (count)
+            {
+                if (pitem->hdr >= can->config.maxhdr || pitem->hdr < 0)
+                {
+                    count--;
+                    pitem++;
+                    continue;
+                }
+                level = rt_hw_interrupt_disable();
+
+                if (can->hdr[pitem->hdr].connected)
+                {
+                    can->hdr[pitem->hdr].connected = 0;
+                    can->hdr[pitem->hdr].msgs = 0;
+                    if (!rt_list_isempty(&can->hdr[pitem->hdr].list))
                     {
-                        rt_hw_interrupt_enable(level);
-                        rt_memcpy(&can->hdr[pitem->hdr].filter, pitem,
-                                  sizeof(struct rt_can_filter_item));
-			level = rt_hw_interrupt_disable();
-                        can->hdr[pitem->hdr].connected = 1;
-                        can->hdr[pitem->hdr].msgs = 0;
-                        rt_list_init(&can->hdr[pitem->hdr].list);
+                        rt_list_remove(can->hdr[pitem->hdr].list.next);
                     }
                     rt_hw_interrupt_enable(level);
-
-                    count--;
-                    pitem++;
+                    rt_memset(&can->hdr[pitem->hdr].filter, 0,
+                              sizeof(struct rt_can_filter_item));
                 }
-            }
-            else
-            {
-                while (count)
+                else
                 {
-                    if (pitem->hdr >= can->config.maxhdr || pitem->hdr < 0)
-                    {
-                        count--;
-                        pitem++;
-                        continue;
-                    }
-                    level = rt_hw_interrupt_disable();
-
-                    if (can->hdr[pitem->hdr].connected)
-                    {
-                        can->hdr[pitem->hdr].connected = 0;
-                        can->hdr[pitem->hdr].msgs = 0;
-                        if (!rt_list_isempty(&can->hdr[pitem->hdr].list))
-                        {
-                            rt_list_remove(can->hdr[pitem->hdr].list.next);
-                        }
-                        rt_hw_interrupt_enable(level);
-                        rt_memset(&can->hdr[pitem->hdr].filter, 0,
-                                  sizeof(struct rt_can_filter_item));
-                    }
-		    else
-		    {
-                        rt_hw_interrupt_enable(level);
-		    }
-                    count--;
-                    pitem++;
+                    rt_hw_interrupt_enable(level);
                 }
+                count--;
+                pitem++;
             }
         }
         break;
@@ -654,12 +647,16 @@ static rt_err_t rt_can_control(struct rt_device *dev,
         /* control device */
         if (can->ops->control != RT_NULL)
         {
-            can->ops->control(can, cmd, args);
+            res = can->ops->control(can, cmd, args);
+        }
+        else
+        {
+            res = -RT_ENOSYS;
         }
         break;
     }
 
-    return RT_EOK;
+    return res;
 }
 
 /*
@@ -667,8 +664,10 @@ static rt_err_t rt_can_control(struct rt_device *dev,
  */
 static void cantimeout(void *arg)
 {
-    rt_can_t can = (rt_can_t)arg;
+    rt_can_t can;
 
+    can = (rt_can_t)arg;
+    RT_ASSERT(can);
     rt_device_control((rt_device_t)can, RT_CAN_CMD_GET_STATUS, (void *)&can->status);
 
     if (can->status_indicate.ind != RT_NULL)
@@ -687,10 +686,22 @@ static void cantimeout(void *arg)
     }
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops can_device_ops =
+{
+    rt_can_init,
+    rt_can_open,
+    rt_can_close,
+    rt_can_read,
+    rt_can_write,
+    rt_can_control
+};
+#endif
+
 /*
  * can register
  */
-rt_err_t rt_hw_can_register(struct rt_can_device *can,
+rt_err_t rt_hw_can_register(struct rt_can_device    *can,
                             const char              *name,
                             const struct rt_can_ops *ops,
                             void                    *data)
@@ -712,12 +723,17 @@ rt_err_t rt_hw_can_register(struct rt_can_device *can,
 #ifdef RT_CAN_USING_BUS_HOOK
     can->bus_hook       = RT_NULL;
 #endif /*RT_CAN_USING_BUS_HOOK*/
+
+#ifdef RT_USING_DEVICE_OPS
+    device->ops         = &can_device_ops;
+#else
     device->init        = rt_can_init;
     device->open        = rt_can_open;
     device->close       = rt_can_close;
     device->read        = rt_can_read;
     device->write       = rt_can_write;
     device->control     = rt_can_control;
+#endif
     can->ops            = ops;
 
     can->status_indicate.ind  = RT_NULL;
@@ -755,7 +771,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
         struct rt_can_rx_fifo *rx_fifo;
         struct rt_can_msg_list *listmsg = RT_NULL;
 #ifdef RT_CAN_USING_HDR
-        rt_int32_t hdr;
+        rt_int8_t hdr;
 #endif
         int ch = -1;
         rt_base_t level;
@@ -838,7 +854,10 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             level = rt_hw_interrupt_disable();
             rx_length = can->hdr[hdr].msgs * sizeof(struct rt_can_msg);
             rt_hw_interrupt_enable(level);
-            can->hdr[hdr].filter.ind(&can->parent, can->hdr[hdr].filter.args, hdr, rx_length);
+            if (rx_length)
+            {
+                can->hdr[hdr].filter.ind(&can->parent, can->hdr[hdr].filter.args, hdr, rx_length);
+            }
         }
         else
 #endif
@@ -849,10 +868,13 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
 
                 level = rt_hw_interrupt_disable();
                 /* get rx length */
-                rx_length = rx_fifo->freenumbers * sizeof(struct rt_can_msg);
+                rx_length = rt_list_len(&rx_fifo->uselist)* sizeof(struct rt_can_msg);
                 rt_hw_interrupt_enable(level);
 
-                can->parent.rx_indicate(&can->parent, rx_length);
+                if (rx_length)
+                {
+                    can->parent.rx_indicate(&can->parent, rx_length);
+                }
             }
         }
         break;

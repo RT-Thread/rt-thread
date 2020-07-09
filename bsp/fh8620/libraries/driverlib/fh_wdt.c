@@ -31,12 +31,6 @@ void WDT_Enable(struct fh_wdt_obj *wdt_obj, int enable)
     SET_REG(wdt_obj->base + WDOG_CONTROL_REG_OFFSET, enable);
 }
 
-inline int WDT_IsEnable(struct fh_wdt_obj *wdt_obj)
-{
-    return GET_REG(wdt_obj->base + WDOG_CONTROL_REG_OFFSET) &
-        WDOG_CONTROL_REG_WDT_EN_MASK;
-}
-
 void WDT_SetTopValue(struct fh_wdt_obj *wdt_obj, int top)
 {
     SET_REG(wdt_obj->base + WDOG_TIMEOUT_RANGE_REG_OFFSET, top);

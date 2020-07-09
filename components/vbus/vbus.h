@@ -1,36 +1,16 @@
-#ifndef __VBUS_H__
-#define __VBUS_H__
 /*
- * VBus
- *
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
- *      http://www.rt-thread.com
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2014-06-09     Grissiom     version 2.0.2; add comment
  * 2015-01-06     Grissiom     version 2.0.3; API change, no functional changes
  */
+#ifndef __VBUS_H__
+#define __VBUS_H__
 
-#include "vbus_local_conf.h"
 #include <vbus_api.h>
 
 int rt_vbus_init(void *outr, void *inr);

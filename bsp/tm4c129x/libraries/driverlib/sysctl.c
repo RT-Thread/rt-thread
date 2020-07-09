@@ -2,7 +2,7 @@
 //
 // sysctl.c - Driver for the system controller.
 //
-// Copyright (c) 2005-2014 Texas Instruments Incorporated.  All rights reserved.
+// Copyright (c) 2005-2017 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // 
-// This is part of revision 2.1.0.12573 of the Tiva Peripheral Driver Library.
+// This is part of revision 2.1.4.178 of the Tiva Peripheral Driver Library.
 //
 //*****************************************************************************
 
@@ -128,59 +128,61 @@ static const uint32_t g_pui32Xtals[] =
         ((uint32_t)mi | (uint32_t)(mf << SYSCTL_PLLFREQ0_MFRAC_S))
 #define PLL_N_TO_REG(n)                                                       \
         ((uint32_t)(n - 1) << SYSCTL_PLLFREQ1_N_S)
+#define PLL_Q_TO_REG(q)                                                       \
+        ((uint32_t)(q - 1) << SYSCTL_PLLFREQ1_Q_S)
 
 //*****************************************************************************
 //
 // Look up of the values that go into the PLLFREQ0 and PLLFREQ1 registers.
 //
 //*****************************************************************************
-static const uint32_t g_pppui32XTALtoVCO[MAX_VCO_ENTRIES][MAX_XTAL_ENTRIES][2] =
+static const uint32_t g_pppui32XTALtoVCO[MAX_VCO_ENTRIES][MAX_XTAL_ENTRIES][3] =
 {
     {
         //
         // VCO 320 MHz
         //
-        { PLL_M_TO_REG(64, 0),   PLL_N_TO_REG(1) },     // 5 MHz
-        { PLL_M_TO_REG(62, 512), PLL_N_TO_REG(1) },     // 5.12 MHz
-        { PLL_M_TO_REG(160, 0),  PLL_N_TO_REG(3) },     // 6 MHz
-        { PLL_M_TO_REG(52, 85),  PLL_N_TO_REG(1) },     // 6.144 MHz
-        { PLL_M_TO_REG(43, 412), PLL_N_TO_REG(1) },     // 7.3728 MHz
-        { PLL_M_TO_REG(40, 0),   PLL_N_TO_REG(1) },     // 8 MHz
-        { PLL_M_TO_REG(39, 64),  PLL_N_TO_REG(1) },     // 8.192 MHz
-        { PLL_M_TO_REG(32, 0),   PLL_N_TO_REG(1) },     // 10 MHz
-        { PLL_M_TO_REG(80, 0),   PLL_N_TO_REG(3) },     // 12 MHz
-        { PLL_M_TO_REG(26, 43),  PLL_N_TO_REG(1) },     // 12.288 MHz
-        { PLL_M_TO_REG(23, 613), PLL_N_TO_REG(1) },     // 13.56 MHz
-        { PLL_M_TO_REG(22, 358), PLL_N_TO_REG(1) },     // 14.318180 MHz
-        { PLL_M_TO_REG(20, 0),   PLL_N_TO_REG(1) },     // 16 MHz
-        { PLL_M_TO_REG(19, 544), PLL_N_TO_REG(1) },     // 16.384 MHz
-        { PLL_M_TO_REG(160, 0),  PLL_N_TO_REG(9) },     // 18 MHz
-        { PLL_M_TO_REG(16, 0),   PLL_N_TO_REG(1) },     // 20 MHz
-        { PLL_M_TO_REG(40, 0),   PLL_N_TO_REG(3) },     // 24 MHz
-        { PLL_M_TO_REG(64, 0),   PLL_N_TO_REG(5) },     // 25 MHz
+        { PLL_M_TO_REG(64, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 5 MHz
+        { PLL_M_TO_REG(62, 512), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 5.12 MHz
+        { PLL_M_TO_REG(160, 0),  PLL_N_TO_REG(3), PLL_Q_TO_REG(2) },     // 6 MHz
+        { PLL_M_TO_REG(52, 85),  PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 6.144 MHz
+        { PLL_M_TO_REG(43, 412), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 7.3728 MHz
+        { PLL_M_TO_REG(40, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 8 MHz
+        { PLL_M_TO_REG(39, 64),  PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 8.192 MHz
+        { PLL_M_TO_REG(32, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 10 MHz
+        { PLL_M_TO_REG(80, 0),   PLL_N_TO_REG(3), PLL_Q_TO_REG(2) },     // 12 MHz
+        { PLL_M_TO_REG(26, 43),  PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 12.288 MHz
+        { PLL_M_TO_REG(23, 613), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 13.56 MHz
+        { PLL_M_TO_REG(22, 358), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 14.318180 MHz
+        { PLL_M_TO_REG(20, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 16 MHz
+        { PLL_M_TO_REG(19, 544), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 16.384 MHz
+        { PLL_M_TO_REG(160, 0),  PLL_N_TO_REG(9), PLL_Q_TO_REG(2) },     // 18 MHz
+        { PLL_M_TO_REG(16, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 20 MHz
+        { PLL_M_TO_REG(40, 0),   PLL_N_TO_REG(3), PLL_Q_TO_REG(2) },     // 24 MHz
+        { PLL_M_TO_REG(64, 0),   PLL_N_TO_REG(5), PLL_Q_TO_REG(2) },     // 25 MHz
     },
     {
         //
         // VCO 480 MHz
         //
-        { PLL_M_TO_REG(96, 0),   PLL_N_TO_REG(1) },     // 5 MHz
-        { PLL_M_TO_REG(93, 768), PLL_N_TO_REG(1) },     // 5.12 MHz
-        { PLL_M_TO_REG(80, 0),   PLL_N_TO_REG(1) },     // 6 MHz
-        { PLL_M_TO_REG(78, 128), PLL_N_TO_REG(1) },     // 6.144 MHz
-        { PLL_M_TO_REG(65, 107), PLL_N_TO_REG(1) },     // 7.3728 MHz
-        { PLL_M_TO_REG(60, 0),   PLL_N_TO_REG(1) },     // 8 MHz
-        { PLL_M_TO_REG(58, 608), PLL_N_TO_REG(1) },     // 8.192 MHz
-        { PLL_M_TO_REG(48, 0),   PLL_N_TO_REG(1) },     // 10 MHz
-        { PLL_M_TO_REG(40, 0),   PLL_N_TO_REG(1) },     // 12 MHz
-        { PLL_M_TO_REG(39, 64),  PLL_N_TO_REG(1) },     // 12.288 MHz
-        { PLL_M_TO_REG(35, 408), PLL_N_TO_REG(1) },     // 13.56 MHz
-        { PLL_M_TO_REG(33, 536), PLL_N_TO_REG(1) },     // 14.318180 MHz
-        { PLL_M_TO_REG(30, 0),   PLL_N_TO_REG(1) },     // 16 MHz
-        { PLL_M_TO_REG(29, 304), PLL_N_TO_REG(1) },     // 16.384 MHz
-        { PLL_M_TO_REG(80, 0),   PLL_N_TO_REG(3) },     // 18 MHz
-        { PLL_M_TO_REG(24, 0),   PLL_N_TO_REG(1) },     // 20 MHz
-        { PLL_M_TO_REG(20, 0),   PLL_N_TO_REG(1) },     // 24 MHz
-        { PLL_M_TO_REG(96, 0),   PLL_N_TO_REG(5) },     // 25 MHz
+        { PLL_M_TO_REG(96, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 5 MHz
+        { PLL_M_TO_REG(93, 768), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 5.12 MHz
+        { PLL_M_TO_REG(80, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 6 MHz
+        { PLL_M_TO_REG(78, 128), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 6.144 MHz
+        { PLL_M_TO_REG(65, 107), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 7.3728 MHz
+        { PLL_M_TO_REG(60, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 8 MHz
+        { PLL_M_TO_REG(58, 608), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 8.192 MHz
+        { PLL_M_TO_REG(48, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 10 MHz
+        { PLL_M_TO_REG(40, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 12 MHz
+        { PLL_M_TO_REG(39, 64),  PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 12.288 MHz
+        { PLL_M_TO_REG(35, 408), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 13.56 MHz
+        { PLL_M_TO_REG(33, 536), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 14.318180 MHz
+        { PLL_M_TO_REG(30, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 16 MHz
+        { PLL_M_TO_REG(29, 304), PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 16.384 MHz
+        { PLL_M_TO_REG(80, 0),   PLL_N_TO_REG(3), PLL_Q_TO_REG(2) },     // 18 MHz
+        { PLL_M_TO_REG(24, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 20 MHz
+        { PLL_M_TO_REG(20, 0),   PLL_N_TO_REG(1), PLL_Q_TO_REG(2) },     // 24 MHz
+        { PLL_M_TO_REG(96, 0),   PLL_N_TO_REG(5), PLL_Q_TO_REG(2) },     // 25 MHz
     },
 };
 
@@ -202,7 +204,7 @@ g_sXTALtoMEMTIM[] =
                  (0 << SYSCTL_MEMTIM0_EWS_S) |
                  SYSCTL_MEMTIM0_MB1) },
     { 40000000, (SYSCTL_MEMTIM0_FBCHT_1_5 | (1 << SYSCTL_MEMTIM0_FWS_S) |
-                 SYSCTL_MEMTIM0_FBCHT_1_5 | (1 << SYSCTL_MEMTIM0_EWS_S) |
+                 SYSCTL_MEMTIM0_EBCHT_1_5 | (1 << SYSCTL_MEMTIM0_EWS_S) |
                  SYSCTL_MEMTIM0_MB1) },
     { 60000000, (SYSCTL_MEMTIM0_FBCHT_2 | (2 << SYSCTL_MEMTIM0_FWS_S) |
                  SYSCTL_MEMTIM0_EBCHT_2 | (2 << SYSCTL_MEMTIM0_EWS_S) |
@@ -329,8 +331,8 @@ _SysCtlFrequencyGet(uint32_t ui32Xtal)
 //*****************************************************************************
 static const uint32_t g_pui32VCOFrequencies[MAX_VCO_ENTRIES] =
 {
-    320000000,                              // VCO 320
-    480000000,                              // VCO 480
+    160000000,                              // VCO 320
+    240000000,                              // VCO 480
 };
 
 //*****************************************************************************
@@ -418,6 +420,8 @@ _SysCtlPeripheralValid(uint32_t ui32Peripheral)
            (ui32Peripheral == SYSCTL_PERIPH_TIMER3) ||
            (ui32Peripheral == SYSCTL_PERIPH_TIMER4) ||
            (ui32Peripheral == SYSCTL_PERIPH_TIMER5) ||
+           (ui32Peripheral == SYSCTL_PERIPH_TIMER6) ||
+           (ui32Peripheral == SYSCTL_PERIPH_TIMER7) ||
            (ui32Peripheral == SYSCTL_PERIPH_UART0) ||
            (ui32Peripheral == SYSCTL_PERIPH_UART1) ||
            (ui32Peripheral == SYSCTL_PERIPH_UART2) ||
@@ -2076,6 +2080,13 @@ SysCtlResetBehaviorGet(void)
 //! function returns the current system frequency which may not match the
 //! requested frequency.
 //!
+//! If the application is using an external crystal then the frequency is
+//! set by using one of the following values:
+//! \b SYSCTL_XTAL_5MHZ, \b SYSCTL_XTAL_6MHZ, \b SYSCTL_XTAL_8MHZ,
+//! \b SYSCTL_XTAL_10MHZ, \b SYSCTL_XTAL_12MHZ, \b SYSCTL_XTAL_16MHZ,
+//! \b SYSCTL_XTAL_18MHZ, \b SYSCTL_XTAL_20MHZ, \b SYSCTL_XTAL_24MHZ, or
+//! \b SYSCTL_XTAL_25MHz.
+//!
 //! The oscillator source is chosen with one of the following values:
 //!
 //! - \b SYSCTL_OSC_MAIN to use an external crystal or oscillator.
@@ -2116,8 +2127,8 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
 {
     int32_t i32Timeout, i32VCOIdx, i32XtalIdx;
     uint32_t ui32MOSCCTL;
+    uint32_t ui32Delay;
     uint32_t ui32SysDiv, ui32Osc, ui32OscSelect, ui32RSClkConfig;
-    bool bNewPLL;
 
     //
     // TM4C123 devices should not use this function.
@@ -2205,6 +2216,32 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
         }
 
         HWREG(SYSCTL_MOSCCTL) = ui32MOSCCTL;
+        
+        //
+        // Timeout using the legacy delay value.
+        //
+        ui32Delay = 524288;
+
+        while((HWREG(SYSCTL_RIS) & SYSCTL_RIS_MOSCPUPRIS) == 0)
+        {
+            ui32Delay--;
+
+            if(ui32Delay == 0)
+            {
+                break;
+            }
+        }
+
+        //
+        // If the main oscillator failed to start up then do not switch to
+        // it and return.
+        //
+        if(ui32Delay == 0)
+        {
+            return(0);
+        }
+
+        
     }
     else
     {
@@ -2271,44 +2308,6 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
         i32XtalIdx -= SysCtlXtalCfgToIndex(SYSCTL_XTAL_5MHZ);
 
         //
-        // If there were no changes to the PLL do not force the PLL to lock by
-        // writing the PLL settings.
-        //
-        if((HWREG(SYSCTL_PLLFREQ1) !=
-            g_pppui32XTALtoVCO[i32VCOIdx][i32XtalIdx][1]) ||
-           (HWREG(SYSCTL_PLLFREQ0) !=
-            (g_pppui32XTALtoVCO[i32VCOIdx][i32XtalIdx][0] |
-             SYSCTL_PLLFREQ0_PLLPWR)))
-        {
-            bNewPLL = true;
-        }
-        else
-        {
-            bNewPLL = false;
-        }
-
-        //
-        // If there are new PLL settings write them.
-        //
-        if(bNewPLL)
-        {
-            //
-            // Set the oscillator source.
-            //
-            HWREG(SYSCTL_RSCLKCFG) |= ui32OscSelect;
-
-            //
-            // Set the M, N and Q values provided from the table and preserve
-            // the power state of the main PLL.
-            //
-            HWREG(SYSCTL_PLLFREQ1) =
-                g_pppui32XTALtoVCO[i32VCOIdx][i32XtalIdx][1];
-            HWREG(SYSCTL_PLLFREQ0) =
-                (g_pppui32XTALtoVCO[i32VCOIdx][i32XtalIdx][0] |
-                 (HWREG(SYSCTL_PLLFREQ0) & SYSCTL_PLLFREQ0_PLLPWR));
-        }
-
-        //
         // Calculate the System divider such that we get a frequency that is
         // the closest to the requested frequency without going over.
         //
@@ -2316,9 +2315,25 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
                      ui32SysClock;
 
         //
-        // Calculate the actual system clock.
+        // Set the oscillator source.
         //
-        ui32SysClock = _SysCtlFrequencyGet(ui32Osc) / ui32SysDiv;
+        HWREG(SYSCTL_RSCLKCFG) |= ui32OscSelect;
+
+        //
+        // Set the M, N and Q values provided from the table and preserve
+        // the power state of the main PLL.
+        //
+        HWREG(SYSCTL_PLLFREQ1) =
+            g_pppui32XTALtoVCO[i32VCOIdx][i32XtalIdx][1];
+        HWREG(SYSCTL_PLLFREQ1) |= PLL_Q_TO_REG(ui32SysDiv);
+        HWREG(SYSCTL_PLLFREQ0) =
+            (g_pppui32XTALtoVCO[i32VCOIdx][i32XtalIdx][0] |
+             (HWREG(SYSCTL_PLLFREQ0) & SYSCTL_PLLFREQ0_PLLPWR));
+
+        //
+        // Calculate the actual system clock as PSYSDIV is always div-by 2.
+        //
+        ui32SysClock = _SysCtlFrequencyGet(ui32Osc) / 2;
 
         //
         // Set the Flash and EEPROM timing values.
@@ -2330,13 +2345,10 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
         //
         if(HWREG(SYSCTL_PLLFREQ0) & SYSCTL_PLLFREQ0_PLLPWR)
         {
-            if(bNewPLL == true)
-            {
-                //
-                // Trigger the PLL to lock to the new frequency.
-                //
-                HWREG(SYSCTL_RSCLKCFG) |= SYSCTL_RSCLKCFG_NEWFREQ;
-            }
+            //
+            // Trigger the PLL to lock to the new frequency.
+            //
+            HWREG(SYSCTL_RSCLKCFG) |= SYSCTL_RSCLKCFG_NEWFREQ;
         }
         else
         {
@@ -2363,9 +2375,8 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
         if(i32Timeout)
         {
             ui32RSClkConfig = HWREG(SYSCTL_RSCLKCFG);
-            ui32RSClkConfig |= ((ui32SysDiv - 1) <<
-                                SYSCTL_RSCLKCFG_PSYSDIV_S) | ui32OscSelect |
-                               SYSCTL_RSCLKCFG_USEPLL;
+            ui32RSClkConfig |= (1 << SYSCTL_RSCLKCFG_PSYSDIV_S) |
+                                ui32OscSelect | SYSCTL_RSCLKCFG_USEPLL;
             ui32RSClkConfig |= SYSCTL_RSCLKCFG_MEMTIMU;
 
             //
@@ -2461,6 +2472,11 @@ SysCtlClockFreqSet(uint32_t ui32Config, uint32_t ui32SysClock)
         //
         HWREG(SYSCTL_RSCLKCFG) = ui32RSClkConfig;
     }
+
+    //
+    // Finally change the OSCSRC back to PIOSC
+    //
+    HWREG(SYSCTL_RSCLKCFG) &= ~(SYSCTL_RSCLKCFG_OSCSRC_M);
 
     return(ui32SysClock);
 }
@@ -2863,11 +2879,6 @@ SysCtlClockGet(void)
             case SYSCTL_DC1_MINSYSDIV_80:
             {
                 ui32Max = 80000000;
-                break;
-            }
-            case SYSCTL_DC1_MINSYSDIV_66:
-            {
-                ui32Max = 66666666;
                 break;
             }
             case SYSCTL_DC1_MINSYSDIV_50:
@@ -3505,6 +3516,93 @@ SysCtlVoltageEventClear(uint32_t ui32Status)
     // Clear the requested voltage events.
     //
     HWREG(SYSCTL_PWRTC) |= ui32Status;
+}
+
+//*****************************************************************************
+//
+//! Gets the effective VCO frequency.
+//!
+//! \param ui32Crystal holds the crystal value used for the PLL.
+//! \param pui32VCOFrequency is a pointer to the storage location which holds 
+//! value of the VCO computed.
+//!
+//! This function calculates the VCO of the PLL before the system divider is
+//! applied
+//!
+//! \return \b true if the PLL is configured correctly and a VCO is valid or
+//! \b false if the device is not TM4C129x or the PLL is not used
+//
+//*****************************************************************************
+bool
+SysCtlVCOGet(uint32_t ui32Crystal, uint32_t *pui32VCOFrequency)
+{
+    int32_t i32XtalIdx;
+    uint32_t ui32RSClkConfig, ui32PLLFreq0, ui32PLLFreq1, ui32Osc;
+    uint32_t ui32MInt, ui32MFrac, ui32NDiv, ui32QDiv, ui32TempVCO;
+
+    //
+    // Check if TM4C123 device is being used. should not use this function.
+    //
+    if(CLASS_IS_TM4C123)
+    {
+        //
+        // Return error if TM4C123.
+        //
+        *pui32VCOFrequency = 0;
+        return(false);
+    }
+
+    //
+    // Read the RSCLKCFG register to determine if PLL is being used.
+    //
+    ui32RSClkConfig = HWREG(SYSCTL_RSCLKCFG);
+
+    //
+    // Check if PLL is used.
+    //
+    if((ui32RSClkConfig & SYSCTL_RSCLKCFG_USEPLL) != SYSCTL_RSCLKCFG_USEPLL)
+    {
+        //
+        // Return error if PLL is not used.
+        //
+        *pui32VCOFrequency = 0;
+        return(false);  
+    }
+    
+    //
+    // Get the index of the crystal from the ui32Config parameter.
+    //
+    i32XtalIdx = SysCtlXtalCfgToIndex(ui32Crystal);
+
+    //
+    // Get the value of the crystal frequency based on the index
+    //
+    ui32Osc = g_pui32Xtals[i32XtalIdx];
+
+    //
+    // Read the PLLFREQ0 and PLLFREQ1 registers to get information on the
+    // MINT, MFRAC, N and Q values of the PLL
+    //
+    ui32PLLFreq0 = HWREG(SYSCTL_PLLFREQ0);
+    ui32PLLFreq1 = HWREG(SYSCTL_PLLFREQ1);
+
+    ui32MInt = (ui32PLLFreq0 & SYSCTL_PLLFREQ0_MINT_M) >> 
+               SYSCTL_PLLFREQ0_MINT_S;
+    ui32MFrac = (ui32PLLFreq0 & SYSCTL_PLLFREQ0_MFRAC_M) >> 
+                SYSCTL_PLLFREQ0_MFRAC_S;
+    ui32NDiv = (ui32PLLFreq1 & SYSCTL_PLLFREQ1_N_M) >> 
+               SYSCTL_PLLFREQ1_N_S;
+    ui32QDiv = (ui32PLLFreq1 & SYSCTL_PLLFREQ1_Q_M) >> 
+               SYSCTL_PLLFREQ1_Q_S;
+
+    //
+    // Calculate the VCO at the output of the PLL
+    //
+    ui32TempVCO = (ui32Osc * ui32MInt) + ((ui32Osc * ui32MFrac) / 1024);
+    ui32TempVCO /= ((ui32NDiv + 1) * (ui32QDiv + 1));
+    
+    *pui32VCOFrequency = ui32TempVCO;
+    return(true);
 }
 
 //*****************************************************************************

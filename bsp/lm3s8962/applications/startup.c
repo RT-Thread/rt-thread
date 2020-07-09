@@ -30,7 +30,7 @@ extern void rt_hw_serial_init(void);
 
 /*@{*/
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(char* device);
 #endif
 

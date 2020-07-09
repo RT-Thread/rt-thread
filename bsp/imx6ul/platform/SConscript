@@ -1,0 +1,24 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+drivers/epit.c
+drivers/gpt.c
+drivers/imx_timer.c
+drivers/imx_i2c.c
+drivers/imx_uart.c
+cpu/armv7_cache.c
+cpu/ccm_pll2.c
+cpu/cortex_a_gcc.S
+''')
+
+CPPPATH = [ cwd + '/cpu',
+cwd + '/include',
+cwd + '/include/mx6ul',
+cwd + '/include/mx6ul/registers'
+]
+CPPDEFINES = ['CHIP_MX6UL']
+
+group = DefineGroup('Platform', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

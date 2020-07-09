@@ -22,29 +22,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-extern uint32_t SysClock;
-// <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
-
-// <bool name="RT_USING_UART0" description="Using UART0" default="true" />
-#define RT_USING_UART0
-// <bool name="RT_USING_UART1" description="Using UART1" default="true" />
-//#define RT_USING_UART1
-// <bool name="RT_USING_UART2" description="Using UART2" default="true" />
-//#define RT_USING_UART2
-
-// </RDTConfigurator>
-
+extern uint32_t SystemCoreClock;
 #ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN  ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
+extern int Image$$RW_IRAM$$ZI$$Limit;
+#define HEAP_BEGIN  ((void *)&Image$$RW_IRAM$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
 #define HEAP_BEGIN  (__segment_end("HEAP"))
 #else
-extern int __bss_end;
-#define HEAP_BEGIN  ((void *)&__bss_end)
+extern int _ebss;
+#define HEAP_BEGIN  ((void *)&_ebss)
 #endif
-#define HEAP_END    (0x20000000 + 256*1024)
+#define HEAP_END    ((void *)(0x20000000 + 256*1024))
 
 #define FINSH_DEVICE_NAME   RT_CONSOLE_DEVICE_NAME
 void rt_hw_board_init(void);

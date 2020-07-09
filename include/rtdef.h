@@ -1,21 +1,7 @@
 /*
- * File      : rtdef.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -30,6 +16,22 @@
  * 2012-12-30     Bernard      add more control command for graphic.
  * 2013-01-09     Bernard      change version number.
  * 2015-02-01     Bernard      change version number to v2.1.0
+ * 2017-08-31     Bernard      change version number to v3.0.0
+ * 2017-11-30     Bernard      change version number to v3.0.1
+ * 2017-12-27     Bernard      change version number to v3.0.2
+ * 2018-02-24     Bernard      change version number to v3.0.3
+ * 2018-04-25     Bernard      change version number to v3.0.4
+ * 2018-05-31     Bernard      change version number to v3.1.0
+ * 2018-09-04     Bernard      change version number to v3.1.1
+ * 2018-09-14     Bernard      apply Apache License v2.0 to RT-Thread Kernel
+ * 2018-10-13     Bernard      change version number to v4.0.0
+ * 2018-10-02     Bernard      add 64bit arch support
+ * 2018-11-22     Jesven       add smp member to struct rt_thread
+ *                             add struct rt_cpu
+ *                             add smp relevant macros
+ * 2019-01-27     Bernard      change version number to v4.0.1
+ * 2019-05-17     Bernard      change version number to v4.0.2
+ * 2019-12-20     Bernard      change version number to v4.0.3
  */
 
 #ifndef __RT_DEF_H__
@@ -46,27 +48,36 @@ extern "C" {
  * @addtogroup BasicDef
  */
 
-/*@{*/
+/**@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      2L              /**< major version number */
-#define RT_SUBVERSION                   1L              /**< minor version number */
-#define RT_REVISION                     0L              /**< revise version number */
+#define RT_VERSION                      4L              /**< major version number */
+#define RT_SUBVERSION                   0L              /**< minor version number */
+#define RT_REVISION                     3L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
                                          (RT_SUBVERSION * 100) + RT_REVISION)
 
 /* RT-Thread basic data type definitions */
+#ifndef RT_USING_ARCH_DATA_TYPE
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
-typedef signed   long                   rt_int32_t;     /**< 32bit integer type */
+typedef signed   int                    rt_int32_t;     /**< 32bit integer type */
 typedef unsigned char                   rt_uint8_t;     /**<  8bit unsigned integer type */
 typedef unsigned short                  rt_uint16_t;    /**< 16bit unsigned integer type */
-typedef unsigned long                   rt_uint32_t;    /**< 32bit unsigned integer type */
-typedef int                             rt_bool_t;      /**< boolean type */
+typedef unsigned int                    rt_uint32_t;    /**< 32bit unsigned integer type */
 
-/* 32bit CPU */
+#ifdef ARCH_CPU_64BIT
+typedef signed long                     rt_int64_t;     /**< 64bit integer type */
+typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned integer type */
+#else
+typedef signed long long                rt_int64_t;     /**< 64bit integer type */
+typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
+#endif
+#endif
+
+typedef int                             rt_bool_t;      /**< boolean type */
 typedef long                            rt_base_t;      /**< Nbit CPU related date type */
 typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
 
@@ -82,7 +93,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_TRUE                         1               /**< boolean true  */
 #define RT_FALSE                        0               /**< boolean fails */
 
-/*@}*/
+/**@}*/
 
 /* maximum value of base type */
 #define RT_UINT8_MAX                    0xff            /**< Maxium number of UINT8 */
@@ -90,14 +101,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
 
+#if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+#define __CLANG_ARM
+#endif
+
 /* Compiler Related Definitions */
-#ifdef __CC_ARM                         /* ARM Compiler */
+#if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
     #include <stdarg.h>
     #define SECTION(x)                  __attribute__((section(x)))
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK						__weak
+
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     /* module compiling */
     #ifdef RT_USING_MODULE
@@ -110,10 +126,10 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #include <stdarg.h>
     #define SECTION(x)                  @ x
     #define RT_UNUSED
-    #define RT_USED
+    #define RT_USED                     __root
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
-    #define WEAK                        __weak
+    #define RT_WEAK                     __weak
     #define rt_inline                   static inline
     #define RTT_API
 
@@ -121,19 +137,19 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #ifdef RT_USING_NEWLIB
         #include <stdarg.h>
     #else
-		/* the version of GNU GCC must be greater than 4.x */
-        typedef __builtin_va_list   __gnuc_va_list;
-        typedef __gnuc_va_list      va_list;
-        #define va_start(v,l)       __builtin_va_start(v,l)
-        #define va_end(v)           __builtin_va_end(v)
-        #define va_arg(v,l)         __builtin_va_arg(v,l)
+        /* the version of GNU GCC must be greater than 4.x */
+        typedef __builtin_va_list       __gnuc_va_list;
+        typedef __gnuc_va_list          va_list;
+        #define va_start(v,l)           __builtin_va_start(v,l)
+        #define va_end(v)               __builtin_va_end(v)
+        #define va_arg(v,l)             __builtin_va_arg(v,l)
     #endif
 
     #define SECTION(x)                  __attribute__((section(x)))
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-    #define WEAK                        __attribute__((weak))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
@@ -142,7 +158,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED                   __attribute__((unused))
     #define RT_USED                     __attribute__((used))
     #define ALIGN(n)                    __attribute__((aligned(n)))
-	#define WEAK                        __attribute__((weak))
+    #define RT_WEAK                     __attribute__((weak))
     #define rt_inline                   static inline
     #define RTT_API
 #elif defined (_MSC_VER)
@@ -151,7 +167,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_UNUSED
     #define RT_USED
     #define ALIGN(n)                    __declspec(align(n))
-	#define WEAK
+    #define RT_WEAK
     #define rt_inline                   static __inline
     #define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
@@ -164,7 +180,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_USED
     #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)
-    #define WEAK
+    #define RT_WEAK
     #define rt_inline                   static inline
     #define RTT_API
 #else
@@ -177,20 +193,20 @@ typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER /* we do not support MS VC++ compiler */
     #define INIT_EXPORT(fn, level)
 #else
-	#if RT_DEBUG_INIT
-		struct rt_init_desc
-		{
-			const char* fn_name;
-			const init_fn_t fn;
-		};
-		#define INIT_EXPORT(fn, level)  		\
-			const char __rti_##fn##_name[] = #fn; \
-			const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn."level) = \
-			{ __rti_##fn##_name, fn};
-	#else
-    	#define INIT_EXPORT(fn, level)  \
-        	const init_fn_t __rt_init_##fn SECTION(".rti_fn."level) = fn
-	#endif
+    #if RT_DEBUG_INIT
+        struct rt_init_desc
+        {
+            const char* fn_name;
+            const init_fn_t fn;
+        };
+        #define INIT_EXPORT(fn, level)                                                       \
+            const char __rti_##fn##_name[] = #fn;                                            \
+            RT_USED const struct rt_init_desc __rt_init_desc_##fn SECTION(".rti_fn." level) = \
+            { __rti_##fn##_name, fn};
+    #else
+        #define INIT_EXPORT(fn, level)                                                       \
+            RT_USED const init_fn_t __rt_init_##fn SECTION(".rti_fn." level) = fn
+    #endif
 #endif
 #else
 #define INIT_EXPORT(fn, level)
@@ -198,15 +214,16 @@ typedef int (*init_fn_t)(void);
 
 /* board init routines will be called in board_init() function */
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
-/* device/component/fs/app init routines will be called in init_thread */
+
+/* pre/device/component/env/app init routines will be called in init_thread */
+/* components pre-initialization (pure software initilization) */
+#define INIT_PREV_EXPORT(fn)            INIT_EXPORT(fn, "2")
 /* device initialization */
-#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "2")
+#define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "3")
 /* components initialization (dfs, lwip, ...) */
-#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "3")
-/* file system initialization (dfs-elm, dfs-rom, ...) */
-#define INIT_FS_EXPORT(fn)              INIT_EXPORT(fn, "4")
+#define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
-#define INIT_ENV_EXPORT(fn)				INIT_EXPORT(fn, "5")
+#define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
 /* appliation initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
 
@@ -247,7 +264,7 @@ typedef int (*init_fn_t)(void);
  * @addtogroup Error
  */
 
-/*@{*/
+/**@{*/
 
 /* RT-Thread error code definitions */
 #define RT_EOK                          0               /**< There is no error */
@@ -259,8 +276,10 @@ typedef int (*init_fn_t)(void);
 #define RT_ENOSYS                       6               /**< No system */
 #define RT_EBUSY                        7               /**< Busy */
 #define RT_EIO                          8               /**< IO error */
+#define RT_EINTR                        9               /**< Interrupted system call */
+#define RT_EINVAL                       10              /**< Invalid argument */
 
-/*@}*/
+/**@}*/
 
 /**
  * @ingroup BasicDef
@@ -288,6 +307,9 @@ typedef int (*init_fn_t)(void);
  */
 #define RT_NULL                         (0)
 
+/**
+ * Double List structure
+ */
 struct rt_list_node
 {
     struct rt_list_node *next;                          /**< point to next node. */
@@ -296,10 +318,19 @@ struct rt_list_node
 typedef struct rt_list_node rt_list_t;                  /**< Type for lists. */
 
 /**
+ * Single List structure
+ */
+struct rt_slist_node
+{
+    struct rt_slist_node *next;                         /**< point to next node. */
+};
+typedef struct rt_slist_node rt_slist_t;                /**< Type for single list. */
+
+/**
  * @addtogroup KernelObject
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * kernel object macros
@@ -341,35 +372,18 @@ typedef struct rt_object *rt_object_t;                  /**< Type for kernel obj
  */
 enum rt_object_class_type
 {
-    RT_Object_Class_Thread = 0,                         /**< The object is a thread. */
-#ifdef RT_USING_SEMAPHORE
+    RT_Object_Class_Null   = 0,                         /**< The object is not used. */
+    RT_Object_Class_Thread,                             /**< The object is a thread. */
     RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
-#endif
-#ifdef RT_USING_MUTEX
     RT_Object_Class_Mutex,                              /**< The object is a mutex. */
-#endif
-#ifdef RT_USING_EVENT
     RT_Object_Class_Event,                              /**< The object is a event. */
-#endif
-#ifdef RT_USING_MAILBOX
     RT_Object_Class_MailBox,                            /**< The object is a mail box. */
-#endif
-#ifdef RT_USING_MESSAGEQUEUE
     RT_Object_Class_MessageQueue,                       /**< The object is a message queue. */
-#endif
-#ifdef RT_USING_MEMHEAP
     RT_Object_Class_MemHeap,                            /**< The object is a memory heap */
-#endif
-#ifdef RT_USING_MEMPOOL
     RT_Object_Class_MemPool,                            /**< The object is a memory pool. */
-#endif
-#ifdef RT_USING_DEVICE
     RT_Object_Class_Device,                             /**< The object is a device */
-#endif
     RT_Object_Class_Timer,                              /**< The object is a timer. */
-#ifdef RT_USING_MODULE
     RT_Object_Class_Module,                             /**< The object is a module. */
-#endif
     RT_Object_Class_Unknown,                            /**< The object is unknown. */
     RT_Object_Class_Static = 0x80                       /**< The object is a static object. */
 };
@@ -394,13 +408,13 @@ struct rt_object_information
 #define RT_OBJECT_HOOK_CALL(func, argv)
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup Clock
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * clock & timer macros
@@ -417,6 +431,7 @@ struct rt_object_information
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
 #define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
 #define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
+#define RT_TIMER_CTRL_GET_STATE         0x4             /**< get timer run state active or deactive*/
 
 #ifndef RT_TIMER_SKIP_LIST_LEVEL
 #define RT_TIMER_SKIP_LIST_LEVEL          1
@@ -444,13 +459,26 @@ struct rt_timer
 };
 typedef struct rt_timer *rt_timer_t;
 
-/*@}*/
+/**@}*/
+
+/**
+ * @addtogroup Signal
+ */
+#ifdef RT_USING_SIGNALS
+#include <libc/libc_signal.h>
+typedef unsigned long rt_sigset_t;
+typedef void (*rt_sighandler_t)(int signo);
+typedef siginfo_t rt_siginfo_t;
+
+#define RT_SIG_MAX          32
+#endif
+/**@}*/
 
 /**
  * @addtogroup Thread
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * Thread
@@ -465,6 +493,16 @@ typedef struct rt_timer *rt_timer_t;
 #define RT_THREAD_RUNNING               0x03                /**< Running status */
 #define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
 #define RT_THREAD_CLOSE                 0x04                /**< Closed status */
+#define RT_THREAD_STAT_MASK             0x07
+
+#define RT_THREAD_STAT_YIELD            0x08                /**< indicate whether remaining_tick has been reloaded since last schedule */
+#define RT_THREAD_STAT_YIELD_MASK       RT_THREAD_STAT_YIELD
+
+#define RT_THREAD_STAT_SIGNAL           0x10                /**< task hold signals */
+#define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
+#define RT_THREAD_STAT_SIGNAL_WAIT      0x20                /**< task is waiting for signals */
+#define RT_THREAD_STAT_SIGNAL_PENDING   0x40                /**< signals is held and it has not been procressed */
+#define RT_THREAD_STAT_SIGNAL_MASK      0xf0
 
 /**
  * thread control command definitions
@@ -473,6 +511,41 @@ typedef struct rt_timer *rt_timer_t;
 #define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread. */
 #define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
+#define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
+
+#ifdef RT_USING_SMP
+
+#define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
+#define RT_CPU_MASK                     ((1 << RT_CPUS_NR) - 1) /**< All CPUs mask bit. */
+
+#ifndef RT_SCHEDULE_IPI
+#define RT_SCHEDULE_IPI                 0
+#endif
+
+/**
+ * CPUs definitions
+ *
+ */
+struct rt_cpu
+{
+    struct rt_thread *current_thread;
+
+    rt_uint16_t irq_nest;
+    rt_uint8_t  irq_switch_flag;
+
+    rt_uint8_t current_priority;
+    rt_list_t priority_table[RT_THREAD_PRIORITY_MAX];
+#if RT_THREAD_PRIORITY_MAX > 32
+    rt_uint32_t priority_group;
+    rt_uint8_t ready_table[32];
+#else
+    rt_uint32_t priority_group;
+#endif
+
+    rt_tick_t tick;
+};
+
+#endif
 
 /**
  * Thread structure
@@ -496,12 +569,21 @@ struct rt_thread
     void       *entry;                                  /**< entry */
     void       *parameter;                              /**< parameter */
     void       *stack_addr;                             /**< stack address */
-    rt_uint16_t stack_size;                             /**< stack size */
+    rt_uint32_t stack_size;                             /**< stack size */
 
     /* error code */
     rt_err_t    error;                                  /**< error code */
 
-    rt_uint8_t  stat;                                   /**< thread stat */
+    rt_uint8_t  stat;                                   /**< thread status */
+
+#ifdef RT_USING_SMP
+    rt_uint8_t  bind_cpu;                               /**< thread is bind to cpu */
+    rt_uint8_t  oncpu;                                  /**< process on cpu` */
+
+    rt_uint16_t scheduler_lock_nest;                    /**< scheduler lock count */
+    rt_uint16_t cpus_lock_nest;                         /**< cpus lock count */
+    rt_uint16_t critical_lock_nest;                     /**< critical lock count */
+#endif /*RT_USING_SMP*/
 
     /* priority */
     rt_uint8_t  current_priority;                       /**< current priority */
@@ -518,6 +600,17 @@ struct rt_thread
     rt_uint8_t  event_info;
 #endif
 
+#if defined(RT_USING_SIGNALS)
+    rt_sigset_t     sig_pending;                        /**< the pending signals */
+    rt_sigset_t     sig_mask;                           /**< the mask bits of signal */
+
+#ifndef RT_USING_SMP
+    void            *sig_ret;                           /**< the return stack pointer from signal */
+#endif
+    rt_sighandler_t *sig_vectors;                       /**< vectors of signal handler */
+    void            *si_list;                           /**< the signal infor list */
+#endif
+
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
 
@@ -525,17 +618,22 @@ struct rt_thread
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
-    rt_uint32_t user_data;                              /**< private user data beyond this thread */
+    /* light weight process if present */
+#ifdef RT_USING_LWP
+    void        *lwp;
+#endif
+
+    rt_ubase_t user_data;                             /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup IPC
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * IPC flags and control command definitions
@@ -568,6 +666,7 @@ struct rt_semaphore
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
     rt_uint16_t          value;                         /**< value of semaphore. */
+    rt_uint16_t          reserved;                      /**< reserved field */
 };
 typedef struct rt_semaphore *rt_sem_t;
 #endif
@@ -618,7 +717,7 @@ struct rt_mailbox
 {
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
-    rt_uint32_t         *msg_pool;                      /**< start address of message buffer */
+    rt_ubase_t          *msg_pool;                      /**< start address of message buffer */
 
     rt_uint16_t          size;                          /**< size of message pool */
 
@@ -649,17 +748,19 @@ struct rt_messagequeue
     void                *msg_queue_head;                /**< list head */
     void                *msg_queue_tail;                /**< list tail */
     void                *msg_queue_free;                /**< pointer indicated the free node of queue */
+
+    rt_list_t            suspend_sender_thread;         /**< sender thread suspended on this message queue */
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif
 
-/*@}*/
+/**@}*/
 
 /**
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /*
  * memory management
@@ -722,19 +823,18 @@ struct rt_mempool
     rt_size_t        block_free_count;                  /**< numbers of free memory block */
 
     rt_list_t        suspend_thread;                    /**< threads pended on this resource */
-    rt_size_t        suspend_thread_count;              /**< numbers of thread pended on this resource */
 };
 typedef struct rt_mempool *rt_mp_t;
 #endif
 
-/*@}*/
+/**@}*/
 
 #ifdef RT_USING_DEVICE
 /**
  * @addtogroup Device
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * device (I/O) class type
@@ -759,8 +859,10 @@ enum rt_device_class_type
     RT_Device_Class_Pipe,                               /**< Pipe device */
     RT_Device_Class_Portal,                             /**< Portal device */
     RT_Device_Class_Timer,                              /**< Timer device */
-	RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
-	RT_Device_Class_Unknown                             /**< unknown device */
+    RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
+    RT_Device_Class_Sensor,                             /**< Sensor device */
+    RT_Device_Class_Touch,                              /**< Touch device */
+    RT_Device_Class_Unknown                             /**< unknown device */
 };
 
 /**
@@ -778,11 +880,6 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
 
-#define RT_DEVICE_CTRL_CONFIG           0x03    	/* configure device */
-#define RT_DEVICE_CTRL_SET_INT          0x10    	/* enable receive irq */
-#define RT_DEVICE_CTRL_CLR_INT          0x11    	/* disable receive irq */
-#define RT_DEVICE_CTRL_GET_INT          0x12
-
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
 #define RT_DEVICE_FLAG_DMA_RX           0x200           /**< DMA mode on Rx */
 #define RT_DEVICE_FLAG_INT_TX           0x400           /**< INT mode on Tx */
@@ -793,12 +890,19 @@ enum rt_device_class_type
 #define RT_DEVICE_OFLAG_WRONLY          0x002           /**< write only access */
 #define RT_DEVICE_OFLAG_RDWR            0x003           /**< read and write */
 #define RT_DEVICE_OFLAG_OPEN            0x008           /**< device is opened */
+#define RT_DEVICE_OFLAG_MASK            0xf0f           /**< mask of open flag */
 
 /**
  * general device commands
  */
 #define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
 #define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
+#define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
+#define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
+
+#define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
+#define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */
+#define RT_DEVICE_CTRL_GET_INT          0x12            /**< get interrupt status */
 
 /**
  * special device commands
@@ -817,6 +921,30 @@ enum rt_device_class_type
 
 typedef struct rt_device *rt_device_t;
 /**
+ * operations set for device object
+ */
+struct rt_device_ops
+{
+    /* common device interface */
+    rt_err_t  (*init)   (rt_device_t dev);
+    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
+    rt_err_t  (*close)  (rt_device_t dev);
+    rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
+    rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+};
+
+/**
+ * WaitQueue structure
+ */
+struct rt_wqueue
+{
+    rt_uint32_t flag;
+    rt_list_t waiting_list;
+};
+typedef struct rt_wqueue rt_wqueue_t;
+
+/**
  * Device structure
  */
 struct rt_device
@@ -834,13 +962,22 @@ struct rt_device
     rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
     rt_err_t (*tx_complete)(rt_device_t dev, void *buffer);
 
+#ifdef RT_USING_DEVICE_OPS
+    const struct rt_device_ops *ops;
+#else
     /* common device interface */
     rt_err_t  (*init)   (rt_device_t dev);
     rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
     rt_err_t  (*close)  (rt_device_t dev);
     rt_size_t (*read)   (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, rt_uint8_t cmd, void *args);
+    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
+#endif
+
+#if defined(RT_USING_POSIX)
+    const struct dfs_file_ops *fops;
+    struct rt_wqueue wait_queue;
+#endif
 
     void                     *user_data;                /**< device private data */
 };
@@ -895,6 +1032,9 @@ enum
     RTGRAPHIC_PIXEL_FORMAT_RGB888,
     RTGRAPHIC_PIXEL_FORMAT_ARGB888,
     RTGRAPHIC_PIXEL_FORMAT_ABGR888,
+    RTGRAPHIC_PIXEL_FORMAT_ARGB565,
+    RTGRAPHIC_PIXEL_FORMAT_ALPHA,
+    RTGRAPHIC_PIXEL_FORMAT_COLOR,
 };
 
 /**
@@ -943,62 +1083,27 @@ struct rt_device_graphic_ops
 };
 #define rt_graphix_ops(device)          ((struct rt_device_graphic_ops *)(device->user_data))
 
-/*@}*/
+/**@}*/
 #endif
 
-#ifdef RT_USING_MODULE
-/**
- * @addtogroup Module
- */
-
-/*@{*/
-
-/*
- * module system
- */
-
-#define RT_MODULE_FLAG_WITHENTRY        0x00            /**< with entry point */
-#define RT_MODULE_FLAG_WITHOUTENTRY     0x01            /**< without entry point */
-
-/**
- * Application Module structure
- */
-struct rt_module
-{
-    struct rt_object             parent;                /**< inherit from object */
-
-    rt_uint32_t                  vstart_addr;            /**< VMA base address for the
-                                                          first LOAD segment. */
-    rt_uint8_t                  *module_space;          /**< module memory space */
-
-    void                        *module_entry;          /**< the entry address of module */
-    rt_thread_t                  module_thread;         /**< the main thread of module */
-
-	rt_uint8_t*                  module_cmd_line;		/**< module command line */
-	rt_uint32_t                  module_cmd_size;		/**< the size of module command line */
-
-#ifdef RT_USING_SLAB
-    /* module memory allocator */
-    void                        *mem_list;              /**< module's free memory list */
-    void                        *page_array;            /**< module's using pages */
-    rt_uint32_t                  page_cnt;              /**< module's using pages count */
-#endif
-
-    rt_uint16_t                  nref;                  /**< reference count */
-
-    rt_uint16_t                  nsym;                  /**< number of symbol in the module */
-    struct rt_module_symtab     *symtab;                /**< module symbol table */
-
-    /* object in this module, module object is the last basic object type */
-    struct rt_object_information module_object[RT_Object_Class_Unknown];
-};
-typedef struct rt_module *rt_module_t;
-
-/*@}*/
-#endif
+/* definitions for libc */
+#include "rtlibc.h"
 
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef __cplusplus
+/* RT-Thread definitions for C++ */
+namespace rtthread {
+
+enum TICK_WAIT {
+    WAIT_NONE = 0,
+    WAIT_FOREVER = -1,
+};
+
+}
+
+#endif /* end of __cplusplus */
 
 #endif

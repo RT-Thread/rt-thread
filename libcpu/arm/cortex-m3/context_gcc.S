@@ -1,11 +1,7 @@
 /*
- * File      : context_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date         Author    Notes
@@ -28,7 +24,7 @@
     .equ    PENDSVSET_BIT, 0x10000000       /* value to trigger PendSV exception */
     
     .equ    SHPR3, 0xE000ED20               /* system priority register (3) */
-    .equ    PENDSV_PRI_LOWEST, 0x00FF0000   /* PendSV priority value (lowest) */
+    .equ    PENDSV_PRI_LOWEST, 0xFFFF0000   /* PendSV and SysTick priority value (lowest) */
 
 /*
  * rt_base_t rt_hw_interrupt_disable();
@@ -144,7 +140,7 @@ rt_hw_context_switch_to:
     MOV     R0, #1
     STR     R0, [R1]
 
-    /* set the PendSV exception priority */
+    /* set the PendSV and SysTick exception priority */
     LDR     R0, =SHPR3
     LDR     R1, =PENDSV_PRI_LOWEST
     LDR.W   R2, [R0,#0]             /* read */
@@ -162,7 +158,9 @@ rt_hw_context_switch_to:
     NOP
     MSR     msp, r0
 
-    CPSIE   I                       /* enable interrupts at processor level */
+    /* enable interrupts at processor level */
+    CPSIE   F
+    CPSIE   I
 
     /* never reach here! */
 
@@ -186,7 +184,7 @@ _get_sp_done:
     STMFD   r0!, {r4 - r11}         /* push r4 - r11 register */
     STMFD   r0!, {lr}               /* push exec_return register */
 
-    TST     lr, #0x04               /* if(!EXC_RETURN[2])
+    TST     lr, #0x04               /* if(!EXC_RETURN[2]) */
     BEQ     _update_msp
     MSR     psp, r0                 /* update stack pointer to PSP. */
     B       _update_done

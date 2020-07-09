@@ -303,8 +303,6 @@
 			<F N="../../src/mem.c"/>
 			<F N="../../src/memheap.c"/>
 			<F N="../../src/mempool.c"/>
-			<F N="../../src/module.c"/>
-			<F N="../../src/module.h"/>
 			<F N="../../src/object.c"/>
 			<F N="../../src/scheduler.c"/>
 			<F N="../../src/SConscript"/>

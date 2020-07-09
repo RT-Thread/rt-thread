@@ -24,6 +24,7 @@
 
 import sys
 import os
+import re
 
 def splitall(loc):
     """
@@ -103,3 +104,190 @@ def xml_indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
+
+
+source_ext = ["c", "h", "s", "S", "cpp", "xpm"]
+source_list = []
+
+def walk_children(child):
+    global source_list
+    global source_ext
+
+    # print child
+    full_path = child.rfile().abspath
+    file_type_list  = full_path.rsplit('.',1)
+    #print file_type
+    if (len(file_type_list) > 1):
+        file_type = full_path.rsplit('.',1)[1]
+
+        if file_type in source_ext:
+            if full_path not in source_list:
+                source_list.append(full_path)
+
+    children = child.all_children()
+    if children != []:
+        for item in children:
+            walk_children(item)
+
+def PrefixPath(prefix, path):
+    path = os.path.abspath(path)
+    prefix = os.path.abspath(prefix)
+
+    if sys.platform == 'win32':
+        prefix = prefix.lower()
+        path = path.lower()
+
+    if path.startswith(prefix):
+        return True
+    
+    return False
+
+def ListMap(l):
+    ret_list = []
+    for item in l:
+        if type(item) == type(()):
+            ret = ListMap(item)
+            ret_list += ret
+        elif type(item) == type([]):
+            ret = ListMap(item)
+            ret_list += ret
+        else:
+            ret_list.append(item)
+
+    return ret_list
+
+def TargetGetList(env, postfix):
+    global source_ext
+    global source_list
+
+    target = env['target']
+
+    source_ext = postfix
+    for item in target:
+        walk_children(item)
+
+    source_list.sort()
+
+    return source_list
+
+def ProjectInfo(env):
+
+    project  = env['project']
+    RTT_ROOT = env['RTT_ROOT']
+    BSP_ROOT = env['BSP_ROOT']
+
+    FILES       = []
+    DIRS        = []
+    HEADERS     = []
+    CPPPATH     = []
+    CPPDEFINES  = []
+
+    for group in project:
+        # get each files
+        if 'src' in group and group['src']:
+            FILES += group['src']
+
+        # get each include path
+        if 'CPPPATH' in group and group['CPPPATH']:
+            CPPPATH += group['CPPPATH']
+
+    if 'CPPDEFINES' in env:
+        CPPDEFINES = env['CPPDEFINES']
+        CPPDEFINES = ListMap(CPPDEFINES)
+
+    # process FILES and DIRS
+    if len(FILES):
+        # use absolute path 
+        for i in range(len(FILES)):
+            FILES[i] = os.path.abspath(str(FILES[i]))
+            DIRS.append(os.path.dirname(FILES[i]))
+
+        FILES.sort()
+        DIRS = list(set(DIRS))
+        DIRS.sort()
+
+    # process HEADERS
+    HEADERS = TargetGetList(env, ['h'])
+
+    # process CPPPATH
+    if len(CPPPATH):
+        # use absolute path 
+        for i in range(len(CPPPATH)):
+            CPPPATH[i] = os.path.abspath(CPPPATH[i])
+
+        # remove repeat path
+        paths = [i for i in set(CPPPATH)]
+        CPPPATH = []
+        for path in paths:
+            if PrefixPath(RTT_ROOT, path):
+                CPPPATH += [os.path.abspath(path).replace('\\', '/')]
+
+            elif PrefixPath(BSP_ROOT, path):
+                CPPPATH += [os.path.abspath(path).replace('\\', '/')]
+
+            else:
+                CPPPATH += ['"%s",' % path.replace('\\', '/')]
+
+        CPPPATH.sort()
+
+    # process CPPDEFINES
+    if len(CPPDEFINES):
+        CPPDEFINES = [i for i in set(CPPDEFINES)]
+
+        CPPDEFINES.sort()
+
+    proj = {}
+    proj['FILES']       = FILES
+    proj['DIRS']        = DIRS
+    proj['HEADERS']     = HEADERS
+    proj['CPPPATH']     = CPPPATH
+    proj['CPPDEFINES']  = CPPDEFINES
+
+    return proj
+
+def VersionCmp(ver1, ver2):
+    la=[]
+    if ver1:
+        la = re.split("[. ]", ver1)
+    lb = re.split("[. ]", ver2)
+
+    f = 0
+    if len(la) > len(lb):
+        f = len(la)
+    else:
+        f = len(lb)
+    for i in range(f):
+        try:
+            if int(la[i]) > int(lb[i]):
+                return 1
+            elif int(la[i]) == int(lb[i]):
+                continue
+            else:
+                return -1
+        except (IndexError, ValueError) as e:
+            if len(la) > len(lb):
+                return 1
+            else:
+                return -1
+    return 0
+
+def GCCC99Patch(cflags):
+    import building
+    gcc_version = building.GetDepend('GCC_VERSION_STR')
+    if gcc_version:
+        gcc_version = gcc_version.replace('"', '')
+    if VersionCmp(gcc_version, "4.8.0") == 1:
+        # remove -std=c99 after GCC 4.8.x
+        cflags = cflags.replace('-std=c99', '')
+
+    return cflags
+
+def ReloadModule(module):
+    import sys
+    if sys.version_info.major >= 3:
+        import importlib
+        importlib.reload(module)
+    else:
+        reload(module)
+
+    return

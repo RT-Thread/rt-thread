@@ -115,7 +115,7 @@ static rt_size_t rt_led_write (rt_device_t dev, rt_off_t pos,
     return index;
 }
 
-static rt_err_t rt_led_control (rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_led_control (rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev == &fm3_led.parent);
 

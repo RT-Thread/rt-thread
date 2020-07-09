@@ -1,0 +1,169 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        config BSP_USING_GPIO
+            bool "Enable GPIO"
+            select RT_USING_PIN
+            default y
+            
+        config BSP_USING_WDT
+            bool "Enable Watch Dog"
+            select RT_USING_WDT
+            default n
+
+        menu "UART Drivers"
+            config BSP_USING_UART0
+                bool "Enable UART0 PA2/3(R/T)"
+                select RT_USING_SERIAL
+                default y    
+
+            config BSP_USING_UART1
+                bool "Enable UART1 PC2/3(R/T)"
+                select RT_USING_SERIAL
+                default n
+        
+            config BSP_USING_UART2
+                bool "Enable UART2 PC4/5(R/T)"
+                select RT_USING_SERIAL
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3 PC6/7(R/T)"
+                select RT_USING_SERIAL
+                default n 
+        endmenu
+
+        menu "SPI Drivers"
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS PC4/5/6(C/O/I)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n 
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS PM5/C2/C3(C/O/I)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n
+        endmenu
+
+        menu "I2C Drivers"
+            config BSP_USING_I2C
+                bool "Enable I2C BUS"
+                select RT_USING_I2C
+                select RT_USING_PIN
+                select RT_USING_I2C_BITOPS
+                default n
+
+                if BSP_USING_I2C
+
+                    config BSP_I2C_SCL  
+                        int "I2C SCL Pin index"
+                        default 98
+
+                    config BSP_I2C_SDA
+                        int "I2C SDA Pin index"
+                        default 99
+
+                    config BSP_I2C_BUS_NAME
+                        string "i2c bus name"
+                        default "i2c0"
+                endif
+        endmenu
+
+        menu "PWM Drivers"
+            config BSP_USING_PWM0
+                bool "Using PWM0 PA4/10(A/B)"
+                select RT_USING_PWM
+                default n 
+
+            config BSP_USING_PWM1
+                bool "Using PWM1 PA5/9(A/B)"
+                select RT_USING_PWM
+                default n  
+
+            config BSP_USING_PWM2
+                bool "Using PWM2 PP0/2(A/B)"
+                select RT_USING_PWM
+                default n  
+
+            config BSP_USING_PWM3
+                bool "Using PWM3 PP1/3(A/B)"
+                select RT_USING_PWM
+                default n  
+        endmenu
+
+        menu "RTC Drivers"
+            config BSP_USING_RTC
+                bool "Using RTC"
+                select RT_USING_RTC
+                default n 
+        endmenu
+
+        menu "HWtimer Drivers"
+            config BSP_USING_HWTIMER0
+                bool "Using timer0"
+                select RT_USING_HWTIMER 
+                default n
+
+            config BSP_USING_HWTIMER1
+                bool "Using timer1"
+                select RT_USING_HWTIMER 
+                default n
+
+            config BSP_USING_HWTIMER2
+                bool "Using timer2"
+                select RT_USING_HWTIMER 
+                default n
+
+            config BSP_USING_HWTIMER3
+                bool "Using timer3"
+                select RT_USING_HWTIMER 
+                default n
+
+            config BSP_USING_HWTIMER4
+                bool "Using timer4"
+                select RT_USING_HWTIMER 
+                default n
+
+            config BSP_USING_HWTIMER5
+                bool "Using timer5"
+                select RT_USING_HWTIMER 
+                default n
+        endmenu
+    endmenu
+    
+    menu "Onboard Peripheral Drivers"
+        menuconfig BSP_USING_EXT_SRAM
+            bool "Enable external sram"
+            select RT_USING_MEMHEAP
+            select RT_USING_MEMHEAP_AS_HEAP
+            default n
+
+            if BSP_USING_EXT_SRAM
+                config BSP_EXT_SRAM_SIZE
+                hex "external sram size"
+                default 0x100000
+            endif
+
+        menuconfig BSP_USING_NOR_FLASH
+            bool "Enable mtd nor flash"
+            select RT_USING_MTD_NOR
+            select PKG_USING_FTL_SRC
+            default n
+
+            if BSP_USING_NOR_FLASH
+                config BSP_NOR_FLASH_SIZE
+                    hex "mtd nor flash size"
+                    default 0x1000000
+                config BSP_NOR_FLASH_SECTOR_SIZE
+                    hex "mtd nor flsah sector"
+                    default 0x10000
+            endif
+    endmenu
+    
+    menu "Offboard Peripheral Drivers"
+
+    endmenu
+    
+endmenu

@@ -12,11 +12,16 @@
 #undef __ECOS__
 #define __ECOS__
 #include <rtthread.h>
-#define malloc rt_malloc
-#define free  rt_free
-#define printf rt_kprintf
+
+#ifndef RT_USING_LIBC
+#define malloc  rt_malloc
+#define free    rt_free
+#define printf  rt_kprintf
+#endif
+
 //#define Z_PREFIX //by prife
 //#include <pkgconf/compress_zlib.h> //prife no such file.
+
 #if CYGINT_COMPRESS_ZLIB_LOCAL_ALLOC != 0
 #define MY_ZCALLOC
 #endif

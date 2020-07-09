@@ -1,11 +1,7 @@
 /*
- * File      : led.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2009, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -19,8 +15,8 @@ const rt_uint32_t led_mask[] = {1 << 21, 1 << 22, 1 << 26};
 
 void rt_hw_led_init(void)
 {
-    SIM_SCGC5 |= (1 << SIM_SCGC5_PORTB_SHIFT);
-    SIM_SCGC5 |= (1 << SIM_SCGC5_PORTE_SHIFT);
+    SIM->SCGC5 |= (1 << SIM_SCGC5_PORTB_SHIFT);
+    SIM->SCGC5 |= (1 << SIM_SCGC5_PORTE_SHIFT);
 
     PORTB->PCR[21] &= ~PORT_PCR_MUX_MASK;
     PORTB->PCR[21] |= PORT_PCR_MUX(1);   //PTB21 is GPIO pin

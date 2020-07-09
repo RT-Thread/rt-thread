@@ -1,0 +1,7 @@
+config RT_USING_UART0
+    bool "Enable UART0"
+    default n
+
+config RT_USING_UART1
+    bool "Enable UART1"
+    default y

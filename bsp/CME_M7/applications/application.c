@@ -15,8 +15,6 @@
 #include <board.h>
 #include <rtthread.h>
 
-#include <components.h>
-
 void rt_init_thread_entry(void* parameter)
 {
     rt_components_init();

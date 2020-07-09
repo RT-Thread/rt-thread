@@ -1,7 +1,7 @@
 /*
- * File      : mnt.c
+ * File      : mnt_init.c
  * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2016, RT-Thread Development Team
+ * COPYRIGHT (C) 2008 - 2017, RT-Thread Development Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,32 +19,54 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-11-19     Urey         the first version
+ * 2017-11-8      Tangyuxin    first version
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef RT_USING_DFS
 #include <dfs_fs.h>
 
 int mnt_init(void)
 {
-#ifdef RT_USING_SDIO
-    rt_mmcsd_core_init();
-    rt_mmcsd_blk_init();
-
-    jz47xx_sdio_init();
-    rt_thread_delay(RT_TICK_PER_SECOND * 1);
-
-    /* mount sd card fat partition 1 as root directory */
-    if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
+    rt_kprintf("init filesystem...\n");
+#ifdef RT_USING_MTD_NOR
+    //mount rootfs
+    if (dfs_mount("rootfs", "/", "elm", 0, 0) == 0)
     {
-        rt_kprintf("File System initialized!\n");
+        rt_kprintf("File System on root initialized!\n");
     }
     else
     {
-        rt_kprintf("File System initialzation failed!\n");
+        rt_kprintf("File System on root initialization failed!\n");
+    }
+
+    //mount appfs
+    if (dfs_mount("appfs", "/appfs", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("File System on appfs initialized!\n");
+    }
+    else
+    {
+        rt_kprintf("File System on appfs initialization failed!\n");
     }
 #endif
+
+#if (defined(RT_USING_SDIO) && defined(RT_USING_MSC0))
+    rt_thread_delay(RT_TICK_PER_SECOND/5);
+    if (dfs_mount("sd0", "/sd", "elm", 0, 0) == 0)
+    {
+        rt_kprintf("File System on TF initialized!\n");
+    }
+    else
+    {
+        rt_kprintf("File System on TF fail!\n");
+    }
+#endif
+
+    return 0;
 }
 INIT_ENV_EXPORT(mnt_init);
+
+#endif

@@ -3,7 +3,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-core/core.c
+core/usbhost_core.c
 core/driver.c
 core/usbhost.c
 core/hub.c
@@ -29,6 +29,6 @@ if GetDepend('RT_USBH_HID_KEYBOARD'):
 CPPPATH = [cwd, cwd + '/class', cwd + '/core', \
 	cwd + '/include', cwd + '../../../include']
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
+group = DefineGroup('rt_usbh', src, depend = ['RT_USING_USB_HOST'], CPPPATH = CPPPATH)
 
 Return('group')

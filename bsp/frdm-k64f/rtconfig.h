@@ -17,6 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 #define RT_USING_OVERFLOW_CHECK
 
@@ -63,7 +64,11 @@
 #define RT_USING_DEVICE_IPC
 /* Using Serial Device Driver Framework" default="true" */
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
+// <section name="RT_USING_COMPONENTS_INIT" description="Using components init" default="false" >
+#define RT_USING_COMPONENTS_INIT
+// </section>
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -97,9 +102,9 @@
 #define DFS_FD_MAX					4
 
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
-/* #define RT_USING_LWIP */
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
+#define RT_USING_LWIP
+/* Enable LwIP debug output */
+//#define RT_LWIP_DEBUG
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 /* Enable UDP protocol*/
@@ -112,23 +117,14 @@
 /* the number of simulatenously active TCP connections*/
 #define RT_LWIP_TCP_PCB_NUM	5
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	201
+/* ip address of target */
+#define RT_LWIP_IPADDR "192.168.1.201"
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+/* gateway address of target */
+#define RT_LWIP_GWADDR  "192.168.1.1"
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+/* mask address of target */
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* tcp thread options */
 #define RT_LWIP_TCPTHREAD_PRIORITY		12
@@ -149,8 +145,8 @@
 #define CHECKSUM_CHECK_IP               0
 #define CHECKSUM_CHECK_UDP              0
 
-#define CHECKSUM_GEN_TCP                0
-#define CHECKSUM_GEN_IP                 0
-#define CHECKSUM_GEN_UDP                0
+#define CHECKSUM_GEN_TCP                1
+#define CHECKSUM_GEN_IP                 1
+#define CHECKSUM_GEN_UDP                1
 
 #endif

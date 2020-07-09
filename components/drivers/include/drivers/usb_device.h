@@ -1,40 +1,31 @@
 /*
- * File      : usb_device.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-10-01     Yi Qiu       first version
  * 2012-12-12     heyuanjie87  change endpoint and function handler
  * 2013-04-26     aozima       add DEVICEQUALIFIER support.
+ * 2017-11-15     ZYH          fix ep0 transform error
  */
 
 #ifndef  __USB_DEVICE_H__
 #define  __USB_DEVICE_H__
 
 #include <rtthread.h>
-#include "usb_common.h"
+#include "drivers/usb_common.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Vendor ID */
 #ifdef USB_VENDOR_ID
-#define _VENDOR_ID              USB_VENDOR_ID
+#define _VENDOR_ID                  USB_VENDOR_ID
 #else
-#define _VENDOR_ID              0x0EFF
+#define _VENDOR_ID                  0x0EFF
 #endif
 /* Product ID */
 #ifdef USB_PRODUCT_ID
@@ -76,7 +67,7 @@ typedef enum
     /* request to read full count */
     UIO_REQUEST_READ_FULL,
     /* request to read any count */
-    UIO_REQUEST_READ_MOST,  
+    UIO_REQUEST_READ_BEST,  
     /* request to write full count */
     UIO_REQUEST_WRITE,
 }UIO_REQUEST_TYPE;
@@ -99,11 +90,11 @@ struct udcd_ops
 
 struct ep_id
 {
-    rt_uint8_t addr;
-    rt_uint8_t type;
-    rt_uint8_t dir;
-    rt_uint8_t maxpacket;
-    rt_uint8_t status;
+    rt_uint8_t  addr;
+    rt_uint8_t  type;
+    rt_uint8_t  dir;
+    rt_uint16_t maxpacket;
+    rt_uint8_t  status;
 };
 
 typedef rt_err_t (*udep_handler_t)(struct ufunction* func, rt_size_t size);
@@ -137,7 +128,9 @@ struct udcd
     struct rt_device parent;
     const struct udcd_ops* ops;
     struct uendpoint ep0;
+    uep0_stage_t stage;
     struct ep_id* ep_pool;
+    rt_uint8_t device_is_hs;
 };
 typedef struct udcd* udcd_t;
 
@@ -198,6 +191,7 @@ struct udevice
     struct udevice_descriptor dev_desc;
 
     struct usb_qualifier_descriptor * dev_qualifier;
+    usb_os_comp_id_desc_t    os_comp_id_desc;
     const char** str;
 
     udevice_state_t state;
@@ -208,6 +202,13 @@ struct udevice
     udcd_t dcd;
 };
 typedef struct udevice* udevice_t;
+
+struct udclass
+{
+    rt_list_t list;
+    ufunction_t (*rt_usbd_function_create)(udevice_t device);
+};
+typedef struct udclass* udclass_t;
 
 enum udev_msg_type
 {
@@ -238,12 +239,13 @@ struct udev_msg
     udcd_t dcd;
     union
     {
-        struct ep_msg ep_msg;
+        struct ep_msg   ep_msg;
         struct urequest setup;
     } content;
 };
 typedef struct udev_msg* udev_msg_t;
 
+int rt_usbd_class_list_init(void);
 udevice_t rt_usbd_device_new(void);
 uconfig_t rt_usbd_config_new(void);
 ufunction_t rt_usbd_function_new(udevice_t device, udev_desc_t dev_desc,
@@ -259,11 +261,14 @@ rt_err_t rt_usbd_device_set_controller(udevice_t device, udcd_t dcd);
 rt_err_t rt_usbd_device_set_descriptor(udevice_t device, udev_desc_t dev_desc);
 rt_err_t rt_usbd_device_set_string(udevice_t device, const char** ustring);
 rt_err_t rt_usbd_device_set_qualifier(udevice_t device, struct usb_qualifier_descriptor* qualifier);
+rt_err_t rt_usbd_device_set_os_comp_id_desc(udevice_t device, usb_os_comp_id_desc_t os_comp_id_desc);
 rt_err_t rt_usbd_device_add_config(udevice_t device, uconfig_t cfg);
 rt_err_t rt_usbd_config_add_function(uconfig_t cfg, ufunction_t func);
+rt_err_t rt_usbd_class_register(udclass_t udclass);
 rt_err_t rt_usbd_function_add_interface(ufunction_t func, uintf_t intf);
 rt_err_t rt_usbd_interface_add_altsetting(uintf_t intf, ualtsetting_t setting);
 rt_err_t rt_usbd_altsetting_add_endpoint(ualtsetting_t setting, uep_t ep);
+rt_err_t rt_usbd_os_comp_id_desc_add_os_func_comp_id_desc(usb_os_comp_id_desc_t os_comp_id_desc, usb_os_func_comp_id_desc_t os_func_comp_id_desc);
 rt_err_t rt_usbd_altsetting_config_descriptor(ualtsetting_t setting, const void* desc, rt_off_t intf_pos);
 rt_err_t rt_usbd_set_config(udevice_t device, rt_uint8_t value);
 rt_err_t rt_usbd_set_altsetting(uintf_t intf, rt_uint8_t value);
@@ -277,10 +282,12 @@ rt_size_t rt_usbd_ep0_write(udevice_t device, void *buffer, rt_size_t size);
 rt_size_t rt_usbd_ep0_read(udevice_t device, void *buffer, rt_size_t size, 
     rt_err_t (*rx_ind)(udevice_t device, rt_size_t size));
 
-ufunction_t rt_usbd_function_mstorage_create(udevice_t device);
-ufunction_t rt_usbd_function_cdc_create(udevice_t device);
-ufunction_t rt_usbd_function_rndis_create(udevice_t device);
-ufunction_t rt_usbd_function_dap_create(udevice_t device);
+int rt_usbd_vcom_class_register(void);
+int rt_usbd_ecm_class_register(void);
+int rt_usbd_hid_class_register(void);
+int rt_usbd_msc_class_register(void);
+int rt_usbd_rndis_class_register(void);
+int rt_usbd_winusb_class_register(void);
 
 #ifdef RT_USB_DEVICE_COMPOSITE
 rt_err_t rt_usbd_function_set_iad(ufunction_t func, uiad_desc_t iad_desc);
@@ -295,7 +302,7 @@ rt_err_t rt_usbd_ep0_clear_stall(udevice_t device);
 rt_err_t rt_usbd_ep0_setup_handler(udcd_t dcd, struct urequest* setup);
 rt_err_t rt_usbd_ep0_in_handler(udcd_t dcd);
 rt_err_t rt_usbd_ep0_out_handler(udcd_t dcd, rt_size_t size);
-rt_err_t rt_usbd_ep_in_handler(udcd_t dcd, rt_uint8_t address);
+rt_err_t rt_usbd_ep_in_handler(udcd_t dcd, rt_uint8_t address, rt_size_t size);
 rt_err_t rt_usbd_ep_out_handler(udcd_t dcd, rt_uint8_t address, rt_size_t size);
 rt_err_t rt_usbd_reset_handler(udcd_t dcd);
 rt_err_t rt_usbd_connect_handler(udcd_t dcd);
@@ -405,5 +412,54 @@ rt_inline rt_err_t dcd_ep_clear_stall(udcd_t dcd, rt_uint8_t address)
 
     return dcd->ops->ep_clear_stall(address);
 }
+rt_inline void usbd_os_proerty_descriptor_send(ufunction_t func, ureq_t setup, usb_os_proerty_t usb_os_proerty, rt_uint8_t number_of_proerty)
+{
+    struct usb_os_property_header header;
+    static rt_uint8_t * data;
+    rt_uint8_t * pdata;
+    rt_uint8_t index,i;
+    if(data == RT_NULL)
+    {
+        header.dwLength = sizeof(struct usb_os_property_header);
+        header.bcdVersion = 0x0100;
+        header.wIndex = 0x05;
+        header.wCount = number_of_proerty;
+        for(index = 0;index < number_of_proerty;index++)
+        {
+            header.dwLength += usb_os_proerty[index].dwSize;
+        }
+        data = (rt_uint8_t *)rt_malloc(header.dwLength);
+        RT_ASSERT(data != RT_NULL);
+        pdata = data;
+        rt_memcpy((void *)pdata,(void *)&header,sizeof(struct usb_os_property_header));
+        pdata += sizeof(struct usb_os_property_header);
+        for(index = 0;index < number_of_proerty;index++)
+        {
+            rt_memcpy((void *)pdata,(void *)&usb_os_proerty[index],10);
+            pdata += 10;
+            for(i = 0;i < usb_os_proerty[index].wPropertyNameLength/2;i++)
+            {
+                *pdata = usb_os_proerty[index].bPropertyName[i];
+                pdata++;
+                *pdata = 0;
+                pdata++;
+            }
+            *((rt_uint32_t *)pdata) = usb_os_proerty[index].dwPropertyDataLength;
+            pdata += 4;
+            for(i = 0;i < usb_os_proerty[index].dwPropertyDataLength/2;i++)
+            {
+                *pdata = usb_os_proerty[index].bPropertyData[i];
+                pdata++;
+                *pdata = 0;
+                pdata++;
+            }
+        }
+    }
+    rt_usbd_ep0_write(func->device, data, setup->wLength);
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

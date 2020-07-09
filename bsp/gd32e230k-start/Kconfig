@@ -1,0 +1,73 @@
+mainmenu "RT-Thread Configuration"
+
+config BSP_DIR
+    string
+    option env="BSP_ROOT"
+    default "."
+
+config RTT_DIR
+    string
+    option env="RTT_ROOT"
+    default "../.."
+
+config PKGS_DIR
+    string
+    option env="PKGS_ROOT"
+    default "packages"
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+
+config SOC_GD32E230K
+    bool 
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config RT_USING_USART0
+    bool "Using USART0"
+    select RT_USING_SERIAL
+    default y
+    
+config RT_USING_USART1
+    bool "Using USART1"
+    select RT_USING_SERIAL
+    default n
+
+config RT_USING_USART2
+    bool "Using USART2"
+    select RT_USING_SERIAL
+    default n
+
+config RT_USING_UART3
+    bool "Using UART3"
+    select RT_USING_SERIAL
+    default n
+    
+config RT_USING_UART4
+    bool "Using UART4"
+    select RT_USING_SERIAL
+    default n
+
+config RT_USING_SPI0
+    bool "Using SPI0"
+    select RT_USING_SPI
+    default y 
+
+config RT_USING_SPI1
+    bool "Using SPI1"
+    select RT_USING_SPI
+    default n  
+
+config RT_USING_I2C0
+    bool "Using I2C0"
+    select RT_USING_I2C
+    default n 
+
+config RT_USING_I2C1
+    bool "Using I2C1"
+    select RT_USING_I2C
+    default n  
+
+
+

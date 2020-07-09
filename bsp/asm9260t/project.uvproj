@@ -69,8 +69,6 @@
             <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
-            <nStopB1X>0</nStopB1X>
-            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
@@ -140,6 +138,7 @@
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>1</RestoreTracepoints>
             <RestoreSysVw>1</RestoreSysVw>
+            <UsePdscDebugDescription>1</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>5</TargetSelection>
@@ -360,7 +359,7 @@
               <MiscControls />
               <Define>RT_USING_ARM_LIBC</Define>
               <Undefine />
-              <IncludePath>applications;.;drivers;platform;../../include;../../libcpu/arm/arm926;../../libcpu/arm/common;../../components/pthreads;../../components/libc/armlibc;../../components/drivers/include;../../components/drivers/include;../../components/drivers/include;../../components/finsh</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;drivers;platform;..\..\libcpu\arm\common;..\..\libcpu\arm\arm926;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,7 +376,7 @@
               <MiscControls />
               <Define />
               <Undefine />
-              <IncludePath />
+              <IncludePath>.\platform</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -390,10 +389,10 @@
             <TextAddressRange>0x20000000</TextAddressRange>
             <DataAddressRange>0x20800000</DataAddressRange>
             <pXoBase />
-            <ScatterFile>.\at91sam9260_ram.scat</ScatterFile>
+            <ScatterFile>.\link_scripts\sdram.scat</ScatterFile>
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc> --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab) </Misc>
+            <Misc />
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
@@ -401,19 +400,127 @@
       </TargetOption>
       <Groups>
         <Group>
+          <GroupName>Kernel</GroupName>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>slab.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\slab.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Applications</GroupName>
           <Files>
             <File>
               <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications/application.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications/startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -423,21 +530,21 @@
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/board.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/usart.c</FilePath>
+              <FilePath>drivers\usart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers/led.c</FilePath>
+              <FilePath>drivers\led.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -447,313 +554,122 @@
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/gpio.c</FilePath>
+              <FilePath>platform\gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/interrupt.c</FilePath>
+              <FilePath>platform\interrupt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>reset.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/reset.c</FilePath>
+              <FilePath>platform\reset.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>rt_low_level_init.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/rt_low_level_init.c</FilePath>
+              <FilePath>platform\rt_low_level_init.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>system_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/system_clock.c</FilePath>
+              <FilePath>platform\system_clock.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>timer0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/timer0.c</FilePath>
+              <FilePath>platform\timer0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform/uart.c</FilePath>
+              <FilePath>platform\uart.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/idle.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/ipc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/irq.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/kservice.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/mempool.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/object.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/scheduler.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>slab.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/slab.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/thread.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../src/timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>ARM926</GroupName>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/arm926/cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/arm926/mmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/arm926/stack.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/arm926/trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/arm926/context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../libcpu/arm/arm926/start_rvds.S</FilePath>
-            </File>
-          </Files>
+          <GroupName>cpu</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/backtrace.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/div0.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../libcpu/arm/common/showmem.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>pthreads</GroupName>
-          <Files>
-            <File>
-              <FileName>clock_time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/clock_time.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mqueue.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/pthreads/mqueue.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread.c</FileName>
+              <FileName>machine.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\machine.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread_attr.c</FileName>
+              <FileName>mmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_attr.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\mmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread_barrier.c</FileName>
+              <FileName>stack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_barrier.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\stack.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread_cond.c</FileName>
+              <FileName>trap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_cond.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\trap.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread_mutex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_mutex.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>pthread_rwlock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_rwlock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_spin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_spin.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pthread_tls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/pthread_tls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sched.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/sched.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>semaphore.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/pthreads/semaphore.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>mem_std.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/armlibc/mem_std.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stubs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/libc/armlibc/stubs.c</FilePath>
+              <FileName>start_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -763,70 +679,56 @@
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/serial/serial.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/drivers/i2c/i2c_core.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/drivers/i2c/i2c_dev.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c-bit-ops.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/drivers/i2c/i2c-bit-ops.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/completion.c</FilePath>
+              <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/dataqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/pipe.c</FilePath>
+              <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>portal.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/portal.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/ringbuffer.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/drivers/src/workqueue.c</FilePath>
+              <FilePath>..\..\components\drivers\src\workqueue.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -836,91 +738,115 @@
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../components/finsh/symbol.c</FilePath>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_compiler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_compiler.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_error.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_error.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_heap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_heap.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_init.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_init.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_node.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_node.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_ops.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_ops.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_parser.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_parser.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_var.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_var.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_vm.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
-              <FilePath>../../components/finsh/finsh_token.c</FilePath>
+              <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libc</GroupName>
+          <Files>
+            <File>
+              <FileName>libc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\libc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem_std.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\mem_std.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stubs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\stubs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>

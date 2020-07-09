@@ -1,21 +1,7 @@
 /*
- * File      : dfs_uffs.h
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2004-2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -29,6 +15,27 @@
 #include "uffs/uffs_public.h"
 
 /* the UFFS ECC mode opitons  */
+#ifndef RT_UFFS_ECC_MODE
+#define RT_UFFS_ECC_MODE      1
+#endif
+
+/*
+ * RT_UFFS_ECC_MODE:
+ * 0, Do not use ECC
+ * 1, UFFS calculate the ECC
+ * 2, Flash driver(or by hardware) calculate the ECC
+ * 3, Hardware calculate the ECC and automatically write to spare.
+ */
+#if RT_UFFS_ECC_MODE == 0
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_NONE
+#elif RT_UFFS_ECC_MODE == 1
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_SOFT
+#elif RT_UFFS_ECC_MODE == 2
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_HW
+#elif RT_UFFS_ECC_MODE == 3
+#define RT_CONFIG_UFFS_ECC_MODE UFFS_ECC_HW_AUTO
+#endif
+
 /* #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_HW_AUTO */
 /* #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_SOFT */
 /* #define RT_CONFIG_UFFS_ECC_MODE  UFFS_ECC_NONE */
@@ -76,7 +83,7 @@ extern const uffs_FlashOps nand_ops;
 
 extern void uffs_setup_storage(
     struct uffs_StorageAttrSt *attr,
-    struct rt_mtd_nand_device * nand);
+    struct rt_mtd_nand_device *nand);
 
 extern int dfs_uffs_init(void);
 #endif /* DFS_UFFS_H_ */

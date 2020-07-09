@@ -16,10 +16,7 @@
 #include <rtthread.h>
 #include "board.h"
 #include "usart.h"
-/* RT_USING_COMPONENTS_INIT */
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
+
 /**
  * @addtogroup NUVOTON_M05X
  */
@@ -105,13 +102,14 @@ void rt_hw_board_init()
 
 	/* Initial usart deriver, and set console device */
 	rt_hw_usart_init();
-#ifdef RT_USING_CONSOLE
-	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void *)M05X_SRAM_BEGIN, (void *)M05X_SRAM_END);
 #endif
-
-	/* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
+#endif
+#ifdef RT_USING_CONSOLE
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
 

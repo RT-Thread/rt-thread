@@ -1,11 +1,7 @@
 /*
- * File      : cpuport.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2013, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date         Author      Notes
@@ -15,6 +11,7 @@
  * 2012-12-23   aozima      stack addr align to 8byte.
  * 2012-12-29   Bernard     Add exception hook.
  * 2013-07-09   aozima      enhancement hard fault exception handler.
+ * 2019-07-03   yangjie     add __rt_ffs() for armclang.
  */
 
 #include <rtthread.h>
@@ -110,6 +107,8 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void* context))
 #define SCB_HFSR        (*(volatile const unsigned *)0xE000ED2C) /* HardFault Status Register */
 #define SCB_MMAR        (*(volatile const unsigned *)0xE000ED34) /* MemManage Fault Address register */
 #define SCB_BFAR        (*(volatile const unsigned *)0xE000ED38) /* Bus Fault Address Register */
+#define SCB_AIRCR       (*(volatile unsigned long *)0xE000ED0C)  /* Reset control Address Register */
+#define SCB_RESET_VALUE 0x05FA0004                               /* Reset value, write to SCB_AIRCR can reset cpu */
 
 #define SCB_CFSR_MFSR   (*(volatile const unsigned char*)0xE000ED28)  /* Memory-management Fault Status Register */
 #define SCB_CFSR_BFSR   (*(volatile const unsigned char*)0xE000ED29)  /* Bus Fault Status Register */
@@ -352,6 +351,14 @@ void rt_hw_cpu_shutdown(void)
     RT_ASSERT(0);
 }
 
+/**
+ * reset CPU
+ */
+RT_WEAK void rt_hw_cpu_reset(void)
+{
+    SCB_AIRCR = SCB_RESET_VALUE;
+}
+
 #ifdef RT_USING_CPU_FFS
 /**
  * This function finds the first bit set (beginning with the least significant bit)
@@ -368,21 +375,42 @@ __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
     BEQ     exit
+
     RBIT    r0, r0
     CLZ     r0, r0
     ADDS    r0, r0, #0x01
 
-    exit
+exit
     BX      lr
+}
+#elif defined(__CLANG_ARM)
+int __rt_ffs(int value)
+{
+    __asm volatile(
+        "CMP     r0, #0x00            \n"
+        "BEQ     1f                   \n"
+
+        "RBIT    r0, r0               \n"
+        "CLZ     r0, r0               \n"
+        "ADDS    r0, r0, #0x01        \n"
+
+        "1:                           \n"
+
+        : "=r"(value)
+        : "r"(value)
+    );
+    return value;
 }
 #elif defined(__IAR_SYSTEMS_ICC__)
 int __rt_ffs(int value)
 {
     if (value == 0) return value;
 
-    __ASM("RBIT r0, r0");
-    __ASM("CLZ  r0, r0");
-    __ASM("ADDS r0, r0, #0x01");
+    asm("RBIT %0, %1" : "=r"(value) : "r"(value));
+    asm("CLZ  %0, %1" : "=r"(value) : "r"(value));
+    asm("ADDS %0, %1, #0x01" : "=r"(value) : "r"(value));
+
+    return value;
 }
 #elif defined(__GNUC__)
 int __rt_ffs(int value)

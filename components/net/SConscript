@@ -4,14 +4,15 @@ Import('RTT_ROOT')
 from building import *
 
 objs = []
-list = os.listdir(os.path.join(RTT_ROOT, 'components', 'net'))
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
 
-# the default version of LWIP is 1.4.1
-if not GetDepend('RT_USING_LWIP132') and not GetDepend('RT_USING_LWIP140') and not GetDepend('RT_USING_LWIP_HEAD'):
-    AddDepend('RT_USING_LWIP141')
+# the default version of LWIP is 2.0.2
+if not GetDepend('RT_USING_LWIP141') and not GetDepend('RT_USING_LWIP202') and not GetDepend('RT_USING_LWIP212'):
+    AddDepend('RT_USING_LWIP202')
 
 for d in list:
-    path = os.path.join(RTT_ROOT, 'components', 'net', d)
+    path = os.path.join(cwd, d)
     if os.path.isfile(os.path.join(path, 'SConscript')):
         objs = objs + SConscript(os.path.join(d, 'SConscript'))
 

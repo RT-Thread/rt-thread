@@ -526,7 +526,7 @@ static rt_size_t rt_dm9161_write (rt_device_t dev, rt_off_t pos, const void* buf
 	return 0;
 }
 
-static rt_err_t rt_dm9161_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_dm9161_control(rt_device_t dev, int cmd, void *args)
 {
 	return RT_EOK;
 }

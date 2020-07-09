@@ -201,7 +201,7 @@ static rt_err_t fh_sadc_close(rt_device_t dev)
     return RT_EOK;
 }
 
-static rt_err_t fh_sadc_ioctl(rt_device_t dev, rt_uint8_t cmd, void *arg)
+static rt_err_t fh_sadc_ioctl(rt_device_t dev, int cmd, void *arg)
 {
 
 	rt_uint32_t control_reg;

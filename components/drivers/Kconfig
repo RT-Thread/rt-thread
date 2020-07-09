@@ -1,0 +1,804 @@
+menu "Device Drivers"
+
+config RT_USING_DEVICE_IPC
+    bool "Using device drivers IPC"
+    default y
+
+if RT_USING_DEVICE_IPC
+    config RT_PIPE_BUFSZ
+        int "Set pipe buffer size"
+        default 512
+    
+    config RT_USING_SYSTEM_WORKQUEUE
+        bool "Using system default workqueue"
+        default n
+
+    if RT_USING_SYSTEM_WORKQUEUE
+        config RT_SYSTEM_WORKQUEUE_STACKSIZE
+            int "The stack size for system workqueue thread"
+            default 2048
+
+    config RT_SYSTEM_WORKQUEUE_PRIORITY
+            int "The priority level of system workqueue thread"
+            default 23
+    endif
+endif
+
+config RT_USING_SERIAL
+    bool "Using serial device drivers"
+    select RT_USING_DEVICE_IPC
+    select RT_USING_DEVICE
+    default y
+
+if RT_USING_SERIAL
+    config RT_SERIAL_USING_DMA
+        bool "Enable serial DMA mode"
+        default y
+
+    config RT_SERIAL_RB_BUFSZ
+        int "Set RX buffer size"
+        default 64
+
+endif
+
+config RT_USING_CAN
+    bool "Using CAN device drivers"
+    default n
+
+if RT_USING_CAN
+    config RT_CAN_USING_HDR
+        bool "Enable CAN hardware filter"
+        default n
+endif
+
+config RT_USING_HWTIMER
+    bool "Using hardware timer device drivers"
+    default n
+
+config RT_USING_CPUTIME
+    bool "Enable CPU time for high resolution clock counter"
+    default n
+    help
+        When enable this option, the BSP should provide a rt_clock_cputime_ops
+        for CPU time by:
+        const static struct rt_clock_cputime_ops _ops = {...};
+        clock_cpu_setops(&_ops);
+
+        Then user can use high resolution clock counter with:
+
+        ts1 = clock_cpu_gettime();
+        ts2 = clock_cpu_gettime();
+
+        /* and get the ms of delta tick with API: */
+        ms_tick = clock_cpu_millisecond(t2 - t1);
+        us_tick = clock_cpu_microsecond(t2 - t1);
+
+if RT_USING_CPUTIME
+    config RT_USING_CPUTIME_CORTEXM
+        bool "Use DWT for CPU time"
+        default y
+        depends on ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
+        help
+            Some Cortex-M3/4/7 MCU has Data Watchpoint and Trace Register, use
+            the cycle counter in DWT for CPU time.
+endif
+
+config RT_USING_I2C
+    bool "Using I2C device drivers"
+    default n
+
+if RT_USING_I2C
+    config RT_I2C_DEBUG
+        bool "Use I2C debug message"
+        default n
+
+    config RT_USING_I2C_BITOPS
+        bool "Use GPIO to simulate I2C"
+        default y
+endif
+
+if RT_USING_I2C_BITOPS
+    config RT_I2C_BITOPS_DEBUG
+        bool "Use simulate I2C debug message"
+        default n
+endif
+
+config RT_USING_PIN
+    bool "Using generic GPIO device drivers"
+    default y
+
+config RT_USING_ADC
+    bool "Using ADC device drivers"
+    default n
+
+config RT_USING_DAC
+    bool "Using DAC device drivers"
+    default n
+    
+config RT_USING_PWM
+    bool "Using PWM device drivers"
+    default n
+
+config RT_USING_MTD_NOR
+    bool "Using MTD Nor Flash device drivers"
+    default n
+
+config RT_USING_MTD_NAND
+    bool "Using MTD Nand Flash device drivers"
+    default n
+
+    if RT_USING_MTD_NAND
+    config RT_MTD_NAND_DEBUG
+        bool "Enable MTD Nand operations debug information"
+        default n
+    endif
+
+config RT_USING_PM
+    bool "Using Power Management device drivers"
+    default n
+
+config RT_USING_RTC
+    bool "Using RTC device drivers"
+    default n
+
+    if RT_USING_RTC
+        config RT_USING_ALARM
+            bool "Using RTC alarm"
+            default n
+
+        config RT_USING_SOFT_RTC
+            bool "Using software simulation RTC device"
+            default n
+
+        config RTC_SYNC_USING_NTP
+            bool "Using NTP auto sync RTC time"
+            depends on PKG_NETUTILS_NTP
+            default y
+
+            if RTC_SYNC_USING_NTP
+                config RTC_NTP_FIRST_SYNC_DELAY
+                    int "NTP first sync delay time(second) for network connect"
+                    default 30
+                config RTC_NTP_SYNC_PERIOD
+                    int "NTP auto sync period(second)"
+                    default 3600
+           endif
+    endif
+
+config RT_USING_SDIO
+    bool "Using SD/MMC device drivers"
+    default n
+
+    if RT_USING_SDIO
+        config RT_SDIO_STACK_SIZE
+            int "The stack size for sdio irq thread"
+            default 512
+
+        config RT_SDIO_THREAD_PRIORITY
+            int "The priority level value of sdio irq thread"
+            default 15
+
+        config RT_MMCSD_STACK_SIZE
+            int "The stack size for mmcsd thread"
+            default 1024
+
+        config RT_MMCSD_THREAD_PREORITY
+            int "The priority level value of mmcsd thread"
+            default 22
+
+        config RT_MMCSD_MAX_PARTITION
+            int "mmcsd max partition"
+            default 16
+        config RT_SDIO_DEBUG
+            bool "Enable SDIO debug log output"
+        default n
+    endif
+
+config RT_USING_SPI
+    bool "Using SPI Bus/Device device drivers"
+    default n
+
+    if RT_USING_SPI  
+        config RT_USING_QSPI
+            bool "Enable QSPI mode"
+            default n
+
+        config RT_USING_SPI_MSD
+            bool "Using SD/TF card driver with spi"
+            select RT_USING_DFS
+            default n
+
+        config RT_USING_SFUD
+            bool "Using Serial Flash Universal Driver"
+            default n
+            help
+                An using JEDEC's SFDP standard serial (SPI) flash universal driver library
+
+            if RT_USING_SFUD
+                config RT_SFUD_USING_SFDP
+                bool "Using auto probe flash JEDEC SFDP parameter"
+                default y
+
+                config RT_SFUD_USING_FLASH_INFO_TABLE
+                bool "Using defined supported flash chip information table"
+                default y
+                
+                config RT_SFUD_USING_QSPI
+                bool "Using QSPI mode support"
+                select RT_USING_QSPI
+                default n
+
+                config RT_SFUD_SPI_MAX_HZ
+                int "Default spi maximum speed(HZ)"
+                range 0 50000000
+                default 50000000
+                help
+                    Read the JEDEC SFDP command must run at 50 MHz or less,and you also can use rt_spi_configure(); to config spi speed.
+
+                config RT_DEBUG_SFUD
+                bool "Show more SFUD debug information"
+                default n
+            endif
+
+        config RT_USING_ENC28J60
+            bool "Using ENC28J60 SPI Ethernet network interface"
+            select RT_USING_LWIP
+            default n
+
+        config RT_USING_SPI_WIFI
+            bool "Using RW009/007 SPI Wi-Fi wireless interface"
+            select RT_USING_LWIP
+            default n
+    endif
+
+config RT_USING_WDT
+    bool "Using Watch Dog device drivers"
+    default n
+
+config RT_USING_AUDIO
+    bool "Using Audio device drivers"
+    default n
+    
+    if RT_USING_AUDIO
+        config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
+            int "Replay memory pool block size"
+            default 4096
+
+        config RT_AUDIO_REPLAY_MP_BLOCK_COUNT
+            int "Replay memory pool block count"
+            default 2
+
+        config RT_AUDIO_RECORD_PIPE_SIZE
+            int "Record pipe size"
+            default 2048
+    endif
+
+config RT_USING_SENSOR
+    bool "Using Sensor device drivers"
+    select RT_USING_PIN
+    default n
+
+if RT_USING_SENSOR
+    config RT_USING_SENSOR_CMD
+        bool "Using Sensor cmd"
+        default y
+endif
+
+config RT_USING_TOUCH
+    bool "Using Touch device drivers"
+    default n
+
+menuconfig RT_USING_HWCRYPTO
+        bool "Using Hardware Crypto drivers"
+        default n
+
+    if RT_USING_HWCRYPTO
+        config RT_HWCRYPTO_DEFAULT_NAME
+            string "Hardware crypto device name"
+            default "hwcryto"
+
+        config RT_HWCRYPTO_IV_MAX_SIZE
+            int "IV max size"
+            default "16"
+
+        config RT_HWCRYPTO_KEYBIT_MAX_SIZE
+            int "Key max bit length"
+            default 256
+
+        config RT_HWCRYPTO_USING_GCM
+            bool "Using Hardware GCM"
+            default n
+
+        config RT_HWCRYPTO_USING_AES
+            bool "Using Hardware AES"
+            default n
+
+        if RT_HWCRYPTO_USING_AES
+            config RT_HWCRYPTO_USING_AES_ECB
+                bool "Using Hardware AES ECB mode"
+                default y
+
+            config RT_HWCRYPTO_USING_AES_CBC
+                bool "Using Hardware AES CBC mode"
+                default n
+
+            config RT_HWCRYPTO_USING_AES_CFB
+                bool "Using Hardware AES CFB mode"
+                default n
+
+            config RT_HWCRYPTO_USING_AES_CTR
+                bool "Using Hardware AES CTR mode"
+                default n
+
+            config RT_HWCRYPTO_USING_AES_OFB
+                bool "Using Hardware AES OFB mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_DES
+            bool "Using Hardware DES"
+            default n
+
+        if RT_HWCRYPTO_USING_DES
+            config RT_HWCRYPTO_USING_DES_ECB
+                bool "Using Hardware DES ECB mode"
+                default y
+
+            config RT_HWCRYPTO_USING_DES_CBC
+                bool "Using Hardware DES CBC mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_3DES
+            bool "Using Hardware 3DES"
+            default n
+
+        if RT_HWCRYPTO_USING_3DES
+            config RT_HWCRYPTO_USING_3DES_ECB
+                bool "Using Hardware 3DES ECB mode"
+                default y
+
+            config RT_HWCRYPTO_USING_3DES_CBC
+                bool "Using Hardware 3DES CBC mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_RC4
+            bool "Using Hardware RC4"
+            default n
+
+        config RT_HWCRYPTO_USING_MD5
+            bool "Using Hardware MD5"
+            default n
+
+        config RT_HWCRYPTO_USING_SHA1
+            bool "Using Hardware SHA1"
+            default n
+
+        config RT_HWCRYPTO_USING_SHA2
+            bool "Using Hardware SHA2"
+            default n
+
+        if RT_HWCRYPTO_USING_SHA2
+            config RT_HWCRYPTO_USING_SHA2_224
+                bool "Using Hardware SHA2_224 mode"
+                default n
+
+            config RT_HWCRYPTO_USING_SHA2_256
+                bool "Using Hardware SHA2_256 mode"
+                default y
+
+            config RT_HWCRYPTO_USING_SHA2_384
+                bool "Using Hardware SHA2_384 mode"
+                default n
+
+            config RT_HWCRYPTO_USING_SHA2_512
+                bool "Using Hardware SHA2_512 mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_RNG
+            bool "Using Hardware RNG"
+            default n
+
+        config RT_HWCRYPTO_USING_CRC
+            bool "Using Hardware CRC"
+            default n
+
+        if RT_HWCRYPTO_USING_CRC
+            config RT_HWCRYPTO_USING_CRC_07
+                bool "Using Hardware CRC-8 0x07 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_8005
+                bool "Using Hardware CRC-16 0x8005 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_1021
+                bool "Using Hardware CRC-16 0x1021 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_3D65
+                bool "Using Hardware CRC-16 0x3D65 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_04C11DB7
+                bool "Using Hardware CRC-32 0x04C11DB7 polynomial"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_BIGNUM
+            bool "Using Hardware bignum"
+            default n
+
+        if RT_HWCRYPTO_USING_BIGNUM
+            config RT_HWCRYPTO_USING_BIGNUM_EXPTMOD
+                bool "Using Hardware bignum expt_mod operation"
+                default y
+
+            config RT_HWCRYPTO_USING_BIGNUM_MULMOD
+                bool "Using Hardware bignum mul_mod operation"
+                default y
+
+            config RT_HWCRYPTO_USING_BIGNUM_MUL
+                bool "Using Hardware bignum mul operation"
+                default n
+
+            config RT_HWCRYPTO_USING_BIGNUM_ADD
+                bool "Using Hardware bignum add operation"
+                default n
+
+            config RT_HWCRYPTO_USING_BIGNUM_SUB
+                bool "Using Hardware bignum sub operation"
+                default n
+        endif
+    endif
+
+config RT_USING_PULSE_ENCODER
+    bool "Using PULSE ENCODER device drivers"
+    default n
+
+config RT_USING_INPUT_CAPTURE
+    bool "Using INPUT CAPTURE device drivers"
+    default n
+
+if RT_USING_INPUT_CAPTURE
+    config RT_INPUT_CAPTURE_RB_SIZE
+        int "Set input capture ringbuffer size"
+        default 100
+endif
+
+menuconfig RT_USING_WIFI
+    bool "Using Wi-Fi framework"
+    default n
+
+    if RT_USING_WIFI
+        config RT_WLAN_DEVICE_STA_NAME
+            string "The device name for station"
+            default "wlan0"
+
+        config RT_WLAN_DEVICE_AP_NAME
+            string "The device name for ap"
+            default "wlan1"
+
+        config RT_WLAN_SSID_MAX_LENGTH
+            int "SSID maximum length"
+            default 32
+
+        config RT_WLAN_PASSWORD_MAX_LENGTH
+            int "Password maximum length"
+            default 32
+
+        config RT_WLAN_DEV_EVENT_NUM
+            int "Driver events maxcount"
+            default 2
+
+        config RT_WLAN_MANAGE_ENABLE
+            bool "Connection management Enable"
+            default y
+
+        if RT_WLAN_MANAGE_ENABLE
+            config RT_WLAN_SCAN_WAIT_MS
+                int "Set scan timeout time(ms)"
+                default 10000
+
+            config RT_WLAN_CONNECT_WAIT_MS
+                int "Set connect timeout time(ms)"
+                default 10000
+
+            config RT_WLAN_SCAN_SORT
+                bool "Automatic sorting of scan results"
+                default y
+
+            config RT_WLAN_MSH_CMD_ENABLE
+                bool "MSH command Enable"
+                default y
+
+            config RT_WLAN_AUTO_CONNECT_ENABLE
+                bool "Auto connect Enable"
+                select RT_WLAN_CFG_ENABLE
+                select RT_WLAN_WORK_THREAD_ENABLE
+                default y
+
+            if RT_WLAN_AUTO_CONNECT_ENABLE
+                config AUTO_CONNECTION_PERIOD_MS
+                    int "Auto connect period(ms)"
+                    default 2000
+            endif
+        endif
+
+        config RT_WLAN_CFG_ENABLE
+            bool "WiFi information automatically saved Enable"
+            default y
+
+        if RT_WLAN_CFG_ENABLE
+            config RT_WLAN_CFG_INFO_MAX
+                int "Maximum number of WiFi information automatically saved"
+                default 3
+        endif
+
+        config RT_WLAN_PROT_ENABLE
+            bool "Transport protocol manage Enable"
+            default y
+
+        if RT_WLAN_PROT_ENABLE
+            config RT_WLAN_PROT_NAME_LEN
+                int "Transport protocol name length"
+                default 8
+
+            config RT_WLAN_PROT_MAX
+                int "Transport protocol maxcount"
+                default 2
+
+            config RT_WLAN_DEFAULT_PROT
+                string "Default transport protocol"
+                default "lwip"
+
+            config RT_WLAN_PROT_LWIP_ENABLE
+                bool "LWIP transport protocol Enable"
+                select RT_USING_LWIP
+                default y
+
+            if RT_WLAN_PROT_LWIP_ENABLE
+                config RT_WLAN_PROT_LWIP_NAME
+                    string "LWIP transport protocol name"
+                    default "lwip"
+
+                config RT_WLAN_PROT_LWIP_PBUF_FORCE
+                    bool "Forced use of PBUF transmission"
+                    default n
+            endif
+        endif
+
+        config RT_WLAN_WORK_THREAD_ENABLE
+            bool "WLAN work queue thread Enable"
+            default y
+
+        if RT_WLAN_WORK_THREAD_ENABLE
+            config RT_WLAN_WORKQUEUE_THREAD_NAME
+                string "WLAN work queue thread name"
+                default "wlan"
+
+            config RT_WLAN_WORKQUEUE_THREAD_SIZE
+                int "WLAN work queue thread size"
+                default 2048
+
+            config RT_WLAN_WORKQUEUE_THREAD_PRIO
+                int "WLAN work queue thread priority"
+                default 15
+        endif
+
+        menuconfig RT_WLAN_DEBUG
+            bool "Enable WLAN Debugging Options"
+            default n
+
+        if RT_WLAN_DEBUG
+            config RT_WLAN_CMD_DEBUG
+                bool "Enable Debugging of wlan_cmd.c"
+                default n
+
+            config RT_WLAN_MGNT_DEBUG
+                bool "Enable Debugging of wlan_mgnt.c"
+                default n
+
+            config RT_WLAN_DEV_DEBUG
+                bool "Enable Debugging of wlan_dev.c"
+                default n
+
+            config RT_WLAN_PROT_DEBUG
+                bool "Enable Debugging of wlan_prot.c"
+                default n
+
+            config RT_WLAN_CFG_DEBUG
+                bool "Enable Debugging of wlan_cfg.c"
+                default n
+
+            config RT_WLAN_LWIP_DEBUG
+                bool "Enable Debugging of wlan_lwip.c"
+                default n
+        endif
+    endif
+
+menu "Using USB"
+    config RT_USING_USB_HOST
+        bool "Using USB host"
+        default n
+
+        if RT_USING_USB_HOST
+            config RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+    config RT_USING_USB_DEVICE
+        bool "Using USB device"
+        default n
+        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
+            config RT_USBD_THREAD_STACK_SZ
+                int "usb thread stack size"
+                default 4096
+        endif
+        if RT_USING_USB_DEVICE
+            config USB_VENDOR_ID
+                hex "USB Vendor ID"
+                default 0x0FFE
+            config USB_PRODUCT_ID
+                hex "USB Product ID"
+                default 0x0001
+
+            config RT_USB_DEVICE_COMPOSITE
+                bool "Enable composite device"
+                default n
+                choice
+                    prompt "Device type"
+                    default _RT_USB_DEVICE_NONE
+                    depends on !RT_USB_DEVICE_COMPOSITE
+                    config _RT_USB_DEVICE_NONE
+                        bool "Using custom class by register interface"
+                        select RT_USB_DEVICE_NONE
+                    config _RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        select RT_USB_DEVICE_CDC
+                    config _RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        select RT_USB_DEVICE_MSTORAGE
+                    config _RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        select RT_USB_DEVICE_HID
+                    config _RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        select RT_USB_DEVICE_RNDIS
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        select RT_USB_DEVICE_ECM
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        select RT_USB_DEVICE_WINUSB
+                    config _RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
+                        select RT_USB_DEVICE_AUDIO
+                endchoice
+                if RT_USB_DEVICE_COMPOSITE
+                    config RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        default n
+                    config RT_USB_DEVICE_NONE
+                        bool
+                        default y
+                    config RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        default n
+                    config RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        default n
+                    config RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        default n
+                    config RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
+                        default n
+                endif
+                if RT_USB_DEVICE_CDC
+                    config RT_VCOM_TASK_STK_SIZE
+                        int "virtual com thread stack size"
+                        default 512
+                    config RT_CDC_RX_BUFSIZE
+                        int "virtual com rx buffer size"
+                        default 128
+                    config RT_VCOM_TX_USE_DMA
+                        bool "Enable to use dma for vcom tx"
+                        default n
+                    config RT_VCOM_SERNO
+                        string "serial number of virtual com"
+                        default "32021919830108"
+                    config RT_VCOM_SER_LEN
+                        int "serial number length of virtual com"
+                        default 14
+                    config RT_VCOM_TX_TIMEOUT
+                        int "tx timeout(ticks) of virtual com"
+                        default 1000
+                endif
+                if RT_USB_DEVICE_WINUSB
+                    config RT_WINUSB_GUID
+                    string "Guid for winusb"
+                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
+                endif
+                if RT_USB_DEVICE_MSTORAGE
+                    config RT_USB_MSTORAGE_DISK_NAME
+                    string "msc class disk name"
+                    default "flash0"
+                endif
+
+                if RT_USB_DEVICE_RNDIS
+                    config RNDIS_DELAY_LINK_UP
+                        bool "Delay linkup media connection"
+                        select RT_USING_TIMER_SOFT
+                        default n
+                endif
+
+                if RT_USB_DEVICE_HID
+                    config RT_USB_DEVICE_HID_KEYBOARD
+                        bool "Use to HID device as Keyboard"
+                        default n
+                    if RT_USB_DEVICE_HID_KEYBOARD
+                        config RT_USB_DEVICE_HID_KEYBOARD_NUMBER
+                        int "Number of Keyboard(max 3)"
+                        default 1
+                        range 1 3
+                    endif
+                    config RT_USB_DEVICE_HID_MOUSE
+                        bool "Use to HID device as Mouse"
+                        default n
+                    config RT_USB_DEVICE_HID_GENERAL
+                        bool "Use to HID device as General HID device"
+                        default y
+                        if RT_USB_DEVICE_HID_GENERAL
+                            config RT_USB_DEVICE_HID_GENERAL_OUT_REPORT_LENGTH
+                                int "General HID device out report length"
+                                default 63
+                                range 0 63
+
+                            config RT_USB_DEVICE_HID_GENERAL_IN_REPORT_LENGTH
+                                int "General HID device in report length"
+                                default 63
+                                range 0 63
+                        endif
+                    config RT_USB_DEVICE_HID_MEDIA
+                        bool "Use to HID device as media keyboard"
+                        default y
+                endif
+                if RT_USB_DEVICE_AUDIO
+                    config RT_USB_DEVICE_AUDIO_MIC
+                        bool "Use usb mic device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_MIC
+                            config RT_USBD_MIC_DEVICE_NAME
+                            string "audio mic device name"
+                            default "mic0"
+                        endif
+                    config RT_USB_DEVICE_AUDIO_SPEAKER
+                        bool "Use usb speaker device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_SPEAKER
+                            config RT_USBD_SPEAKER_DEVICE_NAME
+                            string "audio speaker device name"
+                            default "sound0"
+                        endif
+                endif
+        endif
+    endmenu
+endmenu

@@ -16,9 +16,9 @@ elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil'
 elif CROSS_TOOL == 'iar':
-    print '================ERROR============================'
-    print 'Not support iar yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support iar yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -34,7 +34,7 @@ if PLATFORM == 'gcc':
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=sam7x_rom_gcc.map,-cref,-u,_start -T sam7x_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=sam7x_rom_gcc.map,-cref,-u,_start -T sam7x_rom.ld -nostartfiles'
     CPATH = ''
     LPATH = ''
 

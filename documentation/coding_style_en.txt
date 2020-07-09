@@ -27,10 +27,10 @@ collision, do not use general names or the names that are frequently used.
 To avoid include the same header file for multiple times, you need to define a
 symbol like this:
 
-	#ifndef __FILE_H__
-	#define __FILE_H__
-	/* header file content */
-	#endif
+    #ifndef __FILE_H__
+    #define __FILE_H__
+    /* header file content */
+    #endif
 
 The symbol should begin and end with "__" to avoid naming collision. The words
 of the file name should be connected by "_".
@@ -41,32 +41,32 @@ of the file name should be connected by "_".
 In every header file, there should be copyright information and Change Log
 record like this:
 
-	/*
-	 * File      : rtthread.h
-	 * This file is part of RT-Thread RTOS
-	 * COPYRIGHT (C) 2006, RT-Thread Development Team
-	 *
-	 * The license and distribution terms for this file may be
-	 * found in the file LICENSE in this distribution or at
-	 * http://www.rt-thread.org/license/LICENSE.
-	 *
-	 * Change Logs:
-	 * Date           Author       Notes
-	 * 2006-03-18     Bernard      the first version
-	 * 2006-04-26     Bernard      add semaphore APIs
-	 * …
-	*/
+    /*
+     * File      : rtthread.h
+     * This file is part of RT-Thread RTOS
+     * COPYRIGHT (C) 2006, RT-Thread Development Team
+     *
+     * The license and distribution terms for this file may be
+     * found in the file LICENSE in this distribution or at
+     * http://www.rt-thread.org/license/LICENSE.
+     *
+     * Change Logs:
+     * Date           Author       Notes
+     * 2006-03-18     Bernard      the first version
+     * 2006-04-26     Bernard      add semaphore APIs
+     * ...
+    */
 
 
 5. Structure Defines
 
 Please name structures in lower-case and connect words with "_". For example:
 
-	struct rt_list_node
-	{
-		struct rt_list_node	*next;
-		struct rt_list_node	*prev;
-	};
+    struct rt_list_node
+    {
+        struct rt_list_node *next;
+        struct rt_list_node *prev;
+    };
 
 Braces should have their own lines and the members should be defines with
 indent.
@@ -74,21 +74,21 @@ indent.
 The names of type defines such like structure types should be the structure name
 plus "_t". For example:
 
-	typedef struct rt_list_node rt_list_t;
+    typedef struct rt_list_node rt_list_t;
 
 
 In order to be easily referenced, the types of objects in kernel is pointer. For
 example:
 
-	typedef struct rt_timer* rt_timer_t;
+    typedef struct rt_timer* rt_timer_t;
 
 
-6. Micros
+6. Macros
 
-In RT-Thread, please use upper-case names for micro definitions. Words are
+In RT-Thread, please use upper-case names for macro definitions. Words are
 connected by "_". Like:
 
-	#define RT_TRUE 						1
+    #define RT_TRUE                         1
 
 
 7. Function Naming and Declaration
@@ -97,7 +97,7 @@ Please name functions in lower-case and separate words with "_". API provided to
 upper application should be declared in header files. If the function don't have
 parameters, it should be declared as void:
 
-	rt_thread_t rt_thread_self(void);
+    rt_thread_t rt_thread_self(void);
 
 
 8. Commenting
@@ -113,19 +113,19 @@ or right of them. Anther places are illegal.
 Please use TAB or 4 spaces to indent. It's preferred to use 4 spaces. If no
 other special meanings, the indent should begin right after "{":
 
-	if (condition) 
-	{
-		/* others */
-	}
+    if (condition)
+    {
+        /* others */
+    }
 
 The only one exception is switch. In switch-case statements, "case" should be
 aligned with "switch":
 
-	switch (value)
-	{
-	case value1:
-		break;
-	}
+    switch (value)
+    {
+    case value1:
+        break;
+    }
 
 "case" is aligned with "switch", the following code block should be indented.
 
@@ -135,10 +135,10 @@ aligned with "switch":
 For ease of reading, it is advised that braces should occupy the whole line
 instead of following other statements. Like:
 
-	if (condition)
-	{
-		/* others */
-	}
+    if (condition)
+    {
+        /* others */
+    }
 
 When matching braces have their own lines, the reader would identify the code
 blocks easily.
@@ -146,23 +146,23 @@ blocks easily.
 There should be a space before parentheses when it's not a function call. For
 example:
 
-	if (x <= y)
-	{
-		/* others */
-	}
+    if (x <= y)
+    {
+        /* others */
+    }
 
-	for (index = 0; index < MAX_NUMBER; index ++)
-	{
-		/* others */
-	}
+    for (index = 0; index < MAX_NUMBER; index ++)
+    {
+        /* others */
+    }
 
 In expressions, there should be a space between most binary and ternary
 operators and the strings. No spaces around(inside) parentheses, like:
 
-	if ( x <= y )
-	{
-		/* other */
-	}
+    if ( x <= y )
+    {
+        /* other */
+    }
 
 This is a bad practice.
 
@@ -178,7 +178,7 @@ It is not recommended to use rt_kprintf frequently. Unless you are aware of that
 it's not a big deal to run slower.
 
 Logging should be off by default and can be turned on by a switch(e.g. a
-variable or a micro). When logging, it should be easy to understand and easy to
+variable or a macro). When logging, it should be easy to understand and easy to
 determine where the problem is.
 
 
@@ -195,22 +195,22 @@ The kernel of RT-Thread uses object-oriented tech in C. The naming convention
 is: structure names are the object names, object names + verb phrases are the
 method names of objects:
 
-	struct rt_timer
-	{
-		struct rt_object parent;
-		/* other fields */
-	};
-	typedef struct rt_timer* rt_timer_t;
+    struct rt_timer
+    {
+        struct rt_object parent;
+        /* other fields */
+    };
+    typedef struct rt_timer* rt_timer_t;
 
 The definition of structure rt_timer stands for the object definition of timer
 object.
 
-	rt_timer_t rt_timer_create(const char* name,
-		void (*timeout)(void* parameter), void* parameter,
-		rt_tick_t time, rt_uint8_t flag);
-	rt_err_t rt_timer_delete(rt_timer_t timer);
-	rt_err_t rt_timer_start(rt_timer_t timer);
-	rt_err_t rt_timer_stop(rt_timer_t timer);
+    rt_timer_t rt_timer_create(const char* name,
+        void (*timeout)(void* parameter), void* parameter,
+        rt_tick_t time, rt_uint8_t flag);
+    rt_err_t rt_timer_delete(rt_timer_t timer);
+    rt_err_t rt_timer_start(rt_timer_t timer);
+    rt_err_t rt_timer_stop(rt_timer_t timer);
 
 rt_timer + verb phrase stands for the method that could be used on timer object.
 
@@ -219,13 +219,14 @@ object could be created or it could only created dynamically on heap.
 
 14. Use astyle to format the code automatically
 parameters: --style=allman
-			--indent=spaces=4
-			--pad-oper
-			--pad-header
-			--unpad-paren
-			--suffix=none
-			--align-pointer=name
-			--lineend=linux
-			--convert-tabs
-			--verbose
+            --indent=spaces=4
+            --indent-preproc-block
+            --pad-oper
+            --pad-header
+            --unpad-paren
+            --suffix=none
+            --align-pointer=name
+            --lineend=linux
+            --convert-tabs
+            --verbose
 

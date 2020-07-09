@@ -13,7 +13,7 @@ src_app = ['httpd.c']
 
 src = src_bsp + src_drv1 + src_drv2 + src_dev + src_hdl + src_app
 CPPPATH = [RTT_ROOT + '/bsp/efm32']
-CPPDEFINES = [rtconfig.EFM32_BOARD, rtconfig.EFM32_LCD, rtconfig.EFM32_TYPE]
+CPPDEFINES = [rtconfig.EFM32_LCD, rtconfig.EFM32_TYPE]
 group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -1,0 +1,33 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Glob('GD32F4xx_standard_peripheral/Source/*.c')
+src += [cwd + '/CMSIS/GD/GD32F4xx/Source/system_gd32f4xx.c']
+
+#add for startup script
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [cwd + '/CMSIS/GD/GD32F4xx/Source/GCC/startup_gd32f4xx.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/CMSIS/GD/GD32F4xx/Source/ARM/startup_gd32f4xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/CMSIS/GD/GD32F4xx/Source/IAR/startup_gd32f4xx.s']
+
+path = [
+    cwd + '/CMSIS/GD/GD32F4xx/Include',
+    cwd + '/CMSIS',
+    cwd + '/GD32F4xx_standard_peripheral/Include',]
+    
+if GetDepend(['RT_USING_BSP_USB']):
+    path += [cwd + '/GD32F4xx_usb_driver/Include']
+    src  += [cwd + '/GD32F4xx_usb_driver/Source']
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'GD32F4XX']
+
+group = DefineGroup('GD32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

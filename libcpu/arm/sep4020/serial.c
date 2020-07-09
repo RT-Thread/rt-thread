@@ -1,11 +1,7 @@
 /*
- * File      : serial.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -208,7 +204,7 @@ static rt_size_t rt_serial_write (rt_device_t dev, rt_off_t pos, const void* buf
 	return (rt_uint32_t)ptr - (rt_uint32_t)buffer;
 }
 
-static rt_err_t rt_serial_control (rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_serial_control (rt_device_t dev, int cmd, void *args)
 {
 	RT_ASSERT(dev != RT_NULL);
 

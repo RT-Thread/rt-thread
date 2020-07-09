@@ -1,12 +1,22 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #ifndef __VBUS_API_H__
 #define __VBUS_API_H__
 
-#include "vbus_conf.h"
+#define RT_VBUS_USING_FLOW_CONTROL
 
 #define RT_VBUS_CHANNEL_NR   32
 
 #define RT_VBUS_BLK_HEAD_SZ  4
 #define RT_VBUS_MAX_PKT_SZ   (256 - RT_VBUS_BLK_HEAD_SZ)
+
+#define RT_VMM_RB_BLK_NR (_RT_VBUS_RING_SZ / 64 - 1)
 
 #ifndef __ASSEMBLY__
 #include <stddef.h> /* For size_t */

@@ -2,29 +2,38 @@
  * File      : dhcp_server.c
  *             A simple DHCP server implementation
  *
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
+ * COPYRIGHT (C) 2011-2018, Shanghai Real-Thread Technology Co., Ltd
  * http://www.rt-thread.com
+ * All rights reserved.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 3. The name of the author may not be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
  *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+ * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+ * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
  *
  * Change Logs:
  * Date           Author       Notes
  * 2013-01-30     aozima       the first version
  * 2013-08-08     aozima       support different network segments.
  * 2015-01-30     bernard      release to RT-Thread RTOS.
+ * 2017-12-27     aozima       add [mac-ip] table support.
  */
 
 #include <stdio.h>
@@ -37,31 +46,33 @@
 #include <netif/etharp.h>
 #include <netif/ethernetif.h>
 #include <lwip/ip.h>
+#include <lwip/init.h>
+
+#if (LWIP_VERSION) >= 0x02000000U
+    #include <lwip/prot/dhcp.h>
+#endif
 
 /* DHCP server option */
 
 /* allocated client ip range */
 #ifndef DHCPD_CLIENT_IP_MIN
-#define DHCPD_CLIENT_IP_MIN     2
+    #define DHCPD_CLIENT_IP_MIN     2
 #endif
 #ifndef DHCPD_CLIENT_IP_MAX
-#define DHCPD_CLIENT_IP_MAX     254
+    #define DHCPD_CLIENT_IP_MAX     254
 #endif
 
 /* the DHCP server address */
-#ifndef DHCPD_SERVER_IPADDR0
-#define DHCPD_SERVER_IPADDR0      192UL
-#define DHCPD_SERVER_IPADDR1      168UL
-#define DHCPD_SERVER_IPADDR2      169UL
-#define DHCPD_SERVER_IPADDR3      1UL
+#ifndef DHCPD_SERVER_IP
+    #define DHCPD_SERVER_IP "192.168.169.1"
 #endif
 
 //#define DHCP_DEBUG_PRINTF
 
 #ifdef  DHCP_DEBUG_PRINTF
-#define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
+    #define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
 #else
-#define DEBUG_PRINTF(...)
+    #define DEBUG_PRINTF(...)
 #endif /* DHCP_DEBUG_PRINTF */
 
 /* we need some routines in the DHCP of lwIP */
@@ -72,7 +83,25 @@
 /* buffer size for receive DHCP packet */
 #define BUFSZ               1024
 
-static uint8_t next_client_ip = DHCPD_CLIENT_IP_MIN;
+#ifndef MAC_ADDR_LEN
+    #define MAC_ADDR_LEN     6
+#endif
+
+#ifndef MAC_TABLE_LEN
+    #define MAC_TABLE_LEN     4
+#endif
+
+struct mac_addr_t
+{
+    uint8_t add[MAC_ADDR_LEN];
+};
+
+struct mac_ip_item_t
+{
+    struct mac_addr_t mac_addr;
+    uint8_t ip_addr_3;
+};
+
 static rt_err_t _low_level_dhcp_send(struct netif *netif,
                                      const void *buffer,
                                      rt_size_t size)
@@ -117,7 +146,67 @@ static rt_err_t _low_level_dhcp_send(struct netif *netif,
     memcpy((char *)udphdr + sizeof(struct udp_hdr),
            buffer, size);
 
-    return netif->linkoutput(netif, p);
+    netif->linkoutput(netif, p);
+    pbuf_free(p);
+
+    return RT_EOK;
+}
+
+static uint8_t get_ip(struct mac_addr_t *p_mac_addr)
+{
+    static uint8_t next_client_ip = DHCPD_CLIENT_IP_MIN;
+    static struct mac_ip_item_t mac_table[MAC_TABLE_LEN];
+    static int offset = 0;
+
+    struct mac_addr_t bad_mac;
+    int i;
+    uint8_t ip_addr_3;
+
+    rt_memset(&bad_mac, 0, sizeof(bad_mac));
+    if (!rt_memcmp(&bad_mac, p_mac_addr, sizeof(bad_mac)))
+    {
+        DEBUG_PRINTF("mac address all zero");
+        ip_addr_3 = DHCPD_CLIENT_IP_MAX;
+        goto _return;
+    }
+
+    rt_memset(&bad_mac, 0xFF, sizeof(bad_mac));
+    if (!rt_memcmp(&bad_mac, p_mac_addr, sizeof(bad_mac)))
+    {
+        DEBUG_PRINTF("mac address all one");
+        ip_addr_3 = DHCPD_CLIENT_IP_MAX;
+        goto _return;
+    }
+
+    for (i = 0; i < MAC_TABLE_LEN; i++)
+    {
+        if (!rt_memcmp(&mac_table[i].mac_addr, p_mac_addr, sizeof(bad_mac)))
+        {
+            //use old ip
+            ip_addr_3 = mac_table[i].ip_addr_3;
+            DEBUG_PRINTF("return old ip: %d\n", (int)ip_addr_3);
+            goto _return;
+        }
+    }
+
+    /* add new ip */
+    mac_table[offset].mac_addr = *p_mac_addr;
+    mac_table[offset].ip_addr_3  = next_client_ip;
+    ip_addr_3 = mac_table[offset].ip_addr_3 ;
+
+    offset++;
+    if (offset >= MAC_TABLE_LEN)
+        offset = 0;
+
+    next_client_ip++;
+    if (next_client_ip > DHCPD_CLIENT_IP_MAX)
+        next_client_ip = DHCPD_CLIENT_IP_MIN;
+
+    DEBUG_PRINTF("create new ip: %d\n", (int)ip_addr_3);
+    DEBUG_PRINTF("next_client_ip %d\n", next_client_ip);
+
+_return:
+    return ip_addr_3;
 }
 
 static void dhcpd_thread_entry(void *parameter)
@@ -130,12 +219,28 @@ static void dhcpd_thread_entry(void *parameter)
     struct sockaddr_in server_addr, client_addr;
     struct dhcp_msg *msg;
     int optval = 1;
+    struct mac_addr_t mac_addr;
+    uint8_t DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3;
 
     /* get ethernet interface. */
-    netif = (struct netif*) parameter;
+    netif = (struct netif *) parameter;
     RT_ASSERT(netif != RT_NULL);
 
     /* our DHCP server information */
+    {
+#if (LWIP_VERSION) >= 0x02000000U
+        ip4_addr_t addr;
+        ip4addr_aton(DHCPD_SERVER_IP, &addr);
+#else
+        struct ip_addr addr;
+        ipaddr_aton(DHCPD_SERVER_IP, &addr);
+#endif /* LWIP_VERSION */
+
+        DHCPD_SERVER_IPADDR0 = (ntohl(addr.addr) >> 24) & 0xFF;
+        DHCPD_SERVER_IPADDR1 = (ntohl(addr.addr) >> 16) & 0xFF;
+        DHCPD_SERVER_IPADDR2 = (ntohl(addr.addr) >>  8) & 0xFF;
+        DHCPD_SERVER_IPADDR3 = (ntohl(addr.addr) >>  0) & 0xFF;
+    }
     DEBUG_PRINTF("DHCP server IP: %d.%d.%d.%d  client IP: %d.%d.%d.%d-%d\n",
                  DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
                  DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3,
@@ -174,6 +279,7 @@ static void dhcpd_thread_entry(void *parameter)
     {
         /* bind failed. */
         DEBUG_PRINTF("bind server address failed, errno=%d\n", errno);
+        closesocket(sock);
         rt_free(recv_data);
         return;
     }
@@ -185,7 +291,13 @@ static void dhcpd_thread_entry(void *parameter)
     {
         bytes_read = recvfrom(sock, recv_data, BUFSZ - 1, 0,
                               (struct sockaddr *)&client_addr, &addr_len);
-        if (bytes_read < DHCP_MSG_LEN)
+        if (bytes_read <= 0)
+        {
+            closesocket(sock);
+            rt_free(recv_data);
+            return;
+        }
+        else if (bytes_read < DHCP_MSG_LEN)
         {
             DEBUG_PRINTF("packet too short, wait for next!\n");
             continue;
@@ -198,6 +310,8 @@ static void dhcpd_thread_entry(void *parameter)
             continue;
         }
 
+        memcpy(mac_addr.add, msg->chaddr, MAC_ADDR_LEN);
+
         /* handler. */
         {
             uint8_t *dhcp_opt;
@@ -207,6 +321,10 @@ static void dhcpd_thread_entry(void *parameter)
             uint8_t message_type = 0;
             uint8_t finished = 0;
             uint32_t request_ip  = 0;
+
+            uint8_t client_ip_3;
+
+            client_ip_3 = get_ip(&mac_addr);
 
             dhcp_opt = (uint8_t *)msg + DHCP_OPTIONS_OFS;
             while (finished == 0)
@@ -243,7 +361,9 @@ static void dhcpd_thread_entry(void *parameter)
             if (request_ip)
             {
                 uint32_t client_ip = DHCPD_SERVER_IPADDR0 << 24 | DHCPD_SERVER_IPADDR1 << 16
-                                     | DHCPD_SERVER_IPADDR2 << 8 | (next_client_ip);
+                                     | DHCPD_SERVER_IPADDR2 << 8 | client_ip_3;
+
+                DEBUG_PRINTF("message_type: %d, request_ip: %08X, client_ip: %08X.\n", message_type, request_ip, client_ip);
 
                 if (request_ip != client_ip)
                 {
@@ -253,15 +373,14 @@ static void dhcpd_thread_entry(void *parameter)
                     *dhcp_opt++ = DHCP_OPTION_END;
 
                     DEBUG_PRINTF("requested IP invalid, reply DHCP_NAK\n");
+
                     if (netif != RT_NULL)
                     {
                         int send_byte = (dhcp_opt - (uint8_t *)msg);
                         _low_level_dhcp_send(netif, msg, send_byte);
                         DEBUG_PRINTF("DHCP server send %d byte\n", send_byte);
                     }
-                    next_client_ip++;
-                    if (next_client_ip > DHCPD_CLIENT_IP_MAX)
-                        next_client_ip = DHCPD_CLIENT_IP_MIN;
+
                     continue;
                 }
             }
@@ -331,10 +450,27 @@ static void dhcpd_thread_entry(void *parameter)
                 // DHCP_OPTION_DNS_SERVER, use the default DNS server address in lwIP
                 *dhcp_opt++ = DHCP_OPTION_DNS_SERVER;
                 *dhcp_opt++ = 4;
-                *dhcp_opt++ = 208;
-                *dhcp_opt++ = 67;
-                *dhcp_opt++ = 222;
-                *dhcp_opt++ = 222;
+
+#ifndef DHCP_DNS_SERVER_IP
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR0;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR1;
+                *dhcp_opt++ = DHCPD_SERVER_IPADDR2;
+                *dhcp_opt++ = 1;
+#else
+                {
+#if (LWIP_VERSION) >= 0x02000000U
+                    ip4_addr_t dns_addr;
+#else
+                    struct ip_addr dns_addr;
+#endif /* LWIP_VERSION */
+                    ip4addr_aton(DHCP_DNS_SERVER_IP, &dns_addr);
+
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 24) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 16) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  8) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  0) & 0xFF;
+                }
+#endif
 
                 // DHCP_OPTION_LEASE_TIME
                 *dhcp_opt++ = DHCP_OPTION_LEASE_TIME;
@@ -358,7 +494,7 @@ static void dhcpd_thread_entry(void *parameter)
                 msg->op = DHCP_BOOTREPLY;
                 IP4_ADDR(&msg->yiaddr,
                          DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
-                         DHCPD_SERVER_IPADDR2, next_client_ip);
+                         DHCPD_SERVER_IPADDR2, client_ip_3);
 
                 client_addr.sin_addr.s_addr = INADDR_BROADCAST;
 
@@ -373,27 +509,38 @@ static void dhcpd_thread_entry(void *parameter)
     }
 }
 
-void dhcpd_start(char* netif_name)
+void dhcpd_start(const char *netif_name)
 {
     rt_thread_t thread;
     struct netif *netif = netif_list;
 
-    if(strlen(netif_name) > sizeof(netif->name))
+    if (strlen(netif_name) > sizeof(netif->name))
     {
         rt_kprintf("network interface name too long!\r\n");
         return;
     }
-    while(netif != RT_NULL)
+    while (netif != RT_NULL)
     {
-        if(strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+        if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
             break;
 
         netif = netif->next;
-        if( netif == RT_NULL )
+        if (netif == RT_NULL)
         {
             rt_kprintf("network interface: %s not found!\r\n", netif_name);
             return;
         }
+    }
+
+    if (1)
+    {
+        extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
+
+        dhcp_stop(netif);
+
+        set_if(netif_name, DHCPD_SERVER_IP, "0.0.0.0", "255.255.255.0");
+
+        netif_set_up(netif);
     }
 
     thread = rt_thread_create("dhcpd",
@@ -406,4 +553,3 @@ void dhcpd_start(char* netif_name)
         rt_thread_startup(thread);
     }
 }
-

@@ -15,7 +15,6 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <components.h>
 #include "board.h"
 
 
@@ -26,8 +25,7 @@
 #include "driverlib/rom_map.h"
 
 #define SYS_CLOCK_DEFAULT 120000000
-uint32_t SysClock;
-
+uint32_t SystemCoreClock;
 #define FAULT_NMI               2           // NMI fault
 #define FAULT_HARD              3           // Hard fault
 #define FAULT_MPU               4           // MPU fault
@@ -57,12 +55,16 @@ extern void PendSV_Handler(void);
 extern void HardFault_Handler(void);
 
 /**
- * This function will initial LPC40xx board.
+ * This function will initial TM4C129X board.
  */
 void rt_hw_board_init()
 {
     //init low level drivers. e.g. cpu uart etc.
     rt_components_board_init();
+    //init HEAP.
+    #ifdef RT_USING_HEAP
+        rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+    #endif
     //redirect RTT stdio to CONSOLE device
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }
@@ -82,12 +84,12 @@ int rt_hw_cpu_init(void)
     // Set the clocking to run directly from the external crystal/oscillator.
     // TODO: The SYSCTL_XTAL_ value must be changed to match the value of the
     // crystal on your board.
-    SysClock = MAP_SysCtlClockFreqSet(
+    SystemCoreClock = MAP_SysCtlClockFreqSet(
                 (SYSCTL_XTAL_25MHZ | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
                 SYS_CLOCK_DEFAULT);
 
     MAP_SysTickDisable();
-    MAP_SysTickPeriodSet(SysClock/ RT_TICK_PER_SECOND - 1);
+    MAP_SysTickPeriodSet(SystemCoreClock/ RT_TICK_PER_SECOND - 1);
     MAP_SysTickIntEnable();
     MAP_SysTickEnable();	
 

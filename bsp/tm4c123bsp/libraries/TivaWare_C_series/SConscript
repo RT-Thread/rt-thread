@@ -1,0 +1,73 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+tm4c123_driverlib/src/sysctl.c
+tm4c123_driverlib/src/systick.c
+tm4c123_driverlib/src/interrupt.c
+tm4c123_driverlib/src/fpu.c
+tm4c123_driverlib/src/cpu.c
+tm4c123_driverlib/src/gpio.c
+""")
+
+#if GetDepend(['RT_USING_PIN']):
+   
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['tm4c123_driverlib/src/uart.c']
+
+#if GetDepend(['RT_USING_I2C']):
+
+    
+if GetDepend(['RT_USING_SPI']):
+    src += ['tm4c123_driverlib/src/ssi.c']
+
+#if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+
+
+#if GetDepend(['RT_USING_CAN']):
+
+
+#if GetDepend(['RT_USING_HWTIMER']) 
+
+if GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
+    src += ['tm4c123_driverlib/src/pwm.c']    
+
+#if GetDepend(['BSP_USING_ETH']):
+
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['tm4c123_driverlib/src/adc.c']
+
+#if GetDepend(['RT_USING_RTC']):
+
+
+#if GetDepend(['RT_USING_WDT']):
+
+
+#if GetDepend(['RT_USING_SDIO']):
+
+
+#if GetDepend(['RT_USING_AUDIO']):
+
+
+#if GetDepend(['RT_USING_MTD_NOR']):
+
+
+#if GetDepend(['RT_USING_MTD_NAND']):
+
+
+#if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+
+
+path = [cwd + '/tm4c123_driverlib', 
+    cwd + '/tm4c123_driverlib/driverlib',
+    cwd + '/tm4c123_driverlib/driverlib/inc']
+
+group = DefineGroup('TM4C123_HAL', src, depend = [''], CPPPATH = path)
+
+Return('group')

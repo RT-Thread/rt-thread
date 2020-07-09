@@ -1,21 +1,7 @@
 /*
- * File      : dfs_elm.c
- * This file is part of Device File System in RT-Thread RTOS
- * COPYRIGHT (C) 2008-2011, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,6 +12,9 @@
  * 2012-12-19     Bernard      fixed the O_APPEND and lseek issue.
  * 2013-03-01     aozima       fixed the stat(st_mtime) issue.
  * 2014-01-26     Bernard      Check the sector size before mount.
+ * 2017-02-13     Hichard      Update Fatfs version to 0.12b, support exFAT.
+ * 2017-04-11     Bernard      fix the st_blksize issue.
+ * 2017-05-26     Urey         fix f_mount error when mount more fats
  */
 
 #include <rtthread.h>
@@ -38,13 +27,13 @@
 #define HAVE_DIR_STRUCTURE
 
 #include <dfs_fs.h>
-#include <dfs_def.h>
+#include <dfs_file.h>
 
 static rt_device_t disk[_VOLUMES] = {0};
 
 static int elm_result_to_dfs(FRESULT result)
 {
-    int status = DFS_STATUS_OK;
+    int status = RT_EOK;
 
     switch (result)
     {
@@ -54,31 +43,31 @@ static int elm_result_to_dfs(FRESULT result)
     case FR_NO_FILE:
     case FR_NO_PATH:
     case FR_NO_FILESYSTEM:
-        status = -DFS_STATUS_ENOENT;
+        status = -ENOENT;
         break;
 
     case FR_INVALID_NAME:
-        status = -DFS_STATUS_EINVAL;
+        status = -EINVAL;
         break;
 
     case FR_EXIST:
     case FR_INVALID_OBJECT:
-        status = -DFS_STATUS_EEXIST;
+        status = -EEXIST;
         break;
 
     case FR_DISK_ERR:
     case FR_NOT_READY:
     case FR_INT_ERR:
-        status = -DFS_STATUS_EIO;
+        status = -EIO;
         break;
 
     case FR_WRITE_PROTECTED:
     case FR_DENIED:
-        status = -DFS_STATUS_EROFS;
+        status = -EROFS;
         break;
 
     case FR_MKFS_ABORTED:
-        status = -DFS_STATUS_EINVAL;
+        status = -EINVAL;
         break;
 
     default:
@@ -111,34 +100,36 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     FATFS *fat;
     FRESULT result;
     int index;
-	struct rt_device_blk_geometry geometry;
+    struct rt_device_blk_geometry geometry;
+    char logic_nbr[2] = {'0', ':'};
 
     /* get an empty position */
     index = get_disk(RT_NULL);
     if (index == -1)
-        return -DFS_STATUS_ENOENT;
+        return -ENOENT;
+    logic_nbr[0] = '0' + index;
 
     /* save device */
     disk[index] = fs->dev_id;
-	/* check sector size */
-	if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
-	{
-		if (geometry.bytes_per_sector > _MAX_SS) 
-		{
-			rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
-			return -DFS_STATUS_EINVAL;
-		}
-	}
-	
+    /* check sector size */
+    if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+    {
+        if (geometry.bytes_per_sector > _MAX_SS)
+        {
+            rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
+            return -EINVAL;
+        }
+    }
+
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
     {
         disk[index] = RT_NULL;
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
     }
 
     /* mount fatfs, always 0 logic driver */
-    result = f_mount((BYTE)index, fat);
+    result = f_mount(fat, (const TCHAR *)logic_nbr, 1);
     if (result == FR_OK)
     {
         char drive[8];
@@ -148,10 +139,10 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         dir = (DIR *)rt_malloc(sizeof(DIR));
         if (dir == RT_NULL)
         {
-            f_mount((BYTE)index, RT_NULL);
+            f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
             disk[index] = RT_NULL;
             rt_free(fat);
-            return -DFS_STATUS_ENOMEM;
+            return -ENOMEM;
         }
 
         /* open the root directory to test whether the fatfs is valid */
@@ -166,7 +157,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
 __err:
-    f_mount((BYTE)index, RT_NULL);
+    f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
     disk[index] = RT_NULL;
     rt_free(fat);
     return elm_result_to_dfs(result);
@@ -177,6 +168,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     FATFS *fat;
     FRESULT result;
     int  index;
+    char logic_nbr[2] = {'0', ':'};
 
     fat = (FATFS *)fs->data;
 
@@ -185,9 +177,10 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     /* find the device index and then umount it */
     index = get_disk(fs->dev_id);
     if (index == -1) /* not found */
-        return -DFS_STATUS_ENOENT;
+        return -ENOENT;
 
-    result = f_mount((BYTE)index, RT_NULL);
+    logic_nbr[0] = '0' + index;
+    result = f_mount(RT_NULL, logic_nbr, (BYTE)1);
     if (result != FR_OK)
         return elm_result_to_dfs(result);
 
@@ -195,7 +188,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     disk[index] = RT_NULL;
     rt_free(fat);
 
-    return DFS_STATUS_OK;
+    return RT_EOK;
 }
 
 int dfs_elm_mkfs(rt_device_t dev_id)
@@ -203,12 +196,23 @@ int dfs_elm_mkfs(rt_device_t dev_id)
 #define FSM_STATUS_INIT            0
 #define FSM_STATUS_USE_TEMP_DRIVER 1
     FATFS *fat = RT_NULL;
+    BYTE *work;
     int flag;
     FRESULT result;
     int index;
+    char logic_nbr[2] = {'0', ':'};
+
+    work = (BYTE *)rt_malloc(_MAX_SS);
+    if (RT_NULL == work)
+    {
+        return -ENOMEM;
+    }
 
     if (dev_id == RT_NULL)
-        return -DFS_STATUS_EINVAL;
+    {
+        rt_free(work); /* release memory */
+        return -EINVAL;
+    }
 
     /* if the device is already mounted, then just do mkfs to the drv,
      * while if it is not mounted yet, then find an empty drive to do mkfs
@@ -224,13 +228,17 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         {
             /* no space to store an temp driver */
             rt_kprintf("sorry, there is no space to do mkfs! \n");
-            return -DFS_STATUS_ENOSPC;
+            rt_free(work); /* release memory */
+            return -ENOSPC;
         }
         else
         {
-            fat = rt_malloc(sizeof(FATFS));
+            fat = (FATFS *)rt_malloc(sizeof(FATFS));
             if (fat == RT_NULL)
-                return -DFS_STATUS_ENOMEM;
+            {
+                rt_free(work); /* release memory */
+                return -ENOMEM;
+            }
 
             flag = FSM_STATUS_USE_TEMP_DRIVER;
 
@@ -244,19 +252,29 @@ int dfs_elm_mkfs(rt_device_t dev_id)
              * on the disk, you will get a failure. so we need f_mount here,
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
-            f_mount((BYTE)index, fat);
+            logic_nbr[0] = '0' + index;
+            f_mount(fat, logic_nbr, (BYTE)index);
         }
     }
+    else
+    {
+        logic_nbr[0] = '0' + index;
+    }
 
-    /* 1: no partition table */
-    /* 0: auto selection of cluster size */
-    result = f_mkfs((BYTE)index, 1, 0);
+    /* [IN] Logical drive number */
+    /* [IN] Format options */
+    /* [IN] Size of the allocation unit */
+    /* [-]  Working buffer */
+    /* [IN] Size of working buffer */
+    result = f_mkfs(logic_nbr, FM_ANY | FM_SFD, 0, work, _MAX_SS);
+    rt_free(work);
+    work = RT_NULL;
 
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
         rt_free(fat);
-        f_mount((BYTE)index, RT_NULL);
+        f_mount(RT_NULL, logic_nbr, (BYTE)index);
         disk[index] = RT_NULL;
         /* close device */
         rt_device_close(dev_id);
@@ -268,7 +286,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         return elm_result_to_dfs(result);
     }
 
-    return DFS_STATUS_OK;
+    return RT_EOK;
 }
 
 int dfs_elm_statfs(struct dfs_filesystem *fs, struct statfs *buf)
@@ -312,26 +330,30 @@ int dfs_elm_open(struct dfs_fd *file)
 
 #if (_VOLUMES > 1)
     int vol;
+    struct dfs_filesystem *fs = (struct dfs_filesystem *)file->data;
     extern int elm_get_vol(FATFS * fat);
 
+    if (fs == NULL)
+        return -ENOENT;
+
     /* add path for ELM FatFS driver support */
-    vol = elm_get_vol((FATFS *)file->fs->data);
+    vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
-        return -DFS_STATUS_ENOENT;
-    drivers_fn = rt_malloc(256);
+        return -ENOENT;
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
 
     rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->path);
 #else
     drivers_fn = file->path;
 #endif
 
-    if (file->flags & DFS_O_DIRECTORY)
+    if (file->flags & O_DIRECTORY)
     {
         DIR *dir;
 
-        if (file->flags & DFS_O_CREAT)
+        if (file->flags & O_CREAT)
         {
             result = f_mkdir(drivers_fn);
             if (result != FR_OK)
@@ -350,7 +372,7 @@ int dfs_elm_open(struct dfs_fd *file)
 #if _VOLUMES > 1
             rt_free(drivers_fn);
 #endif
-            return -DFS_STATUS_ENOMEM;
+            return -ENOMEM;
         }
 
         result = f_opendir(dir, drivers_fn);
@@ -364,24 +386,24 @@ int dfs_elm_open(struct dfs_fd *file)
         }
 
         file->data = dir;
-        return DFS_STATUS_OK;
+        return RT_EOK;
     }
     else
     {
         mode = FA_READ;
 
-        if (file->flags & DFS_O_WRONLY)
+        if (file->flags & O_WRONLY)
             mode |= FA_WRITE;
-        if ((file->flags & DFS_O_ACCMODE) & DFS_O_RDWR)
+        if ((file->flags & O_ACCMODE) & O_RDWR)
             mode |= FA_WRITE;
         /* Opens the file, if it is existing. If not, a new file is created. */
-        if (file->flags & DFS_O_CREAT)
+        if (file->flags & O_CREAT)
             mode |= FA_OPEN_ALWAYS;
         /* Creates a new file. If the file is existing, it is truncated and overwritten. */
-        if (file->flags & DFS_O_TRUNC)
+        if (file->flags & O_TRUNC)
             mode |= FA_CREATE_ALWAYS;
         /* Creates a new file. The function fails if the file is already existing. */
-        if (file->flags & DFS_O_EXCL)
+        if (file->flags & O_EXCL)
             mode |= FA_CREATE_NEW;
 
         /* allocate a fd */
@@ -391,7 +413,7 @@ int dfs_elm_open(struct dfs_fd *file)
 #if _VOLUMES > 1
             rt_free(drivers_fn);
 #endif
-            return -DFS_STATUS_ENOMEM;
+            return -ENOMEM;
         }
 
         result = f_open(fd, drivers_fn, mode);
@@ -401,13 +423,13 @@ int dfs_elm_open(struct dfs_fd *file)
         if (result == FR_OK)
         {
             file->pos  = fd->fptr;
-            file->size = fd->fsize;
+            file->size = f_size(fd);
             file->data = fd;
 
-            if (file->flags & DFS_O_APPEND)
+            if (file->flags & O_APPEND)
             {
                 /* seek to the end of file */
-                f_lseek(fd, fd->fsize);
+                f_lseek(fd, f_size(fd));
                 file->pos = fd->fptr;
             }
         }
@@ -419,7 +441,7 @@ int dfs_elm_open(struct dfs_fd *file)
         }
     }
 
-    return DFS_STATUS_OK;
+    return RT_EOK;
 }
 
 int dfs_elm_close(struct dfs_fd *file)
@@ -456,10 +478,37 @@ int dfs_elm_close(struct dfs_fd *file)
 
 int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
-    return -DFS_STATUS_ENOSYS;
+    switch (cmd)
+    {
+    case RT_FIOFTRUNCATE:
+        {
+            FIL *fd;
+            FSIZE_t fptr, length;
+            FRESULT result = FR_OK;
+            fd = (FIL *)(file->data);
+            RT_ASSERT(fd != RT_NULL);
+
+            /* save file read/write point */
+            fptr = fd->fptr;
+            length = *(off_t*)args;
+            if (length <= fd->obj.objsize)
+            {
+                fd->fptr = length;
+                result = f_truncate(fd);
+            }
+            else
+            {
+                result = f_lseek(fd, length);
+            }
+            /* restore file read/write point */
+            fd->fptr = fptr;
+            return elm_result_to_dfs(result);
+        }
+    }
+    return -ENOSYS;
 }
 
-int dfs_elm_read(struct dfs_fd *file, void *buf, rt_size_t len)
+int dfs_elm_read(struct dfs_fd *file, void *buf, size_t len)
 {
     FIL *fd;
     FRESULT result;
@@ -467,7 +516,7 @@ int dfs_elm_read(struct dfs_fd *file, void *buf, rt_size_t len)
 
     if (file->type == FT_DIRECTORY)
     {
-        return -DFS_STATUS_EISDIR;
+        return -EISDIR;
     }
 
     fd = (FIL *)(file->data);
@@ -482,7 +531,7 @@ int dfs_elm_read(struct dfs_fd *file, void *buf, rt_size_t len)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_write(struct dfs_fd *file, const void *buf, rt_size_t len)
+int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
 {
     FIL *fd;
     FRESULT result;
@@ -490,7 +539,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, rt_size_t len)
 
     if (file->type == FT_DIRECTORY)
     {
-        return -DFS_STATUS_EISDIR;
+        return -EISDIR;
     }
 
     fd = (FIL *)(file->data);
@@ -499,7 +548,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, rt_size_t len)
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
     file->pos  = fd->fptr;
-    file->size = fd->fsize;
+    file->size = f_size(fd);
     if (result == FR_OK)
         return byte_write;
 
@@ -557,7 +606,7 @@ int dfs_elm_lseek(struct dfs_fd *file, rt_off_t offset)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count)
+int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
 {
     DIR *dir;
     FILINFO fno;
@@ -571,13 +620,7 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
     /* make integer count */
     count = (count / sizeof(struct dirent)) * sizeof(struct dirent);
     if (count == 0)
-        return -DFS_STATUS_EINVAL;
-
-#if _USE_LFN
-    /* allocate long file name */
-    fno.lfname = rt_malloc(256);
-    fno.lfsize = 256;
-#endif
+        return -EINVAL;
 
     index = 0;
     while (1)
@@ -591,16 +634,16 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
             break;
 
 #if _USE_LFN
-        fn = *fno.lfname ? fno.lfname : fno.fname;
+        fn = *fno.fname ? fno.fname : fno.altname;
 #else
         fn = fno.fname;
 #endif
 
-        d->d_type = DFS_DT_UNKNOWN;
+        d->d_type = DT_UNKNOWN;
         if (fno.fattrib & AM_DIR)
-            d->d_type = DFS_DT_DIR;
+            d->d_type = DT_DIR;
         else
-            d->d_type = DFS_DT_REG;
+            d->d_type = DT_REG;
 
         d->d_namlen = (rt_uint8_t)rt_strlen(fn);
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
@@ -610,10 +653,6 @@ int dfs_elm_getdents(struct dfs_fd *file, struct dirent *dirp, rt_uint32_t count
         if (index * sizeof(struct dirent) >= count)
             break;
     }
-
-#if _USE_LFN
-    rt_free(fno.lfname);
-#endif
 
     if (index == 0)
         return elm_result_to_dfs(result);
@@ -635,10 +674,10 @@ int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
     /* add path for ELM FatFS driver support */
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
-        return -DFS_STATUS_ENOENT;
-    drivers_fn = rt_malloc(256);
+        return -ENOENT;
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
 
     rt_snprintf(drivers_fn, 256, "%d:%s", vol, path);
 #else
@@ -666,11 +705,11 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     /* add path for ELM FatFS driver support */
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
-        return -DFS_STATUS_ENOENT;
+        return -ENOENT;
 
-    drivers_oldfn = rt_malloc(256);
+    drivers_oldfn = (char *)rt_malloc(256);
     if (drivers_oldfn == RT_NULL)
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
     drivers_newfn = newpath;
 
     rt_snprintf(drivers_oldfn, 256, "%d:%s", vol, oldpath);
@@ -701,21 +740,15 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     /* add path for ELM FatFS driver support */
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
-        return -DFS_STATUS_ENOENT;
-    drivers_fn = rt_malloc(256);
+        return -ENOENT;
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
-        return -DFS_STATUS_ENOMEM;
+        return -ENOMEM;
 
     rt_snprintf(drivers_fn, 256, "%d:%s", vol, path);
 #else
     const char *drivers_fn;
     drivers_fn = path;
-#endif
-
-#if _USE_LFN
-    /* allocate long file name */
-    file_info.lfname = rt_malloc(256);
-    file_info.lfsize = 256;
 #endif
 
     result = f_stat(drivers_fn, &file_info);
@@ -727,15 +760,15 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
         /* convert to dfs stat structure */
         st->st_dev = 0;
 
-        st->st_mode = DFS_S_IFREG | DFS_S_IRUSR | DFS_S_IRGRP | DFS_S_IROTH |
-                      DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH;
+        st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
+                      S_IWUSR | S_IWGRP | S_IWOTH;
         if (file_info.fattrib & AM_DIR)
         {
-            st->st_mode &= ~DFS_S_IFREG;
-            st->st_mode |= DFS_S_IFDIR | DFS_S_IXUSR | DFS_S_IXGRP | DFS_S_IXOTH;
+            st->st_mode &= ~S_IFREG;
+            st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
         }
         if (file_info.fattrib & AM_RDO)
-            st->st_mode &= ~(DFS_S_IWUSR | DFS_S_IWGRP | DFS_S_IWOTH);
+            st->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 
         st->st_size  = file_info.fsize;
 
@@ -771,22 +804,11 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
         } /* get st_mtime. */
     }
 
-#if _USE_LFN
-    rt_free(file_info.lfname);
-#endif
-
     return elm_result_to_dfs(result);
 }
 
-static const struct dfs_filesystem_operation dfs_elm =
+static const struct dfs_file_ops dfs_elm_fops =
 {
-    "elm",
-    DFS_FS_FLAG_DEFAULT,
-    dfs_elm_mount,
-    dfs_elm_unmount,
-    dfs_elm_mkfs,
-    dfs_elm_statfs,
-
     dfs_elm_open,
     dfs_elm_close,
     dfs_elm_ioctl,
@@ -795,6 +817,20 @@ static const struct dfs_filesystem_operation dfs_elm =
     dfs_elm_flush,
     dfs_elm_lseek,
     dfs_elm_getdents,
+    RT_NULL, /* poll interface */
+};
+
+static const struct dfs_filesystem_ops dfs_elm =
+{
+    "elm",
+    DFS_FS_FLAG_DEFAULT,
+    &dfs_elm_fops,
+
+    dfs_elm_mount,
+    dfs_elm_unmount,
+    dfs_elm_mkfs,
+    dfs_elm_statfs,
+
     dfs_elm_unlink,
     dfs_elm_stat,
     dfs_elm_rename,
@@ -807,7 +843,7 @@ int elm_init(void)
 
     return 0;
 }
-INIT_FS_EXPORT(elm_init);
+INIT_COMPONENT_EXPORT(elm_init);
 
 /*
  * RT-Thread Device Interface for ELM FatFs
@@ -827,7 +863,7 @@ DSTATUS disk_status(BYTE drv)
 }
 
 /* Read Sector(s) */
-DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, BYTE count)
+DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
@@ -842,7 +878,7 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, BYTE count)
 }
 
 /* Write Sector(s) */
-DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, BYTE count)
+DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
@@ -897,7 +933,7 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
     {
         rt_device_control(device, RT_DEVICE_CTRL_BLK_SYNC, RT_NULL);
     }
-    else if (ctrl == CTRL_ERASE_SECTOR)
+    else if (ctrl == CTRL_TRIM)
     {
         rt_device_control(device, RT_DEVICE_CTRL_BLK_ERASE, buff);
     }
@@ -905,9 +941,36 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
     return RES_OK;
 }
 
-rt_time_t get_fattime(void)
+DWORD get_fattime(void)
 {
-    return 0;
+    DWORD fat_time = 0;
+
+#ifdef RT_USING_LIBC
+    time_t now;
+    struct tm *p_tm;
+    struct tm tm_now;
+
+    /* get current time */
+    now = time(RT_NULL);
+
+    /* lock scheduler. */
+    rt_enter_critical();
+    /* converts calendar time time into local time. */
+    p_tm = localtime(&now);
+    /* copy the statically located variable */
+    memcpy(&tm_now, p_tm, sizeof(struct tm));
+    /* unlock scheduler. */
+    rt_exit_critical();
+
+    fat_time = (DWORD)(tm_now.tm_year - 80) << 25 |
+               (DWORD)(tm_now.tm_mon + 1)   << 21 |
+               (DWORD)tm_now.tm_mday        << 16 |
+               (DWORD)tm_now.tm_hour        << 11 |
+               (DWORD)tm_now.tm_min         <<  5 |
+               (DWORD)tm_now.tm_sec / 2 ;
+#endif /* RT_USING_LIBC  */
+
+    return fat_time;
 }
 
 #if _FS_REENTRANT

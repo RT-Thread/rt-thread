@@ -197,18 +197,92 @@ struct fh_mmc_obj
     MMC_DMA_Descriptors     *descriptors;
     void                    (*mmc_reset)(struct fh_mmc_obj *);
 };
-inline void MMC_SetBlockSize(struct fh_mmc_obj *mmc_obj, rt_uint32_t size);
-inline void MMC_SetByteCount(struct fh_mmc_obj *mmc_obj, rt_uint32_t bytes);
-inline rt_uint32_t MMC_GetWaterlevel(struct fh_mmc_obj *mmc_obj);
-inline rt_uint32_t MMC_GetResponse(struct fh_mmc_obj *mmc_obj, int resp_num);
-inline rt_uint32_t MMC_GetRegCmd(struct fh_mmc_obj *mmc_obj);
-inline rt_uint32_t MMC_GetRegCtrl(struct fh_mmc_obj *mmc_obj);
-inline rt_uint32_t MMC_SetInterruptMask(struct fh_mmc_obj *mmc_obj, rt_uint32_t mask);
-inline rt_uint32_t MMC_GetInterruptMask(struct fh_mmc_obj *mmc_obj);
-inline rt_uint32_t MMC_ClearRawInterrupt(struct fh_mmc_obj *mmc_obj, rt_uint32_t interrupts);
-inline rt_uint32_t MMC_GetRawInterrupt(struct fh_mmc_obj *mmc_obj);
-inline rt_uint32_t MMC_GetStatus(struct fh_mmc_obj *mmc_obj);
-inline rt_uint32_t MMC_GetCardStatus(struct fh_mmc_obj *mmc_obj);
+
+rt_inline rt_uint32_t MMC_GetCardStatus(struct fh_mmc_obj *mmc_obj)
+{
+    rt_uint32_t card_status = GET_REG(mmc_obj->base + OFFSET_SDC_CDETECT);
+
+    return card_status & 0x1;
+}
+
+rt_inline void MMC_StartDma(struct fh_mmc_obj *mmc_obj)
+{
+    rt_uint32_t reg;
+
+    SET_REG(mmc_obj->base + OFFSET_SDC_DBADDR, (rt_uint32_t)mmc_obj->descriptors);
+    reg = GET_REG(mmc_obj->base + OFFSET_SDC_BMOD);
+    reg |= 1 << 7;
+    SET_REG(mmc_obj->base + OFFSET_SDC_BMOD, reg);
+}
+
+rt_inline void MMC_StopDma(struct fh_mmc_obj *mmc_obj)
+{
+    rt_uint32_t reg;
+
+    reg = GET_REG(mmc_obj->base + OFFSET_SDC_BMOD);
+    reg &= ~(1 << 7);
+    SET_REG(mmc_obj->base + OFFSET_SDC_BMOD, reg);
+}
+
+rt_inline rt_uint32_t MMC_GetWaterlevel(struct fh_mmc_obj *mmc_obj)
+{
+    return (GET_REG(mmc_obj->base + OFFSET_SDC_STATUS) >> 17) & 0x1fff;
+}
+
+rt_inline rt_uint32_t MMC_GetStatus(struct fh_mmc_obj *mmc_obj)
+{
+    return GET_REG(mmc_obj->base + OFFSET_SDC_STATUS);
+}
+
+rt_inline rt_uint32_t MMC_GetRawInterrupt(struct fh_mmc_obj *mmc_obj)
+{
+    return GET_REG(mmc_obj->base + OFFSET_SDC_RINTSTS);
+}
+
+rt_inline rt_uint32_t MMC_GetUnmaskedInterrupt(struct fh_mmc_obj *mmc_obj)
+{
+    return GET_REG(mmc_obj->base + OFFSET_SDC_MINTSTS);
+}
+
+rt_inline rt_uint32_t MMC_ClearRawInterrupt(struct fh_mmc_obj *mmc_obj, rt_uint32_t interrupts)
+{
+    return SET_REG(mmc_obj->base + OFFSET_SDC_RINTSTS, interrupts);
+}
+
+rt_inline rt_uint32_t MMC_GetInterruptMask(struct fh_mmc_obj *mmc_obj)
+{
+    return GET_REG(mmc_obj->base + OFFSET_SDC_INTMASK);
+}
+
+rt_inline rt_uint32_t MMC_SetInterruptMask(struct fh_mmc_obj *mmc_obj, rt_uint32_t mask)
+{
+    return SET_REG(mmc_obj->base + OFFSET_SDC_INTMASK, mask);
+}
+
+rt_inline void MMC_SetByteCount(struct fh_mmc_obj *mmc_obj, rt_uint32_t bytes)
+{
+    SET_REG(mmc_obj->base + OFFSET_SDC_BYTCNT, bytes);
+}
+
+rt_inline void MMC_SetBlockSize(struct fh_mmc_obj *mmc_obj, rt_uint32_t size)
+{
+    SET_REG(mmc_obj->base + OFFSET_SDC_BLKSIZ, size);
+}
+
+rt_inline rt_uint32_t MMC_GetResponse(struct fh_mmc_obj *mmc_obj, int resp_num)
+{
+    return GET_REG(mmc_obj->base + OFFSET_SDC_RESP0 + resp_num * 4);
+}
+
+rt_inline rt_uint32_t MMC_IsFifoEmpty(struct fh_mmc_obj *mmc_obj)
+{
+    return (GET_REG(mmc_obj->base + OFFSET_SDC_STATUS) >> 2) & 0x1;
+}
+
+rt_inline rt_uint32_t MMC_IsDataStateBusy(struct fh_mmc_obj *mmc_obj)
+{
+    return (GET_REG(mmc_obj->base + OFFSET_SDC_STATUS) >> 10) & 0x1;
+}
 
 void MMC_Init(struct fh_mmc_obj *mmc_obj);
 int MMC_ResetFifo(struct fh_mmc_obj *mmc_obj);

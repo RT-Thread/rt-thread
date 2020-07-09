@@ -2,7 +2,7 @@ import os
 
 # CPU options
 ARCH='mips'
-CPU ='loongson_1c'
+CPU ='gs232'
 
 # toolchains options
 CROSS_TOOL  = 'gcc'
@@ -12,11 +12,12 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM    = 'gcc'
-	EXEC_PATH   = '/opt/opt/gcc-4.3-ls232/bin'
+	EXEC_PATH   = "/opt/mips-2016.05/bin"
+#	EXEC_PATH   = r'D:\mgc\embedded\codebench\bin'
 else:
-    print '================ERROR==========================='
-    print 'Not support %s yet!' % CROSS_TOOL
-    print '================================================='
+    print('================ERROR===========================')
+    print('Not support %s yet!' % CROSS_TOOL)
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):
@@ -24,6 +25,9 @@ if os.getenv('RTT_EXEC_PATH'):
 
 BUILD       = 'debug'
 
+# don't use loongson company's cross-compilation tool chain to compile the RT-Thread
+# must use the cross-compilation tool chain that RT-Thread recommand
+# download: https://coding.net/u/bernard/p/rtthread_tools/git/blob/master/GCC_Toolchains.md
 PREFIX = 'mips-sde-elf-'
 CC = PREFIX + 'gcc'
 AS = PREFIX + 'gcc'
@@ -35,9 +39,9 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 READELF = PREFIX + 'readelf'
 
-DEVICE = ' -mips32'
+DEVICE = ' -mips32 -msoft-float -mfp32'
 CFLAGS = DEVICE + ' -EL -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
-AFLAGS = ' -c' + DEVICE + ' -EL -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp -DSYSTEM_STACK=0x80003fe8'
+AFLAGS = ' -c' + DEVICE + ' -EL -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp'
 LFLAGS = DEVICE + ' -nostartfiles -EL -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ls1c_ram.lds'
 
 CPATH = ''

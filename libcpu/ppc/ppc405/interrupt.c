@@ -79,7 +79,7 @@ void uic_interrupt(rt_uint32_t uic_base, int vec_base)
 }
 
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t new_handler, 
-    void* param, char* name)
+    void* param, const char* name)
 {
     int	intVal;
     rt_isr_handler_t old_handler;

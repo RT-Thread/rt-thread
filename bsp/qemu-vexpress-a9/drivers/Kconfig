@@ -1,0 +1,32 @@
+config RT_USING_UART0
+    bool "Enable UART0"
+    default n
+
+config RT_USING_UART1
+    bool "Enable UART1"
+    default y
+
+config BSP_DRV_CLCD
+    bool "CLCD driver"
+    depends on PKG_USING_GUIENGINE
+    default y
+
+if BSP_DRV_CLCD
+    config BSP_LCD_WIDTH
+    int "Width of LCD panel"
+    default 640
+
+    config BSP_LCD_HEIGHT
+    int "Height of LCD panel"
+    default 480
+endif
+
+config BSP_DRV_EMAC
+    bool "EMAC driver"
+    depends on RT_USING_LWIP
+    default y
+
+config BSP_DRV_AUDIO
+    bool "Audio driver"
+    select RT_USING_AUDIO
+    default n

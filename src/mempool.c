@@ -1,21 +1,7 @@
 /*
- * File      : mempool.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -43,7 +29,7 @@ static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);
  * @addtogroup Hook
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will set a hook function, which will be invoked when a memory
@@ -67,14 +53,14 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
     rt_mp_free_hook = hook;
 }
 
-/*@}*/
+/**@}*/
 #endif
 
 /**
  * @addtogroup MM
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * This function will initialize a memory pool object, normally which is used
@@ -95,10 +81,13 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
                     rt_size_t          block_size)
 {
     rt_uint8_t *block_ptr;
-    register rt_base_t offset;
+    register rt_size_t offset;
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(start != RT_NULL);
+    RT_ASSERT(size > 0 && block_size > 0);
 
     /* initialize object */
     rt_object_init(&(mp->parent), RT_Object_Class_MemPool, name);
@@ -117,7 +106,6 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
-    mp->suspend_thread_count = 0;
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
@@ -150,6 +138,8 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+    RT_ASSERT(rt_object_is_systemobject(&mp->parent));
 
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
@@ -168,9 +158,6 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
          * suspend list
          */
         rt_thread_resume(thread);
-
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
@@ -200,9 +187,13 @@ rt_mp_t rt_mp_create(const char *name,
 {
     rt_uint8_t *block_ptr;
     struct rt_mempool *mp;
-    register rt_base_t offset;
+    register rt_size_t offset;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
+
+    /* parameter check */
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(block_count > 0 && block_size > 0);
 
     /* allocate object */
     mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
@@ -231,7 +222,6 @@ rt_mp_t rt_mp_create(const char *name,
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
-    mp->suspend_thread_count = 0;
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
@@ -266,6 +256,8 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
     /* parameter check */
     RT_ASSERT(mp != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
+    RT_ASSERT(rt_object_is_systemobject(&mp->parent) == RT_FALSE);
 
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
@@ -285,19 +277,9 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
          */
         rt_thread_resume(thread);
 
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
-
         /* enable interrupt */
         rt_hw_interrupt_enable(temp);
     }
-
-#if defined(RT_USING_MODULE) && defined(RT_USING_SLAB)
-    /* the mp object belongs to an application module */
-    if (mp->parent.flag & RT_OBJECT_FLAG_MODULE)
-        rt_module_free(mp->parent.module_id, mp->start_address);
-    else
-#endif
 
     /* release allocated room */
     rt_free(mp->start_address);
@@ -325,6 +307,9 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
     struct rt_thread *thread;
     rt_uint32_t before_sleep = 0;
 
+    /* parameter check */
+    RT_ASSERT(mp != RT_NULL);
+
     /* get current thread */
     thread = rt_thread_self();
 
@@ -351,7 +336,6 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         /* need suspend thread */
         rt_thread_suspend(thread);
         rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
-        mp->suspend_thread_count++;
 
         if (time > 0)
         {
@@ -419,6 +403,9 @@ void rt_mp_free(void *block)
     struct rt_thread *thread;
     register rt_base_t level;
 
+    /* parameter check */
+    if (block == RT_NULL) return;
+
     /* get the control block of pool which the block belongs to */
     block_ptr = (rt_uint8_t **)((rt_uint8_t *)block - sizeof(rt_uint8_t *));
     mp        = (struct rt_mempool *)*block_ptr;
@@ -435,7 +422,7 @@ void rt_mp_free(void *block)
     *block_ptr = mp->block_list;
     mp->block_list = (rt_uint8_t *)block_ptr;
 
-    if (mp->suspend_thread_count > 0)
+    if (!rt_list_isempty(&(mp->suspend_thread)))
     {
         /* get the suspended thread */
         thread = rt_list_entry(mp->suspend_thread.next,
@@ -447,9 +434,6 @@ void rt_mp_free(void *block)
 
         /* resume thread */
         rt_thread_resume(thread);
-
-        /* decrease suspended thread count */
-        mp->suspend_thread_count --;
 
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
@@ -465,7 +449,7 @@ void rt_mp_free(void *block)
 }
 RTM_EXPORT(rt_mp_free);
 
-/*@}*/
+/**@}*/
 
 #endif
 

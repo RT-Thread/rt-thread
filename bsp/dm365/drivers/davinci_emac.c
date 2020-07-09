@@ -38,12 +38,12 @@ extern void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size);
 /* EMAC internal utility function */
 static inline rt_uint32_t emac_virt_to_phys(void *addr)
 {
-	return addr;
+	return (rt_uint32_t)addr;
 }
 
 static inline rt_uint32_t virt_to_phys(void *addr)
 {
-	return addr;
+	return (rt_uint32_t)addr;
 }
 
 /* Cache macros - Packet buffers would be from pbuf pool which is cached */
@@ -62,7 +62,6 @@ static inline rt_uint32_t virt_to_phys(void *addr)
 
 
 static struct emac_priv davinci_emac_device;
-static struct rt_semaphore sem_ack;
 
 /* clock frequency for EMAC */
 static unsigned long emac_bus_frequency;
@@ -240,6 +239,7 @@ static int davinci_emac_phy_init(rt_device_t dev)
 		rt_kprintf("%s: link down (status: 0x%04x)\n",
 		       dev->parent.name, status);
 		priv->link = 0;
+		eth_device_linkchange(&priv->parent, RT_FALSE);
 		return 0;
 	} else {
 		adv = emac_mii_read(priv, priv->phy_addr, MII_ADVERTISE);
@@ -256,6 +256,7 @@ static int davinci_emac_phy_init(rt_device_t dev)
 		priv->speed = speed;
 		priv->duplex = duplex;
 		priv->link = 1;
+		eth_device_linkchange(&priv->parent, RT_TRUE);
 
 		return 1;
 	}
@@ -387,7 +388,7 @@ static int emac_net_tx_complete(struct emac_priv *priv,
 		priv->net_dev_stats.tx_bytes += p->len;
 		//free pbuf
 	}
-	rt_sem_release(&sem_ack);
+
 	return 0;
 }
 
@@ -553,6 +554,8 @@ static int emac_send(struct emac_priv *priv, struct emac_netpktobj *pkt, rt_uint
 	struct emac_tx_bd __iomem *curr_bd;
 	struct emac_txch *txch;
 	struct emac_netbufobj *buf_list;
+	rt_uint32_t num_pkts = 0;
+	int retry = 0;
 
 	txch = priv->txch[ch];
 	buf_list = pkt->buf_list;   /* get handle to the buffer array */
@@ -563,12 +566,21 @@ static int emac_send(struct emac_priv *priv, struct emac_netpktobj *pkt, rt_uint
 		pkt->pkt_length = EMAC_DEF_MIN_ETHPKTSIZE;
 	}
 
+try:
 	rt_sem_take(&priv->tx_lock, RT_WAITING_FOREVER);
 	curr_bd = txch->bd_pool_head;
 	if (curr_bd == RT_NULL) {
 		txch->out_of_tx_bd++;
 		rt_sem_release(&priv->tx_lock);
-		return EMAC_ERR_TX_OUT_OF_BD;
+		num_pkts = emac_tx_bdproc(priv, EMAC_DEF_TX_CH,
+					  EMAC_DEF_TX_MAX_SERVICE);
+		if (!num_pkts) {
+			retry++;
+			if (retry > 5)
+				return EMAC_ERR_TX_OUT_OF_BD;
+			rt_thread_delay(1);
+		}
+		goto try;
 	}
 
 	txch->bd_pool_head = curr_bd->next;
@@ -713,38 +725,14 @@ static void emac_dev_tx_timeout(struct emac_priv *priv)
 /* transmit packet. */
 rt_err_t rt_davinci_emac_tx( rt_device_t dev, struct pbuf* p)
 {
-	/*struct pbuf* q;
-	rt_uint8_t* bufptr, *buf = RT_NULL;
-	unsigned long ctrl;
-	rt_uint32_t addr;*/
 	rt_err_t err;
 	struct emac_priv *priv = dev->user_data;
 
-	emac_dev_xmit(p, priv);
-
-	
-#if 0
-	buf = rt_malloc(p->tot_len);
-	if (!buf) {
-		rt_kprintf("%s:alloc buf failed\n", __func__);
-		return -RT_ENOMEM;
-	}
-	bufptr = buf;
-
-
-	/*for (q = p; q != RT_NULL; q = q->next)
-	{
-		memcpy(bufptr, q->payload, q->len);
-		bufptr += q->len;
-	}*/
-#endif
-	/* wait ack */
-	err = rt_sem_take(&sem_ack, RT_TICK_PER_SECOND*5);
+	err = emac_dev_xmit(p, priv);
 	if (err != RT_EOK)
 	{
 		emac_dev_tx_timeout(priv);
 	}
-	//rt_free(buf);
 
 	return RT_EOK;
 }
@@ -1460,7 +1448,7 @@ static int emac_hw_enable(struct emac_priv *priv)
 		emac_write(EMAC_RXINTMASKSET, BIT(ch));
 		rxch->queue_active = 1;
 		emac_write(EMAC_RXHDP(ch),
-			   rxch->active_queue_head); /* physcal addr */
+			   (unsigned int)(rxch->active_queue_head)); /* physcal addr */
 	}
 
 	/* Enable MII */
@@ -1623,7 +1611,7 @@ static rt_size_t rt_davinci_emac_write (rt_device_t dev, rt_off_t pos, const voi
 	return 0;
 }
 
-static rt_err_t rt_davinci_emac_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_davinci_emac_control(rt_device_t dev, int cmd, void *args)
 {
 	struct emac_priv *priv = dev->user_data;
 	switch(cmd)
@@ -1655,7 +1643,7 @@ void dm365_emac_gpio_init(void)
 	davinci_writel(arm_intmux, DM365_ARM_INTMUX);
 }
 
-void rt_hw_davinci_emac_init()
+int rt_hw_davinci_emac_init()
 {
 	struct emac_priv *priv = &davinci_emac_device;
 	struct clk  *emac_clk;
@@ -1664,15 +1652,14 @@ void rt_hw_davinci_emac_init()
 	psc_change_state(DAVINCI_DM365_LPSC_CPGMAC, PSC_ENABLE);
 	dm365_emac_gpio_init();
 	rt_memset(&davinci_emac_device, 0, sizeof(davinci_emac_device));
-	davinci_emac_device.emac_base = DM365_EMAC_CNTRL_BASE;
-	davinci_emac_device.ctrl_base = DM365_EMAC_WRAP_CNTRL_BASE;
+	davinci_emac_device.emac_base = (void __iomem *)DM365_EMAC_CNTRL_BASE;
+	davinci_emac_device.ctrl_base = (void __iomem *)DM365_EMAC_WRAP_CNTRL_BASE;
 	davinci_emac_device.ctrl_ram_size = DM365_EMAC_CNTRL_RAM_SIZE;
-	davinci_emac_device.emac_ctrl_ram = DM365_EMAC_WRAP_RAM_BASE;
-	davinci_emac_device.mdio_base = DM365_EMAC_MDIO_BASE;
+	davinci_emac_device.emac_ctrl_ram = (void __iomem *)DM365_EMAC_WRAP_RAM_BASE;
+	davinci_emac_device.mdio_base = (void __iomem *)DM365_EMAC_MDIO_BASE;
 	davinci_emac_device.version = EMAC_VERSION_2;
 	davinci_emac_device.rmii_en = 0;
 	davinci_emac_device.phy_addr = 0x09;
-	rt_sem_init(&sem_ack, "tx_ack", 0, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&priv->tx_lock, "tx_lock", 1, RT_IPC_FLAG_FIFO);
 	rt_sem_init(&priv->rx_lock, "rx_lock", 1, RT_IPC_FLAG_FIFO);
 
@@ -1697,6 +1684,8 @@ void rt_hw_davinci_emac_init()
 	eth_device_init(&(davinci_emac_device.parent), "e0");
 	
 }
+
+INIT_DEVICE_EXPORT(rt_hw_davinci_emac_init);
 
 
 #ifdef RT_USING_FINSH

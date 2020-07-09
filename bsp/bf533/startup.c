@@ -70,7 +70,7 @@ void rtthread_startup(void)
 
 #ifdef RT_USING_FINSH
     /* init finsh */
-    extern void finsh_system_init(void);
+    extern int finsh_system_init(void);
     finsh_system_init();
     finsh_set_device("uart0");
 #endif

@@ -1,8 +1,8 @@
 import os
-ARCH     = 'arm'
-CPU      = 'arm926'
+ARCH = 'arm'
+CPU  = 'arm926'
 # toolchains options
-CROSS_TOOL 	= 'gcc'
+CROSS_TOOL = 'gcc'
 
 #------- toolchains path -------------------------------------------------------
 if os.getenv('RTT_CC'):
@@ -10,14 +10,13 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'D:/ArdaArmTools/Sourcery_Lite/bin'
-	#EXEC_PATH 	= 'D:/ArdaArmTools/GNUARM_4.9_2015q1/bin'
+	EXEC_PATH = r'D:\arm-2013.11\bin'
 elif CROSS_TOOL == 'keil':
 	PLATFORM 	= 'armcc'
 	EXEC_PATH 	= 'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
 	PLATFORM 	= 'iar'
-	IAR_PATH 	= 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.0'
+	EXEC_PATH 	= 'C:/Program Files (x86)/IAR Systems/Embedded Workbench 7.2'
 
 if os.getenv('RTT_EXEC_PATH'):
 	EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -34,12 +33,11 @@ TARGET_NAME = 'rtthread.bin'
 if PLATFORM == 'gcc':
     # toolchains
     PREFIX = 'arm-none-eabi-'
-    #PREFIX = 'arm-none-linux-gnueabi-'
     CC = PREFIX + 'gcc'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'axf'
+    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
@@ -63,77 +61,3 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET ' + TARGET_NAME + '\n' 
     POST_ACTION += SIZE + ' $TARGET\n'
-#------- Keil settings ---------------------------------------------------------
-elif PLATFORM == 'armcc':
-    # toolchains
-    CC = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
-    TARGET_EXT = 'axf'
-    EXEC_PATH += '/arm/armcc/bin/'
-
-    DEVICE = ' --cpu=' + CORE
-    CFLAGS = DEVICE + ' --apcs=interwork --diag_suppress=870'
-    AFLAGS = DEVICE + ' -Iplatform'
-    LFLAGS = DEVICE + ' --strict'
-    LFLAGS += ' --info sizes --info totals --info unused --info veneers'
-    LFLAGS += ' --list ' + MAP_FILE
-    LFLAGS += ' --scatter  ' + LINK_FILE + '.scat'
-
-    if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
-        AFLAGS += ' -g'
-    else:
-        CFLAGS += ' -O2'
-
-    POST_ACTION = 'fromelf --bin $TARGET --output ' + TARGET_NAME + ' \n'
-    POST_ACTION += 'fromelf -z $TARGET\n'
-#------- IAR settings ----------------------------------------------------------
-elif PLATFORM == 'iar':
-    # toolchains
-    CC = 'iccarm'
-    AS = 'iasmarm'
-    AR = 'iarchive'
-    LINK = 'ilinkarm'
-    TARGET_EXT = 'out'
-
-    DEVICE = CORE
-
-    CFLAGS = '--cpu=' + DEVICE
-    CFLAGS += ' --diag_suppress Pa050'
-    CFLAGS += ' --no_cse'
-    CFLAGS += ' --no_unroll'
-    CFLAGS += ' --no_inline'
-    CFLAGS += ' --no_code_motion'
-    CFLAGS += ' --no_tbaa'
-    CFLAGS += ' --no_clustering'
-    CFLAGS += ' --no_scheduling'
-
-    CFLAGS += ' --endian=little'
-    CFLAGS += ' -e'
-    CFLAGS += ' --fpu=none'
-    CFLAGS += ' --dlib_config "' + IAR_PATH + '/arm/INC/c/DLib_Config_Normal.h"'
-    CFLAGS += ' --silent'
-
-    AFLAGS = '--cpu '+ DEVICE
-    AFLAGS += ' -s+'
-    AFLAGS += ' -w+'
-    AFLAGS += ' -r'
-    AFLAGS += ' --fpu none'
-    AFLAGS += ' -S'
-    AFLAGS += ' -Iplatform'
-    
-    if BUILD == 'debug':
-        CFLAGS += ' --debug'
-        CFLAGS += ' -On'
-    else:
-        CFLAGS += ' -Oh'
-
-    LFLAGS = '--config ' + LINK_FILE +'.icf'
-    LFLAGS += ' --entry __iar_program_start'
-    LFLAGS += ' --map ' + MAP_FILE
-    LFLAGS += ' --silent'
-
-    EXEC_PATH = IAR_PATH + '/arm/bin/'
-    POST_ACTION = 'ielftool  --silent --bin $TARGET ' + TARGET_NAME

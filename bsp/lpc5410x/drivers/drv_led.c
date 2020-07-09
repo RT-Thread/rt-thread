@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include "board.h"
 
@@ -5,42 +13,42 @@
 
 struct led_ctrl
 {
-	uint32_t num;
-	uint32_t port;
+    uint32_t num;
+    uint32_t port;
 };
 
 struct lpc_led
 {
-	/* inherit from rt_device */
-	struct rt_device parent;
-	struct led_ctrl ctrl[LED_NUM];
+    /* inherit from rt_device */
+    struct rt_device parent;
+    struct led_ctrl ctrl[LED_NUM];
 };
 
 static struct lpc_led led;
 
 static rt_err_t rt_led_init(rt_device_t dev)
 {
-	/*led2 Blue:P0.31 ,led1 Green:P0.30 ,led0 Red:P0_29  P38,P32*/
-	LPC_SYSCON->AHBCLKCTRLSET[0] = (1UL << 14);       /* enable GPIO0 clock*/
-	
-	LPC_SYSCON->PRESETCTRLSET[0] = (1UL << 14);				/* Resets a GPIO0 peripheral */
-	LPC_SYSCON->PRESETCTRLCLR[0] = (1UL << 14);
-	
-	/* set P0.31, P0.30, P0.29  output. */
-	LPC_GPIO->DIR[0] |= 0x07UL << 29;
-	
-	/* turn off all the led */
-	LPC_GPIO->SET[0] = 0x07UL << 29;
-	
-	led.ctrl[0].num = 29;
-	led.ctrl[0].port = 0;
-	led.ctrl[1].num = 30;
-	led.ctrl[1].port = 0;
-	led.ctrl[2].num = 31;
-	led.ctrl[2].port = 0;
+    /*led2 Blue:P0.31 ,led1 Green:P0.30 ,led0 Red:P0_29  P38,P32*/
+    LPC_SYSCON->AHBCLKCTRLSET[0] = (1UL << 14);       /* enable GPIO0 clock*/
 
-	return RT_EOK;
-	
+    LPC_SYSCON->PRESETCTRLSET[0] = (1UL << 14);             /* Resets a GPIO0 peripheral */
+    LPC_SYSCON->PRESETCTRLCLR[0] = (1UL << 14);
+
+    /* set P0.31, P0.30, P0.29  output. */
+    LPC_GPIO->DIR[0] |= 0x07UL << 29;
+
+    /* turn off all the led */
+    LPC_GPIO->SET[0] = 0x07UL << 29;
+
+    led.ctrl[0].num = 29;
+    led.ctrl[0].port = 0;
+    led.ctrl[1].num = 30;
+    led.ctrl[1].port = 0;
+    led.ctrl[2].num = 31;
+    led.ctrl[2].port = 0;
+
+    return RT_EOK;
+
 }
 
 static rt_err_t rt_led_open(rt_device_t dev, rt_uint16_t oflag)
@@ -52,7 +60,6 @@ static rt_err_t rt_led_close(rt_device_t dev)
 {
     return RT_EOK;
 }
-
 
 static rt_size_t rt_led_read(rt_device_t dev, rt_off_t pos, void *buffer,
                              rt_size_t size)
@@ -66,21 +73,18 @@ static rt_size_t rt_led_read(rt_device_t dev, rt_off_t pos, void *buffer,
 
     for (index = 0; index < nr; index++)
     {
-			//if ((LPC_GPIO->PIN[led.ctrl[pos + index].port]) & 1 << led.ctrl[pos + index].num)
-			if ((LPC_GPIO->B[0][led.ctrl[pos + index].num]))	
-			{
-					*value = 0;
-			}
-			else
-			{
-					*value = 1;
-			}
-			value++;
+        if ((LPC_GPIO->B[0][led.ctrl[pos + index].num]))
+        {
+            *value = 0;
+        }
+        else
+        {
+            *value = 1;
+        }
+        value++;
     }
     return index;
 }
-
-
 
 static rt_size_t rt_led_write(rt_device_t dev, rt_off_t pos,
                               const void *buffer, rt_size_t size)
@@ -93,23 +97,22 @@ static rt_size_t rt_led_write(rt_device_t dev, rt_off_t pos,
     RT_ASSERT((pos + size) <= LED_NUM);
     for (index = 0; index < nw; index++)
     {
-			if (*value > 0)
-			{
-				 //LPC_GPIO->CLR[led.ctrl[pos + index].port] |= (1 << led.ctrl[pos + index].num);
-				 LPC_GPIO->CLR[0] |= (1 << led.ctrl[pos + index].num);
-			}
-			else
-			{
-				//LPC_GPIO->SET[led.ctrl[pos + index].port] |= (1 << led.ctrl[pos + index].num);
-				LPC_GPIO->SET[0] |= (1 << led.ctrl[pos + index].num);
-			}
-		}
-    
-		return index;
+        if (*value > 0)
+        {
+             //LPC_GPIO->CLR[led.ctrl[pos + index].port] |= (1 << led.ctrl[pos + index].num);
+             LPC_GPIO->CLR[0] |= (1 << led.ctrl[pos + index].num);
+        }
+        else
+        {
+            //LPC_GPIO->SET[led.ctrl[pos + index].port] |= (1 << led.ctrl[pos + index].num);
+            LPC_GPIO->SET[0] |= (1 << led.ctrl[pos + index].num);
+        }
+    }
+
+        return index;
 }
 
-
-static rt_err_t rt_led_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_led_control(rt_device_t dev, int cmd, void *args)
 {
     return RT_EOK;
 }
@@ -134,8 +137,6 @@ int rt_led_hw_init(void)
     return 0;
 }
 
-
-
 void Led_Control(rt_uint32_t Set_led, rt_uint32_t value)
 {
     if ( Set_led == 0 )
@@ -144,11 +145,11 @@ void Led_Control(rt_uint32_t Set_led, rt_uint32_t value)
         switch (value)
         {
         case 0:
-						/* Light off */
+            /* Light off */
             LPC_GPIO->B[0][led.ctrl[Set_led].num] = 1UL;
             break;
         case 1:
-						/* Lights on */
+            /* Lights on */
             LPC_GPIO->B[0][led.ctrl[Set_led].num] = 0UL;
             break;
         default:
@@ -162,28 +163,28 @@ void Led_Control(rt_uint32_t Set_led, rt_uint32_t value)
         switch (value)
         {
         case 0:
-						/* Light off */
+            /* Light off */
             LPC_GPIO->B[0][led.ctrl[Set_led].num] = 1UL;
             break;
         case 1:
-						/* Lights on */
+            /* Lights on */
             LPC_GPIO->B[0][led.ctrl[Set_led].num] = 0UL;
             break;
         default:
             break;
         }
     }
-		if ( Set_led == 2 )
+        if ( Set_led == 2 )
     {
         /* set led status */
         switch (value)
         {
         case 0:
-						/* Lights off */
+            /* Lights off */
             LPC_GPIO->B[0][led.ctrl[Set_led].num] = 1UL;
             break;
         case 1:
-						/* Lights on */
+            /* Lights on */
             LPC_GPIO->B[0][led.ctrl[Set_led].num] = 0UL;
             break;
         default:
@@ -191,10 +192,8 @@ void Led_Control(rt_uint32_t Set_led, rt_uint32_t value)
         }
     }
 }
-
-
-
 INIT_DEVICE_EXPORT(rt_led_hw_init);
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 void led_test(rt_uint32_t led_num, rt_uint32_t value)
@@ -204,7 +203,3 @@ void led_test(rt_uint32_t led_num, rt_uint32_t value)
 }
 FINSH_FUNCTION_EXPORT(led_test, e.g: led_test(0, 100).)
 #endif
-
-
-
-

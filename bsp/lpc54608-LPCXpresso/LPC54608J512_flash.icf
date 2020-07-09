@@ -1,0 +1,122 @@
+/*
+** ###################################################################
+**     Processors:          LPC54608J512BD208
+**                          LPC54608J512ET180
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    LPC54S60x/LPC5460x User manual Rev.0.9  7 Nov 2016
+**     Version:             rev. 1.1, 2016-11-25
+**     Build:               b161227
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright (c) 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016 - 2017 NXP
+**     Redistribution and use in source and binary forms, with or without modification,
+**     are permitted provided that the following conditions are met:
+**
+**     o Redistributions of source code must retain the above copyright notice, this list
+**       of conditions and the following disclaimer.
+**
+**     o Redistributions in binary form must reproduce the above copyright notice, this
+**       list of conditions and the following disclaimer in the documentation and/or
+**       other materials provided with the distribution.
+**
+**     o Neither the name of the copyright holder nor the names of its
+**       contributors may be used to endorse or promote products derived from this
+**       software without specific prior written permission.
+**
+**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+define symbol __ram_vector_table_size__ =  isdefinedsymbol(__ram_vector_table__) ? 0x00000400 : 0;
+define symbol __ram_vector_table_offset__ =  isdefinedsymbol(__ram_vector_table__) ? 0x000003FF : 0;
+
+define symbol m_interrupts_start       = 0x00000000;
+define symbol m_interrupts_end         = 0x000003FF;
+
+define symbol m_text_start             = 0x00000400;
+define symbol m_text_end               = 0x0007FFFF;
+
+define symbol m_interrupts_ram_start   = 0x20000000;
+define symbol m_interrupts_ram_end     = 0x20000000 + __ram_vector_table_offset__;
+
+define symbol m_data_start             = m_interrupts_ram_start + __ram_vector_table_size__;
+define symbol m_data_end               = 0x20027FFF;
+
+define symbol m_usb_sram_start         = 0x40100000;
+define symbol m_usb_sram_end           = 0x40101FFF;
+
+/* USB BDT size */
+define symbol usb_bdt_size             = 0x0;
+/* Sizes */
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x0400;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x0400;
+}
+
+define exported symbol __VECTOR_TABLE  = m_interrupts_start;
+define exported symbol __VECTOR_RAM    = isdefinedsymbol(__ram_vector_table__) ? m_interrupts_ram_start : m_interrupts_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = __ram_vector_table_size__;
+
+define memory mem with size = 4G;
+define region TEXT_region = mem:[from m_interrupts_start to m_interrupts_end]
+                          | mem:[from m_text_start to m_text_end];
+define region DATA_region = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+define region m_interrupts_ram_region = mem:[from m_interrupts_ram_start to m_interrupts_ram_end];
+
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+define block RW        { readwrite };
+define block ZI        { zi };
+define block RTT_INIT_FUNC with fixed order { readonly section .rti_fn* };
+
+/* regions for USB */
+define region USB_BDT_region = mem:[from m_usb_sram_start to m_usb_sram_start + usb_bdt_size - 1];
+define region USB_SRAM_region = mem:[from m_usb_sram_start + usb_bdt_size to m_usb_sram_end];
+place in USB_BDT_region                     { section m_usb_bdt };
+place in USB_SRAM_region                    { section m_usb_global };
+
+initialize by copy { readwrite, section .textrw };
+
+if (isdefinedsymbol(__USE_DLIB_PERTHREAD))
+{
+  /* Required in a multi-threaded application */
+  initialize by copy with packing = none { section __DLIB_PERTHREAD };
+}
+
+do not initialize  { section .noinit, section m_usb_bdt, section m_usb_global };
+
+keep { section FSymTab };
+keep { section VSymTab };
+keep { section .rti_fn* };
+keep { section RTMSymTab };
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+place in TEXT_region                        { readonly, block RTT_INIT_FUNC };
+place in DATA_region                        { block RW , block ZI, block CSTACK, last block HEAP};
+place in m_interrupts_ram_region            { section m_interrupts_ram };
+

@@ -56,7 +56,13 @@ struct fh_wdt_obj
 };
 
 void WDT_Enable(struct fh_wdt_obj *wdt_obj, int enable);
-inline int WDT_IsEnable(struct fh_wdt_obj *wdt_obj);
+
+rt_inline int WDT_IsEnable(struct fh_wdt_obj *wdt_obj)
+{
+    return GET_REG(wdt_obj->base + WDOG_CONTROL_REG_OFFSET) &
+        WDOG_CONTROL_REG_WDT_EN_MASK;
+}
+
 void WDT_SetTopValue(struct fh_wdt_obj *wdt_obj, int top);
 void WDT_SetCtrl(struct fh_wdt_obj *wdt_obj, UINT32 reg);
 void WDT_Kick(struct fh_wdt_obj *wdt_obj);

@@ -19,9 +19,7 @@
  */
 
 #include <rtthread.h>
-#ifdef RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
+
 #include <cp15.h>
 
 /* thread phase init */

@@ -1,0 +1,23 @@
+diff --git a/utils/kconfig-tweak.in b/utils/kconfig-tweak.in
+--- a/utils/kconfig-tweak.in
++++ b/utils/kconfig-tweak.in
+@@ -3,8 +3,8 @@
+ 
+ myname=${0##*/}
+ 
+-# If no prefix forced, use the default CONFIG_
+-CONFIG_="${CONFIG_-CONFIG_}"
++# If no prefix forced, use the default @CONFIG_@
++CONFIG_="${CONFIG_-@CONFIG_@}"
+ 
+ usage() {
+ 	cat >&2 <<EOL
+@@ -41,7 +41,7 @@
+ By default, $myname will upper-case the given symbol. Use --keep-case to keep
+ the case of all following symbols unchanged.
+ 
+-$myname uses 'CONFIG_' as the default symbol prefix. Set the environment
++$myname uses '@CONFIG_@' as the default symbol prefix. Set the environment
+ variable CONFIG_ to the prefix to use. Eg.: CONFIG_="FOO_" $myname ...
+ EOL
+ 	exit 1

@@ -1,21 +1,7 @@
 /*
- * File      : mmcsd_core.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author		Notes
@@ -185,7 +171,7 @@ struct rt_mmcsd_req {
  * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
  */
 
-rt_inline rt_uint32_t fls(rt_uint32_t val)
+rt_inline rt_uint32_t __rt_fls(rt_uint32_t val)
 {
 	rt_uint32_t  bit = 32;
 
@@ -213,13 +199,16 @@ rt_inline rt_uint32_t fls(rt_uint32_t val)
 	}
 	if (!(val & 0x80000000u)) 
 	{
-		val <<= 1;
 		bit -= 1;
 	}
 
 	return bit;
 }
 
+#define MMCSD_HOST_PLUGED       0
+#define MMCSD_HOST_UNPLUGED     1
+
+int mmcsd_wait_cd_changed(rt_int32_t timeout);
 void mmcsd_host_lock(struct rt_mmcsd_host *host);
 void mmcsd_host_unlock(struct rt_mmcsd_host *host);
 void mmcsd_req_complete(struct rt_mmcsd_host *host);
@@ -243,9 +232,9 @@ void mmcsd_change(struct rt_mmcsd_host *host);
 void mmcsd_detect(void *param);
 struct rt_mmcsd_host *mmcsd_alloc_host(void);
 void mmcsd_free_host(struct rt_mmcsd_host *host);
-void rt_mmcsd_core_init(void);
+int rt_mmcsd_core_init(void);
 
-void rt_mmcsd_blk_init(void);
+int rt_mmcsd_blk_init(void);
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card);
 void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card);
 

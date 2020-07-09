@@ -146,8 +146,6 @@ extern void lwIPHostGetTime(u32_t *time_s, u32_t *time_ns);
 #include "lwipopts.h"
 #include "drv_eth.h"
 
-#include <components.h>
-
 /**
  * A structure used to keep track of driver state and error counts.
  */
@@ -250,11 +248,11 @@ volatile uint32_t g_ui32AbnormalInts;
 
 typedef struct 
 {
-	/* inherit from ethernet device */
-	struct eth_device parent;
-	tStellarisIF* dma_if;
-	/* for rx_thread async get pbuf */
-	rt_mailbox_t rx_pbuf_mb;
+    /* inherit from ethernet device */
+    struct eth_device parent;
+    tStellarisIF* dma_if;
+    /* for rx_thread async get pbuf */
+    rt_mailbox_t rx_pbuf_mb;
 } net_device;
 typedef net_device* net_device_t; 
 
@@ -636,8 +634,13 @@ tivaif_transmit(net_device_t dev, struct pbuf *p)
           pDesc->Desc.ui32CtrlStatus = 0;
       }
 
+#ifdef RT_LWIP_USING_HW_CHECKSUM
       pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_IP_ALL_CKHSUMS |
                                      DES0_TX_CTRL_CHAINED);
+#else
+      pDesc->Desc.ui32CtrlStatus |= (DES0_TX_CTRL_NO_CHKSUM |
+                                     DES0_TX_CTRL_CHAINED);
+#endif
 
       /* Decrement our descriptor counter, move on to the next buffer in the
        * pbuf chain. */
@@ -864,8 +867,8 @@ tivaif_receive(net_device_t dev)
                   {
 #else
                   //if(tcpip_input(pBuf, psNetif) != RT_EOK)
-				  if((rt_mb_send(dev->rx_pbuf_mb, (rt_uint32_t)pBuf) != RT_EOK) ||
-					(eth_device_ready(&(dev->parent)) != RT_EOK))
+                  if((rt_mb_send(dev->rx_pbuf_mb, (rt_uint32_t)pBuf) != RT_EOK) ||
+                    (eth_device_ready(&(dev->parent)) != RT_EOK))
                   {
 #endif
                       /* drop the packet */
@@ -952,10 +955,10 @@ tivaif_process_phy_interrupt(net_device_t dev)
      */
     ui16Val = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_MISR1);
 
-	/* 
-	 * Dummy read PHY REG EPHY_BMSR, it will force update the EPHY_STS register
-	 */
-		EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMSR);
+    /* 
+     * Dummy read PHY REG EPHY_BMSR, it will force update the EPHY_STS register
+     */
+        EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_BMSR);
     /* Read the current PHY status. */
     ui16Status = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, EPHY_STS);
 
@@ -970,7 +973,7 @@ tivaif_process_phy_interrupt(net_device_t dev)
             netif_set_link_up(psNetif);
 #else
             //tcpip_callback((tcpip_callback_fn)netif_set_link_up, psNetif);
-			eth_device_linkchange(&(dev->parent), RT_TRUE);
+            eth_device_linkchange(&(dev->parent), RT_TRUE);
 #endif
 
             /* In this case we drop through since we may need to reconfigure
@@ -984,7 +987,7 @@ tivaif_process_phy_interrupt(net_device_t dev)
             netif_set_link_down(psNetif);
 #else
             //tcpip_callback((tcpip_callback_fn)netif_set_link_down, psNetif);
-			eth_device_linkchange(&(dev->parent), RT_FALSE);
+            eth_device_linkchange(&(dev->parent), RT_FALSE);
 #endif
         }
     }
@@ -1170,40 +1173,40 @@ void lwIPEthernetIntHandler(void)
 // OUI:00-12-37 (hex) Texas Instruments, only for test 
 static int tiva_eth_mac_addr_init(void)
 {
-	int retVal =0; 
-	uint32_t ulUser[2];
-	uint8_t mac_addr[6];
-	
-	MAP_FlashUserGet(&ulUser[0], &ulUser[1]);
-	if((ulUser[0] == 0xffffffff) || (ulUser[1] == 0xffffffff))
-	{
-		rt_kprintf("Fail to get mac address from eeprom.\n");
-		rt_kprintf("Using default mac address\n");
-		// OUI:00-12-37 (hex) Texas Instruments, only for test 
-		// Configure the hardware MAC address 
-		ulUser[0] = 0x00371200;
-		ulUser[1] = 0x00563412;
-		//FlashUserSet(ulUser0, ulUser1); 
-		retVal =-1;
-	}
-	
-	
-	//Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
-	//address needed to program the hardware registers, then program the MAC
-	//address into the Ethernet Controller registers.
-	
-	mac_addr[0] = ((ulUser[0] >>  0) & 0xff);
-	mac_addr[1] = ((ulUser[0] >>  8) & 0xff);
-	mac_addr[2] = ((ulUser[0] >> 16) & 0xff);
-	mac_addr[3] = ((ulUser[1] >>  0) & 0xff);
-	mac_addr[4] = ((ulUser[1] >>  8) & 0xff);
-	mac_addr[5] = ((ulUser[1] >> 16) & 0xff);
-	
-	//
+    int retVal =0; 
+    uint32_t ulUser[2];
+    uint8_t mac_addr[6];
+    
+    MAP_FlashUserGet(&ulUser[0], &ulUser[1]);
+    if((ulUser[0] == 0xffffffff) || (ulUser[1] == 0xffffffff))
+    {
+        rt_kprintf("Fail to get mac address from eeprom.\n");
+        rt_kprintf("Using default mac address\n");
+        // OUI:00-12-37 (hex) Texas Instruments, only for test 
+        // Configure the hardware MAC address 
+        ulUser[0] = 0x00371200;
+        ulUser[1] = 0x00563412;
+        //FlashUserSet(ulUser0, ulUser1); 
+        retVal =-1;
+    }
+    
+    
+    //Convert the 24/24 split MAC address from NV ram into a 32/16 split MAC
+    //address needed to program the hardware registers, then program the MAC
+    //address into the Ethernet Controller registers.
+    
+    mac_addr[0] = ((ulUser[0] >>  0) & 0xff);
+    mac_addr[1] = ((ulUser[0] >>  8) & 0xff);
+    mac_addr[2] = ((ulUser[0] >> 16) & 0xff);
+    mac_addr[3] = ((ulUser[1] >>  0) & 0xff);
+    mac_addr[4] = ((ulUser[1] >>  8) & 0xff);
+    mac_addr[5] = ((ulUser[1] >> 16) & 0xff);
+    
+    //
     // Program the hardware with its MAC address (for filtering).
     //
     MAP_EMACAddrSet(EMAC0_BASE, 0, mac_addr);
-	return retVal;
+    return retVal;
 }
 
  void tiva_eth_lowlevel_init(void)
@@ -1216,7 +1219,7 @@ static int tiva_eth_mac_addr_init(void)
     MAP_GPIOPinConfigure(GPIO_PF4_EN0LED1);
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_0);
     GPIOPinTypeEthernetLED(GPIO_PORTF_BASE, GPIO_PIN_4);
-	
+    
     //
     // Enable the ethernet peripheral.
     //
@@ -1245,7 +1248,7 @@ static int tiva_eth_mac_addr_init(void)
             //
             // Internal PHY is not present on this part so hang here.
             //
-			rt_kprintf("Internal PHY is not present on this part.\n");
+            rt_kprintf("Internal PHY is not present on this part.\n");
             while(1)
             {
             }
@@ -1285,17 +1288,17 @@ static int tiva_eth_mac_addr_init(void)
                        EMAC_MODE_TX_STORE_FORWARD |
                        EMAC_MODE_TX_THRESHOLD_64_BYTES |
                        EMAC_MODE_RX_THRESHOLD_64_BYTES), 0);
-		   
-	EMACIntRegister(EMAC0_BASE, lwIPEthernetIntHandler);
+           
+    EMACIntRegister(EMAC0_BASE, lwIPEthernetIntHandler);
 
 }
 
 static rt_err_t eth_dev_init(rt_device_t device)
 {
-	net_device_t net_dev = (net_device_t)device;
-	struct netif *psNetif = (net_dev->parent.netif);
-	
-	LWIP_ASSERT("psNetif != NULL", (psNetif != NULL));
+    net_device_t net_dev = (net_device_t)device;
+    struct netif *psNetif = (net_dev->parent.netif);
+    
+    LWIP_ASSERT("psNetif != NULL", (psNetif != NULL));
 
 #if LWIP_NETIF_HOSTNAME
   /* Initialize interface hostname */
@@ -1320,93 +1323,93 @@ static rt_err_t eth_dev_init(rt_device_t device)
 }
 
 /* control the interface */
-static rt_err_t eth_dev_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t eth_dev_control(rt_device_t dev, int cmd, void *args)
 {
-	switch(cmd)
-	{
-	case NIOCTL_GADDR:
-		/* get mac address */
-		if(args) 
-			MAP_EMACAddrGet(EMAC0_BASE, 0, (uint8_t*)args);
-		else 
-			return -RT_ERROR;
-		break;
+    switch(cmd)
+    {
+    case NIOCTL_GADDR:
+        /* get mac address */
+        if(args) 
+            MAP_EMACAddrGet(EMAC0_BASE, 0, (uint8_t*)args);
+        else 
+            return -RT_ERROR;
+        break;
 
-	default :
-		break;
-	}
+    default :
+        break;
+    }
 
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* Open the interface */
 static rt_err_t eth_dev_open(rt_device_t dev, rt_uint16_t oflag)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* Close the interface */
 static rt_err_t eth_dev_close(rt_device_t dev)
 {
-	return RT_EOK;
+    return RT_EOK;
 }
 
 /* Read */
 static rt_size_t eth_dev_read(rt_device_t dev, rt_off_t pos, void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 /* Write */
 static rt_size_t eth_dev_write(rt_device_t dev, rt_off_t pos, const void* buffer, rt_size_t size)
 {
-	rt_set_errno(-RT_ENOSYS);
-	return 0;
+    rt_set_errno(-RT_ENOSYS);
+    return 0;
 }
 
 static rt_err_t eth_dev_tx(rt_device_t dev, struct pbuf *p)
 {
-	return tivaif_transmit((net_device_t)dev, p);
+    return tivaif_transmit((net_device_t)dev, p);
 }
 
 static struct pbuf* eth_dev_rx(rt_device_t dev)
 {
-	rt_err_t result;
-	rt_uint32_t temp =0;
-	net_device_t net_dev = (net_device_t)dev;
-	result = rt_mb_recv(net_dev->rx_pbuf_mb, &temp, RT_WAITING_NO);
-	
-	return (result == RT_EOK)? (struct pbuf*)temp : RT_NULL;
+    rt_err_t result;
+    rt_uint32_t temp =0;
+    net_device_t net_dev = (net_device_t)dev;
+    result = rt_mb_recv(net_dev->rx_pbuf_mb, (rt_ubase_t *)&temp, RT_WAITING_NO);
+    
+    return (result == RT_EOK)? (struct pbuf*)temp : RT_NULL;
 }
 
 int rt_hw_tiva_eth_init(void)
 {
-	rt_err_t result;
+    rt_err_t result;
 
-	/* Clock GPIO and etc */
-	tiva_eth_lowlevel_init(); 
-	tiva_eth_mac_addr_init();
+    /* Clock GPIO and etc */
+    tiva_eth_lowlevel_init(); 
+    tiva_eth_mac_addr_init();
 
-	/* init rt-thread device interface */
-	eth_dev->parent.parent.init     = eth_dev_init;
-	eth_dev->parent.parent.open     = eth_dev_open;
-	eth_dev->parent.parent.close    = eth_dev_close;
-	eth_dev->parent.parent.read     = eth_dev_read;
-	eth_dev->parent.parent.write    = eth_dev_write;
-	eth_dev->parent.parent.control  = eth_dev_control;
-	eth_dev->parent.eth_rx          = eth_dev_rx;
-	eth_dev->parent.eth_tx          = eth_dev_tx;
-	
-	result = rt_mb_init(&eth_rx_pbuf_mb, "epbuf",
+    /* init rt-thread device interface */
+    eth_dev->parent.parent.init     = eth_dev_init;
+    eth_dev->parent.parent.open     = eth_dev_open;
+    eth_dev->parent.parent.close    = eth_dev_close;
+    eth_dev->parent.parent.read     = eth_dev_read;
+    eth_dev->parent.parent.write    = eth_dev_write;
+    eth_dev->parent.parent.control  = eth_dev_control;
+    eth_dev->parent.eth_rx          = eth_dev_rx;
+    eth_dev->parent.eth_tx          = eth_dev_tx;
+    
+    result = rt_mb_init(&eth_rx_pbuf_mb, "epbuf",
                         &rx_pbuf_mb_pool[0], sizeof(rx_pbuf_mb_pool)/4,
                         RT_IPC_FLAG_FIFO);
-	RT_ASSERT(result == RT_EOK);
-	eth_dev->rx_pbuf_mb = &eth_rx_pbuf_mb;
-	
-	
-	result = eth_device_init(&(eth_dev->parent), "e0");
-	return result;
+    RT_ASSERT(result == RT_EOK);
+    eth_dev->rx_pbuf_mb = &eth_rx_pbuf_mb;
+    
+    
+    result = eth_device_init(&(eth_dev->parent), "e0");
+    return result;
 }
 // eth_device_init using malloc
 // We use INIT_COMPONENT_EXPORT insted of INIT_BOARD_EXPORT
@@ -1418,28 +1421,28 @@ INIT_COMPONENT_EXPORT(rt_hw_tiva_eth_init);
 #include "finsh.h"
 void PHY_Read(uint8_t addr)
 {
-	uint16_t data = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, addr);
-	rt_kprintf("R PHY_REG[0x%02X] = 0x%04X\n", addr, data);
+    uint16_t data = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, addr);
+    rt_kprintf("R PHY_REG[0x%02X] = 0x%04X\n", addr, data);
 }
 FINSH_FUNCTION_EXPORT(PHY_Read, (add));
 
 void PHY_Write(uint8_t addr , uint16_t data)
 {
    EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, addr, data);
-	rt_kprintf("W PHY_REG[0x%02X] = 0x%04X\n", addr, data);
+    rt_kprintf("W PHY_REG[0x%02X] = 0x%04X\n", addr, data);
 }
 FINSH_FUNCTION_EXPORT(PHY_Write, (add, data));
 
 void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2, 
                 uint8_t addr3, uint8_t addr4, uint8_t addr5)
 {
-	uint32_t ulUser[2];
-	ulUser[0] = (((addr2<<8)|addr1)<<8)|addr0;
-	ulUser[1] = (((addr5<<8)|addr4)<<8)|addr3;
-	
-	MAP_FlashUserSet(ulUser[0], ulUser[1]);
-	MAP_FlashUserSave();
-	rt_kprintf("Save to EEPROM. please reboot.");
+    uint32_t ulUser[2];
+    ulUser[0] = (((addr2<<8)|addr1)<<8)|addr0;
+    ulUser[1] = (((addr5<<8)|addr4)<<8)|addr3;
+    
+    MAP_FlashUserSet(ulUser[0], ulUser[1]);
+    MAP_FlashUserSave();
+    rt_kprintf("Save to EEPROM. please reboot.");
 }
 FINSH_FUNCTION_EXPORT(PHY_SetAdd, (add0-add5));
 #endif //RT_USING_FINSH

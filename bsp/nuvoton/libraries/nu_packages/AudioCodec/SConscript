@@ -1,0 +1,14 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+group = []
+if GetDepend('NU_PKG_USING_NAU88L25'):
+    src = Split("""
+    acodec_nau88l25.c
+    audio_test.c
+    """)
+    CPPPATH = [cwd]
+    group = DefineGroup('nu_pkgs_nau88l25', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

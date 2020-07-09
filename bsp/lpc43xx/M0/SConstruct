@@ -12,6 +12,7 @@ from building import *
 
 TARGET = 'rtthread-lpc40xx.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
@@ -29,7 +30,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
     import glob
     # Remove the .o for M0 left on the drivers dir.
     for i in glob.glob(GetCurrentDir() + '/../drivers/*.o'):
-        print 'RM %s' % i
+        print('RM %s' % i)
         os.unlink(i)
 
     if sys.platform.startswith('linux'):
@@ -40,7 +41,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
     else:
         # Assume Windows.
         ocwd = os.getcwdu()
-        print 'TODO: remove the object files in ../Libraries'
+        print('TODO: remove the object files in ../Libraries')
         os.chdir(ocwd)
 
 # do building 

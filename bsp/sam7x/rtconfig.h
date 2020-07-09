@@ -83,7 +83,6 @@
 /* SECTION: lwip, a lighwight TCP/IP protocol stack */
 /* Using lighweight TCP/IP protocol stack*/
 #define RT_USING_LWIP
-#define RT_LWIP_USING_RT_MEM
 
 /* Trace LwIP protocol*/
 /* #define RT_LWIP_DEBUG */
@@ -119,23 +118,14 @@
 /* Using DHCP*/
 /* #define RT_LWIP_DHCP */
 
-/* ip address of target*/
-#define RT_LWIP_IPADDR0	192
-#define RT_LWIP_IPADDR1	168
-#define RT_LWIP_IPADDR2	1
-#define RT_LWIP_IPADDR3	30
+/* ip address of target */
+#define RT_LWIP_IPADDR "192.168.1.30"
 
-/* gateway address of target*/
-#define RT_LWIP_GWADDR0	192
-#define RT_LWIP_GWADDR1	168
-#define RT_LWIP_GWADDR2	1
-#define RT_LWIP_GWADDR3	1
+/* gateway address of target */
+#define RT_LWIP_GWADDR  "192.168.1.1"
 
-/* mask address of target*/
-#define RT_LWIP_MSKADDR0	255
-#define RT_LWIP_MSKADDR1	255
-#define RT_LWIP_MSKADDR2	255
-#define RT_LWIP_MSKADDR3	0
+/* mask address of target */
+#define RT_LWIP_MSKADDR  "255.255.255.0"
 
 /* SECTION: DFS options */
 //#define RT_USING_DFS

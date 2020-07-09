@@ -125,7 +125,7 @@ static int32_t snd_card_config(void *priv, audio_dev_para_p para)
         return -2;
     }
     //Set the parameters for codec according para
-    //if audio controller is mater, the codec should be slave.
+    //if audio controller is master, the codec should be slave.
     if (AUDIO_BUS_MODE_MASTER == para->bus_mode)
         para->bus_mode = AUDIO_BUS_MODE_SLAVE;
     else if (AUDIO_BUS_MODE_SLAVE == para->bus_mode)

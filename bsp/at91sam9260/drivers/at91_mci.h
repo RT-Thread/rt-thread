@@ -119,6 +119,6 @@
 #define AT91_MCI_IDR		0x48		/* Interrupt Disable Register */
 #define AT91_MCI_IMR		0x4c		/* Interrupt Mask Register */
 
-extern rt_int32_t at91_mci_init(void);
+extern int at91_mci_init(void);
 
 #endif

@@ -1,11 +1,7 @@
 /*
- * File      : startup.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -25,13 +21,13 @@
 
 extern int  rt_application_init(void);
 #ifdef RT_USING_FINSH
-extern void finsh_system_init(void);
+extern int finsh_system_init(void);
 extern void finsh_set_device(const char* device);
 #endif
 
 #ifdef __CC_ARM
-extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define K64_SRAM_BEGIN    (&Image$$RW_IRAM1$$ZI$$Limit)
+extern int Image$$RW_IRAM2$$ZI$$Limit;
+#define K64_SRAM_BEGIN    (&Image$$RW_IRAM2$$ZI$$Limit)
 #elif __ICCARM__
 #pragma section="HEAP"
 #define K64_SRAM_BEGIN    (__segment_end("HEAP"))

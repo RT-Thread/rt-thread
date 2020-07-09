@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
-  <SchemaVersion>2.1</SchemaVersion>
-
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
+  <SchemaVersion>1.1</SchemaVersion>
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rtthread-lpc5410x</TargetName>
@@ -14,31 +11,28 @@
         <TargetCommonOption>
           <Device>LPC54102:M4</Device>
           <Vendor>NXP</Vendor>
-          <PackID>Keil.LPC54000_DFP.1.0.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IROM(0x00000000,0x80000) IRAM(0x02000000,0x10000) IRAM2(0x02010000,0x08000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD02000000 -FC1000 -FN1 -FF0LPC54xxx_512 -FS00 -FL080000 -FP0($$Device:LPC54102$Flash\LPC54xxx_512.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:LPC54102$Device\Include\LPC54xxx.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:LPC54102$SVD\LPC5410x.svd</SFDFile>
-          <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -60,8 +54,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -70,23 +64,21 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
-            <nStopB1X>0</nStopB1X>
-            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -100,9 +92,8 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
-          <ComprImg>1</ComprImg>
+          <CustomArgument />
+          <IncludeLibraryModules />
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
@@ -132,7 +123,6 @@
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
-            <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
@@ -144,23 +134,22 @@
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>1</RestoreTracepoints>
-            <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>12</TargetSelection>
+          <TargetSelection>14</TargetSelection>
           <SimDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
+            <CpuDll />
+            <CpuDllArguments />
+            <PeripheralDll />
+            <PeripheralDllArguments />
+            <InitializationFile />
           </SimDlls>
           <TargetDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
+            <CpuDll />
+            <CpuDllArguments />
+            <PeripheralDll />
+            <PeripheralDllArguments />
+            <InitializationFile />
             <Driver>BIN\CMSIS_AGDI.dll</Driver>
           </TargetDlls>
         </DebugOption>
@@ -173,14 +162,9 @@
             <Capability>1</Capability>
             <DriverSelection>4104</DriverSelection>
           </Flash1>
-          <bUseTDR>0</bUseTDR>
           <Flash2>BIN\CMSIS_AGDI.dll</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
-          <FcArmLst>0</FcArmLst>
+          <Flash4 />
         </Utilities>
         <TargetArmAds>
           <ArmAdsMisc>
@@ -212,7 +196,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M4"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -343,7 +327,7 @@
                 <Size>0x8000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -359,13 +343,11 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
-            <useXO>0</useXO>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls />
               <Define>CORE_M4</Define>
-              <Undefine></Undefine>
-              <IncludePath>.;..\..\components\drivers\include;..\..\components\finsh;..\..\include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;Libraries\CMSIS\Include;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config;Libraries\lpc_chip\chip_common;applications;drivers</IncludePath>
+              <Undefine />
+              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\Include;Libraries\lpc_chip\chip_common;Libraries\lpc_chip\chip_5410x;Libraries\lpc_chip\chip_5410x\config;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,12 +359,11 @@
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
-            <useXO>0</useXO>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -394,17 +375,131 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x02000000</DataAddressRange>
-            <pXoBase></pXoBase>
-            <ScatterFile></ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc> --keep __fsym_* --keep __vsym_* </Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <ScatterFile />
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>Kernel</GroupName>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>components.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\device.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\idle.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\ipc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\kservice.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>memheap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\memheap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\mempool.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\object.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\signal.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\thread.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\timer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>Applications</GroupName>
           <Files>
@@ -413,16 +508,22 @@
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\board.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>demo_thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\demo_thread.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
@@ -438,6 +539,8 @@
               <FileType>1</FileType>
               <FilePath>drivers\drv_led.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
@@ -453,6 +556,8 @@
               <FileType>1</FileType>
               <FilePath>Libraries\Device\startup\sysinit.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>keil_startup_lpc5410x.s</FileName>
               <FileType>2</FileType>
@@ -464,334 +569,362 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>lib_power.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>Libraries\lpc_chip\chip_5410x\power_lib\keil\lib_power.lib</FilePath>
-            </File>
-            <File>
               <FileName>fpu_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_common\fpu_init.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>iap.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_common\iap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ring_buffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_common\ring_buffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtc_ut.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_common\rtc_ut.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>chip_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\chip_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>clock_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\clock_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>crc_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\crc_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>fifo_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\fifo_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gpiogroup_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\gpiogroup_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>gpio_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\gpio_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_adc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_dmaaltd.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_dmaaltd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_dmaaltd_rom_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_dmaaltd_rom_api.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_i2cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_i2cmd_rom_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmd_rom_api.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_i2cmond.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmond.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_i2cmond_rom_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2cmond_rom_api.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_i2csd.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2csd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_i2csd_rom_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_i2csd_rom_api.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_spimd.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_spimd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_spimd_rom_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_spimd_rom_api.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_spisd.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_spisd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_spisd_rom_api.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_spisd_rom_api.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>hw_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\hw_uart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>iocon_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\iocon_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pinint_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\pinint_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pll_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\pll_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ritimer_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\ritimer_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_adc.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_dma.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_i2cm.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_i2cmon.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cmon.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_i2cs.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_i2cs.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_spim.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_spim.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_spis.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_spis.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>romapi_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\romapi_uart.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>rtc_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\rtc_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sct_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\sct_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sct_pwm_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\sct_pwm_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>stopwatch_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\stopwatch_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>syscon_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\syscon_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>sysinit_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\sysinit_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\timer_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>utick_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\utick_5410x.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>wwdt_5410x.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\lpc_chip\chip_5410x\wwdt_5410x.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>Kernel</GroupName>
           <Files>
             <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\idle.c</FilePath>
-            </File>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\ipc.c</FilePath>
-            </File>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\irq.c</FilePath>
-            </File>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\kservice.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>memheap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\memheap.c</FilePath>
-            </File>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\mempool.c</FilePath>
-            </File>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\object.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\thread.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\timer.c</FilePath>
+              <FileName>lib_power.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>Libraries\lpc_chip\chip_5410x\power_lib\keil\lib_power.lib</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>CORTEX-M4</GroupName>
+          <GroupName>cpu</GroupName>
+          <Files>
+            <File>
+              <FileName>backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>backtrace.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\backtrace.c</FilePath>
-            </File>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -803,31 +936,50 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\completion.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\dataqueue.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\pipe.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
-              <FileName>portal.c</FileName>
+              <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\src\portal.c</FilePath>
+              <FilePath>..\..\components\drivers\src\ringblk_buf.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\src\ringbuffer.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\src\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
@@ -843,61 +995,78 @@
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
-            <File>
-              <FileName>symbol.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\symbol.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_compiler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_compiler.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_error.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_error.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_heap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_heap.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_init.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_node.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_node.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_ops.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_parser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_parser.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_var.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_var.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_vm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_vm.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
@@ -908,5 +1077,4 @@
       </Groups>
     </Target>
   </Targets>
-
 </Project>

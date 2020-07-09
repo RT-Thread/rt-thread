@@ -1,26 +1,7 @@
 /*
- * Channel on VMM Bus
- *
- * COPYRIGHT (C) 2013-2015, Shanghai Real-Thread Technology Co., Ltd
- *      http://www.rt-thread.com
- *
- *  This file is part of RT-Thread (http://www.rt-thread.org)
- *
- *  All rights reserved.
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -174,7 +155,7 @@ static rt_size_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_si
     return size;
 }
 
-rt_err_t  _control(rt_device_t dev, rt_uint8_t cmd, void *args)
+rt_err_t  _control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev);
 

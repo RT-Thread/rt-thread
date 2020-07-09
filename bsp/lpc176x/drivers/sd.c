@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ */
 #include <rtthread.h>
 #include <dfs_fs.h>
 
@@ -24,7 +32,7 @@ static uint8_t  LPC17xx_SD_SendCmd(uint8_t cmd, uint32_t arg);
 static bool     LPC17xx_SD_ReadSector(uint32_t sector, uint8_t *buff, uint32_t count);
 static bool     LPC17xx_SD_ReadDataBlock(uint8_t *buff,    uint32_t cnt);
 static bool     LPC17xx_SD_WriteSector(uint32_t sector, const uint8_t *buff, uint32_t count);
-static bool     LPC17xx_SD_WirteDataBlock(const uint8_t *buff, uint8_t token);
+static bool     LPC17xx_SD_WriteDataBlock(const uint8_t *buff, uint8_t token);
 static bool     LPC17xx_SD_ReadCfg(SDCFG *cfg);
 static bool     LPC17xx_SD_WaitForReady(void);
 
@@ -147,7 +155,7 @@ static bool LPC17xx_SD_Init(void)
     Send a Command to Flash card and get a Response
     cmd:  cmd index
     arg: argument for the cmd
-    return the received response of the commond
+    return the received response of the command
 *****************************************************************************/
 static uint8_t LPC17xx_SD_SendCmd(uint8_t cmd, uint32_t arg)
 {
@@ -271,7 +279,7 @@ static bool LPC17xx_SD_WriteSector(uint32_t sector, const uint8_t *buff, uint32_
     if (count == 1)     /* Single block write */
     {
         if ((LPC17xx_SD_SendCmd(WRITE_BLOCK, sector) == 0)
-                && LPC17xx_SD_WirteDataBlock(buff, TOKEN_SINGLE_BLOCK))
+                && LPC17xx_SD_WriteDataBlock(buff, TOKEN_SINGLE_BLOCK))
             count = 0;
     }
     else                    /* Multiple block write */
@@ -281,12 +289,12 @@ static bool LPC17xx_SD_WriteSector(uint32_t sector, const uint8_t *buff, uint32_
         {
             do
             {
-                if (!LPC17xx_SD_WirteDataBlock(buff, TOKEN_MULTI_BLOCK)) break;
+                if (!LPC17xx_SD_WriteDataBlock(buff, TOKEN_MULTI_BLOCK)) break;
                 buff += 512;
             }
             while (--count);
 #if 1
-            if (!LPC17xx_SD_WirteDataBlock(0, TOKEN_STOP_TRAN)) /* STOP_TRAN token */
+            if (!LPC17xx_SD_WriteDataBlock(0, TOKEN_STOP_TRAN)) /* STOP_TRAN token */
                 count = 1;
 #else
             LPC17xx_SPI_SendByte(TOKEN_STOP_TRAN);
@@ -304,7 +312,7 @@ static bool LPC17xx_SD_WriteSector(uint32_t sector, const uint8_t *buff, uint32_
             0xFC -> multi block
             0xFD -> Stop
 *****************************************************************************/
-static bool LPC17xx_SD_WirteDataBlock(const uint8_t *buff, uint8_t token)
+static bool LPC17xx_SD_WriteDataBlock(const uint8_t *buff, uint8_t token)
 {
     uint8_t resp, i;
 
@@ -454,7 +462,7 @@ static rt_size_t rt_sdcard_write(rt_device_t dev, rt_off_t pos, const void *buff
     return 0;
 }
 
-static rt_err_t rt_sdcard_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t rt_sdcard_control(rt_device_t dev, int cmd, void *args)
 {
     if (cmd == RT_DEVICE_CTRL_BLK_GETGEOME)
     {

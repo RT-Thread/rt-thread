@@ -14,9 +14,9 @@ if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
 	EXEC_PATH 	= '/usr/unicore/gnu-toolchain-unicore/uc4-1.0-beta-hard-RHELAS5/bin/'
 else :
-    print '================ERROR============================'
-    print 'Not support yet!'
-    print '================================================='
+    print('================ERROR============================')
+    print('Not support yet!')
+    print('=================================================')
     exit(0)
 
 if os.getenv('RTT_EXEC_PATH'):

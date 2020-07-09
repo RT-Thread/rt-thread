@@ -1,8 +1,7 @@
 /*
- * File      : emac_drv.c
- *             i.MX6 EMAC Ethernet driver
- * COPYRIGHT (C) 2015, Shanghai Real-Thread Electronic Technology Co.,Ltd
- *
+ * COPYRIGHT (C) 2018, Real-Thread Information Technology Ltd
+ * 
+ * SPDX-License-Identifier: Apache-2.0
  * Change Logs:
  * Date           Author       Notes
  * 2015-07-15     Bernard      The first version
@@ -128,7 +127,7 @@ static rt_size_t imx_emac_write (rt_device_t dev, rt_off_t pos, const void* buff
 	return 0;
 }
 
-static rt_err_t imx_emac_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t imx_emac_control(rt_device_t dev, int cmd, void *args)
 {
     struct emac_device *emac;
 

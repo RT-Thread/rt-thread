@@ -1,0 +1,208 @@
+menu "Utilities"
+
+config RT_USING_RYM
+    bool "Enable Ymodem"
+    default n
+
+    if RT_USING_RYM
+        config YMODEM_USING_CRC_TABLE
+        bool "Enable CRC Table in Ymodem"
+        default n
+
+        config YMODEM_USING_FILE_TRANSFER
+        bool "Enable file transfer feature"
+        select RT_USING_DFS
+        default n
+    endif
+
+config RT_USING_ULOG
+    bool "Enable ulog"
+    default n
+
+    if RT_USING_ULOG
+        if !ULOG_USING_SYSLOG
+            choice
+                prompt "The static output log level."
+                default ULOG_OUTPUT_LVL_D
+                help
+                    When the log level is less than this option and it will stop output.
+                    These log will not compile into ROM when using LOG_X api.
+                    NOTE: It's not available on syslog mode.
+                config ULOG_OUTPUT_LVL_A
+                    bool "Assert"
+                config ULOG_OUTPUT_LVL_E
+                    bool "Error"
+                config ULOG_OUTPUT_LVL_W
+                    bool "Warning"
+                config ULOG_OUTPUT_LVL_I
+                    bool "Information"
+                config ULOG_OUTPUT_LVL_D
+                    bool "Debug"
+            endchoice
+        endif
+
+        if ULOG_USING_SYSLOG
+            choice
+                prompt "The static output log level."
+                default ULOG_OUTPUT_LVL_DEBUG
+                help
+                    When the log level is less than this option and it will stop output.
+                    These log will not compile into ROM when using LOG_X api.
+                    NOTE: It's not available on syslog mode.
+                config ULOG_OUTPUT_LVL_EMERG
+                    bool "EMERG"
+                config ULOG_OUTPUT_LVL_ALERT
+                    bool "ALERT"
+                config ULOG_OUTPUT_LVL_CRIT
+                    bool "CRIT"
+                config ULOG_OUTPUT_LVL_ERROR
+                    bool "ERR"
+                config ULOG_OUTPUT_LVL_WARNING
+                    bool "WARNING"
+                config ULOG_OUTPUT_LVL_NOTICE
+                    bool "NOTICE"
+                config ULOG_OUTPUT_LVL_INFO
+                    bool "INFO"
+                config ULOG_OUTPUT_LVL_DEBUG
+                    bool "DEBUG"
+            endchoice
+        endif
+
+        config ULOG_OUTPUT_LVL
+            int
+            default 0 if ULOG_OUTPUT_LVL_A
+            default 0 if ULOG_OUTPUT_LVL_EMERG
+            default 1 if ULOG_OUTPUT_LVL_ALERT
+            default 2 if ULOG_OUTPUT_LVL_CRIT
+            default 3 if ULOG_OUTPUT_LVL_E
+            default 3 if ULOG_OUTPUT_LVL_ERROR
+            default 4 if ULOG_OUTPUT_LVL_W
+            default 4 if ULOG_OUTPUT_LVL_WARNING
+            default 5 if ULOG_OUTPUT_LVL_NOTICE
+            default 6 if ULOG_OUTPUT_LVL_I
+            default 6 if ULOG_OUTPUT_LVL_INFO
+            default 7 if ULOG_OUTPUT_LVL_D
+            default 7 if ULOG_OUTPUT_LVL_DEBUG
+            default 7
+
+        config ULOG_USING_ISR_LOG
+            bool "Enable ISR log."
+            default n
+            help
+                The log output API can using in ISR (Interrupt Service Routines) also.
+
+        config ULOG_ASSERT_ENABLE
+            bool "Enable assert check."
+            default y
+
+        config ULOG_LINE_BUF_SIZE
+            int "The log's max width."
+            default 128
+            help
+               The buffer size for every line log.
+
+        config ULOG_USING_ASYNC_OUTPUT
+            bool "Enable async output mode."
+            default n
+            help
+                When enable asynchronous output mode. The log output is not immediately and the log will stored to buffer.
+                The another thread (Such as idle) will read the buffer and output the log. So it will using more RAM.
+
+        if ULOG_USING_ASYNC_OUTPUT
+            config ULOG_ASYNC_OUTPUT_BUF_SIZE
+                int "The async output buffer size."
+                default 2048
+
+            config ULOG_ASYNC_OUTPUT_BY_THREAD
+                bool "Enable async output by thread."
+                default y
+                help
+                    This thread will output the asynchronous logs. The logs can output by other user thread when this option is disable.
+
+                if ULOG_ASYNC_OUTPUT_BY_THREAD
+
+                    config ULOG_ASYNC_OUTPUT_THREAD_STACK
+                        int "The async output thread stack size."
+                        default 1024
+
+                    config ULOG_ASYNC_OUTPUT_THREAD_PRIORITY
+                        int "The async output thread stack priority."
+                        range 0 RT_THREAD_PRIORITY_MAX
+                        default 30
+
+                endif
+        endif
+
+        menu "log format"
+            config ULOG_OUTPUT_FLOAT
+                bool "Enable float number support. It will using more thread stack."
+                select RT_USING_LIBC
+                default n
+                help
+                    The default formater is using rt_vsnprint and it not supported float number.
+                    When enable this option then it will enable libc. The formater will change to vsnprint on libc.
+
+            if !ULOG_USING_SYSLOG
+                config ULOG_USING_COLOR
+                    bool "Enable color log."
+                    default y
+                    help
+                        The log will has different color by level.
+            endif
+
+            config ULOG_OUTPUT_TIME
+                bool "Enable time information."
+                default y
+
+            config ULOG_TIME_USING_TIMESTAMP
+                bool "Enable timestamp format for time."
+                default n
+                depends on ULOG_OUTPUT_TIME
+
+            config ULOG_OUTPUT_LEVEL
+                bool "Enable level information."
+                default y
+
+            config ULOG_OUTPUT_TAG
+                bool "Enable tag information."
+                default y
+
+            config ULOG_OUTPUT_THREAD_NAME
+                bool "Enable thread information."
+                default n
+        endmenu
+
+        config ULOG_BACKEND_USING_CONSOLE
+            bool "Enable console backend."
+            default y
+            help
+                The low level output using rt_kprintf().
+
+        config ULOG_USING_FILTER
+            bool "Enable runtime log filter."
+            default n
+            help
+                It will enable the log filter.
+                Such as level filter, log tag filter, log kw filter and tag's level filter.
+
+        config ULOG_USING_SYSLOG
+            bool "Enable syslog format log and API."
+            select ULOG_OUTPUT_TIME
+            select ULOG_USING_FILTER
+            default n
+    endif
+
+config RT_USING_UTEST
+    bool "Enable utest (RT-Thread test framework)"
+    default n
+
+    if RT_USING_UTEST
+        config UTEST_THR_STACK_SIZE
+            int "The utest thread stack size"
+            default 4096
+        config UTEST_THR_PRIORITY
+            int "The utest thread priority"
+            default 20
+    endif
+
+endmenu

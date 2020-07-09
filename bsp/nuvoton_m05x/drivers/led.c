@@ -13,10 +13,6 @@
  */
 
 #include "led.h"
-/* RT_USING_COMPONENTS_INIT */
-#ifdef  RT_USING_COMPONENTS_INIT
-#include <components.h>
-#endif
 
 /*
     LED: P3.6

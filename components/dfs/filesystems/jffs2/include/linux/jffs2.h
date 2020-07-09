@@ -74,6 +74,8 @@
 
 /* These can go once we've made sure we've caught all uses without
    byteswapping */
+#include <stdint.h>
+
 #if defined(__GNUC__) || (__CC_ARM) 
 typedef struct {
 	uint32_t v32;

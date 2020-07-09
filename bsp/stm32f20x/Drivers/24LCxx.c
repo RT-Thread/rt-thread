@@ -1,11 +1,7 @@
 /*
- * File      : 24LCxx.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -118,7 +114,7 @@ static rt_err_t ee24LCxx_close(rt_device_t dev)
 	return RT_EOK;
 }
 
-static rt_err_t ee24LCxx_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+static rt_err_t ee24LCxx_control(rt_device_t dev, int cmd, void *args)
 {
 	return RT_EOK;
 }

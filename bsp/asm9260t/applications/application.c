@@ -26,12 +26,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-void rt_init_thread_entry(void* parameter)
-{
-    /* Initialization RT-Thread Components */
-    rt_components_init();
-}
-
 #ifdef RT_USING_LED
 #include "led.h"
 
@@ -61,14 +55,8 @@ static void start_led_thread(void)
 }
 #endif
 
-int rt_application_init()
+int main()
 {
-    rt_thread_t init_thread;
-    init_thread = rt_thread_create("init", rt_init_thread_entry, RT_NULL, 2048,
-                                   (RT_THREAD_PRIORITY_MAX / 8 * 2), 20);
-    if(init_thread != RT_NULL)
-        rt_thread_startup(init_thread);
-
 #ifdef RT_USING_LED
     start_led_thread();
 #endif

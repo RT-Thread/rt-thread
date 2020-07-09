@@ -1,21 +1,7 @@
 /*
- * File      : mmu.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -34,13 +20,13 @@ void mmu_setttbase(rt_uint32_t i)
 	 * set by page table entry
 	 */
 	value = 0;
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c8, c7, 0
 	}
 
 	value = 0x55555555;
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c3, c0, 0
 			mcr p15, 0, i, c2, c0, 0
@@ -49,7 +35,7 @@ void mmu_setttbase(rt_uint32_t i)
 
 void mmu_set_domain(rt_uint32_t i)
 {
-	__asm
+	__asm volatile
 	{
 		mcr p15,0, i, c3, c0,  0
 	}
@@ -59,7 +45,7 @@ void mmu_enable()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x01
@@ -71,7 +57,7 @@ void mmu_disable()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x01
@@ -83,7 +69,7 @@ void mmu_enable_icache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x1000
@@ -95,7 +81,7 @@ void mmu_enable_dcache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x04
@@ -107,7 +93,7 @@ void mmu_disable_icache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x1000
@@ -119,7 +105,7 @@ void mmu_disable_dcache()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x04
@@ -131,7 +117,7 @@ void mmu_enable_alignfault()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			orr value, value, #0x02
@@ -143,7 +129,7 @@ void mmu_disable_alignfault()
 {
 	register rt_uint32_t value;
 
-	__asm
+	__asm volatile
 	{
 		mrc p15, 0, value, c1, c0, 0
 			bic value, value, #0x02
@@ -153,7 +139,7 @@ void mmu_disable_alignfault()
 
 void mmu_clean_invalidated_cache_index(int index)
 {
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, index, c7, c14, 2
 	}
@@ -167,7 +153,7 @@ void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while(ptr < buffer + size)
 	{
-		__asm
+		__asm volatile
 		{
 			MCR p15, 0, ptr, c7, c14, 1
 		}
@@ -183,7 +169,7 @@ void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while (ptr < buffer + size)
 	{
-		__asm
+		__asm volatile
 		{
 			MCR p15, 0, ptr, c7, c10, 1
 		}
@@ -199,7 +185,7 @@ void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while (ptr < buffer + size)
 	{
-		__asm
+		__asm volatile
 		{
 			MCR p15, 0, ptr, c7, c6, 1
 		}
@@ -212,7 +198,7 @@ void mmu_invalidate_tlb()
 	register rt_uint32_t value;
 
 	value = 0;
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c8, c7, 0
 	}
@@ -224,7 +210,7 @@ void mmu_invalidate_icache()
 
 	value = 0;
 
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c7, c5, 0
 	}
@@ -237,7 +223,7 @@ void mmu_invalidate_dcache_all()
 
 	value = 0;
 
-	__asm
+	__asm volatile
 	{
 		mcr p15, 0, value, c7, c6, 0
 	}
@@ -253,16 +239,16 @@ void mmu_setttbase(register rt_uint32_t i)
 	 * set by page table entry
 	 */
 	value = 0;
-	asm ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
+	asm volatile ("mcr p15, 0, %0, c8, c7, 0"::"r"(value));
 
 	value = 0x55555555;
-	asm ("mcr p15, 0, %0, c3, c0, 0"::"r"(value));
-	asm ("mcr p15, 0, %0, c2, c0, 0"::"r"(i));
+	asm volatile ("mcr p15, 0, %0, c3, c0, 0"::"r"(value));
+	asm volatile ("mcr p15, 0, %0, c2, c0, 0"::"r"(i));
 }
 
 void mmu_set_domain(register rt_uint32_t i)
 {
-	asm ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
+	asm volatile ("mcr p15,0, %0, c3, c0,  0": :"r" (i));
 }
 
 void mmu_enable()
@@ -270,7 +256,7 @@ void mmu_enable()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= 0x1;
 	/* Enables the extended page tables to be configured for
@@ -279,7 +265,7 @@ void mmu_enable()
 	i |= (1 << 13); /* High exception vectors selected, address range = 0xFFFF0000-0xFFFF001C */
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable()
@@ -287,12 +273,12 @@ void mmu_disable()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~0x1;
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_enable_icache()
@@ -300,12 +286,12 @@ void mmu_enable_icache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= (1 << 12);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_enable_dcache()
@@ -313,12 +299,12 @@ void mmu_enable_dcache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= (1 << 2);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable_icache()
@@ -326,12 +312,12 @@ void mmu_disable_icache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~(1 << 12);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable_dcache()
@@ -339,12 +325,12 @@ void mmu_disable_dcache()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~(1 << 2);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_enable_alignfault()
@@ -352,12 +338,12 @@ void mmu_enable_alignfault()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i |= (1 << 1);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_disable_alignfault()
@@ -365,17 +351,17 @@ void mmu_disable_alignfault()
 	register rt_uint32_t i;
 
 	/* read control register */
-	asm ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
+	asm volatile ("mrc p15, 0, %0, c1, c0, 0":"=r" (i));
 
 	i &= ~(1 << 1);
 
 	/* write back to control register */
-	asm ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
+	asm volatile ("mcr p15, 0, %0, c1, c0, 0": :"r" (i));
 }
 
 void mmu_clean_invalidated_cache_index(int index)
 {
-	asm ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
+	asm volatile ("mcr p15, 0, %0, c7, c14, 2": :"r" (index));
 }
 
 void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
@@ -386,7 +372,7 @@ void mmu_clean_invalidated_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while(ptr < buffer + size)
 	{
-		asm ("mcr p15, 0, %0, c7, c14, 1": :"r" (ptr));
+		asm volatile ("mcr p15, 0, %0, c7, c14, 1": :"r" (ptr));
 		ptr += CACHE_LINE_SIZE;
 	}
 }
@@ -400,7 +386,7 @@ void mmu_clean_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while (ptr < buffer + size)
 	{
-		asm ("mcr p15, 0, %0, c7, c10, 1": :"r" (ptr));
+		asm volatile ("mcr p15, 0, %0, c7, c10, 1": :"r" (ptr));
 		ptr += CACHE_LINE_SIZE;
 	}
 }
@@ -413,24 +399,24 @@ void mmu_invalidate_dcache(rt_uint32_t buffer, rt_uint32_t size)
 
 	while (ptr < buffer + size)
 	{
-		asm ("mcr p15, 0, %0, c7, c6, 1": :"r" (ptr));
+		asm volatile ("mcr p15, 0, %0, c7, c6, 1": :"r" (ptr));
 		ptr += CACHE_LINE_SIZE;
 	}
 }
 
 void mmu_invalidate_tlb()
 {
-	asm ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
+	asm volatile ("mcr p15, 0, %0, c8, c7, 0": :"r" (0));
 }
 
 void mmu_invalidate_icache()
 {
-	asm ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
+	asm volatile ("mcr p15, 0, %0, c7, c5, 0": :"r" (0));
 }
 
 void mmu_invalidate_dcache_all()
 {
-	asm ("mcr p15, 0, %0, c7, c6, 0": :"r" (0));
+	asm volatile ("mcr p15, 0, %0, c7, c6, 0": :"r" (0));
 }
 #endif
 

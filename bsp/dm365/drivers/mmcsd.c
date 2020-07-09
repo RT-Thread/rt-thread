@@ -1388,7 +1388,7 @@ static void rt_hw_edma_init(void)
 ** 调用模块: 无
 **
 ********************************************************************************************************/
-rt_int32_t rt_hw_mmcsd_init(void)
+int rt_hw_mmcsd_init(void)
 {
 	struct clk  *clk;
 	struct mmc_dm365_host *dm365_host;
@@ -1477,3 +1477,6 @@ err:
 
 	return -RT_ENOMEM;
 }
+
+INIT_DEVICE_EXPORT(rt_hw_mmcsd_init);
+

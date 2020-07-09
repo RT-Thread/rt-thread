@@ -1,11 +1,7 @@
 /*
- * File      : start.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -111,7 +107,7 @@ reset:
 copy_loop:
 	ldmia	r0!, {r3-r10}	/* copy from source address [r0]    */
 	stmia	r1!, {r3-r10}	/* copy to   target address [r1]    */
-	cmp	r0, r2				/* until source end addreee [r2]    */
+	cmp	r0, r2		/* until source end address [r2]    */
 	ble	copy_loop
 #endif
 	

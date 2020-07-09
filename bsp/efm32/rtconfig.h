@@ -16,10 +16,15 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
-/* RT_NAME_MAX*/
+/* EFM32_BOARD */
+//#define EFM32_G8XX_STK
+//#define EFM32_GXXX_DK
+#define EFM32GG_DK3750
+
+/* RT_NAME_MAX */
 #define RT_NAME_MAX					(8)
 
-/* RT_ALIGN_SIZE*/
+/* RT_ALIGN_SIZE */
 #define RT_ALIGN_SIZE				(4)
 
 /* PRIORITY_MAX */
@@ -30,6 +35,7 @@
 
 /* SECTION: RT_DEBUG */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 //#define RT_DEBUG_MEM 				(1)
 //#define RT_DEBUG_SCHEDULER 			(1)
 //#define RT_DEBUG_IPC 				(1)
@@ -288,8 +294,6 @@
 //#define RT_USING_LWIP
 //#define RT_USING_NETUTILS
 //#define RT_LWIP_DHCP
-/* LwIP uses RT-Thread Memory Management */
-#define RT_LWIP_USING_RT_MEM
 /* Enable ICMP protocol*/
 #define RT_LWIP_ICMP
 /* Enable ICMP protocol*/

@@ -386,7 +386,7 @@ rt_err_t sam7xether_init(rt_device_t dev)
 }
 
 /* control the interface */
-rt_err_t sam7xether_control(rt_device_t dev, rt_uint8_t cmd, void *args)
+rt_err_t sam7xether_control(rt_device_t dev, int cmd, void *args)
 {
 	switch(cmd)
 	{

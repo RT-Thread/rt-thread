@@ -1,18 +1,15 @@
 ;/*
-; * File      : context_rvds.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2009, RT-Thread Development Team
-; *
-; * The license and distribution terms for this file may be
-; * found in the file LICENSE in this distribution or at
-; * http://www.rt-thread.org/license/LICENSE
-; *
+;* Copyright (c) 2006-2018, RT-Thread Development Team
+;*
+;* SPDX-License-Identifier: Apache-2.0
+;*
 ; * Change Logs:
 ; * Date           Author       Notes
 ; * 2009-01-17     Bernard      first version.
 ; * 2012-01-01     aozima       support context switch load/store FPU register.
 ; * 2013-06-18     aozima       add restore MSP feature.
 ; * 2013-06-23     aozima       support lazy stack optimized.
+; * 2018-07-24     aozima       enhancement hard fault exception handler.
 ; */
 
 ;/**
@@ -23,7 +20,7 @@
 SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
-NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
+NVIC_PENDSV_PRI EQU     0xFFFF0000               ; PendSV and SysTick priority value (lowest)
 NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV exception
 
     AREA |.text|, CODE, READONLY, ALIGN=2
@@ -147,15 +144,15 @@ switch_to_thread
 
     MSR     psp, r1                 ; update stack pointer
 
-pendsv_exit
-    ; restore interrupt
-    MSR     PRIMASK, r2
-
     IF      {FPU} != "SoftVFP"
     ORR     lr, lr, #0x10           ; lr |=  (1 << 4), clean FPCA.
     CMP     r3,  #0                 ; if(flag_r3 != 0)
     BICNE   lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
     ENDIF
+
+pendsv_exit
+    ; restore interrupt
+    MSR     PRIMASK, r2
 
     ORR     lr, lr, #0x04
     BX      lr
@@ -189,7 +186,7 @@ rt_hw_context_switch_to    PROC
     MOV     r0, #1
     STR     r0, [r1]
 
-    ; set the PendSV exception priority
+    ; set the PendSV and SysTick exception priority
     LDR     r0, =NVIC_SYSPRI2
     LDR     r1, =NVIC_PENDSV_PRI
     LDR.W   r2, [r0,#0x00]       ; read
@@ -208,6 +205,7 @@ rt_hw_context_switch_to    PROC
     MSR     msp, r0
 
     ; enable interrupts at processor level
+    CPSIE   F
     CPSIE   I
 
     ; never reach here!
@@ -224,7 +222,22 @@ rt_hw_interrupt_thread_switch PROC
 HardFault_Handler    PROC
 
     ; get current context
-    MRS     r0, psp                 ; get fault thread stack pointer
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MRSEQ   r0, msp                 ; [2]=0 ==> Z=1, get fault context from handler.
+    MRSNE   r0, psp                 ; [2]=1 ==> Z=0, get fault context from thread.
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+    IF      {FPU} != "SoftVFP"
+    STMFD   r0!, {lr}               ; push dummy for flag
+    ENDIF
+    STMFD   r0!, {lr}               ; push exec_return register
+
+    TST     lr, #0x04               ; if(!EXC_RETURN[2])
+    ITE     EQ
+    MSREQ   msp, r0                 ; [2]=0 ==> Z=1, update stack pointer to MSP.
+    MSRNE   psp, r0                 ; [2]=1 ==> Z=0, update stack pointer to PSP.
+
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
     POP     {lr}

@@ -22,6 +22,7 @@
 //#define RT_USING_MODULE
 // <section name="RT_DEBUG" description="Kernel Debug Configuration" default="true" >
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 // <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
 #define RT_DEBUG_INIT   0
 // <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
@@ -74,6 +75,7 @@
 #define RT_USING_DEVICE_IPC
 // <bool name="RT_USING_SERIAL" description="Using Serial Device Driver Framework" default="true" />
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 // <integer name="RT_UART_RX_BUFFER_SIZE" description="The buffer size for UART reception" default="64" />
 #define RT_UART_RX_BUFFER_SIZE    256
 // <bool name="RT_USING_MTD_NAND" description="Using MTD NAND Framework" default="true" />
@@ -146,8 +148,8 @@
 #define RT_DFS_ELM_CODE_PAGE    936
 // <bool name="RT_DFS_ELM_CODE_PAGE_FILE" description="Using OEM code page file" default="false" />
 #define RT_DFS_ELM_CODE_PAGE_FILE
-// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="256" />
-#define RT_DFS_ELM_MAX_LFN  256
+// <integer name="RT_DFS_ELM_MAX_LFN" description="Maximal size of file name length" default="255" />
+#define RT_DFS_ELM_MAX_LFN  255
 // <integer name="RT_DFS_ELM_MAX_SECTOR_SIZE" description="Maximal size of sector" default="512" />
 #define RT_DFS_ELM_MAX_SECTOR_SIZE  4096
 // <bool name="RT_DFS_ELM_USE_ERASE" description="Enable erase feature for flash" default="true" />
@@ -224,8 +226,6 @@
 // </section>
 
 #define RT_USING_VBUS
-#define RT_USING_LOGTRACE
-
 // </RDTConfigurator>
 
 

@@ -1,0 +1,36 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+src = Split("""
+hal/am_hal_clkgen.c
+hal/am_hal_debug.c
+hal/am_hal_cachectrl.c
+hal/am_hal_pwrctrl.c
+hal/am_hal_mcuctrl.c
+hal/am_hal_sysctrl.c
+hal/am_hal_reset.c
+hal/am_hal_stimer.c
+hal/am_hal_ctimer.c
+hal/am_hal_rtc.c
+hal/am_hal_interrupt.c
+hal/am_hal_queue.c
+hal/am_hal_iom.c
+hal/am_hal_ios.c
+hal/am_hal_vcomp.c
+hal/am_hal_flash.c
+hal/am_hal_gpio.c
+hal/am_hal_uart.c
+hal/am_hal_adc.c
+hal/am_hal_pdm.c
+hal/am_hal_i2c_bit_bang.c
+""")
+
+path = [cwd]
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')

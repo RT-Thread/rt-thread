@@ -1,21 +1,7 @@
 /*
- * File      : context.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -70,12 +56,6 @@ rt_hw_context_switch:
 
     ldmfd sp!, {r4}         @ pop new task cpsr to spsr
     msr spsr_cxsf, r4
-#ifdef RT_USING_VFP
-    vmrs    r0, fpexc
-    bic     r0, r0, #FPEXC_EN    @ always disable VFP so we can 
-                                 @ lazily save/restore the old state.
-    vmsr    fpexc, r0
-#endif
 _do_switch:
     ldmfd sp!, {r0-r12, lr, pc}^  @ pop new task r0-r12, lr & pc, copy spsr to cpsr
 
@@ -92,12 +72,6 @@ rt_hw_context_switch_to:
 
     bic r4, r4, #0x20       @ must be ARM mode
     msr cpsr_cxsf, r4
-#ifdef RT_USING_VFP
-    vmrs    r0, fpexc
-    bic     r0, r0, #FPEXC_EN    @ always disable VFP so we can 
-                                 @ lazily save/restore the old state.
-    vmsr    fpexc, r0
-#endif
     ldmfd sp!, {r0-r12, lr, pc}^   @ pop new task r0-r12, lr & pc
 
 /*

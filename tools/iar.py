@@ -25,6 +25,9 @@
 import os
 import sys
 import string
+import utils
+
+from SCons.Script import *
 
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
@@ -49,76 +52,99 @@ def IARAddGroup(parent, name, files, project_path):
     group = SubElement(parent, 'group')
     group_name = SubElement(group, 'name')
     group_name.text = name
-    
+
     for f in files:
         fn = f.rfile()
         name = fn.name
         path = os.path.dirname(fn.abspath)
-    
         basename = os.path.basename(path)
         path = _make_path_relative(project_path, path)
         path = os.path.join(path, name)
-        
+
         file = SubElement(group, 'file')
         file_name = SubElement(file, 'name')
+
         if os.path.isabs(path):
-            file_name.text = path.decode(fs_encoding)
+            file_name.text = path # path.decode(fs_encoding)
         else:
-            file_name.text = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+            file_name.text = '$PROJ_DIR$\\' + path # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
 def IARWorkspace(target):
-    # make an workspace 
+    # make an workspace
     workspace = target.replace('.ewp', '.eww')
-    out = file(workspace, 'wb')
+    out = open(workspace, 'w')
     xml = iar_workspace % target
     out.write(xml)
     out.close()
-    
+
 def IARProject(target, script):
     project_path = os.path.dirname(os.path.abspath(target))
 
     tree = etree.parse('template.ewp')
     root = tree.getroot()
 
-    out = file(target, 'wb')
+    out = open(target, 'w')
 
     CPPPATH = []
     CPPDEFINES = []
     LINKFLAGS = ''
     CCFLAGS = ''
-    
+    Libs = []
+    lib_prefix = ['lib', '']
+    lib_suffix = ['.a', '.o', '']
+
+    def searchLib(group):
+        for path_item in group['LIBPATH']:
+            for prefix_item in lib_prefix:
+                for suffix_item in lib_suffix:
+                    lib_full_path = os.path.join(path_item, prefix_item + item + suffix_item)
+                    if os.path.isfile(lib_full_path):
+                        return lib_full_path
+        else:
+            return ''
+
     # add group
     for group in script:
         IARAddGroup(root, group['name'], group['src'], project_path)
 
         # get each include path
-        if group.has_key('CPPPATH') and group['CPPPATH']:
+        if 'CPPPATH' in group and group['CPPPATH']:
             CPPPATH += group['CPPPATH']
-        
+
         # get each group's definitions
-        if group.has_key('CPPDEFINES') and group['CPPDEFINES']:
+        if 'CPPDEFINES' in group and group['CPPDEFINES']:
             CPPDEFINES += group['CPPDEFINES']
-        
+
         # get each group's link flags
-        if group.has_key('LINKFLAGS') and group['LINKFLAGS']:
+        if 'LINKFLAGS' in group and group['LINKFLAGS']:
             LINKFLAGS += group['LINKFLAGS']
-    
-    # make relative path 
+
+        if 'LIBS' in group and group['LIBS']:
+            for item in group['LIBS']:
+                lib_path = searchLib(group)
+                if lib_path != '':
+                    lib_path = _make_path_relative(project_path, lib_path)
+                    Libs += [lib_path]
+                    # print('found lib isfile: ' + lib_path)
+                else:
+                    print('not found LIB: ' + item)
+
+    # make relative path
     paths = set()
     for path in CPPPATH:
         inc = _make_path_relative(project_path, os.path.normpath(path))
         paths.add(inc) #.replace('\\', '/')
-    
+
     # setting options
     options = tree.findall('configuration/settings/data/option')
     for option in options:
         # print option.text
         name = option.find('name')
-        
+
         if name.text == 'CCIncludePath2' or name.text == 'newCCIncludePaths':
             for path in paths:
                 state = SubElement(option, 'state')
-                if os.path.isabs(path):
+                if os.path.isabs(path) or path.startswith('$'):
                     state.text = path
                 else:
                     state.text = '$PROJ_DIR$\\' + path
@@ -127,9 +153,56 @@ def IARProject(target, script):
             for define in CPPDEFINES:
                 state = SubElement(option, 'state')
                 state.text = define
-    
+
+        if name.text == 'IlinkAdditionalLibs':
+            for path in Libs:
+                state = SubElement(option, 'state')
+                if os.path.isabs(path) or path.startswith('$'):
+                    path = path.decode(fs_encoding)
+                else:
+                    path = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+                state.text = path
+
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8').decode())
     out.close()
-    
+
     IARWorkspace(target)
+
+def IARVersion():
+    import subprocess
+    import re
+
+    def IARPath():
+        import rtconfig
+
+        # backup environ
+        old_environ = os.environ
+        os.environ['RTT_CC'] = 'iar'
+        utils.ReloadModule(rtconfig)
+
+        # get iar path
+        path = rtconfig.EXEC_PATH
+
+        # restore environ
+        os.environ = old_environ
+        utils.ReloadModule(rtconfig)
+
+        return path
+
+    path = IARPath();
+
+    if os.path.exists(path):
+        cmd = os.path.join(path, 'iccarm.exe')
+    else:
+        print('Error: get IAR version failed. Please update the IAR installation path in rtconfig.py!')
+        exit(-1)
+
+    child = subprocess.Popen([cmd, '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    stdout, stderr = child.communicate()
+
+    # example stdout: IAR ANSI C/C++ Compiler V8.20.1.14183/W32 for ARM
+    iar_version = re.search('[\d\.]+', stdout).group(0)
+    if GetOption('verbose'):
+        print("IAR version: %s" % iar_version)
+    return iar_version

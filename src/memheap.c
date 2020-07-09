@@ -1,21 +1,11 @@
 /*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
  * File      : memheap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2012, RT-Thread Development Team
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  * Change Logs:
  * Date           Author       Notes
@@ -44,7 +34,7 @@
 #define RT_MEMHEAP_MINIALLOC    12
 
 #define RT_MEMHEAP_SIZE         RT_ALIGN(sizeof(struct rt_memheap_item), RT_ALIGN_SIZE)
-#define MEMITEM_SIZE(item)      ((rt_uint32_t)item->next - (rt_uint32_t)item - RT_MEMHEAP_SIZE)
+#define MEMITEM_SIZE(item)      ((rt_ubase_t)item->next - (rt_ubase_t)item - RT_MEMHEAP_SIZE)
 
 /*
  * The initialized memory pool will be:
@@ -60,7 +50,7 @@
 rt_err_t rt_memheap_init(struct rt_memheap *memheap,
                          const char        *name,
                          void              *start_addr,
-                         rt_uint32_t        size)
+                         rt_size_t         size)
 {
     struct rt_memheap_item *item;
 
@@ -96,7 +86,7 @@ rt_err_t rt_memheap_init(struct rt_memheap *memheap,
     item->prev_free = item;
 
     item->next = (struct rt_memheap_item *)
-        ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
+                 ((rt_uint8_t *)item + memheap->available_size + RT_MEMHEAP_SIZE);
     item->prev = item->next;
 
     /* block list header */
@@ -134,6 +124,8 @@ RTM_EXPORT(rt_memheap_init);
 rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 {
     RT_ASSERT(heap);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
+    RT_ASSERT(rt_object_is_systemobject(&heap->parent));
 
     rt_object_detach(&(heap->lock.parent.parent));
     rt_object_detach(&(heap->parent));
@@ -143,13 +135,14 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
 }
 RTM_EXPORT(rt_memheap_detach);
 
-void *rt_memheap_alloc(struct rt_memheap *heap, rt_uint32_t size)
+void *rt_memheap_alloc(struct rt_memheap *heap, rt_size_t size)
 {
     rt_err_t result;
     rt_uint32_t free_size;
     struct rt_memheap_item *header_ptr;
 
     RT_ASSERT(heap != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
     /* align allocated size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
@@ -295,6 +288,9 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     struct rt_memheap_item *header_ptr;
     struct rt_memheap_item *new_ptr;
 
+    RT_ASSERT(heap);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
+
     if (newsize == 0)
     {
         rt_memheap_free(ptr);
@@ -315,10 +311,10 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
     header_ptr = (struct rt_memheap_item *)
                  ((rt_uint8_t *)ptr - RT_MEMHEAP_SIZE);
     oldsize = MEMITEM_SIZE(header_ptr);
-     /* re-allocate memory */
+    /* re-allocate memory */
     if (newsize > oldsize)
     {
-        void* new_ptr;
+        void *new_ptr;
         struct rt_memheap_item *next_ptr;
 
         /* lock memheap */
@@ -371,7 +367,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
                 next_ptr->prev->next = next_ptr->next;
 
                 /* build a new one on the right place */
-                next_ptr = (struct rt_memheap_item*)((char*)ptr + newsize);
+                next_ptr = (struct rt_memheap_item *)((char *)ptr + newsize);
 
                 RT_DEBUG_LOG(RT_DEBUG_MEMHEAP,
                              ("new free block: block[0x%08x] nextm[0x%08x] prevm[0x%08x]",
@@ -410,7 +406,7 @@ void *rt_memheap_realloc(struct rt_memheap *heap, void *ptr, rt_size_t newsize)
         rt_sem_release(&(heap->lock));
 
         /* re-allocate a memory block */
-        new_ptr = (void*)rt_memheap_alloc(heap, newsize);
+        new_ptr = (void *)rt_memheap_alloc(heap, newsize);
         if (new_ptr != RT_NULL)
         {
             rt_memcpy(new_ptr, ptr, oldsize < newsize ? oldsize : newsize);
@@ -503,8 +499,8 @@ void rt_memheap_free(void *ptr)
     struct rt_memheap_item *header_ptr, *new_ptr;
     rt_uint32_t insert_header;
 
-	/* NULL check */
-	if (ptr == RT_NULL) return;
+    /* NULL check */
+    if (ptr == RT_NULL) return;
 
     /* set initial status as OK */
     insert_header = 1;
@@ -523,6 +519,9 @@ void rt_memheap_free(void *ptr)
 
     /* get pool ptr */
     heap = header_ptr->pool_ptr;
+
+    RT_ASSERT(heap);
+    RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
     /* lock memheap */
     result = rt_sem_take(&(heap->lock), RT_WAITING_FOREVER);
@@ -610,7 +609,7 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
 
 void *rt_malloc(rt_size_t size)
 {
-    void* ptr;
+    void *ptr;
 
     /* try to allocate in system heap */
     ptr = rt_memheap_alloc(&_heap, size);
@@ -620,16 +619,19 @@ void *rt_malloc(rt_size_t size)
         struct rt_list_node *node;
         struct rt_memheap *heap;
         struct rt_object_information *information;
-        extern struct rt_object_information rt_object_container[];
 
         /* try to allocate on other memory heap */
-        information = &rt_object_container[RT_Object_Class_MemHeap];
+        information = rt_object_get_information(RT_Object_Class_MemHeap);
+        RT_ASSERT(information != RT_NULL);
         for (node  = information->object_list.next;
              node != &(information->object_list);
              node  = node->next)
         {
             object = rt_list_entry(node, struct rt_object, list);
             heap   = (struct rt_memheap *)object;
+
+            RT_ASSERT(heap);
+            RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
 
             /* not allocate in the default system heap */
             if (heap == &_heap)
@@ -659,6 +661,12 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
     if (rmem == RT_NULL)
         return rt_malloc(newsize);
 
+    if (newsize == 0)
+    {
+        rt_free(rmem);
+        return RT_NULL;
+    }
+
     /* get old memory item */
     header_ptr = (struct rt_memheap_item *)
                  ((rt_uint8_t *)rmem - RT_MEMHEAP_SIZE);
@@ -678,6 +686,8 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
                 rt_memcpy(new_ptr, rmem, oldsize);
             else
                 rt_memcpy(new_ptr, rmem, newsize);
+
+            rt_free(rmem);
         }
     }
 

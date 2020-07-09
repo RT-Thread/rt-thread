@@ -1,0 +1,124 @@
+#! armcc -E
+/*
+** ###################################################################
+**     Processors:          LPC54608J512BD208
+**                          LPC54608J512ET180
+**
+**     Compiler:            Keil ARM C/C++ Compiler
+**     Reference manual:    LPC54S60x/LPC5460x User manual Rev.0.9  7 Nov 2016
+**     Version:             rev. 1.1, 2016-11-25
+**     Build:               b161227
+**
+**     Abstract:
+**         Linker file for the Keil ARM C/C++ Compiler
+**
+**     Copyright (c) 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016 - 2017 NXP
+**     Redistribution and use in source and binary forms, with or without modification,
+**     are permitted provided that the following conditions are met:
+**
+**     o Redistributions of source code must retain the above copyright notice, this list
+**       of conditions and the following disclaimer.
+**
+**     o Redistributions in binary form must reproduce the above copyright notice, this
+**       list of conditions and the following disclaimer in the documentation and/or
+**       other materials provided with the distribution.
+**
+**     o Neither the name of the copyright holder nor the names of its
+**       contributors may be used to endorse or promote products derived from this
+**       software without specific prior written permission.
+**
+**     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+**     ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+**     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+**     DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+**     ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+**     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+**     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+**     ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+**     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+**     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+#if (defined(__ram_vector_table__))
+  #define __ram_vector_table_size__    0x00000400
+#else
+  #define __ram_vector_table_size__    0x00000000
+#endif
+
+#define m_interrupts_start             0x00000000
+#define m_interrupts_size              0x00000400
+
+#define m_text_start                   0x00000400
+#define m_text_size                    0x0007FC00
+
+#define m_interrupts_ram_start         0x20000000
+#define m_interrupts_ram_size          __ram_vector_table_size__
+
+#define m_data_start                   (m_interrupts_ram_start + m_interrupts_ram_size)
+#define m_data_size                    0x00028000/*(0x00028000 - m_interrupts_ram_size)*/
+
+#define m_usb_sram_start               0x40100000
+#define m_usb_sram_size                0x00002000
+
+/* USB BDT size */
+#define usb_bdt_size                   0x0
+/* Sizes */
+#if (defined(__stack_size__))
+  #define Stack_Size                   __stack_size__
+#else
+  #define Stack_Size                   0x0400
+#endif
+
+#if (defined(__heap_size__))
+  #define Heap_Size                    __heap_size__
+#else
+  #define Heap_Size                    0x0400
+#endif
+    
+#define RTT_HEAP_LENGTH		(m_data_size - ImageLength(RW_m_data) - ImageLength(ARM_LIB_HEAP) - ImageLength(ARM_LIB_STACK))
+
+LR_m_text m_interrupts_start m_text_start+m_text_size-m_interrupts_start { ; load region size_region
+  VECTOR_ROM m_interrupts_start m_interrupts_size { ; load address = execution address
+    * (RESET,+FIRST)
+  }
+  ER_m_text m_text_start FIXED m_text_size { ; load address = execution address
+    * (InRoot$$Sections)
+    .ANY (+RO)
+  }
+
+#if (defined(__ram_vector_table__))
+  VECTOR_RAM m_interrupts_ram_start EMPTY m_interrupts_ram_size {
+  }
+#else
+  VECTOR_RAM m_interrupts_start EMPTY 0 {
+  }
+#endif
+  RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size { ; RW data
+    .ANY (+RW +ZI)
+  }
+  ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
+  }
+  ARM_LIB_STACK +0 EMPTY Stack_Size { ; Stack region growing down
+  }
+  RTT_HEAP +0 EMPTY RTT_HEAP_LENGTH {
+  }
+}
+
+LR_m_usb_bdt m_usb_sram_start usb_bdt_size {
+  ER_m_usb_bdt m_usb_sram_start UNINIT usb_bdt_size {
+    * (m_usb_bdt)
+  }
+}
+
+LR_m_usb_ram (m_usb_sram_start + usb_bdt_size) (m_usb_sram_size - usb_bdt_size) {
+  ER_m_usb_ram (m_usb_sram_start + usb_bdt_size) UNINIT (m_usb_sram_size - usb_bdt_size) {
+    * (m_usb_global)
+  }
+}
+

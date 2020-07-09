@@ -12,12 +12,14 @@ from building import *
 
 TARGET = 'rtthread-realview.' + rtconfig.TARGET_EXT
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')
 Export('rtconfig')
@@ -29,7 +31,7 @@ if GetDepend('RT_USING_VMM'):
     if os.system('{cppcmd} -P -C -E -I. -D__ASSEMBLY__ {ldfile}.S -o {ldfile}'.format(
                   cppcmd = os.path.join(rtconfig.EXEC_PATH, 'arm-none-eabi-gcc'),
                   ldfile = rtconfig.LINK_SCRIPT)) != 0:
-        print 'failed to generate linker script %s' % rtconfig.LINK_SCRIPT
+        print('failed to generate linker script %s' % rtconfig.LINK_SCRIPT)
         sys.exit(255)
     # if the linker script changed, relink the target
     Depends(TARGET, rtconfig.LINK_SCRIPT)

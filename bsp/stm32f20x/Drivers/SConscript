@@ -1,8 +1,6 @@
-Import('RTT_ROOT')
-Import('rtconfig')
 from building import *
 
-cwd     = os.path.join(str(Dir('#')), 'Drivers')
+cwd = GetCurrentDir()
 src	= Glob('*.c')
 CPPPATH = [cwd]
 
@@ -15,9 +13,6 @@ if GetDepend('RT_USING_DFS') == False:
 #remove other no use files
 #SrcRemove(src, 'FM25Lx.c')
 #SrcRemove(src, '24LCxx.c')
-
-#MDK platform retarget. Not yet tested
-SrcRemove(src, 'stdio_Retarget.c')
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
