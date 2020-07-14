@@ -322,6 +322,15 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
     struct siginfo_node *si_node;
 
     level = rt_hw_interrupt_disable();
+
+    if (!(tid->stat & RT_THREAD_STAT_SIGNAL_PENDING))
+    {
+        rt_hw_interrupt_enable(level);
+        return;
+    }
+
+    tid->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
     if (tid->sig_pending & tid->sig_mask)
     {
         /* if thread is not waiting for signal */
