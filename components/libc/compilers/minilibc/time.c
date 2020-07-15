@@ -153,7 +153,7 @@ time_t mktime(struct tm * const t)
         day -= years;
     }
 
-    day += t->tm_yday = __spm[t->tm_mon] + t->tm_mday - 1 +
+    day += t->tm_yday = __spm[t->tm_mon - 1] + t->tm_mday - 1 +
                         (__isleap(t->tm_year + 1900) & (t->tm_mon > 1));
 
     /* day is now the number of days since 'Jan 1 1970' */
