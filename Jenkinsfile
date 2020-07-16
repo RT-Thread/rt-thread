@@ -127,8 +127,8 @@ pipeline {
 
                         echo \$RTT_EXEC_PATH
 
-                        export CPUS=$(cat /proc/cpuinfo | grep "processor" | sort | uniq | wc -l)
-                        scons -j${env.CPUS} -C bsp/\$RTT_BSP
+                        export CPUS=\$(cat /proc/cpuinfo | grep "processor" | sort | uniq | wc -l)
+                        scons -j\${CPUS} -C bsp/\$RTT_BSP
                         """
                     }
                 }
