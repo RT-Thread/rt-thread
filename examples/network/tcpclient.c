@@ -129,7 +129,7 @@ static void tcpclient(void *arg)
         ret = send(sock, send_data, rt_strlen(send_data), 0);
         if (ret < 0)
         {
-            /* 接收失败，关闭这个连接 */
+            /* 发送失败，关闭这个连接 */
             LOG_I("send error, close the socket.");
             goto __exit;
         }
