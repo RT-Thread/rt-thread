@@ -56,6 +56,7 @@ typedef enum
 } at_socket_evt_t;
 
 struct at_socket;
+struct at_device;
 
 typedef void (*at_evt_cb_t)(struct at_socket *socket, at_socket_evt_t event, const char *buff, size_t bfsz);
 
@@ -65,6 +66,7 @@ typedef void (* at_socket_callback)(struct at_socket *conn, int event, uint16_t 
 /* AT socket operations function */
 struct at_socket_ops
 {
+    int (*at_socket)(struct at_device *device, enum at_socket_type type);
     int (*at_connect)(struct at_socket *socket, char *ip, int32_t port, enum at_socket_type type, rt_bool_t is_client);
     int (*at_closesocket)(struct at_socket *socket);
     int (*at_send)(struct at_socket *socket, const char *buff, size_t bfsz, enum at_socket_type type);
