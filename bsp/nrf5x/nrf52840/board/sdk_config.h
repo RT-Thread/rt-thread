@@ -48,6 +48,7 @@
 #endif
 // <h> nRF_BLE 
 
+#include <rtconfig.h>
 //==========================================================
 // <q> BLE_ADVERTISING_ENABLED  - ble_advertising - Advertising module
  
@@ -11694,7 +11695,6 @@
 #endif
 // </e>
 
-// </h>
 //==========================================================
 #ifndef NRFX_SYSTICK_ENABLED
 #define NRFX_SYSTICK_ENABLED 1
