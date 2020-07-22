@@ -64,7 +64,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_TI            (11) /* Texas Instruments */
 #define RT_SENSOR_VENDOR_PLANTOWER     (12) /* Plantower */
 #define RT_SENSOR_VENDOR_AMS           (13) /* ams AG */
-
+#define RT_SENSOR_VENDOR_MELEXIS       (14) /* Melexis */
 
 /* Sensor unit types */
 
