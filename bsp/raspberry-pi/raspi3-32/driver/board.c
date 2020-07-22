@@ -73,10 +73,6 @@ void ipi_handler()
     rt_scheduler_ipi_handler(0,RT_NULL);
 }
 #endif
-void vector_copy(void)
-{
-    rt_memcpy((void*)0x0, (void*)0x8000, 64);
-}
 
 void idle_wfi(void)
 {
@@ -87,7 +83,6 @@ void rt_hw_board_init(void)
 {
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
-    vector_copy();
     rt_hw_vector_init();
     /* initialize uart */
     rt_hw_uart_init();

@@ -111,6 +111,10 @@ config RT_USING_ADC
     bool "Using ADC device drivers"
     default n
 
+config RT_USING_DAC
+    bool "Using DAC device drivers"
+    default n
+    
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n

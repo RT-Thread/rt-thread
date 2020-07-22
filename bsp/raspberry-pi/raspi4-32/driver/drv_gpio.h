@@ -17,6 +17,14 @@
 #include "board.h"
 #include "interrupt.h"
 
+struct gpio_irq_def
+{
+    void  *irq_arg[32];
+    void (*irq_cb[32])(void *param);
+    rt_uint8_t irq_type[32];
+    rt_uint8_t state[32];
+};
+
 #define GPIO_REG_GPFSEL0(BASE)             HWREG32(BASE + 0x00)
 #define GPIO_REG_GPFSEL1(BASE)             HWREG32(BASE + 0x04)
 #define GPIO_REG_GPFSEL2(BASE)             HWREG32(BASE + 0x08)
@@ -59,6 +67,10 @@
 #define GPIO_REG_GPPUDCLK1(BASE)           HWREG32(BASE + 0x9C)
 #define GPIO_REG_REV9(BASE)                HWREG32(BASE + 0xA0)
 #define GPIO_REG_TEST(BASE)                HWREG32(BASE + 0xA4)
+#define GPIO_PUP_PDN_CNTRL_REG0(BASE)      HWREG32(BASE + 0xE4)
+#define GPIO_PUP_PDN_CNTRL_REG1(BASE)      HWREG32(BASE + 0xE8)
+#define GPIO_PUP_PDN_CNTRL_REG2(BASE)      HWREG32(BASE + 0xEC)
+#define GPIO_PUP_PDN_CNTRL_REG3(BASE)      HWREG32(BASE + 0xF0)
 
 typedef enum {
     GPIO_PIN_0,
@@ -115,7 +127,14 @@ typedef enum {
     ALT5 = 0b010
 } GPIO_FUNC;
 
+typedef enum {
+    RASPI_NO_RESISTOR = 0x00,
+    RASPI_PULL_UP = 0x01,
+    RASPI_PULL_DOWN = 0x10
+} GPIO_PUPD_FUNC;
+
 void prev_raspi_pin_mode(GPIO_PIN pin, GPIO_FUNC mode);
+void prev_raspi_pin_write(GPIO_PIN pin, int pin_value);
 int rt_hw_gpio_init(void);
 
 #endif /* __DRV_GPIO_H__ */

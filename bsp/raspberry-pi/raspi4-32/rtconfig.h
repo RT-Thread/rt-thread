@@ -86,6 +86,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -154,6 +155,12 @@
 
 /* samples: kernel and components samples */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
 #define BCM2711_SOC
 
 /* Hardware Drivers Config */
@@ -167,6 +174,9 @@
 #define BSP_USING_GIC
 #define BSP_USING_GIC400
 #define BSP_USING_PIN
+#define BSP_USING_SPI
+#define BSP_USING_SPI0_BUS
+#define BSP_USING_SPI0_DEVICE0
 #define BSP_USING_CORETIMER
 
 /* Board Peripheral Drivers */

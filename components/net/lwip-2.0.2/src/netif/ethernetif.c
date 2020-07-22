@@ -164,6 +164,16 @@ static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_
 static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 {
     netdev_low_level_set_dhcp_status(netif, is_enabled);
+
+    /*add dhcp start or stop must call dhcp_start and dhcp_stop function*/
+    if(is_enabled == RT_TRUE)
+    {
+        dhcp_start((struct netif *)netif->user_data);
+    }
+    else
+    {
+        dhcp_stop((struct netif *)netif->user_data);    
+    }
     return ERR_OK;
 }
 #endif /* RT_LWIP_DHCP */
@@ -484,16 +494,15 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 #if LWIP_NETIF_HOSTNAME
 #define LWIP_HOSTNAME_LEN 16
     char *hostname = RT_NULL;
-    netif = (struct netif*) rt_malloc (sizeof(struct netif) + LWIP_HOSTNAME_LEN);
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
 #else
-    netif = (struct netif*) rt_malloc (sizeof(struct netif));
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif));
 #endif
     if (netif == RT_NULL)
     {
         rt_kprintf("malloc netif failed\n");
         return -RT_ERROR;
     }
-    rt_memset(netif, 0, sizeof(struct netif));
 
     /* set netif */
     dev->netif = netif;
