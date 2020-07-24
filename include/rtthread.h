@@ -338,7 +338,7 @@ rt_err_t rt_event_delete(rt_event_t event);
 rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set);
 rt_err_t rt_event_recv(rt_event_t   event,
                        rt_uint32_t  set,
-                       rt_uint8_t   opt,
+                       rt_uint8_t   option,
                        rt_int32_t   timeout,
                        rt_uint32_t *recved);
 rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg);
@@ -518,10 +518,10 @@ void rt_components_board_init(void);
 void rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
 #endif
-rt_int32_t rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
+rt_int32_t rt_vsprintf(char *buf, const char *format, va_list arg_ptr);
 rt_int32_t rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 rt_int32_t rt_sprintf(char *buf, const char *format, ...);
-rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
+rt_int32_t rt_snprintf(char *buf, rt_size_t size, const char *fmt, ...);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
@@ -529,7 +529,7 @@ rt_device_t rt_console_get_device(void);
 #endif
 
 rt_err_t rt_get_errno(void);
-void rt_set_errno(rt_err_t no);
+void rt_set_errno(rt_err_t error);
 int *_rt_errno(void);
 #if !defined(RT_USING_NEWLIB) && !defined(_WIN32)
 #ifndef errno
@@ -539,12 +539,12 @@ int *_rt_errno(void);
 
 int __rt_ffs(int value);
 
-void *rt_memset(void *src, int c, rt_ubase_t n);
-void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
+void *rt_memset(void *s, int c, rt_ubase_t count);
+void *rt_memcpy(void *dst, const void *src, rt_ubase_t count);
 
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
-rt_size_t rt_strlen(const char *src);
+rt_size_t rt_strlen(const char *s);
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 char *rt_strdup(const char *s);
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
@@ -552,9 +552,9 @@ char *rt_strdup(const char *s);
 char* strdup(const char* str);
 #endif
 
-char *rt_strstr(const char *str1, const char *str2);
+char *rt_strstr(const char *s1, const char *s2);
 rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
-char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
+char *rt_strncpy(char *dst, const char *src, rt_ubase_t n);
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);
