@@ -604,7 +604,7 @@ rt_inline int skip_atoi(const char **s)
 
 #ifdef RT_PRINTF_PRECISION
 static char *print_number(char *buf,
-                          char *end,
+                          char *str_end,
 #ifdef RT_PRINTF_LONGLONG
                           long long  num,
 #else
@@ -616,7 +616,7 @@ static char *print_number(char *buf,
                           int   type)
 #else
 static char *print_number(char *buf,
-                          char *end,
+                          char *str_end,
 #ifdef RT_PRINTF_LONGLONG
                           long long  num,
 #else
@@ -697,7 +697,7 @@ static char *print_number(char *buf,
 
         while (size-- > 0)
         {
-            if (buf < end)
+            if (buf < str_end)
                 *buf = ' ';
             ++ buf;
         }
@@ -705,7 +705,7 @@ static char *print_number(char *buf,
 
     if (sign)
     {
-        if (buf < end)
+        if (buf < str_end)
         {
             *buf = sign;
         }
@@ -718,16 +718,16 @@ static char *print_number(char *buf,
     {
         if (base == 8)
         {
-            if (buf < end)
+            if (buf < str_end)
                 *buf = '0';
             ++ buf;
         }
         else if (base == 16)
         {
-            if (buf < end)
+            if (buf < str_end)
                 *buf = '0';
             ++ buf;
-            if (buf < end)
+            if (buf < str_end)
             {
                 *buf = type & LARGE ? 'X' : 'x';
             }
@@ -741,7 +741,7 @@ static char *print_number(char *buf,
     {
         while (size-- > 0)
         {
-            if (buf < end)
+            if (buf < str_end)
                 *buf = c;
             ++ buf;
         }
@@ -750,7 +750,7 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_PRECISION
     while (i < precision--)
     {
-        if (buf < end)
+        if (buf < str_end)
             *buf = '0';
         ++ buf;
     }
@@ -759,14 +759,14 @@ static char *print_number(char *buf,
     /* put number in the temporary buffer */
     while (i-- > 0 && (precision_bak != 0))
     {
-        if (buf < end)
+        if (buf < str_end)
             *buf = tmp[i];
         ++ buf;
     }
 
     while (size-- > 0)
     {
-        if (buf < end)
+        if (buf < str_end)
             *buf = ' ';
         ++ buf;
     }
@@ -785,7 +785,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     rt_uint32_t num;
 #endif
     int i, len;
-    char *str, *end, c;
+    char *str, *str_end, c;
     const char *s;
 
     rt_uint8_t base;            /* the base of number */
@@ -798,20 +798,20 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
 
     str = buf;
-    end = buf + size;
+    str_end = buf + size;
 
-    /* Make sure end is always >= buf */
-    if (end < buf)
+    /* Make sure str_end is always >= buf */
+    if (str_end < buf)
     {
-        end  = ((char *) - 1);
-        size = end - buf;
+        str_end = ((char *) - 1);
+        size = str_end - buf;
     }
 
     for (; *fmt ; ++fmt)
     {
         if (*fmt != '%')
         {
-            if (str < end)
+            if (str < str_end)
                 *str = *fmt;
             ++ str;
             continue;
@@ -892,20 +892,20 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (--field_width > 0)
                 {
-                    if (str < end) *str = ' ';
+                    if (str < str_end) *str = ' ';
                     ++ str;
                 }
             }
 
             /* get character */
             c = (rt_uint8_t)va_arg(args, int);
-            if (str < end) *str = c;
+            if (str < str_end) *str = c;
             ++ str;
 
             /* put width */
             while (--field_width > 0)
             {
-                if (str < end) *str = ' ';
+                if (str < str_end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -923,21 +923,21 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (len < field_width--)
                 {
-                    if (str < end) *str = ' ';
+                    if (str < str_end) *str = ' ';
                     ++ str;
                 }
             }
 
             for (i = 0; i < len; ++i)
             {
-                if (str < end) *str = *s;
+                if (str < str_end) *str = *s;
                 ++ str;
                 ++ s;
             }
 
             while (len < field_width--)
             {
-                if (str < end) *str = ' ';
+                if (str < str_end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -949,18 +949,18 @@ rt_int32_t rt_vsnprintf(char       *buf,
                 flags |= ZEROPAD;
             }
 #ifdef RT_PRINTF_PRECISION
-            str = print_number(str, end,
+            str = print_number(str, str_end,
                                (long)va_arg(args, void *),
                                16, field_width, precision, flags);
 #else
-            str = print_number(str, end,
+            str = print_number(str, str_end,
                                (long)va_arg(args, void *),
                                16, field_width, flags);
 #endif
             continue;
 
         case '%':
-            if (str < end) *str = '%';
+            if (str < str_end) *str = '%';
             ++ str;
             continue;
 
@@ -982,12 +982,12 @@ rt_int32_t rt_vsnprintf(char       *buf,
             break;
 
         default:
-            if (str < end) *str = '%';
+            if (str < str_end) *str = '%';
             ++ str;
 
             if (*fmt)
             {
-                if (str < end) *str = *fmt;
+                if (str < str_end) *str = *fmt;
                 ++ str;
             }
             else
@@ -1018,18 +1018,18 @@ rt_int32_t rt_vsnprintf(char       *buf,
             if (flags & SIGN) num = (rt_int32_t)num;
         }
 #ifdef RT_PRINTF_PRECISION
-        str = print_number(str, end, num, base, field_width, precision, flags);
+        str = print_number(str, str_end, num, base, field_width, precision, flags);
 #else
-        str = print_number(str, end, num, base, field_width, flags);
+        str = print_number(str, str_end, num, base, field_width, flags);
 #endif
     }
 
     if (size > 0)
     {
-        if (str < end) *str = '\0';
+        if (str < str_end) *str = '\0';
         else
         {
-            end[-1] = '\0';
+            str_end[-1] = '\0';
         }
     }
 
