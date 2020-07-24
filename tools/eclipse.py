@@ -22,7 +22,7 @@ from xml.etree.ElementTree import SubElement
 
 from building import *
 
-MODULE_VER_NUM = 4
+MODULE_VER_NUM = 5
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
 
@@ -138,6 +138,20 @@ def IsRttEclipsePathFormat(path):
         return True
     else :
         return False
+
+# all libs added by scons should be ends with five whitespace as a flag
+rtt_lib_flag = 5 * " "
+
+
+def ConverToRttEclipseLibFormat(lib):
+    return str(lib) + str(rtt_lib_flag)
+
+
+def IsRttEclipseLibFormat(path):
+    if path.endswith(rtt_lib_flag):
+        return True
+    else:
+        return False
     
     
 def IsCppProject():
@@ -189,7 +203,7 @@ def HandleToolOption(tools, env, project, reset):
                     linker_script_option = option
                 elif option.get('id').find('linker.nostart') != -1:
                     linker_nostart_option = option
-                elif option.get('id').find('linker.libs') != -1 and env.has_key('LIBS'):
+                elif option.get('id').find('linker.libs') != -1:
                     linker_libs_option = option
                 elif option.get('id').find('linker.paths') != -1 and env.has_key('LIBPATH'):
                     linker_paths_option = option
@@ -288,16 +302,22 @@ def HandleToolOption(tools, env, project, reset):
         else:
             option.set('value', 'false')
     # update libs
-    if linker_libs_option is not None :
+    if linker_libs_option is not None:
         option = linker_libs_option
         # remove old libs
         for item in option.findall('listOptionValue'):
-            option.remove(item)
+            if IsRttEclipseLibFormat(item.get("value")):
+                option.remove(item)
+
         # add new libs
-        for lib in env['LIBS']:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
+        if env.has_key('LIBS'):
+            for lib in env['LIBS']:
+                formatedLib = ConverToRttEclipseLibFormat(lib)
+                SubElement(option, 'listOptionValue', {
+                           'builtIn': 'false', 'value': formatedLib})
+
     # update lib paths
-    if linker_paths_option is not None :
+    if linker_paths_option is not None:
         option = linker_paths_option
         # remove old lib paths
         for item in option.findall('listOptionValue'):
