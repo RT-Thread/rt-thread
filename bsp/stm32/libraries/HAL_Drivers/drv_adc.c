@@ -285,6 +285,9 @@ static int stm32_adc_init(void)
         }
         else
         {
+            /* calibration */
+            HAL_ADCEx_Calibration_Start(&&stm32_adc_obj[i].ADC_Handler);
+            
             /* register ADC device */
             if (rt_hw_adc_register(&stm32_adc_obj[i].stm32_adc_device, name_buf, &stm_adc_ops, &stm32_adc_obj[i].ADC_Handler) == RT_EOK)
             {
