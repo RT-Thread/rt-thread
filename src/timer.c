@@ -500,7 +500,10 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
             /*timer is stop*/
             *(rt_tick_t *)arg = RT_TIMER_FLAG_DEACTIVATED;
         }
-        break;    
+        break;
+
+    default:
+        break;
     }
 
     return RT_EOK;
