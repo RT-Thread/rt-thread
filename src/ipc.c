@@ -1080,6 +1080,13 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
                     status = RT_EOK;
                 }
             }
+            else
+            {
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
+
+                return -RT_EINVAL;
+            }
 
             /* move node to the next */
             n = n->next;
@@ -1186,10 +1193,10 @@ rt_err_t rt_event_recv(rt_event_t   event,
     {
         /* no waiting */
         thread->error = -RT_ETIMEOUT;
-        
+
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
-        
+
         return -RT_ETIMEOUT;
     }
     else
