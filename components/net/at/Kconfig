@@ -61,6 +61,10 @@ if RT_USING_AT
             select RT_USING_SAL
             default n
 
+        config AT_CLIENT_PASS_THROUGH
+            bool "Enable Pass-Through support in AT clients"
+            default n
+
     endif
 
     if AT_USING_SERVER || AT_USING_CLIENT

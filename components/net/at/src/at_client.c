@@ -31,6 +31,93 @@ extern rt_size_t at_vprintfln(rt_device_t device, const char *format, va_list ar
 extern void at_print_raw_cmd(const char *type, const char *cmd, rt_size_t size);
 extern const char *at_get_last_cmd(rt_size_t *cmd_size);
 
+#ifdef AT_CLIENT_PASS_THROUGH
+/**
+ * Create pass through object.
+ *
+ * @param buf_size the maximum pass through buffer size
+ * @param timeout the maximum pass through time
+ *
+ * @return != RT_NULL: pass through object
+ *          = RT_NULL: no memory
+ */
+at_pass_through_t at_create_ptb(rt_size_t buf_size, rt_int32_t timeout)
+{
+    at_pass_through_t ptb = RT_NULL;
+
+    ptb = (at_pass_through_t) rt_calloc(1, sizeof(struct at_pass_through));
+    if (ptb == RT_NULL)
+    {
+        LOG_E("Create pass through object failed, No memory for struct!");
+        return RT_NULL;
+    }
+
+    ptb->buf = (char *) rt_calloc(1, buf_size);
+    if (ptb->buf == RT_NULL)
+    {
+        LOG_E("Create pass through object failed, No memory for buffer!");
+        rt_free(ptb);
+        return RT_NULL;
+    }
+
+    ptb->buf_size = buf_size;
+    ptb->timeout = timeout;
+
+    return ptb;
+}
+
+/**
+ * Delete and free pass through object.
+ *
+ * @param ptb pass through object
+ */
+void at_delete_ptb(at_pass_through_t ptb)
+{
+    if (ptb && ptb->buf)
+    {
+        rt_free(ptb->buf);
+    }
+
+    if (ptb)
+    {
+        rt_free(ptb);
+        ptb = RT_NULL;
+    }
+}
+
+/**
+ * Set pass through object information
+ *
+ * @param ptb pass through object
+ * @param buf_size the maximum pass through buffer size
+ * @param timeout the maximum pass throug time
+ *
+ * @return  != RT_NULL: pass throug object
+ *           = RT_NULL: no memory
+ */
+at_pass_through_t at_ptb_set_info(at_pass_through_t ptb, rt_size_t buf_size,
+                                  rt_int32_t timeout)
+{
+    RT_ASSERT(ptb);
+
+    if (ptb->buf_size != buf_size)
+    {
+        ptb->buf_size = buf_size;
+
+        ptb->buf = (char *) rt_realloc(ptb->buf, buf_size);
+        if (!ptb->buf)
+        {
+            LOG_D("No memory for realloc pass through  buffer size(%d).",
+                  buf_size);
+            return RT_NULL;
+        }
+    }
+    ptb->timeout = timeout;
+
+    return ptb;
+}
+#endif
+
 /**
  * Create response object.
  *
@@ -685,6 +772,10 @@ static int at_recv_readline(at_client_t client)
         {
             is_full = RT_TRUE;
         }
+#ifdef AT_CLIENT_PASS_THROUGH
+        if (client->ptb)
+            break;
+#endif /* AT_CLIENT_PASS_THROUGH */
 
         /* is newline or URC data */
         if ((ch == '\n' && last_ch == '\r') || (client->end_sign != 0 && ch == client->end_sign)
@@ -717,6 +808,33 @@ static void client_parser(at_client_t client)
     {
         if (at_recv_readline(client) > 0)
         {
+#ifdef AT_CLIENT_PASS_THROUGH
+            if (client->ptb != RT_NULL)
+            {
+                at_pass_through_t ptb = client->ptb;
+
+                /* pass through current receive */
+                if (ptb->buf_len + client->recv_line_len < ptb->buf_size)
+                {
+                    /* copy current receive to the pass through buf */
+                    rt_memcpy(ptb->buf + ptb->buf_len,
+                              client->recv_line_buf, client->recv_line_len);
+
+                    /* update the pass through buffer information */
+                    ptb->buf_len += client->recv_line_len;
+                }
+                else
+                {
+                    client->ptb_status = AT_PASS_THROUGH_BUFF_FULL;
+                    LOG_E("The Pass Through buffer size is out of buffer size(%d)!",
+                          ptb->buf_size);
+                }
+                //release
+                client->ptb = RT_NULL;
+                rt_sem_release(client->ptb_notice);
+            }
+#endif /* AT_CLIENT_PASS_THROUGH */
+
             if ((urc = get_urc_obj(client)) != RT_NULL)
             {
                 /* current receive is request, try to execute related operations */
@@ -800,6 +918,7 @@ static int at_client_para_init(at_client_t client)
 #define AT_CLIENT_SEM_NAME             "at_cs"
 #define AT_CLIENT_RESP_NAME            "at_cr"
 #define AT_CLIENT_THREAD_NAME          "at_clnt"
+#define AT_CLIENT_PASS_THROUGH_NAME    "at_cpt"
 
     int result = RT_EOK;
     static int at_client_num = 0;
@@ -843,6 +962,18 @@ static int at_client_para_init(at_client_t client)
         goto __exit;
     }
 
+#ifdef AT_CLIENT_PASS_THROUGH
+    rt_snprintf(name, RT_NAME_MAX, "%s%d",
+                AT_CLIENT_PASS_THROUGH_NAME, at_client_num);
+    client->ptb_notice = rt_sem_create(name, 0, RT_IPC_FLAG_FIFO);
+    if (client->ptb_notice == RT_NULL)
+    {
+        LOG_E("AT client initialize failed! pass_through_notice semaphore create failed!");
+        result = -RT_ENOMEM;
+        goto __exit;
+    }
+#endif /* AT_CLIENT_PASS_THROUGH */
+
     client->urc_table = RT_NULL;
     client->urc_table_size = 0;
 
@@ -876,6 +1007,12 @@ __exit:
         {
             rt_sem_delete(client->resp_notice);
         }
+#ifdef AT_CLIENT_PASS_THROUGH
+        if (client->ptb_notice)
+        {
+            rt_sem_delete(client->ptb_notice);
+        }
+#endif /* AT_CLIENT_PASS_THROUGH */
 
         if (client->device)
         {
