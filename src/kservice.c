@@ -999,15 +999,10 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
 #ifdef RT_PRINTF_LONGLONG
         if (qualifier == 'L') num = va_arg(args, long long);
-        else if (qualifier == 'l')
-#else
-        if (qualifier == 'l')
-#endif
-        {
-            num = va_arg(args, rt_uint32_t);
-            if (flags & SIGN) num = (rt_int32_t)num;
-        }
         else if (qualifier == 'h')
+#else
+        if (qualifier == 'h')
+#endif
         {
             num = (rt_uint16_t)va_arg(args, rt_int32_t);
             if (flags & SIGN) num = (rt_int16_t)num;
