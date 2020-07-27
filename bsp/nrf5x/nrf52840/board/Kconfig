@@ -55,6 +55,37 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+    menuconfig BSP_USING_SOFTDEVICE
+        bool "Enable NRF SOFTDEVICE"
+        select PKG_USING_NRF5X_SDK
+        default n
+if BSP_USING_SOFTDEVICE
+    config NRFX_CLOCK_ENABLED
+	int "NRFX_CLOCK_ENABLED"
+    default 1
+	config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+	int "NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY"
+    default 7
+	config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+	int "NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY"
+    default 7
+	config NRFX_RTC_ENABLED
+	int "NRFX_RTC_ENABLED"
+    default 1
+	config NRF_CLOCK_ENABLED
+	int "NRF_CLOCK_ENABLED"
+    default 1
+	config NRF_SDH_BLE_ENABLED
+	int "NRF_SDH_BLE_ENABLED"
+    default 1
+	config NRF_SDH_ENABLED
+	int "NRF_SDH_ENABLED"
+    default 1
+	config NRF_SDH_SOC_ENABLED
+	int "NRF_SDH_SOC_ENABLED"
+    default 1
+	
+endif
 
     menuconfig BSP_USING_UART
         bool "Enable UART"

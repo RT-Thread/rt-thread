@@ -63,6 +63,7 @@ extern "C" {
 #define RT_SENSOR_VENDOR_SENSIRION     (10) /* Sensirion */
 #define RT_SENSOR_VENDOR_TI            (11) /* Texas Instruments */
 #define RT_SENSOR_VENDOR_PLANTOWER     (12) /* Plantower */
+#define RT_SENSOR_VENDOR_AMS           (13) /* ams AG */
 
 
 /* Sensor unit types */
@@ -81,6 +82,8 @@ extern "C" {
 #define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
 #define  RT_SENSOR_UNIT_MM             (12) /* Distance                unit: mm         */
 #define  RT_SENSOR_UNIT_MN             (13) /* Force                   unit: mN         */
+#define  RT_SENSOR_UNIT_PPM            (14) /* Concentration           unit: ppm        */
+#define  RT_SENSOR_UNIT_PPB            (15) /* Concentration           unit: ppb        */
 
 /* Sensor communication interface types */
 

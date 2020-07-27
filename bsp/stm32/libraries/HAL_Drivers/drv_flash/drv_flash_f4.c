@@ -211,6 +211,8 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
     rt_err_t result      = RT_EOK;
     rt_uint32_t end_addr = addr + size;
+    rt_uint32_t written_size = 0;
+    rt_uint32_t write_size = 0;
 
     if ((end_addr) > STM32_FLASH_END_ADDRESS)
     {
@@ -227,22 +229,61 @@ int stm32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 
     __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
 
-    for (size_t i = 0; i < size; i++, addr++, buf++)
+    while (written_size < size)
     {
-        /* write data to flash */
-        if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, addr, (rt_uint64_t)(*buf)) == HAL_OK)
+        if (((addr + written_size) % 4 == 0) && (size - written_size >= 4))
         {
-            if (*(rt_uint8_t *)addr != *buf)
+            if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, addr + written_size, *((rt_uint32_t *)(buf + written_size))) == HAL_OK)
+            {
+                if (*(rt_uint32_t *)(addr + written_size) != *(rt_uint32_t *)(buf + written_size))
+                {
+                    result = -RT_ERROR;
+                    break;
+                }
+            }
+            else
             {
                 result = -RT_ERROR;
                 break;
             }
+            write_size = 4;
+        }
+        else if (((addr + written_size) % 2 == 0) && (size - written_size >= 2))
+        {
+            if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD, addr + written_size, *((rt_uint16_t *)(buf + written_size))) == HAL_OK)
+            {
+                if (*(rt_uint16_t *)(addr + written_size) != *(rt_uint16_t *)(buf + written_size))
+                {
+                    result = -RT_ERROR;
+                    break;
+                }
+            }
+            else
+            {
+                result = -RT_ERROR;
+                break;
+            }
+            write_size = 2;
         }
         else
         {
-            result = -RT_ERROR;
-            break;
+            if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, addr + written_size, *((rt_uint8_t *)(buf + written_size))) == HAL_OK)
+            {
+                if (*(rt_uint8_t *)(addr + written_size) != *(rt_uint8_t *)(buf + written_size))
+                {
+                    result = -RT_ERROR;
+                    break;
+                }
+            }
+            else
+            {
+                result = -RT_ERROR;
+                break;
+            }
+            write_size = 1;
         }
+
+        written_size += write_size;
     }
 
     HAL_FLASH_Lock();
@@ -274,6 +315,11 @@ int stm32_flash_erase(rt_uint32_t addr, size_t size)
     if ((addr + size) > STM32_FLASH_END_ADDRESS)
     {
         LOG_E("ERROR: erase outrange flash size! addr is (0x%p)\n", (void*)(addr + size));
+        return -RT_EINVAL;
+    }
+
+    if (size < 1)
+    {
         return -RT_EINVAL;
     }
 

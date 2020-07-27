@@ -29,6 +29,11 @@
 
 /* GPIO */
 #define GPIO_BASE                   (PER_BASE + GPIO_BASE_OFFSET)
+#define GPIO_IRQ_NUM                (3)   //40 pin mode
+#define IRQ_GPIO0                   (96 + 49) //bank0 (0 to 27)
+#define IRQ_GPIO1                   (96 + 50) //bank1 (28 to 45)
+#define IRQ_GPIO2                   (96 + 51) //bank2 (46 to 57)
+#define IRQ_GPIO3                   (96 + 52) //bank3
 
 /* Timer (ARM side) */
 #define ARM_TIMER_IRQ       (64)
@@ -56,6 +61,18 @@
 #define AUX_BASE                    (PER_BASE + AUX_BASE_OFFSET)
 #define IRQ_PL011                   (96 + 57)
 
+/* SPI */
+#define SPI_0_BASE_OFFSET     (0x00204000)
+#define SPI_3_BASE_OFFSET     (0x00204600)
+#define SPI_4_BASE_OFFSET     (0x00204800)
+#define SPI_5_BASE_OFFSET     (0x00204A00)
+#define SPI_6_BASE_OFFSET     (0x00204C00)
+
+#define SPI_0_BASE            (PER_BASE + SPI_0_BASE_OFFSET)
+#define SPI_3_BASE            (PER_BASE + SPI_3_BASE_OFFSET)
+#define SPI_4_BASE            (PER_BASE + SPI_4_BASE_OFFSET)
+#define SPI_5_BASE            (PER_BASE + SPI_5_BASE_OFFSET)
+#define SPI_6_BASE            (PER_BASE + SPI_6_BASE_OFFSET)
 /* Peripheral IRQ OR-ing */
 #define PACTL_CS                    HWREG32((PER_BASE + PACTL_CS_OFFSET))
 typedef enum {

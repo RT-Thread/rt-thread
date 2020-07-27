@@ -25,8 +25,8 @@ struct gd32_uart_config
 /* gd32 uart dirver class */
 struct gd32_uart
 {
-    struct gd32_uart_config *config;
     struct rt_serial_device serial;
+    struct gd32_uart_config *config;
 };
 
 int rt_hw_usart_init(void);
