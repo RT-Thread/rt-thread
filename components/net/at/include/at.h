@@ -140,6 +140,30 @@ struct at_response
 
 typedef struct at_response *at_response_t;
 
+#ifdef AT_USING_CLIENT_PASS_THROUGH
+enum at_pass_through_status
+{
+     AT_PASS_THROUGH_OK = 0,           /* AT pass through OK */
+     AT_PASS_THROUGH_ERROR = -1,       /* AT pass through ERROR */
+     AT_PASS_THROUGH_TIMEOUT = -2,     /* AT pass through is timeout */
+     AT_PASS_THROUGH_BUFF_FULL= -3,    /* AT pass through buffer is full */
+};
+typedef enum at_pass_through_status at_pass_through_status_t;
+struct at_pass_through
+{
+    /* pass through buffer */
+    char *buf;
+    /* the maximum pass through buffer size, it set by `at_create_ptb()` function */
+    rt_size_t buf_size;
+    /* the length of current pass through buffer */
+    rt_size_t buf_len;
+    /* the maximum pass through time */
+    rt_int32_t timeout;
+};
+
+typedef struct at_pass_through *at_pass_through_t;
+#endif /* AT_USING_CLIENT_PASS_THROUGH */
+
 struct at_client;
 
 /* URC(Unsolicited Result Code) object, such as: 'RING', 'READY' request by AT server */
@@ -173,6 +197,13 @@ struct at_client
     rt_size_t recv_bufsz;
     rt_sem_t rx_notice;
     rt_mutex_t lock;
+
+    /* the Pass Through Buffer(PTB) */
+#ifdef AT_USING_CLIENT_PASS_THROUGH
+    at_pass_through_t ptb;
+    at_pass_through_status_t ptb_status;
+    rt_sem_t ptb_notice;
+#endif /* AT_USING_CLIENT_PASS_THROUGH */
 
     at_response_t resp;
     rt_sem_t resp_notice;
@@ -228,10 +259,19 @@ int at_obj_set_urc_table(at_client_t client, const struct at_urc * table, rt_siz
 /* AT client send commands to AT server and waiter response */
 int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr, ...);
 
+#ifdef AT_USING_CLIENT_PASS_THROUGH
+/* AT response object create and delete */
+at_pass_through_t at_create_ptb(rt_size_t buf_size, rt_int32_t timeout);
+void at_delete_ptb(at_pass_through_t ptb);
+at_pass_through_t at_ptb_set_info(at_pass_through_t ptb, rt_size_t buf_size,
+                                  rt_int32_t timeout);
+#endif
+
 /* AT response object create and delete */
 at_response_t at_create_resp(rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout);
 void at_delete_resp(at_response_t resp);
 at_response_t at_resp_set_info(at_response_t resp, rt_size_t buf_size, rt_size_t line_num, rt_int32_t timeout);
+
 
 /* AT response line buffer get and parse response buffer arguments */
 const char *at_resp_get_line(at_response_t resp, rt_size_t resp_line);
