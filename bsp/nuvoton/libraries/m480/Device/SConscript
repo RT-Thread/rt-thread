@@ -1,0 +1,25 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+Nuvoton/M480/Source/system_M480.c
+""")
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src + ['Nuvoton/M480/Source/GCC/startup_M480.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['Nuvoton/M480/Source/ARM/startup_M480.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['Nuvoton/M480/Source/IAR/startup_M480.s']
+
+path = [cwd + '/Nuvoton/M480/Include',]
+
+group = DefineGroup('m480_device', src, depend = [''], CPPPATH = path)
+
+Return('group')

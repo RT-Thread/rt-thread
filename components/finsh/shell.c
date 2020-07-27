@@ -101,7 +101,7 @@ int finsh_set_prompt(const char * prompt)
 #include <dfs_posix.h>
 #endif /* RT_USING_DFS */
 
-const char *finsh_get_prompt()
+const char *finsh_get_prompt(void)
 {
 #define _MSH_PROMPT "msh "
 #define _PROMPT     "finsh "

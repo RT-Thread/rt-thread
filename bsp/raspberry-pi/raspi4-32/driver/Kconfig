@@ -50,6 +50,25 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
+            menuconfig BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            default n
+        
+        if BSP_USING_SPI   
+            config BSP_USING_SPI0_BUS
+                bool "Enable SPI0 BUS"
+                default n
+            config BSP_USING_SPI0_DEVICE0
+                bool "Enable SPI0 DEVICE0"
+                select BSP_USING_SPI0_BUS
+                default n
+            config BSP_USING_SPI0_DEVICE1
+                bool "Enable SPI0 DEVICE1"
+                select BSP_USING_SPI0_BUS
+                default n
+        endif
+
         config BSP_USING_CORETIMER
             bool "Using core timer"
             select RT_USING_CORETIMER

@@ -32,6 +32,96 @@ extern void *_heap_end;
  */
 extern void _init(void);
 
+/* 
+ * - Check MCU pin assignment here https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html
+ * - If you changed menuconfig to use different peripherals such as SPI, ADC, GPIO,
+ *   HWTIMER, I2C, PWM, UART, WDT, RTC, please add or change related pinmux configuration
+ *   code in functions(rt_hw_*_drvinit) below
+ */
+
+void rt_hw_spi_drvinit(void)
+{
+
+}
+
+void rt_hw_adc_drvinit(void)
+{
+
+}
+
+void rt_hw_gpio_drvinit(void)
+{
+    // Clock on all the GPIOs and AF
+    rcu_periph_clock_enable(RCU_GPIOA);
+    rcu_periph_clock_enable(RCU_GPIOB);
+    rcu_periph_clock_enable(RCU_GPIOC);
+    rcu_periph_clock_enable(RCU_GPIOD);
+    rcu_periph_clock_enable(RCU_GPIOE);
+    rcu_periph_clock_enable(RCU_AF);
+}
+
+void rt_hw_hwtimer_drvinit(void)
+{
+
+}
+
+void rt_hw_i2c_drvinit(void)
+{
+
+}
+
+void rt_hw_pwm_drvinit(void)
+{
+
+}
+
+void rt_hw_rtc_drvinit(void)
+{
+
+}
+
+void rt_hw_uart_drvinit(void)
+{
+    /* Notice: Debug UART4 GPIO pins are already initialized in nuclei_sdk */
+
+}
+
+void rt_hw_wdt_drvinit(void)
+{
+
+}
+
+void rt_hw_drivers_init(void)
+{
+#ifdef RT_USING_PIN
+    rt_hw_gpio_drvinit();
+#endif
+#ifdef BSP_USING_UART
+    rt_hw_uart_drvinit();
+#endif
+#ifdef BSP_USING_SPI
+    rt_hw_spi_drvinit();
+#endif
+#ifdef BSP_USING_I2C
+    rt_hw_i2c_drvinit();
+#endif
+#ifdef BSP_USING_ADC
+    rt_hw_adc_drvinit();
+#endif
+#ifdef BSP_USING_WDT
+    rt_hw_wdt_drvinit();
+#endif
+#ifdef BSP_USING_RTC
+    rt_hw_rtc_drvinit();
+#endif
+#ifdef BSP_USING_HWTIMER
+    rt_hw_hwtimer_drvinit();
+#endif
+#ifdef BSP_USING_PWM
+    rt_hw_pwm_drvinit();
+#endif
+}
+
 /**
  * @brief Setup hardware board for rt-thread
  *
@@ -47,6 +137,9 @@ void rt_hw_board_init(void)
 
     _init(); // __libc_init_array is not used in RT-Thread
 
+    /* Board hardware drivers initialization */
+    rt_hw_drivers_init();
+
     /* USART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
     rt_hw_usart_init();
@@ -61,6 +154,7 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+
 }
 
 /******************** end of file *******************/

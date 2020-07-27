@@ -302,7 +302,7 @@ static int alloc_empty_socket(rt_slist_t *l)
     return idx;
 }
 
-static struct at_socket *alloc_socket_by_device(struct at_device *device)
+static struct at_socket *alloc_socket_by_device(struct at_device *device, enum at_socket_type type)
 {
     static rt_mutex_t at_slock = RT_NULL;
     struct at_socket *sock = RT_NULL;
@@ -323,14 +323,21 @@ static struct at_socket *alloc_socket_by_device(struct at_device *device)
     rt_mutex_take(at_slock, RT_WAITING_FOREVER);
 
     /* find an empty at socket entry */
-    for (idx = 0; idx < device->class->socket_num && device->sockets[idx].magic; idx++);
+    if (device->class->socket_ops->at_socket != RT_NULL)
+    {
+        idx = device->class->socket_ops->at_socket(device, type);
+    }
+    else
+    {
+        for (idx = 0; idx < device->class->socket_num && device->sockets[idx].magic; idx++);
+    }
 
     /* can't find an empty protocol family entry */
-    if (idx == device->class->socket_num)
+    if (idx < 0 || idx >= device->class->socket_num)
     {
         goto __err;
     }
-
+    
     sock = &(device->sockets[idx]);
     /* the socket descriptor is the number of sockte lists */
     sock->socket = alloc_empty_socket(&(sock->list));
@@ -374,7 +381,7 @@ __err:
     return RT_NULL;
 }
 
-static struct at_socket *alloc_socket(void)
+static struct at_socket *alloc_socket(enum at_socket_type type)
 {
     extern struct netdev *netdev_default;
     struct netdev *netdev = RT_NULL;
@@ -401,7 +408,7 @@ static struct at_socket *alloc_socket(void)
         return RT_NULL;
     }
 
-    return alloc_socket_by_device(device);
+    return alloc_socket_by_device(device, type);
 }
 
 static void at_recv_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz);
@@ -433,7 +440,7 @@ int at_socket(int domain, int type, int protocol)
     }
 
     /* allocate and initialize a new AT socket */
-    sock = alloc_socket();
+    sock = alloc_socket(socket_type);
     if (sock == RT_NULL)
     {
         return -1;
@@ -615,7 +622,7 @@ int at_bind(int socket, const struct sockaddr *name, socklen_t namelen)
         }
 
         /* allocate new socket */
-        new_sock = alloc_socket_by_device(new_device);
+        new_sock = alloc_socket_by_device(new_device, type);
         if (new_sock == RT_NULL)
         {
             return -1;

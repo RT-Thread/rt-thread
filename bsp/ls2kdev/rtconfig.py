@@ -40,7 +40,7 @@ OBJDUMP = PREFIX + 'objdump'
 OBJCPY = PREFIX + 'objcopy'
 READELF = PREFIX + 'readelf'
 
-DEVICE = ' -march=mips64r2 -mabi=64 -msoft-float -EL'
+DEVICE = ' -march=mips64r2 -mabi=64 -msoft-float -EL -mno-gpopt'
 CFLAGS = DEVICE + '  -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + '  -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp'
 LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ls2k_ram.lds'
