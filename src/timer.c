@@ -365,11 +365,12 @@ rt_err_t rt_timer_start(rt_timer_t timer)
              * So insert the new timer to the end the the some-timeout timer
              * list.
              */
-            if ((t->timeout_tick - timer->timeout_tick) == 0)
+            if (t->timeout_tick == timer->timeout_tick)
             {
                 continue;
             }
-            else if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX / 2)
+
+            if ((t->timeout_tick - timer->timeout_tick) < RT_TICK_MAX / 2)
             {
                 break;
             }
