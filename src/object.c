@@ -312,7 +312,7 @@ void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
                     const char               *name)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
@@ -379,7 +379,7 @@ void rt_object_init(struct rt_object         *object,
  */
 void rt_object_detach(rt_object_t object)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
 
     /* object check */
     RT_ASSERT(object != RT_NULL);
@@ -411,7 +411,7 @@ void rt_object_detach(rt_object_t object)
 rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 {
     struct rt_object *object;
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -476,7 +476,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
  */
 void rt_object_delete(rt_object_t object)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
 
     /* object check */
     RT_ASSERT(object != RT_NULL);

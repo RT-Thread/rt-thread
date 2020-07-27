@@ -157,13 +157,13 @@ rt_inline rt_err_t rt_ipc_list_resume(rt_list_t *list)
 rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
 {
     struct rt_thread *thread;
-    register rt_ubase_t temp;
+    register rt_ubase_t level;
 
     /* wakeup all suspended threads */
     while (!rt_list_isempty(list))
     {
         /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
+        level = rt_hw_interrupt_disable();
 
         /* get next suspended thread */
         thread = rt_list_entry(list->next, struct rt_thread, tlist);
@@ -178,7 +178,7 @@ rt_inline rt_err_t rt_ipc_list_resume_all(rt_list_t *list)
         rt_thread_resume(thread);
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
+        rt_hw_interrupt_enable(level);
     }
 
     return RT_EOK;
@@ -323,7 +323,7 @@ RTM_EXPORT(rt_sem_delete);
  */
 rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     struct rt_thread *thread;
 
     /* parameter check */
@@ -432,7 +432,7 @@ RTM_EXPORT(rt_sem_trytake);
  */
 rt_err_t rt_sem_release(rt_sem_t sem)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     register rt_bool_t need_schedule;
 
     /* parameter check */
@@ -653,7 +653,7 @@ RTM_EXPORT(rt_mutex_delete);
  */
 rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     struct rt_thread *thread;
 
     /* this function must not be used in interrupt even if time = 0 */
@@ -789,7 +789,7 @@ RTM_EXPORT(rt_mutex_take);
  */
 rt_err_t rt_mutex_release(rt_mutex_t mutex)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
 

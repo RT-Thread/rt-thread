@@ -80,7 +80,7 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 void rt_thread_exit(void)
 {
     struct rt_thread *thread;
-    register rt_base_t level;
+    register rt_ubase_t level;
 
     /* get current thread */
     thread = rt_thread_self();
@@ -264,7 +264,7 @@ RTM_EXPORT(rt_thread_init);
 rt_thread_t rt_thread_self(void)
 {
 #ifdef RT_USING_SMP
-    rt_base_t lock;
+    rt_ubase_t lock;
     rt_thread_t self;
 
     lock = rt_hw_local_irq_disable();
@@ -331,7 +331,7 @@ RTM_EXPORT(rt_thread_startup);
  */
 rt_err_t rt_thread_detach(rt_thread_t thread)
 {
-    rt_base_t lock;
+    rt_ubase_t lock;
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
@@ -433,7 +433,7 @@ RTM_EXPORT(rt_thread_create);
  */
 rt_err_t rt_thread_delete(rt_thread_t thread)
 {
-    rt_base_t lock;
+    rt_ubase_t lock;
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
@@ -493,7 +493,7 @@ RTM_EXPORT(rt_thread_yield);
  */
 rt_err_t rt_thread_sleep(rt_tick_t tick)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
     struct rt_thread *thread;
 
     /* set to current thread */
@@ -546,7 +546,7 @@ RTM_EXPORT(rt_thread_delay);
  */
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
     struct rt_thread *thread;
 
     RT_ASSERT(tick != RT_NULL);
@@ -625,7 +625,7 @@ RTM_EXPORT(rt_thread_mdelay);
  */
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
@@ -721,7 +721,7 @@ RTM_EXPORT(rt_thread_control);
 rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
     register rt_base_t stat;
-    register rt_base_t temp;
+    register rt_ubase_t temp;
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
@@ -769,7 +769,7 @@ RTM_EXPORT(rt_thread_suspend);
  */
 rt_err_t rt_thread_resume(rt_thread_t thread)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);

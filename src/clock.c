@@ -58,7 +58,7 @@ RTM_EXPORT(rt_tick_get);
  */
 void rt_tick_set(rt_tick_t tick)
 {
-    rt_base_t level;
+    rt_ubase_t level;
 
     level = rt_hw_interrupt_disable();
     rt_tick = tick;

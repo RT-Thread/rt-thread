@@ -95,7 +95,7 @@ if (!(EX))                                                                    \
 #define RT_DEBUG_NOT_IN_INTERRUPT                                             \
 do                                                                            \
 {                                                                             \
-    rt_base_t level;                                                          \
+    rt_ubase_t level;                                                          \
     level = rt_hw_interrupt_disable();                                        \
     if (rt_interrupt_get_nest() != 0)                                         \
     {                                                                         \
@@ -113,7 +113,7 @@ while (0)
 #define RT_DEBUG_IN_THREAD_CONTEXT                                            \
 do                                                                            \
 {                                                                             \
-    rt_base_t level;                                                          \
+    rt_ubase_t level;                                                          \
     level = rt_hw_interrupt_disable();                                        \
     if (rt_thread_self() == RT_NULL)                                          \
     {                                                                         \

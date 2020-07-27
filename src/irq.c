@@ -64,7 +64,7 @@ volatile rt_uint8_t rt_interrupt_nest = 0;
  */
 void rt_interrupt_enter(void)
 {
-    rt_base_t level;
+    rt_ubase_t level;
 
     RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq coming..., irq nest:%d\n",
                                 rt_interrupt_nest));
@@ -85,7 +85,7 @@ RTM_EXPORT(rt_interrupt_enter);
  */
 void rt_interrupt_leave(void)
 {
-    rt_base_t level;
+    rt_ubase_t level;
 
     RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq leave, irq nest:%d\n",
                                 rt_interrupt_nest));
@@ -108,7 +108,7 @@ RTM_EXPORT(rt_interrupt_leave);
 RT_WEAK rt_uint8_t rt_interrupt_get_nest(void)
 {
     rt_uint8_t ret;
-    rt_base_t level;
+    rt_ubase_t level;
 
     level = rt_hw_interrupt_disable();
     ret = rt_interrupt_nest;

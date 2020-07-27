@@ -72,7 +72,7 @@ static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
 rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_size_t i;
-    rt_base_t level;
+    rt_ubase_t level;
     rt_err_t ret = -RT_EFULL;
 
     /* disable interrupt */
@@ -104,7 +104,7 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
     rt_size_t i;
-    rt_base_t level;
+    rt_ubase_t level;
     rt_err_t ret = -RT_ENOSYS;
 
     /* disable interrupt */
@@ -152,7 +152,7 @@ void rt_thread_idle_excute(void)
      * will do all the cleanups. */
     while (_has_defunct_thread())
     {
-        rt_base_t lock;
+        rt_ubase_t lock;
         rt_thread_t thread;
 #ifdef RT_USING_MODULE
         struct rt_dlmodule *module = RT_NULL;

@@ -297,7 +297,7 @@ void rt_scheduler_ipi_handler(int vector, void *param)
  */
 void rt_schedule(void)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     struct rt_thread *to_thread;
     struct rt_thread *current_thread;
     struct rt_cpu    *pcpu;
@@ -417,7 +417,7 @@ __exit:
  */
 void rt_schedule(void)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
 
@@ -547,7 +547,7 @@ __exit:
 void rt_scheduler_do_irq_switch(void *context)
 {
     int cpu_id;
-    rt_base_t level;
+    rt_ubase_t level;
     struct rt_cpu* pcpu;
     struct rt_thread *to_thread;
     struct rt_thread *current_thread;
@@ -645,7 +645,7 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
     int cpu_id;
     int bind_cpu;
     rt_uint32_t cpu_mask;
-    register rt_base_t level;
+    register rt_ubase_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -707,7 +707,7 @@ __exit:
 #else
 void rt_schedule_insert_thread(struct rt_thread *thread)
 {
-    register rt_base_t temp;
+    register rt_ubase_t temp;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -752,7 +752,7 @@ __exit:
 #ifdef RT_USING_SMP
 void rt_schedule_remove_thread(struct rt_thread *thread)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -804,7 +804,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
 #else
 void rt_schedule_remove_thread(struct rt_thread *thread)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
 
     RT_ASSERT(thread != RT_NULL);
 
@@ -841,7 +841,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
 #ifdef RT_USING_SMP
 void rt_enter_critical(void)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -877,7 +877,7 @@ void rt_enter_critical(void)
 #else
 void rt_enter_critical(void)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -900,7 +900,7 @@ RTM_EXPORT(rt_enter_critical);
 #ifdef RT_USING_SMP
 void rt_exit_critical(void)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
     struct rt_thread *current_thread;
 
     /* disable interrupt */
@@ -939,7 +939,7 @@ void rt_exit_critical(void)
 #else
 void rt_exit_critical(void)
 {
-    register rt_base_t level;
+    register rt_ubase_t level;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();

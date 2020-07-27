@@ -171,7 +171,7 @@ static void _signal_deliver(rt_thread_t tid)
 #ifdef RT_USING_SMP
 void *rt_signal_check(void* context)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     int cpu_id;
     struct rt_cpu* pcpu;
     struct rt_thread *current_thread;
@@ -208,7 +208,7 @@ void *rt_signal_check(void* context)
 
 rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     rt_sighandler_t old = RT_NULL;
     rt_thread_t tid = rt_thread_self();
 
@@ -235,7 +235,7 @@ rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
 
 void rt_signal_mask(int signo)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     rt_thread_t tid = rt_thread_self();
 
     level = rt_hw_interrupt_disable();
@@ -247,7 +247,7 @@ void rt_signal_mask(int signo)
 
 void rt_signal_unmask(int signo)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     rt_thread_t tid = rt_thread_self();
 
     level = rt_hw_interrupt_disable();
@@ -269,7 +269,7 @@ void rt_signal_unmask(int signo)
 int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
 {
     int ret = RT_EOK;
-    rt_base_t   level;
+    rt_ubase_t   level;
     rt_thread_t tid = rt_thread_self();
     struct siginfo_node *si_node = RT_NULL, *si_prev = RT_NULL;
 
@@ -387,7 +387,7 @@ __done_return:
 
 void rt_thread_handle_sig(rt_bool_t clean_state)
 {
-    rt_base_t level;
+    rt_ubase_t level;
 
     rt_thread_t tid = rt_thread_self();
     struct siginfo_node *si_node;
@@ -445,7 +445,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
 void rt_thread_alloc_sig(rt_thread_t tid)
 {
     int index;
-    rt_base_t level;
+    rt_ubase_t level;
     rt_sighandler_t *vectors;
 
     vectors = (rt_sighandler_t *)RT_KERNEL_MALLOC(sizeof(rt_sighandler_t) * RT_SIG_MAX);
@@ -463,7 +463,7 @@ void rt_thread_alloc_sig(rt_thread_t tid)
 
 void rt_thread_free_sig(rt_thread_t tid)
 {
-    rt_base_t level;
+    rt_ubase_t level;
     struct siginfo_node *si_node;
     rt_sighandler_t *sig_vectors;
 
@@ -500,7 +500,7 @@ void rt_thread_free_sig(rt_thread_t tid)
 int rt_thread_kill(rt_thread_t tid, int sig)
 {
     siginfo_t si;
-    rt_base_t level;
+    rt_ubase_t level;
     struct siginfo_node *si_node;
 
     RT_ASSERT(tid != RT_NULL);
