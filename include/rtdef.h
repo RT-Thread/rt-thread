@@ -96,9 +96,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 /**@}*/
 
 /* maximum value of base type */
-#define RT_UINT8_MAX                    0xff            /**< Maxium number of UINT8 */
-#define RT_UINT16_MAX                   0xffff          /**< Maxium number of UINT16 */
-#define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
+#define RT_UINT8_MAX                    0xffU           /**< Maxium number of UINT8 */
+#define RT_UINT16_MAX                   0xffffU         /**< Maxium number of UINT16 */
+#define RT_UINT32_MAX                   0xffffffffUL    /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
 
 #if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
@@ -419,27 +419,27 @@ struct rt_object_information
 /**
  * clock & timer macros
  */
-#define RT_TIMER_FLAG_DEACTIVATED       0x0             /**< timer is deactive */
-#define RT_TIMER_FLAG_ACTIVATED         0x1             /**< timer is active */
-#define RT_TIMER_FLAG_ONE_SHOT          0x0             /**< one shot timer */
-#define RT_TIMER_FLAG_PERIODIC          0x2             /**< periodic timer */
+#define RT_TIMER_FLAG_DEACTIVATED       0x0UL            /**< timer is deactive */
+#define RT_TIMER_FLAG_ACTIVATED         0x1UL            /**< timer is active */
+#define RT_TIMER_FLAG_ONE_SHOT          0x0UL            /**< one shot timer */
+#define RT_TIMER_FLAG_PERIODIC          0x2UL            /**< periodic timer */
 
-#define RT_TIMER_FLAG_HARD_TIMER        0x0             /**< hard timer,the timer's callback function will be called in tick isr. */
-#define RT_TIMER_FLAG_SOFT_TIMER        0x4             /**< soft timer,the timer's callback function will be called in timer thread. */
+#define RT_TIMER_FLAG_HARD_TIMER        0x0UL             /**< hard timer,the timer's callback function will be called in tick isr. */
+#define RT_TIMER_FLAG_SOFT_TIMER        0x4UL             /**< soft timer,the timer's callback function will be called in timer thread. */
 
-#define RT_TIMER_CTRL_SET_TIME          0x0             /**< set timer control command */
-#define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
-#define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
-#define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
-#define RT_TIMER_CTRL_GET_STATE         0x4             /**< get timer run state active or deactive*/
+#define RT_TIMER_CTRL_SET_TIME          0x0UL             /**< set timer control command */
+#define RT_TIMER_CTRL_GET_TIME          0x1UL             /**< get timer control command */
+#define RT_TIMER_CTRL_SET_ONESHOT       0x2UL             /**< change timer to one shot */
+#define RT_TIMER_CTRL_SET_PERIODIC      0x3UL             /**< change timer to periodic */
+#define RT_TIMER_CTRL_GET_STATE         0x4UL             /**< get timer run state active or deactive*/
 
 #ifndef RT_TIMER_SKIP_LIST_LEVEL
-#define RT_TIMER_SKIP_LIST_LEVEL          1
+#define RT_TIMER_SKIP_LIST_LEVEL          1UL
 #endif
 
 /* 1 or 3 */
 #ifndef RT_TIMER_SKIP_LIST_MASK
-#define RT_TIMER_SKIP_LIST_MASK         0x3
+#define RT_TIMER_SKIP_LIST_MASK         0x3UL
 #endif
 
 /**
@@ -487,31 +487,31 @@ typedef siginfo_t rt_siginfo_t;
 /*
  * thread state definitions
  */
-#define RT_THREAD_INIT                  0x00                /**< Initialized status */
-#define RT_THREAD_READY                 0x01                /**< Ready status */
-#define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
-#define RT_THREAD_RUNNING               0x03                /**< Running status */
-#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
-#define RT_THREAD_CLOSE                 0x04                /**< Closed status */
-#define RT_THREAD_STAT_MASK             0x07
+#define RT_THREAD_INIT                  0x00UL                /**< Initialized status */
+#define RT_THREAD_READY                 0x01UL                /**< Ready status */
+#define RT_THREAD_SUSPEND               0x02UL                /**< Suspend status */
+#define RT_THREAD_RUNNING               0x03UL                /**< Running status */
+#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND     /**< Blocked status */
+#define RT_THREAD_CLOSE                 0x04UL                /**< Closed status */
+#define RT_THREAD_STAT_MASK             0x07UL 
 
-#define RT_THREAD_STAT_YIELD            0x08                /**< indicate whether remaining_tick has been reloaded since last schedule */
+#define RT_THREAD_STAT_YIELD            0x08UL                /**< indicate whether remaining_tick has been reloaded since last schedule */
 #define RT_THREAD_STAT_YIELD_MASK       RT_THREAD_STAT_YIELD
 
-#define RT_THREAD_STAT_SIGNAL           0x10                /**< task hold signals */
+#define RT_THREAD_STAT_SIGNAL           0x10UL                /**< task hold signals */
 #define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
-#define RT_THREAD_STAT_SIGNAL_WAIT      0x20                /**< task is waiting for signals */
-#define RT_THREAD_STAT_SIGNAL_PENDING   0x40                /**< signals is held and it has not been procressed */
-#define RT_THREAD_STAT_SIGNAL_MASK      0xf0
+#define RT_THREAD_STAT_SIGNAL_WAIT      0x20UL                /**< task is waiting for signals */
+#define RT_THREAD_STAT_SIGNAL_PENDING   0x40UL                /**< signals is held and it has not been procressed */
+#define RT_THREAD_STAT_SIGNAL_MASK      0xf0UL
 
 /**
  * thread control command definitions
  */
-#define RT_THREAD_CTRL_STARTUP          0x00                /**< Startup thread. */
-#define RT_THREAD_CTRL_CLOSE            0x01                /**< Close thread. */
-#define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02                /**< Change thread priority. */
-#define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
-#define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
+#define RT_THREAD_CTRL_STARTUP          0x00UL                /**< Startup thread. */
+#define RT_THREAD_CTRL_CLOSE            0x01UL                /**< Close thread. */
+#define RT_THREAD_CTRL_CHANGE_PRIORITY  0x02UL                /**< Change thread priority. */
+#define RT_THREAD_CTRL_INFO             0x03UL                /**< Get thread information. */
+#define RT_THREAD_CTRL_BIND_CPU         0x04UL                /**< Set thread bind cpu. */
 
 #ifdef RT_USING_SMP
 
@@ -638,11 +638,11 @@ typedef struct rt_thread *rt_thread_t;
 /**
  * IPC flags and control command definitions
  */
-#define RT_IPC_FLAG_FIFO                0x00            /**< FIFOed IPC. @ref IPC. */
-#define RT_IPC_FLAG_PRIO                0x01            /**< PRIOed IPC. @ref IPC. */
+#define RT_IPC_FLAG_FIFO                0x00UL            /**< FIFOed IPC. @ref IPC. */
+#define RT_IPC_FLAG_PRIO                0x01UL            /**< PRIOed IPC. @ref IPC. */
 
-#define RT_IPC_CMD_UNKNOWN              0x00            /**< unknown IPC command */
-#define RT_IPC_CMD_RESET                0x01            /**< reset IPC object */
+#define RT_IPC_CMD_UNKNOWN              0x00UL            /**< unknown IPC command */
+#define RT_IPC_CMD_RESET                0x01UL            /**< reset IPC object */
 
 #define RT_WAITING_FOREVER              -1              /**< Block forever until get resource. */
 #define RT_WAITING_NO                   0               /**< Non-block. */
@@ -693,9 +693,9 @@ typedef struct rt_mutex *rt_mutex_t;
 /**
  * flag defintions in event
  */
-#define RT_EVENT_FLAG_AND               0x01            /**< logic and */
-#define RT_EVENT_FLAG_OR                0x02            /**< logic or */
-#define RT_EVENT_FLAG_CLEAR             0x04            /**< clear flag */
+#define RT_EVENT_FLAG_AND               0x01UL            /**< logic and */
+#define RT_EVENT_FLAG_OR                0x02UL            /**< logic or */
+#define RT_EVENT_FLAG_CLEAR             0x04UL            /**< clear flag */
 
 /*
  * event structure
