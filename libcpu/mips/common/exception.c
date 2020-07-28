@@ -24,14 +24,14 @@ rt_ubase_t rt_interrupt_from_thread;
 rt_ubase_t rt_interrupt_to_thread;
 rt_ubase_t rt_thread_switch_interrupt_flag;
 
-rt_base_t rt_hw_interrupt_disable(void)
+rt_ubase_t rt_hw_interrupt_disable(void)
 {
     rt_base_t status = read_c0_status();
     clear_c0_status(ST0_IE);
     return status;
 }
 
-void rt_hw_interrupt_enable(rt_base_t level)
+void rt_hw_interrupt_enable(rt_ubase_t level)
 {
     write_c0_status(level);
 }
