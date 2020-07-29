@@ -456,7 +456,10 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-        cs++, ct++;
+    {        
+        cs++;
+        ct++;
+    }
 
     return (*cs - *ct);
 }
