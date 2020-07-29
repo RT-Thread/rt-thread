@@ -1009,6 +1009,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         }
         else
         {
+            /* include qualifier == 'l', executing the same program */
             num = va_arg(args, rt_uint32_t);
             if (flags & SIGN) num = (rt_int32_t)num;
         }
