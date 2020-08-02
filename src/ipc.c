@@ -34,6 +34,8 @@
  * 2013-09-14     Grissiom     add an option check in rt_event_recv
  * 2018-10-02     Bernard      add 64bit support for mailbox
  * 2019-09-16     tyx          add send wait support for message queue
+ * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
+                               event without pending
  */
 
 #include <rtthread.h>
@@ -1177,7 +1179,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-
+            
+        /* fill thread event info */            
+        thread->event_set = (event->set & set);
+        thread->event_info = option;
+        
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
