@@ -57,7 +57,7 @@ config SOC_SERIES_M480
         select RT_USING_NETDEV
 
         config NU_EMAC_PDMA_MEMCOPY
-            bool "Use PDMA for data tranferring"
+            bool "Use PDMA for data transferring"
             select BSP_USING_PDMA
             depends on BSP_USING_EMAC
             default y
@@ -82,14 +82,15 @@ config SOC_SERIES_M480
 
     menuconfig BSP_USING_EADC
         bool "Enable Enhanced Analog-to-Digital Converter(EADC)"
+        select RT_USING_ADC
 
-        config BSP_USING_EADC0
-            bool "Enable EADC0"
-            depends on BSP_USING_EADC && RT_USING_ADC
+        if BSP_USING_EADC
+            config BSP_USING_EADC0
+                bool "Enable EADC0"
 
-        config BSP_USING_EADC1
-            bool "Enable EADC1"
-            depends on BSP_USING_EADC && RT_USING_ADC
+            config BSP_USING_EADC1
+                bool "Enable EADC1"
+        endif
 
     menuconfig BSP_USING_TMR
         bool "Enable Timer Controller(TIMER)"
@@ -371,12 +372,14 @@ config SOC_SERIES_M480
 
                 config BSP_USING_UI2C0
                     select RT_USING_I2C
+                    select BSP_USING_UI2C
                     bool "UI2C0"
                     help
                         Choose this option if you need I2C function mode.
 
                 config BSP_USING_USPI0
                     select RT_USING_SPI
+                    select BSP_USING_USPI
                     bool "USPI0"
                     help
                         Choose this option if you need SPI function mode.
@@ -391,7 +394,7 @@ config SOC_SERIES_M480
                 depends on BSP_USING_UUART0 && RT_SERIAL_USING_DMA
 
             config BSP_USING_USPI0_PDMA
-                bool "Use PDMA for data tranferring"
+                bool "Use PDMA for data transferring"
                 select BSP_USING_USPI_PDMA
                 depends on BSP_USING_USPI0
         endif
@@ -405,21 +408,21 @@ config SOC_SERIES_M480
 
                     config BSP_USING_UUART1
                         select RT_USING_SERIAL
-                         select BSP_USING_UUART
+                        select BSP_USING_UUART
                         bool "UUART1"
                         help
                           Choose this option if you need UART function mode.
 
                     config BSP_USING_UI2C1
                         select RT_USING_I2C
-                           select BSP_USING_UI2C
+                        select BSP_USING_UI2C
                         bool "UI2C1"
                         help
                           Choose this option if you need I2C function mode.
 
                      config BSP_USING_USPI1
                         select RT_USING_SPI
-                           select BSP_USING_USPI
+                        select BSP_USING_USPI
                         bool "USPI1"
                         help
                           Choose this option if you need SPI function mode.
@@ -434,7 +437,7 @@ config SOC_SERIES_M480
                     depends on BSP_USING_UUART1 && RT_SERIAL_USING_DMA
 
                 config BSP_USING_USPI1_PDMA
-                    bool "Use PDMA for data tranferring"
+                    bool "Use PDMA for data transferring"
                     select BSP_USING_USPI_PDMA
                     depends on BSP_USING_USPI1
             endif
@@ -459,6 +462,10 @@ config SOC_SERIES_M480
             config NU_SDH_HOTPLUG
                 bool "Using HOTPLUG"
                 default y
+
+            config NU_SDH_MOUNT_ON_ROOT
+                bool "Mount on root"
+
         endif
 
     menuconfig BSP_USING_CAN
@@ -652,7 +659,7 @@ config SOC_SERIES_M480
                        select BSP_USING_SPI_PDMA
                        depends on BSP_USING_SPI1
               endif
- 
+
             choice
                 prompt "Select SPI2 function mode"
                 config BSP_USING_SPI2_NONE
@@ -686,7 +693,7 @@ config SOC_SERIES_M480
                 bool "NONE"
                 help
                     Choose this option if you need not SPI3.
-                
+
                 config BSP_USING_SPI3
                 bool "Enable SPI3"
                 help
@@ -724,20 +731,23 @@ config SOC_SERIES_M480
         bool "Enable Quad Serial Peripheral Interface(QSPI)"
         select RT_USING_SPI
         select RT_USING_QSPI
+        select BSP_USING_SPI
 
-           if BSP_USING_QSPI
+        if BSP_USING_QSPI
            config BSP_USING_QSPI0
                bool "Enable QSPI0"
 
            config BSP_USING_QSPI0_PDMA
                 bool "Enable PDMA for QSPI0"
+                select BSP_USING_SPI_PDMA
                 depends on BSP_USING_QSPI0
 
            config BSP_USING_QSPI1
                 bool "Enable QSPI1"
 
            config BSP_USING_QSPI1_PDMA
-                   bool "Enable PDMA for QSPI1"
+                bool "Enable PDMA for QSPI1"
+                select BSP_USING_SPI_PDMA
                 depends on BSP_USING_QSPI1
         endif
 
@@ -857,7 +867,7 @@ config SOC_SERIES_M480
 
             if BSP_USING_CRC
                 config NU_CRC_USE_PDMA
-                bool "Use PDMA for data tranferring."
+                bool "Use PDMA for data transferring."
                 select BSP_USING_PDMA
                 default y
             endif

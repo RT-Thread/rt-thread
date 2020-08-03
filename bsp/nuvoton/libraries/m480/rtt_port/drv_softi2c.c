@@ -24,7 +24,6 @@
 #define DBG_ENABLE
 #define DBG_SECTION_NAME LOG_TAG
 #define DBG_LEVEL        DBG_INFO
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #ifdef BSP_USING_SOFT_I2C0
@@ -58,7 +57,7 @@ struct nu_soft_i2c_config
     rt_uint8_t sda;
     const char *bus_name;
 };
-/* soft i2c dirver class */
+/* soft i2c driver class */
 struct nu_soft_i2c
 {
     struct rt_i2c_bit_ops ops;
