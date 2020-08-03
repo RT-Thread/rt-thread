@@ -32,7 +32,7 @@ NuMaker-PFM-M487 provides multiple networking, interfaces, audio recording, play
 | -- | -- | -- |
 |SPI flash | W25Q32 | Supported |
 |Ethernet PHY| IP101GR | Supported |
-|Audio Codec| NAU88L25, Supports MIC and earphone | Coming soon |
+|Audio Codec| NAU88L25, Supports MIC and earphone | Supported |
 
 ## 2. Supported compiler
 Support GCC, MDK4, MDK5, IAR IDE/compilers. More information of these compiler version as following:
