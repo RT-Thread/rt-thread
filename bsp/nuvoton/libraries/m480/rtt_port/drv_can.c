@@ -97,7 +97,7 @@ static struct nu_can nu_can_arr[] =
     },
 #endif
     {0}
-}; /* usart nu_usart */
+}; /* struct nu_can */
 
 /* Public functions ------------------------------------------------------------*/
 
@@ -112,7 +112,7 @@ static const struct rt_can_ops nu_can_ops =
 
 static const struct can_configure nu_can_default_config = NU_CAN_CONFIG_DEFAULT;
 
-/* Interrupt Handle Funtion  ----------------------------------------------------*/
+/* Interrupt Handle Function  ----------------------------------------------------*/
 #if defined(BSP_USING_CAN0)
 /* CAN0 interrupt entry */
 void CAN0_IRQHandler(void)
@@ -238,7 +238,7 @@ static rt_err_t nu_can_configure(struct rt_can_device *can, struct can_configure
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    /* Get base address of uart register */
+    /* Get base address of CAN register */
     CAN_T *can_base = ((nu_can_t)can)->can_base;
 
     RT_ASSERT(can_base != RT_NULL);
@@ -312,7 +312,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef RT_CAN_USING_HDR
     struct rt_can_filter_config *filter_cfg;
 #endif
-    /* Get base address of uart register */
+    /* Get base address of CAN register */
     CAN_T *can_base = ((nu_can_t)can)->can_base;
 
     RT_ASSERT(can_base != RT_NULL);
@@ -346,7 +346,6 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             /* Enable Status Change Interrupt  */
             CAN_EnableInt(can_base, CAN_CON_IE_Msk | CAN_CON_SIE_Msk);
-            NVIC_SetPriority(((nu_can_t)can)->can_irq_n, (1 << __NVIC_PRIO_BITS) - 2);
             /* Enable NVIC interrupt. */
             NVIC_EnableIRQ(((nu_can_t)can)->can_irq_n);
 
@@ -355,7 +354,6 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             /* Enable Error Status and Status Change Interrupt  */
             CAN_EnableInt(can_base, CAN_CON_IE_Msk | CAN_CON_SIE_Msk | CAN_CON_EIE_Msk);
-            NVIC_SetPriority(((nu_can_t)can)->can_irq_n, (1 << __NVIC_PRIO_BITS) - 2);
             /* Enable NVIC interrupt. */
             NVIC_EnableIRQ(((nu_can_t)can)->can_irq_n);
         }
@@ -440,6 +438,9 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
         rt_memcpy(arg, &can->status, sizeof(can->status));
     }
     break;
+    default:
+       return -(RT_EINVAL);
+
     }
 
     return RT_EOK;
@@ -449,7 +450,7 @@ static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_
 {
     STR_CANMSG_T tMsg;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
-    /* Get base address of uart register */
+    /* Get base address of CAN register */
     CAN_T *can_base = ((nu_can_t)can)->can_base;
 
     RT_ASSERT(can_base != RT_NULL);
@@ -495,7 +496,7 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
 {
     STR_CANMSG_T tMsg;
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
-    /* Get base address of uart register */
+    /* Get base address of CAN register */
     CAN_T *can_base = ((nu_can_t)can)->can_base;
 
     RT_ASSERT(can_base != RT_NULL);
@@ -558,7 +559,7 @@ static int rt_hw_can_init(void)
         RT_ASSERT(ret == RT_EOK);
     }
 
-    return ret;
+    return (int)ret;
 }
 INIT_DEVICE_EXPORT(rt_hw_can_init);
 #endif  //#if defined(BSP_USING_CAN)

@@ -139,7 +139,7 @@ static struct nu_uuart nu_uuart_arr [] =
     {0}
 }; /* uuart nu_uuart */
 
-/* Interrupt Handle Funtion  ----------------------------------------------------*/
+/* Interrupt Handle Function  ----------------------------------------------------*/
 #if defined(BSP_USING_UUART0)
 /* USCI0 interrupt entry */
 void USCI0_IRQHandler(void)
@@ -197,7 +197,7 @@ static void nu_uuart_isr(nu_uuart_t serial)
 }
 
 /**
- * Configurae uuart port
+ * Configure uuart port
  */
 static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -209,11 +209,8 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
     /* Get base address of uuart register */
     UUART_T *uuart_base = ((nu_uuart_t)serial)->uuart_base;
 
-
-    /* Check baudrate */
+    /* Check baud rate */
     RT_ASSERT(cfg->baud_rate != 0);
-
-
 
     /* Check word len */
     switch (cfg->data_bits)
@@ -280,8 +277,7 @@ static rt_err_t nu_uuart_configure(struct rt_serial_device *serial, struct seria
     /* Reset this module */
     SYS_ResetModule(((nu_uuart_t)serial)->uuart_rst);
 
-
-    /* Open UUart and set UUART Baudrate */
+    /* Open UUart and set UUART baud rate */
     UUART_Open(uuart_base, cfg->baud_rate);
 
     /* Set line configuration. */
@@ -311,6 +307,11 @@ static rt_err_t nu_pdma_uuart_rx_config(struct rt_serial_device *serial, uint8_t
                                        (void *)serial,
                                        NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT);
 
+    if (result != RT_EOK)
+    {
+        goto exit_nu_pdma_uuart_rx_config;
+    }
+
     result = nu_pdma_transfer(((nu_uuart_t)serial)->pdma_chanid_rx,
                               8,
                               (uint32_t)&uuart_base->RXDAT,
@@ -318,7 +319,10 @@ static rt_err_t nu_pdma_uuart_rx_config(struct rt_serial_device *serial, uint8_t
                               i32TriggerLen,
                               1000);  //Idle-timeout, 1ms
 
-
+    if (result != RT_EOK)
+    {
+        goto exit_nu_pdma_uuart_rx_config;
+    }
 
     //UUART PDMA reset
     UUART_PDMA_ENABLE(uuart_base, UUART_PDMACTL_PDMARST_Msk);
@@ -327,6 +331,7 @@ static rt_err_t nu_pdma_uuart_rx_config(struct rt_serial_device *serial, uint8_t
     UUART_EnableInt(uuart_base, UUART_RLS_INT_MASK);
     UUART_PDMA_ENABLE(uuart_base, UUART_PDMACTL_RXPDMAEN_Msk | UUART_PDMACTL_PDMAEN_Msk);
 
+exit_nu_pdma_uuart_rx_config:
 
     return result;
 }
@@ -483,7 +488,6 @@ static rt_err_t nu_uuart_control(struct rt_serial_device *serial, int cmd, void 
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 
     RT_ASSERT(serial != RT_NULL);
-    RT_ASSERT(arg != RT_NULL);
 
     /* Get base address of uuart register */
     UUART_T *uuart_base = ((nu_uuart_t)serial)->uuart_base;
@@ -530,6 +534,25 @@ static rt_err_t nu_uuart_control(struct rt_serial_device *serial, int cmd, void 
         break;
 #endif
 
+    case RT_DEVICE_CTRL_CLOSE:
+        /* Disable NVIC interrupt. */
+        NVIC_DisableIRQ(((nu_uuart_t)serial)->uuart_irq_n);
+
+#if defined(RT_SERIAL_USING_DMA)
+        nu_pdma_channel_terminate(((nu_uuart_t)serial)->pdma_chanid_tx);
+        nu_pdma_channel_terminate(((nu_uuart_t)serial)->pdma_chanid_rx);
+#endif
+
+        /* Reset this module */
+        SYS_ResetModule(((nu_uuart_t)serial)->uuart_rst);
+
+        /* Close UUART port */
+        UUART_Close(uuart_base);
+
+        break;
+    default:
+        result = -RT_EINVAL;
+        break;
     }
     return result;
 }
@@ -599,7 +622,7 @@ static int rt_hw_uuart_init(void)
         RT_ASSERT(ret == RT_EOK);
     }
 
-    return ret;
+    return (int)ret;
 }
 
 INIT_DEVICE_EXPORT(rt_hw_uuart_init);

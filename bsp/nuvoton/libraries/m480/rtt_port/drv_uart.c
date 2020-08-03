@@ -291,7 +291,7 @@ static struct nu_uart nu_uart_arr [] =
     {0}
 }; /* uart nu_uart */
 
-/* Interrupt Handle Funtion  ----------------------------------------------------*/
+/* Interrupt Handle Function  ----------------------------------------------------*/
 #if defined(BSP_USING_UART0)
 /* UART0 interrupt entry */
 void UART0_IRQHandler(void)
@@ -419,6 +419,8 @@ static void nu_uart_isr(nu_uart_t serial)
 #if defined(RT_SERIAL_USING_DMA)
     if (u32IntSts & UART_INTSTS_HWRLSIF_Msk)
     {
+        /* Drain RX FIFO to remove remain FEF frames in FIFO. */
+        uart_base->FIFO |= UART_FIFO_RXRST_Msk;
         uart_base->FIFOSTS |= (UART_FIFOSTS_BIF_Msk | UART_FIFOSTS_FEF_Msk | UART_FIFOSTS_PEF_Msk);
         return;
     }
@@ -434,7 +436,7 @@ static void nu_uart_isr(nu_uart_t serial)
 }
 
 /**
- * Configurae uart port
+ * Configure uart port
  */
 static rt_err_t nu_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
@@ -544,6 +546,10 @@ static rt_err_t nu_pdma_uart_rx_config(struct rt_serial_device *serial, uint8_t 
                                        nu_pdma_uart_rx_cb,
                                        (void *)serial,
                                        NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT);
+    if ( result != RT_EOK )
+    {
+        goto exit_nu_pdma_uart_rx_config;
+    }
 
     result = nu_pdma_transfer(((nu_uart_t)serial)->pdma_chanid_rx,
                               8,
@@ -551,17 +557,24 @@ static rt_err_t nu_pdma_uart_rx_config(struct rt_serial_device *serial, uint8_t 
                               (uint32_t)pu8Buf,
                               i32TriggerLen,
                               1000);  //Idle-timeout, 1ms
+    if ( result != RT_EOK )
+    {
+        goto exit_nu_pdma_uart_rx_config;
+    }
 
     /* Enable Receive Line interrupt & Start DMA RX transfer. */
     UART_ENABLE_INT(uart_base, UART_INTEN_RLSIEN_Msk);
     UART_PDMA_ENABLE(uart_base, UART_INTEN_RXPDMAEN_Msk);
+
+
+exit_nu_pdma_uart_rx_config:
 
     return result;
 }
 
 static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
 {
-    rt_size_t recv_len=0;
+    rt_size_t recv_len = 0;
     rt_size_t transferred_rxbyte = 0;
     struct rt_serial_device *serial = (struct rt_serial_device *)pvOwner;
     nu_uart_t puart = (nu_uart_t)serial;
@@ -715,7 +728,6 @@ static rt_err_t nu_uart_control(struct rt_serial_device *serial, int cmd, void *
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 
     RT_ASSERT(serial != RT_NULL);
-    RT_ASSERT(arg != RT_NULL);
 
     /* Get base address of uart register */
     UART_T *uart_base = ((nu_uart_t)serial)->uart_base;
@@ -762,6 +774,27 @@ static rt_err_t nu_uart_control(struct rt_serial_device *serial, int cmd, void *
         }
         break;
 #endif
+
+    case RT_DEVICE_CTRL_CLOSE:
+        /* Disable NVIC interrupt. */
+        NVIC_DisableIRQ(((nu_uart_t)serial)->uart_irq_n);
+
+#if defined(RT_SERIAL_USING_DMA)
+        nu_pdma_channel_terminate(((nu_uart_t)serial)->pdma_chanid_tx);
+        nu_pdma_channel_terminate(((nu_uart_t)serial)->pdma_chanid_rx);
+#endif
+
+        /* Reset this module */
+        SYS_ResetModule(((nu_uart_t)serial)->uart_rst);
+
+        /* Close UART port */
+        UART_Close(uart_base);
+
+        break;
+
+    default:
+        result = -RT_EINVAL;
+        break;
 
     }
     return result;

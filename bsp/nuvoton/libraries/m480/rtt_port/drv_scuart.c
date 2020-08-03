@@ -1,25 +1,26 @@
 /**************************************************************************//**
-*
-* @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
-*
-* SPDX-License-Identifier: Apache-2.0
-*
-* Change Logs:
-* Date            Author       Notes
-* 2020-5-31       Egbert       First version
-*
-******************************************************************************/
+ *
+ * @copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date            Author       Notes
+ * 2020-7-21       Egbert       First version
+ *
+ ******************************************************************************/
 
 #include <rtconfig.h>
 
 #if defined(BSP_USING_SCUART)
 
+#include <NuMicro.h>
 #include <rtdevice.h>
 #include <rthw.h>
-#include <NuMicro.h>
 
-/* Private define ---------------------------------------------------------------*/
-#define LOG_TAG         "drv.scuart"
+/* Private definition
+ * ---------------------------------------------------------------*/
+#define LOG_TAG "drv.scuart"
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "drv.scuart"
 #define DBG_LEVEL DBG_ERROR
@@ -41,7 +42,8 @@ enum
     SCUART_CNT
 };
 
-/* Private typedef --------------------------------------------------------------*/
+/* Private typedef
+ * --------------------------------------------------------------*/
 struct nu_scuart
 {
     rt_serial_t dev;
@@ -49,34 +51,32 @@ struct nu_scuart
     SC_T *scuart_base;
     uint32_t scuart_rst;
     IRQn_Type scuart_irq_n;
-
 };
 typedef struct nu_scuart *nu_scuart_t;
 
-/* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_scuart_configure(struct rt_serial_device *serial, struct serial_configure *cfg);
-static rt_err_t nu_scuart_control(struct rt_serial_device *serial, int cmd, void *arg);
+/* Private functions
+ * ------------------------------------------------------------*/
+static rt_err_t nu_scuart_configure(struct rt_serial_device *serial,
+                                    struct serial_configure *cfg);
+static rt_err_t nu_scuart_control(struct rt_serial_device *serial, int cmd,
+                                  void *arg);
 static int nu_scuart_send(struct rt_serial_device *serial, char c);
 static int nu_scuart_receive(struct rt_serial_device *serial);
 static void nu_scuart_isr(nu_scuart_t serial);
 
-/* Public functions ------------------------------------------------------------*/
-
-/* Private variables ------------------------------------------------------------*/
-
 static const struct rt_uart_ops nu_scuart_ops =
 {
-    .configure      = nu_scuart_configure,
-    .control        = nu_scuart_control,
-    .putc           = nu_scuart_send,
-    .getc           = nu_scuart_receive,
-    .dma_transmit   = RT_NULL /* not support DMA mode */
+    .configure = nu_scuart_configure,
+    .control = nu_scuart_control,
+    .putc = nu_scuart_send,
+    .getc = nu_scuart_receive,
+    .dma_transmit = RT_NULL /* not support DMA mode */
 };
 
 static const struct serial_configure nu_scuart_default_config =
         RT_SERIAL_CONFIG_DEFAULT;
 
-static struct nu_scuart nu_scuart_arr [] =
+static struct nu_scuart nu_scuart_arr[] =
 {
 #if defined(BSP_USING_SCUART0)
     {
@@ -108,7 +108,8 @@ static struct nu_scuart nu_scuart_arr [] =
     {0}
 }; /* scuart nu_scuart */
 
-/* Interrupt Handle Funtion  ----------------------------------------------------*/
+/* Interrupt Handle Function
+ * ----------------------------------------------------*/
 #if defined(BSP_USING_SCUART0)
 /* SCUART0 interrupt entry */
 void SC0_IRQHandler(void)
@@ -151,8 +152,6 @@ void SC2_IRQHandler(void)
 }
 #endif
 
-
-
 /**
  * All SCUART interrupt service routine
  */
@@ -177,9 +176,10 @@ static void nu_scuart_isr(nu_scuart_t serial)
 }
 
 /**
- * Configurae scuart port
+ * Configure scuart port
  */
-static rt_err_t nu_scuart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t nu_scuart_configure(struct rt_serial_device *serial,
+                                    struct serial_configure *cfg)
 {
     rt_err_t ret = RT_EOK;
     uint32_t scuart_word_len = 0;
@@ -189,7 +189,7 @@ static rt_err_t nu_scuart_configure(struct rt_serial_device *serial, struct seri
     /* Get base address of scuart register */
     SC_T *scuart_base = ((nu_scuart_t)serial)->scuart_base;
 
-    /* Check baudrate */
+    /* Check baud rate */
     RT_ASSERT(cfg->baud_rate != 0);
 
     /* Check word len */
@@ -258,11 +258,12 @@ static rt_err_t nu_scuart_configure(struct rt_serial_device *serial, struct seri
     /* Reset this module */
     SYS_ResetModule(((nu_scuart_t)serial)->scuart_rst);
 
-    /* Open SCUART and set SCUART Baudrate */
+    /* Open SCUART and set SCUART baud rate */
     SCUART_Open(scuart_base, cfg->baud_rate);
 
     /* Set line configuration. */
-    SCUART_SetLineConfig(scuart_base, 0, scuart_word_len, scuart_parity, scuart_stop_bit);
+    SCUART_SetLineConfig(scuart_base, 0, scuart_word_len, scuart_parity,
+                         scuart_stop_bit);
 
     /* Enable NVIC interrupt. */
     NVIC_EnableIRQ(((nu_scuart_t)serial)->scuart_irq_n);
@@ -278,14 +279,14 @@ exit_nu_scuart_configure:
 /**
  * SCUART interrupt control
  */
-static rt_err_t nu_scuart_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t nu_scuart_control(struct rt_serial_device *serial, int cmd,
+                                  void *arg)
 {
     rt_err_t result = RT_EOK;
     rt_uint32_t flag;
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 
     RT_ASSERT(serial != RT_NULL);
-    RT_ASSERT(arg != RT_NULL);
 
     /* Get base address of scuart register */
     SC_T *scuart_base = ((nu_scuart_t)serial)->scuart_base;
@@ -298,10 +299,6 @@ static rt_err_t nu_scuart_control(struct rt_serial_device *serial, int cmd, void
             flag = SC_INTEN_RDAIEN_Msk | SC_INTEN_RXTOIEN_Msk;
             SCUART_DISABLE_INT(scuart_base, flag);
         }
-        else if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX) /* Disable DMA-RX */
-        {
-            LOG_E("SCUART does not support dma transmission");
-        }
         break;
 
     case RT_DEVICE_CTRL_SET_INT:
@@ -312,6 +309,21 @@ static rt_err_t nu_scuart_control(struct rt_serial_device *serial, int cmd, void
         }
         break;
 
+    case RT_DEVICE_CTRL_CLOSE:
+        /* Disable NVIC interrupt. */
+        NVIC_DisableIRQ(((nu_scuart_t)serial)->scuart_irq_n);
+
+        /* Reset this module */
+        SYS_ResetModule(((nu_scuart_t)serial)->scuart_rst);
+
+        /* Close SCUART port */
+        SCUART_Close(scuart_base);
+
+        break;
+
+    default:
+        result = -RT_EINVAL;
+        break;
     }
     return result;
 }
@@ -327,7 +339,8 @@ static int nu_scuart_send(struct rt_serial_device *serial, char c)
     SC_T *scuart_base = ((nu_scuart_t)serial)->scuart_base;
 
     /* Waiting if TX-FIFO is full. */
-    while (SCUART_IS_TX_FULL(scuart_base));
+    while (SCUART_IS_TX_FULL(scuart_base))
+        ;
 
     /* Put char into TX-FIFO */
     SCUART_WRITE(scuart_base, c);
@@ -368,10 +381,11 @@ static int rt_hw_scuart_init(void)
     {
         flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
 
-        nu_scuart_arr[i].dev.ops    = &nu_scuart_ops;
+        nu_scuart_arr[i].dev.ops = &nu_scuart_ops;
         nu_scuart_arr[i].dev.config = nu_scuart_default_config;
 
-        ret = rt_hw_serial_register(&nu_scuart_arr[i].dev, nu_scuart_arr[i].name, flag, NULL);
+        ret = rt_hw_serial_register(&nu_scuart_arr[i].dev, nu_scuart_arr[i].name,
+                                    flag, NULL);
         RT_ASSERT(ret == RT_EOK);
     }
 
