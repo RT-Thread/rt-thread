@@ -1,8 +1,9 @@
 # RT-Thread SConscript bridge
 import os
+from building import *
 
 objs = []
-cwd  = GetCurrentDir()
+cwd = GetCurrentDir()
 list = os.listdir(cwd)
 
 for d in list:
