@@ -10,7 +10,7 @@
 *
 ******************************************************************************/
 
-#include <rtthread.h>
+#include <rtconfig.h>
 #include <rtdevice.h>
 #include <drv_gpio.h>
 
@@ -19,6 +19,8 @@
 
 int main(int argc, char **argv)
 {
+#if defined(RT_USING_PIN)
+
     int counter = 0;
 
     /* set LEDR1 pin mode to output */
@@ -32,5 +34,6 @@ int main(int argc, char **argv)
         rt_thread_mdelay(500);
     }
 
+#endif
     return 0;
 }

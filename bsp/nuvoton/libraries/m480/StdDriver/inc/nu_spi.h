@@ -134,6 +134,15 @@ extern "C"
 #define SPI_TRIGGER_TX_PDMA(spi)   ((spi)->PDMACTL |= SPI_PDMACTL_TXPDMAEN_Msk)
 
 /**
+  * @brief      Trigger TX and RX PDMA function.
+  * @param[in]  spi The pointer of the specified SPI module.
+  * @return     None.
+  * @details    Set TXPDMAEN bit and RXPDMAEN bit of SPI_PDMACTL register to enable TX and RX PDMA transfer function.
+  * \hideinitializer
+  */
+#define SPI_TRIGGER_TX_RX_PDMA(spi)   ((spi)->PDMACTL |= (SPI_PDMACTL_TXPDMAEN_Msk | SPI_PDMACTL_RXPDMAEN_Msk))
+
+/**
   * @brief      Disable RX PDMA transfer.
   * @param[in]  spi The pointer of the specified SPI module.
   * @return     None.
@@ -150,6 +159,15 @@ extern "C"
   * \hideinitializer
   */
 #define SPI_DISABLE_TX_PDMA(spi) ( (spi)->PDMACTL &= ~SPI_PDMACTL_TXPDMAEN_Msk )
+
+/**
+  * @brief      Disable TX and RX PDMA transfer.
+  * @param[in]  spi The pointer of the specified SPI module.
+  * @return     None.
+  * @details    Clear TXPDMAEN bit and RXPDMAEN bit of SPI_PDMACTL register to disable TX and RX PDMA transfer function.
+  * \hideinitializer
+  */
+#define SPI_DISABLE_TX_RX_PDMA(spi) ( (spi)->PDMACTL &= ~(SPI_PDMACTL_TXPDMAEN_Msk | SPI_PDMACTL_RXPDMAEN_Msk) )
 
 /**
   * @brief      Get the count of available data in RX FIFO.

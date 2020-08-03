@@ -166,7 +166,7 @@ static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_
     if ((irqindex = nu_find_irqindex(pin)) >= 0)
         goto exit_nu_gpio_attach_irq;
 
-    // Find avaiable index of pin in pool.
+    // Find available index of pin in pool.
     if ((irqindex = nu_cto(g_u32PinIrqMask)) < IRQ_MAX_NUM)  // Count Trailing Ones ==> Find First Zero
         goto exit_nu_gpio_attach_irq;
 
