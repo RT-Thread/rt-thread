@@ -21,9 +21,9 @@
 #endif
 
 /* Private define ---------------------------------------------------------------*/
-#define NU_GETBYTE_OFST(addr)         ((addr&0x3)*8)
-#define NU_GET_WALIGN(addr)           (addr&~0x3)
-#define NU_GET_LSB2BIT(addr)          (addr&0x3)
+#define NU_GETBYTE_OFST(addr)         (((addr)&0x3)*8)
+#define NU_GET_WALIGN(addr)           ((addr)&~0x3)
+#define NU_GET_LSB2BIT(addr)          ((addr)&0x3)
 /* Private typedef --------------------------------------------------------------*/
 
 /* Private functions ------------------------------------------------------------*/
@@ -159,7 +159,8 @@ int nu_fmc_erase(long addr, size_t size)
     uint32_t addr_end = addr + size;
 
 #if defined(NU_SUPPORT_NONALIGN)
-    uint8_t *page_sdtemp = RT_NULL, *page_edtemp = RT_NULL;
+    uint8_t *page_sdtemp = RT_NULL; 
+    uint8_t *page_edtemp = RT_NULL;
 
 
     addrptr = addr & (FMC_FLASH_PAGE_SIZE - 1);
@@ -315,7 +316,7 @@ static int nu_fmc_init(void)
 
     g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_FIFO);
 
-    return RT_EOK;
+    return (int)RT_EOK;
 }
 INIT_APP_EXPORT(nu_fmc_init);
 

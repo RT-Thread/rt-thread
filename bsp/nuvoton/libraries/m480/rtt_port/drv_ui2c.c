@@ -22,7 +22,6 @@
 #define DBG_ENABLE
 #define DBG_SECTION_NAME LOG_TAG
 #define DBG_LEVEL        DBG_INFO
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #define SLV_10BIT_ADDR (0x1E<<2)             //1111+0xx+r/w
@@ -110,7 +109,7 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_bus_t *nu_ui2c,
         LOG_D("addr1: %d, addr2: %d\n", addr1, addr2);
 
         ret = nu_ui2c_send_data(nu_ui2c, addr1);
-        if (ret != RT_EOK) //for timeout conditrion
+        if (ret != RT_EOK) //for timeout condition
             return -RT_EIO;
 
         if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk) && !ignore_nack)
@@ -122,7 +121,7 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_bus_t *nu_ui2c,
         UI2C_CLR_PROT_INT_FLAG(nu_ui2c->ui2c_base, UI2C_PROTSTS_ACKIF_Msk);
 
         ret = nu_ui2c_send_data(nu_ui2c,  addr2);
-        if (ret != RT_EOK) //for timeout conditrion
+        if (ret != RT_EOK) //for timeout condition
             return -RT_EIO;
 
         if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk) && !ignore_nack)
@@ -139,7 +138,7 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_bus_t *nu_ui2c,
 
             UI2C_SET_CONTROL_REG(nu_ui2c->ui2c_base, (UI2C_CTL_PTRG | UI2C_CTL_STA));
             ret = nu_ui2c_wait_ready_with_timeout(nu_ui2c);
-            if (ret != RT_EOK) //for timeout conditrion
+            if (ret != RT_EOK) //for timeout condition
                 return -RT_EIO;
 
             if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_STARIF_Msk) != UI2C_PROTSTS_STARIF_Msk) && !ignore_nack)
@@ -150,16 +149,15 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_bus_t *nu_ui2c,
             }
             UI2C_CLR_PROT_INT_FLAG(nu_ui2c->ui2c_base, UI2C_PROTSTS_STARIF_Msk);
 
-            addr1 |= 0x01;
+            addr1 |= RT_I2C_RD;
 
             ret = nu_ui2c_send_data(nu_ui2c,  addr1);
-            if (ret != RT_EOK) //for timeout conditrion
+            if (ret != RT_EOK) //for timeout condition
                 return -RT_EIO;
 
             if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk) && !ignore_nack)
             {
                 LOG_E("NACK: sending repeated addr\n");
-
                 return -RT_EIO;
             }
             UI2C_CLR_PROT_INT_FLAG(nu_ui2c->ui2c_base, UI2C_PROTSTS_ACKIF_Msk);
@@ -170,11 +168,11 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_bus_t *nu_ui2c,
         /* 7-bit addr */
         addr1 = msg->addr << 1;
         if (flags & RT_I2C_RD)
-            addr1 |= 1;
+            addr1 |= RT_I2C_RD;
 
         /* Send device address */
         ret = nu_ui2c_send_data(nu_ui2c,  addr1); /* Send Address */
-        if (ret != RT_EOK) //for timeout conditrion
+        if (ret != RT_EOK) //for timeout condition
             return -RT_EIO;
 
         if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk)
@@ -210,7 +208,7 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
     UI2C_SET_CONTROL_REG(nu_ui2c->ui2c_base, UI2C_CTL_STA);
     ret = nu_ui2c_wait_ready_with_timeout(nu_ui2c);
 
-    if (ret != RT_EOK) //for timeout conditrion
+    if (ret != RT_EOK) //for timeout condition
     {
         rt_set_errno(-RT_ETIMEOUT);
         return 0;
@@ -235,7 +233,7 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
             {
                 UI2C_SET_CONTROL_REG(nu_ui2c->ui2c_base, (UI2C_CTL_PTRG | UI2C_CTL_STA));/* Send repeat START */
                 ret = nu_ui2c_wait_ready_with_timeout(nu_ui2c);
-                if (ret != RT_EOK) //for timeout conditrion
+                if (ret != RT_EOK) //for timeout condition
                     break;
 
                 if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_STARIF_Msk) != UI2C_PROTSTS_STARIF_Msk)) /* Check Send repeat START */
@@ -272,7 +270,7 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 }
 
                 ret = nu_ui2c_wait_ready_with_timeout(nu_ui2c);
-                if (ret != RT_EOK) //for timeout conditrion
+                if (ret != RT_EOK) //for timeout condition
                     break;
 
                 if (nu_ui2c->ui2c_base->PROTCTL & UI2C_CTL_AA)
@@ -303,12 +301,12 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
             {
                 /* Send register number and MSB of data */
                 ret = nu_ui2c_send_data(nu_ui2c, (uint8_t)(nu_ui2c->msg[i].buf[cnt_data]));
-                if (ret != RT_EOK) //for timeout conditrion
+                if (ret != RT_EOK) //for timeout condition
                     break;
 
                 if (((UI2C_GET_PROT_STATUS(nu_ui2c->ui2c_base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk)
                         && !ignore_nack
-                   ) /* Send aata and get Ack */
+                   ) /* Send data and get Ack */
                 {
                     i = 0;
                     break;
@@ -320,7 +318,7 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
     UI2C_SET_CONTROL_REG(nu_ui2c->ui2c_base, (UI2C_CTL_PTRG | UI2C_CTL_STO));            /* Send STOP signal */
     ret = nu_ui2c_wait_ready_with_timeout(nu_ui2c);
-    if (ret != RT_EOK) //for timeout conditrion
+    if (ret != RT_EOK) //for timeout condition
     {
         rt_set_errno(-RT_ETIMEOUT);
         return 0;
@@ -357,8 +355,11 @@ int rt_hw_ui2c_init(void)
 
 #if defined(BSP_USING_UI2C0)
     /* Enable UI2C0 clock */
+    SYS_UnlockReg();
     CLK_EnableModuleClock(USCI0_MODULE);
     SYS_ResetModule(USCI0_RST);
+    SYS_LockReg();
+
     nu_ui2c0.ui2c_dev.ops = &nu_ui2c_ops;
     ret = rt_i2c_bus_device_register(&nu_ui2c0.ui2c_dev, nu_ui2c0.dev_name);
     RT_ASSERT(RT_EOK == ret);
@@ -366,8 +367,11 @@ int rt_hw_ui2c_init(void)
 
 #if defined(BSP_USING_UI2C1)
     /* Enable UI2C1 clock */
+    SYS_UnlockReg();
     CLK_EnableModuleClock(USCI1_MODULE);
     SYS_ResetModule(USCI1_RST);
+    SYS_LockReg();
+
     nu_ui2c1.ui2c_dev.ops = &nu_ui2c_ops;
     ret = rt_i2c_bus_device_register(&nu_ui2c1.ui2c_dev, nu_ui2c1.dev_name);
     RT_ASSERT(RT_EOK == ret);
