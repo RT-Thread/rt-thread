@@ -95,12 +95,11 @@ if RT_USING_I2C
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
         default y
-endif
-
-if RT_USING_I2C_BITOPS
-    config RT_I2C_BITOPS_DEBUG
-        bool "Use simulate I2C debug message"
-        default n
+    if RT_USING_I2C_BITOPS
+		config RT_I2C_BITOPS_DEBUG
+   		bool "Use simulate I2C debug message"
+    	default n
+	endif
 endif
 
 config RT_USING_PIN
