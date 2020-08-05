@@ -1,8 +1,8 @@
-# BSP README 模板
+# NUCLEO-F091RC 开发板 BSP 说明
 
 ## 简介
 
-本文档为 RT-Thread 开发团队为 STM32F091RC-NuCLEO 开发板提供的 BSP (板级支持包) 说明。
+本文档为 RT-Thread 开发团队为 STM32F091RC-NUCLEO 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -22,7 +22,7 @@ STM32F091RC-NuCLEO 开发板是 ST 官方推出的一款基于 ARM Cortex-M0 内
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32F091，主频 48MHz，256KB FLASH ，32KB RAM
+- MCU：STM32F091RC，主频 48MHz，256KB FLASH ，32KB RAM
 - 外部 RAM：无
 - 外部 FLASH：无
 - 常用外设
@@ -30,7 +30,7 @@ STM32F091RC-NuCLEO 开发板是 ST 官方推出的一款基于 ARM Cortex-M0 内
 - 常用接口：USB 转串口、arduino 接口等
 - 调试接口，标准 SWD
 
-开发板更多详细信息请参考 ST 的 [NUCLEO 开发板介绍](https://www.st.com/en/evaluation-tools/stm32-mcu-nucleo.html?querycriteria=productId=LN1847)。
+开发板更多详细信息请参考意法半导体[NUCLEO-F091RC](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-f091rc.html)。
 
 ## 外设支持
 
