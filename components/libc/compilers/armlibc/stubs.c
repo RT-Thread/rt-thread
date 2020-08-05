@@ -269,16 +269,14 @@ long _sys_flen(FILEHANDLE fh)
 {
 #ifdef RT_USING_DFS
     struct stat stat;
-#endif
-    
+
     if (fh < STDERR)
         return -1;
 
-#ifndef RT_USING_DFS
-    return -1;
-#else
     fstat(fh, &stat);
     return stat.st_size;
+#else
+    return -1;
 #endif
 }
 
