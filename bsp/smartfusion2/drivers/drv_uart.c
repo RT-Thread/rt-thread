@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-08-06     whik         first version
+ */
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -41,6 +50,7 @@ void uart1_rx_handler(mss_uart_instance_t *this_uart)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+
 static rt_err_t sf2_uart_configure(struct rt_serial_device *serial, 
 	                               struct serial_configure *cfg)
 {
@@ -150,7 +160,6 @@ static const struct rt_uart_ops sf2_uart_ops =
     sf2_uart_putc,
     sf2_uart_getc,
 };
-
 
 int rt_hw_uart_init(void)
 {

@@ -1,16 +1,14 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-08-06     whik         first version
+ */
 #include "config.h"
 
-void sw0_isr(void *args)
-{
-    rt_kprintf("sw_0 is trigger \r\n");
-    rt_thread_mdelay(400);
-}
-
-void sw1_isr(void *args)
-{
-    rt_kprintf("sw_1 is trigger \r\n");
-    rt_thread_mdelay(400);
-}
 /* hardware initialization */
 void boardInit(void)
 {

@@ -10,7 +10,7 @@
 #if MSCC_NO_RELATIVE_PATHS
 #include "sys_config.h"
 #else
-#include "../drivers_config/sys_config/sys_config.h"
+#include "sys_config.h"
 #endif
 #include "sys_init_cfg_types.h"
 /*------------------------------------------------------------------------------
