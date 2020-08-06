@@ -53,6 +53,9 @@ if PLATFORM == 'gcc':
     CPATH = ''
     LPATH = ''
 
+    AFLAGS += ' -D__STARTUP_INITIALIZE_NONCACHEDATA'
+    AFLAGS += ' -D__STARTUP_CLEAR_BSS'
+
     if BUILD == 'debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
@@ -60,7 +63,7 @@ if PLATFORM == 'gcc':
     else:
         CFLAGS += ' -O2 -Os'
 
-    POST_ACTION = OBJCPY + ' -O binary --remove-section=.boot_data --remove-section=.image_vertor_table --remove-section=.ncache $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
     # module setting 
     CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
