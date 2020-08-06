@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-07-09     whik         first version
+ */
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rthw.h>
 
-#include "mss_gpio.h"
 #include "drv_gpio.h"
 
 #ifdef BSP_USING_GPIO
@@ -132,7 +140,7 @@ static rt_err_t sf2_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 
 static rt_err_t sf2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
 {
-    uint32_t mode;
+    uint32_t mode = 0;
     rt_base_t level;
 
     if (enabled == PIN_IRQ_ENABLE)

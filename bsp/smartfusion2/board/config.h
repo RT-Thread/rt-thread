@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-08-06     whik         first version
+ */
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
