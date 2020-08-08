@@ -46,22 +46,6 @@ static const struct pin_index pins[] =
     __NRF5X_PIN(29,  0, 29),
     __NRF5X_PIN(30,  0, 30),
     __NRF5X_PIN(31,  0, 31),
-    __NRF5X_PIN(32,  1, 0 ),
-    __NRF5X_PIN(33,  1, 1 ),
-    __NRF5X_PIN(34,  1, 2 ),
-    __NRF5X_PIN(35,  1, 3 ),
-    __NRF5X_PIN(36,  1, 4 ),
-    __NRF5X_PIN(37,  1, 5 ),
-    __NRF5X_PIN(38,  1, 6 ),
-    __NRF5X_PIN(39,  1, 7 ),
-    __NRF5X_PIN(40,  1, 8 ),
-    __NRF5X_PIN(41,  1, 9 ),
-    __NRF5X_PIN(42,  1, 10),
-    __NRF5X_PIN(43,  1, 11),
-    __NRF5X_PIN(44,  1, 12),
-    __NRF5X_PIN(45,  1, 13),
-    __NRF5X_PIN(46,  1, 14),
-    __NRF5X_PIN(47,  1, 15),
 };
 
 /* EVENTS_IN[n](n=0..7) and EVENTS_PORT */
