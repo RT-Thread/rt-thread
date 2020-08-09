@@ -53,6 +53,9 @@ if PLATFORM == 'gcc':
     CPATH = ''
     LPATH = ''
 
+    AFLAGS += ' -D__STARTUP_INITIALIZE_NONCACHEDATA'
+    AFLAGS += ' -D__STARTUP_CLEAR_BSS'
+
     if BUILD == 'debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
