@@ -32,6 +32,7 @@
  * 2019-01-27     Bernard      change version number to v4.0.1
  * 2019-05-17     Bernard      change version number to v4.0.2
  * 2019-12-20     Bernard      change version number to v4.0.3
+ * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  */
 
 #ifndef __RT_DEF_H__
@@ -920,6 +921,8 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
+
+#ifdef RT_USING_DEVICE_OPS
 /**
  * operations set for device object
  */
@@ -933,6 +936,7 @@ struct rt_device_ops
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 };
+#endif
 
 /**
  * WaitQueue structure
