@@ -18,12 +18,12 @@
 #define LCD_BUF_SIZE        (LCD_WIDTH * LCD_HEIGHT * LCD_BITS_PER_PIXEL / 8)
 #define LCD_PIXEL_FORMAT    RTGRAPHIC_PIXEL_FORMAT_RGB565
 
-#define LCD_HSYNC_WIDTH     2
+#define LCD_HSYNC_WIDTH     10
 #define LCD_VSYNC_HEIGHT    2
-#define LCD_HBP             46
-#define LCD_VBP             23
-#define LCD_HFP             22
-#define LCD_VFP             22
+#define LCD_HBP             20
+#define LCD_VBP             2
+#define LCD_HFP             10
+#define LCD_VFP             5
 
 #define LCD_BACKLIGHT_USING_GPIO
 #define LCD_BL_GPIO_NUM     GET_PIN(D, 7)
