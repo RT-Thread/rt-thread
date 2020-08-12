@@ -68,7 +68,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         select RT_USING_SPI
-        default n
+        default y
         if BSP_USING_SPI  
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
