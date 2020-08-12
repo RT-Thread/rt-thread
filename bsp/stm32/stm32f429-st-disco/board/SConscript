@@ -27,6 +27,9 @@ if GetDepend(['BSP_USING_SDCARD']):
 if GetDepend(['BSP_USING_QSPI']):
     src += ['ports/drv_qspi_flash.c']
 
+if GetDepend(['BSP_USING_LCD']):
+    src += ['ports/ili9341.c']
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']
