@@ -1,12 +1,10 @@
+menu "RT-Thread CPU arch and features"
+
 config ARCH_CPU_64BIT
     bool
 
 config ARCH_ARM
     bool
-
-config RT_USING_CPU_FFS
-    bool
-    default n
 
 config ARCH_ARM_CORTEX_M
     bool
@@ -22,7 +20,6 @@ config ARCH_ARM_CORTEX_M0
 config ARCH_ARM_CORTEX_M3
     bool
     select ARCH_ARM_CORTEX_M
-    select RT_USING_CPU_FFS
 
 config ARCH_ARM_MPU
     bool
@@ -31,12 +28,10 @@ config ARCH_ARM_MPU
 config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
-    select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_M7
     bool
     select ARCH_ARM_CORTEX_M
-    select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_R
     bool
@@ -74,13 +69,7 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
-config ARCH_ARMV8
-    bool
-
 config ARCH_MIPS
-    bool
-
-config ARCH_MIPS64
     bool
 
 config ARCH_MIPS_XBURST
@@ -91,25 +80,52 @@ config ARCH_ANDES
     bool
 
 config ARCH_CSKY
-    bool
+    bool "select c-sky cpu"
+    select ARCH_CSKY
+    default n
+    help
+        "select c-sky cpu"
 
 config ARCH_POWERPC
     bool
 
-config ARCH_RISCV
-    bool
 
-config ARCH_RISCV_FPU
-    bool
+menu "risc-v arch"
+    config ARCH_RISCV
+        bool "arch risc-v"
+        select ARCH_RISCV
+        default n
 
-config ARCH_RISCV32
-    select ARCH_RISCV
-    bool
+        if ARCH_RISCV
+            choice
+   		prompt "select risc-v 32/64-bits machine"
+		default ARCH_RISCV_32
+		
+		config ARCH_RISCV_32
+		    bool "riscv 32-bits machine"
+		config ARCH_RISCV_64
+		    bool "riscv 64-bits machine"
+	    endchoice
+        endif
 
-config ARCH_RISCV64
-    select ARCH_RISCV
-    select ARCH_CPU_64BIT
-    bool
+    config ARCH_RISCV_FPU
+        bool "has FPU"
+        select ARCH_RISCV_FPU
+        default n
+
+        if ARCH_RISCV_FPU
+            choice
+   		prompt "select simple or double float fpu"
+		default ARCH_RISCV_FPU_S
+		
+		config ARCH_RISCV_FPU_S
+		    bool "simple float fpu"
+		config ARCH_RISCV_FPU_D
+		    bool "double float fpu"
+	    endchoice
+        endif
+endmenu
+
 
 config ARCH_IA32
     bool
@@ -128,3 +144,5 @@ config ARCH_HOST_SIMULATOR
 config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
+
+endmenu

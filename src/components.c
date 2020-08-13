@@ -217,6 +217,9 @@ int rtthread_startup(void)
 {
     rt_hw_interrupt_disable();
 
+    /* timer system initialization */
+    rt_system_timer_init();
+
     /* board level initialization
      * NOTE: please initialize heap inside board initialization.
      */
@@ -225,9 +228,7 @@ int rtthread_startup(void)
     /* show RT-Thread version */
     rt_show_version();
 
-    /* timer system initialization */
-    rt_system_timer_init();
-
+    
     /* scheduler system initialization */
     rt_system_scheduler_init();
 
