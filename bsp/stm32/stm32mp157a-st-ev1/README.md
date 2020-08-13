@@ -2,7 +2,7 @@
 
 [中文页](README_zh.md) |
 
-# Introduction
+## Introduction
 
 This document records the execution instruction of the BSP (board support package) provided by the RT-Thread development team for the STM32MP157A-EV1 development board.
 
@@ -20,18 +20,18 @@ By reading the Quickly Get Started section developers can quickly get their hand
 
 The STM32MP157A-EV1 is a development board based on a dual Cortex-A7 and Cortex-M4 core. The Cortex-A7 core operates at 650 MHZ and the Cortex-M4 operates at 209MHZ. There is no Flash inside the STM32MP157A.
 
-​									![board](figures/board.png)
+![board](figures/board.png)
 
 The mainly-used **on-board resources** are shown as follows:
 
-* MCU : STM32MP157AAAx
-* Common peripherals:
-	- 4 LEDs: LD4(PD8), LD5(PD9), LD2(PA13), LD3(PA14)
-	- 4 Buttons:  WAKE_UP, RESET (NRST), USER1(PA13), USER2 (PA14)
-* Common-used interface: USB, SD card, Ethernet, MIPI, USB HOST, Audio, HDMI, Arduino.
-* Debug interface: Standard JTAG/SWD.
+- MCU : STM32MP157AAAx
+- Common peripherals:
+  - 4 LEDs: LD4(PD8), LD5(PD9), LD2(PA13), LD3(PA14)
+  - 4 Buttons:  WAKE_UP, RESET (NRST), USER1(PA13), USER2 (PA14)
+- Common-used interface: USB, SD card, Ethernet, MIPI, USB HOST, Audio, HDMI, Arduino.
+- Debug interface: Standard JTAG/SWD.
 
-For more details about this board, please refer to the ST official documentation: 
+For more details about this board, please refer to the ST official documentation:
 
 [STM32MP157A-EV1 Development board introduction](https://www.st.com/content/st_com/zh/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-eval-boards/stm32mp157a-ev1.html)
 
@@ -72,13 +72,12 @@ Each peripheral supporting condition for this BSP is as follows:
 | CRC                            |     NO      |                  |
 | RNG                            |     NO      |                  |
 | HASH                           |     NO      |                  |
-| CRYP                           |     NO      |                  |
 
 ## Execution Instruction
 
-###  Quickly Get Started
+### Quickly Get Started
 
-This BSP provides IAR projects for developers. Here's an example of the IAR development environment, to introduce how to run the system.
+This BSP provides MDK4,MDK5 and IAR projects for developers. Also support GCC development environment,Here's an example of the MDK5 development environment, to introduce how to run the system.
 
 #### Hardware Connection
 
@@ -86,9 +85,9 @@ Use a USB cable to connect the development board to the PC and turn on the power
 
 #### Compile And Download
 
-Double-click the project.eww file, to open the IAR project, compile and download the program to the board.
+Double-click the project.uvprojx file, to open the MDK5 project, compile and download the program to the board.
 
-> By default, the project uses ST_LINK simulator to download the program, when the ST_LINK connects the board, clicking the download button can download the program to the board. 
+> By default, the project uses ST_LINK simulator to download the program, when the ST_LINK connects the board, clicking the download button can download the program to the board.
 
 #### Running Results
 
@@ -101,37 +100,36 @@ Connect the serial port of the board to PC, communicate with it via a serial ter
 - RT -     Thread Operating System
  / | \     3.1.1 build Nov 19 2018
  2006 - 2018 Copyright by rt-thread team
-msh > 
+msh >
 ```
 
 #### Drivers
 
 ##### 1. DAC
 
-* Open the [Env](https://www.rt-thread.io/download.html?download=Env) tool under this BSP;
-* Enter the `menuconfig` command, enter the Hardware Drivers config and open DAC, save and exit;
-
-* Enter the `scons --target=iar` command to regenerate project.
+- Open the [Env](https://www.rt-thread.io/download.html?download=Env) tool under this BSP;
+- Enter the `menuconfig` command, enter the Hardware Drivers config and open DAC, save and exit;
+- Enter the `scons --target=iar` command to regenerate project.
 
 ###### Finsh
 
 Before you use a device, you need to find out if the device exists, and you can use the name of the DAC device that is enrolled with the command  `dac probe` . As shown as follows.
 
-```
+```c
 msh />dac probe dac1
 probe dac1 success
 ```
 
 Enable the channel of the device can use the command  `dac enable`  followed by the channel number.
 
- ```shell
+ ```c
 msh />dac probe dac1
 probe dac1 success
  ```
 
 Set up the data of the channel for a DAC device can use the command  `dac write` followed by the channel number.
 
-```
+```c
 msh />dac write 1 1000
 dac1 channel 1 write value is 1000
 ```
@@ -145,24 +143,23 @@ dac1 channel 1 disable success
 
 ### Advanced Features
 
-This BSP only enables GPIO and serial port 4 by default. If need more advanced features, you need to configure the BSP with RT-Thread Env tools, as follows: 
+This BSP only enables GPIO and serial port 4 by default. If need more advanced features, you need to configure the BSP with RT-Thread Env tools, as follows:
 
-* Open the [Env](https://www.rt-thread.io/download.html?download=Env) tool under this BSP;
-* Enter the `menuconfig` command to configure the project, then save and exit;
-* Enter the  `pkgs --update` command to update the packages;
-* Enter the `scons --target=iar `command to regenerate the  project.
+- Open the [Env](https://www.rt-thread.io/download.html?download=Env) tool under this BSP;
+- Enter the `menuconfig` command to configure the project, then save and exit;
+- Enter the  `pkgs --update` command to update the packages;
+- Enter the `scons --target=iar`command to regenerate the  project.
 
 ## Notes
 
-* Before downloading the program, set the board to the mode of "Engineering Mode".  The BOOT switch sets to BOOT0=0,BOOT1 = 0 and BOOT2=1, as shown below:
+- Before downloading the program, set the board to the mode of "Engineering Mode".  The BOOT switch sets to BOOT0=0,BOOT1 = 0 and BOOT2=1, as shown below:
 
-  ​																		<img src="figures\boot.png" alt="boot_switch" style="zoom:50%;" />			
+![boot](figures/boot.png)
 
-* If need to reburn the program, please reset the development board.
-
+- If need to reburn the program, please reset the development board.
 
 ## Contact Information
 
 accendant:
 
-- [liukang](https://github.com/thread-liu) 
+- [liukang](https://github.com/thread-liu)
