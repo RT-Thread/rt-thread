@@ -456,7 +456,10 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-        cs++, ct++;
+    {        
+        cs++;
+        ct++;
+    }
 
     return (*cs - *ct);
 }
@@ -543,7 +546,7 @@ void rt_show_version(void)
 RTM_EXPORT(rt_show_version);
 
 /* private function */
-#define isdigit(c)  ((unsigned)((c) - '0') < 10)
+#define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
 #ifdef RT_PRINTF_LONGLONG
 rt_inline int divide(long long *n, int base)
@@ -588,7 +591,7 @@ rt_inline int divide(long *n, int base)
 rt_inline int skip_atoi(const char **s)
 {
     register int i = 0;
-    while (isdigit(**s))
+    while (_ISDIGIT(**s))
         i = i * 10 + *((*s)++) - '0';
 
     return i;
@@ -834,7 +837,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
         /* get field width */
         field_width = -1;
-        if (isdigit(*fmt)) field_width = skip_atoi(&fmt);
+        if (_ISDIGIT(*fmt)) field_width = skip_atoi(&fmt);
         else if (*fmt == '*')
         {
             ++ fmt;
@@ -853,7 +856,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         if (*fmt == '.')
         {
             ++ fmt;
-            if (isdigit(*fmt)) precision = skip_atoi(&fmt);
+            if (_ISDIGIT(*fmt)) precision = skip_atoi(&fmt);
             else if (*fmt == '*')
             {
                 ++ fmt;

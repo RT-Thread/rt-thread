@@ -179,7 +179,7 @@ void list_date(void)
     time_t now;
 
     now = time(RT_NULL);
-    rt_kprintf("%s\n", ctime(&now));
+    rt_kprintf("%.*s\n", 25, ctime(&now));
 }
 FINSH_FUNCTION_EXPORT(list_date, show date and time.)
 
@@ -194,7 +194,7 @@ static void date(uint8_t argc, char **argv)
         time_t now;
         /* output current time */
         now = time(RT_NULL);
-        rt_kprintf("%s", ctime(&now));
+        rt_kprintf("%.*s", 25, ctime(&now));
     }
     else if (argc >= 7)
     {

@@ -165,8 +165,8 @@ static void pm_run(struct rt_pm *pm, rt_uint8_t mode)
 
     SYS_UnlockReg();
 
-    /* Switch run mdoe frequency using PLL + HXT if HXT is enabled.
-       Otherwise, the systme clock will use PLL + HIRC. */
+    /* Switch run mode frequency using PLL + HXT if HXT is enabled.
+       Otherwise, the system clock will use PLL + HIRC. */
     switch (mode)
     {
     case PM_RUN_MODE_HIGH_SPEED:
@@ -209,7 +209,7 @@ static void hw_timer_init(void)
     CLK_EnableModuleClock(PM_TIMER_MODULE);
     SYS_LockReg();
 
-    /* Initialise timer and enable wakeup function. */
+    /* Initialize timer and enable wakeup function. */
     TIMER_Open(PM_TIMER, TIMER_CONTINUOUS_MODE, 1);
     TIMER_SET_PRESCALE_VALUE(PM_TIMER, 0);
     TIMER_EnableInt(PM_TIMER);
@@ -262,7 +262,7 @@ static void pm_timer_start(struct rt_pm *pm, rt_uint32_t timeout)
     if (timeout == RT_TICK_MAX)
         return;
 
-    /* start pm timer to compenstate the os tick in power down mode */
+    /* start pm timer to compensate the os tick in power down mode */
     tick = pm_tick_from_os_tick(timeout);
     TIMER_SET_CMP_VALUE(PM_TIMER, tick);
     TIMER_Start(PM_TIMER);
@@ -277,7 +277,7 @@ static void pm_timer_stop(struct rt_pm *pm)
 }
 
 
-/* pm device driver initialise. */
+/* pm device driver initialize. */
 int rt_hw_pm_init(void)
 {
     rt_uint8_t timer_mask;

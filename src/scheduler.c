@@ -33,10 +33,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_SMP
-rt_hw_spinlock_t _rt_critical_lock;
-#endif /*RT_USING_SMP*/
-
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -851,7 +847,7 @@ void rt_enter_critical(void)
     if (!current_thread)
     {
         rt_hw_local_irq_enable(level);
-        return ;
+        return;
     }
 
     /*
@@ -859,12 +855,15 @@ void rt_enter_critical(void)
      * enough and does not check here
      */
 
-    /* lock scheduler for all cpus */
-    if (current_thread->critical_lock_nest == 0)
     {
-        rt_hw_spin_lock(&_rt_critical_lock);
+        register rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
+        current_thread->cpus_lock_nest++;
+        if (lock_nest == 0)
+        {
+            current_thread->scheduler_lock_nest ++;
+            rt_hw_spin_lock(&_cpus_lock);
+        }
     }
-
     /* critical for local cpu */
     current_thread->critical_lock_nest ++;
 
@@ -910,16 +909,18 @@ void rt_exit_critical(void)
     if (!current_thread)
     {
         rt_hw_local_irq_enable(level);
-        return ;
+        return;
     }
 
     current_thread->scheduler_lock_nest --;
 
     current_thread->critical_lock_nest --;
 
-    if (current_thread->critical_lock_nest == 0)
+    current_thread->cpus_lock_nest--;
+    if (current_thread->cpus_lock_nest == 0)
     {
-        rt_hw_spin_unlock(&_rt_critical_lock);
+        current_thread->scheduler_lock_nest --;
+        rt_hw_spin_unlock(&_cpus_lock);
     }
 
     if (current_thread->scheduler_lock_nest <= 0)
