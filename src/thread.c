@@ -679,9 +679,17 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
     case RT_THREAD_CTRL_STARTUP:
         return rt_thread_startup(thread);
 
-#ifdef RT_USING_HEAP
     case RT_THREAD_CTRL_CLOSE:
-        return rt_thread_delete(thread);
+
+        if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
+        {
+            return rt_thread_detach(thread);
+        }
+#ifdef RT_USING_HEAP
+        else
+        {
+            return rt_thread_delete(thread);
+        }
 #endif
 
 #ifdef RT_USING_SMP
