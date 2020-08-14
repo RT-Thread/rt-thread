@@ -514,6 +514,9 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
+#define RT_THREAD_FLAG_CREATE           0x00UL              /**< Create thread flag. */
+#define RT_THREAD_FLAG_INIT             0x01UL              /**< Init thread flag. */
+
 #ifdef RT_USING_SMP
 
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
