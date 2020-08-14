@@ -209,6 +209,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                       dest = 'target',
                       type = 'string',
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse')
+    AddOption('--stackanalysis',
+                dest = 'stackanalysis',
+                action = 'store_true',
+                default = False,
+                help = 'thread stack static analysis')
     AddOption('--genconfig',
                 dest = 'genconfig',
                 action = 'store_true',
@@ -363,6 +368,11 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         genconfig()
         exit(0)
 
+    if GetOption('stackanalysis'):
+        from WCS import ThreadStackStaticAnalysis
+        ThreadStackStaticAnalysis(Env)
+        exit(0)
+    
     if env['PLATFORM'] != 'win32':
         AddOption('--menuconfig',
                     dest = 'menuconfig',
