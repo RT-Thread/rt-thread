@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Dgcc -fstack-usage -fdump-rtl-dfinish'
+    CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
@@ -73,7 +73,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M4.fp '
     CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict --scatter "board\linker_scripts\link.sct"'
+    LFLAGS = DEVICE + ' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
@@ -87,7 +87,6 @@ elif PLATFORM == 'armcc':
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
-
 
     CXXFLAGS = CFLAGS 
     CFLAGS += ' -std=c99'
@@ -142,10 +141,3 @@ elif PLATFORM == 'iar':
     
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
-
-def dist_handle(BSP_ROOT, dist_dir):
-    import sys
-    cwd_path = os.getcwd()
-    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
-    from sdk_dist import dist_do_building
-    dist_do_building(BSP_ROOT, dist_dir)
