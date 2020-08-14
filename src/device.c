@@ -339,7 +339,7 @@ RTM_EXPORT(rt_device_close);
  * @param buffer the data buffer to save read data
  * @param size the size of buffer
  *
- * @return the actually read size on successful, otherwise negative returned.
+ * @return the actually read size on successful, otherwise zero returned.
  *
  * @note since 0.4.0, the unit of size/pos is a block for block device.
  */
@@ -378,7 +378,7 @@ RTM_EXPORT(rt_device_read);
  * @param buffer the data buffer to be written to device
  * @param size the size of buffer
  *
- * @return the actually written size on successful, otherwise negative returned.
+ * @return the actually written size on successful, otherwise zero returned.
  *
  * @note since 0.4.0, the unit of size/pos is a block for block device.
  */
