@@ -679,10 +679,23 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
     case RT_THREAD_CTRL_STARTUP:
         return rt_thread_startup(thread);
 
-#ifdef RT_USING_HEAP
     case RT_THREAD_CTRL_CLOSE:
-        return rt_thread_delete(thread);
+        rt_uint32_t flag = *(rt_uint32_t *)arg;
+
+        if(flag == RT_THREAD_FLAG_INIT)
+        {
+            return rt_thread_detach(thread);
+        }
+#ifdef RT_USING_HEAP
+        else if (flag == RT_THREAD_FLAG_CREATE)
+        {
+            return rt_thread_delete(thread);
+        }
 #endif
+        else
+        {
+            return -RT_EINVAL;
+        }
 
 #ifdef RT_USING_SMP
     case RT_THREAD_CTRL_BIND_CPU:
