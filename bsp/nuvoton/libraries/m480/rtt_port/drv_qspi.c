@@ -12,6 +12,14 @@
 #include <rtconfig.h>
 
 #if defined(BSP_USING_QSPI)
+
+#define LOG_TAG                 "drv.qspi"
+#define DBG_ENABLE
+#define DBG_SECTION_NAME        LOG_TAG
+#define DBG_LEVEL               DBG_INFO
+#define DBG_COLOR
+#include <rtdbg.h>
+
 #include <rthw.h>
 #include <rtdef.h>
 
@@ -87,8 +95,8 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
                                       struct rt_spi_configuration *configuration)
 {
     struct nu_spi *spi_bus;
-    uint32_t u32SPIMode;
-    uint32_t u32BusClock;
+    rt_uint32_t u32SPIMode;
+    rt_uint32_t u32BusClock;
     rt_err_t ret = RT_EOK;
 
     RT_ASSERT(device != RT_NULL);
@@ -130,7 +138,7 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
     u32BusClock = QSPI_SetBusClock((QSPI_T *)spi_bus->spi_base, configuration->max_hz);
     if (configuration->max_hz > u32BusClock)
     {
-        rt_kprintf("%s clock max frequency is %dHz (!= %dHz)\n", spi_bus->name, u32BusClock, configuration->max_hz);
+        LOG_W("%s clock max frequency is %dHz (!= %dHz)\n", spi_bus->name, u32BusClock, configuration->max_hz);
         configuration->max_hz = u32BusClock;
     }
 
@@ -173,7 +181,7 @@ exit_nu_qspi_bus_configure:
 }
 
 #if defined(RT_SFUD_USING_QSPI)
-static int nu_qspi_mode_config(struct nu_spi *qspi_bus, uint8_t *tx, uint8_t *rx, int qspi_lines)
+static int nu_qspi_mode_config(struct nu_spi *qspi_bus, rt_uint8_t *tx, rt_uint8_t *rx, int qspi_lines)
 {
     QSPI_T *qspi_base = (QSPI_T *)qspi_bus->spi_base;
     if (qspi_lines > 1)
@@ -188,6 +196,9 @@ static int nu_qspi_mode_config(struct nu_spi *qspi_bus, uint8_t *tx, uint8_t *rx
             case 4:
                 QSPI_ENABLE_QUAD_OUTPUT_MODE(qspi_base);
                 break;
+            default:
+                LOG_E("Data line is not supported.\n");
+                break;
             }
         }
         else
@@ -199,6 +210,9 @@ static int nu_qspi_mode_config(struct nu_spi *qspi_bus, uint8_t *tx, uint8_t *rx
                 break;
             case 4:
                 QSPI_ENABLE_QUAD_INPUT_MODE(qspi_base);
+                break;
+            default:
+                LOG_E("Data line is not supported.\n");
                 break;
             }
         }
@@ -218,11 +232,11 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     struct rt_qspi_configuration *qspi_configuration;
 #if defined(RT_SFUD_USING_QSPI)
     struct rt_qspi_message *qspi_message;
-    int last = 1;
+    rt_uint8_t u8last = 1;
 #endif
-    uint8_t bytes_per_word;
+    rt_uint8_t bytes_per_word;
     QSPI_T *qspi_base;
-    int len = 0;
+    rt_uint32_t u32len = 0;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(message != RT_NULL);
@@ -252,9 +266,9 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     /* Command stage */
     if (qspi_message->instruction.content != 0)
     {
-        last = nu_qspi_mode_config(qspi_bus, (uint8_t *) &qspi_message->instruction.content, RT_NULL, qspi_message->instruction.qspi_lines);
+        u8last = nu_qspi_mode_config(qspi_bus, (rt_uint8_t *) &qspi_message->instruction.content, RT_NULL, qspi_message->instruction.qspi_lines);
         nu_spi_transfer((struct nu_spi *)qspi_bus,
-                        (uint8_t *) &qspi_message->instruction.content,
+                        (rt_uint8_t *) &qspi_message->instruction.content,
                         RT_NULL,
                         1,
                         1);
@@ -263,29 +277,29 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     /* Address stage */
     if (qspi_message->address.size != 0)
     {
-        uint32_t u32ReversedAddr = 0;
-        uint32_t u32AddrNumOfByte = qspi_message->address.size / 8;
+        rt_uint32_t u32ReversedAddr = 0;
+        rt_uint32_t u32AddrNumOfByte = qspi_message->address.size / 8;
         switch (u32AddrNumOfByte)
         {
         case 1:
             u32ReversedAddr = (qspi_message->address.content & 0xff);
             break;
         case 2:
-            nu_set16_be((uint8_t *)&u32ReversedAddr, qspi_message->address.content);
+            nu_set16_be((rt_uint8_t *)&u32ReversedAddr, qspi_message->address.content);
             break;
         case 3:
-            nu_set24_be((uint8_t *)&u32ReversedAddr, qspi_message->address.content);
+            nu_set24_be((rt_uint8_t *)&u32ReversedAddr, qspi_message->address.content);
             break;
         case 4:
-            nu_set32_be((uint8_t *)&u32ReversedAddr, qspi_message->address.content);
+            nu_set32_be((rt_uint8_t *)&u32ReversedAddr, qspi_message->address.content);
             break;
         default:
             RT_ASSERT(0);
             break;
         }
-        last = nu_qspi_mode_config(qspi_bus, (uint8_t *)&u32ReversedAddr, RT_NULL, qspi_message->address.qspi_lines);
+        u8last = nu_qspi_mode_config(qspi_bus, (rt_uint8_t *)&u32ReversedAddr, RT_NULL, qspi_message->address.qspi_lines);
         nu_spi_transfer((struct nu_spi *)qspi_bus,
-                        (uint8_t *) &u32ReversedAddr,
+                        (rt_uint8_t *) &u32ReversedAddr,
                         RT_NULL,
                         u32AddrNumOfByte,
                         1);
@@ -294,32 +308,32 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
     /* Dummy_cycles stage */
     if (qspi_message->dummy_cycles != 0)
     {
-        qspi_bus->dummy = 0xff;
+        qspi_bus->dummy = 0x00;
 
-        last = nu_qspi_mode_config(qspi_bus, (uint8_t *) &qspi_bus->dummy, RT_NULL, last);
+        u8last = nu_qspi_mode_config(qspi_bus, (rt_uint8_t *) &qspi_bus->dummy, RT_NULL, u8last);
         nu_spi_transfer((struct nu_spi *)qspi_bus,
-                        (uint8_t *) &qspi_bus->dummy,
+                        (rt_uint8_t *) &qspi_bus->dummy,
                         RT_NULL,
-                        qspi_message->dummy_cycles / (8 / last),
+                        qspi_message->dummy_cycles / (8 / u8last),
                         1);
     }
 
     /* Data stage */
-    nu_qspi_mode_config(qspi_bus, (uint8_t *) message->send_buf, (uint8_t *) message->recv_buf, qspi_message->qspi_data_lines);
+    nu_qspi_mode_config(qspi_bus, (rt_uint8_t *) message->send_buf, (rt_uint8_t *) message->recv_buf, qspi_message->qspi_data_lines);
 #endif //#if defined(RT_SFUD_USING_QSPI)
 
     if (message->length != 0)
     {
         nu_spi_transfer((struct nu_spi *)qspi_bus,
-                        (uint8_t *) message->send_buf,
-                        (uint8_t *) message->recv_buf,
+                        (rt_uint8_t *) message->send_buf,
+                        (rt_uint8_t *) message->recv_buf,
                         message->length,
                         bytes_per_word);
-        len = message->length;
+        u32len = message->length;
     }
     else
     {
-        len = 1;
+        u32len = 1;
     }
 
     if (message->cs_release && !(qspi_configuration->parent.mode & RT_SPI_NO_CS))
@@ -334,12 +348,12 @@ static rt_uint32_t nu_qspi_bus_xfer(struct rt_spi_device *device, struct rt_spi_
         }
     }
 
-    return len;
+    return u32len;
 }
 
-static int nu_qspi_register_bus(struct nu_spi *qspi_device, const char *name)
+static int nu_qspi_register_bus(struct nu_spi *qspi_bus, const char *name)
 {
-    return rt_qspi_bus_register(&qspi_device->dev, name, &nu_qspi_poll_ops);
+    return rt_qspi_bus_register(&qspi_bus->dev, name, &nu_qspi_poll_ops);
 }
 
 /**
@@ -347,19 +361,21 @@ static int nu_qspi_register_bus(struct nu_spi *qspi_device, const char *name)
  */
 static int rt_hw_qspi_init(void)
 {
-    int i;
+    rt_uint8_t i;
 
     for (i = (QSPI_START + 1); i < QSPI_CNT; i++)
     {
         nu_qspi_register_bus(&nu_qspi_arr[i], nu_qspi_arr[i].name);
-#if defined(BSP_USING_QSPI_PDMA)
+#if defined(BSP_USING_SPI_PDMA)
         nu_qspi_arr[i].pdma_chanid_tx = -1;
         nu_qspi_arr[i].pdma_chanid_rx = -1;
+#endif
+#if defined(BSP_USING_QSPI_PDMA)
         if ((nu_qspi_arr[i].pdma_perp_tx != NU_PDMA_UNUSED) && (nu_qspi_arr[i].pdma_perp_rx != NU_PDMA_UNUSED))
         {
             if (nu_hw_spi_pdma_allocate(&nu_qspi_arr[i]) != RT_EOK)
             {
-                rt_kprintf("Failed to allocate DMA channels for %s. We will use poll-mode for this bus.\n", nu_qspi_arr[i].name);
+                LOG_E("Failed to allocate DMA channels for %s. We will use poll-mode for this bus.\n", nu_qspi_arr[i].name);
             }
         }
 #endif
@@ -381,7 +397,7 @@ rt_err_t nu_qspi_bus_attach_device(const char *bus_name, const char *device_name
     qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
     if (qspi_device == RT_NULL)
     {
-        rt_kprintf("no memory, qspi bus attach device failed!\n");
+        LOG_E("no memory, qspi bus attach device failed!\n");
         result = -RT_ENOMEM;
         goto __exit;
     }

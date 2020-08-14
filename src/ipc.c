@@ -34,6 +34,8 @@
  * 2013-09-14     Grissiom     add an option check in rt_event_recv
  * 2018-10-02     Bernard      add 64bit support for mailbox
  * 2019-09-16     tyx          add send wait support for message queue
+ * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
+                               event without pending
  */
 
 #include <rtthread.h>
@@ -117,6 +119,9 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
                 rt_list_insert_before(list, &(thread->tlist));
         }
         break;
+
+    default:
+        break;  
     }
 
     return RT_EOK;
@@ -685,7 +690,9 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     }
     else
     {
+#ifdef RT_USING_SIGNALS
 __again:
+#endif /* end of RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -754,8 +761,10 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
+#ifdef RT_USING_SIGNALS
                     /* interrupt by signal, try it again */
                     if (thread->error == -RT_EINTR) goto __again;
+#endif /* end of RT_USING_SIGNALS */
 
                     /* return error */
                     return thread->error;
@@ -1080,6 +1089,13 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
                     status = RT_EOK;
                 }
             }
+            else
+            {
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
+
+                return -RT_EINVAL;
+            }
 
             /* move node to the next */
             n = n->next;
@@ -1177,7 +1193,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-
+            
+        /* fill thread event info */            
+        thread->event_set = (event->set & set);
+        thread->event_info = option;
+        
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1186,10 +1206,10 @@ rt_err_t rt_event_recv(rt_event_t   event,
     {
         /* no waiting */
         thread->error = -RT_ETIMEOUT;
-        
+
         /* enable interrupt */
         rt_hw_interrupt_enable(level);
-        
+
         return -RT_ETIMEOUT;
     }
     else

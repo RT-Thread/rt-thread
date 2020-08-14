@@ -145,7 +145,8 @@ INIT_APP_EXPORT(rt_hw_bmx055_port);
 #if defined(BOARD_USING_ESP8266)
 #include <at_device_esp8266.h>
 
-#define LOG_TAG                        "at.sample.esp"
+#define LOG_TAG    "at.sample.esp"
+#undef DBG_TAG
 #include <at_log.h>
 
 static struct at_device_esp8266 esp0 =

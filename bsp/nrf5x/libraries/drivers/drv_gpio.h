@@ -13,7 +13,6 @@
 
 #include <board.h>
 #include <rtdevice.h>
-#include <nrf52840.h>
 #include <hal/nrf_gpio.h>
 #include <drivers/include/nrfx_gpiote.h>
 
