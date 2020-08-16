@@ -84,10 +84,10 @@ struct eth_tx_msg
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
 #ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
-static char eth_tx_thread_mb_pool[32 * 4];
+static char eth_tx_thread_mb_pool[32 * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[512];
 #else
-static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 #endif
@@ -96,10 +96,10 @@ static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
 #ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
-static char eth_rx_thread_mb_pool[48 * 4];
+static char eth_rx_thread_mb_pool[48 * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[1024];
 #else
-static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 #endif
