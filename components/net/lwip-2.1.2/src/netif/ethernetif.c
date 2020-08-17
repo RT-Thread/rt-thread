@@ -732,7 +732,7 @@ int eth_system_device_init_private(void)
 #ifndef LWIP_NO_RX_THREAD
     /* initialize mailbox and create Ethernet Rx thread */
     result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
-                        &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
+                        &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/sizeof(rt_ubase_t),
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 
@@ -748,7 +748,7 @@ int eth_system_device_init_private(void)
 #ifndef LWIP_NO_TX_THREAD
     /* initialize mailbox and create Ethernet Tx thread */
     result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
-                        &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
+                        &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/sizeof(rt_ubase_t),
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 
