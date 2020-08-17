@@ -61,6 +61,15 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+	config BSP_USING_SAADC
+        bool "Enable SAADC"
+        select RT_USING_ADC
+        default n
+        if BSP_USING_SAADC
+                config NRFX_SAADC_ENABLED
+                int 
+                default 1  
+        endif
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         select RT_USING_PWM
