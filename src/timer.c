@@ -500,7 +500,10 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
             /*timer is stop*/
             *(rt_tick_t *)arg = RT_TIMER_FLAG_DEACTIVATED;
         }
-        break;    
+        break;
+
+    default:
+        break;
     }
 
     return RT_EOK;
@@ -592,20 +595,19 @@ rt_tick_t rt_timer_next_timeout_tick(void)
 void rt_soft_timer_check(void)
 {
     rt_tick_t current_tick;
-    rt_list_t *n;
     struct rt_timer *t;
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check enter\n"));
 
-    current_tick = rt_tick_get();
-
     /* lock scheduler */
     rt_enter_critical();
 
-    for (n = rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next;
-         n != &(rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]);)
+    while (!rt_list_isempty(&rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
-        t = rt_list_entry(n, struct rt_timer, row[RT_TIMER_SKIP_LIST_LEVEL - 1]);
+        t = rt_list_entry(rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next,
+                            struct rt_timer, row[RT_TIMER_SKIP_LIST_LEVEL - 1]);
+
+        current_tick = rt_tick_get();
 
         /*
          * It supposes that the new tick shall less than the half duration of
@@ -615,9 +617,6 @@ void rt_soft_timer_check(void)
         {
             RT_OBJECT_HOOK_CALL(rt_timer_enter_hook, (t));
 
-            /* move node to the next */
-            n = n->next;
-
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
 
@@ -625,9 +624,6 @@ void rt_soft_timer_check(void)
             rt_exit_critical();
             /* call timeout function */
             t->timeout_func(t->parameter);
-
-            /* re-get tick */
-            current_tick = rt_tick_get();
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));

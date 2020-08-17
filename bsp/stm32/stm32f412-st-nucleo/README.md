@@ -20,9 +20,9 @@
 
 ![board](figures/board.png)
 
-该开发板常用 ** 板载资源 ** 如下：
+该开发板常用 **板载资源** 如下：
 
-- MCU：STM32F411ZG，主频 100MHz，1024KB FLASH ，256KB RAM。
+- MCU：STM32F412ZG，主频 100MHz，1024KB FLASH ，256KB RAM。
 - 常用外设
   - LED：3 个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
   - 按键，2 个，USER and RESET 。
@@ -71,7 +71,7 @@
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD3 和 LD1 常亮、绿色 LD2 会周期性闪烁。
+下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD3 和 LD1 常亮、蓝色 LD2 会周期性闪烁。
 
 USB 虚拟 COM 端口默认连接串口 3，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 

@@ -71,7 +71,7 @@
 
 ### 快速上手
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，暂不支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，以及GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
@@ -115,4 +115,4 @@ msh >
 
 维护人:
 
--  [王强](https://github.com/xfwangqiang), 邮箱：<164877907@qq.com>
+-  [王强](https://github.com/xfwangqiang, https://gitee.com/xfwangqiang), 邮箱：<164877907@qq.com>

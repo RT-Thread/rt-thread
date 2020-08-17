@@ -19,7 +19,6 @@
 #define DBG_ENABLE
 #define DBG_SECTION_NAME        LOG_TAG
 #define DBG_LEVEL               DBG_INFO
-#define DBG_COLOR
 #define TPWM_CHANNEL_NUM        2
 #include <rtdbg.h>
 

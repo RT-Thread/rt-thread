@@ -7,6 +7,12 @@ config SOC_NRF52840
     select RT_USING_USER_MAIN
     default y
 
+config SOC_NORDIC
+    bool 
+    config SOC_NORDIC
+    default y
+
+
 menu "Onboard Peripheral Drivers"
     config BSP_USING_JLINK_TO_USART
         bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
@@ -55,38 +61,142 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        select RT_USING_PWM
+        default n
+        if BSP_USING_PWM
+                config NRFX_PWM_ENABLED
+                int 
+                default 1
+                config BSP_USING_PWM0
+                    bool "Enable PWM0 bus"
+                    default y
+                if BSP_USING_PWM0
+                    config NRFX_PWM0_ENABLED
+                    int 
+                    default 1
+                    config BSP_USING_PWM0_CH0
+                        int "PWM0 channel 0 pin number set"
+                        range 0 47
+                        default 13
+                    config BSP_USING_PWM0_CH1
+                        int "PWM0 channel 1 pin number set"
+                        range 0 47
+                        default 14
+                    config BSP_USING_PWM0_CH2
+                        int "PWM0 channel 2 pin number set"
+                        range 0 47
+                        default 15
+                    config BSP_USING_PWM0_CH3
+                        int "PWM0 channel 3 pin number set"
+                        range 0 47
+                        default 16
+                endif
+                config BSP_USING_PWM1
+                    bool "Enable PWM1 bus"
+                    default n
+                if BSP_USING_PWM1
+                    config NRFX_PWM1_ENABLED
+                    int 
+                    default 1
+                    config BSP_USING_PWM1_CH0
+                        int "PWM1 channel 0 pin number set"
+                        range 0 47
+                        default 13
+                    config BSP_USING_PWM1_CH1
+                        int "PWM1 channel 1 pin number set"
+                        range 0 47
+                        default 14
+                    config BSP_USING_PWM1_CH2
+                        int "PWM1 channel 2 pin number set"
+                        range 0 47
+                        default 15
+                    config BSP_USING_PWM1_CH3
+                        int "PWM1 channel 3 pin number set"
+                        range 0 47
+                        default 16
+                endif
+                config BSP_USING_PWM2
+                    bool "Enable PWM2 bus"
+                    default n
+                if BSP_USING_PWM2
+                    config NRFX_PWM2_ENABLED
+                    int 
+                    default 1
+                    config BSP_USING_PWM2_CH0
+                        int "PWM2 channel 0 pin number set"
+                        range 0 47
+                        default 13
+                    config BSP_USING_PWM2_CH1
+                        int "PWM2 channel 1 pin number set"
+                        range 0 47
+                        default 14
+                    config BSP_USING_PWM2_CH2
+                        int "PWM2 channel 2 pin number set"
+                        range 0 47
+                        default 15
+                    config BSP_USING_PWM2_CH3
+                        int "PWM2 channel 3 pin number set"
+                        range 0 47
+                        default 16
+                endif
+                config BSP_USING_PWM3
+                    bool "Enable PWM3 bus"
+                    default n
+                if BSP_USING_PWM3
+                    config NRFX_PWM3_ENABLED
+                    int 
+                    default 1
+                    config BSP_USING_PWM3_CH0
+                        int "PWM3 channel 0 pin number set"
+                        range 0 47
+                        default 13
+                    config BSP_USING_PWM3_CH1
+                        int "PWM3 channel 1 pin number set"
+                        range 0 47
+                        default 14
+                    config BSP_USING_PWM3_CH2
+                        int "PWM3 channel 2 pin number set"
+                        range 0 47
+                        default 15
+                    config BSP_USING_PWM3_CH3
+                        int "PWM3 channel 3 pin number set"
+                        range 0 47
+                        default 16
+                endif
+        endif
     menuconfig BSP_USING_SOFTDEVICE
         bool "Enable NRF SOFTDEVICE"
         select PKG_USING_NRF5X_SDK
+        select NRFX_CLOCK_ENABLED
         default n
 if BSP_USING_SOFTDEVICE
     config NRFX_CLOCK_ENABLED
-	int "NRFX_CLOCK_ENABLED"
+    int 
     default 1
-	config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
-	int "NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY"
+    config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+    int 
     default 7
-	config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
-	int "NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY"
-    default 7
-	config NRFX_RTC_ENABLED
-	int "NRFX_RTC_ENABLED"
+    config NRFX_RTC_ENABLED
+    int 
     default 1
-	config NRF_CLOCK_ENABLED
-	int "NRF_CLOCK_ENABLED"
+    config NRFX_RTC1_ENABLED
+    int 
     default 1
-	config NRF_SDH_BLE_ENABLED
-	int "NRF_SDH_BLE_ENABLED"
+    config NRF_CLOCK_ENABLED
+    int 
     default 1
-	config NRF_SDH_ENABLED
-	int "NRF_SDH_ENABLED"
+    config NRF_SDH_BLE_ENABLED
+    int 
     default 1
-	config NRF_SDH_SOC_ENABLED
-	int "NRF_SDH_SOC_ENABLED"
+    config NRF_SDH_ENABLED
+    int 
     default 1
-	
+    config NRF_SDH_SOC_ENABLED
+    int 
+    default 1
 endif
-
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
