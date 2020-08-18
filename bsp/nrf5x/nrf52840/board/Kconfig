@@ -61,7 +61,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-	config BSP_USING_SAADC
+    config BSP_USING_SAADC
         bool "Enable SAADC"
         select RT_USING_ADC
         default n
