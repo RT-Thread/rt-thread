@@ -12,7 +12,6 @@ config SOC_NORDIC
     config SOC_NORDIC
     default y
 
-
 menu "Onboard Peripheral Drivers"
     config BSP_USING_JLINK_TO_USART
         bool "Enable JLINK TO USART (uart0|RX_PIN:8|TX_PIN:6)"
