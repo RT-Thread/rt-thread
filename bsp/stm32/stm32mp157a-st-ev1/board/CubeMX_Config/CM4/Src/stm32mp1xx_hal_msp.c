@@ -81,10 +81,6 @@ void HAL_MspInit(void)
     /* Configure PMIC */
     BSP_PMIC_Init();
     BSP_PMIC_InitRegulators();
-    
-    __HAL_RCC_VREF_CLK_ENABLE();
-    HAL_SYSCFG_VREFBUF_HighImpedanceConfig(SYSCFG_VREFBUF_HIGH_IMPEDANCE_DISABLE);
-    HAL_SYSCFG_EnableVREFBUF();
 #endif
   }
   /* USER CODE END MspInit 1 */
