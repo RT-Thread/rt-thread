@@ -87,7 +87,7 @@ typedef struct {
 #define SFUD_MF_ID_FUDAN                               0xA1
 #define SFUD_MF_ID_HYUNDAI                             0xAD
 #define SFUD_MF_ID_SST                                 0xBF
-#define SFUD_MF_ID_MICRONIX                            0xC2
+#define SFUD_MF_ID_MACRONIX                            0xC2
 #define SFUD_MF_ID_GIGADEVICE                          0xC8
 #define SFUD_MF_ID_ISSI                                0xD5
 #define SFUD_MF_ID_WINBOND                             0xEF
@@ -110,7 +110,7 @@ typedef struct {
     {"GigaDevice", SFUD_MF_ID_GIGADEVICE},                \
     {"ISSI",       SFUD_MF_ID_ISSI},                      \
     {"Winbond",    SFUD_MF_ID_WINBOND},                   \
-    {"Micronix",   SFUD_MF_ID_MICRONIX},                  \
+    {"Macronix",   SFUD_MF_ID_MACRONIX},                  \
 }
 
 #ifdef SFUD_USING_FLASH_INFO_TABLE
@@ -144,7 +144,7 @@ typedef struct {
 #endif /* SFUD_USING_FLASH_INFO_TABLE */
 
 #ifdef SFUD_USING_QSPI
-/* This table saves flash read-fast instructions in QSPI mode, 
+/* This table saves flash read-fast instructions in QSPI mode,
  * SFUD can use this table to select the most appropriate read instruction for flash.
  * | mf_id | type_id | capacity_id | qspi_read_mode |
  */
@@ -173,7 +173,9 @@ typedef struct {
     /* A25LQ64 */                                                                                  \
     {SFUD_MF_ID_AMIC, 0x40, 0x17, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO|QUAD_IO},                    \
     /* MX25L3206E and KH25L3206E */                                                                \
-    {SFUD_MF_ID_MICRONIX, 0x20, 0x16, NORMAL_SPI_READ|DUAL_OUTPUT},                                \
+    {SFUD_MF_ID_MACRONIX, 0x20, 0x16, NORMAL_SPI_READ|DUAL_OUTPUT},                                \
+    /* MX25L51245G */                                                                              \
+    {SFUD_MF_ID_MACRONIX, 0x20, 0x1A, NORMAL_SPI_READ|DUAL_OUTPUT|DUAL_IO|QUAD_OUTPUT|QUAD_IO},    \
     /* GD25Q64B */                                                                                 \
     {SFUD_MF_ID_GIGADEVICE, 0x40, 0x17, NORMAL_SPI_READ|DUAL_OUTPUT},                              \
 }

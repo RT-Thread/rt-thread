@@ -35,7 +35,7 @@ NuMaker-IoT-M487 provides multiple networking, interfaces, audio recording, play
 |Ethernet PHY| IP101GR | Supported |
 |Sensor| BMX055 | Supported |
 |Wi-Fi module| ESP8266-ESP12, AT firmware v1.7 | Supported |
-|Audio Codec| NAU88L25, Supports MIC and earphone | Coming soon |
+|Audio Codec| NAU88L25, Supports MIC and earphone | Supported |
 
 ## 2. Supported compiler
 Support GCC, MDK4, MDK5, IAR IDE/compilers. More information of these compiler version as following:

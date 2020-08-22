@@ -306,6 +306,10 @@ static rt_err_t nu_i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_ca
         } // switch (caps->sub_type)
         break;
 
+    default:
+        result = -RT_ERROR;
+        break;
+
     } // switch (caps->main_type)
 
     return result;
@@ -449,6 +453,9 @@ static rt_err_t nu_i2s_start(struct rt_audio_device *audio, int stream)
         LOG_I("Start record.");
     }
     break;
+
+    default:
+        return -RT_ERROR;
     }
 
     return RT_EOK;
