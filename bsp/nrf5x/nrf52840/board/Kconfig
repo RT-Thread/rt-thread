@@ -332,6 +332,23 @@ endif
             range 0x1000 0x1000
             default 0x1000
 	endmenu
+    
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
+    if BSP_USING_WDT
+        config NRFX_WDT_ENABLED
+        int
+        default 1
+        config NRFX_WDT0_ENABLED
+        int
+        default 1
+        config NRFX_WDT_CONFIG_NO_IRQ
+        int
+        default 1
+    endif
+    
 endmenu
 
 endmenu
