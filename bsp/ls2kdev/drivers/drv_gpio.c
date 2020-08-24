@@ -73,7 +73,7 @@ static int loongson_pin_read(struct rt_device *device, rt_base_t pin)
     gpio = (void *)device->user_data;
     rt_uint64_t m;
 
-    m  = gpio->GPIO1_I;
+    m  = gpio->GPIO0_I;
     m &= (rt_uint64_t)1 << pin;
 
     rc = !!m;
