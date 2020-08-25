@@ -44,14 +44,6 @@ extern void ioreuse_initial(void);
  */
 void rt_hw_board_init(void)
 {
-/* usart init ? */
-
-//    phobos_ioreuse_initial();
-
-    /* NVIC Configuration */
-//    drv_nvic_init(2);
-    
-
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
