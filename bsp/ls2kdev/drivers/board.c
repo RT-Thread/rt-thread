@@ -12,6 +12,7 @@
 #include <rthw.h>
 
 #include "mips_regs.h"
+#include "mips_fpu.h"
 #include "exception.h"
 #include "drv_uart.h"
 #include "board.h"
