@@ -29,6 +29,9 @@ if GetDepend(['BSP_USING_SAADC']):
 if GetDepend(['BSP_USING_PWM']):
     src += ['drv_pwm.c']
 
+if GetDepend(['BSP_USING_WDT']):
+    src += ['drv_wdt.c']
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
