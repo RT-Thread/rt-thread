@@ -395,21 +395,6 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     HAL_GPIO_Init(index->gpio, &GPIO_InitStruct);
 }
 
-rt_int16_t stm32_pin_get(char *pin_name)
-{
-    // convert pin name to pin number
-    // eg: "A4"  ( GPIOA, GPIO_PIN_4 )--> 4  ( drv_gpio.c pin)
-    // eg: "B4"  ( GPIOB, GPIO_PIN_4 )--> 20 ( drv_gpio.c pin)
-    char pin_index = strtol(&pin_name[1],0,10);
-    
-    if(pin_name[0] < 'A' || pin_name[0] > 'Z')
-    {
-        return -1;
-    }
-
-    return (16 * (pin_name[0]-'A') + pin_index);
-}
-
 rt_inline rt_int32_t bit2bitno(rt_uint32_t bit)
 {
     int i;
