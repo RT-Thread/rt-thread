@@ -25,7 +25,7 @@ static rt_tick_t rt_tick = 0;
 #endif
 
 /**
- * This function will init system tick and set it to zero.
+ * This function will initialize system tick and set it to zero.
  * @ingroup SystemInit
  *
  * @deprecated since 1.1.0, this function does not need to be invoked
@@ -88,6 +88,8 @@ void rt_tick_increase(void)
     {
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
+
+        thread->stat |= RT_THREAD_STAT_YIELD;
 
         /* yield */
         rt_thread_yield();

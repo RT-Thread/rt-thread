@@ -168,6 +168,11 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
     case HWCRYPTO_TYPE_RNG:
     {
         RNG_HandleTypeDef *hrng = rt_calloc(1, sizeof(RNG_HandleTypeDef));
+        if (RT_NULL == hrng)
+        {
+            res = -RT_ERROR;
+            break;
+        }
 
         hrng->Instance = RNG;
         HAL_RNG_Init(hrng);

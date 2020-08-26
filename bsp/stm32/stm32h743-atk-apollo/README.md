@@ -41,24 +41,26 @@
 | **板载外设**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
 | USB 转串口        |     支持     |                                       |
+| COM2        |     支持     |                                       |
 | QSPI Flash        |     支持     |                                       |
 | 以太网            |   暂不支持   |                                       |
 | SD卡              |   暂不支持   |                                       |
-| CAN               |   暂不支持   |                                       |
+| CAN-FD             |   暂不支持   |                                       |
 | SDRAM             |     支持     |                                       |
 | LCD               |     支持     |                                       |
 | MPU9250六轴传感器 |   暂不支持   |                                       |
 | **片上外设**      | **支持情况** | **备注**                              |
 | GPIO              |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176 |
 | UART              |     支持     |                                       |
-| SPI               |   暂不支持   |                                       |
-| I2C               |   暂不支持   |                                       |
+| SPI               |   支持   | SPI2 |
+| I2C               |   支持   | PCF8574 |
 | SDIO              |   暂不支持   |                                       |
 | RTC               |     支持     |                                       |
 | PWM               |   暂不支持   |                                       |
 | USB Device        |   暂不支持   |                                       |
 | USB Host          |   暂不支持   |                                       |
 | IWG               |     支持     |                                       |
+| FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 
 ## 使用说明
 
@@ -116,7 +118,8 @@ msh >
 
 ## 注意事项
 
-暂无
+1. 使用UART2 DMA模式时，HEAP的CACHE策略设置了WT模式，所以在使用rt_device_read读取数据之前必须调用用SCB_InvalidateDCache_by_Addr或者SCB_InvalidateDCache，已确保读取到数据的正确性。
+2. 使用FAL操作片内FLASH，每次读写必须是32字节的整数倍。
 
 ## 联系人信息
 

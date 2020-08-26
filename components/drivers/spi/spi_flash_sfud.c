@@ -15,21 +15,20 @@
 
 #ifdef RT_USING_SFUD
 
-#ifdef RT_DEBUG_SFUD
-#define DEBUG_TRACE         rt_kprintf("[SFUD] "); rt_kprintf
-#else
-#define DEBUG_TRACE(...)
-#endif /* RT_DEBUG_SFUD */
-
 #ifndef RT_SFUD_DEFAULT_SPI_CFG
+
+#ifndef RT_SFUD_SPI_MAX_HZ
+#define RT_SFUD_SPI_MAX_HZ 50000000
+#endif
+
 /* read the JEDEC SFDP command must run at 50 MHz or less */
 #define RT_SFUD_DEFAULT_SPI_CFG                  \
 {                                                \
     .mode = RT_SPI_MODE_0 | RT_SPI_MSB,          \
     .data_width = 8,                             \
-    .max_hz = 50 * 1000 * 1000,                  \
+    .max_hz = RT_SFUD_SPI_MAX_HZ,                \
 }
-#endif
+#endif /* RT_SFUD_DEFAULT_SPI_CFG */
 
 #ifdef SFUD_USING_QSPI
 #define RT_SFUD_DEFAULT_QSPI_CFG                 \
@@ -39,11 +38,7 @@
     .ddr_mode = 0,                               \
     .qspi_dl_width = 4,                          \
 }
-#endif
-
-static char log_buf[RT_CONSOLEBUF_SIZE];
-
-void sfud_log_debug(const char *file, const long line, const char *format, ...);
+#endif /* SFUD_USING_QSPI */
 
 static rt_err_t rt_sfud_control(rt_device_t dev, int cmd, void *args) {
     RT_ASSERT(dev);
@@ -151,11 +146,11 @@ static sfud_err spi_write_read(const sfud_spi *spi, const uint8_t *write_buf, si
     if(rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_QSPI) {
         qspi_dev = (struct rt_qspi_device *) (rtt_dev->rt_spi_device);
         if (write_size && read_size) {
-            if (rt_qspi_send_then_recv(qspi_dev, write_buf, write_size, read_buf, read_size) == 0) {
+            if (rt_qspi_send_then_recv(qspi_dev, write_buf, write_size, read_buf, read_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         } else if (write_size) {
-            if (rt_qspi_send(qspi_dev, write_buf, write_size) == 0) {
+            if (rt_qspi_send(qspi_dev, write_buf, write_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         }
@@ -168,11 +163,11 @@ static sfud_err spi_write_read(const sfud_spi *spi, const uint8_t *write_buf, si
                 result = SFUD_ERR_TIMEOUT;
             }
         } else if (write_size) {
-            if (rt_spi_send(rtt_dev->rt_spi_device, write_buf, write_size) == 0) {
+            if (rt_spi_send(rtt_dev->rt_spi_device, write_buf, write_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         } else {
-            if (rt_spi_recv(rtt_dev->rt_spi_device, read_buf, read_size) == 0) {
+            if (rt_spi_recv(rtt_dev->rt_spi_device, read_buf, read_size) <= 0) {
                 result = SFUD_ERR_TIMEOUT;
             }
         }
@@ -254,44 +249,6 @@ static void retry_delay_100us(void) {
     rt_thread_delay((RT_TICK_PER_SECOND * 1 + 9999) / 10000);
 }
 
-/**
- * This function is print debug info.
- *
- * @param file the file which has call this function
- * @param line the line number which has call this function
- * @param format output format
- * @param ... args
- */
-void sfud_log_debug(const char *file, const long line, const char *format, ...) {
-    va_list args;
-
-    /* args point to the first variable parameter */
-    va_start(args, format);
-    rt_kprintf("[SFUD] (%s:%ld) ", file, line);
-    /* must use vprintf to print */
-    rt_vsnprintf(log_buf, sizeof(log_buf), format, args);
-    rt_kprintf("%s\n", log_buf);
-    va_end(args);
-}
-
-/**
- * This function is print routine info.
- *
- * @param format output format
- * @param ... args
- */
-void sfud_log_info(const char *format, ...) {
-    va_list args;
-
-    /* args point to the first variable parameter */
-    va_start(args, format);
-    rt_kprintf("[SFUD] ");
-    /* must use vprintf to print */
-    rt_vsnprintf(log_buf, sizeof(log_buf), format, args);
-    rt_kprintf("%s\n", log_buf);
-    va_end(args);
-}
-
 sfud_err sfud_spi_port_init(sfud_flash *flash) {
     sfud_err result = SFUD_SUCCESS;
 
@@ -306,7 +263,7 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
     flash->spi.unlock = spi_unlock;
     flash->spi.user_data = flash;
     if (RT_TICK_PER_SECOND < 1000) {
-        rt_kprintf("[SFUD] Warning: The OS tick(%d) is less than 1000. So the flash write will take more time.\n", RT_TICK_PER_SECOND);
+        LOG_W("[SFUD] Warning: The OS tick(%d) is less than 1000. So the flash write will take more time.", RT_TICK_PER_SECOND);
     }
     /* 100 microsecond delay */
     flash->retry.delay = retry_delay_100us;
@@ -317,7 +274,7 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
 }
 
 #ifdef RT_USING_DEVICE_OPS
-const static struct rt_device_ops flash_device_ops = 
+const static struct rt_device_ops flash_device_ops =
 {
     RT_NULL,
     RT_NULL,
@@ -329,23 +286,23 @@ const static struct rt_device_ops flash_device_ops =
 #endif
 
 /**
- * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
+ * Probe SPI flash by SFUD (Serial Flash Universal Driver) driver library and though SPI device by specified configuration.
  *
  * @param spi_flash_dev_name the name which will create SPI flash device
  * @param spi_dev_name using SPI device name
+ * @param spi_cfg SPI device configuration
+ * @param qspi_cfg QSPI device configuration
  *
  * @return probed SPI flash device, probe failed will return RT_NULL
  */
-rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name) {
+rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
+        struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg)
+{
     rt_spi_flash_device_t rtt_dev = RT_NULL;
     sfud_flash *sfud_dev = RT_NULL;
     char *spi_flash_dev_name_bak = RT_NULL, *spi_dev_name_bak = RT_NULL;
-    /* using default flash SPI configuration for initialize SPI Flash
-     * @note you also can change the SPI to other configuration after initialized finish */
-    struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
     extern sfud_err sfud_device_init(sfud_flash *flash);
 #ifdef SFUD_USING_QSPI
-    struct rt_qspi_configuration qspi_cfg = RT_SFUD_DEFAULT_QSPI_CFG;
     struct rt_qspi_device *qspi_dev = RT_NULL;
 #endif
 
@@ -375,7 +332,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
             /* RT-Thread SPI device initialize */
             rtt_dev->rt_spi_device = (struct rt_spi_device *) rt_device_find(spi_dev_name);
             if (rtt_dev->rt_spi_device == RT_NULL || rtt_dev->rt_spi_device->parent.type != RT_Device_Class_SPIDevice) {
-                rt_kprintf("ERROR: SPI device %s not found!\n", spi_dev_name);
+                LOG_E("ERROR: SPI device %s not found!", spi_dev_name);
                 goto error;
             }
             sfud_dev->spi.name = spi_dev_name_bak;
@@ -384,12 +341,12 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
             /* set the qspi line number and configure the QSPI bus */
             if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_QSPI) {
                 qspi_dev = (struct rt_qspi_device *)rtt_dev->rt_spi_device;
-                qspi_cfg.qspi_dl_width = qspi_dev->config.qspi_dl_width;
-                rt_qspi_configure(qspi_dev, &qspi_cfg);
+                qspi_cfg->qspi_dl_width = qspi_dev->config.qspi_dl_width;
+                rt_qspi_configure(qspi_dev, qspi_cfg);
             }
             else
 #endif
-                rt_spi_configure(rtt_dev->rt_spi_device, &cfg);
+                rt_spi_configure(rtt_dev->rt_spi_device, spi_cfg);
         }
         /* SFUD flash device initialize */
         {
@@ -401,7 +358,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
             sfud_dev->user_data = rtt_dev;
             /* initialize SFUD device */
             if (sfud_device_init(sfud_dev) != SFUD_SUCCESS) {
-                rt_kprintf("ERROR: SPI flash probe failed by SPI device %s.\n", spi_dev_name);
+                LOG_E("ERROR: SPI flash probe failed by SPI device %s.", spi_dev_name);
                 goto error;
             }
             /* when initialize success, then copy SFUD flash device's geometry to RT-Thread SPI flash device */
@@ -411,8 +368,8 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 #ifdef SFUD_USING_QSPI
             /* reconfigure the QSPI bus for medium size */
             if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_QSPI) {
-                qspi_cfg.medium_size = sfud_dev->chip.capacity;
-                rt_qspi_configure(qspi_dev, &qspi_cfg);
+                qspi_cfg->medium_size = sfud_dev->chip.capacity;
+                rt_qspi_configure(qspi_dev, qspi_cfg);
                 if(qspi_dev->enter_qspi_mode != RT_NULL)
                     qspi_dev->enter_qspi_mode(qspi_dev);
 
@@ -437,10 +394,10 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
 
         rt_device_register(&(rtt_dev->flash_device), spi_flash_dev_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STANDALONE);
 
-        DEBUG_TRACE("Probe SPI flash %s by SPI device %s success.\n",spi_flash_dev_name, spi_dev_name);
+        LOG_I("Probe SPI flash %s by SPI device %s success.",spi_flash_dev_name, spi_dev_name);
         return rtt_dev;
     } else {
-        rt_kprintf("ERROR: Low memory.\n");
+        LOG_E("ERROR: Low memory.");
         goto error;
     }
 
@@ -456,6 +413,26 @@ error:
     rt_free(spi_dev_name_bak);
 
     return RT_NULL;
+}
+
+/**
+ * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
+ *
+ * @param spi_flash_dev_name the name which will create SPI flash device
+ * @param spi_dev_name using SPI device name
+ *
+ * @return probed SPI flash device, probe failed will return RT_NULL
+ */
+rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name)
+{
+    struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
+#ifndef SFUD_USING_QSPI
+    return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, RT_NULL);
+#else
+    struct rt_qspi_configuration qspi_cfg = RT_SFUD_DEFAULT_QSPI_CFG;
+
+    return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, &qspi_cfg);
+#endif
 }
 
 /**
@@ -491,7 +468,7 @@ sfud_flash_t rt_sfud_flash_find(const char *spi_dev_name)
 
     rt_spi_device = (struct rt_spi_device *) rt_device_find(spi_dev_name);
     if (rt_spi_device == RT_NULL || rt_spi_device->parent.type != RT_Device_Class_SPIDevice) {
-        rt_kprintf("ERROR: SPI device %s not found!\n", spi_dev_name);
+        LOG_E("ERROR: SPI device %s not found!", spi_dev_name);
         goto __error;
     }
 
@@ -500,7 +477,7 @@ sfud_flash_t rt_sfud_flash_find(const char *spi_dev_name)
         sfud_dev = (sfud_flash_t) (rtt_dev->user_data);
         return sfud_dev;
     } else {
-        rt_kprintf("ERROR: SFUD flash device not found!\n");
+        LOG_E("ERROR: SFUD flash device not found!");
         goto __error;
     }
 
@@ -515,7 +492,7 @@ sfud_flash_t rt_sfud_flash_find_by_dev_name(const char *flash_dev_name)
 
     rtt_dev = (rt_spi_flash_device_t) rt_device_find(flash_dev_name);
     if (rtt_dev == RT_NULL || rtt_dev->flash_device.type != RT_Device_Class_Block) {
-        rt_kprintf("ERROR: Flash device %s not found!\n", flash_dev_name);
+        LOG_E("ERROR: Flash device %s not found!", flash_dev_name);
         goto __error;
     }
 
@@ -523,7 +500,7 @@ sfud_flash_t rt_sfud_flash_find_by_dev_name(const char *flash_dev_name)
         sfud_dev = (sfud_flash_t) (rtt_dev->user_data);
         return sfud_dev;
     } else {
-        rt_kprintf("ERROR: SFUD flash device not found!\n");
+        LOG_E("ERROR: SFUD flash device not found!");
         goto __error;
     }
 
@@ -707,11 +684,13 @@ static void sf(uint8_t argc, char **argv) {
                 addr = 0;
                 size = sfud_dev->chip.capacity;
                 uint32_t start_time, time_cast;
-                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = SFUD_WRITE_MAX_PAGE_SIZE;
+                size_t write_size = SFUD_WRITE_MAX_PAGE_SIZE, read_size = SFUD_WRITE_MAX_PAGE_SIZE, cur_op_size;
                 uint8_t *write_data = rt_malloc(write_size), *read_data = rt_malloc(read_size);
 
                 if (write_data && read_data) {
-                    rt_memset(write_data, 0x55, write_size);
+                    for (i = 0; i < write_size; i ++) {
+                        write_data[i] = i & 0xFF;
+                    }
                     /* benchmark testing */
                     rt_kprintf("Erasing the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
@@ -727,8 +706,14 @@ static void sf(uint8_t argc, char **argv) {
                     rt_kprintf("Writing the %s %ld bytes data, waiting...\n", sfud_dev->name, size);
                     start_time = rt_tick_get();
                     for (i = 0; i < size; i += write_size) {
-                        result = sfud_write(sfud_dev, addr + i, write_size, write_data);
+                        if (i + write_size <= size) {
+                            cur_op_size = write_size;
+                        } else {
+                            cur_op_size = size - i;
+                        }
+                        result = sfud_write(sfud_dev, addr + i, cur_op_size, write_data);
                         if (result != SFUD_SUCCESS) {
+                            rt_kprintf("Writing %s failed, already wr for %lu bytes, write %d each time\n", sfud_dev->name, i, write_size);
                             break;
                         }
                     }
@@ -744,18 +729,20 @@ static void sf(uint8_t argc, char **argv) {
                     start_time = rt_tick_get();
                     for (i = 0; i < size; i += read_size) {
                         if (i + read_size <= size) {
-                            result = sfud_read(sfud_dev, addr + i, read_size, read_data);
+                            cur_op_size = read_size;
                         } else {
-                            result = sfud_read(sfud_dev, addr + i, size - i, read_data);
+                            cur_op_size = size - i;
                         }
+                        result = sfud_read(sfud_dev, addr + i, cur_op_size, read_data);
                         /* data check */
-                        if (memcmp(write_data, read_data, read_size))
+                        if (memcmp(write_data, read_data, cur_op_size))
                         {
                             rt_kprintf("Data check ERROR! Please check you flash by other command.\n");
                             result = SFUD_ERR_READ;
                         }
 
                         if (result != SFUD_SUCCESS) {
+                            rt_kprintf("Read %s failed, already rd for %lu bytes, read %d each time\n", sfud_dev->name, i, read_size);
                             break;
                         }
                     }

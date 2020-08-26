@@ -19,6 +19,8 @@
 #include <dfs_posix.h>
 #include <dfs_poll.h>
 
+#ifdef RT_USING_POSIX
+
 struct rt_poll_node;
 
 struct rt_poll_table
@@ -135,6 +137,14 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
                 req->_key = pollfd->events | POLLERR | POLLHUP;
 
                 mask = f->fops->poll(f, req);
+
+                /* dealwith the device return error -1*/
+                if (mask < 0)
+                {   
+                    fd_put(f);
+                    pollfd->revents = 0;
+                    return mask;
+                }
             }
             /* Mask out unneeded events. */
             mask &= pollfd->events | POLLERR | POLLHUP;
@@ -152,6 +162,7 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
     int istimeout = 0;
     int n;
     struct pollfd *pf;
+    int  ret = 0;
 
     if (msec == 0)
     {
@@ -166,7 +177,14 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
 
         for (n = 0; n < nfds; n ++)
         {
-            if (do_pollfd(pf, &pt->req))
+            ret = do_pollfd(pf, &pt->req);
+            if(ret < 0)
+            {
+                /*dealwith the device return error -1  */
+                pt->req._proc = RT_NULL;
+                return ret;
+            }
+            else if(ret > 0)
             {
                 num ++;
                 pt->req._proc = RT_NULL;
@@ -214,3 +232,4 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
     return num;
 }
 
+#endif 

@@ -90,17 +90,19 @@ void rt_hw_board_init(void)
 
     /* init hardware interrupt */
     rt_hw_interrupt_init();
+
+#ifdef RT_USING_HEAP
+    /* init memory system */
+    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+#endif
+
+    /* init uart */
     rt_hw_uart_init();
 
 #ifdef RT_USING_CONSOLE
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif /* RT_USING_CONSOLE */
-
-#ifdef RT_USING_HEAP
-    /* init memory system */
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
-#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

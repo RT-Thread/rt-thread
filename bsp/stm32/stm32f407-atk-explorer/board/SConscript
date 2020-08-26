@@ -21,6 +21,9 @@ if GetDepend(['BSP_USING_SPI_FLASH']):
 if GetDepend(['BSP_USING_SDCARD']):
     src += Glob('ports/sdcard_port.c')
 
+if GetDepend(['BSP_USING_SRAM']):
+    src += Glob('ports/drv_sram.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports']

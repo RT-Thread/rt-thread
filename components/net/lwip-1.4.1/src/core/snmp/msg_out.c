@@ -306,7 +306,7 @@ snmp_authfail_trap(void)
  *
  * @param vb_len varbind-list length
  * @param rhl points to returned header lengths
- * @return the required lenght for encoding the response header
+ * @return the required length for encoding the response header
  */
 static u16_t
 snmp_resp_header_sum(struct snmp_msg_pstat *m_stat, u16_t vb_len)
@@ -353,7 +353,7 @@ snmp_resp_header_sum(struct snmp_msg_pstat *m_stat, u16_t vb_len)
  *
  * @param vb_len varbind-list length
  * @param thl points to returned header lengths
- * @return the required lenght for encoding the trap header
+ * @return the required length for encoding the trap header
  */
 static u16_t
 snmp_trap_header_sum(struct snmp_msg_trap *m_trap, u16_t vb_len)

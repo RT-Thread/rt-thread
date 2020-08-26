@@ -36,7 +36,7 @@
 #define m_interrupts_size              0x00000400
 
 #define m_text_start                   0x60002400
-#define m_text_size                    0x1fffdbff
+#define m_text_size                    0x01FFDC00
 
 #define m_data_start                   0x20000000
 #define m_data_size                    0x00020000

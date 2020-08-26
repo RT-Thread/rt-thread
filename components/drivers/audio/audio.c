@@ -33,7 +33,7 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
     rt_err_t result = RT_EOK;
     rt_uint8_t *data;
     rt_size_t dst_size, src_size;
-    rt_uint16_t position, remain_bytes, index = 0;
+    rt_uint16_t position, remain_bytes = 0, index = 0;
     struct rt_audio_buf_info *buf_info;
 
     RT_ASSERT(audio != RT_NULL);

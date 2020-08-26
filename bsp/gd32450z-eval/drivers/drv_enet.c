@@ -652,7 +652,10 @@ int rt_hw_gd32_eth_init(void)
     /* init tx buffer free semaphore */
     rt_sem_init(&gd32_emac_device0.tx_buf_free, "tx_buf0", EMAC_TXBUFNB, RT_IPC_FLAG_FIFO);
     eth_device_init(&(gd32_emac_device0.parent), "e0");
-    
+
+    /* change device link status */
+    eth_device_linkchange(&(gd32_emac_device0.parent), RT_TRUE);
+
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_gd32_eth_init);

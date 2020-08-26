@@ -175,7 +175,7 @@ rt_hw_context_switch_exit:
     LOAD x1,   1 * REGBYTES(sp)
 
     li    t0, 0x00001800
-    csrs  mstatus, t0
+    csrw  mstatus, t0
     LOAD a0,   2 * REGBYTES(sp)
     csrs mstatus, a0
 

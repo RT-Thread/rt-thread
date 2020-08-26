@@ -460,8 +460,6 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                     rt_device_register(&blk_dev->dev, "sd0",
                         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
                     rt_list_insert_after(&blk_devices, &blk_dev->list);
-    
-                    break;
                 }
                 else
                 {
@@ -472,7 +470,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
             }
 
 #ifdef RT_USING_DFS_MNTTABLE
-            if (0) // if (blk_dev)
+            if (blk_dev)
             {
             	LOG_I("try to mount file system!");
             	/* try to mount file system on this block device */
@@ -507,9 +505,10 @@ void rt_mmcsd_blk_remove(struct rt_mmcsd_card *card)
         	const char * mounted_path = dfs_filesystem_get_mounted_path(&(blk_dev->dev));
         	if (mounted_path)
         	{
-        		dfs_unmount(mounted_path);
+                  dfs_unmount(mounted_path);
+                  LOG_D("unmount file system %s for device %s.\r\n", mounted_path, blk_dev->dev.parent.name);
         	}
-
+            rt_sem_delete(blk_dev->part.lock);
             rt_device_unregister(&blk_dev->dev);
             rt_list_remove(&blk_dev->list);
             rt_free(blk_dev);

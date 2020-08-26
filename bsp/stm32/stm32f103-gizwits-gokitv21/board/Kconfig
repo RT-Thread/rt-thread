@@ -31,6 +31,14 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1 RX DMA"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
         endif
 
     menuconfig BSP_USING_SPI

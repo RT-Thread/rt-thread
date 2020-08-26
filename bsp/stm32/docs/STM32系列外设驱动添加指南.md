@@ -95,6 +95,7 @@
 |  10  | Watchdog | **开启该外设**                                             |
 |  11  | EMAC     | **配置 ETH 外设的工作模式（一般为 RMII 模式）**              |
 |  12  | SDRAM    | **需要根据板载的 SDRAM 型号配置片选脚，地址线，数据线等**    |
+|  13  | SDIO     | **开启该外设，配置引脚（或者使用默认引脚），SDIO会改变时钟结构，故需重新配置时钟并修改board.c** |
 
 ### 5.3 复杂外设配置说明
 
@@ -144,3 +145,18 @@
 
  ![adc 编译](figures/adc_config3.png)
  ![adc 编译](figures/adc_config4.png)
+
+#### 5.3.4 编码器外设驱动添加说明
+
+ 1. 打开 STM32CubeMX 工程，设置 TIMER 在 Cube 里的选项，如下图所示：
+
+ ![pulse_encoder CubeMX 配置](figures/pulse_encoder_config1.png)
+
+ 2. 打开 stm32/stm32f407-atk-explorer/board/Kconfig ，添加 Kconfig 选项。选中自己添加的选项后，生成一遍工程，如下图所示：
+
+ ![pulse_encoder Kconfig 配置](figures/pulse_encoder_config2.png)
+
+ 3. 打开工程进行编译，工程会提示 PULSE_ENCODER4_CONFIG 未定义。 可以在 stm32/libraries/HAL_Drivers/config/f4/pulse_encoder_config.h 中进行定义，如下图所示：
+
+ ![pulse_encoder 编译](figures/pulse_encoder_config3.png)
+ ![pulse_encoder 编译](figures/pulse_encoder_config4.png)

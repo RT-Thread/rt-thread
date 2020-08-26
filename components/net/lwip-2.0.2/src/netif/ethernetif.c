@@ -164,6 +164,16 @@ static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_
 static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 {
     netdev_low_level_set_dhcp_status(netif, is_enabled);
+
+    /*add dhcp start or stop must call dhcp_start and dhcp_stop function*/
+    if(is_enabled == RT_TRUE)
+    {
+        dhcp_start((struct netif *)netif->user_data);
+    }
+    else
+    {
+        dhcp_stop((struct netif *)netif->user_data);    
+    }
     return ERR_OK;
 }
 #endif /* RT_LWIP_DHCP */
@@ -173,7 +183,7 @@ static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 extern int lwip_ping_recv(int s, int *ttl);
 extern err_t lwip_ping_send(int s, ip_addr_t *addr, int size);
 
-int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len, 
+int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
                         uint32_t timeout, struct netdev_ping_resp *ping_resp)
 {
     int s, ttl, recv_len, result = 0;
@@ -188,7 +198,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     struct addrinfo hint, *res = RT_NULL;
     struct sockaddr_in *h = RT_NULL;
     struct in_addr ina;
-    
+
     RT_ASSERT(netif);
     RT_ASSERT(host);
     RT_ASSERT(ping_resp);
@@ -207,7 +217,7 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
         return -RT_ERROR;
     }
     rt_memcpy(&(ping_resp->ip_addr), &target_addr, sizeof(ip_addr_t));
-    
+
     /* new a socket */
     if ((s = lwip_socket(AF_INET, SOCK_RAW, IP_PROTO_ICMP)) < 0)
     {
@@ -275,7 +285,7 @@ const struct netdev_ops lwip_netdev_ops =
     lwip_netdev_set_addr_info,
 #ifdef RT_LWIP_DNS
     lwip_netdev_set_dns_server,
-#else 
+#else
     NULL,
 #endif /* RT_LWIP_DNS */
 
@@ -323,8 +333,8 @@ static int netdev_add(struct netif *lwip_netif)
 
     rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
     result = netdev_register(netdev, name, (void *)lwip_netif);
-	
-    /* Update netdev info after registered */	
+
+    /* Update netdev info after registered */
     netdev->flags = lwip_netif->flags;
     netdev->mtu = lwip_netif->mtu;
     netdev->ops = &lwip_netdev_ops;
@@ -333,7 +343,7 @@ static int netdev_add(struct netif *lwip_netif)
     netdev->ip_addr = lwip_netif->ip_addr;
     netdev->gw = lwip_netif->gw;
     netdev->netmask = lwip_netif->netmask;
-	
+
 #ifdef RT_LWIP_DHCP
     netdev_low_level_set_dhcp_status(netdev, RT_TRUE);
 #endif
@@ -412,7 +422,7 @@ static err_t eth_netif_device_init(struct netif *netif)
     /* network interface device register */
     netdev_add(netif);
 #endif /* RT_USING_NETDEV */
-    
+
     ethif = (struct eth_device*)netif->state;
     if (ethif != RT_NULL)
     {
@@ -481,14 +491,18 @@ static err_t eth_netif_device_init(struct netif *netif)
 rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_uint16_t flags)
 {
     struct netif* netif;
-
-    netif = (struct netif*) rt_malloc (sizeof(struct netif));
+#if LWIP_NETIF_HOSTNAME
+#define LWIP_HOSTNAME_LEN 16
+    char *hostname = RT_NULL;
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
+#else
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif));
+#endif
     if (netif == RT_NULL)
     {
         rt_kprintf("malloc netif failed\n");
         return -RT_ERROR;
     }
-    rt_memset(netif, 0, sizeof(struct netif));
 
     /* set netif */
     dev->netif = netif;
@@ -519,7 +533,9 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
-    netif->hostname = "rtthread";
+    hostname = (char *)netif + sizeof(struct netif);
+    rt_sprintf(hostname, "rtthread_%02x%02x", name[0], name[1]);
+    netif->hostname = hostname;
 #endif /* LWIP_NETIF_HOSTNAME */
 
     /* if tcp thread has been started up, we add this netif to the system */
@@ -531,7 +547,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
         ipaddr.addr = inet_addr(RT_LWIP_IPADDR);
         gw.addr = inet_addr(RT_LWIP_GWADDR);
         netmask.addr = inet_addr(RT_LWIP_MSKADDR);
-#else        
+#else
         IP4_ADDR(&ipaddr, 0, 0, 0, 0);
         IP4_ADDR(&gw, 0, 0, 0, 0);
         IP4_ADDR(&netmask, 0, 0, 0, 0);
@@ -683,7 +699,7 @@ static void eth_rx_thread_entry(void* parameter)
             while (1)
             {
                 if(device->eth_rx == RT_NULL) break;
-                
+
                 p = device->eth_rx(&(device->parent));
                 if (p != RT_NULL)
                 {
@@ -706,9 +722,9 @@ static void eth_rx_thread_entry(void* parameter)
 }
 #endif
 
-/* this function does not need, 
- * use eth_system_device_init_private() 
- * call by lwip_system_init(). 
+/* this function does not need,
+ * use eth_system_device_init_private()
+ * call by lwip_system_init().
  */
 int eth_system_device_init(void)
 {
@@ -855,22 +871,22 @@ void list_if(void)
 			ip6_addr_t *addr;
 			int addr_state;
 			int i;
-			
+
 			addr = (ip6_addr_t *)&netif->ip6_addr[0];
 			addr_state = netif->ip6_addr_state[0];
-			
-			rt_kprintf("\nipv6 link-local: %s state:%02X %s\n", ip6addr_ntoa(addr), 
+
+			rt_kprintf("\nipv6 link-local: %s state:%02X %s\n", ip6addr_ntoa(addr),
 			addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
-			
+
 			for(i=1; i<LWIP_IPV6_NUM_ADDRESSES; i++)
 			{
 				addr = (ip6_addr_t *)&netif->ip6_addr[i];
 				addr_state = netif->ip6_addr_state[i];
-			
-				rt_kprintf("ipv6[%d] address: %s state:%02X %s\n", i, ip6addr_ntoa(addr), 
+
+				rt_kprintf("ipv6[%d] address: %s state:%02X %s\n", i, ip6addr_ntoa(addr),
 				addr_state, ip6_addr_isvalid(addr_state)?"VALID":"INVALID");
 			}
-			
+
 		}
         rt_kprintf("\r\n");
 #endif /* LWIP_IPV6 */

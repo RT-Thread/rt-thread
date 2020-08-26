@@ -1,0 +1,52 @@
+menu "Nuvoton Packages Config"
+    config NU_PKG_USING_UTILS
+        bool
+        default y
+
+    config NU_PKG_USING_DEMO
+        bool "Enable demos"
+        default y
+
+    config NU_PKG_USING_BMX055
+        bool "BMX055 9-axis sensor."
+        select RT_USING_I2C
+        select RT_USING_SENSOR
+        default n
+
+    config NU_PKG_USING_MAX31875
+        bool "MAX31875 Temperature sensor."
+        select RT_USING_I2C
+        select RT_USING_SENSOR
+        default n
+
+    config NU_PKG_USING_NAU88L25
+        bool "NAU88L25 Audio Codec."
+        select BSP_USING_I2C
+        default n
+
+    config NU_PKG_USING_ILI9341
+        bool "ILI9341 LCD Panel"
+        select BSP_USING_GPIO
+        default n
+        
+        if NU_PKG_USING_ILI9341
+
+            choice
+                prompt "Select ili9341 interface"
+
+                config NU_PKG_USING_ILI9341_SPI
+                    select BSP_USING_SPI
+                    bool "ILI9341_SPI"
+                help
+                    Choose this option if you the ili9341 device is with SPI interface.
+
+                config NU_PKG_USING_ILI9341_EBI
+                    select BSP_USING_EBI
+                    bool "ILI9341_EBI"
+                help
+                    Choose this option if you the ili9341 device is with EBI interface.
+            endchoice
+
+        endif
+
+endmenu
