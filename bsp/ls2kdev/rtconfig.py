@@ -31,6 +31,7 @@ BUILD       = 'debug'
 
 PREFIX = 'mips-sde-elf-'
 CC = PREFIX + 'gcc'
+CXX = PREFIX + 'g++'
 AS = PREFIX + 'gcc'
 AR = PREFIX + 'ar'
 LINK = PREFIX + 'gcc'
