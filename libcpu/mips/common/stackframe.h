@@ -206,6 +206,8 @@
     li	v1, ~(ST0_CU1 | ST0_FR | ST0_IM)
     and	v0, v1
     or	v0, a0
+    li  v1, (ST0_KX | ST0_SX | ST0_UX)
+    or  v0, v1
     mtc0	v0, CP0_STATUS
     LONG_L	v1, PT_EPC(sp)
     MTC0	v1, CP0_EPC
