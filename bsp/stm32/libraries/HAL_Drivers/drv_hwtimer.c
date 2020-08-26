@@ -314,7 +314,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 #endif
         {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-            val = (uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler / 10000) - 1;
+            val = HAL_RCC_GetPCLK2Freq() * pclk2_doubler / freq;
 #endif
         }
         else
