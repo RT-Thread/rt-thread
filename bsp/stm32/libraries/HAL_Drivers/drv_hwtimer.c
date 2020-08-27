@@ -153,6 +153,7 @@ static struct stm32_hwtimer stm32_hwtimer_obj[] =
 #endif
 };
 
+/* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
 static void pclkx_doubler_get(uint32_t *pclk1_doubler, uint32_t *pclk2_doubler)
 {
     uint32_t flatency = 0;
