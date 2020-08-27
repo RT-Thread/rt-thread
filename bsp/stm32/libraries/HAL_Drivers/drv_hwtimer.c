@@ -168,8 +168,16 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         uint32_t FLatency = 0;
         RCC_ClkInitTypeDef RCC_ClkInitStruct;
         HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &FLatency);
-        uint32_t pclk1_doubler = 1 + ( RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1 );
-        uint32_t pclk2_doubler = 1 + ( RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1 );
+        uint32_t pclk1_doubler = 1;
+        uint32_t pclk2_doubler = 1;
+        if(RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
+        {
+             pclk1_doubler = pclk1_doubler + 1;
+        }
+        if(RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
+        {
+             pclk2_doubler = pclk2_doubler + 1;
+        }
 
         /* time init */
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
@@ -300,8 +308,16 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         uint32_t FLatency = 0;
         RCC_ClkInitTypeDef RCC_ClkInitStruct;
         HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &FLatency);
-        uint32_t pclk1_doubler = 1 + ( RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1 );
-        uint32_t pclk2_doubler = 1 + ( RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1 );
+        uint32_t pclk1_doubler = 1;
+        uint32_t pclk2_doubler = 1;
+        if(RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
+        {
+             pclk1_doubler = pclk1_doubler + 1;
+        }
+        if(RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
+        {
+             pclk2_doubler = pclk2_doubler + 1;
+        }
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
