@@ -154,10 +154,10 @@ static struct stm32_hwtimer stm32_hwtimer_obj[] =
 };
 
 /* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
-static void pclkx_doubler_get(uint32_t *pclk1_doubler, uint32_t *pclk2_doubler)
+static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
 {
-    uint32_t flatency = 0;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct;
+    rt_uint32_t flatency = 0;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
     RT_ASSERT(pclk1_doubler != RT_NULL);
     RT_ASSERT(pclk1_doubler != RT_NULL);
@@ -167,15 +167,28 @@ static void pclkx_doubler_get(uint32_t *pclk1_doubler, uint32_t *pclk2_doubler)
     *pclk1_doubler = 1;
     *pclk2_doubler = 1;
 
-    if(RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
+#if defined(SOC_SERIES_STM32MP1)
+    if (RCC_ClkInitStruct.APB1_Div != RCC_APB1_DIV1)
+    {
+        *pclk1_doubler = 2;
+    }
+    if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
+    {
+       *pclk2_doubler = 2; 
+    }
+#else
+    
+    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)    
     {
          *pclk1_doubler = 2;
     }
-
-    if(RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+    if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
     {
          *pclk2_doubler = 2;
     }
+#endif
+#endif
 }
 
 static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
