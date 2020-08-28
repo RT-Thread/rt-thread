@@ -177,7 +177,6 @@ static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_dou
        *pclk2_doubler = 2; 
     }
 #else
-    
     if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)    
     {
          *pclk1_doubler = 2;
