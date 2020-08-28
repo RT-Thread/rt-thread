@@ -40,6 +40,10 @@ ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif
 
+#ifdef RT_USING_TIMER_SOFT
+static rt_bool_t timer_idle;
+#endif
+
 #ifdef RT_USING_HOOK
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
@@ -408,7 +412,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
     {
         /* check whether timer thread is ready */
-        if ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+        if (timer_idle && ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
         {
             /* resume timer thread to check soft timer */
             rt_thread_resume(&timer_thread);
@@ -445,12 +449,11 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
     level = rt_hw_interrupt_disable();
 
     _rt_timer_remove(timer);
+    /* change stat */
+    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
-
-    /* change stat */
-    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
     return RT_EOK;
 }
@@ -521,6 +524,7 @@ void rt_timer_check(void)
     struct rt_timer *t;
     rt_tick_t current_tick;
     register rt_base_t level;
+    rt_list_t l = RT_LIST_OBJECT_INIT(l);
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("timer check enter\n"));
 
@@ -544,7 +548,8 @@ void rt_timer_check(void)
 
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
-
+            /* add timer to temporary list  */
+            rt_list_insert_after(&l, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
             /* call timeout function */
             t->timeout_func(t->parameter);
 
@@ -553,6 +558,12 @@ void rt_timer_check(void)
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
+
+            /* Check whether the timer object is detached or started again */
+            if (rt_list_isempty(&l))
+            {
+                continue;
+            }
 
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
@@ -596,11 +607,13 @@ void rt_soft_timer_check(void)
 {
     rt_tick_t current_tick;
     struct rt_timer *t;
+    register rt_base_t level;
+    rt_list_t l = RT_LIST_OBJECT_INIT(l);
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check enter\n"));
 
-    /* lock scheduler */
-    rt_enter_critical();
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
 
     while (!rt_list_isempty(&rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
@@ -619,24 +632,39 @@ void rt_soft_timer_check(void)
 
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
+            /* add timer to temporary list  */
+            rt_list_insert_after(&l, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
+            /* soft time busy */
+            timer_idle = RT_FALSE;
+            /* enable interrupt */
+            rt_hw_interrupt_enable(level);
 
-            /* not lock scheduler when performing timeout function */
-            rt_exit_critical();
             /* call timeout function */
             t->timeout_func(t->parameter);
 
+            timer_idle = RT_TRUE;
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 
-            /* lock scheduler */
-            rt_enter_critical();
+            /* disable interrupt */
+            level = rt_hw_interrupt_disable();
+
+            /* Check whether the timer object is detached or started again */
+            if (rt_list_isempty(&l))
+            {
+                continue;
+            }
 
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
                 rt_timer_start(t);
+                /* disable interrupt */
+                level = rt_hw_interrupt_disable();
             }
             else
             {
@@ -646,9 +674,8 @@ void rt_soft_timer_check(void)
         }
         else break; /* not check anymore */
     }
-
-    /* unlock scheduler */
-    rt_exit_critical();
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check leave\n"));
 }
@@ -714,6 +741,7 @@ void rt_system_timer_thread_init(void)
 #ifdef RT_USING_TIMER_SOFT
     int i;
 
+    timer_idle = RT_TRUE;
     for (i = 0;
          i < sizeof(rt_soft_timer_list) / sizeof(rt_soft_timer_list[0]);
          i++)
