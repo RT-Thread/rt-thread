@@ -50,8 +50,8 @@ typedef enum utest_error utest_err_e;
 struct utest
 {
     utest_err_e error;
-    uint32_t passed_num;
-    uint32_t failed_num;
+    rt_uint32_t passed_num;
+    rt_uint32_t failed_num;
 };
 typedef struct utest *utest_t;
 
@@ -70,7 +70,7 @@ typedef struct utest *utest_t;
 */
 struct utest_tc_export {
     const char  *name;
-    uint32_t     run_timeout;
+    rt_uint32_t     run_timeout;
     rt_err_t   (*init)(void);
     void       (*tc)(void);
     rt_err_t   (*cleanup)(void);
