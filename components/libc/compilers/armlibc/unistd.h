@@ -10,3 +10,4 @@
 
 int     isatty      (int fd);
 char *  ttyname     (int desc);
+
