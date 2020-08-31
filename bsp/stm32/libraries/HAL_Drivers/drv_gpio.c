@@ -313,7 +313,7 @@ static const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
-static rt_base_t stm32_pin_get(char *name)
+static rt_base_t stm32_pin_get(const char *name)
 {
     rt_base_t pin = 0;
     int hw_port_num, hw_pin_num = 0;

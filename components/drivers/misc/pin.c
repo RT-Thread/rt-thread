@@ -152,7 +152,7 @@ int  rt_pin_read(rt_base_t pin)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(rt_pin_read, pinRead, read status from hardware pin);
 
-rt_base_t rt_pin_get(char *name)
+rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     RT_ASSERT(name[0] == 'P');

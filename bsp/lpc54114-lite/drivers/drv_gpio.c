@@ -38,7 +38,7 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},    
 };
 
-static rt_base_t lpc_pin_get(char *name)
+static rt_base_t lpc_pin_get(const char *name)
 {
     rt_base_t pin = 0;
     int hw_port_num, hw_pin_num = 0;
