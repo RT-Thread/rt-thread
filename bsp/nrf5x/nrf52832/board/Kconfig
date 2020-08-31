@@ -26,6 +26,15 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+    config BSP_USING_SAADC
+        bool "Enable SAADC"
+        select RT_USING_ADC
+        default n
+        if BSP_USING_SAADC
+                config NRFX_SAADC_ENABLED
+                int 
+                default 1  
+        endif
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         select RT_USING_PWM
@@ -44,19 +53,19 @@ menu "On-chip Peripheral Drivers"
                     config BSP_USING_PWM0_CH0
                         int "PWM0 channel 0 pin number set"
                         range 0 47
-                        default 13
+                        default 17
                     config BSP_USING_PWM0_CH1
                         int "PWM0 channel 1 pin number set"
                         range 0 47
-                        default 14
+                        default 18
                     config BSP_USING_PWM0_CH2
                         int "PWM0 channel 2 pin number set"
                         range 0 47
-                        default 15
+                        default 19
                     config BSP_USING_PWM0_CH3
                         int "PWM0 channel 3 pin number set"
                         range 0 47
-                        default 16
+                        default 20
                 endif
                 config BSP_USING_PWM1
                     bool "Enable PWM1 bus"
@@ -289,6 +298,21 @@ endif
             range 0x1000 0x1000
             default 0x1000
 	endmenu
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
+    if BSP_USING_WDT
+        config NRFX_WDT_ENABLED
+        int
+        default 1
+        config NRFX_WDT0_ENABLED
+        int
+        default 1
+        config NRFX_WDT_CONFIG_NO_IRQ
+        int
+        default 1
+    endif
 endmenu
 
 endmenu
