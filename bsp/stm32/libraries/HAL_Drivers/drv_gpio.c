@@ -313,6 +313,51 @@ static const struct pin_index *get_pin(uint8_t pin)
     return index;
 };
 
+static rt_base_t stm32_pin_get(char *name)
+{
+    rt_base_t pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len = 1;
+    int mul = 1;
+
+    name_len = rt_strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
+    {
+        return -RT_EINVAL;
+    }
+    if ((name[0] != 'P') || (name[2] != '.'))
+    {
+        return -RT_EINVAL;
+    }
+
+    if ((name[1] >= 'A') && (name[1] <= 'Z'))
+    {
+        hw_port_num = (int)(name[1] - 'A');
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = name_len - 1; i > 2; i--)
+    {
+        hw_pin_num += ((int)(name[i] - '0') * mul);
+        mul = mul * 10;
+    }
+
+    pin = 16 * hw_port_num + hw_pin_num;
+
+    if (pin < ITEM_NUM(pins))
+    {
+        return pin;
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+}
+
 static void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
 {
     const struct pin_index *index;
@@ -627,6 +672,7 @@ const static struct rt_pin_ops _stm32_pin_ops =
     stm32_pin_attach_irq,
     stm32_pin_dettach_irq,
     stm32_pin_irq_enable,
+    stm32_pin_get,
 };
 
 rt_inline void pin_irq_hdr(int irqno)
