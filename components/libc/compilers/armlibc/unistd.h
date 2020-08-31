@@ -8,6 +8,3 @@
  */
 #include "sys/unistd.h"
 
-int     isatty      (int fd);
-char *  ttyname     (int desc);
-
