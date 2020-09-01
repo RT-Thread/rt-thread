@@ -22,7 +22,9 @@ BUILD = 'debug'
 NUCLEI_SDK_SOC = "hbird"
 NUCLEI_SDK_BOARD = "hbird_eval"
 # Configurable options below
+# DOWNLOAD: https://doc.nucleisys.com/nuclei_sdk/develop/buildsystem.html#download
 NUCLEI_SDK_DOWNLOAD = "ilm"
+# CORE: See https://doc.nucleisys.com/nuclei_sdk/develop/buildsystem.html#core
 NUCLEI_SDK_CORE = "nx600"
 
 if PLATFORM == 'gcc':
