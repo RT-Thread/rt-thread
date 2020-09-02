@@ -36,4 +36,8 @@
 
 #endif
 
+
+int     isatty      (int fd);
+char *  ttyname     (int desc);
+
 #endif /* _SYS_UNISTD_H */
