@@ -219,7 +219,7 @@ int rt_hw_uart_init(void)
     return result;
 }
 
-void rt_hw_serial_thread_entry(void *parameter)
+void rt_hw_serial_rcvtsk(void *parameter)
 {
     struct hbird_uart_config *uart_cfg;
 
