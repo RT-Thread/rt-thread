@@ -94,16 +94,16 @@ Nuclei OpenOCD, i386 Open On-Chip Debugger 0.10.0+dev-g11f0cf429 (2020-07-15-04:
 Licensed under GNU GPL v2
 For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
-rt_thread_idle_entry (parameter=<optimized out>) at D:\workspace\Sourcecode\rt-thread\src\idle.c:249
-249             for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
+rt_list_insert_before (n=0xdeadbeef, l=0x90000f80 <timer_thread_stack+464>) at D:\workspace\Sourcecode\rt-thread\include/rtservice.h:79
+79          n->next = l;
 cleared protection for sectors 0 through 63 on flash bank 0
 
 Loading section .init, size 0x284 lma 0x80000000
-Loading section .text, size 0xb57e lma 0x800002c0
-Loading section .rodata, size 0x3248 lma 0x8000b840
-Loading section .data, size 0x350 lma 0x8000ea88
-Start address 0x80000198, load size 60826
-Transfer rate: 49 KB/sec, 10137 bytes/write.
+Loading section .text, size 0xb30a lma 0x800002c0
+Loading section .rodata, size 0x3248 lma 0x8000b5d0
+Loading section .data, size 0x340 lma 0x8000e818
+Start address 0x80000198, load size 60182
+Transfer rate: 48 KB/sec, 10030 bytes/write.
 shutdown command invoked
 A debugging session is active.
 
@@ -140,12 +140,10 @@ msh />
 msh />ps
 thread   pri  status      sp     stack size max used left tick  error
 -------- ---  ------- ---------- ----------  ------  ---------- ---
-thread01  19  suspend 0x00000158 0x0000018c    87%   0x00000005 000
-thread00  19  suspend 0x00000158 0x0000018c    87%   0x00000005 000
-tshell    20  running 0x00000258 0x00001000    18%   0x00000004 000
-tidle0    31  ready   0x000000a8 0x0000018c    59%   0x0000000e 000
-timer      4  suspend 0x000000f8 0x00000200    49%   0x00000009 000
-main      10  suspend 0x00000168 0x00000800    36%   0x00000006 000
+serrxsim   5  suspend 0x00000134 0x0000018c    77%   0x00000005 000
+tshell    20  running 0x000002b0 0x00001000    17%   0x00000005 000
+tidle0    31  ready   0x00000164 0x0000018c    89%   0x0000000b 000
+timer      4  suspend 0x00000120 0x00000200    56%   0x00000009 000
 msh />
 ~~~
 
@@ -182,26 +180,26 @@ Nuclei OpenOCD, i386 Open On-Chip Debugger 0.10.0+dev-g11f0cf429 (2020-07-15-04:
 Licensed under GNU GPL v2
 For bug reports, read
         http://openocd.org/doc/doxygen/bugs.html
-0x0000000080000f14 in _has_defunct_thread () at D:\workspace\Sourcecode\rt-thread\src\idle.c:153
-153         while (_has_defunct_thread())
+0x0000000080000e80 in rt_thread_idle_entry (parameter=<optimized out>)
+    at D:\workspace\Sourcecode\rt-thread\src\idle.c:253
+253                     idle_hook_list[i]();
 (gdb) load
 Loading section .init, size 0x284 lma 0x80000000
-Loading section .text, size 0xb57e lma 0x800002c0
-Loading section .rodata, size 0x3248 lma 0x8000b840
-Loading section .data, size 0x350 lma 0x8000ea88
-Start address 0x80000198, load size 60826
-Transfer rate: 48 KB/sec, 10137 bytes/write.
+Loading section .text, size 0xb30a lma 0x800002c0
+Loading section .rodata, size 0x3248 lma 0x8000b5d0
+Loading section .data, size 0x340 lma 0x8000e818
+Start address 0x80000198, load size 60182
+Transfer rate: 49 KB/sec, 10030 bytes/write.
 (gdb) b main
-Breakpoint 1 at 0x800002c0: file applications\main.c, line 95.
+Breakpoint 1 at 0x800002c0: file applications\main.c, line 35.
 (gdb) c
 Continuing.
 
-Breakpoint 1, main () at applications\main.c:95
-95          board_gpio_init();
+Breakpoint 1, main () at applications\main.c:35
+35          board_serial_init();
 (gdb) n
-96          create_thread_demo();
-(gdb) n
-99          board_serial_init();
+rt_thread_exit () at D:\workspace\Sourcecode\rt-thread\src\thread.c:277
+277         return rt_current_thread;
 (gdb) c
 Continuing.
 ~~~
