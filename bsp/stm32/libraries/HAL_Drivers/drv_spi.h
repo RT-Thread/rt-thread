@@ -67,4 +67,4 @@ struct stm32_spi
     struct rt_spi_bus spi_bus;
 };
 
-#endif /*__DRV_SPI_H_ */
+#endif /*__DRV_SPI_H__ */

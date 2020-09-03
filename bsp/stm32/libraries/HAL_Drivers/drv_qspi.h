@@ -23,4 +23,4 @@ rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_n
 }
 #endif
 
-#endif
+#endif /* __DRV_QSPI_H__ */
