@@ -807,7 +807,7 @@ void eth_rx_irq(int irqno, void *param)
 
     if (dma_status_reg & GmacLineIntfIntr)
     {
-        rt_kprintf("%s:: Interrupt due to GMAC LINE module\n", __FUNCTION__);
+        //rt_kprintf("%s:: Interrupt due to GMAC LINE module\n", __FUNCTION__);
     }
 
     interrupt = synopGMAC_get_interrupt_type(gmacdev);
