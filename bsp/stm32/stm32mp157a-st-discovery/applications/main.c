@@ -27,7 +27,6 @@ int main(void)
         rt_thread_mdelay(500);    
         rt_pin_write(LED8_PIN, PIN_LOW);
         rt_thread_mdelay(500);
-        rt_kprintf("Hello RT-Thread!\n");
     }
     
     return RT_EOK;

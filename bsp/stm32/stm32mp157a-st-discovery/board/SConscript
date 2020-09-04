@@ -13,19 +13,26 @@ CubeMX_Config/Common/System/system_stm32mp1xx.c
 CubeMX_Config/CM4/Src/stm32mp1xx_hal_msp.c
 ''')
 
-if GetDepend(['BSP_USING_ADC']):
-    src += Glob('ports/drv_hard_i2c.c')
-    src += Glob('ports/stpmic.c')
+if GetDepend(['BSP_USING_RCC']):
+    src += Glob('ports/drv_rcc.c')
 
-if GetDepend(['BSP_USING_DAC']):
-    src += Glob('ports/drv_hard_i2c.c')
-    src += Glob('ports/stpmic.c')
+if GetDepend(['BSP_USING_EXTI']):
+    src += Glob('ports/drv_exti.c')
+
+if GetDepend(['BSP_USING_PWR']):
+    src += Glob('ports/drv_pwr.c')
 
 if GetDepend(['BSP_USING_WWDG']):
     src += Glob('ports/drv_wwdg.c')
 
 if GetDepend(['BSP_USING_LPTIM']):
     src += Glob('ports/drv_lptim.c')
+
+if GetDepend(['BSP_USING_TIM14']):
+    src += Glob('ports/timer_sample.c')
+
+if GetDepend(['BSP_USING_PMIC']):
+    src += Glob('ports/drv_pmic.c')
 
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/CM4/Inc']
