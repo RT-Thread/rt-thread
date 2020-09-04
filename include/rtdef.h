@@ -51,6 +51,10 @@ extern "C" {
 
 /**@{*/
 
+/*RT-Thread OS identification*/
+#define __rtthread__
+#define __rtthread
+
 /* RT-Thread version information */
 #define RT_VERSION                      4L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
