@@ -22,8 +22,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-#include "stpmic.h"
-#include "rtconfig.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,14 +73,7 @@ void HAL_MspInit(void)
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
-  if(IS_ENGINEERING_BOOT_MODE())
-  {
-#if defined(BSP_USING_ADC) || defined(BSP_USING_DAC)      
-    /* Configure PMIC */
-    BSP_PMIC_Init();
-    BSP_PMIC_InitRegulators();
-#endif
-  }
+
   /* USER CODE END MspInit 1 */
 }
 
