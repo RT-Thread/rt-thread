@@ -12,7 +12,7 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
-rtconfig.AFLAGS += ' -I' + str(Dir('#'))
+rtconfig.AFLAGS += ' -I' + str('.') + ' -I ' + RTT_ROOT + '/libcpu/mips/gs232/'+ ' -I ' + RTT_ROOT + '/libcpu/mips/common/'
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],

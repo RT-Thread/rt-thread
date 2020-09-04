@@ -124,7 +124,11 @@ static void unhandled_exception_handle(struct pt_regs *regs)
 {
     rt_kprintf("Unknown Exception, EPC: 0x%p, CAUSE: 0x%08x\n", read_c0_epc(), read_c0_cause());
     rt_kprintf("Exception Name:%s\n",exception_name[(read_c0_cause() >> 2) & 0x1f]);
+#ifdef SOC_LS2K1000
     rt_kprintf("ExeCode = 0x%08x,BadAddr = 0x%p\n",(read_c0_cause() >> 2) & 0x1f,mmu_tlb_get_bad_vaddr());
+#else
+    rt_kprintf("ExeCode = 0x%08x\n",(read_c0_cause() >> 2) & 0x1f);
+#endif
     rt_kprintf("ST0: 0x%08x ",regs->cp0_status);
     rt_kprintf("ErrorPC: 0x%p\n",read_c0_errorepc());
     mips_dump_regs(regs);
