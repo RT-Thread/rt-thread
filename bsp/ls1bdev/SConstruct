@@ -11,6 +11,7 @@ sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+rtconfig.AFLAGS += ' -I' + str('.') + ' -I ' + RTT_ROOT + '/libcpu/mips/common/'
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
