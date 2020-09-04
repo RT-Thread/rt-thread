@@ -25,6 +25,9 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_QSPI_FLASH
+            config NRFX_QSPI_ENABLED
+            int 
+            default 1
             config BSP_QSPI_SCK_PIN
                 int "QSPI SCK pin number"
                 range 0 31
@@ -204,7 +207,77 @@ if BSP_USING_SOFTDEVICE
     config NRF_SDH_SOC_ENABLED
     int 
     default 1
+    config NRF_SDH_BLE_PERIPHERAL_LINK_COUNT
+    int 
+    default 1
+    config BLE_ADVERTISING_ENABLED
+    int 
+    default 1
+    config NRF_BLE_QWR_ENABLED
+    int 
+    default 1
+    config NRF_SDH_BLE_VS_UUID_COUNT
+    int 
+    default 1
+    config NRF_BLE_CONN_PARAMS_ENABLED
+    int 
+    default 1
+    config NRF_BLE_CONN_PARAMS_MAX_SLAVE_LATENCY_DEVIATION
+    int 
+    default 499
+    config NRF_BLE_CONN_PARAMS_MAX_SUPERVISION_TIMEOUT_DEVIATION
+    int 
+    default 65535
+    config NRF_BLE_GATT_ENABLED
+    int 
+    default 1
+
+    choice
+        prompt "sample(softdevice)"
+        default SD_BLE_APP_BEACON
+        
+        config SD_BLE_APP_BEACON
+        bool "ble_app_beacon"
+        default n
+
+        config SD_BLE_APP_BLINKY
+        bool "ble_app_blinky"
+        default n 
+        if SD_BLE_APP_BLINKY
+            config BLE_LBS_ENABLED
+            int 
+            default 1
+        endif
+
+        config SD_BLE_APP_UART
+        bool "ble_app_uart"
+        default n 
+        if SD_BLE_APP_UART
+            config BLE_NUS_ENABLED
+            int 
+            default 1
+            config NRF_SDH_BLE_GATT_MAX_MTU_SIZE
+            int 
+            default 247
+        endif
+
+        config SD_BLE_APP_HRS
+        bool "ble_app_hrs"
+        default n 
+        if SD_BLE_APP_HRS
+            config BLE_HRS_ENABLED
+            int 
+            default 1
+            config NRF_SDH_BLE_GATT_MAX_MTU_SIZE
+            int 
+            default 247
+        endif
+        config SD_BLE_APP_HIDS_MOUSE
+        bool "ble_app_hids_mouse"
+        default n 
+    endchoice
 endif
+    
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
