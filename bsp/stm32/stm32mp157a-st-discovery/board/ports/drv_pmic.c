@@ -901,10 +901,6 @@ static int pmic_init(void)
         HAL_SYSCFG_VREFBUF_HighImpedanceConfig(SYSCFG_VREFBUF_HIGH_IMPEDANCE_DISABLE);
         HAL_SYSCFG_EnableVREFBUF();
     }
-  
-    __HAL_RCC_VREF_CLK_ENABLE();
-    HAL_SYSCFG_VREFBUF_HighImpedanceConfig(SYSCFG_VREFBUF_HIGH_IMPEDANCE_DISABLE);
-    HAL_SYSCFG_EnableVREFBUF();
 
     LOG_I("stpmic init success!");
         
