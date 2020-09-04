@@ -33,6 +33,7 @@
  * 2019-05-17     Bernard      change version number to v4.0.2
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
+ * 2020-09-04     Meco Man     add RT-Thread OS identification
  */
 
 #ifndef __RT_DEF_H__
