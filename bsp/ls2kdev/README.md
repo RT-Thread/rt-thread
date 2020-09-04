@@ -84,13 +84,43 @@ Hi, this is RT-Thread!!
 msh >
 ```
 
-## 4. 支持情况
+## 4.开机自动启动
+
+在调试阶段，可以利用脚本，在pmon阶段从TFTP服务器上获取固件，然后引导启动。这样可以节省开发配置的时间。具体的步骤如下：
+
+**第一步：**
+设置开发板的IP地址，在进入pmon的控制台后，输入`set ifconfig syn0:10.1.1.100`。其中`syn0`后面的ip地址为开发板的ip地址，与存放rt-thread固件的TFTP的服务器IP地址在**同一网段**。
+
+**第二步：**
+
+进入龙芯的Debian系统，用管理员权限进入，输入用户名`root`，密码`loongson`。并且修改boot分区下的boot.cfg文件。增加如下：
+
+```
+title   TFTPBOOT
+ kernel tftfp://10.1.1.118/rtthread.elf
+ args console=tty root=/dev/sda2
+ initrd (wd0,0)/initrd.img
+```
+
+其中`tftfp://10.1.1.118/rtthread.elf`中的`10.1.1.118`为tftp服务器的ip地址。
+
+**第三步：**
+
+电脑开启TFTP服务器，将路径指向存放有ls2k的rt-thread固件的目录下。
+
+以上三步完成之后，重启系统，就可以省略每次都需要进入pmon的输入命令的麻烦，板子上电后，可以自动从系统TFTP服务器中获取固件，然后启动，大大提高调试代码效率。
+
+## 5. 支持情况
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0|
+| GPIO | 支持 | - |
+| PWM | 支持 | - |
+| GMAC | 支持 | 网卡驱动 |
+| RTC  | 支持 | - |
 
-## 5. 联系人信息
+## 6. 联系人信息
 
 维护人：[bernard][4]
 
