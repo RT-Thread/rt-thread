@@ -1,6 +1,7 @@
 import os
 import sys
 import rtconfig
+import pdb
 
 from rtconfig import RTT_ROOT
 
@@ -9,7 +10,8 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
-rtconfig.AFLAGS += ' -I' + str(Dir('#')) + ' -I ' + RTT_ROOT + '/libcpu/mips/common/'
+#rtconfig.AFLAGS += ' -I' + str(Dir('#')) + ' -I ' + RTT_ROOT + '/libcpu/mips/common/'
+rtconfig.AFLAGS += ' -I' + str('.') + ' -I ' + RTT_ROOT + '/libcpu/mips/common/'
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
