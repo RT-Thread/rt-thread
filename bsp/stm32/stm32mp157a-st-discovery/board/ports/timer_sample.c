@@ -58,7 +58,7 @@ static int hwtimer_start(void)
         return RT_ERROR;
     }
 
-    /* 以读写方式打开设备 */
+    /* Open the device in read/write mode */
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
     {
@@ -66,10 +66,10 @@ static int hwtimer_start(void)
         return ret;
     }
 
-    /* 设置超时回调函数 */
+    /* Set the timeout callback function */
     rt_device_set_rx_indicate(hw_dev, timeout_cb);
 
-    /* 设置模式为周期性定时器 */
+    /* Set the mode to periodic timer */
     mode = HWTIMER_MODE_PERIOD;
     ret = rt_device_control(hw_dev, HWTIMER_CTRL_MODE_SET, &mode);
     if (ret != RT_EOK)
