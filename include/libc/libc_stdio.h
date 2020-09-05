@@ -15,6 +15,10 @@
 #ifndef LIBC_STDIO_H__
 #define LIBC_STDIO_H__
 
+#ifdef RT_USING_POSIX
+
 #include <posix_getline.h>
+
+#endif
 
 #endif
