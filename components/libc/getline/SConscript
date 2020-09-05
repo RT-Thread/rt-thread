@@ -7,7 +7,7 @@ src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
 group = DefineGroup('libc', src, 
-    depend = ['RT_USING_LIBC', 'RT_USING_POSIX'], 
+    depend = ['RT_USING_LIBC', 'RT_USING_POSIX','RT_USING_POSIX_GETLINE'], 
     CPPPATH = CPPPATH)
 
 Return('group')
