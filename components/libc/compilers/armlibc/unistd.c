@@ -11,6 +11,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+#ifdef RT_USING_POSIX
+
 #ifdef RT_USING_POSIX_TERMIOS
 int isatty(int fd)
 {
@@ -23,3 +25,5 @@ char *ttyname(int fd)
 {
     return "/dev/tty0"; /*TODO: need to add more specific*/
 }
+
+#endif
