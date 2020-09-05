@@ -12,7 +12,7 @@
 #include <posix_getline.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <limits.h>
+#include <rtlibc.h>
 
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
     char *cur_pos, *new_lineptr;
