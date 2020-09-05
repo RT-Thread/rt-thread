@@ -1,4 +1,4 @@
-# getline/getdelim for RT-Thread POSIX
+# getline/getdelim for RT-Thread POSIX(IEEE Std 1003.1-2008)
 
 [![Build Status](https://travis-ci.org/ivanrad/getline.svg?branch=master)](https://travis-ci.org/ivanrad/getline)
 
