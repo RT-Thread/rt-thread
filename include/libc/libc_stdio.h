@@ -5,20 +5,16 @@
  */
 
 /*
- * File      : libc_limits.h
+ * File      : libc_stdio.h
  *
  * Change Logs:
  * Date                 Author             Notes
  * 2020-09-05     Meco Manthe  first version
  */
 
-#ifndef LIBC_LIMITS_H__
-#define LIBC_LIMITS_H__
+#ifndef LIBC_STDIO_H__
+#define LIBC_STDIO_H__
 
-#include <limits.h>
-
-#ifndef SSIZE_MAX
-# define SSIZE_MAX      LONG_MAX
-#endif
+#include <posix_getline.h>
 
 #endif
