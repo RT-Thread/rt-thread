@@ -1,6 +1,7 @@
 /* posix_getline.h
  * RT-Thread POSIX
  * getdelim(), getline() - read a delimited record from stream, ersatz implementation
+ * This code is unlicensed -- free and released into the public domain. 
  * https://man7.org/linux/man-pages/man3/getline.3.html
  * Authors:
  *     https://github.com/ivanrad/getline
