@@ -17,8 +17,12 @@
 
 #include <limits.h>
 
+#ifdef RT_USING_POSIX
+
 #ifndef SSIZE_MAX
 # define SSIZE_MAX      LONG_MAX
+#endif
+
 #endif
 
 #endif
