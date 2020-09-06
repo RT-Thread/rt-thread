@@ -12,6 +12,7 @@
 #define LIBC_LIMITS_H__
 
 #include <limits.h>
+#include <rtconfig.h>
 
 #ifdef RT_USING_POSIX
 
