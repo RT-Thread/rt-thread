@@ -133,7 +133,7 @@ env:
   - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='fh8620' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
+#  - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f403a-start' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f407-start' RTT_TOOL_CHAIN='sourcery-arm'
