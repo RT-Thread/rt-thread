@@ -75,15 +75,15 @@ void rt_tick_increase(void)
 
     /* increase the global tick */
 #ifdef RT_USING_SMP
-    rt_cpu_self()->tick ++;
+    rt_cpu_self()->tick++;
 #else
-    ++ rt_tick;
+    ++rt_tick;
 #endif
 
     /* check time slice */
     thread = rt_thread_self();
 
-    -- thread->remaining_tick;
+    --thread->remaining_tick;
     if (thread->remaining_tick == 0)
     {
         /* change to initialized tick */
@@ -122,11 +122,10 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
         tick = RT_TICK_PER_SECOND * (ms / 1000);
         tick += (RT_TICK_PER_SECOND * (ms % 1000) + 999) / 1000;
     }
-    
+
     /* return the calculated tick */
     return tick;
 }
 RTM_EXPORT(rt_tick_from_millisecond);
 
 /**@}*/
-

@@ -33,10 +33,13 @@ static void rt_preempt_disable(void)
     }
 
     /* lock scheduler for local cpu */
-    current_thread->scheduler_lock_nest ++;
+    current_thread->scheduler_lock_nest++;
 
     /* enable interrupt */
     rt_hw_local_irq_enable(level);
+    
+    if(0)
+        return;
 }
 
 /*
@@ -58,7 +61,7 @@ static void rt_preempt_enable(void)
     }
 
     /* unlock scheduler for local cpu */
-    current_thread->scheduler_lock_nest --;
+    current_thread->scheduler_lock_nest--;
 
     rt_schedule();
     /* enable interrupt */
@@ -126,7 +129,7 @@ struct rt_cpu *rt_cpu_index(int index)
 rt_base_t rt_cpus_lock(void)
 {
     rt_base_t level;
-    struct rt_cpu* pcpu;
+    struct rt_cpu *pcpu;
 
     level = rt_hw_local_irq_disable();
 
@@ -152,7 +155,7 @@ RTM_EXPORT(rt_cpus_lock);
  */
 void rt_cpus_unlock(rt_base_t level)
 {
-    struct rt_cpu* pcpu = rt_cpu_self();
+    struct rt_cpu *pcpu = rt_cpu_self();
 
     if (pcpu->current_thread != RT_NULL)
     {
@@ -175,7 +178,7 @@ RTM_EXPORT(rt_cpus_unlock);
  */
 void rt_cpus_lock_status_restore(struct rt_thread *thread)
 {
-    struct rt_cpu* pcpu = rt_cpu_self();
+    struct rt_cpu *pcpu = rt_cpu_self();
 
     pcpu->current_thread = thread;
     if (!thread->cpus_lock_nest)
