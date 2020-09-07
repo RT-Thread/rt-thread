@@ -28,7 +28,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32mp1xx_hal_conf.h"
-#include <rtthread.h>
+#include <stddef.h>
 
 /** @addtogroup STM32MP1xx_HAL_Driver
  * @{
