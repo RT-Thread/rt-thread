@@ -2903,7 +2903,7 @@
 // <e> NRFX_QSPI_ENABLED - nrfx_qspi - QSPI peripheral driver
 //==========================================================
 #ifndef NRFX_QSPI_ENABLED
-#define NRFX_QSPI_ENABLED 1
+#define NRFX_QSPI_ENABLED 0
 #endif
 // <o> NRFX_QSPI_CONFIG_SCK_DELAY - tSHSL, tWHSL and tSHWL in number of 16 MHz periods (62.5 ns).  <0-255> 
 

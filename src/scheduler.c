@@ -784,7 +784,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
         {
 #if RT_THREAD_PRIORITY_MAX > 32
             pcpu->ready_table[thread->number] &= ~thread->high_mask;
-            if (rt_thread_ready_table[thread->number] == 0)
+            if (pcpu->ready_table[thread->number] == 0)
             {
                 pcpu->priority_group &= ~thread->number_mask;
             }

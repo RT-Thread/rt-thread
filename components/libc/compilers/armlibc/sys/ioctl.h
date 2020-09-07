@@ -5,14 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2020-09-01     Meco Man     First Version
  */
-#ifndef FCNTL_H__
-#define FCNTL_H__
+#ifndef _SYS_IOCTL_H
+#define _SYS_IOCTL_H
 
-#include <rtconfig.h>
 
-#ifdef RT_USING_DFS
-#include <dfs_posix.h>
-#endif
 
 #endif

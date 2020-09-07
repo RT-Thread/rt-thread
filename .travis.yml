@@ -66,8 +66,8 @@ env:
 #  - RTT_BSP='mini4020' # no scons
 #  - RTT_BSP='mm32l07x' # not support gcc
 #  - RTT_BSP='nios_ii' # no scons
-  - RTT_BSP='nuvoton_nuc472' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='nuvoton_m05x' RTT_TOOL_CHAIN='sourcery-arm'
+#  - RTT_BSP='nuvoton_nuc472' RTT_TOOL_CHAIN='sourcery-arm'
+#  - RTT_BSP='nuvoton_m05x' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='pic32ethernet' # no scons
   - RTT_BSP='qemu-vexpress-a9' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='qemu-vexpress-gemini' RTT_TOOL_CHAIN='sourcery-arm'
@@ -133,7 +133,7 @@ env:
   - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='fh8620' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
+#  - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f403a-start' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f407-start' RTT_TOOL_CHAIN='sourcery-arm'
