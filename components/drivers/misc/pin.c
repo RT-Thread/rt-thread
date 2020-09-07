@@ -156,6 +156,11 @@ rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     RT_ASSERT(name[0] == 'P');
+    
+    if(_hw_pin.ops->pin_get == RT_NULL)
+    {
+        return -RT_ENOSYS;
+    }
 
     return _hw_pin.ops->pin_get(name);
 }
