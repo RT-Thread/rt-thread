@@ -8,12 +8,11 @@
  * 2020-09-01     Meco Man     First Version
  */
 
-#include <termios.h>
 #include <unistd.h>
 
-#ifdef RT_USING_POSIX
-
 #ifdef RT_USING_POSIX_TERMIOS
+#include <termios.h>
+
 int isatty(int fd)
 {
     struct termios ts;
@@ -25,5 +24,3 @@ char *ttyname(int fd)
 {
     return "/dev/tty0"; /*TODO: need to add more specific*/
 }
-
-#endif
