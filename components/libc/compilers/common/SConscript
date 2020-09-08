@@ -10,7 +10,7 @@ CPPPATH = [cwd]
 if GetDepend('RT_USING_LIBC'):
         src += Glob('*.c')
 else:
-        if GetDepend('RT_LIBC_USING_TIME'):
+        if GetDepend('RT_LIBC_USING_TIME') and not GetDepend('RT_USING_MINILIBC'):
                 src += ['time.c']
 
 if GetDepend('RT_USING_POSIX') == False:
