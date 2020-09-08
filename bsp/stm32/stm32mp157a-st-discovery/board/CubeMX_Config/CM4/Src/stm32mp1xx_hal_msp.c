@@ -22,8 +22,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 /* USER CODE BEGIN Includes */
-#include "stpmic.h"
-#include "rtconfig.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -75,18 +73,9 @@ void HAL_MspInit(void)
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
-  if(IS_ENGINEERING_BOOT_MODE())
-  {
-#if defined(BSP_USING_ADC) || defined(BSP_USING_DAC)      
-    /* Configure PMIC */
-    BSP_PMIC_Init();
-    BSP_PMIC_InitRegulators();
-    
-    __HAL_RCC_VREF_CLK_ENABLE();
-    HAL_SYSCFG_VREFBUF_HighImpedanceConfig(SYSCFG_VREFBUF_HIGH_IMPEDANCE_DISABLE);
-    HAL_SYSCFG_EnableVREFBUF();
-#endif
-  }
+    HAL_NVIC_SetPriority(RCC_WAKEUP_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(RCC_WAKEUP_IRQn);
+    __HAL_RCC_ENABLE_IT(RCC_IT_WKUP);
   /* USER CODE END MspInit 1 */
 }
 
@@ -295,7 +284,7 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef* hlptim)
   /** Initializes the peripherals clock 
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_LPTIM1;
-    PeriphClkInit.Lptim1ClockSelection = RCC_LPTIM1CLKSOURCE_PCLK1;
+    PeriphClkInit.Lptim1ClockSelection = RCC_LPTIM1CLKSOURCE_LSE;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
       Error_Handler();
