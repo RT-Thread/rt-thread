@@ -16,6 +16,7 @@ else:
 if GetDepend('RT_USING_POSIX') == False:
         SrcRemove(src, ['unistd.c'])
 
-group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
+if not GetDepend('RT_USING_MINILIBC') and GetDepend('RT_USING_LIBC'):
+	group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

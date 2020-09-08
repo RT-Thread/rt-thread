@@ -12,7 +12,7 @@
 #ifndef LIBC_FCNTL_H__
 #define LIBC_FCNTL_H__
 
-#if defined(RT_USING_NEWLIB) || defined(_WIN32)
+#if defined(RT_USING_NEWLIB) || defined(_WIN32) || defined( __GNUC__ )
 #include <fcntl.h>
 
 #ifndef O_NONBLOCK
