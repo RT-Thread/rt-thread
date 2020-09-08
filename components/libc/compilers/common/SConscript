@@ -13,7 +13,6 @@ else:
         if GetDepend('RT_LIBC_USING_TIME'):
                 src += ['time.c']
 
-if (rtconfig.PLATFORM == 'armcc' or rtconfig.PLATFORM == 'iar') and rtconfig.ARCH != 'sim' :
-        group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

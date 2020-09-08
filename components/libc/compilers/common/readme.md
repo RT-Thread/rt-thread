@@ -1,0 +1,1 @@
+This folder is "common" for armlibc newlibcand dlib. It's not "common" for minilibc.
