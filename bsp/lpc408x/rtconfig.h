@@ -40,8 +40,9 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40001
+#define RT_VER_NUM 0x40003
 #define ARCH_ARM
+#define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
 
@@ -101,24 +102,23 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
-/* Using WiFi */
-
-
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
+#define RT_USING_LIBC
+#define RT_USING_POSIX
 
 /* Network */
 
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -128,9 +128,6 @@
 
 
 /* Utilities */
-
-
-/* ARM CMSIS */
 
 
 /* RT-Thread online packages */
