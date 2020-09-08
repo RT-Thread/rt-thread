@@ -6,7 +6,8 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-11-06     balanceTWK        first version
- * 2020-06-16     thread-liu        add stm32mp1 
+ * 2020-06-16     thread-liu        add stm32mp1
+ * 2020-09-01     thread-liu        add GPIOZ 
  */
 
 #ifndef __DRV_GPIO_H__
@@ -18,7 +19,7 @@
 #define __STM32_PORT(port)  GPIO##port##_BASE
 
 #if defined(SOC_SERIES_STM32MP1)
-#define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x1000UL) )) + PIN)
+#define GET_PIN(PORTx,PIN) (GPIO##PORTx == GPIOZ) ? (176 + PIN) : ((rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x1000UL) )) + PIN))
 #else
 #define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
 // get GPIOx, eg: GPIOA...
