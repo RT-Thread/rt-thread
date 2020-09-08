@@ -649,7 +649,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>../../../rtthread.bin</state>
+                    <state>template.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -657,7 +657,7 @@
                 </option>
                 <option>
                     <name>OOCObjCopyEnable</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
