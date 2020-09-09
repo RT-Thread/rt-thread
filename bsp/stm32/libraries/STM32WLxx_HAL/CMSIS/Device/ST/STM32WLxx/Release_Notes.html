@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32WLxx CMSIS</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<div class="card fluid">
+<div class="sectione dark">
+<center>
+<h1 id="release-notes-for-stm32wlxx-cmsis"><small>Release Notes for</small> STM32WLxx CMSIS</h1>
+<p>Copyright © 2019 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
+</center>
+</div>
+</div>
+<h1 id="license">License</h1>
+<p>This software component is licensed by ST under Apache-2.0 license, the “License”; You may not use this component except in compliance with the License. You may obtain a copy of the License at:</p>
+<p><a href="https://opensource.org/licenses/Apache-2.0">Apache-2.0</a></p>
+<h1 id="purpose">Purpose</h1>
+<p>This driver provides the CMSIS device for the stm32WLxx products. This covers</p>
+<ul>
+<li>STM32WLE5xx devices</li>
+</ul>
+<p>This driver is composed of the descriptions of the registers under “Include” directory.</p>
+<p>Various template file are provided to easily build an application. They can be adapted to fit applications requirements.</p>
+<ul>
+<li>Templates/system_stm32WLxx.c contains the initialization code referred as SystemInit.</li>
+<li>Startup files are provided as example for IAR© and KEIL©.</li>
+<li>Linker files are provided as example for IAR© and KEIL©.</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" aria-hidden="true"><strong>V0.4.0 / 13-December-2019</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<h3 id="fourth-alpha-release">Fourth Alpha release</h3>
+<ul>
+<li>Limit the scope of CMSIS devices to STM32WLE5xx device</li>
+<li>Align DAC naming with Reference Manual without any index 1 (DAC1 to DAC everywhere)</li>
+<li>Align AES naming with Reference Manual without any index 1 (AES1 to AES everywhere)</li>
+<li>Review and align files header with BSD-3-Clause license &amp; Copyright</li>
+</ul>
+<h3 id="restrictions">Restrictions</h3>
+<ul>
+<li>Alignement of ADC naming with Reference Manual without any index 1 (ADC1 to ADC everywhere) is not yet done</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true"><strong>V0.3.0 / 27-September-2019</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="third-alpha-release">Third Alpha release</h3>
+<ul>
+<li>Add the support of all STM32WL Lines (STM32WLE5xx, STM32E4xx, STM3254xx) on Include/devices.h and IAR &amp; Keil templates files (startup &amp; linker files)</li>
+<li>Alignment on last CubeFW Specification v1.2 (CM0 templates suffix change from cm0 to cm0plus)</li>
+<li>Align few IPs registers / bits definitino with last Reference Manual</li>
+<li>CPU1/CPU2 clock management</li>
+<li>MISRA C 2012 few corrections</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true"><strong>V0.2.0 / 21-June-2019</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<h3 id="second-alpha-release">Second Alpha release</h3>
+<ul>
+<li>Few updates of CMSIS device to folluw IUM updates (SPI3 renamed SUBGHZSPI, GTZC alignment, RNG_CR_NISTN renamed RNG_CR_NISTC)</li>
+<li>Add MDK-ARM templates startup&amp; linker files (.s, .sct)</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V0.1.0 / 15-February-2019</strong></label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<h3 id="first-alpha-release-for-internal-use-only">First Alpha release (for internal use only)</h3>
+<ul>
+<li>Add support of STM32WL55xx.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<p>For complete documentation on STM32WLxx, visit: [<a href="http://www.st.com/stm32WL">www.st.com/stm32WL</a>]</p>
+<em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em>
+</footer>
+</body>
+</html>

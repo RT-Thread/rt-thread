@@ -10,7 +10,7 @@
  * 2020-06-16     thread-liu        add STM32MP1
  * 2020-09-01     thread-liu        add GPIOZ  
  */
-
+#include "stdlib.h" // atoi
 #include <board.h>
 #include "drv_gpio.h"
 
@@ -419,7 +419,7 @@ rt_int16_t stm32_pin_get(char *pin_name)
     // convert pin name to pin number
     // eg: "A4"  ( GPIOA, GPIO_PIN_4 )--> 4  ( drv_gpio.c pin)
     // eg: "B4"  ( GPIOB, GPIO_PIN_4 )--> 20 ( drv_gpio.c pin)
-    char pin_index = strtol(&pin_name[1],0,10);
+    char pin_index = atoi(&pin_name[1]);
     
     if(pin_name[0] < 'A' || pin_name[0] > 'Z')
     {

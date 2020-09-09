@@ -101,7 +101,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
 static void rt_rtc_init(void)
 {
-#ifndef SOC_SERIES_STM32H7
+#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) 
     __HAL_RCC_PWR_CLK_ENABLE();
 #endif
 
@@ -162,6 +162,10 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
     PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
 #endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+
+#if defined(SOC_SERIES_STM32WL)
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
+#endif
 
     /* Enable RTC Clock */
     __HAL_RCC_RTC_ENABLE();
