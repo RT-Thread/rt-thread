@@ -1,105 +1,80 @@
-# i.MX RT1050 EVK 开发板 BSP 说明
+# NXP i. MX RT1050 EVK BSP(Board Support Package) Execution Instruction.
 
-## 简介
+[中文页](README_zh.md) |
 
-本文档为 RT-Thread 开发团队为 NXP i.MX RT1050 EVK 开发板提供的 BSP (板级支持包) 说明。
+## Introduction
 
-主要内容如下：
+This document records the execution instruction of the BSP (board support package) provided by the RT-Thread development team for the NXP i. MX RT1050 EVK development board.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The document is covered in three parts:
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+- NXP i. MX RT1050 EVK Board Resources Introduction
+- Quickly Get Started
+- Advanced Features
 
-## 开发板介绍
+By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
-i.MX RT1050 EVK 是 NXP 官方推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 600MHz，该开发板具有丰富的板载资源，可以充分发挥 RT1052 的芯片性能。
+## Board Resources Introduction
 
-开发板外观如下图所示：
+The i.MX RT1050 EVK  is a development board based on ARM Cortex-M7. The maximum main frequency is 600 MHz, and it has a wealth of on-board resources that can take full advantage of the RT1052's chip performance.
 
-![board](figures/board.jpg)
+[![board](https://github.com/RT-Thread/rt-thread/raw/master/bsp/imxrt/imxrt1052-nxp-evk/figures/board.jpg)](https://github.com/RT-Thread/rt-thread/blob/master/bsp/imxrt/imxrt1052-nxp-evk/figures/board.jpg)
 
-该开发板常用**板载资源**如下：
+The mainly-used resources of this board are shown as follows:
 
-- MCU：MIMXRT1052DVL6A，主频 600MHz
-- 存储：256MB SDRAM、512MB Hyper FLASH
-- 常用外设
-  - 运动传感器：FXOS8700CQ
+- MCU: MIMXRT1052DVL6A. Main Frequency 600MHz,
+- Memory: 256MB SDRAM、512MB Hyper FLASH
+- Common-used peripherals:
+  - Motion Sensors: FXOS8700CQ
   - LED
-- 常用接口：USB 转串口、SD 卡接口、以太网接口、LCD 接口、摄像头接口
-- 调试接口：标准 JTAG/SWD
+- Common-used interfaces: USB、SD Card、Ethernet、LCD、Camera.
+- Debug interface: Standard JTAG/SWD. For more details about this board, please refer to [nxp.com](https://www.nxp.com/)
 
-开发板更多的详细信息请参考 NXP [i.MX RT1050 EVK 开发板介绍](https://www.nxp.com)。
+## Peripheral Condition
 
-## 外设支持
+Each peripheral supporting condition for this BSP is as follows:
 
-本 BSP 目前对外设的支持情况如下：
+| **On-chip Peripheral** | **Support** | **Remark** |
+| ---------------------- | ----------- | ---------- |
+| GPIO                   | Support     |            |
+| UART                   | Support     | UART1      |
 
-| **片上外设**      | **支持情况** | **备注**  |
-| :---------------- | :----------: | :------------------------------------------------------ |
-| GPIO       |     支持     |                                                         |
-| UART        |     支持     |      UART1                                                   |
+## Execution Instruction
 
-## 使用说明
+### Quickly Get Started
 
-使用说明分为如下两个章节：
+This BSP provides MDK 5 and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-- 快速上手
+#### Hardware Connection
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+Use a USB cable to connect the development board to the PC and turn on the power switch.
 
-- 进阶使用
+#### Compile and Download
 
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+Double-click the project.uvprojx file, to open the MDK 5 project, compile and download the project to the board.
 
+> By default, the project uses the CMSIS-DAP to download the program, when the CMSIS-DAP connects the board, clicking the download button can download the program to the board.
 
-### 快速上手
+### **Running Results**
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+Once the project is successfully downloaded, the system runs automatically. The green LED on the board will flash periodically.
 
-#### 硬件连接
+Connect the serial port of the board to the PC, communicate with it via a serial terminal tool(115200-8-1-N). Reset the board and the startup information of RT-Thread will be observed:
 
-使用数据线连接开发板到 PC，打开电源开关。
-
-#### 编译下载
-
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
-
-> 工程默认配置使用 CMSIS-DAP 下载程序，在通过 CMSIS-DAP 连接开发板的基础上，点击下载按钮即可下载程序到开发板
-
-#### 运行结果
-
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，绿色 LED 会周期性闪烁。
-
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
-
-```bash
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.1 build May 5 2019
  2006 - 2019 Copyright by rt-thread team
 ```
-### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口 1 的功能，如果需使用更多高级外设功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
+## **Advanced Features**
 
-1. 在 bsp 下打开 env 工具。
+This BSP only enables GPIO and serial port 1 by default. If you need more advanced features, you need to configure the BSP with RT-Thread [Env tools](https://www.rt-thread.io/download.html?download=Env), as follows:
 
-2. 输入 `menuconfig` 命令配置工程，配置好之后保存退出。
+1. Open the env tool under BSP;
+2. Enter menuconfig command to configure the project, then save and exit;
+3. Enter pkgs --update command to update the package;
+4. Enter scons --target=mdk4/mdk5/iar command to regenerate the project.
 
-3. 输入 `pkgs --update` 命令更新软件包。
-
-4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [i.MXRT 系列 BSP 外设驱动使用教程](../docs/IMXRT系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-暂无
-
-## 联系人信息
-
-维护人:
-
-- [tyustli](https://github.com/tyustli)
+Learn how to use RT-Thread Env, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
