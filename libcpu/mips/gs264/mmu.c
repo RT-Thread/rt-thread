@@ -21,15 +21,15 @@ void *current_mmu_table = RT_NULL;
 
 void *mmu_table_get()
 {
-	return current_mmu_table;
+    return current_mmu_table;
 }
 
 void switch_mmu(void *mmu_table)
 {
-	current_mmu_table = mmu_table;
+    current_mmu_table = mmu_table;
 
     mmu_clear_tlb();
-	mmu_clear_itlb();
+    mmu_clear_itlb();
 }
 
 /* dump 2nd level page table */
@@ -476,7 +476,7 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
 static void rt_hw_cpu_tlb_invalidate(void)
 {
     mmu_clear_tlb();
-	mmu_clear_itlb();
+    mmu_clear_itlb();
 }
 
 #ifdef RT_USING_USERSPACE
