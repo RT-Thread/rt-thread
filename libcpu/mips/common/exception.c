@@ -24,6 +24,41 @@ rt_ubase_t rt_interrupt_from_thread;
 rt_ubase_t rt_interrupt_to_thread;
 rt_ubase_t rt_thread_switch_interrupt_flag;
 
+const char *exception_name[] = {
+                                "Interrupt",
+                                "(X)TLB Modify Exception",
+                                "(X)TLB Read/Fetch Exception",
+                                "(X)TLB Write Exception",
+                                "Address Read/Fetch Exception",
+                                "Address Write Exception",
+                                "",
+                                "",
+                                "Syscall",
+                                "Breakpoint",
+                                "Reversed Instruction Exception",
+                                "Coprocessor Unit Invalid",
+                                "Overflow",
+                                "Trap",
+                                "FPU Exception in Vector Instruction",
+                                "FPU Exception",
+                                "Loongson Custom Exception",
+                                "",
+                                "",
+                                "(X)TLB Read Denied Exception",
+                                "(X)TLB Execute Denied Exception",
+                                "Vector Module Disabled Exception",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "Cache Error Exception",
+                                ""
+                                };
+
 rt_base_t rt_hw_interrupt_disable(void)
 {
     rt_base_t status = read_c0_status();
@@ -87,10 +122,15 @@ void cache_error_handler(void)
 
 static void unhandled_exception_handle(struct pt_regs *regs)
 {
-    rt_kprintf("Unknown Exception, EPC: 0x%08x, CAUSE: 0x%08x\n", read_c0_epc(),
-               read_c0_cause());
-    rt_kprintf("ST0: 0x%08x ", regs->cp0_status);
-    rt_kprintf("ErrorPC: 0x%08x\n", read_c0_errorepc());
+    rt_kprintf("Unknown Exception, EPC: 0x%p, CAUSE: 0x%08x\n", read_c0_epc(), read_c0_cause());
+    rt_kprintf("Exception Name:%s\n",exception_name[(read_c0_cause() >> 2) & 0x1f]);
+#ifdef SOC_LS2K1000
+    rt_kprintf("ExeCode = 0x%08x,BadAddr = 0x%p\n",(read_c0_cause() >> 2) & 0x1f,mmu_tlb_get_bad_vaddr());
+#else
+    rt_kprintf("ExeCode = 0x%08x\n",(read_c0_cause() >> 2) & 0x1f);
+#endif
+    rt_kprintf("ST0: 0x%08x ",regs->cp0_status);
+    rt_kprintf("ErrorPC: 0x%p\n",read_c0_errorepc());
     mips_dump_regs(regs);
     rt_hw_cpu_shutdown();
 }
