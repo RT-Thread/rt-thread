@@ -51,7 +51,7 @@ int mbox_call(unsigned char ch, int mmu_enable)
     return 0;
 }
 
-int bcm283x_mbox_hardware_get_model(void)
+int bcm271x_mbox_hardware_get_model(void)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
@@ -69,7 +69,7 @@ int bcm283x_mbox_hardware_get_model(void)
     return mbox[5];
 }
 
-int bcm283x_mbox_hardware_get_revison(void)
+int bcm271x_mbox_hardware_get_revison(void)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
@@ -87,7 +87,7 @@ int bcm283x_mbox_hardware_get_revison(void)
     return mbox[5];
 }
 
-int bcm283x_mbox_hardware_get_mac_address(uint8_t * mac)
+int bcm271x_mbox_hardware_get_mac_address(uint8_t * mac)
 {
     mbox[0] = 8*4;                                 // length of the message
     mbox[1] = MBOX_REQUEST;                        // this is a request message
@@ -113,7 +113,7 @@ int bcm283x_mbox_hardware_get_mac_address(uint8_t * mac)
 }
 
 
-int bcm283x_mbox_hardware_get_serial(rt_uint64_t* sn)
+int bcm271x_mbox_hardware_get_serial(rt_uint64_t* sn)
 {
     mbox[0] = 8*4;                              // length of the message
     mbox[1] = MBOX_REQUEST;                     // this is a request message
@@ -133,7 +133,7 @@ int bcm283x_mbox_hardware_get_serial(rt_uint64_t* sn)
     return 0;
 }
 
-int bcm283x_mbox_hardware_get_arm_memory(rt_uint32_t * base, rt_uint32_t * size)
+int bcm271x_mbox_hardware_get_arm_memory(rt_uint32_t * base, rt_uint32_t * size)
 {
     mbox[0] = 8*4;                                  // length of the message
     mbox[1] = MBOX_REQUEST;                         // this is a request message
@@ -155,7 +155,7 @@ int bcm283x_mbox_hardware_get_arm_memory(rt_uint32_t * base, rt_uint32_t * size)
 
 }
 
-int bcm283x_mbox_hardware_get_vc_memory(rt_uint32_t * base, rt_uint32_t * size)
+int bcm271x_mbox_hardware_get_vc_memory(rt_uint32_t * base, rt_uint32_t * size)
 {
     mbox[0] = 8*4;                               // length of the message
     mbox[1] = MBOX_REQUEST;                      // this is a request message
@@ -176,7 +176,7 @@ int bcm283x_mbox_hardware_get_vc_memory(rt_uint32_t * base, rt_uint32_t * size)
     return 0;
 }
 
-int bcm283x_mbox_clock_get_turbo(void)
+int bcm271x_mbox_clock_get_turbo(void)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
@@ -199,7 +199,7 @@ int bcm283x_mbox_clock_get_turbo(void)
     return mbox[6];
 }
 
-int bcm283x_mbox_clock_set_turbo(int level)
+int bcm271x_mbox_clock_set_turbo(int level)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
@@ -222,7 +222,7 @@ int bcm283x_mbox_clock_set_turbo(int level)
     return mbox[6];
 }
 
-int bcm283x_mbox_clock_get_state(int id)
+int bcm271x_mbox_clock_get_state(int id)
 {
     mbox[0] = 8*4;                       // length of the message
     mbox[1] = MBOX_REQUEST;              // this is a request message
@@ -245,7 +245,7 @@ int bcm283x_mbox_clock_get_state(int id)
     return (mbox[6] & 0x3);
 }
 
-int bcm283x_mbox_clock_set_state(int id, int state)
+int bcm271x_mbox_clock_set_state(int id, int state)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
@@ -268,7 +268,7 @@ int bcm283x_mbox_clock_set_state(int id, int state)
     return (mbox[6] & 0x3);
 }
 
-int bcm283x_mbox_clock_get_rate(int id)
+int bcm271x_mbox_clock_get_rate(int id)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
@@ -291,7 +291,7 @@ int bcm283x_mbox_clock_get_rate(int id)
     return mbox[6];
 }
 
-int bcm283x_mbox_clock_set_rate(int id, int rate)
+int bcm271x_mbox_clock_set_rate(int id, int rate)
 {
     mbox[0] = 8*4;                      // length of the message
     mbox[1] = MBOX_REQUEST;             // this is a request message
@@ -314,7 +314,7 @@ int bcm283x_mbox_clock_set_rate(int id, int rate)
     return mbox[6];
 }
 
-int bcm283x_mbox_clock_get_max_rate(int id)
+int bcm271x_mbox_clock_get_max_rate(int id)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
@@ -337,7 +337,7 @@ int bcm283x_mbox_clock_get_max_rate(int id)
     return mbox[6];
 }
 
-int bcm283x_mbox_clock_get_min_rate(int id)
+int bcm271x_mbox_clock_get_min_rate(int id)
 {
     mbox[0] = 8*4;                          // length of the message
     mbox[1] = MBOX_REQUEST;                 // this is a request message
@@ -360,7 +360,7 @@ int bcm283x_mbox_clock_get_min_rate(int id)
     return mbox[6];
 }
 
-int bcm283x_mbox_power_get_state(int id)
+int bcm271x_mbox_power_get_state(int id)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
@@ -383,7 +383,7 @@ int bcm283x_mbox_power_get_state(int id)
     return (mbox[6] & 0x3);
 }
 
-int bcm283x_mbox_power_set_state(int id, int state)
+int bcm271x_mbox_power_set_state(int id, int state)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
@@ -406,7 +406,7 @@ int bcm283x_mbox_power_set_state(int id, int state)
     return (mbox[6] & 0x3);
 }
 
-int bcm283x_mbox_temp_get(void)
+int bcm271x_mbox_temp_get(void)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
@@ -429,7 +429,7 @@ int bcm283x_mbox_temp_get(void)
     return mbox[6];
 }
 
-int bcm283x_mbox_temp_get_max(void)
+int bcm271x_mbox_temp_get_max(void)
 {
     mbox[0] = 8*4;                  // length of the message
     mbox[1] = MBOX_REQUEST;         // this is a request message
