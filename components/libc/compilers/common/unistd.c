@@ -8,10 +8,11 @@
  * 2020-09-01     Meco Man     First Version
  */
 
-#include <termios.h>
 #include <unistd.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
+#include <termios.h>
+
 int isatty(int fd)
 {
     struct termios ts;
