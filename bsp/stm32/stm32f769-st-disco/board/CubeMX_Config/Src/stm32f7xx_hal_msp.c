@@ -78,6 +78,141 @@ void HAL_MspInit(void)
 }
 
 /**
+* @brief ETH MSP Initialization
+* This function configures the hardware resources used in this example
+* @param heth: ETH handle pointer
+* @retval None
+*/
+void HAL_ETH_MspInit(ETH_HandleTypeDef* heth)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(heth->Instance==ETH)
+  {
+  /* USER CODE BEGIN ETH_MspInit 0 */
+
+  /* USER CODE END ETH_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_ETH_CLK_ENABLE();
+  
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+    __HAL_RCC_GPIOG_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**ETH GPIO Configuration    
+    PE2     ------> ETH_TXD3
+    PG14     ------> ETH_TXD1
+    PG13     ------> ETH_TXD0
+    PG11     ------> ETH_TX_EN
+    PH3     ------> ETH_COL
+    PH2     ------> ETH_CRS
+    PC3     ------> ETH_TX_CLK
+    PC1     ------> ETH_MDC
+    PC2     ------> ETH_TXD2
+    PA1     ------> ETH_RX_CLK
+    PC4     ------> ETH_RXD0
+    PH7     ------> ETH_RXD3
+    PA2     ------> ETH_MDIO
+    PC5     ------> ETH_RXD1
+    PH6     ------> ETH_RXD2
+    PA7     ------> ETH_RX_DV 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_2;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_13|GPIO_PIN_11;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+    HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_2|GPIO_PIN_7|GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+    HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_4 
+                          |GPIO_PIN_5;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF11_ETH;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN ETH_MspInit 1 */
+
+  /* USER CODE END ETH_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief ETH MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param heth: ETH handle pointer
+* @retval None
+*/
+void HAL_ETH_MspDeInit(ETH_HandleTypeDef* heth)
+{
+  if(heth->Instance==ETH)
+  {
+  /* USER CODE BEGIN ETH_MspDeInit 0 */
+
+  /* USER CODE END ETH_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_ETH_CLK_DISABLE();
+  
+    /**ETH GPIO Configuration    
+    PE2     ------> ETH_TXD3
+    PG14     ------> ETH_TXD1
+    PG13     ------> ETH_TXD0
+    PG11     ------> ETH_TX_EN
+    PH3     ------> ETH_COL
+    PH2     ------> ETH_CRS
+    PC3     ------> ETH_TX_CLK
+    PC1     ------> ETH_MDC
+    PC2     ------> ETH_TXD2
+    PA1     ------> ETH_RX_CLK
+    PC4     ------> ETH_RXD0
+    PH7     ------> ETH_RXD3
+    PA2     ------> ETH_MDIO
+    PC5     ------> ETH_RXD1
+    PH6     ------> ETH_RXD2
+    PA7     ------> ETH_RX_DV 
+    */
+    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_2);
+
+    HAL_GPIO_DeInit(GPIOG, GPIO_PIN_14|GPIO_PIN_13|GPIO_PIN_11);
+
+    HAL_GPIO_DeInit(GPIOH, GPIO_PIN_3|GPIO_PIN_2|GPIO_PIN_7|GPIO_PIN_6);
+
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_3|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_4 
+                          |GPIO_PIN_5);
+
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_7);
+
+  /* USER CODE BEGIN ETH_MspDeInit 1 */
+
+  /* USER CODE END ETH_MspDeInit 1 */
+  }
+
+}
+
+/**
 * @brief UART MSP Initialization
 * This function configures the hardware resources used in this example
 * @param huart: UART handle pointer
