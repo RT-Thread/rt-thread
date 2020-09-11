@@ -98,6 +98,15 @@ msh >
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0|
+| GPIO | 支持 | - |
+| I2C | 支持 | - |
+| RTC | 支持 | - |
+| SDIO | 支持 | SDCARE |
+| SPI | 支持 | - |
+| TIMER | 支持 | - |
+| WDT | 支持 | - |
+| MBOX | 支持 | - |
+| FRAMEBUFFER | 支持 | HDMI |
 
 ## 5. 联系人信息
 
