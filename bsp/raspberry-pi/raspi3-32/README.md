@@ -125,9 +125,13 @@ msh />
 | Drive          | Support | Remark |
 | -------------- | ------- | ------ |
 | UART           | Support | UART0  |
-| GPIO           | Support |        |
-| IIC            | Support |        |
-| SPI            | Support |        |
-| CPU Timer      | Support |        |
-| SD card driver | Support |        |
-
+| GPIO           | Support |     -   |
+| IIC            | Support |    -    |
+| SPI            | Support |   -     |
+| CPU Timer      | Support |     -   |
+| SD card driver | Support |    -    |
+| RTC | Support | - |
+| WDT | Support | - |
+| MAILBOX | Support | - |
+| SMP | Support | - |
+| FRAMEBUFFER | Support | HDMI |

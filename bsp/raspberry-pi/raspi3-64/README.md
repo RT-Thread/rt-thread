@@ -78,4 +78,13 @@ msh >
 | Drive | Support | Remark |
 | ----- | ------- | ------ |
 | UART  | Support | UART0  |
+| GPIO | Support | - |
+| I2C | Support | - |
+| RTC | Support | - |
+| SDIO | Support | SDCARE |
+| SPI | Support | - |
+| TIMER | Support | - |
+| WDT | Support | - |
+| MBOX | Support | - |
+| FRAMEBUFFER | Support | HDMI |
 
