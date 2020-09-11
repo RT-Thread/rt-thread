@@ -233,17 +233,6 @@ static rt_err_t _send_cmd(
     }
     else if (type == response_r2)
     {
-    #if defined(__CORTEX_M) && __CORTEX_M == 0
-        /* initial message */
-        message.send_buf = RT_NULL;
-        message.recv_buf = recv_buffer;
-        message.length = 1;
-        message.cs_take = message.cs_release = 0;
-
-        /* transfer message */
-        device->bus->ops->xfer(device, &message);
-        response[1] = recv_buffer[0];
-    #else
         /* initial message */
         message.send_buf = RT_NULL;
         message.recv_buf = response + 1;
@@ -252,24 +241,9 @@ static rt_err_t _send_cmd(
 
         /* transfer message */
         device->bus->ops->xfer(device, &message);
-    #endif
     }
     else if ((type == response_r3) || (type == response_r7))
     {
-    #if defined(__CORTEX_M) && __CORTEX_M == 0
-        /* initial message */
-        message.send_buf = RT_NULL;
-        message.recv_buf = recv_buffer;
-        message.length = 4;
-        message.cs_take = message.cs_release = 0;
-
-        /* transfer message */
-        device->bus->ops->xfer(device, &message);
-        response[1] = recv_buffer[0];
-        response[2] = recv_buffer[1];
-        response[3] = recv_buffer[2];
-        response[4] = recv_buffer[3];
-    #else
         /* initial message */
         message.send_buf = RT_NULL;
         message.recv_buf = response + 1;
@@ -278,7 +252,6 @@ static rt_err_t _send_cmd(
 
         /* transfer message */
         device->bus->ops->xfer(device, &message);
-    #endif
     }
     else
     {
