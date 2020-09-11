@@ -28,7 +28,6 @@ rt_data_queue_init(struct rt_data_queue *queue,
                    void (*evt_notify)(struct rt_data_queue *queue, rt_uint32_t event))
 {
     RT_ASSERT(queue != RT_NULL);
-    RT_ASSERT((0x10000 % size) == 0);
 
     queue->evt_notify = evt_notify;
 
