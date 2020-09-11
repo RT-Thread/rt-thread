@@ -9,7 +9,7 @@
 #ifndef __RTT_DIRENT_H__
 #define __RTT_DIRENT_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 
 /*
 * dirent.h - format of directory entries

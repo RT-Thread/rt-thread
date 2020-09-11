@@ -10,7 +10,7 @@
 #ifndef __STRING_H__
 #define __STRING_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 #include <sys/types.h>
 
 /* replace for standard string library */

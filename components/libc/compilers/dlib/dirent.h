@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date         Author       Notes
  */
 #ifndef __RTT_DIRENT_H__
 #define __RTT_DIRENT_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 #include <rtlibc.h>
 
 /*

@@ -6,10 +6,10 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#ifndef __RTT_DIRENT_H__
-#define __RTT_DIRENT_H__
+#ifndef DIRENT_H__
+#define DIRENT_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 #include <rtlibc.h>
 
 /*

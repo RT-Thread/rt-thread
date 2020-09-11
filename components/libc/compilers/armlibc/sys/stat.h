@@ -5,4 +5,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2020-09-11     Meco Man     First Version
+
  */
+#ifndef	_SYS_STAT_H
+#define	_SYS_STAT_H
+
+#endif

@@ -10,7 +10,7 @@
 #define __TYPES_H__
 
 #include <stdint.h>
-#include <rtthread.h>
+#include <rtconfig.h>
 
 typedef rt_int32_t clockid_t;
 typedef rt_int32_t key_t;       /* Used for interprocess communication. */

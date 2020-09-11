@@ -9,6 +9,8 @@
 #ifndef _SYS_UNISTD_H
 #define _SYS_UNISTD_H
 
+#include <rtconfig.h>
+
 #ifdef RT_USING_DFS
 
 #define STDIN_FILENO    0       /* standard input file descriptor */

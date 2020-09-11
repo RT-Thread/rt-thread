@@ -9,7 +9,7 @@
 #ifndef __RTT_STATFS_H__
 #define __RTT_STATFS_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 
 struct statfs
 {

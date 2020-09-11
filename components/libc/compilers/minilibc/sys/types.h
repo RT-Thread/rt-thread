@@ -8,6 +8,7 @@
  */
 #ifndef __TYPES_H__
 #define __TYPES_H__
+
 #include <rtconfig.h>
 
 typedef long        off_t;

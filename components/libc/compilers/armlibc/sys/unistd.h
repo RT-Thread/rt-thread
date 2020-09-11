@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date         Author       Notes
  */
 #ifndef _SYS_UNISTD_H
 #define _SYS_UNISTD_H
 
-#include <rtthread.h>
+#include <rtconfig.h>
 
 #ifdef RT_USING_DFS
 

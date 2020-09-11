@@ -9,7 +9,7 @@
 #ifndef __STAT_H__
 #define __STAT_H__
 
-#include <rtthread.h>
+#include <rtconfig.h>
 
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
