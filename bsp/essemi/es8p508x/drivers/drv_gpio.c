@@ -382,6 +382,7 @@ const static struct rt_pin_ops _es8p_pin_ops =
     es8p_pin_attach_irq,
     es8p_pin_detach_irq,
     es8p_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)
