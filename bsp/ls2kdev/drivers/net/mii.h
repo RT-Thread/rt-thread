@@ -37,7 +37,7 @@
 
 /* Basic mode control register. */
 #define BMCR_RESV               0x003f  /* Unused...                   */
-#define BMCR_SPEED1000        0x0040  /* MSB of Speed (1000)         */
+#define BMCR_SPEED1000          0x0040  /* MSB of Speed (1000)         */
 #define BMCR_CTST               0x0080  /* Collision test              */
 #define BMCR_FULLDPLX           0x0100  /* Full duplex                 */
 #define BMCR_ANRESTART          0x0200  /* Auto negotiation restart    */
@@ -135,8 +135,8 @@
 #define EXPANSION_MFAULTS       0x0010  /* Multiple faults detected    */
 #define EXPANSION_RESV          0xffe0  /* Unused...                   */
 
-#define ESTATUS_1000_TFULL    0x2000    /* Can do 1000BT Full */
-#define ESTATUS_1000_THALF    0x1000    /* Can do 1000BT Half */
+#define ESTATUS_1000_TFULL      0x2000    /* Can do 1000BT Full */
+#define ESTATUS_1000_THALF      0x1000    /* Can do 1000BT Half */
 
 /* N-way test register. */
 #define NWAYTEST_RESV1          0x00ff  /* Unused...                   */
@@ -170,11 +170,11 @@
 
 
 /* Which connector port. */
-#define PORT_TP         0x00
-#define PORT_AUI        0x01
-#define PORT_MII        0x02 
-#define PORT_FIBRE      0x03
-#define PORT_BNC        0x04
+#define PORT_TP             0x00
+#define PORT_AUI            0x01
+#define PORT_MII            0x02 
+#define PORT_FIBRE          0x03
+#define PORT_BNC            0x04
 
 /* Which transceiver to use. */
 #define XCVR_INTERNAL       0x00
@@ -183,18 +183,18 @@
 #define XCVR_DUMMY2         0x03 
 #define XCVR_DUMMY3         0x04
 
-#define AUTONEG_DISABLE        0x00
-#define AUTONEG_ENABLE         0x01
+#define AUTONEG_DISABLE     0x00
+#define AUTONEG_ENABLE      0x01
 
 
-#define SPEED_10          10
-#define SPEED_100         100
-#define SPEED_1000        1000
-#define SPEED_2500        2500
-#define SPEED_10000       10000
+#define SPEED_10            10
+#define SPEED_100           100
+#define SPEED_1000          1000
+#define SPEED_2500          2500
+#define SPEED_10000         10000
 
-#define DUPLEX_HALF        0x00
-#define DUPLEX_FULL        0x01
+#define DUPLEX_HALF         0x00
+#define DUPLEX_FULL         0x01
 
 struct ethtool_cmd {
     u32    cmd;

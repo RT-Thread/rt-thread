@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,21 +14,21 @@
 #include <rtthread.h>
 
 #define DESC_SEC       (0x2)
-#define MEMWBWA        ((1<<12)|(3<<2))     /* write back, write allocate */
-#define MEMWB          (3<<2)  /* write back, no write allocate */
-#define MEMWT          (2<<2)  /* write through, no write allocate */
-#define SHAREDEVICE    (1<<2)  /* shared device */
-#define STRONGORDER    (0<<2)  /* strong ordered */
-#define XN             (1<<4)  /* eXecute Never */
+#define MEMWBWA        ((1<<12)|(3<<2))      /* write back, write allocate */
+#define MEMWB          (3<<2)                /* write back, no write allocate */
+#define MEMWT          (2<<2)                /* write through, no write allocate */
+#define SHAREDEVICE    (1<<2)                /* shared device */
+#define STRONGORDER    (0<<2)                /* strong ordered */
+#define XN             (1<<4)                /* execute Never */
 #ifdef RT_USING_USERSPACE
-#define AP_RW          (1<<10) /* supervisor=RW, user=No */
-#define AP_RO          ((1<<10) |(1 << 15)) /* supervisor=RW, user=No */
+#define AP_RW          (1<<10)               /* supervisor=RW, user=No */
+#define AP_RO          ((1<<10) |(1 << 15))  /* supervisor=RW, user=No */
 #else
-#define AP_RW          (3<<10) /* supervisor=RW, user=RW */
-#define AP_RO          ((2<<10) /* supervisor=RW, user=RO */
+#define AP_RW          (3<<10)               /* supervisor=RW, user=RW */
+#define AP_RO          ((2<<10)              /* supervisor=RW, user=RO */
 #endif
 
-#define SHARED         (1<<16) /* shareable */
+#define SHARED         (1<<16)               /* shareable */
 
 #define DOMAIN_FAULT   (0x0)
 #define DOMAIN_CHK     (0x1)

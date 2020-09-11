@@ -12,15 +12,15 @@
 
 mips32_core_cfg_t g_mips_core =
 {
-    64,		/* icache_line_size */
-    128,	/* icache_lines_per_way */
-    4,		/* icache_ways */
+    64,        /* icache_line_size */
+    128,       /* icache_lines_per_way */
+    4,         /* icache_ways */
     32768,
-    64,		/* dcache_line_size */
-    128,	/* dcache_lines_per_way */
-    4,		/* dcache_ways */
+    64,        /* dcache_line_size */
+    128,       /* dcache_lines_per_way */
+    4,         /* dcache_ways */
     32768,
-    64,		/* max_tlb_entries */
+    64,        /* max_tlb_entries */
 };
 
 static rt_uint16_t m_pow(rt_uint16_t b, rt_uint16_t n)

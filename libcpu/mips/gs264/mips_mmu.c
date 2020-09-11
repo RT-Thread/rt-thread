@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2020-07-26 	  lizhirui 	   the first version
+ * 2020-07-26     lizhirui     the first version
  */
 
 #include <string.h>
@@ -205,18 +205,18 @@ uint64_t mmu_tlb_get_bad_vaddr()
 
 void tlb_dump()
 {
-	uint32_t max_index = mmu_get_max_tlb_index();
-	//uint32_t max_index = 10;
-	uint32_t entry;
-	tlb_item_t tlb_item;
+    uint32_t max_index = mmu_get_max_tlb_index();
+    //uint32_t max_index = 10;
+    uint32_t entry;
+    tlb_item_t tlb_item;
 
-	for(entry = 0;entry <= max_index;entry++)
-	{
-		mmu_tlb_read(entry,&tlb_item);
-		//mmu_tlb_write_indexed(entry,&tlb_item);
-		//mmu_tlb_read(entry,&tlb_item);
-		rt_kprintf("vpn = 0x%p,ppn0 = 0x%p,ppn1 = 0x%p\n",(uint64_t)tlb_item.entry_hi.vpn2 << 13 | (uint64_t)tlb_item.entry_hi.asid << 62,(uint64_t)tlb_item.entry_lo[0].pfn << 12,(uint64_t)tlb_item.entry_lo[1].pfn << 12);
-		rt_kprintf("v = %d,d = %d,g = %d,ri = %d,xi = %d,c = %d\n",tlb_item.entry_lo[0].v,tlb_item.entry_lo[0].d,tlb_item.entry_lo[0].g,tlb_item.entry_lo[0].ri,tlb_item.entry_lo[0].xi,tlb_item.entry_lo[0].c);
-		rt_kprintf("v = %d,d = %d,g = %d,ri = %d,xi = %d,c = %d\n",tlb_item.entry_lo[1].v,tlb_item.entry_lo[1].d,tlb_item.entry_lo[1].g,tlb_item.entry_lo[1].ri,tlb_item.entry_lo[1].xi,tlb_item.entry_lo[1].c);
-	}
+    for(entry = 0;entry <= max_index;entry++)
+    {
+        mmu_tlb_read(entry,&tlb_item);
+        //mmu_tlb_write_indexed(entry,&tlb_item);
+        //mmu_tlb_read(entry,&tlb_item);
+        rt_kprintf("vpn = 0x%p,ppn0 = 0x%p,ppn1 = 0x%p\n",(uint64_t)tlb_item.entry_hi.vpn2 << 13 | (uint64_t)tlb_item.entry_hi.asid << 62,(uint64_t)tlb_item.entry_lo[0].pfn << 12,(uint64_t)tlb_item.entry_lo[1].pfn << 12);
+        rt_kprintf("v = %d,d = %d,g = %d,ri = %d,xi = %d,c = %d\n",tlb_item.entry_lo[0].v,tlb_item.entry_lo[0].d,tlb_item.entry_lo[0].g,tlb_item.entry_lo[0].ri,tlb_item.entry_lo[0].xi,tlb_item.entry_lo[0].c);
+        rt_kprintf("v = %d,d = %d,g = %d,ri = %d,xi = %d,c = %d\n",tlb_item.entry_lo[1].v,tlb_item.entry_lo[1].d,tlb_item.entry_lo[1].g,tlb_item.entry_lo[1].ri,tlb_item.entry_lo[1].xi,tlb_item.entry_lo[1].c);
+    }
 }
