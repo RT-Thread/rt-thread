@@ -221,6 +221,7 @@ static struct rt_pin_ops loongson_pin_ops = {
     .pin_attach_irq = loongson_pin_attach_irq,
     .pin_detach_irq = loongson_pin_detach_irq,
     .pin_irq_enable = loongson_pin_irq_enable,
+    .pin_get        = RT_NULL,
 };
 
 
