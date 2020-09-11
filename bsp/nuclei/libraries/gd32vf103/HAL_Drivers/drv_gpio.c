@@ -443,6 +443,7 @@ const static struct rt_pin_ops _gd32_pin_ops =
     gd32_pin_attach_irq,
     gd32_pin_dettach_irq,
     gd32_pin_irq_enable,
+    RT_NULL,
 };
 
 rt_inline void pin_irq_hdr(int irqno)

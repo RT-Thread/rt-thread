@@ -251,7 +251,8 @@ const static struct rt_pin_ops drv_pin_ops =
 
     drv_pin_attach_irq,
     drv_pin_detach_irq,
-    drv_pin_irq_enable
+    drv_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)
