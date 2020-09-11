@@ -538,6 +538,7 @@ static const struct rt_pin_ops ops =
     pin_attach_irq,
     pin_detach_irq,
     pin_irq_enable,
+    RT_NULL,
 };
 #endif
 
