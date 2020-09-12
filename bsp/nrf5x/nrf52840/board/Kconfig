@@ -6,6 +6,12 @@ config SOC_NRF52840
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
+    config NRFX_CLOCK_ENABLED
+    int 
+    default 1
+    config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+    int 
+    default 7
 
 config SOC_NORDIC
     bool 
@@ -177,106 +183,7 @@ menu "On-chip Peripheral Drivers"
                         default 16
                 endif
         endif
-    menuconfig BSP_USING_SOFTDEVICE
-        bool "Enable NRF SOFTDEVICE"
-        select PKG_USING_NRF5X_SDK
-        select NRFX_CLOCK_ENABLED
-        default n
-if BSP_USING_SOFTDEVICE
-    config NRFX_CLOCK_ENABLED
-    int 
-    default 1
-    config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
-    int 
-    default 7
-    config NRFX_RTC_ENABLED
-    int 
-    default 1
-    config NRFX_RTC1_ENABLED
-    int 
-    default 1
-    config NRF_CLOCK_ENABLED
-    int 
-    default 1
-    config NRF_SDH_BLE_ENABLED
-    int 
-    default 1
-    config NRF_SDH_ENABLED
-    int 
-    default 1
-    config NRF_SDH_SOC_ENABLED
-    int 
-    default 1
-    config NRF_SDH_BLE_PERIPHERAL_LINK_COUNT
-    int 
-    default 1
-    config BLE_ADVERTISING_ENABLED
-    int 
-    default 1
-    config NRF_BLE_QWR_ENABLED
-    int 
-    default 1
-    config NRF_SDH_BLE_VS_UUID_COUNT
-    int 
-    default 1
-    config NRF_BLE_CONN_PARAMS_ENABLED
-    int 
-    default 1
-    config NRF_BLE_CONN_PARAMS_MAX_SLAVE_LATENCY_DEVIATION
-    int 
-    default 499
-    config NRF_BLE_CONN_PARAMS_MAX_SUPERVISION_TIMEOUT_DEVIATION
-    int 
-    default 65535
-    config NRF_BLE_GATT_ENABLED
-    int 
-    default 1
 
-    choice
-        prompt "sample(softdevice)"
-        default SD_BLE_APP_BEACON
-        
-        config SD_BLE_APP_BEACON
-        bool "ble_app_beacon"
-        default n
-
-        config SD_BLE_APP_BLINKY
-        bool "ble_app_blinky"
-        default n 
-        if SD_BLE_APP_BLINKY
-            config BLE_LBS_ENABLED
-            int 
-            default 1
-        endif
-
-        config SD_BLE_APP_UART
-        bool "ble_app_uart"
-        default n 
-        if SD_BLE_APP_UART
-            config BLE_NUS_ENABLED
-            int 
-            default 1
-            config NRF_SDH_BLE_GATT_MAX_MTU_SIZE
-            int 
-            default 247
-        endif
-
-        config SD_BLE_APP_HRS
-        bool "ble_app_hrs"
-        default n 
-        if SD_BLE_APP_HRS
-            config BLE_HRS_ENABLED
-            int 
-            default 1
-            config NRF_SDH_BLE_GATT_MAX_MTU_SIZE
-            int 
-            default 247
-        endif
-        config SD_BLE_APP_HIDS_MOUSE
-        bool "ble_app_hids_mouse"
-        default n 
-    endchoice
-endif
     
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -422,4 +329,27 @@ endif
     endif
 endmenu
 
+
+choice
+prompt "BLE STACK"
+default BLE_STACK_USING_NULL
+help
+    Select the ble stack
+
+config BLE_STACK_USING_NULL
+    bool "not use the ble stack"
+
+config  BSP_USING_SOFTDEVICE
+    select PKG_USING_NRF5X_SDK
+    bool "Nordic softdevice(perpheral)"
+
+config BSP_USING_NIMBLE
+    select PKG_USING_NIMBLE
+    select PKG_NIMBLE_BSP_NRF52840
+    bool "use nimble stack(iot)"
+endchoice
+
+
 endmenu
+
+
