@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U683349164 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC4000 -FN2 -FF0nrf52xxx.flm -FS00 -FL0200000 -FP0($$Device:nRF52840_xxAA$Flash\nrf52xxx.flm) -FF1nrf52xxx_uicr.flm -FS110001000 -FL11000 -FP1($$Device:nRF52840_xxAA$Flash\nrf52xxx_uicr.flm)</Name>
+          <Name>-U683349164 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8004 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC4000 -FN2 -FF0nrf52xxx_uicr.flm -FS010001000 -FL01000 -FP0($$Device:nRF52840_xxAA$Flash\nrf52xxx_uicr.flm) -FF1nrf52xxx_sde -FS10 -FL1200000 -FP1($$Device:nRF52840_xxAA$Flash\nrf52xxx_sde.flm)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
