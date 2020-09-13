@@ -313,6 +313,27 @@ endif
         int
         default 1
     endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+    bool "Enable RTC"
+    select RT_USING_RTC
+    select RT_USING_LIBC
+    select NRFX_CLOCK_ENABLED
+    default n
+    if BSP_USING_ONCHIP_RTC
+        config NRFX_CLOCK_ENABLED
+        int 
+        default 1
+        config NRFX_RTC_ENABLED
+        int 
+        default 1
+        config NRFX_RTC2_ENABLED
+        int 
+        default 1
+        config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+        int
+        default 7
+    endif
 endmenu
 
 endmenu
