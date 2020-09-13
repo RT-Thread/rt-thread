@@ -20,6 +20,8 @@
 extern "C" {
 #endif
 
+#include <rtdef.h>
+
 /**
  * @addtogroup KernelService
  */

@@ -15,6 +15,8 @@
 extern "C" {
 #endif
 
+#include <rtdef.h>
+
 struct rt_pollreq;
 typedef void (*poll_queue_proc)(rt_wqueue_t *, struct rt_pollreq *);
 

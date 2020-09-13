@@ -23,6 +23,8 @@
 extern "C" {
 #endif
 
+#include <rtdef.h>
+
 enum rt_rbb_status
 {
     /* unused status when first initialize or after blk_free() */
