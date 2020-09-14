@@ -23,7 +23,7 @@
  *                             add TCFLSH and FIONREAD support.
  * 2018-12-08     Ernest Chen  add DMA choice
  * 2020-09-14     WillianChan  add a line feed to the carriage return character
-                               when using interrupt tx
+ *                             when using interrupt tx
  */
 
 #include <rthw.h>
