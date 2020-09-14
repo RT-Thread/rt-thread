@@ -19,7 +19,7 @@
 
 #define RMII
 
-#define Gmac_base           (0x9000000000000000 | 0x40040000)
+#define PCI_BASE            (0xFE00001800)
 #define Buffer_Size         2048
 #define MAX_ADDR_LEN        6
 #define NAMESIZE            16
@@ -29,7 +29,7 @@
 
 #define DEFAULT_MAC_ADDRESS {0x00, 0x55, 0x7B, 0xB5, 0x7D, 0xF7}
 
-u64 regbase = 0x9000000000000000 | 0x40040000;
+u64 gmac_base = 0;
 static u32 GMAC_Power_down;
 extern void *plat_alloc_consistent_dmaable_memory(synopGMACdevice *pcidev, u32 size, u32 *addr) ;
 extern s32 synopGMAC_check_phy_init(synopGMACPciNetworkAdapter *adapter) ;
@@ -39,6 +39,32 @@ dma_addr_t plat_dma_map_single(void *hwdev, void *ptr, u32 size);
 void eth_rx_irq(int irqno, void *param);
 static char Rx_Buffer[Buffer_Size];
 static char Tx_Buffer[Buffer_Size];
+
+struct pci_header
+{
+    uint16_t VendorID;
+    uint16_t DeviceID;
+    uint16_t Command;
+    uint16_t Status;
+    uint32_t RevisionID : 8;
+    uint32_t ClassCode : 24;
+    uint8_t CachelineSize;
+    uint8_t LatencyTimer;
+    uint8_t HeaderType;
+    uint8_t BIST;
+    uint32_t BaseAddressRegister[6];
+    uint32_t CardbusCISPointer;
+    uint16_t SubsystemVendorID;
+    uint16_t SubsystemID;
+    uint32_t ExpansionROMBaseAddress;
+    uint32_t CapabilitiesPointer : 8;
+    uint32_t resv1 : 24;
+    uint32_t resv2;
+    uint8_t InterruptLine;
+    uint8_t InterruptPin;
+    uint8_t Min_Gnt;
+    uint8_t Max_Lat;
+};
 
 struct rt_eth_dev
 {
@@ -203,7 +229,6 @@ void synopGMAC_linux_cable_unplug_function(void *adaptr)
     synopGMACdevice            *gmacdev = adapter->synopGMACdev;
     struct ethtool_cmd cmd;
 
-    //rt_kprintf("%s\n",__FUNCTION__);
     if (!mii_link_ok(&adapter->mii))
     {
         if (gmacdev->LinkState)
@@ -287,7 +312,7 @@ static rt_err_t eth_init(rt_device_t device)
     synopGMACdevice *gmacdev = (synopGMACdevice *)adapter->synopGMACdev;
 
     synopGMAC_reset(gmacdev);
-    synopGMAC_attach(gmacdev, (regbase + MACBASE), (regbase + DMABASE), DEFAULT_PHY_BASE, macaddr);
+    synopGMAC_attach(gmacdev, (gmac_base + MACBASE), (gmac_base + DMABASE), DEFAULT_PHY_BASE, macaddr);
 
     synopGMAC_read_version(gmacdev);
 
@@ -889,7 +914,9 @@ void eth_rx_irq(int irqno, void *param)
 
 int rt_hw_eth_init(void)
 {
-    u64 base_addr = Gmac_base;
+    struct pci_header *p = (struct pci_header *)(0x9000000000000000 | PCI_BASE);
+    gmac_base = (0x9000000000000000 | ((p->BaseAddressRegister[0]) & 0xffffff00));
+
     struct synopGMACNetworkAdapter *synopGMACadapter;
     static u8 mac_addr0[6] = DEFAULT_MAC_ADDRESS;
     int index;
@@ -918,7 +945,7 @@ int rt_hw_eth_init(void)
      * Attach the device to MAC struct This will configure all the required base addresses
      * such as Mac base, configuration base, phy base address(out of 32 possible phys)
      * */
-    synopGMAC_attach(synopGMACadapter->synopGMACdev, (regbase + MACBASE), regbase + DMABASE, DEFAULT_PHY_BASE, mac_addr0);
+    synopGMAC_attach(synopGMACadapter->synopGMACdev, (gmac_base + MACBASE), gmac_base + DMABASE, DEFAULT_PHY_BASE, mac_addr0);
     
     init_phy(synopGMACadapter->synopGMACdev);
     synopGMAC_reset(synopGMACadapter->synopGMACdev);
@@ -932,7 +959,7 @@ int rt_hw_eth_init(void)
     synopGMACadapter->mii.phy_id = synopGMACadapter->synopGMACdev->PhyBase;
     synopGMACadapter->mii.supports_gmii = mii_check_gmii_support(&synopGMACadapter->mii);
 
-    eth_dev.iobase = base_addr;
+    eth_dev.iobase = gmac_base;
     eth_dev.name = "e0";
     eth_dev.priv = synopGMACadapter;
     eth_dev.dev_addr[0] = mac_addr0[0];
