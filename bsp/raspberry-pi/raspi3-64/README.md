@@ -81,7 +81,7 @@ msh >
 | GPIO | Support | - |
 | I2C | Support | - |
 | RTC | Support | - |
-| SDIO | Support | SDCARE |
+| SDIO | Support | SDCARD |
 | SPI | Support | - |
 | TIMER | Support | - |
 | WDT | Support | - |
