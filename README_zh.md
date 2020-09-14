@@ -171,6 +171,7 @@ RT-Thread微信公众号：
 
 ![qrcode](./documentation/figures/qrcode.png)
 
+测试
 
 # 贡献代码
 
