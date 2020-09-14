@@ -33,7 +33,6 @@ int mbox_call(unsigned char ch, int mmu_enable)
     /* write the address of our message to the mailbox with channel identifier */
     *MBOX_WRITE = r;
     /* now wait for the response */
-   // rt_kprintf("mailbox request %x\n",r);
     while(1)
     {
         /* is there a response? */
@@ -44,7 +43,6 @@ int mbox_call(unsigned char ch, int mmu_enable)
         /* is it a response to our message? */
         if (r == *MBOX_READ){
             /* is it a valid successful response? */
-        	//rt_kprintf("mbox: %x, %x, %x, %x, %x, %x, %x, %x\n", mbox[0], mbox[1], mbox[2], mbox[3], mbox[4], mbox[5], mbox[6], mbox[7]);
             return mbox[1] == MBOX_RESPONSE;
         }
     }
