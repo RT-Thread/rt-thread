@@ -68,6 +68,9 @@ msh />
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0,UART2,UART3,UART4,UART5 |
+| GPIO | 支持 | - |
+| SPI | 支持 | SPI0 |
+| MAILBOX | 支持 | - |
 
 ## 5. 联系人信息
 

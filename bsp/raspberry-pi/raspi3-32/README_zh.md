@@ -136,11 +136,16 @@ msh />
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0|
-| GPIO | 支持 | |
-| IIC | 支持 | |
-| SPI | 支持 | |
-| CPU Timer | 支持 | |
-| SD卡驱动 | 支持 | |
+| GPIO | 支持 | - |
+| IIC | 支持 | - |
+| SPI | 支持 | - |
+| CPU Timer | 支持 | - |
+| SD卡驱动 | 支持 | - |
+| RTC | 支持 | - |
+| WDT | 支持 | - |
+| MAILBOX | 支持 | - |
+| SMP | 支持 | - |
+| FRAMEBUFFER | 支持 | HDMI |
 
 ## 5. 联系人信息
 
