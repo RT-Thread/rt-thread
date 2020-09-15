@@ -22,6 +22,9 @@
  */
 void rt_hw_cpu_reset(void)
 {
+    WDT_EN = 0x01;
+    WDT_TIMER = 0x01;
+    WDT_SET = 0x01;
     rt_kprintf("reboot system...\n");
     while (1);
 }
@@ -32,6 +35,8 @@ void rt_hw_cpu_reset(void)
  */
 void rt_hw_cpu_shutdown(void)
 {
+    PM1_STS &= 0xffffffff;
+    PM1_CNT = 0x3c00;
     rt_kprintf("shutdown...\n");
 
     while (1);
