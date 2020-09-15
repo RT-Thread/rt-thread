@@ -101,7 +101,7 @@ msh >
 | GPIO | 支持 | - |
 | I2C | 支持 | - |
 | RTC | 支持 | - |
-| SDIO | 支持 | SDCARE |
+| SDIO | 支持 | SDCARD |
 | SPI | 支持 | - |
 | TIMER | 支持 | - |
 | WDT | 支持 | - |
@@ -110,10 +110,10 @@ msh >
 
 ## 5. 联系人信息
 
-维护人：[bernard][5]
+维护人：[bigmagic123][5]
 
 [1]: https://www.rt-thread.org/page/download.html
 [2]: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads
 [3]: https://downloads.raspberrypi.org/raspbian_lite_latest
 [4]: https://etcher.io
-[5]: https://github.com/BernardXiong
+[5]: https://github.com/bigmagic123
