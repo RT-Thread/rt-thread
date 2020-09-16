@@ -22,6 +22,8 @@
  * 2017-11-15     JasonJia     fix poll rx issue when data is full.
  *                             add TCFLSH and FIONREAD support.
  * 2018-12-08     Ernest Chen  add DMA choice
+ * 2020-09-14     WillianChan  add a line feed to the carriage return character
+ *                             when using interrupt tx
  */
 
 #include <rthw.h>
@@ -315,6 +317,19 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
 
     while (length)
     {
+        /*
+         * to be polite with serial console add a line feed
+         * to the carriage return character
+         */
+        if (*data == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+        {
+            if (serial->ops->putc(serial, '\r') == -1)
+            {
+                rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
+                continue;
+            }
+        }
+
         if (serial->ops->putc(serial, *(char*)data) == -1)
         {
             rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
