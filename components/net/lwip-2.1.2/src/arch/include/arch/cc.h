@@ -59,7 +59,7 @@
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
 #endif /* RT_USING_LIBC */
 
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME) || defined ( __GNUC__)
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__CLANG_ARM))
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else
