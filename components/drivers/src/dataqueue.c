@@ -43,7 +43,7 @@ rt_data_queue_init(struct rt_data_queue *queue,
 
     rt_list_init(&(queue->suspended_push_list));
     rt_list_init(&(queue->suspended_pop_list));
-    
+
     queue->queue = (struct rt_data_item *)rt_malloc(sizeof(struct rt_data_item) * size);
     if (queue->queue == RT_NULL)
     {
