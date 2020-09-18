@@ -79,7 +79,10 @@ typedef uintptr_t mem_ptr_t;
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
 #elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) /*Arm Compiler 6*/
-//AC6 TODO
+#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_STRUCT __attribute__((packed))
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_END
 #elif defined(__IAR_SYSTEMS_ICC__)   /* IAR Compiler */
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_STRUCT
