@@ -14,7 +14,6 @@
 #include <rtthread.h>
 #include "ls2k1000.h"
 
-
 struct loongson_pll {
     rt_uint64_t PLL_SYS_0;
     rt_uint64_t PLL_SYS_1;

@@ -22,6 +22,7 @@
 #include "fsl_phy.h"
 #include "fsl_cache.h"
 #include "fsl_iomuxc.h"
+#include "fsl_common.h"
 
 #ifdef RT_USING_LWIP
 
@@ -62,10 +63,10 @@ struct rt_imxrt_eth
     enet_mii_duplex_t duplex;
 };
 
-ALIGN(ENET_BUFF_ALIGNMENT) enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM] SECTION("NonCacheable");
+AT_NONCACHEABLE_SECTION_ALIGN(enet_tx_bd_struct_t g_txBuffDescrip[ENET_TXBD_NUM], ENET_BUFF_ALIGNMENT);
 ALIGN(ENET_BUFF_ALIGNMENT) rt_uint8_t g_txDataBuff[ENET_TXBD_NUM][RT_ALIGN(ENET_TXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
-ALIGN(ENET_BUFF_ALIGNMENT) enet_rx_bd_struct_t g_rxBuffDescrip[ENET_RXBD_NUM] SECTION("NonCacheable");
+AT_NONCACHEABLE_SECTION_ALIGN(enet_rx_bd_struct_t g_rxBuffDescrip[ENET_RXBD_NUM], ENET_BUFF_ALIGNMENT);
 ALIGN(ENET_BUFF_ALIGNMENT) rt_uint8_t g_rxDataBuff[ENET_RXBD_NUM][RT_ALIGN(ENET_RXBUFF_SIZE, ENET_BUFF_ALIGNMENT)];
 
 static struct rt_imxrt_eth imxrt_eth_device;

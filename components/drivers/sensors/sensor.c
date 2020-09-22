@@ -34,7 +34,8 @@ static char *const sensor_name_str[] =
     "step_",     /* Step sensor       */
     "forc_",     /* Force sensor      */
     "dust_",     /* Dust sensor       */
-    "eco2_"      /* eCO2 sensor       */
+    "eco2_",     /* eCO2 sensor       */
+    "gnss_"      /* GPS/GNSS sensor   */
 };
 
 /* Sensor interrupt correlation function */

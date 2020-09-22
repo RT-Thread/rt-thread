@@ -13,9 +13,9 @@ ES-PDS-ES32F369x 是东软载波微电子官方推出的一款基于 ARM Cortex-
 
 开发板外观如下图所示：
 
-ES-PDS-ES32F369x-V1.2
+ES-PDS-ES32F369x-V1.3
 
-![ES32F0654](figures/ES-PDS-ES32F369x-V1.2.jpg)
+![ES32F0654](figures/ES-PDS-ES32F369x-V1.3.jpg)
 
 该开发板常用 **板载资源** 如下：
 
@@ -32,15 +32,19 @@ ES-PDS-ES32F369x-V1.2
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注**         |
-| :----------- | :----------: | :--------------- |
-| SPI FLASH    |     支持     | SPI0             |
-| **片上外设** | **支持情况** | **备注**         |
-| GPIO         |     支持     | 50 GPIOs         |
-| UART         |     支持     | UART0/1/2/3/4/5  |
-| SPI          |     支持     | SPI0/1/2         |
-| I2C          |     支持     | I2C0/1           |
-| CAN          |     支持     | CAN0             |
+| **板载外设** | **支持情况** | **备注**        |
+| :----------- | :----------: | :-------------- |
+| SPI FLASH    |     支持     | SPI0            |
+| **片上外设** | **支持情况** | **备注**        |
+| GPIO         |     支持     | 50 GPIOs        |
+| UART         |     支持     | UART0/1/2/3/4/5 |
+| SPI          |     支持     | SPI0/1/2        |
+| I2C          |     支持     | I2C0/1          |
+| CAN          |     支持     | CAN0            |
+| PWM          |     支持     | PWM0/1          |
+| TIMER        |     支持     | TIMER0/1        |
+| RTC          |     支持     | RTC             |
+| ADC          |     支持     | ADC0            |
 
 ### 1.2  注意事项
 
@@ -56,7 +60,7 @@ ES-PDS-ES32F369x-V1.2
 
 使用ESlinkⅡ(mini)连接开发板如下图所示：
 
-ESLinkⅡ(mini) + ES-PDS-ES32F369x-V1.2
+ESLinkⅡ(mini) + ES-PDS-ES32F369x-V1.3
 
 ![ESLinkII](figures/ESLinkII-mini.jpg)
 

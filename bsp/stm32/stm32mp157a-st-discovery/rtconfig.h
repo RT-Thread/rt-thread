@@ -91,7 +91,6 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_USING_LIBC
 
 /* Network */
 
@@ -151,6 +150,12 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32MP1
