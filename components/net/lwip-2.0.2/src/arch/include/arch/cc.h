@@ -63,9 +63,9 @@
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
 #elif defined(__IAR_SYSTEMS_ICC__)   /* IAR Compiler */
-#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_BEGIN   #pragma pack(1)
 #define PACK_STRUCT_STRUCT
-#define PACK_STRUCT_END
+#define PACK_STRUCT_END     #pragma pack()
 #define PACK_STRUCT_FIELD(x) x
 #define PACK_STRUCT_USE_INCLUDES
 #elif defined(__GNUC__)     /* GNU GCC Compiler */
