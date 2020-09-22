@@ -14,7 +14,7 @@
 
 #include <es32f36xx.h>
 
-#define ES32F3_SRAM_SIZE    0x80000
+#define ES32F3_SRAM_SIZE    0x18000
 #define ES32F3_SRAM_END     (0x20000000 + ES32F3_SRAM_SIZE)
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)

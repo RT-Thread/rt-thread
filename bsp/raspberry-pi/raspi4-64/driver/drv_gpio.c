@@ -103,6 +103,7 @@ static const struct rt_pin_ops ops =
     raspi_pin_attach_irq,
     raspi_pin_detach_irq,
     raspi_pin_irq_enable,
+    RT_NULL,
 };
 #endif
 

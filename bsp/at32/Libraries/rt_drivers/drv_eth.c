@@ -31,6 +31,9 @@
 #define ETH_RXBUFNB        	4
 #define ETH_TXBUFNB        	2
 
+#define LINK_THREAD_STACK_SIZE   256
+#define LINK_THREAD_PREORITY     21
+
 extern ETH_DMADESCTypeDef  *DMATxDescToSet;
 extern ETH_DMADESCTypeDef  *DMARxDescToGet;
 extern ETH_DMADESCTypeDef  *DMAPTPTxDescToSet;
@@ -38,6 +41,8 @@ extern ETH_DMADESCTypeDef  *DMAPTPRxDescToGet;
 
 static ETH_DMADESCTypeDef  DMARxDscrTab[ETH_RXBUFNB], DMATxDscrTab[ETH_TXBUFNB];
 static rt_uint8_t Rx_Buff[ETH_RXBUFNB][ETH_MAX_PACKET_SIZE], Tx_Buff[ETH_TXBUFNB][ETH_MAX_PACKET_SIZE];
+static struct rt_thread eth_link_thread;
+static rt_uint8_t eth_link_stack[LINK_THREAD_STACK_SIZE];
 
 #define MAX_ADDR_LEN        6
 /* Gloable variables ---------------------------------------------------------*/
@@ -634,6 +639,37 @@ struct pbuf *rt_at32_eth_rx(rt_device_t dev)
     return p;
 }
 
+static void eth_link_thread_entry(void *paramter)
+{
+    uint8_t linked_down = 1;
+
+    struct netif *pnetif = at32_eth_device.parent.netif;
+
+    while(1){
+        if((ETH_ReadPHYRegister(PHY_ADDRESS, PHY_BSR) & PHY_Linked_Status) && (linked_down == 1))
+        {
+            /* link up */
+            linked_down = 0;
+#ifndef RT_LWIP_DHCP
+            pnetif->ip_addr = inet_addr(RT_LWIP_IPADDR);
+            pnetif->gw = inet_addr(RT_LWIP_GWADDR);
+            pnetif->netmask = inet_addr(RT_LWIP_MSKADDR);
+#else
+            IP4_ADDR(&(pnetif->ip_addr), 0, 0, 0, 0);
+            IP4_ADDR(&(pnetif->netmask), 0, 0, 0, 0);
+            IP4_ADDR(&(pnetif->gw), 0, 0, 0, 0);
+#endif
+            eth_device_linkchange(&(at32_eth_device.parent), RT_TRUE);
+        }else if(!(ETH_ReadPHYRegister(PHY_ADDRESS, PHY_BSR) & PHY_Linked_Status) && (linked_down == 0))
+        {
+            /* link down */
+            linked_down = 1;
+            eth_device_linkchange(&(at32_eth_device.parent), RT_FALSE);
+        }
+        rt_thread_mdelay(500);
+    }
+}
+
 /* interrupt service routine */
 void ETH_IRQHandler(void)
 {
@@ -707,9 +743,17 @@ static int rt_hw_at32_eth_init(void)
 
     /* register eth device */
     state = eth_device_init(&(at32_eth_device.parent), "e0");
+
     if (RT_EOK == state)
     {
         LOG_D("emac device init success");
+
+        state = rt_thread_init(&eth_link_thread, "eth_link_detect", eth_link_thread_entry, RT_NULL,
+                     &eth_link_stack[0], LINK_THREAD_STACK_SIZE, LINK_THREAD_PREORITY, 20);
+        if (state == RT_EOK)
+        {
+            rt_thread_startup(&eth_link_thread);
+        }
     }
     else
     {

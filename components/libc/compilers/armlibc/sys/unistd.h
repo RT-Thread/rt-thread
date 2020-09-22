@@ -46,4 +46,8 @@
 #define O_SYNC      _FSYNC
 #endif
 
+
+int     isatty      (int fd);
+char *  ttyname     (int desc);
+
 #endif /* _SYS_UNISTD_H */
