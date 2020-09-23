@@ -18,7 +18,7 @@
 #ifdef BSP_USING_ONCHIP_RTC
 
 #define LOG_TAG             "drv.rtc"
-#define DBG_LVL               DBG_LOG
+#define DBG_LVL              DBG_LOG
 #include <rtdbg.h>
 
 /* 2018-01-30 14:44:50 = RTC_TIME_INIT(2018, 1, 30, 14, 44, 50)  */
@@ -27,6 +27,10 @@
 
 #ifndef ONCHIP_RTC_TIME_DEFAULT
 #define ONCHIP_RTC_TIME_DEFAULT                    RTC_TIME_INIT(2018, 1, 1, 0, 0 ,0)
+#endif
+
+#ifndef RTC_INSTANCE_ID
+#define RTC_INSTANCE_ID (2)
 #endif
 
 #define TICK_FREQUENCE_HZ        (RT_TICK_PER_SECOND)     // RTC tick frequence, in HZ
@@ -54,7 +58,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
     #define SYSTICK_CLOCK_HZ    (32768UL)
     #define RTC_PRESCALER       ((uint32_t) (NRFX_ROUNDED_DIV(SYSTICK_CLOCK_HZ, TICK_FREQUENCE_HZ) - 1))
 
-    const nrfx_rtc_t rtc_instance = NRFX_RTC_INSTANCE(2);
+    const nrfx_rtc_t rtc_instance = NRFX_RTC_INSTANCE(RTC_INSTANCE_ID);
     nrf_clock_lf_src_set(NRF_CLOCK, (nrf_clock_lfclk_t)NRFX_CLOCK_CONFIG_LF_SRC);
     nrfx_clock_lfclk_start();
 
