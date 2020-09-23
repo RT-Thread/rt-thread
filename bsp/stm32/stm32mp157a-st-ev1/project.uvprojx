@@ -323,7 +323,7 @@
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>1</uGnu>
+            <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>1</v6Lang>
             <v6LangP>1</v6LangP>
@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>CORE_CM4, USE_HAL_DRIVER, STM32MP157Axx, RT_USING_ARM_LIBC</Define>
+              <Define>CORE_CM4, __LOG_TRACE_IO_, METAL_MAX_DEVICE_REGIONS=2, VIRTIO_SLAVE_ONLY, NO_ATOMIC_64_SUPPORT, STM32MP157Axx, METAL_INTERNAL, USE_HAL_DRIVER, RT_USING_ARM_LIBC</Define>
               <Undefine />
               <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\CM4\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc;..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include;..\libraries\STM32MPxx_HAL\CMSIS\Core\Include;..\libraries\STM32MPxx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
