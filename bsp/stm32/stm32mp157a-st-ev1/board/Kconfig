@@ -28,6 +28,11 @@ menu "Onboard Peripheral Drivers"
         select RT_MTD_NAND_DEBUG
         default n
 
+    config BSP_USING_OPENAMP
+        bool "Enable OpenAMP"
+        select RT_USING_OPENAMP
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
