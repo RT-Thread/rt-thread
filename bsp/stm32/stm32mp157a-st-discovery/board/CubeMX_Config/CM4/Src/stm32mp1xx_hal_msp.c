@@ -73,6 +73,11 @@ void HAL_MspInit(void)
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
+#if !defined(BSP_USING_OPENAMP)
+    __HAL_RCC_SYSRAM_CLK_ENABLE();
+    __HAL_RCC_RETRAM_CLK_ENABLE();
+#endif
+
     HAL_NVIC_SetPriority(RCC_WAKEUP_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(RCC_WAKEUP_IRQn);
     __HAL_RCC_ENABLE_IT(RCC_IT_WKUP);
@@ -284,7 +289,7 @@ void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef* hlptim)
   /** Initializes the peripherals clock 
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_LPTIM1;
-    PeriphClkInit.Lptim1ClockSelection = RCC_LPTIM1CLKSOURCE_LSE;
+    PeriphClkInit.Lptim1ClockSelection = RCC_LPTIM1CLKSOURCE_LSI;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
       Error_Handler();
@@ -531,12 +536,13 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     __HAL_RCC_GPIOF_CLK_ENABLE();
     /**SPI5 GPIO Configuration    
     PF9     ------> SPI5_MOSI
+    PF8     ------> SPI5_MISO
     PF7     ------> SPI5_SCK 
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_7;
+    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_8|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI5;
     HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
