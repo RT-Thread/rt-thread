@@ -97,7 +97,7 @@ if RT_USING_I2C
         default y
 
     if RT_USING_I2C_BITOPS
-	config RT_I2C_BITOPS_DEBUG
+        config RT_I2C_BITOPS_DEBUG
             bool "Use simulate I2C debug message"
             default n
     endif
