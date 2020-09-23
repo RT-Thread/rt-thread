@@ -22,11 +22,15 @@ if RT_USING_LIBC && RT_USING_DFS
 
     if RT_USING_POSIX
     config RT_USING_POSIX_MMAP
-        bool "Enable mmap() api"
+        bool "Enable mmap() API"
         default n
 
     config RT_USING_POSIX_TERMIOS
-        bool "Enable termios feature"
+        bool "Enable termios APIs"
+        default n
+
+    config RT_USING_POSIX_GETLINE
+        bool "Enable getline()/getdelim() APIs"
         default n
 
     config RT_USING_POSIX_AIO

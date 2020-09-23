@@ -353,6 +353,7 @@ const static struct rt_pin_ops _nrf5x_pin_ops =
     nrf5x_pin_attach_irq,
     nrf5x_pin_dettach_irq,
     nrf5x_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

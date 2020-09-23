@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-08-21     zhangjun     copy from minilibc
+ * 2020-09-07     Meco Man     combine gcc armcc iccarm
  */
 
 #include <sys/time.h>
