@@ -32,6 +32,9 @@ if GetDepend(['BSP_USING_PWM']):
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 
+if GetDepend(['BSP_USING_ONCHIP_RTC']):
+    src += ['drv_rtc.c']
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
