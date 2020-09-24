@@ -370,7 +370,6 @@
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -728,7 +727,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>project.out</state>
+          <state>RT-Thread-STM32MP1_CM4.elf</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1446,7 +1445,6 @@
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -2179,18 +2177,6 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\hwtimer\hwtimer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_dev.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
@@ -2230,9 +2216,6 @@
       <name>$PROJ_DIR$\board\CubeMX_Config\CM4\Src\stm32mp1xx_hal_msp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\board\ports\timer_sample.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Source\Templates\iar\startup_stm32mp15xx.s</name>
     </file>
     <file>
@@ -2240,9 +2223,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_hwtimer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
@@ -2334,9 +2314,6 @@
     <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
     </file>
-  </group>
-  <group>
-    <name>libc</name>
   </group>
   <group>
     <name>STM32_HAL</name>

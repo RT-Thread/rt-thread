@@ -704,7 +704,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>project.out</state>
+                    <state>RT-Thread-STM32MP1_CM4.elf</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
