@@ -55,6 +55,7 @@
 #define FT_SOCKET                1   /* socket file  */
 #define FT_DIRECTORY             2   /* directory    */
 #define FT_USER                  3   /* user defined */
+#define FT_DEVICE                4   /* device */
 
 /* File flags */
 #define DFS_F_OPEN              0x01000000
