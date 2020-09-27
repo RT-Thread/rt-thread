@@ -34,14 +34,6 @@ struct timeval {
     long    tv_sec;     /* seconds */
     long    tv_usec;    /* and microseconds */
 };
-
-/*
- * Structure defined by POSIX.1b to be like a timeval.
- */
-struct timespec {
-	time_t	tv_sec;		/* seconds */
-	long	tv_nsec;	/* and nanoseconds */
-};
 #endif /* _TIMEVAL_DEFINED */
 
 
