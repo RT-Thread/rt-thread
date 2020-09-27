@@ -21,7 +21,17 @@
 #define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
 #define PIN_NO(pin) ((uint8_t)((pin) & 0xFu))
 
+#if defined(SOC_SERIES_STM32MP1)
+#if defined(GPIOZ)
+#define gpioz_port_base (175) /* PIN_STPORT_MAX * 16 - 16 */
+#define PIN_STPORT(pin) ((pin > gpioz_port_base) ? ((GPIO_TypeDef *)(GPIOZ_BASE )) : ((GPIO_TypeDef *)(GPIOA_BASE + (0x1000u * PIN_PORT(pin)))))
+#else
+#define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x1000u * PIN_PORT(pin)))))
+#endif /* GPIOZ */
+#else
 #define PIN_STPORT(pin) ((GPIO_TypeDef *)(GPIOA_BASE + (0x400u * PIN_PORT(pin))))
+#endif /* SOC_SERIES_STM32MP1 */
+
 #define PIN_STPIN(pin) ((uint16_t)(1u << PIN_NO(pin)))
 
 #if defined(GPIOZ)
