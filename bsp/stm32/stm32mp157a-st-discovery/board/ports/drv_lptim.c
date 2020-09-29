@@ -22,6 +22,8 @@
 #define LED7_PIN  GET_PIN(H, 7)
 LPTIM_HandleTypeDef hlptim1;
 
+extern int lptim_stop(void);
+
 void LPTIM1_IRQHandler(void)
 {
     /* enter interrupt */
@@ -39,6 +41,12 @@ void HAL_LPTIM_AutoReloadMatchCallback(LPTIM_HandleTypeDef *hlptim)
     {
         HAL_GPIO_TogglePin(GPIOH, GPIO_PIN_7);
     }
+    
+    /* All level of ITs can interrupt */
+    __set_BASEPRI(0U); 
+
+    lptim_stop();
+    rt_kprintf("system returns to normal!\n");
 }
 
 static int lptim_control(uint8_t pre_value)
@@ -49,32 +57,36 @@ static int lptim_control(uint8_t pre_value)
     }
     hlptim1.Instance->CFGR &= ~(7 << 9);      /* clear PRESC[2:0] */
     hlptim1.Instance->CFGR |= pre_value << 9; /* set PRESC[2:0]  */
-
+    rt_kprintf("set lptim pre value [0x%x] success!\n", pre_value);
+    
     return RT_EOK;
 }
 
-static int lptim_start(void)
+int lptim_start(void)
 {
-
   /* ### Start counting in interrupt mode ############################# */
     if (HAL_LPTIM_Counter_Start_IT(&hlptim1, 32767) != HAL_OK)
     {
-        LOG_D("lptim1 start Counting Error!\n");
+        LOG_D("lptim1 start counting failed!\n");
         return -RT_ERROR;
     }
     
+    LOG_D("lptim1 start counting success!\n");
+        
     return RT_EOK;
 }
 
-static int lptim_stop()
+int lptim_stop(void)
 {
    if (HAL_LPTIM_Counter_Stop_IT(&hlptim1) != HAL_OK)
    {
-        LOG_D("lptim1 stop Error!\n");
+        LOG_D("lptim1 stop failed!\n");
         return -RT_ERROR;
    }
-    
-    return RT_EOK;
+   
+   LOG_D("lptim1 stop counting success!\n"); 
+   
+   return RT_EOK;
 }
 
 int lptim_init(void)
@@ -94,9 +106,10 @@ int lptim_init(void)
     hlptim1.Init.Input2Source = LPTIM_INPUT2SOURCE_GPIO;
     if (HAL_LPTIM_Init(&hlptim1) != HAL_OK)
     {
-        LOG_D("LPTIM Init Error!\n");
+        LOG_D("lptim init failed!\n");
         return -RT_ERROR;
     }
+    LOG_D("lptim init success!\n");
     
     return RT_EOK;
 }

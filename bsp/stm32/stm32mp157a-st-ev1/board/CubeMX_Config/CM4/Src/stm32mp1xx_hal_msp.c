@@ -73,7 +73,14 @@ void HAL_MspInit(void)
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
-
+#if !defined(BSP_USING_OPENAMP)
+    __HAL_RCC_SYSRAM_CLK_ENABLE();
+    __HAL_RCC_RETRAM_CLK_ENABLE();
+#endif
+  
+    HAL_NVIC_SetPriority(RCC_WAKEUP_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(RCC_WAKEUP_IRQn);
+    __HAL_RCC_ENABLE_IT(RCC_IT_WKUP);
   /* USER CODE END MspInit 1 */
 }
 

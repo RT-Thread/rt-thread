@@ -32,6 +32,12 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_RCC
         bool "Enable rcc use sample"
         default n
+
+    config BSP_USING_OPENAMP
+        bool "Enable OpenAMP"
+        select RT_USING_OPENAMP
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

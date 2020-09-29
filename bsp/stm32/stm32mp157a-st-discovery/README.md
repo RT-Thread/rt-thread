@@ -37,25 +37,25 @@ For more details about this board, please refer to the ST official documentation
 
 Each peripheral supporting condition for this BSP is as follows:
 
-| On-board Peripheral            | **Support** |     **Remark**      |
-| :----------------------------- | :---------: | :-----------------: |
-| USB TO UART                    |     YES     |                     |
-| PWR                            |     YES     |                     |
-| RCC                            |     YES     |                     |
-| SD Card (SDMMC)                |     NO      |                     |
-| ETH                            |     NO      |                     |
-| AUDIO                          |     NO      |                     |
-| **On-chip Peripheral Drivers** | **Support** |     **Remark**      |
-| GPIO                           |     YES     |  GPIOA-GPIOK, GPIOZ |
-| UART                           |     YES     |   UART4 (ST-Link)   |
-| EXTI                           |     YES     |                     |
-| SPI                            |     YES     |                     |
-| TIM                            |     YES     |                     |
-| LPTIM                          |     YES     |                     |
-| I2C                            |     YES     | Software & Hardware |
-| ADC                            |     YES     |                     |
-| DAC                            |     YES     |                     |
-| WWDG                           |     YES     |                     |
+| On-board Peripheral            | **Support** |     **Remark**     |
+| :----------------------------- | :---------: | :----------------: |
+| USB TO UART                    |     YES     |                    |
+| PWR                            |     YES     |                    |
+| RCC                            |     YES     |                    |
+| SD Card (SDMMC)                |     NO      |                    |
+| ETH                            |     NO      |                    |
+| AUDIO                          |     NO      |                    |
+| **On-chip Peripheral Drivers** | **Support** |     **Remark**     |
+| GPIO                           |     YES     | GPIOA-GPIOK, GPIOZ |
+| UART                           |     YES     |  UART4 (ST-Link)   |
+| EXTI                           |     YES     |                    |
+| SPI                            |     YES     |                    |
+| TIM                            |     YES     |                    |
+| LPTIM                          |     YES     |                    |
+| I2C                            |     YES     |      Software      |
+| ADC                            |     YES     |                    |
+| DAC                            |     YES     |                    |
+| WWDG                           |     YES     |                    |
 
 ## Execution Instruction
 

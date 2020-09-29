@@ -13,6 +13,9 @@
 #define LOG_TAG             "drv.pwr"
 #include <drv_log.h>
 
+extern int lptim_start(void);
+extern int lptim_stop(void);
+
 static RCC_ClkInitTypeDef  RCC_ClkInit = {0};
 
 #define __WAIT_EVENT_TIMEOUT(__CONDITION__, __TIMEOUT_VAL__)                 \
@@ -38,7 +41,7 @@ static void backup_cm4_clocks(void)
 }
 
 /* Restore the CM4 clock source muxer and the CM4 prescaler. */
-static rt_err_t restore_cm4_clock(void)
+rt_err_t restore_cm4_clock(void)
 {
     /* Update SystemCoreClock variable */
     SystemCoreClock = HAL_RCC_GetSystemCoreClockFreq();
@@ -90,18 +93,18 @@ static rt_err_t restore_cm4_clock(void)
 
     return RT_EOK;
 }
-           
+
 void RCC_WAKEUP_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    
+
     HAL_RCC_WAKEUP_IRQHandler();
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
-           
+
 void HAL_RCC_WAKEUP_Callback()
 {
     if (__HAL_PWR_GET_FLAG(PWR_FLAG_STOP) == 1U)
@@ -111,13 +114,23 @@ void HAL_RCC_WAKEUP_Callback()
 
     restore_cm4_clock();
     /* All level of ITs can interrupt */
-    __set_BASEPRI(0U); 
+    __set_BASEPRI(0U);
+
     rt_kprintf("system exit stop mode success!\n");
+}
+
+static void enter_sleep_mode(void)
+{
+    __set_BASEPRI((1) << (8 - __NVIC_PRIO_BITS));
+
+    lptim_start();
+
+    HAL_PWR_EnterSLEEPMode(PWR_LOWPOWERREGULATOR_ON, PWR_SLEEPENTRY_WFI);
 }
 
 static void enter_stop_mode(void)
 {
-    /* 
+    /*
      * Only the IT with the highest priority (0 value) can interrupt.
      * RCC_WAKEUP_IRQn IT is intended to have the highest priority and to be the
      * only one IT having this value
@@ -125,15 +138,16 @@ static void enter_stop_mode(void)
      * CSTOP (protection mechanism)
      */
     __set_BASEPRI((1) << (8 - __NVIC_PRIO_BITS));
-     backup_cm4_clocks();
+
     __HAL_PWR_CLEAR_FLAG(PWR_FLAG_STOP);
+    backup_cm4_clocks();
     HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 }
 
 static void pm_wackup_key_init(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
-    
+
     __HAL_RCC_GPIOA_CLK_ENABLE();
 
     GPIO_InitStruct.Pin = GPIO_PIN_13;
@@ -141,29 +155,35 @@ static void pm_wackup_key_init(void)
     GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-    
+
     HAL_NVIC_SetPriority(EXTI13_IRQn, 0x01, 0);
     HAL_NVIC_EnableIRQ(EXTI13_IRQn);
 }
-   
+
 int drv_pm_hw_init(void)
 {
     pm_wackup_key_init();
-    
+
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(drv_pm_hw_init);
-           
+
 static int pwr_sample(int argc, char *argv[])
 {
     if (argc > 1)
     {
         if (!rt_strcmp(argv[1], "stop"))
-        { 
+        {
            rt_kprintf("system will enter stop mode! you can press USER2 button to exit this mode\n");
            enter_stop_mode();
            return RT_EOK;
-                  
+
+        }
+        else if (!rt_strcmp(argv[1], "sleep"))
+        {
+           rt_kprintf("system will enter sleep mode! lptim1 will wake up the system\n");
+           enter_sleep_mode();
+           return RT_EOK;
         }
         else
         {
@@ -174,6 +194,7 @@ _exit:
     {
         rt_kprintf("Usage:\n");
         rt_kprintf("pwr_sample stop      - system enter stop mode\n");
+        rt_kprintf("pwr_sample sleep     - system enter sleep mode\n");
     }
 
     return -RT_ERROR;
