@@ -74,7 +74,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
 /**
  * exception handle table
  */
-#define RT_EXCEPTION_MAX 31
+#define RT_EXCEPTION_MAX 32
 exception_func_t sys_exception_handlers[RT_EXCEPTION_MAX];
 
 /**
