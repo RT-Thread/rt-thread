@@ -37,7 +37,28 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Onboard Peripheral Drivers"
+    
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
 
+    menuconfig BSP_USING_ETH
+	bool "Enable Ethernet"
+	select PHY_USING_KSZ8081
+	select RT_USING_NETDEV
+	default n
+    
+
+	if BSP_USING_ETH
+		config PHY_USING_KSZ8081
+			bool "i.MX RT1064EVK uses ksz8081 phy"
+			default y
+
+        config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+            bool "Enable the PHY ksz8081 RMII50M mode"
+            depends on PHY_USING_KSZ8081
+            default y
+	endif
 endmenu
 
 menu "Board extended module Drivers"
