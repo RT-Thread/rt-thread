@@ -634,6 +634,7 @@ void rt_soft_timer_check(void)
                 /* deactive it if it's a one-shot timer. */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
             }
+            soft_timer_status = RT_SOFT_TIMER_BUSY;
             /* enable interrupt */
             rt_hw_interrupt_enable(level);
 
