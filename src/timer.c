@@ -25,6 +25,10 @@
 static rt_list_t rt_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 
 #ifdef RT_USING_TIMER_SOFT
+
+#define RT_SOFT_TIMER_IDLE              1
+#define RT_SOFT_TIMER_BUSY              0
+
 #ifndef RT_TIMER_THREAD_STACK_SIZE
 #define RT_TIMER_THREAD_STACK_SIZE     512
 #endif
@@ -33,6 +37,8 @@ static rt_list_t rt_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 #define RT_TIMER_THREAD_PRIO           0
 #endif
 
+/* soft timer status */
+static rt_uint8_t soft_timer_status = RT_SOFT_TIMER_IDLE;
 /* soft timer list */
 static rt_list_t rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_thread timer_thread;
@@ -408,7 +414,8 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
     {
         /* check whether timer thread is ready */
-        if ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+        if ((soft_timer_status == RT_SOFT_TIMER_IDLE) &&
+           ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
         {
             /* resume timer thread to check soft timer */
             rt_thread_resume(&timer_thread);
@@ -445,12 +452,11 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
     level = rt_hw_interrupt_disable();
 
     _rt_timer_remove(timer);
+    /* change status */
+    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
-
-    /* change stat */
-    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
     return RT_EOK;
 }
@@ -467,10 +473,13 @@ RTM_EXPORT(rt_timer_stop);
  */
 rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 {
+    register rt_base_t level;
+
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
+    level = rt_hw_interrupt_disable();
     switch (cmd)
     {
     case RT_TIMER_CTRL_GET_TIME:
@@ -505,6 +514,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
     default:
         break;
     }
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -544,6 +554,11 @@ void rt_timer_check(void)
 
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
+            if (!(t->parent.flag & RT_TIMER_FLAG_PERIODIC))
+            {
+                /* deactive it if it's a one-shot timer. */
+                t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+            }
 
             /* call timeout function */
             t->timeout_func(t->parameter);
@@ -561,14 +576,8 @@ void rt_timer_check(void)
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
                 rt_timer_start(t);
             }
-            else
-            {
-                /* stop timer */
-                t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-            }
         }
-        else
-            break;
+        else break;
     }
 
     /* enable interrupt */
@@ -596,11 +605,12 @@ void rt_soft_timer_check(void)
 {
     rt_tick_t current_tick;
     struct rt_timer *t;
+    register rt_base_t level;
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check enter\n"));
 
-    /* lock scheduler */
-    rt_enter_critical();
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
 
     while (!rt_list_isempty(&rt_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
@@ -619,36 +629,41 @@ void rt_soft_timer_check(void)
 
             /* remove timer from timer list firstly */
             _rt_timer_remove(t);
+            if (!(t->parent.flag & RT_TIMER_FLAG_PERIODIC))
+            {
+                /* deactive it if it's a one-shot timer. */
+                t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+            }
+            /* enable interrupt */
+            rt_hw_interrupt_enable(level);
 
-            /* not lock scheduler when performing timeout function */
-            rt_exit_critical();
             /* call timeout function */
             t->timeout_func(t->parameter);
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             RT_DEBUG_LOG(RT_DEBUG_TIMER, ("current tick: %d\n", current_tick));
 
-            /* lock scheduler */
-            rt_enter_critical();
+            /* disable interrupt */
+            level = rt_hw_interrupt_disable();
 
+            soft_timer_status = RT_SOFT_TIMER_IDLE;
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
                 rt_timer_start(t);
-            }
-            else
-            {
-                /* stop timer */
-                t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+                /* disable interrupt */
+                level = rt_hw_interrupt_disable();
             }
         }
         else break; /* not check anymore */
     }
-
-    /* unlock scheduler */
-    rt_exit_critical();
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
 
     RT_DEBUG_LOG(RT_DEBUG_TIMER, ("software timer check leave\n"));
 }
