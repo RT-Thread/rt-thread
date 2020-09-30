@@ -227,6 +227,8 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
     level = rt_hw_interrupt_disable();
 
     _rt_timer_remove(timer);
+    /* stop timer */
+    timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
