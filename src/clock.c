@@ -91,8 +91,7 @@ void rt_tick_increase(void)
 
         thread->stat |= RT_THREAD_STAT_YIELD;
 
-        /* yield */
-        rt_thread_yield();
+        rt_schedule();
     }
 
     /* check timer */
