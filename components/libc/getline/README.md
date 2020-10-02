@@ -26,5 +26,3 @@ This code is unlicensed -- free and released into the public domain. See `UNLICE
 Meco Man 
 
 jiantingman@foxmail.com
-
-https://github.com/mysterywolf/getline
