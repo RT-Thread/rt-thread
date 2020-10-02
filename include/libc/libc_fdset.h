@@ -13,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || defined(_WIN32) || defined( __GNUC__ )
+#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/types.h>
 #if defined(HAVE_SYS_SELECT_H)
 #include <sys/select.h>
