@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 #ifdef RT_USING_POSIX_TERMIOS
-#include <termios.h>
+#include "termios.h"
 
 int isatty(int fd)
 {
