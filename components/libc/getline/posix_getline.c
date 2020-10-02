@@ -10,10 +10,10 @@
  * Meco Man    2020-09-03    First Version
  */
 
-#include <posix_getline.h>
+#include "posix_getline.h"
 #include <stdlib.h>
 #include <errno.h>
-#include <rtlibc.h>
+#include "rtlibc.h"
 
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
     char *cur_pos, *new_lineptr;

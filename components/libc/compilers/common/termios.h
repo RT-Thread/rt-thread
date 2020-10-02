@@ -11,7 +11,7 @@
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include <sys/types.h>
-#include <posix_termios.h>
+#include "posix_termios.h"
 #endif
 
 #endif
