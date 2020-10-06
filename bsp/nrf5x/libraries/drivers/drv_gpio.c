@@ -376,16 +376,8 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-/* test GPIO write, read, input interrupt */
-#define DK_BOARD_LED_1  13
-#define DK_BOARD_LED_2  14
-#define DK_BOARD_LED_3  15
-#define DK_BOARD_LED_4  16
 
-#define DK_BOARD_BUTTON_1  11
-#define DK_BOARD_BUTTON_2  12
-#define DK_BOARD_BUTTON_3  24
-#define DK_BOARD_BUTTON_4  25
+/* test GPIO write, read, input interrupt */
 
 void button_1_callback(void *args)
 {

@@ -10,6 +10,18 @@
 #define MCU_SRAM_SIZE MCU_SRAM_SIZE_KB*1024
 #define MCU_SRAM_END_ADDRESS        (MCU_SRAM_START_ADDRESS + MCU_SRAM_SIZE)
 
+/* led pins define on board*/
+#define DK_BOARD_LED_1  13
+#define DK_BOARD_LED_2  14
+#define DK_BOARD_LED_3  15
+#define DK_BOARD_LED_4  16
+
+/* button pins define on board*/
+#define DK_BOARD_BUTTON_1  11
+#define DK_BOARD_BUTTON_2  12
+#define DK_BOARD_BUTTON_3  24
+#define DK_BOARD_BUTTON_4  25
+
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
 #define HEAP_BEGIN      ((void *)&Image$$RW_IRAM1$$ZI$$Limit)

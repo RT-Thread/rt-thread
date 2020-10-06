@@ -11,8 +11,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#define DK_BOARD_LED_1  13
-#define DK_BOARD_LED_2  14
+#include "board.h"
 
 int main(void)
 {
