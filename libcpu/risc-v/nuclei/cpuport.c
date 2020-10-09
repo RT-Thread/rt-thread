@@ -19,7 +19,7 @@
 #define SYSTICK_TICK_CONST                      (SOC_TIMER_FREQ / RT_TICK_PER_SECOND)
 
 /* Interrupt level for kernel systimer interrupt and software timer interrupt */
-#define RT_KERNEL_INTERRUPT_LEVEL               1
+#define RT_KERNEL_INTERRUPT_LEVEL               0
 
 /* Initial CSR MSTATUS value when thread created */
 #define RT_INITIAL_MSTATUS                      (MSTATUS_MPP | MSTATUS_MPIE | MSTATUS_FS_INITIAL)

@@ -34,6 +34,9 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     case RT_SENSOR_CLASS_MAG:
         LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mGauss, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
+    case RT_SENSOR_CLASS_GNSS:
+        LOG_I("num:%3d, lon:%5d, lat:%5d, timestamp:%5d", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, sensor_data->timestamp);
+        break;
     case RT_SENSOR_CLASS_TEMP:
         LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
         break;

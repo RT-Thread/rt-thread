@@ -331,7 +331,7 @@
               <MiscControls />
               <Define>ES32F36xx</Define>
               <Undefine />
-              <IncludePath>.;..\..\..\include;applications;.;drivers;libraries\CMSIS\Device\EastSoft\ES32F36xx\Include;libraries\CMSIS\Include;libraries\ES32F36xx_ALD_StdPeriph_Driver\Include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>.;..\..\..\include;applications;.;drivers;libraries\CMSIS\Device\EastSoft\ES32F36xx\Include;libraries\CMSIS\Include;libraries\ES32F36xx_ALD_StdPeriph_Driver\Include;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -795,27 +795,6 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
-          <Files>
-            <File>
-              <FileName>can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\can\can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>i2c_dev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>pin.c</FileName>

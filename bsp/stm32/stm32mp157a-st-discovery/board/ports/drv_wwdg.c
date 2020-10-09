@@ -21,7 +21,8 @@
 
 #define LED5_PIN  GET_PIN(A, 14)
 
-WWDG_HandleTypeDef hwwdg1;  
+static rt_uint8_t feed_flag = 0;
+static WWDG_HandleTypeDef hwwdg1;  
 
 void WWDG1_IRQHandler(void)
 {
@@ -36,14 +37,13 @@ void WWDG1_IRQHandler(void)
 
 void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef* hwwdg)
 {
-    static unsigned char led_value = 0x00;
-    
-    led_value = !led_value;
-    
     if(hwwdg->Instance==WWDG1)
     {
-        HAL_WWDG_Refresh(&hwwdg1);
-        rt_pin_write(LED5_PIN, led_value);
+        if (feed_flag)
+        {
+            HAL_WWDG_Refresh(&hwwdg1);
+            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_14);
+        }
     }
 }
 
@@ -61,6 +61,8 @@ static void wwdg_init()
     {
         Error_Handler();
     }
+    
+    feed_flag = 1;
 }
 
 static void wwdg_control(uint8_t pre_value)
@@ -71,6 +73,11 @@ static void wwdg_control(uint8_t pre_value)
     }
     hwwdg1.Instance->CFR &= ~(7 << 11);     /* clear WDGTB[2:0] */
     hwwdg1.Instance->CFR |= pre_value << 11; /* set WDGTB[2:0] */	
+}
+
+static void wwdg_stop(void)
+{
+    feed_flag = 0;
 }
 
 static int wwdg_sample(int argc, char *argv[])
@@ -88,11 +95,16 @@ static int wwdg_sample(int argc, char *argv[])
                 wwdg_control(atoi(argv[2]));
             }     
         }
+        else if (!strcmp(argv[1], "stop"))
+        {
+            wwdg_stop();
+        }
     }
     else
     {
         rt_kprintf("Usage:\n");
         rt_kprintf("wwdg_sample run            - open wwdg, when feed wwdg in wwdg irq, the LD5 will blink\n");
+        rt_kprintf("wwdg_sample stop           - stop to feed wwdg, system will reset\n");
         rt_kprintf("wwdg_sample set            - set the wwdg prescaler, wwdg_sample set [0 - 7]\n");
     }
 
