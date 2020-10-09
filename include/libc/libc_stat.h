@@ -9,7 +9,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB)
+#if defined(RT_USING_NEWLIB) || defined( __GNUC__ )
 /* use header file of newlib */
 #include <sys/stat.h>
 

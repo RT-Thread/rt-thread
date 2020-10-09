@@ -63,11 +63,11 @@ static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
 #define RT_ETHERNETIF_THREAD_PREORITY	0x90
-static char eth_rx_thread_mb_pool[48 * 4];
+static char eth_rx_thread_mb_pool[48 * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[1024];
 #else
 #define RT_ETHERNETIF_THREAD_PREORITY	RT_LWIP_ETHTHREAD_PRIORITY
-static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 
@@ -79,10 +79,10 @@ struct eth_tx_msg
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
 #ifndef RT_LWIP_ETHTHREAD_PRIORITY
-static char eth_tx_thread_mb_pool[32 * 4];
+static char eth_tx_thread_mb_pool[32 * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[512];
 #else
-static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 
@@ -281,7 +281,7 @@ rt_err_t eth_system_device_init()
 	/* init rx thread */
 	/* init mailbox and create ethernet thread */
 	result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
-		&eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
+		&eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/sizeof(rt_ubase_t),
 		RT_IPC_FLAG_FIFO);
 	RT_ASSERT(result == RT_EOK);
 
@@ -297,7 +297,7 @@ rt_err_t eth_system_device_init()
 	/* init mailbox and create ethernet thread */
         
 	result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
-		&eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
+		&eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/sizeof(rt_ubase_t),
 		RT_IPC_FLAG_FIFO);
 	RT_ASSERT(result == RT_EOK);
 

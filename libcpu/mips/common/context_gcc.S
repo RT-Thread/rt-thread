@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-12-04     Jiaxun Yang  Initial version
+ * 2020-07-26     lizhirui     Fixed some problems
  */
 
 #ifndef __ASSEMBLY__
@@ -56,12 +57,12 @@ rt_hw_context_switch_interrupt:
     bnez    t1, _reswitch
     nop
     li      t1, 0x01                       /* set rt_thread_switch_interrupt_flag to 1 */
-    sw      t1, 0(t0)
+    LONG_S      t1, 0(t0)
     PTR_LA      t0, rt_interrupt_from_thread   /* set rt_interrupt_from_thread */
-    sw      a0, 0(t0)
+    LONG_S      a0, 0(t0)
 _reswitch:
     PTR_LA      t0, rt_interrupt_to_thread     /* set rt_interrupt_to_thread */
-    sw      a1, 0(t0)
+    LONG_S      a1, 0(t0)
     jr      ra
     nop
 
@@ -97,24 +98,24 @@ mips_irq_handle:
     * rt_hw_context_switch_interrupt_do and do not return
     */
     PTR_LA  k0, rt_thread_switch_interrupt_flag
-    lw      k1, 0(k0)
+    LONG_L  k1, 0(k0)
     beqz    k1, spurious_interrupt
     nop
-    sw      zero, 0(k0)                     /* clear flag */
+    LONG_S  zero, 0(k0)                     /* clear flag */
     nop
 
     /*
     * switch to the new thread
     */
     PTR_LA  k0, rt_interrupt_from_thread
-    lw      k1, 0(k0)
+    LONG_L  k1, 0(k0)
     nop
-    sw      sp, 0(k1)                       /* store sp in preempted task TCB */
+    LONG_S  sp, 0(k1)                       /* store sp in preempted task TCB */
 
     PTR_LA  k0, rt_interrupt_to_thread
-    lw      k1, 0(k0)
+    LONG_L  k1, 0(k0)
     nop
-    lw      sp, 0(k1)                       /* get new task stack pointer */
+    LONG_L  sp, 0(k1)                       /* get new task stack pointer */
     j       spurious_interrupt
     nop
 

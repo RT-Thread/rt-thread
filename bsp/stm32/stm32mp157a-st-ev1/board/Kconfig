@@ -15,6 +15,24 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART4
         default y
 
+    config BSP_USING_PMIC
+        bool "Enable PMIC"
+        select BSP_USING_I2C
+        select BSP_USING_I2C3
+        default y
+
+    config BSP_USING_NAND
+        bool "Enable FMC (MT29F8G08ABACAH4)"
+        select RT_USING_FMC
+        select RT_USING_MTD_NAND
+        select RT_MTD_NAND_DEBUG
+        default n
+
+    config BSP_USING_OPENAMP
+        bool "Enable OpenAMP"
+        select RT_USING_OPENAMP
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -22,11 +40,6 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
-        
-    config BSP_USING_WWDG
-        bool "Enable WWDG"
-        select RT_USING_WWDG
-        default n
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -46,7 +59,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART3 TX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
-		
+
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default y
@@ -78,16 +91,6 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_TIM17
                 bool "Enable TIM17"
-                default n
-
-        endif
-    menuconfig BSP_USING_LPTIM
-        bool "Enable lptimer"
-        default n
-        select RT_USING_LPTIMER
-        if BSP_USING_LPTIM
-            config BSP_USING_LPTIM1
-                bool "Enable LPTIM1"
                 default n
         endif
 
@@ -126,52 +129,84 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         default n
-        if BSP_USING_I2C1
-            comment "Notice: PD7 --> 55; PG15 --> 111" 
-            config BSP_I2C1_SCL_PIN
-                int "I2C1 scl pin number"
-                range 1 176
-                default 55
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 1 176
-                default 111
-
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PD7 --> 55; PG15 --> 111"
+                    config BSP_I2C1_SCL_PIN
+                        int "I2C1 scl pin number"
+                        range 1 176
+                        default 55
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 1 176
+                        default 111
+                endif
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C2
+                    comment "Notice: PH4 --> 116; PH5 --> 117"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 1 176
+                        default 116
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 1 176
+                        default 117
+                endif
+	    menuconfig BSP_USING_I2C3
+                bool "Enable I2C3 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C3
+                    comment "Notice: PZ4 --> 180; PZ5 --> 181"
+                    config BSP_I2C3_SCL_PIN
+                        int "i2c3 scl pin number"
+                        range 1 191
+                        default 180
+                    config BSP_I2C3_SDA_PIN
+                        int "I2C3 sda pin number"
+                        range 1 191
+                        default 181
+                endif
         endif
-        
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         select RT_USING_SPI
         default n
-        if BSP_USING_SPI  
+        if BSP_USING_SPI
             config BSP_USING_SPI5
                 bool "Enable SPI5 BUS"
-                default n        
+                default n
 
             config BSP_SPI5_TX_USING_DMA
                 bool "Enable SPI5 TX DMA"
                 depends on BSP_USING_SPI5
                 default n
-                
+
             config BSP_SPI5_RX_USING_DMA
                 bool "Enable SPI5 RX DMA"
                 depends on BSP_USING_SPI5
                 select BSP_SPI5_TX_USING_DMA
-                default n  
+                default n
         endif
 
  source "../libraries/HAL_Drivers/Kconfig"
-    
+
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

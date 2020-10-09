@@ -427,6 +427,7 @@ const static struct rt_pin_ops _gd32vf_pin_ops =
     gd32vf_pin_attach_irq,
     gd32vf_pin_dettach_irq,
     gd32vf_pin_irq_enable,
+    RT_NULL,
 };
 
 rt_inline void pin_irq_hdr(int irqno)

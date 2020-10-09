@@ -46,6 +46,24 @@ static const struct pin_index pins[] =
     __NRF5X_PIN(29,  0, 29),
     __NRF5X_PIN(30,  0, 30),
     __NRF5X_PIN(31,  0, 31),
+#ifdef SOC_NRF52840    
+    __NRF5X_PIN(32,  1, 0 ),
+    __NRF5X_PIN(33,  1, 1 ),
+    __NRF5X_PIN(34,  1, 2 ),
+    __NRF5X_PIN(35,  1, 3 ),
+    __NRF5X_PIN(36,  1, 4 ),
+    __NRF5X_PIN(37,  1, 5 ),
+    __NRF5X_PIN(38,  1, 6 ),
+    __NRF5X_PIN(39,  1, 7 ),
+    __NRF5X_PIN(40,  1, 8 ),
+    __NRF5X_PIN(41,  1, 9 ),
+    __NRF5X_PIN(42,  1, 10),
+    __NRF5X_PIN(43,  1, 11),
+    __NRF5X_PIN(44,  1, 12),
+    __NRF5X_PIN(45,  1, 13),
+    __NRF5X_PIN(46,  1, 14),
+    __NRF5X_PIN(47,  1, 15),
+#endif /* SOC_NRF52840 */
 };
 
 /* EVENTS_IN[n](n=0..7) and EVENTS_PORT */
@@ -335,6 +353,7 @@ const static struct rt_pin_ops _nrf5x_pin_ops =
     nrf5x_pin_attach_irq,
     nrf5x_pin_dettach_irq,
     nrf5x_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)
@@ -356,4 +375,105 @@ int rt_hw_pin_init(void)
     
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
+
+/* test GPIO write, read, input interrupt */
+#define DK_BOARD_LED_1  13
+#define DK_BOARD_LED_2  14
+#define DK_BOARD_LED_3  15
+#define DK_BOARD_LED_4  16
+
+#define DK_BOARD_BUTTON_1  11
+#define DK_BOARD_BUTTON_2  12
+#define DK_BOARD_BUTTON_3  24
+#define DK_BOARD_BUTTON_4  25
+
+void button_1_callback(void *args)
+{
+	static int flag1 = 0;
+	if(flag1 == 0)
+	{
+		flag1 = 1;
+		rt_pin_write(DK_BOARD_LED_1, PIN_LOW);
+	}
+	else
+	{
+		flag1 = 0;
+		rt_pin_write(DK_BOARD_LED_1, PIN_HIGH);
+	}
+}
+void button_2_callback(void *args)
+{
+	static int flag2 = 0;
+	if(flag2 == 0)
+	{
+		flag2 = 1;
+		rt_pin_write(DK_BOARD_LED_2, PIN_LOW);
+	}
+	else
+	{
+		flag2 = 0;
+		rt_pin_write(DK_BOARD_LED_2, PIN_HIGH);
+	}
+}
+void button_3_callback(void *args)
+{
+	static int flag3 = 0;
+	if(flag3 == 0)
+	{
+		flag3 = 1;
+		rt_pin_write(DK_BOARD_LED_3, PIN_LOW);
+	}
+	else
+	{
+		flag3 = 0;
+		rt_pin_write(DK_BOARD_LED_3, PIN_HIGH);
+	}
+}
+void button_4_callback(void *args)
+{
+	static int flag4 = 0;
+	if(flag4 == 0)
+	{
+		flag4 = 1;
+		rt_pin_write(DK_BOARD_LED_4, PIN_LOW);
+	}
+	else
+	{
+		flag4 = 0;
+		rt_pin_write(DK_BOARD_LED_4, PIN_HIGH);
+	}
+}
+
+void gpio_sample(void)
+{
+	rt_err_t err_code;
+    
+	rt_pin_mode(DK_BOARD_LED_1, PIN_MODE_OUTPUT);
+	rt_pin_mode(DK_BOARD_LED_2, PIN_MODE_OUTPUT);
+	rt_pin_mode(DK_BOARD_LED_3, PIN_MODE_OUTPUT);
+	rt_pin_mode(DK_BOARD_LED_4, PIN_MODE_OUTPUT);
+
+	rt_pin_write(DK_BOARD_LED_1, PIN_HIGH);
+	rt_pin_write(DK_BOARD_LED_2, PIN_HIGH);
+	rt_pin_write(DK_BOARD_LED_3, PIN_HIGH);
+	rt_pin_write(DK_BOARD_LED_4, PIN_HIGH);
+	
+	err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_1, PIN_IRQ_MODE_FALLING,
+                                    button_1_callback, (void*) true); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
+	rt_pin_irq_enable(DK_BOARD_BUTTON_1, PIN_IRQ_ENABLE);
+	
+	err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_2, PIN_IRQ_MODE_FALLING,
+                                    button_2_callback, (void*) true); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
+	rt_pin_irq_enable(DK_BOARD_BUTTON_2, PIN_IRQ_ENABLE);
+	
+	err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_3, PIN_IRQ_MODE_FALLING,
+                                    button_3_callback, (void*) true); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
+	rt_pin_irq_enable(DK_BOARD_BUTTON_3, PIN_IRQ_ENABLE);
+	
+	err_code =  rt_pin_attach_irq(DK_BOARD_BUTTON_4, PIN_IRQ_MODE_FALLING,
+                                    button_4_callback, (void*) false); //true: hi_accuracy(IN_EVENT),false: lo_accuracy(PORT_EVENT)
+	rt_pin_irq_enable(DK_BOARD_BUTTON_4, PIN_IRQ_ENABLE);	
+}
+MSH_CMD_EXPORT(gpio_sample, gpio sample);
+
 #endif /* RT_USING_PIN */

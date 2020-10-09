@@ -118,7 +118,7 @@ config RT_USING_LWIP
             config RT_USING_LWIP202
                 bool "lwIP v2.0.2"
 
-	    config RT_USING_LWIP212
+        config RT_USING_LWIP212
                 bool "lwIP v2.1.2"
 
         endchoice
@@ -130,6 +130,10 @@ config RT_USING_LWIP
                 select NETDEV_USING_IPV6
                 select NETDEV_IPV6_SCOPES if RT_USING_LWIP212
         endif
+
+        config RT_LWIP_MEM_ALIGNMENT
+            int "Memory alignment"
+            default 4
 
         config RT_LWIP_IGMP
             bool "IGMP protocol"

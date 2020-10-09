@@ -224,7 +224,6 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>RT_USING_DLIBC</state>
           <state>CORE_CM4</state>
           <state>NO_ATOMIC_64_SUPPORT</state>
           <state>METAL_INTERNAL</state>
@@ -368,11 +367,9 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Core\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -675,7 +672,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state>../../../rtthread.bin</state>
+          <state>template.bin</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -683,7 +680,7 @@
         </option>
         <option>
           <name>OOCObjCopyEnable</name>
-          <state>1</state>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -730,7 +727,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>project.out</state>
+          <state>RT-Thread-STM32MP1_CM4.elf</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1302,7 +1299,6 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>RT_USING_DLIBC</state>
           <state>CORE_CM4</state>
           <state>NO_ATOMIC_64_SUPPORT</state>
           <state>METAL_INTERNAL</state>
@@ -1446,11 +1442,9 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Core\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -2211,42 +2205,6 @@
     </file>
   </group>
   <group>
-    <name>dlib</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\rmtx.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
-    </file>
-  </group>
-  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\board\board.c</name>
@@ -2355,12 +2313,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
-    <name>libc</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
   </group>
   <group>

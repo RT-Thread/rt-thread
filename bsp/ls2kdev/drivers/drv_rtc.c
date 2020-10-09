@@ -17,6 +17,8 @@
 #include <rtthread.h>
 #include "ls2k1000.h"
 
+#ifdef RT_USING_RTC
+
 struct loongson_rtc {
     rt_uint32_t sys_toytrim;
     rt_uint32_t sys_toywrite0;
@@ -176,3 +178,5 @@ int rt_hw_rtc_init(void)
 }
 
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
+
+#endif /*RT_USING_RTC*/

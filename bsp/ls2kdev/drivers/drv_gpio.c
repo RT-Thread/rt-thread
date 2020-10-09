@@ -5,8 +5,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2015-01-20     Bernard      the first version
- * 2017-10-20      ZYH          add mode open drain and input pull down
- * 2020-06-01     Du Huanpeng   GPIO driver based on <components/drivers/include/drivers/pin.h>
+ * 2017-10-20      ZYH         add mode open drain and input pull down
+ * 2020-06-01     Du Huanpeng  GPIO driver based on <components/drivers/include/drivers/pin.h>
  */
 #include <rtthread.h>
 #include <drivers/pin.h>
@@ -73,7 +73,7 @@ static int loongson_pin_read(struct rt_device *device, rt_base_t pin)
     gpio = (void *)device->user_data;
     rt_uint64_t m;
 
-    m  = gpio->GPIO1_I;
+    m  = gpio->GPIO0_I;
     m &= (rt_uint64_t)1 << pin;
 
     rc = !!m;
@@ -221,6 +221,7 @@ static struct rt_pin_ops loongson_pin_ops = {
     .pin_attach_irq = loongson_pin_attach_irq,
     .pin_detach_irq = loongson_pin_detach_irq,
     .pin_irq_enable = loongson_pin_irq_enable,
+    .pin_get        = RT_NULL,
 };
 
 

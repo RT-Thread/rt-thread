@@ -6,12 +6,21 @@ config SOC_NRF52840
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
+    config NRFX_CLOCK_ENABLED
+    int 
+    default 1
+    config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+    int 
+    default 7
+    config NRFX_CLOCK_CONFIG_LF_SRC
+    int 
+    default 1  
 
+    
 config SOC_NORDIC
     bool 
     config SOC_NORDIC
     default y
-
 
 menu "Onboard Peripheral Drivers"
     config BSP_USING_JLINK_TO_USART
@@ -26,6 +35,9 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_QSPI_FLASH
+            config NRFX_QSPI_ENABLED
+            int 
+            default 1
             config BSP_QSPI_SCK_PIN
                 int "QSPI SCK pin number"
                 range 0 31
@@ -61,6 +73,20 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+    if BSP_USING_GPIO
+        config NRFX_GPIOTE_ENABLED
+        int 
+        default 1  
+    endif
+    config BSP_USING_SAADC
+        bool "Enable SAADC"
+        select RT_USING_ADC
+        default n
+        if BSP_USING_SAADC
+                config NRFX_SAADC_ENABLED
+                int 
+                default 1  
+        endif
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         select RT_USING_PWM
@@ -166,47 +192,25 @@ menu "On-chip Peripheral Drivers"
                         default 16
                 endif
         endif
-    menuconfig BSP_USING_SOFTDEVICE
-        bool "Enable NRF SOFTDEVICE"
-        select PKG_USING_NRF5X_SDK
-        select NRFX_CLOCK_ENABLED
-        default n
-if BSP_USING_SOFTDEVICE
-    config NRFX_CLOCK_ENABLED
-    int 
-    default 1
-    config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
-    int 
-    default 7
-    config NRFX_RTC_ENABLED
-    int 
-    default 1
-    config NRFX_RTC1_ENABLED
-    int 
-    default 1
-    config NRF_CLOCK_ENABLED
-    int 
-    default 1
-    config NRF_SDH_BLE_ENABLED
-    int 
-    default 1
-    config NRF_SDH_ENABLED
-    int 
-    default 1
-    config NRF_SDH_SOC_ENABLED
-    int 
-    default 1
-endif
+
+    
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
         select RT_USING_SERIAL
 
         if BSP_USING_UART
+            config NRFX_UART_ENABLED
+            int 
+            default 1
+
             config BSP_USING_UART0
                 bool "Enable UART0"
                 default y 
                 if BSP_USING_UART0
+                    config NRFX_UART0_ENABLED
+                    int 
+                    default 1
                     config BSP_UART0_RX_PIN
                         int "uart0 rx pin number"
                         range 0 31
@@ -227,6 +231,9 @@ endif
         default y
 
         if BSP_USING_SPI
+            config NRFX_SPI_ENABLED
+            int 
+            default 1
             config BSP_USING_SPI0
                 bool "Enable SPI0 bus"
                 default y
@@ -324,6 +331,77 @@ endif
             range 0x1000 0x1000
             default 0x1000
 	endmenu
-endmenu
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
+    if BSP_USING_WDT
+        config NRFX_WDT_ENABLED
+        int
+        default 1
+        config NRFX_WDT0_ENABLED
+        int
+        default 1
+        config NRFX_WDT_CONFIG_NO_IRQ
+        int
+        default 1
+    endif
+
+    menuconfig BSP_USING_ONCHIP_RTC
+    bool "Enable RTC"
+    select RT_USING_RTC
+    select RT_USING_LIBC
+    default n
+    if BSP_USING_ONCHIP_RTC
+        config NRFX_CLOCK_ENABLED
+        int 
+        default 1
+        config NRFX_CLOCK_DEFAULT_CONFIG_IRQ_PRIORITY
+        int
+        default 7
+        config NRFX_RTC_ENABLED
+        int 
+        default 1
+        config NRFX_RTC0_ENABLED
+        int
+        default 1
+        config NRFX_RTC1_ENABLED
+        int
+        default 1
+        config NRFX_RTC2_ENABLED
+        int
+        default 1
+        config RTC_INSTANCE_ID
+        int 
+        default 2
+        config RTC_INSTANCE_ID
+            int "select RTC instance id, must be 0, 1, 2"
+            range 0 2
+            default 2
+    endif
 
 endmenu
+
+choice
+prompt "BLE STACK"
+default BLE_STACK_USING_NULL
+help
+    Select the ble stack
+
+config BLE_STACK_USING_NULL
+    bool "not use the ble stack"
+
+config  BSP_USING_SOFTDEVICE
+    select PKG_USING_NRF5X_SDK
+    bool "Nordic softdevice(perpheral)"
+
+config BSP_USING_NIMBLE
+    select PKG_USING_NIMBLE
+    select PKG_NIMBLE_BSP_NRF52840
+    bool "use nimble stack(iot)"
+endchoice
+
+
+endmenu
+
+

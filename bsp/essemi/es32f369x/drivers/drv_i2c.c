@@ -16,6 +16,7 @@
 #include "drv_i2c.h"
 #include <ald_i2c.h>
 #include <ald_gpio.h>
+#include <rtdbg.h>
 
 #ifdef RT_USING_I2C
 
@@ -55,8 +56,8 @@ static void _i2c_init(void)
 
     ald_i2c_reset(&_h_i2c0);
     ald_i2c_init(&_h_i2c0);
-    /* PB8->I2C0_SCL, PB9->I2C0_SDA */
-    ald_gpio_init(GPIOB, GPIO_PIN_8 | GPIO_PIN_9, &gpio_instruct);
+    /* PB06->I2C0_SCL, PB07->I2C0_SDA */
+    ald_gpio_init(GPIOB, GPIO_PIN_6 | GPIO_PIN_7, &gpio_instruct);
 #endif
 
 #ifdef BSP_USING_I2C1
@@ -90,7 +91,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
         {
             if (ald_i2c_master_recv(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -98,7 +99,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
         {
             if (ald_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -107,7 +108,7 @@ static rt_size_t es32f3_master_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    i2c_dbg("send stop condition\n");
+    LOG_E("send stop condition\n");
 
     return ret;
 }

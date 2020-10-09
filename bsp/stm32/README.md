@@ -55,7 +55,8 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l476-st-nucleo](stm32l476-st-nucleo) | ST 官方 STM32L476-nucleo 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
 | **MP1 系列** |  |
-| [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-ST-Discovery Kit 开发板 |
+| [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-DK1 开发板 |
+| [stm32mp157a-st-ev1](stm32mp157a-st-ev1) | ST 官方 STM32MP157A-EV1 开发板 |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 

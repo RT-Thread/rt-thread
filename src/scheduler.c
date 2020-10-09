@@ -346,9 +346,9 @@ void rt_schedule(void)
                 }
                 else
                 {
-                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
+                current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -444,9 +444,9 @@ void rt_schedule(void)
                 }
                 else
                 {
-                    rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     need_insert_from_thread = 1;
                 }
+                rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
 
             if (to_thread != rt_current_thread)
@@ -595,9 +595,9 @@ void rt_scheduler_do_irq_switch(void *context)
                 }
                 else
                 {
-                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
+                current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -784,7 +784,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
         {
 #if RT_THREAD_PRIORITY_MAX > 32
             pcpu->ready_table[thread->number] &= ~thread->high_mask;
-            if (rt_thread_ready_table[thread->number] == 0)
+            if (pcpu->ready_table[thread->number] == 0)
             {
                 pcpu->priority_group &= ~thread->number_mask;
             }

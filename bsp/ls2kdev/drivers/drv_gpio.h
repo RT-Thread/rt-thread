@@ -6,7 +6,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-24     勤为本          first version
+ * 2017-11-24     勤为本        first version
  * 2018-05-11     zhuangwei    add gpio interrupt ops
  */
 
@@ -35,7 +35,6 @@ struct loongson_gpio {
 };
 
 int loongson_pin_init(void);
-
 
 #endif
 
