@@ -35,7 +35,9 @@
  * 2018-10-02     Bernard      add 64bit support for mailbox
  * 2019-09-16     tyx          add send wait support for message queue
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
-                               event without pending
+ *                             event without pending
+ * 2020-10-11     Meco Man     add semaphore values' overflow-check code
+ *                             in the function of rt_sem_release
  */
 
 #include <rtthread.h>
@@ -463,7 +465,17 @@ rt_err_t rt_sem_release(rt_sem_t sem)
         need_schedule = RT_TRUE;
     }
     else
-        sem->value ++; /* increase value */
+    {
+        if(sem->value < 65535u)
+        {
+            sem->value ++; /* increase value */
+        }
+        else
+        {
+            rt_hw_interrupt_enable(temp); /* enable interrupt */
+            return -RT_EFULL; /* value overflowed */
+        }
+    }
 
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
