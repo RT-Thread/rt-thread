@@ -11,15 +11,15 @@ These are ersatz functions, a drop-in replacement, to be used on those occasions
 
 For more details, see [Open Group Base Specification for getdelim/getline][opengroup-spec].
 
-## Building the project
 
-Just run `make`.
 
 ## License
 
 This code is unlicensed -- free and released into the public domain. See `UNLICENSE` file for more information.
 
 [opengroup-spec]: http://pubs.opengroup.org/onlinepubs/9699919799/functions/getline.html
+
+
 
 
 ## 联系&维护
