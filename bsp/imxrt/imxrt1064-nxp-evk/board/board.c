@@ -416,6 +416,7 @@ void imxrt_enet_pins_init(void)
                                                  Hyst. Enable Field: Hysteresis Disabled */
 }
 
+#ifndef BSP_USING_PHY
 void imxrt_enet_phy_reset_by_gpio(void)
 {
     gpio_pin_config_t gpio_config = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
@@ -428,7 +429,28 @@ void imxrt_enet_phy_reset_by_gpio(void)
     rt_thread_delay(100);
     GPIO_WritePinOutput(GPIO1, 9, 1);
 }
+#endif /* BSP_USING_PHY */
+
 #endif /* BSP_USING_ETH */
+
+#ifdef BSP_USING_PHY
+void imxrt_phy_pins_init( void )
+{
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_B0_09_GPIO1_IO09, /* GPIO_AD_B0_09 is configured as GPIO1_IO09 */
+        0U);                             /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_B0_09_GPIO1_IO09, /* GPIO_B0_00 PAD functional properties : */
+        0x10B0u);                        /* Slew Rate Field: Slow Slew Rate
+                                                 Drive Strength Field: R0/6
+                                                 Speed Field: medium(100MHz)
+                                                 Open Drain Enable Field: Open Drain Disabled
+                                                 Pull / Keep Enable Field: Pull/Keeper Enabled
+                                                 Pull / Keep Select Field: Keeper
+                                                 Pull Up / Down Config. Field: 100K Ohm Pull Down
+                                                 Hyst. Enable Field: Hysteresis Disabled */
+}
+#endif /* BSP_USING_PHY */
 
 /**
  * This function will initial rt1050 board.
@@ -448,6 +470,10 @@ void rt_hw_board_init()
 
 #ifdef BSP_USING_ETH
     imxrt_enet_pins_init();
+#endif
+
+#ifdef BSP_USING_PHY
+    imxrt_phy_pins_init();
 #endif
 
 #ifdef BSP_USING_DMA
