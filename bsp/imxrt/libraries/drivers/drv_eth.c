@@ -551,7 +551,6 @@ static void phy_monitor_thread_entry(void *parameter)
         LOG_E("Can not find phy device called \"rtt-phy\"");
         return ;
     }
-    LOG_I("start to initialize phy device!");
     if (RT_NULL == phy_dev->ops->init)
     {
         LOG_E("phy driver error!");
@@ -562,10 +561,6 @@ static void phy_monitor_thread_entry(void *parameter)
     {
         LOG_E("Phy device initialize unsuccessful!\n");
         return ;
-    }
-    else
-    {
-        LOG_I("Phy device initialize successful!\n");
     }
 
     while (1)
