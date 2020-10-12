@@ -66,5 +66,8 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, imxrt_library, 'SCons
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
 
+# include peripherals
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'peripherals', 'SConscript')))
+
 # make a building
 DoBuilding(TARGET, objs)
