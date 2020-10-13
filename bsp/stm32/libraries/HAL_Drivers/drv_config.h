@@ -100,6 +100,7 @@ extern "C" {
 #include "h7/spi_config.h"
 #include "h7/qspi_config.h"
 #include "h7/adc_config.h"
+#include "h7/dac_config.h"
 #include "h7/tim_config.h"
 #include "h7/sdio_config.h"
 #include "h7/pwm_config.h"
