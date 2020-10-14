@@ -1,0 +1,77 @@
+// File: STM32L4x5_4x6.dbgconf
+// Version: 1.0.0
+// Note: refer to STM32L4x5 and STM32L4x6 Reference manual (RM0351)
+//       refer to STM32L475xx STM32L476xx STM32L486xx STM32L496xx STM32L4A6xx datasheets
+
+// <<< Use Configuration Wizard in Context Menu >>>
+
+// <h> Debug MCU configuration register (DBGMCU_CR)
+//   <o.2>  DBG_STANDBY              <i> Debug Standby mode
+//   <o.1>  DBG_STOP                 <i> Debug Stop mode
+//   <o.0>  DBG_SLEEP                <i> Debug Sleep mode
+// </h>
+DbgMCU_CR = 0x00000007;
+
+// <h> Debug MCU APB1 freeze register1 (DBGMCU_APB1FZR1)
+//                                   <i> Reserved bits must be kept at reset value
+//   <o.31> DBG_LPTIM1_STOP          <i> LPTIM1 counter stopped when core is halted
+//   <o.26> DBG_CAN2_STOP            <i> bxCAN2 stopped when core is halted
+//   <o.25> DBG_CAN1_STOP            <i> bxCAN1 stopped when core is halted
+//   <o.23> DBG_I2C3_STOP            <i> I2C3 SMBUS timeout counter stopped when core is halted
+//   <o.22> DBG_I2C2_STOP            <i> I2C2 SMBUS timeout counter stopped when core is halted
+//   <o.21> DBG_I2C1_STOP            <i> I2C1 SMBUS timeout counter stopped when core is halted
+//   <o.12> DBG_IWDG_STOP            <i> Independent watchdog counter stopped when core is halted
+//   <o.11> DBG_WWDG_STOP            <i> Window watchdog counter stopped when core is halted
+//   <o.10> DBG_RTC_STOP             <i> RTC counter stopped when core is halted
+//   <o.5>  DBG_TIM7_STOP            <i> TIM7 counter stopped when core is halted
+//   <o.4>  DBG_TIM6_STOP            <i> TIM6 counter stopped when core is halted
+//   <o.3>  DBG_TIM5_STOP            <i> TIM5 counter stopped when core is halted
+//   <o.2>  DBG_TIM4_STOP            <i> TIM4 counter stopped when core is halted
+//   <o.1>  DBG_TIM3_STOP            <i> TIM3 counter stopped when core is halted
+//   <o.0>  DBG_TIM2_STOP            <i> TIM2 counter stopped when core is halted
+// </h>
+DbgMCU_APB1_Fz1 = 0x00000000;
+
+// <h> Debug MCU APB1 freeze register 2 (DBGMCU_APB1FZR2)
+//                                   <i> Reserved bits must be kept at reset value
+//   <o.5>  DBG_LPTIM2_STOP          <i> LPTIM2 counter stopped when core is halted
+//   <o.1>  DBG_I2C4_STOP            <i> I2C4 SMBUS timeout counter stopped when core is halted
+// </h>
+DbgMCU_APB1_Fz2 = 0x00000000;
+
+// <h> Debug MCU APB2 freeze register (DBGMCU_APB2FZR)
+//                                   <i> Reserved bits must be kept at reset value
+//   <o.18> DBG_TIM17_STOP           <i> TIM17 counter stopped when core is halted
+//   <o.17> DBG_TIM16_STOP           <i> TIM16 counter stopped when core is halted
+//   <o.16> DBG_TIM15_STOP           <i> TIM15 counter stopped when core is halted
+//   <o.13> DBG_TIM8_STOP            <i> TIM8 counter stopped when core is halted
+//   <o.11> DBG_TIM1_STOP            <i> TIM1 counter stopped when core is halted
+// </h>
+DbgMCU_APB2_Fz = 0x00000000;
+
+// <h> TPIU Pin Routing (TRACECLK fixed on Pin PE2)
+//   <i> TRACECLK: Pin PE2
+//   <o1> TRACED0
+//     <i> ETM Trace Data 0
+//       <0x00040003=> Pin PE3
+//       <0x00020001=> Pin PC1
+//   <o2> TRACED1
+//     <i> ETM Trace Data 1
+//       <0x00040004=> Pin PE4
+//       <0x0002000A=> Pin PC10
+//   <o3> TRACED2
+//     <i> ETM Trace Data 2
+//       <0x00040005=> Pin PE5
+//       <0x00030002=> Pin PD2
+//   <o4> TRACED3
+//     <i> ETM Trace Data 3
+//       <0x00040006=> Pin PE6
+//       <0x0002000C=> Pin PC12
+// </h>
+TraceClk_Pin = 0x00040002;
+TraceD0_Pin  = 0x00040003;
+TraceD1_Pin  = 0x00040004;
+TraceD2_Pin  = 0x00040005;
+TraceD3_Pin  = 0x00040006;
+
+// <<< end of configuration section >>>
