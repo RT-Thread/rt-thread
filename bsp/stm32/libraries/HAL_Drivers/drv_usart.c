@@ -9,6 +9,7 @@
  * 2020-03-16     SummerGift   add device close feature
  * 2020-03-20     SummerGift   fix bug caused by ORE
  * 2020-05-02     whj4674672   support stm32h7 uart dma
+ * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
 
 #include "board.h"
@@ -243,7 +244,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1)
+    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
     uart->handle.Instance->TDR = c;
 #else
     uart->handle.Instance->DR = c;
@@ -264,7 +265,7 @@ static int stm32_getc(struct rt_serial_device *serial)
     {
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1)
+    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
         ch = uart->handle.Instance->RDR & 0xff;
 #else
         ch = uart->handle.Instance->DR & 0xff;
@@ -367,7 +368,7 @@ static void uart_isr(struct rt_serial_device *serial)
         }
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
     && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7) \
-    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1)
+    && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB)
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBD) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_LBD);
@@ -866,12 +867,12 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         SET_BIT(RCC->AHBENR, dma_config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, dma_config->dma_rcc);
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) \
-    || defined(SOC_SERIES_STM32G4)|| defined(SOC_SERIES_STM32H7)
+    || defined(SOC_SERIES_STM32G4)|| defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32WB)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
         tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
 
-#if (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4)) && defined(DMAMUX1)
+#if (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)) && defined(DMAMUX1)
         /* enable DMAMUX clock for L4+ and G4 */
         __HAL_RCC_DMAMUX1_CLK_ENABLE();   
 #elif defined(SOC_SERIES_STM32MP1)
@@ -897,7 +898,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Channel             = dma_config->channel;
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4)\
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)\
     || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
     DMA_Handle->Instance                 = dma_config->Instance;
     DMA_Handle->Init.Request             = dma_config->request;
