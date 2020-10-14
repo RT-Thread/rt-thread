@@ -70,7 +70,7 @@ void udpecho_socket_entry(void *parameter)
 	{
 		/* no memory yet */
 		rt_kprintf("no memory\n");
-		goto _exit;
+		return;
 	}
 	/* create a UDP socket */
 	if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
@@ -183,7 +183,7 @@ void tcpecho_socket_entry(void *parameter)
 	if (recv_data == RT_NULL)
 	{
 		rt_kprintf("no memory\n");
-		goto _exit;
+		return;
 	}
 
 	/* create a TCP socket */
