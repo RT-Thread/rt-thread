@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
+ * 2020-10-14     wangqiang    use phy device in phy monitor thread
  */
 
 #include <rtthread.h>

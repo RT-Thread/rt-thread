@@ -1,7 +1,15 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2020-10-14     wangqiang    the first version
+ */
 
-
-#ifndef __MDIO_H___
-#define __MDIO_H___
+#ifndef __MDIO_H__
+#define __MDIO_H__
 
 #include <rtthread.h>
 
