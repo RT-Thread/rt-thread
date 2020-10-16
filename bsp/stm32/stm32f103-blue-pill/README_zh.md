@@ -1,5 +1,7 @@
 # STM32F103C8T6最小系统板(BluePill) BSP 说明
 
+[[English]](README.md)
+
 ## 简介
 
 本文档为 STM32F103C8T6最小系统板(BluePill) 的 BSP (板级支持包) 说明。
