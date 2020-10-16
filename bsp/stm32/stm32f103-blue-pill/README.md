@@ -1,5 +1,20 @@
 # STM32F103C8 Blue Pill Board BSP Introduction
 
+ [[中文版]](README_zh.md)
+
+This document records the guide of the BSP (board support package) provided by the RT-Thread development team for the STM32F103C8 Blue Pill development board.
+
+The document is covered in four parts:
+
+- Onboard Resources
+- Quickly Get Started
+- Advanced Features
+- References
+
+By reading the ***Quickly Get Started*** section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
+
+
+
 ## Onboard Resources
 
 The "blue pill" is a STM32F103 based development board with Cortex-M3 ARM CPU that runs at 72 MHz, 20 kB of RAM and 64 or 128 kB of flash memory. The microcontroller (MCU) has USB port, two serial ports, 16 bit PWM pins and 12 bit ADC pins. It runs at 3.3V, but some of its pins are 5V tolerant.
@@ -18,25 +33,9 @@ The "blue pill" is a STM32F103 based development board with Cortex-M3 ARM CPU th
 
 
 
-## Build
-
-### Keil5 MDK
-
-Please open`project.uvprojx` file and compile the project. 
-
-### Keil4 MDK
-
-Please open`project.uvproj` file and compile the project. 
-
-### IAR
-
-Please open`project.eww` file and compile the project. 
 
 
-
-## Execution Instruction
-
-### Quickly Get Started
+## Quickly Get Started
 
 This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
@@ -46,7 +45,7 @@ This BSP provides MDK4, MDK5, and IAR projects for developers and it supports th
 
 2) Use FTDI adapter(USB to UART) to connect the BluePill board's PA9(Tx) and PA10(Rx) pins.
 
-![connection](figures\connection.jpg)
+![connection](figures/connection.jpg)
 
 ### Compile and Download
 
