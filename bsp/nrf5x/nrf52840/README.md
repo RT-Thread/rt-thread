@@ -2,15 +2,15 @@
 
 ## 简介
 
-该文件夹主要存放所有主芯片为nRF52840的板级支持包。目前默认支持的开发板是管方[PCA10056](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK)
-主要内容如下：
+该文件夹主要存放所有主芯片为nRF52840的板级支持包。目前默认支持的开发板是官方[PCA10056](https://www.nordicsemi.com/Software-and-tools/Development-Kits/nRF52840-DK)
+本文主要内容如下：
 
 - 开发板资源介绍
 - 进阶使用方法
 
 ## 开发板介绍
 
-PCA10056-nRF52840是Nordic 官方的开发板，搭载nRF52840 芯片，基于ARM Cortex-M4内核，最高主频64 MHz，具有丰富的资源。
+PCA10056-nRF52840是Nordic 官方的开发板，搭载nRF52840 芯片，基于ARM Cortex-M4内核，最高主频64 MHz，具有丰富的外设资源。
 
 开发板外观如下图所示
 
@@ -66,7 +66,7 @@ PCA10056-nrf52840 开发板常用 **板载资源** 如下：
 
 ## 支持其他开发板
 
-客户可以将自己的开发板的.config文件和board/Kconfig文件到board/$(board_name)下面添加README.md即可
+客户可以将自己的开发板的.config文件和board/Kconfig文件到board/$(board_name)下面添加README.md即可，使用的时候替换.config文件
 
 ## 注意事项
 
