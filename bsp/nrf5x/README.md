@@ -31,13 +31,12 @@ Nordic nRF5x系列BSP 目前支持情况如下：
 ```
 nrf5x
 ├───docs 
-│   └───figures                     // 文档使用图片
+│   └───images                      // nrf5x文档使用图片
 │   └───nRF5x系列BSP制作教程.md
-├───libraries                       
+├───libraries                       // nrf5x系列支持BSP
 │   └───drivers                     // nRF5x 系列设备通用驱动文件 
 │   └───templates                   // 通用设备 BSP 工程模板
-│   │   └───nrf51x                  // nrf51x 系列 BSP 工程模板
-│   │   │   nrf52x                  // nrf52x 系列 BSP 工程模板
+│   │   └───nrf52x                  // nrf52x 系列 BSP 工程模板
 │   │   └───nrf5x_board_kconfig     // 通用 BSP 工程配置文件
 ├───nrf52832                        // nrf52832 BSP 工程
 │   └───application                 // 应用代码
@@ -47,7 +46,7 @@ nrf5x
 │   │   kconfig                     // 工程配置文件
 │   └───rtconfig.h
 ├───nrf52840                        // nrf52840 BSP 工程
-└───README.md                       
+└───README.md                       // nordic 工程整体介绍
 ```
 
 ###  如何使用
@@ -87,7 +86,7 @@ nrf5x
 ![image-20201017190301705](docs/images/softdevice_2.png)
 
 - 保存配置，然后`pkgs --update`, 执行`scons --target=mdk5`  
-- 打开keil 工程，softdevice的工程需要烧入官方的协议栈，所以先要烧入softdevice（如果之前已经烧入SDK16.0的softdevice，可以不用执行这一步，点击softdevice工程，烧入即可
+- 打开keil 工程，softdevice的工程需要烧入官方的协议栈，所以先要烧入softdevice(如果之前已经烧入SDK16.0的softdevice，可以不用执行这一步)，点击softdevice工程，烧入即可
 
 ![image-20201017192453525](docs/images/image-20201017192453525.png)
 
