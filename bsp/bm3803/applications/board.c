@@ -1,16 +1,22 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2020, Shenzhen Academy of Aerospace Technology
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
- *
- * Change Logs:
- * Date           Author       Notes
- * 2020-10-16     Dystopia     the first version
- */
+Copyright 2020 Shenzhen Academy of Aerospace Technology
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Change Logs:
+Date           Author       Notes
+2020-10-16     Dystopia     the first version
+*/
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -21,27 +27,27 @@
 
 extern int __bss_end;
 
-static void rt_hw_timer_isr(int vector, void* param)
+static void rt_hw_timer_isr(int vector, void *param)
 {
-	rt_tick_increase();
-	/* timer interrupt cleared by hardware */
+    rt_tick_increase();
+    /* timer interrupt cleared by hardware */
 }
 
 int rt_hw_timer_init(void)
 {
-	unsigned int counter = 1000000 / RT_TICK_PER_SECOND;
-	volatile struct lregs *regs = (struct lregs*)PREGS;
-    
+    unsigned int counter = 1000000 / RT_TICK_PER_SECOND;
+    volatile struct lregs *regs = (struct lregs *)PREGS;
+
     regs->scalercnt = CPU_FREQ / 1000000 - 1;
     regs->scalerload = CPU_FREQ / 1000000 - 1;
     regs->timercnt2 = counter - 1;
     regs->timerload2 = counter - 1;
 
-	rt_hw_interrupt_install(TIMER2_TT, rt_hw_timer_isr, RT_NULL, "tick");
-	rt_hw_interrupt_umask(TIMER2_TT);
+    rt_hw_interrupt_install(TIMER2_TT, rt_hw_timer_isr, RT_NULL, "tick");
+    rt_hw_interrupt_umask(TIMER2_TT);
 
-	/* start timer */
-	regs->timerctrl2 = 0x7;
+    /* start timer */
+    regs->timerctrl2 = 0x7;
 
     return 0;
 }
@@ -52,7 +58,7 @@ INIT_BOARD_EXPORT(rt_hw_timer_init);
  */
 void rt_hw_board_init(void)
 {
-	rt_system_heap_init((void*)&__bss_end, (void*)&__bss_end + 0x01000000);
+    rt_system_heap_init((void *)&__bss_end, (void *)&__bss_end + 0x01000000);
     rt_components_board_init();
-	rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }

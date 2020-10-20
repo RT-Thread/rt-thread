@@ -1,12 +1,22 @@
 /*
- * Copyright (c) 2020, Shenzhen Academy of Aerospace Technology
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2020-10-16     Dystopia     the first version
- */
+Copyright 2020 Shenzhen Academy of Aerospace Technology
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Change Logs:
+Date           Author       Notes
+2020-10-16     Dystopia     the first version
+*/
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -43,10 +53,10 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
-	if (vector > 0x1F || vector < 0x11)
-		return;
-	volatile struct lregs *regs = (struct lregs*)PREGS;
-	regs->irqmask &= ~(1 << (vector - 0x10));
+    if (vector > 0x1F || vector < 0x11)
+        return;
+    volatile struct lregs *regs = (struct lregs *)PREGS;
+    regs->irqmask &= ~(1 << (vector - 0x10));
 }
 
 /**
@@ -55,10 +65,10 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
-	if (vector > 0x1F || vector < 0x11)
-		return;
-	volatile struct lregs *regs = (struct lregs*)PREGS;
-	regs->irqmask |= 1 << (vector - 0x10);
+    if (vector > 0x1F || vector < 0x11)
+        return;
+    volatile struct lregs *regs = (struct lregs *)PREGS;
+    regs->irqmask |= 1 << (vector - 0x10);
 }
 
 /**
@@ -72,7 +82,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if(vector < MAX_HANDLERS || vector >= 0)
+    if (vector < MAX_HANDLERS || vector >= 0)
     {
         old_handler = isr_table[vector].handler;
 
