@@ -22,7 +22,7 @@ STM32F103C8T6最小系统，采用SWD调试接口，可以用3个接口就能完
 
 开发板外观如下图所示：
 
-![board](figures/board1.jpg)
+![board](figures/Bluepill_pinout.png)
 
 该开发板常用 **板载资源** 如下：
 
@@ -91,7 +91,7 @@ msh >
 ```
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 ADC、PWM等更多高级功能，再用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 ADC、SPI等更多高级功能，再用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
