@@ -1,16 +1,22 @@
 /*
- * File      : serial.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2020, Shenzhen Academy of Aerospace Technology
- *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
- *
- * Change Logs:
- * Date           Author       Notes
- * 2020-10-16     Dystopia     the first version
- */
+Copyright 2020 Shenzhen Academy of Aerospace Technology
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Change Logs:
+Date           Author       Notes
+2020-10-16     Dystopia     the first version
+*/
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -27,16 +33,16 @@ struct bm3803_uart
     int irq;
 };
 
-static void bm3803_uart_isr(int tt, void* param)
+static void bm3803_uart_isr(int tt, void *param)
 {
-    struct bm3803_uart* uart;
+    struct bm3803_uart *uart;
     struct rt_serial_device *serial;
-    struct uart_reg* uart_base;
+    struct uart_reg *uart_base;
 
-    serial = (struct rt_serial_device*)param;
+    serial = (struct rt_serial_device *)param;
     uart = (struct bm3803_uart *)serial->parent.user_data;
     uart_base = uart->uart_base;
-    
+
     if (uart_base->uartstatus & 0x1)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
@@ -47,8 +53,8 @@ static void bm3803_uart_isr(int tt, void* param)
 
 static rt_err_t bm3803_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    struct bm3803_uart* uart;
-    struct uart_reg* uart_base;
+    struct bm3803_uart *uart;
+    struct uart_reg *uart_base;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct bm3803_uart *)serial->parent.user_data;
@@ -57,17 +63,17 @@ static rt_err_t bm3803_configure(struct rt_serial_device *serial, struct serial_
 
     if (cfg->baud_rate == BAUD_RATE_115200)
     {
-		uart_base->uartscaler = ((((CPU_FREQ * 10) / (8 * 115200)) - 5) / 10);
+        uart_base->uartscaler = ((((CPU_FREQ * 10) / (8 * 115200)) - 5) / 10);
     }
     else if (cfg->baud_rate == BAUD_RATE_9600)
     {
-		uart_base->uartscaler = ((((CPU_FREQ * 10) / (8 * 9600)) - 5) / 10);
+        uart_base->uartscaler = ((((CPU_FREQ * 10) / (8 * 9600)) - 5) / 10);
     }
     else
     {
         NOT_IMPLEMENTED();
     }
-    
+
     uart_base->uartctrl |= 0x3;
 
     return RT_EOK;
@@ -75,7 +81,7 @@ static rt_err_t bm3803_configure(struct rt_serial_device *serial, struct serial_
 
 static rt_err_t bm3803_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    struct bm3803_uart* uart;
+    struct bm3803_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct bm3803_uart *)serial->parent.user_data;
@@ -97,13 +103,13 @@ static rt_err_t bm3803_control(struct rt_serial_device *serial, int cmd, void *a
 
 static int bm3803_putc(struct rt_serial_device *serial, char c)
 {
-    struct bm3803_uart* uart;
-	struct uart_reg* uart_base;
-	
+    struct bm3803_uart *uart;
+    struct uart_reg *uart_base;
+
     RT_ASSERT(serial != RT_NULL);
     uart = (struct bm3803_uart *)serial->parent.user_data;
     uart_base = uart->uart_base;
-    
+
     while (!(uart_base->uartstatus & 0x4));
     uart_base->uartdata = c;
 
@@ -113,13 +119,13 @@ static int bm3803_putc(struct rt_serial_device *serial, char c)
 static int bm3803_getc(struct rt_serial_device *serial)
 {
     int ch;
-    struct bm3803_uart* uart;
-    struct uart_reg* uart_base;
+    struct bm3803_uart *uart;
+    struct uart_reg *uart_base;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct bm3803_uart *)serial->parent.user_data;
-	uart_base = uart->uart_base;
-	
+    uart_base = uart->uart_base;
+
     ch = -1;
     if (uart_base->uartstatus & 0x1)
     {
@@ -131,7 +137,7 @@ static int bm3803_getc(struct rt_serial_device *serial)
 
 static const struct rt_uart_ops bm3803_uart_ops =
 {
-	bm3803_configure,
+    bm3803_configure,
     bm3803_control,
     bm3803_putc,
     bm3803_getc,
@@ -141,7 +147,7 @@ static const struct rt_uart_ops bm3803_uart_ops =
 #ifdef RT_USING_UART1
 struct bm3803_uart uart1 =
 {
-    (void*)UART1_BASE,
+    (void *)UART1_BASE,
     UART1_TT,
 };
 struct rt_serial_device serial1;
@@ -152,7 +158,7 @@ int rt_hw_serial_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART1
-	volatile struct lregs *regs = (struct lregs*)PREGS;
+    volatile struct lregs *regs = (struct lregs *)PREGS;
     serial1.ops = &bm3803_uart_ops;
     serial1.config = config;
     /* configure gpio direction */
@@ -166,8 +172,8 @@ int rt_hw_serial_init(void)
     rt_hw_interrupt_mask(uart1.irq);
     /* register UART1 device */
     rt_hw_serial_register(&serial1, "uart1",
-            RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-            &uart1);
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          &uart1);
 #endif
     return 0;
 }
