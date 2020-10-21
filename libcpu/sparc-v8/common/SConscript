@@ -8,15 +8,9 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
-if rtconfig.PLATFORM == 'armcc':
-    src += Glob('*_rvds.S')
-
 if rtconfig.PLATFORM == 'gcc':
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
-
-if rtconfig.PLATFORM == 'iar':
-    src += Glob('*_iar.S')
 
 group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH)
 
