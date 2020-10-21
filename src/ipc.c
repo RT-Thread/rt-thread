@@ -37,7 +37,7 @@
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
  *                             event without pending
  * 2020-10-11     Meco Man     add semaphore values' overflow-check code
- *                             in the function of rt_sem_release
+ * 2020-10-21     Meco Man     add mutex values' overflow-check code
  */
 
 #include <rtthread.h>
@@ -697,8 +697,16 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     if (mutex->owner == thread)
     {
-        /* it's the same thread */
-        mutex->hold ++;
+        if(mutex->hold < 255u)
+        {
+            /* it's the same thread */
+            mutex->hold ++;
+        }
+        else
+        {
+            rt_hw_interrupt_enable(temp); /* enable interrupt */
+            return -RT_EFULL; /* value overflowed */
+        }
     }
     else
     {
