@@ -36,8 +36,7 @@
  * 2019-09-16     tyx          add send wait support for message queue
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
  *                             event without pending
- * 2020-10-11     Meco Man     add semaphore values' overflow-check code
- * 2020-10-21     Meco Man     add mutex values' overflow-check code
+ * 2020-10-11     Meco Man     add value overflow-check code
  */
 
 #include <rtthread.h>
@@ -724,7 +723,15 @@ __again:
             /* set mutex owner and original priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-            mutex->hold ++;
+            if(mutex->hold < 255u)
+            {
+                mutex->hold ++;
+            }
+            else
+            {
+                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                return -RT_EFULL; /* value overflowed */
+            }
         }
         else
         {
@@ -881,7 +888,15 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             /* set new owner and priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-            mutex->hold ++;
+            if(mutex->hold < 255u)
+            {
+                mutex->hold ++;
+            }
+            else
+            {
+                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                return -RT_EFULL; /* value overflowed */
+            }
 
             /* resume thread */
             rt_ipc_list_resume(&(mutex->parent.suspend_thread));
@@ -890,9 +905,17 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         }
         else
         {
-            /* increase value */
-            mutex->value ++;
-
+            if(mutex->value < 65535u)
+            {
+                /* increase value */
+                mutex->value ++;
+            }
+            else
+            {
+                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                return -RT_EFULL; /* value overflowed */
+            }
+            
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -1583,9 +1606,18 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    /* increase message entry */
-    mb->entry ++;
-
+    
+    if(mb->entry < 65535u)
+    {
+        /* increase message entry */
+        mb->entry ++;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        return -RT_EFULL; /* value overflowed */
+    }
+    
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
@@ -2147,8 +2179,16 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     if (mq->msg_queue_head == RT_NULL)
         mq->msg_queue_head = msg;
 
-    /* increase message entry */
-    mq->entry ++;
+    if(mq->entry < 65535u)
+    {
+        /* increase message entry */
+        mq->entry ++;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        return -RT_EFULL; /* value overflowed */
+    }
 
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
@@ -2247,9 +2287,17 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     if (mq->msg_queue_tail == RT_NULL)
         mq->msg_queue_tail = msg;
 
-    /* increase message entry */
-    mq->entry ++;
-
+    if(mq->entry < 65535u)
+    {
+        /* increase message entry */
+        mq->entry ++;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        return -RT_EFULL; /* value overflowed */
+    }
+    
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
