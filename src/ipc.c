@@ -465,7 +465,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     }
     else
     {
-        if(sem->value < 65535u)
+        if(sem->value < RT_SEM_VALUE_MAX)
         {
             sem->value ++; /* increase value */
         }
@@ -696,7 +696,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     if (mutex->owner == thread)
     {
-        if(mutex->hold < 255u)
+        if(mutex->hold < RT_MUTEX_HOLD_MAX)
         {
             /* it's the same thread */
             mutex->hold ++;
@@ -723,7 +723,7 @@ __again:
             /* set mutex owner and original priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-            if(mutex->hold < 255u)
+            if(mutex->hold < RT_MUTEX_HOLD_MAX)
             {
                 mutex->hold ++;
             }
@@ -888,7 +888,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             /* set new owner and priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-            if(mutex->hold < 255u)
+            if(mutex->hold < RT_MUTEX_HOLD_MAX)
             {
                 mutex->hold ++;
             }
@@ -905,7 +905,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         }
         else
         {
-            if(mutex->value < 65535u)
+            if(mutex->value < RT_MUTEX_VALUE_MAX)
             {
                 /* increase value */
                 mutex->value ++;
@@ -1607,7 +1607,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
     
-    if(mb->entry < 65535u)
+    if(mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
         mb->entry ++;
@@ -2179,7 +2179,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     if (mq->msg_queue_head == RT_NULL)
         mq->msg_queue_head = msg;
 
-    if(mq->entry < 65535u)
+    if(mq->entry < RT_MQ_ENTRY_MAX)
     {
         /* increase message entry */
         mq->entry ++;
@@ -2287,7 +2287,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     if (mq->msg_queue_tail == RT_NULL)
         mq->msg_queue_tail = msg;
 
-    if(mq->entry < 65535u)
+    if(mq->entry < RT_MQ_ENTRY_MAX)
     {
         /* increase message entry */
         mq->entry ++;
