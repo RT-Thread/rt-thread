@@ -569,7 +569,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
     if (rt_tick_get() - *tick < inc_tick)
     {
-        *tick = rt_tick_get() - *tick + inc_tick;
+        *tick = *tick + inc_tick - rt_tick_get();
 
         /* suspend thread */
         rt_thread_suspend(thread);
