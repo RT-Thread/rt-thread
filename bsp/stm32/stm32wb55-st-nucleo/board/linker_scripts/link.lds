@@ -5,7 +5,7 @@
 /* Program Entry, set to mark it as "used" and avoid gc */
 MEMORY
 {
-    ROM (rx) : ORIGIN = 0x08000000, LENGTH = 1024 /* 1024KB flash */
+    ROM (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
     RAM (rw) : ORIGIN = 0x20000000, LENGTH = 192k  /* 192KB sram */
 }
 ENTRY(Reset_Handler)
@@ -153,4 +153,10 @@ SECTIONS
     .debug_funcnames 0 : { *(.debug_funcnames) }
     .debug_typenames 0 : { *(.debug_typenames) }
     .debug_varnames  0 : { *(.debug_varnames) }
+
+    .ARM.attributes 0       : { *(.ARM.attributes) }
+   MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
+   MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
+   MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED
+   
 }
