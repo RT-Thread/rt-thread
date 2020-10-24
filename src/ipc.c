@@ -37,6 +37,7 @@
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
+ * 2020-10-25     Meco Man     add rt_mutex_trytake
  */
 
 #include <rtthread.h>
@@ -814,6 +815,19 @@ __again:
     return RT_EOK;
 }
 RTM_EXPORT(rt_mutex_take);
+
+/**
+ * This function will try to take a mutex and immediately return
+ *
+ * @param mutex the mutex object
+ *
+ * @return the error code
+ */
+rt_err_t rt_mutex_trytake(rt_mutex_t mutex)
+{
+    return rt_mutex_take(mutex, 0);
+}
+RTM_EXPORT(rt_mutex_trytake);
 
 /**
  * This function will release a mutex, if there are threads suspended on mutex,
