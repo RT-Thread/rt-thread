@@ -35,8 +35,23 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_OPENAMP
         bool "Enable OpenAMP"
-        select RT_USING_OPENAMP
         default n
+
+    menuconfig BSP_USING_RS485
+        bool "Enable RS485 "
+        default n
+        if BSP_USING_RS485
+            comment "set rts pin number "
+            config BSP_RS485_RTS_PIN
+                int "RS485 rts pin number"
+                range 1 176
+                default 5
+
+            config RS485_UART_DEVICE_NAME
+            string "the uart name for rs485"
+            default "uart3"
+
+        endif
 
 endmenu
 
@@ -59,12 +74,10 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default y
-
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
-
             config BSP_UART3_TX_USING_DMA
                 bool "Enable UART3 TX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
@@ -73,12 +86,10 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default y
-
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                 default n
-
             config BSP_UART4_TX_USING_DMA
                 bool "Enable UART4 TX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
