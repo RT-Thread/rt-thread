@@ -9,7 +9,7 @@ The document is covered in four parts:
 - Onboard Resources
 - Quickly Get Started
 - Advanced Features
-- References
+- Read more
 
 By reading the ***Quickly Get Started*** section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
@@ -17,7 +17,7 @@ By reading the ***Quickly Get Started*** section developers can quickly get thei
 
 ## Onboard Resources
 
-The "blue pill" is a STM32F103 based development board with Cortex-M3 ARM CPU that runs at 72 MHz, 20 KB of RAM and 64 or 128 KB of flash memory. The microcontroller (MCU) has a USB port, two serial ports, 16 bit PWM pins and 12 bit ADC pins. It runs at 3.3V, but some of its pins are 5V tolerant.
+The Blue Pill is a STM32F103 based development board with Cortex-M3 ARM CPU that runs at 72 MHz, 20 KB of RAM and 64 or 128 KB of flash memory. The microcontroller (MCU) has a USB port, two serial ports, 16 bit PWM pins and 12 bit ADC pins. It runs at 3.3V, but some of its pins are 5V tolerant.
 
 - MCU：STM32F103C8T6 @72MHz, 64KB FLASH , 20KB RAM
 
@@ -25,7 +25,7 @@ The "blue pill" is a STM32F103 based development board with Cortex-M3 ARM CPU th
   
   - LED：PC13
   
-- Debug IO interface type: SWD / ST-LINK
+- Debug IO interface type: ST-LINK V2 (SWD)
 
 
 ![board](figures/Bluepill_pinout.png)
@@ -38,23 +38,73 @@ The "blue pill" is a STM32F103 based development board with Cortex-M3 ARM CPU th
 
 This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-### Hardware connection
+### Use ST-LINK Debugger to connect the Blue Pill Board
 
-1) Use a Type-A to Mini-B cable to connect the development board to the PC and turn on the power switch. 
+ST-LINK driver: https://www.st.com/en/development-tools/stsw-link009.html
 
-2) Use FTDI adapter(USB to UART) to connect the Blue Pill board's PA9(Tx) and PA10(Rx) pins.
+| ST-LINK Debugger | Blue Pill 4-Pin SWD |
+| :--------------: | :-----------------: |
+|      SWDIO       |         IO          |
+|      SWDCLK      |         CLK         |
+|      VCC3.3      |       VCC3.3        |
+|       GND        |         GND         |
+
+![connection](figures/connecter1.jpeg)
+
+![connection](figures/connecter2.png)
+
+![connection](figures/connecter3.jpeg)
+
+
+
+### Use FTDI adapter(USB to UART) to connect the Blue Pill Board's PA9(Tx) and PA10(Rx) pins
+
+FTDI adapter driver: https://www.ftdichip.com/FTDrivers.htm
+
+You can use other USB to UART adapters to replace FTDI adapter.
+
+| FTDI adapter(USB to UART) |            Blue Pill Board            |
+| :-----------------------: | :-----------------------------------: |
+|            Tx             |                PA10 Rx                |
+|            Rx             |                PA9 Tx                 |
+|            GND            |                  GND                  |
+|          VCC 3.3          | **Don't need to connect VCC 3.3 pin** |
+|           VCC 5           |  **Don't need to connect VCC 5 pin**  |
+
+
 
 ![connection](figures/connection.jpg)
 
+
+
+### Make sure Jumper Position (Both 0 Position)
+
+| BOOTx | High / Low |
+| :---: | :--------: |
+| BOOT0 |     0      |
+| BOOT1 |     0      |
+
+![connection](figures/jumper.jpg)
+
+
+
 ### Compile and Download
 
-Double-click the `project.uvprojx` file to open the MDK5 project; compile and download the program to the board.
+- Double-click the `project.uvprojx` file to open the MDK5 project  (**NOT** `template.uvprojx` file)
+- Click the “option for target” button
+  - Debug: Choose "ST-LINK Debugger" and Click "Setting" button:
+    - Port: choose "SW (Serial Wire)"
+    - Flash Download: check "Reset and Run"
+
+- Compile and download the program to the board
+
+
 
 ### Running Results
 
 After the program is successfully downloaded, the system runs automatically. Observe the running results of the LED on the development board, and you will see the LED is flashing periodically.
 
-The USB virtual COM port connects to USART1(PA9-Tx, PA10-Rx) by default, and when the corresponding serial port (115200-8-1-N) is opened in the terminal tool, the output information of RT-Thread can be seen when the device is reset:
+The USB virtual COM port connects to **USART1 (PA9-Tx, PA10-Rx) by default**, and when the corresponding serial port (**115200**-8-1-N) is opened in the terminal tool, the output information of RT-Thread can be seen when the device is reset:
 
 ```shell
  \ | /
@@ -63,6 +113,8 @@ The USB virtual COM port connects to USART1(PA9-Tx, PA10-Rx) by default, and whe
  2006 - 2018 Copyright by rt-thread team
 msh >
 ```
+
+- If you have no terminal tool software available, you can download *Putty*: https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 
 
 
@@ -79,7 +131,7 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 
 
-## References
+## Read more
 
 - [[Schematic]](https://stm32duinoforum.com/forum/images/c/c1/wiki_subdomain/Vcc-gnd.com-STM32F103C8-schematic.pdf)
 - [[STM32 Blue Pill vs Black Pill Microcontroller Boards]](https://www.youtube.com/watch?v=QCdnO43RBK4&t=875s)
@@ -91,7 +143,7 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 ## Maintained By
 
-Meco Man @ rt-thread community
+Meco Man @ RT-Thread Community
 
 jiantingman@foxmail.com 
 
