@@ -90,7 +90,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_POSIX
+
 
 /* Network */
 
