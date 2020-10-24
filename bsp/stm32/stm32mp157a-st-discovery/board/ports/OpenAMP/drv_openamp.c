@@ -12,6 +12,7 @@
 
 #ifdef BSP_USING_OPENAMP
 
+#include <finsh.h>
 #include <drv_openamp.h>
 #include <openamp.h>
 #include <virt_uart.h>
@@ -234,7 +235,12 @@ int rt_hw_openamp_init(void)
     openamp_init();
     
     rt_hw_openamp_register(&dev_openamp, "openamp", 0, NULL);
-
+    
+    if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "openamp") == 0)
+    {
+        rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    }
+    
     return RT_EOK;
 }
 INIT_PREV_EXPORT(rt_hw_openamp_init);
