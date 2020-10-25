@@ -18,7 +18,11 @@ STM32F103C8T6最小系统，采用SWD调试接口，可以用3个接口就能完
 
 开发板外观如下图所示：
 
-![board](figures/board.png)
+![board](figures/board1.jpg)
+
+![board](figures/board2.jpg)
+
+![board](figures/board3.jpg)
 
 该开发板常用 **板载资源** 如下：
 
@@ -108,3 +112,4 @@ msh >
 维护人:
 
 -  [obito0](https://github.com/obito0), 邮箱：<496420502@qq.com>
+-  Meco Man : jiantingman@foxmail.com  https://github.com/mysterywolf
