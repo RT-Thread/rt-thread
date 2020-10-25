@@ -26,6 +26,7 @@
  *                             bug when thread has not startup.
  * 2018-11-22     Jesven       yield is same to rt_schedule
  *                             add support for tasks bound to cpu
+ * 2020-10-25     Meco Man     support to suspend thread with nesting
  */
 
 #include <rthw.h>
@@ -178,6 +179,11 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* initialize cleanup function and user data */
     thread->cleanup   = 0;
     thread->user_data = 0;
+    
+    /* initialize current of thread suspense with nesting */
+#ifdef RT_USING_SUSPEND_NESTING
+    thread->suspend_ctr = 0;
+#endif
 
     /* initialize thread timer */
     rt_timer_init(&(thread->thread_timer),
@@ -734,10 +740,15 @@ RTM_EXPORT(rt_thread_control);
  * @note if suspend self thread, after this function call, the
  * rt_schedule() must be invoked.
  */
+#ifndef RT_USING_SUSPEND_NESTING
 rt_err_t rt_thread_suspend(rt_thread_t thread)
+#else
+static rt_err_t _rt_thread_suspend(rt_thread_t thread)
+#endif
 {
-    register rt_base_t stat;
     register rt_base_t temp;
+#ifndef RT_USING_SUSPEND_NESTING
+    register rt_base_t stat;
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
@@ -752,15 +763,17 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
                                        thread->stat));
         return -RT_ERROR;
     }
+#endif
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
+#ifndef RT_USING_SUSPEND_NESTING
     if (stat == RT_THREAD_RUNNING)
     {
         /* not suspend running status thread on other core */
         RT_ASSERT(thread == rt_thread_self());
     }
-
+#endif
     /* change thread stat */
     rt_schedule_remove_thread(thread);
     thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
@@ -774,6 +787,51 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
     return RT_EOK;
 }
+
+#ifdef RT_USING_SUSPEND_NESTING
+rt_err_t rt_thread_suspend(rt_thread_t thread)
+{
+    register rt_ubase_t temp;
+//    register rt_base_t stat;
+
+    /* thread check */
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread: %s, nesting cur: %d\n", thread->name, thread->suspend_ctr));
+
+//    temp = rt_hw_interrupt_disable();
+//    stat = thread->stat & RT_THREAD_STAT_MASK;
+//    if (stat == RT_THREAD_RUNNING)
+//    {
+//        /* not suspend running status thread on other core */
+//        RT_ASSERT(thread == rt_thread_self());
+//    }
+//    rt_hw_interrupt_enable(temp);
+
+    if (thread->suspend_ctr == (RT_THREAD_SUSPEND_MAX)-1)
+    {
+        return -RT_EFULL; /* suspend_ctr overflowed */
+    }
+
+    if((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    {
+        temp = rt_hw_interrupt_disable();
+        thread->suspend_ctr ++;
+        rt_hw_interrupt_enable(temp);
+    }
+    else
+    {
+        _rt_thread_suspend(thread);
+        if(rt_thread_self() == thread)
+        {
+            rt_schedule();
+        }
+    }
+
+    return RT_EOK;
+}
+#endif
 RTM_EXPORT(rt_thread_suspend);
 
 /**
@@ -783,10 +841,15 @@ RTM_EXPORT(rt_thread_suspend);
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
  */
+#ifndef RT_USING_SUSPEND_NESTING
 rt_err_t rt_thread_resume(rt_thread_t thread)
+#else
+rt_err_t _rt_thread_resume(rt_thread_t thread)
+#endif
 {
     register rt_base_t temp;
 
+#ifndef RT_USING_SUSPEND_NESTING
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
@@ -800,6 +863,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
         return -RT_ERROR;
     }
+#endif
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
@@ -818,6 +882,39 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     RT_OBJECT_HOOK_CALL(rt_thread_resume_hook, (thread));
     return RT_EOK;
 }
+
+#ifdef RT_USING_SUSPEND_NESTING
+rt_err_t rt_thread_resume(rt_thread_t thread)
+{
+    register rt_ubase_t temp;
+
+    /* thread check */
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread: %s, nesting cur: %d\n", thread->name, thread->suspend_ctr));
+
+    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_SUSPEND)
+    {
+        RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
+                                       thread->stat));
+
+        return -RT_ERROR;
+    }
+
+    if(thread->suspend_ctr > 0)
+    {
+        temp = rt_hw_interrupt_disable();
+        thread->suspend_ctr --;
+        rt_hw_interrupt_enable(temp);
+    }
+    else
+    {
+        _rt_thread_resume(thread);    
+    }
+    return RT_EOK;
+}
+#endif
 RTM_EXPORT(rt_thread_resume);
 
 /**
@@ -828,6 +925,7 @@ RTM_EXPORT(rt_thread_resume);
  */
 void rt_thread_timeout(void *parameter)
 {
+    register rt_ubase_t temp;
     struct rt_thread *thread;
 
     thread = (struct rt_thread *)parameter;
@@ -840,12 +938,28 @@ void rt_thread_timeout(void *parameter)
     /* set error number */
     thread->error = -RT_ETIMEOUT;
 
+#ifdef RT_USING_SUSPEND_NESTING
+    if(thread->suspend_ctr > 0)
+    {
+        temp = rt_hw_interrupt_disable();
+        thread->suspend_ctr --;
+        rt_hw_interrupt_enable(temp);
+    }
+    else
+    {
+        /* remove from suspend list */
+        rt_list_remove(&(thread->tlist));
+        
+        /* insert to schedule ready list */
+        rt_schedule_insert_thread(thread);        
+    }
+#else
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
 
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
-
+#endif
     /* do schedule */
     rt_schedule();
 }

@@ -34,6 +34,7 @@
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
  * 2020-10-23     Meco Man     define maximum value of ipc type
+ * 2020-10-25     Meco Man     support to suspend thread with nesting
  */
 
 #ifndef __RT_DEF_H__
@@ -109,6 +110,9 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maxium number of mutex .hold */
 #define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
 #define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
+
+/* maximum value of thread type */
+#define RT_THREAD_SUSPEND_MAX           RT_UINT8_MAX    /**< Maxium number of thread suspend nesting */
 
 #if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #define __CLANG_ARM
@@ -626,13 +630,16 @@ struct rt_thread
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
-
-    /* light weight process if present */
+    
 #ifdef RT_USING_LWP
-    void        *lwp;
+    void        *lwp;                                   /**< light weight process if present */
 #endif
 
-    rt_ubase_t user_data;                             /**< private user data beyond this thread */
+#ifdef RT_USING_SUSPEND_NESTING
+    rt_uint8_t suspend_ctr;                             /**< support to suspend thread with nesting */
+#endif
+
+    rt_ubase_t user_data;                               /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
