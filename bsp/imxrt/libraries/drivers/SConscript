@@ -45,7 +45,6 @@ if GetDepend('BSP_USING_LCD'):
 if GetDepend('BSP_USING_ETH'):
     src += ['drv_eth.c']
 
-<<<<<<< HEAD
 if GetDepend('BSP_USING_AUDIO'):
     src += ['drv_sai.c']
     src += ['bsp_wm8960.c']
@@ -53,7 +52,6 @@ if GetDepend('BSP_USING_AUDIO'):
 if GetDepend('BSP_USING_SDIO'):
     src += ['drv_sdio.c'] 
     
-=======
 if GetDepend('BSP_USING_USB_DEVICE'):
     src += ['drv_usbd.c']
     src += Glob('usb/device/*.c')
@@ -61,8 +59,7 @@ if GetDepend('BSP_USING_USB_DEVICE'):
 if GetDepend('BSP_USING_USB_DEVICE'):
     src += Glob('usb/phy/*.c')
     CPPDEFINES += ['ENDIANNESS']
-
->>>>>>> upstream/master
+    
 path =  [cwd,cwd + '/config']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
