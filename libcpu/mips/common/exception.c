@@ -19,10 +19,45 @@
 
 /*@{*/
 
-extern rt_uint32_t __ebase_entry;
-rt_uint32_t rt_interrupt_from_thread;
-rt_uint32_t rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrupt_flag;
+extern rt_ubase_t __ebase_entry;
+rt_ubase_t rt_interrupt_from_thread;
+rt_ubase_t rt_interrupt_to_thread;
+rt_ubase_t rt_thread_switch_interrupt_flag;
+
+const char *exception_name[] = {
+                                "Interrupt",
+                                "(X)TLB Modify Exception",
+                                "(X)TLB Read/Fetch Exception",
+                                "(X)TLB Write Exception",
+                                "Address Read/Fetch Exception",
+                                "Address Write Exception",
+                                "",
+                                "",
+                                "Syscall",
+                                "Breakpoint",
+                                "Reversed Instruction Exception",
+                                "Coprocessor Unit Invalid",
+                                "Overflow",
+                                "Trap",
+                                "FPU Exception in Vector Instruction",
+                                "FPU Exception",
+                                "Loongson Custom Exception",
+                                "",
+                                "",
+                                "(X)TLB Read Denied Exception",
+                                "(X)TLB Execute Denied Exception",
+                                "Vector Module Disabled Exception",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "Cache Error Exception",
+                                ""
+                                };
 
 rt_base_t rt_hw_interrupt_disable(void)
 {
@@ -39,7 +74,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
 /**
  * exception handle table
  */
-#define RT_EXCEPTION_MAX	31
+#define RT_EXCEPTION_MAX 32
 exception_func_t sys_exception_handlers[RT_EXCEPTION_MAX];
 
 /**
@@ -59,10 +94,13 @@ exception_func_t rt_set_except_vector(int n, exception_func_t func)
     return old_handler;
 }
 
-void mips_dump_regs(struct pt_regs *regs) {
+void mips_dump_regs(struct pt_regs *regs)
+{
     int i, j;
-    for(i = 0; i < 32 / 4; i++) {
-        for(j = 0; j < 4; j++) {
+    for (i = 0; i < 32 / 4; i++)
+    {
+        for (j = 0; j < 4; j++)
+        {
             int reg = 4 * i + j;
             rt_kprintf("%d: 0x%08x, ", reg, regs->regs[reg]);
         }
@@ -84,9 +122,15 @@ void cache_error_handler(void)
 
 static void unhandled_exception_handle(struct pt_regs *regs)
 {
-    rt_kprintf("Unknown Exception, EPC: 0x%08x, CAUSE: 0x%08x\n", read_c0_epc(), read_c0_cause());
+    rt_kprintf("Unknown Exception, EPC: 0x%p, CAUSE: 0x%08x\n", read_c0_epc(), read_c0_cause());
+    rt_kprintf("Exception Name:%s\n",exception_name[(read_c0_cause() >> 2) & 0x1f]);
+#ifdef SOC_LS2K1000
+    rt_kprintf("ExeCode = 0x%08x,BadAddr = 0x%p\n",(read_c0_cause() >> 2) & 0x1f,mmu_tlb_get_bad_vaddr());
+#else
+    rt_kprintf("ExeCode = 0x%08x\n",(read_c0_cause() >> 2) & 0x1f);
+#endif
     rt_kprintf("ST0: 0x%08x ",regs->cp0_status);
-    rt_kprintf("ErrorPC: 0x%08x\n",read_c0_errorepc());
+    rt_kprintf("ErrorPC: 0x%p\n",read_c0_errorepc());
     mips_dump_regs(regs);
     rt_hw_cpu_shutdown();
 }
@@ -95,13 +139,17 @@ static void install_default_exception_handler(void)
 {
     rt_int32_t i;
 
-    for (i=0; i<RT_EXCEPTION_MAX; i++)
-        sys_exception_handlers[i] = (exception_func_t)unhandled_exception_handle;
+    for (i = 0; i < RT_EXCEPTION_MAX; i++)
+        sys_exception_handlers[i] =
+                (exception_func_t)unhandled_exception_handle;
 }
 
 int rt_hw_exception_init(void)
 {
-    rt_uint32_t ebase = (rt_uint32_t)&__ebase_entry;
+    rt_ubase_t ebase = (rt_ubase_t)&__ebase_entry;
+#ifdef ARCH_MIPS64
+    ebase |= 0xffffffff00000000;
+#endif
     write_c0_ebase(ebase);
     clear_c0_status(ST0_BEV | ST0_ERL | ST0_EXL);
     clear_c0_status(ST0_IM | ST0_IE);
@@ -114,12 +162,14 @@ int rt_hw_exception_init(void)
 
 void rt_general_exc_dispatch(struct pt_regs *regs)
 {
-    rt_uint32_t cause, exccode;
+    rt_ubase_t cause, exccode;
+    cause = read_c0_cause();
+    exccode = (cause & CAUSEF_EXCCODE) >> CAUSEB_EXCCODE;    
 
-    exccode = (cause & CAUSEF_EXCCODE) >> CAUSEB_EXCCODE;
+    if (exccode == 0)
+    {
+        rt_ubase_t status, pending;
 
-    if (exccode == 0) {
-        rt_uint32_t status, pending;
         status = read_c0_status();
         pending = (cause & CAUSEF_IP) & (status & ST0_IM);
         if (pending & CAUSEF_IP0)
@@ -138,7 +188,9 @@ void rt_general_exc_dispatch(struct pt_regs *regs)
             rt_do_mips_cpu_irq(6);
         if (pending & CAUSEF_IP7)
             rt_do_mips_cpu_irq(7);
-    } else {
+    }
+    else
+    {
         if (sys_exception_handlers[exccode])
             sys_exception_handlers[exccode](regs);
     }

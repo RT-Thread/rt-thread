@@ -84,6 +84,10 @@ static struct rt_pin_ops am33xx_pin_ops =
     am33xx_pin_mode,
     am33xx_pin_write,
     am33xx_pin_read,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
 };
 
 int rt_hw_gpio_init(void)

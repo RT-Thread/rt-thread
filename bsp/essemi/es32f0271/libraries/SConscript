@@ -1,0 +1,32 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = []
+
+src += Glob('ES32F027x_MD_StdPeriph_Driver/Source/*.c')
+
+#add for startup script
+if rtconfig.CROSS_TOOL == 'gcc':
+     src = src + ['CMSIS/Device/EastSoft/ES32F0271/Startup/gcc/startup_es32f027x.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+     src = src + ['CMSIS/Device/EastSoft/ES32F0271/Startup/keil/startup_es32f027x.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+     src = src + ['CMSIS/Device/EastSoft/ES32F0271/Startup/iar/startup_es32f027x.s']
+
+src = src + ['CMSIS/Device/EastSoft/ES32F0271/System/system_es32f027x.c']
+
+path = [cwd + '/CMSIS/Device/EastSoft/ES32F0271/Include',
+        cwd + '/CMSIS/Device/EastSoft/ES32F0271/Include/ES32F0271',
+        cwd + '/CMSIS/Device/EastSoft/ES32F0271/System',
+        cwd + '/CMSIS/Include',
+        cwd + '/',
+        cwd + '/ES32F027x_MD_StdPeriph_Driver/Include']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')

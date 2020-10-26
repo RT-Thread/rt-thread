@@ -1,0 +1,136 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        config BSP_USING_GPIO
+            bool "Enable GPIO"
+            select RT_USING_PIN
+            default y
+
+        menu "UART Drivers"
+            config BSP_USING_UART0
+                bool "Enable UART0 PB10/PB11(T/R)"
+                select RT_USING_SERIAL
+                default n
+
+            config BSP_USING_UART1
+                bool "Enable UART1 PC10/PC11(T/R)"
+                select RT_USING_SERIAL
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2 PC12/PD02(T/R)"
+                select RT_USING_SERIAL
+                default y
+
+            config BSP_USING_UART3
+                bool "Enable UART3 PC04/PC05(T/R)"
+                select RT_USING_SERIAL
+                default n
+                depends on !BSP_USING_SPI2
+
+            config BSP_USING_UART4
+                bool "Enable UART4 PB06/PB07(T/R)"
+                select RT_USING_SERIAL
+                default n
+                depends on !BSP_USING_I2C0
+                depends on !BSP_USING_PWM0
+
+            config BSP_USING_UART5
+                bool "Enable UART5 PB09/PB08(T/R)"
+                select RT_USING_SERIAL
+                default n
+                depends on !BSP_USING_PWM0
+        endmenu
+
+        menu "SPI Drivers"
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS PB03/PB04/PB05(CLK/MISO/MOSI)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS PC01/PC02/PC03(CLK/MISO/MOSI)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS PC05/PB00/PB01(CLK/MISO/MOSI)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n
+                depends on !BSP_USING_UART3
+        endmenu
+
+        menu "I2C Drivers"
+            config BSP_USING_I2C0
+                bool "Enable I2C0 BUS PB06/PB07(SCL/SDA)"
+                select RT_USING_I2C
+                default n
+                depends on !BSP_USING_PWM0
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1 BUS PA05/PA06(SCL/SDA)"
+                select RT_USING_I2C
+                default n
+        endmenu
+
+        menu "CAN Drivers"
+            config BSP_USING_CAN
+                bool "Enable CAN BUS PB08/PB09(RX/TX)"
+                select RT_USING_CAN
+                default n
+        endmenu
+
+        menu "ADC Drivers"
+            config BSP_USING_ADC
+                bool "Using ADC"
+                select RT_USING_ADC
+                default n
+        endmenu
+
+        menu "RTC Drivers"
+            config BSP_USING_RTC
+                bool "Using RTC"
+                select RT_USING_RTC
+                default n
+        endmenu
+
+        menu "HWtimer Drivers"
+            config BSP_USING_HWTIMER0
+                bool "Using timer0"
+                select RT_USING_HWTIMER
+                default n
+
+            config BSP_USING_HWTIMER1
+                bool "Using timer1"
+                select RT_USING_HWTIMER
+                default n
+        endmenu
+
+        menu "PWM Drivers"
+            config BSP_USING_PWM0
+                bool "Using PWM0 PB06/PB07/PB08/PB09"
+                select RT_USING_PWM
+                default n
+                depends on !BSP_USING_CAN
+                depends on !BSP_USING_I2C0
+
+            config BSP_USING_PWM1
+                bool "Using PWM1 PA00/PA01/PA02/PA03"
+                select RT_USING_PWM
+                default n
+        endmenu
+
+    endmenu
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "Offboard Peripheral Drivers"
+
+    endmenu
+
+endmenu

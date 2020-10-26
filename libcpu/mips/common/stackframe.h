@@ -22,7 +22,9 @@
 #ifdef RT_USING_FPU
     /* Ensure CU1 (FPU) is enabled */
     MFC0 v1, CP0_STATUS
-    ori v1, ST0_CU1
+    lui t1, %hi(ST0_CU1)
+    addiu t1, t1, %lo(ST0_CU1)
+    or v1, v1, t1
     MTC0 v1, CP0_STATUS
     SSNOP
     cfc1 v1, fcr31
@@ -60,11 +62,11 @@
     mfhi	v1
     LONG_S	$8, PT_R8(sp)
     LONG_S	$9, PT_R9(sp)
-    LONG_S	v1, PT_HI(sp)
+    sw	v1, PT_HI(sp)
     mflo	v1
     LONG_S	$10, PT_R10(sp)
     LONG_S	$11, PT_R11(sp)
-    LONG_S	v1,  PT_LO(sp)
+    sw	v1,  PT_LO(sp)
     LONG_S	$12, PT_R12(sp)
     LONG_S	$13, PT_R13(sp)
     LONG_S	$14, PT_R14(sp)
@@ -125,11 +127,13 @@
 #ifdef RT_USING_FPU
     /* Ensure CU1 (FPU) is enabled */
     MFC0 v1, CP0_STATUS
-    ori v1, ST0_CU1
+    lui t1, %hi(ST0_CU1)
+    addiu t1, t1, %lo(ST0_CU1)
+    or v1, v1, t1
     MTC0 v1, CP0_STATUS
     SSNOP
     LONG_L v1, PT_FPU_FCSR31(sp)
-    ctc1 v1, fcsr31
+    ctc1 v1, fcr31
     l.d $f0, PT_FPU_R0(sp)
     l.d $f2, PT_FPU_R2(sp)
     l.d $f4, PT_FPU_R4(sp)
@@ -159,11 +163,11 @@
     .endm
 
     .macro	RESTORE_TEMP
-    LONG_L	$24, PT_LO(sp)
+    lw	$24, PT_LO(sp)
     LONG_L	$8, PT_R8(sp)
     LONG_L	$9, PT_R9(sp)
     mtlo	$24
-    LONG_L	$24, PT_HI(sp)
+    lw	$24, PT_HI(sp)
     LONG_L	$10, PT_R10(sp)
     LONG_L	$11, PT_R11(sp)
     mthi	$24
@@ -202,6 +206,8 @@
     li	v1, ~(ST0_CU1 | ST0_FR | ST0_IM)
     and	v0, v1
     or	v0, a0
+    li  v1, (ST0_KX | ST0_SX | ST0_UX)
+    or  v0, v1
     mtc0	v0, CP0_STATUS
     LONG_L	v1, PT_EPC(sp)
     MTC0	v1, CP0_EPC

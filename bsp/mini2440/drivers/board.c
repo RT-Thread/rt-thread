@@ -26,6 +26,29 @@
  */
 /*@{*/
 
+#if defined(__CC_ARM)
+    extern int Image$$ER_ZI$$ZI$$Base;
+    extern int Image$$ER_ZI$$ZI$$Length;
+    extern int Image$$ER_ZI$$ZI$$Limit;
+#elif (defined (__GNUC__))
+    rt_uint8_t _irq_stack_start[1024];
+    rt_uint8_t _fiq_stack_start[1024];
+    rt_uint8_t _undefined_stack_start[512];
+    rt_uint8_t _abort_stack_start[512];
+    rt_uint8_t _svc_stack_start[4096] SECTION(".nobss");
+#endif
+
+#if defined(__CC_ARM)
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#define HEAP_BEGIN      ((void*)&Image$$RW_IRAM1$$ZI$$Limit)
+#elif defined(__GNUC__)
+extern int __bss_end;
+#define HEAP_BEGIN      (((void*)&__bss_end) + 0x1000)
+#endif
+
+#define HEAP_END        (void*)(0x33F00000)
+
+
 extern rt_uint32_t PCLK, FCLK, HCLK, UCLK;
 
 extern void rt_hw_clock_init(void);
@@ -35,118 +58,12 @@ extern void rt_hw_get_clock(void);
 extern void rt_hw_set_dividor(rt_uint8_t hdivn, rt_uint8_t pdivn);
 extern void rt_hw_set_clock(rt_uint8_t sdiv, rt_uint8_t pdiv, rt_uint8_t mdiv);
 
-#define UART0	((struct uartport *)&U0BASE)
-struct serial_int_rx uart0_int_rx;
-struct serial_device uart0 =
-{
-	UART0,
-	&uart0_int_rx,
-	RT_NULL
-};
-struct rt_device uart0_device;
-
-#define UART2	((struct uartport *)&U2BASE)
-struct serial_int_rx uart2_int_rx;
-struct serial_device uart2 =
-{
-	UART2,
-	&uart2_int_rx,
-	RT_NULL
-};
-struct rt_device uart2_device;
-
 /**
  * This function will handle rtos timer
  */
 static void rt_timer_handler(int vector, void *param)
 {
 	rt_tick_increase();
-}
-
-/**
- * This function will handle serial
- */
-static void rt_serial0_handler(int vector, void *param)
-{
-	INTSUBMSK |= (BIT_SUB_RXD0);
-
-	rt_hw_serial_isr(&uart0_device);
-
-	SUBSRCPND |= BIT_SUB_RXD0;
-
-	/* Unmask sub interrupt (RXD0) */
-	INTSUBMSK  &=~(BIT_SUB_RXD0);
-}
-
-/**
- * This function will handle serial
- */
-static void rt_serial2_handler(int vector, void *param)
-{
-	INTSUBMSK |= (BIT_SUB_RXD2);
-
-	rt_hw_serial_isr(&uart2_device);
-
-	SUBSRCPND |= BIT_SUB_RXD2;
-
-	/* Unmask sub interrupt (RXD0) */
-	INTSUBMSK  &=~(BIT_SUB_RXD2);
-}
-
-/**
- * This function will handle init uart
- */
-static void rt_hw_uart_init(void)
-{
-	int i;
-	/* UART0 port configure */
-	GPHCON |= 0xAA;
-	/* PULLUP is disable */
-	GPHUP |= 0xF;
-
-	/* FIFO enable, Tx/Rx FIFO clear */
-	uart0.uart_device->ufcon = 0x0;
-	/* disable the flow control */
-	uart0.uart_device->umcon = 0x0;
-	/* Normal,No parity,1 stop,8 bit */
-	uart0.uart_device->ulcon = 0x3;
-	/*
-	 * tx=level,rx=edge,disable timeout int.,enable rx error int.,
-	 * normal,interrupt or polling
-	 */
-	uart0.uart_device->ucon = 0x245;
-	/* Set uart0 bps */
-	uart0.uart_device->ubrd = (rt_int32_t)(PCLK / (BPS * 16)) - 1;
-	/* output PCLK to UART0/1, PWMTIMER */
-	CLKCON |= 0x0D00;
-
-	/* FIFO enable, Tx/Rx FIFO clear */
-	uart2.uart_device->ufcon = 0x0;
-	/* disable the flow control */
-	uart2.uart_device->umcon = 0x0;
-	/* Normal,No parity,1 stop,8 bit */
-	uart2.uart_device->ulcon = 0x3;
-	/*
-	 * tx=level,rx=edge,disable timeout int.,enable rx error int.,
-	 * normal,interrupt or polling
-	 */
-	uart2.uart_device->ucon = 0x245;
-	/* Set uart0 bps */
-	uart2.uart_device->ubrd = (rt_int32_t)(PCLK / (BPS * 16)) - 1;
-
-	for (i = 0; i < 100; i++);
-
-	/* install uart0 isr */
-	INTSUBMSK &= ~(BIT_SUB_RXD0);
-
-	/* install uart2 isr */
-	INTSUBMSK &= ~(BIT_SUB_RXD2);
-
-	rt_hw_interrupt_install(INTUART0, rt_serial0_handler, RT_NULL, "UART0");
-	rt_hw_interrupt_umask(INTUART0);
-
-	rt_hw_interrupt_install(INTUART2, rt_serial2_handler, RT_NULL, "UART2");
-	rt_hw_interrupt_umask(INTUART2);
 }
 
 /**
@@ -177,6 +94,12 @@ static  void rt_hw_timer_init(void)
  */
 void rt_hw_board_init(void)
 {
+	rt_hw_cpu_icache_enable();
+	rt_hw_cpu_dcache_enable();
+
+	/* init hardware interrupt */
+	rt_hw_interrupt_init();
+
 	/* initialize the system clock */
 	rt_hw_clock_init();
 
@@ -186,14 +109,20 @@ void rt_hw_board_init(void)
 	/* initialize led port */
 	rt_hw_led_init();
 
-	/* initialize uart */
-	rt_hw_uart_init();
-
 	/* initialize mmu */
 	rt_hw_mmu_init();
 
 	/* initialize timer4 */
 	rt_hw_timer_init();
-}
 
+	/* initialize system heap */
+	rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+
+	rt_components_board_init();
+
+#ifdef RT_USING_CONSOLE
+	rt_console_set_device("uart0");
+#endif
+
+}
 /*@}*/

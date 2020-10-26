@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Dgcc'
+    CFLAGS = DEVICE + ' -Dgcc -fstack-usage -fdump-rtl-dfinish'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
@@ -142,3 +142,10 @@ elif PLATFORM == 'iar':
     
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

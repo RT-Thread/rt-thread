@@ -1,3 +1,4 @@
+
 # STM32 BSP 说明
 
 STM32 系列 BSP 目前支持情况如下表所示：
@@ -9,6 +10,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **F1 系列** |  |
 | [stm32f103-atk-nano](stm32f103-atk-nano)        | 正点原子 F103 NANO 开发板  |
 | [stm32f103-atk-warshipv3](stm32f103-atk-warshipv3)  | 正点原子 F103 战舰V3 开发板  |
+| [stm32f103-blue-pill](stm32f103-blue-pill) | STM32F103C8T6蓝色最小系统板 |
 | [stm32f103-dofly-lyc8](stm32f103-dofly-lyc8) | 德飞莱 STM32F103 开发板 |
 | [stm32f103-dofly-M3S](stm32f103-dofly-M3S) | 德飞莱 STM32F103 开发板 |
 | [stm32f103-fire-arbitrary](stm32f103-fire-arbitrary/)  | 野火 F103 霸道开发板     |
@@ -20,6 +22,7 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f405-smdz-breadfruit](stm32f405-smdz-breadfruit) | 三木电子 SM1432F405 开发板 |
 | [stm32f407-st-discovery](stm32f407-st-discovery) | ST 官方 STM32F407-discovery 开发板 |
 | [stm32f407-atk-explorer](stm32f407-atk-explorer) | 正点原子 F407 探索者开发板 |
+| [stm32f411-atk-nano](stm32f411-atk-nano/) | 正点原子 F411 NANO 开发板 |
 | [stm32f411-st-nucleo](stm32f411-st-nucleo/) | ST 官方 STM32F411-Nucleo-64 开发板 |
 | [stm32f427-robomaster-a](stm32f427-robomaster-a/) |大疆公司 RoboMaster A型开发板|
 | [stm32f429-st-disco](stm32f429-st-disco) | ST 官方 STM32F429-discovery 开发板 |
@@ -41,7 +44,9 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | **H7 系列** |  |
 | [stm32h743-atk-apollo](stm32h743-atk-apollo) | 正点原子 h743 阿波罗开发板 |
 | [stm32h743-st-nucleo](stm32h743-st-nucleo) | ST 官方 STM32H743-nucleo 开发板 |
+| [stm32h747-st-discovery](stm32h747-st-discovery) | ST 官方 STM32H747I-discovery 开发板 |
 | **L0 系列** |  |
+| [stm32l010-st-nucleo](stm32l010-st-nucleo) | ST 官方 STM32L010-nucleo 开发板 |
 | [stm32l053-st-nucleo](stm32l053-st-nucleo) | ST 官方 STM32L053-nucleo 开发板 |
 | **L4 系列** |  |
 | [stm32l4r9-st-eval](stm32l4r9-st-eval) | ST 官方 STM32L4R9I-EVAL 开发板 |
@@ -50,6 +55,9 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32l475-st-discovery](stm32l475-st-discovery) | ST 官方 stm32l475-discovery 开发板 |
 | [stm32l476-st-nucleo](stm32l476-st-nucleo) | ST 官方 STM32L476-nucleo 开发板 |
 | [stm32l496-ali-developer](stm32l496-ali-developer) | 诺行 STM32L496 Ali Developer Kit 开发板 |
+| **MP1 系列** |  |
+| [stm32mp157a-st-discovery](stm32mp157a-st-discovery) | ST 官方 STM32MP157A-DK1 开发板 |
+| [stm32mp157a-st-ev1](stm32mp157a-st-ev1) | ST 官方 STM32MP157A-EV1 开发板 |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 

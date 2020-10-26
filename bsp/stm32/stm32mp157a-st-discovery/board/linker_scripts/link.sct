@@ -1,0 +1,35 @@
+; *************************************************************
+; *** Scatter-Loading Description                           ***
+; *************************************************************
+
+LR_VECTORS 0x00000000 0x00000400  {    ; load region size_region
+  .isr_vector +0 {
+    startup*.o (RESET, +First)
+  }
+}
+
+LR_IROM1 0x10000000 0x00020000  {      ; load region size_region
+  ER_IROM1 0x10000000 0x00020000  {    ; load address = execution address
+    *(InRoot$$Sections)
+    .ANY (+RO)
+    .ANY (+XO)
+  }
+  RW_IRAM1 0x10020000 0x00050000  {    ; RW data
+    .ANY (+RW +ZI)
+  }
+;  RW_IRAM2 0x10020000 0x00020000  {    ; RW data
+;    .ANY (+RW +ZI)
+;  }
+;  RW_IRAM3 0x10040000 0x00010000  {    ; RW data
+;    .ANY (+RW +ZI)
+;  }
+;  RW_IRAM4 0x10050000 0x00010000  {    ; RW data
+;    .ANY (+RW +ZI)
+;  }
+; ***** To uncomment these 4 lines if OPENAMP used    *****
+; ***   Create region for OPENAMP                       ***
+  .resource_table +0 ALIGN 4 {         ; resource table
+    *(.resource_table)
+  }
+  __OpenAMP_SHMEM__ 0x10050000 EMPTY 0x8000 {} ; Shared Memory area used by OpenAMP
+}
