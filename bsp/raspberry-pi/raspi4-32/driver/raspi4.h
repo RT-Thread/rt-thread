@@ -119,6 +119,18 @@ typedef enum {
 
 #define GIC_ACK_INTID_MASK  0x000003ff
 
+//watchdog
+#define PM_RSTC         HWREG32(PER_BASE + 0x0010001c)
+#define PM_RSTS         HWREG32(PER_BASE + 0x00100020)
+#define PM_WDOG         HWREG32(PER_BASE + 0x00100024)
+
+#define PM_PASSWORD                 (0x5A000000)
+#define PM_WDOG_TIME_SET            (0x000fffff)
+#define PM_RSTS_HADWRH_SET          (0x00000040)
+#define PM_RSTC_WRCFG_FULL_RESET    (0x00000020)
+#define PM_RSTC_WRCFG_CLR           (0xffffffcf)
+#define PM_RSTC_RESET               (0x00000102)
+
 /* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 {
