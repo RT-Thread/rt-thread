@@ -1,0 +1,35 @@
+﻿# RT-Thread building script for component
+
+Import('RTT_ROOT')
+from building import *
+
+cwd     = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+CPPPATH = [cwd]
+group = []
+
+# USB driver constrain
+if GetDepend('BOARD_USING_HSUSBD') and ( GetDepend('BSP_USING_USBD') or GetDepend('BSP_USING_HSUSBH') or GetDepend('BSP_USING_HSOTG') ):
+    print 'Sorry, wrong selection.'
+    print '[Hint] You already select BOARD_USING_HSUSBD. Please de-select BSP_USING_USBD, BSP_USING_HSUSBH and BSP_USING_HSOTG options.'
+    sys.exit(1)
+elif GetDepend('BOARD_USING_HSUSBD_USBH') and ( GetDepend('BSP_USING_USBD') or GetDepend('BSP_USING_HSUSBH') or GetDepend('BSP_USING_HSOTG') ):
+    print 'Sorry, wrong selection.'
+    print '[Hint] You already select BOARD_USING_HSUSBD_USBH. Please de-select BSP_USING_USBD, BSP_USING_HSUSBH and BSP_USING_HSOTG options.'
+    sys.exit(1)
+elif GetDepend('BOARD_USING_HSUSBH') and ( GetDepend('BSP_USING_USBH') or GetDepend('BSP_USING_HSUSBD') or GetDepend('BSP_USING_HSOTG') ):
+    print 'Sorry, wrong selection.'
+    print '[Hint] You already select BOARD_USING_HSUSBH. Please de-select BSP_USING_USBH, BSP_USING_HSUSBD and BSP_USING_HSOTG options.'
+    sys.exit(1)
+elif GetDepend('BOARD_USING_HSUSBH_USBD') and ( GetDepend('BSP_USING_USBH') or GetDepend('BSP_USING_HSUSBD') or GetDepend('BSP_USING_HSOTG') ):
+    print 'Sorry, wrong selection.'
+    print '[Hint] You already select BOARD_USING_HSUSBH_USBD. Please de-select BSP_USING_USBH, BSP_USING_HSUSBD and BSP_USING_HSOTG options.'
+    sys.exit(1)
+elif GetDepend('BOARD_USING_HSOTG') and ( GetDepend('BSP_USING_USBD') or GetDepend('BSP_USING_USBH') ):
+    print 'Sorry, wrong selection.'
+    print '[Hint] You already select BOARD_USING_HSOTG. Please de-select BSP_USING_USBD and BSP_USING_USBH options.'
+    sys.exit(1)
+else:
+    group = DefineGroup('m480_rttport', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

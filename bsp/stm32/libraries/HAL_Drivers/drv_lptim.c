@@ -13,15 +13,6 @@
 
 static LPTIM_HandleTypeDef LptimHandle;
 
-void HAL_LPTIM_MspInit(LPTIM_HandleTypeDef *hlptim)
-{
-    if (hlptim->Instance == LPTIM1)
-    {
-        /* Peripheral clock enable */
-        __HAL_RCC_LPTIM1_CLK_ENABLE();
-    }
-}
-
 void LPTIM1_IRQHandler(void)
 {
     HAL_LPTIM_IRQHandler(&LptimHandle);

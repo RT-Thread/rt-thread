@@ -1,12 +1,18 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-12-04     Jiaxun Yang  Initial version
+ * 2020-07-26     lizhirui     Add xtlb exception entry
  */
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
+#include <mips.h>
 
     .section ".exc_vectors", "ax"
     .extern tlb_refill_handler
@@ -18,6 +24,11 @@
     .type	tlb_refill_exception,@function
 ebase_start:
 tlb_refill_exception:
+    b	_general_exception_handler
+    nop
+
+    /* 0x080 - XTLB refill handler */
+    .org ebase_start + 0x080
     b	_general_exception_handler
     nop
 
@@ -45,15 +56,15 @@ irq_exception:
     /* general exception handler */
 _general_exception_handler:
     .set	noreorder
-    la	$k0, mips_irq_handle
-    jr	$k0
+    PTR_LA	k0, mips_irq_handle
+    jr	k0
     nop
     .set	reorder
 
     /* interrupt handler */
 _irq_handler:
     .set	noreorder
-    la	$k0, mips_irq_handle
-    jr	$k0
+    PTR_LA	k0, mips_irq_handle
+    jr	k0
     nop
     .set	reorder

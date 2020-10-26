@@ -419,6 +419,7 @@ int rt_hw_pin_init(void)
     lpc_pin_ops.pin_attach_irq  = lpc_pin_attach_irq;
     lpc_pin_ops.pin_detach_irq  = lpc_pin_detach_irq;
     lpc_pin_ops.pin_irq_enable  = lpc_pin_irq_enable;
+    lpc_pin_ops.pin_get         = RT_NULL,
 
     ret = rt_device_pin_register("pin", &lpc_pin_ops, RT_NULL);
 

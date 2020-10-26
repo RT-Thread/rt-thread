@@ -5,6 +5,9 @@ ARCH='arm'
 CPU='cortex-m7'
 CROSS_TOOL='gcc'
 
+# bsp lib config
+BSP_LIBRARY_TYPE = None
+
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 if os.getenv('RTT_ROOT'):
@@ -49,6 +52,9 @@ if PLATFORM == 'gcc':
 
     CPATH = ''
     LPATH = ''
+
+    AFLAGS += ' -D__STARTUP_INITIALIZE_NONCACHEDATA'
+    AFLAGS += ' -D__STARTUP_CLEAR_BSS'
 
     if BUILD == 'debug':
         CFLAGS += ' -gdwarf-2'
@@ -150,3 +156,10 @@ elif PLATFORM == 'iar':
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

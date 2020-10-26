@@ -508,6 +508,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 
     /* create a hub instance */
     hub = rt_malloc(sizeof(struct uhub));
+    RT_ASSERT(hub != RT_NULL);
     rt_memset(hub, 0, sizeof(struct uhub));
     
     /* make interface instance's user data point to hub instance */

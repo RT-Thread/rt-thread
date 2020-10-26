@@ -443,16 +443,15 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 #if LWIP_NETIF_HOSTNAME
 #define LWIP_HOSTNAME_LEN 16
     char *hostname = RT_NULL;
-    netif = (struct netif*) rt_malloc (sizeof(struct netif) + LWIP_HOSTNAME_LEN);
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
 #else
-    netif = (struct netif*) rt_malloc (sizeof(struct netif));
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif));
 #endif
     if (netif == RT_NULL)
     {
         rt_kprintf("malloc netif failed\n");
         return -RT_ERROR;
     }
-    rt_memset(netif, 0, sizeof(struct netif));
 
     /* set netif */
     dev->netif = netif;

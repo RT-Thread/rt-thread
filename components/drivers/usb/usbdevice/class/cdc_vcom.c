@@ -28,7 +28,11 @@
 #define VCOM_TX_TIMEOUT      1000
 #endif /*RT_VCOM_TX_TIMEOUT*/
 
+#ifdef RT_CDC_RX_BUFSIZE
+#define CDC_RX_BUFSIZE          RT_CDC_RX_BUFSIZE
+#else
 #define CDC_RX_BUFSIZE          128
+#endif
 #define CDC_MAX_PACKET_SIZE     64
 #define VCOM_DEVICE             "vcom"
 
@@ -489,6 +493,7 @@ static rt_err_t _function_enable(ufunction_t func)
     
     data = (struct vcom*)func->user_data;
     data->ep_out->buffer = rt_malloc(CDC_RX_BUFSIZE);
+    RT_ASSERT(data->ep_out->buffer != RT_NULL);
 
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
@@ -584,11 +589,13 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
     
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
-    //not support HS
-    //rt_usbd_device_set_qualifier(device, &dev_qualifier);
+    
+    /* support HS */
+    rt_usbd_device_set_qualifier(device, &dev_qualifier);
     
     /* allocate memory for cdc vcom data */
     data = (struct vcom*)rt_malloc(sizeof(struct vcom));
+    RT_ASSERT(data != RT_NULL);
     rt_memset(data, 0, sizeof(struct vcom));
     func->user_data = (void*)data;
     

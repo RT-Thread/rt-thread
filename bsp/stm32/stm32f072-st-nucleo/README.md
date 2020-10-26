@@ -29,7 +29,7 @@ NUCLEO-F072RB 开发板常用 **板载资源** 如下：
 - 常用接口：USB 转串口、Arduino Uno 和 ST morpho 两类扩展接口
 - 调试接口：板载 ST-LINK/V2-1 调试器。
 
-更多相关信息资料见 ST 官网详情页：[NUCLEO_F072RB_STM32Nucleo-64开发板]https://www.stmcu.com.cn/Designresource/design_resource_detail?file_name=NUCLEO_F072RB_STM32Nucleo-64%E5%BC%80%E5%8F%91%E6%9D%BF&lang=EN&ver=
+开发板更多详细信息请参考意法半导体[NUCLEO-F072RB](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-f072rb.html)
 
 ## 外设支持
 

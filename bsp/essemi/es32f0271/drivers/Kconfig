@@ -1,0 +1,102 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        menu "PIN Drivers"
+        config BSP_USING_GPIO
+            bool "Enable GPIO"
+            select RT_USING_PIN
+            default y
+        endmenu
+
+        menu "UART Drivers"
+            config BSP_USING_UART1
+                bool "Enable UART1 PB06/PB07(T/R)"
+                select RT_USING_SERIAL
+                default y
+
+            config BSP_USING_UART2
+                bool "Enable UART2 PA02/PA03(T/R)"
+                select RT_USING_SERIAL
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3 PC06/PC07(T/R)"
+                select RT_USING_SERIAL
+                default n
+        endmenu
+
+        menu "SPI Drivers"
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS PB03/PB04/PB05(CLK/MISO/MOSI)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS PB13/PB14/PB15(CLK/MISO/MOSI)"
+                select RT_USING_SPI
+                select RT_USING_PIN
+                default n
+                depends on !BSP_USING_PWM_GP16C2T4
+        endmenu
+
+        menu "I2C Drivers"
+            config BSP_USING_I2C1
+                bool "Enable I2C1 BUS PC12/PD02(SCL/SDA)"
+                select RT_USING_I2C
+                default n
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2 BUS PB10/PB11(SCL/SDA)"
+                select RT_USING_I2C
+                default n
+        endmenu
+
+        menu "HWtimer Drivers"
+
+            config BSP_USING_HWTIMER1
+                bool "Using timer1"
+                select RT_USING_HWTIMER
+                default n
+        endmenu
+
+        menu "PWM Drivers"
+
+            config BSP_USING_PWM_GP16C2T1
+                bool "Using PWM_1(GP16C2T1) PB01/PB02"
+                select RT_USING_PWM
+                default n
+
+            config BSP_USING_PWM_GP16C2T4
+                bool "Using PWM2(GP16C2T4) PB12/PB14"
+                select RT_USING_PWM
+                default n
+                depends on !BSP_USING_SPI2
+
+        endmenu
+
+        menu "RTC Drivers"
+            config BSP_USING_RTC
+                bool "Using RTC"
+                select RT_USING_RTC
+                default n
+        endmenu
+
+        menu "ADC Drivers"
+            config BSP_USING_ADC
+                bool "Using ADC"
+                select RT_USING_ADC
+                default n
+        endmenu
+
+    endmenu
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "Offboard Peripheral Drivers"
+
+    endmenu
+
+endmenu

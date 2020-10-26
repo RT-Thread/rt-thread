@@ -5,12 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017/08/30      Bernard      The first version
+ * 2017/08/30     Bernard      The first version
  */
 #ifndef TERMIOS_H__
 #define TERMIOS_H__
 
 #include <rtthread.h>
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {

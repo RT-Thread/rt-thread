@@ -124,7 +124,7 @@ static void _dlmodule_exit(void)
                 rt_thread_t thread = (rt_thread_t)object;
 
                 /* stop timer and suspend thread*/
-                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE ||
+                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
                     (thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
                 {
                     rt_timer_stop(&(thread->thread_timer));
