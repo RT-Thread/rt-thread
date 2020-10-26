@@ -114,13 +114,9 @@ int rt_hw_wdt_init(void)
     rt_hw_watchdog_register(&raspi_wdg, "wdg", 0, RT_NULL);
     return RT_EOK;
 }
-
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
 
-/**
- * Reboot
- */
-int reboot(void)
+void reboot(void)
 {
     unsigned int r;
 
@@ -134,8 +130,6 @@ int reboot(void)
     PM_RSTC |= (PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
     
     while (1);
-    
-    return 0;
 }
 MSH_CMD_EXPORT(reboot,reboot system...);
 #endif /*BSP_USING_WDT */
