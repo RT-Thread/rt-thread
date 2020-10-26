@@ -1,19 +1,23 @@
 /****************************************************************************
  *
- * File Name£º
+ * File Name:
  *  
- * Author£º
+ * Author:
  *  
- * Date£º
+ * Date:
  * 
  * Descriptions:
  * 
  *
  ******************************************************************************/
+#ifndef W25Q128_H_
+#define W25Q128_H_
 /*----------------------------------------------------------------------------*
 **                             Dependencies                                   *
 **----------------------------------------------------------------------------*/
-
+#include <rtthread.h>
+#include "drv_spi.h"
+#include "board_config.h"
 
 /**---------------------------------------------------------------------------*
  **                            Debugging Flag                                 *
@@ -55,14 +59,23 @@ extern   "C"
 **                             Function Define                                *
 **----------------------------------------------------------------------------*/
 /*************************************************
-* Function:
-* Description:
-* Author:
+* Function:rt_hw_spi_oled_init
+* Description: 
+* Author:Eric
 * Returns: 
 * Parameter:
 * History:
 *************************************************/
+static int rt_hw_spi_w25q128_init(void)
+{
+	   
+	/* CS pin PA3 attach spi device */
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    rt_hw_spi_device_attach("spi1", "spi10", GPIOA, GPIO_PIN_3);
 
+    return RT_EOK;
+}
+INIT_COMPONENT_EXPORT(rt_hw_spi_oled_init);
 
 
 
@@ -73,4 +86,5 @@ extern   "C"
 }
 #endif
 // End of xxx.c
-
+#endif  
+// End of xxx.H

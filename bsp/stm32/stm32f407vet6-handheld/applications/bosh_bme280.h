@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-10-24 16:02:14
+ * @LastEditTime: 2020-10-26 14:08:18
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \stm32f407vet6-handheld\applications\bosh_bme280.h
+ */
 /****************************************************************************
  *
  * File Name:
@@ -10,9 +18,14 @@
  * 
  *
  ******************************************************************************/
+#ifndef BME280_H_
+#define BME280_H_
 /*----------------------------------------------------------------------------*
 **                             Dependencies                                   *
 **----------------------------------------------------------------------------*/
+#include <rtthread.h>
+#include <rtdevice.h>
+#include "board_config.h"
 
 
 /**---------------------------------------------------------------------------*
@@ -30,6 +43,12 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Mcaro Definitions                              *
 **----------------------------------------------------------------------------*/
+/* bosh bme280sensor i2c device name */
+#define BOSH_BME280_I2C_BUS_NAME    "i2c1" 
+
+/* i2c bus device handle */
+static struct rt_i2c_bus_device *i2c_bus = NULL;
+i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(BOSH_BME280_I2C_BUS_NAME);
 
 /*----------------------------------------------------------------------------*
 **                             Data Structures                                *

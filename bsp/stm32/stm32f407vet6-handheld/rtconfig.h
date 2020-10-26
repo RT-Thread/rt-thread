@@ -92,6 +92,8 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_SPI
+#define RT_USING_SENSOR
+#define RT_USING_SENSOR_CMD
 
 /* Using USB */
 
@@ -165,6 +167,9 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_SENSORS_DRIVERS
+#define PKG_USING_BME280
+#define PKG_USING_BME280_LATEST_VERSION
 #define PKG_USING_U8G2
 #define U8G2_USE_HW_SPI
 #define U8G2_SPI_BUS_NAME "spi1"
@@ -214,13 +219,21 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_UART2
+#define BSP_USING_ON_CHIP_FLASH
 #define BSP_USING_SPI
 #define BSP_USING_SPI1
 #define BSP_SPI1_TX_USING_DMA
 #define BSP_SPI1_RX_USING_DMA
-#define BSP_USING_I2C2
-#define BSP_I2C2_SCL_PIN 24
-#define BSP_I2C2_SDA_PIN 25
+#define BSP_USING_SPI2
+#define BSP_SPI2_TX_USING_DMA
+#define BSP_SPI2_RX_USING_DMA
+#define BSP_USING_SPI3
+#define BSP_SPI3_TX_USING_DMA
+#define BSP_SPI3_RX_USING_DMA
+#define BSP_USING_I2C1
+#define BSP_I2C1_SCL_PIN 95
+#define BSP_I2C1_SDA_PIN 96
 #define BSP_USING_USBD
 #define BSP_USBD_TYPE_FS
 

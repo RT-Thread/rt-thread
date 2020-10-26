@@ -73,5 +73,3 @@ extern   "C"
 }
 #endif
 // End of xxx.c
-#endif  
-// End of xxx.H
