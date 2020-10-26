@@ -1,9 +1,12 @@
 /*
- * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016-2019 NXP
- * All rights reserved.
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-12-05     zylx         The first version for STM32F4xx
+ * 2019-4-25      misonyo      port to IMXRT
  */
 
 #ifndef __DRV_WM8960_H__
