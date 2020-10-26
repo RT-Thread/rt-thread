@@ -6,5 +6,6 @@
         "**/build" : true,
         "**/*.pyc" : true
     },
-    "editor.renderWhitespace": "all"
+    "editor.renderWhitespace": "all",
+    "C_Cpp.errorSquiggles": "Enabled"
 }
