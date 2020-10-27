@@ -13,6 +13,7 @@
 #include "mbox.h"
 #include "drv_hdmi.h"
 
+#ifdef BSP_USING_HDMI
 #define LCD_WIDTH     (800)
 #define LCD_HEIGHT    (480)
 #define LCD_DEPTH     (32)
@@ -305,3 +306,4 @@ int hdmi_fb_init(void)
 }
 
 INIT_DEVICE_EXPORT(hdmi_fb_init);
+#endif /*BSP_USING_HDMI */

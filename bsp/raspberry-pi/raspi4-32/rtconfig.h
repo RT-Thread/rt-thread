@@ -183,5 +183,7 @@
 
 /* Board Peripheral Drivers */
 
+#define BSP_USING_HDMI
+#define BSP_USING_HDMI_DISPLAY
 
 #endif
