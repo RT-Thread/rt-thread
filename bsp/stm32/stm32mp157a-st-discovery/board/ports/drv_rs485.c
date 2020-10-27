@@ -19,14 +19,13 @@
 static rt_device_t serial = {0};
 static struct rt_semaphore rx_sem = {0};
 
-/* rs485 send data callback function */
+/* uart send data callback function */
 static rt_err_t rs485_output(rt_device_t dev, void * buffer)
 {
-    RS485_IN; 
-    
     return RT_EOK;
 }
 
+/* uart receive data callback function */
 static rt_err_t rs485_input(rt_device_t dev, rt_size_t size)
 {
     rt_sem_release(&rx_sem);
@@ -37,12 +36,13 @@ static rt_err_t rs485_input(rt_device_t dev, rt_size_t size)
 /* send string */
 int rs485_send_data(char *tbuf, rt_uint16_t t_len)
 {
-    /* set rs485 mode */
+    /* change rs485 mode */
     RS485_OUT;
     
     /* send data */
     rt_device_write(serial, 0, tbuf, t_len);
     
+    /* change rs485 mode */
     RS485_IN;
     
     return RT_EOK;
@@ -63,6 +63,7 @@ static void rs485_thread_entry(void *parameter)
         /* The data read through the serial port output dislocation */
         ch = ch + 1;
         
+        /* send char */
         rs485_send_data(&ch, 1);
     }
 }
