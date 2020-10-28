@@ -193,7 +193,7 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
         return -RT_ERROR;
     }
     
-#if defined(SOC_SERIES_STM32MP1) || defined (SOC_SERIES_STM32H7)
+#if defined(SOC_SERIES_STM32MP1) || defined (SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
     ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;
 #else
     ADC_ChanConf.Rank = 1;
@@ -205,22 +205,24 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_55CYCLES_5;
 #elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_112CYCLES;
-#elif defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
+#elif defined(SOC_SERIES_STM32L4)
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
 #elif defined(SOC_SERIES_STM32MP1)
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_810CYCLES_5;
 #elif defined(SOC_SERIES_STM32H7)
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_64CYCLES_5;
+    #elif defined (SOC_SERIES_STM32WB)
+    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
 #endif
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
     ADC_ChanConf.Offset = 0;
 #endif
 
-#if defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
+#if defined(SOC_SERIES_STM32L4)
     ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;
     ADC_ChanConf.SingleDiff = LL_ADC_SINGLE_ENDED;
-#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
     ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;  /* ADC channel affected to offset number */
     ADC_ChanConf.Offset       = 0; 
     ADC_ChanConf.SingleDiff   = ADC_SINGLE_ENDED; /* ADC channel differential mode */
