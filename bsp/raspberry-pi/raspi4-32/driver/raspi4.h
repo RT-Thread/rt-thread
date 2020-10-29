@@ -119,6 +119,39 @@ typedef enum {
 
 #define GIC_ACK_INTID_MASK  0x000003ff
 
+//watchdog
+#define PM_RSTC         HWREG32(PER_BASE + 0x0010001c)
+#define PM_RSTS         HWREG32(PER_BASE + 0x00100020)
+#define PM_WDOG         HWREG32(PER_BASE + 0x00100024)
+
+#define PM_PASSWORD                 (0x5A000000)
+#define PM_WDOG_TIME_SET            (0x000fffff)
+#define PM_RSTS_HADWRH_SET          (0x00000040)
+#define PM_RSTC_WRCFG_FULL_RESET    (0x00000020)
+#define PM_RSTC_WRCFG_CLR           (0xffffffcf)
+#define PM_RSTC_RESET               (0x00000102)
+
+//timer
+#define ST_BASE_OFFSET     (0x003000)
+#define STIMER_BASE  (PER_BASE  + ST_BASE_OFFSET)
+#define STIMER_CS    __REG32(STIMER_BASE + 0x0000)
+#define STIMER_CLO   __REG32(STIMER_BASE + 0x0004)
+#define STIMER_CHI   __REG32(STIMER_BASE + 0x0008)
+#define STIMER_C0    __REG32(STIMER_BASE + 0x000C)
+#define STIMER_C1    __REG32(STIMER_BASE + 0x0010)
+#define STIMER_C2    __REG32(STIMER_BASE + 0x0014)
+#define STIMER_C3    __REG32(STIMER_BASE + 0x0018)
+
+#define DELAY_MICROS(micros) \
+    do{ \
+ rt_uint32_t compare = STIMER_CLO + micros * 25; \
+ while (STIMER_CLO < compare); \
+    } while (0) \
+
+//External Mass Media Controller (SD Card)
+#define MMC0_BASE_ADDR		(PER_BASE+0x300000)   
+#define MMC2_BASE_ADDR		(PER_BASE+0x340000)  
+
 /* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 {
