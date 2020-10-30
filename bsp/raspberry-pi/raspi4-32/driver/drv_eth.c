@@ -1,3 +1,14 @@
+
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author         Notes
+ * 2020-10-30     bigmagic       first version
+ */
+
 #include <rthw.h>
 #include <stdint.h>
 #include <rtthread.h>
