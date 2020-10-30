@@ -445,6 +445,7 @@ static rt_err_t configure(struct rt_spi_device *device,
     struct tina_spi_cs *tina_spi_cs = device->parent.user_data;
     struct tina_spi *_spi_info = (struct tina_spi *)spi_bus->parent.user_data;
     SPI_T *spi = _spi_info->spi;
+    rt_err_t ret = RT_EOK;
 
     LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
@@ -483,7 +484,7 @@ static rt_err_t configure(struct rt_spi_device *device,
         SPI_SetFirstTransmitBit(spi, SPI_TCTRL_FBS_LSB);
     }
 
-    switch (configuration->mode)
+    switch (configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
         SPI_SetSclkMode(spi, SPI_SCLK_Mode0);
@@ -497,6 +498,9 @@ static rt_err_t configure(struct rt_spi_device *device,
     case RT_SPI_MODE_3:
         SPI_SetSclkMode(spi, SPI_SCLK_Mode3);
         break;
+    default:
+        ret = -RT_EIO;
+        goto exit_spi_bus_config_mode_err;
     }
 
     /* baudrate */
@@ -531,9 +535,10 @@ static rt_err_t configure(struct rt_spi_device *device,
     SPI_SetDataSize(spi, 0, 0);
     SPI_Enable(spi);
 
+exit_spi_bus_config_mode_err:
     LOG_D("%s -> %d", __FUNCTION__, __LINE__);
 
-    return RT_EOK;
+    return ret;
 };
 
 static rt_uint32_t xfer(struct rt_spi_device *device, struct rt_spi_message *message)
