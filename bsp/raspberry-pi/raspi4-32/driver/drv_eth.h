@@ -6,7 +6,7 @@
  *
  * Change Logs:
  * Date           Author         Notes
- * 2020-04-16     bigmagic       first version
+ * 2020-10-30     bigmagic       first version
  */
 
 #ifndef __DRV_ETH_H__
