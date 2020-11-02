@@ -12,9 +12,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    #EXEC_PATH   = r'/opt/unknown-gcc/bin'
-    #EXEC_PATH   = r'/home/rudy/opt/tmp/SiFive/riscv64-unknown-elf-gcc-8.3.0-2019.08.0/bin'
-    EXEC_PATH   = r'/home/rudy/opt/FreedomStudio/SiFive/riscv64-unknown-elf-gcc-8.3.0-2020.04.1/bin/'
+    EXEC_PATH   = r'/opt/unknown-gcc/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
