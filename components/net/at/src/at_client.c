@@ -917,6 +917,11 @@ int at_client_init(const char *dev_name,  rt_size_t recv_bufsz)
     RT_ASSERT(dev_name);
     RT_ASSERT(recv_bufsz > 0);
 
+    if (at_client_get(dev_name) != RT_NULL)
+    {
+        return result;
+    }
+
     for (idx = 0; idx < AT_CLIENT_NUM_MAX && at_client_table[idx].device; idx++);
 
     if (idx >= AT_CLIENT_NUM_MAX)
