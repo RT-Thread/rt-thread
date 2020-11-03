@@ -24,10 +24,15 @@
 #define RECV_DATA_NO_CACHE      (0x08400000)
 #define DMA_DISC_ADDR_SIZE      (4 * 1024 *1024)
 
-#define RX_DESC_BASE (MAC_REG + GENET_RX_OFF)
-#define TX_DESC_BASE (MAC_REG + GENET_TX_OFF)
+#define RX_DESC_BASE            (MAC_REG + GENET_RX_OFF)
+#define TX_DESC_BASE            (MAC_REG + GENET_TX_OFF)
 
-#define MAX_ADDR_LEN (6)
+#define MAX_ADDR_LEN            (6)
+
+#define upper_32_bits(n)        ((rt_uint32_t)(((n) >> 16) >> 16))
+#define lower_32_bits(n)        ((rt_uint32_t)(n))
+
+#define BIT(nr)                 (1UL << (nr))
 
 static rt_uint32_t tx_index = 0;
 static rt_uint32_t rx_index = 0;
@@ -49,28 +54,6 @@ struct rt_eth_dev
 };
 static struct rt_eth_dev eth_dev;
 static struct rt_semaphore sem_lock;
-
-#define upper_32_bits(n) ((rt_uint32_t)(((n) >> 16) >> 16))
-#define lower_32_bits(n) ((rt_uint32_t)(n))
-
-
-#define BIT(nr)                     (1UL << (nr))
-
-#define roundup(x, y) (                    \
-{                            \
-    const typeof(y) __y = y;            \
-    (((x) + (__y - 1)) / __y) * __y;        \
-}                            \
-)
-#define rounddown(x, y) (                \
-{                            \
-    typeof(x) __x = (x);                \
-    __x - (__x % (y));                \
-}                            \
-)
-
-#define CLR(r,x) (r &= ~(1UL << x))
-#define SET(r,y) (r |= (1UL << y))
 
 static inline rt_uint32_t read32(void *addr)
 {
@@ -214,7 +197,7 @@ static int bcmgenet_gmac_write_hwaddr(void)
     return 0;
 }
 
-int get_ethernet_uid(void)
+static int get_ethernet_uid(void)
 {
     rt_uint32_t uid_high = 0;
     rt_uint32_t uid_low = 0;
@@ -308,7 +291,7 @@ static void rx_descs_init(void)
     }
 }
 
-int phy_startup(void)
+static int phy_startup(void)
 {
     int count = 1000000;
     while ((bcmgenet_mdio_read(1, BCM54213PE_MII_STATUS) & MII_STATUS_LINK_UP) && (--count))
@@ -344,7 +327,7 @@ int phy_startup(void)
     return 0;
 }
 
-int bcmgenet_adjust_link(void)
+static int bcmgenet_adjust_link(void)
 {
     rt_uint32_t speed;
     rt_uint32_t phy_dev_speed = SPEED_100;
