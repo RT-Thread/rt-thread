@@ -1,10 +1,10 @@
 # STM32 Nucleo-64 BSP Introduction
 
-This document records the guide of the BSP (board support package) provided by the RT-Thread development team for the STM32 Nucleo-64 development boards.
+This document records the instruction of the BSP (board support package) that provided by the RT-Thread development team for the STM32 Nucleo-64 development boards.
 
 The document is covered in three parts:
 
--  Resources Introduction
+- Resources Introduction
 - Quickly Get Started
 - Advanced Features
 
@@ -82,7 +82,7 @@ msh >
 
 ### Terminal tool - PuTTy 
 
-If you have no terminal tool software available, you can download *PuTTy*:
+If you don't have a terminal tool software available, you can download *PuTTy*:
 
 >  https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html
 
@@ -90,7 +90,7 @@ If you have no terminal tool software available, you can download *PuTTy*:
 
 
 
-These two videos will show you how to use PuTTy:
+Follow these tutorial videos to learn PuTTy:
 
 > https://www.youtube.com/watch?v=ab4ilbsteWU
 >
@@ -102,12 +102,12 @@ These two videos will show you how to use PuTTy:
 
 This BSP only enables GPIO and USART2 by default. If you need more advanced features such as SPI, I2C, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env) , as follows:
 
-1. Open the ENV tool under the specific BSP folder;
+1. Open the Env tool under the specific BSP folder;
 2. Enter `menuconfig` command to configure the project, then save and exit;
 3. Enter `pkgs --update` command to update the package;
 4. Enter `scons --target=mdk4/mdk5/iar` command to regenerate the project.
 
-Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
+Learn how to use RT-Thread Env, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
 
 
 
