@@ -2,7 +2,7 @@
 
 [中文](README_zh.md) 
 
-## MCU: STM32F410RBT6 @100MHz, 128KB FLASH,  32KB RAM
+## MCU: STM32F410RB @100MHz, 128KB FLASH,  32KB RAM
 
 The STM32F410x8/B devices are based on the high-performance ARM®Cortex® -M4 32-bit RISC core operating at a frequency of up to 100 MHz. Their Cortex®-M4 core features a Floating point unit (FPU) single precision which supports all ARM single-precision data-processing instructions and data types. It also implements a full set of DSP instructions and a memory protection unit (MPU) which enhances application security.
 
@@ -62,17 +62,12 @@ All devices offer one 12-bit ADC, one 12-bit DAC, a low-power RTC, three general
 
 
 
-## Must-Read
+## Read more
 
-This document will demonstrate how to run RT-Thread on STM32 Nucleo-64 boards: [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md)
-
-
-
-## Read more / More details
-
-|                    document title & link                     |                description                |
-| :----------------------------------------------------------: | :---------------------------------------: |
-| [STM32F410RB ST Official Website](https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f4-series/stm32f410/stm32f410rb.html#documentation) | STM32F410RB datasheet and other resources |
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32F410RB ST Official Website](https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f4-series/stm32f410/stm32f410rb.html#documentation) |          STM32F410RB datasheet and other resources           |
 
 
 
