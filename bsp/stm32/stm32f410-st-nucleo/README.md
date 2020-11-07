@@ -42,7 +42,7 @@ All devices offer one 12-bit ADC, one 12-bit DAC, a low-power RTC, three general
   - Three 16-bit general purpose timers
   - One 32-bit timer up to 100 MHz with up to four IC/OC/PWM or pulse counter and quadrature (incremental) encoder input
   - Two watchdog timers (independent window)
-  - SysTick timer.
+  - SysTick timer
 
 - Debug mode
   - Serial wire debug (SWD) & JTAG interfaces
