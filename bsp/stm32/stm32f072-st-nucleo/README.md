@@ -33,7 +33,7 @@ These features make the STM32F072x8/xB microcontrollers suitable for a wide rang
 
 - Clock management
 
-- - 4 to 32 MHz crystal oscillator
+  - 4 to 32 MHz crystal oscillator
   - 32 kHz oscillator for RTC with calibration
   - Internal 8 MHz RC with x6 PLL option
   - Internal 40 kHz RC oscillator
@@ -41,14 +41,14 @@ These features make the STM32F072x8/xB microcontrollers suitable for a wide rang
 
 - Up to 87 fast I/Os
 
-- - All mappable on external interrupt vectors
+  - All mappable on external interrupt vectors
   - Up to 68 I/Os with 5V tolerant capability and 19 with independent supply VDDIO2
 
 - Seven-channel DMA controller
 
 - One 12-bit, 1.0 μs ADC (up to 16 channels)
 
-- - Conversion range: 0 to 3.6 V
+  - Conversion range: 0 to 3.6 V
   - Separate analog supply: 2.4 V to 3.6 V
 
 - One 12-bit D/A converter (with 2 channels)
@@ -61,14 +61,14 @@ These features make the STM32F072x8/xB microcontrollers suitable for a wide rang
 
 - 12 timers
 
-- - One 16-bit advanced-control timer for six-channel PWM output
+  - One 16-bit advanced-control timer for six-channel PWM output
   - One 32-bit and seven 16-bit timers, with up to four IC/OC, OCN, usable for IR control decoding or DAC control
   - Independent and system watchdog timers
   - SysTick timer
 
 - Communication interfaces
 
-- - Two I2C interfaces supporting Fast Mode Plus (1 Mbit/s) with 20 mA current sink, one supporting SMBus/PMBus and wakeup
+  - Two I2C interfaces supporting Fast Mode Plus (1 Mbit/s) with 20 mA current sink, one supporting SMBus/PMBus and wakeup
   - Four USARTs supporting master synchronous SPI and modem control, two with ISO7816 interface, LIN, IrDA, auto baud rate detection and wakeup feature
   - Two SPIs (18 Mbit/s) with 4 to 16 programmable bit frames, and with I2S interface multiplexed
   - CAN interface
