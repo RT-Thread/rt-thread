@@ -16,14 +16,14 @@ These features make the STM32F072x8/xB microcontrollers suitable for a wide rang
 
 - Memories
 
-- - 64 to 128 Kbytes of Flash memory
+  - 64 to 128 Kbytes of Flash memory
   - 16 Kbytes of SRAM with HW parity
 
 - CRC calculation unit
 
 - Reset and power management
 
-- - Digital and I/O supply: VDD= 2.0 V to 3.6 V
+  - Digital and I/O supply: VDD= 2.0 V to 3.6 V
   - Analog supply: VDDA= VDDto 3.6 V
   - Selected I/Os: VDDIO2= 1.65 V to 3.6 V
   - Power-on/Power down reset (POR/PDR)
