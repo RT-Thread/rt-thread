@@ -126,10 +126,10 @@ def CLAddCFiles(parent, files, project_path):
     
 
 def CLGenWorkspace(project_name, project_path):
-    if os.path.isfile('template.workspace'):
-        tree = etree.parse('template.workspace')
+    if os.path.isfile('codelite_template.workspace'):
+        tree = etree.parse('codelite_template.workspace')
     else:
-        tree = etree.parse(os.path.join(os.path.dirname(__file__), 'template.workspace'))
+        tree = etree.parse(os.path.join(os.path.dirname(__file__), 'codelite_template.workspace'))
         
     root = tree.getroot()
     root.attrib['Name'] = project_name
@@ -153,10 +153,10 @@ def TargetCodelite(script, program):
     project_path = os.path.abspath('.')
     CLGenWorkspace(project_name, project_path)
     
-    if os.path.isfile('template.project'):
-        tree = etree.parse('template.project')
+    if os.path.isfile('codelite_template.project'):
+        tree = etree.parse('codelite_template.project')
     else:
-        tree = etree.parse(os.path.join(os.path.dirname(__file__), 'template.project'))
+        tree = etree.parse(os.path.join(os.path.dirname(__file__), 'codelite_template.project'))
         
     root = tree.getroot()
     root.attrib['Name'] = project_name
