@@ -196,7 +196,14 @@ def TargetCodelite(script, program):
         
         CLSetCFlags(root, building.Env.get('CCFLAGS', []))
         CLSetCxxFlags(root, building.Env.get('CCFLAGS', []))
-        CLSetAsFlags(root, building.Env.get('ASFLAGS', []))
+        
+        asflags = building.Env.get('ASFLAGS', [])
+        asflags = asflags.replace('-ffunction-sections', '')
+        asflags = asflags.replace('-fdata-sections', '')
+        asflags = asflags.replace('-x', '')
+        asflags = asflags.replace('-Wa,', '')
+        asflags = asflags.replace('assembler-with-cpp', '')
+        CLSetAsFlags(root, asflags)
         CLSetLdFlags(root, building.Env.get('LINKFLAGS', []))
         
         for macro in building.Env.get('CPPDEFINES', []):
