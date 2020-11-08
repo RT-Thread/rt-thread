@@ -15,6 +15,7 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
 #ifdef HAVE_CCONFIG_H
 #include <cconfig.h>
 #endif
@@ -46,8 +47,8 @@ struct sigevent
 #ifndef HAVE_SIGINFO
 struct siginfo
 {
-    rt_uint16_t si_signo;
-    rt_uint16_t si_code;
+    uint16_t si_signo;
+    uint16_t si_code;
 
     union sigval si_value;
 };

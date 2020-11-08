@@ -38,6 +38,7 @@
  *                             after lwIP initialization.
  * 2013-02-28     aozima       fixed list_tcps bug: ipaddr_ntoa isn't reentrant.
  * 2016-08-18     Bernard      port to lwIP 2.0.0
+ * 2020-08-10     lizhirui     fixed some problems when this is running on 64-bit cpu
  */
 
 #include "lwip/opt.h"
@@ -85,10 +86,10 @@ struct eth_tx_msg
 static struct rt_mailbox eth_tx_thread_mb;
 static struct rt_thread eth_tx_thread;
 #ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
-static char eth_tx_thread_mb_pool[32 * 4];
+static char eth_tx_thread_mb_pool[32 * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[512];
 #else
-static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_tx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 #endif
@@ -97,10 +98,10 @@ static char eth_tx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 static struct rt_mailbox eth_rx_thread_mb;
 static struct rt_thread eth_rx_thread;
 #ifndef RT_LWIP_ETHTHREAD_MBOX_SIZE
-static char eth_rx_thread_mb_pool[48 * 4];
+static char eth_rx_thread_mb_pool[48 * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[1024];
 #else
-static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * 4];
+static char eth_rx_thread_mb_pool[RT_LWIP_ETHTHREAD_MBOX_SIZE * sizeof(rt_ubase_t)];
 static char eth_rx_thread_stack[RT_LWIP_ETHTHREAD_STACKSIZE];
 #endif
 #endif
@@ -164,6 +165,16 @@ static int lwip_netdev_set_dns_server(struct netdev *netif, uint8_t dns_num, ip_
 static int lwip_netdev_set_dhcp(struct netdev *netif, rt_bool_t is_enabled)
 {
     netdev_low_level_set_dhcp_status(netif, is_enabled);
+
+    /*add dhcp start or stop must call dhcp_start and dhcp_stop function*/
+    if(is_enabled == RT_TRUE)
+    {
+        dhcp_start((struct netif *)netif->user_data);
+    }
+    else
+    {
+        dhcp_stop((struct netif *)netif->user_data);    
+    }
     return ERR_OK;
 }
 #endif /* RT_LWIP_DHCP */
@@ -385,7 +396,7 @@ static err_t ethernetif_linkoutput(struct netif *netif, struct pbuf *p)
     /* send a message to eth tx thread */
     msg.netif = netif;
     msg.buf   = p;
-    if (rt_mb_send(&eth_tx_thread_mb, (rt_uint32_t) &msg) == RT_EOK)
+    if (rt_mb_send(&eth_tx_thread_mb, (rt_ubase_t) &msg) == RT_EOK)
     {
         /* waiting for ack */
         rt_sem_take(&(enetif->tx_ack), RT_WAITING_FOREVER);
@@ -484,16 +495,15 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 #if LWIP_NETIF_HOSTNAME
 #define LWIP_HOSTNAME_LEN 16
     char *hostname = RT_NULL;
-    netif = (struct netif*) rt_malloc (sizeof(struct netif) + LWIP_HOSTNAME_LEN);
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
 #else
-    netif = (struct netif*) rt_malloc (sizeof(struct netif));
+    netif = (struct netif*) rt_calloc (1, sizeof(struct netif));
 #endif
     if (netif == RT_NULL)
     {
         rt_kprintf("malloc netif failed\n");
         return -RT_ERROR;
     }
-    rt_memset(netif, 0, sizeof(struct netif));
 
     /* set netif */
     dev->netif = netif;
@@ -590,7 +600,7 @@ rt_err_t eth_device_ready(struct eth_device* dev)
 {
     if (dev->netif)
         /* post message to Ethernet thread */
-        return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+        return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
     else
         return ERR_OK; /* netif is not initialized yet, just return. */
 }
@@ -610,7 +620,7 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
     rt_hw_interrupt_enable(level);
 
     /* post message to ethernet thread */
-    return rt_mb_send(&eth_rx_thread_mb, (rt_uint32_t)dev);
+    return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
 }
 #else
 /* NOTE: please not use it in interrupt when no RxThread exist */
@@ -730,7 +740,7 @@ int eth_system_device_init_private(void)
 #ifndef LWIP_NO_RX_THREAD
     /* initialize mailbox and create Ethernet Rx thread */
     result = rt_mb_init(&eth_rx_thread_mb, "erxmb",
-                        &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/4,
+                        &eth_rx_thread_mb_pool[0], sizeof(eth_rx_thread_mb_pool)/sizeof(rt_ubase_t),
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 
@@ -746,7 +756,7 @@ int eth_system_device_init_private(void)
 #ifndef LWIP_NO_TX_THREAD
     /* initialize mailbox and create Ethernet Tx thread */
     result = rt_mb_init(&eth_tx_thread_mb, "etxmb",
-                        &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/4,
+                        &eth_tx_thread_mb_pool[0], sizeof(eth_tx_thread_mb_pool)/sizeof(rt_ubase_t),
                         RT_IPC_FLAG_FIFO);
     RT_ASSERT(result == RT_EOK);
 

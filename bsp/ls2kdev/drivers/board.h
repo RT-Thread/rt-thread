@@ -15,8 +15,8 @@
 
 extern unsigned char __bss_end;
 
-#define CPU_HZ	(100 * 1000 * 1000)
-#define RT_HW_HEAP_BEGIN    KSEG1BASE//(void*)&__bss_end
+#define CPU_HZ              (1000 * 1000 * 1000) //QEMU 200*1000*1000
+#define RT_HW_HEAP_BEGIN    (void*)&__bss_end
 #define RT_HW_HEAP_END      (void*)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024)
 
 void rt_hw_board_init(void);

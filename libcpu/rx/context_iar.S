@@ -28,8 +28,8 @@ _rt_hw_interrupt_enable:
      MVTIPL     #KERNEL_INTERRUPT_PRIORITY
      RTS
 
-; r0 --> swith from thread stack
-; r1 --> swith to thread stack
+; r0 --> switch from thread stack
+; r1 --> switch to thread stack
 ; psr, pc, lr, r12, r3, r2, r1, r0 are pushed into [from] stack
 ___interrupt_27:
 

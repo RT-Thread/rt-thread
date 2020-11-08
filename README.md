@@ -86,7 +86,7 @@ RT-Thread supports many architectures, and has covered the major architectures i
 - **ARM9**：manufacturers like Allwinner、Xilinx 、GOKE
 - **ARM11**：manufacturers like Fullhan
 - **MIPS32**：manufacturers like loongson、Ingenic
-- **RISC-V**：manufacturers like Hifive、Kendryte
+- **RISC-V**：manufacturers like Hifive、Kendryte、[Nuclei](https://nucleisys.com/)
 - **ARC**：manufacturers like SYNOPSYS
 - **DSP**：manufacturers like TI
 - **C-Sky**

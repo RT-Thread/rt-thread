@@ -55,12 +55,16 @@ extern void PendSV_Handler(void);
 extern void HardFault_Handler(void);
 
 /**
- * This function will initial LPC40xx board.
+ * This function will initial TM4C129X board.
  */
 void rt_hw_board_init()
 {
     //init low level drivers. e.g. cpu uart etc.
     rt_components_board_init();
+    //init HEAP.
+    #ifdef RT_USING_HEAP
+        rt_system_heap_init(HEAP_BEGIN, HEAP_END);
+    #endif
     //redirect RTT stdio to CONSOLE device
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 }

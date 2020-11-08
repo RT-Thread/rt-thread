@@ -49,7 +49,7 @@ long hello(void)
 }
 FINSH_FUNCTION_EXPORT(hello, say hello world);
 
-long clear(void)
+static long clear(void)
 {
     rt_kprintf("\x1b[2J\x1b[H");
 

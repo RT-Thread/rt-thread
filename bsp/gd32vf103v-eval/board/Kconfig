@@ -16,6 +16,11 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
 
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
     menuconfig BSP_USING_UART
         bool "Enable USART"
         default y
@@ -24,7 +29,8 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART0
                 bool "Enable USART0"
                 default y
-        endif
+        endif    
+
 endmenu
 
 menu "Board extended module Drivers"

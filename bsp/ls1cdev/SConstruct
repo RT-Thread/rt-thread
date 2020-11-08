@@ -12,7 +12,6 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
-rtconfig.AFLAGS += ' -I' + str(Dir('#'))
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
@@ -21,6 +20,7 @@ env = Environment(tools = ['mingw'],
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')
 Export('rtconfig')

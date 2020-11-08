@@ -475,13 +475,13 @@ int __rt_ffs(int value)
 {
     __asm volatile(
         "CMP     r0, #0x00            \n"
-        "BEQ     exit                 \n"
+        "BEQ     1f                   \n"
 
         "RBIT    r0, r0               \n"
         "CLZ     r0, r0               \n"
         "ADDS    r0, r0, #0x01        \n"
 
-        "exit:                        \n"
+        "1:                           \n"
         "BX      lr                   \n"
 
         : "=r"(value)

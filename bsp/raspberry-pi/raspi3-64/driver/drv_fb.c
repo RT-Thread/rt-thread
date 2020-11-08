@@ -15,9 +15,10 @@
 #include "drv_fb.h"
 #include "mmu.h"
 
-#define LCD_WIDTH     (640)
+#define LCD_WIDTH     (800)
 #define LCD_HEIGHT    (480)
 #define LCD_DEPTH     (32)
+#define LCD_BPP       (32)
 
 #define TAG_ALLOCATE_BUFFER         0x00040001
 #define TAG_SET_PHYS_WIDTH_HEIGHT   0x00048003
@@ -27,6 +28,39 @@
 #define TAG_GET_PITCH               0x00040008
 #define TAG_SET_VIRT_OFFSET         0x00048009
 #define TAG_END                     0x00000000
+
+
+enum {
+    MBOX_TAG_FB_GET_GPIOVIRT        = 0x00040010,
+    MBOX_TAG_FB_ALLOCATE_BUFFER     = 0x00040001,
+    MBOX_TAG_FB_RELEASE_BUFFER      = 0x00048001,
+    MBOX_TAG_FB_BLANK_SCREEN        = 0x00040002,
+    MBOX_TAG_FB_GET_PHYS_WH         = 0x00040003,
+    MBOX_TAG_FB_TEST_PHYS_WH        = 0x00044003,
+    MBOX_TAG_FB_SET_PHYS_WH         = 0x00048003,
+    MBOX_TAG_FB_GET_VIRT_WH         = 0x00040004,
+    MBOX_TAG_FB_TEST_VIRT_WH        = 0x00044004,
+    MBOX_TAG_FB_SET_VIRT_WH         = 0x00048004,
+    MBOX_TAG_FB_GET_DEPTH           = 0x00040005,
+    MBOX_TAG_FB_TEST_DEPTH          = 0x00044005,
+    MBOX_TAG_FB_SET_DEPTH           = 0x00048005,
+    MBOX_TAG_FB_GET_PIXEL_ORDER     = 0x00040006,
+    MBOX_TAG_FB_TEST_PIXEL_ORDER    = 0x00044006,
+    MBOX_TAG_FB_SET_PIXEL_ORDER     = 0x00048006,
+    MBOX_TAG_FB_GET_ALPHA_MODE      = 0x00040007,
+    MBOX_TAG_FB_TEST_ALPHA_MODE     = 0x00044007,
+    MBOX_TAG_FB_SET_ALPHA_MODE      = 0x00048007,
+    MBOX_TAG_FB_GET_PITCH           = 0x00040008,
+    MBOX_TAG_FB_GET_VIRT_OFFSET     = 0x00040009,
+    MBOX_TAG_FB_TEST_VIRT_OFFSET    = 0x00044009,
+    MBOX_TAG_FB_SET_VIRT_OFFSET     = 0x00048009,
+    MBOX_TAG_FB_GET_OVERSCAN        = 0x0004000a,
+    MBOX_TAG_FB_TEST_OVERSCAN       = 0x0004400a,
+    MBOX_TAG_FB_SET_OVERSCAN        = 0x0004800a,
+    MBOX_TAG_FB_GET_PALETTE         = 0x0004000b,
+    MBOX_TAG_FB_TEST_PALETTE        = 0x0004400b,
+    MBOX_TAG_FB_SET_PALETTE         = 0x0004800b,
+};
 
 #define LCD_DEVICE(dev)    (struct rt_hdmi_fb_device*)(dev)
 
@@ -75,7 +109,7 @@ rt_err_t hdmi_fb_control(rt_device_t dev, int cmd, void *args)
             info->bits_per_pixel= LCD_DEPTH;
             info->width         = lcd->width;
             info->height        = lcd->height;
-            info->framebuffer   = lcd->fb;//(rt_uint8_t *)lcd->fb;
+            info->framebuffer   = lcd->fb;
         }
         break;
     }
@@ -119,38 +153,122 @@ rt_err_t rt_hdmi_fb_device_init(struct rt_hdmi_fb_device *hdmi_fb, const char *n
     return RT_EOK;
 }
 
-int hdmi_fb_init(void)
+rt_uint32_t bcm283x_mbox_fb_get_gpiovirt(void)
+{
+    mbox[0] = 8*4;                      // length of the message
+    mbox[1] = MBOX_REQUEST;             // this is a request message
+    
+    mbox[2] = MBOX_TAG_FB_GET_GPIOVIRT;
+    mbox[3] = 4;                        // buffer size
+    mbox[4] = 0;                        // len
+
+    mbox[5] = 0;                        // id
+    mbox[6] = 0;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+    return (mbox[5] & 0x3fffffff);
+}
+
+rt_uint32_t bcm283x_mbox_fb_get_pitch(void)
+{
+    mbox[0] = 8*4;                  // length of the message
+    mbox[1] = MBOX_REQUEST;         // this is a request message
+    
+    mbox[2] = MBOX_TAG_FB_GET_PITCH;
+    mbox[3] = 4;                    // buffer size
+    mbox[4] = 0;                    // len
+
+    mbox[5] = 0;                    // id
+    mbox[6] = 0;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+    return mbox[5];
+}
+
+void bcm283x_mbox_fb_set_porder(int rgb)
+{
+    mbox[0] = 8*4;                      // length of the message
+    mbox[1] = MBOX_REQUEST;             // this is a request message
+    
+    mbox[2] = MBOX_TAG_FB_SET_PIXEL_ORDER;
+    mbox[3] = 4;                        // buffer size
+    mbox[4] = 4;                        // len
+
+    mbox[5] = rgb;                      // id
+    mbox[6] = 0;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+}
+
+void bcm283x_mbox_fb_setoffset(int xoffset, int yoffset)
+{
+    mbox[0] = 8*4;                      // length of the message
+    mbox[1] = MBOX_REQUEST;             // this is a request message
+    
+    mbox[2] = MBOX_TAG_FB_SET_VIRT_OFFSET;
+    mbox[3] = 8;                        // buffer size
+    mbox[4] = 8;                        // len
+
+    mbox[5] = xoffset;                  // id
+    mbox[6] = yoffset;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+}
+
+
+void bcm283x_mbox_fb_setalpha(int alpha)
+{
+
+    mbox[0] = 8*4;                      // length of the message
+    mbox[1] = MBOX_REQUEST;             // this is a request message
+    
+    mbox[2] = MBOX_TAG_FB_SET_ALPHA_MODE;
+    mbox[3] = 4;                        // buffer size
+    mbox[4] = 4;                        // len
+
+    mbox[5] = alpha;                    // id
+    mbox[6] = 0;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+}
+
+void *bcm283x_mbox_fb_alloc(int width, int height, int bpp, int nrender)
 {
     mbox[0] = 4 * 35;
     mbox[1] = MBOX_REQUEST;
 
     mbox[2] = TAG_ALLOCATE_BUFFER;//get framebuffer, gets alignment on request
-    mbox[3] = 8;
-    mbox[4] = 0;
-    mbox[5] = 4096;   //FrameBufferInfo.pointer
-    mbox[6] = 0;      //FrameBufferInfo.size
+    mbox[3] = 8;                  //size
+    mbox[4] = 4;                  //len
+    mbox[5] = 4096;               //The design of MBOX driver forces us to give the virtual address 0x3C100000
+    mbox[6] = 0;                  //FrameBufferInfo.size
 
     mbox[7] = TAG_SET_PHYS_WIDTH_HEIGHT;
     mbox[8] = 8;
-    mbox[9] = 0;
-    mbox[10] = LCD_WIDTH;
-    mbox[11] = LCD_HEIGHT;
+    mbox[9] = 8;
+    mbox[10] = width;
+    mbox[11] = height;
 
     mbox[12] = TAG_SET_VIRT_WIDTH_HEIGHT;
     mbox[13] = 8;
-    mbox[14] = 0;
-    mbox[15] = LCD_WIDTH;
-    mbox[16] = LCD_HEIGHT;
+    mbox[14] = 8;
+    mbox[15] = width;
+    mbox[16] = height * nrender;
 
     mbox[17] = TAG_SET_DEPTH;
     mbox[18] = 4;
-    mbox[19] = 0;
-    mbox[20] = 16;    //FrameBufferInfo.depth RGB 565
+    mbox[19] = 4;
+    mbox[20] = bpp;
 
     mbox[21] = TAG_SET_PIXEL_ORDER;
     mbox[22] = 4;
     mbox[23] = 0;
-    mbox[24] = 1;     //RGB, not BGR preferably
+    mbox[24] = 0;                    //RGB, not BGR preferably
 
     mbox[25] = TAG_GET_PITCH;
     mbox[26] = 4;
@@ -167,17 +285,25 @@ int hdmi_fb_init(void)
 
     mbox_call(MBOX_CH_PROP, MMU_DISABLE);
 
-    _hdmi.fb = (rt_uint8_t *)(uintptr_t)(mbox[5] & 0x3FFFFFFF);
+    return (void *)((rt_uint64_t)(mbox[5] & 0x3fffffff));
+}
 
+int hdmi_fb_init(void)
+{
+    _hdmi.fb = (rt_uint8_t *)bcm283x_mbox_fb_alloc(LCD_WIDTH, LCD_HEIGHT, LCD_BPP, 1);
+    bcm283x_mbox_fb_setoffset(0, 0);
+    bcm283x_mbox_fb_set_porder(0);
     _hdmi.width = LCD_WIDTH;
     _hdmi.height = LCD_HEIGHT;
     _hdmi.depth = LCD_DEPTH;
     _hdmi.pitch = 0;
     _hdmi.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB888;
 
-    armv8_map((unsigned long)_hdmi.fb, (unsigned long)_hdmi.fb, 0x200000, MEM_ATTR_MEMORY);
+    armv8_map((unsigned long)_hdmi.fb, (unsigned long)_hdmi.fb, 0x200000, MEM_ATTR_IO);
 
-    rt_kprintf("_hdmi.fb is %p\n", _hdmi.fb);
+    rt_hw_dcache_invalidate_range((unsigned long)_hdmi.fb,LCD_WIDTH * LCD_HEIGHT * 3);
+
+    //rt_kprintf("_hdmi.fb is %p\n", _hdmi.fb);
     rt_hdmi_fb_device_init(&_hdmi, "lcd");
 
     return 0;
