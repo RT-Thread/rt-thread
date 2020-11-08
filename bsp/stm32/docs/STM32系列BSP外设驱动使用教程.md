@@ -1,4 +1,4 @@
-# BSP 外设驱动使用教程
+# STM32系列BSP外设驱动使用教程
 
 ## 简介
 
@@ -12,7 +12,7 @@
 
 ## 前提要求
 
-- 学会如何使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/rtthread-development-guide/rtthread-tool-manual/env/env-user-manual/)
+- 学会如何使用 ENV 工具，参考：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/programming-manual/env/env/)
 
 ## 如何使用更多的板载资源
 
