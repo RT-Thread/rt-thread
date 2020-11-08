@@ -32,6 +32,8 @@
  * 2019-01-27     Bernard      change version number to v4.0.1
  * 2019-05-17     Bernard      change version number to v4.0.2
  * 2019-12-20     Bernard      change version number to v4.0.3
+ * 2020-08-10     Meco Man     add macro for struct rt_device_ops
+ * 2020-10-23     Meco Man     define maximum value of ipc type
  */
 
 #ifndef __RT_DEF_H__
@@ -100,6 +102,13 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UINT16_MAX                   0xffff          /**< Maxium number of UINT16 */
 #define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
+
+/* maximum value of ipc type */
+#define RT_SEM_VALUE_MAX                RT_UINT16_MAX   /**< Maxium number of semaphore .value */
+#define RT_MUTEX_VALUE_MAX              RT_UINT16_MAX   /**< Maxium number of mutex .value */
+#define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maxium number of mutex .hold */
+#define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
+#define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
 
 #if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #define __CLANG_ARM
@@ -372,20 +381,20 @@ typedef struct rt_object *rt_object_t;                  /**< Type for kernel obj
  */
 enum rt_object_class_type
 {
-    RT_Object_Class_Null   = 0,                         /**< The object is not used. */
-    RT_Object_Class_Thread,                             /**< The object is a thread. */
-    RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
-    RT_Object_Class_Mutex,                              /**< The object is a mutex. */
-    RT_Object_Class_Event,                              /**< The object is a event. */
-    RT_Object_Class_MailBox,                            /**< The object is a mail box. */
-    RT_Object_Class_MessageQueue,                       /**< The object is a message queue. */
-    RT_Object_Class_MemHeap,                            /**< The object is a memory heap */
-    RT_Object_Class_MemPool,                            /**< The object is a memory pool. */
-    RT_Object_Class_Device,                             /**< The object is a device */
-    RT_Object_Class_Timer,                              /**< The object is a timer. */
-    RT_Object_Class_Module,                             /**< The object is a module. */
-    RT_Object_Class_Unknown,                            /**< The object is unknown. */
-    RT_Object_Class_Static = 0x80                       /**< The object is a static object. */
+    RT_Object_Class_Null          = 0x00,      /**< The object is not used. */
+    RT_Object_Class_Thread        = 0x01,      /**< The object is a thread. */
+    RT_Object_Class_Semaphore     = 0x02,      /**< The object is a semaphore. */
+    RT_Object_Class_Mutex         = 0x03,      /**< The object is a mutex. */
+    RT_Object_Class_Event         = 0x04,      /**< The object is a event. */
+    RT_Object_Class_MailBox       = 0x05,      /**< The object is a mail box. */
+    RT_Object_Class_MessageQueue  = 0x06,      /**< The object is a message queue. */
+    RT_Object_Class_MemHeap       = 0x07,      /**< The object is a memory heap. */
+    RT_Object_Class_MemPool       = 0x08,      /**< The object is a memory pool. */
+    RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
+    RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
+    RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
+    RT_Object_Class_Unknown       = 0x0c,      /**< The object is unknown. */
+    RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
 /**
@@ -623,7 +632,7 @@ struct rt_thread
     void        *lwp;
 #endif
 
-    rt_uint32_t user_data;                             /**< private user data beyond this thread */
+    rt_ubase_t user_data;                             /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
@@ -920,6 +929,8 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RTC_SET_ALARM    0x13            /**< set alarm */
 
 typedef struct rt_device *rt_device_t;
+
+#ifdef RT_USING_DEVICE_OPS
 /**
  * operations set for device object
  */
@@ -933,6 +944,7 @@ struct rt_device_ops
     rt_size_t (*write)  (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
     rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
 };
+#endif
 
 /**
  * WaitQueue structure

@@ -8,7 +8,15 @@ config SOC_STM32H743II
     default y
 
 menu "Onboard Peripheral Drivers"
-    
+
+    config BSP_USING_COM2
+        bool "Enable COM2(485)"
+        select BSP_USING_UART
+        select BSP_USING_UART2
+        select BSP_USING_I2C1
+        select PKG_USING_PCF8574
+        default n
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         select BSP_USING_FMC
@@ -25,6 +33,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_QSPI
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
+        default n
+    config BSP_USING_SDMMC
+        bool "Enable SDMMC (SD card)"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
         default n
 
 endmenu
@@ -44,6 +58,20 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default y
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART2_TX_USING_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
         endif
 
     config BSP_USING_FMC
@@ -70,6 +98,28 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
 
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            comment "Notice: PH4 --> 116; PH5 --> 117"
+            config BSP_I2C1_SCL_PIN
+                int "i2c1 scl pin number"
+                range 1 176
+                default 116
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 176
+                default 117
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -88,12 +138,32 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
 
-	
+
     source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
@@ -101,5 +171,5 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
- 
+
 endmenu

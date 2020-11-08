@@ -36,31 +36,16 @@ C语言头文件为了避免多次重复包含，需要定义一个符号。这�
 在每个源文件文件头上，应该包括相应的版权信息，Change Log 记录：
 
 ```c
-    /*
-     * File      : rtthread.h
-     * This file is part of RT-Thread RTOS
-     * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
-     *
-     *  This program is free software; you can redistribute it and/or modify
-     *  it under the terms of the GNU General Public License as published by
-     *  the Free Software Foundation; either version 2 of the License, or
-     *  (at your option) any later version.
-     *
-     *  This program is distributed in the hope that it will be useful,
-     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     *  GNU General Public License for more details.
-     *
-     *  You should have received a copy of the GNU General Public License along
-     *  with this program; if not, write to the Free Software Foundation, Inc.,
-     *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-     *
-     * Change Logs:
-     * Date           Author       Notes
-     * 2006-03-18     Bernard      the first version
-     * 2006-04-26     Bernard      add semaphore APIs
-     * ...
-     */
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2006-03-18     Bernard      the first version
+ * 2006-04-26     Bernard      add semaphore APIs
+ */
 ```
 
 例如采用如上的形式。

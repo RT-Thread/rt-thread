@@ -41,6 +41,7 @@ env:
   - RTT_BSP='lm3s8962' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm3s9b9x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lm4f232' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='tm4c123bsp' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='tm4c129x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc43xx/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='lpc176x' RTT_TOOL_CHAIN='sourcery-arm'
@@ -65,8 +66,8 @@ env:
 #  - RTT_BSP='mini4020' # no scons
 #  - RTT_BSP='mm32l07x' # not support gcc
 #  - RTT_BSP='nios_ii' # no scons
-  - RTT_BSP='nuvoton_nuc472' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='nuvoton_m05x' RTT_TOOL_CHAIN='sourcery-arm'
+#  - RTT_BSP='nuvoton_nuc472' RTT_TOOL_CHAIN='sourcery-arm'
+#  - RTT_BSP='nuvoton_m05x' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='pic32ethernet' # no scons
   - RTT_BSP='qemu-vexpress-a9' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='qemu-vexpress-gemini' RTT_TOOL_CHAIN='sourcery-arm'
@@ -81,6 +82,7 @@ env:
   - RTT_BSP='stm32/stm32f103-fire-arbitrary' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-hw100k-ibox' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-mini-system' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f103-onenet-nbiot' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f103-yf-ufun' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f107-uc-eval' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f401-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
@@ -88,8 +90,10 @@ env:
   - RTT_BSP='stm32/stm32f407-atk-explorer' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f407-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f410-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f411-atk-nano' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f411-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f411-weact-MiniF4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32f413-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f427-robomaster-a' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-armfly-v6' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f429-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
@@ -101,21 +105,28 @@ env:
   - RTT_BSP='stm32/stm32f767-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f767-fire-challenger' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32f767-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32g070-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32g071-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32g431-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32h743-atk-apollo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32h743-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32h747-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l4r9-st-eval' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32l010-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l053-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32l412-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l432-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32l433-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l475-atk-pandora' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l475-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l476-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l496-ali-developer' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32/stm32l496-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32mp157a-st-discovery' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32mp157a-st-ev1' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32f20x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='swm320-lq100' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32wb55-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='x86' # x86
@@ -123,8 +134,10 @@ env:
   - RTT_BSP='zynq7000' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='frdm-k64f' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='fh8620' RTT_TOOL_CHAIN='sourcery-arm'
-  - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
+#  - RTT_BSP='x1000' RTT_TOOL_CHAIN='sourcery-mips'
   - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='at32/at32f403a-start' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='at32/at32f407-start' RTT_TOOL_CHAIN='sourcery-arm'
 
 stage: compile
 script:

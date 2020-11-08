@@ -12,18 +12,26 @@
 #include <rthw.h>
 
 #include "mips_regs.h"
+#include "mips_fpu.h"
 #include "exception.h"
 #include "drv_uart.h"
 #include "board.h"
+#include "ls2k1000.h"
+
 /**
  * this function will reset CPU
  *
  */
 void rt_hw_cpu_reset(void)
 {
+    WDT_EN = 0x01;
+    WDT_TIMER = 0x01;
+    WDT_SET = 0x01;
     rt_kprintf("reboot system...\n");
     while (1);
 }
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset cpu);
+
 
 /**
  * this function will shutdown CPU
@@ -31,10 +39,13 @@ void rt_hw_cpu_reset(void)
  */
 void rt_hw_cpu_shutdown(void)
 {
+    PM1_STS &= 0xffffffff;
+    PM1_CNT = 0x3c00;
     rt_kprintf("shutdown...\n");
 
     while (1);
 }
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_shutdown, poweroff, shutdown cpu);
 
 
 /**

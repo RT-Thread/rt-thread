@@ -323,18 +323,29 @@ static const struct dfs_file_ops pipe_fops =
 rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
+    rt_err_t ret = RT_EOK;
 
-    if (device == RT_NULL) return -RT_EINVAL;
+    if (device == RT_NULL)
+    {
+        ret = -RT_EINVAL;
+        goto __exit;
+    }
+    
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     if (pipe->fifo == RT_NULL)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            ret = -RT_ENOMEM;
+        }
     }
 
     rt_mutex_release(&(pipe->lock));
 
-    return RT_EOK;
+__exit:
+    return ret;
 }
 
 rt_err_t  rt_pipe_close  (rt_device_t device)

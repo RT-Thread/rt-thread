@@ -19,8 +19,8 @@
 
     .globl  rt_cpu_early_init
 rt_cpu_early_init:
-     mfc0	t0, CP0_CONFIG
-     ori	t0, 3
-     mtc0	t0, CP0_CONFIG
+     mfc0    t0, CP0_CONFIG
+     ori     t0, 3
+     mtc0    t0, CP0_CONFIG
      ehb
-     jr	ra
+     jr      ra

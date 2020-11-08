@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 def dist_do_building(BSP_ROOT):
     from mkdist import bsp_copy_files
     import rtconfig
-    
+
     dist_dir  = os.path.join(BSP_ROOT, 'dist', os.path.basename(BSP_ROOT))
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
     library_dir  = os.path.join(dist_dir, 'Libraries')

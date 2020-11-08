@@ -6,6 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-12-10     zylx         first version
+ * 2020-06-16     thread-liu   Porting for stm32mp1
+ * 2020-08-25     linyongkang  Fix the timer clock frequency doubling problem
+ * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
 
 #include <board.h>
@@ -151,9 +154,47 @@ static struct stm32_hwtimer stm32_hwtimer_obj[] =
 #endif
 };
 
+/* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
+static void pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
+{
+    rt_uint32_t flatency = 0;
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+    RT_ASSERT(pclk1_doubler != RT_NULL);
+    RT_ASSERT(pclk1_doubler != RT_NULL);
+
+    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
+
+    *pclk1_doubler = 1;
+    *pclk2_doubler = 1;
+
+#if defined(SOC_SERIES_STM32MP1)
+    if (RCC_ClkInitStruct.APB1_Div != RCC_APB1_DIV1)
+    {
+        *pclk1_doubler = 2;
+    }
+    if (RCC_ClkInitStruct.APB2_Div != RCC_APB2_DIV1)
+    {
+       *pclk2_doubler = 2; 
+    }
+#else
+    if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)    
+    {
+         *pclk1_doubler = 2;
+    }
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+    if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
+    {
+         *pclk2_doubler = 2;
+    }
+#endif
+#endif
+}
+
 static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
 {
     uint32_t prescaler_value = 0;
+    uint32_t pclk1_doubler, pclk2_doubler;
     TIM_HandleTypeDef *tim = RT_NULL;
     struct stm32_hwtimer *tim_device = RT_NULL;
 
@@ -163,22 +204,28 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         tim = (TIM_HandleTypeDef *)timer->parent.user_data;
         tim_device = (struct stm32_hwtimer *)timer;
 
+        pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+
         /* time init */
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
+#elif defined(SOC_SERIES_STM32WB)
+        if (tim->Instance == TIM16 || tim->Instance == TIM17)
+#elif defined(SOC_SERIES_STM32MP1)
+       if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         if (0)
 #endif
         {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
-            prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * 2 / 10000) - 1;
+            prescaler_value = (uint32_t)(HAL_RCC_GetPCLK2Freq() * pclk2_doubler / 10000) - 1;
 #endif
         }
         else
         {
-            prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * 2 / 10000) - 1;
+            prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler / 10000) - 1;
         }
         tim->Init.Period            = 10000 - 1;
         tim->Init.Prescaler         = prescaler_value;
@@ -192,7 +239,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
             tim->Init.CounterMode   = TIM_COUNTERMODE_DOWN;
         }
         tim->Init.RepetitionCounter = 0;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
         tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
         if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -271,6 +318,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
     rt_err_t result = RT_EOK;
+    uint32_t pclk1_doubler, pclk2_doubler;
 
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(arg != RT_NULL);
@@ -287,27 +335,27 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         /* set timer frequence */
         freq = *((rt_uint32_t *)arg);
 
+        pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
 #elif defined(SOC_SERIES_STM32L4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
+#elif defined(SOC_SERIES_STM32WB)
+        if (tim->Instance == TIM16 || tim->Instance == TIM17)
+			#elif defined(SOC_SERIES_STM32MP1)
+       if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)  
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
         if (0)
 #endif
         {
-#if defined(SOC_SERIES_STM32L4)
-            val = HAL_RCC_GetPCLK2Freq() / freq;
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-            val = HAL_RCC_GetPCLK2Freq() * 2 / freq;
+#if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
+            val = HAL_RCC_GetPCLK2Freq() * pclk2_doubler / freq;
 #endif
         }
         else
         {
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-            val = HAL_RCC_GetPCLK1Freq() * 2 / freq;
-#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
-            val = HAL_RCC_GetPCLK1Freq() / freq;
-#endif
+            val = HAL_RCC_GetPCLK1Freq() * pclk1_doubler / freq;
         }
         __HAL_TIM_SET_PRESCALER(tim, val - 1);
 
@@ -410,7 +458,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 #ifdef BSP_USING_TIM14
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     void TIM8_TRG_COM_TIM14_IRQHandler(void)
-#elif defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1) 
     void TIM14_IRQHandler(void)
 #endif
 {
@@ -432,9 +480,9 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM16
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) 
     void TIM1_UP_TIM16_IRQHandler(void)
-#elif defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1) 
     void TIM16_IRQHandler(void)
 #endif
 {
@@ -446,9 +494,9 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM17
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) 
     void TIM1_TRG_COM_TIM17_IRQHandler(void)
-#elif defined(SOC_SERIES_STM32F0)
+#elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1) 
     void TIM17_IRQHandler(void)
 #endif
 {

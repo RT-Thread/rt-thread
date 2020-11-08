@@ -17,7 +17,11 @@
 
 ## 2. 编译说明
 
-环境搭建在Ubuntu上进行，首先下载[mips-sde-elf-gcc][2]。该文件存放在网盘中，提取码为ucb2。
+环境搭建在**Ubuntu**上进行，首先下载[mips-sde-elf-gcc][2]。该文件存放在网盘中，提取码为ucb2。
+
+**windows**上环境搭建可以下载如下工具链：
+
+[mips-2015.05-19-mips-sde-elf.exe](https://sourcery.mentor.com/GNUToolchain/package13851/public/mips-sde-elf/mips-2015.05-19-mips-sde-elf.exe)
 
 解压到指定的目录，然后修改当前bsp目录下的`rtconfig.py`文件。
 
@@ -27,7 +31,13 @@ if  CROSS_TOOL == 'gcc':
 	EXEC_PATH   = "/opt/mips-2015.05-19-mips-sde-elf-i686-pc-linux-gnu/mips-2015.05/bin/"
 ```
 
-然后在控制台输入`scons`即可，可以生成`rtthread.elf`、`rtthread.bin`文件，其中`rtthread.elf`是下载到开发板上的程序。
+如果不想修改`rtconfig.py`可以尝试第二种办法：
+
+安装好工具链后，假设工具链安装在`D:\mgc\embedded\codebench`目录下。使用env工具，打开console后，进入到命令行环境中，需要手动设置工具链的环境变量`RTT_EXEC_PATH`：
+
+    set RTT_EXEC_PATH=D:\mgc\embedded\codebench\bin
+
+使用env工具，可以在console下进入到`bsp/ls2kdev`目录中，然后在控制台输入`scons`即可，可以生成`rtthread.elf`、`rtthread.bin`文件，其中`rtthread.elf`是下载到开发板上的程序。
 
 ## 3.程序运行
 
@@ -74,13 +84,43 @@ Hi, this is RT-Thread!!
 msh >
 ```
 
-## 4. 支持情况
+## 4.开机自动启动
+
+在调试阶段，可以利用脚本，在pmon阶段从TFTP服务器上获取固件，然后引导启动。这样可以节省开发配置的时间。具体的步骤如下：
+
+**第一步：**
+设置开发板的IP地址，在进入pmon的控制台后，输入`set ifconfig syn0:10.1.1.100`。其中`syn0`后面的ip地址为开发板的ip地址，与存放rt-thread固件的TFTP的服务器IP地址在**同一网段**。
+
+**第二步：**
+
+进入龙芯的Debian系统，用管理员权限进入，输入用户名`root`，密码`loongson`。并且修改boot分区下的boot.cfg文件。增加如下：
+
+```
+title   TFTPBOOT
+ kernel tftfp://10.1.1.118/rtthread.elf
+ args console=tty root=/dev/sda2
+ initrd (wd0,0)/initrd.img
+```
+
+其中`tftfp://10.1.1.118/rtthread.elf`中的`10.1.1.118`为tftp服务器的ip地址。
+
+**第三步：**
+
+电脑开启TFTP服务器，将路径指向存放有ls2k的rt-thread固件的目录下。
+
+以上三步完成之后，重启系统，就可以省略每次都需要进入pmon的输入命令的麻烦，板子上电后，可以自动从系统TFTP服务器中获取固件，然后启动，大大提高调试代码效率。
+
+## 5. 支持情况
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0|
+| GPIO | 支持 | - |
+| PWM | 支持 | - |
+| GMAC | 支持 | 网卡驱动 |
+| RTC  | 支持 | - |
 
-## 5. 联系人信息
+## 6. 联系人信息
 
 维护人：[bernard][4]
 

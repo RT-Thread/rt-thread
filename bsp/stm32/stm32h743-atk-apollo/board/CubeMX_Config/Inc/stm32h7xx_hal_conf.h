@@ -15,7 +15,7 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32H7xx_HAL_CONF_H
@@ -30,28 +30,33 @@
 
 /* ########################## Module Selection ############################## */
 /**
-  * @brief This is the list of modules to be used in the HAL driver 
+  * @brief This is the list of modules to be used in the HAL driver
   */
-#define HAL_MODULE_ENABLED  
+#define HAL_MODULE_ENABLED
 
-  /* #define HAL_ADC_MODULE_ENABLED   */
+#define HAL_ADC_MODULE_ENABLED
 /* #define HAL_FDCAN_MODULE_ENABLED   */
 /* #define HAL_CEC_MODULE_ENABLED   */
 /* #define HAL_COMP_MODULE_ENABLED   */
 /* #define HAL_CRC_MODULE_ENABLED   */
 /* #define HAL_CRYP_MODULE_ENABLED   */
-/* #define HAL_DAC_MODULE_ENABLED   */
+#define HAL_DAC_MODULE_ENABLED
 /* #define HAL_DCMI_MODULE_ENABLED   */
 #define HAL_DMA2D_MODULE_ENABLED
 /* #define HAL_ETH_MODULE_ENABLED   */
 /* #define HAL_NAND_MODULE_ENABLED   */
 /* #define HAL_NOR_MODULE_ENABLED   */
+/* #define HAL_OTFDEC_MODULE_ENABLED   */
 /* #define HAL_SRAM_MODULE_ENABLED   */
 #define HAL_SDRAM_MODULE_ENABLED
 /* #define HAL_HASH_MODULE_ENABLED   */
 /* #define HAL_HRTIM_MODULE_ENABLED   */
+/* #define HAL_HSEM_MODULE_ENABLED   */
+/* #define HAL_GFXMMU_MODULE_ENABLED   */
 /* #define HAL_JPEG_MODULE_ENABLED   */
 /* #define HAL_OPAMP_MODULE_ENABLED   */
+/* #define HAL_OSPI_MODULE_ENABLED   */
+/* #define HAL_OSPI_MODULE_ENABLED   */
 /* #define HAL_I2S_MODULE_ENABLED   */
 /* #define HAL_SMBUS_MODULE_ENABLED   */
 #define HAL_IWDG_MODULE_ENABLED
@@ -61,7 +66,7 @@
 /* #define HAL_RNG_MODULE_ENABLED   */
 #define HAL_RTC_MODULE_ENABLED
 /* #define HAL_SAI_MODULE_ENABLED   */
-/* #define HAL_SD_MODULE_ENABLED   */
+#define HAL_SD_MODULE_ENABLED
 /* #define HAL_MMC_MODULE_ENABLED   */
 /* #define HAL_SPDIFRX_MODULE_ENABLED   */
 #define HAL_SPI_MODULE_ENABLED
@@ -78,6 +83,8 @@
 /* #define HAL_DSI_MODULE_ENABLED   */
 /* #define HAL_JPEG_MODULE_ENABLED   */
 /* #define HAL_MDIOS_MODULE_ENABLED   */
+/* #define HAL_PSSI_MODULE_ENABLED   */
+/* #define HAL_DTS_MODULE_ENABLED   */
 #define HAL_GPIO_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_MDMA_MODULE_ENABLED
@@ -93,9 +100,9 @@
 /**
   * @brief Adjust the value of External High Speed oscillator (HSE) used in your application.
   *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSE is used as system clock source, directly or through the PLL).  
+  *        (when HSE is used as system clock source, directly or through the PLL).
   */
-#if !defined  (HSE_VALUE) 
+#if !defined  (HSE_VALUE)
 #define HSE_VALUE    ((uint32_t)25000000) /*!< Value of the External oscillator in Hz : FPGA case fixed to 60MHZ */
 #endif /* HSE_VALUE */
 
@@ -110,11 +117,11 @@
 #if !defined  (CSI_VALUE)
   #define CSI_VALUE    ((uint32_t)4000000) /*!< Value of the Internal oscillator in Hz*/
 #endif /* CSI_VALUE */
-   
+
 /**
   * @brief Internal High Speed oscillator (HSI) value.
   *        This value is used by the RCC HAL module to compute the system frequency
-  *        (when HSI is used as system clock source, directly or through the PLL). 
+  *        (when HSI is used as system clock source, directly or through the PLL).
   */
 #if !defined  (HSI_VALUE)
   #define HSI_VALUE    ((uint32_t)64000000) /*!< Value of the Internal oscillator in Hz*/
@@ -134,8 +141,8 @@
 
 /**
   * @brief External clock source for I2S peripheral
-  *        This value is used by the I2S HAL module to compute the I2S clock source 
-  *        frequency, this source is inserted directly through I2S_CKIN pad. 
+  *        This value is used by the I2S HAL module to compute the I2S clock source
+  *        frequency, this source is inserted directly through I2S_CKIN pad.
   */
 #if !defined  (EXTERNAL_CLOCK_VALUE)
   #define EXTERNAL_CLOCK_VALUE    12288000U /*!< Value of the External clock in Hz*/
@@ -147,11 +154,11 @@
 /* ########################### System Configuration ######################### */
 /**
   * @brief This is the HAL system configuration section
-  */     
+  */
 #define  VDD_VALUE                    ((uint32_t)3300U) /*!< Value of VDD in mv */
 #define  TICK_INT_PRIORITY            ((uint32_t)0U) /*!< tick interrupt priority */
 #define  USE_RTOS                     0U
-#define  USE_SD_TRANSCEIVER           1U               /*!< use uSD Transceiver */
+#define  USE_SD_TRANSCEIVER           0U               /*!< use uSD Transceiver */
 
 #define  USE_HAL_ADC_REGISTER_CALLBACKS     0U /* ADC register callback disabled     */
 #define  USE_HAL_CEC_REGISTER_CALLBACKS     0U /* CEC register callback disabled     */
@@ -162,6 +169,7 @@
 #define  USE_HAL_DFSDM_REGISTER_CALLBACKS   0U /* DFSDM register callback disabled   */
 #define  USE_HAL_DMA2D_REGISTER_CALLBACKS   0U /* DMA2D register callback disabled   */
 #define  USE_HAL_DSI_REGISTER_CALLBACKS     0U /* DSI register callback disabled     */
+#define  USE_HAL_DTS_REGISTER_CALLBACKS     0U /* DTS register callback disabled     */
 #define  USE_HAL_ETH_REGISTER_CALLBACKS     0U /* ETH register callback disabled     */
 #define  USE_HAL_FDCAN_REGISTER_CALLBACKS   0U /* FDCAN register callback disabled   */
 #define  USE_HAL_NAND_REGISTER_CALLBACKS    0U /* NAND register callback disabled    */
@@ -170,24 +178,33 @@
 #define  USE_HAL_SRAM_REGISTER_CALLBACKS    0U /* SRAM register callback disabled    */
 #define  USE_HAL_HASH_REGISTER_CALLBACKS    0U /* HASH register callback disabled    */
 #define  USE_HAL_HCD_REGISTER_CALLBACKS     0U /* HCD register callback disabled     */
+#define  USE_HAL_GFXMMU_REGISTER_CALLBACKS  0U /* GFXMMU register callback disabled  */
 #define  USE_HAL_HRTIM_REGISTER_CALLBACKS   0U /* HRTIM register callback disabled   */
 #define  USE_HAL_I2C_REGISTER_CALLBACKS     0U /* I2C register callback disabled     */
 #define  USE_HAL_I2S_REGISTER_CALLBACKS     0U /* I2S register callback disabled     */
+#define  USE_HAL_IRDA_REGISTER_CALLBACKS    0U /* IRDA register callback disabled    */
 #define  USE_HAL_JPEG_REGISTER_CALLBACKS    0U /* JPEG register callback disabled    */
 #define  USE_HAL_LPTIM_REGISTER_CALLBACKS   0U /* LPTIM register callback disabled   */
 #define  USE_HAL_LTDC_REGISTER_CALLBACKS    0U /* LTDC register callback disabled    */
 #define  USE_HAL_MDIOS_REGISTER_CALLBACKS   0U /* MDIO register callback disabled    */
+#define  USE_HAL_MMC_REGISTER_CALLBACKS     0U /* MMC register callback disabled     */
 #define  USE_HAL_OPAMP_REGISTER_CALLBACKS   0U /* MDIO register callback disabled    */
+#define  USE_HAL_OSPI_REGISTER_CALLBACKS    0U /* OSPI register callback disabled    */
+#define  USE_HAL_OTFDEC_REGISTER_CALLBACKS  0U /* OTFDEC register callback disabled  */
 #define  USE_HAL_PCD_REGISTER_CALLBACKS     0U /* PCD register callback disabled     */
 #define  USE_HAL_QSPI_REGISTER_CALLBACKS    0U /* QSPI register callback disabled    */
 #define  USE_HAL_RNG_REGISTER_CALLBACKS     0U /* RNG register callback disabled     */
 #define  USE_HAL_RTC_REGISTER_CALLBACKS     0U /* RTC register callback disabled     */
 #define  USE_HAL_SAI_REGISTER_CALLBACKS     0U /* SAI register callback disabled     */
+#define  USE_HAL_SD_REGISTER_CALLBACKS      0U /* SD register callback disabled      */
+#define  USE_HAL_SMARTCARD_REGISTER_CALLBACKS  0U /* SMARTCARD register callback disabled */
 #define  USE_HAL_SPDIFRX_REGISTER_CALLBACKS 0U /* SPDIFRX register callback disabled */
 #define  USE_HAL_SMBUS_REGISTER_CALLBACKS   0U /* SMBUS register callback disabled   */
 #define  USE_HAL_SPI_REGISTER_CALLBACKS     0U /* SPI register callback disabled     */
 #define  USE_HAL_SWPMI_REGISTER_CALLBACKS   0U /* SWPMI register callback disabled   */
 #define  USE_HAL_TIM_REGISTER_CALLBACKS     0U /* TIM register callback disabled     */
+#define  USE_HAL_UART_REGISTER_CALLBACKS    0U /* UART register callback disabled    */
+#define  USE_HAL_USART_REGISTER_CALLBACKS   0U /* USART register callback disabled   */
 #define  USE_HAL_WWDG_REGISTER_CALLBACKS    0U /* WWDG register callback disabled    */
 
 /* ########################### Ethernet Configuration ######################### */
@@ -203,14 +220,14 @@
 
 /* ########################## Assert Selection ############################## */
 /**
-  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
+  * @brief Uncomment the line below to expanse the "assert_param" macro in the
   *        HAL drivers code
   */
-/* #define USE_FULL_ASSERT    1U */ 
+/* #define USE_FULL_ASSERT    1U */
 
 /* Includes ------------------------------------------------------------------*/
 /**
-  * @brief Include module's header file 
+  * @brief Include module's header file
   */
 
 #ifdef HAL_RCC_MODULE_ENABLED
@@ -293,6 +310,10 @@
   #include "stm32h7xx_hal_flash.h"
 #endif /* HAL_FLASH_MODULE_ENABLED */
 
+#ifdef HAL_GFXMMU_MODULE_ENABLED
+  #include "stm32h7xx_hal_gfxmmu.h"
+#endif /* HAL_GFXMMU_MODULE_ENABLED */
+
 #ifdef HAL_HRTIM_MODULE_ENABLED
   #include "stm32h7xx_hal_hrtim.h"
 #endif /* HAL_HRTIM_MODULE_ENABLED */
@@ -348,6 +369,14 @@
 #ifdef HAL_OPAMP_MODULE_ENABLED
 #include "stm32h7xx_hal_opamp.h"
 #endif /* HAL_OPAMP_MODULE_ENABLED */
+
+#ifdef HAL_OSPI_MODULE_ENABLED
+  #include "stm32h7xx_hal_ospi.h"
+#endif /* HAL_OSPI_MODULE_ENABLED */
+
+#ifdef HAL_OTFDEC_MODULE_ENABLED
+#include "stm32h7xx_hal_otfdec.h"
+#endif /* HAL_OTFDEC_MODULE_ENABLED */
 
 #ifdef HAL_PWR_MODULE_ENABLED
  #include "stm32h7xx_hal_pwr.h"
@@ -428,22 +457,30 @@
 #ifdef HAL_HCD_MODULE_ENABLED
  #include "stm32h7xx_hal_hcd.h"
 #endif /* HAL_HCD_MODULE_ENABLED */
-   
+
+#ifdef HAL_PSSI_MODULE_ENABLED
+  #include "stm32h7xx_hal_pssi.h"
+#endif /* HAL_PSSI_MODULE_ENABLED */
+
+#ifdef HAL_DTS_MODULE_ENABLED
+  #include "stm32h7xx_hal_dts.h"
+#endif /* HAL_DTS_MODULE_ENABLED */
+
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  The assert_param macro is used for function's parameters check.
   * @param  expr: If expr is false, it calls assert_failed function
   *         which reports the name of the source file and the source
-  *         line number of the call that failed. 
+  *         line number of the call that failed.
   *         If expr is true, it returns no value.
   * @retval None
   */
-  #define assert_param(expr) ((expr) ? (void)0 : assert_failed((uint8_t *)__FILE__, __LINE__))
+  #define assert_param(expr) ((expr) ? (void)0U : assert_failed((uint8_t *)__FILE__, __LINE__))
 /* Exported functions ------------------------------------------------------- */
   void assert_failed(uint8_t* file, uint32_t line);
 #else
-  #define assert_param(expr) ((void)0)
+  #define assert_param(expr) ((void)0U)
 #endif /* USE_FULL_ASSERT */
 
 #ifdef __cplusplus
@@ -451,6 +488,6 @@
 #endif
 
 #endif /* __STM32H7xx_HAL_CONF_H */
- 
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

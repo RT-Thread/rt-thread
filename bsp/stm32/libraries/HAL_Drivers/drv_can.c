@@ -59,6 +59,19 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
     {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ  | CAN_BS2_7TQ | 150)},
     {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ  | CAN_BS2_7TQ | 300)}
 };
+#elif defined (SOC_SERIES_STM32L4)/* APB1 80MHz(max) */
+static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
+{
+    {CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_5TQ  | CAN_BS2_2TQ | 10)},
+    {CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_14TQ  | CAN_BS2_5TQ | 5)},
+    {CAN500kBaud, (CAN_SJW_2TQ | CAN_BS1_7TQ  | CAN_BS2_2TQ | 16)},
+    {CAN250kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 20)},
+    {CAN125kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 40)},
+    {CAN100kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 50)},
+    {CAN50kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 100)},
+    {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 250)},
+    {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 500)}
+};
 #endif
 
 #ifdef BSP_USING_CAN1
@@ -688,9 +701,9 @@ void CAN1_SCE_IRQHandler(void)
         drv_can1.device.status.ackerrcnt++;
         if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
             rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK1))
             rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK2))
             rt_hw_can_isr(&drv_can1.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
@@ -806,11 +819,11 @@ void CAN2_SCE_IRQHandler(void)
         break;
     case RT_CAN_BUS_ACK_ERR:
         drv_can2.device.status.ackerrcnt++;
-        if (!READ_BIT(drv_can1.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
             rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 0 << 8);
-        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK1))
             rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 1 << 8);
-        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK0))
+        else if (!READ_BIT(drv_can2.CanHandle.Instance->TSR, CAN_FLAG_TXOK2))
             rt_hw_can_isr(&drv_can2.device, RT_CAN_EVENT_TX_FAIL | 2 << 8);
         break;
     case RT_CAN_BUS_IMPLICIT_BIT_ERR:
