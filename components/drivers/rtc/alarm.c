@@ -8,6 +8,7 @@
  * 2012-10-27     heyuanjie87       first version.
  * 2013-05-17     aozima            initial alarm event & mutex in system init.
  * 2020-10-15     zhangsz           add alarm flags hour minute second.
+ * 2020-11-09     zhangsz           fix alarm set when modify rtc time.
  */
 
 #include <rtthread.h>
@@ -102,7 +103,7 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         {
             alarm->wktime.tm_hour = now->tm_hour;
             alarm->wktime.tm_min = now->tm_min;
-            alarm->wktime.tm_sec = alarm->wktime.tm_sec + 1;
+            alarm->wktime.tm_sec = now->tm_sec + 1;
             if (alarm->wktime.tm_sec > 59)
             {
                 alarm->wktime.tm_sec = 0;
@@ -125,7 +126,7 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
             alarm->wktime.tm_hour = now->tm_hour;
             if (alarm->wktime.tm_sec == now->tm_sec)
             {
-                alarm->wktime.tm_min = alarm->wktime.tm_min + 1;
+                alarm->wktime.tm_min = now->tm_min + 1;
                 if (alarm->wktime.tm_min > 59)
                 {
                     alarm->wktime.tm_min = 0;
@@ -144,7 +145,7 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
             if ((alarm->wktime.tm_min == now->tm_min) &&
                 (alarm->wktime.tm_sec == now->tm_sec))
             {
-                alarm->wktime.tm_hour = alarm->wktime.tm_hour + 1;
+                alarm->wktime.tm_hour = now->tm_hour + 1;
                 if (alarm->wktime.tm_hour > 23)
                 {
                     alarm->wktime.tm_hour = 0;
