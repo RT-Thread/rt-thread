@@ -47,7 +47,7 @@ rt_hw_context_switch_to:
 
 #ifdef RT_USING_SMP
     mv   a0,   a1
-    jal  rt_cpus_lock_status_restore
+    call  rt_cpus_lock_status_restore
 #endif
     LOAD a0,   2 * REGBYTES(sp)
     csrw mstatus, a0
@@ -123,7 +123,7 @@ save_mpie:
 
 #ifdef RT_USING_SMP
     mv   a0,   a2
-    jal  rt_cpus_lock_status_restore
+    call  rt_cpus_lock_status_restore
 #endif /*RT_USING_SMP*/
 
     j rt_hw_context_switch_exit
