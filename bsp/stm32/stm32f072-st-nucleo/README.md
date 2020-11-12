@@ -1,105 +1,110 @@
-# NUCLEO-F072RB 开发板 BSP 说明
+# STM32F072-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为刘恒为 NUCLEO-F072RB 开发板提供的 BSP (板级支持包) 说明。
+## MCU: STM32F072RB @48MHz, 128KB FLASH,  16KB RAM
 
-主要内容如下：
+The STM32F072x8/xB microcontrollers incorporate the high-performance ARM®Cortex®-M0 32-bit RISC core operating at up to 48 MHz frequency, high-speed embedded memories (up to 128 Kbytes of Flash memory and 16 Kbytes of SRAM), and an extensive range of enhanced peripherals and I/Os. All devices offer standard communication interfaces (two I2Cs, two SPI/I2S, one HDMI CEC and four USARTs), one USB Full-speed device (crystal-less), one CAN, one 12-bit ADC, one 12-bit DAC with two channels, seven 16-bit timers, one 32-bit timer and an advanced-control PWM timer.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The STM32F072x8/xB microcontrollers operate in the -40 to +85 °C and -40 to +105 °C temperature ranges, from a 2.0 to 3.6 V power supply. A comprehensive set of power-saving modes allows the design of low-power applications.
+The STM32F072x8/xB microcontrollers include devices in seven different packages ranging from 48 pins to 100 pins with a die form also available upon request. Depending on the device chosen, different sets of peripherals are included.
+These features make the STM32F072x8/xB microcontrollers suitable for a wide range of applications such as application control and user interfaces, hand-held equipment, A/V receivers and digital TV, PC peripherals, gaming and GPS platforms, industrial applications, PLCs, inverters, printers, scanners, alarm systems, video intercoms and HVACs.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+#### KEY FEATURES
 
-## 开发板介绍
+- Core: ARM®32-bit Cortex®-M0 CPU, frequency up to 48 MHz
 
-NUCLEO-F072RB 是 ST 官方推出的开发板，搭载 STM32F072RBT6 芯片，基于 ARM Cortex-M0 内核，最高主频 48 MHz，具有丰富的板载资源，可以充分发挥 STM32F072RBT6 的芯片性能。
+- Memories
 
-开发板外观如下图所示：
+  - 64 to 128 Kbytes of Flash memory
+  - 16 Kbytes of SRAM with HW parity
 
-![board](figures/board.jpg)
+- CRC calculation unit
 
-NUCLEO-F072RB 开发板常用 **板载资源** 如下：
+- Reset and power management
 
-- MCU：STM32F072RBT6，主频 48MHz，128KB FLASH ，16KB RAM
-- 常用外设
-  - LED：3 个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
-  - 按键：2 个，USER and RESET 。
-- 常用接口：USB 转串口、Arduino Uno 和 ST morpho 两类扩展接口
-- 调试接口：板载 ST-LINK/V2-1 调试器。
+  - Digital and I/O supply: VDD= 2.0 V to 3.6 V
+  - Analog supply: VDDA= VDDto 3.6 V
+  - Selected I/Os: VDDIO2= 1.65 V to 3.6 V
+  - Power-on/Power down reset (POR/PDR)
+  - Programmable voltage detector (PVD)
+  - Low power modes: Sleep, Stop, Standby
+  - VBATsupply for RTC and backup registers
 
-开发板更多详细信息请参考意法半导体[NUCLEO-F072RB](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-f072rb.html)
+- Clock management
 
-## 外设支持
+  - 4 to 32 MHz crystal oscillator
+  - 32 kHz oscillator for RTC with calibration
+  - Internal 8 MHz RC with x6 PLL option
+  - Internal 40 kHz RC oscillator
+  - Internal 48 MHz oscillator with automatic trimming based on ext. synchronization
 
-本 BSP 目前对外设的支持情况如下：
+- Up to 87 fast I/Os
 
-| **片上外设**   | **支持情况** |               **备注**                 |
-| :------------ | :----------: | :-----------------------------------: |
-| GPIO          |     支持     | PA0, PA1... PH1 ---> PIN: 0, 1...63    |
-| UART          |     支持     |              UART2                     |
-| LED           |     支持     |              LED2                      |
+  - All mappable on external interrupt vectors
+  - Up to 68 I/Os with 5V tolerant capability and 19 with independent supply VDDIO2
 
-## 使用说明
+- Seven-channel DMA controller
 
-使用说明分为如下两个章节：
+- One 12-bit, 1.0 μs ADC (up to 16 channels)
 
-- 快速上手
+  - Conversion range: 0 to 3.6 V
+  - Separate analog supply: 2.4 V to 3.6 V
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+- One 12-bit D/A converter (with 2 channels)
 
-- 进阶使用
+- Two fast low-power analog comparators with programmable input and output
 
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+- Up to 24 capacitive sensing channels for touchkey, linear and rotary touch sensors
+
+- Calendar RTC with alarm and periodic wakeup from Stop/Standby
+
+- 12 timers
+
+  - One 16-bit advanced-control timer for six-channel PWM output
+  - One 32-bit and seven 16-bit timers, with up to four IC/OC, OCN, usable for IR control decoding or DAC control
+  - Independent and system watchdog timers
+  - SysTick timer
+
+- Communication interfaces
+
+  - Two I2C interfaces supporting Fast Mode Plus (1 Mbit/s) with 20 mA current sink, one supporting SMBus/PMBus and wakeup
+  - Four USARTs supporting master synchronous SPI and modem control, two with ISO7816 interface, LIN, IrDA, auto baud rate detection and wakeup feature
+  - Two SPIs (18 Mbit/s) with 4 to 16 programmable bit frames, and with I2S interface multiplexed
+  - CAN interface
+  - USB 2.0 full-speed interface, able to run from internal 48 MHz oscillator and with BCD and LPM support
+
+- HDMI CEC wakeup on header reception
+
+- Serial wire debug (SWD)
+
+- 96-bit unique ID
+
+- All packages ECOPACK®2
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Read more
 
-#### 硬件连接
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32F072RB ST Official Website](https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-mainstream-mcus/stm32f0-series/stm32f0x2/stm32f072rb.html#documentation) |          STM32F072RB datasheet and other resources           |
 
-使用 Type-A to Mini-B 线连接开发板和 PC 供电，红色 LED LD3 (PWR) 和 LD1 (COM) 会点亮。
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Maintained By
 
-> 工程默认配置使用 ST-LINK 下载程序，点击下载按钮即可下载程序到开发板。
+[刘恒](https://github.com/lhxzui)
 
-#### 运行结果
+iuzxhl@qq.com
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD3 和 LD1 常亮、绿色 LD2 会周期性闪烁。
 
-USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
-```
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.2 build May 30 2019
- 2006 - 2019 Copyright by rt-thread team
-msh >
-```
+## Translated By
 
-### 进阶使用
+Meco Man @ RT-Thread Community
 
-此 BSP 默认只开启了 GPIO 和 串口 2 的功能，更多高级功能需要利用 env 工具对 BSP 进行配置，步骤如下：
-
-1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-## 联系人信息
-
-维护人:
-
--  [刘恒](https://github.com/lhxzui), 邮箱：<iuzxhl@qq.com>
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf
