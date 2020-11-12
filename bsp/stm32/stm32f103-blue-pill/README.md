@@ -48,7 +48,7 @@ KEY FEATURES
   - Temperature sensor
 - DMA
   - 7-channel DMA controller
-  - Peripherals supported: timers, ADC, SPIs, I2Cs and USARTs
+  - Peripherals supported: Timers, ADC, SPIs, I2Cs and USARTs
 
 - Up to 80 fast I/O ports
   - 26/37/51/80 I/Os, all mappable on 16 external interrupt vectors and almost all 5 V-tolerant
