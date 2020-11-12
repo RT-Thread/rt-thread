@@ -29,7 +29,9 @@ The mainly-used resources of this board are shown as follows:
 - External FLASH: None
 - Common peripherals -Button: one, user (has the wake-up feature, PC13)
 - Common-used interfaces: USB, Arduino interface, etc.
-- Debug interface: standard SWD For more details about this board, please refer to [ST official](https://www.st.com/en/evaluation-tools/stm32-nucleo-boards.html?querycriteria=productId=LN1847).
+- Debug interface: Standard SWD interface.
+
+### For more details about this board, please refer to [ST official](https://www.st.com/en/evaluation-tools/stm32-nucleo-boards.html?querycriteria=productId=LN1847).
 
 
 
