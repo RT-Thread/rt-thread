@@ -15,7 +15,7 @@ except:
     print(RTT_ROOT)
     exit(-1)
 
-TARGET = 'rt-thread.' + rtconfig.TARGET_EXT
+TARGET = 'build/rt-thread.' + rtconfig.TARGET_EXT
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],

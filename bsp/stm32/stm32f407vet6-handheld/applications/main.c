@@ -14,7 +14,7 @@
 #include <board.h>
 #include <rtthread.h>
 
-#include "board_config.h"
+// #include "board_config.h"
 
 #ifdef __cplusplus
 extern   "C"

@@ -1,24 +1,10 @@
-'''
-Author: your name
-Date: 2020-10-22 11:54:38
-LastEditTime: 2020-10-26 11:53:19
-LastEditors: your name
-Description: In User Settings Edit
-FilePath: \stm32f407vet6-handheld\applications\SConscript
-'''
 import rtconfig
 from building import *
 
 cwd     = GetCurrentDir()
 CPPPATH = [cwd, str(Dir('#'))]
 src     = Split("""
-main.cpp
-oled_gui.cpp
-vcom.c
-bosh_bme280.c
-w25q128.c
-rgb.c
-template.txt
+main.c
 """)
 
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
