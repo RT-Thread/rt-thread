@@ -20,7 +20,7 @@ MM32 MiniBoard Rev.D2
 
 MM32 MiniBoard Rev.D2 开发板板载资源如下：
 
-- MCU：MM32L073PF  ARM 32-bit Cortex-M3，主频 96MHz，128KB FLASH ，20KB SRAM
+- MCU：MM32L373PF  ARM 32-bit Cortex-M3，主频 96MHz，128KB FLASH ，20KB SRAM
 - 常用外设
   - LED：4个4色LED，可用于测试GPIO功能
   - 按键：1个复位按键、 1个WakeUp按键、两个普通按键

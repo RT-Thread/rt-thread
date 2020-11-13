@@ -81,12 +81,12 @@ struct rt_ulog
     /* all backends */
     rt_slist_t backend_list;
     /* the thread log's line buffer */
-    char log_buf_th[ULOG_LINE_BUF_SIZE];
+    char log_buf_th[ULOG_LINE_BUF_SIZE + 1];
 
 #ifdef ULOG_USING_ISR_LOG
     /* the ISR log's line buffer */
     rt_base_t output_locker_isr_lvl;
-    char log_buf_isr[ULOG_LINE_BUF_SIZE];
+    char log_buf_isr[ULOG_LINE_BUF_SIZE + 1];
 #endif /* ULOG_USING_ISR_LOG */
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
@@ -396,7 +396,7 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 #if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
         backend->output(backend, level, tag, is_raw, log, size);
 #else
-        if (backend->support_color)
+        if (backend->support_color || is_raw)
         {
             backend->output(backend, level, tag, is_raw, log, size);
         }
@@ -728,6 +728,8 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
         }
         /* package newline sign */
         log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+        /*add string end sign*/
+        log_buf[log_len] = '\0';
         /* do log output */
         do_output(LOG_LVL_DBG, NULL, RT_TRUE, log_buf, log_len);
     }

@@ -44,6 +44,7 @@
 | COM3         |  支持   |                                           |
 | MPU6050      |     支持     |                                       |
 | Flash        |   支持   |                               |
+| SRAM         |   支持   |                               |
 | SD卡         |   支持   |                               |
 | 以太网       |   支持   |                               |
 | WM8978       |   暂不支持   |                                       |
@@ -57,8 +58,8 @@
 | WDT          |     支持     |                                       |
 | FLASH | 支持 | 已适配 [FAL](https://github.com/RT-Thread-packages/fal) |
 | PWM          |   支持   |                               |
-| USB Device   |   暂不支持   |               即将支持                |
-| USB Host     |   暂不支持   |               即将支持                |
+| USB Device   |   支持   |                               |
+| USB Host     |   支持   |                               |
 | **扩展模块** | **支持情况** |               **备注**                |
 | ATK-ESP8266 模块 | 暂不支持 | 即将支持 |
 

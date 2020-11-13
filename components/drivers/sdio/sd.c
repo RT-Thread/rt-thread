@@ -93,25 +93,6 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
         card->tacc_ns = (tacc_uint[csd->taac&0x07] * tacc_value[(csd->taac&0x78)>>3] + 9) / 10;
         card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];
 
-    #if 0
-        val = GET_BITS(resp, 115, 4);
-        unit = GET_BITS(resp, 112, 3);
-        csd->tacc_ns     = (tacc_uint[unit] * tacc_value[val] + 9) / 10;
-        csd->tacc_clks   = GET_BITS(resp, 104, 8) * 100;
-
-        val = GET_BITS(resp, 99, 4);
-        unit = GET_BITS(resp, 96, 3);
-        csd->max_data_rate    = tran_unit[unit] * tran_value[val];
-        csd->ccc      = GET_BITS(resp, 84, 12);
-
-        unit = GET_BITS(resp, 47, 3);
-        val = GET_BITS(resp, 62, 12);
-        csd->device_size      = (1 + val) << (unit + 2);
-
-        csd->read_bl_len = GET_BITS(resp, 80, 4);
-        csd->write_bl_len = GET_BITS(resp, 22, 4);
-        csd->r2w_factor = GET_BITS(resp, 26, 3);
-    #endif
         break;
     case 1:
         card->flags |= CARD_FLAG_SDHC;
@@ -142,23 +123,6 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
         card->tacc_ns = 0;
         card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];
 
-    #if 0
-        csd->tacc_ns     = 0;
-        csd->tacc_clks   = 0;
-
-        val = GET_BITS(resp, 99, 4);
-        unit = GET_BITS(resp, 96, 3);
-        csd->max_data_rate    = tran_unit[unit] * tran_value[val];
-        csd->ccc      = GET_BITS(resp, 84, 12);
-
-        val = GET_BITS(resp, 48, 22);
-        csd->device_size     = (1 + val) << 10;
-
-        csd->read_bl_len = 9;
-        csd->write_bl_len = 9;
-        /* host should not use this factor and should use 250ms for write timeout */
-        csd->r2w_factor = 2;
-    #endif
         break;
     default:
         LOG_E("unrecognised CSD structure version %d!", csd->csd_structure);

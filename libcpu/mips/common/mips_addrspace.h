@@ -1,25 +1,11 @@
 /*
- * File      : mips_addrspace.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2008 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2016Äê9ÔÂ12ÈÕ     Urey         the first version
+ * 2019-12-04     Jiaxun Yang  Initial version
  */
 
 #ifndef _MIPS_ADDRSPACE_H_
@@ -38,7 +24,7 @@
 #define _ATYPE_		__PTRDIFF_TYPE__
 #define _ATYPE32_	int
 #define _ATYPE64_	__s64
-#ifdef CONFIG_64BIT
+#ifdef ARCH_MIPS64
 #define _CONST64_(x)	x ## L
 #else
 #define _CONST64_(x)	x ## LL
@@ -68,7 +54,7 @@
 #define XPHYSADDR(a)		((_ACAST64_(a)) &			\
 				 _CONST64_(0x000000ffffffffff))
 
-#ifdef CONFIG_64BIT
+#ifdef ARCH_MIPS64
 
 /*
  * Memory segments (64bit kernel mode addresses)
@@ -89,6 +75,12 @@
 #define CKSEG2ADDR(a)		(CPHYSADDR(a) | CKSEG2)
 #define CKSEG3ADDR(a)		(CPHYSADDR(a) | CKSEG3)
 
+#define KUSEGBASE			0xffffffff00000000
+#define KSEG0BASE			0xffffffff80000000
+#define KSEG1BASE			0xffffffffa0000000
+#define KSEG2BASE			0xffffffffc0000000
+#define KSEG3BASE			0xffffffffe0000000
+
 #else
 
 #define CKSEG0ADDR(a)		(CPHYSADDR(a) | KSEG0BASE)
@@ -104,23 +96,24 @@
 #define KSEG2ADDR(a)		(CPHYSADDR(a) | KSEG2BASE)
 #define KSEG3ADDR(a)		(CPHYSADDR(a) | KSEG3BASE)
 
-/*
- * Memory segments (32bit kernel mode addresses)
- * These are the traditional names used in the 32-bit universe.
- */
-//#define KUSEGBASE			0x00000000
-//#define KSEG0BASE			0x80000000
-//#define KSEG1BASE			0xa0000000
-//#define KSEG2BASE			0xc0000000
-//#define KSEG3BASE			0xe0000000
-
 #define CKUSEG			0x00000000
 #define CKSEG0			0x80000000
 #define CKSEG1			0xa0000000
 #define CKSEG2			0xc0000000
 #define CKSEG3			0xe0000000
 
+/*
+ * Memory segments (32bit kernel mode addresses)
+ * These are the traditional names used in the 32-bit universe.
+ */
+#define KUSEGBASE			0x00000000
+#define KSEG0BASE			0x80000000
+#define KSEG1BASE			0xa0000000
+#define KSEG2BASE			0xc0000000
+#define KSEG3BASE			0xe0000000
+
 #endif
+
 
 /*
  * Cache modes for XKPHYS address conversion macros
@@ -147,14 +140,6 @@
  * Returns the uncached address of a sdram address
  */
 #ifndef __ASSEMBLY__
-#if defined(CONFIG_SOC_AU1X00) || defined(CONFIG_TB0229)
-/* We use a 36 bit physical address map here and
-   cannot access physical memory directly from core */
-#define UNCACHED_SDRAM(a) (((unsigned long)(a)) | 0x20000000)
-#else	/* !CONFIG_SOC_AU1X00 */
-#define UNCACHED_SDRAM(a) CKSEG1ADDR(a)
-#endif	/* CONFIG_SOC_AU1X00 */
-#endif	/* __ASSEMBLY__ */
 
 /*
  * The ultimate limited of the 64-bit MIPS architecture:  2 bits for selecting
@@ -162,46 +147,19 @@
  * R8000 implements most with its 48-bit physical address space.
  */
 #define TO_PHYS_MASK	_CONST64_(0x07ffffffffffffff)	/* 2^^59 - 1 */
-
-#ifndef CONFIG_CPU_R8000
-
-/*
- * The R8000 doesn't have the 32-bit compat spaces so we don't define them
- * in order to catch bugs in the source code.
- */
-
 #define COMPAT_K1BASE32		_CONST64_(0xffffffffa0000000)
 #define PHYS_TO_COMPATK1(x)	((x) | COMPAT_K1BASE32) /* 32-bit compat k1 */
 
-#endif
-
 #define KDM_TO_PHYS(x)		(_ACAST64_ (x) & TO_PHYS_MASK)
 #define PHYS_TO_K0(x)		(_ACAST64_ (x) | CAC_BASE)
+#endif
 
 
 #ifndef __ASSEMBLY__
-/*
- * Change virtual addresses to physical addresses and vv.
- * These are trivial on the 1:1 Linux/MIPS mapping
- */
-static inline phys_addr_t virt_to_phys(volatile void * address)
-{
-#ifndef CONFIG_64BIT
-	return CPHYSADDR(address);
-#else
-	return XPHYSADDR(address);
+#define REG8( addr )		  (*(volatile u8 *) (addr))
+#define REG16( addr )		  (*(volatile u16 *)(addr))
+#define REG32( addr )		  (*(volatile u32 *)(addr))
+#define REG64( addr )		  (*(volatile u64 *)(addr))
 #endif
-}
-
-static inline void * phys_to_virt(unsigned long address)
-{
-#ifndef CONFIG_64BIT
-	return (void *)KSEG0ADDR(address);
-#else
-	return (void *)CKSEG0ADDR(address);
-#endif
-}
-#endif
-
 
 #endif /* _MIPS_ADDRSPACE_H_ */

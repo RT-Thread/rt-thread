@@ -41,6 +41,9 @@ extern "C" {
 void rt_system_object_init(void);
 struct rt_object_information *
 rt_object_get_information(enum rt_object_class_type type);
+int rt_object_get_length(enum rt_object_class_type type);
+int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers, int maxlen);
+
 void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
                     const char               *name);
@@ -138,6 +141,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread);
 
 rt_err_t rt_thread_yield(void);
 rt_err_t rt_thread_delay(rt_tick_t tick);
+rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick);
 rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
@@ -553,7 +557,7 @@ rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
 char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
-rt_uint32_t rt_strcasecmp(const char *a, const char *b);
+rt_int32_t rt_strcasecmp(const char *a, const char *b);
 
 void rt_show_version(void);
 

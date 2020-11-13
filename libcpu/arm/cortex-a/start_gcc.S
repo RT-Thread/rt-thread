@@ -52,6 +52,26 @@ stack_top:
 /* reset entry */
 .globl _reset
 _reset:
+#ifdef ARCH_ARMV8
+    /* Check for HYP mode */
+    mrs r0, cpsr_all
+    and r0, r0, #0x1F
+    mov r8, #0x1A
+    cmp r0, r8
+    beq overHyped
+    b continue
+
+overHyped: /* Get out of HYP mode */
+    adr r1, continue
+    msr ELR_hyp, r1
+    mrs r1, cpsr_all
+    and r1, r1, #0x1f    ;@ CPSR_MODE_MASK
+    orr r1, r1, #0x13    ;@ CPSR_MODE_SUPERVISOR
+    msr SPSR_hyp, r1
+    eret
+
+continue:
+#endif
     /* set the cpu to SVC32 mode and disable interrupt */
     cps #Mode_SVC
 

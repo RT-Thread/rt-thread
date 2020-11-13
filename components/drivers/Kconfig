@@ -89,19 +89,23 @@ config RT_USING_I2C
 
 if RT_USING_I2C
     config RT_I2C_DEBUG
-        bool "Use I2C debug mesage"
+        bool "Use I2C debug message"
         default n
 
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
         default y
+
+    if RT_USING_I2C_BITOPS
+	config RT_I2C_BITOPS_DEBUG
+            bool "Use simulate I2C debug message"
+            default n
+    endif
 endif
 
-if RT_USING_I2C_BITOPS
-    config RT_I2C_BITOPS_DEBUG
-        bool "Use simulate I2C debug mesage"
-        default n
-endif
+config RT_USING_PHY
+    bool "Using ethernet phy device drivers"
+    default n
 
 config RT_USING_PIN
     bool "Using generic GPIO device drivers"
@@ -111,6 +115,10 @@ config RT_USING_ADC
     bool "Using ADC device drivers"
     default n
 
+config RT_USING_DAC
+    bool "Using DAC device drivers"
+    default n
+    
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
@@ -224,6 +232,13 @@ config RT_USING_SPI
                 select RT_USING_QSPI
                 default n
 
+                config RT_SFUD_SPI_MAX_HZ
+                int "Default spi maximum speed(HZ)"
+                range 0 50000000
+                default 50000000
+                help
+                    Read the JEDEC SFDP command must run at 50 MHz or less,and you also can use rt_spi_configure(); to config spi speed.
+
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n
@@ -250,11 +265,11 @@ config RT_USING_AUDIO
     
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
-            int "Replay memmory pool block size"
+            int "Replay memory pool block size"
             default 4096
 
         config RT_AUDIO_REPLAY_MP_BLOCK_COUNT
-            int "Replay memmory pool block count"
+            int "Replay memory pool block count"
             default 2
 
         config RT_AUDIO_RECORD_PIPE_SIZE
@@ -705,6 +720,9 @@ menu "Using USB"
                     config RT_VCOM_TASK_STK_SIZE
                         int "virtual com thread stack size"
                         default 512
+                    config RT_CDC_RX_BUFSIZE
+                        int "virtual com rx buffer size"
+                        default 128
                     config RT_VCOM_TX_USE_DMA
                         bool "Enable to use dma for vcom tx"
                         default n

@@ -29,6 +29,7 @@
  * 2018-11-22     Jesven       list_thread add smp support
  * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread 
  *                             Provide protection for the "first layer of objects" when list_*
+ * 2020-04-07     chenhui      add clear 
  */
 
 #include <rthw.h>
@@ -47,6 +48,15 @@ long hello(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(hello, say hello world);
+
+static long clear(void)
+{
+    rt_kprintf("\x1b[2J\x1b[H");
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT(clear,clear the terminal screen);
+MSH_CMD_EXPORT(clear,clear the terminal screen);
 
 extern void rt_show_version(void);
 long version(void)
@@ -811,6 +821,7 @@ static char *const device_type_str[] =
     "Miscellaneous Device",
     "Sensor Device",
     "Touch Device",
+    "Phy Device",
     "Unknown"
 };
 

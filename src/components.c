@@ -92,7 +92,7 @@ void rt_components_board_init(void)
         rt_kprintf(":%d done\n", result);
     }
 #else
-    const init_fn_t *fn_ptr;
+    volatile const init_fn_t *fn_ptr;
 
     for (fn_ptr = &__rt_init_rti_board_start; fn_ptr < &__rt_init_rti_board_end; fn_ptr++)
     {
@@ -118,7 +118,7 @@ void rt_components_init(void)
         rt_kprintf(":%d done\n", result);
     }
 #else
-    const init_fn_t *fn_ptr;
+    volatile const init_fn_t *fn_ptr;
 
     for (fn_ptr = &__rt_init_rti_board_end; fn_ptr < &__rt_init_rti_end; fn_ptr ++)
     {
@@ -174,11 +174,11 @@ void main_thread_entry(void *parameter)
 {
     extern int main(void);
     extern int $Super$$main(void);
-    
+
 #ifdef RT_USING_COMPONENTS_INIT
     /* RT-Thread components initialization */
     rt_components_init();
-#endif    
+#endif
 #ifdef RT_USING_SMP
     rt_hw_secondary_cpu_up();
 #endif

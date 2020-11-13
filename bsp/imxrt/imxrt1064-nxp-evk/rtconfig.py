@@ -5,6 +5,9 @@ ARCH='arm'
 CPU='cortex-m7'
 CROSS_TOOL='gcc'
 
+# bsp lib config
+BSP_LIBRARY_TYPE = None
+
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 if os.getenv('RTT_ROOT'):
@@ -45,14 +48,17 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds -Xlinker -print-memory-usage'
 
     CPATH = ''
     LPATH = ''
 
+    AFLAGS += ' -D__STARTUP_INITIALIZE_NONCACHEDATA'
+    AFLAGS += ' -D__STARTUP_CLEAR_BSS'
+
     if BUILD == 'debug':
-        CFLAGS += ' -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -g'
+        AFLAGS += ' -g'
         CFLAGS += ' -O0'
     else:
         CFLAGS += ' -O2 -Os'
@@ -150,3 +156,10 @@ elif PLATFORM == 'iar':
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

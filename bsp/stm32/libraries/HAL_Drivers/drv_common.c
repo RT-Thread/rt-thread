@@ -29,11 +29,15 @@ void rt_hw_systick_init(void)
 {
 #if defined (SOC_SERIES_STM32H7)
     HAL_SYSTICK_Config((HAL_RCCEx_GetD1SysClockFreq()) / RT_TICK_PER_SECOND);
+#elif defined (SOC_SERIES_STM32MP1)
+	HAL_SYSTICK_Config(HAL_RCC_GetSystemCoreClockFreq() / RT_TICK_PER_SECOND);
 #else
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
 #endif
+#if !defined (SOC_SERIES_STM32MP1)
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+#endif
+    NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }
 
 /**
@@ -67,6 +71,7 @@ void HAL_ResumeTick(void)
 
 void HAL_Delay(__IO uint32_t Delay)
 {
+    rt_thread_mdelay(Delay);
 }
 
 /* re-implement tick interface for STM32 HAL */

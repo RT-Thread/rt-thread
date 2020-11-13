@@ -129,7 +129,7 @@ const char *dfs_filesystem_get_mounted_path(struct rt_device *device)
     for (iter = &filesystem_table[0];
             iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
     {
-        /* fint the mounted device */
+        /* find the mounted device */
         if (iter->ops == NULL) continue;
         else if (iter->dev_id == device)
         {
@@ -321,7 +321,7 @@ int dfs_mount(const char   *device_name,
         if (rt_device_open(fs->dev_id,
                            RT_DEVICE_OFLAG_RDWR) != RT_EOK)
         {
-            /* The underlaying device has error, clear the entry. */
+            /* The underlying device has error, clear the entry. */
             dfs_lock();
             memset(fs, 0, sizeof(struct dfs_filesystem));
 
@@ -555,6 +555,53 @@ int dfs_mount_device(rt_device_t dev)
   rt_kprintf("can't find device:%s to be mounted.\n", dev->parent.name);
   return -RT_ERROR;
 }
+
+int dfs_unmount_device(rt_device_t dev)
+{
+    struct dfs_filesystem *iter;
+    struct dfs_filesystem *fs = NULL;
+
+    /* lock filesystem */
+    dfs_lock();
+
+    for (iter = &filesystem_table[0];
+            iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+    {
+        /* check if the PATH is mounted */
+        if (strcmp(iter->dev_id->parent.name, dev->parent.name) == 0)
+        {
+            fs = iter;
+            break;
+        }
+    }
+
+    if (fs == NULL ||
+        fs->ops->unmount == NULL ||
+        fs->ops->unmount(fs) < 0)
+    {
+        goto err1;
+    }
+
+    /* close device, but do not check the status of device */
+    if (fs->dev_id != NULL)
+        rt_device_close(fs->dev_id);
+
+    if (fs->path != NULL)
+        rt_free(fs->path);
+
+    /* clear this filesystem table entry */
+    memset(fs, 0, sizeof(struct dfs_filesystem));
+
+    dfs_unlock();
+
+    return 0;
+
+err1:
+    dfs_unlock();
+
+    return -1;
+}
+
 #endif
 
 #ifdef RT_USING_FINSH

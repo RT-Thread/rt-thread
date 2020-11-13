@@ -22,6 +22,8 @@
  * 2017-11-15     JasonJia     fix poll rx issue when data is full.
  *                             add TCFLSH and FIONREAD support.
  * 2018-12-08     Ernest Chen  add DMA choice
+ * 2020-09-14     WillianChan  add a line feed to the carriage return character
+ *                             when using interrupt tx
  */
 
 #include <rthw.h>
@@ -315,6 +317,19 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
 
     while (length)
     {
+        /*
+         * to be polite with serial console add a line feed
+         * to the carriage return character
+         */
+        if (*data == '\n' && (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+        {
+            if (serial->ops->putc(serial, '\r') == -1)
+            {
+                rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
+                continue;
+            }
+        }
+
         if (serial->ops->putc(serial, *(char*)data) == -1)
         {
             rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
@@ -330,14 +345,16 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
 static void _serial_check_buffer_size(void)
 {
     static rt_bool_t already_output = RT_FALSE;
-		
+
     if (already_output == RT_FALSE)
     {
+#if !defined(RT_USING_ULOG) || defined(ULOG_USING_ISR_LOG)
         LOG_W("Warning: There is no enough buffer for saving data,"
               " please increase the RT_SERIAL_RB_BUFSZ option.");
+#endif
         already_output = RT_TRUE;
     }
-}	
+}
 
 #if defined(RT_USING_POSIX) || defined(RT_SERIAL_USING_DMA)
 static rt_size_t _serial_fifo_calc_recved_len(struct rt_serial_device *serial)
@@ -731,6 +748,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         rt_free(rx_fifo);
         serial->serial_rx = RT_NULL;
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
+
         /* configure low level device */
         serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_INT_RX);
     }
@@ -752,10 +770,11 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 
             rt_free(rx_fifo);
         }
-        /* configure low level device */
-        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_RX);
         serial->serial_rx = RT_NULL;
         dev->open_flag &= ~RT_DEVICE_FLAG_DMA_RX;
+
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_RX);
     }
 #endif /* RT_SERIAL_USING_DMA */
     
@@ -769,6 +788,7 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         rt_free(tx_fifo);
         serial->serial_tx = RT_NULL;
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
+
         /* configure low level device */
         serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void*)RT_DEVICE_FLAG_INT_TX);
     }
@@ -780,10 +800,19 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
         tx_dma = (struct rt_serial_tx_dma*)serial->serial_tx;
         RT_ASSERT(tx_dma != RT_NULL);
 
+        rt_data_queue_deinit(&(tx_dma->data_queue));
+
         rt_free(tx_dma);
         serial->serial_tx = RT_NULL;
         dev->open_flag &= ~RT_DEVICE_FLAG_DMA_TX;
+
+        /* configure low level device */
+        serial->ops->control(serial, RT_DEVICE_CTRL_CLR_INT, (void *) RT_DEVICE_FLAG_DMA_TX);
     }
+
+    serial->ops->control(serial, RT_DEVICE_CTRL_CLOSE, RT_NULL);
+    dev->flag &= ~RT_DEVICE_FLAG_ACTIVATED;
+
 #endif /* RT_SERIAL_USING_DMA */
     return RT_EOK;
 }
@@ -1286,4 +1315,3 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #endif /* RT_SERIAL_USING_DMA */
     }
 }
-

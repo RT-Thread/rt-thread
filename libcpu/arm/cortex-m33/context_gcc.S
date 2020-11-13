@@ -25,7 +25,7 @@
 .equ    SCB_VTOR,           0xE000ED08              /* Vector Table Offset Register */
 .equ    NVIC_INT_CTRL,      0xE000ED04              /* interrupt control state register */
 .equ    NVIC_SYSPRI2,       0xE000ED20              /* system priority register (2) */
-.equ    NVIC_PENDSV_PRI,    0x00FF0000              /* PendSV priority value (lowest) */
+.equ    NVIC_PENDSV_PRI,    0xFFFF0000              /* PendSV and SysTick priority value (lowest) */
 .equ    NVIC_PENDSVSET,     0x10000000              /* value to trigger PendSV exception */
 
 /*
@@ -98,7 +98,7 @@ PendSV_Handler:
     MSR     PRIMASK, r2                             /* if r1 == 0x00, do msr PRIMASK, r2 */
     BX      lr                                      /* if r1 == 0x00, do bx lr */
 
-schedule
+schedule:
     PUSH    {r2}                                    /* store interrupt state */
 
     /* clear rt_thread_switch_interrupt_flag to 0 */
@@ -225,7 +225,7 @@ rt_hw_context_switch_to:
     MOV     r0, #1
     STR     r0, [r1]
 
-    /* set the PendSV exception priority */
+    /* set the PendSV and SysTick exception priority */
     LDR r0, =NVIC_SYSPRI2
     LDR r1, =NVIC_PENDSV_PRI
     LDR.W   r2, [r0,#0x00]       /* read       */

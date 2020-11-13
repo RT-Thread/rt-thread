@@ -22,11 +22,15 @@ if RT_USING_LIBC && RT_USING_DFS
 
     if RT_USING_POSIX
     config RT_USING_POSIX_MMAP
-        bool "Enable mmap() api"
+        bool "Enable mmap() API"
         default n
 
     config RT_USING_POSIX_TERMIOS
-        bool "Enable termios feature"
+        bool "Enable termios APIs"
+        default n
+
+    config RT_USING_POSIX_GETLINE
+        bool "Enable getline()/getdelim() APIs"
         default n
 
     config RT_USING_POSIX_AIO
@@ -34,9 +38,19 @@ if RT_USING_LIBC && RT_USING_DFS
         default n
     endif
 
+endif
+
+if RT_USING_LIBC
     config RT_USING_MODULE
         bool "Enable dynamic module with dlopen/dlsym/dlclose feature"
         default n
+
+    if RT_USING_MODULE
+    config RT_USING_CUSTOM_DLMODULE
+        bool "Enable load dynamic module by custom"
+        default n
+    endif
+
 endif
 
 if RT_USING_LIBC != y

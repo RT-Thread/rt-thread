@@ -229,8 +229,8 @@ static void tcpserver_test(int argc, char** argv)
         {
             if (started)
             {
-                LOG_I("The tcpclient has started!");
-                LOG_I("Please stop tcpclient firstly, by: tcpclient --stop");
+                LOG_I("The tcpserver has started!");
+                LOG_I("Please stop tcpserver firstly, by: tcpserver --stop");
                 return;
             }
 

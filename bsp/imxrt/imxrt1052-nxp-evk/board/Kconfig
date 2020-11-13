@@ -96,19 +96,41 @@ menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_ETH
 	bool "Enable Ethernet"
-	select PHY_USING_KSZ8081
 	select RT_USING_NETDEV
 	default n
+    
 
 	if BSP_USING_ETH
-		config PHY_USING_KSZ8081
-			bool "i.MX RT1050EVKB uses ksz8081 phy"
+		config BSP_USING_PHY
+            select RT_USING_PHY
+			bool "Enable ethernet phy"
 			default y
 
-			config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
-				bool "Enable the PHY ksz8081 RMII50M mode"
-				depends on PHY_USING_KSZ8081
-				default y
+	    if BSP_USING_PHY
+            config PHY_DEVICE_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1064EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_RESET_PORT
+                    int "indicate port of reset"
+                    default 1
+
+                config PHY_RESET_PIN
+                    int "indicate pin of reset"
+                    default 9
+                
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+
+        endif
 	endif
 endmenu
 
