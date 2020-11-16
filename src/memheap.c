@@ -126,8 +126,8 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
     RT_ASSERT(heap);
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
     RT_ASSERT(rt_object_is_systemobject(&heap->parent));
-
-    rt_object_detach(&(heap->lock.parent.parent));
+    
+    rt_sem_detach(&heap->lock);
     rt_object_detach(&(heap->parent));
 
     /* Return a successful completion. */
