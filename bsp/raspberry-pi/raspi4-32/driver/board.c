@@ -19,8 +19,11 @@
 
 struct mem_desc platform_mem_desc[] = {
     {0x0, 0x6400000, 0x0, NORMAL_MEM},
-    {0xFE000000, 0xFE400000, 0xFE000000, DEVICE_MEM},//uart gpio
-    {0xFF800000, 0xFFA00000, 0xFF800000, DEVICE_MEM} //gic
+    {0x8000000, 0x8800000, 0x8000000, DEVICE_MEM},    //mbox msg
+    {0x0EA00000, 0x0EE00000, 0x0EA00000, DEVICE_MEM}, //framebuffer
+    {0xFD500000, 0xFDA00000, 0xFD500000, DEVICE_MEM}, //gmac
+    {0xFE000000, 0xFE400000, 0xFE000000, DEVICE_MEM}, //peripheral
+    {0xFF800000, 0xFFA00000, 0xFF800000, DEVICE_MEM}  //gic
 };
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
