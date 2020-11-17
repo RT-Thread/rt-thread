@@ -261,7 +261,6 @@ menu "Onboard Peripheral Drivers"
         endif
 	endif
 	
-		
     menuconfig BSP_USING_SDIO
 	bool "Enable SDcard"
 	select RT_USING_SDIO
