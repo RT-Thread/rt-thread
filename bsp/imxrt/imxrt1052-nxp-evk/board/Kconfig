@@ -255,6 +255,7 @@ menu "Onboard Peripheral Drivers"
     select BSP_USING_PWM4_CH0
     select BSP_USING_PWM4_CH1
     default n
+	
     config BSP_USING_AUDIO
         bool "Enable AUDIO (WM8960)"
         select BSP_USING_I2C1
