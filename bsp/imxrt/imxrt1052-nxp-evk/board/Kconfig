@@ -227,14 +227,6 @@ menu "Onboard Peripheral Drivers"
 	bool "Enable Ethernet"
 	select RT_USING_NETDEV
 	default n
-	
-    menuconfig BSP_USING_SDIO
-	bool "Enable SDcard"
-	select RT_USING_SDIO
-	select RT_USING_DFS_DEVFS
-    select RT_USING_DFS
-	select RT_USING_DFS_ELMFAT
-	default n
 
 	if BSP_USING_ETH
 		config BSP_USING_PHY
@@ -268,14 +260,15 @@ menu "Onboard Peripheral Drivers"
 
         endif
 	endif
-	config BSP_USING_RGB
-    bool "Enable RGB LED (PWM1_CH3A, PWM4_CH0A and PWM4_CH1A)"
-    select BSP_USING_PWM1
-    select BSP_USING_PWM4
-    select BSP_USING_PWM1_CH3
-    select BSP_USING_PWM4_CH0
-    select BSP_USING_PWM4_CH1
-    default n
+	
+		
+    menuconfig BSP_USING_SDIO
+	bool "Enable SDcard"
+	select RT_USING_SDIO
+	select RT_USING_DFS_DEVFS
+    select RT_USING_DFS
+	select RT_USING_DFS_ELMFAT
+	default n
 	
     config BSP_USING_AUDIO
         bool "Enable AUDIO (WM8960)"
