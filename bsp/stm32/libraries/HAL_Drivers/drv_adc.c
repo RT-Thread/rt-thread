@@ -9,6 +9,7 @@
  * 2018-12-12     greedyhao    Porting for stm32f7xx
  * 2019-02-01     yuneizhilin  fix the stm32_adc_init function initialization issue
  * 2020-06-17     thread-liu   Porting for stm32mp1xx
+ * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
 
 #include <board.h>
@@ -51,7 +52,7 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
 
     if (enabled)
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
         ADC_Enable(stm32_adc_handler);
 #else
         __HAL_ADC_ENABLE(stm32_adc_handler);
@@ -59,7 +60,7 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chan
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined (SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
         ADC_Disable(stm32_adc_handler);
 #else
         __HAL_ADC_DISABLE(stm32_adc_handler);
@@ -192,7 +193,7 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
         return -RT_ERROR;
     }
     
-#if defined(SOC_SERIES_STM32MP1)
+#if defined(SOC_SERIES_STM32MP1) || defined (SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
     ADC_ChanConf.Rank = ADC_REGULAR_RANK_1;
 #else
     ADC_ChanConf.Rank = 1;
@@ -208,16 +209,20 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
 #elif defined(SOC_SERIES_STM32MP1)
     ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_810CYCLES_5;
+#elif defined(SOC_SERIES_STM32H7)
+    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_64CYCLES_5;
+    #elif defined (SOC_SERIES_STM32WB)
+    ADC_ChanConf.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
 #endif
 
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
     ADC_ChanConf.Offset = 0;
 #endif
 
 #if defined(SOC_SERIES_STM32L4)
     ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;
     ADC_ChanConf.SingleDiff = LL_ADC_SINGLE_ENDED;
-#elif defined(SOC_SERIES_STM32MP1)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
     ADC_ChanConf.OffsetNumber = ADC_OFFSET_NONE;  /* ADC channel affected to offset number */
     ADC_ChanConf.Offset       = 0; 
     ADC_ChanConf.SingleDiff   = ADC_SINGLE_ENDED; /* ADC channel differential mode */
@@ -225,13 +230,13 @@ static rt_err_t stm32_get_adc_value(struct rt_adc_device *device, rt_uint32_t ch
     HAL_ADC_ConfigChannel(stm32_adc_handler, &ADC_ChanConf);
 
     /* perform an automatic ADC calibration to improve the conversion accuracy */
-#if defined(SOC_SERIES_STM32L4)
+#if defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
     if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_ChanConf.SingleDiff) != HAL_OK)
     {
         LOG_E("ADC calibration error!\n");
         return -RT_ERROR;
     }
-#elif defined(SOC_SERIES_STM32MP1)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
     /* Run the ADC linear calibration in single-ended mode */
     if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_CALIB_OFFSET_LINEARITY, ADC_ChanConf.SingleDiff) != HAL_OK)
     {

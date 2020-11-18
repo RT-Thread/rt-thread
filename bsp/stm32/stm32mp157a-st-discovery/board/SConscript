@@ -13,6 +13,9 @@ CubeMX_Config/Common/System/system_stm32mp1xx.c
 CubeMX_Config/CM4/Src/stm32mp1xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_SPI5']):
+    src += Glob('ports/spi_sample.c')
+
 if GetDepend(['BSP_USING_RCC']):
     src += Glob('ports/drv_rcc.c')
 
@@ -34,9 +37,34 @@ if GetDepend(['BSP_USING_TIM14']):
 if GetDepend(['BSP_USING_PMIC']):
     src += Glob('ports/drv_pmic.c')
 
+if GetDepend(['BSP_USING_RS485']):
+    src += Glob('ports/drv_rs485.c')
+
+if GetDepend(['BSP_USING_OPENAMP']):
+    src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
+    src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
+    src +=  Glob('CubeMX_Config/CM4/Src/openamp_log.c')
+    src +=  Glob('CubeMX_Config/CM4/Src/mbox_ipcc.c')
+    src +=  Glob('CubeMX_Config/CM4/Src/rsc_table.c')
+    src +=  Glob('ports/OpenAMP/libmetal/lib/*.c')
+    src +=  Glob('ports/OpenAMP/libmetal/lib/system/generic/*.c')
+    src +=  Glob('ports/OpenAMP/libmetal/lib/system/generic/cortexm/*.c')
+    src +=  Glob('ports/OpenAMP/open-amp/lib/rpmsg/*.c')
+    src +=  Glob('ports/OpenAMP/open-amp/lib/remoteproc/*.c')
+    src +=  Glob('ports/OpenAMP/open-amp/lib/virtio/*.c')
+    src +=  Glob('ports/OpenAMP/virtual_driver/*.c')
+    src +=  Glob('ports/OpenAMP/drv_openamp.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/CM4/Inc']
 path += [cwd + '/ports']
+
+if GetDepend(['BSP_USING_OPENAMP']):
+    path += [cwd + '/ports/OpenAMP']
+    path += [cwd + '/ports/OpenAMP/open-amp/lib/include']
+    path += [cwd + '/ports/OpenAMP/libmetal/lib/include']
+    path += [cwd + '/ports/OpenAMP/virtual_driver']
+    path += [cwd + '/CubeMX_Config/CM4/Inc']
 
 startup_path_prefix = SDK_LIB
 

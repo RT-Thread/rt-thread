@@ -38,7 +38,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, lon:%5d, lat:%5d, timestamp:%5d", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_TEMP:
-        LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
+        LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, (rt_uint32_t)sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
         LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
@@ -344,6 +344,9 @@ static void sensor(int argc, char **argv)
                 break;
             case RT_SENSOR_VENDOR_AMS:
                 rt_kprintf("vendor    :AMS\n");
+                break;
+            case RT_SENSOR_VENDOR_MAXIM:
+                rt_kprintf("vendor    :Maxim Integrated\n");
                 break;
         }
         rt_kprintf("model     :%s\n", info.model);

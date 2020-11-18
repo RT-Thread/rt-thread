@@ -126,6 +126,7 @@ env:
   - RTT_BSP='stm32/stm32mp157a-st-ev1' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='stm32f20x' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='swm320-lq100' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='stm32/stm32wb55-st-nucleo' RTT_TOOL_CHAIN='sourcery-arm'
 #  - RTT_BSP='taihu' RTT_TOOL_CHAIN='sourcery-ppc'
 #  - RTT_BSP='upd70f3454' # iar
 #  - RTT_BSP='x86' # x86
@@ -137,6 +138,7 @@ env:
   - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f403a-start' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f407-start' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='smartfusion2' RTT_TOOL_CHAIN='sourcery-arm'
 
 stage: compile
 script:

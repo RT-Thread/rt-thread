@@ -6,6 +6,7 @@
  * Change Logs:
  * Date         Author        Notes
  * 2018-12-04   balanceTWK    first version
+ * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
 
 #include "board.h"
@@ -101,16 +102,24 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
 static void rt_rtc_init(void)
 {
-#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) 
+
+#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32WB)
     __HAL_RCC_PWR_CLK_ENABLE();
 #endif
 
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 #ifdef BSP_RTC_USING_LSI
+#ifdef SOC_SERIES_STM32WB
+RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
+    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+#else
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
     RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
     RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+#endif
 #else
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
@@ -193,7 +202,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
 
         /* set the frequency division */
 #ifdef BSP_RTC_USING_LSI

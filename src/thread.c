@@ -478,7 +478,15 @@ RTM_EXPORT(rt_thread_delete);
  */
 rt_err_t rt_thread_yield(void)
 {
+    struct rt_thread *thread;
+    rt_base_t lock;
+
+    thread = rt_thread_self();
+    lock = rt_hw_interrupt_disable();
+    thread->remaining_tick = thread->init_tick;
+    thread->stat |= RT_THREAD_STAT_YIELD;
     rt_schedule();
+    rt_hw_interrupt_enable(lock);
 
     return RT_EOK;
 }
@@ -561,7 +569,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
     if (rt_tick_get() - *tick < inc_tick)
     {
-        *tick = rt_tick_get() - *tick + inc_tick;
+        *tick = *tick + inc_tick - rt_tick_get();
 
         /* suspend thread */
         rt_thread_suspend(thread);

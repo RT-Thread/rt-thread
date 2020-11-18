@@ -9,8 +9,10 @@ src = Split("""
 """)
 
 if GetDepend(['BSP_USING_UART']):
-    src += ['drv_uart.c']
-    
+    if GetDepend(['NRFX_USING_UART']):
+        src += ['drv_uart.c']
+    else:   
+        src += ['drv_uarte.c']   
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['drv_flash.c']
 
@@ -31,6 +33,9 @@ if GetDepend(['BSP_USING_PWM']):
 
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_ONCHIP_RTC']):
+    src += ['drv_rtc.c']
 
 path =  [cwd]
 

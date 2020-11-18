@@ -906,7 +906,34 @@ static int pmic_init(void)
         
     return RT_EOK;
 }
-
 INIT_PREV_EXPORT(pmic_init);
+
+static int i2c_sample(int argc, char *argv[])
+{
+    rt_uint8_t id = 0;
+    
+    if (argc > 1)
+    {
+        if (!rt_strcmp(argv[1], "read"))
+        { 
+           rt_kprintf("i2c read pmic version id\n"); 
+           id = stpmu1_read_reg(VERSION_STATUS_REG);
+           rt_kprintf("version id : 0x%02x\n", id);
+           return RT_EOK;
+        }
+        else
+        {
+            goto _exit;
+        }
+    }
+_exit:
+    {
+        rt_kprintf("Usage:\n");
+        rt_kprintf("i2c_sample read          - read pmic verison id\n");
+    }
+    
+    return RT_ERROR;
+}
+MSH_CMD_EXPORT(i2c_sample, i2c sample);
 
 #endif
