@@ -87,15 +87,20 @@ def GetNewLibVersion(rtconfig):
     return version
 
 def CheckMUSLLibc():
-    f = open(".config")
-    if f:
-        for line in f:
-            if line.find('CONFIG_RT_USING_MUSL=y') != -1:
-                return True
+    try:
+        f = open(".config")
+        if f:
+            for line in f:
+                if line.find('CONFIG_RT_USING_MUSL=y') != -1:
+                    return True
 
-        f.close()
-    else:
-        print("open .config failed")
+            f.close()
+        else:
+            print("open .config failed")
+
+        return False
+    except Exception as e:
+        pass
 
     return False
 
