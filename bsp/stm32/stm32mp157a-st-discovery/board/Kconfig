@@ -50,8 +50,12 @@ menu "Onboard Peripheral Drivers"
             config RS485_UART_DEVICE_NAME
             string "the uart name for rs485"
             default "uart3"
-
         endif
+    
+    config BSP_USING_GBE
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
 
 endmenu
 
@@ -196,7 +200,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 117
                 endif
-	    menuconfig BSP_USING_I2C3
+            menuconfig BSP_USING_I2C3
                 bool "Enable I2C3 BUS (software simulation)"
                 default n
                 if BSP_USING_I2C3
@@ -210,6 +214,21 @@ menu "On-chip Peripheral Drivers"
                         range 1 191
                         default 181
                 endif
+            menuconfig BSP_USING_I2C4
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C4
+                    comment "Notice: PD12 --> 60; PF15 --> 95" 
+                    config BSP_I2C4_SCL_PIN
+                        int "i2c4 scl pin number"
+                        range 1 191
+                        default 60
+                    config BSP_I2C4_SDA_PIN
+                        int "I2C4 sda pin number"
+                        range 1 191
+                        default 95
+                endif
+
         endif
 
     menuconfig BSP_USING_SPI

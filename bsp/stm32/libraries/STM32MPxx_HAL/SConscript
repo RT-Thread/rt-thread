@@ -54,8 +54,8 @@ if GetDepend(['RT_USING_CAN']):
 #    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim_ex.c']
 #    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_lptim.c']
 
-if GetDepend(['BSP_USING_ETH']):
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_eth.c']
+# if GetDepend(['BSP_USING_ETH']):
+#     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_eth.c']
 
 if GetDepend(['BSP_USING_WWDG']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_wwdg.c']
