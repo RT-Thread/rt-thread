@@ -19,6 +19,10 @@
 #ifdef RT_USING_SMP
 #include <interrupt.h>
 
+#ifdef RT_USING_USERSPACE
+#include <mmu.h>
+#endif
+
 static void rt_hw_timer2_isr(int vector, void *param)
 {
     rt_tick_increase();
@@ -26,11 +30,22 @@ static void rt_hw_timer2_isr(int vector, void *param)
     timer_clear_pending(0);
 }
 
+#ifdef RT_USING_USERSPACE
+extern void set_secondary_cpu_boot_address(uint32_t pv_off, void *second_boot_reg);
+#else
+extern void set_secondary_cpu_boot_address(void);
+#endif
+
 void rt_hw_secondary_cpu_up(void)
 {
-    extern void set_secondary_cpu_boot_address(void);
+#ifdef RT_USING_USERSPACE
+    void *plat_boot_reg;
 
-    set_secondary_cpu_boot_address();
+    plat_boot_reg = rt_hw_mmu_map(&mmu_info, 0, (void*)0x10000034, 0x1000, MMU_MAP_K_RW);
+    set_secondary_cpu_boot_address(PV_OFFSET, plat_boot_reg);
+#else
+    extern void set_secondary_cpu_boot_address(void);
+#endif
     __asm__ volatile ("dsb":::"memory");
     rt_hw_ipi_send(0, 1 << 1);
 }
@@ -41,7 +56,7 @@ void secondary_cpu_c_start(void)
 
     rt_hw_spin_lock(&_cpus_lock);
 
-    arm_gic_cpu_init(0, REALVIEW_GIC_CPU_BASE);
+    arm_gic_cpu_init(0, 0);
     arm_gic_set_cpu(0, IRQ_PBA8_TIMER0_1, 0x2);
 
     timer_init(0, 10000);

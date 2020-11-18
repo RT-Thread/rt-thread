@@ -1,15 +1,20 @@
 #include <board.h>
 #include <rtthread.h>
+#include <automac.h>
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
-#include <automac.h>
+
+#include "mmu.h"
+#include "drv_smc911x.h"
 
 #define MAX_ADDR_LEN                6
 #define SMC911X_EMAC_DEVICE(eth)    (struct eth_device_smc911x*)(eth)
 
-#include "drv_smc911x.h"
-
 #define DRIVERNAME "EMAC"
+
+#define DBG_LVL DBG_LOG
+#define DBG_TAG "EMAC"
+#include <rtdbg.h>
 
 struct eth_device_smc911x
 {
@@ -116,7 +121,7 @@ static int smc911x_detect_chip(struct eth_device_smc911x *dev)
     }
     else if (val != 0x87654321)
     {
-        rt_kprintf(DRIVERNAME ": Invalid chip endian 0x%08lx\n", val);
+        LOG_E("Invalid chip endian 0x%08lx\n", val);
         return -1;
     }
 
@@ -320,7 +325,7 @@ static void smc911x_isr(int vector, void *param)
     emac = SMC911X_EMAC_DEVICE(param);
 
     status = smc911x_reg_read(emac, INT_STS);
-    
+
     if (status & INT_STS_RSFL)
     {
         eth_device_ready(&emac->parent);
@@ -347,21 +352,12 @@ static rt_err_t smc911x_emac_init(rt_device_t dev)
     /* Turn on Tx + Rx */
     smc911x_enable(emac);
 
-#if 1
     /* Interrupt on every received packet */
     smc911x_reg_write(emac, FIFO_INT, 0x01 << 8);
     smc911x_reg_write(emac, INT_EN, INT_EN_RDFL_EN | INT_EN_RSFL_EN);
 
     /* enable interrupt */
     smc911x_reg_write(emac, INT_CFG, INT_CFG_IRQ_EN | INT_CFG_IRQ_POL | INT_CFG_IRQ_TYPE);
-#else
-
-    /* disable interrupt */
-    smc911x_reg_write(emac, INT_EN, 0);
-    value = smc911x_reg_read(emac, INT_CFG);
-    value &= ~INT_CFG_IRQ_EN;
-    smc911x_reg_write(emac, INT_CFG, value);
-#endif
 
     rt_hw_interrupt_install(emac->irqno, smc911x_isr, emac, "smc911x");
     rt_hw_interrupt_umask(emac->irqno);
@@ -383,6 +379,7 @@ static rt_err_t smc911x_emac_control(rt_device_t dev, int cmd, void *args)
         if(args) rt_memcpy(args, emac->enetaddr, 6);
         else return -RT_ERROR;
         break;
+
     default :
         break;
     }
@@ -432,12 +429,12 @@ rt_err_t smc911x_emac_tx(rt_device_t dev, struct pbuf* p)
 
     if (!status) return 0;
 
-    rt_kprintf(DRIVERNAME ": failed to send packet: %s%s%s%s%s\n",
-               status & TX_STS_LOC ? "TX_STS_LOC " : "",
-               status & TX_STS_LATE_COLL ? "TX_STS_LATE_COLL " : "",
-               status & TX_STS_MANY_COLL ? "TX_STS_MANY_COLL " : "",
-               status & TX_STS_MANY_DEFER ? "TX_STS_MANY_DEFER " : "",
-               status & TX_STS_UNDERRUN ? "TX_STS_UNDERRUN" : "");
+    LOG_E("failed to send packet: %s%s%s%s%s",
+        status & TX_STS_LOC ? "TX_STS_LOC " : "",
+        status & TX_STS_LATE_COLL ? "TX_STS_LATE_COLL " : "",
+        status & TX_STS_MANY_COLL ? "TX_STS_MANY_COLL " : "",
+        status & TX_STS_MANY_DEFER ? "TX_STS_MANY_DEFER " : "",
+        status & TX_STS_UNDERRUN ? "TX_STS_UNDERRUN" : "");
 
     return -RT_EIO;
 }
@@ -500,7 +497,9 @@ const static struct rt_device_ops smc911x_emac_ops =
 
 int smc911x_emac_hw_init(void)
 {
-    _emac.iobase = VEXPRESS_ETH_BASE;
+    rt_memset(&_emac, 0x0, sizeof(_emac));
+
+    _emac.iobase = (uint32_t)rt_hw_kernel_phys_to_virt((void*)VEXPRESS_ETH_BASE, 0x1000);
     _emac.irqno  = IRQ_VEXPRESS_A9_ETH;
 
     if (smc911x_detect_chip(&_emac))

@@ -8,7 +8,6 @@ config RT_USING_UART1
 
 config BSP_DRV_CLCD
     bool "CLCD driver"
-    depends on PKG_USING_GUIENGINE
     default y
 
 if BSP_DRV_CLCD
@@ -23,7 +22,6 @@ endif
 
 config BSP_DRV_EMAC
     bool "EMAC driver"
-    depends on RT_USING_LWIP
     default y
 
 config BSP_DRV_AUDIO

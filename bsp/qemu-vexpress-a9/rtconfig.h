@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
@@ -49,10 +50,16 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 #define ARCH_ARM
+#define ARCH_ARM_MMU
+#define RT_USING_USERSPACE
+#define KERNEL_VADDR_START 0xc0000000
+#define PV_OFFSET 0xa0000000
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARM_CORTEX_A9
+#define RT_BACKTRACE_FUNCTION_NAME
+#define RT_USING_CACHE
 
 /* RT-Thread Components */
 
@@ -63,7 +70,6 @@
 
 /* C++ features */
 
-#define RT_USING_CPLUSPLUS
 
 /* Command shell */
 
@@ -84,7 +90,7 @@
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
+#define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 8
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_ELMFAT
@@ -132,13 +138,8 @@
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
 #define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
-
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -146,8 +147,7 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_PTHREADS
-#define PTHREAD_NUM_MAX 8
+#define RT_USING_MUSL
 #define RT_USING_POSIX
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
@@ -178,6 +178,7 @@
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
+#define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
 #define RT_LWIP_DHCP
@@ -202,7 +203,7 @@
 #define RT_LWIP_TCP_WND 8196
 #define RT_LWIP_TCPTHREAD_PRIORITY 10
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
-#define RT_LWIP_TCPTHREAD_STACKSIZE 1024
+#define RT_LWIP_TCPTHREAD_STACKSIZE 2048
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
 #define RT_LWIP_ETHTHREAD_STACKSIZE 1024
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
@@ -213,11 +214,9 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-
-/* Modbus master and slave stack */
-
 
 /* AT commands */
 
@@ -226,7 +225,12 @@
 
 
 /* Utilities */
+
 #define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define RT_CH_MSG_MAX_NR 1024
+#define RT_LWP_SHM_MAX_NR 64
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
 
 /* RT-Thread online packages */
 
@@ -267,9 +271,18 @@
 
 /* samples: kernel and components samples */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_DRV_CLCD
+#define BSP_LCD_WIDTH 640
+#define BSP_LCD_HEIGHT 480
 #define BSP_DRV_EMAC
 
 #endif

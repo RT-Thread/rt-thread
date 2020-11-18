@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "board.h"
 #include "drv_sdio.h"
 
 #ifdef RT_USING_SDIO
@@ -286,7 +287,7 @@ static rt_err_t sdhci_pl180_setclock(struct sdhci_t * sdhci, rt_uint32_t clock)
     if(clock)
     {
         temp = read32(pdat->virt + PL180_CLOCK) | (0x1<<8);
-        temp = temp; // skip warning 
+        temp = temp; // skip warning
         write32(pdat->virt + PL180_CLOCK, 0x100);
     }
     else
@@ -379,7 +380,7 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
     LOG_D("clock:%d bus_width:%d", io_cfg->clock, io_cfg->bus_width);
 }
 
-static const struct rt_mmcsd_host_ops ops = 
+static const struct rt_mmcsd_host_ops ops =
 {
     mmc_request_send,
     mmc_set_iocfg,
@@ -409,8 +410,9 @@ int pl180_init(void)
         goto err;
     }
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
+    
+    virt = (rt_uint32_t)rt_hw_kernel_phys_to_virt((void*)MMC_BASE_ADDR, 0x1000);
 
-    virt = MMC_BASE_ADDR;
     id = (((read32((virt + 0xfec)) & 0xff) << 24) |
                 ((read32((virt + 0xfe8)) & 0xff) << 16) |
                 ((read32((virt + 0xfe4)) & 0xff) <<  8) |

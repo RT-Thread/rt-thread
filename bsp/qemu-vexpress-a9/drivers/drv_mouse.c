@@ -227,8 +227,10 @@ int rt_hw_mouse_init(void)
     rt_uint8_t value;
     rt_uint32_t id;
     struct mouse_pl050_pdata_t *pdat;
-    virtual_addr_t virt = MOUSE_ADDRESS;
+    virtual_addr_t virt;
     int irq = MOUSE_IRQ_NUM;
+
+    virt = (virtual_addr_t)rt_hw_kernel_phys_to_virt((void*)MOUSE_ADDRESS, 0x1000);
 
     id = (((read32(virt + 0xfec) & 0xff) << 24) |
                 ((read32(virt + 0xfe8) & 0xff) << 16) |
@@ -295,3 +297,4 @@ int rt_hw_mouse_init(void)
 INIT_DEVICE_EXPORT(rt_hw_mouse_init);
 
 #endif
+

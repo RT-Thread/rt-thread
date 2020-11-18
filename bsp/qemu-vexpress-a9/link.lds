@@ -2,7 +2,8 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 SECTIONS
 {
-    . = 0x60010000;
+    /*. = 0x60010000; */
+    . = 0xc0010000;
 
     __text_start = .;
     .text :
@@ -16,7 +17,7 @@ SECTIONS
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
         __rt_utest_tc_tab_end = .;
-        
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -42,9 +43,12 @@ SECTIONS
     } =0
     __text_end = .;
 
-    __exidx_start = .;
-    .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
-    __exidx_end = .;
+    .ARM.exidx   :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    }
 
     __rodata_start = .;
     .rodata   : { *(.rodata) *(.rodata.*) }

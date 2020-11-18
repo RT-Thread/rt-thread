@@ -316,6 +316,7 @@ struct rt_hw_register
     unsigned long ORIG_r0;
 };
 
+#include <rtdef.h>
 #include <armv7.h>
 
 /* Interrupt Control Interface */
