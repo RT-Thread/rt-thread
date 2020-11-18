@@ -29,6 +29,8 @@ if GetDepend('RT_USING_DEVICE') == False:
 if GetDepend('RT_USING_SMP') == False:
     SrcRemove(src, ['cpu.c'])
 
-group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH)
+CPPDEFINES = ['__RTTHREAD__']
+
+group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')
