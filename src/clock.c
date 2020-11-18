@@ -24,10 +24,8 @@
 static rt_tick_t rt_tick = 0;
 #endif
 
-extern void rt_timer_check(void);
-
 /**
- * This function will init system tick and set it to zero.
+ * This function will initialize system tick and set it to zero.
  * @ingroup SystemInit
  *
  * @deprecated since 1.1.0, this function does not need to be invoked
@@ -91,8 +89,9 @@ void rt_tick_increase(void)
         /* change to initialized tick */
         thread->remaining_tick = thread->init_tick;
 
-        /* yield */
-        rt_thread_yield();
+        thread->stat |= RT_THREAD_STAT_YIELD;
+
+        rt_schedule();
     }
 
     /* check timer */
@@ -109,15 +108,20 @@ void rt_tick_increase(void)
  *
  * @return the calculated tick
  */
-int rt_tick_from_millisecond(rt_int32_t ms)
+rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 {
-    int tick;
+    rt_tick_t tick;
 
     if (ms < 0)
-        tick = RT_WAITING_FOREVER;
+    {
+        tick = (rt_tick_t)RT_WAITING_FOREVER;
+    }
     else
-        tick = (RT_TICK_PER_SECOND * ms + 999) / 1000;
-
+    {
+        tick = RT_TICK_PER_SECOND * (ms / 1000);
+        tick += (RT_TICK_PER_SECOND * (ms % 1000) + 999) / 1000;
+    }
+    
     /* return the calculated tick */
     return tick;
 }

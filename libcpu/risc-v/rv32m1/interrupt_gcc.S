@@ -69,10 +69,10 @@ IRQ_Handler:
 
     /* need to switch new thread */
     la    s0, rt_thread_switch_interrupt_flag
-    LOAD  s2, 0(s0)
+    lw    s2, 0(s0)
     beqz  s2, spurious_interrupt
     /* clear switch interrupt flag */
-    STORE zero, 0(s0)
+    sw    zero, 0(s0)
 
     csrr  a0, mepc
     STORE a0, 0 * REGBYTES(sp)

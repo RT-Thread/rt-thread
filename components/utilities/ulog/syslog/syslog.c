@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <ulog.h>
 #include <rthw.h>
+#include <stdint.h>
 #include "syslog.h"
 
 #ifdef ULOG_OUTPUT_FLOAT
@@ -192,10 +193,10 @@ RT_WEAK rt_size_t syslog_formater(char *log_buf, int level, const char *tag, rt_
 
 #ifdef ULOG_OUTPUT_LEVEL
         rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "<%d>%s%3d %02d:%02d:%02d", level,
-                get_month_str(tm->tm_mon + 1), tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, rt_tick_get() % 1000);
+                get_month_str(tm->tm_mon + 1), tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
 #else
         rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE - log_len, "%s%3d %02d:%02d:%02d",
-                get_month_str(tm->tm_mon + 1), tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec, rt_tick_get() % 1000);
+                get_month_str(tm->tm_mon + 1), tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
 #endif /* ULOG_OUTPUT_LEVEL */
 
         log_len += rt_strlen(log_buf + log_len);

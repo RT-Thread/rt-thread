@@ -1,13 +1,27 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = Glob('*.c')
-
-# remove no need file.
-if GetDepend('RT_USING_LWIP') == False:
-	SrcRemove(src, 'drv_emac.c')
-
 CPPPATH = [cwd]
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+if GetDepend(['BSP_USING_EMAC']):
+    src += ['drv_emac.c']
+
+if GetDepend(['BSP_USING_HWTIMER0']):
+    src += ['drv_hwtimer.c']
+	
+if GetDepend(['BSP_USING_LED']):
+    src += ['drv_led.c']
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['drv_sdram.c']
+	
+if GetDepend('BSP_USING_UART0') or GetDepend('BSP_USING_UART2'):
+    src += ['drv_uart.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 

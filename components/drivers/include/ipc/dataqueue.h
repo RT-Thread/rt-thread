@@ -17,17 +17,19 @@
 #define RT_DATAQUEUE_EVENT_LWM       0x03
 
 struct rt_data_item;
-#define RT_DATAQUEUE_SIZE(dq)        ((dq)->put_index - (dq)->get_index)
-#define RT_DATAQUEUE_EMPTY(dq)       ((dq)->size - RT_DATAQUEUE_SIZE(dq))
+
 /* data queue implementation */
 struct rt_data_queue
 {
+    rt_uint32_t magic;
+
     rt_uint16_t size;
     rt_uint16_t lwm;
-    rt_bool_t   waiting_lwm;
 
-    rt_uint16_t get_index;
-    rt_uint16_t put_index;
+    rt_uint16_t get_index : 15;
+    rt_uint16_t is_empty  : 1;
+    rt_uint16_t put_index : 15;
+    rt_uint16_t is_full   : 1;
 
     struct rt_data_item *queue;
 
@@ -57,5 +59,7 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
                             const void          **data_ptr,
                             rt_size_t            *size);
 void rt_data_queue_reset(struct rt_data_queue *queue);
+rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue);
+rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue);
 
 #endif

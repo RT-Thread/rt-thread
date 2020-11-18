@@ -1,8 +1,12 @@
-/*************************************************************************
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * 时钟相关头文件
+ * SPDX-License-Identifier: Apache-2.0
  *
- *************************************************************************/
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     勤为本       first version
+ */
 
 
 #ifndef __OPENLOONGSON_CLOCK_H

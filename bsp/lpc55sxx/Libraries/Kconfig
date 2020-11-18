@@ -1,0 +1,15 @@
+config SOC_LPC55S6X_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_FPU
+    
+config SOC_LPC55S66_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_FPU
+    
+config SOC_LPC55S69_SERIES
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_FPU
+

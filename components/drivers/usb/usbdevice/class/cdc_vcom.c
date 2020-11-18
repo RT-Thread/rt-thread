@@ -28,7 +28,11 @@
 #define VCOM_TX_TIMEOUT      1000
 #endif /*RT_VCOM_TX_TIMEOUT*/
 
+#ifdef RT_CDC_RX_BUFSIZE
+#define CDC_RX_BUFSIZE          RT_CDC_RX_BUFSIZE
+#else
 #define CDC_RX_BUFSIZE          128
+#endif
 #define CDC_MAX_PACKET_SIZE     64
 #define VCOM_DEVICE             "vcom"
 
@@ -63,6 +67,7 @@ static struct ucdc_line_coding line_coding;
 #define CDC_BULKIN_MAXSIZE (CDC_TX_BUFSIZE / 8)
 
 #define CDC_TX_HAS_DATE   0x01
+#define CDC_TX_HAS_SPACE  0x02
 
 struct vcom
 {
@@ -488,6 +493,7 @@ static rt_err_t _function_enable(ufunction_t func)
     
     data = (struct vcom*)func->user_data;
     data->ep_out->buffer = rt_malloc(CDC_RX_BUFSIZE);
+    RT_ASSERT(data->ep_out->buffer != RT_NULL);
 
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
@@ -583,11 +589,13 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
     
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
-    //not support HS
-    //rt_usbd_device_set_qualifier(device, &dev_qualifier);
+    
+    /* support HS */
+    rt_usbd_device_set_qualifier(device, &dev_qualifier);
     
     /* allocate memory for cdc vcom data */
     data = (struct vcom*)rt_malloc(sizeof(struct vcom));
+    RT_ASSERT(data != RT_NULL);
     rt_memset(data, 0, sizeof(struct vcom));
     func->user_data = (void*)data;
     
@@ -693,22 +701,47 @@ static int _vcom_getc(struct rt_serial_device *serial)
 
     return result;
 }
-static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size,int direction)
+
+static rt_size_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, rt_size_t size)
 {
     rt_uint32_t level;
+    rt_size_t   put_len = 0;
+    rt_size_t   w_ptr = 0;
+    rt_uint32_t res;
+    rt_size_t   remain_size = size;
 
+    while (remain_size)
+    {
+        level = rt_hw_interrupt_disable();
+        put_len = rt_ringbuffer_put(&data->tx_ringbuffer, (const rt_uint8_t *)&buf[w_ptr], remain_size);
+        rt_hw_interrupt_enable(level);
+        w_ptr += put_len;
+        remain_size -= put_len;
+        if (put_len == 0)
+        {
+            rt_event_recv(&data->tx_event, CDC_TX_HAS_SPACE,
+                    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                    VCOM_TX_TIMEOUT, &res);
+        }
+        else
+        {
+            rt_event_send(&data->tx_event, CDC_TX_HAS_DATE);
+        }
+    }
+
+    return size;
+}
+
+static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size,int direction)
+{
     struct ufunction *func;
     struct vcom *data;
-    rt_uint32_t baksize;
+    rt_uint32_t send_size = 0;
     rt_size_t ptr = 0;
-    int empty = 0;
     rt_uint8_t crlf[2] = {'\r', '\n',};
 
     func = (struct ufunction*)serial->parent.user_data;
     data = (struct vcom*)func->user_data;
-
-    size = (size >= CDC_BULKIN_MAXSIZE) ? CDC_BULKIN_MAXSIZE : size;
-    baksize = size;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
@@ -717,46 +750,24 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
 
     if (data->connected)
     {
-        size = 0;
         if((serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
         {
-            empty = 0;
-            while(ptr < baksize)
+            while(send_size < size)
             {
-                while(ptr < baksize && buf[ptr] != '\n')
+                while(ptr < size && buf[ptr] != '\n')
                 {
                     ptr++;
                 }
-                if(ptr < baksize)
+                if(ptr < size)
                 {
-                    level = rt_hw_interrupt_disable();
-                    size += rt_ringbuffer_put_force(&data->tx_ringbuffer, (const rt_uint8_t *)&buf[size], ptr - size);
-                    rt_hw_interrupt_enable(level);
-
-                    /* no data was be ignored */
-                    if(size == ptr)
-                    {
-                        level = rt_hw_interrupt_disable();
-                        if(rt_ringbuffer_space_len(&data->tx_ringbuffer) >= 2)
-                        {
-                            rt_ringbuffer_put_force(&data->tx_ringbuffer, crlf, 2);
-                            size++;
-                        }
-                        rt_hw_interrupt_enable(level);
-                    }
-                    else
-                    {
-                        empty = 1;
-                        break;
-                    }
-
-                    /* ring buffer is full */
-                    if(size == ptr)
-                    {
-                        empty = 1;
-                        break;
-                    }
+                    send_size += _vcom_rb_block_put(data, (const rt_uint8_t *)&buf[send_size], ptr - send_size);
+                    _vcom_rb_block_put(data, crlf, 2);
+                    send_size++;
                     ptr++;
+                }
+                else if (ptr == size)
+                {
+                    send_size += _vcom_rb_block_put(data, (const rt_uint8_t *)&buf[send_size], ptr - send_size);
                 }
                 else
                 {
@@ -764,17 +775,12 @@ static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_s
                 }
             }
         }
-
-        if(size < baksize && !empty)
+        else
         {
-            level = rt_hw_interrupt_disable();
-            size += rt_ringbuffer_put_force(&data->tx_ringbuffer, (rt_uint8_t *)&buf[size], baksize - size);
-            rt_hw_interrupt_enable(level);
-        }
-
-        if(size)
-        {
-            rt_event_send(&data->tx_event, CDC_TX_HAS_DATE);
+            while (send_size < size)
+            {
+                send_size += _vcom_rb_block_put(data, (rt_uint8_t *)&buf[send_size], size - send_size);
+            }
         }
     }
     else
@@ -902,6 +908,7 @@ static void vcom_tx_thread_entry(void* parameter)
 #else
                 rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DMADONE);
 #endif
+                rt_event_send(&data->tx_event, CDC_TX_HAS_SPACE);
             }
         }
 

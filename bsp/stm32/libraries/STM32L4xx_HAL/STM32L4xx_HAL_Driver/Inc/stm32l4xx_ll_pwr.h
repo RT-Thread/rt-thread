@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -517,7 +501,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledDSIPinsPDActivation(void)
 }
 #endif /* PWR_CR3_DSIPDEN */
 
-#if defined(PWR_CR2_PVME1)
+#if defined(PWR_CR2_USV)
 /**
   * @brief  Enable VDDUSB supply
   * @rmtoll CR2          USV           LL_PWR_EnableVddUSB
@@ -800,37 +784,37 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledDSIPullDown(void)
 }
 #endif /* PWR_CR3_DSIPDEN */
 
-#if defined(PWR_CR3_EN_ULP)
+#if defined(PWR_CR3_ENULP)
 /**
   * @brief  Enable Ultra Low Power BORL, BORH and PVD for STOP2 and Standby modes
-  * @rmtoll CR3          EN_ULP       LL_PWR_EnableBORPVD_ULP
+  * @rmtoll CR3          ENULP        LL_PWR_EnableBORPVD_ULP
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_EnableBORPVD_ULP(void)
 {
-  SET_BIT(PWR->CR3, PWR_CR3_EN_ULP);
+  SET_BIT(PWR->CR3, PWR_CR3_ENULP);
 }
 
 /**
   * @brief  Disable Ultra Low Power BORL, BORH and PVD for STOP2 and Standby modes
-  * @rmtoll CR3          EN_ULP       LL_PWR_DisableBORPVD_ULP
+  * @rmtoll CR3          ENULP        LL_PWR_DisableBORPVD_ULP
   * @retval None
   */
 __STATIC_INLINE void LL_PWR_DisableBORPVD_ULP(void)
 {
-  CLEAR_BIT(PWR->CR3, PWR_CR3_EN_ULP);
+  CLEAR_BIT(PWR->CR3, PWR_CR3_ENULP);
 }
 
 /**
   * @brief  Check if Ultra Low Power BORL, BORH and PVD for STOP2 and Standby modes is enabled
-  * @rmtoll CR3          EN_ULP       LL_PWR_IsEnabledBORPVD_ULP
+  * @rmtoll CR3          ENULP        LL_PWR_IsEnabledBORPVD_ULP
   * @retval State of bit (1 or 0).
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledBORPVD_ULP(void)
 {
-  return ((READ_BIT(PWR->CR3, PWR_CR3_EN_ULP) == (PWR_CR3_EN_ULP)) ? 1UL : 0UL);
+  return ((READ_BIT(PWR->CR3, PWR_CR3_ENULP) == (PWR_CR3_ENULP)) ? 1UL : 0UL);
 }
-#endif /* PWR_CR3_EN_ULP */
+#endif /* PWR_CR3_ENULP */
 
 /**
   * @brief  Enable SRAM2 content retention in Standby mode
@@ -1119,7 +1103,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsWakeUpPinPolarityLow(uint32_t WakeUpPin)
   */
 __STATIC_INLINE void LL_PWR_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
 {
-  SET_BIT(*((uint32_t *)GPIO), GPIONumber);
+  SET_BIT(*((__IO uint32_t *)GPIO), GPIONumber);
 }
 
 /**
@@ -1166,7 +1150,7 @@ __STATIC_INLINE void LL_PWR_EnableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
   */
 __STATIC_INLINE void LL_PWR_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
 {
-  CLEAR_BIT(*((uint32_t *)GPIO), GPIONumber);
+  CLEAR_BIT(*((__IO uint32_t *)GPIO), GPIONumber);
 }
 
 /**
@@ -1213,7 +1197,7 @@ __STATIC_INLINE void LL_PWR_DisableGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullUp(uint32_t GPIO, uint32_t GPIONumber)
 {
-  return ((READ_BIT(*((uint32_t *)(GPIO)), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
+  return ((READ_BIT(*((__IO uint32_t *)GPIO), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
 }
 
 /**
@@ -1260,8 +1244,7 @@ __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullUp(uint32_t GPIO, uint32_t GPIO
   */
 __STATIC_INLINE void LL_PWR_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  register uint32_t temp = (uint32_t)(GPIO) + 4U;
-  SET_BIT(*((uint32_t *)(temp)), GPIONumber);
+  SET_BIT(*((__IO uint32_t *)(GPIO + 4U)), GPIONumber);
 }
 
 /**
@@ -1308,8 +1291,7 @@ __STATIC_INLINE void LL_PWR_EnableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumbe
   */
 __STATIC_INLINE void LL_PWR_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  register uint32_t temp = (uint32_t)(GPIO) + 4U;
-  CLEAR_BIT(*((uint32_t *)(temp)), GPIONumber);
+  CLEAR_BIT(*((__IO uint32_t *)(GPIO + 4U)), GPIONumber);
 }
 
 /**
@@ -1356,8 +1338,7 @@ __STATIC_INLINE void LL_PWR_DisableGPIOPullDown(uint32_t GPIO, uint32_t GPIONumb
   */
 __STATIC_INLINE uint32_t LL_PWR_IsEnabledGPIOPullDown(uint32_t GPIO, uint32_t GPIONumber)
 {
-  register uint32_t temp = (uint32_t)(GPIO) + 4U;
-  return ((READ_BIT(*((uint32_t *)(temp)), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
+  return ((READ_BIT(*((__IO uint32_t *)(GPIO + 4U)), GPIONumber) == (GPIONumber)) ? 1UL : 0UL);
 }
 
 /**

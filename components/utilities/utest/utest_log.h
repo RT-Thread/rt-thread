@@ -11,21 +11,24 @@
 #ifndef __UTEST_LOG_H__
 #define __UTEST_LOG_H__
 
+#include <rtthread.h>
+
 #define UTEST_DEBUG
 
-#undef DBG_SECTION_NAME
-#undef DBG_LEVEL
-#undef DBG_COLOR
-#undef DBG_ENABLE
+#undef DBG_TAG
+#undef DBG_LVL
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME          "testcase"
+#define DBG_TAG              "testcase"
 #ifdef UTEST_DEBUG
-#define DBG_LEVEL                 DBG_LOG
+#define DBG_LVL              DBG_LOG
 #else
-#define DBG_LEVEL                 DBG_INFO
+#define DBG_LVL              DBG_INFO
 #endif
-#define DBG_COLOR
 #include <rtdbg.h>
+
+#define UTEST_LOG_ALL    (1u)
+#define UTEST_LOG_ASSERT (2u)
+
+void utest_log_lv_set(rt_uint8_t lv);
 
 #endif /* __UTEST_LOG_H__ */

@@ -3,7 +3,7 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Split("""
-core/core.c
+core/usbdevice_core.c
 core/usbdevice.c
 """)
 
@@ -24,6 +24,12 @@ if GetDepend('RT_USB_DEVICE_RNDIS'):
 
 if GetDepend('RT_USB_DEVICE_WINUSB'):
 	src += Glob('class/winusb.c')
+	
+if GetDepend('RT_USB_DEVICE_AUDIO_MIC'):
+	src += Glob('class/audio_mic.c')
+
+if GetDepend('RT_USB_DEVICE_AUDIO_SPEAKER'):
+	src += Glob('class/audio_speaker.c')
 
 CPPPATH = [cwd]
 

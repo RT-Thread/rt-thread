@@ -1,0 +1,31 @@
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Glob('board.c')
+src += Glob('CubeMX_Config/Src/stm32h7xx_hal_msp.c')
+
+if GetDepend(['BSP_USING_QSPI_FLASH']):
+    src += Glob('ports/drv_qspi_flash.c')
+
+if GetDepend('BSP_USING_SPI_LCD'):
+    src = src + ['ports/drv_lcd.c']
+
+path = [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/gcc/startup_stm32h750xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/arm/startup_stm32h750xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [cwd + '/../../libraries/STM32H7xx_HAL/CMSIS/Device/ST/STM32H7xx/Source/Templates/iar/startup_stm32h750xx.s']
+
+# STM32H743xx || STM32H750xx || STM32F753xx
+# You can select chips from the list above
+CPPDEFINES = ['STM32H750xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

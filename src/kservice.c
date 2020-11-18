@@ -316,7 +316,7 @@ RTM_EXPORT(rt_memmove);
  * This function will compare two areas of memory
  *
  * @param cs one area of memory
- * @param ct znother area of memory
+ * @param ct another area of memory
  * @param count the size of the area
  *
  * @return the result
@@ -326,7 +326,7 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
     const unsigned char *su1, *su2;
     int res = 0;
 
-    for (su1 = cs, su2 = ct; 0 < count; ++su1, ++su2, count--)
+    for (su1 = (const unsigned char *)cs, su2 = (const unsigned char *)ct; 0 < count; ++su1, ++su2, count--)
         if ((res = *su1 - *su2) != 0)
             break;
 
@@ -370,7 +370,7 @@ RTM_EXPORT(rt_strstr);
  *
  * @return the result
  */
-rt_uint32_t rt_strcasecmp(const char *a, const char *b)
+rt_int32_t rt_strcasecmp(const char *a, const char *b)
 {
     int ca, cb;
 
@@ -456,11 +456,15 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-        cs++, ct++;
+    {        
+        cs++;
+        ct++;
+    }
 
     return (*cs - *ct);
 }
 RTM_EXPORT(rt_strcmp);
+
 /**
  * The  strnlen()  function  returns the number of characters in the
  * string pointed to by s, excluding the terminating null byte ('\0'),
@@ -476,11 +480,13 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 {
     const char *sc;
 
-    for (sc = s; *sc != '\0' && sc - s < maxlen; ++sc) /* nothing */
+    for (sc = s; *sc != '\0' && (rt_ubase_t)(sc - s) < maxlen; ++sc) /* nothing */
         ;
 
     return sc - s;
 }
+RTM_EXPORT(rt_strnlen);
+
 /**
  * This function will return the length of a string, which terminate will
  * null character.
@@ -535,13 +541,33 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2018 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2020 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
 /* private function */
-#define isdigit(c)  ((unsigned)((c) - '0') < 10)
+#define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
+#ifdef RT_PRINTF_LONGLONG
+rt_inline int divide(long long *n, int base)
+{
+    int res;
+
+    /* optimized for processor which does not support divide instructions. */
+    if (base == 10)
+    {
+        res = (int)(((unsigned long long)*n) % 10U);
+        *n = (long long)(((unsigned long long)*n) / 10U);
+    }
+    else
+    {
+        res = (int)(((unsigned long long)*n) % 16U);
+        *n = (long long)(((unsigned long long)*n) / 16U);
+    }
+
+    return res;
+}
+#else
 rt_inline int divide(long *n, int base)
 {
     int res;
@@ -560,11 +586,12 @@ rt_inline int divide(long *n, int base)
 
     return res;
 }
+#endif
 
 rt_inline int skip_atoi(const char **s)
 {
     register int i = 0;
-    while (isdigit(**s))
+    while (_ISDIGIT(**s))
         i = i * 10 + *((*s)++) - '0';
 
     return i;
@@ -581,7 +608,11 @@ rt_inline int skip_atoi(const char **s)
 #ifdef RT_PRINTF_PRECISION
 static char *print_number(char *buf,
                           char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
                           long  num,
+#endif
                           int   base,
                           int   s,
                           int   precision,
@@ -589,7 +620,11 @@ static char *print_number(char *buf,
 #else
 static char *print_number(char *buf,
                           char *end,
+#ifdef RT_PRINTF_LONGLONG
+                          long long  num,
+#else
                           long  num,
+#endif
                           int   base,
                           int   s,
                           int   type)
@@ -601,6 +636,7 @@ static char *print_number(char *buf,
 #else
     char tmp[16];
 #endif
+    int precision_bak = precision;
     const char *digits;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
@@ -664,7 +700,7 @@ static char *print_number(char *buf,
 
         while (size-- > 0)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = ' ';
             ++ buf;
         }
@@ -672,11 +708,11 @@ static char *print_number(char *buf,
 
     if (sign)
     {
-        if (buf <= end)
+        if (buf < end)
         {
             *buf = sign;
-            -- size;
         }
+        -- size;
         ++ buf;
     }
 
@@ -685,16 +721,16 @@ static char *print_number(char *buf,
     {
         if (base == 8)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = '0';
             ++ buf;
         }
         else if (base == 16)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = '0';
             ++ buf;
-            if (buf <= end)
+            if (buf < end)
             {
                 *buf = type & LARGE ? 'X' : 'x';
             }
@@ -708,7 +744,7 @@ static char *print_number(char *buf,
     {
         while (size-- > 0)
         {
-            if (buf <= end)
+            if (buf < end)
                 *buf = c;
             ++ buf;
         }
@@ -717,23 +753,23 @@ static char *print_number(char *buf,
 #ifdef RT_PRINTF_PRECISION
     while (i < precision--)
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = '0';
         ++ buf;
     }
 #endif
 
     /* put number in the temporary buffer */
-    while (i-- > 0)
+    while (i-- > 0 && (precision_bak != 0))
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = tmp[i];
         ++ buf;
     }
 
     while (size-- > 0)
     {
-        if (buf <= end)
+        if (buf < end)
             *buf = ' ';
         ++ buf;
     }
@@ -765,7 +801,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
 
     str = buf;
-    end = buf + size - 1;
+    end = buf + size;
 
     /* Make sure end is always >= buf */
     if (end < buf)
@@ -778,7 +814,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
     {
         if (*fmt != '%')
         {
-            if (str <= end)
+            if (str < end)
                 *str = *fmt;
             ++ str;
             continue;
@@ -801,7 +837,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
         /* get field width */
         field_width = -1;
-        if (isdigit(*fmt)) field_width = skip_atoi(&fmt);
+        if (_ISDIGIT(*fmt)) field_width = skip_atoi(&fmt);
         else if (*fmt == '*')
         {
             ++ fmt;
@@ -820,7 +856,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         if (*fmt == '.')
         {
             ++ fmt;
-            if (isdigit(*fmt)) precision = skip_atoi(&fmt);
+            if (_ISDIGIT(*fmt)) precision = skip_atoi(&fmt);
             else if (*fmt == '*')
             {
                 ++ fmt;
@@ -859,20 +895,20 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (--field_width > 0)
                 {
-                    if (str <= end) *str = ' ';
+                    if (str < end) *str = ' ';
                     ++ str;
                 }
             }
 
             /* get character */
             c = (rt_uint8_t)va_arg(args, int);
-            if (str <= end) *str = c;
+            if (str < end) *str = c;
             ++ str;
 
             /* put width */
             while (--field_width > 0)
             {
-                if (str <= end) *str = ' ';
+                if (str < end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -890,21 +926,21 @@ rt_int32_t rt_vsnprintf(char       *buf,
             {
                 while (len < field_width--)
                 {
-                    if (str <= end) *str = ' ';
+                    if (str < end) *str = ' ';
                     ++ str;
                 }
             }
 
             for (i = 0; i < len; ++i)
             {
-                if (str <= end) *str = *s;
+                if (str < end) *str = *s;
                 ++ str;
                 ++ s;
             }
 
             while (len < field_width--)
             {
-                if (str <= end) *str = ' ';
+                if (str < end) *str = ' ';
                 ++ str;
             }
             continue;
@@ -927,7 +963,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
             continue;
 
         case '%':
-            if (str <= end) *str = '%';
+            if (str < end) *str = '%';
             ++ str;
             continue;
 
@@ -949,12 +985,12 @@ rt_int32_t rt_vsnprintf(char       *buf,
             break;
 
         default:
-            if (str <= end) *str = '%';
+            if (str < end) *str = '%';
             ++ str;
 
             if (*fmt)
             {
-                if (str <= end) *str = *fmt;
+                if (str < end) *str = *fmt;
                 ++ str;
             }
             else
@@ -991,8 +1027,14 @@ rt_int32_t rt_vsnprintf(char       *buf,
 #endif
     }
 
-    if (str <= end) *str = '\0';
-    else *end = '\0';
+    if (size > 0)
+    {
+        if (str < end) *str = '\0';
+        else
+        {
+            end[-1] = '\0';
+        }
+    }
 
     /* the trailing null byte doesn't count towards the total
     * ++str;
@@ -1074,18 +1116,22 @@ RTM_EXPORT(rt_console_get_device);
  *
  * @param name the name of new console device
  *
- * @return the old console device handler
+ * @return the old console device handler on successful, or RT_NULL on failure.
  */
 rt_device_t rt_console_set_device(const char *name)
 {
-    rt_device_t new, old;
+    rt_device_t new_device, old_device;
 
     /* save old device */
-    old = _console_device;
+    old_device = _console_device;
 
     /* find new console device */
-    new = rt_device_find(name);
-    if (new != RT_NULL)
+    new_device = rt_device_find(name);
+    
+    /* check whether it's a same device */
+    if (new_device == old_device) return RT_NULL;
+    
+    if (new_device != RT_NULL)
     {
         if (_console_device != RT_NULL)
         {
@@ -1094,11 +1140,11 @@ rt_device_t rt_console_set_device(const char *name)
         }
 
         /* set new console device */
-        rt_device_open(new, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
-        _console_device = new;
+        rt_device_open(new_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
+        _console_device = new_device;
     }
 
-    return old;
+    return old_device;
 }
 RTM_EXPORT(rt_console_set_device);
 #endif
@@ -1293,7 +1339,9 @@ int __rt_ffs(int value)
 
 #ifdef RT_DEBUG
 /* RT_ASSERT(EX)'s hook */
+
 void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
+
 /**
  * This function will set a hook function to RT_ASSERT(EX). It will run when the expression is false.
  *

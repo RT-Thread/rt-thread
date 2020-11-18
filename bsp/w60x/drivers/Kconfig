@@ -1,0 +1,268 @@
+
+config BSP_USING_WM_LIBRARIES
+    bool
+    select PKG_USING_WM_LIBRARIES
+    default y
+
+menu "W60x Device config"
+    choice
+        prompt "SOC type"
+        default SOC_W600_A8xx
+        config SOC_W600_A8xx
+            bool "W600-A8xx"
+        config SOC_W601_A8xx
+            bool "W601-A8xx"
+    endchoice
+
+    choice
+        prompt "Board type"
+        if SOC_W600_A8xx
+            config W600_EV_BOARD
+                bool "W600_EV BOARD"
+        endif
+        if SOC_W601_A8xx
+            config W601_IOT_BOARD
+                bool "W601 IoT Board"
+        endif
+        config W60X_CUSTOM_BOARD
+            bool "Custom Board"
+    endchoice
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    menuconfig BSP_USING_UART
+        bool "Using UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+            config BSP_USING_UART0
+            bool "Enabel UART 0"
+            default y
+
+            if W600_EV_BOARD || W60X_CUSTOM_BOARD
+                config BSP_USING_UART1
+                    bool "Enabel UART 1"
+                    default n
+
+                if BSP_USING_UART1
+                    config WM_UART1_BAUDRATE
+                        int "UART1 baudrate"
+                        default 115200
+                endif
+            endif
+
+            if W601_IOT_BOARD || W60X_CUSTOM_BOARD
+                config BSP_USING_UART2
+                    bool "Enabel UART 2"
+                    default n
+
+                if BSP_USING_UART2
+                    config WM_UART2_BAUDRATE
+                        int "UART2 baudrate"
+                        default 115200
+                endif
+            endif
+        endif
+
+    config BSP_USING_PIN
+        bool "Using PIN"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_WIFI
+        bool "Using WIFI"
+        select RT_USING_WIFI
+        select RT_USING_LWIP
+        select PKG_USING_NETUTILS
+        select PKG_NETUTILS_NTP
+        select RT_USING_RTC
+        select RT_USING_SOFT_RTC if !BSP_USING_RTC
+        default y
+
+    if SOC_W601_A8xx
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            select RT_USING_ADC
+            default n
+
+        if BSP_USING_ADC
+            config USING_CPU_TEMP
+                bool "Enable CPU Temperature"
+            config USING_ADC_CH1
+                bool "Enable ADC Channel 1"
+            config USING_ADC_CH2
+                bool "Enable ADC Channel 2"
+            config USING_ADC_CH3
+                bool "Enable ADC Channel 3"
+            config USING_ADC_CH4
+                bool "Enable ADC Channel 4"
+            config USING_ADC_CH5
+                bool "Enable ADC Channel 5"
+            config USING_ADC_CH6
+                bool "Enable ADC Channel 6"
+            config USING_ADC_CH7
+                bool "Enable ADC Channel 7"
+            config USING_ADC_CH8
+                bool "Enable ADC Channel 8"
+        endif
+    endif
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        select RT_USING_HWTIMER
+        default n
+
+    if  BSP_USING_HWTIMER
+        config USING_HW_TIMER1
+            bool "Enable hw timer1"
+        config USING_HW_TIMER2
+            bool "Enable hw timer2"
+        config USING_HW_TIMER3
+            bool "Enable hw timer3"
+        config USING_HW_TIMER4
+            bool "Enable hw timer4"
+        config USING_HW_TIMER5
+            bool "Enable hw timer5"
+    endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        select RT_USING_PWM
+        default n
+
+    if BSP_USING_PWM
+        config USING_PWM_CH1
+            bool "Enable pwm channel 1"
+            default n
+            if USING_PWM_CH1
+                config WM_PWM_CH1_PIN
+                int "wm pwm channel 1 pin number"
+                default 23
+            endif
+        config USING_PWM_CH2
+            bool "Enable pwm channel 2"
+            default n
+            if USING_PWM_CH2
+                config WM_PWM_CH2_PIN
+                int "wm pwm channel 2 pin number"
+                default 22
+            endif
+        config USING_PWM_CH3
+            bool "Enable pwm channel 3"
+            default n
+            if USING_PWM_CH3
+                config WM_PWM_CH3_PIN
+                int "wm pwm channel 3 pin number"
+                default 21
+            endif
+        config USING_PWM_CH4
+            bool "Enable pwm channel 4"
+            default n
+            if USING_PWM_CH4
+                config WM_PWM_CH4_PIN
+                int "wm pwm channel 4 pin number"
+                default 37
+            endif
+        config USING_PWM_CH5
+            bool "Enable pwm channel 5"
+            default n
+            if USING_PWM_CH5
+                config WM_PWM_CH5_PIN
+                int "wm pwm channel 5 pin number"
+                default 19
+            endif
+    endif
+    
+    config BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+
+    if BSP_USING_I2C
+        config WM_HW_I2C_FREQ
+            int "wm hardware I2C frequency(HZ)"
+            default 200000
+    endif
+
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable SOFT I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        default n
+
+        if BSP_USING_SOFT_I2C
+            config BSP_USING_SOFT_I2C1
+                bool "Enabel SOFT I2C1"
+                default n
+        endif   
+
+        if BSP_USING_SOFT_I2C
+            config BSP_USING_SOFT_I2C2
+                bool "Enabel SOFT I2C2"
+                default n      
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+
+    if BSP_USING_SPI
+        config WM_SPI_BUS_NAME
+            string "Set SPI BUS name"
+            default "spi0"
+    endif
+
+    config BSP_USING_WDT
+        bool "Enable WDT"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    if BSP_USING_RTC
+        config BSP_USING_ALARM
+            bool "Enable Alarm"
+            select RT_USING_ALARM
+            default n
+    endif
+
+    config BSP_USING_CRYPTO
+        bool "Enable Hardware Crypto"
+        select RT_USING_HWCRYPTO
+        select RT_HWCRYPTO_USING_AES
+        select RT_HWCRYPTO_USING_AES_ECB
+        select RT_HWCRYPTO_USING_AES_CBC
+        select RT_HWCRYPTO_USING_MD5
+        select RT_HWCRYPTO_USING_SHA1
+        select RT_HWCRYPTO_USING_RNG
+        select RT_HWCRYPTO_USING_CRC
+        select RT_HWCRYPTO_USING_CRC_07
+        select RT_HWCRYPTO_USING_CRC_8005
+        select RT_HWCRYPTO_USING_CRC_1021
+        select RT_HWCRYPTO_USING_CRC_04C11DB7
+        select RT_HWCRYPTO_USING_BIGNUM
+        select RT_HWCRYPTO_USING_BIGNUM_EXPTMOD
+        default n
+
+    config BSP_USING_STANDBY
+        bool "Enable standby"
+        default n
+endmenu
+
+menu "External Libraries"
+    config WM_USING_ONESHOT
+        bool "Using winner micro Oneshot"
+        select RT_USING_WIFI
+        default y
+
+    if WM_USING_ONESHOT
+        config WM_USING_ONESHOT_DEMO
+            bool "Using Oneshot Demo"
+            default y
+    endif
+endmenu

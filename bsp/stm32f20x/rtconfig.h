@@ -11,12 +11,13 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
-#define RT_DEBUG
 #define RT_USING_OVERFLOW_CHECK
-#define RT_DEBUG_INIT 0
-#define RT_DEBUG_THREAD 0
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -38,6 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_VER_NUM 0x40001
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M3
@@ -61,6 +63,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
@@ -86,8 +89,12 @@
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
+#define RT_PIPE_BUFSZ 512
 #define RT_USING_PIN
 #define RT_USING_RTC
+
+/* Using WiFi */
+
 
 /* Using USB */
 
@@ -97,12 +104,18 @@
 #define RT_USING_LIBC
 #define RT_USING_POSIX
 
-/* Network stack */
+/* Network */
+
+/* Socket abstraction layer */
+
 
 /* light weight TCP/IP stack */
 
 
 /* Modbus master and slave stack */
+
+
+/* AT commands */
 
 
 /* VBUS(Virtual Software BUS) */
@@ -113,7 +126,6 @@
 
 /* ARM CMSIS */
 
-#define RT_USING_RTT_CMSIS
 
 /* RT-Thread online packages */
 
@@ -126,6 +138,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* IoT Cloud */
 
 
 /* security packages */
@@ -142,8 +157,6 @@
 
 /* system packages */
 
-/* RT-Thread GUI Engine */
-
 
 /* peripheral libraries and drivers */
 
@@ -151,16 +164,7 @@
 /* miscellaneous packages */
 
 
-/* sample package */
-
-
-/* example package: hello */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
+/* samples: kernel and components samples */
 
 #define SOC_STM32F2
 #define RT_USING_UART1

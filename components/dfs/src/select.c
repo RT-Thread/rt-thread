@@ -14,16 +14,18 @@
 #include <dfs_poll.h>
 #include <dfs_select.h>
 
+#ifdef RT_USING_POSIX
+
 static void fdszero(fd_set *set, int nfds)
 {
     fd_mask *m;
     int n;
-    
+
     /*
       The 'sizeof(fd_set)' of the system space may differ from user space,
       so the actual size of the 'fd_set' is determined here with the parameter 'nfds'
     */
-    m = (fd_mask*)set;
+    m = (fd_mask *)set;
     for (n = 0; n < nfds; n += (sizeof(fd_mask) * 8))
     {
         rt_memset(m, 0, sizeof(fd_mask));
@@ -178,3 +180,4 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     return ret;
 }
 
+#endif 

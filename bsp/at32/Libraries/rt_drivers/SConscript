@@ -1,0 +1,56 @@
+# RT-Thread building script for component
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+""")
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_SERIAL']):
+    src += ['drv_usart.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['drv_pwm.c']
+
+if GetDepend(['BSP_USING_HWTIMER']):
+    src += ['drv_hwtimer.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
+    src += ['drv_eth.c']
+
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
+
+if GetDepend(['BSP_USING_ADC']):
+    src += Glob('drv_adc.c')
+
+if GetDepend('BSP_USING_SRAM'):
+    src += ['drv_sram.c']
+
+if GetDepend('BSP_USING_RTC'):
+    src += ['drv_rtc.c']
+
+if GetDepend(['BSP_USING_WDT']):
+    src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_SDIO']):
+    src += ['drv_sdio.c']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

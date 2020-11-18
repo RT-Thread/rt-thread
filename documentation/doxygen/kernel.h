@@ -87,7 +87,7 @@
  *   priority would get the resource.
  *
  * RT-Thread operating systems supports event/fast event, mail box and message queue.
- * - The event mechanism is used to awake a thead by setting one or more corresponding
+ * - The event mechanism is used to awake a thread by setting one or more corresponding
  * bit of a binary number when an event ocurs.
  * - The fast event supports event thread queue. Once a one bit event occurs, the corresponding
  * blocked thread can be found out timing accurately, then will be waked up.

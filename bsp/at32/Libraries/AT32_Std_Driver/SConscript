@@ -1,0 +1,46 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_adc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_can.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_crc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_dbgmcu.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_dma.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_exti.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_flash.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_gpio.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_i2c.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_iwdg.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_pwr.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_rcc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_spi.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_tim.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_usart.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_wwdg.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_sdio.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_acc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_bkp.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_rtc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_ertc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_eth.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_xmc.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_comp.c
+AT32F4xx_StdPeriph_Driver/src/at32f4xx_dac.c
+AT32F4xx_StdPeriph_Driver/src/misc.c
+""")
+
+path = [
+    cwd + '/CMSIS/AT32/AT32F4xx/inc',
+    cwd + '/CMSIS',
+    cwd + '/AT32F4xx_StdPeriph_Driver/inc',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('AT32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

@@ -40,7 +40,8 @@ static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
     rt_uint32_t index = 0;
     struct lpc_i2c *lpc_i2c = RT_NULL;
     struct rt_i2c_msg *msg = RT_NULL;
-    i2c_master_transfer_t xfer = {0};
+    i2c_direction_t direction;
+    status_t result = kStatus_Success;
 
     RT_ASSERT(bus != RT_NULL); 
 
@@ -49,33 +50,35 @@ static rt_size_t master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg ms
     for(index = 0; index < num; index++)
     {
         msg = &msgs[index];
-        
-        xfer.slaveAddress   = msg->addr;
-        xfer.flags          = kI2C_TransferDefaultFlag;
-        xfer.subaddress     = 0;
-        xfer.subaddressSize = 1;
-        xfer.data           = msg->buf;
-        xfer.dataSize       = msg->len;
+        direction = ((msg->flags & RT_I2C_RD) ? kI2C_Read : kI2C_Write);
 
-        if (msg->flags & RT_I2C_RD)
+        if (!(msg->flags & RT_I2C_NO_START))
         {
-            xfer.direction  = kI2C_Read;
+            /* Start condition and slave address. */
+            result = I2C_MasterStart(lpc_i2c->base, msg->addr, direction);
         }
-        else
+
+        if (result == kStatus_Success)
         {
-            xfer.direction  = kI2C_Write;
-        }
-        
-        if(I2C_MasterTransferBlocking(lpc_i2c->base, &xfer) != kStatus_Success)
-        {
-            rt_kprintf("i2c bus write failed, i2c bus stop!\n");
-            goto exit;
+            if (direction == kI2C_Write)
+            {
+                /* Transmit data. */
+                result = I2C_MasterWriteBlocking(lpc_i2c->base, msg->buf, msg->len, kI2C_TransferDefaultFlag);
+            }
+            else
+            {
+                /* Receive Data. */
+                result = I2C_MasterReadBlocking(lpc_i2c->base, msg->buf, msg->len, kI2C_TransferDefaultFlag);
+            }
         }
     }
 
-    ret = index;
+    if (result == kStatus_Success)
+    {
+        ret = index;
+    }
 
-exit:
+    I2C_MasterStop(lpc_i2c->base);
     return ret;
 }
 

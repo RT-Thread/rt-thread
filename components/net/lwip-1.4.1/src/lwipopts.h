@@ -264,8 +264,8 @@
 #endif
 
 /*
- * You can re-define following setting in rtcofnig.h to overwrite the default 
- * setting in the lwip opts.h 
+ * You can re-define following setting in rtcofnig.h to overwrite the default
+ * setting in the lwip opts.h
  */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
 // #define MEMP_NUM_NETBUF             2
@@ -373,6 +373,18 @@
 #define LWIP_ARP                    1
 #define ARP_TABLE_SIZE              10
 #define ARP_QUEUEING                1
+
+/* ---------- Checksum options ---------- */
+#ifdef RT_LWIP_USING_HW_CHECKSUM
+#define CHECKSUM_GEN_IP                 0
+#define CHECKSUM_GEN_UDP                0
+#define CHECKSUM_GEN_TCP                0
+#define CHECKSUM_GEN_ICMP               0
+#define CHECKSUM_CHECK_IP               0
+#define CHECKSUM_CHECK_UDP              0
+#define CHECKSUM_CHECK_TCP              0
+#define CHECKSUM_CHECK_ICMP             0
+#endif
 
 /* ---------- IP options ---------- */
 /* Define IP_FORWARD to 1 if you wish to have the ability to forward
@@ -487,6 +499,14 @@
 
 /* no read/write/close for socket */
 #define LWIP_POSIX_SOCKETS_IO_NAMES 0
+
+/**
+ * LWIP_NETIF_HOSTNAME==1: Support netif hostname
+ */
+#ifndef LWIP_NETIF_HOSTNAME
+#define LWIP_NETIF_HOSTNAME             1
+#endif
+
 #define LWIP_NETIF_API  1
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */

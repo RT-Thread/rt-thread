@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2016 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -120,7 +104,7 @@ typedef struct
 #endif /* LSE_VALUE */
 
 #if !defined  (LSI_VALUE)
-#define LSI_VALUE    32000U    /*!< Value of the LSI oscillator in Hz */
+#define LSI_VALUE    40000U    /*!< Value of the LSI oscillator in Hz */
 #endif /* LSI_VALUE */
 /**
   * @}
@@ -268,23 +252,23 @@ typedef struct
 /** @defgroup RCC_LL_EC_MCO1SOURCE  MCO1 SOURCE selection
   * @{
   */
-#define LL_RCC_MCO1SOURCE_NOCLOCK          RCC_CFGR_MCOSEL_NOCLOCK      /*!< MCO output disabled, no clock on MCO */
-#define LL_RCC_MCO1SOURCE_SYSCLK           RCC_CFGR_MCOSEL_SYSCLK       /*!< SYSCLK selection as MCO source */
-#define LL_RCC_MCO1SOURCE_HSI              RCC_CFGR_MCOSEL_HSI          /*!< HSI selection as MCO source */
-#define LL_RCC_MCO1SOURCE_HSE              RCC_CFGR_MCOSEL_HSE          /*!< HSE selection as MCO source */
-#define LL_RCC_MCO1SOURCE_PLLCLK_DIV_2     RCC_CFGR_MCOSEL_PLL_DIV2     /*!< PLL clock divided by 2*/
-#if defined(RCC_CFGR_MCOSEL_PLL2CLK)
-#define LL_RCC_MCO1SOURCE_PLL2CLK          RCC_CFGR_MCOSEL_PLL2         /*!< PLL2 clock selected as MCO source*/
-#endif /* RCC_CFGR_MCOSEL_PLL2CLK */
-#if defined(RCC_CFGR_MCOSEL_PLL3CLK_DIV2)
-#define LL_RCC_MCO1SOURCE_PLLI2SCLK_DIV2   RCC_CFGR_MCOSEL_PLL3_DIV2    /*!< PLLI2S clock divided by 2 selected as MCO source*/
-#endif /* RCC_CFGR_MCOSEL_PLL3CLK_DIV2 */
-#if defined(RCC_CFGR_MCOSEL_EXT_HSE)
-#define LL_RCC_MCO1SOURCE_EXT_HSE          RCC_CFGR_MCOSEL_EXT_HSE      /*!< XT1 external 3-25 MHz oscillator clock selected as MCO source */
-#endif /* RCC_CFGR_MCOSEL_EXT_HSE */
-#if defined(RCC_CFGR_MCOSEL_PLL3CLK)
-#define LL_RCC_MCO1SOURCE_PLLI2SCLK        RCC_CFGR_MCOSEL_PLL3CLK      /*!< PLLI2S clock selected as MCO source */
-#endif /* RCC_CFGR_MCOSEL_PLL3CLK */
+#define LL_RCC_MCO1SOURCE_NOCLOCK          RCC_CFGR_MCO_NOCLOCK      /*!< MCO output disabled, no clock on MCO */
+#define LL_RCC_MCO1SOURCE_SYSCLK           RCC_CFGR_MCO_SYSCLK       /*!< SYSCLK selection as MCO source */
+#define LL_RCC_MCO1SOURCE_HSI              RCC_CFGR_MCO_HSI          /*!< HSI selection as MCO source */
+#define LL_RCC_MCO1SOURCE_HSE              RCC_CFGR_MCO_HSE          /*!< HSE selection as MCO source */
+#define LL_RCC_MCO1SOURCE_PLLCLK_DIV_2     RCC_CFGR_MCO_PLLCLK_DIV2  /*!< PLL clock divided by 2*/
+#if defined(RCC_CFGR_MCO_PLL2CLK)
+#define LL_RCC_MCO1SOURCE_PLL2CLK          RCC_CFGR_MCO_PLL2CLK      /*!< PLL2 clock selected as MCO source*/
+#endif /* RCC_CFGR_MCO_PLL2CLK */
+#if defined(RCC_CFGR_MCO_PLL3CLK_DIV2)
+#define LL_RCC_MCO1SOURCE_PLLI2SCLK_DIV2   RCC_CFGR_MCO_PLL3CLK_DIV2 /*!< PLLI2S clock divided by 2 selected as MCO source*/
+#endif /* RCC_CFGR_MCO_PLL3CLK_DIV2 */
+#if defined(RCC_CFGR_MCO_EXT_HSE)
+#define LL_RCC_MCO1SOURCE_EXT_HSE          RCC_CFGR_MCO_EXT_HSE      /*!< XT1 external 3-25 MHz oscillator clock selected as MCO source */
+#endif /* RCC_CFGR_MCO_EXT_HSE */
+#if defined(RCC_CFGR_MCO_PLL3CLK)
+#define LL_RCC_MCO1SOURCE_PLLI2SCLK        RCC_CFGR_MCO_PLL3CLK      /*!< PLLI2S clock selected as MCO source */
+#endif /* RCC_CFGR_MCO_PLL3CLK */
 /**
   * @}
   */
@@ -320,8 +304,8 @@ typedef struct
 #if defined(RCC_CFGR_USBPRE)
 #define LL_RCC_USB_CLKSOURCE_PLL             RCC_CFGR_USBPRE        /*!< PLL clock is not divided */
 #define LL_RCC_USB_CLKSOURCE_PLL_DIV_1_5     0x00000000U            /*!< PLL clock is divided by 1.5 */
-#endif /*RCC_CFGR_USBPRE*/                   
-#if defined(RCC_CFGR_OTGFSPRE)               
+#endif /*RCC_CFGR_USBPRE*/
+#if defined(RCC_CFGR_OTGFSPRE)
 #define LL_RCC_USB_CLKSOURCE_PLL_DIV_2       RCC_CFGR_OTGFSPRE      /*!< PLL clock is divided by 2 */
 #define LL_RCC_USB_CLKSOURCE_PLL_DIV_3       0x00000000U            /*!< PLL clock is divided by 3 */
 #endif /*RCC_CFGR_OTGFSPRE*/
@@ -1602,7 +1586,7 @@ __STATIC_INLINE uint32_t LL_RCC_PLL_GetPrediv(void)
 #if defined(RCC_CFGR2_PREDIV1)
   return (uint32_t)(READ_BIT(RCC->CFGR2, RCC_CFGR2_PREDIV1));
 #else
-  return (uint32_t)(READ_BIT(RCC->CFGR, RCC_CFGR_PLLXTPRE));
+  return (uint32_t)(READ_BIT(RCC->CFGR, RCC_CFGR_PLLXTPRE) >> RCC_CFGR_PLLXTPRE_Pos);
 #endif /*RCC_CFGR2_PREDIV1*/
 }
 

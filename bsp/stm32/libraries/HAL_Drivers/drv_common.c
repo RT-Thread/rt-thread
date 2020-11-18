@@ -5,14 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-7      SummerGift   change to new framework
+ * 2018-11-7      SummerGift   first version
  */
 
 #include "drv_common.h"
-
-#ifdef RT_USING_PIN
-#include "drv_gpio.h"
-#endif
+#include "board.h"
 
 #ifdef RT_USING_SERIAL
 #include "drv_usart.h"
@@ -30,9 +27,17 @@ FINSH_FUNCTION_EXPORT_ALIAS(reboot, __cmd_reboot, Reboot System);
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
+#if defined (SOC_SERIES_STM32H7)
+    HAL_SYSTICK_Config((HAL_RCCEx_GetD1SysClockFreq()) / RT_TICK_PER_SECOND);
+#elif defined (SOC_SERIES_STM32MP1)
+	HAL_SYSTICK_Config(HAL_RCC_GetSystemCoreClockFreq() / RT_TICK_PER_SECOND);
+#else
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
+#endif
+#if !defined (SOC_SERIES_STM32MP1)
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+#endif
+    NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }
 
 /**
@@ -66,6 +71,7 @@ void HAL_ResumeTick(void)
 
 void HAL_Delay(__IO uint32_t Delay)
 {
+    rt_thread_mdelay(Delay);
 }
 
 /* re-implement tick interface for STM32 HAL */
@@ -91,19 +97,48 @@ void _Error_Handler(char *s, int num)
 }
 
 /**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    rt_uint32_t start, now, delta, reload, us_tick;
+    start = SysTick->VAL;
+    reload = SysTick->LOAD;
+    us_tick = SystemCoreClock / 1000000UL;
+    do {
+        now = SysTick->VAL;
+        delta = start > now ? start - now : reload + start - now;
+    } while(delta < us_tick * us);
+}
+
+/**
  * This function will initial STM32 board.
  */
 RT_WEAK void rt_hw_board_init()
 {
+#ifdef SCB_EnableICache
+    /* Enable I-Cache---------------------------------------------------------*/
+    SCB_EnableICache();
+#endif
+
+#ifdef SCB_EnableDCache
+    /* Enable D-Cache---------------------------------------------------------*/
+    SCB_EnableDCache();
+#endif
+
     /* HAL_Init() function is called at the beginning of the program */
     HAL_Init();
 
+    /* enable interrupt */
+    __set_PRIMASK(0);
     /* System clock initialization */
     SystemClock_Config();
-    rt_hw_systick_init();
+    /* disable interrupt */
+    __set_PRIMASK(1);
 
-    /* Hardware GPIO initialization */
-    MX_GPIO_Init();
+    rt_hw_systick_init();
 
     /* Heap initialization */
 #if defined(RT_USING_HEAP)

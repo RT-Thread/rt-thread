@@ -8,8 +8,8 @@
  * 2014-01-05     NongXiaoming      The first version for LPC40xx
  */
 
-#ifndef __UART_H__
-#define __UART_H__
+#ifndef DRV_UART_H__
+#define DRV_UART_H__
 
 void rt_hw_uart_init(void);
 

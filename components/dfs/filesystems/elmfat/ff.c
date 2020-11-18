@@ -569,7 +569,7 @@ static WCHAR LfnBuf[_MAX_LFN+1];	/* LFN enabled with static working buffer */
 #define	FREE_NAMBUF()	ff_memfree(lfn)
 #else
 #define	DEF_NAMBUF		WCHAR *lfn;
-#define INIT_NAMBUF(fs)	{ lfn = ff_memalloc((_MAX_LFN+1)*2); if (!lfn) LEAVE_FF(fs, FR_NOT_ENOUGH_CORE); (fs)->lfnbuf = lfn; }
+#define INIT_NAMBUF(fs)	{ lfn = (WCHAR *)ff_memalloc((_MAX_LFN+1)*2); if (!lfn) LEAVE_FF(fs, FR_NOT_ENOUGH_CORE); (fs)->lfnbuf = lfn; }
 #define	FREE_NAMBUF()	ff_memfree(lfn)
 #endif
 

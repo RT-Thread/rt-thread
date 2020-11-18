@@ -12,29 +12,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -8266,7 +8250,7 @@ typedef struct
 #define EXTI_IMR1_IM31_Msk       (0x1UL << EXTI_IMR1_IM31_Pos)                 /*!< 0x80000000 */
 #define EXTI_IMR1_IM31           EXTI_IMR1_IM31_Msk                            /*!< Interrupt Mask on line 31 */
 #define EXTI_IMR1_IM_Pos         (0U)
-#define EXTI_IMR1_IM_Msk         (0x9FFFFFFFUL << EXTI_IMR1_IM_Pos)            /*!< 0x9FFFFFFF */
+#define EXTI_IMR1_IM_Msk         (0xFFFFFFFFUL << EXTI_IMR1_IM_Pos)            /*!< 0xFFFFFFFF */
 #define EXTI_IMR1_IM             EXTI_IMR1_IM_Msk                              /*!< Interrupt Mask All */
 
 /*******************  Bit definition for EXTI_EMR1 register  ******************/
@@ -14501,13 +14485,13 @@ typedef struct
 #define SDMMC_POWER_PWRCTRL_1           (0x2UL << SDMMC_POWER_PWRCTRL_Pos)     /*!< 0x00000002 */
 #define SDMMC_POWER_VSWITCH_Pos         (2U)
 #define SDMMC_POWER_VSWITCH_Msk         (0x1UL << SDMMC_POWER_VSWITCH_Pos)     /*!< 0x00000004 */
-#define SDMMC_POWER_VSWITCH             SDMMC_POWER_VSWITCH_Pos                /*!<Voltage switch sequence start */
+#define SDMMC_POWER_VSWITCH             SDMMC_POWER_VSWITCH_Msk                /*!<Voltage switch sequence start */
 #define SDMMC_POWER_VSWITCHEN_Pos       (3U)
 #define SDMMC_POWER_VSWITCHEN_Msk       (0x1UL << SDMMC_POWER_VSWITCHEN_Pos)   /*!< 0x00000008 */
-#define SDMMC_POWER_VSWITCHEN           SDMMC_POWER_VSWITCHEN_Pos              /*!<Voltage switch procedure enable */
+#define SDMMC_POWER_VSWITCHEN           SDMMC_POWER_VSWITCHEN_Msk              /*!<Voltage switch procedure enable */
 #define SDMMC_POWER_DIRPOL_Pos          (4U)
 #define SDMMC_POWER_DIRPOL_Msk          (0x1UL << SDMMC_POWER_DIRPOL_Pos)      /*!< 0x00000010 */
-#define SDMMC_POWER_DIRPOL              SDMMC_POWER_DIRPOL_Pos                 /*!<Data and Command direction signals polarity selection */
+#define SDMMC_POWER_DIRPOL              SDMMC_POWER_DIRPOL_Msk                 /*!<Data and Command direction signals polarity selection */
 
 /******************  Bit definition for SDMMC_CLKCR register  ******************/
 #define SDMMC_CLKCR_CLKDIV_Pos          (0U)
@@ -14520,8 +14504,8 @@ typedef struct
 #define SDMMC_CLKCR_WIDBUS_Pos          (14U)
 #define SDMMC_CLKCR_WIDBUS_Msk          (0x3UL << SDMMC_CLKCR_WIDBUS_Pos)      /*!< 0x0000C000 */
 #define SDMMC_CLKCR_WIDBUS              SDMMC_CLKCR_WIDBUS_Msk                 /*!<WIDBUS[1:0] bits (Wide bus mode enable bit) */
-#define SDMMC_CLKCR_WIDBUS_0            (0x1UL << SDMMC_CLKCR_WIDBUS_Pos)      /*!< 0x00000800 */
-#define SDMMC_CLKCR_WIDBUS_1            (0x2UL << SDMMC_CLKCR_WIDBUS_Pos)      /*!< 0x00001000 */
+#define SDMMC_CLKCR_WIDBUS_0            (0x1UL << SDMMC_CLKCR_WIDBUS_Pos)      /*!< 0x00004000 */
+#define SDMMC_CLKCR_WIDBUS_1            (0x2UL << SDMMC_CLKCR_WIDBUS_Pos)      /*!< 0x00008000 */
 
 #define SDMMC_CLKCR_NEGEDGE_Pos         (16U)
 #define SDMMC_CLKCR_NEGEDGE_Msk         (0x1UL << SDMMC_CLKCR_NEGEDGE_Pos)     /*!< 0x00010000 */
@@ -16902,7 +16886,7 @@ typedef struct
 
 /******************************************************************************/
 /*                                                                            */
-/*                         Low Power Timer (LPTTIM)                           */
+/*                         Low Power Timer (LPTIM)                            */
 /*                                                                            */
 /******************************************************************************/
 /******************  Bit definition for LPTIM_ISR register  *******************/
@@ -19946,6 +19930,9 @@ typedef struct
 /****************** LPTIM Instances : All supported instances *****************/
 #define IS_LPTIM_INSTANCE(INSTANCE)     (((INSTANCE) == LPTIM1) || \
                                          ((INSTANCE) == LPTIM2))
+
+/****************** LPTIM Instances : supporting the encoder mode *************/
+#define IS_LPTIM_ENCODER_INTERFACE_INSTANCE(INSTANCE) ((INSTANCE) == LPTIM1)
 
 /****************** TIM Instances : All supported instances *******************/
 #define IS_TIM_INSTANCE(INSTANCE)       (((INSTANCE) == TIM1)   || \

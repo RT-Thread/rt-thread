@@ -15,6 +15,7 @@ TARGET = rtconfig.OUTPUT_NAME + rtconfig.TARGET_EXT
 # add rtconfig.h path to the assembler
 rtconfig.AFLAGS += ' -I' + str(Dir('#')) +' -I' + str(Dir('#')) + '/bsp'
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
         AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
         CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,

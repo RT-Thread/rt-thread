@@ -8,14 +8,12 @@ drivers/imx_timer.c
 drivers/imx_i2c.c
 drivers/imx_uart.c
 cpu/armv7_cache.c
-cpu/gic.c
 cpu/ccm_pll2.c
-cpu/mmu.c
 cpu/cortex_a_gcc.S
 ''')
 
 CPPPATH = [ cwd + '/cpu',
-cwd + '/include', 
+cwd + '/include',
 cwd + '/include/mx6ul',
 cwd + '/include/mx6ul/registers'
 ]

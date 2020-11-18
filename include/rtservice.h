@@ -24,7 +24,7 @@ extern "C" {
  * @addtogroup KernelService
  */
 
-/*@{*/
+/**@{*/
 
 /**
  * rt_container_of - return the member address of ptr, if the type of ptr is the
@@ -128,21 +128,21 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
 
 /**
  * rt_list_for_each - iterate over a list
- * @pos:	the rt_list_t * to use as a loop cursor.
- * @head:	the head for your list.
+ * @pos:    the rt_list_t * to use as a loop cursor.
+ * @head:   the head for your list.
  */
 #define rt_list_for_each(pos, head) \
     for (pos = (head)->next; pos != (head); pos = pos->next)
 
 /**
  * rt_list_for_each_safe - iterate over a list safe against removal of list entry
- * @pos:	the rt_list_t * to use as a loop cursor.
- * @n:		another rt_list_t * to use as temporary storage
- * @head:	the head for your list.
+ * @pos:    the rt_list_t * to use as a loop cursor.
+ * @n:      another rt_list_t * to use as temporary storage
+ * @head:   the head for your list.
  */
 #define rt_list_for_each_safe(pos, n, head) \
-	for (pos = (head)->next, n = pos->next; pos != (head); \
-		pos = n, n = pos->next)
+    for (pos = (head)->next, n = pos->next; pos != (head); \
+        pos = n, n = pos->next)
 
 /**
  * rt_list_for_each_entry  -   iterate over list of given type
@@ -306,7 +306,7 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
 #define rt_slist_tail_entry(ptr, type, member) \
     rt_slist_entry(rt_slist_tail(ptr), type, member)
 
-/*@}*/
+/**@}*/
 
 #ifdef __cplusplus
 }

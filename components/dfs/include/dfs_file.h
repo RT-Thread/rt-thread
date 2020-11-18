@@ -44,6 +44,7 @@ struct dfs_fd
     char *path;                  /* Name (below mount point) */
     int ref_count;               /* Descriptor reference count */
 
+    struct dfs_filesystem *fs;
     const struct dfs_file_ops *fops;
 
     uint32_t flags;              /* Descriptor flags */
@@ -65,6 +66,10 @@ int dfs_file_lseek(struct dfs_fd *fd, off_t offset);
 
 int dfs_file_stat(const char *path, struct stat *buf);
 int dfs_file_rename(const char *oldpath, const char *newpath);
+int dfs_file_ftruncate(struct dfs_fd *fd, off_t length);
+
+/* 0x5254 is just a magic number to make these relatively unique ("RT") */
+#define RT_FIOFTRUNCATE 0x52540000U
 
 #ifdef __cplusplus
 }

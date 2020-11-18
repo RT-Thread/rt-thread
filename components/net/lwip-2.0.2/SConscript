@@ -81,11 +81,8 @@ if GetDepend(['RT_LWIP_PPP']):
 if GetDepend(['RT_USING_LWIP_IPV6']):
     src += ipv6_src
 
-if GetDepend(['RT_USING_NETUTILS']):
-    if GetDepend(['RT_NETUTILS_USING_TFTP']):
-        src += Glob('src/apps/tftp/*.c')
-    if GetDepend(['RT_NETUTILS_USING_PING']):
-        src += Glob('src/apps/ping/*.c')
+if GetDepend(['RT_LWIP_USING_PING']):
+    src += Glob('src/apps/ping/ping.c')
 
 group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP202'], CPPPATH = path)
 

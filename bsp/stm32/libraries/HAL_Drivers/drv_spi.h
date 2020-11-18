@@ -5,11 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-5      SummerGift   change to new framework
+ * 2018-11-5      SummerGift   first version
  */
 
-#ifndef __DRV_SPI_H_
-#define __DRV_SPI_H_
+#ifndef __DRV_SPI_H__
+#define __DRV_SPI_H__
 
 #include <rtthread.h>
 #include "rtdevice.h"
@@ -17,7 +17,15 @@
 #include <drv_common.h>
 #include "drv_dma.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, GPIO_TypeDef* cs_gpiox, uint16_t cs_gpio_pin);
+
+#ifdef __cplusplus
+}
+#endif
 
 struct stm32_hw_spi_cs
 {
@@ -29,7 +37,7 @@ struct stm32_spi_config
 {
     SPI_TypeDef *Instance;
     char *bus_name;
-    struct dma_config dma_rx, dma_tx;
+    struct dma_config *dma_rx, *dma_tx;
 };
 
 struct stm32_spi_device
@@ -39,22 +47,24 @@ struct stm32_spi_device
     char *device_name;
 };
 
+#define SPI_USING_RX_DMA_FLAG   (1<<0)
+#define SPI_USING_TX_DMA_FLAG   (1<<1)
+
 /* stm32 spi dirver class */
 struct stm32_spi
 {
     SPI_HandleTypeDef handle;
-    const struct stm32_spi_config *config;
+    struct stm32_spi_config *config;
     struct rt_spi_configuration *cfg;
-    
-#ifdef BSP_SPI_USING_DMA
+
     struct
     {
         DMA_HandleTypeDef handle_rx;
         DMA_HandleTypeDef handle_tx;
     } dma;
-#endif
     
+    rt_uint8_t spi_dma_flag;
     struct rt_spi_bus spi_bus;
 };
 
-#endif /*__DRV_SPI_H_ */
+#endif /*__DRV_SPI_H__ */

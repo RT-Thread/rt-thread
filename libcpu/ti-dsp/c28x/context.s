@@ -6,6 +6,8 @@
 ; Change Logs:
 ; Date           Author       Notes
 ; 2018-09-01     xuzhuoyi     the first version.
+; 2019-06-17     zhaoxiaowei  fix bugs of old c28x interrupt api.
+; 2019-07-03     zhaoxiaowei  add _rt_hw_calc_csb function to support __rt_ffs.
 ;
 
     .ref   _rt_interrupt_to_thread
@@ -15,6 +17,7 @@
     .def   _RTOSINT_Handler
     .def   _rt_hw_get_st0
     .def   _rt_hw_get_st1
+    .def   _rt_hw_calc_csb
     .def   _rt_hw_context_switch_interrupt
     .def   _rt_hw_context_switch
     .def   _rt_hw_context_switch_to
@@ -73,7 +76,9 @@ RT_CTX_RESTORE  .macro
 ;
     .asmfunc
 _rt_hw_interrupt_disable:
-    DINT
+    PUSH  ST1
+    SETC  INTM,DBGM
+    MOV   AL, *--SP
     LRETR
     .endasmfunc
 
@@ -82,7 +87,8 @@ _rt_hw_interrupt_disable:
 ;
     .asmfunc
 _rt_hw_interrupt_enable:
-    EINT
+    MOV   *SP++, AL
+    POP   ST1
     LRETR
     .endasmfunc
     
@@ -94,11 +100,10 @@ _rt_hw_interrupt_enable:
  
     .asmfunc
 _rt_hw_context_switch_interrupt:
-_rt_hw_context_switch:
     MOVL    XAR0, #0
     MOV     AR0, AL
     MOVL    XAR4, *-SP[4]
-    ; set rt_thread_switch_interrupt_flag to 1 
+    ; set rt_thread_switch_interrupt_flag to 1
     MOVL    XAR5, #_rt_thread_switch_interrupt_flag
     MOVL    XAR6, *XAR5
     MOVL    ACC, XAR6
@@ -111,6 +116,36 @@ _rt_hw_context_switch:
     MOVL    *XAR5, XAR0
 
 _reswitch:
+    MOVL    XAR5, #_rt_interrupt_to_thread     ; set rt_interrupt_to_thread
+    MOVL    *XAR5, XAR4
+
+    LRETR
+    .endasmfunc
+
+;
+; void rt_hw_context_switch(rt_uint32 from, rt_uint32 to);
+; r0 --> from
+; r4 --> to
+
+
+    .asmfunc
+_rt_hw_context_switch:
+    MOVL    XAR0, #0
+    MOV     AR0, AL
+    MOVL    XAR4, *-SP[4]
+    ; set rt_thread_switch_interrupt_flag to 1 
+    MOVL    XAR5, #_rt_thread_switch_interrupt_flag
+    MOVL    XAR6, *XAR5
+    MOVL    ACC, XAR6
+    CMPB    AL, #1
+    B       _reswitch2, EQ
+    MOVL     XAR6, #1
+    MOVL    *XAR5, XAR6
+
+    MOVL    XAR5, #_rt_interrupt_from_thread   ; set rt_interrupt_from_thread
+    MOVL    *XAR5, XAR0
+
+_reswitch2:
     MOVL    XAR5, #_rt_interrupt_to_thread     ; set rt_interrupt_to_thread
     MOVL    *XAR5, XAR4
 
@@ -139,8 +174,6 @@ _RTOSINT_Handler:
     MOV     AR1, AL
     CMP     AR1, #0
     B       switch_to_thread, EQ    ; skip register save at the first time 
-
-    ;MOVZ    AR1, @SP                 ; get from thread stack pointer 
     
 ;#if defined (__VFP_FP__) && !defined(__SOFTFP__)
 ;    TST     lr, #0x10           ; if(!EXC_RETURN[4]) 
@@ -159,9 +192,9 @@ _RTOSINT_Handler:
 ;#endif
 
     MOV     AL, *AR0
-    MOV     AR1, AL
+    MOV     AR0, AL
     MOVZ    AR1, @SP                 ; get from thread stack pointer
-    MOV     *AR0, AR1                ; update from thread stack pointer 
+    MOV     *AR0, AR1                ; update from thread stack pointer
 
 switch_to_thread:
     MOV     AR1, #_rt_interrupt_to_thread
@@ -175,7 +208,7 @@ switch_to_thread:
 ;#endif
 
     MOV     @SP, AR1
-    INC     SP
+
     RT_CTX_RESTORE     ; pop r4 - r11 register
 
 rtosint_exit:
@@ -197,6 +230,25 @@ _rt_hw_get_st1:
     PUSH    ST1
     POP     AL
     LRETR
+    .endasmfunc
+
+; C28x do not have a build-in "__ffs" func in its C compiler.
+; We can use the "Count Sign Bits" (CSB) instruction to make one.
+; CSB will return the number of 0's minus 1 above the highest set bit.
+; The count is placed in T. For example:
+;    ACC        T     maxbit
+; 0x00000001    30      0
+; 0x00000010    26      4
+; 0x000001FF    22      8
+; 0x000001F0    22      8
+    .asmfunc
+_rt_hw_calc_csb:
+    MOV     AH, #0
+    CSB     ACC                   ; T = no. of sign bits - 1
+    MOVU    ACC, T                ; ACC = no. of sign bits - 1
+    SUBB    ACC, #30              ; ACC = ACC - 30
+    ABS     ACC                   ; ACC = |ACC|
+    lretr
     .endasmfunc
 
 ;

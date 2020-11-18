@@ -1,0 +1,212 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32MP157A
+    bool
+    select SOC_SERIES_STM32MP1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (uart4)"
+        select BSP_USING_UART
+        select BSP_USING_UART4
+        default y
+
+    config BSP_USING_PMIC
+        bool "Enable PMIC"
+        select BSP_USING_I2C
+        select BSP_USING_I2C3
+        default y
+
+    config BSP_USING_NAND
+        bool "Enable FMC (MT29F8G08ABACAH4)"
+        select RT_USING_FMC
+        select RT_USING_MTD_NAND
+        select RT_MTD_NAND_DEBUG
+        default n
+
+    config BSP_USING_OPENAMP
+        bool "Enable OpenAMP"
+        select RT_USING_OPENAMP
+        default n
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+        if BSP_USING_UART
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default y
+
+            config BSP_UART3_RX_USING_DMA
+                bool "Enable UART3 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART3_TX_USING_DMA
+                bool "Enable UART3 TX DMA"
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM14
+                bool "Enable TIM14"
+                default n
+
+            config BSP_USING_TIM16
+                bool "Enable TIM16"
+                default n
+
+            config BSP_USING_TIM17
+                bool "Enable TIM17"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable pwm"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_PWM4
+            bool "Enable timer4 output pwm"
+            default n
+            if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH2
+                    bool "Enable PWM4 channel2"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PD7 --> 55; PG15 --> 111"
+                    config BSP_I2C1_SCL_PIN
+                        int "I2C1 scl pin number"
+                        range 1 176
+                        default 55
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 1 176
+                        default 111
+                endif
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C2
+                    comment "Notice: PH4 --> 116; PH5 --> 117"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 scl pin number"
+                        range 1 176
+                        default 116
+                    config BSP_I2C2_SDA_PIN
+                        int "I2C2 sda pin number"
+                        range 1 176
+                        default 117
+                endif
+	    menuconfig BSP_USING_I2C3
+                bool "Enable I2C3 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C3
+                    comment "Notice: PZ4 --> 180; PZ5 --> 181"
+                    config BSP_I2C3_SCL_PIN
+                        int "i2c3 scl pin number"
+                        range 1 191
+                        default 180
+                    config BSP_I2C3_SDA_PIN
+                        int "I2C3 sda pin number"
+                        range 1 191
+                        default 181
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        select RT_USING_SPI
+        default n
+        if BSP_USING_SPI
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+
+            config BSP_SPI5_TX_USING_DMA
+                bool "Enable SPI5 TX DMA"
+                depends on BSP_USING_SPI5
+                default n
+
+            config BSP_SPI5_RX_USING_DMA
+                bool "Enable SPI5 RX DMA"
+                depends on BSP_USING_SPI5
+                select BSP_SPI5_TX_USING_DMA
+                default n
+        endif
+
+ source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

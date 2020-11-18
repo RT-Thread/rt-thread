@@ -43,7 +43,7 @@ extern unsigned char __bss_end__;
 #define HEAP_BEGIN  (__section_end(".noinit"))
 #endif
 
-#define HEAP_END    (0x24000000)
+#define HEAP_END    (((rt_uint32_t)HEAP_BEGIN & (0xF0 << 24)) + (32 << 20))
 
 extern void rt_hw_interrupt_init(void);
 extern void rt_hw_clock_init(void);
@@ -57,8 +57,8 @@ static struct mem_desc at91_mem_desc[] = {
 	{ 0x00000000, 0xFFFFFFFF, 0x00000000, RW_NCNB },     /* None cached for 4G memory */
 	{ 0x20000000, 0x24000000-1, 0x20000000, RW_CB },     /* 64M cached SDRAM memory */
 	{ 0x00000000, 0x100000, 0x20000000, RW_CB },         /* isr vector table */
-	{ 0x90000000, 0x90400000 - 1, 0x00200000, RW_NCNB }, /* 4K SRAM0 + 4k SRAM1 */
-	{ 0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB }   /* 64M none-cached SDRAM memory */
+	{ 0x90000000, 0x90400000-1, 0x00200000, RW_NCNB },   /* 4K SRAM0@2M + 4k SRAM1@3M + 16k UHP@5M */
+	{ 0xA0000000, 0xA4000000-1, 0x20000000, RW_NCNB }    /* 64M none-cached SDRAM memory */
 };
 
 

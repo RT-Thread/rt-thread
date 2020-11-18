@@ -1,21 +1,7 @@
 /*
- * File      : drv_uart.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -26,6 +12,7 @@
 #define __DRV_UART_H__
 
 #include "ls1c.h"
+#include <rthw.h>
 
 #define DEV_CLK 252000000 // 252MHz
 #define UART_BAUDRATE 115200
@@ -45,43 +32,43 @@
 #define UART11_BASE         0xBFE4Cb00
 
 /* UART registers */
-#define UART_DAT(base)      __REG8(base + 0x00)
-#define UART_IER(base)      __REG8(base + 0x01)
-#define UART_IIR(base)      __REG8(base + 0x02)
-#define UART_FCR(base)      __REG8(base + 0x02)
-#define UART_LCR(base)      __REG8(base + 0x03)
-#define UART_MCR(base)      __REG8(base + 0x04)
-#define UART_LSR(base)      __REG8(base + 0x05)
-#define UART_MSR(base)      __REG8(base + 0x06)
+#define UART_DAT(base)      HWREG8(base + 0x00)
+#define UART_IER(base)      HWREG8(base + 0x01)
+#define UART_IIR(base)      HWREG8(base + 0x02)
+#define UART_FCR(base)      HWREG8(base + 0x02)
+#define UART_LCR(base)      HWREG8(base + 0x03)
+#define UART_MCR(base)      HWREG8(base + 0x04)
+#define UART_LSR(base)      HWREG8(base + 0x05)
+#define UART_MSR(base)      HWREG8(base + 0x06)
 
-#define UART_LSB(base)      __REG8(base + 0x00)
-#define UART_MSB(base)      __REG8(base + 0x01)
+#define UART_LSB(base)      HWREG8(base + 0x00)
+#define UART_MSB(base)      HWREG8(base + 0x01)
 
 /* UART0 registers */
-#define UART0_DAT           __REG8(UART0_BASE + 0x00)
-#define UART0_IER           __REG8(UART0_BASE + 0x01)
-#define UART0_IIR           __REG8(UART0_BASE + 0x02)
-#define UART0_FCR           __REG8(UART0_BASE + 0x02)
-#define UART0_LCR           __REG8(UART0_BASE + 0x03)
-#define UART0_MCR           __REG8(UART0_BASE + 0x04)
-#define UART0_LSR           __REG8(UART0_BASE + 0x05)
-#define UART0_MSR           __REG8(UART0_BASE + 0x06)
+#define UART0_DAT           HWREG8(UART0_BASE + 0x00)
+#define UART0_IER           HWREG8(UART0_BASE + 0x01)
+#define UART0_IIR           HWREG8(UART0_BASE + 0x02)
+#define UART0_FCR           HWREG8(UART0_BASE + 0x02)
+#define UART0_LCR           HWREG8(UART0_BASE + 0x03)
+#define UART0_MCR           HWREG8(UART0_BASE + 0x04)
+#define UART0_LSR           HWREG8(UART0_BASE + 0x05)
+#define UART0_MSR           HWREG8(UART0_BASE + 0x06)
 
-#define UART0_LSB           __REG8(UART0_BASE + 0x00)
-#define UART0_MSB           __REG8(UART0_BASE + 0x01)
+#define UART0_LSB           HWREG8(UART0_BASE + 0x00)
+#define UART0_MSB           HWREG8(UART0_BASE + 0x01)
 
 /* UART1 registers */
-#define UART1_DAT           __REG8(UART1_BASE + 0x00)
-#define UART1_IER           __REG8(UART1_BASE + 0x01)
-#define UART1_IIR           __REG8(UART1_BASE + 0x02)
-#define UART1_FCR           __REG8(UART1_BASE + 0x02)
-#define UART1_LCR           __REG8(UART1_BASE + 0x03)
-#define UART1_MCR           __REG8(UART1_BASE + 0x04)
-#define UART1_LSR           __REG8(UART1_BASE + 0x05)
-#define UART1_MSR           __REG8(UART1_BASE + 0x06)
+#define UART1_DAT           HWREG8(UART1_BASE + 0x00)
+#define UART1_IER           HWREG8(UART1_BASE + 0x01)
+#define UART1_IIR           HWREG8(UART1_BASE + 0x02)
+#define UART1_FCR           HWREG8(UART1_BASE + 0x02)
+#define UART1_LCR           HWREG8(UART1_BASE + 0x03)
+#define UART1_MCR           HWREG8(UART1_BASE + 0x04)
+#define UART1_LSR           HWREG8(UART1_BASE + 0x05)
+#define UART1_MSR           HWREG8(UART1_BASE + 0x06)
 
-#define UART1_LSB           __REG8(UART1_BASE + 0x00)
-#define UART1_MSB           __REG8(UART1_BASE + 0x01)
+#define UART1_LSB           HWREG8(UART1_BASE + 0x00)
+#define UART1_MSB           HWREG8(UART1_BASE + 0x01)
 
 /* UART interrupt enable register value */
 #define UARTIER_IME     (1 << 3)

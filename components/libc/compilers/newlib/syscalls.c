@@ -9,14 +9,12 @@
 #include <reent.h>
 #include <sys/errno.h>
 #include <sys/time.h>
+#include <stdio.h>
+
 #include <rtthread.h>
 
 #ifdef RT_USING_DFS
 #include <dfs_posix.h>
-#endif
-
-#ifdef RT_USING_PTHREADS
-#include <pthread.h>
 #endif
 
 #ifdef RT_USING_MODULE
@@ -24,6 +22,14 @@
 #endif
 
 /* Reentrant versions of system calls.  */
+
+#ifndef _REENT_ONLY
+int *
+__errno ()
+{
+  return _rt_errno();
+}
+#endif
 
 int
 _close_r(struct _reent *ptr, int fd)
@@ -218,7 +224,7 @@ _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
-    if (fd == 0)
+    if (fileno(stdout) == fd)
     {
         rt_device_t console;
 
@@ -431,4 +437,19 @@ void abort(void)
     }
 
     while (1);
+}
+
+uid_t getuid(void)
+{
+    return 0;
+}
+
+mode_t umask(mode_t mask)
+{
+    return 022;
+}
+
+int flock(int fd, int operation)
+{
+    return 0;
 }

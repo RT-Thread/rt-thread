@@ -101,7 +101,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     FRESULT result;
     int index;
     struct rt_device_blk_geometry geometry;
-    char logic_nbr[2] = {'0',':'};
+    char logic_nbr[2] = {'0', ':'};
 
     /* get an empty position */
     index = get_disk(RT_NULL);
@@ -129,7 +129,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
     /* mount fatfs, always 0 logic driver */
-    result = f_mount(fat, (const TCHAR*)logic_nbr, 1);
+    result = f_mount(fat, (const TCHAR *)logic_nbr, 1);
     if (result == FR_OK)
     {
         char drive[8];
@@ -139,7 +139,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         dir = (DIR *)rt_malloc(sizeof(DIR));
         if (dir == RT_NULL)
         {
-            f_mount(RT_NULL, (const TCHAR*)logic_nbr, 1);
+            f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
             disk[index] = RT_NULL;
             rt_free(fat);
             return -ENOMEM;
@@ -157,7 +157,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     }
 
 __err:
-    f_mount(RT_NULL, (const TCHAR*)logic_nbr, 1);
+    f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
     disk[index] = RT_NULL;
     rt_free(fat);
     return elm_result_to_dfs(result);
@@ -168,7 +168,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     FATFS *fat;
     FRESULT result;
     int  index;
-    char logic_nbr[2] = {'0',':'};
+    char logic_nbr[2] = {'0', ':'};
 
     fat = (FATFS *)fs->data;
 
@@ -180,7 +180,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
         return -ENOENT;
 
     logic_nbr[0] = '0' + index;
-    result = f_mount(RT_NULL, logic_nbr, (BYTE)1); 
+    result = f_mount(RT_NULL, logic_nbr, (BYTE)1);
     if (result != FR_OK)
         return elm_result_to_dfs(result);
 
@@ -200,10 +200,11 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     int flag;
     FRESULT result;
     int index;
-    char logic_nbr[2] = {'0',':'};
-    
-    work = rt_malloc(_MAX_SS);
-    if(RT_NULL == work) {
+    char logic_nbr[2] = {'0', ':'};
+
+    work = (BYTE *)rt_malloc(_MAX_SS);
+    if (RT_NULL == work)
+    {
         return -ENOMEM;
     }
 
@@ -232,7 +233,7 @@ int dfs_elm_mkfs(rt_device_t dev_id)
         }
         else
         {
-            fat = rt_malloc(sizeof(FATFS));
+            fat = (FATFS *)rt_malloc(sizeof(FATFS));
             if (fat == RT_NULL)
             {
                 rt_free(work); /* release memory */
@@ -265,14 +266,15 @@ int dfs_elm_mkfs(rt_device_t dev_id)
     /* [IN] Size of the allocation unit */
     /* [-]  Working buffer */
     /* [IN] Size of working buffer */
-    result = f_mkfs(logic_nbr, FM_ANY|FM_SFD, 0, work, _MAX_SS);
-    rt_free(work); work = RT_NULL;
+    result = f_mkfs(logic_nbr, FM_ANY | FM_SFD, 0, work, _MAX_SS);
+    rt_free(work);
+    work = RT_NULL;
 
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
         rt_free(fat);
-        f_mount(RT_NULL, logic_nbr,(BYTE)index);
+        f_mount(RT_NULL, logic_nbr, (BYTE)index);
         disk[index] = RT_NULL;
         /* close device */
         rt_device_close(dev_id);
@@ -338,7 +340,7 @@ int dfs_elm_open(struct dfs_fd *file)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -476,6 +478,33 @@ int dfs_elm_close(struct dfs_fd *file)
 
 int dfs_elm_ioctl(struct dfs_fd *file, int cmd, void *args)
 {
+    switch (cmd)
+    {
+    case RT_FIOFTRUNCATE:
+        {
+            FIL *fd;
+            FSIZE_t fptr, length;
+            FRESULT result = FR_OK;
+            fd = (FIL *)(file->data);
+            RT_ASSERT(fd != RT_NULL);
+
+            /* save file read/write point */
+            fptr = fd->fptr;
+            length = *(off_t*)args;
+            if (length <= fd->obj.objsize)
+            {
+                fd->fptr = length;
+                result = f_truncate(fd);
+            }
+            else
+            {
+                result = f_lseek(fd, length);
+            }
+            /* restore file read/write point */
+            fd->fptr = fptr;
+            return elm_result_to_dfs(result);
+        }
+    }
     return -ENOSYS;
 }
 
@@ -646,7 +675,7 @@ int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -678,7 +707,7 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     if (vol < 0)
         return -ENOENT;
 
-    drivers_oldfn = rt_malloc(256);
+    drivers_oldfn = (char *)rt_malloc(256);
     if (drivers_oldfn == RT_NULL)
         return -ENOMEM;
     drivers_newfn = newpath;
@@ -712,7 +741,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     vol = elm_get_vol((FATFS *)fs->data);
     if (vol < 0)
         return -ENOENT;
-    drivers_fn = rt_malloc(256);
+    drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
@@ -778,7 +807,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     return elm_result_to_dfs(result);
 }
 
-static const struct dfs_file_ops dfs_elm_fops = 
+static const struct dfs_file_ops dfs_elm_fops =
 {
     dfs_elm_open,
     dfs_elm_close,
@@ -834,7 +863,7 @@ DSTATUS disk_status(BYTE drv)
 }
 
 /* Read Sector(s) */
-DRESULT disk_read (BYTE drv, BYTE* buff, DWORD sector, UINT count)
+DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
@@ -849,7 +878,7 @@ DRESULT disk_read (BYTE drv, BYTE* buff, DWORD sector, UINT count)
 }
 
 /* Write Sector(s) */
-DRESULT disk_write (BYTE drv, const BYTE* buff, DWORD sector, UINT count)
+DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
@@ -916,7 +945,7 @@ DWORD get_fattime(void)
 {
     DWORD fat_time = 0;
 
-#ifdef RT_USING_LIBC 
+#ifdef RT_USING_LIBC
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
@@ -933,12 +962,12 @@ DWORD get_fattime(void)
     /* unlock scheduler. */
     rt_exit_critical();
 
-    fat_time =  (DWORD)(tm_now.tm_year - 80) << 25 |
-                (DWORD)(tm_now.tm_mon + 1)   << 21 |
-                (DWORD)tm_now.tm_mday        << 16 |
-                (DWORD)tm_now.tm_hour        << 11 |
-                (DWORD)tm_now.tm_min         <<  5 |
-                (DWORD)tm_now.tm_sec / 2 ;
+    fat_time = (DWORD)(tm_now.tm_year - 80) << 25 |
+               (DWORD)(tm_now.tm_mon + 1)   << 21 |
+               (DWORD)tm_now.tm_mday        << 16 |
+               (DWORD)tm_now.tm_hour        << 11 |
+               (DWORD)tm_now.tm_min         <<  5 |
+               (DWORD)tm_now.tm_sec / 2 ;
 #endif /* RT_USING_LIBC  */
 
     return fat_time;

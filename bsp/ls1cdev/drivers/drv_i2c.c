@@ -1,25 +1,11 @@
 /*
- * File      : drv_i2c.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017-11-14     «⁄Œ™±æ       first version
+ * 2017-11-14     Âã§‰∏∫Êú¨       first version
  */
 
 #include <rtthread.h>
@@ -30,8 +16,8 @@
 #include "../libraries/ls1c_delay.h"
 
 
-#define LS1C_I2C_SCL                (57)    // gpio57
-#define LS1C_I2C_SDA                (56)    // gpio56
+#define LS1C_I2C_SCL                (51)    // gpio57
+#define LS1C_I2C_SDA                (50)    // gpio56
 
 #define LS1C_SET_GPIO_MODE
 
@@ -104,8 +90,8 @@ static const struct rt_i2c_bit_ops bit_ops = {
 
     .udelay     = ls1c_udelay,
 
-    .delay_us   = 20,       // ¥À÷µŒ™÷‹∆⁄(us)
-    .timeout    = 10,       // µ•ŒªŒ™tick
+    .delay_us   = 20,       // Ê≠§ÂÄº‰∏∫Âë®Êúü(us)
+    .timeout    = 10,       // Âçï‰Ωç‰∏∫tick
 };
 
 
@@ -118,7 +104,7 @@ int ls1c_i2c_init(void)
 
     ls1c_i2c_gpio_init();
 
-    rt_i2c_bit_add_bus(&bus, "i2c2");
+    rt_i2c_bit_add_bus(&bus, "i2c3");
 
     return RT_EOK;
 }

@@ -38,13 +38,14 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-typedef rt_uint8_t	u8_t;
-typedef rt_int8_t	s8_t;
-typedef rt_uint16_t	u16_t;
-typedef rt_int16_t	s16_t;
-typedef rt_uint32_t	u32_t;
-typedef rt_int32_t	s32_t;
-typedef rt_uint32_t	mem_ptr_t;
+#include <stdint.h>
+typedef uint8_t   u8_t;
+typedef int8_t    s8_t;
+typedef uint16_t  u16_t;
+typedef int16_t   s16_t;
+typedef uint32_t  u32_t;
+typedef int32_t   s32_t;
+typedef uintptr_t mem_ptr_t;
 
 #define U16_F "hu"
 #define S16_F "hd"
@@ -54,10 +55,8 @@ typedef rt_uint32_t	mem_ptr_t;
 #define X32_F "lx"
 
 #ifdef RT_USING_LIBC
-#if defined(__CC_ARM) || defined(__IAR_SYSTEMS_ICC__)
-#include <sys/errno.h>
-#else
-#include <errno.h>
+#if !defined(__CC_ARM) && !defined(__IAR_SYSTEMS_ICC__)
+
 /* some errno not defined in newlib */
 #define ENSRNOTFOUND 163  /* Domain name not found */
 /* WARNING: ESHUTDOWN also not defined in newlib. We chose
@@ -65,11 +64,9 @@ typedef rt_uint32_t	mem_ptr_t;
 			in arch.h has been assigned to another error code. */
 #define ESHUTDOWN 180
 #endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
-#else
-#define LWIP_PROVIDE_ERRNO
 #endif
 
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else
@@ -79,6 +76,11 @@ typedef rt_uint32_t	mem_ptr_t;
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
 #define PACK_STRUCT_STRUCT __attribute__ ((__packed__))
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_END
+#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) /*Arm Compiler 6*/
+#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_STRUCT __attribute__((packed))
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
 #elif defined(__IAR_SYSTEMS_ICC__)   /* IAR Compiler */

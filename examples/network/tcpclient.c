@@ -12,14 +12,12 @@
 
 #define DEBUG_TCP_CLIENT
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "TCP"
+#define DBG_TAG               "TCP"
 #ifdef DEBUG_TCP_CLIENT
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO /* DBG_ERROR */
+#define DBG_LVL               DBG_INFO /* DBG_ERROR */
 #endif
-#define DBG_COLOR
 #include <rtdbg.h>
 
 #define BUFSZ   1024
@@ -131,7 +129,7 @@ static void tcpclient(void *arg)
         ret = send(sock, send_data, rt_strlen(send_data), 0);
         if (ret < 0)
         {
-            /* 接收失败，关闭这个连接 */
+            /* 发送失败，关闭这个连接 */
             LOG_I("send error, close the socket.");
             goto __exit;
         }

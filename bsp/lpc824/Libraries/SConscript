@@ -21,12 +21,7 @@ elif rtconfig.CROSS_TOOL == 'iar':
 
 CPPPATH = [ cwd + '/peri_driver', cwd + '/common/board', 
 			cwd + '/common/chip', cwd + '/common/CMSIS']
-			
-if GetDepend(['RT_USING_BSP_CMSIS']):
-    CPPPATH += [cwd + '/common/CMSIS/']
-elif GetDepend(['RT_USING_RTT_CMSIS']):
-    CPPPATH += [RTT_ROOT + '/components/CMSIS/Include']
-			
+					
 CPPDEFINES = ['CORE_M0PLUS']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)

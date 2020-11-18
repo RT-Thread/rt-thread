@@ -4,6 +4,10 @@ config ARCH_CPU_64BIT
 config ARCH_ARM
     bool
 
+config RT_USING_CPU_FFS
+    bool
+    default n
+
 config ARCH_ARM_CORTEX_M
     bool
     select ARCH_ARM
@@ -18,6 +22,7 @@ config ARCH_ARM_CORTEX_M0
 config ARCH_ARM_CORTEX_M3
     bool
     select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
 
 config ARCH_ARM_MPU
     bool
@@ -26,10 +31,12 @@ config ARCH_ARM_MPU
 config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_M7
     bool
     select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
 
 config ARCH_ARM_CORTEX_R
     bool
@@ -67,8 +74,18 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config ARCH_ARMV8
+    bool
+
 config ARCH_MIPS
     bool
+
+config ARCH_MIPS64
+    bool
+	select ARCH_CPU_64BIT
+	
+config ARCH_CPU_64BIT
+		bool
 
 config ARCH_MIPS_XBURST
     bool

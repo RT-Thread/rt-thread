@@ -1,0 +1,122 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F429ZI
+    bool
+    select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        select BSP_USING_FMC
+        default n
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+                
+        endif
+        
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            config BSP_I2C1_SCL_PIN
+                int "I2C1 scl pin number"
+                range 1 176
+                default 24
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 176
+                default 25
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        select RT_USING_SPI
+        default y
+        if BSP_USING_SPI  
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n        
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+                
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n  
+        endif
+    
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+
+    config BSP_USING_FMC
+        bool "Enable FMC"
+        default n
+
+    config BSP_USING_USBD
+        bool "Enable OTGFS as USB device"
+        select RT_USING_USB_DEVICE
+        default n
+
+    config BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+
+    config BSP_USING_LTDC
+        bool "Enable LTDC"
+        select BSP_USING_SDRAM
+        select BSP_USING_LCD
+        default n
+
+    source "../libraries/HAL_Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+ 
+endmenu

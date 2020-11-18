@@ -4,21 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author        Notes
- * 2015-06-15     hichard     first version
+ * Date           Author       Notes
+ * 2015-06-15     hichard      first version
  */
 
 #include <drivers/mmcsd_core.h>
 #include <drivers/mmc.h>
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME               "SDIO"
+#define DBG_TAG               "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LEVEL                      DBG_LOG
+#define DBG_LVL               DBG_LOG
 #else
-#define DBG_LEVEL                      DBG_INFO
+#define DBG_LVL               DBG_INFO
 #endif /* RT_SDIO_DEBUG */
-#define DBG_COLOR
 #include <rtdbg.h>
 
 static const rt_uint32_t tran_unit[] =
@@ -184,6 +182,8 @@ static int mmc_get_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t **new_ext_csd)
  */
 static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
+  rt_uint64_t card_capacity = 0;
+
   if(card == RT_NULL || ext_csd == RT_NULL)
   {
     LOG_E("emmc parse ext csd fail, invaild args");
@@ -191,11 +191,12 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
   }
 
   card->flags |=  CARD_FLAG_HIGHSPEED;
-  card->hs_max_data_rate = 200000000;
+  card->hs_max_data_rate = 52000000;
   
-  card->card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
-  card->card_capacity *= card->card_blksize;
-  card->card_capacity >>= 10; /* unit:KB */
+  card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
+  card_capacity *= card->card_blksize;
+  card_capacity >>= 10; /* unit:KB */
+  card->card_capacity = card_capacity;
   LOG_I("emmc card capacity %d KB.", card->card_capacity);
   
   return 0;
@@ -317,8 +318,17 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     * the device to work in 8bit transfer mode. If the
     * mmc switch command returns error then switch to
     * 4bit transfer mode. On success set the corresponding
-    * bus width on the host.
+    * bus width on the host. Meanwhile, mmc core would
+    * bail out early if corresponding bus capable wasn't
+    * set by drivers.
     */
+     if ((!(host->flags & MMCSD_BUSWIDTH_8) &&
+	  ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8) ||
+         (!(host->flags & MMCSD_BUSWIDTH_4) &&
+	  (ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_4 ||
+	  ext_csd_bits[idx] == EXT_CSD_BUS_WIDTH_8)))
+	     continue;
+
     err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                      EXT_CSD_BUS_WIDTH,
                      ext_csd_bits[idx]);
@@ -503,16 +513,10 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
         card->flags |= CARD_FLAG_SDHC;
  
     /* set bus speed */
-    max_data_rate = (unsigned int)-1;
     if (card->flags & CARD_FLAG_HIGHSPEED) 
-    {
-        if (max_data_rate > card->hs_max_data_rate)
-            max_data_rate = card->hs_max_data_rate;
-    } 
-    else if (max_data_rate > card->max_data_rate) 
-    {
+        max_data_rate = card->hs_max_data_rate;
+    else
         max_data_rate = card->max_data_rate;
-    }
 
     mmcsd_set_clock(host, max_data_rate);
 

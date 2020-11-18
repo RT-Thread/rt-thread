@@ -36,6 +36,7 @@ extern "C" {
 enum at_socket_state
 {
     AT_SOCKET_NONE,
+    AT_SOCKET_OPEN,
     AT_SOCKET_LISTEN,
     AT_SOCKET_CONNECT,
     AT_SOCKET_CLOSED
@@ -54,20 +55,23 @@ typedef enum
     AT_SOCKET_EVT_CLOSED,
 } at_socket_evt_t;
 
-typedef void (*at_evt_cb_t)(int socket, at_socket_evt_t event, const char *buff, size_t bfsz);
-
 struct at_socket;
+struct at_device;
+
+typedef void (*at_evt_cb_t)(struct at_socket *socket, at_socket_evt_t event, const char *buff, size_t bfsz);
+
 /* A callback prototype to inform about events for AT socket */
 typedef void (* at_socket_callback)(struct at_socket *conn, int event, uint16_t len);
 
-/* AT device socket options function */
-struct at_device_ops
+/* AT socket operations function */
+struct at_socket_ops
 {
-    int (*at_connect)(int socket, char *ip, int32_t port, enum at_socket_type type, rt_bool_t is_client);
-    int (*at_closesocket)(int socket);
-    int (*at_send)(int socket, const char *buff, size_t bfsz, enum at_socket_type type);
+    int (*at_connect)(struct at_socket *socket, char *ip, int32_t port, enum at_socket_type type, rt_bool_t is_client);
+    int (*at_closesocket)(struct at_socket *socket);
+    int (*at_send)(struct at_socket *socket, const char *buff, size_t bfsz, enum at_socket_type type);
     int (*at_domain_resolve)(const char *name, char ip[16]);
     void (*at_set_event_cb)(at_socket_evt_t event, at_evt_cb_t cb);
+    int (*at_socket)(struct at_device *device, enum at_socket_type type);
 };
 
 /* AT receive package list structure */
@@ -86,10 +90,14 @@ struct at_socket
     uint32_t magic;
 
     int socket;
+    /* device releated information for the socket */
+    void *device;
     /* type of the AT socket (TCP, UDP or RAW) */
     enum at_socket_type type;
     /* current state of the AT socket */
     enum at_socket_state state;
+    /* sockets operations */
+    const struct at_socket_ops *ops;
     /* receive semaphore, received data release semaphore */
     rt_sem_t recv_notice;
     rt_mutex_t recv_lock;
@@ -111,6 +119,10 @@ struct at_socket
 #ifdef SAL_USING_POSIX
     rt_wqueue_t wait_head;
 #endif
+    rt_slist_t list;
+
+    /* user-specific data */
+    void *user_data;
 };
 
 int at_socket(int domain, int type, int protocol);
@@ -129,7 +141,6 @@ int at_getaddrinfo(const char *nodename, const char *servname, const struct addr
 void at_freeaddrinfo(struct addrinfo *ai);
 
 struct at_socket *at_get_socket(int socket);
-void at_socket_device_register(const struct at_device_ops *ops);
 
 #ifndef RT_USING_SAL
 

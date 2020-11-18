@@ -1,45 +1,49 @@
-# RV32M1_VEGA 板级支持包
+# RISC-V RV32M1 VEGA Board BSP(Board Support Package) Execution Instruction
 
-## 1. 简介
+[中文页](README_zh.md) |
 
-RV32M1_VEGA开发板是一款多核异构的RISC-V 32开发板，包含了两个RISC-V 32位核心，同时也包括了BLE外设。
+## Introduction
 
-| 硬件 | 描述 |
-| -- | -- |
-|芯片型号| RV32M1 |
-|CPU| RV32IMC, with extensons for post-incrementing load and stores, |
-| | multiply-accumulate extensions, ALU extensions, hardware loops. |
-| | RV32IEMC |
-|主频| 48MHz或72MHz |
-| | 48MHz或72MHz |
-|片内SRAM| 256kB + 128kB |
-|片内Flash| 1MB + 256kB |
+RV32M1_VEGA board is a heterogeneous multi-core RISC-V 32 development board that contains two RISC-V 32-bit cores, as well as BLE peripherals.
 
-## 2. 编译说明
+| Hardware       | Description                                                  |
+| -------------- | ------------------------------------------------------------ |
+| Chip Model     | RV32M1                                                       |
+| CPU            | RV32IMC, with extensons for post-incrementing load and stores, |
+|                | multiply-accumulate extensions, ALU extensions, hardware loops. |
+|                | RV32IEMC                                                     |
+| Main Frequency | 48MHz or 72MHz                                               |
+|                | 48MHz or 72MHz                                               |
+| On-chip SRAM   | 256kB + 128kB                                                |
+| On-chip Flash  | 1MB + 256kB                                                  |
 
-当前测试的工具链是以标准的GNU GCC 7.2.0 & newlib 2.5.0方式，并以标准的RV32IMC构架进行编译，所以RV32M1的扩展指令未支持，RT-Thread ENV版本是1.0。
+## **Compilation**
 
-Windows上编译推荐使用[env工具][1]，可以在console下进入到`bsp/rv32m1_vega/ri5cy`目录中，运行以下命令：
+The toolchain currently used for test is built from the standard GNU GCC 7.2.0 and newlib 2.5.0 and for the standard RV32IMC architecture, so the extension instructions of RV32M1 is not supported, note that the version of RT-Thread ENV used in this BSP is 1.0.
 
-    scons
+It's recommended to use the [env tool](https://www.rt-thread.io/download.html?download=Env) to compile programs on Windows. Switch to the directory `bsp/rv32m1_vega/ri5cy` in the console and run the following command to compile this BSP:
 
-来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。
+```
+scons
+```
 
-## 3. 烧写及执行
+If successfully compiled, a new 'rtthread.elf' and 'rtthread.bin' file will be generated. ‘rtthread.bin' needs to be burned to the device and run.
 
-请使用JLink接入到RV32M1_VEGA开发板的RISC-V核的JTAG接口上，同时把JLink在PC上的驱动更改为WinUSB模式。JTAG接口位于RV32M1芯片和天线座子旁边，小的20pin JTAG接口。
+## Burn and Execution
 
-使用USB线连接到标记了SDA的USB口上，在PC上会出现一个串口设备，可以使用115200-N-8-1的配置方式打开这个串口。设备使用的串口引脚是：`[PTC7/PTC8]`
+Please use JLink to connect to the JTAG interface of the RISC-V core on the RV32M1_VEGA board, and change the JLink driver to WinUSB mode. The JTAG interface is located next to the RV32M1 chip and the antenna seat, with a small 20pin JTAG interface.
 
-当正确编译产生出rtthread.bin映像文件后，可以使用gdb连接到openocd，并以`load`命令烧写到flash中。
+Use a USB cable to connect to a USB port marked with SDA, then a serial device is recognized by PC, which can be opened with the configuration of 115200-N-8-1. The serial pins used by the device are: `[PTC7/PTC8]`
 
-关于更多使用JTAG，使用gdb调试RV32M1_VEGA开发板的情况，建议参考开发板的[开发环境搭建](https://github.com/open-isa-org/open-isa.org/blob/master/RV32M1_Vega_Develop_Environment_Setup.pdf)的文档。
+When the rtthread.bin image file is generated after being correctly compiled, you can use gdb to connect to openocd and burn it to flash with the `load` command.
 
-### 3.1 运行结果
+For more information about how to use JTAG and how to use gdb to debug the RV32M1_VEGA development board, please refer to [Development Environment Construction](https://github.com/open-isa-org/open-isa-org/open-isa.org/blob/master/RV32M1_Vega_Develop_Environment_Setup.pdf).
 
-如果编译 & 烧写无误，当按`SW1`复位按钮复位设备后，会在串口上看到RT-Thread的启动logo信息：
+## Running Results
 
-``` text
+When the compiling and burning are done correctly, press the reset button `SW1` to reset the device, the startup message of RT-Thread can be observed via the serial port :
+
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.0 build Dec  5 2018
@@ -49,33 +53,34 @@ Hello RT-Thread!
 msh />
 ```
 
-## 4. 驱动支持情况及计划
+## Peripheral Condition
 
-| 驱动 | 支持情况  |  备注  |
-| ------ | ----  | :------  |
-| UART | 支持 | UART0, RX(PTC7), TX(PTC8) |
-|  | 未支持 | UART1, RX(PTA25), TX(PTA26) |
-| clock | 支持 |  |
-| GPIO | 支持（列表可能不完善，同时也需要按照使用到的IO调整pinmux、clock） |  |
-| MMC/SD | 支持 |  |
+| Drive  | Support                                                      | Remark                      |
+| ------ | ------------------------------------------------------------ | --------------------------- |
+| UART   | Support                                                      | UART0, RX(PTC7), TX(PTC8)   |
+|        | Support                                                      | UART1, RX(PTA25), TX(PTA26) |
+| clock  | Support                                                      |                             |
+| GPIO   | Support(The list may not complete, also you need to modify pinmux, clock according to the IO being used.) |                             |
+| MMC/SD | Support                                                      |                             |
 
-### 4.1 IO在板级支持包中的映射情况
+## **IO mapping in BSP**
 
-| IO号 | 板级代码中的定义 |
-| -- | -- |
-| PTA22 | LED_BLUE |
-| PTA23 | LED_GREEN |
-| PTA24 | LED_RED |
-| PTA24 | LED_STS |
-| PTE8 | BTN_SW3 |
-| PTE9 | BTN_SW4 |
-| PTE12 | BTN_SW5 |
-| PTA0 | BTN_SW2/BTN_NMI |
+| IO Number | BSP Code Definition |
+| --------- | ------------------- |
+| PTA22     | LED_BLUE            |
+| PTA23     | LED_GREEN           |
+| PTA24     | LED_RED             |
+| PTA24     | LED_STS             |
+| PTA25     | UART1_RX            |
+| PTA26     | UART1_TX            |
+| PTE8      | BTN_SW3             |
+| PTE9      | BTN_SW4             |
+| PTE12     | BTN_SW5             |
+| PTA0      | BTN_SW2/BTN_NMI     |
 
-## 5. 参考
+## References
 
-* [开发板用户手册](https://github.com/open-isa-org/open-isa.org/blob/master/RV32M1_VEGA_Board_User_Guide.pdf)
-* 芯片[数据手册](https://github.com/open-isa-org/open-isa.org/blob/master/Reference%20Manual%20and%20Data%20Sheet/RV32M1DS_Rev.1.1.pdf)
-* [open-isa链接](https://github.com/open-isa-org/open-isa.org)
+- [User Guide](https://github.com/open-isa-org/open-isa.org/blob/master/RV32M1_VEGA_Board_User_Guide.pdf)
+- Chip [Reference Manual and Data Sheet](https://github.com/open-isa-org/open-isa.org/blob/master/Reference Manual and Data Sheet/RV32M1DS_Rev.1.1.pdf)
+- [open-isa](https://github.com/open-isa-org/open-isa.org)
 
-  [1]: https://www.rt-thread.org/page/download.html

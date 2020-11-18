@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-27     zylx         change to new framework
+ * 2018-11-27     zylx         first version
  */
 
 #include "board.h"
@@ -49,6 +49,9 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     struct stm32_qspi_bus *qspi_bus = device->parent.bus->parent.user_data;
     rt_memset(&qspi_bus->QSPI_Handler, 0, sizeof(qspi_bus->QSPI_Handler));
 
+    QSPI_HandleTypeDef QSPI_Handler_config = QSPI_BUS_CONFIG;
+    qspi_bus->QSPI_Handler = QSPI_Handler_config;
+
     while (cfg->max_hz < HAL_RCC_GetHCLKFreq() / (i + 1))
     {
         i++;
@@ -75,18 +78,10 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     /* flash size */
     qspi_bus->QSPI_Handler.Init.FlashSize = POSITION_VAL(qspi_cfg->medium_size) - 1;
 
-    qspi_bus->QSPI_Handler.Instance = QUADSPI;
-    /* fifo threshold is 4 byte */
-    qspi_bus->QSPI_Handler.Init.FifoThreshold = 4;
-    /* Sampling shift half a cycle */
-    qspi_bus->QSPI_Handler.Init.SampleShifting = QSPI_SAMPLE_SHIFTING_HALFCYCLE;
-    /* cs high time */
-    qspi_bus->QSPI_Handler.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_4_CYCLE;
-
     result = HAL_QSPI_Init(&qspi_bus->QSPI_Handler);
     if (result  == HAL_OK)
     {
-        LOG_D("qspi init succsee!");
+        LOG_D("qspi init success!");
     }
     else
     {
@@ -95,29 +90,31 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
 
 #ifdef BSP_QSPI_USING_DMA
     /* QSPI interrupts must be enabled when using the HAL_QSPI_Receive_DMA */
-    HAL_NVIC_SetPriority(QUADSPI_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(QUADSPI_IRQn);
-    HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+    HAL_NVIC_SetPriority(QSPI_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(QSPI_IRQn);
+    HAL_NVIC_SetPriority(QSPI_DMA_IRQ, 0, 0);
+    HAL_NVIC_EnableIRQ(QSPI_DMA_IRQ);
 
     /* init QSPI DMA */
-     __HAL_RCC_DMA1_CLK_ENABLE();
+    if(QSPI_DMA_RCC  == RCC_AHB1ENR_DMA1EN)
+    {
+        __HAL_RCC_DMA1_CLK_ENABLE();
+    }
+    else
+    {
+        __HAL_RCC_DMA2_CLK_ENABLE();
+    }
+    
     HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
-    qspi_bus->hdma_quadspi.Instance = DMA1_Channel5;
-    qspi_bus->hdma_quadspi.Init.Request = DMA_REQUEST_5;
-    qspi_bus->hdma_quadspi.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    qspi_bus->hdma_quadspi.Init.PeriphInc = DMA_PINC_DISABLE;
-    qspi_bus->hdma_quadspi.Init.MemInc = DMA_MINC_ENABLE;
-    qspi_bus->hdma_quadspi.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    qspi_bus->hdma_quadspi.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    qspi_bus->hdma_quadspi.Init.Mode = DMA_NORMAL;
-    qspi_bus->hdma_quadspi.Init.Priority = DMA_PRIORITY_LOW;
+    DMA_HandleTypeDef hdma_quadspi_config = QSPI_DMA_CONFIG;
+    qspi_bus->hdma_quadspi = hdma_quadspi_config;
+
     if (HAL_DMA_Init(&qspi_bus->hdma_quadspi) != HAL_OK)
     {
         LOG_E("qspi dma init failed (%d)!", result);
     }
-    
-    __HAL_LINKDMA(&qspi_bus->QSPI_Handler,hdma,qspi_bus->hdma_quadspi);
+
+    __HAL_LINKDMA(&qspi_bus->QSPI_Handler, hdma, qspi_bus->hdma_quadspi);
 #endif /* BSP_QSPI_USING_DMA */
 
     return result;
@@ -255,8 +252,8 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
 #endif
         {
             len = length;
-#ifdef BSP_QSPI_USING_DMA           
-            while(qspi_bus->QSPI_Handler.RxXferCount != 0);
+#ifdef BSP_QSPI_USING_DMA
+            while (qspi_bus->QSPI_Handler.RxXferCount != 0);
 #endif
         }
         else
@@ -366,7 +363,7 @@ __exit:
 }
 
 #ifdef BSP_QSPI_USING_DMA
-void QUADSPI_IRQHandler(void)
+void QSPI_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
@@ -377,7 +374,7 @@ void QUADSPI_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-void DMA1_Channel5_IRQHandler(void)
+void QSPI_DMA_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();

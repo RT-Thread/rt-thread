@@ -13,6 +13,10 @@
 
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef BSP_USING_ADC1
 #ifndef ADC1_CONFIG
 #define ADC1_CONFIG                                                 \
@@ -78,5 +82,9 @@
     }
 #endif /* ADC3_CONFIG */
 #endif /* BSP_USING_ADC3 */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ADC_CONFIG_H__ */

@@ -212,7 +212,9 @@ void rt_system_object_init(void)
 /**
  * This function will return the specified type of object information.
  *
- * @param type the type of object
+ * @param type the type of object, which can be 
+ *             RT_Object_Class_Thread/Semaphore/Mutex... etc
+ *
  * @return the object type information or RT_NULL
  */
 struct rt_object_information *
@@ -228,6 +230,77 @@ rt_object_get_information(enum rt_object_class_type type)
 RTM_EXPORT(rt_object_get_information);
 
 /**
+ * This function will return the length of object list in object container.
+ *
+ * @param type the type of object, which can be 
+ *             RT_Object_Class_Thread/Semaphore/Mutex... etc
+ * @return the length of object list
+ */
+int rt_object_get_length(enum rt_object_class_type type)
+{
+    int count = 0;
+    rt_ubase_t level;
+    struct rt_list_node *node = RT_NULL;
+    struct rt_object_information *information = RT_NULL;
+
+    information = rt_object_get_information((enum rt_object_class_type)type);
+    if (information == RT_NULL) return 0;
+
+    level = rt_hw_interrupt_disable();
+    /* get the count of objects */
+    rt_list_for_each(node, &(information->object_list))
+    {
+        count ++;
+    }
+    rt_hw_interrupt_enable(level);
+
+    return count;
+}
+RTM_EXPORT(rt_object_get_length);
+
+/**
+ * This function will copy the object pointer of the specified type, 
+ * with the maximum size specified by maxlen.
+ *
+ * @param type the type of object, which can be 
+ *             RT_Object_Class_Thread/Semaphore/Mutex... etc
+ * @param pointers the pointers will be saved to
+ * @param maxlen the maximum number of pointers can be saved
+ *
+ * @return the copied number of object pointers
+ */
+int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers, int maxlen)
+{
+    int index = 0;
+    rt_ubase_t level;
+
+    struct rt_object *object;
+    struct rt_list_node *node = RT_NULL;
+    struct rt_object_information *information = RT_NULL;
+
+    if (maxlen <= 0) return 0;
+
+    information = rt_object_get_information((enum rt_object_class_type)type);
+    if (information == RT_NULL) return 0;
+
+    level = rt_hw_interrupt_disable();
+    /* retrieve pointer of object */
+    rt_list_for_each(node, &(information->object_list))
+    {
+        object = rt_list_entry(node, struct rt_object, list);
+
+        pointers[index] = object;
+        index ++;
+
+        if (index >= maxlen) break;
+    }
+    rt_hw_interrupt_enable(level);
+
+    return index;
+}
+RTM_EXPORT(rt_object_get_pointers);
+
+/**
  * This function will initialize an object and add it to object system
  * management.
  *
@@ -240,6 +313,7 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     register rt_base_t temp;
+    struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -249,11 +323,29 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
-    /* initialize object's parameters */
+    /* check object type to avoid re-initialization */
 
+    /* enter critical */
+    rt_enter_critical();
+    /* try to find object */
+    for (node  = information->object_list.next;
+            node != &(information->object_list);
+            node  = node->next)
+    {
+        struct rt_object *obj;
+
+        obj = rt_list_entry(node, struct rt_object, list);
+        if (obj) /* skip warning when disable debug */
+        {
+            RT_ASSERT(obj != object);
+        }
+    }
+    /* leave critical */
+    rt_exit_critical();
+
+    /* initialize object's parameters */
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
-
     /* copy name */
     rt_strncpy(object->name, name, RT_NAME_MAX);
 
@@ -463,9 +555,10 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     struct rt_list_node *node = RT_NULL;
     struct rt_object_information *information = RT_NULL;
 
+    information = rt_object_get_information((enum rt_object_class_type)type);
+
     /* parameter check */
-    if ((name == RT_NULL) || (type > RT_Object_Class_Unknown))
-        return RT_NULL;
+    if ((name == RT_NULL) || (information == RT_NULL)) return RT_NULL;
 
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -474,14 +567,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     rt_enter_critical();
 
     /* try to find object */
-    if (information == RT_NULL)
-    {
-        information = rt_object_get_information((enum rt_object_class_type)type);
-        RT_ASSERT(information != RT_NULL);
-    }
-    for (node  = information->object_list.next;
-            node != &(information->object_list);
-            node  = node->next)
+    rt_list_for_each(node, &(information->object_list))
     {
         object = rt_list_entry(node, struct rt_object, list);
         if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
