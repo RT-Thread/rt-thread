@@ -40,6 +40,9 @@ if GetDepend(['BSP_USING_PMIC']):
 if GetDepend(['BSP_USING_RS485']):
     src += Glob('ports/drv_rs485.c')
 
+if GetDepend(['BSP_USING_GBE']):
+    src += Glob('ports/drv_eth.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
