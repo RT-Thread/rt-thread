@@ -45,6 +45,12 @@ rt_hw_context_switch_to:
 #ifdef RT_USING_SMP
     mov     r0, r1
     bl      rt_cpus_lock_status_restore
+#else
+#ifdef RT_USING_USERSPACE
+    ldr     r1, =rt_current_thread
+    ldr     r0, [r1]
+    bl      lwp_mmu_switch
+#endif
 #endif /*RT_USING_SMP*/
     b       rt_hw_context_switch_exit
 
@@ -95,6 +101,12 @@ rt_hw_context_switch:
 #ifdef RT_USING_SMP
     mov     r0, r2
     bl      rt_cpus_lock_status_restore
+#else
+#ifdef RT_USING_USERSPACE
+    ldr     r1, =rt_current_thread
+    ldr     r0, [r1]
+    bl      lwp_mmu_switch
+#endif
 #endif /*RT_USING_SMP*/
     b       rt_hw_context_switch_exit
 
@@ -178,5 +190,29 @@ rt_hw_context_switch_exit:
 #endif
     ldmfd   sp!, {r1}
     msr     spsr_cxsf, r1        /* original mode */
+
+#ifdef RT_USING_GDBSERVER
+    bl lwp_check_debug
+#endif
+
+#ifdef RT_USING_LWP
+    bl lwp_check_exit
+#endif
+
+#ifdef RT_USING_LWP
+    and r1, #0x1f
+    cmp r1, #0x10
+    bne 1f
+    ldmfd   sp!, {r0-r12,lr}
+    ldmfd   sp!, {lr}
+    b ret_to_user
+1:
+#endif
     ldmfd   sp!, {r0-r12,lr,pc}^ /* irq return */
 
+#ifdef RT_USING_FPU
+.global set_fpexc
+set_fpexc:
+    vmsr fpexc, r0
+    bx lr
+#endif

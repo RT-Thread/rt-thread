@@ -232,7 +232,7 @@ int msh_exec_module(const char *cmd_line, int size)
     length = cmd_length + 32;
 
     /* allocate program name memory */
-    pg_name = (char *) rt_malloc(length);
+    pg_name = (char *) rt_malloc(length + 3);
     if (pg_name == RT_NULL)
         return -RT_ENOMEM;
 
@@ -357,9 +357,35 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
     pg_name = argv[0];
     /* try to open program */
     fd = open(pg_name, O_RDONLY, 0);
-
     if (fd < 0)
-        return -1;
+    {
+        /* try to open *.elf file */
+        pg_name = rt_malloc(strlen(argv[0]) + 64);
+        if (pg_name)
+        {
+            strcpy(pg_name, argv[0]);
+            strcat(pg_name, ".elf");
+
+            fd = open(pg_name, O_RDONLY, 0);
+
+            /* try it in /bin */
+            if (fd < 0)
+            {
+                if (strstr(argv[0], "elf") != NULL)
+                    snprintf(pg_name, 64, "/bin/%s", argv[0]);
+                else
+                    snprintf(pg_name, 64, "/bin/%s.elf", argv[0]);
+                fd = open(pg_name, O_RDONLY, 0);
+            }
+
+            if (fd < 0)
+            {
+                rt_free(pg_name);
+                return -1;
+            }
+        }
+        else return -1; /* out of memory */
+    }
 
     /* found program */
     close(fd);
@@ -595,7 +621,7 @@ void msh_auto_complete(char *prefix)
 
             ptr --;
         }
-#ifdef RT_USING_MODULE
+#if defined(RT_USING_MODULE) || defined(RT_USING_LWP)
         /* There is a chance that the user want to run the module directly. So
          * try to complete the file names. If the completed path is not a
          * module, the system won't crash anyway. */

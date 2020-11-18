@@ -241,7 +241,7 @@ int dfs_mount(const char   *device_name,
 
     for (ops = &filesystem_operation_table[0];
             ops < &filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX]; ops++)
-        if ((*ops != NULL) && (strcmp((*ops)->name, filesystemtype) == 0))
+        if ((*ops != NULL) && (strncmp((*ops)->name, filesystemtype, strlen((*ops)->name)) == 0))
             break;
 
     dfs_unlock();
@@ -312,6 +312,9 @@ int dfs_mount(const char   *device_name,
     fs->path   = fullpath;
     fs->ops    = *ops;
     fs->dev_id = dev_id;
+    /* For UFS, record the real filesystem name */
+    fs->data = (void *) filesystemtype;
+
     /* release filesystem_table lock */
     dfs_unlock();
 
@@ -447,7 +450,8 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
     for (index = 0; index < DFS_FILESYSTEM_TYPES_MAX; index ++)
     {
         if (filesystem_operation_table[index] != NULL &&
-            strcmp(filesystem_operation_table[index]->name, fs_name) == 0)
+            strncmp(filesystem_operation_table[index]->name, fs_name,
+                strlen(filesystem_operation_table[index]->name)) == 0)
             break;
     }
     dfs_unlock();
@@ -463,7 +467,7 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
             return -1;
         }
 
-        return ops->mkfs(dev_id);
+        return ops->mkfs(dev_id, fs_name);
     }
 
     LOG_E("File system (%s) was not found.", fs_name);
@@ -490,6 +494,7 @@ int dfs_statfs(const char *path, struct statfs *buffer)
             return fs->ops->statfs(fs, buffer);
     }
 
+    rt_set_errno(-ENOSYS);
     return -1;
 }
 
@@ -625,7 +630,10 @@ int df(const char *path)
     result = dfs_statfs(path ? path : NULL, &buffer);
     if (result != 0)
     {
-        rt_kprintf("dfs_statfs failed.\n");
+        if (rt_get_errno() == -ENOSYS)
+            rt_kprintf("The function is not implemented.\n");
+        else
+            rt_kprintf("statfs failed: errno=%d.\n", rt_get_errno());
         return -1;
     }
 

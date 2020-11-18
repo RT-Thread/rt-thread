@@ -331,7 +331,6 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     _rt_timer_remove(timer);
     /* change status of timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
@@ -341,9 +340,6 @@ rt_err_t rt_timer_start(rt_timer_t timer)
      */
     RT_ASSERT(timer->init_tick < RT_TICK_MAX / 2);
     timer->timeout_tick = rt_tick_get() + timer->init_tick;
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_TIMER_SOFT
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
@@ -443,17 +439,20 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
 {
     register rt_base_t level;
 
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
     /* timer check */
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
 
     if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
+    {
+        rt_hw_interrupt_enable(level);
         return -RT_ERROR;
+    }
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(timer->parent)));
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
 
     _rt_timer_remove(timer);
     /* change status */
@@ -513,6 +512,21 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
             /*timer is stop*/
             *(rt_tick_t *)arg = RT_TIMER_FLAG_DEACTIVATED;
         }
+        break;
+    case RT_TIMER_CTRL_GET_FUNC:
+        *(void **)arg = timer->timeout_func;
+        break;
+
+    case RT_TIMER_CTRL_SET_FUNC:
+        timer->timeout_func = (void (*)(void*))arg;
+        break;
+
+    case RT_TIMER_CTRL_GET_PARM:
+        *(void **)arg = timer->parameter;
+        break;
+
+    case RT_TIMER_CTRL_SET_PARM:
+        timer->parameter = arg;
         break;
 
     default:

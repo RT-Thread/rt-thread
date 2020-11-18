@@ -17,6 +17,13 @@ config RT_USING_ARCH_DATA_TYPE
 
         Please re-define these data types in rtconfig_project.h file.
 
+config RT_USING_SMART
+    bool "Enable RT-Thread Smart (microkernel on kernel/userland)"
+    default n
+    select RT_USING_LWP
+    help
+        RT-Thread Smart is a microkernel based operating system on RT-Thread.
+
 config RT_USING_SMP
     bool "Enable SMP(Symmetric multiprocessing)"
     default n

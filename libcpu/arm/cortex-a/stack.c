@@ -10,10 +10,10 @@
  */
 #include <rtthread.h>
 #include <board.h>
-#include <armv7.h>
+#include <arch.h>
 
 /**
- * @addtogroup AM33xx
+ * @addtogroup ARM Cortex-A
  */
 /*@{*/
 

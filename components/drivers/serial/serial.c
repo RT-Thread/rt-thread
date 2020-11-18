@@ -575,6 +575,8 @@ static rt_err_t rt_serial_init(struct rt_device *dev)
     serial->serial_rx = RT_NULL;
     serial->serial_tx = RT_NULL;
 
+    rt_memset(&serial->rx_notify, 0, sizeof(struct rt_device_notify));
+
     /* apply configuration */
     if (serial->ops->configure)
         result = serial->ops->configure(serial, &serial->config);
@@ -1010,6 +1012,20 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 
             break;
 
+        case RT_DEVICE_CTRL_NOTIFY_SET:
+            if (args)
+            {
+                rt_memcpy(&serial->rx_notify, args, sizeof(struct rt_device_notify));
+            }
+            break;
+
+        case RT_DEVICE_CTRL_CONSOLE_OFLAG:
+            if (args)
+            {
+                *(rt_uint16_t*)args = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM;
+            }
+            break;
+
 #ifdef RT_USING_POSIX_TERMIOS
         case TCGETA:
             {
@@ -1236,6 +1252,12 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                     serial->parent.rx_indicate(&serial->parent, rx_length);
                 }
             }
+
+            if (serial->rx_notify.notify)
+            {
+                serial->rx_notify.notify(serial->rx_notify.dev);
+            }
+
             break;
         }
         case RT_SERIAL_EVENT_TX_DONE:
@@ -1315,3 +1337,4 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #endif /* RT_SERIAL_USING_DMA */
     }
 }
+

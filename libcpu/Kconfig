@@ -1,12 +1,20 @@
 config ARCH_CPU_64BIT
     bool
 
-config ARCH_ARM
+config RT_USING_CACHE
     bool
+    default n
 
 config RT_USING_CPU_FFS
     bool
     default n
+
+config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n
+
+config ARCH_ARM
+    bool
 
 config ARCH_ARM_CORTEX_M
     bool
@@ -44,7 +52,28 @@ config ARCH_ARM_CORTEX_R
 
 config ARCH_ARM_MMU
     bool
+    select RT_USING_CACHE
     depends on ARCH_ARM
+
+config RT_USING_USERSPACE
+    bool "Isolated user space"
+    default n
+    depends on ARCH_ARM_MMU
+
+config KERNEL_VADDR_START
+    hex "The virtural address of kernel start"
+    default 0xc0000000
+    depends on RT_USING_USERSPACE
+
+config PV_OFFSET
+    hex "The offset of kernel physical address and virtural address"
+    default 0
+    depends on RT_USING_USERSPACE
+
+config RT_IOREMAP_LATE
+    bool "Support to create IO mapping in the kernel address space after system initlalization."
+    default n
+    depends on ARCH_ARM_CORTEX_A
 
 config ARCH_ARM_ARM9
     bool
@@ -74,6 +103,11 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config RT_BACKTRACE_FUNCTION_NAME
+    bool "To show function name when backtrace"
+    default n
+    depends on ARCH_ARM_CORTEX_A
+
 config ARCH_ARMV8
     bool
 
@@ -82,10 +116,7 @@ config ARCH_MIPS
 
 config ARCH_MIPS64
     bool
-	select ARCH_CPU_64BIT
-	
-config ARCH_CPU_64BIT
-		bool
+    select ARCH_CPU_64BIT
 
 config ARCH_MIPS_XBURST
     bool
@@ -128,7 +159,3 @@ config ARCH_TIDSP_C28X
 
 config ARCH_HOST_SIMULATOR
     bool
-
-config ARCH_CPU_STACK_GROWS_UPWARD
-    bool
-    default n

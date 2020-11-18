@@ -18,6 +18,10 @@ if rtconfig.PLATFORM == 'gcc':
 if rtconfig.PLATFORM == 'iar':
     src += Glob('*_iar.S')
 
+# There is no GIC in Raspi3, so remove it from source files.
+if GetDepend('SOC_BCM283x'):
+    SrcRemove(src, ['gic.c'])
+
 group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

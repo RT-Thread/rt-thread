@@ -629,12 +629,25 @@ void rt_memory_info(rt_uint32_t *total,
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
+
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#else
+#ifndef ARCH_PAGE_SIZE
+#define ARCH_PAGE_SIZE  0
+#endif
+
+#endif
 
 void list_mem(void)
 {
-    rt_kprintf("total memory: %d\n", mem_size_aligned);
-    rt_kprintf("used memory : %d\n", used_mem);
+    size_t total_pages = 0, free_pages = 0;
+#ifdef RT_USING_USERSPACE
+    rt_page_get_info(&total_pages, &free_pages);
+#endif
+
+    rt_kprintf("total memory: %d\n", mem_size_aligned + total_pages * ARCH_PAGE_SIZE);
+    rt_kprintf("used memory : %d\n", used_mem + (total_pages - free_pages) * ARCH_PAGE_SIZE);
     rt_kprintf("maximum allocated memory: %d\n", max_mem);
 }
 FINSH_FUNCTION_EXPORT(list_mem, list memory usage information)

@@ -206,7 +206,7 @@ static int dfs_uffs_unmount(struct dfs_filesystem *fs)
     return -ENOENT;
 }
 
-static int dfs_uffs_mkfs(rt_device_t dev_id)
+static int dfs_uffs_mkfs(rt_device_t dev_id, const char *fs_name)
 {
     rt_base_t index;
     rt_uint32_t block;

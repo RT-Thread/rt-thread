@@ -6,7 +6,7 @@ cwd = GetCurrentDir()
 group = []
 
 CPPPATH = [cwd]
-CPPDEFINES = ['RT_USING_NEWLIB']
+CPPDEFINES = []
 
 # link with libc and libm:
 # libm is a frequently used lib. Newlib is compiled with -ffunction-sections in
@@ -14,7 +14,15 @@ CPPDEFINES = ['RT_USING_NEWLIB']
 # been referenced. So setting this won't result in bigger text size.
 LIBS = ['c', 'm']
 
-if rtconfig.PLATFORM == 'gcc':
+if rtconfig.PLATFORM == 'gcc' and GetDepend('RT_USING_LIBC'):
+    if GetDepend('RT_USING_MUSL'):
+        # musl libc is used as a software library.
+        src  = []
+        LIBS = []
+    elif not GetDepend('RT_USING_NEWLIB'):
+        # RT_USING_NEWLIB is defined already
+        CPPDEFINES = ['RT_USING_NEWLIB']
+
     group = DefineGroup('newlib', src, depend = ['RT_USING_LIBC'], 
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 

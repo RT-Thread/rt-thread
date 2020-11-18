@@ -108,8 +108,13 @@ if RT_USING_DFS
         default y
 
     config RT_USING_DFS_ROMFS
-        bool "Enable ReadOnly file system on flash"
+        bool "Enable readonly file system on flash"
         default n
+
+    config RT_USING_DFS_CROMFS
+        bool "Enable readonly compressed file system on flash"
+        default n
+        select PKG_USING_ZLIB
 
     config RT_USING_DFS_RAMFS
         bool "Enable RAM file system"

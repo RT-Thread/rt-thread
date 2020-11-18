@@ -11,12 +11,126 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
+#include <backtrace.h>
 
-#include "armv7.h"
+#include "arch.h"
 #include "interrupt.h"
 
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
+#endif
+
+#ifdef RT_USING_LWP
+#include <lwp.h>
+
+#ifdef LWP_USING_CORE_DUMP
+#include <lwp_core_dump.h>
+#endif
+
+#ifdef RT_USING_GDBSERVER
+#include <lwp_gdbserver.h>
+#include <hw_breakpoint.h>
+
+static int check_debug_event(struct rt_hw_exp_stack *regs, uint32_t pc_adj)
+{
+    uint32_t mode = regs->cpsr;
+
+    if ((mode & 0x1f) == 0x10)
+    {
+        /*
+        uint32_t ifsr, dfar, dfsr;
+        */
+        uint32_t ifsr, dfar;
+        int ret;
+
+        asm volatile ("MRC p15, 0, %0, c5, c0, 1":"=r"(ifsr));
+        ifsr &= ((1UL << 10) | 0xfUL);
+        if (ifsr == 0x2UL)
+        {
+            uint32_t dbgdscr;
+            struct rt_channel_msg msg;
+            gdb_thread_info thread_info;
+
+            regs->pc -= pc_adj;
+
+            asm volatile ("MRC p14, 0, %0, c0, c1, 0":"=r"(dbgdscr));
+            switch ((dbgdscr & (0xfUL << 2)))
+            {
+                case (0x1UL << 2): //breadkpoint
+                case (0x3UL << 2): //bkpt
+                    do {
+                        struct rt_lwp *gdb_lwp = gdb_get_dbg_lwp();
+                        struct rt_lwp *lwp;
+
+                        if (!gdb_lwp)
+                        {
+                            break;
+                        }
+                        lwp = lwp_self();
+                        if (lwp == gdb_lwp)
+                        {
+                            break;
+                        }
+                        *(uint32_t*)regs->pc = lwp->bak_first_ins;
+                        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)regs->pc, 4);
+                        icache_invalid_all();
+                        lwp->debug = 0;
+                        return 1;
+                    } while (0);
+
+                    thread_info.notify_type = GDB_NOTIFIY_BREAKPOINT;
+                    thread_info.abt_ins = *(uint32_t*)regs->pc;
+                    ret = 1;
+                    break;
+                case (0xaUL << 2): //watchpoint
+                    asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(dfar));
+                    thread_info.watch_addr = (void*)dfar;
+                    /*
+                    asm volatile ("MRC p15, 0, %0, c5, c0, 0":"=r"(dfsr));
+                    thread_info.rw = (1UL << ((dfsr >> 11) & 1UL));
+                    */
+                    thread_info.rw = (1UL << (((~*(uint32_t*)regs->pc) >> 20) & 1UL));
+                    thread_info.notify_type = GDB_NOTIFIY_WATCHPOINT;
+                    ret =  2;
+                    break;
+                default:
+                    return 0;
+            }
+            thread_info.thread = rt_thread_self();
+            thread_info.thread->regs = regs;
+            msg.u.d = (void*)&thread_info;
+            dmb();
+            thread_info.thread->debug_suspend = 1;
+            dsb();
+            rt_thread_suspend(thread_info.thread);
+            rt_raw_channel_send(gdb_get_server_channel(), &msg);
+            rt_schedule();
+            while (thread_info.thread->debug_suspend)
+            {
+                rt_thread_suspend(thread_info.thread);
+                rt_schedule();
+            }
+            return ret;
+        }
+    }
+    return 0;
+}
+#endif
+
+void sys_exit(int value);
+void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
+{
+    uint32_t mode = regs->cpsr;
+
+    if ((mode & 0x1f) == 0x10)
+    {
+        rt_kprintf("%s! pc = 0x%08x\n", info, regs->pc - pc_adj);
+#ifdef LWP_USING_CORE_DUMP
+        lwp_core_dump(regs, pc_adj);
+#endif
+        sys_exit(-1);
+    }
+}
 #endif
 
 /**
@@ -33,6 +147,18 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("fp :0x%08x ip :0x%08x\n", regs->fp, regs->ip);
     rt_kprintf("sp :0x%08x lr :0x%08x pc :0x%08x\n", regs->sp, regs->lr, regs->pc);
     rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
+#ifdef RT_USING_USERSPACE
+    {
+        uint32_t v;
+        asm volatile ("MRC p15, 0, %0, c5, c0, 0":"=r"(v));
+        rt_kprintf("dfsr:0x%08x\n", v);
+        asm volatile ("MRC p15, 0, %0, c2, c0, 0":"=r"(v));
+        rt_kprintf("ttbr0:0x%08x\n", v);
+        asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(v));
+        rt_kprintf("dfar:0x%08x\n", v);
+        rt_kprintf("0x%08x -> 0x%08x\n", v, rt_hw_mmu_v2p(&mmu_info, (void*)v));
+    }
+#endif
 }
 
 /**
@@ -43,6 +169,9 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
  *
  * @note never invoke this function in application
  */
+#ifdef RT_USING_FPU
+void set_fpexc(rt_uint32_t val);
+#endif
 void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
 {
 #ifdef RT_USING_FPU
@@ -70,14 +199,16 @@ void rt_hw_trap_undef(struct rt_hw_exp_stack *regs)
         if ((ins & 0xe00) == 0xa00)
         {
             /* float ins */
-            uint32_t val = (1U << 30);
-
-            asm volatile ("vmsr fpexc, %0"::"r"(val):"memory");
+            set_fpexc(1U << 30);
             regs->pc = addr;
             return;
         }
     }
 #endif
+#ifdef RT_USING_LWP
+    check_user_fault(regs, 4, "User undefined instruction");
+#endif
+    rt_unwind(regs, 4);
     rt_kprintf("undefined instruction:\n");
     rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
@@ -115,6 +246,16 @@ void rt_hw_trap_swi(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
 {
+#ifdef RT_USING_LWP
+#ifdef RT_USING_GDBSERVER
+    if (check_debug_event(regs, 4))
+    {
+        return;
+    }
+#endif
+    check_user_fault(regs, 4, "User prefetch abort");
+#endif
+    rt_unwind(regs, 4);
     rt_kprintf("prefetch abort:\n");
     rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
@@ -133,6 +274,16 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
 {
+#ifdef RT_USING_LWP
+#ifdef RT_USING_GDBSERVER
+    if (check_debug_event(regs, 8))
+    {
+        return;
+    }
+#endif
+    check_user_fault(regs, 8, "User data abort");
+#endif
+    rt_unwind(regs, 8);
     rt_kprintf("data abort:");
     rt_hw_show_register(regs);
 #ifdef RT_USING_FINSH
@@ -160,6 +311,69 @@ void rt_hw_trap_resv(struct rt_hw_exp_stack *regs)
 
 void rt_hw_trap_irq(void)
 {
+#ifdef SOC_BCM283x
+    extern rt_uint8_t core_timer_flag;
+    void *param;
+    uint32_t irq;
+    rt_isr_handler_t isr_func;
+    extern struct rt_irq_desc isr_table[];
+    uint32_t value = 0;
+    value = IRQ_PEND_BASIC & 0x3ff;
+
+    if(core_timer_flag != 0)
+    {
+        uint32_t cpu_id = rt_hw_cpu_id();
+        uint32_t int_source = CORE_IRQSOURCE(cpu_id);
+        if (int_source & 0x0f)
+        {
+            if (int_source & 0x08)
+            {
+                isr_func = isr_table[IRQ_ARM_TIMER].handler;
+                #ifdef RT_USING_INTERRUPT_INFO
+                            isr_table[IRQ_ARM_TIMER].counter++;
+                #endif
+                if (isr_func)
+                {
+                    param = isr_table[IRQ_ARM_TIMER].param;
+                    isr_func(IRQ_ARM_TIMER, param);
+                }
+            }
+        }
+    }
+
+    /* local interrupt*/
+    if (value)
+    {
+        if (value & (1 << 8))
+        {
+            value = IRQ_PEND1;
+            irq = __rt_ffs(value) - 1;
+        }
+        else if (value & (1 << 9))
+        {
+            value = IRQ_PEND2;
+            irq = __rt_ffs(value) + 31;
+        }
+        else
+        {
+            value &= 0x0f;
+            irq = __rt_ffs(value) + 63;
+        }
+
+        /* get interrupt service routine */
+        isr_func = isr_table[irq].handler;
+#ifdef RT_USING_INTERRUPT_INFO
+        isr_table[irq].counter++;
+#endif
+        if (isr_func)
+        {
+            /* Interrupt for myself. */
+            param = isr_table[irq].param;
+            /* turn to interrupt service routine */
+            isr_func(irq, param);
+        }
+    }
+#else
     void *param;
     int ir;
     rt_isr_handler_t isr_func;
@@ -188,6 +402,7 @@ void rt_hw_trap_irq(void)
 
     /* end of interrupt */
     rt_hw_interrupt_ack(ir);
+#endif
 }
 
 void rt_hw_trap_fiq(void)

@@ -65,6 +65,15 @@ void rt_tick_set(rt_tick_t tick)
     rt_hw_interrupt_enable(level);
 }
 
+#ifdef RT_USING_HOOK
+static void (*rt_tick_hook)(void);
+
+void rt_tick_sethook(void (*hook)(void))
+{
+    rt_tick_hook = hook;
+}
+#endif
+
 /**
  * This function will notify kernel there is one tick passed. Normally,
  * this function is invoked by clock ISR.
@@ -78,6 +87,13 @@ void rt_tick_increase(void)
     rt_cpu_self()->tick ++;
 #else
     ++ rt_tick;
+#endif
+
+#ifdef RT_USING_HOOK
+    if (rt_tick_hook)
+    {
+        rt_tick_hook();
+    }
 #endif
 
     /* check time slice */

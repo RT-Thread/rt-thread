@@ -275,10 +275,10 @@ void rt_system_scheduler_start(void)
 #ifdef RT_USING_SMP
 /**
  * This function will handle IPI interrupt and do a scheduling in system;
- * 
+ *
  * @param vector, the number of IPI interrupt for system scheduling
  * @param param, use RT_NULL
- * 
+ *
  * NOTE: this function should be invoke or register as ISR in BSP.
  */
 void rt_scheduler_ipi_handler(int vector, void *param)
@@ -288,7 +288,7 @@ void rt_scheduler_ipi_handler(int vector, void *param)
 
 /**
  * This function will perform one scheduling. It will select one thread
- * with the highest priority level in global ready queue or local ready queue, 
+ * with the highest priority level in global ready queue or local ready queue,
  * then switch to it.
  */
 void rt_schedule(void)
@@ -321,7 +321,11 @@ void rt_schedule(void)
 
         if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
+#ifdef RT_USING_LWP
+            rt_thread_wakeup(current_thread);
+#else
             rt_thread_resume(current_thread);
+#endif
         }
     }
 #endif
@@ -561,7 +565,11 @@ void rt_scheduler_do_irq_switch(void *context)
 
         if ((current_thread->stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
+#ifdef RT_USING_LWP
+            rt_thread_wakeup(current_thread);
+#else
             rt_thread_resume(current_thread);
+#endif
         }
     }
 #endif
@@ -854,7 +862,6 @@ void rt_enter_critical(void)
      * the maximal number of nest is RT_UINT16_MAX, which is big
      * enough and does not check here
      */
-
     {
         register rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
         current_thread->cpus_lock_nest++;

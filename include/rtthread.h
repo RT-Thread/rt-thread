@@ -79,6 +79,9 @@ rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
 rt_tick_t  rt_tick_from_millisecond(rt_int32_t ms);
+#ifdef RT_USING_HOOK
+void rt_tick_sethook(void (*hook)(void));
+#endif
 
 void rt_system_timer_init(void);
 void rt_system_timer_thread_init(void);
@@ -146,6 +149,10 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
 rt_err_t rt_thread_resume(rt_thread_t thread);
+#ifdef RT_USING_LWP
+rt_err_t rt_thread_wakeup(rt_thread_t thread);
+void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data);
+#endif
 void rt_thread_timeout(void *parameter);
 
 #ifdef RT_USING_SIGNALS

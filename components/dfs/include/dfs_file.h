@@ -69,7 +69,8 @@ int dfs_file_rename(const char *oldpath, const char *newpath);
 int dfs_file_ftruncate(struct dfs_fd *fd, off_t length);
 
 /* 0x5254 is just a magic number to make these relatively unique ("RT") */
-#define RT_FIOFTRUNCATE 0x52540000U
+#define RT_FIOFTRUNCATE  0x52540000U
+#define RT_FIOGETXIPADDR 0x52540001U
 
 #ifdef __cplusplus
 }
