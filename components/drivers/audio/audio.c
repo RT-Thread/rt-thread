@@ -19,7 +19,9 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
+#ifndef MIN
 #define MIN(a, b)         ((a) < (b) ? (a) : (b))
+#endif
 
 enum
 {
