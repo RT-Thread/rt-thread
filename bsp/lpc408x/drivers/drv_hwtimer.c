@@ -50,7 +50,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     match.MatchChannel = 0;
     match.IntOnMatch = ENABLE;
     match.ResetOnMatch = ENABLE;
-    match.StopOnMatch = (opmode == HWTIMER_MODE_ONESHOT)? ENABLE : DISABLE;
+    match.StopOnMatch = (opmode == HWTIMER_MODE_ONESHOT) ? ENABLE : DISABLE;
     match.ExtMatchOutputType = 0;
     match.MatchValue = t;
 
@@ -84,7 +84,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         uint32_t pre;
 
         clk = CLKPWR_GetCLK(CLKPWR_CLKTYPE_PER);
-        pre = clk / *((uint32_t*)arg) - 1;
+        pre = clk / *((uint32_t *)arg) - 1;
         tim->PR = pre;
     }
     break;
@@ -126,7 +126,7 @@ static const struct rt_hwtimer_ops _ops =
 
 static rt_hwtimer_t _timer0;
 
-int lpc_hwtimer_init(void)
+int rt_hw_hwtimer_init(void)
 {
     _timer0.info = &_info;
     _timer0.ops  = &_ops;
@@ -145,5 +145,6 @@ void TIMER0_IRQHandler(void)
     }
 }
 
-INIT_BOARD_EXPORT(lpc_hwtimer_init);
-#endif
+INIT_BOARD_EXPORT(rt_hw_hwtimer_init);
+
+#endif  /* RT_USING_HWTIMER */

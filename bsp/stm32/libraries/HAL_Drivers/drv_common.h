@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-7      SummerGift   change to new framework
+ * 2018-11-7      SummerGift   first version
  */
 
 #ifndef __DRV_COMMON_H__
@@ -14,7 +14,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdevice.h>
-#include <board.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void _Error_Handler(char *s, int num);
 
@@ -23,5 +26,9 @@ void _Error_Handler(char *s, int num);
 #endif
 
 #define DMA_NOT_AVAILABLE ((DMA_INSTANCE_TYPE *)0xFFFFFFFFU)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

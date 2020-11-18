@@ -1,11 +1,7 @@
 ;/*
-; * File      : context_iar.S
-; * This file is part of RT-Thread RTOS
-; * COPYRIGHT (C) 2009, RT-Thread Development Team
+; * Copyright (c) 2006-2018, RT-Thread Development Team
 ; *
-; * The license and distribution terms for this file may be
-; * found in the file LICENSE in this distribution or at
-; * http://www.rt-thread.org/license/LICENSE
+; * SPDX-License-Identifier: Apache-2.0
 ; *
 ; * Change Logs:
 ; * Date           Author       Notes
@@ -23,7 +19,7 @@
 SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SHPR3      EQU     0xE000ED20               ; system priority register (2)
-NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
+NVIC_PENDSV_PRI EQU     0xFFFF0000               ; PendSV and SysTick priority value (lowest)
 NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV exception
 
     SECTION    .text:CODE(2)
@@ -167,7 +163,7 @@ rt_hw_context_switch_to:
     MOVS    r0, #1
     STR     r0, [r1]
 
-    ; set the PendSV exception priority
+    ; set the PendSV and SysTick exception priority
     LDR     r0, =NVIC_SHPR3
     LDR     r1, =NVIC_PENDSV_PRI
     LDR     r2, [r0,#0x00]       ; read

@@ -12,14 +12,15 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
-rtconfig.AFLAGS += ' -I' + str(Dir('#'))
 
+DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
-	AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
-	CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
-	AR = rtconfig.AR, ARFLAGS = '-rc',
-	LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CCFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')
 Export('rtconfig')
@@ -28,9 +29,9 @@ Export('rtconfig')
 objs = PrepareBuilding(env, RTT_ROOT)
 
 if GetDepend('RT_USING_SELF_BOOT'):
-    rtconfig.LFLAGS += " -Ttext 0x80010000"
+    rtconfig.LFLAGS += " -Ttext 0x80000000"
 else:
-	rtconfig.LFLAGS += " -Ttext 0x80200000"    
+    rtconfig.LFLAGS += " -Ttext 0x80200000"
 env.Replace(LINKFLAGS = rtconfig.LFLAGS)
 
 if GetDepend('RT_USING_FPU'):
@@ -38,9 +39,9 @@ if GetDepend('RT_USING_FPU'):
     env['ASFLAGS']   = env['ASFLAGS'].replace('-msoft-float', '-mhard-float')
     env['CXXFLAGS']  = env['CXXFLAGS'].replace('-msoft-float', '-mhard-float')
     env['LINKFLAGS'] = env['LINKFLAGS'].replace('-msoft-float', '-mhard-float')
-    
+
 if GetDepend('RT_USING_RTGUI'):
     objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
-    
+
 # make a building
 DoBuilding(TARGET, objs)

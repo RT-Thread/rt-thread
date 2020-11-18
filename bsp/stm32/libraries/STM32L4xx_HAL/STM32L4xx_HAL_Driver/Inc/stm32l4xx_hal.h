@@ -7,29 +7,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -56,6 +40,27 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+
+/** @defgroup HAL_Exported_Constants HAL Exported Constants
+  * @{
+  */
+
+/** @defgroup HAL_TICK_FREQ Tick Frequency
+  * @{
+  */
+#define  HAL_TICK_FREQ_10HZ         100U
+#define  HAL_TICK_FREQ_100HZ        10U
+#define  HAL_TICK_FREQ_1KHZ         1U
+#define  HAL_TICK_FREQ_DEFAULT      HAL_TICK_FREQ_1KHZ
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
 /** @defgroup SYSCFG_Exported_Constants SYSCFG Exported Constants
   * @{
   */
@@ -518,6 +523,18 @@
   */
 
 /* Private macros ------------------------------------------------------------*/
+/** @defgroup HAL_Private_Macros HAL Private Macros
+  * @{
+  */
+
+#define IS_TICKFREQ(__FREQ__) (((__FREQ__) == HAL_TICK_FREQ_10HZ)  || \
+                               ((__FREQ__) == HAL_TICK_FREQ_100HZ) || \
+                               ((__FREQ__) == HAL_TICK_FREQ_1KHZ))
+
+/**
+  * @}
+  */
+
 /** @defgroup SYSCFG_Private_Macros SYSCFG Private Macros
   * @{
   */
@@ -573,6 +590,8 @@
   * @{
   */
 extern __IO uint32_t uwTick;
+extern uint32_t uwTickPrio;
+extern uint32_t uwTickFreq;
 /**
   * @}
   */
@@ -590,8 +609,8 @@ extern __IO uint32_t uwTick;
 /* Initialization and de-initialization functions  ******************************/
 HAL_StatusTypeDef HAL_Init(void);
 HAL_StatusTypeDef HAL_DeInit(void);
-void HAL_MspInit(void);
-void HAL_MspDeInit(void);
+void              HAL_MspInit(void);
+void              HAL_MspDeInit(void);
 HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
 
 /**
@@ -603,17 +622,20 @@ HAL_StatusTypeDef HAL_InitTick (uint32_t TickPriority);
   */
 
 /* Peripheral Control functions  ************************************************/
-void HAL_IncTick(void);
-void HAL_Delay(uint32_t Delay);
-uint32_t HAL_GetTick(void);
-void HAL_SuspendTick(void);
-void HAL_ResumeTick(void);
-uint32_t HAL_GetHalVersion(void);
-uint32_t HAL_GetREVID(void);
-uint32_t HAL_GetDEVID(void);
-uint32_t HAL_GetUIDw0(void);
-uint32_t HAL_GetUIDw1(void);
-uint32_t HAL_GetUIDw2(void);
+void               HAL_IncTick(void);
+void               HAL_Delay(uint32_t Delay);
+uint32_t           HAL_GetTick(void);
+uint32_t           HAL_GetTickPrio(void);
+HAL_StatusTypeDef  HAL_SetTickFreq(uint32_t Freq);
+uint32_t           HAL_GetTickFreq(void);
+void               HAL_SuspendTick(void);
+void               HAL_ResumeTick(void);
+uint32_t           HAL_GetHalVersion(void);
+uint32_t           HAL_GetREVID(void);
+uint32_t           HAL_GetDEVID(void);
+uint32_t           HAL_GetUIDw0(void);
+uint32_t           HAL_GetUIDw1(void);
+uint32_t           HAL_GetUIDw2(void);
 
 /**
   * @}
@@ -624,12 +646,12 @@ uint32_t HAL_GetUIDw2(void);
   */
 
 /* DBGMCU Peripheral Control functions  *****************************************/
-void HAL_DBGMCU_EnableDBGSleepMode(void);
-void HAL_DBGMCU_DisableDBGSleepMode(void);
-void HAL_DBGMCU_EnableDBGStopMode(void);
-void HAL_DBGMCU_DisableDBGStopMode(void);
-void HAL_DBGMCU_EnableDBGStandbyMode(void);
-void HAL_DBGMCU_DisableDBGStandbyMode(void);
+void              HAL_DBGMCU_EnableDBGSleepMode(void);
+void              HAL_DBGMCU_DisableDBGSleepMode(void);
+void              HAL_DBGMCU_EnableDBGStopMode(void);
+void              HAL_DBGMCU_DisableDBGStopMode(void);
+void              HAL_DBGMCU_EnableDBGStandbyMode(void);
+void              HAL_DBGMCU_DisableDBGStandbyMode(void);
 
 /**
   * @}
@@ -640,20 +662,20 @@ void HAL_DBGMCU_DisableDBGStandbyMode(void);
   */
 
 /* SYSCFG Control functions  ****************************************************/
-void HAL_SYSCFG_SRAM2Erase(void);
-void HAL_SYSCFG_EnableMemorySwappingBank(void);
-void HAL_SYSCFG_DisableMemorySwappingBank(void);
+void              HAL_SYSCFG_SRAM2Erase(void);
+void              HAL_SYSCFG_EnableMemorySwappingBank(void);
+void              HAL_SYSCFG_DisableMemorySwappingBank(void);
 
 #if defined(VREFBUF)
-void HAL_SYSCFG_VREFBUF_VoltageScalingConfig(uint32_t VoltageScaling);
-void HAL_SYSCFG_VREFBUF_HighImpedanceConfig(uint32_t Mode);
-void HAL_SYSCFG_VREFBUF_TrimmingConfig(uint32_t TrimmingValue);
+void              HAL_SYSCFG_VREFBUF_VoltageScalingConfig(uint32_t VoltageScaling);
+void              HAL_SYSCFG_VREFBUF_HighImpedanceConfig(uint32_t Mode);
+void              HAL_SYSCFG_VREFBUF_TrimmingConfig(uint32_t TrimmingValue);
 HAL_StatusTypeDef HAL_SYSCFG_EnableVREFBUF(void);
-void HAL_SYSCFG_DisableVREFBUF(void);
+void              HAL_SYSCFG_DisableVREFBUF(void);
 #endif /* VREFBUF */
 
-void HAL_SYSCFG_EnableIOAnalogSwitchBooster(void);
-void HAL_SYSCFG_DisableIOAnalogSwitchBooster(void);
+void              HAL_SYSCFG_EnableIOAnalogSwitchBooster(void);
+void              HAL_SYSCFG_DisableIOAnalogSwitchBooster(void);
 
 /**
   * @}

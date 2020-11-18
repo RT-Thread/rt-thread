@@ -18,17 +18,13 @@
  * In your C/C++ file, enable/disable DEBUG_ENABLE macro, and then include this
  * header file.
  *
- * #define DBG_SECTION_NAME    "MOD"
- * #define DBG_ENABLE          // enable debug macro
- * #define DBG_LEVEL           DBG_INFO
- * #include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
+ * #define DBG_TAG           "MOD_TAG"
+ * #define DBG_LVL           DBG_INFO
+ * #include <rtdbg.h>          // must after of DBG_LVL, DBG_TAG or other options
  *
  * Then in your C/C++ file, you can use LOG_X macro to print out logs:
  * LOG_D("this is a debug log!");
  * LOG_E("this is a error log!");
- *
- * If you want to use different color for different kinds log, you can
- * #define DBG_COLOR
  */
 
 #ifndef RT_DBG_H__
@@ -36,7 +32,21 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_ULOG) && defined(DBG_ENABLE)
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* the debug log will force enable when RT_DEBUG macro is defined */
+#if defined(RT_DEBUG) && !defined(DBG_ENABLE)
+#define DBG_ENABLE
+#endif
+
+/* it will force output color log when RT_DEBUG_COLOR macro is defined */
+#if defined(RT_DEBUG_COLOR) && !defined(DBG_COLOR)
+#define DBG_COLOR
+#endif
+
+#if defined(RT_USING_ULOG)
 /* using ulog compatible with rtdbg  */
 #include <ulog.h>
 #else
@@ -47,15 +57,29 @@
 #define DBG_INFO            2
 #define DBG_LOG             3
 
+#ifdef DBG_TAG
+#ifndef DBG_SECTION_NAME
+#define DBG_SECTION_NAME    DBG_TAG
+#endif
+#else
+/* compatible with old version */
 #ifndef DBG_SECTION_NAME
 #define DBG_SECTION_NAME    "DBG"
 #endif
+#endif /* DBG_TAG */
 
 #ifdef DBG_ENABLE
 
+#ifdef DBG_LVL
+#ifndef DBG_LEVEL
+#define DBG_LEVEL         DBG_LVL
+#endif
+#else
+/* compatible with old version */
 #ifndef DBG_LEVEL
 #define DBG_LEVEL         DBG_WARNING
 #endif
+#endif /* DBG_LVL */
 
 /*
  * The color for terminal (foreground)
@@ -71,13 +95,13 @@
 #ifdef DBG_COLOR
 #define _DBG_COLOR(n)        rt_kprintf("\033["#n"m")
 #define _DBG_LOG_HDR(lvl_name, color_n)                    \
-    rt_kprintf("\033["#color_n"m["lvl_name"/"DBG_SECTION_NAME"] ")
+    rt_kprintf("\033["#color_n"m[" lvl_name "/" DBG_SECTION_NAME "] ")
 #define _DBG_LOG_X_END                                     \
     rt_kprintf("\033[0m\n")
 #else
 #define _DBG_COLOR(n)
 #define _DBG_LOG_HDR(lvl_name, color_n)                    \
-    rt_kprintf("["lvl_name"/"DBG_SECTION_NAME"] ")
+    rt_kprintf("[" lvl_name "/" DBG_SECTION_NAME "] ")
 #define _DBG_LOG_X_END                                     \
     rt_kprintf("\n")
 #endif /* DBG_COLOR */
@@ -107,23 +131,6 @@
         rt_kprintf(DBG_SECTION_NAME " Here %s:%d\n",        \
             __FUNCTION__, __LINE__);                        \
     }
-
-#define dbg_enter                                           \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        _DBG_COLOR(32);                                     \
-        rt_kprintf(DBG_SECTION_NAME " Enter %s\n",          \
-            __FUNCTION__);                                  \
-        _DBG_COLOR(0);                                      \
-    }
-
-#define dbg_exit                                            \
-    if ((DBG_LEVEL) <= DBG_LOG){                            \
-        _DBG_COLOR(32);                                     \
-        rt_kprintf(DBG_SECTION_NAME " Exit  %s:%d\n",       \
-            __FUNCTION__);                                  \
-        _DBG_COLOR(0);                                      \
-    }
-
 
 #define dbg_log_line(lvl, color_n, fmt, ...)                \
     do                                                      \
@@ -172,5 +179,9 @@
 #define LOG_RAW(...)         dbg_raw(__VA_ARGS__)
 
 #endif /* defined(RT_USING_ULOG) && define(DBG_ENABLE) */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* RT_DBG_H__ */

@@ -1,0 +1,85 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32F769NI
+    bool
+    select SOC_SERIES_STM32F7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        select RT_USING_LWIP
+        default n
+
+        if BSP_USING_ETH
+            choice
+                prompt "On-board PHY chip"
+                default PHY_USING_DP83848C
+
+                config PHY_USING_DP83848C
+                    bool "DP83848C"
+
+                config PHY_USING_LAN8720A
+                    bool "LAN8720A"
+
+                config PHY_USING_DM9161CEP
+                    bool "DM9161CEP"
+
+            endchoice
+        endif
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+                
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+                
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_UART5_RX_USING_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+                
+            config BSP_UART5_TX_USING_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    source "../libraries/HAL_Drivers/Kconfig"
+    
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+ 
+endmenu

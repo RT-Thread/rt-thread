@@ -128,6 +128,7 @@
 // <c1>Using Serial
 //  <i>Using Serial
 //#define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 // </c>
 // </h>
 
@@ -182,7 +183,5 @@
 
 #define RT_USING_UART
 #define RT_USING_UART1
-
-#define RT_USING_RTT_CMSIS
 
 #endif

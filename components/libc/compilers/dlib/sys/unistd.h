@@ -34,14 +34,10 @@
 #define	_FNDELAY	_FNONBLOCK	/* non blocking I/O (4.2 style) */
 #define	_FNOCTTY	0x8000	/* don't assign a ctty on this open */
 
-#define	O_RDONLY	0		/* +1 == FREAD */
-#define	O_WRONLY	1		/* +1 == FWRITE */
-#define	O_RDWR		2		/* +1 == FREAD|FWRITE */
-#define	O_APPEND	_FAPPEND
-#define	O_CREAT		_FCREAT
-#define	O_TRUNC		_FTRUNC
-#define	O_EXCL		_FEXCL
-#define O_SYNC		_FSYNC
 #endif
+
+
+int     isatty      (int fd);
+char *  ttyname     (int desc);
 
 #endif /* _SYS_UNISTD_H */

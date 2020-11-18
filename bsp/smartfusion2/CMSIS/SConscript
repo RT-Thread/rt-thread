@@ -1,0 +1,17 @@
+from building import *
+import rtconfig
+
+cwd = GetCurrentDir()
+src	= Glob('*.c')
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['startup_gcc/startup_m2sxxx.S']
+    
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += ['startup_arm/startup_m2sxxx.s']
+
+CPPPATH = [cwd]
+
+group = DefineGroup('CMSIS', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

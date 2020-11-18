@@ -28,17 +28,15 @@
 #include "drv_ac97.h"
 #include "realview.h"
 
-#define DBG_ENABLE
-#define DBG_SECTION_NAME  "PL041"
-// #define DBG_LEVEL         DBG_LOG
-// #define DBG_LEVEL         DBG_INFO
-#define DBG_LEVEL         DBG_WARNING
-// #define DBG_LEVEL         DBG_ERROR
-#define DBG_COLOR
+#define DBG_TAG  "PL041"
+// #define DBG_LVL         DBG_LOG
+// #define DBG_LVL         DBG_INFO
+#define DBG_LVL  DBG_WARNING
+// #define DBG_LVL         DBG_ERROR
 #include <rtdbg.h>
 
 #define FRAME_PERIOD_US    (50)
-#define PL041_CHANNLE_NUM  (4)
+#define PL041_CHANNEL_NUM  (4)
 
 #define PL041_READ(_a)        (*(volatile rt_uint32_t *)(_a))
 #define PL041_WRITE(_a, _v)   (*(volatile rt_uint32_t *)(_a) = (_v))
@@ -49,7 +47,7 @@ struct pl041_irq_def
     void *user_data;
 };
 
-static struct pl041_irq_def irq_tbl[PL041_CHANNLE_NUM];
+static struct pl041_irq_def irq_tbl[PL041_CHANNEL_NUM];
 
 static void aaci_pl041_delay(rt_uint32_t us)
 {
@@ -171,13 +169,13 @@ rt_uint16_t aaci_ac97_read(rt_uint16_t reg)
     return v;
 }
 
-int aaci_pl041_channle_disable(int channle)
+int aaci_pl041_channel_disable(int channel)
 {
     rt_uint32_t v;
     void *p_rx, *p_tx;
 
-    p_rx = (void *)((rt_uint32_t)(&PL041->rxcr1) + channle * 0x14);
-    p_tx = (void *)((rt_uint32_t)(&PL041->txcr1) + channle * 0x14);
+    p_rx = (void *)((rt_uint32_t)(&PL041->rxcr1) + channel * 0x14);
+    p_tx = (void *)((rt_uint32_t)(&PL041->txcr1) + channel * 0x14);
     v = PL041_READ(p_rx);
     v &= ~AACI_CR_EN;
     PL041_WRITE(p_rx, v);
@@ -187,13 +185,13 @@ int aaci_pl041_channle_disable(int channle)
     return 0;
 }
 
-int aaci_pl041_channle_enable(int channle)
+int aaci_pl041_channel_enable(int channel)
 {
     rt_uint32_t v;
     void *p_rx, *p_tx;
 
-    p_rx = (void *)((rt_uint32_t)(&PL041->rxcr1) + channle * 0x14);
-    p_tx = (void *)((rt_uint32_t)(&PL041->txcr1) + channle * 0x14);
+    p_rx = (void *)((rt_uint32_t)(&PL041->rxcr1) + channel * 0x14);
+    p_tx = (void *)((rt_uint32_t)(&PL041->txcr1) + channel * 0x14);
     v = PL041_READ(p_rx);
     v |= AACI_CR_EN;
     PL041_WRITE(p_rx, v);
@@ -203,13 +201,13 @@ int aaci_pl041_channle_enable(int channle)
     return 0;
 }
 
-int aaci_pl041_channle_read(int channle, rt_uint16_t *buff, int count)
+int aaci_pl041_channel_read(int channel, rt_uint16_t *buff, int count)
 {
     void *p_data, *p_status;
     int i = 0;
 
-    p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channle * 0x14);
-    p_data = (void *)((rt_uint32_t)(&(PL041->dr1[0])) + channle * 0x20);
+    p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channel * 0x14);
+    p_data = (void *)((rt_uint32_t)(&(PL041->dr1[0])) + channel * 0x20);
     for (i = 0; (!(PL041_READ(p_status) & AACI_SR_RXFE)) && (i < count); i++)
     {
         buff[i] = (rt_uint16_t)PL041_READ(p_data);
@@ -217,13 +215,13 @@ int aaci_pl041_channle_read(int channle, rt_uint16_t *buff, int count)
     return i;
 }
 
-int aaci_pl041_channle_write(int channle, rt_uint16_t *buff, int count)
+int aaci_pl041_channel_write(int channel, rt_uint16_t *buff, int count)
 {
     void *p_data, *p_status;
     int i = 0;
 
-    p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channle * 0x14);
-    p_data = (void *)((rt_uint32_t)(&(PL041->dr1[0])) + channle * 0x20);
+    p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channel * 0x14);
+    p_data = (void *)((rt_uint32_t)(&(PL041->dr1[0])) + channel * 0x20);
     for (i = 0; (!(PL041_READ(p_status) & AACI_SR_TXFF)) && (i < count); i++)
     {
         PL041_WRITE(p_data, buff[i]);
@@ -231,13 +229,13 @@ int aaci_pl041_channle_write(int channle, rt_uint16_t *buff, int count)
     return i;
 }
 
-int aaci_pl041_channle_cfg(int channle, pl041_cfg_t cgf)
+int aaci_pl041_channel_cfg(int channel, pl041_cfg_t cgf)
 {
     rt_uint32_t v;
     void *p_rx, *p_tx;
 
-    p_rx = (void *)((rt_uint32_t)(&PL041->rxcr1) + channle * 0x14);
-    p_tx = (void *)((rt_uint32_t)(&PL041->txcr1) + channle * 0x14);
+    p_rx = (void *)((rt_uint32_t)(&PL041->rxcr1) + channel * 0x14);
+    p_tx = (void *)((rt_uint32_t)(&PL041->txcr1) + channel * 0x14);
     v = AACI_CR_FEN | AACI_CR_SZ16 | cgf->itype;
     PL041_WRITE(p_rx, v);
     v = AACI_CR_FEN | AACI_CR_SZ16 | cgf->otype;
@@ -249,86 +247,86 @@ int aaci_pl041_channle_cfg(int channle, pl041_cfg_t cgf)
     return 0;
 }
 
-void aaci_pl041_irq_enable(int channle, rt_uint32_t vector)
+void aaci_pl041_irq_enable(int channel, rt_uint32_t vector)
 {
     rt_uint32_t v;
     void *p_irq;
 
     vector &= vector & 0x7f;
-    p_irq = (void *)((rt_uint32_t)(&PL041->iie1) + channle * 0x14);
+    p_irq = (void *)((rt_uint32_t)(&PL041->iie1) + channel * 0x14);
     v = PL041_READ(p_irq);
     v |= vector;
     PL041_WRITE(p_irq, v);
 }
 
-void aaci_pl041_irq_disable(int channle, rt_uint32_t vector)
+void aaci_pl041_irq_disable(int channel, rt_uint32_t vector)
 {
     rt_uint32_t v;
     void *p_irq;
 
     vector &= vector & 0x7f;
-    p_irq = (void *)((rt_uint32_t)(&PL041->iie1) + channle * 0x14);
+    p_irq = (void *)((rt_uint32_t)(&PL041->iie1) + channel * 0x14);
     v = PL041_READ(p_irq);
     v &= ~vector;
     PL041_WRITE(p_irq, v);
 }
 
-rt_err_t aaci_pl041_irq_register(int channle, pl041_irq_fun_t fun, void *user_data)
+rt_err_t aaci_pl041_irq_register(int channel, pl041_irq_fun_t fun, void *user_data)
 {
-    if (channle < 0 || channle >= PL041_CHANNLE_NUM)
+    if (channel < 0 || channel >= PL041_CHANNEL_NUM)
     {
-        LOG_E("%s channle:%d err.", __FUNCTION__, channle);
+        LOG_E("%s channel:%d err.", __FUNCTION__, channel);
         return -RT_ERROR;
     }
-    irq_tbl[channle].fun = fun;
-    irq_tbl[channle].user_data = user_data;
+    irq_tbl[channel].fun = fun;
+    irq_tbl[channel].user_data = user_data;
     return RT_EOK;
 }
 
-rt_err_t aaci_pl041_irq_unregister(int channle)
+rt_err_t aaci_pl041_irq_unregister(int channel)
 {
-    if (channle < 0 || channle >= PL041_CHANNLE_NUM)
+    if (channel < 0 || channel >= PL041_CHANNEL_NUM)
     {
-        LOG_E("%s channle:%d err.", __FUNCTION__, channle);
+        LOG_E("%s channel:%d err.", __FUNCTION__, channel);
         return -RT_ERROR;
     }
-    irq_tbl[channle].fun = RT_NULL;
-    irq_tbl[channle].user_data = RT_NULL;
+    irq_tbl[channel].fun = RT_NULL;
+    irq_tbl[channel].user_data = RT_NULL;
     return RT_EOK;
 }
 
 static void aaci_pl041_irq_handle(int irqno, void *param)
 {
-    rt_uint32_t mask, channle, m;
+    rt_uint32_t mask, channel, m;
     struct pl041_irq_def *_irq = param;
     void *p_status;
 
     mask = PL041_READ(&PL041->allints);
-    PL041_WRITE(PL041->intclr, mask);
+    PL041_WRITE(&PL041->intclr, mask);
 
-    for (channle = 0; (channle < PL041_CHANNLE_NUM) && (mask); channle++)
+    for (channel = 0; (channel < PL041_CHANNEL_NUM) && (mask); channel++)
     {
         mask = mask >> 7;
         m = mask & 0x7f;
         if (m & AACI_ISR_ORINTR)
         {
-            LOG_W("RX overrun on chan %d", channle);
+            LOG_W("RX overrun on chan %d", channel);
         }
 
         if (m & AACI_ISR_RXTOINTR)
         {
-            LOG_W("RX timeout on chan %d", channle);
+            LOG_W("RX timeout on chan %d", channel);
         }
 
         if (mask & AACI_ISR_URINTR)
         {
-            LOG_W("TX underrun on chan %d", channle);
+            LOG_W("TX underrun on chan %d", channel);
         }
 
-        p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channle * 0x14);
-        if (_irq[channle].fun != RT_NULL)
+        p_status = (void *)((rt_uint32_t)(&PL041->sr1) + channel * 0x14);
+        if (_irq[channel].fun != RT_NULL)
         {
-            _irq[channle].fun(PL041_READ(p_status), _irq[channle].user_data);
+            _irq[channel].fun(PL041_READ(p_status), _irq[channel].user_data);
         }
     }
 }

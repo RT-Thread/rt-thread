@@ -17,6 +17,7 @@
 /* SECTION: RT_DEBUG */
 /* Thread Debug */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 #define RT_USING_OVERFLOW_CHECK
 
 /* Using Hook */
@@ -55,6 +56,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_IPC
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE
@@ -129,7 +131,5 @@
 
 // <bool name="RT_USING_CMSIS_OS" description="Using CMSIS OS API" default="true" />
 // #define RT_USING_CMSIS_OS
-// <bool name="RT_USING_RTT_CMSIS" description="Using CMSIS in RTT" default="true" />
-#define RT_USING_RTT_CMSIS
 
 #endif

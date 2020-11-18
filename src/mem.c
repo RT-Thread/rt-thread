@@ -489,6 +489,12 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         {
             ((struct heap_mem *)&heap_ptr[mem2->next])->prev = ptr2;
         }
+        
+        if (mem2 < lfree)
+        {
+            /* the splited struct is now the lowest */
+            lfree = mem2;
+        }
 
         plug_holes(mem2);
 
@@ -644,7 +650,7 @@ int memcheck(void)
     {
         position = (rt_ubase_t)mem - (rt_ubase_t)heap_ptr;
         if (position < 0) goto __exit;
-        if (position > mem_size_aligned) goto __exit;
+        if (position > (int)mem_size_aligned) goto __exit;
         if (mem->magic != HEAP_MAGIC) goto __exit;
         if (mem->used != 0 && mem->used != 1) goto __exit;
     }

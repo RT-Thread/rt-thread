@@ -9,6 +9,8 @@
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
  * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
+ * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
+ *                             RT_USING_DFS is not defined
  */
 
 #include <string.h>
@@ -251,7 +253,7 @@ void _ttywrch(int ch)
 #endif
 }
 
-void _sys_exit(int return_code)
+RT_WEAK void _sys_exit(int return_code)
 {
     /* TODO: perhaps exit the thread which is invoking this function */
     while (1);
@@ -265,12 +267,25 @@ void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
+#ifdef RT_USING_DFS
+    struct stat stat;
+
+    if (fh < STDERR)
+        return -1;
+
+    fstat(fh, &stat);
+    return stat.st_size;
+#else
     return -1;
+#endif
 }
 
 int _sys_istty(FILEHANDLE fh)
 {
-    return 0;
+    if((STDIN <= fh) && (fh <= STDERR))
+        return 1;
+    else
+        return 0;
 }
 
 int remove(const char *filename)

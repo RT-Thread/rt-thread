@@ -24,8 +24,8 @@ typedef struct
 UART_CFG_T uart0 = {
     .uart = NRF_DRV_UART_INSTANCE(0),
 #ifdef RT_USING_CONSOLE
-    .rx_pin = 3,
-    .tx_pin = 4
+    .rx_pin = 8,
+    .tx_pin = 6
 #else
     .rx_pin = 19,
     .tx_pin = 20

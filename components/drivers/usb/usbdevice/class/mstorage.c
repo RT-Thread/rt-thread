@@ -16,6 +16,10 @@
 #include "drivers/usb_device.h"
 #include "mstorage.h"
 
+#ifdef RT_USING_DFS_MNTTABLE
+#include "dfs_fs.h"
+#endif
+
 #ifdef RT_USB_DEVICE_MSTORAGE
 
 enum STAT
@@ -422,7 +426,7 @@ static rt_size_t _read_capacity(ufunction_t func, ustorage_cbw_t cbw)
 
     data = (struct mstorage*)func->user_data;   
     buf = data->ep_in->buffer;    
-    sector_count = data->geometry.sector_count;
+    sector_count = data->geometry.sector_count - 1; /* Last Logical Block Address */
     sector_size = data->geometry.bytes_per_sector;
 
     buf[0] = sector_count >> 24;
@@ -606,8 +610,11 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
                     rt_usbd_ep_set_stall(func->device, data->ep_out);
                 }
                 else
-                {
-                    rt_usbd_ep_set_stall(func->device, data->ep_in);                    
+                {   
+                    //rt_kprintf("warning:in stall path but not stall\n");
+                    
+                    /* FIXME: Disable the operation or the disk cannot work. */
+                    //rt_usbd_ep_set_stall(func->device, data->ep_in);                    
                 }
                 data->csw_response.data_reside = 0;
             }
@@ -715,9 +722,22 @@ static void _cb_len_calc(ufunction_t func, struct scsi_cmd* cmd,
             break;
         }
     }
+    
+    //workaround: for stability in full-speed mode
+    else if(cmd->cmd_len == 12)
+    {
+        switch(cmd->type)
+        {
+        case COUNT:
+            data->cb_data_size = cbw->cb[4]; 
+            break;
+        default:      
+            break;
+        }
+    }
     else
     {
-//        rt_kprintf("cmd_len error %d\n", cmd->cmd_len);      
+        rt_kprintf("cmd_len error %d\n", cmd->cmd_len);      
     }
 }
 
@@ -733,7 +753,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     data = (struct mstorage*)func->user_data;   
     if(cmd->cmd_len != cbw->cb_len)
     {
-  //      rt_kprintf("cb_len error\n");
+        rt_kprintf("cb_len error\n");
         cmd->cmd_len = cbw->cb_len;
     }
 
@@ -764,7 +784,7 @@ static rt_bool_t _cbw_verify(ufunction_t func, struct scsi_cmd* cmd,
     
     if(cbw->xfer_len < data->cb_data_size)
     {
- //       rt_kprintf("xfer_len < data_size\n");
+        rt_kprintf("xfer_len < data_size\n");
         data->cb_data_size = cbw->xfer_len;
         data->csw_response.status = 1;
     }
@@ -955,7 +975,7 @@ static rt_err_t _function_enable(ufunction_t func)
     struct mstorage *data;
     RT_ASSERT(func != RT_NULL);
     RT_DEBUG_LOG(RT_DEBUG_USB, ("Mass storage function enabled\n"));
-    data = (struct mstorage*)func->user_data;   
+    data = (struct mstorage*)func->user_data;
 
     data->disk = rt_device_find(RT_USB_MSTORAGE_DISK_NAME);
     if(data->disk == RT_NULL)
@@ -963,6 +983,10 @@ static rt_err_t _function_enable(ufunction_t func)
         rt_kprintf("no data->disk named %s\n", RT_USB_MSTORAGE_DISK_NAME);
         return -RT_ERROR;
     }
+
+#ifdef RT_USING_DFS_MNTTABLE
+    dfs_unmount_device(data->disk);
+#endif
 
     if(rt_device_open(data->disk, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
@@ -1029,6 +1053,9 @@ static rt_err_t _function_disable(ufunction_t func)
     if(data->disk != RT_NULL)
     {
         rt_device_close(data->disk);
+#ifdef RT_USING_DFS_MNTTABLE
+        dfs_mount_device(data->disk);
+#endif
         data->disk = RT_NULL;
     }
     

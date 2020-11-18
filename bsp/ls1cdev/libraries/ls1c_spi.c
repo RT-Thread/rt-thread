@@ -1,21 +1,7 @@
 /*
- * File      : ls1c_spi.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006 - 2012, RT-Thread Development Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -23,7 +9,6 @@
  */
 
 // 硬件spi接口源文件
-
 
 #include <string.h>
 #include "ls1c_public.h"
@@ -38,7 +23,7 @@
  * 获取指定SPI模块的基地址
  * @SPIx SPI模块的编号
  */
-inline void *ls1c_spi_get_base(unsigned char SPIx)
+void *ls1c_spi_get_base(unsigned char SPIx)
 {
     void *base = NULL;
 
@@ -67,7 +52,7 @@ inline void *ls1c_spi_get_base(unsigned char SPIx)
  */
 void ls1c_spi_print_all_regs_info(void *spi_base)
 {
-    rt_kprintf("[%s] SPCR=0x%x, SPSR=0x%x, SPER=0x%x, SFC_PARAM=0x%x, SFC_SOFTCS=0x%x, SFC_TIMING=0x%x\r\n",
+    printf("[%s] SPCR=0x%x, SPSR=0x%x, SPER=0x%x, SFC_PARAM=0x%x, SFC_SOFTCS=0x%x, SFC_TIMING=0x%x\r\n",
               __FUNCTION__, 
               reg_read_8(spi_base + LS1C_SPI_SPCR_OFFSET),
               reg_read_8(spi_base + LS1C_SPI_SPSR_OFFSET),
@@ -137,7 +122,7 @@ unsigned int ls1c_spi_get_div(unsigned int max_speed_hz)
             break;
     }
 /*    
-    rt_kprintf("[%s] clk=%ld, max_speed_hz=%d, div_tmp=%d, bit=%d\r\n", 
+    printf("[%s] clk=%ld, max_speed_hz=%d, div_tmp=%d, bit=%d\r\n", 
               __FUNCTION__, clk, max_speed_hz, div_tmp, bit);
 */
     return div_tmp;
@@ -229,7 +214,7 @@ void ls1c_spi_set_cs(void *spi_base, unsigned char cs, int new_status)
  * 等待收发完成
  * @spi_base 基地址
  */
-inline void ls1c_spi_wait_txrx_done(void *spi_base)
+void ls1c_spi_wait_txrx_done(void *spi_base)
 {
     int timeout = LS1C_SPI_TX_TIMEOUT;
 
@@ -247,7 +232,7 @@ inline void ls1c_spi_wait_txrx_done(void *spi_base)
  * 清中断和标志位
  * @spi_base 基地址
  */
-inline void ls1c_spi_clear(void *spi_base)
+void ls1c_spi_clear(void *spi_base)
 {
     unsigned char val = 0;
 
@@ -260,7 +245,7 @@ inline void ls1c_spi_clear(void *spi_base)
     val = reg_read_8(spi_base + LS1C_SPI_SPSR_OFFSET);
     if (LS1C_SPI_SPSR_WCOL_MASK & val)
     {
-        rt_kprintf("[%s] clear register SPSR's wcol!\r\n",__FUNCTION__);       // 手册和linux源码中不一样，加个打印看看
+        printf("[%s] clear register SPSR's wcol!\r\n");       // 手册和linux源码中不一样，加个打印看看
         reg_write_8(val & ~LS1C_SPI_SPSR_WCOL_MASK, spi_base + LS1C_SPI_SPSR_OFFSET);   // 写0，linux源码中是写0
 //        reg_write_8(val | LS1C_SPI_SPSR_WCOL_MASK, spi_base + LS1C_SPI_SPSR_OFFSET);  // 写1，按照1c手册，应该写1
     }

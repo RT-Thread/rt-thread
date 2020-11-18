@@ -41,6 +41,9 @@ extern "C" {
 void rt_system_object_init(void);
 struct rt_object_information *
 rt_object_get_information(enum rt_object_class_type type);
+int rt_object_get_length(enum rt_object_class_type type);
+int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers, int maxlen);
+
 void rt_object_init(struct rt_object         *object,
                     enum rt_object_class_type type,
                     const char               *name);
@@ -75,7 +78,7 @@ void rt_system_tick_init(void);
 rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
-int  rt_tick_from_millisecond(rt_int32_t ms);
+rt_tick_t  rt_tick_from_millisecond(rt_int32_t ms);
 
 void rt_system_timer_init(void);
 void rt_system_timer_thread_init(void);
@@ -138,6 +141,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread);
 
 rt_err_t rt_thread_yield(void);
 rt_err_t rt_thread_delay(rt_tick_t tick);
+rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick);
 rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
 rt_err_t rt_thread_suspend(rt_thread_t thread);
@@ -378,13 +382,38 @@ rt_mq_t rt_mq_create(const char *name,
                      rt_uint8_t  flag);
 rt_err_t rt_mq_delete(rt_mq_t mq);
 
-rt_err_t rt_mq_send(rt_mq_t mq, void *buffer, rt_size_t size);
-rt_err_t rt_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size);
+rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size);
+rt_err_t rt_mq_send_wait(rt_mq_t     mq,
+                         const void *buffer,
+                         rt_size_t   size,
+                         rt_int32_t  timeout);
+rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size);
 rt_err_t rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
                     rt_int32_t timeout);
 rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg);
+#endif
+
+/*
+ * spinlock
+ */
+#ifdef RT_USING_SMP
+struct rt_spinlock;
+
+void rt_spin_lock_init(struct rt_spinlock *lock);
+void rt_spin_lock(struct rt_spinlock *lock);
+void rt_spin_unlock(struct rt_spinlock *lock);
+rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
+void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
+
+#else
+#define rt_spin_lock_init(lock)                 /* nothing */
+#define rt_spin_lock(lock)                      rt_enter_critical()
+#define rt_spin_unlock(lock)                    rt_exit_critical()
+#define rt_spin_lock_irqsave(lock)              rt_hw_interrupt_disable()
+#define rt_spin_unlock_irqrestore(lock, level)  rt_hw_interrupt_enable(level)
+
 #endif
 
 /**@}*/
@@ -516,6 +545,7 @@ void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_ubase_t count);
 rt_int32_t rt_strcmp(const char *cs, const char *ct);
 rt_size_t rt_strlen(const char *src);
+rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
 char *rt_strdup(const char *s);
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 /* leak strdup interface */
@@ -527,7 +557,7 @@ rt_int32_t rt_sscanf(const char *buf, const char *fmt, ...);
 char *rt_strncpy(char *dest, const char *src, rt_ubase_t n);
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
-rt_uint32_t rt_strcasecmp(const char *a, const char *b);
+rt_int32_t rt_strcasecmp(const char *a, const char *b);
 
 void rt_show_version(void);
 

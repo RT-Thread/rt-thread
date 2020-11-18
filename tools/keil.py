@@ -51,6 +51,9 @@ def _get_filetype(fn):
     if fn.rfind('.lib') != -1:
         return 4
 
+    if fn.rfind('.o') != -1:
+        return 3
+
     # other filetype
     return 5
 
@@ -91,6 +94,8 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
 
     file_path.text = path.decode(fs_encoding)
 
+    return group
+
 def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     name = os.path.basename(filename)
     path = os.path.dirname (filename)
@@ -123,6 +128,8 @@ def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     file_path = SubElement(file, 'FilePath')
 
     file_path.text = path.decode(fs_encoding)
+
+    return group
 
 def MDK4AddGroup(ProjectFiles, parent, name, files, project_path):
     # don't add an empty group
@@ -242,12 +249,13 @@ def MDK45Project(tree, target, script):
                     full_path = os.path.join(path_item, item + '.lib')
                     if os.path.isfile(full_path): # has this library
                         lib_path = full_path
+                        break
 
                 if lib_path != '':
-                    if (group_tree != None):
+                    if group_tree != None:
                         MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], lib_path, project_path)
                     else:
-                        MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+                        group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')

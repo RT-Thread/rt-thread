@@ -45,23 +45,7 @@
 #define S32_F "ld"
 #define X32_F "lx"
 
-#ifdef RT_USING_LIBC
-#if defined(__CC_ARM) || defined(__CLANG_ARM) || defined(__IAR_SYSTEMS_ICC__)
-#include <sys/errno.h>
-#else
-#include <errno.h>
-/* some errno not defined in newlib */
-#define ENSRNOTFOUND 163  /* Domain name not found */
-/* WARNING: ESHUTDOWN also not defined in newlib. We chose
-			180 here because the number "108" which is used
-			in arch.h has been assigned to another error code. */
-#define ESHUTDOWN 180
-#endif /* __CC_ARM/__IAR_SYSTEMS_ICC__ */
-#else
-#define LWIP_PROVIDE_ERRNO
-#endif
-
-#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC)
+#if defined(RT_USING_LIBC) || defined(RT_USING_MINILIBC) || defined(RT_LIBC_USING_TIME) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/time.h>
 #define LWIP_TIMEVAL_PRIVATE	   0
 #else
@@ -71,6 +55,11 @@
 #if defined(__CC_ARM)   /* ARMCC compiler */
 #define PACK_STRUCT_FIELD(x) x
 #define PACK_STRUCT_STRUCT __attribute__ ((__packed__))
+#define PACK_STRUCT_BEGIN
+#define PACK_STRUCT_END
+#elif defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) /*Arm Compiler 6*/
+#define PACK_STRUCT_FIELD(x) x
+#define PACK_STRUCT_STRUCT __attribute__((packed))
 #define PACK_STRUCT_BEGIN
 #define PACK_STRUCT_END
 #elif defined(__IAR_SYSTEMS_ICC__)   /* IAR Compiler */

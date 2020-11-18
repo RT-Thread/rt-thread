@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define AT_SW_VERSION                  "1.2.0"
+#define AT_SW_VERSION                  "1.3.1"
 
 #define AT_CMD_NAME_LEN                16
 #define AT_END_MARK_LEN                4
@@ -64,7 +64,7 @@ enum at_status
 {
     AT_STATUS_UNINITIALIZED = 0,
     AT_STATUS_INITIALIZED,
-    AT_STATUS_BUSY,
+    AT_STATUS_CLI,
 };
 typedef enum at_status at_status_t;
 
@@ -96,7 +96,7 @@ struct at_server
     rt_device_t device;
 
     at_status_t status;
-    char (*get_char)(void);
+    rt_err_t (*get_char)(struct at_server *server, char *ch, rt_int32_t timeout);
     rt_bool_t echo_mode;
 
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
@@ -124,9 +124,11 @@ struct at_response
 {
     /* response buffer */
     char *buf;
-    /* the maximum response buffer size */
+    /* the maximum response buffer size, it set by `at_create_resp()` function */
     rt_size_t buf_size;
-    /* the number of setting response lines
+    /* the length of current response buffer */
+    rt_size_t buf_len;
+    /* the number of setting response lines, it set by `at_create_resp()` function
      * == 0: the response data will auto return when received 'OK' or 'ERROR'
      * != 0: the response data will return when received setting lines number data */
     rt_size_t line_num;
@@ -138,14 +140,23 @@ struct at_response
 
 typedef struct at_response *at_response_t;
 
+struct at_client;
+
 /* URC(Unsolicited Result Code) object, such as: 'RING', 'READY' request by AT server */
 struct at_urc
 {
     const char *cmd_prefix;
     const char *cmd_suffix;
-    void (*func)(const char *data, rt_size_t size);
+    void (*func)(struct at_client *client, const char *data, rt_size_t size);
 };
 typedef struct at_urc *at_urc_t;
+
+struct at_urc_table
+{
+    size_t urc_size;
+    const struct at_urc *urc;
+};
+typedef struct at_urc *at_urc_table_t;
 
 struct at_client
 {
@@ -154,9 +165,12 @@ struct at_client
     at_status_t status;
     char end_sign;
 
-    char *recv_buffer;
+    /* the current received one line data buffer */
+    char *recv_line_buf;
+    /* The length of the currently received one line data */
+    rt_size_t recv_line_len;
+    /* The maximum supported receive data length */
     rt_size_t recv_bufsz;
-    rt_size_t cur_recv_len;
     rt_sem_t rx_notice;
     rt_mutex_t lock;
 
@@ -164,7 +178,7 @@ struct at_client
     rt_sem_t resp_notice;
     at_resp_status_t resp_status;
 
-    const struct at_urc *urc_table;
+    struct at_urc_table *urc_table;
     rt_size_t urc_table_size;
 
     rt_thread_t parser;
@@ -180,6 +194,8 @@ int at_server_init(void);
 void at_server_printf(const char *format, ...);
 void at_server_printfln(const char *format, ...);
 void at_server_print_result(at_result_t result);
+rt_size_t at_server_send(at_server_t server, const char *buf, rt_size_t size);
+rt_size_t at_server_recv(at_server_t server, char *buf, rt_size_t size, rt_int32_t timeout);
 
 /* AT server request arguments parse */
 int at_req_parse_args(const char *req_args, const char *req_expr, ...);
@@ -207,7 +223,7 @@ rt_size_t at_client_obj_recv(at_client_t client, char *buf, rt_size_t size, rt_i
 void at_obj_set_end_sign(at_client_t client, char ch);
 
 /* Set URC(Unsolicited Result Code) table */
-void at_obj_set_urc_table(at_client_t client, const struct at_urc * table, rt_size_t size);
+int at_obj_set_urc_table(at_client_t client, const struct at_urc * table, rt_size_t size);
 
 /* AT client send commands to AT server and waiter response */
 int at_obj_exec_cmd(at_client_t client, at_response_t resp, const char *cmd_expr, ...);

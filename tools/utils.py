@@ -24,6 +24,7 @@
 
 import sys
 import os
+import re
 
 def splitall(loc):
     """
@@ -245,10 +246,11 @@ def ProjectInfo(env):
     return proj
 
 def VersionCmp(ver1, ver2):
-    la=[];
+    la=[]
     if ver1:
-        la = ver1.split('.')
-    lb = ver2.split('.')
+        la = re.split("[. ]", ver1)
+    lb = re.split("[. ]", ver2)
+
     f = 0
     if len(la) > len(lb):
         f = len(la)
@@ -262,7 +264,7 @@ def VersionCmp(ver1, ver2):
                 continue
             else:
                 return -1
-        except IndexError as e:
+        except (IndexError, ValueError) as e:
             if len(la) > len(lb):
                 return 1
             else:
@@ -271,10 +273,10 @@ def VersionCmp(ver1, ver2):
 
 def GCCC99Patch(cflags):
     import building
-    gcc_version = building.GetDepend('GCC_VERSION')
+    gcc_version = building.GetDepend('GCC_VERSION_STR')
     if gcc_version:
         gcc_version = gcc_version.replace('"', '')
-    if VersionCmp(gcc_version, "4.8.0"):
+    if VersionCmp(gcc_version, "4.8.0") == 1:
         # remove -std=c99 after GCC 4.8.x
         cflags = cflags.replace('-std=c99', '')
 

@@ -97,7 +97,7 @@ int dfs_device_fs_close(struct dfs_fd *file)
 
         root_dirent = (struct device_dirent *)file->data;
         RT_ASSERT(root_dirent != RT_NULL);
-        
+
         /* release dirent */
         rt_free(root_dirent);
         return RT_EOK;
@@ -133,7 +133,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         struct rt_object_information *information;
         struct device_dirent *root_dirent;
         rt_uint32_t count = 0;
-        
+
         /* lock scheduler */
         rt_enter_critical();
 
@@ -145,8 +145,8 @@ int dfs_device_fs_open(struct dfs_fd *file)
             count ++;
         }
 
-        root_dirent = (struct device_dirent *)rt_malloc(sizeof(struct device_dirent) + 
-            count * sizeof(rt_device_t));
+        root_dirent = (struct device_dirent *)rt_malloc(sizeof(struct device_dirent) +
+                      count * sizeof(rt_device_t));
         if (root_dirent != RT_NULL)
         {
             root_dirent->devices = (rt_device_t *)(root_dirent + 1);
@@ -165,7 +165,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
 
         /* set data */
         file->data = root_dirent;
-        
+
         return RT_EOK;
     }
 
@@ -178,7 +178,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
     {
         /* use device fops */
         file->fops = device->fops;
-        file->data = (void*)device;
+        file->data = (void *)device;
 
         /* use fops */
         if (file->fops->open)
@@ -186,6 +186,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
             result = file->fops->open(file);
             if (result == RT_EOK || result == -RT_ENOSYS)
             {
+                file->type = FT_DEVICE;
                 return 0;
             }
         }
@@ -197,6 +198,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         if (result == RT_EOK || result == -RT_ENOSYS)
         {
             file->data = device;
+            file->type = FT_DEVICE;
             return RT_EOK;
         }
     }
@@ -214,7 +216,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
         st->st_dev = 0;
 
         st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-            S_IWUSR | S_IWGRP | S_IWOTH;
+                      S_IWUSR | S_IWGRP | S_IWOTH;
         st->st_mode &= ~S_IFREG;
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
 
@@ -233,7 +235,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
             st->st_dev = 0;
 
             st->st_mode = S_IRUSR | S_IRGRP | S_IROTH |
-                S_IWUSR | S_IWGRP | S_IWOTH;
+                          S_IWUSR | S_IWGRP | S_IWOTH;
 
             if (dev_id->type == RT_Device_Class_Char)
                 st->st_mode |= S_IFCHR;
@@ -293,7 +295,7 @@ static int dfs_device_fs_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     return mask;
 }
 
-static const struct dfs_file_ops _device_fops = 
+static const struct dfs_file_ops _device_fops =
 {
     dfs_device_fs_open,
     dfs_device_fs_close,
@@ -306,7 +308,7 @@ static const struct dfs_file_ops _device_fops =
     dfs_device_fs_poll,
 };
 
-static const struct dfs_filesystem_ops _device_fs = 
+static const struct dfs_filesystem_ops _device_fs =
 {
     "devfs",
     DFS_FS_FLAG_DEFAULT,

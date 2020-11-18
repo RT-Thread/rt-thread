@@ -13,21 +13,21 @@
  * 2013-07-09     aozima            support respone chain list.
  * 2013-07-18     aozima            re-initial respone chain list when RNDIS restart.
  * 2017-11-25     ZYH               fix it and add OS descriptor
+ * 2019-06-10     ZYH               fix hot plug and delay linkup
  */
 
 #include <rtdevice.h>
+#ifdef RT_USB_DEVICE_RNDIS
 #include "cdc.h"
 #include "rndis.h"
 #include "ndis.h"
 
-//#define RNDIS_DEBUG
-//#define RNDIS_DELAY_LINK_UP
+/* define RNDIS_DELAY_LINK_UP by menuconfig for delay linkup */
 
-#ifdef  RNDIS_DEBUG
-#define RNDIS_PRINTF                rt_kprintf("[RNDIS] "); rt_kprintf
-#else
-#define RNDIS_PRINTF(...)
-#endif /* RNDIS_DEBUG */
+#define DBG_LEVEL           DBG_WARNING
+#define DBG_SECTION_NAME    "RNDIS"
+#include <rtdbg.h>
+
 
 /* RT-Thread LWIP ethernet interface */
 #include <netif/ethernetif.h>
@@ -314,7 +314,7 @@ static rt_err_t _rndis_init_response(ufunction_t func, rndis_init_msg_t msg)
 
     if( (response == RT_NULL) || (resp == RT_NULL) )
     {
-        RNDIS_PRINTF("%d: no memory!\r\n", __LINE__);
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
 
         if(response != RT_NULL)
             rt_free(response);
@@ -360,7 +360,7 @@ static rndis_query_cmplt_t _create_resp(rt_size_t size)
 
     if(resp == RT_NULL)
     {
-        RNDIS_PRINTF("%d: no memory!\r\n", __LINE__);
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
         return RT_NULL;
     }
 
@@ -421,7 +421,7 @@ static rt_err_t _rndis_query_response(ufunction_t func,rndis_query_msg_t msg)
     case OID_GEN_LINK_SPEED:
         resp = _create_resp(4);
         if(resp == RT_NULL) break;
-        _set_resp(resp, func->device->dcd->device_is_hs ? (480UL * 1000 *1000) : (12UL * 1000 * 1000) / 100);
+        _set_resp(resp, (func->device->dcd->device_is_hs ? (480UL * 1000 *1000) : (12UL * 1000 * 1000)) / 100);
         break;
 
     case OID_GEN_MEDIA_CONNECT_STATUS:
@@ -510,7 +510,7 @@ static rt_err_t _rndis_query_response(ufunction_t func,rndis_query_msg_t msg)
         break;
 
     default:
-        RNDIS_PRINTF("OID %X\n", msg->Oid);
+        LOG_W("Not support OID %X", msg->Oid);
         ret = -RT_ERROR;
         break;
     }
@@ -518,7 +518,7 @@ static rt_err_t _rndis_query_response(ufunction_t func,rndis_query_msg_t msg)
     response = rt_malloc(sizeof(struct rt_rndis_response));
     if( (response == RT_NULL) || (resp == RT_NULL) )
     {
-        RNDIS_PRINTF("%d: no memory!\r\n", __LINE__);
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
 
         if(response != RT_NULL)
             rt_free(response);
@@ -557,7 +557,7 @@ static rt_err_t _rndis_set_response(ufunction_t func,rndis_set_msg_t msg)
 
     if( (response == RT_NULL) || (resp == RT_NULL) )
     {
-        RNDIS_PRINTF("%d: no memory!\r\n", __LINE__);
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
 
         if(response != RT_NULL)
             rt_free(response);
@@ -577,8 +577,10 @@ static rt_err_t _rndis_set_response(ufunction_t func,rndis_set_msg_t msg)
     case OID_GEN_CURRENT_PACKET_FILTER:
         oid_packet_filter = *((rt_uint32_t *)((rt_uint8_t *)&(msg->RequestId) + \
                                               msg->InformationBufferOffset));
+        /* TODO: make complier happy */
         oid_packet_filter = oid_packet_filter;
-        RNDIS_PRINTF("OID_GEN_CURRENT_PACKET_FILTER\r\n");
+
+        LOG_D("OID_GEN_CURRENT_PACKET_FILTER");
 
 #ifdef  RNDIS_DELAY_LINK_UP
         /* link up. */
@@ -592,11 +594,62 @@ static rt_err_t _rndis_set_response(ufunction_t func,rndis_set_msg_t msg)
         break;
 
     default:
+        LOG_W("Unknow rndis set 0x%02X", msg->Oid);
         resp->Status = RNDIS_STATUS_FAILURE;
         return RT_EOK;
     }
 
     resp->Status = RNDIS_STATUS_SUCCESS;
+
+    response->buffer = resp;
+
+    {
+        rt_base_t level = rt_hw_interrupt_disable();
+        rt_list_insert_before(&((rt_rndis_eth_t)func->user_data)->response_list, &response->list);
+        rt_hw_interrupt_enable(level);
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t _rndis_reset_response(ufunction_t func,rndis_set_msg_t msg)
+{
+    struct rndis_reset_cmplt * resp;
+    struct rt_rndis_response * response;
+
+    response = rt_malloc(sizeof(struct rt_rndis_response));
+    resp = rt_malloc(sizeof(struct rndis_reset_cmplt));
+
+    if( (response == RT_NULL) || (resp == RT_NULL) )
+    {
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
+
+        if(response != RT_NULL)
+            rt_free(response);
+
+        if(resp != RT_NULL)
+            rt_free(resp);
+
+        return -RT_ENOMEM;
+    }
+
+    /* reset packet filter */
+
+    oid_packet_filter = 0x0000000;
+
+    /* link down eth */
+
+    eth_device_linkchange(&((rt_rndis_eth_t)func->user_data)->parent, RT_FALSE);
+
+    /* reset eth rx tx */
+    ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
+    ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
+
+
+    resp->MessageType = REMOTE_NDIS_RESET_CMPLT;
+    resp->MessageLength = sizeof(struct rndis_reset_cmplt);
+    resp->Status = RNDIS_STATUS_SUCCESS;
+    resp->AddressingReset = 1;
 
     response->buffer = resp;
 
@@ -619,7 +672,7 @@ static rt_err_t _rndis_keepalive_response(ufunction_t func,rndis_keepalive_msg_t
 
     if( (response == RT_NULL) || (resp == RT_NULL) )
     {
-        RNDIS_PRINTF("%d: no memory!\r\n", __LINE__);
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
 
         if(response != RT_NULL)
             rt_free(response);
@@ -652,34 +705,42 @@ static rt_err_t _rndis_msg_parser(ufunction_t func, rt_uint8_t *msg)
     switch (((rndis_gen_msg_t) msg)->MessageType)
     {
     case REMOTE_NDIS_INITIALIZE_MSG:
+        LOG_D("REMOTE_NDIS_INITIALIZE_MSG");
         ret = _rndis_init_response(func, (rndis_init_msg_t) msg);
         break;
 
     case REMOTE_NDIS_HALT_MSG:
-        RNDIS_PRINTF("halt\n");
+        LOG_D("REMOTE_NDIS_HALT_MSG");
         /* link down. */
         eth_device_linkchange(&((rt_rndis_eth_t)func->user_data)->parent, RT_FALSE);
+
+        /* reset eth rx tx */
+        ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
+        ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
         break;
 
     case REMOTE_NDIS_QUERY_MSG:
+        LOG_D("REMOTE_NDIS_QUERY_MSG");
         ret = _rndis_query_response(func,(rndis_query_msg_t) msg);
         break;
 
     case REMOTE_NDIS_SET_MSG:
+        LOG_D("REMOTE_NDIS_SET_MSG");
         ret = _rndis_set_response(func,(rndis_set_msg_t) msg);
-        RNDIS_PRINTF("set\n");
         break;
 
     case REMOTE_NDIS_RESET_MSG:
-        RNDIS_PRINTF("reset\n");
+        LOG_D("REMOTE_NDIS_RESET_MSG");
+        ret = _rndis_reset_response(func,(rndis_set_msg_t) msg);
         break;
 
     case REMOTE_NDIS_KEEPALIVE_MSG:
+        LOG_D("REMOTE_NDIS_KEEPALIVE_MSG");
         ret = _rndis_keepalive_response(func,(rndis_keepalive_msg_t) msg);
         break;
 
     default:
-        RNDIS_PRINTF("msg %X\n", ((rndis_gen_msg_t) msg)->MessageType);
+        LOG_W("not support RNDIS msg %X", ((rndis_gen_msg_t) msg)->MessageType);
         ret = -RT_ERROR;
         break;
     }
@@ -718,7 +779,7 @@ static rt_err_t _rndis_get_encapsulated_response(ufunction_t func, ureq_t setup)
 
     if(rt_list_isempty(&((rt_rndis_eth_t)func->user_data)->response_list))
     {
-        RNDIS_PRINTF("response_list is empty!\r\n");
+        LOG_D("response_list is empty!");
         ((rt_rndis_eth_t)func->user_data)->need_notify = RT_TRUE;
         return RT_EOK;
     }
@@ -741,7 +802,7 @@ static rt_err_t _rndis_get_encapsulated_response(ufunction_t func, ureq_t setup)
     {
         rt_uint32_t * data;
 
-        RNDIS_PRINTF("auto append next response!\r\n");
+        LOG_I("auto append next response!");
         data = (rt_uint32_t *)((rt_rndis_eth_t)func->user_data)->eps.ep_cmd->buffer;
         data[0] = RESPONSE_AVAILABLE;
         data[1] = 0;
@@ -757,55 +818,6 @@ static rt_err_t _rndis_get_encapsulated_response(ufunction_t func, ureq_t setup)
 
     return RT_EOK;
 }
-
-#ifdef  RNDIS_DELAY_LINK_UP
-/**
- * This function will set rndis connect status.
- *
- * @param device the usb device object.
- * @param status the connect status.
- *
- * @return RT_EOK on successful.
- */
-static rt_err_t _rndis_indicate_status_msg(ufunction_t func, rt_uint32_t status)
-{
-    rndis_indicate_status_msg_t resp;
-    struct rt_rndis_response * response;
-
-    response = rt_malloc(sizeof(struct rt_rndis_response));
-    resp = rt_malloc(sizeof(struct rndis_indicate_status_msg));
-
-    if( (response == RT_NULL) || (resp == RT_NULL) )
-    {
-        RNDIS_PRINTF("%d: no memory!\r\n", __LINE__);
-
-        if(response != RT_NULL)
-            rt_free(response);
-
-        if(resp != RT_NULL)
-            rt_free(resp);
-
-        return -RT_ENOMEM;
-    }
-
-    resp->MessageType = REMOTE_NDIS_INDICATE_STATUS_MSG;
-    resp->MessageLength = 20; /* sizeof(struct rndis_indicate_status_msg) */
-    resp->Status = status;
-    resp->StatusBufferLength = 0;
-    resp->StatusBufferOffset = 0;
-
-    response->buffer = resp;
-    {
-        rt_base_t level = rt_hw_interrupt_disable();
-        rt_list_insert_before(&((rt_rndis_eth_t)func->user_data)->response_list, &response->list);
-        rt_hw_interrupt_enable(level);
-    }
-
-    _rndis_response_available(func);
-
-    return RT_EOK;
-}
-#endif /* RNDIS_DELAY_LINK_UP */
 
 /**
  * This function will handle rndis interface request.
@@ -831,7 +843,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         break;
 
     default:
-        RNDIS_PRINTF("unkown setup->request!\r\n");
+        LOG_W("unkown setup->request 0x%02X !", setup->bRequest);
         break;
     }
 
@@ -933,6 +945,8 @@ static rt_err_t _function_enable(ufunction_t func)
 {
     cdc_eps_t eps;
 
+    LOG_I("plugged in");
+
     eps = (cdc_eps_t)&((rt_rndis_eth_t)func->user_data)->eps;
     eps->ep_in->buffer  = ((rt_rndis_eth_t)func->user_data)->tx_pool;
     eps->ep_out->buffer = ((rt_rndis_eth_t)func->user_data)->rx_pool;
@@ -945,6 +959,7 @@ static rt_err_t _function_enable(ufunction_t func)
 
     ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
     ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
+    // eth_device_ready(&(((rt_rndis_eth_t)func->user_data)->parent));
 
 #ifdef  RNDIS_DELAY_LINK_UP
     /* stop link up timer. */
@@ -981,7 +996,7 @@ static rt_err_t _function_enable(ufunction_t func)
  */
 static rt_err_t _function_disable(ufunction_t func)
 {
-    RNDIS_PRINTF("plugged out\n");
+    LOG_I("plugged out");
 
 #ifdef  RNDIS_DELAY_LINK_UP
     /* stop link up timer. */
@@ -996,7 +1011,7 @@ static rt_err_t _function_disable(ufunction_t func)
         while(!rt_list_isempty(&((rt_rndis_eth_t)func->user_data)->response_list))
         {
             response = (struct rt_rndis_response *)((rt_rndis_eth_t)func->user_data)->response_list.next;
-            RNDIS_PRINTF("remove resp chain list!\r\n");
+            LOG_D("remove resp chain list!");
 
             rt_list_remove(&response->list);
             rt_free((void *)response->buffer);
@@ -1007,8 +1022,14 @@ static rt_err_t _function_disable(ufunction_t func)
         rt_hw_interrupt_enable(level);
     }
 
+    
     /* link down. */
     eth_device_linkchange(&((rt_rndis_eth_t)func->user_data)->parent, RT_FALSE);
+
+    /* reset eth rx tx */
+    ((rt_rndis_eth_t)func->user_data)->rx_frist = RT_TRUE;
+    ((rt_rndis_eth_t)func->user_data)->rx_flag = RT_FALSE;
+
     return RT_EOK;
 }
 
@@ -1141,22 +1162,25 @@ rt_err_t rt_rndis_eth_tx(rt_device_t dev, struct pbuf* p)
 
     if(!device->parent.link_status)
     {
-        RNDIS_PRINTF("linkdown, drop pkg\r\n");
+        LOG_I("linkdown, drop pkg");
         return RT_EOK;
     }
 
-    RT_ASSERT(p->tot_len < sizeof(device->tx_buffer));
+    //RT_ASSERT(p->tot_len < sizeof(device->tx_buffer));
     if(p->tot_len > sizeof(device->tx_buffer))
     {
-        RNDIS_PRINTF("RNDIS MTU is:%d, but the send packet size is %d\r\n",
+        LOG_W("RNDIS MTU is:%d, but the send packet size is %d",
                      sizeof(device->tx_buffer), p->tot_len);
         p->tot_len = sizeof(device->tx_buffer);
     }
 
     /* wait for buffer free. */
-    result = rt_sem_take(&device->tx_buffer_free, RT_WAITING_FOREVER);
+    result = rt_sem_take(&device->tx_buffer_free, rt_tick_from_millisecond(1000));
     if(result != RT_EOK)
     {
+        LOG_W("wait for buffer free timeout");
+        /* if cost 1s to wait send done it said that connection is close . drop it */
+        rt_sem_release(&device->tx_buffer_free);
         return result;
     }
 
@@ -1215,11 +1239,59 @@ const static struct rt_device_ops rndis_device_ops =
 #endif /* RT_USING_LWIP */
 
 #ifdef  RNDIS_DELAY_LINK_UP
+
+/**
+ * This function will set rndis connect status.
+ *
+ * @param device the usb device object.
+ * @param status the connect status.
+ *
+ * @return RT_EOK on successful.
+ */
+static rt_err_t _rndis_indicate_status_msg(ufunction_t func, rt_uint32_t status)
+{
+    rndis_indicate_status_msg_t resp;
+    struct rt_rndis_response * response;
+
+    response = rt_malloc(sizeof(struct rt_rndis_response));
+    resp = rt_malloc(sizeof(struct rndis_indicate_status_msg));
+
+    if( (response == RT_NULL) || (resp == RT_NULL) )
+    {
+        LOG_E("%s,%d: no memory!", __func__, __LINE__);
+
+        if(response != RT_NULL)
+            rt_free(response);
+
+        if(resp != RT_NULL)
+            rt_free(resp);
+
+        return -RT_ENOMEM;
+    }
+
+    resp->MessageType = REMOTE_NDIS_INDICATE_STATUS_MSG;
+    resp->MessageLength = 20; /* sizeof(struct rndis_indicate_status_msg) */
+    resp->Status = status;
+    resp->StatusBufferLength = 0;
+    resp->StatusBufferOffset = 0;
+
+    response->buffer = resp;
+    {
+        rt_base_t level = rt_hw_interrupt_disable();
+        rt_list_insert_before(&((rt_rndis_eth_t)func->user_data)->response_list, &response->list);
+        rt_hw_interrupt_enable(level);
+    }
+
+    _rndis_response_available(func);
+
+    return RT_EOK;
+}
+
 /* the delay linkup timer handler. */
 static void timer_timeout(void* parameter)
 {
-    RNDIS_PRINTF("delay link up!\r\n");
-    _rndis_indicate_status_msg(((rt_rndis_eth_t)parameter)->parent.parent.user_data,
+    LOG_I("delay link up!");
+    _rndis_indicate_status_msg(((rt_rndis_eth_t)parameter)->func,
                                RNDIS_STATUS_MEDIA_CONNECT);
     eth_device_linkchange(&((rt_rndis_eth_t)parameter)->parent, RT_TRUE);
 }
@@ -1319,7 +1391,7 @@ ufunction_t rt_usbd_function_rndis_create(udevice_t device)
                   timer_timeout,
                   _rndis,
                   RT_TICK_PER_SECOND * 2,
-                  RT_TIMER_FLAG_ONE_SHOT);
+                  RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
 #endif  /* RNDIS_DELAY_LINK_UP */
 
     /* OUI 00-00-00, only for test. */
@@ -1373,3 +1445,5 @@ int rt_usbd_rndis_class_register(void)
     return 0;
 }
 INIT_PREV_EXPORT(rt_usbd_rndis_class_register);
+
+#endif /* RT_USB_DEVICE_RNDIS */

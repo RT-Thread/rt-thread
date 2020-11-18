@@ -23,7 +23,7 @@
 
 import os
 import re
-import platform 
+import platform
 
 def GetGCCRoot(rtconfig):
     exec_path = rtconfig.EXEC_PATH
@@ -32,7 +32,10 @@ def GetGCCRoot(rtconfig):
     if prefix.endswith('-'):
         prefix = prefix[:-1]
 
-    root_path = os.path.join(exec_path, '..', prefix)
+    if exec_path == '/usr/bin':
+        root_path = os.path.join('/usr/lib', prefix)
+    else:
+        root_path = os.path.join(exec_path, '..', prefix)
 
     return root_path
 
@@ -40,6 +43,24 @@ def CheckHeader(rtconfig, filename):
     root = GetGCCRoot(rtconfig)
 
     fn = os.path.join(root, 'include', filename)
+    if os.path.isfile(fn):
+        return True
+
+    # Usually the cross compiling gcc toolchain has directory as:
+    #
+    # bin
+    # lib
+    # share
+    # arm-none-eabi
+    #    bin
+    #    include
+    #    lib
+    #    share
+    prefix = rtconfig.PREFIX
+    if prefix.endswith('-'):
+        prefix = prefix[:-1]
+
+    fn = os.path.join(root, prefix, 'include', filename)
     if os.path.isfile(fn):
         return True
 
@@ -77,18 +98,18 @@ def GCCResult(rtconfig, str):
 
     gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
 
-    # use temp file to get more information 
+    # use temp file to get more information
     f = open('__tmp.c', 'w')
     if f:
         f.write(str)
         f.close()
 
-        # '-fdirectives-only', 
+        # '-fdirectives-only',
         if(platform.system() == 'Windows'):
             child = subprocess.Popen([gcc_cmd, '-E', '-P', '__tmp.c'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         else:
             child = subprocess.Popen(gcc_cmd + ' -E -P __tmp.c', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        
+
         stdout, stderr = child.communicate()
 
         # print(stdout)
@@ -127,7 +148,7 @@ def GCCResult(rtconfig, str):
 
             if re.findall('pthread_create', line):
                 posix_thread = 1
-    
+
         if have_fdset:
             result += '#define HAVE_FDSET 1\n'
 
@@ -141,7 +162,7 @@ def GCCResult(rtconfig, str):
             result += '#define HAVE_SIGVAL 1\n'
 
         if version:
-            result += '#define GCC_VERSION "%s"\n' % version
+            result += '#define GCC_VERSION_STR "%s"\n' % version
 
         result += '#define STDC "%s"\n' % stdc
 

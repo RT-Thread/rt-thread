@@ -1,11 +1,7 @@
 /*
- * File      : display_controller.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006-2012, RT-Thread Develop Team
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date                Author           Notes
@@ -20,7 +16,7 @@
 #include <rtthread.h>
 #include "ls1c.h"
 
-#define DC_BASE					0xBC301240  //Display Controller
+#define DC_BASE                 0xBC301240  //Display Controller
 
 /* Frame Buffer registers */
 #define DC_FB_CONFIG			__REG32(DC_BASE + 0x000)
@@ -51,9 +47,9 @@
 
 struct vga_struct
 {
-	long pclk;
-	int hr,hss,hse,hfl;
-	int vr,vss,vse,vfl;
+    long pclk;
+    int hr,hss,hse,hfl;
+    int vr,vss,vse,vfl;
 };
 
 #endif

@@ -11,6 +11,12 @@ SECTIONS
         *(.text)
         *(.text.*)
 
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+        
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -61,8 +67,8 @@ SECTIONS
         PROVIDE(__dtors_end__ = .);
     }
 
+    . = ALIGN(8);
     __data_start = .;
-    . = ALIGN(4);
     .data :
     {
         *(.data)
@@ -70,8 +76,8 @@ SECTIONS
     }
     __data_end = .;
 
-    . = ALIGN(4);
-    __bss_start = __data_end;
+    . = ALIGN(8);
+    __bss_start = .;
     .bss       :
     {
     *(.bss)

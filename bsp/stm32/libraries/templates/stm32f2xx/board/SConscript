@@ -1,0 +1,32 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f2xx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/STM32F2xx_HAL/CMSIS/Device/ST/STM32F2xx/Source/Templates/gcc/startup_stm32f207xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/STM32F2xx_HAL/CMSIS/Device/ST/STM32F2xx/Source/Templates/arm/startup_stm32f207xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/STM32F2xx_HAL/CMSIS/Device/ST/STM32F2xx/Source/Templates/iar/startup_stm32f207xx.s']
+
+# STM32F205xx || STM32F207xx || STM32F215xx
+# STM32F217xx 
+# You can select chips from the list above
+CPPDEFINES = ['STM32F207xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

@@ -18,6 +18,10 @@
 #include <lwp.h>
 #endif
 
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+#include <libc.h>
+#endif
+
 /* Global variables */
 const struct dfs_filesystem_ops *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
 struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
@@ -119,7 +123,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     int idx;
 
     /* find an empty fd entry */
-    for (idx = startfd; idx < fdt->maxfd; idx++)
+    for (idx = startfd; idx < (int)fdt->maxfd; idx++)
     {
         if (fdt->fds[idx] == RT_NULL)
             break;
@@ -135,9 +139,9 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 
         /* increase the number of FD with 4 step length */
         cnt = fdt->maxfd + 4;
-        cnt = cnt > DFS_FD_MAX? DFS_FD_MAX : cnt;
+        cnt = cnt > DFS_FD_MAX ? DFS_FD_MAX : cnt;
 
-        fds = rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
+        fds = (struct dfs_fd **)rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
         if (fds == NULL) goto __exit; /* return fdt->maxfd */
 
         /* clean the new allocated fds */
@@ -151,9 +155,9 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     }
 
     /* allocate  'struct dfs_fd' */
-    if (idx < fdt->maxfd &&fdt->fds[idx] == RT_NULL)
+    if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
     {
-        fdt->fds[idx] = rt_calloc(1, sizeof(struct dfs_fd));
+        fdt->fds[idx] = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
         if (fdt->fds[idx] == RT_NULL)
             idx = fdt->maxfd;
     }
@@ -185,7 +189,7 @@ int fd_new(void)
     if (idx == fdt->maxfd)
     {
         idx = -(1 + DFS_FD_OFFSET);
-        LOG_E( "DFS fd new is failed! Could not found an empty fd entry.");
+        LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
         goto __result;
     }
 
@@ -212,9 +216,14 @@ struct dfs_fd *fd_get(int fd)
     struct dfs_fd *d;
     struct dfs_fdtable *fdt;
 
+#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
+    if ((0 <= fd) && (fd <= 2))
+        fd = libc_stdio_get_console();
+#endif
+
     fdt = dfs_fdtable_get();
     fd = fd - DFS_FD_OFFSET;
-    if (fd < 0 || fd >= fdt->maxfd)
+    if (fd < 0 || fd >= (int)fdt->maxfd)
         return NULL;
 
     dfs_lock();
@@ -254,7 +263,7 @@ void fd_put(struct dfs_fd *fd)
         struct dfs_fdtable *fdt;
 
         fdt = dfs_fdtable_get();
-        for (index = 0; index < fdt->maxfd; index ++)
+        for (index = 0; index < (int)fdt->maxfd; index ++)
         {
             if (fdt->fds[index] == fd)
             {
@@ -311,7 +320,7 @@ int fd_is_open(const char *pathname)
             fd = fdt->fds[index];
             if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
 
-            if (fd->fops == fs->ops->fops && strcmp(fd->path, mountpath) == 0)
+            if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
@@ -384,14 +393,14 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
     if (filename[0] != '/') /* it's a absolute path, use it directly */
     {
-        fullpath = rt_malloc(strlen(directory) + strlen(filename) + 2);
+        fullpath = (char *)rt_malloc(strlen(directory) + strlen(filename) + 2);
 
         if (fullpath == NULL)
             return NULL;
 
         /* join path and file name */
         rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2,
-            "%s/%s", directory, filename);
+                    "%s/%s", directory, filename);
     }
     else
     {
@@ -490,7 +499,7 @@ RTM_EXPORT(dfs_normalize_path);
 /**
  * This function will get the file descriptor table of current process.
  */
-struct dfs_fdtable* dfs_fdtable_get(void)
+struct dfs_fdtable *dfs_fdtable_get(void)
 {
     struct dfs_fdtable *fdt;
 #ifdef RT_USING_LWP
@@ -514,25 +523,26 @@ int list_fd(void)
 {
     int index;
     struct dfs_fdtable *fd_table;
-    
+
     fd_table = dfs_fdtable_get();
     if (!fd_table) return -1;
 
     rt_enter_critical();
-    
+
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
-    for (index = 0; index < fd_table->maxfd; index ++)
+    for (index = 0; index < (int)fd_table->maxfd; index ++)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
         if (fd && fd->fops)
         {
-            rt_kprintf("%2d ", index);
+            rt_kprintf("%2d ", index + DFS_FD_OFFSET);
             if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
             else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
             else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
             else if (fd->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
             rt_kprintf("%3d ", fd->ref_count);
             rt_kprintf("%04x  ", fd->magic);

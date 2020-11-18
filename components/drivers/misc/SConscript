@@ -11,8 +11,17 @@ if GetDepend(['RT_USING_PIN']):
 if GetDepend(['RT_USING_ADC']):
     src = src + ['adc.c']
     
+if GetDepend(['RT_USING_DAC']):
+    src = src + ['dac.c']
+
 if GetDepend(['RT_USING_PWM']):
     src = src + ['rt_drv_pwm.c']
+    
+if GetDepend(['RT_USING_PULSE_ENCODER']):
+    src = src + ['pulse_encoder.c']
+
+if GetDepend(['RT_USING_INPUT_CAPTURE']):
+    src = src + ['rt_inputcapture.c']
 
 if len(src):
     group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)

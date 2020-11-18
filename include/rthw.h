@@ -37,7 +37,7 @@ extern "C" {
 #endif
 
 #ifndef RT_CPU_CACHE_LINE_SZ
-#define RT_CPU_CACHE_LINE_SZ	32
+#define RT_CPU_CACHE_LINE_SZ    32
 #endif
 
 enum RT_HW_CACHE_OPS
@@ -143,6 +143,12 @@ typedef union {
     } tickets;
 } rt_hw_spinlock_t;
 
+struct rt_spinlock
+{
+    rt_hw_spinlock_t lock;
+};
+
+void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock);
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 
@@ -153,10 +159,11 @@ extern rt_hw_spinlock_t _rt_critical_lock;
 
 #define __RT_HW_SPIN_LOCK_INITIALIZER(lockname) {0}
 
-#define __RT_HW_SPIN_LOCK_UNLOCKED(lockname) \
- (struct rt_hw_spinlock ) __RT_HW_SPIN_LOCK_INITIALIZER(lockname)
+#define __RT_HW_SPIN_LOCK_UNLOCKED(lockname)    \
+    (rt_hw_spinlock_t) __RT_HW_SPIN_LOCK_INITIALIZER(lockname)
 
-#define RT_DEFINE_SPINLOCK(x)  struct rt_hw_spinlock x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
+#define RT_DEFINE_SPINLOCK(x)  rt_hw_spinlock_t x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
+#define RT_DECLARE_SPINLOCK(x)
 
 /**
  *  ipi function
@@ -172,6 +179,13 @@ void rt_hw_secondary_cpu_up(void);
  * secondary cpu idle function
  */
 void rt_hw_secondary_cpu_idle_exec(void);
+#else
+
+#define RT_DEFINE_SPINLOCK(x)  
+#define RT_DECLARE_SPINLOCK(x)    rt_ubase_t x
+
+#define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
+#define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
 
 #endif
 

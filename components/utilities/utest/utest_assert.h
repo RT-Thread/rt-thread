@@ -14,11 +14,16 @@
 #include "utest.h"
 #include <rtthread.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* No need for the user to use this function directly */
 void utest_assert(int value, const char *file, int line, const char *func, const char *msg);
 
 /* No need for the user to use this function directly */
 void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const char *file, int line, const char *func, const char *msg);
+void utest_assert_buf(const char *a, const char *b, rt_size_t sz, rt_bool_t equal, const char *file, int line, const char *func, const char *msg);
 
 /* No need for the user to use this macro directly */
 #define __utest_assert(value, msg) utest_assert(value, __FILE__, __LINE__, __func__, msg)
@@ -37,6 +42,8 @@ void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const ch
  * @macro uassert_int_not_equal if @a not equal to @b, not assert, means passing. Integer type test.
  * @macro uassert_str_equal     if @a equal to @b,     not assert, means passing. String type test.
  * @macro uassert_str_not_equal if @a not equal to @b, not assert, means passing. String type test.
+ * @macro uassert_buf_equal     if @a equal to @b,     not assert, means passing. buf type test.
+ * @macro uassert_buf_not_equal if @a not equal to @b, not assert, means passing. buf type test.
  * @macro uassert_in_range      if @value is in range of min and max,     not assert, means passing.
  * @macro uassert_not_in_range  if @value is not in range of min and max, not assert, means passing.
  * 
@@ -52,7 +59,14 @@ void utest_assert_string(const char *a, const char *b, rt_bool_t equal, const ch
 #define uassert_str_equal(a, b)      utest_assert_string((const char*)(a), (const char*)(b), RT_TRUE, __FILE__, __LINE__, __func__, "string not equal")
 #define uassert_str_not_equal(a, b)  utest_assert_string((const char*)(a), (const char*)(b), RT_FALSE, __FILE__, __LINE__, __func__, "string equal")
 
+#define uassert_buf_equal(a, b, sz)      utest_assert_buf((const char*)(a), (const char*)(b), (sz), RT_TRUE, __FILE__, __LINE__, __func__, "buf not equal")
+#define uassert_buf_not_equal(a, b, sz)  utest_assert_buf((const char*)(a), (const char*)(b), (sz), RT_FALSE, __FILE__, __LINE__, __func__, "buf equal")
+
 #define uassert_in_range(value, min, max)     __utest_assert(((value >= min) && (value <= max)), "(" #value ") not in range("#min","#max")") 
 #define uassert_not_in_range(value, min, max) __utest_assert(!((value >= min) && (value <= max)), "(" #value ") in range("#min","#max")")
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __UTEST_ASSERT_H__ */

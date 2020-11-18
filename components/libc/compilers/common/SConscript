@@ -2,11 +2,21 @@ from building import *
 
 Import('rtconfig')
 
-src   = Glob('*.c')
+src   = []
 cwd   = GetCurrentDir()
 group = []
 CPPPATH = [cwd]
 
-group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_LIBC'):
+        src += Glob('*.c')      
+else:
+        if GetDepend('RT_LIBC_USING_TIME') and not GetDepend('RT_USING_MINILIBC'):
+                src += ['time.c']
+
+if GetDepend('RT_USING_POSIX') == False:
+        SrcRemove(src, ['unistd.c'])
+
+if not GetDepend('RT_USING_MINILIBC') and (GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME')):
+	group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

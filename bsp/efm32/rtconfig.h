@@ -35,6 +35,7 @@
 
 /* SECTION: RT_DEBUG */
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 //#define RT_DEBUG_MEM 				(1)
 //#define RT_DEBUG_SCHEDULER 			(1)
 //#define RT_DEBUG_IPC 				(1)
@@ -212,6 +213,7 @@
 /* SECTION: Runtime library */
 // #define RT_USING_NOLIBC
 // #define RT_USING_NEWLIB
+#define RT_LIBC_USING_TIME
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE

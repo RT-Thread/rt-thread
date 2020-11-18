@@ -1,21 +1,11 @@
 /*
- * COPYRIGHT (C) 2013-2014, Shanghai Real-Thread Technology Co., Ltd
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- *  All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * Change Logs:
+ * Date           Author       Notes
+ * 2013-07-20     Bernard      first version
  */
 
 #include <rtthread.h>
@@ -47,7 +37,7 @@ static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 #define GIC_DIST_ENABLE_SET(hw_base, n)     __REG32((hw_base) + 0x100 + (n/32) * 4)
 #define GIC_DIST_ENABLE_CLEAR(hw_base, n)   __REG32((hw_base) + 0x180 + (n/32) * 4)
 #define GIC_DIST_PENDING_SET(hw_base, n)    __REG32((hw_base) + 0x200)
-#define GIC_DIST_PENDING_CLEAR(hw_base, n)  __REG32((hw_base) + 0x280)
+#define GIC_DIST_PENDING_CLEAR(hw_base, n)  __REG32((hw_base) + 0x280 + (n/32) * 4)
 #define GIC_DIST_ACTIVE_BIT(hw_base)        __REG32((hw_base) + 0x300)
 #define GIC_DIST_PRI(hw_base, n)            __REG32((hw_base) + 0x400 +  (n/4) * 4)
 #define GIC_DIST_TARGET(hw_base, n)         __REG32((hw_base) + 0x800 +  (n/4) * 4)
@@ -78,9 +68,8 @@ void arm_gic_ack(rt_uint32_t index, int irq)
     irq = irq - _gic_table[index].offset;
     RT_ASSERT(irq >= 0);
 
-    GIC_DIST_ENABLE_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
+    GIC_DIST_PENDING_CLEAR(_gic_table[index].dist_hw_base, irq) = mask;
     GIC_CPU_EOI(_gic_table[index].cpu_hw_base) = irq;
-    GIC_DIST_ENABLE_SET(_gic_table[index].dist_hw_base, irq) = mask;
 }
 
 void arm_gic_mask(rt_uint32_t index, int irq)

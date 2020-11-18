@@ -8,73 +8,83 @@ cwd = GetCurrentDir()
 # The set of source files associated with this SConscript file.
 src = Split("""
 CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dma.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cortex.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_crc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_irda.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_iwdg.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pwr.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rcc_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_smartcard.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_usart.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_wwdg.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_adc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_crc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_dac.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_dma.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_exti.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_fsmc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_gpio.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_i2c.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_pwr.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_rcc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_rtc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_sdmmc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_spi.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_tim.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_usart.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_usb.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_utils.c
 STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_cec.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dac.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_dac_ex.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_eth.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_hcd.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2s.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_mmc.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_nand.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pccard.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_nor.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sram.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd.c
-STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd_ex.c
+STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
 """)
-#device options
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c']
+    
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_usart.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c']
+    
+if GetDepend(['RT_USING_SPI']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_spi.c']
+
+if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_pcd_ex.c'] 
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_usb.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_hcd.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c']
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_tim_ex.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_eth.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_rtc_ex.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_iwdg.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_wwdg.c']
+
+if GetDepend(['RT_USING_SDIO']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_sdmmc.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sd.c']
+
+if GetDepend(['RT_USING_AUDIO']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2s.c']
+
+if GetDepend(['RT_USING_MTD_NOR']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_nor.c']
+
+if GetDepend(['RT_USING_MTD_NAND']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_nand.c']
+
+if GetDepend(['BSP_USING_EXT_SRAM']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_fsmc.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_sram.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c']
+    src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c']
 
 path = [cwd + '/CMSIS/Device/ST/STM32F1xx/Include', 
-	cwd + '/STM32F1xx_HAL_Driver/Inc',
+    cwd + '/STM32F1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
-
-if GetDepend(['RT_USING_RTT_CMSIS']):
-    path += [RTT_ROOT + '/components/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)

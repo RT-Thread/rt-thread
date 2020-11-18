@@ -13,35 +13,7 @@
 #include <board.h>
 
 #include "cp15.h"
-
-#define DESC_SEC       (0x2)
-#define CB             (3<<2)  //cache_on, write_back
-#define CNB            (2<<2)  //cache_on, write_through
-#define NCB            (1<<2)  //cache_off,WR_BUF on
-#define NCNB           (0<<2)  //cache_off,WR_BUF off
-#define AP_RW          (3<<10) //supervisor=RW, user=RW
-#define AP_RO          (2<<10) //supervisor=RW, user=RO
-#define XN             (1<<4)  // eXecute Never
-
-#define DOMAIN_FAULT   (0x0)
-#define DOMAIN_CHK     (0x1)
-#define DOMAIN_NOTCHK  (0x3)
-#define DOMAIN0        (0x0<<5)
-#define DOMAIN1        (0x1<<5)
-
-#define DOMAIN0_ATTR   (DOMAIN_CHK<<0)
-#define DOMAIN1_ATTR   (DOMAIN_FAULT<<2)
-
-/* Read/Write, cache, write back */
-#define RW_CB          (AP_RW|DOMAIN0|CB|DESC_SEC)
-/* Read/Write, cache, write through */
-#define RW_CNB         (AP_RW|DOMAIN0|CNB|DESC_SEC)
-/* Read/Write without cache and write buffer */
-#define RW_NCNB        (AP_RW|DOMAIN0|NCNB|DESC_SEC)
-/* Read/Write without cache and write buffer, no execute */
-#define RW_NCNBXN      (AP_RW|DOMAIN0|NCNB|DESC_SEC|XN)
-/* Read/Write without cache and write buffer */
-#define RW_FAULT       (AP_RW|DOMAIN1|NCNB|DESC_SEC)
+#include "mmu.h"
 
 /* dump 2nd level page table */
 void rt_hw_cpu_dump_page_table_2nd(rt_uint32_t *ptb)
@@ -178,17 +150,24 @@ unsigned long rt_hw_set_domain_register(unsigned long domain_val)
     return old_domain;
 }
 
+void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
+{
+    /* set page table */
+    for(; size > 0; size--)
+    {
+        rt_hw_mmu_setmtt(mdesc->vaddr_start, mdesc->vaddr_end,
+                mdesc->paddr_start, mdesc->attr);
+        mdesc++;
+    }
+}
+
 void rt_hw_mmu_init(void)
 {
+    rt_cpu_dcache_clean_flush();
+    rt_cpu_icache_flush();
     rt_hw_cpu_dcache_disable();
     rt_hw_cpu_icache_disable();
     rt_cpu_mmu_disable();
-
-    /* set page table */
-    /* 4G 1:1 memory */
-    rt_hw_mmu_setmtt(0, 0xffffffff-1, 0, RW_CB);
-    /* IO memory region */
-    rt_hw_mmu_setmtt(0x44000000, 0x80000000-1, 0x44000000, RW_NCNBXN);
 
     /*rt_hw_cpu_dump_page_table(MMUTable);*/
     rt_hw_set_domain_register(0x55555555);

@@ -603,7 +603,8 @@ static sfud_err page256_or_1_byte_write(const sfud_flash *flash, uint32_t addr, 
         const uint8_t *data) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
-    uint8_t cmd_data[5 + SFUD_WRITE_MAX_PAGE_SIZE], cmd_size;
+    static uint8_t cmd_data[5 + SFUD_WRITE_MAX_PAGE_SIZE];
+    uint8_t cmd_size;
     size_t data_size;
 
     SFUD_ASSERT(flash);
@@ -690,7 +691,7 @@ __exit:
 static sfud_err aai_write(const sfud_flash *flash, uint32_t addr, size_t size, const uint8_t *data) {
     sfud_err result = SFUD_SUCCESS;
     const sfud_spi *spi = &flash->spi;
-    uint8_t cmd_data[6], cmd_size;
+    uint8_t cmd_data[8], cmd_size;
     bool first_write = true;
 
     SFUD_ASSERT(flash);
@@ -896,7 +897,7 @@ static sfud_err set_write_enabled(const sfud_flash *flash, bool enabled) {
         if (enabled && (register_status & SFUD_STATUS_REGISTER_WEL) == 0) {
             SFUD_INFO("Error: Can't enable write status.");
             return SFUD_ERR_WRITE;
-        } else if (!enabled && (register_status & SFUD_STATUS_REGISTER_WEL) == 1) {
+        } else if (!enabled && (register_status & SFUD_STATUS_REGISTER_WEL) != 0) {
             SFUD_INFO("Error: Can't disable write status.");
             return SFUD_ERR_WRITE;
         }

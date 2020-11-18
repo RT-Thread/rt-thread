@@ -28,7 +28,7 @@ Stack_Size      EQU __STARTUP_CONFIG_STACK_SIZE
                 ELIF :DEF: __STACK_SIZE
 Stack_Size      EQU __STACK_SIZE
                 ELSE
-Stack_Size      EQU     8096
+Stack_Size      EQU 8192
                 ENDIF
                 
                 IF :DEF: __STARTUP_CONFIG
@@ -46,7 +46,7 @@ Heap_Size       EQU __STARTUP_CONFIG_HEAP_SIZE
                 ELIF :DEF: __HEAP_SIZE
 Heap_Size       EQU __HEAP_SIZE
                 ELSE
-Heap_Size       EQU     0
+Heap_Size       EQU 8192
                 ENDIF
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3

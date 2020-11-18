@@ -14,6 +14,7 @@
  * 2012-12-29     Bernard      Add exception hook.
  * 2013-06-23     aozima       support lazy stack optimized.
  * 2018-07-24     aozima       enhancement hard fault exception handler.
+ * 2019-07-03     yangjie      add __rt_ffs() for armclang.
  */
 
 #include <rtthread.h>
@@ -453,7 +454,7 @@ RT_WEAK void rt_hw_cpu_reset(void)
  * @return return the index of the first bit set. If value is 0, then this function
  * shall return 0.
  */
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+#if defined(__CC_ARM)
 __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
@@ -465,6 +466,24 @@ __asm int __rt_ffs(int value)
 
 exit
     BX      lr
+}
+#elif defined(__CLANG_ARM)
+int __rt_ffs(int value)
+{
+    __asm volatile(
+        "CMP     r0, #0x00            \n"
+        "BEQ     1f                   \n"
+
+        "RBIT    r0, r0               \n"
+        "CLZ     r0, r0               \n"
+        "ADDS    r0, r0, #0x01        \n"
+
+        "1:                           \n"
+
+        : "=r"(value)
+        : "r"(value)
+    );
+    return value;
 }
 #elif defined(__IAR_SYSTEMS_ICC__)
 int __rt_ffs(int value)

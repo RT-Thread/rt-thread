@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2006-2018, RT-Thread Development Team
  *
@@ -26,6 +27,9 @@
  * 2012-10-22     Bernard      add MS VC++ patch.
  * 2016-06-02     armink       beautify the list_thread command
  * 2018-11-22     Jesven       list_thread add smp support
+ * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread 
+ *                             Provide protection for the "first layer of objects" when list_*
+ * 2020-04-07     chenhui      add clear 
  */
 
 #include <rthw.h>
@@ -35,6 +39,8 @@
 
 #include "finsh.h"
 
+#define LIST_FIND_OBJ_NR 8
+
 long hello(void)
 {
     rt_kprintf("Hello RT-Thread!\n");
@@ -42,6 +48,15 @@ long hello(void)
     return 0;
 }
 FINSH_FUNCTION_EXPORT(hello, say hello world);
+
+static long clear(void)
+{
+    rt_kprintf("\x1b[2J\x1b[H");
+
+    return 0;
+}
+FINSH_FUNCTION_EXPORT(clear,clear the terminal screen);
+MSH_CMD_EXPORT(clear,clear the terminal screen);
 
 extern void rt_show_version(void);
 long version(void)
@@ -53,41 +68,112 @@ long version(void)
 FINSH_FUNCTION_EXPORT(version, show RT-Thread version information);
 MSH_CMD_EXPORT(version, show RT-Thread version information);
 
-static int object_name_maxlen(const char *type_name, struct rt_list_node *list)
-{
-    struct rt_list_node *node;
-    struct rt_object *object = NULL;
-    int max_length = rt_strlen(type_name), length;
-
-    rt_enter_critical();
-    for (node = list->next; node != list; node = node->next)
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-
-        length = rt_strlen(object->name);
-        if (length > max_length) max_length = length;
-    }
-    rt_exit_critical();
-
-    if (max_length > RT_NAME_MAX || max_length == 0) max_length = RT_NAME_MAX;
-
-    return max_length;
-}
-
 rt_inline void object_split(int len)
 {
     while (len--) rt_kprintf("-");
 }
 
-static long _list_thread(struct rt_list_node *list)
+typedef struct
 {
-    int maxlen;
-    rt_uint8_t *ptr;
-    struct rt_thread *thread;
-    struct rt_list_node *node;
-    const char *item_title = "thread";
+    rt_list_t *list;
+    rt_list_t **array;
+    rt_uint8_t type;
+    int nr;             /* input: max nr, can't be 0 */
+    int nr_out;         /* out: got nr */
+} list_get_next_t;
 
-    maxlen = object_name_maxlen(item_title, list);
+static void list_find_init(list_get_next_t *p, rt_uint8_t type, rt_list_t **array, int nr)
+{
+    struct rt_object_information *info;
+    rt_list_t *list;
+
+    info = rt_object_get_information((enum rt_object_class_type)type);
+    list = &info->object_list;
+
+    p->list = list;
+    p->type = type;
+    p->array = array;
+    p->nr = nr;
+    p->nr_out = 0;
+}
+
+static rt_list_t *list_get_next(rt_list_t *current, list_get_next_t *arg)
+{
+    int first_flag = 0;
+    rt_ubase_t level;
+    rt_list_t *node, *list;
+    rt_list_t **array;
+    int nr;
+
+    arg->nr_out = 0;
+
+    if (!arg->nr || !arg->type)
+    {
+        return (rt_list_t *)RT_NULL;
+    }
+
+    list = arg->list;
+
+    if (!current) /* find first */
+    {
+        node = list;
+        first_flag = 1;
+    }
+    else
+    {
+        node = current;
+    }
+
+    level = rt_hw_interrupt_disable();
+
+    if (!first_flag)
+    {
+        struct rt_object *obj;
+        /* The node in the list? */
+        obj = rt_list_entry(node, struct rt_object, list);
+        if ((obj->type & ~RT_Object_Class_Static) != arg->type)
+        {
+            rt_hw_interrupt_enable(level);
+            return (rt_list_t *)RT_NULL;
+        }
+    }
+
+    nr = 0;
+    array = arg->array;
+    while (1)
+    {
+        node = node->next;
+
+        if (node == list)
+        {
+            node = (rt_list_t *)RT_NULL;
+            break;
+        }
+        nr++;
+        *array++ = node;
+        if (nr == arg->nr)
+        {
+            break;
+        }
+    }
+    
+    rt_hw_interrupt_enable(level);
+    arg->nr_out = nr;
+    return node;
+}
+
+long list_thread(void)
+{
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+    const char *item_title = "thread";
+    int maxlen;
+
+    list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
     rt_kprintf("%-*.s cpu pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
@@ -96,63 +182,79 @@ static long _list_thread(struct rt_list_node *list)
     rt_kprintf("%-*.s pri  status      sp     stack size max used left tick  error\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
-    for (node = list->next; node != list; node = node->next)
+
+    do
     {
-        rt_uint8_t stat;
-        thread = rt_list_entry(node, struct rt_thread, list);
+        next = list_get_next(next, &find_arg);
+        {
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_thread thread_info, *thread;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+                /* copy info */
+                memcpy(&thread_info, obj, sizeof thread_info);
+                rt_hw_interrupt_enable(level);
+
+                thread = (struct rt_thread*)obj;
+                {
+                    rt_uint8_t stat;
+                    rt_uint8_t *ptr;
+
 #ifdef RT_USING_SMP
-        if (thread->oncpu != RT_CPU_DETACHED)
-            rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->current_priority);
-        else
-            rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+                    if (thread->oncpu != RT_CPU_DETACHED)
+                        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->name, thread->oncpu, thread->current_priority);
+                    else
+                        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
 
 #else
-        rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
 #endif /*RT_USING_SMP*/
-        stat = (thread->stat & RT_THREAD_STAT_MASK);
-        if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-        else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
-        else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
-        else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
+                    stat = (thread->stat & RT_THREAD_STAT_MASK);
+                    if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
+                    else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+                    else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
+                    else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
+                    else if (stat == RT_THREAD_RUNNING) rt_kprintf(" running");
 
 #if defined(ARCH_CPU_STACK_GROWS_UPWARD)
-        ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size;
-        while (*ptr == '#')ptr --;
+                    ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
+                    while (*ptr == '#')ptr --;
 
-        rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
-                   thread->stack_size,
-                   ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
-                   thread->remaining_tick,
-                   thread->error);
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                            ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
+                            thread->stack_size,
+                            ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
+                            thread->remaining_tick,
+                            thread->error);
 #else
-        ptr = (rt_uint8_t *)thread->stack_addr;
-        while (*ptr == '#')ptr ++;
+                    ptr = (rt_uint8_t *)thread->stack_addr;
+                    while (*ptr == '#')ptr ++;
 
-        rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
-                   thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
-                   thread->stack_size,
-                   (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
-                        / thread->stack_size,
-                   thread->remaining_tick,
-                   thread->error);
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                            thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
+                            thread->stack_size,
+                            (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
+                            / thread->stack_size,
+                            thread->remaining_tick,
+                            thread->error);
 #endif
+                }
+            }
+        }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_thread(void)
-{
-    rt_ubase_t level;
-    struct rt_object_information *info;
-    long ret;
-
-    level = rt_hw_interrupt_disable();
-    info = rt_object_get_information(RT_Object_Class_Thread);
-    ret = _list_thread(&info->object_list);
-    rt_hw_interrupt_enable(level);
-    return ret;
 }
 FINSH_FUNCTION_EXPORT(list_thread, list thread);
 MSH_CMD_EXPORT(list_thread, list thread);
@@ -173,427 +275,607 @@ static void show_wait_queue(struct rt_list_node *list)
 }
 
 #ifdef RT_USING_SEMAPHORE
-static long _list_sem(struct rt_list_node *list)
+long list_sem(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_semaphore *sem;
-    struct rt_list_node *node;
     const char *item_title = "semaphore";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_Semaphore, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s v   suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " --- --------------\n");
-    for (node = list->next; node != list; node = node->next)
+
+    do
     {
-        sem = (struct rt_semaphore *)(rt_list_entry(node, struct rt_object, list));
-        if (!rt_list_isempty(&sem->parent.suspend_thread))
+        next = list_get_next(next, &find_arg);
         {
-            rt_kprintf("%-*.*s %03d %d:",
-                       maxlen, RT_NAME_MAX,
-                       sem->parent.parent.name,
-                       sem->value,
-                       rt_list_len(&sem->parent.suspend_thread));
-            show_wait_queue(&(sem->parent.suspend_thread));
-            rt_kprintf("\n");
-        }
-        else
-        {
-            rt_kprintf("%-*.*s %03d %d\n",
-                       maxlen, RT_NAME_MAX,
-                       sem->parent.parent.name,
-                       sem->value,
-                       rt_list_len(&sem->parent.suspend_thread));
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_semaphore *sem;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+                rt_hw_interrupt_enable(level);
+
+                sem = (struct rt_semaphore*)obj;
+                if (!rt_list_isempty(&sem->parent.suspend_thread))
+                {
+                    rt_kprintf("%-*.*s %03d %d:",
+                            maxlen, RT_NAME_MAX,
+                            sem->parent.parent.name,
+                            sem->value,
+                            rt_list_len(&sem->parent.suspend_thread));
+                    show_wait_queue(&(sem->parent.suspend_thread));
+                    rt_kprintf("\n");
+                }
+                else
+                {
+                    rt_kprintf("%-*.*s %03d %d\n",
+                            maxlen, RT_NAME_MAX,
+                            sem->parent.parent.name,
+                            sem->value,
+                            rt_list_len(&sem->parent.suspend_thread));
+                }
+            }
         }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
 }
-
-long list_sem(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_Semaphore);
-
-    return _list_sem(&info->object_list);
-}
-FINSH_FUNCTION_EXPORT(list_sem, list semaphone in system);
+FINSH_FUNCTION_EXPORT(list_sem, list semaphore in system);
 MSH_CMD_EXPORT(list_sem, list semaphore in system);
 #endif
 
 #ifdef RT_USING_EVENT
-static long _list_event(struct rt_list_node *list)
+long list_event(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_event *e;
-    struct rt_list_node *node;
     const char *item_title = "event";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_Event, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s      set    suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     "  ---------- --------------\n");
-    for (node = list->next; node != list; node = node->next)
+
+    do
     {
-        e = (struct rt_event *)(rt_list_entry(node, struct rt_object, list));
-        if (!rt_list_isempty(&e->parent.suspend_thread))
+        next = list_get_next(next, &find_arg);
         {
-            rt_kprintf("%-*.*s  0x%08x %03d:",
-                       maxlen, RT_NAME_MAX,
-                       e->parent.parent.name,
-                       e->set,
-                       rt_list_len(&e->parent.suspend_thread));
-            show_wait_queue(&(e->parent.suspend_thread));
-            rt_kprintf("\n");
-        }
-        else
-        {
-            rt_kprintf("%-*.*s  0x%08x 0\n",
-                       maxlen, RT_NAME_MAX, e->parent.parent.name, e->set);
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_event *e;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                e = (struct rt_event *)obj;
+                if (!rt_list_isempty(&e->parent.suspend_thread))
+                {
+                    rt_kprintf("%-*.*s  0x%08x %03d:",
+                            maxlen, RT_NAME_MAX,
+                            e->parent.parent.name,
+                            e->set,
+                            rt_list_len(&e->parent.suspend_thread));
+                    show_wait_queue(&(e->parent.suspend_thread));
+                    rt_kprintf("\n");
+                }
+                else
+                {
+                    rt_kprintf("%-*.*s  0x%08x 0\n",
+                            maxlen, RT_NAME_MAX, e->parent.parent.name, e->set);
+                }
+            }
         }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_event(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_Event);
-    return _list_event(&info->object_list);
 }
 FINSH_FUNCTION_EXPORT(list_event, list event in system);
 MSH_CMD_EXPORT(list_event, list event in system);
 #endif
 
 #ifdef RT_USING_MUTEX
-static long _list_mutex(struct rt_list_node *list)
+long list_mutex(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_mutex *m;
-    struct rt_list_node *node;
     const char *item_title = "mutex";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_Mutex, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s   owner  hold suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " -------- ---- --------------\n");
-    for (node = list->next; node != list; node = node->next)
+
+    do
     {
-        m = (struct rt_mutex *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s %-8.*s %04d %d\n",
-                   maxlen, RT_NAME_MAX,
-                   m->parent.parent.name,
-                   RT_NAME_MAX,
-                   m->owner->name,
-                   m->hold,
-                   rt_list_len(&m->parent.suspend_thread));
+        next = list_get_next(next, &find_arg);
+        {
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_mutex *m;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                m = (struct rt_mutex *)obj;
+                rt_kprintf("%-*.*s %-8.*s %04d %d\n",
+                        maxlen, RT_NAME_MAX,
+                        m->parent.parent.name,
+                        RT_NAME_MAX,
+                        m->owner->name,
+                        m->hold,
+                        rt_list_len(&m->parent.suspend_thread));
+
+            }
+        }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_mutex(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_Mutex);
-
-    return _list_mutex(&info->object_list);
 }
 FINSH_FUNCTION_EXPORT(list_mutex, list mutex in system);
 MSH_CMD_EXPORT(list_mutex, list mutex in system);
 #endif
 
 #ifdef RT_USING_MAILBOX
-static long _list_mailbox(struct rt_list_node *list)
+long list_mailbox(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_mailbox *m;
-    struct rt_list_node *node;
     const char *item_title = "mailbox";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_MailBox, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s entry size suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  ---- --------------\n");
-    for (node = list->next; node != list; node = node->next)
+
+    do
     {
-        m = (struct rt_mailbox *)(rt_list_entry(node, struct rt_object, list));
-        if (!rt_list_isempty(&m->parent.suspend_thread))
+        next = list_get_next(next, &find_arg);
         {
-            rt_kprintf("%-*.*s %04d  %04d %d:",
-                       maxlen, RT_NAME_MAX,
-                       m->parent.parent.name,
-                       m->entry,
-                       m->size,
-                       rt_list_len(&m->parent.suspend_thread));
-            show_wait_queue(&(m->parent.suspend_thread));
-            rt_kprintf("\n");
-        }
-        else
-        {
-            rt_kprintf("%-*.*s %04d  %04d %d\n",
-                       maxlen, RT_NAME_MAX,
-                       m->parent.parent.name,
-                       m->entry,
-                       m->size,
-                       rt_list_len(&m->parent.suspend_thread));
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_mailbox *m;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                m = (struct rt_mailbox *)obj;
+                if (!rt_list_isempty(&m->parent.suspend_thread))
+                {
+                    rt_kprintf("%-*.*s %04d  %04d %d:",
+                            maxlen, RT_NAME_MAX,
+                            m->parent.parent.name,
+                            m->entry,
+                            m->size,
+                            rt_list_len(&m->parent.suspend_thread));
+                    show_wait_queue(&(m->parent.suspend_thread));
+                    rt_kprintf("\n");
+                }
+                else
+                {
+                    rt_kprintf("%-*.*s %04d  %04d %d\n",
+                            maxlen, RT_NAME_MAX,
+                            m->parent.parent.name,
+                            m->entry,
+                            m->size,
+                            rt_list_len(&m->parent.suspend_thread));
+                }
+
+            }
         }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_mailbox(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_MailBox);
-    return _list_mailbox(&info->object_list);
 }
 FINSH_FUNCTION_EXPORT(list_mailbox, list mail box in system);
 MSH_CMD_EXPORT(list_mailbox, list mail box in system);
 #endif
 
 #ifdef RT_USING_MESSAGEQUEUE
-static long _list_msgqueue(struct rt_list_node *list)
+long list_msgqueue(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_messagequeue *m;
-    struct rt_list_node *node;
     const char *item_title = "msgqueue";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_MessageQueue, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s entry suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  --------------\n");
-    for (node = list->next; node != list; node = node->next)
+    do
     {
-        m = (struct rt_messagequeue *)(rt_list_entry(node, struct rt_object, list));
-        if (!rt_list_isempty(&m->parent.suspend_thread))
+        next = list_get_next(next, &find_arg);
         {
-            rt_kprintf("%-*.*s %04d  %d:",
-                       maxlen, RT_NAME_MAX,
-                       m->parent.parent.name,
-                       m->entry,
-                       rt_list_len(&m->parent.suspend_thread));
-            show_wait_queue(&(m->parent.suspend_thread));
-            rt_kprintf("\n");
-        }
-        else
-        {
-            rt_kprintf("%-*.*s %04d  %d\n",
-                       maxlen, RT_NAME_MAX,
-                       m->parent.parent.name,
-                       m->entry,
-                       rt_list_len(&m->parent.suspend_thread));
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_messagequeue *m;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                m = (struct rt_messagequeue *)obj;
+                if (!rt_list_isempty(&m->parent.suspend_thread))
+                {
+                    rt_kprintf("%-*.*s %04d  %d:",
+                            maxlen, RT_NAME_MAX,
+                            m->parent.parent.name,
+                            m->entry,
+                            rt_list_len(&m->parent.suspend_thread));
+                    show_wait_queue(&(m->parent.suspend_thread));
+                    rt_kprintf("\n");
+                }
+                else
+                {
+                    rt_kprintf("%-*.*s %04d  %d\n",
+                            maxlen, RT_NAME_MAX,
+                            m->parent.parent.name,
+                            m->entry,
+                            rt_list_len(&m->parent.suspend_thread));
+                }
+            }
         }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_msgqueue(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_MessageQueue);
-    return _list_msgqueue(&info->object_list);
 }
 FINSH_FUNCTION_EXPORT(list_msgqueue, list message queue in system);
 MSH_CMD_EXPORT(list_msgqueue, list message queue in system);
 #endif
 
 #ifdef RT_USING_MEMHEAP
-static long _list_memheap(struct rt_list_node *list)
+long list_memheap(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_memheap *mh;
-    struct rt_list_node *node;
     const char *item_title = "memheap";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_MemHeap, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s  pool size  max used size available size\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(      " ---------- ------------- --------------\n");
-    for (node = list->next; node != list; node = node->next)
+    do
     {
-        mh = (struct rt_memheap *)rt_list_entry(node, struct rt_object, list);
+        next = list_get_next(next, &find_arg);
+        {
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_memheap *mh;
 
-        rt_kprintf("%-*.*s %-010d %-013d %-05d\n",
-                   maxlen, RT_NAME_MAX,
-                   mh->parent.name,
-                   mh->pool_size,
-                   mh->max_used_size,
-                   mh->available_size);
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                mh = (struct rt_memheap *)obj;
+
+                rt_kprintf("%-*.*s %-010d %-013d %-05d\n",
+                        maxlen, RT_NAME_MAX,
+                        mh->parent.name,
+                        mh->pool_size,
+                        mh->max_used_size,
+                        mh->available_size);
+
+            }
+        }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_memheap(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_MemHeap);
-    return _list_memheap(&info->object_list);
 }
 FINSH_FUNCTION_EXPORT(list_memheap, list memory heap in system);
 MSH_CMD_EXPORT(list_memheap, list memory heap in system);
 #endif
 
 #ifdef RT_USING_MEMPOOL
-static long _list_mempool(struct rt_list_node *list)
+long list_mempool(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_mempool *mp;
-    struct rt_list_node *node;
     const char *item_title = "mempool";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_MemPool, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s block total free suspend thread\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ----  ----  ---- --------------\n");
-    for (node = list->next; node != list; node = node->next)
+    do
     {
-        mp = (struct rt_mempool *)rt_list_entry(node, struct rt_object, list);
-        if (mp->suspend_thread_count > 0)
+        next = list_get_next(next, &find_arg);
         {
-            rt_kprintf("%-*.*s %04d  %04d  %04d %d:",
-                       maxlen, RT_NAME_MAX,
-                       mp->parent.name,
-                       mp->block_size,
-                       mp->block_total_count,
-                       mp->block_free_count,
-                       mp->suspend_thread_count);
-            show_wait_queue(&(mp->suspend_thread));
-            rt_kprintf("\n");
-        }
-        else
-        {
-            rt_kprintf("%-*.*s %04d  %04d  %04d %d\n",
-                       maxlen, RT_NAME_MAX,
-                       mp->parent.name,
-                       mp->block_size,
-                       mp->block_total_count,
-                       mp->block_free_count,
-                       mp->suspend_thread_count);
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_mempool *mp;
+                int suspend_thread_count;
+                rt_list_t *node;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                mp = (struct rt_mempool *)obj;
+
+                suspend_thread_count = 0;
+                rt_list_for_each(node, &mp->suspend_thread)
+                {
+                    suspend_thread_count++;
+                }
+
+                if (suspend_thread_count > 0)
+                {
+                    rt_kprintf("%-*.*s %04d  %04d  %04d %d:",
+                            maxlen, RT_NAME_MAX,
+                            mp->parent.name,
+                            mp->block_size,
+                            mp->block_total_count,
+                            mp->block_free_count,
+                            suspend_thread_count);
+                    show_wait_queue(&(mp->suspend_thread));
+                    rt_kprintf("\n");
+                }
+                else
+                {
+                    rt_kprintf("%-*.*s %04d  %04d  %04d %d\n",
+                            maxlen, RT_NAME_MAX,
+                            mp->parent.name,
+                            mp->block_size,
+                            mp->block_total_count,
+                            mp->block_free_count,
+                            suspend_thread_count);
+                }
+            }
         }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     return 0;
-}
-
-long list_mempool(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_MemPool);
-    return _list_mempool(&info->object_list);
 }
 FINSH_FUNCTION_EXPORT(list_mempool, list memory pool in system)
 MSH_CMD_EXPORT(list_mempool, list memory pool in system);
 #endif
 
-static long _list_timer(struct rt_list_node *list)
+long list_timer(void)
 {
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+
     int maxlen;
-    struct rt_timer *timer;
-    struct rt_list_node *node;
     const char *item_title = "timer";
 
-    maxlen = object_name_maxlen(item_title, list);
+    list_find_init(&find_arg, RT_Object_Class_Timer, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
 
     rt_kprintf("%-*.s  periodic   timeout       flag\n", maxlen, item_title); object_split(maxlen);
     rt_kprintf(     " ---------- ---------- -----------\n");
-    for (node = list->next; node != list; node = node->next)
-    {
-        timer = (struct rt_timer *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s 0x%08x 0x%08x ",
-                   maxlen, RT_NAME_MAX,
-                   timer->parent.name,
-                   timer->init_tick,
-                   timer->timeout_tick);
-        if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
-            rt_kprintf("activated\n");
-        else
-            rt_kprintf("deactivated\n");
+    do {
+        next = list_get_next(next, &find_arg);
+        {
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_timer *timer;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                timer = (struct rt_timer *)obj;
+                rt_kprintf("%-*.*s 0x%08x 0x%08x ",
+                        maxlen, RT_NAME_MAX,
+                        timer->parent.name,
+                        timer->init_tick,
+                        timer->timeout_tick);
+                if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+                    rt_kprintf("activated\n");
+                else
+                    rt_kprintf("deactivated\n");
+
+            }
+        }
     }
+    while (next != (rt_list_t*)RT_NULL);
 
     rt_kprintf("current tick:0x%08x\n", rt_tick_get());
 
     return 0;
 }
-
-long list_timer(void)
-{
-    struct rt_object_information *info;
-
-    info = rt_object_get_information(RT_Object_Class_Timer);
-    return _list_timer(&info->object_list);
-}
 FINSH_FUNCTION_EXPORT(list_timer, list timer in system);
 MSH_CMD_EXPORT(list_timer, list timer in system);
 
 #ifdef RT_USING_DEVICE
-static long _list_device(struct rt_list_node *list)
+static char *const device_type_str[] =
 {
-    int maxlen;
-    struct rt_device *device;
-    struct rt_list_node *node;
-    char *const device_type_str[] =
-    {
-        "Character Device",
-        "Block Device",
-        "Network Interface",
-        "MTD Device",
-        "CAN Device",
-        "RTC",
-        "Sound Device",
-        "Graphic Device",
-        "I2C Bus",
-        "USB Slave Device",
-        "USB Host Bus",
-        "SPI Bus",
-        "SPI Device",
-        "SDIO Bus",
-        "PM Pseudo Device",
-        "Pipe",
-        "Portal Device",
-        "Timer Device",
-        "Miscellaneous Device",
-        "Unknown"
-    };
-    const char *item_title = "device";
-
-    maxlen = object_name_maxlen(item_title, list);
-
-    rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title); object_split(maxlen);
-    rt_kprintf(     " -------------------- ----------\n");
-    for (node = list->next; node != list; node = node->next)
-    {
-        device = (struct rt_device *)(rt_list_entry(node, struct rt_object, list));
-        rt_kprintf("%-*.*s %-20s %-8d\n",
-                   maxlen, RT_NAME_MAX,
-                   device->parent.name,
-                   (device->type <= RT_Device_Class_Unknown) ?
-                   device_type_str[device->type] :
-                   device_type_str[RT_Device_Class_Unknown],
-                   device->ref_count);
-    }
-
-    return 0;
-}
+    "Character Device",
+    "Block Device",
+    "Network Interface",
+    "MTD Device",
+    "CAN Device",
+    "RTC",
+    "Sound Device",
+    "Graphic Device",
+    "I2C Bus",
+    "USB Slave Device",
+    "USB Host Bus",
+    "SPI Bus",
+    "SPI Device",
+    "SDIO Bus",
+    "PM Pseudo Device",
+    "Pipe",
+    "Portal Device",
+    "Timer Device",
+    "Miscellaneous Device",
+    "Sensor Device",
+    "Touch Device",
+    "Phy Device",
+    "Unknown"
+};
 
 long list_device(void)
 {
-    struct rt_object_information *info;
+    rt_ubase_t level;
+    list_get_next_t find_arg;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    rt_list_t *next = (rt_list_t*)RT_NULL;
 
-    info = rt_object_get_information(RT_Object_Class_Device);
-    return _list_device(&info->object_list);
+    int maxlen;
+    const char *item_title = "device";
+
+    list_find_init(&find_arg, RT_Object_Class_Device, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+
+    maxlen = RT_NAME_MAX;
+
+    rt_kprintf("%-*.s         type         ref count\n", maxlen, item_title); object_split(maxlen);
+    rt_kprintf(     " -------------------- ----------\n");
+    do
+    {
+        next = list_get_next(next, &find_arg);
+        {
+            int i;
+            for (i = 0; i < find_arg.nr_out; i++)
+            {
+                struct rt_object *obj;
+                struct rt_device *device;
+
+                obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                level = rt_hw_interrupt_disable();
+                if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                {
+                    rt_hw_interrupt_enable(level);
+                    continue;
+                }
+
+                rt_hw_interrupt_enable(level);
+
+                device = (struct rt_device *)obj;
+                rt_kprintf("%-*.*s %-20s %-8d\n",
+                        maxlen, RT_NAME_MAX,
+                        device->parent.name,
+                        (device->type <= RT_Device_Class_Unknown) ?
+                        device_type_str[device->type] :
+                        device_type_str[RT_Device_Class_Unknown],
+                        device->ref_count);
+
+            }
+        }
+    }
+    while (next != (rt_list_t*)RT_NULL);
+
+    return 0;
 }
 FINSH_FUNCTION_EXPORT(list_device, list device in system);
 MSH_CMD_EXPORT(list_device, list device in system);
@@ -616,7 +898,7 @@ long list(void)
             /* skip the internal command */
             if (strncmp((char *)index->name, "__", 2) == 0) continue;
 
-#ifdef FINSH_USING_DESCRIPTION
+#if defined(FINSH_USING_DESCRIPTION) && defined(FINSH_USING_SYMTAB)
             rt_kprintf("%-16s -- %s\n", index->name, index->desc);
 #else
             rt_kprintf("%s\n", index->name);

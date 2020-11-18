@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2019, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -81,12 +81,12 @@ struct rt_ulog
     /* all backends */
     rt_slist_t backend_list;
     /* the thread log's line buffer */
-    char log_buf_th[ULOG_LINE_BUF_SIZE];
+    char log_buf_th[ULOG_LINE_BUF_SIZE + 1];
 
 #ifdef ULOG_USING_ISR_LOG
     /* the ISR log's line buffer */
     rt_base_t output_locker_isr_lvl;
-    char log_buf_isr[ULOG_LINE_BUF_SIZE];
+    char log_buf_isr[ULOG_LINE_BUF_SIZE + 1];
 #endif /* ULOG_USING_ISR_LOG */
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
@@ -149,7 +149,7 @@ size_t ulog_strcpy(size_t cur_len, char *dst, const char *src)
     while (*src != 0)
     {
         /* make sure destination has enough space */
-        if (cur_len++ <= ULOG_LINE_BUF_SIZE)
+        if (cur_len++ < ULOG_LINE_BUF_SIZE)
         {
             *dst++ = *src++;
         }
@@ -315,7 +315,10 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
         /* is not in interrupt context */
         if (rt_interrupt_get_nest() == 0)
         {
-            log_len += ulog_strcpy(log_len, log_buf + log_len, rt_thread_self()->name);
+            rt_size_t name_len = rt_strnlen(rt_thread_self()->name, RT_NAME_MAX);
+
+            rt_strncpy(log_buf + log_len, rt_thread_self()->name, name_len);
+            log_len += name_len;
         }
         else
         {
@@ -393,22 +396,22 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 #if !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG)
         backend->output(backend, level, tag, is_raw, log, size);
 #else
-        if (backend->support_color)
+        if (backend->support_color || is_raw)
         {
             backend->output(backend, level, tag, is_raw, log, size);
         }
         else
         {
             /* recalculate the log start address and log size when backend not supported color */
-            rt_size_t color_info_len = rt_strlen(color_output_info[level]);
+            rt_size_t color_info_len = rt_strlen(color_output_info[level]), output_size = size;
             if (color_info_len)
             {
                 rt_size_t color_hdr_len = rt_strlen(CSI_START) + color_info_len;
 
                 log += color_hdr_len;
-                size -= (color_hdr_len + (sizeof(CSI_END) - 1));
+                output_size -= (color_hdr_len + (sizeof(CSI_END) - 1));
             }
-            backend->output(backend, level, tag, is_raw, log, size);
+            backend->output(backend, level, tag, is_raw, log, output_size);
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }
@@ -681,7 +684,7 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
             log_len = 6 + name_len + 2;
             rt_memset(log_buf, ' ', log_len);
         }
-        fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width);
+        fmt_result = rt_snprintf(log_buf + log_len, ULOG_LINE_BUF_SIZE, "%04X-%04X: ", i, i + width - 1);
         /* calculate log length */
         if ((fmt_result > -1) && (fmt_result <= ULOG_LINE_BUF_SIZE))
         {
@@ -725,6 +728,8 @@ void ulog_hexdump(const char *tag, rt_size_t width, rt_uint8_t *buf, rt_size_t s
         }
         /* package newline sign */
         log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+        /*add string end sign*/
+        log_buf[log_len] = '\0';
         /* do log output */
         do_output(LOG_LVL_DBG, NULL, RT_TRUE, log_buf, log_len);
     }
@@ -1184,6 +1189,8 @@ void ulog_async_waiting_log(rt_int32_t time)
 
 static void async_output_thread_entry(void *param)
 {
+    ulog_async_output();
+
     while (1)
     {
         ulog_async_waiting_log(RT_WAITING_FOREVER);

@@ -95,9 +95,9 @@ void rt_rbb_destroy(rt_rbb_t rbb)
 {
     RT_ASSERT(rbb);
 
-    rt_free(rbb);
     rt_free(rbb->buf);
     rt_free(rbb->blk_set);
+    rt_free(rbb);
 
 }
 RTM_EXPORT(rt_rbb_destroy);
@@ -134,16 +134,16 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 {
     rt_base_t level;
     rt_size_t empty1 = 0, empty2 = 0;
-    rt_rbb_blk_t head, tail, new = NULL;
+    rt_rbb_blk_t head, tail, new_rbb = NULL;
 
     RT_ASSERT(rbb);
     RT_ASSERT(blk_size < (1L << 24));
 
     level = rt_hw_interrupt_disable();
 
-    new = find_empty_blk_in_set(rbb);
+    new_rbb = find_empty_blk_in_set(rbb);
 
-    if (rt_slist_len(&rbb->blk_list) < rbb->blk_max_num && new)
+    if (rt_slist_len(&rbb->blk_list) < rbb->blk_max_num && new_rbb)
     {
         if (rt_slist_len(&rbb->blk_list) > 0)
         {
@@ -163,22 +163,22 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 
                 if (empty1 >= blk_size)
                 {
-                    rt_slist_append(&rbb->blk_list, &new->list);
-                    new->status = RT_RBB_BLK_INITED;
-                    new->buf = tail->buf + tail->size;
-                    new->size = blk_size;
+                    rt_slist_append(&rbb->blk_list, &new_rbb->list);
+                    new_rbb->status = RT_RBB_BLK_INITED;
+                    new_rbb->buf = tail->buf + tail->size;
+                    new_rbb->size = blk_size;
                 }
                 else if (empty2 >= blk_size)
                 {
-                    rt_slist_append(&rbb->blk_list, &new->list);
-                    new->status = RT_RBB_BLK_INITED;
-                    new->buf = rbb->buf;
-                    new->size = blk_size;
+                    rt_slist_append(&rbb->blk_list, &new_rbb->list);
+                    new_rbb->status = RT_RBB_BLK_INITED;
+                    new_rbb->buf = rbb->buf;
+                    new_rbb->size = blk_size;
                 }
                 else
                 {
                     /* no space */
-                    new = NULL;
+                    new_rbb = NULL;
                 }
             }
             else
@@ -194,35 +194,35 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
 
                 if (empty1 >= blk_size)
                 {
-                    rt_slist_append(&rbb->blk_list, &new->list);
-                    new->status = RT_RBB_BLK_INITED;
-                    new->buf = tail->buf + tail->size;
-                    new->size = blk_size;
+                    rt_slist_append(&rbb->blk_list, &new_rbb->list);
+                    new_rbb->status = RT_RBB_BLK_INITED;
+                    new_rbb->buf = tail->buf + tail->size;
+                    new_rbb->size = blk_size;
                 }
                 else
                 {
                     /* no space */
-                    new = NULL;
+                    new_rbb = NULL;
                 }
             }
         }
         else
         {
             /* the list is empty */
-            rt_slist_append(&rbb->blk_list, &new->list);
-            new->status = RT_RBB_BLK_INITED;
-            new->buf = rbb->buf;
-            new->size = blk_size;
+            rt_slist_append(&rbb->blk_list, &new_rbb->list);
+            new_rbb->status = RT_RBB_BLK_INITED;
+            new_rbb->buf = rbb->buf;
+            new_rbb->size = blk_size;
         }
     }
     else
     {
-        new = NULL;
+        new_rbb = NULL;
     }
 
     rt_hw_interrupt_enable(level);
 
-    return new;
+    return new_rbb;
 }
 RTM_EXPORT(rt_rbb_blk_alloc);
 

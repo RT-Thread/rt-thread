@@ -55,35 +55,58 @@
        structure.   
        
    (#) You can continuously monitor the SDRAM device HAL state by calling the function
-       HAL_SDRAM_GetState()         
-      
+       HAL_SDRAM_GetState()
+
+   *** Callback registration ***
+    =============================================
+    [..]
+      The compilation define  USE_HAL_SDRAM_REGISTER_CALLBACKS when set to 1
+      allows the user to configure dynamically the driver callbacks.
+
+      Use Functions @ref HAL_SDRAM_RegisterCallback() to register a user callback,
+      it allows to register following callbacks:
+        (+) MspInitCallback    : SDRAM MspInit.
+        (+) MspDeInitCallback  : SDRAM MspDeInit.
+      This function takes as parameters the HAL peripheral handle, the Callback ID
+      and a pointer to the user callback function.
+
+      Use function @ref HAL_SDRAM_UnRegisterCallback() to reset a callback to the default
+      weak (surcharged) function. It allows to reset following callbacks:
+        (+) MspInitCallback    : SDRAM MspInit.
+        (+) MspDeInitCallback  : SDRAM MspDeInit.
+      This function) takes as parameters the HAL peripheral handle and the Callback ID.
+
+      By default, after the @ref HAL_SDRAM_Init and if the state is HAL_SDRAM_STATE_RESET
+      all callbacks are reset to the corresponding legacy weak (surcharged) functions.
+      Exception done for MspInit and MspDeInit callbacks that are respectively
+      reset to the legacy weak (surcharged) functions in the @ref HAL_SDRAM_Init
+      and @ref  HAL_SDRAM_DeInit only when these callbacks are null (not registered beforehand).
+      If not, MspInit or MspDeInit are not null, the @ref HAL_SDRAM_Init and @ref HAL_SDRAM_DeInit
+      keep and use the user MspInit/MspDeInit callbacks (registered beforehand)
+
+      Callbacks can be registered/unregistered in READY state only.
+      Exception done for MspInit/MspDeInit callbacks that can be registered/unregistered
+      in READY or RESET state, thus registered (user) MspInit/DeInit callbacks can be used
+      during the Init/DeInit.
+      In that case first register the MspInit/MspDeInit user callbacks
+      using @ref HAL_SDRAM_RegisterCallback before calling @ref HAL_SDRAM_DeInit
+      or @ref HAL_SDRAM_Init function.
+
+      When The compilation define USE_HAL_SDRAM_REGISTER_CALLBACKS is set to 0 or
+      not defined, the callback registering feature is not available
+      and weak (surcharged) callbacks are used.
+
   @endverbatim
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */ 
@@ -147,8 +170,21 @@ HAL_StatusTypeDef HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTy
   {  
     /* Allocate lock resource and initialize it */
     hsdram->Lock = HAL_UNLOCKED;
+#if (USE_HAL_SDRAM_REGISTER_CALLBACKS == 1)
+    if(hsdram->MspInitCallback == NULL)
+    {
+      hsdram->MspInitCallback = HAL_SDRAM_MspInit;
+    }
+    hsdram->RefreshErrorCallback = HAL_SDRAM_RefreshErrorCallback;
+    hsdram->DmaXferCpltCallback = HAL_SDRAM_DMA_XferCpltCallback;
+    hsdram->DmaXferErrorCallback = HAL_SDRAM_DMA_XferErrorCallback;
+
+    /* Init the low level hardware */
+    hsdram->MspInitCallback(hsdram);
+#else
     /* Initialize the low level hardware (MSP) */
     HAL_SDRAM_MspInit(hsdram);
+#endif
   }
   
   /* Initialize the SDRAM controller state */
@@ -174,8 +210,18 @@ HAL_StatusTypeDef HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTy
   */
 HAL_StatusTypeDef HAL_SDRAM_DeInit(SDRAM_HandleTypeDef *hsdram)
 {
+#if (USE_HAL_SDRAM_REGISTER_CALLBACKS == 1)
+  if(hsdram->MspDeInitCallback == NULL)
+  {
+    hsdram->MspDeInitCallback = HAL_SDRAM_MspDeInit;
+  }
+
+  /* DeInit the low level hardware */
+  hsdram->MspDeInitCallback(hsdram);
+#else
   /* Initialize the low level hardware (MSP) */
   HAL_SDRAM_MspDeInit(hsdram);
+#endif
 
   /* Configure the SDRAM registers with their reset values */
   FMC_SDRAM_DeInit(hsdram->Instance, hsdram->Init.SDBank);
@@ -231,8 +277,12 @@ void HAL_SDRAM_IRQHandler(SDRAM_HandleTypeDef *hsdram)
   if(__FMC_SDRAM_GET_FLAG(hsdram->Instance, FMC_SDRAM_FLAG_REFRESH_IT))
   {
     /* SDRAM refresh error interrupt callback */
+#if (USE_HAL_SDRAM_REGISTER_CALLBACKS == 1)
+    hsdram->RefreshErrorCallback(hsdram);
+#else
     HAL_SDRAM_RefreshErrorCallback(hsdram);
-    
+#endif
+
     /* Clear SDRAM refresh error interrupt pending bit */
     __FMC_SDRAM_CLEAR_FLAG(hsdram->Instance, FMC_SDRAM_FLAG_REFRESH_ERROR);
   }
@@ -629,6 +679,207 @@ HAL_StatusTypeDef HAL_SDRAM_Write_DMA(SDRAM_HandleTypeDef *hsdram, uint32_t *pAd
   
   return HAL_OK;
 }
+
+#if (USE_HAL_SDRAM_REGISTER_CALLBACKS == 1)
+/**
+  * @brief  Register a User SDRAM Callback
+  *         To be used instead of the weak (surcharged) predefined callback
+  * @param hsdram : SDRAM handle
+  * @param CallbackId : ID of the callback to be registered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_SDRAM_MSP_INIT_CB_ID       SDRAM MspInit callback ID
+  *          @arg @ref HAL_SDRAM_MSP_DEINIT_CB_ID     SDRAM MspDeInit callback ID
+  *          @arg @ref HAL_SDRAM_REFRESH_ERR_CB_ID    SDRAM Refresh Error callback ID
+  * @param pCallback : pointer to the Callback function
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_SDRAM_RegisterCallback (SDRAM_HandleTypeDef *hsdram, HAL_SDRAM_CallbackIDTypeDef CallbackId, pSDRAM_CallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  HAL_SDRAM_StateTypeDef state;
+  
+  if(pCallback == NULL)
+  {
+    return HAL_ERROR;
+  }
+
+  /* Process locked */
+  __HAL_LOCK(hsdram);
+  
+  state = hsdram->State;
+  if((state == HAL_SDRAM_STATE_READY) || (state == HAL_SDRAM_STATE_WRITE_PROTECTED))
+  {
+    switch (CallbackId)
+    {
+    case HAL_SDRAM_MSP_INIT_CB_ID :
+      hsdram->MspInitCallback = pCallback;
+      break;
+    case HAL_SDRAM_MSP_DEINIT_CB_ID :
+      hsdram->MspDeInitCallback = pCallback;
+      break;
+    case HAL_SDRAM_REFRESH_ERR_CB_ID :
+      hsdram->RefreshErrorCallback = pCallback;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if(hsdram->State == HAL_SDRAM_STATE_RESET)
+  {
+    switch (CallbackId)
+    {
+    case HAL_SDRAM_MSP_INIT_CB_ID :
+      hsdram->MspInitCallback = pCallback;
+      break;
+    case HAL_SDRAM_MSP_DEINIT_CB_ID :
+      hsdram->MspDeInitCallback = pCallback;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hsdram);
+  return status;
+}
+
+/**
+  * @brief  Unregister a User SDRAM Callback
+  *         SDRAM Callback is redirected to the weak (surcharged) predefined callback
+  * @param hsdram : SDRAM handle
+  * @param CallbackId : ID of the callback to be unregistered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_SDRAM_MSP_INIT_CB_ID       SDRAM MspInit callback ID
+  *          @arg @ref HAL_SDRAM_MSP_DEINIT_CB_ID     SDRAM MspDeInit callback ID
+  *          @arg @ref HAL_SDRAM_REFRESH_ERR_CB_ID    SDRAM Refresh Error callback ID
+  *          @arg @ref HAL_SDRAM_DMA_XFER_CPLT_CB_ID  SDRAM DMA Xfer Complete callback ID
+  *          @arg @ref HAL_SDRAM_DMA_XFER_ERR_CB_ID   SDRAM DMA Xfer Error callback ID
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_SDRAM_UnRegisterCallback (SDRAM_HandleTypeDef *hsdram, HAL_SDRAM_CallbackIDTypeDef CallbackId)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  HAL_SDRAM_StateTypeDef state;
+  
+  /* Process locked */
+  __HAL_LOCK(hsdram);
+  
+  state = hsdram->State;
+  if((state == HAL_SDRAM_STATE_READY) || (state == HAL_SDRAM_STATE_WRITE_PROTECTED))
+  {
+    switch (CallbackId)
+    {
+    case HAL_SDRAM_MSP_INIT_CB_ID :
+      hsdram->MspInitCallback = HAL_SDRAM_MspInit;
+      break;
+    case HAL_SDRAM_MSP_DEINIT_CB_ID :
+      hsdram->MspDeInitCallback = HAL_SDRAM_MspDeInit;
+      break;
+    case HAL_SDRAM_REFRESH_ERR_CB_ID :
+      hsdram->RefreshErrorCallback = HAL_SDRAM_RefreshErrorCallback;
+      break;
+    case HAL_SDRAM_DMA_XFER_CPLT_CB_ID :
+      hsdram->DmaXferCpltCallback = HAL_SDRAM_DMA_XferCpltCallback;
+      break;
+    case HAL_SDRAM_DMA_XFER_ERR_CB_ID :
+      hsdram->DmaXferErrorCallback = HAL_SDRAM_DMA_XferErrorCallback;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else if(hsdram->State == HAL_SDRAM_STATE_RESET)
+  {
+    switch (CallbackId)
+    {
+    case HAL_SDRAM_MSP_INIT_CB_ID :
+      hsdram->MspInitCallback = HAL_SDRAM_MspInit;
+      break;
+    case HAL_SDRAM_MSP_DEINIT_CB_ID :
+      hsdram->MspDeInitCallback = HAL_SDRAM_MspDeInit;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hsdram);
+  return status;
+}
+
+/**
+  * @brief  Register a User SDRAM Callback for DMA transfers
+  *         To be used instead of the weak (surcharged) predefined callback
+  * @param hsdram : SDRAM handle
+  * @param CallbackId : ID of the callback to be registered
+  *        This parameter can be one of the following values:
+  *          @arg @ref HAL_SDRAM_DMA_XFER_CPLT_CB_ID  SDRAM DMA Xfer Complete callback ID
+  *          @arg @ref HAL_SDRAM_DMA_XFER_ERR_CB_ID   SDRAM DMA Xfer Error callback ID
+  * @param pCallback : pointer to the Callback function
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_SDRAM_RegisterDmaCallback(SDRAM_HandleTypeDef *hsdram, HAL_SDRAM_CallbackIDTypeDef CallbackId, pSDRAM_DmaCallbackTypeDef pCallback)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+  HAL_SDRAM_StateTypeDef state;
+  
+  if(pCallback == NULL)
+  {
+    return HAL_ERROR;
+  }
+
+  /* Process locked */
+  __HAL_LOCK(hsdram);
+  
+  state = hsdram->State;
+  if((state == HAL_SDRAM_STATE_READY) || (state == HAL_SDRAM_STATE_WRITE_PROTECTED))
+  {
+    switch (CallbackId)
+    {
+    case HAL_SDRAM_DMA_XFER_CPLT_CB_ID :
+      hsdram->DmaXferCpltCallback = pCallback;
+      break;
+    case HAL_SDRAM_DMA_XFER_ERR_CB_ID :
+      hsdram->DmaXferErrorCallback = pCallback;
+      break;
+    default :
+      /* update return status */
+      status =  HAL_ERROR;
+      break;
+    }
+  }
+  else
+  {
+    /* update return status */
+    status =  HAL_ERROR;
+  }
+
+  /* Release Lock */
+  __HAL_UNLOCK(hsdram);
+  return status;
+}
+#endif
+
 /**
   * @}
   */

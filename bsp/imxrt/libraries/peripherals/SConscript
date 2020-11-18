@@ -1,0 +1,16 @@
+from building import *
+
+src = []
+cwd = []
+CPPDEFINES = []
+
+cwd = GetCurrentDir()
+
+if GetDepend('BSP_USING_PHY') and GetDepend('PHY_USING_KSZ8081'):
+    src += ['phyksz8081.c']
+
+path = [cwd]
+
+group = DefineGroup('Peripherals', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
+
+Return('group')

@@ -6,29 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -126,7 +110,11 @@ typedef enum
 /**
   * @brief  HASH Handle Structure definition
   */
+#if (USE_HAL_HASH_REGISTER_CALLBACKS == 1)
 typedef struct __HASH_HandleTypeDef
+#else
+typedef struct
+#endif /* (USE_HAL_HASH_REGISTER_CALLBACKS) */
 {
   HASH_InitTypeDef           Init;             /*!< HASH required parameters */
 
@@ -163,6 +151,8 @@ typedef struct __HASH_HandleTypeDef
   __IO uint32_t              NbWordsAlreadyPushed;      /*!< Numbers of words already pushed in FIFO before inputting new block */
 
   __IO  uint32_t             ErrorCode;        /*!< HASH Error code */
+
+  __IO  uint32_t             Accumulation;     /*!< HASH multi buffers accumulation flag */
 
 #if (USE_HAL_HASH_REGISTER_CALLBACKS == 1)
   void    (* InCpltCallback)( struct __HASH_HandleTypeDef * hhash);    /*!< HASH input completion callback */
@@ -238,11 +228,11 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
 /** @defgroup HASH_flags_definition  HASH flags definitions
   * @{
   */
-#define HASH_FLAG_DINIS            HASH_SR_DINIS  /*!< 16 locations are free in the DIN : a new block can be entered in the IP */
-#define HASH_FLAG_DCIS             HASH_SR_DCIS   /*!< Digest calculation complete                                             */
-#define HASH_FLAG_DMAS             HASH_SR_DMAS   /*!< DMA interface is enabled (DMAE=1) or a transfer is ongoing              */
-#define HASH_FLAG_BUSY             HASH_SR_BUSY   /*!< The hash core is Busy, processing a block of data                       */
-#define HASH_FLAG_DINNE            HASH_CR_DINNE  /*!< DIN not empty : the input buffer contains at least one word of data     */
+#define HASH_FLAG_DINIS            HASH_SR_DINIS  /*!< 16 locations are free in the DIN : a new block can be entered in the Peripheral */
+#define HASH_FLAG_DCIS             HASH_SR_DCIS   /*!< Digest calculation complete                                                     */
+#define HASH_FLAG_DMAS             HASH_SR_DMAS   /*!< DMA interface is enabled (DMAE=1) or a transfer is ongoing                      */
+#define HASH_FLAG_BUSY             HASH_SR_BUSY   /*!< The hash core is Busy, processing a block of data                               */
+#define HASH_FLAG_DINNE            HASH_CR_DINNE  /*!< DIN not empty : the input buffer contains at least one word of data             */
 
 /**
   * @}
@@ -417,16 +407,6 @@ typedef  void (*pHASH_CallbackTypeDef)(HASH_HandleTypeDef * hhash); /*!< pointer
                                         ((__DATATYPE__) == HASH_DATATYPE_8B) || \
                                         ((__DATATYPE__) == HASH_DATATYPE_1B))
 
-
-
-/**
-  * @brief Ensure that input data buffer size is valid for multi-buffer HASH
-  *        processing in polling mode.
-  * @note  This check is valid only for multi-buffer HASH processing in polling mode.
-  * @param __SIZE__: input data buffer size.
-  * @retval SET (__SIZE__ is valid) or RESET (__SIZE__ is invalid)
-  */
-#define IS_HASH_POLLING_MULTIBUFFER_SIZE(__SIZE__)  (((__SIZE__) % 4U) == 0U)
 /**
   * @brief Ensure that input data buffer size is valid for multi-buffer HASH
   *        processing in DMA mode.
@@ -517,7 +497,9 @@ HAL_StatusTypeDef HAL_HASH_SHA1_Accumulate(HASH_HandleTypeDef *hhash, uint8_t *p
 
 /* HASH processing using IT  **************************************************/
 HAL_StatusTypeDef HAL_HASH_SHA1_Start_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer);
+HAL_StatusTypeDef HAL_HASH_SHA1_Accumulate_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
 HAL_StatusTypeDef HAL_HASH_MD5_Start_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer);
+HAL_StatusTypeDef HAL_HASH_MD5_Accumulate_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size);
 void HAL_HASH_IRQHandler(HASH_HandleTypeDef *hhash);
 /**
   * @}
@@ -603,6 +585,7 @@ uint32_t HAL_HASH_GetError(HASH_HandleTypeDef *hhash);
 /* Private functions */
 HAL_StatusTypeDef HASH_Start(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer, uint32_t Timeout, uint32_t Algorithm);
 HAL_StatusTypeDef HASH_Accumulate(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint32_t Algorithm);
+HAL_StatusTypeDef HASH_Accumulate_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint32_t Algorithm);
 HAL_StatusTypeDef HASH_Start_IT(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint8_t* pOutBuffer, uint32_t Algorithm);
 HAL_StatusTypeDef HASH_Start_DMA(HASH_HandleTypeDef *hhash, uint8_t *pInBuffer, uint32_t Size, uint32_t Algorithm);
 HAL_StatusTypeDef HASH_Finish(HASH_HandleTypeDef *hhash, uint8_t* pOutBuffer, uint32_t Timeout);

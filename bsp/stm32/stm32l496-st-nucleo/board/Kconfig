@@ -1,0 +1,68 @@
+menu "Hardware Drivers Config"
+
+config SOC_STM32L496ZG
+    bool
+    select SOC_SERIES_STM32L4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_STLINK_TO_USART
+        bool "Enable STLINK TO USART (lpuart1)"
+        select BSP_USING_UART
+        select BSP_USING_LPUART1
+        default y
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_UART2_RX_USING_DMA
+                bool "Enable UART2 RX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+				
+			config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default n
+
+            config BSP_LPUART1_RX_USING_DMA
+                bool "Enable LPUART1 RX DMA"
+                depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+   
+    source "../libraries/HAL_Drivers/Kconfig"
+    
+endmenu
+
+endmenu

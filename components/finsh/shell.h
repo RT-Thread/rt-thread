@@ -78,11 +78,11 @@ struct finsh_shell
     struct finsh_parser parser;
 #endif
 
-    char line[FINSH_CMD_SIZE];
-    rt_uint8_t line_position;
-    rt_uint8_t line_curpos;
+    char line[FINSH_CMD_SIZE + 1];
+    rt_uint16_t line_position;
+    rt_uint16_t line_curpos;
 
-#ifndef RT_USING_POSIX
+#if !defined(RT_USING_POSIX) && defined(RT_USING_DEVICE)
     rt_device_t device;
 #endif
 
@@ -107,4 +107,3 @@ const char *finsh_get_password(void);
 #endif
 
 #endif
-

@@ -29,7 +29,7 @@ struct hid_s
     uep_t ep_in;
     uep_t ep_out;
     int status;
-    rt_uint16_t protocol;
+    rt_uint8_t protocol;
     rt_uint8_t report_buf[MAX_REPORT_SIZE];
     struct rt_messagequeue hid_mq;
 };
@@ -246,7 +246,7 @@ static struct udevice_descriptor _dev_desc =
     USB_DESC_LENGTH_DEVICE,     //bLength;
     USB_DESC_TYPE_DEVICE,       //type;
     USB_BCD_VERSION,            //bcdUSB;
-    USB_CLASS_HID,              //bDeviceClass;
+    0x0,                        //bDeviceClass;
     0x00,                       //bDeviceSubClass;
     0x00,                       //bDeviceProtocol;
     64,                         //bMaxPacketSize0;
@@ -266,8 +266,8 @@ static struct usb_qualifier_descriptor dev_qualifier =
     sizeof(dev_qualifier),          //bLength
     USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
     0x0200,                         //bcdUSB
-    USB_CLASS_MASS_STORAGE,         //bDeviceClass
-    0x06,                           //bDeviceSubClass
+    0x0,                            //bDeviceClass
+    0x0,                            //bDeviceSubClass
     0x50,                           //bDeviceProtocol
     64,                             //bMaxPacketSize0
     0x01,                           //bNumConfigurations
@@ -347,7 +347,7 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
         USB_DYNAMIC | USB_DIR_IN,
         USB_EP_ATTR_INT,
         0x40,
-        0x01,
+        0x0A,
     },
 
     /* Endpoint Descriptor OUT */
@@ -372,7 +372,7 @@ const static char* _ustring[] =
     "Interface",
 };
 
-static void dump_data(uint8_t *data, rt_size_t size)
+static void dump_data(rt_uint8_t *data, rt_size_t size)
 {
     rt_size_t i;
     for (i = 0; i < size; i++)
@@ -458,8 +458,6 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
 
     struct hid_s *data = (struct hid_s *) func->user_data;
 
-    if(setup->wIndex != 0)
-        return -RT_EIO;
 
     switch (setup->bRequest)
     {
@@ -489,7 +487,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         dcd_ep0_send_status(func->device->dcd);
         break;
     case USB_HID_REQ_GET_PROTOCOL:
-        rt_usbd_ep0_write(func->device, &data->protocol,2);
+        rt_usbd_ep0_write(func->device, &data->protocol,1);
         break;
     case USB_HID_REQ_SET_REPORT:
 
@@ -695,8 +693,9 @@ ufunction_t rt_usbd_function_hid_create(udevice_t device)
 
     /* create a cdc function */
     func = rt_usbd_function_new(device, &_dev_desc, &ops);
-    //not support hs
-    //rt_usbd_device_set_qualifier(device, &_dev_qualifier);
+    
+    /* For high speed mode supporting */
+    rt_usbd_device_set_qualifier(device, &dev_qualifier);
 
     /* allocate memory for cdc vcom data */
     data = (struct hid_s*)rt_malloc(sizeof(struct hid_s));

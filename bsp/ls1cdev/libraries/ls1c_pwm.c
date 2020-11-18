@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2018, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2017-09-06     勤为本       first version
+ */
+
 // 封装硬件pwm接口
 
 #include "ls1c_public.h"
@@ -6,12 +16,8 @@
 #include "ls1c_clock.h"
 #include "ls1c_regs.h"
 
-
-
 // pwm的最大周期
 #define PWM_MAX_PERIOD                  (0xFFFFFF)      // 计数器的值
-
-
 
 /*
  * 根据gpio获取相应pwm的基地址
@@ -192,6 +198,4 @@ void pwm_init(pwm_info_t *pwm_info)
     
     return ;
 }
-
-
 

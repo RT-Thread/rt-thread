@@ -28,7 +28,7 @@ template<typename T, uint32_t queue_sz>
 class Mail {
 public:
     /** Create and Initialise Mail queue. */
-    Mail(const char* name = "")
+    Mail(const char *name = "")
     {
         rt_mb_init(&mID, name, mPool, queue_sz, RT_IPC_FLAG_FIFO);
     }

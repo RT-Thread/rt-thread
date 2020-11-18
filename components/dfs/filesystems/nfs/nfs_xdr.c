@@ -496,6 +496,8 @@ xdr_GETATTR3res(register XDR *xdrs, GETATTR3res *objp)
 		if (!xdr_GETATTR3resok(xdrs, &objp->GETATTR3res_u.resok))
 			return (FALSE);
 		break;
+	default :
+		return (FALSE);
 	}
 	return (TRUE);
 }

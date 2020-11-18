@@ -69,6 +69,7 @@ static int rt_wlan_device_connetct(char *ssid, char *passwd)
 
 static void airkiss_send_notification(uint8_t random)
 {
+    int i;
     int sock = -1;
     int udpbufsize = 2;
     struct sockaddr_in UDPBCAddr, UDPBCServerAddr;
@@ -102,7 +103,7 @@ static void airkiss_send_notification(uint8_t random)
         goto _exit;
     }
 
-    for (int i = 0; i <= 20; i++)
+    for (i = 0; i <= 20; i++)
     {
         int ret = sendto(sock, (char *)&random, 1, 0, (struct sockaddr *)&UDPBCAddr, sizeof(UDPBCAddr));
         rt_thread_delay(10);
