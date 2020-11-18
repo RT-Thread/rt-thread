@@ -22,9 +22,9 @@
 #define GET_PIN(PORTx,PIN) (GPIO##PORTx == GPIOZ) ? (176 + PIN) : ((rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x1000UL) )) + PIN))
 #else
 #define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
-// get GPIOx, eg: GPIOA...
+/* get GPIOx */
 #define GET_GPIO_PORT(pin) (GPIO_TypeDef *)( GPIOA_BASE + (uint32_t) ( pin >> 4 ) * 0x0400UL ) 
-// get GPIO_PIN_x, eg: GPIO_PIN_6...
+/* get GPIO_PIN_x */
 #define GET_GPIO_PIN(pin) (rt_uint16_t)( 1 << ( pin & 0x0F ) )
 #endif
 
