@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_USING_SMART
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -15,11 +16,12 @@
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 2048
+#define IDLE_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 2048
+#define RT_TIMER_THREAD_STACK_SIZE 512
 #define RT_DEBUG
+#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -32,17 +34,27 @@
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
+#define RT_USING_MEMHEAP
 #define RT_USING_SMALL_MEM
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
 
 #define RT_USING_DEVICE
+#define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 512
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40003
+#define ARCH_ARM
+#define ARCH_ARM_MMU
+#define RT_USING_USERSPACE
+#define KERNEL_VADDR_START 0xc0000000
+#define PV_OFFSET 0x40100000
+#define RT_IOREMAP_LATE
+#define ARCH_ARM_CORTEX_A
 #define ARCH_ARMV8
+#define RT_USING_CACHE
 
 /* RT-Thread Components */
 
@@ -67,14 +79,15 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
 
 #define RT_USING_DFS
 #define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_ELMFAT
 
@@ -89,15 +102,24 @@
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_ROMFS
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_PWM
+#define RT_USING_RTC
+#define RT_USING_SOFT_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 512
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -113,12 +135,22 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_USING_MUSL
 #define RT_USING_POSIX
+#define RT_USING_POSIX_MMAP
+#define RT_USING_POSIX_TERMIOS
+#define RT_USING_POSIX_AIO
 
 /* Network */
 
 /* Socket abstraction layer */
 
+#define RT_USING_SAL
+
+/* protocol stack implement */
+
+#define SAL_USING_LWIP
+#define SAL_USING_POSIX
 
 /* Network interface device */
 
@@ -144,8 +176,8 @@
 
 /* Static IPv4 Address */
 
-#define RT_LWIP_IPADDR "192.168.1.30"
-#define RT_LWIP_GWADDR "192.168.1.1"
+#define RT_LWIP_IPADDR "192.168.137.100"
+#define RT_LWIP_GWADDR "192.168.137.1"
 #define RT_LWIP_MSKADDR "255.255.255.0"
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
@@ -160,9 +192,9 @@
 #define RT_LWIP_TCP_WND 8196
 #define RT_LWIP_TCPTHREAD_PRIORITY 10
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
-#define RT_LWIP_TCPTHREAD_STACKSIZE 1024
+#define RT_LWIP_TCPTHREAD_STACKSIZE 4096
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
-#define RT_LWIP_ETHTHREAD_STACKSIZE 1024
+#define RT_LWIP_ETHTHREAD_STACKSIZE 4096
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
@@ -182,6 +214,11 @@
 
 /* Utilities */
 
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define RT_CH_MSG_MAX_NR 1024
+#define RT_LWP_SHM_MAX_NR 64
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
 
 /* RT-Thread online packages */
 
@@ -241,9 +278,6 @@
 #define BSP_USING_GIC
 #define BSP_USING_GIC400
 #define BSP_USING_PIN
-#define BSP_USING_SPI
-#define BSP_USING_SPI0_BUS
-#define BSP_USING_SPI0_DEVICE0
 #define BSP_USING_CORETIMER
 #define BSP_USING_WDT
 #define BSP_USING_SDIO
@@ -252,6 +286,5 @@
 /* Board Peripheral Drivers */
 
 #define BSP_USING_HDMI
-#define BSP_USING_HDMI_DISPLAY
 
 #endif

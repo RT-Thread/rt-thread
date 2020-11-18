@@ -12,7 +12,6 @@
 #ifndef __DRV_ETH_H__
 #define __DRV_ETH_H__
 
-#define MAC_REG                     (void *)(0xfd580000)
 
 //#define BIT(nr)                     (1UL << (nr))
 

@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 #include "raspi4.h"
+#include "mmu.h"
 
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
@@ -21,5 +22,7 @@ extern unsigned char __bss_end;
 #define RT_HW_HEAP_END      (void*)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024)
 
 void rt_hw_board_init(void);
+
+extern rt_mmu_info mmu_info;
 
 #endif
