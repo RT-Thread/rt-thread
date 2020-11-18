@@ -73,6 +73,7 @@ extern "C" {
 #include "l4/spi_config.h"
 #include "l4/qspi_config.h"
 #include "l4/adc_config.h"
+#include "l4/dac_config.h"
 #include "l4/tim_config.h"
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
