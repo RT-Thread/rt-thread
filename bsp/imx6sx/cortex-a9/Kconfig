@@ -28,8 +28,10 @@ source "$PKGS_DIR/Kconfig"
 
 config SOC_MCIMX6X4
     bool 
+    select ARCH_ARM_CORTEX_A9
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_CACHE
     default y
 
 config RT_USING_UART1

@@ -26,6 +26,10 @@
 #include <dlmodule.h>
 #endif
 
+#ifdef RT_USING_LWP
+#include <lwp_console.h>
+#endif
+
 /* use precision */
 #define RT_PRINTF_PRECISION
 
@@ -113,6 +117,13 @@ int *_rt_errno(void)
     return (int *)&__rt_errno;
 }
 RTM_EXPORT(_rt_errno);
+
+#ifdef RT_USING_MUSL
+int *___errno_location(void)
+{
+    return _rt_errno();
+}
+#endif
 
 /**
  * This function will set the content of memory to specified value
@@ -456,7 +467,7 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-    {        
+    {
         cs++;
         ct++;
     }
@@ -538,7 +549,11 @@ char *strdup(const char *s) __attribute__((alias("rt_strdup")));
 void rt_show_version(void)
 {
     rt_kprintf("\n \\ | /\n");
+#ifdef RT_USING_SMART
+    rt_kprintf("- RT -     Thread Smart Operating System\n");
+#else
     rt_kprintf("- RT -     Thread Operating System\n");
+#endif
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
     rt_kprintf(" 2006 - 2020 Copyright by rt-thread team\n");
@@ -1120,6 +1135,27 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
+#ifdef RT_USING_LWP
+    rt_device_t new_iodev, old_iodev = RT_NULL;
+
+    /* find new console device */
+    new_iodev = rt_device_find(name);
+    if (new_iodev != RT_NULL)
+    {
+        if (_console_device != RT_NULL)
+        {
+            old_iodev = rt_console_set_iodev(new_iodev);
+        }
+        else
+        {
+            rt_console_register("console", new_iodev);
+            _console_device = rt_device_find("console");
+            rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
+        }
+    }
+
+    return old_iodev;
+#else
     rt_device_t new_device, old_device;
 
     /* save old device */
@@ -1145,6 +1181,7 @@ rt_device_t rt_console_set_device(const char *name)
     }
 
     return old_device;
+#endif
 }
 RTM_EXPORT(rt_console_set_device);
 #endif

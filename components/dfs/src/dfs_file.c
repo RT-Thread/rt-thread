@@ -607,10 +607,10 @@ void cat(const char *filename)
 
     do
     {
-        memset(buffer, 0, sizeof(buffer));
         length = dfs_file_read(&fd, buffer, sizeof(buffer) - 1);
         if (length > 0)
         {
+            buffer[length] = '\0';
             rt_kprintf("%s", buffer);
         }
     }

@@ -39,7 +39,11 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
+#define RT_USING_CACHE
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_A
+#define ARCH_ARM_CORTEX_A9
 
 /* RT-Thread Components */
 
@@ -87,12 +91,6 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
-/* Using Hardware Crypto drivers */
-
-
-/* Using WiFi */
-
-
 /* Using USB */
 
 
@@ -126,6 +124,7 @@
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
+#define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -161,11 +160,9 @@
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
 #define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-
-/* Modbus master and slave stack */
-
 
 /* AT commands */
 
@@ -215,6 +212,13 @@
 
 /* samples: kernel and components samples */
 
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+#define SOC_MCIMX6X4
 #define RT_USING_UART1
 
 #endif

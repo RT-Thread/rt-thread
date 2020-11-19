@@ -14,7 +14,7 @@
 #include "raspi4.h"
 #include "drv_spi.h"
 
-#ifdef RT_USING_SPI
+#ifdef BSP_USING_SPI
 
 #define RPI_CORE_CLK_HZ        (250000000)
 #define BSP_SPI_MAX_HZ         (30* 1000 *1000)

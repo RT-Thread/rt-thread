@@ -22,6 +22,10 @@
 #include <dlmodule.h>
 #endif
 
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#endif
+
 /*
  * define object_info for the number of rt_object_container items.
  */
@@ -55,6 +59,9 @@ enum rt_object_info_type
     RT_Object_Info_Timer,                              /**< The object is a timer. */
 #ifdef RT_USING_MODULE
     RT_Object_Info_Module,                             /**< The object is a module. */
+#endif
+#ifdef RT_USING_LWP
+    RT_Object_Info_Channel,                            /**< The object is a IPC channel */
 #endif
     RT_Object_Info_Unknown,                            /**< The object is unknown. */
 };
@@ -102,6 +109,10 @@ static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] 
 #ifdef RT_USING_MODULE
     /* initialize object container - module */
     {RT_Object_Class_Module, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Module), sizeof(struct rt_dlmodule)},
+#endif
+#ifdef RT_USING_LWP
+    /* initialize object container - module */
+    {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel)},
 #endif
 };
 
@@ -212,7 +223,7 @@ void rt_system_object_init(void)
 /**
  * This function will return the specified type of object information.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  *
  * @return the object type information or RT_NULL
@@ -232,7 +243,7 @@ RTM_EXPORT(rt_object_get_information);
 /**
  * This function will return the length of object list in object container.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  * @return the length of object list
  */
@@ -259,10 +270,10 @@ int rt_object_get_length(enum rt_object_class_type type)
 RTM_EXPORT(rt_object_get_length);
 
 /**
- * This function will copy the object pointer of the specified type, 
+ * This function will copy the object pointer of the specified type,
  * with the maximum size specified by maxlen.
  *
- * @param type the type of object, which can be 
+ * @param type the type of object, which can be
  *             RT_Object_Class_Thread/Semaphore/Mutex... etc
  * @param pointers the pointers will be saved to
  * @param maxlen the maximum number of pointers can be saved
@@ -462,6 +473,21 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         rt_list_insert_after(&(information->object_list), &(object->list));
     }
 
+#ifdef RT_USING_LWP
+    {
+        struct rt_lwp *lwp = lwp_self();
+        if (lwp)
+        {
+            /* insert object into lwP object list */
+            rt_list_insert_after(&(lwp->object_list), &(object->lwp_obj_list));
+        }
+        else
+        {
+            rt_list_init(&(object->lwp_obj_list));
+        }
+    }
+#endif
+
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);
 
@@ -492,6 +518,11 @@ void rt_object_delete(rt_object_t object)
 
     /* remove from old list */
     rt_list_remove(&(object->list));
+
+#ifdef RT_USING_LWP
+    /* remove from the object list of lwP */
+    rt_list_remove(&(object->lwp_obj_list));
+#endif
 
     /* unlock interrupt */
     rt_hw_interrupt_enable(temp);

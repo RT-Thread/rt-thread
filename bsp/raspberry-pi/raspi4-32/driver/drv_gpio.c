@@ -23,26 +23,26 @@ static struct gpio_irq_def _g_gpio_irq_tbl[GPIO_IRQ_NUM];
 uint32_t raspi_get_pin_state(uint32_t fselnum)
 {
     uint32_t gpfsel = 0;
-
+    
     switch (fselnum)
     {
     case 0:
-        gpfsel = GPIO_REG_GPFSEL0(GPIO_BASE);
+        gpfsel = GPIO_REG_GPFSEL0(gpio_base_addr);
         break;
     case 1:
-        gpfsel = GPIO_REG_GPFSEL1(GPIO_BASE);
+        gpfsel = GPIO_REG_GPFSEL1(gpio_base_addr);
         break;
     case 2:
-        gpfsel = GPIO_REG_GPFSEL2(GPIO_BASE);
+        gpfsel = GPIO_REG_GPFSEL2(gpio_base_addr);
         break;
     case 3:
-        gpfsel = GPIO_REG_GPFSEL3(GPIO_BASE);
+        gpfsel = GPIO_REG_GPFSEL3(gpio_base_addr);
         break;
     case 4:
-        gpfsel = GPIO_REG_GPFSEL4(GPIO_BASE);
+        gpfsel = GPIO_REG_GPFSEL4(gpio_base_addr);
         break;
     case 5:
-        gpfsel = GPIO_REG_GPFSEL5(GPIO_BASE);
+        gpfsel = GPIO_REG_GPFSEL5(gpio_base_addr);
         break;
     default:
         break;
@@ -55,22 +55,22 @@ void raspi_set_pin_state(uint32_t fselnum, uint32_t gpfsel)
     switch (fselnum)
     {
     case 0:
-        GPIO_REG_GPFSEL0(GPIO_BASE) = gpfsel;
+        GPIO_REG_GPFSEL0(gpio_base_addr) = gpfsel;
         break;
     case 1:
-        GPIO_REG_GPFSEL1(GPIO_BASE) = gpfsel;
+        GPIO_REG_GPFSEL1(gpio_base_addr) = gpfsel;
         break;
     case 2:
-        GPIO_REG_GPFSEL2(GPIO_BASE) = gpfsel;
+        GPIO_REG_GPFSEL2(gpio_base_addr) = gpfsel;
         break;
     case 3:
-        GPIO_REG_GPFSEL3(GPIO_BASE) = gpfsel;
+        GPIO_REG_GPFSEL3(gpio_base_addr) = gpfsel;
         break;
     case 4:
-        GPIO_REG_GPFSEL4(GPIO_BASE) = gpfsel;
+        GPIO_REG_GPFSEL4(gpio_base_addr) = gpfsel;
         break;
     case 5:
-        GPIO_REG_GPFSEL5(GPIO_BASE) = gpfsel;
+        GPIO_REG_GPFSEL5(gpio_base_addr) = gpfsel;
         break;
     default:
         break;
@@ -86,22 +86,22 @@ static void gpio_set_pud(GPIO_PIN pin, GPIO_PUPD_FUNC mode)
     switch (fselnum)
     {
     case 0:
-        reg_value = GPIO_PUP_PDN_CNTRL_REG0(GPIO_BASE);
-        GPIO_PUP_PDN_CNTRL_REG0(GPIO_BASE) = (reg_value | (mode << (fselrest*2)));
+        reg_value = GPIO_PUP_PDN_CNTRL_REG0(gpio_base_addr);
+        GPIO_PUP_PDN_CNTRL_REG0(gpio_base_addr) = (reg_value | (mode << (fselrest*2)));
         break;
     case 1:
-        reg_value = GPIO_PUP_PDN_CNTRL_REG1(GPIO_BASE);
-        GPIO_PUP_PDN_CNTRL_REG1(GPIO_BASE) = (reg_value | (mode << (fselrest*2)));
+        reg_value = GPIO_PUP_PDN_CNTRL_REG1(gpio_base_addr);
+        GPIO_PUP_PDN_CNTRL_REG1(gpio_base_addr) = (reg_value | (mode << (fselrest*2)));
         break;
 
     case 2:
-        reg_value = GPIO_PUP_PDN_CNTRL_REG2(GPIO_BASE);
-        GPIO_PUP_PDN_CNTRL_REG2(GPIO_BASE) = (reg_value | (mode << (fselrest*2)));
+        reg_value = GPIO_PUP_PDN_CNTRL_REG2(gpio_base_addr);
+        GPIO_PUP_PDN_CNTRL_REG2(gpio_base_addr) = (reg_value | (mode << (fselrest*2)));
         break;
 
     case 3:
-        reg_value = GPIO_PUP_PDN_CNTRL_REG3(GPIO_BASE);
-        GPIO_PUP_PDN_CNTRL_REG3(GPIO_BASE) = (reg_value | (mode << (fselrest*2)));
+        reg_value = GPIO_PUP_PDN_CNTRL_REG3(gpio_base_addr);
+        GPIO_PUP_PDN_CNTRL_REG3(gpio_base_addr) = (reg_value | (mode << (fselrest*2)));
         break;    
     default:
         break;
@@ -128,23 +128,24 @@ void prev_raspi_pin_write(GPIO_PIN pin, int pin_value)
     {
         if(pin_value == 1)
         {
-            GPIO_REG_GPSET0(GPIO_BASE) = 1 << (pin % 32);
+            GPIO_REG_GPSET0(gpio_base_addr) = 1 << (pin % 32);
         }
         else
         {
-            GPIO_REG_GPCLR0(GPIO_BASE) = 1 << (pin % 32);
+            GPIO_REG_GPCLR0(gpio_base_addr) = 1 << (pin % 32);
         }
     }
     else
     {
         if(pin_value == 1)
         {
-            GPIO_REG_GPSET1(GPIO_BASE) = 1 << (pin % 32);
+            GPIO_REG_GPSET1(gpio_base_addr) = 1 << (pin % 32);
         }
         else
         {
-            GPIO_REG_GPCLR1(GPIO_BASE) = 1 << (pin % 32);
+            GPIO_REG_GPCLR1(gpio_base_addr) = 1 << (pin % 32);
         }
+        
     }
 }
 
@@ -187,7 +188,7 @@ static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
 
     if(num == 0)
     {
-        if(GPIO_REG_GPLEV0(GPIO_BASE) & (1 << pin))
+        if(GPIO_REG_GPLEV0(gpio_base_addr) & (1 << pin))
         {
             pin_level = 1;
         }
@@ -199,7 +200,7 @@ static int raspi_pin_read(struct rt_device *device, rt_base_t pin)
     }
     else
     {
-        if(GPIO_REG_GPLEV1(GPIO_BASE) & (1 << pin))
+        if(GPIO_REG_GPLEV1(gpio_base_addr) & (1 << pin))
         {
             pin_level = 1;
         }
@@ -235,65 +236,65 @@ static rt_err_t raspi_pin_attach_irq(struct rt_device *device, rt_int32_t pin, r
     case PIN_IRQ_MODE_RISING:
         if(pin_num == 0)
         {
-            reg_value = GPIO_REG_GPREN0(GPIO_BASE);
-            GPIO_REG_GPREN0(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPREN0(gpio_base_addr);
+            GPIO_REG_GPREN0(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         else
         {
-            reg_value = GPIO_REG_GPREN1(GPIO_BASE);
-            GPIO_REG_GPREN1(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPREN1(gpio_base_addr);
+            GPIO_REG_GPREN1(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         break;
     case PIN_IRQ_MODE_FALLING:
         if(pin_num == 0)
         {
-            reg_value = GPIO_REG_GPFEN0(GPIO_BASE);
-            GPIO_REG_GPFEN0(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPFEN0(gpio_base_addr);
+            GPIO_REG_GPFEN0(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         else
         {
-            reg_value = GPIO_REG_GPFEN1(GPIO_BASE);
-            GPIO_REG_GPFEN1(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPFEN1(gpio_base_addr);
+            GPIO_REG_GPFEN1(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         break;
     case PIN_IRQ_MODE_RISING_FALLING:
         if(pin_num == 0)
         {
-            reg_value = GPIO_REG_GPAREN0(GPIO_BASE);
-            GPIO_REG_GPAREN0(GPIO_BASE) = (reg_value & ~ mask) | (mask);
-            reg_value = GPIO_REG_GPFEN0(GPIO_BASE);
-            GPIO_REG_GPFEN0(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPAREN0(gpio_base_addr);
+            GPIO_REG_GPAREN0(gpio_base_addr) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPFEN0(gpio_base_addr);
+            GPIO_REG_GPFEN0(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         else
         {
-            reg_value = GPIO_REG_GPAREN1(GPIO_BASE);
-            GPIO_REG_GPAREN1(GPIO_BASE) = (reg_value & ~ mask) | (mask);
-            reg_value = GPIO_REG_GPFEN1(GPIO_BASE);
-            GPIO_REG_GPFEN1(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPAREN1(gpio_base_addr);
+            GPIO_REG_GPAREN1(gpio_base_addr) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPFEN1(gpio_base_addr);
+            GPIO_REG_GPFEN1(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         break;
     case PIN_IRQ_MODE_HIGH_LEVEL:
         if(pin_num == 0)
         {
-            reg_value = GPIO_REG_GPHEN0(GPIO_BASE);
-            GPIO_REG_GPHEN0(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPHEN0(gpio_base_addr);
+            GPIO_REG_GPHEN0(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         else
         {
-            reg_value = GPIO_REG_GPHEN1(GPIO_BASE);
-            GPIO_REG_GPHEN1(GPIO_BASE) = (reg_value & ~ mask) | ( mask);
+            reg_value = GPIO_REG_GPHEN1(gpio_base_addr);
+            GPIO_REG_GPHEN1(gpio_base_addr) = (reg_value & ~ mask) | ( mask);
         }
         break;
     case PIN_IRQ_MODE_LOW_LEVEL:
         if(pin_num == 0)
         {
-            reg_value = GPIO_REG_GPLEN0(GPIO_BASE);
-            GPIO_REG_GPLEN0(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPLEN0(gpio_base_addr);
+            GPIO_REG_GPLEN0(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         else
         {
-            reg_value = GPIO_REG_GPLEN1(GPIO_BASE);
-            GPIO_REG_GPLEN1(GPIO_BASE) = (reg_value & ~ mask) | (mask);
+            reg_value = GPIO_REG_GPLEN1(gpio_base_addr);
+            GPIO_REG_GPLEN1(gpio_base_addr) = (reg_value & ~ mask) | (mask);
         }
         break;
     }
@@ -357,30 +358,30 @@ static void gpio_irq_handler(int irq, void *param)
     if(irq == IRQ_GPIO0)
     {
         /* 0~27 */
-        value = GPIO_REG_GPEDS0(GPIO_BASE);
+        value = GPIO_REG_GPEDS0(gpio_base_addr);
         value &= 0x0fffffff;
         pin = 0;
-        GPIO_REG_GPEDS0(GPIO_BASE) = value;
+        GPIO_REG_GPEDS0(gpio_base_addr) = value;
     }
     else if(irq == IRQ_GPIO1)
     {
         /* 28-45 */
-        tmpvalue = GPIO_REG_GPEDS0(GPIO_BASE);
+        tmpvalue = GPIO_REG_GPEDS0(gpio_base_addr);
         tmpvalue &= (~0x0fffffff);
-        GPIO_REG_GPEDS0(GPIO_BASE) = tmpvalue;
+        GPIO_REG_GPEDS0(gpio_base_addr) = tmpvalue;
 
-        value = GPIO_REG_GPEDS1(GPIO_BASE);
+        value = GPIO_REG_GPEDS1(gpio_base_addr);
         value &= 0x3fff;
-        GPIO_REG_GPEDS1(GPIO_BASE) = value;
+        GPIO_REG_GPEDS1(gpio_base_addr) = value;
         value = (value) | tmpvalue;
         pin = 28;
     }
     else if (irq == IRQ_GPIO2)
     {
         /* 46-53 */
-        value = GPIO_REG_GPEDS1(GPIO_BASE);
+        value = GPIO_REG_GPEDS1(gpio_base_addr);
         value &= (~0x3fff);
-        GPIO_REG_GPEDS1(GPIO_BASE) = value;
+        GPIO_REG_GPEDS1(gpio_base_addr) = value;
         pin = 46;
     }
 
@@ -405,23 +406,23 @@ int rt_hw_gpio_init(void)
     rt_device_pin_register("gpio", &ops, RT_NULL);
 
     //disable all intr
-    GPIO_REG_GPEDS0(GPIO_BASE) = 0xffffffff;
-    GPIO_REG_GPEDS1(GPIO_BASE) = 0xffffffff;
+    GPIO_REG_GPEDS0(gpio_base_addr) = 0xffffffff;
+    GPIO_REG_GPEDS1(gpio_base_addr) = 0xffffffff;
 
-    GPIO_REG_GPREN0(GPIO_BASE) = 0x0;
-    GPIO_REG_GPREN1(GPIO_BASE) = 0x0;
+    GPIO_REG_GPREN0(gpio_base_addr) = 0x0;
+    GPIO_REG_GPREN1(gpio_base_addr) = 0x0;
 
-    GPIO_REG_GPFEN0(GPIO_BASE) = 0x0;
-    GPIO_REG_GPFEN1(GPIO_BASE) = 0x0;
+    GPIO_REG_GPFEN0(gpio_base_addr) = 0x0;
+    GPIO_REG_GPFEN1(gpio_base_addr) = 0x0;
 
-    GPIO_REG_GPHEN0(GPIO_BASE) = 0x0;
-    GPIO_REG_GPHEN1(GPIO_BASE) = 0x0;
+    GPIO_REG_GPHEN0(gpio_base_addr) = 0x0;
+    GPIO_REG_GPHEN1(gpio_base_addr) = 0x0;
 
-    GPIO_REG_GPAREN0(GPIO_BASE) = 0x0;
-    GPIO_REG_GPAREN1(GPIO_BASE) = 0x0;
+    GPIO_REG_GPAREN0(gpio_base_addr) = 0x0;
+    GPIO_REG_GPAREN1(gpio_base_addr) = 0x0;
 
-    GPIO_REG_GPAFEN0(GPIO_BASE) = 0x0;
-    GPIO_REG_GPAFEN0(GPIO_BASE) = 0x0;
+    GPIO_REG_GPAFEN0(gpio_base_addr) = 0x0;
+    GPIO_REG_GPAFEN0(gpio_base_addr) = 0x0;
     
     rt_hw_interrupt_install(IRQ_GPIO0, gpio_irq_handler, &_g_gpio_irq_tbl[0], "gpio0_irq");
     rt_hw_interrupt_umask(IRQ_GPIO0);

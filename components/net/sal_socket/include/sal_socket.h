@@ -35,8 +35,12 @@ typedef uint16_t in_port_t;
 #define SOCK_STREAM     1
 #define SOCK_DGRAM      2
 #define SOCK_RAW        3
+#define SOCK_PACKET     10
 
-#define SOCK_MAX        (SOCK_RAW + 1)
+#define SOCK_NONBLOCK   04000
+#define SOCK_CLOEXEC    02000000
+
+#define SOCK_MAX        (SOCK_CLOEXEC + 1)
 
 /* Option flags per-socket. These must match the SOF_ flags in ip.h (checked in init.c) */
 #define SO_REUSEADDR    0x0004 /* Allow local address reuse */

@@ -255,12 +255,13 @@ int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base)
 {
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
-    _gic_table[index].cpu_hw_base = cpu_base;
+    if (_gic_table[index].cpu_hw_base == 0)
+        _gic_table[index].cpu_hw_base = cpu_base;
 
-    GIC_CPU_PRIMASK(cpu_base) = 0xf0;
-    GIC_CPU_BINPOINT(cpu_base) = 0x7;
+    GIC_CPU_PRIMASK(_gic_table[index].cpu_hw_base) = 0xf0;
+    GIC_CPU_BINPOINT(_gic_table[index].cpu_hw_base) = 0x7;
     /* Enable CPU interrupt */
-    GIC_CPU_CTRL(cpu_base) = 0x01;
+    GIC_CPU_CTRL(_gic_table[index].cpu_hw_base) = 0x01;
 
     return 0;
 }

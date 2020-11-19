@@ -18,6 +18,7 @@ config PKGS_DIR
 config BOARD_IMX6UL
     bool 
     select ARCH_ARM_CORTEX_A7
+    select RT_USING_CACHE
     default y
 
 source "$RTT_DIR/Kconfig"

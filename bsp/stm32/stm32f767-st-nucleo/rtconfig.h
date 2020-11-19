@@ -16,8 +16,10 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 #define RT_DEBUG
-#define RT_DEBUG_COLOR
 
 /* Inter-Thread communication */
 
@@ -38,8 +40,10 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart3"
-#define RT_VER_NUM 0x40000
+#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_VER_NUM 0x40003
+#define RT_USING_CACHE
+#define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M7
@@ -84,10 +88,8 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -102,10 +104,10 @@
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -115,9 +117,6 @@
 
 
 /* Utilities */
-
-
-/* ARM CMSIS */
 
 
 /* RT-Thread online packages */
@@ -157,12 +156,13 @@
 /* miscellaneous packages */
 
 
-/* sample package */
-
 /* samples: kernel and components samples */
 
 
-/* example package: hello */
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F7

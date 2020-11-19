@@ -14,3 +14,9 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"
 source "board/Kconfig"
+
+config SOC_IMXRT1064
+    bool 
+    select ARCH_ARM_CORTEX_M7
+    select RT_USING_CACHE
+    default y

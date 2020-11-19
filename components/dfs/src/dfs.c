@@ -28,6 +28,7 @@ struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
 
 /* device filesystem lock */
 static struct rt_mutex fslock;
+static struct rt_mutex fdlock;
 
 #ifdef DFS_USING_WORKDIR
 char working_directory[DFS_PATH_MAX] = {"/"};
@@ -64,6 +65,7 @@ int dfs_init(void)
 
     /* create device filesystem lock */
     rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_FIFO);
 
 #ifdef DFS_USING_WORKDIR
     /* set current working directory */
@@ -108,6 +110,21 @@ void dfs_lock(void)
     }
 }
 
+void dfs_fd_lock(void)
+{
+    rt_err_t result = -RT_EBUSY;
+
+    while (result == -RT_EBUSY)
+    {
+        result = rt_mutex_take(&fdlock, RT_WAITING_FOREVER);
+    }
+
+    if (result != RT_EOK)
+    {
+        RT_ASSERT(0);
+    }
+}
+
 /**
  * this function will lock device file system.
  *
@@ -116,6 +133,11 @@ void dfs_lock(void)
 void dfs_unlock(void)
 {
     rt_mutex_release(&fslock);
+}
+
+void dfs_fd_unlock(void)
+{
+    rt_mutex_release(&fdlock);
 }
 
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
@@ -172,15 +194,13 @@ __exit:
  *
  * @return -1 on failed or the allocated file descriptor.
  */
-int fd_new(void)
+int fdt_fd_new(struct dfs_fdtable *fdt)
 {
     struct dfs_fd *d;
     int idx;
-    struct dfs_fdtable *fdt;
 
-    fdt = dfs_fdtable_get();
     /* lock filesystem */
-    dfs_lock();
+    dfs_fd_lock();
 
     /* find an empty fd entry */
     idx = fd_alloc(fdt, 0);
@@ -198,8 +218,16 @@ int fd_new(void)
     d->magic = DFS_FD_MAGIC;
 
 __result:
-    dfs_unlock();
+    dfs_fd_unlock();
     return idx + DFS_FD_OFFSET;
+}
+
+int fd_new(void)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    return fdt_fd_new(fdt);
 }
 
 /**
@@ -211,36 +239,42 @@ __result:
  * @return NULL on on this file descriptor or the file descriptor structure
  * pointer.
  */
-struct dfs_fd *fd_get(int fd)
+struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
 {
     struct dfs_fd *d;
-    struct dfs_fdtable *fdt;
 
 #if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
     if ((0 <= fd) && (fd <= 2))
         fd = libc_stdio_get_console();
 #endif
 
-    fdt = dfs_fdtable_get();
     fd = fd - DFS_FD_OFFSET;
     if (fd < 0 || fd >= (int)fdt->maxfd)
         return NULL;
 
-    dfs_lock();
+    dfs_fd_lock();
     d = fdt->fds[fd];
 
     /* check dfs_fd valid or not */
     if ((d == NULL) || (d->magic != DFS_FD_MAGIC))
     {
-        dfs_unlock();
+        dfs_fd_unlock();
         return NULL;
     }
 
     /* increase the reference count */
     d->ref_count ++;
-    dfs_unlock();
+    dfs_fd_unlock();
 
     return d;
+}
+
+struct dfs_fd *fd_get(int fd)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    return fdt_fd_get(fdt, fd);
 }
 
 /**
@@ -248,11 +282,11 @@ struct dfs_fd *fd_get(int fd)
  *
  * This function will put the file descriptor.
  */
-void fd_put(struct dfs_fd *fd)
+void fdt_fd_put(struct dfs_fdtable* fdt, struct dfs_fd *fd)
 {
     RT_ASSERT(fd != NULL);
 
-    dfs_lock();
+    dfs_fd_lock();
 
     fd->ref_count --;
 
@@ -260,9 +294,7 @@ void fd_put(struct dfs_fd *fd)
     if (fd->ref_count == 0)
     {
         int index;
-        struct dfs_fdtable *fdt;
 
-        fdt = dfs_fdtable_get();
         for (index = 0; index < (int)fdt->maxfd; index ++)
         {
             if (fdt->fds[index] == fd)
@@ -273,7 +305,15 @@ void fd_put(struct dfs_fd *fd)
             }
         }
     }
-    dfs_unlock();
+    dfs_fd_unlock();
+}
+
+void fd_put(struct dfs_fd *fd)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+    fdt_fd_put(fdt, fd);
 }
 
 /**
@@ -313,7 +353,7 @@ int fd_is_open(const char *pathname)
         else
             mountpath = fullpath + strlen(fs->path);
 
-        dfs_lock();
+        dfs_fd_lock();
 
         for (index = 0; index < fdt->maxfd; index++)
         {
@@ -324,12 +364,12 @@ int fd_is_open(const char *pathname)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
-                dfs_unlock();
+                dfs_fd_unlock();
 
                 return 0;
             }
         }
-        dfs_unlock();
+        dfs_fd_unlock();
 
         rt_free(fullpath);
     }
@@ -517,6 +557,11 @@ struct dfs_fdtable *dfs_fdtable_get(void)
     return fdt;
 }
 
+struct dfs_fdtable *dfs_fdtable_get_global(void)
+{
+    return &_fdtab;
+}
+
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 int list_fd(void)
@@ -561,6 +606,82 @@ int list_fd(void)
     return 0;
 }
 MSH_CMD_EXPORT(list_fd, list file descriptor);
+
+/*
+ * If no argument is specified, display the mount history;
+ * If there are 3 arguments, mount the filesystem.
+ * The order of the arguments is:
+ * argv[1]: device name
+ * argv[2]: mountpoint path
+ * argv[3]: filesystem type
+ */
+int mount(int argc, char *argv[])
+{
+    if (argc == 1) /* display the mount history */
+    {
+        struct dfs_filesystem *iter;
+
+        rt_kprintf("filesystem  device  mountpoint\n");
+        rt_kprintf("----------  ------  ----------\n");
+        for (iter = &filesystem_table[0];
+             iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+        {
+            if ((iter != NULL) && (iter->path != NULL))
+            {
+                rt_kprintf("%-10s  %-6s  %-s\n",
+                           iter->ops->name, iter->dev_id->parent.name, iter->path);
+            }
+        }
+        return 0;
+    }
+    else if (argc == 4)
+    { /* mount a filesystem to the specified directory */
+        char *device = argv[1];
+        char *path = argv[2];
+        char *fstype = argv[3];
+
+        rt_kprintf("mount device %s(%s) onto %s ... ", device, fstype, path);
+        if (dfs_mount(device, path, fstype, 0, 0) == 0)
+        {
+            rt_kprintf("succeed!\n");
+            return 0;
+        }
+        else
+        {
+            rt_kprintf("failed!\n");
+            return -1;
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: mount <device> <mountpoint> <fstype>.\n");
+        return -1;
+    }
+}
+MSH_CMD_EXPORT(mount, mount<device><mountpoint><fstype>);
+
+/* unmount the filesystem from the specified mountpoint */
+int unmount(int argc, char *argv[])
+{
+    if (argc != 2)
+    {
+        rt_kprintf("Usage: unmount <mountpoint>.\n");
+        return -1;
+    }
+
+    char *path = argv[1];
+
+    rt_kprintf("unmount %s ... ", path);
+    if (dfs_unmount(path) < 0)
+    {
+        rt_kprintf("failed!\n");
+        return -1;
+    } else {
+        rt_kprintf("succeed!\n");
+        return 0;
+    }
+}
+MSH_CMD_EXPORT(unmount, unmount the mountpoint);
+
 #endif
 /*@}*/
-

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-12-10     Jesven       fix complie error in iar and keil
+ * 2019-11-12     Jesven       the first version
  */
 
 #ifndef __LWP_SYSCALL_H__
@@ -14,8 +14,13 @@
 #include <stdint.h>
 #include <rtthread.h>
 #include <dfs_posix.h>
+#include <dfs_poll.h>
 #include <sys/time.h>
 #include <sys/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef long suseconds_t;       /* microseconds (signed) */
 typedef uint32_t id_t;          /* may contain pid, uid or gid */
@@ -30,35 +35,62 @@ typedef uint32_t id_t;          /* may contain pid, uid or gid */
 #define	PRIO_PGRP	    1
 #define	PRIO_USER	    2
 
-#ifndef TIMEVAL_TO_TIMESPEC
-#define TIMEVAL_TO_TIMESPEC(tv, ts) {                   \
-    (ts)->tv_sec = (tv)->tv_sec;                        \
-    (ts)->tv_nsec = (tv)->tv_usec * 1000;               \
-}
-#endif
-
-#ifndef TIMESPEC_TO_TIMEVAL
-#define TIMESPEC_TO_TIMEVAL(tv, ts) {                   \
-    (tv)->tv_sec = (ts)->tv_sec;                        \
-    (tv)->tv_usec = (ts)->tv_nsec / 1000;               \
-}
-#endif
-
 void sys_exit(int value);
 ssize_t sys_read(int fd, void *buf, size_t nbyte);
 ssize_t sys_write(int fd, const void *buf, size_t nbyte);
 off_t sys_lseek(int fd, off_t offset, int whence);
 int sys_open(const char *name, int mode, ...);
 int sys_close(int fd);
+int sys_ioctl(int fd, unsigned long cmd, void* data);
+int sys_fstat(int file, struct stat *buf);
+int sys_poll(struct pollfd *fds, nfds_t nfds, int timeout);
 int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
-int sys_getpriority(int which, id_t who);
-int sys_setpriority(int which, id_t who, int prio);
 int sys_gettimeofday(struct timeval *tp, struct timezone *tzp);
 int sys_settimeofday(const struct timeval *tv, const struct timezone *tzp);
-int sys_msgget(key_t key, int msgflg);
-int sys_msgsend(int msqid, const void *msgp, size_t msgsz, int msgflg);
-int sys_msgrcv(int msqid, void *msgp, size_t msgsz, long msgtyp, int msgflg);
+int sys_exec(char *filename, int argc, char **argv, char **envp);
+int sys_kill(int pid, int sig);
+int sys_getpid(void);
+int sys_getpriority(int which, id_t who);
+int sys_setpriority(int which, id_t who, int prio);
+rt_sem_t sys_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag);
+rt_err_t sys_sem_delete(rt_sem_t sem);
+rt_err_t sys_sem_take(rt_sem_t sem, rt_int32_t time);
+rt_err_t sys_sem_release(rt_sem_t sem);
+rt_mutex_t sys_mutex_create(const char *name, rt_uint8_t flag);
+rt_err_t sys_mutex_delete(rt_mutex_t mutex);
+rt_err_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time);
+rt_err_t sys_mutex_release(rt_mutex_t mutex);
+rt_event_t sys_event_create(const char *name, rt_uint8_t flag);
+rt_err_t sys_event_delete(rt_event_t event);
+rt_err_t sys_event_send(rt_event_t event, rt_uint32_t set);
+rt_err_t sys_event_recv(rt_event_t event, rt_uint32_t set, rt_uint8_t opt, rt_int32_t timeout, rt_uint32_t *recved);
+rt_mailbox_t sys_mb_create(const char *name, rt_size_t size, rt_uint8_t flag);
+rt_err_t sys_mb_delete(rt_mailbox_t mb);
+rt_err_t sys_mb_send(rt_mailbox_t mb, rt_uint32_t value);
+rt_err_t sys_mb_send_wait(rt_mailbox_t mb, rt_uint32_t value, rt_int32_t timeout);
+rt_err_t sys_mb_recv(rt_mailbox_t mb, rt_uint32_t *value, rt_int32_t timeout);
+rt_mq_t sys_mq_create(const char *name, rt_size_t msg_size, rt_size_t max_msgs, rt_uint8_t flag);
+rt_err_t sys_mq_delete(rt_mq_t mq);
+rt_err_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size);
+rt_err_t sys_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size);
+rt_err_t sys_mq_recv(rt_mq_t mq, void *buffer, rt_size_t size, rt_int32_t timeout);
+rt_thread_t sys_thread_create(void *arg[]);
+rt_err_t sys_thread_delete(rt_thread_t thread);
+rt_err_t sys_thread_startup(rt_thread_t thread);
+rt_thread_t sys_thread_self(void);
+int sys_channel_open(const char *name, int flags);
+rt_err_t sys_channel_close(int fd);
+rt_err_t sys_channel_send(int fd, rt_channel_msg_t data);
+rt_err_t sys_channel_send_recv(int fd, rt_channel_msg_t data, rt_channel_msg_t data_ret);
+rt_err_t sys_channel_reply(int fd, rt_channel_msg_t data);
+rt_err_t sys_channel_recv(int fd, rt_channel_msg_t data);
+void sys_enter_critical(void);
+void sys_exit_critical(void);
 
 int sys_log(const char* log, int size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

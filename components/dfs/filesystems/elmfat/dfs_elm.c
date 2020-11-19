@@ -191,7 +191,7 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     return RT_EOK;
 }
 
-int dfs_elm_mkfs(rt_device_t dev_id)
+int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
 {
 #define FSM_STATUS_INIT            0
 #define FSM_STATUS_USE_TEMP_DRIVER 1
@@ -567,7 +567,7 @@ int dfs_elm_flush(struct dfs_fd *file)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_lseek(struct dfs_fd *file, rt_off_t offset)
+int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
 {
     FRESULT result = FR_OK;
     if (file->type == FT_REGULAR)

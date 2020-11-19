@@ -24,7 +24,7 @@
 
 SECTIONS
 {
-    . = 0x8000;
+    . = 0xc0000000;
     . = ALIGN(4096);
     .text :
     {
@@ -61,6 +61,12 @@ SECTIONS
 
         . = ALIGN(16);
         _etext = .;
+    }
+
+    .ARM.exidx : {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
     }
 
     .eh_frame_hdr :

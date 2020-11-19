@@ -13,6 +13,7 @@
 #define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_DEBUG
@@ -39,6 +40,10 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "dbgu"
+#define RT_VER_NUM 0x40003
+#define RT_USING_CACHE
+#define ARCH_ARM
+#define ARCH_ARM_ARM9
 
 /* RT-Thread Components */
 
@@ -49,9 +54,6 @@
 
 /* C++ features */
 
-#define RT_USING_DEVICE_IPC
-#define RT_USING_SERIAL
-#define RT_SERIAL_USING_DMA
 
 /* Command shell */
 
@@ -82,6 +84,8 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
+#define RT_SERIAL_USING_DMA
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
 /* Using USB */
@@ -90,16 +94,17 @@
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
+#define RT_USING_POSIX
 
 /* Network */
 
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -148,13 +153,15 @@
 /* miscellaneous packages */
 
 
-/* sample package */
-
 /* samples: kernel and components samples */
 
 
-/* example package: hello */
+/* Privated Packages of RealThread */
 
+
+/* Network Utilities */
+
+#define SOC_AT91SAM926
 #define RT_USING_DBGU
 #define RT_USING_LED
 

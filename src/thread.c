@@ -126,6 +126,10 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
     /* init thread list */
     rt_list_init(&(thread->tlist));
 
+#ifdef RT_USING_LWP
+    thread->wakeup.func = RT_NULL;
+#endif
+
     thread->entry = (void *)entry;
     thread->parameter = parameter;
 
@@ -201,6 +205,13 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 
 #ifdef RT_USING_LWP
     thread->lwp = RT_NULL;
+    rt_list_init(&(thread->sibling));
+    thread->signal = 0;
+    thread->signal_mask = 0;
+    thread->signal_mask_bak = 0;
+    thread->signal_in_process = 0;
+    rt_memset(thread->signal_handler, 0, sizeof thread->signal_handler);
+    rt_memset(&thread->user_ctx, 0, sizeof thread->user_ctx);
 #endif
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
@@ -478,15 +489,18 @@ RTM_EXPORT(rt_thread_delete);
  */
 rt_err_t rt_thread_yield(void)
 {
+    rt_base_t level;
     struct rt_thread *thread;
-    rt_base_t lock;
 
     thread = rt_thread_self();
-    lock = rt_hw_interrupt_disable();
+
+    level = rt_hw_interrupt_disable();
+
     thread->remaining_tick = thread->init_tick;
     thread->stat |= RT_THREAD_STAT_YIELD;
+
     rt_schedule();
-    rt_hw_interrupt_enable(lock);
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
@@ -809,6 +823,10 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     rt_timer_stop(&thread->thread_timer);
 
+#ifdef RT_USING_LWP
+    thread->wakeup.func = RT_NULL;
+#endif
+
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
 
@@ -819,6 +837,53 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_resume);
+
+#ifdef RT_USING_LWP
+/**
+ * This function will wakeup a thread with customized operation.
+ *
+ * @param thread the thread to be resumed
+ *
+ * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ */
+rt_err_t rt_thread_wakeup(rt_thread_t thread)
+{
+    register rt_base_t temp;
+    rt_err_t ret;
+
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
+    if (thread->wakeup.func)
+    {
+        ret = thread->wakeup.func(thread->wakeup.user_data, thread);
+        thread->wakeup.func = RT_NULL;
+    }
+    else
+    {
+        ret = rt_thread_resume(thread);
+    }
+
+    rt_hw_interrupt_enable(temp);
+    return ret;
+}
+RTM_EXPORT(rt_thread_wakeup);
+
+void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data)
+{
+    register rt_base_t temp;
+
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+
+    temp = rt_hw_interrupt_disable();
+    thread->wakeup.func = func;
+    thread->wakeup.user_data = user_data;
+    rt_hw_interrupt_enable(temp);
+}
+RTM_EXPORT(rt_thread_wakeup_set);
+#endif
 
 /**
  * This function is the timeout function for thread, normally which is invoked

@@ -6,3 +6,29 @@ config RT_USING_LWP
     default n
     help
         The lwP is a light weight process running in user mode.
+
+if RT_USING_LWP
+    config RT_LWP_MAX_NR
+        int "The max number of light-weight process"
+        default 30
+endif
+
+config RT_USING_GDBSERVER
+    bool "Using gdbserver"
+    default y
+    depends on RT_USING_USERSPACE
+
+config RT_CH_MSG_MAX_NR
+    int "The maximum number of channel messages"
+    default 1024
+    depends on RT_USING_LWP
+
+config RT_LWP_SHM_MAX_NR
+    int "The maximum number of shared memory"
+    default 64
+    depends on RT_USING_LWP
+
+config LWP_CONSOLE_INPUT_BUFFER_SIZE
+    int "The input buffer size of lwp console device"
+    default 1024
+    depends on RT_USING_LWP

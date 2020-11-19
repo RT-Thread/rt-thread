@@ -53,9 +53,9 @@ extern "C" {
 /**@{*/
 
 /* RT-Thread version information */
-#define RT_VERSION                      4L              /**< major version number */
+#define RT_VERSION                      5L              /**< major version number */
 #define RT_SUBVERSION                   0L              /**< minor version number */
-#define RT_REVISION                     3L              /**< revise version number */
+#define RT_REVISION                     0L              /**< revise version number */
 
 /* RT-Thread version */
 #define RTTHREAD_VERSION                ((RT_VERSION * 10000) + \
@@ -114,6 +114,10 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define __CLANG_ARM
 #endif
 
+#if defined(__ARMCC_VERSION) && defined(__GNUC__)
+#define __ARMCC_GNUC__
+#endif
+
 /* Compiler Related Definitions */
 #if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
     #include <stdarg.h>
@@ -143,7 +147,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RTT_API
 
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
-    #ifdef RT_USING_NEWLIB
+    #if defined(RT_USING_NEWLIB) || defined(RT_USING_MUSL)
         #include <stdarg.h>
     #else
         /* the version of GNU GCC must be greater than 4.x */
@@ -221,11 +225,11 @@ typedef int (*init_fn_t)(void);
 #define INIT_EXPORT(fn, level)
 #endif
 
-/* board init routines will be called in board_init() function */
+/* board initial routines will be called in board_init() function */
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
 
-/* pre/device/component/env/app init routines will be called in init_thread */
-/* components pre-initialization (pure software initilization) */
+/* pre/device/component/env/app initial routines will be called in init_thread */
+/* components pre-initialization (pure software initialization) */
 #define INIT_PREV_EXPORT(fn)            INIT_EXPORT(fn, "2")
 /* device initialization */
 #define INIT_DEVICE_EXPORT(fn)          INIT_EXPORT(fn, "3")
@@ -233,7 +237,7 @@ typedef int (*init_fn_t)(void);
 #define INIT_COMPONENT_EXPORT(fn)       INIT_EXPORT(fn, "4")
 /* environment initialization (mount disk, ...) */
 #define INIT_ENV_EXPORT(fn)             INIT_EXPORT(fn, "5")
-/* appliation initialization (rtgui application etc ...) */
+/* application initialization (rtgui application etc ...) */
 #define INIT_APP_EXPORT(fn)             INIT_EXPORT(fn, "6")
 
 #if !defined(RT_USING_FINSH)
@@ -287,6 +291,7 @@ typedef int (*init_fn_t)(void);
 #define RT_EIO                          8               /**< IO error */
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
+#define RT_ETRAP                        11              /**< trap event */
 
 /**@}*/
 
@@ -358,6 +363,11 @@ struct rt_object
 #ifdef RT_USING_MODULE
     void      *module_id;                               /**< id of application module */
 #endif
+
+#ifdef RT_USING_LWP
+    rt_list_t  lwp_obj_list;                            /**< list node of kernel object for lwp */
+#endif
+
     rt_list_t  list;                                    /**< list node of kernel object */
 };
 typedef struct rt_object *rt_object_t;                  /**< Type for kernel objects. */
@@ -393,7 +403,8 @@ enum rt_object_class_type
     RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
-    RT_Object_Class_Unknown       = 0x0c,      /**< The object is unknown. */
+    RT_Object_Class_Channel       = 0x0c,      /**< The object is a channel */
+    RT_Object_Class_Unknown       = 0x0d,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
@@ -441,6 +452,10 @@ struct rt_object_information
 #define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
 #define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
 #define RT_TIMER_CTRL_GET_STATE         0x4             /**< get timer run state active or deactive*/
+#define RT_TIMER_CTRL_GET_FUNC          0x5             /**< get timer timeout func  */
+#define RT_TIMER_CTRL_SET_FUNC          0x6             /**< set timer timeout func  */
+#define RT_TIMER_CTRL_GET_PARM          0x7             /**< get timer parameter  */
+#define RT_TIMER_CTRL_SET_PARM          0x8             /**< get timer parameter  */
 
 #ifndef RT_TIMER_SKIP_LIST_LEVEL
 #define RT_TIMER_SKIP_LIST_LEVEL          1
@@ -556,6 +571,27 @@ struct rt_cpu
 
 #endif
 
+struct rt_thread;
+
+#ifdef RT_USING_LWP
+typedef rt_err_t (*rt_wakeup_func_t)(void *object, struct rt_thread *thread);
+
+struct rt_wakeup
+{
+    rt_wakeup_func_t func;
+    void *user_data;
+};
+
+typedef void (*lwp_sighandler_t)(int);
+typedef rt_uint32_t lwp_sigset_t;
+struct rt_user_context
+{
+    void *sp;
+    void *pc;
+    void *flag;
+};
+#endif
+
 /**
  * Thread structure
  */
@@ -568,6 +604,10 @@ struct rt_thread
 
 #ifdef RT_USING_MODULE
     void       *module_id;                              /**< id of application module */
+#endif
+
+#ifdef RT_USING_LWP
+    rt_list_t  lwp_obj_list;                            /**< list node of kernel object for lwp */
 #endif
 
     rt_list_t   list;                                   /**< the object list */
@@ -620,8 +660,15 @@ struct rt_thread
     void            *si_list;                           /**< the signal infor list */
 #endif
 
+#if defined(RT_USING_LWP)
+    void            *msg_ret;                           /**< the return msg */
+#endif
+
     rt_ubase_t  init_tick;                              /**< thread's initialized tick */
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
+
+    rt_ubase_t  tick_mark;
+    rt_ubase_t  run_tick;
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
 
@@ -630,6 +677,29 @@ struct rt_thread
     /* light weight process if present */
 #ifdef RT_USING_LWP
     void        *lwp;
+    /* for user create */
+    void        *user_entry;
+    void        *user_stack;
+    rt_uint32_t user_stack_size;
+    rt_uint32_t *kernel_sp;                             /**< kernel stack point */
+    rt_list_t   sibling;                                /**< next thread of same process */
+
+    rt_uint32_t signal;
+    lwp_sigset_t signal_mask;
+    lwp_sigset_t signal_mask_bak;
+    rt_uint32_t signal_in_process;
+    lwp_sighandler_t signal_handler[32];
+    struct rt_user_context user_ctx;
+
+    struct rt_wakeup wakeup;                            /**< wakeup data */
+    int exit_request;
+#ifdef RT_USING_USERSPACE
+    int step_exec;
+    int debug_ret_user;
+    int debug_suspend;
+    struct rt_hw_exp_stack *regs;
+    void * thread_idr;                                 /** lwp thread indicator */
+#endif
 #endif
 
     rt_ubase_t user_data;                             /**< private user data beyond this thread */
@@ -909,6 +979,8 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
 #define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
 #define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
+#define RT_DEVICE_CTRL_NOTIFY_SET       0x05            /**< set notify func */
+#define RT_DEVICE_CTRL_CONSOLE_OFLAG    0x06            /**< get console open flag */
 
 #define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */
@@ -994,6 +1066,29 @@ struct rt_device
 
     void                     *user_data;                /**< device private data */
 };
+
+/**
+ * Notify structure
+ */
+struct rt_device_notify
+{
+    void (*notify)(rt_device_t dev);
+    struct rt_device *dev;
+};
+
+#ifdef RT_USING_LWP
+struct rt_channel
+{
+    struct rt_ipc_object parent;                        /**< inherit from object */
+    struct rt_thread *reply;                            /**< the thread will be reply */
+    rt_list_t wait_msg;                                 /**< the wait queue of sender msg */
+    rt_list_t wait_thread;                              /**< the wait queue of sender thread */
+    rt_wqueue_t reader_queue;                           /**< channel poll queue */
+    rt_uint8_t  stat;                                   /**< the status of this channel */
+    rt_ubase_t  ref;
+};
+typedef struct rt_channel *rt_channel_t;
+#endif
 
 /**
  * block device geometry structure

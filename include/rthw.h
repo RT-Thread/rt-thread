@@ -12,6 +12,7 @@
  * 2017-10-17     Hichard      add some micros
  * 2018-11-17     Jesven       add rt_hw_spinlock_t
  *                             add smp support
+ * 2019-05-18     Bernard      add empty definition for not enable cache case
  */
 
 #ifndef __RT_HW_H__
@@ -49,6 +50,7 @@ enum RT_HW_CACHE_OPS
 /*
  * CPU interfaces
  */
+#ifdef RT_USING_CACHE
 void rt_hw_cpu_icache_enable(void);
 void rt_hw_cpu_icache_disable(void);
 rt_base_t rt_hw_cpu_icache_status(void);
@@ -58,6 +60,20 @@ void rt_hw_cpu_dcache_enable(void);
 void rt_hw_cpu_dcache_disable(void);
 rt_base_t rt_hw_cpu_dcache_status(void);
 void rt_hw_cpu_dcache_ops(int ops, void* addr, int size);
+#else
+
+/* define cache ops as empty */
+#define rt_hw_cpu_icache_enable
+#define rt_hw_cpu_icache_disable
+#define rt_hw_cpu_icache_ops
+#define rt_hw_cpu_dcache_enable
+#define rt_hw_cpu_dcache_disable
+#define rt_hw_cpu_dcache_ops
+
+#define rt_hw_cpu_icache_status 0
+#define rt_hw_cpu_dcache_status 0
+
+#endif
 
 void rt_hw_cpu_reset(void);
 void rt_hw_cpu_shutdown(void);
@@ -186,6 +202,8 @@ void rt_hw_secondary_cpu_idle_exec(void);
 
 #define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
 #define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
+
+typedef int rt_spinlock_t;
 
 #endif
 

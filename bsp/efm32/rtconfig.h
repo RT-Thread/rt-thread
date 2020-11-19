@@ -213,6 +213,7 @@
 /* SECTION: Runtime library */
 // #define RT_USING_NOLIBC
 // #define RT_USING_NEWLIB
+#define RT_USING_LIBC
 #define RT_LIBC_USING_TIME
 
 /* SECTION: Console options */
@@ -281,7 +282,7 @@
 #define RT_USING_DFS_ELMFAT
 #define DFS_ELMFAT_INTERFACE_EFM
 #endif /* defined(EFM32_USING_SPISD) */
-#if defined(RT_USING_NEWLIB)
+#if defined(RT_USING_LIBC)
 #define RT_USING_DFS_DEVFS
 #endif /* defined(RT_USING_NEWLIB) */
 

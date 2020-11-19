@@ -275,9 +275,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         except KeyError:
             print ('Unknow target: '+ tgt_name+'. Avaible targets: ' +', '.join(tgt_dict.keys()))
             sys.exit(1)
-    elif (GetDepend('RT_USING_NEWLIB') == False and GetDepend('RT_USING_NOLIBC') == False) \
-        and rtconfig.PLATFORM == 'gcc':
-        AddDepend('RT_USING_MINILIBC')
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
     if not os.path.exists(rtconfig.EXEC_PATH):
@@ -331,11 +328,17 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # parse rtconfig.h to get used component
     PreProcessor = PatchedPreProcessor()
-    f = open('rtconfig.h', 'r')
-    contents = f.read()
-    f.close()
-    PreProcessor.process_contents(contents)
-    BuildOptions = PreProcessor.cpp_namespace
+    try:
+        f = open('rtconfig.h', 'r')
+        contents = f.read()
+        f.close()
+        PreProcessor.process_contents(contents)
+        BuildOptions = PreProcessor.cpp_namespace
+    except:
+        pass
+
+    if rtconfig.PLATFORM == 'gcc' and not GetDepend('RT_USING_LIBC'):
+        AddDepend('RT_USING_MINILIBC') # use minilibc
 
     if GetOption('clang-analyzer'):
         # perform what scan-build does

@@ -1,22 +1,25 @@
 from building import *
 
-Import('rtconfig')
-
 src   = []
 cwd   = GetCurrentDir()
 group = []
 CPPPATH = [cwd]
+CPPDEFINES = []
 
 if GetDepend('RT_USING_LIBC'):
-        src += Glob('*.c')      
+    src += Glob('*.c')
 else:
-        if GetDepend('RT_LIBC_USING_TIME') and not GetDepend('RT_USING_MINILIBC'):
-                src += ['time.c']
+    if GetDepend('RT_LIBC_USING_TIME') and not GetDepend('RT_USING_MINILIBC'):
+        src += ['time.c']
 
 if GetDepend('RT_USING_POSIX') == False:
-        SrcRemove(src, ['unistd.c'])
+    SrcRemove(src, ['unistd.c'])
 
-if not GetDepend('RT_USING_MINILIBC') and (GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME')):
-	group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_MUSL'):
+    SrcRemove(src, ['time.c'])
+    CPPDEFINES = ['_TIMEVAL_DEFINED']
+
+if not GetDepend('RT_USING_MINILIBC') and not GetDepend('RT_USING_MUSL') and (GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME')):
+    group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

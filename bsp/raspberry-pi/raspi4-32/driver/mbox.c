@@ -11,18 +11,20 @@
  */
 
 /* mailbox message buffer */
+#include <rthw.h>
 #include "mbox.h"
 #include "mmu.h"
 //volatile unsigned int  __attribute__((aligned(16))) mbox[36];
-volatile unsigned int *mbox = (volatile unsigned int *) MBOX_ADDR;
+
 #define BUS_ADDRESS(phys)	(((phys) & ~0xC0000000)  |  0xC0000000)
+volatile unsigned int *mbox;
 
 /**
  * Make a mailbox call. Returns 0 on failure, non-zero on success
  */
 int mbox_call(unsigned char ch, int mmu_enable)
 {
-    unsigned int r = (((MBOX_ADDR)&~0xF) | (ch&0xF));
+    unsigned int r = ((((rt_uint32_t)MBOX_ADDR)&~0xF) | (ch&0xF));
     if(mmu_enable)
         r = BUS_ADDRESS(r);
     /* wait until we can write to the mailbox */

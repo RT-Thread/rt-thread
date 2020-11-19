@@ -41,6 +41,11 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40003
+#define RT_USING_CACHE
+#define RT_USING_CPU_FFS
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
 
@@ -78,6 +83,7 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CPUTIME
+#define RT_USING_CPUTIME_CORTEXM
 #define RT_USING_PHY
 #define RT_USING_PIN
 
@@ -155,6 +161,12 @@
 /* samples: kernel and components samples */
 
 
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
 /* Hardware Drivers Config */
 
 #define BSP_USING_HYPERFLASH
@@ -171,5 +183,6 @@
 
 /* Board extended module Drivers */
 
+#define SOC_IMXRT1052
 
 #endif

@@ -10,7 +10,7 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
@@ -40,7 +40,12 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x40001
+#define RT_VER_NUM 0x40003
+#define RT_USING_CACHE
+#define RT_USING_CPU_FFS
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
 
@@ -78,10 +83,8 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CPUTIME
+#define RT_USING_CPUTIME_CORTEXM
 #define RT_USING_PIN
-
-/* Using WiFi */
-
 
 /* Using USB */
 
@@ -95,10 +98,10 @@
 /* Socket abstraction layer */
 
 
+/* Network interface device */
+
+
 /* light weight TCP/IP stack */
-
-
-/* Modbus master and slave stack */
 
 
 /* AT commands */
@@ -150,6 +153,12 @@
 /* samples: kernel and components samples */
 
 
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
 /* Hardware Drivers Config */
 
 #define BSP_USING_4MFLASH
@@ -163,7 +172,9 @@
 
 /* Onboard Peripheral Drivers */
 
+
 /* Board extended module Drivers */
 
+#define SOC_IMXRT1064
 
 #endif

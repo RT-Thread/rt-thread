@@ -27,9 +27,9 @@
  * 2012-10-22     Bernard      add MS VC++ patch.
  * 2016-06-02     armink       beautify the list_thread command
  * 2018-11-22     Jesven       list_thread add smp support
- * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread 
+ * 2018-12-27     Jesven       Fix the problem that disable interrupt too long in list_thread
  *                             Provide protection for the "first layer of objects" when list_*
- * 2020-04-07     chenhui      add clear 
+ * 2020-04-07     chenhui      add clear
  */
 
 #include <rthw.h>
@@ -55,8 +55,8 @@ static long clear(void)
 
     return 0;
 }
-FINSH_FUNCTION_EXPORT(clear,clear the terminal screen);
-MSH_CMD_EXPORT(clear,clear the terminal screen);
+FINSH_FUNCTION_EXPORT(clear, clear the terminal screen);
+MSH_CMD_EXPORT(clear, clear the terminal screen);
 
 extern void rt_show_version(void);
 long version(void)
@@ -156,7 +156,7 @@ static rt_list_t *list_get_next(rt_list_t *current, list_get_next_t *arg)
             break;
         }
     }
-    
+
     rt_hw_interrupt_enable(level);
     arg->nr_out = nr;
     return node;
@@ -1147,6 +1147,192 @@ void list_prefix(char *prefix)
 static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
+
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#ifdef RT_USING_USERSPACE
+#include <lwp_mm_area.h>
+#endif
+
+#ifdef RT_USING_HEAP
+extern void list_mem(void);
+extern long list_memheap(void);
+#endif
+
+static rt_ubase_t rt_tick_mark = 0;
+static char top_ch;
+
+static void top_tick_hook(void)
+{
+    rt_base_t level;
+    struct rt_thread *thread;
+
+    level = rt_hw_interrupt_disable();
+    thread = rt_thread_self();
+    if (thread)
+    {
+        if (thread->tick_mark != rt_tick_mark)
+        {
+            thread->run_tick = 0;
+            thread->tick_mark = rt_tick_mark;
+        }
+        thread->run_tick++;
+    }
+    rt_hw_interrupt_enable(level);
+}
+
+static void top_getchar_entry(void* parameter)
+{
+    rt_sem_t sem = (rt_sem_t)parameter;
+    while (1)
+    {
+        top_ch = getchar();
+        rt_sem_release(sem);
+        if (top_ch == 'q')
+        {
+            break;
+        }
+    }
+}
+
+long top(void)
+{
+    rt_thread_t tid;
+    list_get_next_t find_arg;
+    rt_list_t *next = (rt_list_t*)RT_NULL;
+    rt_list_t *obj_list[LIST_FIND_OBJ_NR];
+    const char *item_title = "THREAD";
+    int maxlen;
+    rt_sem_t top_char_sem;
+
+    rt_base_t level;
+
+    top_ch = 0;
+    top_char_sem = rt_sem_create("top_char", 0, RT_IPC_FLAG_FIFO);
+    tid = rt_thread_create("top_getchar", top_getchar_entry, top_char_sem,
+            1024, 2, 10);
+    if (tid)
+    {
+        rt_thread_startup(tid);
+    }
+
+    while (1)
+    {
+        rt_ubase_t tick_diff;
+        rt_ubase_t wait_tick;
+
+        level = rt_hw_interrupt_disable();
+        rt_tick_mark = rt_tick_get();
+        rt_tick_sethook(top_tick_hook);
+        rt_hw_interrupt_enable(level);
+
+        wait_tick = RT_TICK_PER_SECOND + rt_tick_mark;
+
+        while (rt_tick_get() < wait_tick)
+        {
+            rt_sem_take(top_char_sem, wait_tick - rt_tick_get());
+            if (top_ch == 'q')
+            {
+                rt_sem_delete(top_char_sem);
+                level = rt_hw_interrupt_disable();
+                rt_tick_sethook(0);
+                rt_hw_interrupt_enable(level);
+                return 0;
+            }
+        }
+
+        level = rt_hw_interrupt_disable();
+        rt_tick_sethook(0);
+        rt_hw_interrupt_enable(level);
+
+        tick_diff = rt_tick_get() - rt_tick_mark;
+
+        list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list)/sizeof(obj_list[0]));
+        maxlen = RT_NAME_MAX;
+        rt_kprintf("\033[2J");
+
+#ifdef RT_USING_HEAP
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+        list_memheap();
+#else
+        list_mem();
+#endif
+#endif
+        object_split(maxlen);
+        rt_kprintf(     "----------------\n");
+        rt_kprintf("%-*.s  PID  PRI  A %%CPU VIRT\n", maxlen, item_title); object_split(maxlen);
+        rt_kprintf(     " ----- ---  - ---- ----\n");
+        do
+        {
+            next = list_get_next(next, &find_arg);
+            {
+                int i;
+                for (i = 0; i < find_arg.nr_out; i++)
+                {
+                    struct rt_object *obj;
+                    struct rt_thread thread_info, *thread;
+
+                    obj = rt_list_entry(obj_list[i], struct rt_object, list);
+                    level = rt_hw_interrupt_disable();
+
+                    if ((obj->type & ~RT_Object_Class_Static) != find_arg.type)
+                    {
+                        rt_hw_interrupt_enable(level);
+                        continue;
+                    }
+                    /* copy info */
+                    memcpy(&thread_info, obj, sizeof thread_info);
+                    rt_hw_interrupt_enable(level);
+
+                    thread = (struct rt_thread*)obj;
+                    {
+                        if (thread->tick_mark != rt_tick_mark)
+                        {
+                            thread->run_tick = 0;
+                        }
+
+                        level = rt_hw_interrupt_disable();
+                        if (thread->lwp)
+                        {
+                            pid_t pid;
+                            struct rt_lwp *lwp;
+
+                            lwp = (struct rt_lwp*)thread->lwp;
+                            lwp_ref_inc(lwp);
+                            rt_hw_interrupt_enable(level);
+                            pid = lwp_to_pid(lwp);
+                            rt_kprintf("%-*.*s %5d %3d ", maxlen, RT_NAME_MAX, thread->name, pid, thread->current_priority);
+#ifdef RT_USING_USERSPACE
+                            {
+                                size_t virt;
+
+                                level = rt_hw_interrupt_disable();
+                                virt = lwp_vmem_count(lwp->map_area);
+                                rt_hw_interrupt_enable(level);
+                                rt_kprintf(" U %3d  0x%08x\n", thread->run_tick * 100/tick_diff, virt);
+                            }
+#else
+                            rt_kprintf(" U %3d\n", thread->run_tick * 100/tick_diff);
+#endif
+                            lwp_ref_dec(lwp);
+                        }
+                        else
+                        {
+                            rt_hw_interrupt_enable(level);
+                            rt_kprintf("%-*.*s       %3d ", maxlen, RT_NAME_MAX, thread->name, thread->current_priority);
+                            rt_kprintf(" K %3d\n", thread->run_tick * 100/tick_diff);
+                        }
+                    }
+                }
+            }
+        }
+        while (next != (rt_list_t*)RT_NULL);
+    }
+    return 0;
+}
+FINSH_FUNCTION_EXPORT(top, display system info);
+MSH_CMD_EXPORT(top, disaplay system info);
+#endif /* end of RT_USING_LWP */
 
 #endif /* RT_USING_FINSH */
 

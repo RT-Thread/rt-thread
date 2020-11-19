@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-02-11     Bernard      Ignore O_CREAT flag in open.
  */
-
+#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
 
@@ -123,6 +123,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
 {
     rt_err_t result;
     rt_device_t device;
+    rt_base_t level;
 
     /* open root directory */
     if ((file->path[0] == '/') && (file->path[1] == '\0') &&
@@ -134,8 +135,8 @@ int dfs_device_fs_open(struct dfs_fd *file)
         struct device_dirent *root_dirent;
         rt_uint32_t count = 0;
 
-        /* lock scheduler */
-        rt_enter_critical();
+        /* disable interrupt */
+        level = rt_hw_interrupt_disable();
 
         /* traverse device object */
         information = rt_object_get_information(RT_Object_Class_Device);
@@ -161,7 +162,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
                 count ++;
             }
         }
-        rt_exit_critical();
+        rt_hw_interrupt_enable(level);
 
         /* set data */
         file->data = root_dirent;

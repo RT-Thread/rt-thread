@@ -13,18 +13,18 @@
 #include <rtthread.h>
 #include <board.h>
 
-#ifdef RT_USING_SMP
-
 int rt_hw_cpu_id(void)
 {
     int cpu_id;
     __asm__ volatile (
             "mrc p15, 0, %0, c0, c0, 5"
             :"=r"(cpu_id)
-            );
+    );
     cpu_id &= 0xf;
     return cpu_id;
-};
+}
+
+#ifdef RT_USING_SMP
 
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock)
 {
@@ -40,7 +40,7 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
     __asm__ __volatile__(
             "pld [%0]"
             ::"r"(&lock->slock)
-            );
+    );
 
     __asm__ __volatile__(
             "1: ldrex   %0, [%3]\n"
@@ -52,9 +52,10 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
             : "r" (&lock->slock), "I" (1 << 16)
             : "cc");
 
-    while (lockval.tickets.next != lockval.tickets.owner) {
+    while (lockval.tickets.next != lockval.tickets.owner)
+    {
         __asm__ __volatile__("wfe":::"memory");
-        lockval.tickets.owner = *(volatile unsigned short *)(&lock->tickets.owner);
+        lockval.tickets.owner = *(volatile unsigned short *) (&lock->tickets.owner);
     }
 
     __asm__ volatile ("dmb":::"memory");
@@ -77,6 +78,7 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 void rt_hw_cpu_shutdown()
 {
     rt_uint32_t level;
+
     rt_kprintf("shutdown...\n");
 
     level = rt_hw_interrupt_disable();

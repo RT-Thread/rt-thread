@@ -67,6 +67,8 @@
 // #define RT_USING_SLAB
 // </section>
 
+#define RT_USING_CACHE
+
 // <section name="RT_USING_DEVICE" description="Using Device Driver Framework" default="true" >
 #define RT_USING_DEVICE
 // <bool name="RT_USING_DEVICE_IPC" description="Using IPC in Device Driver Framework" default="true" />

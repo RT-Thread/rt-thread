@@ -262,7 +262,7 @@ config RT_USING_WDT
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
-    
+
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memory pool block size"

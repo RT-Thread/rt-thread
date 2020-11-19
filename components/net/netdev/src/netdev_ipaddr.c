@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <stdlib.h>
 #include <netdev_ipaddr.h>
 
 /* Here for now until needed in other places in lwIP */

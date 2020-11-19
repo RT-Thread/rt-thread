@@ -97,13 +97,20 @@ const char *dfs_subdir(const char *directory, const char *filename);
 void dfs_lock(void);
 void dfs_unlock(void);
 
+void dfs_fd_lock(void);
+void dfs_fd_unlock(void);
+
 /* FD APIs */
+int fdt_fd_new(struct dfs_fdtable *fdt);
+struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd);
+void fdt_fd_put(struct dfs_fdtable* fdt, struct dfs_fd *fd);
 int fd_new(void);
 struct dfs_fd *fd_get(int fd);
 void fd_put(struct dfs_fd *fd);
 int fd_is_open(const char *pathname);
 
 struct dfs_fdtable *dfs_fdtable_get(void);
+struct dfs_fdtable *dfs_fdtable_get_global(void);
 
 #ifdef __cplusplus
 }

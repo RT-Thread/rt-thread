@@ -10,6 +10,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#ifdef RT_USING_USERSPACE
+#include <lwp.h>
+#endif
+
 #ifdef RT_USING_SMP
 static struct rt_cpu rt_cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
@@ -64,29 +68,41 @@ static void rt_preempt_enable(void)
     /* enable interrupt */
     rt_hw_local_irq_enable(level);
 }
+#endif /* end of RT_USING_SMP */
 
 void rt_spin_lock_init(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     rt_hw_spin_lock_init(&lock->lock);
+#endif
 }
 RTM_EXPORT(rt_spin_lock_init)
 
 void rt_spin_lock(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     rt_preempt_disable();
     rt_hw_spin_lock(&lock->lock);
+#else
+    rt_enter_critical();
+#endif
 }
 RTM_EXPORT(rt_spin_lock)
 
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     rt_hw_spin_unlock(&lock->lock);
     rt_preempt_enable();
+#else
+    rt_exit_critical();
+#endif
 }
 RTM_EXPORT(rt_spin_unlock)
 
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
+#ifdef RT_USING_SMP
     unsigned long level;
 
     rt_preempt_disable();
@@ -95,20 +111,27 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
     rt_hw_spin_lock(&lock->lock);
 
     return level;
+#else
+    return rt_hw_interrupt_disable();
+#endif
 }
 RTM_EXPORT(rt_spin_lock_irqsave)
 
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
+#ifdef RT_USING_SMP
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
 
     rt_preempt_enable();
+#else
+    rt_hw_interrupt_enable(level);
+#endif
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
 /**
- * This fucntion will return current cpu.
+ * This function will return current cpu.
  */
 struct rt_cpu *rt_cpu_self(void)
 {
@@ -177,6 +200,14 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 {
     struct rt_cpu* pcpu = rt_cpu_self();
 
+#ifdef RT_USING_USERSPACE
+    if (pcpu->current_thread)
+    {
+        pcpu->current_thread->thread_idr = rt_cpu_get_thread_idr();
+    }
+    lwp_mmu_switch(thread);
+    rt_cpu_set_thread_idr(thread->thread_idr);
+#endif
     pcpu->current_thread = thread;
     if (!thread->cpus_lock_nest)
     {
@@ -184,5 +215,3 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     }
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
-
-#endif

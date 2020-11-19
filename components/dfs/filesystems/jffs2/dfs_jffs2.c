@@ -176,7 +176,7 @@ static int dfs_jffs2_unmount(struct dfs_filesystem* fs)
     return -ENOENT;
 }
 
-static int dfs_jffs2_mkfs(rt_device_t dev_id)
+static int dfs_jffs2_mkfs(rt_device_t dev_id, const char *fs_name)
 {
     /* just erase all blocks on this nand partition */
     return -ENOSYS;

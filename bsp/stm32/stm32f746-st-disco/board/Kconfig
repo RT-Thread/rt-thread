@@ -5,6 +5,7 @@ config SOC_STM32F746NG
     select SOC_SERIES_STM32F7
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_CACHE
     default y
 
 menu "Onboard Peripheral Drivers"

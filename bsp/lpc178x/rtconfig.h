@@ -88,6 +88,7 @@
 // </section>
 
 // <section name="LIBC" description="C Runtime library setting" default="always" >
+#define RT_USING_LIBC
 // <bool name="RT_USING_NEWLIB" description="Using newlib library, only available under GNU GCC" default="true" />
 // #define RT_USING_NEWLIB
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />

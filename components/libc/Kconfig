@@ -4,6 +4,22 @@ config RT_USING_LIBC
     bool "Enable libc APIs from toolchain"
     default y
 
+if RT_USING_LIBC && RT_USING_LWP
+    choice
+        prompt "Select c standard library"
+        default RT_USING_NEWLIB
+        help
+            Select c standard library
+
+        config RT_USING_NEWLIB
+        bool "Use libc: newlib"
+
+        config RT_USING_MUSL
+        bool "Use libc: musl (libc.a/libm.a in RT-Thread)"
+
+    endchoice
+endif
+
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
     default n
