@@ -1148,6 +1148,17 @@ static int dummy = 0;
 FINSH_VAR_EXPORT(dummy, finsh_type_int, dummy variable for finsh)
 #endif
 
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#ifdef RT_USING_USERSPACE
+#include <lwp_mm_area.h>
+#endif
+
+#ifdef RT_USING_HEAP
+extern void list_mem(void);
+extern long list_memheap(void);
+#endif
+
 static rt_ubase_t rt_tick_mark = 0;
 static char top_ch;
 
@@ -1183,17 +1194,6 @@ static void top_getchar_entry(void* parameter)
         }
     }
 }
-
-#ifdef RT_USING_LWP
-#include <lwp.h>
-#ifdef RT_USING_USERSPACE
-#include <lwp_mm_area.h>
-#endif
-
-#ifdef RT_USING_HEAP
-extern void list_mem(void);
-extern long list_memheap(void);
-#endif
 
 long top(void)
 {

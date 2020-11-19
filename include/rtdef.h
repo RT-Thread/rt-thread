@@ -114,6 +114,10 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define __CLANG_ARM
 #endif
 
+#if defined(__ARMCC_VERSION) && defined(__GNUC__)
+#define __ARMCC_GNUC__
+#endif
+
 /* Compiler Related Definitions */
 #if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
     #include <stdarg.h>

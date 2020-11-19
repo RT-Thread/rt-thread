@@ -23,6 +23,7 @@ config BCM2836_SOC
     select ARCH_ARM_CORTEX_A7
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_CACHE
     default y
 
 source "driver/Kconfig"
