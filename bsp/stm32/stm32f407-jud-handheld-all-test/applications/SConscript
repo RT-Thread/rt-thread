@@ -1,0 +1,20 @@
+import rtconfig
+from building import *
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd, str(Dir('#'))]
+src     = Split("""
+main.cpp
+oled_gui.cpp
+myfont.c
+sendwave.c
+cmd.c
+strref.c
+util.c
+cyclequeue.c
+ota.c
+""")
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

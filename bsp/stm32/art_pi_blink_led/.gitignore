@@ -1,0 +1,37 @@
+*.pyc
+*.map
+*.dblite
+*.elf
+*.bin
+*.hex
+*.axf
+*.pdb
+*.idb
+*.ilk
+!*.old
+build
+Debug
+*~
+*.o
+*.obj
+*.out
+*.bak
+*.dep
+*.lib
+*.i
+*.d
+.DS_Stor*
+.config 3
+.config 4
+.config 5
+*.uimg
+GPATH
+GRTAGS
+GTAGS
+.vscode
+JLinkLog.txt
+JLinkSettings.ini
+DebugConfig/
+RTE/
+settings/
+*.uvguix*

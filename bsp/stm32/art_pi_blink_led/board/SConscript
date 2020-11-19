@@ -1,0 +1,21 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Glob('*.c')
+src += Glob('port/*.c')
+
+# add cubemx drivers
+src += Split('''
+CubeMX_Config/Core/Src/stm32h7xx_hal_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/port']
+path += [cwd + '/CubeMX_Config/Core/Inc']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
