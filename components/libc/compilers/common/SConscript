@@ -4,7 +4,7 @@ src   = []
 cwd   = GetCurrentDir()
 group = []
 CPPPATH = [cwd]
-CPPDEFINES = ['']
+CPPDEFINES = []
 
 if GetDepend('RT_USING_LIBC'):
     src += Glob('*.c')
