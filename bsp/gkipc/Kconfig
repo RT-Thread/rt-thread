@@ -20,8 +20,10 @@ source "$PKGS_DIR/Kconfig"
 
 config SOC_GK710
     bool 
+    select ARCH_ARM_ARM9
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_CACHE
     default y
 
 choice

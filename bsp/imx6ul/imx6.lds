@@ -37,6 +37,13 @@ SECTIONS
     } =0
     __text_end = .;
 
+    .ARM.exidx   :
+    {
+        __exidx_start = .;
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+        __exidx_end = .;
+    }
+
     __rodata_start = .;
     .rodata   : { *(.rodata) *(.rodata.*) }
     __rodata_end = .;

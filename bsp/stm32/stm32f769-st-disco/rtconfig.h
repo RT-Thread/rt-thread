@@ -40,8 +40,9 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40003
-#define ARCH_ARM
+#define RT_USING_CACHE
 #define RT_USING_CPU_FFS
+#define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M7
 
@@ -88,7 +89,7 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_LIBC_USING_TIME
+#define RT_USING_LIBC
 
 /* Network */
 
@@ -103,6 +104,7 @@
 
 #define RT_USING_LWIP
 #define RT_USING_LWIP202
+#define RT_LWIP_MEM_ALIGNMENT 4
 #define RT_LWIP_IGMP
 #define RT_LWIP_ICMP
 #define RT_LWIP_DNS
@@ -189,6 +191,12 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F7

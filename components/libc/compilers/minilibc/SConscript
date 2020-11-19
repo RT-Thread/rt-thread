@@ -1,14 +1,17 @@
 from building import *
 Import('rtconfig')
 
-src = Glob('*.c') + Glob('*.cpp')
-cwd = GetCurrentDir()
+src   = Glob('*.c') + Glob('*.cpp')
+cwd   = GetCurrentDir()
 group = []
 
 CPPPATH = [cwd]
 CPPDEFINES = ['RT_USING_MINILIBC']
 
-if rtconfig.PLATFORM == 'gcc' and rtconfig.ARCH != 'sim' and not GetDepend('RT_USING_LIBC') and GetDepend('RT_USING_MINILIBC'):
+if rtconfig.PLATFORM == 'gcc' and not GetDepend('RT_USING_LIBC') and rtconfig.ARCH != 'sim':
+    if GetDepend('RT_USING_MINILIBC'):
+        CPPDEFINES = []
+
     group = DefineGroup('libc', src, depend = [''],
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
