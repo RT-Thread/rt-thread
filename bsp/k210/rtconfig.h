@@ -48,6 +48,8 @@
 #define RT_VER_NUM 0x40003
 #define ARCH_CPU_64BIT
 #define ARCH_RISCV
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 
 /* RT-Thread Components */
@@ -190,6 +192,7 @@
 #define PKG_USING_KENDRYTE_SDK
 #define PKG_USING_KENDRYTE_SDK_V055
 #define PKG_KENDRYTE_SDK_VERNUM 0x0055
+#define BSP_USING_SPI1
 
 /* miscellaneous packages */
 
@@ -204,7 +207,6 @@
 #define BSP_USING_UART1
 #define BSP_UART1_TXD_PIN 20
 #define BSP_UART1_RXD_PIN 21
-#define BSP_USING_SPI1
 #define BSP_SPI1_CLK_PIN 27
 #define BSP_SPI1_D0_PIN 28
 #define BSP_SPI1_D1_PIN 26
