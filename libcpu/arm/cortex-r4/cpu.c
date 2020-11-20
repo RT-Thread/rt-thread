@@ -20,7 +20,7 @@
  * this function will reset CPU
  *
  */
-void rt_hw_cpu_reset()
+RT_WEAK void rt_hw_cpu_reset()
 {
 }
 
@@ -28,7 +28,7 @@ void rt_hw_cpu_reset()
  * this function will shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+RT_WEAK void rt_hw_cpu_shutdown()
 {
 	rt_kprintf("shutdown...\n");
 
