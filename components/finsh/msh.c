@@ -391,6 +391,9 @@ static int _msh_exec_lwp(char *cmd, rt_size_t length)
     close(fd);
     exec(pg_name, argc, argv);
 
+    if (pg_name != argv[0])
+        rt_free(pg_name);
+
     return 0;
 }
 #endif

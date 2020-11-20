@@ -22,6 +22,7 @@ extern long list_thread(void);
 
 #ifdef RT_USING_LWP
 #include <lwp.h>
+#include <lwp_arch.h>
 
 #ifdef LWP_USING_CORE_DUMP
 #include <lwp_core_dump.h>
@@ -130,6 +131,19 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 #endif
         sys_exit(-1);
     }
+}
+
+int check_user_stack(struct rt_hw_exp_stack *regs)
+{
+    void* dfar = RT_NULL;
+
+    asm volatile ("MRC p15, 0, %0, c6, c0, 0":"=r"(dfar));
+    if (arch_expand_user_stack(dfar))
+    {
+        regs->pc -= 8;
+        return 1;
+    }
+    return 0;
 }
 #endif
 
@@ -281,6 +295,10 @@ void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
         return;
     }
 #endif
+    if (check_user_stack(regs))
+    {
+        return;
+    }
     check_user_fault(regs, 8, "User data abort");
 #endif
     rt_unwind(regs, 8);

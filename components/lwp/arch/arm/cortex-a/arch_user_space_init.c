@@ -19,9 +19,6 @@
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
 
-#define USER_HEAP_VADDR  0x80000000
-#define USER_VADDR_START 0x00100000
-
 extern size_t MMUTable[];
 
 int arch_user_space_init(struct rt_lwp *lwp)
@@ -45,7 +42,7 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
 void *arch_kernel_mmu_table_get(void)
 {
-    return (void*)MMUTable + PV_OFFSET;
+    return (void*)((char*)MMUTable + PV_OFFSET);
 }
 
 void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors)
@@ -55,12 +52,12 @@ void arch_kuser_init(rt_mmu_info *mmu_info, void *vectors)
 
     rt_hw_mmu_map_auto(mmu_info, vectors, 0x1000, MMU_MAP_U_RO);
 
-    rt_memcpy(vectors + 0x1000 - kuser_sz, __kuser_helper_start, kuser_sz);
+    rt_memcpy((void*)((char*)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
     /*
      * vectors + 0xfe0 = __kuser_get_tls
      * vectors + 0xfe8 = hardware TLS instruction at 0xffff0fe8
      */
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, vectors + 0x1000 - kuser_sz, kuser_sz);
-    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, vectors + 0x1000 - kuser_sz, kuser_sz);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)((char*)vectors + 0x1000 - kuser_sz), kuser_sz);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void*)((char*)vectors + 0x1000 - kuser_sz), kuser_sz);
 }
 #endif
