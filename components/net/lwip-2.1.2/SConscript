@@ -260,6 +260,6 @@ if GetDepend(['RT_USING_LWIP_IPV6']):
 if GetDepend(['RT_LWIP_USING_PING']):
     src += lwipping_SRCS
 
-group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP212'], CPPPATH = path)
+group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP', 'RT_USING_LWIP212'], CPPPATH = path)
 
 Return('group')

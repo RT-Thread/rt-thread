@@ -19,6 +19,6 @@ path += [cwd + '/../platform']
 
 libcwd = str(Dir('#'))
 
-group = DefineGroup('drivers', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

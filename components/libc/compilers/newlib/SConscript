@@ -15,7 +15,7 @@ CPPDEFINES = ['RT_USING_NEWLIB']
 LIBS = ['c', 'm']
 
 if rtconfig.PLATFORM == 'gcc':
-    group = DefineGroup('newlib', src, depend = ['RT_USING_LIBC'], 
+    group = DefineGroup('Newlib', src, depend = ['RT_USING_LIBC'], 
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 
 Return('group')

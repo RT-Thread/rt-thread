@@ -9,7 +9,7 @@ CPPPATH = [cwd]
 CPPDEFINES = ['RT_USING_MINILIBC']
 
 if rtconfig.PLATFORM == 'gcc' and rtconfig.ARCH != 'sim' and not GetDepend('RT_USING_LIBC') and GetDepend('RT_USING_MINILIBC'):
-    group = DefineGroup('libc', src, depend = [''],
+    group = DefineGroup('Libc', src, depend = [''],
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')
