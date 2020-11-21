@@ -66,6 +66,8 @@
 #define m_data3_start                  0x00000000       ; ITCM 128KB
 #define m_data3_size                   0x00020000
 
+#define m_ncache_start                 0x81E00000
+#define m_ncache_size                  0x00200000
 
 /* Sizes */
 #if (defined(__stack_size__))
@@ -124,7 +126,7 @@ LR_IROM1 m_text_start m_text_size
     RTT_HEAP +0 EMPTY RTT_HEAP_SIZE{}
 
     ; ncache RW data
-    RW_m_ncache m_data2_start m_data2_size 
+    RW_m_ncache m_ncache_start m_ncache_size
     { 
         * (NonCacheable.init)
         * (NonCacheable)

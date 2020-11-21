@@ -45,6 +45,9 @@ extern "C" {
 #define  RT_TOUCH_CTRL_SET_X_TO_Y        (5)   /* Set X Y coordinate exchange */
 #define  RT_TOUCH_CTRL_DISABLE_INT       (6)   /* Disable interrupt */
 #define  RT_TOUCH_CTRL_ENABLE_INT        (7)   /* Enable interrupt */
+#define  RT_TOUCH_CTRL_POWER_ON          (8)   /* Touch Power On */
+#define  RT_TOUCH_CTRL_POWER_OFF         (9)   /* Touch Power Off */
+#define  RT_TOUCH_CTRL_GET_STATUS        (10)  /* Get Touch Power Status */
 
 /* Touch event */
 #define RT_TOUCH_EVENT_NONE              (0)   /* Touch none */
