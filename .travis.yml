@@ -138,6 +138,7 @@ env:
   - RTT_BSP='xplorer4330/M4' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f403a-start' RTT_TOOL_CHAIN='sourcery-arm'
   - RTT_BSP='at32/at32f407-start' RTT_TOOL_CHAIN='sourcery-arm'
+  - RTT_BSP='smartfusion2' RTT_TOOL_CHAIN='sourcery-arm'
 
 stage: compile
 script:
