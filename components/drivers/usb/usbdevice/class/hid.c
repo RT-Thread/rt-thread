@@ -12,10 +12,8 @@
 
 #include <rthw.h>
 #include <rtdevice.h>
-
 #include "drivers/usb_common.h"
 #include "drivers/usb_device.h"
-
 #include "hid.h"
 
 #ifdef RT_USB_DEVICE_HID
