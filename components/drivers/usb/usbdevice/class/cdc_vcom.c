@@ -13,8 +13,6 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
-#include <rtservice.h>
 #include <rtdevice.h>
 #include <drivers/serial.h>
 #include "drivers/usb_device.h"
