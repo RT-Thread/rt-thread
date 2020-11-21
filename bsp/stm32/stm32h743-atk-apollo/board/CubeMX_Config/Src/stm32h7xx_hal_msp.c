@@ -1026,7 +1026,45 @@ void HAL_SDRAM_MspDeInit(SDRAM_HandleTypeDef* hsdram){
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_DCMI_MspInit(DCMI_HandleTypeDef* hdcmi)
+{
+    GPIO_InitTypeDef GPIO_Initure;
+    
+    __HAL_RCC_DCMI_CLK_ENABLE();
 
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE(); 
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    
+    GPIO_Initure.Pin=GPIO_PIN_6;  
+    GPIO_Initure.Mode=GPIO_MODE_AF_PP; 
+    GPIO_Initure.Pull=GPIO_PULLUP; 
+    GPIO_Initure.Speed=GPIO_SPEED_FREQ_VERY_HIGH; 
+    GPIO_Initure.Alternate=GPIO_AF13_DCMI;  
+    HAL_GPIO_Init(GPIOA,&GPIO_Initure);
+    
+    //PB7,8,9
+    GPIO_Initure.Pin=GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9;  
+    HAL_GPIO_Init(GPIOB,&GPIO_Initure);
+    
+    //PC6,7,8,9,11
+    GPIO_Initure.Pin=GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8|\
+                     GPIO_PIN_9|GPIO_PIN_11;  
+    HAL_GPIO_Init(GPIOC,&GPIO_Initure);
+    
+    //PD3
+    GPIO_Initure.Pin=GPIO_PIN_3; 
+    HAL_GPIO_Init(GPIOD,&GPIO_Initure);
+    
+    //PH8
+    GPIO_Initure.Pin=GPIO_PIN_8; 
+    HAL_GPIO_Init(GPIOH,&GPIO_Initure);
+    
+    HAL_NVIC_SetPriority(DCMI_IRQn,2,2);
+    HAL_NVIC_EnableIRQ(DCMI_IRQn);
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

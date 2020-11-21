@@ -104,6 +104,9 @@ if GetDepend(['BSP_USING_LTDC']):
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_ltdc.c']
     src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma2d.c']
 
+if GetDepend(['BSP_USING_DCMI']):
+    src += ['STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c']
+
 path = [cwd + '/STM32H7xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32H7xx/Include',
     cwd + '/CMSIS/Include']
