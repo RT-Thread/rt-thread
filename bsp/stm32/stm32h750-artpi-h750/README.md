@@ -1,8 +1,8 @@
-# STM32H750-armfly-h7-tool 开发板 BSP 说明
+# STM32H750-artpi 开发板 BSP 说明
 
 ## 简介
 
-本文档为 zylx 为 STM32H750-armfly-h7-tool 开发板提供的 BSP (板级支持包) 说明。
+本文档 为 STM32H750-ART-PI 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-STM32H750 是安富莱推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 400Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32H750 的芯片性能。
+STM32H750 是RTTHREAD推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 480Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32H750 的芯片性能。
 
 开发板外观如下图所示：
 
@@ -22,24 +22,33 @@ STM32H750 是安富莱推出的一款基于 ARM Cortex-M7 内核的开发板，�
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32H750，主频 400MHz，2MB FLASH ，1MB RAM
-- 常用接口：USB 转串口、以太网接口、DAC接口，电流检测接口等
-- 调试接口，标准 SWD
+- MCU：STM32H750，主频 480MHz，128KB FLASH, 1MB RAM
+- 常用接口：USB 转串口、USB OTG、RGB888等
+- 调试接口，标准 ST-LINK
 
-开发板更多详细信息请参考[ H7-TOOL开发工具 ](http://armbbs.cn/forum.php?mod=viewthread&tid=89934&extra=page%3D2%26filter%3Dauthor%26orderby%3Ddateline)。
+开发板更多详细信息请参考[H750-ART-PI](https://www.rt-thread.org/product/153.html)。
+
+官方仓库[sdk-bsp-stm32h750-realthread-artpi](https://github.com/supperthomas/sdk-bsp-stm32h750-realthread-artpi)
 
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注** |
-| :----------- | :----------: | :------- |
-| LCD          |    待支持    |          |
-| ESP32        |     支持     | AT固件   |
-| **片上外设** | **支持情况** | **备注** |
-| GPIO         |     支持     |          |
-| UART         |     支持     | UART1    |
-| USB Device   |     支持     | USB HS   |
+| **板载外设** | **支持情况** | **备注**                  |
+| :----------- | :----------: | :------------------------ |
+| LED          |    待支持    | 一个红灯，一个蓝灯        |
+| BUTTON       |    待支持    | 一个用户可控button        |
+| QSPI  FLASH  |    待支持    | 1MB w25q64  QSPI接口FLASH |
+| SPI  FLASH   |    待支持    | 2MB w25q128 SPI FLASH     |
+| SDCARD       |    待支持    | sdcard接口                |
+| AP6212       |    待支持    | WIFI & BLUETOOTH          |
+| LCD RG888    |    待支持    | 显示屏接口                |
+| **片上外设** | **支持情况** | **备注**                  |
+| GPIO         |     支持     |                           |
+| UART         |     支持     | UART1                     |
+| SPI          |     支持     | SPI                       |
+| QSPI         |     支持     |                           |
+|              |              |                           |
 
 
 ## 使用说明
@@ -98,14 +107,20 @@ msh >
 
 ## 注意事项
 
-- 调试串口为串口1 映射说明
+- 调试串口为串口4 映射说明
 
-    PA10     ------> USART1_RX
+    PI9  ------> USART4_RX
 
-    PA9     ------> USART1_TX 
+    PA0 ------> USART4_TX 
 
 ## 联系人信息
 
-维护人:
+ART-Pi 是一个开源创意硬件平台，期待有更多的小伙伴能一起发现更多的乐趣，在使用过程中若您有任何的想法和建议，建议您通过以下方式来联系到我们。
 
--  [zylx](https://github.com/qgyhd1234 )
+RT-Thread [社区论坛](https://club.rt-thread.org/)。
+
+-  ART-Pi 官方交流 QQ 群(1016035998)。
+
+## 贡献代码
+
+如果您对 ART-Pi 感兴趣，并有一些好玩的项目愿意与大家分享，欢迎给我们贡献代码，您可以参考 [ART-Pi 代码贡献手册](https://github.com/RT-Thread-Studio/sdk-bsp-stm32h750-realthread-artpi/blob/master/documents/UM5004-RT-Thread ART-Pi 代码贡献手册.md) 。
