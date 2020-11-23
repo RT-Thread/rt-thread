@@ -39,7 +39,7 @@ These features make the STM32F412xE/G microcontrollers suitable for a wide range
   - Standby: 2.4 μA @25 °C / 1.7 V without RTC; 12 μA @85 °C @1.7 V
   - VBAT supply for RTC: 1 μA @25 °C
 - 1×12-bit, 2.4 MSPS ADC: up to 16 channels
-- 2x digital filters for sigma delta modulator, 4x PDM interfaces, stereo microphone support
+- 2x digital filters for sigma delta modulator, 4xPDM interfaces, stereo microphone support
 - General-purpose DMA: 16-stream DMA
 
 - Up to 17 timers: up to twelve 16-bit timers, two 32-bit timers up to 100 MHz each with up to four IC/OC/PWM or pulse counter and quadrature (incremental) encoder input, two watchdog timers (independent and window), one SysTick timer
@@ -50,12 +50,12 @@ These features make the STM32F412xE/G microcontrollers suitable for a wide range
   - Up to 109 fast I/Os up to 100 MHz
   - Up to 114 five V-tolerant I/Os
 - Up to 17 communication interfaces
-  - Up to 4x I2C interfaces (SMBus/PMBus)
-  - Up to 4 USARTs (2 x 12.5 Mbit/s, 2 x 6.25 Mbit/s), ISO 7816 interface, LIN, IrDA, modem control)
+  - Up to 4xI2C interfaces (SMBus/PMBus)
+  - Up to 4 USARTs (2x12.5 Mbit/s, 2x6.25 Mbit/s), ISO 7816 interface, LIN, IrDA, modem control)
   - Up to 5 SPI/I2Ss (up to 50 Mbit/s, SPI or I2S audio protocol), out of which 2 muxed full-duplex I2S interfaces
   - SDIO interface (SD/MMC/eMMC)
   - Advanced connectivity: USB 2.0 full-speed device/host/OTG controller with PHY
-  - 2x CAN (2.0B Active)
+  - 2xCAN (2.0B Active)
 - True random number generator
 - CRC calculation unit
 - 96-bit unique ID
