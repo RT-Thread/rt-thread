@@ -93,14 +93,13 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 #define RT_USING_SPI
+
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
 #define RT_USING_LIBC
-#define RT_USING_PTHREADS
-#define PTHREAD_NUM_MAX 8
 #define RT_USING_POSIX
 
 /* Network */
@@ -161,12 +160,6 @@
 
 
 /* samples: kernel and components samples */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32F4
