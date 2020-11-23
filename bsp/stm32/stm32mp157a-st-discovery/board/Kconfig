@@ -56,6 +56,13 @@ menu "Onboard Peripheral Drivers"
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
+        
+    config BSP_USING_SDMMC
+        bool "Enable SDMMC (SD card)"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
 
 endmenu
 
