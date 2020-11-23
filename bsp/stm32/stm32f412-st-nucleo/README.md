@@ -39,7 +39,7 @@ These features make the STM32F412xE/G microcontrollers suitable for a wide range
   - Standby: 2.4 μA @25 °C / 1.7 V without RTC; 12 μA @85 °C @1.7 V
   - VBAT supply for RTC: 1 μA @25 °C
 - 1×12-bit, 2.4 MSPS ADC: up to 16 channels
-- 2x digital filters for sigma delta modulator, 4xPDM interfaces, stereo microphone support
+- 2xdigital filters for sigma delta modulator, 4xPDM interfaces, stereo microphone support
 - General-purpose DMA: 16-stream DMA
 
 - Up to 17 timers: up to twelve 16-bit timers, two 32-bit timers up to 100 MHz each with up to four IC/OC/PWM or pulse counter and quadrature (incremental) encoder input, two watchdog timers (independent and window), one SysTick timer
