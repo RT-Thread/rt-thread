@@ -55,7 +55,7 @@ These features make the STM32F765xx, STM32F767xx, STM32F768Ax and STM32F769xx mi
   - Up to 4 USARTs/4 UARTs (12.5 Mbit/s, ISO7816 interface, LIN, IrDA, modem control)
   - Up to 6 SPIs (up to 54 Mbit/s), 3 with muxed simplex I2S for audio
   - 2 x SAIs (serial audio interface)
-  - 3 × CANs (2.0B Active) and 2x SDMMCs
+  - 3 x CANs (2.0B Active) and 2 x SDMMCs
   - SPDIFRX interface
   - HDMI-CEC
   - MDIO slave interface
