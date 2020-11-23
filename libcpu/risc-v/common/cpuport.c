@@ -151,7 +151,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
 #endif /* end of RT_USING_SMP */
 
 /** shutdown CPU */
-void rt_hw_cpu_shutdown()
+RT_WEAK void rt_hw_cpu_shutdown()
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");

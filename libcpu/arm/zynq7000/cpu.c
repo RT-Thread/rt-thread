@@ -16,7 +16,7 @@
  * reset cpu by dog's time-out
  *
  */
-void rt_hw_cpu_reset()
+RT_WEAK void rt_hw_cpu_reset()
 {
     while (1);  /* loop forever and wait for reset to happen */
 
@@ -27,7 +27,7 @@ void rt_hw_cpu_reset()
  *  shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+RT_WEAK void rt_hw_cpu_shutdown()
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");
