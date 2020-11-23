@@ -1,15 +1,11 @@
-/****************************************************************************
- *
- * File Name:
- *  
- * Author:
- *  
- * Date:
- * 
- * Descriptions:
- * 
- *
- ******************************************************************************/
+/*
+ * File Name:cmd_parser.c
+ * Descriptions: uart and usb command parser /ARM/IAR/GCC compiler
+ * Change Logs:
+ * Date             Author       Notes
+ * 2020-11-23       Eric      first implementation
+*/
+
 /*----------------------------------------------------------------------------*
 **                             Dependencies                                   *
 **----------------------------------------------------------------------------*/
@@ -56,14 +52,14 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Function Define                                *
 **----------------------------------------------------------------------------*/
-/*************************************************
-* Function:
-* Description:
-* Author:
-* Returns: 
+/*
+* Function: cmd_init()
+* Descriptions: This function will initialize cmd parser
+* Author: Eric
+* Returns:
 * Parameter:
 * History:
-*************************************************/
+*/
 
 
 
