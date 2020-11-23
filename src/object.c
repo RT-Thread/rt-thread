@@ -192,18 +192,6 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
 #endif
 
 /**
- * @ingroup SystemInit
- *
- * This function will initialize system object management.
- *
- * @deprecated since 0.3.0, this function does not need to be invoked
- * in the system initialization.
- */
-void rt_system_object_init(void)
-{
-}
-
-/**
  * @addtogroup KernelObject
  */
 
