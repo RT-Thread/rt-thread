@@ -121,7 +121,7 @@ int __rt_ffs(int value)
 /**
  * shutdown CPU
  */
-void rt_hw_cpu_shutdown(void)
+RT_WEAK void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 
