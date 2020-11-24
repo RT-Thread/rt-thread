@@ -217,8 +217,7 @@ extern uint32_t _ebss;
 // application.
 //
 //*****************************************************************************
-void
-ResetISR(void)
+void ResetISR(void)
 {
     uint32_t *pui32Src, *pui32Dest;
 
@@ -261,6 +260,9 @@ ResetISR(void)
     //
     // Call the application's entry point.
     //
+    extern int entry(void);
+    entry();
+    /*rtthread_startup();*/
     main();
 }
 
