@@ -46,6 +46,14 @@ if GetDepend(['BSP_USING_GBE']):
 if GetDepend(['BSP_USING_SDMMC']):
     src += Glob('ports/drv_sdio.c')
 
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('ports/audio/drv_cs42l51.c')
+    src += Glob('ports/audio/drv_sound.c')
+    src += Glob('ports/audio/audio_play.c')
+
+if GetDepend(['BSP_USING_AUDIO_RECORD']):
+    src += Glob('ports/audio/drv_mic.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
@@ -64,6 +72,7 @@ if GetDepend(['BSP_USING_OPENAMP']):
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/CM4/Inc']
 path += [cwd + '/ports']
+path += [cwd + '/ports/audio']
 
 if GetDepend(['BSP_USING_OPENAMP']):
     path += [cwd + '/ports/OpenAMP']

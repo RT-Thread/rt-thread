@@ -75,8 +75,6 @@ if GetDepend(['RT_USING_SDIO']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sd.c']
 
 if GetDepend(['RT_USING_AUDIO']):
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_i2s.c']
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_i2s_ex.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sai.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sai_ex.c']
 
