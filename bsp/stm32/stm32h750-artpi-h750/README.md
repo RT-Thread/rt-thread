@@ -45,7 +45,7 @@ STM32H750 是RTTHREAD推出的一款基于 ARM Cortex-M7 内核的开发板，�
 | LCD RG888    |    待支持    | 显示屏接口                |
 | **片上外设** | **支持情况** | **备注**                  |
 | GPIO         |     支持     |                           |
-| UART         |     支持     | UART1                     |
+| UART         |     支持     | UART4 UART3               |
 | SPI          |     支持     | SPI                       |
 | QSPI         |     支持     |                           |
 |              |              |                           |
