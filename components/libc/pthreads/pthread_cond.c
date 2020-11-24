@@ -110,7 +110,7 @@ int pthread_cond_destroy(pthread_cond_t *cond)
         return 0; /* which is not initialized */
 
     result = rt_sem_trytake(&(cond->sem));
-    if (result != RT_EOK)
+    if (!((result == RT_EOK) || (result == -RT_ETIMEOUT)))
         return EBUSY;
 
     /* clean condition */
