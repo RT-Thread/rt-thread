@@ -521,7 +521,8 @@ int rt_hw_sdio_init(void)
         LOG_E("host create fail");
         return RT_NULL;
     }
-    return 0;
+    
+    return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdio_init);
 
@@ -547,7 +548,7 @@ int mnt_init(void)
         rt_kprintf("file system mount success!\n");
     }
 
-    return 0;
+    return RT_EOK;
 }
 INIT_ENV_EXPORT(mnt_init);
 
