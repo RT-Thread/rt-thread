@@ -26,10 +26,10 @@
 /**---------------------------------------------------------------------------*
 **                             Compiler Flag                                  *
 **----------------------------------------------------------------------------*/
-//#ifdef __cplusplus
-//extern   "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern   "C"
+{
+#endif
 
 /*----------------------------------------------------------------------------*
 **                             Mcaro Definitions                              *
@@ -68,9 +68,9 @@ typedef struct cmd {
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
-    CMD_PACKET_EMPTY = 0, // 空状态
-    CMD_PACKET_HEAD, // 收到包头状态
-    CMD_PACKET_COMPLETED // 收到完整包状态
+    CMD_PACKET_EMPTY = 0, // empty status
+    CMD_PACKET_HEAD, // receive head
+    CMD_PACKET_COMPLETED // receive complete
 } CMD_PACKET_BUF_STATUS_E;
 
 /*----------------------------------------------------------------------------*/
@@ -117,16 +117,16 @@ typedef struct
 **----------------------------------------------------------------------------*/
 void cmd_init(void);
 void cmd_parsing(char *str);
-
-
-
+/* receive data and lenth*/
+void CMD_OnRecvData(const uint8_t* pcu8Data, uint32_t u32DataLen);
+void CMD_ClearPacketBuf(void);
 
 /**---------------------------------------------------------------------------*
  **                         Compiler Flag                                     *
  **---------------------------------------------------------------------------*/
-//#ifdef   __cplusplus
-//}
-//#endif
-// End of xxx.c
+#ifdef   __cplusplus
+}
+#endif
+//End of xxx.c
 #endif  
 // End of xxx.H

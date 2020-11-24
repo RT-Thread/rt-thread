@@ -24,6 +24,7 @@
 #include "util.h"
 #include "app.h"
 #include "board_config.h"
+#include "common.h"
 
 /**---------------------------------------------------------------------------*
  **                            Debugging Flag                                 *
@@ -55,6 +56,12 @@ extern   "C"
 **                             Data Structures                                *
 **----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
+#define CMD_PACKET_MAX_LEN (64)
+// CMD Packet起始字节
+//#define CMD_PACKET_HEAD_BYTE ((uint8_t)'')
+// CMD Packet结束字节
+//#define CMD_PACKET_TAIL_BYTE ((uint8_t)'')
+
 typedef struct
 {
 	const char* Cmd_Titel_Head;
@@ -82,6 +89,10 @@ static Cmd_Titel cmd_content[] =
 	NULL,
 	NULL,
 };
+
+// Cmd Handler Function Type Define
+//typedef void (*CMD_HANDLER_FUNC)(const StrConstRef_T* pctStrRefParam);
+
 /*----------------------------------------------------------------------------*
 **                             Local Vars                                     *
 **----------------------------------------------------------------------------*/
@@ -96,6 +107,10 @@ static CmdPacketBuf_T s_tCmdPacketBuf = {CMD_PACKET_EMPTY};
 /*----------------------------------------------------------------------------*
 **                             Local Function                                 *
 **----------------------------------------------------------------------------*/
+//uint32_t _CMD_OnRecvData(const uint8_t* pcu8Data, uint32_t u32DataLen);
+//void CMD_OnRecvData(const uint8_t* pcu8Data, uint32_t u32DataLen);
+static uint32_t _CMD_AssemblePacket(const uint8_t* pcu8Data, uint32_t u32DataLen);
+static void _CMD_PacketProcess(const uint8_t* pcu8Packet, uint32_t u32PacketLen);
 static void _CMD_Response(const char* pcszFmt, ...);
 static void _CMD_HandlerVER(const StrConstRef_T* pctStrRefParam);
 static void _CMD_ClearPacketBuf(void);
@@ -105,6 +120,7 @@ static unsigned int _cmd_hash(const char* str);
 static void _cmd_init(const void *begin, const void *end);
 static cmd_t* _get_next_cmd(cmd_t *cmd);
 static int _cmd_match(const char *str, const char *cmd);
+
 /*
 * Function: _list()
 * Descriptions: This function will list all command
@@ -135,6 +151,77 @@ static void _list(void)
 	_CMD_Response("%s",cmd_titel->Cmd_Titel_Tail);
 }
 REGISTER_CMD(cmd_list, _list,list all command);
+
+/*
+* Function: _CMD_OnRecvData()
+* Descriptions: This function will receive date and lenth
+* Author: Eric
+* Returns:
+* Parameter:
+* History:
+*/
+uint32_t _CMD_OnRecvData(const uint8_t* pcu8Data, uint32_t u32DataLen)
+{
+		uint32_t u32ProcessedLen = _CMD_AssemblePacket(pcu8Data, u32DataLen);
+		_CMD_PacketProcess(s_tCmdPacketBuf.pu8PacketBuf, s_tCmdPacketBuf.u32PacketLen);
+		_CMD_ClearPacketBuf();
+	if (s_tCmdPacketBuf.u32PacketLen >= sizeof(s_tCmdPacketBuf.pu8PacketBuf))
+	{
+		_CMD_ClearPacketBuf();
+	//	CMD_TRACE("_CMD_NORMALOnRecvData() warning, CMD packet buffer is full!");
+		/* receive complete */
+	}
+	else
+	{ 
+		/* uncomplete */
+	}
+	
+	return u32ProcessedLen;
+}
+
+/*
+* Function: _CMD_PacketProcess()
+* Descriptions: This function will process cmd
+* Author: Eric
+* Returns:
+* Parameter:
+* History:
+*/
+static void _CMD_PacketProcess(const uint8_t* pcu8Packet, uint32_t u32PacketLen)
+{
+	if ((NULL == pcu8Packet) || (u32PacketLen < 2))
+	{
+		return;
+	}
+			cmd_parsing((char *)s_tCmdPacketBuf.pu8PacketBuf);
+
+}
+
+/*
+* Function: _CMD_AssemblePacket()
+* Descriptions: This function will assemble data
+* Author: Eric
+* Returns:
+* Parameter:
+* History:
+*/
+static uint32_t _CMD_AssemblePacket(const uint8_t* pcu8Data, uint32_t u32DataLen)
+{
+#define pu8PacketBuf s_tCmdPacketBuf.pu8PacketBuf
+#define u32PacketLen s_tCmdPacketBuf.u32PacketLen
+
+	uint32_t i = 0;
+	for (i = 0;
+		(i < u32DataLen) 
+		&& (u32PacketLen < sizeof(pu8PacketBuf)); ++i)
+	{
+		uint8_t u8Data = pcu8Data[i];
+		pu8PacketBuf[u32PacketLen++] = u8Data;
+	}
+#undef pu8PacketBuf
+#undef u32PacketLen
+	return i;
+}
 
 /*
 * Function: _CMD_Response()
@@ -187,22 +274,9 @@ REGISTER_CMD(VER, _CMD_HandlerVER,show the version);
 */
 static void _CMD_ClearPacketBuf(void)
 {
-	//memset(&s_tCmdPacketBuf, 0, sizeof(s_tCmdPacketBuf));
+	memset(&s_tCmdPacketBuf, 0, sizeof(s_tCmdPacketBuf));
 	s_tCmdPacketBuf.ePacketStatus = CMD_PACKET_EMPTY;
 	s_tCmdPacketBuf.u32PacketLen = 0;
-}
-
-/*************************************************
-* Function: CMD_ClearPacketBuf
-* Description: This function is CMD_ClearPacketBuf handler 
-* Author: wangk
-* Returns:
-* Parameter:
-* History:
-*************************************************/
-static void CMD_ClearPacketBuf(void)
-{
-	_CMD_ClearPacketBuf();
 }
 
 /*
@@ -367,6 +441,39 @@ void cmd_parsing(char *str)
 			_CMD_Response("%s",cmd_content->Cmd_Titel_Content_First); //"Error! Please use cmd_list to check cmd menue and retry !"
 			
 		}		
+}
+
+/*
+* Function: CMD_OnRecvData
+* Description: receive data and handle
+* Author: wangk
+* Returns: 
+* Parameter:
+* History:
+*/
+void CMD_OnRecvData(const uint8_t* pcu8Data, uint32_t u32DataLen)
+{
+	/* 已处理数据长度 */
+	uint32_t u32ProcessedLen = 0;
+	/* 循环处理所有接收到的数据 */
+	while (u32ProcessedLen < u32DataLen)
+	{
+		u32ProcessedLen += _CMD_OnRecvData((pcu8Data + u32ProcessedLen), 
+			(u32DataLen - u32ProcessedLen));
+	}
+}
+
+/*
+* Function: CMD_ClearPacketBuf
+* Description: This function is CMD_ClearPacketBuf handler 
+* Author: wangk
+* Returns:
+* Parameter:
+* History:
+*/
+void CMD_ClearPacketBuf(void)
+{
+	_CMD_ClearPacketBuf();
 }
 
 /**---------------------------------------------------------------------------*

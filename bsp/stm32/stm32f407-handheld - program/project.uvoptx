@@ -157,9 +157,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>312</LineNumber>
+          <LineNumber>308</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134246472</Address>
+          <Address>134246612</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -168,7 +168,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>applications\app\main.cpp</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\rt_thread\applications/app/main.cpp\312</Expression>
+          <Expression>\\rt_thread\applications/app/main.cpp\308</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>
@@ -224,7 +224,7 @@
 
   <Group>
     <GroupName>Applications</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

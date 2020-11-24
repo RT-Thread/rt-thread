@@ -16,23 +16,19 @@
 #include <board.h>
 #include <stdint.h>
 #include <stdbool.h>
-#if defined(BSP_USING_RSCDRRM020NDSE3)
-#include "rscdrrm020ndse3.h"
-#elif defined(BSP_USING_AD7730)
-#include "ad7730.h"
-#endif
-//#include "sendwave.h"
+
 #include "app.h"
-//#include "cmd.h"
 #include "cyclequeue.h"
 #include "board_config.h"
 
+#include "cmd_parser.h"
+
 //#include "at.h"
-extern "C"
-{
-  //  #include "fal.h"
-  #include "cmd_parser.h"
-}
+//extern "C"
+//{
+//  //  #include "fal.h"
+//}
+
 
 /**---------------------------------------------------------------------------*
  **                            Debugging Flag                                 *
@@ -394,12 +390,9 @@ int main(void)
 				rt_size_t read_len = rt_device_read(vcom_dev, 0, vcom_data_buf, sizeof(vcom_data_buf));
 				if (read_len > 0)
 				{ // 收取到数据
-					//APP_TRACE("vcom read_len=%d\r\n", read_len);
-					
-					///* 数据输入到CMD模块 */
-					//CMD_OnRecvData(vcom_data_buf, (uint32_t)read_len);
-					cmd_parsing((char *)vcom_data_buf);
-					rt_memset(vcom_data_buf, 0, sizeof(vcom_data_buf));
+
+					CMD_OnRecvData(vcom_data_buf, (uint32_t)read_len);
+
 				}
 				else
 				{ // 数据已收取完毕
