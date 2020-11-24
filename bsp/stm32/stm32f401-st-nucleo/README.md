@@ -51,7 +51,7 @@ Each peripheral supporting condition for this BSP is as follows:
 
 ## Quickly Get Started
 
-This BSP provides MDK5 and IAR projects for developers. Also support GCC development environment Here's an example of the MDK5 development environment, to introduce how to run the system.
+This BSP provides MDK5 and IAR projects for developers. Also support GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
 #### Hardware Connection
 
