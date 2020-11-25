@@ -262,8 +262,6 @@ void ResetISR(void)
     //
     extern int entry(void);
     entry();
-    /*rtthread_startup();*/
-    main();
 }
 
 //*****************************************************************************
