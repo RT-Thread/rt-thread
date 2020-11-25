@@ -40,6 +40,7 @@ lwp_user_entry:
     cpsid i
     msr     spsr, r9
 
+    ldr     r3, =0x80000000 ;/* user stack top */
     /* set data address. */
     movs    pc, r1
 

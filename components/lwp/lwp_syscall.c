@@ -78,15 +78,21 @@ static void kmem_put(void *kptr)
 
 static void sockaddr_tolwip(const struct musl_sockaddr *std, struct sockaddr *lwip)
 {
-    lwip->sa_len = sizeof(*lwip);
-    lwip->sa_family = (sa_family_t) std->sa_family;
-    memcpy(lwip->sa_data, std->sa_data, sizeof(lwip->sa_data));
+    if (std && lwip)
+    {
+        lwip->sa_len = sizeof(*lwip);
+        lwip->sa_family = (sa_family_t) std->sa_family;
+        memcpy(lwip->sa_data, std->sa_data, sizeof(lwip->sa_data));
+    }
 }
 
 static void sockaddr_tomusl(const struct sockaddr *lwip, struct musl_sockaddr *std)
 {
-    std->sa_family = (uint16_t) lwip->sa_family;
-    memcpy(std->sa_data, lwip->sa_data, sizeof(std->sa_data));
+    if (std && lwip)
+    {
+        std->sa_family = (uint16_t) lwip->sa_family;
+        memcpy(std->sa_data, lwip->sa_data, sizeof(std->sa_data));
+    }
 }
 
 static void lwp_user_thread(void *parameter)
@@ -972,13 +978,40 @@ int sys_listen(int socket, int backlog)
     return listen(socket, backlog);
 }
 
+#define MUSLC_MSG_OOB       0x0001
+#define MUSLC_MSG_PEEK      0x0002
+#define MUSLC_MSG_DONTWAIT  0x0040
+#define MUSLC_MSG_WAITALL   0x0100
+#define MUSLC_MSG_MORE      0x8000
+
+static int netflags_muslc_2_lwip(int flags)
+{
+    int flgs = 0;
+
+    if (flags & MUSLC_MSG_PEEK)
+        flgs |= MSG_PEEK;
+    if (flags & MUSLC_MSG_WAITALL)
+        flgs |= MSG_WAITALL;
+    if (flags & MUSLC_MSG_OOB)
+        flgs |= MSG_OOB;
+    if (flags & MUSLC_MSG_DONTWAIT)
+        flgs |= MSG_DONTWAIT;
+    if (flags & MUSLC_MSG_MORE)
+        flgs |= MSG_MORE;
+    return flgs;
+}
+
 int sys_recvfrom(int socket, void *mem, size_t len, int flags,
       struct musl_sockaddr *from, socklen_t *fromlen)
 {
+    int flgs = 0;
 #ifdef RT_USING_USERSPACE
-    int ret;
-    void *kmem;
+    int ret = -1;
+    void *kmem = RT_NULL;
+#endif
 
+    flgs = netflags_muslc_2_lwip(flags);
+#ifdef RT_USING_USERSPACE
     if (!len)
         return -1;
 
@@ -989,14 +1022,18 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
     if (!kmem)
         return -1;
 
+    if (flags == 0x2) {
+        flags = 0x1;
+    }
+
     if (from)
     {
         struct sockaddr sa;
         sockaddr_tolwip(from, &sa);
 
-        ret = recvfrom(socket, kmem, len, flags, &sa, fromlen);
+        ret = recvfrom(socket, kmem, len, flgs, &sa, fromlen);
     } else
-        ret = recvfrom(socket, kmem, len, flags, NULL, NULL);
+        ret = recvfrom(socket, kmem, len, flgs, NULL, NULL);
 
     if (ret > 0)
         lwp_data_put(&lwp_self()->mmu_info, mem, kmem, len);
@@ -1009,7 +1046,7 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
         struct sockaddr sa;
         sockaddr_tolwip(from, &sa);
 
-        return recvfrom(socket, mem, len, flags, &sa, fromlen);
+        return recvfrom(socket, mem, len, flgs, &sa, fromlen);
     }
 
     return recvfrom(socket, mem, len, flags, NULL, NULL);
@@ -1018,16 +1055,23 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
 
 int sys_recv(int socket, void *mem, size_t len, int flags)
 {
-    return recvfrom(socket, mem, len, flags, NULL, NULL);
+    int flgs = 0;
+
+    flgs = netflags_muslc_2_lwip(flags);
+    return recvfrom(socket, mem, len, flgs, NULL, NULL);
 }
 
 int sys_sendto(int socket, const void *dataptr, size_t size, int flags,
     const struct musl_sockaddr *to, socklen_t tolen)
 {
+    int flgs = 0;
 #ifdef RT_USING_USERSPACE
-    int ret;
-    void *kmem;
+    int ret = -1;
+    void *kmem = RT_NULL;
+#endif
 
+    flgs = netflags_muslc_2_lwip(flags);
+#ifdef RT_USING_USERSPACE
     if (!size)
         return -1;
 
@@ -1045,10 +1089,10 @@ int sys_sendto(int socket, const void *dataptr, size_t size, int flags,
         struct sockaddr sa;
         sockaddr_tolwip(to, &sa);
 
-        ret = sendto(socket, kmem, size, flags, &sa, tolen);
+        ret = sendto(socket, kmem, size, flgs, &sa, tolen);
     }
     else
-        ret = sendto(socket, kmem, size, flags, NULL, tolen);
+        ret = sendto(socket, kmem, size, flgs, NULL, tolen);
 
     kmem_put(kmem);
     return ret;
@@ -1058,15 +1102,18 @@ int sys_sendto(int socket, const void *dataptr, size_t size, int flags,
         struct sockaddr sa;
         sockaddr_tolwip(to, &sa);
 
-        return sendto(socket, dataptr, size, flags, &sa, tolen);
+        return sendto(socket, dataptr, size, flgs, &sa, tolen);
     }
-    return sendto(socket, dataptr, size, flags, NULL, tolen);
+    return sendto(socket, dataptr, size, flgs, NULL, tolen);
 #endif
 }
 
 int sys_send(int socket, const void *dataptr, size_t size, int flags)
 {
-    return sendto(socket, dataptr, size, flags, NULL, 0);
+    int flgs = 0;
+
+    flgs = netflags_muslc_2_lwip(flags);
+    return sendto(socket, dataptr, size, flgs, NULL, 0);
 }
 
 int sys_socket(int domain, int type, int protocol)
