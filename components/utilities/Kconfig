@@ -205,4 +205,8 @@ config RT_USING_UTEST
             default 20
     endif
 
+config RT_USING_VCONSOLE
+    bool "Enable Virtual console"
+    default n
+
 endmenu
