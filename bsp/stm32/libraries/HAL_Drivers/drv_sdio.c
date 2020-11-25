@@ -7,7 +7,8 @@
  * Date           Author       Notes
  * 2018-06-22     tyx          first
  * 2018-12-12     balanceTWK   first version
- * 2019-06-11     WillianChan   Add SD card hot plug detection
+ * 2019-06-11     WillianChan  Add SD card hot plug detection
+ * 2020-11-09     whj4674672   fix sdio non-aligned access problem
  */
 
 #include "board.h"
@@ -366,7 +367,7 @@ static void rthw_sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
 
     if (req->cmd != RT_NULL)
     {
-        memset(&pkg, 0, sizeof(pkg));
+        rt_memset(&pkg, 0, sizeof(pkg));
         data = req->cmd->data;
         pkg.cmd = req->cmd;
 
@@ -382,7 +383,7 @@ static void rthw_sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
                 pkg.buff = cache_buf;
                 if (data->flags & DATA_DIR_WRITE)
                 {
-                    memcpy(cache_buf, data->buf, size);
+                    rt_memcpy(cache_buf, data->buf, size);
                 }
             }
         }
@@ -391,13 +392,13 @@ static void rthw_sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
 
         if ((data != RT_NULL) && (data->flags & DATA_DIR_READ) && ((rt_uint32_t)data->buf & (SDIO_ALIGN_LEN - 1)))
         {
-            memcpy(data->buf, cache_buf, data->blksize * data->blks);
+            rt_memcpy(data->buf, cache_buf, data->blksize * data->blks);
         }
     }
 
     if (req->stop != RT_NULL)
     {
-        memset(&pkg, 0, sizeof(pkg));
+        rt_memset(&pkg, 0, sizeof(pkg));
         pkg.cmd = req->stop;
         rthw_sdio_send_command(sdio, &pkg);
     }
