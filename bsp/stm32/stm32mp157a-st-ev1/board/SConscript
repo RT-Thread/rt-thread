@@ -19,6 +19,9 @@ if GetDepend(['BSP_USING_PMIC']):
 if GetDepend(['BSP_USING_NAND']):
     src += Glob('ports/drv_nand.c')
 
+if GetDepend(['BSP_USING_GBE']):
+    src += Glob('ports/eth/drv_eth.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
@@ -34,6 +37,7 @@ if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('ports/OpenAMP/virtual_driver/*.c')
     src +=  Glob('ports/OpenAMP/drv_openamp.c')
 
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/CM4/Inc']
 path += [cwd + '/ports']
@@ -44,6 +48,9 @@ if GetDepend(['BSP_USING_OPENAMP']):
     path += [cwd + '/ports/OpenAMP/libmetal/lib/include']
     path += [cwd + '/ports/OpenAMP/virtual_driver']
     path += [cwd + '/CubeMX_Config/CM4/Inc']
+
+if GetDepend(['BSP_USING_GBE']):
+    path += [cwd + '/ports/eth']
 
 startup_path_prefix = SDK_LIB
 

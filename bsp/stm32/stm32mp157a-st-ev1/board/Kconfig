@@ -33,6 +33,10 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_OPENAMP
         default n
 
+    config BSP_USING_GBE
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -48,11 +52,11 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART3
                 bool "Enable UART3"
-                default y
+                default n
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART3_TX_USING_DMA
@@ -62,7 +66,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_UART4
                 bool "Enable UART4"
-                default y
+                default n
 
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
