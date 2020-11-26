@@ -150,7 +150,9 @@ typedef enum {
 
 //External Mass Media Controller (SD Card)
 #define MMC0_BASE_ADDR		(PER_BASE+0x300000)   
-#define MMC2_BASE_ADDR		(PER_BASE+0x340000)  
+#define MMC2_BASE_ADDR		(PER_BASE+0x340000)
+
+#define ETH_IRQ                 (160+29)
 
 /* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)
