@@ -41,7 +41,7 @@ extern   "C"
 * Function: oled_gui_init
 * Description: 初始化OLED GUI模块
 * Author: wangk
-* Returns: 
+* Returns:
 * Parameter:
 * History:
 *************************************************/
@@ -51,7 +51,7 @@ void oled_gui_init(void);
 * Function: oled_gui_start
 * Description: 启动OLED GUI模块
 * Author: wangk
-* Returns: 
+* Returns:
 * Parameter:
 * History:
 *************************************************/

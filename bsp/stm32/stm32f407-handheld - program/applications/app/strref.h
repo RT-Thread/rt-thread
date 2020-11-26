@@ -46,7 +46,7 @@ typedef struct
 * Function: STRREF_IsEmpty
 * Description: 判断StrConstRef_T类型字符串是否为空
 * Author: wangk
-* Returns: 
+* Returns:
 * Parameter:
 * History:
 *************************************************/

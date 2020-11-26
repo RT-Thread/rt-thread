@@ -134,7 +134,7 @@ static enum rym_code ymodem_on_data(struct rym_ctx *ctx, rt_uint8_t *buf, rt_siz
 bool OTA_Download(rt_device_t ptDevice)
 {
     struct rym_ctx rctx;
-	bool ret = false;
+    bool ret = false;
 
     recv_partition = DEFAULT_DOWNLOAD_PART;
     rt_kprintf("Default save firmware on download partition.\n");
@@ -147,7 +147,7 @@ bool OTA_Download(rt_device_t ptDevice)
     {
         rt_kprintf("Download firmware to flash success.\n");
 
-		ret = true;
+        ret = true;
     }
     else
     {
@@ -167,9 +167,9 @@ bool OTA_Download(rt_device_t ptDevice)
 *************************************************/
 void OTA_Reboot(void)
 {
-	rt_kprintf("System now will restart...\r\n");
-	
-	/* Reset the device, Start new firmware */
+    rt_kprintf("System now will restart...\r\n");
+
+    /* Reset the device, Start new firmware */
     rt_hw_cpu_reset();
 }
 

@@ -57,23 +57,23 @@ extern   "C"
 * Function: STRREF_IsEmpty
 * Description: 判断StrConstRef_T类型字符串是否为空
 * Author: wangk
-* Returns: 
+* Returns:
 * Parameter:
 * History:
 *************************************************/
 bool STRREF_IsEmpty(const StrConstRef_T* pctStrRef)
 {
-	if (NULL == pctStrRef)
-	{
-		return true;
-	}
-	
-	if ((NULL == pctStrRef->pcStr) || (pctStrRef->u32Len <= 0))
-	{
-		return true;
-	}
-	
-	return false;
+    if (NULL == pctStrRef)
+    {
+        return true;
+    }
+
+    if ((NULL == pctStrRef->pcStr) || (pctStrRef->u32Len <= 0))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 /*************************************************
@@ -87,19 +87,21 @@ bool STRREF_IsEmpty(const StrConstRef_T* pctStrRef)
 *************************************************/
 uint32_t STRREF_StrCpy(char* pszBuf, uint32_t u32BufLen, const StrConstRef_T* pctStrRef)
 {
-	if ((NULL == pszBuf) || (u32BufLen <= 0))
-	{
-		return 0;
-	}
-	if ((NULL == pctStrRef) || (pctStrRef->u32Len <= 0))
-	{
-		pszBuf[0] = '\0';
-		return 0;
-	}
-	uint32_t u32CopyLen = MIN(u32BufLen - 1, pctStrRef->u32Len);
-	memcpy(pszBuf, pctStrRef->pcStr, u32CopyLen);
-	pszBuf[u32CopyLen] = '\0';
-	return u32CopyLen;
+    if ((NULL == pszBuf) || (u32BufLen <= 0))
+    {
+        return 0;
+    }
+
+    if ((NULL == pctStrRef) || (pctStrRef->u32Len <= 0))
+    {
+        pszBuf[0] = '\0';
+        return 0;
+    }
+
+    uint32_t u32CopyLen = MIN(u32BufLen - 1, pctStrRef->u32Len);
+    memcpy(pszBuf, pctStrRef->pcStr, u32CopyLen);
+    pszBuf[u32CopyLen] = '\0';
+    return u32CopyLen;
 }
 
 /*************************************************
@@ -113,31 +115,37 @@ uint32_t STRREF_StrCpy(char* pszBuf, uint32_t u32BufLen, const StrConstRef_T* pc
 *************************************************/
 int32_t STRREF_StrCmp(const char* pcszStr, const StrConstRef_T* pctStrRef)
 {
-	if ((NULL == pcszStr) && (NULL == pctStrRef))
-	{
-		return 0;
-	}
-	if ((NULL == pcszStr) && (NULL != pctStrRef))
-	{
-		return -1;
-	}
-	if ((NULL != pcszStr) && (NULL == pctStrRef))
-	{
-		return 1;
-	}
-	if (('\0' == pcszStr[0]) && (0 == pctStrRef->u32Len))
-	{
-		return 0;
-	}
-	if (('\0' == pcszStr[0]) && (0 != pctStrRef->u32Len))
-	{
-		return -1;
-	}
-	if (('\0' != pcszStr[0]) && (0 == pctStrRef->u32Len))
-	{
-		return 1;
-	}
-	return strncmp(pcszStr, pctStrRef->pcStr, pctStrRef->u32Len);
+    if ((NULL == pcszStr) && (NULL == pctStrRef))
+    {
+        return 0;
+    }
+
+    if ((NULL == pcszStr) && (NULL != pctStrRef))
+    {
+        return -1;
+    }
+
+    if ((NULL != pcszStr) && (NULL == pctStrRef))
+    {
+        return 1;
+    }
+
+    if (('\0' == pcszStr[0]) && (0 == pctStrRef->u32Len))
+    {
+        return 0;
+    }
+
+    if (('\0' == pcszStr[0]) && (0 != pctStrRef->u32Len))
+    {
+        return -1;
+    }
+
+    if (('\0' != pcszStr[0]) && (0 == pctStrRef->u32Len))
+    {
+        return 1;
+    }
+
+    return strncmp(pcszStr, pctStrRef->pcStr, pctStrRef->u32Len);
 }
 
 /*************************************************
@@ -150,29 +158,32 @@ int32_t STRREF_StrCmp(const char* pcszStr, const StrConstRef_T* pctStrRef)
 *************************************************/
 int32_t STRREF_ToInt(const StrConstRef_T* pctStrRef)
 {
-	if ((NULL == pctStrRef) || (pctStrRef->u32Len <= 0))
-	{
-		return 0;
-	}
-	char szBuf[32] = "";
-	STRREF_StrCpy(szBuf, sizeof(szBuf), pctStrRef);
+    if ((NULL == pctStrRef) || (pctStrRef->u32Len <= 0))
+    {
+        return 0;
+    }
 
-	int32_t s32Ret = 0;
-	const char* pszStr = szBuf;
+    char szBuf[32] = "";
+    STRREF_StrCpy(szBuf, sizeof(szBuf), pctStrRef);
 
-	if (('+' == szBuf[0]) || ('-' == szBuf[0]))
-	{ // 处理正负号
-		++pszStr;
-	}
+    int32_t s32Ret = 0;
+    const char* pszStr = szBuf;
 
-	s32Ret = (int32_t)atoi(pszStr);
+    if (('+' == szBuf[0]) || ('-' == szBuf[0]))
+    {
+        // 处理正负号
+        ++pszStr;
+    }
 
-	if ('-' == szBuf[0])
-	{ // 负数
-		s32Ret = -s32Ret;
-	}
+    s32Ret = (int32_t)atoi(pszStr);
 
-	return s32Ret;
+    if ('-' == szBuf[0])
+    {
+        // 负数
+        s32Ret = -s32Ret;
+    }
+
+    return s32Ret;
 }
 
 /*************************************************
@@ -185,12 +196,12 @@ int32_t STRREF_ToInt(const StrConstRef_T* pctStrRef)
 *************************************************/
 uint32_t STRREF_ToU32(const StrConstRef_T* pctStrRef)
 {
-	if (STRREF_IsEmpty(pctStrRef))
-	{
-		return 0;
-	}
+    if (STRREF_IsEmpty(pctStrRef))
+    {
+        return 0;
+    }
 
-	return UTIL_StrToU32(pctStrRef->pcStr, pctStrRef->u32Len);
+    return UTIL_StrToU32(pctStrRef->pcStr, pctStrRef->u32Len);
 }
 
 /*************************************************
@@ -203,12 +214,12 @@ uint32_t STRREF_ToU32(const StrConstRef_T* pctStrRef)
 *************************************************/
 uint32_t STRREF_HexStrToU32(const StrConstRef_T* pctStrRef)
 {
-	if (STRREF_IsEmpty(pctStrRef))
-	{
-		return 0;
-	}
+    if (STRREF_IsEmpty(pctStrRef))
+    {
+        return 0;
+    }
 
-	return UTIL_HexStrToU32(pctStrRef->pcStr, pctStrRef->u32Len);
+    return UTIL_HexStrToU32(pctStrRef->pcStr, pctStrRef->u32Len);
 }
 
 /*************************************************
@@ -221,29 +232,34 @@ uint32_t STRREF_HexStrToU32(const StrConstRef_T* pctStrRef)
 *************************************************/
 bool STRREF_IsInteger(const StrConstRef_T* pctStrRef)
 {
-	if ((NULL == pctStrRef) || (pctStrRef->u32Len <= 0))
-	{
-		return false;
-	}
-	bool bRet = true;
-	uint32_t i = 0;
-	if (('+' == pctStrRef->pcStr[0]) || ('-' == pctStrRef->pcStr[0]))
-	{
-		++i;
-	}
-	if (i >= pctStrRef->u32Len)
-	{
-		return false;
-	}
-	for (; i < pctStrRef->u32Len; ++i)
-	{
-		if (!isdigit(pctStrRef->pcStr[i]))
-		{
-			bRet = false;
-			break;
-		}
-	}
-	return bRet;
+    if ((NULL == pctStrRef) || (pctStrRef->u32Len <= 0))
+    {
+        return false;
+    }
+
+    bool bRet = true;
+    uint32_t i = 0;
+
+    if (('+' == pctStrRef->pcStr[0]) || ('-' == pctStrRef->pcStr[0]))
+    {
+        ++i;
+    }
+
+    if (i >= pctStrRef->u32Len)
+    {
+        return false;
+    }
+
+    for (; i < pctStrRef->u32Len; ++i)
+    {
+        if (!isdigit(pctStrRef->pcStr[i]))
+        {
+            bRet = false;
+            break;
+        }
+    }
+
+    return bRet;
 }
 
 /*************************************************
@@ -256,43 +272,46 @@ bool STRREF_IsInteger(const StrConstRef_T* pctStrRef)
 *************************************************/
 uint32_t STRREF_Split(const StrConstRef_T* pctStrRef, char chSep, StrConstRef_T ptStrRefPartListBuf[], uint32_t u32ListBufLen)
 {
-	// 参数检查
-	if (STRREF_IsEmpty(pctStrRef) 
-		|| (NULL == ptStrRefPartListBuf)
-		|| (u32ListBufLen <= 0))
-	{
-		return 0;
-	}
-	
-	uint32_t u32ListLen = 0;
-	uint32_t i = 0;
+    // 参数检查
+    if (STRREF_IsEmpty(pctStrRef)
+            || (NULL == ptStrRefPartListBuf)
+            || (u32ListBufLen <= 0))
+    {
+        return 0;
+    }
 
-	// 第一个子串起始地址和长度初始化
-	ptStrRefPartListBuf[u32ListLen].pcStr = pctStrRef->pcStr;
-	ptStrRefPartListBuf[u32ListLen].u32Len = 0;
-	for (i = 0; i < pctStrRef->u32Len; ++i)
-	{
-			if (chSep == pctStrRef->pcStr[i])
-			{
-					if ((u32ListLen + 1) >= u32ListBufLen)
-					{ // 超过最大Split数
-							break;
-					}
-					// 下一个子串起始地址和长度初始化
-					++u32ListLen;
-					ptStrRefPartListBuf[u32ListLen].pcStr = pctStrRef->pcStr + i + 1;
-					ptStrRefPartListBuf[u32ListLen].u32Len = 0;
-			}
-			else
-			{
-					++(ptStrRefPartListBuf[u32ListLen].u32Len);
-			}
-	}
-	
-	// 计入最后一个子串
-	++u32ListLen;
+    uint32_t u32ListLen = 0;
+    uint32_t i = 0;
 
-	return u32ListLen;
+    // 第一个子串起始地址和长度初始化
+    ptStrRefPartListBuf[u32ListLen].pcStr = pctStrRef->pcStr;
+    ptStrRefPartListBuf[u32ListLen].u32Len = 0;
+
+    for (i = 0; i < pctStrRef->u32Len; ++i)
+    {
+        if (chSep == pctStrRef->pcStr[i])
+        {
+            if ((u32ListLen + 1) >= u32ListBufLen)
+            {
+                // 超过最大Split数
+                break;
+            }
+
+            // 下一个子串起始地址和长度初始化
+            ++u32ListLen;
+            ptStrRefPartListBuf[u32ListLen].pcStr = pctStrRef->pcStr + i + 1;
+            ptStrRefPartListBuf[u32ListLen].u32Len = 0;
+        }
+        else
+        {
+            ++(ptStrRefPartListBuf[u32ListLen].u32Len);
+        }
+    }
+
+    // 计入最后一个子串
+    ++u32ListLen;
+
+    return u32ListLen;
 }
 
 /**---------------------------------------------------------------------------*

@@ -119,7 +119,6 @@ void cmd_init(void);
 void cmd_parsing(char *str);
 /* receive data and lenth*/
 void CMD_OnRecvData(const uint8_t* pcu8Data, uint32_t u32DataLen);
-void CMD_ClearPacketBuf(void);
 
 /**---------------------------------------------------------------------------*
  **                         Compiler Flag                                     *

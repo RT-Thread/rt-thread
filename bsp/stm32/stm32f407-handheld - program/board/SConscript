@@ -12,11 +12,16 @@ board.c
 CubeMX_Config/Src/stm32f4xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_RSCDRRM020NDSE3']):
+    src += Glob('ports/rscdrrm020ndse3.c')
+    src += Glob('ports/Pressure_Comp.c')
+    src += Glob('ports/crc.c')
+
 if GetDepend(['BSP_USING_ETH']):
     src += Glob('ports/phy_reset.c')
 
 if GetDepend(['BSP_USING_SPI_FLASH']):
-    src += Glob('ports/spi_flash_init.c')
+    src += Glob('ports/spi_w25q128.c')
 
 if GetDepend(['BSP_USING_SDCARD']):
     src += Glob('ports/sdcard_port.c')

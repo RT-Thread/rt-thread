@@ -32,7 +32,7 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Data Structures                                *
 **----------------------------------------------------------------------------*/
-	
+
 /*----------------------------------------------------------------------------*
 **                             Function Define                                *
 **----------------------------------------------------------------------------*/
@@ -65,7 +65,7 @@ bool UTIL_IsDomainNameValid(const char* pcszDomainName);
 * History:
 *************************************************/
 uint32_t UTIL_GetHexStr(const uint8_t* pcu8Data, uint32_t u32DataLen, char* pszBuf, uint32_t u32BufLen);
-	
+
 /*************************************************
 * Function: UTIL_StrToU32
 * Description: 字符串转32位无符号整数
@@ -124,37 +124,40 @@ uint32_t UTIL_Pow10N(uint32_t u32N);
 * Parameter:
 * History:
 *************************************************/
-uint32_t UTIL_ToFloatStr(int32_t s32Val, uint32_t u32N, 
-	char* szBuf, uint32_t u32BufLen);
-	
+uint32_t UTIL_ToFloatStr(int32_t s32Val, uint32_t u32N,
+                         char* szBuf, uint32_t u32BufLen);
+
 /*************************************************
 * Function: UTIL_TimeDiff
 * Description: 计算时间差(处理计时溢出问题)
 * Author: wangk
-* Returns: 
+* Returns:
 * Parameter:
 * History:
 *************************************************/
 inline uint32_t UTIL_TimeDiff(uint32_t u32EndTime, uint32_t u32StartTime)
 {
-#if 0
-	uint32_t u32TimeDiff = u32EndTime - u32StartTime;
-	if (u32EndTime < u32StartTime)
-	{ // 发生了计时溢出
-		u32TimeDiff = u32EndTime + (UINT_MAX - u32StartTime);
-	}
-#else
-	/* 按照补码计算,如果溢出也能得到正确结果(a-b=a+(-b) 补码等于原码按位取反加1) */
-	uint32_t u32TimeDiff = u32EndTime - u32StartTime;
-#endif
-	return u32TimeDiff;
+    #if 0
+    uint32_t u32TimeDiff = u32EndTime - u32StartTime;
+
+    if (u32EndTime < u32StartTime)
+    {
+        // 发生了计时溢出
+        u32TimeDiff = u32EndTime + (UINT_MAX - u32StartTime);
+    }
+
+    #else
+    /* 按照补码计算,如果溢出也能得到正确结果(a-b=a+(-b) 补码等于原码按位取反加1) */
+    uint32_t u32TimeDiff = u32EndTime - u32StartTime;
+    #endif
+    return u32TimeDiff;
 }
 
 /*************************************************
 * Function: UTIL_POW2Floor
 * Description: 计算小于等于某数的最大2^N值
 * Author: wangk
-* Returns: 
+* Returns:
 * Parameter:
 * History:
 *************************************************/

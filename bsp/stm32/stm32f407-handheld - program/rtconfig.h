@@ -82,7 +82,12 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_SPI
+#define RT_USING_SENSOR
+#define RT_USING_SENSOR_CMD
 
 /* Using USB */
 
@@ -101,7 +106,7 @@
 
 /* POSIX layer and C standard library */
 
-#define RT_LIBC_USING_TIME
+#define RT_USING_LIBC
 
 /* Network */
 
@@ -122,6 +127,25 @@
 
 /* Utilities */
 
+#define RT_USING_ULOG
+#define ULOG_OUTPUT_LVL_I
+#define ULOG_OUTPUT_LVL 6
+#define ULOG_ASSERT_ENABLE
+#define ULOG_LINE_BUF_SIZE 128
+#define ULOG_USING_ASYNC_OUTPUT
+#define ULOG_ASYNC_OUTPUT_BUF_SIZE 2048
+#define ULOG_ASYNC_OUTPUT_BY_THREAD
+#define ULOG_ASYNC_OUTPUT_THREAD_STACK 1024
+#define ULOG_ASYNC_OUTPUT_THREAD_PRIORITY 30
+
+/* log format */
+
+#define ULOG_USING_COLOR
+#define ULOG_OUTPUT_TIME
+#define ULOG_OUTPUT_LEVEL
+#define ULOG_OUTPUT_TAG
+#define ULOG_BACKEND_USING_CONSOLE
+#define ULOG_USING_FILTER
 
 /* RT-Thread online packages */
 
@@ -150,15 +174,30 @@
 
 /* tools packages */
 
+#define PKG_USING_CMBACKTRACE
+#define PKG_CMBACKTRACE_PLATFORM_M4
+#define PKG_CMBACKTRACE_DUMP_STACK
+#define PKG_CMBACKTRACE_PRINT_ENGLISH
+#define PKG_USING_CMBACKTRACE_V10400
+#define PKG_CMBACKTRACE_VER_NUM 0x10400
 
 /* system packages */
 
+#define PKG_USING_FAL
+#define FAL_DEBUG_CONFIG
+#define FAL_DEBUG 1
+#define FAL_PART_HAS_TABLE_CFG
+#define PKG_USING_FAL_V00500
+#define PKG_FAL_VER_NUM 0x00500
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_SENSORS_DRIVERS
+#define PKG_USING_BME280
+#define PKG_USING_BME280_LATEST_VERSION
 
 /* miscellaneous packages */
 
@@ -174,6 +213,8 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_PRESSURE_SENSOR
+#define BSP_USING_RSCDRRM020NDSE3
 
 /* On-chip Peripheral Drivers */
 
@@ -185,6 +226,16 @@
 #define BSP_USING_UART3
 #define BSP_UART3_RX_USING_DMA
 #define BSP_UART3_TX_USING_DMA
+#define BSP_USING_ON_CHIP_FLASH
+#define BSP_USING_SPI
+#define BSP_USING_SPI1
+#define BSP_SPI1_TX_USING_DMA
+#define BSP_SPI1_RX_USING_DMA
+#define BSP_USING_SPI2
+#define BSP_USING_SPI3
+#define BSP_USING_I2C2
+#define BSP_I2C2_SCL_PIN 24
+#define BSP_I2C2_SDA_PIN 25
 #define BSP_USING_USBD
 #define BSP_USBD_TYPE_FS
 

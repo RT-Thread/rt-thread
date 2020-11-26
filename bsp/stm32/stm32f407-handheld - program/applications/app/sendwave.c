@@ -15,7 +15,8 @@
 #include "sendwave.h"
 
 /* 此处定义一些常量, 请勿修改! */
-enum {
+enum
+{
     Ch_Num          = 16,       // 通道数量
     Frame_MaxBytes  = 80,       // 最大帧长度
     Frame_Head      = 0xA3,     // 帧头识别字
@@ -37,7 +38,8 @@ enum {
  **/
 char ws_point_int8(char *buffer, char channel, int8_t value)
 {
-    if ((uint8_t)channel < Ch_Num) { // 通道验证
+    if ((uint8_t)channel < Ch_Num)   // 通道验证
+    {
         // 帧头
         *buffer++ = Frame_Head;
         *buffer++ = Frame_PointMode;
@@ -45,6 +47,7 @@ char ws_point_int8(char *buffer, char channel, int8_t value)
         *buffer = value; // 数据添加到帧
         return 4; // 数据帧长度
     }
+
     return 0;
 }
 
@@ -57,7 +60,8 @@ char ws_point_int8(char *buffer, char channel, int8_t value)
  **/
 char ws_point_int16(char *buffer, char channel, int16_t value)
 {
-    if ((uint8_t)channel < Ch_Num) { // 通道验证
+    if ((uint8_t)channel < Ch_Num)   // 通道验证
+    {
         // 帧头
         *buffer++ = Frame_Head;
         *buffer++ = Frame_PointMode;
@@ -67,6 +71,7 @@ char ws_point_int16(char *buffer, char channel, int16_t value)
         *buffer = value & 0xFF;
         return 5; // 数据帧长度
     }
+
     return 0;
 }
 
@@ -79,7 +84,8 @@ char ws_point_int16(char *buffer, char channel, int16_t value)
  **/
 char ws_point_int32(char *buffer, char channel, int32_t value)
 {
-    if ((uint8_t)channel < Ch_Num) { // 通道验证
+    if ((uint8_t)channel < Ch_Num)   // 通道验证
+    {
         // 帧头
         *buffer++ = Frame_Head;
         *buffer++ = Frame_PointMode;
@@ -91,8 +97,9 @@ char ws_point_int32(char *buffer, char channel, int32_t value)
         *buffer = value & 0xFF;
         return 7; // 数据帧长度
     }
+
     return 0;
-    
+
 }
 
 /* 函数功能: 发送float类型数据
@@ -105,12 +112,14 @@ char ws_point_int32(char *buffer, char channel, int32_t value)
 char ws_point_float(char *buffer, char channel, float value)
 {
     // 这个联合变量用来实现浮点到整形的变换
-    union {
+    union
+    {
         float f;
         uint32_t i;
     } temp;
 
-    if ((uint8_t)channel < Ch_Num) { // 通道验证
+    if ((uint8_t)channel < Ch_Num)   // 通道验证
+    {
         temp.f = value;
         // 帧头
         *buffer++ = Frame_Head;
@@ -123,6 +132,7 @@ char ws_point_float(char *buffer, char channel, float value)
         *buffer = temp.i & 0xFF;
         return 7; // 数据帧长度
     }
+
     return 0;
 }
 
@@ -159,13 +169,16 @@ char ws_add_int8(char *buffer, char channel, int8_t value)
     char *p = buffer + count + 3; // 跳过前面数据
 
     count += 2;
+
     // 帧长度及通道验证
-    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num) {
+    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num)
+    {
         buffer[2] = count;
         *p++ = channel | Format_Int8; // 通道及数据格式信息
         *p = value; // 数据添加到帧
         return 1;
     }
+
     return 0;
 }
 
@@ -182,8 +195,10 @@ char ws_add_int16(char *buffer, char channel, int16_t value)
     char *p = buffer + count + 3; // 跳过前面数据
 
     count += 3;
+
     // 帧长度及通道验证
-    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num) {
+    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num)
+    {
         buffer[2] = count;
         *p++ = channel | Format_Int16; // 通道及数据格式信息
         // 数据添加到帧
@@ -191,6 +206,7 @@ char ws_add_int16(char *buffer, char channel, int16_t value)
         *p = value & 0xFF;
         return 1;
     }
+
     return 0;
 }
 
@@ -207,8 +223,10 @@ char ws_add_int32(char *buffer, char channel, int32_t value)
     char *p = buffer + count + 3; // 跳过前面数据
 
     count += 5;
+
     // 帧长度及通道验证
-    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num) {
+    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num)
+    {
         buffer[2] = count;
         *p++ = channel | Format_Int32; // 通道及数据格式信息
         // 数据添加到帧
@@ -218,6 +236,7 @@ char ws_add_int32(char *buffer, char channel, int32_t value)
         *p = value & 0xFF;
         return 1;
     }
+
     return 0;
 }
 
@@ -234,9 +253,12 @@ char ws_add_float(char *buffer, char channel, float value)
     char *p = buffer + count + 3; // 跳过前面数据
 
     count += 5;
+
     // 帧长度及通道验证
-    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num) {
-        union {
+    if (count <= Frame_MaxBytes && (uint8_t)channel < Ch_Num)
+    {
+        union
+        {
             float f;
             uint32_t i;
         } temp;
@@ -250,6 +272,7 @@ char ws_add_float(char *buffer, char channel, float value)
         *p = temp.i & 0xFF;
         return 1;
     }
+
     return 0;
 }
 

@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2018-11-27     SummerGift   add spi flash port file
+ * @Author: your name
+ * @Date: 2020-11-25 08:44:06
+ * @LastEditTime: 2020-11-25 08:44:59
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \stm32f407-handheld - program\board\ports\spi_w25q128.c
  */
-
 #include <rtthread.h>
 #include "spi_flash.h"
 #include "spi_flash_sfud.h"
@@ -28,4 +26,3 @@ static int rt_hw_spi_flash_init(void)
 }
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
 #endif
-

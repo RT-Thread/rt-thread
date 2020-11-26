@@ -43,7 +43,7 @@ extern   "C"
 #if !defined(MIN)
 #define MIN(a,b)	(((a) < (b)) ? (a) : (b))
 #endif
-	
+
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 #endif
@@ -65,16 +65,16 @@ extern   "C"
 
 /* 字符是否为有效的HEX字符 */
 #define IS_HEX_CHAR(c) ((((c) >= '0') && ((c) <= '9')) \
-												|| (((c) >= 'a') && ((c) <= 'f')) \
-												|| (((c) >= 'A') && ((c) <= 'F')))
+                        || (((c) >= 'a') && ((c) <= 'f')) \
+                        || (((c) >= 'A') && ((c) <= 'F')))
 
 /* Case返回枚举常量(或宏)名称字符串 */
 #define MACRO_NAME_CASE(eMacro) case eMacro: return #eMacro
 
 #ifdef TRACE_ON
-	#define LOG_TRACE(...) rt_kprintf(__VA_ARGS__)
+#define LOG_TRACE(...) rt_kprintf(__VA_ARGS__)
 #else
-	#define LOG_TRACE(...)
+#define LOG_TRACE(...)
 #endif
 
 /*----------------------------------------------------------------------------*
@@ -84,7 +84,7 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                             Function Define                                *
 **----------------------------------------------------------------------------*/
-	
+
 /**--------------------------------------------------------------------------*
 **                         Compiler Flag                                     *
 **---------------------------------------------------------------------------*/

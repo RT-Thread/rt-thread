@@ -1,28 +1,13 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2020-09-27     Administrator       the first version
- */
+ * File Name	 board_config.h
+ * Descriptions	 PIN /Version
+ * Change Logs
+ * Date             Author       Notes
+ * 2020-11-23       Eric     	 first implementation
+*/
+
 #ifndef DRIVERS_INCLUDE_INCLUDE_USER_BOARD_CONFIG_H_
 #define DRIVERS_INCLUDE_INCLUDE_USER_BOARD_CONFIG_H_
-/****************************************************************************
- *
- * File Name£º
- *
- * Author£º
- *
- * Date£º
- *
- * Descriptions:
- *
- *
- ******************************************************************************/
-
-
 
 /*----------------------------------------------------------------------------*
 **                             Dependencies                                   *
@@ -30,11 +15,6 @@
 #include <board.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-
-/**---------------------------------------------------------------------------*
- **                            Debugging Flag                                 *
- **---------------------------------------------------------------------------*/
 
 /**---------------------------------------------------------------------------*
 **                             Compiler Flag                                  *
@@ -44,11 +24,6 @@ extern   "C"
 {
 #endif
 
-/* ############################ Debug Selection ############################# */
-#define BME280_DEBUG
-#define OLED_DEBUG
-#define W25Q128_DEBUG
-
 /* ########################### PIN USE Selection ############################ */
 #define CHARGE_PIN
 #define SWITCH_PIN
@@ -56,9 +31,21 @@ extern   "C"
 #define ADC_PIN
 #define RGB_PIN
 #define BME280_PIN
+#define RSCDRRM020NDSE3_PIN
 
 /* ########################### Command Selection ############################ */
-#define Board_Command
+#define BOARD_VERSION
+
+/*----------------------------------------------------------------------------*
+**                                                                            *
+**                            Board Version Define                            *
+**                                                                            *
+**----------------------------------------------------------------------------*/
+//#define BOARD_VERSION
+#ifdef BOARD_VERSION
+#define BUILD (__DATE__ " " __TIME__)
+#define VERSION ("V 1.1")
+#endif
 
 /*----------------------------------------------------------------------------*
 **                                                                            *
@@ -117,14 +104,13 @@ extern   "C"
 //#define RGB_PIN
 #ifdef RGB_PIN
 #define LIGHT_B_PIN        GET_PIN(E,9)    //PE9   B_TIM1_CH1
-#define LIGHT_G_PIN        GET_PIN(E,11)   //PE11  B_TIM1_CH2
-#define LIGHT_R_PIN        GET_PIN(E,13)   //PE13  B_TIM1_CH3
+#define LIGHT_G_PIN        GET_PIN(E,11)   //PE11  G_TIM1_CH2
+#define LIGHT_R_PIN        GET_PIN(E,13)   //PE13  R_TIM1_CH3
 #endif
 
 /*----------------------------------------------------------------------------*
 **                           BME280 configuration                             *
 **----------------------------------------------------------------------------*/
-
 //#define BME280_PIN
 #ifdef BME280_PIN
 #define BME280_SDO_PIN            GET_PIN(B,5)  //
@@ -135,26 +121,17 @@ extern   "C"
 /*----------------------------------------------------------------------------*
 **                 RSCDRRM020NDSE3 pin configuration                          *
 **----------------------------------------------------------------------------*/
-
+//#define RSCDRRM020NDSE3_PIN
+#ifdef RSCDRRM020NDSE3_PIN
+#define RSCDRRM020NDSE3_PWER_EN_PIN		GET_PIN(B, 11)/* defined the PWER_EN pin: PB11 */
+#define RSCDRRM020NDSE3_RDY_PIN			GET_PIN(B, 12)/* defined the RDY pin: PB12 */
+#define RSCDRRM020NDSE3_CS_AD_PIN	 	GET_PIN(B, 10)/* defined the CS_ADC pin: PB10 */
+#define RSCDRRM020NDSE3_CS_EE_PIN	 	GET_PIN(E, 15)/* defined the CS_EE pin: PE15 */
+#endif
 
 /*----------------------------------------------------------------------------*
 **                           BT pin configuration                             *
 **----------------------------------------------------------------------------*/
-
-
-/*----------------------------------------------------------------------------*
-**                                                                            *
-**                            Board Command Define                            *
-**                                                                            *
-**----------------------------------------------------------------------------*/
-//#define Board_Command
-#ifdef Board_Command
-#define BUILD (__DATE__ " " __TIME__)
-#define VERSION ("V 1.1")
-#endif
-
-
-
 
 
 /**---------------------------------------------------------------------------*

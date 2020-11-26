@@ -19,7 +19,7 @@
 
 #ifdef __cplusplus
 #if __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 #endif // __cplusplus
 
@@ -42,7 +42,8 @@
 #define     CH16    15
 
 /* 信息帧数据结构定义 */
-typedef struct {
+typedef struct
+{
     uint8_t year;           // 0~99 -> 2000 ~ 2099, 7 bit
     uint8_t month;          // 1 ~ 12, 4 bit
     uint8_t day;            // 1 ~ 31, 5 bit
@@ -68,7 +69,7 @@ char ws_send_timestamp(char *buffer, ws_timestamp_t* ts);
 
 #ifdef __cplusplus
 #if __cplusplus
-  }
+}
 #endif
 #endif // __cplusplus
 
