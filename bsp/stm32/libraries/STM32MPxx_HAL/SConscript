@@ -35,10 +35,6 @@ if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_uart.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_uart_ex.c']
 
-#if GetDepend(['RT_USING_SPI']):
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_spi.c']
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_qspi.c']
-
 if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_pccard.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_pcd.c']
@@ -48,14 +44,6 @@ if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
 
 if GetDepend(['RT_USING_CAN']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_can.c']
-
-#if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim.c']
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim_ex.c']
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_lptim.c']
-
-# if GetDepend(['BSP_USING_ETH']):
-#     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_eth.c']
 
 if GetDepend(['BSP_USING_WWDG']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_wwdg.c']
@@ -103,6 +91,21 @@ if GetDepend(['BSP_USING_LTDC']):
 if GetDepend(['BSP_USING_SDMMC']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_sdmmc.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sd.c']
+
+if GetDepend(['BSP_USING_HASH']):
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_hash.c']
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_hash_ex.c']
+
+if GetDepend(['BSP_USING_CRC']):
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_crc.c']
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_crc_ex.c']
+
+if GetDepend(['BSP_USING_RNG']):
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_rng.c']
+
+if GetDepend(['BSP_USING_CRYP']):
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_cryp.c']
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_cryp_ex.c']
 
 path = [cwd + '/STM32MP1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32MP1xx/Include',

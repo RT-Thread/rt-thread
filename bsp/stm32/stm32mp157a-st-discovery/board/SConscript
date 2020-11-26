@@ -54,6 +54,9 @@ if GetDepend(['BSP_USING_AUDIO']):
 if GetDepend(['BSP_USING_AUDIO_RECORD']):
     src += Glob('ports/audio/drv_mic.c')
 
+if GetDepend(['(BSP_USING_RNG)']) or GetDepend(['(BSP_USING_HASH)']) or GetDepend(['(BSP_USING_CRC)']) or GetDepend(['BSP_USING_CRYP']):
+    src += Glob('ports/crypto/crypto_sample.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
