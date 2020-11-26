@@ -165,6 +165,8 @@ extern uint32_t mmc2_base_addr;
 #define MAC_REG                 (void *)(0xfd580000)
 extern void *                   mac_reg_base_addr;
 
+#define ETH_IRQ                 (160+29)
+
 #define SEND_DATA_NO_CACHE      (0x08200000)
 extern void *                   eth_send_no_cache;
 
