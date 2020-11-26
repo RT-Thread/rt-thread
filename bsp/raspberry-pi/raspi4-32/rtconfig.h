@@ -11,7 +11,7 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
@@ -46,6 +46,7 @@
 #define RT_CONSOLEBUF_SIZE 512
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40003
+#define RT_USING_CACHE
 #define ARCH_ARM
 #define ARCH_ARM_MMU
 #define RT_USING_USERSPACE
@@ -54,7 +55,6 @@
 #define RT_IOREMAP_LATE
 #define ARCH_ARM_CORTEX_A
 #define ARCH_ARMV8
-#define RT_USING_CACHE
 
 /* RT-Thread Components */
 
@@ -249,6 +249,9 @@
 
 
 /* system packages */
+
+
+/* Micrium: Micrium software products porting for RT-Thread */
 
 
 /* peripheral libraries and drivers */
