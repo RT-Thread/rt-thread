@@ -552,8 +552,8 @@ static rt_err_t reset_emmc(struct sdhci_pdata_t * pdat)
 
     // Clear control2
     write32(pdat->virt + EMMC_CONTROL2, 0);
-    // Get the base clock rate
-    mmc_base_clock = bcm271x_mbox_clock_get_rate(12);
+    // Get the base clock rate //12
+    mmc_base_clock = bcm271x_mbox_clock_get_rate(EMMC_CLK_ID);
     if(mmc_base_clock == 0)
     {
         rt_kprintf("EMMC: assuming clock rate to be 100MHz\n");
