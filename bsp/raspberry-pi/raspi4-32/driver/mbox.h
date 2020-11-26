@@ -134,6 +134,18 @@ enum {
 
 #define MBOX_ADDR 0x08000000
 
+#define    RES_CLK_ID           (0x000000000)
+#define    EMMC_CLK_ID          (0x000000001)
+#define    UART_CLK_ID          (0x000000002)
+#define    ARM_CLK_ID           (0x000000003)
+#define    CORE_CLK_ID          (0x000000004)
+#define    V3D_CLK_ID           (0x000000005)
+#define    H264_CLK_ID          (0x000000006)
+#define    ISP_CLK_ID           (0x000000007)
+#define    SDRAM_CLK_ID         (0x000000008)
+#define    PIXEL_CLK_ID         (0x000000009)
+#define    PWM_CLK_ID           (0x00000000a)
+
 int mbox_call(unsigned char ch, int mmu_enable);
 int bcm271x_notify_reboot(void);
 int bcm271x_notify_xhci_reset(void);
