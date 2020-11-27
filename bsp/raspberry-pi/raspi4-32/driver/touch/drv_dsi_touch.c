@@ -52,6 +52,13 @@ static void dsi_touch_thread_entry(void *param)
 {
     static volatile uint32_t touchbuf;
     touchbuf = bcm271x_mbox_get_touch(); //0x0f436000
+
+    if(touchbuf == RT_NULL)
+    {
+        rt_kprintf("init dsi touch err!\n");
+        return;
+    }
+    
     while (1)
     {
         struct touch_regs *regs = (struct touch_regs *)touchbuf;

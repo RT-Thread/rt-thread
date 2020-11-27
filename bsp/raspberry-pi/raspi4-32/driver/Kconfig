@@ -93,6 +93,10 @@ menu "Hardware Drivers Config"
             select RT_USING_WDT
             default n
 
+        config BSP_USING_ETH
+            bool "Enable ETH"
+            default n
+
         menuconfig BSP_USING_RTC
             bool "Enable RTC"
             select RT_USING_RTC
@@ -119,14 +123,37 @@ menu "Hardware Drivers Config"
     endmenu
 
     menu "Board Peripheral Drivers"
-        menuconfig BSP_USING_HDMI
-            bool "Enable HDMI"
+        menuconfig BSP_USING_LCD
+            bool "Enable LCD"
             default n
 
-        if BSP_USING_HDMI
+        if BSP_USING_LCD
             config BSP_USING_HDMI_DISPLAY
                 bool "HDMI DISPLAY"
                 default n
+            config BSP_USING_DSI_DISPLAY
+                bool "DSI DISPLAY"
+                default n
+            config BSP_USING_ILI9486
+                bool "ILI9486 DISPLAY"
+                default n
         endif
+
+        menuconfig BSP_USING_TOUCH
+            bool "Enable Touch"
+            default n
+
+        if BSP_USING_TOUCH
+            config BSP_USING_DSI_TOUCH_DEV
+                bool "DSI TOUCH"
+                default n
+            config BSP_USING_XPT_TOUCH_DEV
+                bool "XPT TOUCH"
+                default n
+        endif
+
+        config USING_LCD_CONSOLE
+            bool "LCD CONSOLE"
+            default n
     endmenu
 endmenu
