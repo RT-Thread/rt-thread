@@ -75,7 +75,6 @@ static rt_err_t raspi_spi_configure(struct rt_spi_device *device, struct rt_spi_
 {
     RT_ASSERT(cfg != RT_NULL);
     RT_ASSERT(device != RT_NULL);
-    rt_uint16_t divider;
     struct raspi_spi_device* hw_config = (struct raspi_spi_device *)(device->parent.user_data);
     struct raspi_spi_hw_config *hwcfg = (struct raspi_spi_hw_config *)hw_config->spi_hw_config;
     // spi clear fifo
