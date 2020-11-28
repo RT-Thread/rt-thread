@@ -56,6 +56,11 @@ extern "C"{
 #define RT_SPI_BUS_MODE_QSPI        (1<<1)
 
 /**
+ * spi device control commands
+ */
+#define RT_DEVICE_CTRL_SPI_WRITE_THEN_READ 0x10            /* spi write then read */
+
+/**
  * SPI message structure
  */
 struct rt_spi_message
@@ -159,6 +164,14 @@ struct rt_qspi_device
     void (*enter_qspi_mode)(struct rt_qspi_device *device);
 
     void (*exit_qspi_mode)(struct rt_qspi_device *device);
+};
+
+struct rt_spi_ctrl_args
+{
+    const void *send_buf;
+    rt_size_t send_length;
+    void *recv_buf;
+    rt_size_t recv_length;
 };
 
 #define SPI_DEVICE(dev) ((struct rt_spi_device *)(dev))

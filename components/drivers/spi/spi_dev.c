@@ -125,12 +125,24 @@ static rt_err_t _spidev_device_control(rt_device_t dev,
                                        int         cmd,
                                        void       *args)
 {
+    struct rt_spi_device *device;
+    struct rt_spi_ctrl_args *args_s;
+
+    device = (struct rt_spi_device *)dev;
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(device->bus != RT_NULL);
+
     switch (cmd)
     {
-    case 0: /* set device */
-        break;
-    case 1: 
-        break;
+    case RT_DEVICE_CTRL_SPI_WRITE_THEN_READ:
+        if(args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+
+        args_s = (struct rt_spi_ctrl_args *)args;
+
+        return rt_spi_send_then_recv(device, args_s->send_buf, args_s->send_length, args_s->recv_buf, args_s->recv_length);
     }
 
     return RT_EOK;
