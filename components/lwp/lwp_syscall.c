@@ -813,11 +813,28 @@ void sys_exit_critical(void)
 }
 
 /* syscall: "sys_log" ret: "int" args: "const char*" "size" */
+static int __sys_log_enable = 0;
+static int sys_log_enable(int argc, char** argv)
+{
+    if (argc == 1)
+    {
+        rt_kprintf("sys_log = %d\n", __sys_log_enable);
+        return 0;
+    }
+    else
+    {
+        __sys_log_enable = atoi(argv[1]);
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(sys_log_enable, sys_log, sys_log 1(enable)/0(disable));
+
 int sys_log(const char* log, int size)
 {
     rt_device_t console = rt_console_get_device();
 
-    if (console) rt_device_write(console, -1, log, size);
+    if (console && __sys_log_enable) rt_device_write(console, -1, log, size);
 
     return 0;
 }
