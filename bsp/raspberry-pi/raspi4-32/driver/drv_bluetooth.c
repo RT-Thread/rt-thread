@@ -18,8 +18,8 @@
 //arm-none-eabi-objcopy.exe -I binary -O elf32-littlearm -B arm driver\BCM4345C0.hcd driver\BCM4345C0.a
 
 #define     BT_UART_NAME       "uart0"
-#define     BT_TX_MAX          (4096)
-#define     BT_RX_MAX          (1024)
+#define     BT_TX_MAX          (256)
+#define     BT_RX_MAX          (256)
 #define     BT_HEAD_NUM        (4)
 #define     BT_TRY_NUM_MAX     (3)
 #define     BT_SEND_MIN_PACK   (8)
@@ -49,24 +49,10 @@ int bt_uart_send_data(rt_device_t dev, rt_uint32_t *buf, int len)
     return rt_device_write(dev, 0, buf, len);
 }
 
+
 void bt_uart_receive_flush(rt_device_t dev)
 {
-    rt_uint32_t overflow_len = 0;
-
-    if (rt_sem_trytake(bt_rx_sem) == RT_EOK)
-    {
-        while (rt_device_read(dev, -1, &ch, 1) == 1)
-        {
-            overflow_len++;
-        }
-
-        bt_rx_sem->value = 0;
-
-        if(overflow_len > 0)
-        {
-            rt_kprintf("bt_uart_receive_flush: discarded data[%d]\n", overflow_len);
-        }
-    }  
+    rt_device_read(dev, RT_NULL, rx_buff, BT_RX_MAX);
 }
 
 int bt_uart_receive_data(rt_device_t dev, rt_uint8_t *buf, rt_uint32_t *len, rt_int32_t time)
@@ -75,28 +61,13 @@ int bt_uart_receive_data(rt_device_t dev, rt_uint8_t *buf, rt_uint32_t *len, rt_
     rt_uint32_t buf_sz = *len;
     rt_uint32_t overflow_len = 0;
 
-    rt_sem_take(bt_rx_sem, time);
-    while (rt_device_read(dev, -1, &ch, 1) == 1)
-    {
-        if (ii < buf_sz)
-        {
-            buf[ii++] = ch;
-        }
-        else
-        {
-            overflow_len++;
-        }
-    }
+    ii =  rt_device_read(dev, 0, buf, BT_RX_MAX);
     *len = ii;
-    if(overflow_len)
-    {
-        rt_kprintf("uart0 rx: Overflow![%d][%d]\n", buf_sz, overflow_len);
-    }
     return ii;
 }
 
 
-void bt_data_pack(rt_uint8_t *tx_buff, rt_uint16_t ogf, rt_uint16_t ocf, rt_uint32_t data_len)
+void bt_data_pack(rt_uint8_t *tx_buff, rt_uint8_t ogf, rt_uint8_t ocf, rt_uint32_t data_len)
 {
     tx_buff[0] = BT_HCI_COMMAND_PKT;
     tx_buff[1] = ogf;//hi(ogf << 10 | ocf);//opcode hi
@@ -126,7 +97,6 @@ rt_uint32_t bt_reply_check(const rt_uint8_t *buff, rt_uint16_t ogf, rt_uint16_t 
             rt_kprintf("Saw HCI COMMAND STATUS error:%d", buff[3]);
             return 12;
         }
-
 
         if(buff[4] == 0)
         {
@@ -172,7 +142,7 @@ rt_uint32_t bt_reply_check(const rt_uint8_t *buff, rt_uint16_t ogf, rt_uint16_t 
     }
     else
     {
-        return 12;
+        return 11;
     }
     
     return 0;
@@ -185,7 +155,7 @@ rt_err_t bt_loadfirmware(void)
     int ret = 0;
     int recv_len = BT_RX_MAX;
     int step = 0;
-    rt_uint16_t ogf,ocf;
+    rt_uint8_t ogf,ocf;
 
     rt_memset(tx_buff, 0, BT_TX_MAX);
 
@@ -199,15 +169,9 @@ rt_err_t bt_loadfirmware(void)
         recv_len = BT_RX_MAX;
         bt_uart_receive_flush(bt_device);
         bt_uart_send_data(bt_device, tx_buff, BT_SEND_MIN_PACK);
-
-        rt_thread_delay(100);
+        rt_thread_mdelay(5);
 
         ret = bt_uart_receive_data(bt_device, rx_buff, &recv_len, 2000);
-
-        for(kk = 0; kk < recv_len; kk++)
-        {
-            rt_kprintf("rx_buff[%d]=%02x\n", kk, rx_buff[kk]);
-        }
 
         if(ret > 0)
         {
@@ -237,9 +201,8 @@ rt_err_t bt_loadfirmware(void)
             unsigned char *data = &(_binary_driver_BCM4345C0_hcd_start[c + 3]);
             rt_memset(tx_buff, 0, BT_TX_MAX);
 
-            ogf = hi(_binary_driver_BCM4345C0_hcd_start[c] << 10 | _binary_driver_BCM4345C0_hcd_start[c + 1]);
-            ocf = lo(_binary_driver_BCM4345C0_hcd_start[c] << 10 | _binary_driver_BCM4345C0_hcd_start[c + 1]);
-
+            ogf = _binary_driver_BCM4345C0_hcd_start[c + 1];
+            ocf = _binary_driver_BCM4345C0_hcd_start[c];
             bt_data_pack(tx_buff, ogf, ocf, length);
 
             rt_memcpy(&tx_buff[BT_HEAD_NUM], data, length);
@@ -247,26 +210,12 @@ rt_err_t bt_loadfirmware(void)
             for (ii = 0; ii < BT_TRY_NUM_MAX; ii++)
             {
                 recv_len = BT_RX_MAX;
+                rt_memset(rx_buff, 0, BT_TX_MAX);
                 bt_uart_receive_flush(bt_device);
-                rt_base_t aaa = rt_hw_interrupt_disable();
-                //bt_uart_send_data(bt_device, tx_buff, RT_ALIGN(length + BT_HEAD_NUM, 8));
+                bt_uart_send_data(bt_device, tx_buff, length + BT_HEAD_NUM);
                 bt_uart_receive_flush(bt_device);
-                //rt_hw_interrupt_enable(aaa);
-                rt_kprintf("send len is %d\n", RT_ALIGN(length + BT_HEAD_NUM, 8));
-                // rt_thread_delay(100);
-                // ret = bt_uart_receive_data(bt_device, rx_buff, &recv_len, 1000);
-                // rt_kprintf("recv is %d\n", recv_len);
-
-                for(kk = 0; kk < 16; kk++)
-                {   
-                    char ch;
-                    if((PL011_REG_FR(UART0_BASE) & PL011_FR_RXFE) == 0)
-                    {
-                        ch = PL011_REG_DR(UART0_BASE) & 0xff;
-                        rt_kprintf("rx_buff[%d]=%02x\n", kk, ch);
-                    }
-
-                }
+                rt_thread_mdelay(5);
+                ret = bt_uart_receive_data(bt_device, rx_buff, &recv_len, 1000);
 
                 if(ret > 0)
                 {
@@ -285,10 +234,15 @@ rt_err_t bt_loadfirmware(void)
 
             if(ii >= 3)
             {
-                rt_kprintf("err!\n");
-                return RT_ERROR;
+                step = 3;
+                break;
             }
             c += 3 + length;
+        }
+
+        if(step != 3)
+        {
+            return RT_EOK;
         }
     }
     else
@@ -296,7 +250,6 @@ rt_err_t bt_loadfirmware(void)
         return RT_ERROR;
     }
     
-    // wait_msec(0x100000);
     return RT_ERROR;
 }
 
@@ -319,7 +272,7 @@ rt_err_t bt_reset(void)
         recv_len = BT_RX_MAX;
         bt_uart_receive_flush(bt_device);
         bt_uart_send_data(bt_device, tx_buff, 8);
-        //rt_thread_delay(100);
+        rt_thread_mdelay(5);
         ret = bt_uart_receive_data(bt_device, rx_buff, &recv_len, 1000);
         //rt_kprintf("recv_len is %d\n", recv_len);
         if(ret > 0)
@@ -396,6 +349,22 @@ int rt_hw_bluetooth_init(void)
     {
         rt_kprintf("bluetooth reset err!\n");
     }
-    rt_thread_delay(1000);
-    //bt_loadfirmware();
+
+        if(bt_reset() == RT_EOK)
+    {
+        rt_kprintf("bluetooth reset ok!\n");
+    }
+    else
+    {
+        rt_kprintf("bluetooth reset err!\n");
+    }
+    rt_thread_delay(10);
+    if(bt_loadfirmware() == RT_EOK)
+    {
+        rt_kprintf("loadfirmware ok!\n");
+    }
+    else
+    {
+        rt_kprintf("loadfirmware err!\n");
+    }
 }
