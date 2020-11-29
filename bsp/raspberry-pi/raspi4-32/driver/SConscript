@@ -2,7 +2,7 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp')
+src     = Glob('*.c') + Glob('*.cpp') + Glob('*.a')
 CPPPATH = [cwd, str(Dir('#'))]
 
 if not GetDepend('BSP_USING_ETH'):
