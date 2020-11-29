@@ -123,6 +123,10 @@ menu "Hardware Drivers Config"
             bool "Enable ETH"
             default n
 
+        config BSP_USING_BULETOOTH
+            bool "Enable BULETOOTH"
+            default n
+
         menuconfig BSP_USING_RTC
             bool "Enable RTC"
             select RT_USING_RTC
