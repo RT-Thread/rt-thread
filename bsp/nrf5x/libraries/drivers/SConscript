@@ -9,13 +9,18 @@ src = Split("""
 """)
 
 if GetDepend(['BSP_USING_UART']):
-    src += ['drv_uart.c']
-    
+    if GetDepend(['NRFX_USING_UART']):
+        src += ['drv_uart.c']
+    else:   
+        src += ['drv_uarte.c']   
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
     src += ['drv_flash.c']
 
 if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += ['drv_qspi_flash.c']
+    
+if GetDepend(['BSP_USING_I2C']):
+    src += ['drv_i2c.c']
 
 if GetDepend(['BSP_USING_SPI']):
     src += ['drv_spi.c']

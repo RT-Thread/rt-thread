@@ -258,7 +258,7 @@ const static struct rt_pin_ops drv_pin_ops =
 int rt_hw_pin_init(void)
 {
     rt_err_t ret = RT_EOK;
-    memset(pin_alloc_table, 0, sizeof pin_alloc_table);
+    memset(pin_alloc_table, -1, sizeof pin_alloc_table);
     free_pin = GPIO_ALLOC_START;
     ret = rt_device_pin_register("pin", &drv_pin_ops, RT_NULL);
 
