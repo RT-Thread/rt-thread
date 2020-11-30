@@ -353,7 +353,7 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
 
 /**
   * @brief  This function send sdio request.
-  * @param  sdio  rthw_sdio
+  * @param  host  rt_mmcsd_host
   * @param  req   request
   * @retval None
   */
