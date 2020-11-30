@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-04-05     bigmagic     Initial version
+ * 2020-10-28     ma           Buadrate & Multi-Port support
  */
 
 /**
@@ -21,22 +22,51 @@
 
 #define TRUE 1
 #define FALSE 0
-
+const struct serial_configure config_uart0 = {                                          
+    BAUD_RATE_115200, /* 921600 bits/s */  
+    DATA_BITS_8,      /* 8 databits */     
+    STOP_BITS_1,      /* 1 stopbit */      
+    PARITY_NONE,      /* No parity  */     
+    BIT_ORDER_LSB,    /* LSB first sent */ 
+    NRZ_NORMAL,       /* Normal mode */    
+    RT_SERIAL_RB_BUFSZ, /* Buffer size */  
+    0                                      
+};
 struct rt_uart_ls2k
 {
     void *base;
     rt_uint32_t IRQ;
 };
+static rt_err_t ls2k_uart_set_buad(struct rt_serial_device *serial,struct serial_configure *cfg)
+{
 
+    struct rt_uart_ls2k *uart_dev = RT_NULL;
+    rt_err_t ret=RT_EOK;
+
+    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
+    
+    uart_dev = (struct rt_uart_ls2k *)serial->parent.user_data;
+	uint64_t brtc = (125000000U) / (16*(cfg->baud_rate));
+    UART_LCR(uart_dev->base)=0x80; // Activate buadcfg
+    UART_LSB(uart_dev->base)= brtc & 0xff;
+    UART_MSB(uart_dev->base)= brtc >> 8;
+
+	if(((((short)UART_MSB(uart_dev->base))<<8) | UART_LSB(uart_dev->base)) != brtc) ret=RT_ERROR;
+	
+    UART_LCR(uart_dev->base)= CFCR_8BITS;// Back to normal
+	UART_MCR(uart_dev->base)= MCR_IENABLE/* | MCR_DTR | MCR_RTS*/;
+	UART_IER(uart_dev->base) = 0; 
+}
 static rt_err_t ls2k_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct rt_uart_ls2k *uart_dev = RT_NULL;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-
+    ls2k_uart_set_buad(serial,cfg);
     uart_dev = (struct rt_uart_ls2k *)serial->parent.user_data;
-
+    HWREG8(0xffffffffbfe10428)=0x1f;// Enable Multi-Port Support, by default it's 0x11 ,which means UART0 & UART4 Controller is in single port mode.
     UART_IER(uart_dev->base) = 0; /* clear interrupt */
     UART_FCR(uart_dev->base) = 0xc1; /* reset UART Rx/Tx */
     /* set databits, stopbits and parity. (8-bit data, 1 stopbit, no parity) */
@@ -154,25 +184,47 @@ struct rt_uart_ls2k uart_dev0 =
     (void *)UARTx_BASE(0),
     LS2K_UART_0_1_2_3_IRQ,
 };
-struct rt_serial_device serial;
+struct rt_uart_ls2k uart_dev4 =
+{
+    (void *)UARTx_BASE(4),
+    LS2K_UART_4_5_6_7_IRQ ,
+};
+
+
+struct rt_serial_device serial,serial4;
 
 
 void rt_hw_uart_init(void)
 {
-    struct rt_uart_ls2k *uart;
+    //UART0_1_ENABLE=0xff;
+    struct rt_uart_ls2k *uart,*uart4;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    
+    
 
     uart = &uart_dev0;
+    uart4=&uart_dev4;
 
     serial.ops    = &ls2k_uart_ops;
-    serial.config = config;
+    serial.config = config_uart0;
 
-    rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial, "UART");
+    serial4.ops= &ls2k_uart_ops;
+    serial4.config=config;
+
+
+    rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial, "UART0");
+    rt_hw_interrupt_install(uart4->IRQ, uart_irq_handler, &serial4, "UART4");
 
     /* register UART device */
     rt_hw_serial_register(&serial,
-                          "uart",
+                          "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart);
+
+    rt_hw_serial_register(&serial4,
+                          "uart4",
+                          RT_DEVICE_FLAG_RDWR| RT_DEVICE_FLAG_INT_RX,
+                          &uart_dev4);
+    
 }
 /*@}*/
