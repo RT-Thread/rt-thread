@@ -8,6 +8,6 @@ CPPPATH = [cwd]
 
 SrcRemove(src, ['rpc/auth_none.c'])
 
-group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_NFS'], CPPPATH = CPPPATH)
+group = DefineGroup('FileSystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_NFS'], CPPPATH = CPPPATH)
 
 Return('group')
