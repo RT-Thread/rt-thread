@@ -45,6 +45,6 @@ src/write.c
 
 CPPPATH = [cwd, cwd + '/include', cwd + '/src', cwd + '/cyg', cwd + '/kernel', cwd + '/cyg/compress']
 
-group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_JFFS2'], CPPPATH = CPPPATH)
+group = DefineGroup('FileSystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_JFFS2'], CPPPATH = CPPPATH)
 
 Return('group')

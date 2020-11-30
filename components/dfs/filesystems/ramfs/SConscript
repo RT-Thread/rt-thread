@@ -4,6 +4,6 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = [cwd]
 
-group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS', 'RT_USING_MEMHEAP', 'RT_USING_DFS_RAMFS'], CPPPATH = CPPPATH)
+group = DefineGroup('FileSystem', src, depend = ['RT_USING_DFS', 'RT_USING_MEMHEAP', 'RT_USING_DFS_RAMFS'], CPPPATH = CPPPATH)
 
 Return('group')

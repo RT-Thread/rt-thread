@@ -10,6 +10,6 @@ if GetDepend('DFS_ROMFS_ROOT'):
     # A new ROMFS root has been defined, we should remove the romfs.c
     SrcRemove(src, ['romfs.c'])
 
-group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS','RT_USING_DFS_ROMFS'], CPPPATH = CPPPATH)
+group = DefineGroup('FileSystem', src, depend = ['RT_USING_DFS','RT_USING_DFS_ROMFS'], CPPPATH = CPPPATH)
 
 Return('group')

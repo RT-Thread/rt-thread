@@ -12,6 +12,6 @@ if rtconfig.PLATFORM == 'gcc':
     src += Glob('*_init.S')
     src += Glob('*_gcc.S')
 
-group = DefineGroup('Libcpu', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('LIBARCH', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

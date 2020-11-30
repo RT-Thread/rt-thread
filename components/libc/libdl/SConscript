@@ -7,7 +7,7 @@ group   = []
 CPPPATH = [cwd]
 
 if rtconfig.PLATFORM == 'gcc':
-    group = DefineGroup('Libc', src, 
+    group = DefineGroup('LIBC', src, 
         depend = ['RT_USING_MODULE'], 
         CPPPATH = CPPPATH)
 
