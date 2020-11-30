@@ -525,11 +525,11 @@ void rthw_sdio_irq_update(struct rt_mmcsd_host *host, rt_int32_t enable)
 }
 
 /**
-  * @brief  This function delect sdcard.
+  * @brief  This function detect sdcard.
   * @param  host    rt_mmcsd_host
   * @retval 0x01
   */
-static rt_int32_t rthw_sd_delect(struct rt_mmcsd_host *host)
+static rt_int32_t rthw_sd_detect(struct rt_mmcsd_host *host)
 {
     LOG_D("try to detect device");
     return 0x01;
@@ -605,7 +605,7 @@ static const struct rt_mmcsd_host_ops ops =
 {
     rthw_sdio_request,
     rthw_sdio_iocfg,
-    rthw_sd_delect,
+    rthw_sd_detect,
     rthw_sdio_irq_update,
 };
 
