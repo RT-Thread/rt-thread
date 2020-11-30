@@ -97,7 +97,7 @@ msh >
 
 ```
 title   TFTPBOOT
- kernel tftfp://10.1.1.118/rtthread.elf
+ kernel tftp://10.1.1.118/rtthread.elf
  args console=tty root=/dev/sda2
  initrd (wd0,0)/initrd.img
 ```
@@ -114,17 +114,19 @@ title   TFTPBOOT
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | UART0|
+| UART | 支持 | UART0\UART4,波特率可调 |
 | GPIO | 支持 | - |
 | PWM | 支持 | - |
 | GMAC | 支持 | 网卡驱动 |
 | RTC  | 支持 | - |
+| SPI | 支持 | - |
 
 ## 6. 联系人信息
 
-维护人：[bernard][4]
+维护人：[bernard][4],[0xcccccccccccc][5]
 
 [1]: http://ftp.loongnix.org/loongsonpi/pi_2/doc
 [2]: https://pan.baidu.com/s/17dbdOE4NAJ-qEW7drVRq2w
 [3]: http://ftp.loongnix.org/embedd/ls2k/
 [4]: https://github.com/BernardXiong
+[5]: https://github.com/0xcccccccccccc
