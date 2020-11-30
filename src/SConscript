@@ -23,12 +23,17 @@ if GetDepend('RT_USING_MEMHEAP') == False:
     if GetDepend('RT_USING_MEMHEAP_AS_HEAP'):
         SrcRemove(src, ['mem.c'])
 
+if GetDepend('RT_USING_USERHEAP'):
+    SrcRemove(src, ['mem.c', 'slab.c'])
+
 if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
 if GetDepend('RT_USING_SMP') == False:
     SrcRemove(src, ['cpu.c'])
 
-group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH)
+CPPDEFINES = ['__RTTHREAD__']
+
+group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -40,9 +40,6 @@ void rtthread_startup(void)
 	rt_hw_board_init();
 	rt_show_version();
 
-	/* init tick */
-	rt_system_tick_init();
-
 	/* init timer system */
 	rt_system_timer_init();
 
