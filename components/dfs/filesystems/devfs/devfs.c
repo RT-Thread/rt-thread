@@ -326,7 +326,7 @@ static const struct dfs_filesystem_ops _device_fs =
 
 int devfs_init(void)
 {
-    /* register rom file system */
+    /* register device file system */
     dfs_register(&_device_fs);
 
     return 0;
