@@ -47,16 +47,17 @@ static rt_err_t ls2k_uart_set_buad(struct rt_serial_device *serial,struct serial
     RT_ASSERT(cfg != RT_NULL);
     
     uart_dev = (struct rt_uart_ls2k *)serial->parent.user_data;
-	uint64_t brtc = (125000000U) / (16*(cfg->baud_rate));
+    uint64_t brtc = (125000000U) / (16*(cfg->baud_rate));
     UART_LCR(uart_dev->base)=0x80; // Activate buadcfg
     UART_LSB(uart_dev->base)= brtc & 0xff;
     UART_MSB(uart_dev->base)= brtc >> 8;
 
-	if(((((short)UART_MSB(uart_dev->base))<<8) | UART_LSB(uart_dev->base)) != brtc) ret=RT_ERROR;
+    if(((((short)UART_MSB(uart_dev->base))<<8) | UART_LSB(uart_dev->base)) != brtc) 
+	    ret=RT_ERROR;
 	
     UART_LCR(uart_dev->base)= CFCR_8BITS;// Back to normal
-	UART_MCR(uart_dev->base)= MCR_IENABLE/* | MCR_DTR | MCR_RTS*/;
-	UART_IER(uart_dev->base) = 0; 
+    UART_MCR(uart_dev->base)= MCR_IENABLE/* | MCR_DTR | MCR_RTS*/;
+    UART_IER(uart_dev->base) = 0; 
 }
 static rt_err_t ls2k_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
