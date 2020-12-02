@@ -24,7 +24,7 @@ struct mem_desc platform_mem_desc[] = {
     {0x0E000000, 0x0EE00000, 0x0E000000, DEVICE_MEM}, //framebuffer
     {0x0F400000, 0x0FA00000, 0x0F400000, DEVICE_MEM}, //dsi_touch 
     {0xFD500000, 0xFDA00000, 0xFD500000, DEVICE_MEM}, //gmac
-    {0xFE000000, 0xFEA00000, 0xFE000000, DEVICE_MEM}, //peripheral
+    {0xFE000000, 0xFF000000, 0xFE000000, DEVICE_MEM}, //peripheral
     {0xFF800000, 0xFFA00000, 0xFF800000, DEVICE_MEM}  //gic
 };
 
