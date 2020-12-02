@@ -11,6 +11,8 @@ if not GetDepend('BSP_USING_SPI'):
     SrcRemove(src, ['drv_spi.c'])
 if not GetDepend('BSP_USING_WDT'):
     SrcRemove(src, ['drv_wdt.c'])
+if not GetDepend('BSP_USING_BULETOOTH'):
+    SrcRemove(src, ['drv_bluetooth.c'])
 
 group = DefineGroup('driver', src, depend = [''], CPPPATH = CPPPATH)
 

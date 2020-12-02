@@ -238,6 +238,9 @@
 /* samples: kernel and components samples */
 
 
+/* games: games run on RT-Thread console */
+
+
 /* Privated Packages of RealThread */
 
 
@@ -266,7 +269,6 @@
 #define BSP_USING_CORETIMER
 #define BSP_USING_WDT
 #define BSP_USING_ETH
-#define BSP_USING_BULETOOTH
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
 
