@@ -1046,9 +1046,9 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
     if (from)
     {
         struct sockaddr sa;
-        sockaddr_tolwip(from, &sa);
 
         ret = recvfrom(socket, kmem, len, flgs, &sa, fromlen);
+        sockaddr_tomusl(&sa, from);
     } else
         ret = recvfrom(socket, kmem, len, flgs, NULL, NULL);
 
@@ -1060,10 +1060,12 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
 #else
     if (from)
     {
-        struct sockaddr sa;
-        sockaddr_tolwip(from, &sa);
+        int ret = -1;
+        struct sockaddr sa = {0};
 
-        return recvfrom(socket, mem, len, flgs, &sa, fromlen);
+        ret = recvfrom(socket, mem, len, flgs, &sa, fromlen);
+        sockaddr_tomusl(&sa, from);
+        return ret;
     }
 
     return recvfrom(socket, mem, len, flags, NULL, NULL);
@@ -1135,10 +1137,28 @@ int sys_send(int socket, const void *dataptr, size_t size, int flags)
 
 int sys_socket(int domain, int type, int protocol)
 {
+    int fd = -1;
+    int nonblock = 0;
     /* not support SOCK_CLOEXEC type */
     if (type & SOCK_CLOEXEC) type &= ~SOCK_CLOEXEC;
+    if (type & SOCK_NONBLOCK)
+    {
+        nonblock = 1;
+        type &= ~SOCK_NONBLOCK;
+    }
 
-    return socket(domain, type, protocol);
+    fd = socket(domain, type, protocol);
+    if (fd < 0)
+    {
+        goto out;
+    }
+    if (nonblock)
+    {
+        fcntl(fd, F_SETFL, O_NONBLOCK);
+    }
+
+out:
+    return fd;
 }
 
 int sys_closesocket(int socket)
