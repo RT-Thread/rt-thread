@@ -37,6 +37,32 @@ menu "Onboard Peripheral Drivers"
         bool "Enable Ethernet"
         default n
         select RT_USING_LWIP
+
+    menuconfig BSP_USING_SDMMC
+        bool "Enable SDMMC"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select BSP_USING_PMIC
+        if BSP_USING_SDMMC
+            menuconfig BSP_USING_SD_CARD
+                bool "Enable sd card"
+                default n
+                if BSP_USING_SD_CARD
+                    config SD_USING_DFS
+                        bool "sd card fatfs"
+                        default n
+                endif
+
+            menuconfig BSP_USING_EMMC
+                bool "Enable eMMC (32 Gbits)"
+                default n
+                if BSP_USING_EMMC
+                    config EMMC_USING_DFS
+                        bool "emmc card fatfs"
+                        default n
+                endif
+        endif
 endmenu
 
 menu "On-chip Peripheral Drivers"
