@@ -28,6 +28,10 @@ if GetDepend(['BSP_USING_SD_CARD']):
 if GetDepend(['BSP_USING_EMMC']):
     src += Glob('ports/drv_emmc.c')
 
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('ports/drv_wm8994.c')
+    src += Glob('ports/drv_sound.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')

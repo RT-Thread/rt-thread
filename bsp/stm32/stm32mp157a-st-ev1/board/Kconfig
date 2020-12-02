@@ -63,6 +63,15 @@ menu "Onboard Peripheral Drivers"
                         default n
                 endif
         endif
+
+    config BSP_USING_AUDIO
+    bool "Enable Audio Device (WM8994)"
+    select RT_USING_AUDIO
+    select BSP_USING_PMIC
+    select BSP_USING_I2C
+    select BSP_USING_I2C2
+    default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
