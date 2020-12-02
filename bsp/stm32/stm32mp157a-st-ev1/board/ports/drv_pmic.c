@@ -19,6 +19,8 @@
 #define LOG_TAG              "drv.pmic"
 #include <drv_log.h>
 
+#define I2C_NAME "i2c3"
+
 static struct rt_i2c_bus_device *pmic_dev = RT_NULL;
 
 /* i2c read reg */
@@ -884,7 +886,7 @@ static int pmic_init(void)
     {
         BSP_PMIC_MspInit();
         
-        result = rt_hw_pmic_init("i2c3");
+        result = rt_hw_pmic_init(I2C_NAME);
         if(result != RT_EOK)
         {
             LOG_D("stpmic init failed: %02x", result);
