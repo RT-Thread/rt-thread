@@ -166,7 +166,7 @@
 //TXFR_LEN
 //DMA Transfer Length
 
-void dma_init(dch);
+void dma_init(unsigned char dch);
 rt_err_t dma_memcpy(void *src, void *dst, unsigned int size, unsigned int dch, unsigned int timeout);
 
 #endif

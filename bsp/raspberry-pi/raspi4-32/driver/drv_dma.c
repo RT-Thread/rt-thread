@@ -99,7 +99,7 @@ rt_err_t dma_memcpy(void *src, void *dst, unsigned int size, unsigned int dch, u
     return RT_EOK;
 }
 
-void dma_init(rt_uint8_t dch)
+void dma_init(unsigned char dch)
 {
     rt_sem_init(&dma_sem, "dma_sem", 0, RT_IPC_FLAG_FIFO);
 
