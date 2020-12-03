@@ -119,7 +119,7 @@ trap_entry:
     mv  sp, s0
     mv  a0, s0
     call rt_scheduler_do_irq_switch
-    j   rt_hw_context_switch_exit
+    tail   rt_hw_context_switch_exit
 
 #else
 
@@ -143,4 +143,4 @@ trap_entry:
 #endif
 
 spurious_interrupt:
-    j rt_hw_context_switch_exit
+    tail rt_hw_context_switch_exit
