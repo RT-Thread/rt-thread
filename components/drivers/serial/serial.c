@@ -221,7 +221,10 @@ rt_inline int _serial_poll_rx(struct rt_serial_device *serial, rt_uint8_t *data,
         *data = ch;
         data ++; length --;
 
-        if (ch == '\n') break;
+        if(serial->parent.open_flag & RT_DEVICE_FLAG_STREAM)
+        {
+            if (ch == '\n') break;
+        }
     }
 
     return size - length;
