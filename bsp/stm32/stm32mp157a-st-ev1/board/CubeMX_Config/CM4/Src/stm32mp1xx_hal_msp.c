@@ -1398,6 +1398,129 @@ void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
 }
 
 /**
+* @brief DCMI MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hdcmi: DCMI handle pointer
+* @retval None
+*/
+void HAL_DCMI_MspInit(DCMI_HandleTypeDef* hdcmi)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(hdcmi->Instance==DCMI)
+  {
+  /* USER CODE BEGIN DCMI_MspInit 0 */
+
+  /* USER CODE END DCMI_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_DCMI_CLK_ENABLE();
+  
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOI_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    
+    /**DCMI GPIO Configuration
+    PH9     ------> DCMI_D0      
+    PH10    ------> DCMI_D1
+    PH11    ------> DCMI_D2
+    PH12    ------> DCMI_D3
+    PH14    ------> DCMI_D4
+    PI4     ------> DCMI_D5  
+    PB8     ------> DCMI_D6  
+    PE6     ------> DCMI_D7      
+    PH8     ------> DCMI_HSYNC
+    PB7     ------> DCMI_VSYNC
+    PA6     ------> DCMI_PIXCLK
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_14|GPIO_PIN_8 
+                          |GPIO_PIN_9|GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+    HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_8;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_4;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+    HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF13_DCMI;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    
+    HAL_NVIC_SetPriority(DCMI_IRQn, 0x03, 0x00);        
+    HAL_NVIC_EnableIRQ(DCMI_IRQn);     
+    
+  /* USER CODE BEGIN DCMI_MspInit 1 */
+  /* USER CODE END DCMI_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief DCMI MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hdcmi: DCMI handle pointer
+* @retval None
+*/
+void HAL_DCMI_MspDeInit(DCMI_HandleTypeDef* hdcmi)
+{
+  if(hdcmi->Instance==DCMI)
+  {
+  /* USER CODE BEGIN DCMI_MspDeInit 0 */
+
+  /* USER CODE END DCMI_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_DCMI_CLK_DISABLE();
+  
+    /**DCMI GPIO Configuration    
+    PH10     ------> DCMI_D1
+    PH11     ------> DCMI_D2
+    PH14     ------> DCMI_D4
+    PH8     ------> DCMI_HSYNC
+    PH9     ------> DCMI_D0
+    PE6     ------> DCMI_D7
+    PH12     ------> DCMI_D3
+    PB7     ------> DCMI_VSYNC
+    PI4     ------> DCMI_D5
+    PA6     ------> DCMI_PIXCLK
+    PB8     ------> DCMI_D6 
+    */
+    HAL_GPIO_DeInit(GPIOH, GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_14|GPIO_PIN_8 
+                          |GPIO_PIN_9|GPIO_PIN_12);
+
+    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_6);
+
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_7|GPIO_PIN_8);
+
+    HAL_GPIO_DeInit(GPIOI, GPIO_PIN_4);
+
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_6);
+
+  /* USER CODE BEGIN DCMI_MspDeInit 1 */
+    HAL_DMA_DeInit(hdcmi->DMA_Handle);
+  /* USER CODE END DCMI_MspDeInit 1 */
+  }
+
+}
+
+/**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
