@@ -72,6 +72,18 @@ menu "Onboard Peripheral Drivers"
     select BSP_USING_I2C2
     default n
 
+    config BSP_USING_DCMI
+        bool "Enable CAMERA (ov5640)"
+        select BSP_USING_MFX
+        select BSP_USING_PMIC
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        default n
+
+    config BSP_USING_MFX
+        bool "Enable Multi Function eXpander"
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
