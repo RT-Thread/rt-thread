@@ -13,10 +13,14 @@
 #include "mbox.h"
 #include "drv_hdmi.h"
 
-#ifdef BSP_USING_HDMI
+#ifdef USING_LCD_CONSOLE
+#include "lcd_console.h"
+#endif
+
+#if defined(BSP_USING_HDMI_DISPLAY) || defined(BSP_USING_DSI_DISPLAY)
 #define LCD_WIDTH     (800)
 #define LCD_HEIGHT    (480)
-#define LCD_DEPTH     (32)
+#define LCD_DEPTH     (4)
 #define LCD_BPP       (32)
 
 #define TAG_ALLOCATE_BUFFER         0x00040001
@@ -84,6 +88,9 @@ rt_size_t hdmi_fb_read(rt_device_t dev, rt_off_t pos, void *buf, rt_size_t size)
 
 rt_size_t hdmi_fb_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
 {
+#ifdef USING_LCD_CONSOLE
+    fb_print((char*)buffer);
+#endif
     return size;
 }
 
@@ -105,7 +112,7 @@ rt_err_t hdmi_fb_control(rt_device_t dev, int cmd, void *args)
 
             RT_ASSERT(info != RT_NULL);
             info->pixel_format  = RTGRAPHIC_PIXEL_FORMAT_RGB888;
-            info->bits_per_pixel= LCD_DEPTH;
+            info->bits_per_pixel= 32;
             info->width         = lcd->width;
             info->height        = lcd->height;
             info->framebuffer   = lcd->fb;
@@ -285,12 +292,18 @@ void *bcm271x_mbox_fb_alloc(int width, int height, int bpp, int nrender)
     mbox[34] = TAG_END;
 
     mbox_call(8, MMU_DISABLE);
+
     return (void *)((rt_uint32_t)(mbox[5] & 0x3fffffff));
 }
 
 int hdmi_fb_init(void)
 {
     _hdmi.fb = (rt_uint8_t *)bcm271x_mbox_fb_alloc(LCD_WIDTH, LCD_HEIGHT, LCD_BPP, 1);
+    if(_hdmi.fb == RT_NULL)
+    {
+        rt_kprintf("init dsi or hdmi err!\n");
+        return 0;
+    }
     bcm271x_mbox_fb_setoffset(0, 0);
     bcm271x_mbox_fb_set_porder(0);
     _hdmi.width = LCD_WIDTH;
@@ -299,8 +312,9 @@ int hdmi_fb_init(void)
     _hdmi.pitch = 0;
     _hdmi.pixel_format = RTGRAPHIC_PIXEL_FORMAT_RGB888;
 
+    rt_memset(_hdmi.fb, 0, LCD_WIDTH*LCD_HEIGHT*(LCD_BPP/8));
     //rt_kprintf("_hdmi.fb is %p\n", _hdmi.fb);
-    rt_hdmi_fb_device_init(&_hdmi, "lcd");
+    rt_hdmi_fb_device_init(&_hdmi, "hdmi");
 
     return 0;
 }
