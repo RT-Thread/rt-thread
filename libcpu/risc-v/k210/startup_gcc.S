@@ -116,18 +116,21 @@ _start:
 
   /* other cpu core, jump to cpu entry directly */
   bnez a0, secondary_cpu_entry
-  j primary_cpu_entry
+  tail primary_cpu_entry
 
 secondary_cpu_entry:
 #ifdef RT_USING_SMP
   la a0, secondary_boot_flag
   ld a0, 0(a0)
   li a1, 0xa55a
-  beq a0, a1, secondary_cpu_c_start
+  beq a0, a1, 1f
 #endif
   j secondary_cpu_entry
 
 #ifdef RT_USING_SMP
+1:
+  tail secondary_cpu_c_start
+
 .data
 .global secondary_boot_flag
 .align 3
