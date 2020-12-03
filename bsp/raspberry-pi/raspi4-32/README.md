@@ -129,6 +129,12 @@ msh />
 | HDMI | 支持 | - |
 | SDIO | 支持 | - |
 | ETH | 支持 | - |
+| BSC | 支持 | - |
+| DMA | 支持 | - |
+| DSI LCD/TOUCH | 支持     | DSI接口的LCD和TOUCH |
+| ILI9486 SPI LCD | 支持 | - |
+| XPT2046 TOUCH | 支持     | - |
+| BULETOOTH | 正在完善 | 支持reset，loadfirmware |
 
 ## 5. 注意事项
 

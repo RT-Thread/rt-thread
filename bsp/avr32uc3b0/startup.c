@@ -30,8 +30,6 @@ int main(void)
 #endif
 
 	rt_hw_board_init();
-	rt_system_tick_init();
-	rt_system_object_init();
 	rt_system_timer_init();
 
 #ifdef RT_USING_HEAP

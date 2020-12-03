@@ -26,7 +26,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-
+DMA_HandleTypeDef hdma_sai2_a     = {0};
+DMA_HandleTypeDef hdma_sai2_b     = {0};
+DMA_HandleTypeDef hdma_sai4_a     = {0};
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -962,6 +964,436 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef *hI2c)
         /* Disable NVIC for I2C */
         HAL_NVIC_DisableIRQ(I2C4_ER_IRQn);
         HAL_NVIC_DisableIRQ(I2C4_EV_IRQn);
+    }
+}
+
+/**
+* @brief SD MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hsd: SD handle pointer
+* @retval None
+*/
+void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+    if(hsd->Instance==SDMMC1)
+    {
+        /* USER CODE BEGIN SDMMC1_MspInit 0 */
+        if (IS_ENGINEERING_BOOT_MODE())
+        {
+            /** Initializes the peripherals clock 
+            */
+            PeriphClkInit.Sdmmc12ClockSelection = RCC_SDMMC12CLKSOURCE_PLL4;
+            PeriphClkInit.PeriphClockSelection  = RCC_PERIPHCLK_SDMMC12;
+            if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+            {
+                Error_Handler();
+            }
+        }
+        /* USER CODE END SDMMC1_MspInit 0 */
+        /* Peripheral clock enable */
+        __HAL_RCC_SDMMC1_CLK_ENABLE();
+
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_GPIOC_CLK_ENABLE();
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+        __HAL_RCC_GPIOF_CLK_ENABLE();
+        /**SDMMC1 GPIO Configuration
+        PB9     ------> SDMMC1_CDIR
+        PC7     ------> SDMMC1_D123DIR
+        PC8     ------> SDMMC1_D0
+        PC9     ------> SDMMC1_D1
+        PC10    ------> SDMMC1_D2
+        PC11    ------> SDMMC1_D3
+        PC12    ------> SDMMC1_CK
+        PD2     ------> SDMMC1_CMD
+        PE4     ------> SDMMC1_CKIN
+        PF2     ------> SDMMC1_D0DIR 
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_9;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF11_SDIO1;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_2;
+        HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_7;
+        GPIO_InitStruct.Alternate = GPIO_AF8_SDIO1;
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+            
+        GPIO_InitStruct.Pin = GPIO_PIN_4;
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+          
+        GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11 
+                             |GPIO_PIN_12;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Alternate = GPIO_AF12_SDIO1;
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_2;
+        HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+        __HAL_RCC_SDMMC1_FORCE_RESET();
+        __HAL_RCC_SDMMC1_RELEASE_RESET();
+
+        /* SDMMC1 interrupt Init */
+        HAL_NVIC_SetPriority(SDMMC1_IRQn, 2, 0);
+        HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
+        /* USER CODE BEGIN SDMMC1_MspInit 1 */
+
+        /* USER CODE END SDMMC1_MspInit 1 */
+    }
+    
+    if(hsd->Instance==SDMMC2)
+    {
+        /* USER CODE BEGIN SDMMC2_MspInit 0 */
+        if (IS_ENGINEERING_BOOT_MODE())
+        {
+            /** Initializes the peripherals clock 
+            */
+            PeriphClkInit.Sdmmc12ClockSelection = RCC_SDMMC12CLKSOURCE_PLL4;
+            PeriphClkInit.PeriphClockSelection  = RCC_PERIPHCLK_SDMMC12;
+            if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+            {
+                Error_Handler();
+            }
+        }
+        /* USER CODE END SDMMC2_MspInit 0 */
+        /* Peripheral clock enable */
+        __HAL_RCC_SDMMC2_CLK_ENABLE();
+
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+        __HAL_RCC_GPIOG_CLK_ENABLE();
+        /**SDMMC2 GPIO Configuration
+        PB14     ------> SDMMC2_D0
+        PB15     ------> SDMMC2_D1
+        PB3      ------> SDMMC2_D2
+        PB4      ------> SDMMC2_D3
+        PA8      ------> SDMMC2_D4
+        PA9      ------> SDMMC2_D5
+        PE5      ------> SDMMC2_D6
+        PD3      ------> SDMMC2_D7       
+        PE3      ------> SDMMC2_CK
+        PG6      ------> SDMMC2_CMD
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_14|GPIO_PIN_15;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_PULLUP;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF9_SDIO2;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_8;
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_3;
+        HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+            
+        GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_5;
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+          
+        GPIO_InitStruct.Pin = GPIO_PIN_9;
+        GPIO_InitStruct.Alternate = GPIO_AF10_SDIO2;
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_6;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+        __HAL_RCC_SDMMC2_FORCE_RESET();
+        __HAL_RCC_SDMMC2_RELEASE_RESET();
+
+        /* SDMMC2 interrupt Init */
+        HAL_NVIC_SetPriority(SDMMC2_IRQn, 0X05, 0);
+        HAL_NVIC_EnableIRQ(SDMMC2_IRQn);
+        /* USER CODE BEGIN SDMMC2_MspInit 1 */
+
+        /* USER CODE END SDMMC2_MspInit 1 */
+    }
+}
+
+/**
+* @brief SD MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hsd: SD handle pointer
+* @retval None
+*/
+void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
+{
+  if(hsd->Instance==SDMMC1)
+  {
+  /* USER CODE BEGIN SDMMC1_MspDeInit 0 */
+
+  /* USER CODE END SDMMC1_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_SDMMC1_CLK_DISABLE();
+  
+    /**SDMMC1 GPIO Configuration    
+    PB9     ------> SDMMC1_CDIR
+    PC7     ------> SDMMC1_D123DIR
+    PC8     ------> SDMMC1_D0
+    PC9     ------> SDMMC1_D1
+    PC10    ------> SDMMC1_D2
+    PC11    ------> SDMMC1_D3
+    PC12    ------> SDMMC1_CK
+    PD2     ------> SDMMC1_CMD
+    PE4     ------> SDMMC1_CKIN
+    PF2     ------> SDMMC1_D0DIR 
+    */
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11 
+                          |GPIO_PIN_12);
+
+    HAL_GPIO_DeInit(GPIOD, GPIO_PIN_2);
+
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_9);
+    
+    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_4);
+    
+    HAL_GPIO_DeInit(GPIOF, GPIO_PIN_2);
+    /* SDMMC1 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(SDMMC1_IRQn);
+  /* USER CODE BEGIN SDMMC1_MspDeInit 1 */
+
+  /* USER CODE END SDMMC1_MspDeInit 1 */
+  }
+  
+  if(hsd->Instance==SDMMC2)
+  {
+  /* USER CODE BEGIN SDMMC2_MspDeInit 0 */
+
+  /* USER CODE END SDMMC2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_SDMMC2_CLK_DISABLE();
+  
+    /**SDMMC2 GPIO Configuration    
+        PB14     ------> SDMMC2_D0
+        PB15     ------> SDMMC2_D1
+        PB3      ------> SDMMC2_D2
+        PB4      ------> SDMMC2_D3
+        PA8      ------> SDMMC2_D4
+        PA9      ------> SDMMC2_D5
+        PE5      ------> SDMMC2_D6
+        PD3      ------> SDMMC2_D7       
+        PE3      ------> SDMMC2_CK
+        PG6      ------> SDMMC2_CMD
+    */
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_14|GPIO_PIN_15);
+
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_8|GPIO_PIN_9);
+
+    HAL_GPIO_DeInit(GPIOD, GPIO_PIN_3);
+    
+    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_3|GPIO_PIN_5);
+    
+    HAL_GPIO_DeInit(GPIOF, GPIO_PIN_6);
+    /* SDMMC2 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(SDMMC2_IRQn);
+  /* USER CODE BEGIN SDMMC2_MspDeInit 1 */
+
+  /* USER CODE END SDMMC2_MspDeInit 1 */
+  }
+}
+
+void HAL_SAI_MspInit(SAI_HandleTypeDef* hsai)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+    /* SAI2 */
+    if (hsai->Instance==SAI2_Block_A)
+    {
+        /* Peripheral clock enable */
+        if(IS_ENGINEERING_BOOT_MODE())
+        {
+            /** Initializes the peripherals clock 
+            */
+            PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI2;
+            PeriphClkInit.Sai2ClockSelection = RCC_SAI2CLKSOURCE_PLL3_Q;
+            if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+            {
+                Error_Handler();
+            }
+        }
+
+        __HAL_RCC_GPIOE_CLK_ENABLE();
+        __HAL_RCC_GPIOI_CLK_ENABLE();
+        __HAL_RCC_GPIOF_CLK_ENABLE();
+        __HAL_RCC_SAI2_CLK_ENABLE();
+
+        /**SAI2_A_Block_A GPIO Configuration    
+        PE0     ------> SAI2_MCLK_A
+        PI7     ------> SAI2_FS_A
+        PI5     ------> SAI2_SCK_A
+        PI6     ------> SAI2_SD_A
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_0;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF10_SAI2;
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_5|GPIO_PIN_6;
+        HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+
+        /* Configure DMA used for SAI2 */
+        __HAL_RCC_DMAMUX_CLK_ENABLE();
+        __HAL_RCC_DMA1_CLK_ENABLE();
+
+        hdma_sai2_a.Instance                 = DMA1_Stream0;
+        hdma_sai2_a.Init.Request             = DMA_REQUEST_SAI2_A;
+        hdma_sai2_a.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        hdma_sai2_a.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_sai2_a.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_sai2_a.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_sai2_a.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_sai2_a.Init.Mode                = DMA_CIRCULAR;
+        hdma_sai2_a.Init.Priority            = DMA_PRIORITY_HIGH;
+        hdma_sai2_a.Init.FIFOMode            = DMA_FIFOMODE_ENABLE;
+        hdma_sai2_a.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+        hdma_sai2_a.Init.MemBurst            = DMA_MBURST_SINGLE;
+        hdma_sai2_a.Init.PeriphBurst         = DMA_PBURST_SINGLE;
+        
+        HAL_DMA_DeInit(&hdma_sai2_a);
+        if (HAL_DMA_Init(&hdma_sai2_a) != HAL_OK)
+        {
+          Error_Handler();
+        }
+        __HAL_LINKDMA(hsai,hdmatx,hdma_sai2_a);
+        __HAL_DMA_ENABLE(&hdma_sai2_a);
+        
+        HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0x02, 0);
+        HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+    }
+    
+    if (hsai->Instance==SAI2_Block_B)
+    {
+          /* Peripheral clock enable */
+        if (IS_ENGINEERING_BOOT_MODE())
+        {
+            /** Initializes the peripherals clock 
+            */
+            PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI2;
+            PeriphClkInit.Sai2ClockSelection = RCC_SAI2CLKSOURCE_PLL3_Q;
+            if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+            {
+                Error_Handler();
+            }
+
+        }
+        __HAL_RCC_GPIOF_CLK_ENABLE();
+        __HAL_RCC_SAI2_CLK_ENABLE();
+                
+        /**SAI2_B_Block_B GPIO Configuration     
+        PE12     ------> SAI2_MCLK_B
+        PE13     ------> SAI2_FS_B
+        PE14     ------> SAI2_SCK_B
+        PF11     ------> SAI2_SD_B
+        */
+
+        GPIO_InitStruct.Pin = GPIO_PIN_11;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF10_SAI2;
+        HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+        
+        GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14;
+        HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+        
+        __HAL_RCC_DMAMUX_CLK_ENABLE();
+        __HAL_RCC_DMA1_CLK_ENABLE();
+        
+        /* Peripheral DMA init*/
+        hdma_sai2_b.Instance                 = DMA1_Stream1;
+        hdma_sai2_b.Init.Request             = DMA_REQUEST_SAI2_B;
+        hdma_sai2_b.Init.Direction           = DMA_PERIPH_TO_MEMORY;
+        hdma_sai2_b.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_sai2_b.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_sai2_b.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_sai2_b.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_sai2_b.Init.Mode                = DMA_CIRCULAR;
+        hdma_sai2_b.Init.Priority            = DMA_PRIORITY_HIGH;
+        hdma_sai2_b.Init.FIFOMode            = DMA_FIFOMODE_ENABLE;
+        hdma_sai2_b.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+        hdma_sai2_b.Init.MemBurst            = DMA_MBURST_SINGLE;
+        hdma_sai2_b.Init.PeriphBurst         = DMA_PBURST_SINGLE;
+		
+        HAL_DMA_DeInit(&hdma_sai2_b);
+        if (HAL_DMA_Init(&hdma_sai2_b) != HAL_OK)
+        {
+            Error_Handler();
+        }
+        __HAL_LINKDMA(hsai,hdmarx,hdma_sai2_b);
+        __HAL_DMA_ENABLE(&hdma_sai2_b);
+        HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0x02, 0);
+        HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn); 
+    }
+    /* SAI4 */
+    if(hsai->Instance==SAI4_Block_A)
+    {
+        /* Peripheral clock enable */
+        if(IS_ENGINEERING_BOOT_MODE())
+        {
+            /** Initializes the peripherals clock 
+            */
+            PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SAI4;
+            PeriphClkInit.Sai4ClockSelection = RCC_SAI4CLKSOURCE_PLL3_Q;
+            if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+            {
+                Error_Handler();
+            }
+
+        }
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_SAI4_CLK_ENABLE();
+        
+        /**SAI4_A_Block_A GPIO Configuration    
+        PB5     ------> SAI4_SD_A 
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_5;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+        GPIO_InitStruct.Alternate = GPIO_AF10_SAI4;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        /* Peripheral DMA init*/
+        __HAL_RCC_DMAMUX_CLK_ENABLE();
+        __HAL_RCC_DMA1_CLK_ENABLE();
+        
+        hdma_sai4_a.Instance                 = DMA1_Stream2;
+        hdma_sai4_a.Init.Request             = DMA_REQUEST_SAI4_A;
+        hdma_sai4_a.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        hdma_sai4_a.Init.PeriphInc           = DMA_PINC_DISABLE;
+        hdma_sai4_a.Init.MemInc              = DMA_MINC_ENABLE;
+        hdma_sai4_a.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+        hdma_sai4_a.Init.MemDataAlignment    = DMA_MDATAALIGN_HALFWORD;
+        hdma_sai4_a.Init.Mode                = DMA_CIRCULAR;
+        hdma_sai4_a.Init.Priority            = DMA_PRIORITY_HIGH;
+        hdma_sai4_a.Init.FIFOMode            = DMA_FIFOMODE_ENABLE;
+        hdma_sai4_a.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+        hdma_sai4_a.Init.MemBurst            = DMA_MBURST_SINGLE;
+        hdma_sai4_a.Init.PeriphBurst         = DMA_PBURST_SINGLE;
+       
+        HAL_DMA_DeInit(&hdma_sai4_a);
+        if (HAL_DMA_Init(&hdma_sai4_a) != HAL_OK)
+        {
+          Error_Handler();
+        }
+        __HAL_LINKDMA(hsai,hdmatx,hdma_sai4_a);
+        __HAL_DMA_ENABLE(&hdma_sai4_a);
+        HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0x02, 0);
+        HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn); 
     }
 }
 

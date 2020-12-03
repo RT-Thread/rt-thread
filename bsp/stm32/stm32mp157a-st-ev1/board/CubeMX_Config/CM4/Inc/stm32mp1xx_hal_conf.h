@@ -57,8 +57,8 @@
 /*#define HAL_PCD_MODULE_ENABLED   */
 /*#define HAL_QSPI_MODULE_ENABLED   */
 /*#define HAL_RNG_MODULE_ENABLED   */
-/*#define HAL_SAI_MODULE_ENABLED   */
-/*#define HAL_SD_MODULE_ENABLED   */
+#define HAL_SAI_MODULE_ENABLED
+#define HAL_SD_MODULE_ENABLED
 /*#define HAL_MMC_MODULE_ENABLED   */
 /*#define HAL_RTC_MODULE_ENABLED   */
 /*#define HAL_SMBUS_MODULE_ENABLED   */
@@ -153,6 +153,8 @@
   #define CSI_VALUE    4000000U /*!< Value of the Internal oscillator in Hz*/
 #endif /* CSI_VALUE */
 
+#define  USE_SD_TRANSCEIVER           1U
+   
 /**
   * @brief External clock source for I2S peripheral
   *        This value is used by the I2S HAL module to compute the I2S clock source 

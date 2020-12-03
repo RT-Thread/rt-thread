@@ -33,6 +33,45 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_OPENAMP
         default n
 
+    config BSP_USING_GBE
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+
+    menuconfig BSP_USING_SDMMC
+        bool "Enable SDMMC"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select BSP_USING_PMIC
+        if BSP_USING_SDMMC
+            menuconfig BSP_USING_SD_CARD
+                bool "Enable sd card"
+                default n
+                if BSP_USING_SD_CARD
+                    config SD_USING_DFS
+                        bool "sd card fatfs"
+                        default n
+                endif
+
+            menuconfig BSP_USING_EMMC
+                bool "Enable eMMC (32 Gbits)"
+                default n
+                if BSP_USING_EMMC
+                    config EMMC_USING_DFS
+                        bool "emmc card fatfs"
+                        default n
+                endif
+        endif
+
+    config BSP_USING_AUDIO
+    bool "Enable Audio Device (WM8994)"
+    select RT_USING_AUDIO
+    select BSP_USING_PMIC
+    select BSP_USING_I2C
+    select BSP_USING_I2C2
+    default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -48,11 +87,11 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART3
                 bool "Enable UART3"
-                default y
+                default n
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART3_TX_USING_DMA
@@ -62,7 +101,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_UART4
                 bool "Enable UART4"
-                default y
+                default n
 
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
