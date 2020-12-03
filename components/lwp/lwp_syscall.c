@@ -1276,6 +1276,7 @@ int sys_getaddrinfo(const char *nodename, const char *servname, const struct mus
         /* set up addrinfo */
         res->ai_family = k_res->ai_family;
         res->ai_flags  = k_res->ai_flags;
+        res->ai_next = NULL;
 
         if (hints != NULL)
         {
