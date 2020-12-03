@@ -579,7 +579,7 @@ void rt_timer_check(void)
             {
                 continue;
             }
-
+            rt_list_remove(&(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
@@ -667,7 +667,7 @@ void rt_soft_timer_check(void)
             {
                 continue;
             }
-
+            rt_list_remove(&(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
