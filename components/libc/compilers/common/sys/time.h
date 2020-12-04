@@ -36,6 +36,13 @@ struct timeval {
 };
 #endif /* _TIMEVAL_DEFINED */
 
+#ifndef _TIMESPEC
+#define _TIMESPEC
+struct timespec {
+    time_t  tv_sec;     /* seconds */
+    long    tv_nsec;    /* and nanoseconds */
+};
+#endif
 
 struct timezone {
   int tz_minuteswest;   /* minutes west of Greenwich */
