@@ -1521,6 +1521,104 @@ void HAL_DCMI_MspDeInit(DCMI_HandleTypeDef* hdcmi)
 }
 
 /**
+* @brief FDCAN MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hfdcan: FDCAN handle pointer
+* @retval None
+*/
+void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* hfdcan)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  if(hfdcan->Instance==FDCAN1)
+  {
+  /* USER CODE BEGIN FDCAN1_MspInit 0 */
+
+  /* USER CODE END FDCAN1_MspInit 0 */
+  if(IS_ENGINEERING_BOOT_MODE())
+  {
+  /** Initializes the peripherals clock 
+  */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_FDCAN;
+    PeriphClkInit.FdcanClockSelection = RCC_FDCANCLKSOURCE_HSE;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+  }
+
+    /* Peripheral clock enable */
+    __HAL_RCC_FDCAN_CLK_ENABLE();
+  
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOI_CLK_ENABLE();
+    /**FDCAN1 GPIO Configuration    
+    PH13     ------> FDCAN1_TX
+    PI9     ------> FDCAN1_RX 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_13;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF9_FDCAN1;
+    HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_9;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF9_FDCAN1;
+    HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
+
+    /* FDCAN1 interrupt Init */
+    HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0x02, 0);
+    HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+    HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, 0x02, 0);
+    HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
+    HAL_NVIC_SetPriority(FDCAN_CAL_IRQn, 0x02, 0);
+    HAL_NVIC_EnableIRQ(FDCAN_CAL_IRQn);
+  /* USER CODE BEGIN FDCAN1_MspInit 1 */
+  /* USER CODE END FDCAN1_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief FDCAN MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hfdcan: FDCAN handle pointer
+* @retval None
+*/
+void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef* hfdcan)
+{
+  if(hfdcan->Instance==FDCAN1)
+  {
+  /* USER CODE BEGIN FDCAN1_MspDeInit 0 */
+
+  /* USER CODE END FDCAN1_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_FDCAN_CLK_DISABLE();
+  
+    /**FDCAN1 GPIO Configuration    
+    PH13     ------> FDCAN1_TX
+    PI9     ------> FDCAN1_RX 
+    */
+    HAL_GPIO_DeInit(GPIOH, GPIO_PIN_13);
+
+    HAL_GPIO_DeInit(GPIOI, GPIO_PIN_9);
+
+    /* FDCAN1 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
+    HAL_NVIC_DisableIRQ(FDCAN1_IT1_IRQn);
+    HAL_NVIC_DisableIRQ(FDCAN_CAL_IRQn);
+  /* USER CODE BEGIN FDCAN1_MspDeInit 1 */
+
+  /* USER CODE END FDCAN1_MspDeInit 1 */
+  }
+
+}
+
+/**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
   */

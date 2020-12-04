@@ -252,6 +252,15 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_FDCAN
+    bool "Enable FDCAN"
+    default n
+    if BSP_USING_FDCAN
+        config BSP_USING_FDCAN1
+            bool "Enable FDCAN1"
+            default n
+    endif
+
  source "../libraries/HAL_Drivers/Kconfig"
 
 endmenu
