@@ -35,10 +35,6 @@ if GetDepend(['RT_USING_SERIAL']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_uart.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_uart_ex.c']
 
-#if GetDepend(['RT_USING_SPI']):
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_spi.c']
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_qspi.c']
-
 if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_pccard.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_pcd.c']
@@ -48,11 +44,6 @@ if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
 
 if GetDepend(['RT_USING_CAN']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_can.c']
-
-#if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim.c']
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim_ex.c']
-#    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_lptim.c']
 
 if GetDepend(['BSP_USING_ETH']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_eth.c']
@@ -73,10 +64,9 @@ if GetDepend(['RT_USING_WDT']):
 if GetDepend(['RT_USING_SDIO']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_sdmmc.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sd.c']
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_delayblock.c']
 
 if GetDepend(['RT_USING_AUDIO']):
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_i2s.c']
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_i2s_ex.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sai.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sai_ex.c']
 

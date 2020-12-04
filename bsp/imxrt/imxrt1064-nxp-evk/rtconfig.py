@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds -Xlinker -print-memory-usage'
 
     CPATH = ''
     LPATH = ''
@@ -57,8 +57,8 @@ if PLATFORM == 'gcc':
     AFLAGS += ' -D__STARTUP_CLEAR_BSS'
 
     if BUILD == 'debug':
-        CFLAGS += ' -gdwarf-2'
-        AFLAGS += ' -gdwarf-2'
+        CFLAGS += ' -g'
+        AFLAGS += ' -g'
         CFLAGS += ' -O0'
     else:
         CFLAGS += ' -O2 -Os'

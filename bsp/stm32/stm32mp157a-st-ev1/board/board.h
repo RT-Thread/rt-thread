@@ -32,7 +32,7 @@ extern "C" {
 
     
 #if defined(BSP_USING_OPENAMP)    
-#define STM32_SRAM_BEGIN             (uint32_t)0x10020000 
+#define STM32_SRAM_BEGIN             (uint32_t)0x10030000 
 #else
 #define STM32_SRAM_BEGIN             (uint32_t)0x2FFF0000     
 #endif

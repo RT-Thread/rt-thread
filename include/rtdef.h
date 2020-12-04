@@ -878,6 +878,7 @@ enum rt_device_class_type
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
     RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Touch,                              /**< Touch device */
+    RT_Device_Class_PHY,                                /**< PHY device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 

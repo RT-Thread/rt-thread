@@ -111,9 +111,7 @@ msh >
 
 
 
-## 联系人信息
+## 感谢 & 维护
 
-维护人:
-
--  [obito0](https://github.com/obito0), 邮箱：<496420502@qq.com>
--  Meco Man: jiantingman@foxmail.com     https://github.com/mysterywolf
+- 感谢[obito0](https://github.com/obito0)提供的[原始工程](../stm32f103-mini-system)
+- [Meco Man](https://github.com/mysterywolf): jiantingman@foxmail.com

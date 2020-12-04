@@ -35,7 +35,7 @@ extern volatile unsigned int* mbox;
 /* tags */
 #define MBOX_TAG_SETPOWER       0x28001
 #define MBOX_TAG_SETCLKRATE     0x38002
-#define MBOX_GET_MAC_ADDRESS	0x10003
+#define MBOX_GET_MAC_ADDRESS    0x10003
 #define MBOX_TAG_LAST           0
 
 #define MMIO_BASE       0xFE000000
@@ -50,14 +50,14 @@ extern volatile unsigned int* mbox;
 #define MBOX_FULL       0x80000000
 #define MBOX_EMPTY      0x40000000
 
-#define DEVICE_ID_SD_CARD	0
-#define DEVICE_ID_USB_HCD	3
-#define POWER_STATE_OFF		(0 << 0)
-#define POWER_STATE_ON		(1 << 0)
-#define POWER_STATE_WAIT	(1 << 1)
-#define POWER_STATE_NO_DEVICE	(1 << 1)	// in response
-#define MMU_ENABLE 1
-#define MMU_DISABLE 0
+#define DEVICE_ID_SD_CARD        (0)
+#define DEVICE_ID_USB_HCD        (3)
+#define POWER_STATE_OFF          (0 << 0)
+#define POWER_STATE_ON           (1 << 0)
+#define POWER_STATE_WAIT         (1 << 1)
+#define POWER_STATE_NO_DEVICE    (1 << 1)    // in response
+#define MMU_ENABLE               (1)
+#define MMU_DISABLE              (0)
 
 /*
  * raspi hardware info
@@ -102,9 +102,60 @@ enum {
     MBOX_TAG_TEMP_GET_MAX   = 0x0003000A,
 };
 
-#define MBOX_ADDR 0xc00000
+/*
+ * raspi Memory
+ */
+enum {
+    MBOX_TAG_ALLOCATE_MEMORY = 0x0003000C, // Memory: Allocates Contiguous Memory On The GPU (Response: Handle)
+    MBOX_TAG_LOCK_MEMORY     = 0x0003000D, // Memory: Unlock Buffer (Response: Status)
+    MBOX_TAG_UNLOCK_MEMORY   = 0x0003000E, // Memory: Unlock Buffer (Response: Status)
+    MBOX_TAG_RELEASE_MEMORY  = 0x0003000F, // Memory: Free The Memory Buffer (Response: Status)
+    MBOX_TAG_EXECUTE_CODE    = 0x00030010, // Memory: Calls The Function At Given (Bus) Address And With Arguments Given
+};
+
+/*
+ * raspi GPU
+ */
+enum {
+    MBOX_TAG_EXECUTE_QPU = 0x00030011, // QPU: Calls The QPU Function At Given (Bus) Address And With Arguments Given (Response: Number Of QPUs, Control, No Flush, Timeout In ms)
+    MBOX_TAG_ENABLE_QPU  = 0x00030012, // QPU: Enables The QPU (Response: Enable State)
+};
+
+/*
+ * raspi HDMI
+ */
+#define MBOX_TAG_GET_EDID_BLOCK        0x00030020 // HDMI: Read Specificed EDID Block From Attached HDMI/DVI Device (Response: Block Number, Status, EDID Block (128 Bytes))
+
+/*
+ * raspi NOTIFY
+ */
+#define MBOX_TAG_NOTIFY_REBOOT         0x00030048
+#define MBOX_TAG_NOTIFY_XHCI_RESET     0x00030058
+
+/*
+* touch
+*/
+#define MBOX_TAG_GET_TOUCHBUF          (0x0004000F)
+
+#define MBOX_ADDR 0x08000000
+
+#define    RES_CLK_ID           (0x000000000)
+#define    EMMC_CLK_ID          (0x000000001)
+#define    UART_CLK_ID          (0x000000002)
+#define    ARM_CLK_ID           (0x000000003)
+#define    CORE_CLK_ID          (0x000000004)
+#define    V3D_CLK_ID           (0x000000005)
+#define    H264_CLK_ID          (0x000000006)
+#define    ISP_CLK_ID           (0x000000007)
+#define    SDRAM_CLK_ID         (0x000000008)
+#define    PIXEL_CLK_ID         (0x000000009)
+#define    PWM_CLK_ID           (0x00000000a)
 
 int mbox_call(unsigned char ch, int mmu_enable);
+int bcm271x_mbox_get_touch(void);
+int bcm271x_notify_reboot(void);
+int bcm271x_notify_xhci_reset(void);
+int bcm271x_gpu_enable(void);
 int bcm271x_mbox_hardware_get_model(void);
 int bcm271x_mbox_hardware_get_revison(void);
 int bcm271x_mbox_hardware_get_mac_address(uint8_t * mac);
