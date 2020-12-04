@@ -1,0 +1,74 @@
+name: sdk-check
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  # Runs on the 0, 4, 8, 12, 16 and 20th hour every day
+  schedule:
+    - cron:  '0 0 1 * *'
+  push:
+    branches:
+      - action
+    paths-ignore:
+      - docs/**
+  pull_request:
+    branches:
+      - action
+    paths-ignore:
+      - docs/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+       include:
+         - node-version: 10.x
+           RTT_BSP: "CME_M7"
+           RTT_TOOL_CHAIN: "sourcery-arm"
+         - node-version: 10.x
+           RTT_BSP: "apollo2"
+           RTT_TOOL_CHAIN: "sourcery-arm"
+         - node-version: 10.x
+           RTT_BSP: "asm9260t"
+           RTT_TOOL_CHAIN: "sourcery-arm"           
+         - node-version: 10.x
+           RTT_BSP: "allwinner_tina"
+           RTT_TOOL_CHAIN: "sourcery-arm"
+         - node-version: 10.x
+           RTT_BSP: "efm32"
+           RTT_TOOL_CHAIN: "sourcery-arm"
+         - node-version: 10.x
+           RTT_BSP: "gd32e230k-start"
+           RTT_TOOL_CHAIN: "sourcery-arm"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@master
+        with:
+          python-version: 3.8
+
+      - name: Install Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get -qq install gcc-multilib libsdl-dev scons || true
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/arm-2017q2-v6/gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 
+          sudo tar xjf gcc-arm-none-eabi-6-2017-q2-update-linux.tar.bz2 -C /opt  
+          /opt/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gcc --version
+
+          wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 
+          sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt  
+          /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
+
+          echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-6-2017-q2-update/bin " >> $GITHUB_ENV
+          echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin  " >> $GITHUB_ENV
+          echo "RTT_ROOT=`pwd`  " >> $GITHUB_ENV
+          echo "RTT_CC=`gcc`  " >> $GITHUB_ENV
+
+      - name: Scons compile
+        env:
+          RTT_BSP: ${{ matrix.RTT_BSP }}
+          RTT_TOOL_CHAIN: ${{ matrix.RTT_TOOL_CHAIN }}
+        run: scons -C bsp/$RTT_BSP
