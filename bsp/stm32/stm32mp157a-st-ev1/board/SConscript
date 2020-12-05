@@ -52,6 +52,9 @@ if GetDepend(['BSP_USING_SPDIFRX']):
 if GetDepend(['BSP_USING_DFSDM']):
     src += Glob('ports/drv_dfsdm.c')
 
+if GetDepend(['BSP_USING_WWDG']):
+    src += Glob('ports/drv_wwdg.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
