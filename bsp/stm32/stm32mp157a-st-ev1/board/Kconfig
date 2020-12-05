@@ -28,6 +28,13 @@ menu "Onboard Peripheral Drivers"
         select RT_MTD_NAND_DEBUG
         default n
 
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (MX25L51245G)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
     config BSP_USING_OPENAMP
         bool "Enable OpenAMP"
         select RT_USING_OPENAMP
@@ -92,6 +99,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+        
     menuconfig BSP_USING_UART
         bool "Enable UART"
         select RT_USING_SERIAL
