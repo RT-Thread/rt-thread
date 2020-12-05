@@ -99,7 +99,10 @@ if GetDepend(['BSP_USING_FDCAN']):
 
 if GetDepend(['BSP_USING_QSPI']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_qspi.c']
-    
+
+if GetDepend(['BSP_USING_SPDIFRX']):
+    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_spdifrx.c']
+
 path = [cwd + '/STM32MP1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32MP1xx/Include',
     cwd + '/CMSIS/Core/Include',

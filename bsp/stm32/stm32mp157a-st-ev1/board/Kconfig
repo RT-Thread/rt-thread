@@ -75,6 +75,9 @@ menu "Onboard Peripheral Drivers"
     bool "Enable Audio Device (WM8994)"
     select RT_USING_AUDIO
     select BSP_USING_PMIC
+    select BSP_USING_SDMMC
+    select BSP_USING_SD_CARD
+    select SD_USING_DFS
     select BSP_USING_I2C
     select BSP_USING_I2C2
     default n
@@ -104,7 +107,12 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_QSPI
         select RT_USING_SPI
         default n
-        
+    
+    config BSP_USING_SPDIFRX
+        bool "Enable spdifrx"
+        select BSP_USING_AUDIO
+        default n
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         select RT_USING_SERIAL
