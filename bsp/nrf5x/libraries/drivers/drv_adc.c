@@ -12,8 +12,6 @@
 
 #ifdef RT_USING_ADC
 
-#define ADC_NAME "adc"
-
 struct rt_adc_device nrf5x_adc_device;
 
 drv_nrfx_saadc_result_t results;
