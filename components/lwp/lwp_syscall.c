@@ -76,6 +76,126 @@ static void kmem_put(void *kptr)
 }
 #endif
 
+/* The same socket option is defined differently in the user interfaces and the
+ * implementation. The options should be converted in the kernel. */
+
+/* socket levels */
+#define INTF_SOL_SOCKET     1
+#define IMPL_SOL_SOCKET     0xFFF
+
+/* socket option name */
+#define INTF_SO_REUSEADDR   2
+#define INTF_SO_KEEPALIVE   9
+#define INTF_SO_BROADCAST   6
+#define INTF_SO_ACCEPTCONN  30
+#define INTF_SO_DONTROUTE   5
+#define INTF_SO_LINGER      13
+#define INTF_SO_OOBINLINE   10
+#define INTF_SO_REUSEPORT   15
+#define INTF_SO_SNDBUF      7
+#define INTF_SO_RCVBUF      8
+#define INTF_SO_SNDLOWAT    19
+#define INTF_SO_RCVLOWAT    18
+#define INTF_SO_SNDTIMEO    21
+#define INTF_SO_RCVTIMEO    20
+#define INTF_SO_ERROR       4
+#define INTF_SO_TYPE        3
+#define INTF_SO_NO_CHECK    11
+
+#define IMPL_SO_REUSEADDR   0x0004
+#define IMPL_SO_KEEPALIVE   0x0008
+#define IMPL_SO_BROADCAST   0x0020
+#define IMPL_SO_ACCEPTCONN  0x0002
+#define IMPL_SO_DONTROUTE   0x0010
+#define IMPL_SO_LINGER      0x0080
+#define IMPL_SO_OOBINLINE   0x0100
+#define IMPL_SO_REUSEPORT   0x0200
+#define IMPL_SO_SNDBUF      0x1001
+#define IMPL_SO_RCVBUF      0x1002
+#define IMPL_SO_SNDLOWAT    0x1003
+#define IMPL_SO_RCVLOWAT    0x1004
+#define IMPL_SO_SNDTIMEO    0x1005
+#define IMPL_SO_RCVTIMEO    0x1006
+#define IMPL_SO_ERROR       0x1007
+#define IMPL_SO_TYPE        0x1008
+#define IMPL_SO_NO_CHECK    0x100a
+
+static void convert_sockopt(int *level, int *optname)
+{
+    switch (*level)
+    {
+        case INTF_SOL_SOCKET:
+            *level = IMPL_SOL_SOCKET;
+            break;
+        default:
+            break;
+    }
+
+    switch (*optname)
+    {
+        case INTF_SO_REUSEADDR:
+            *optname = IMPL_SO_REUSEADDR;
+            break;
+        case INTF_SO_KEEPALIVE:
+            *optname = IMPL_SO_KEEPALIVE;
+            break;
+        case INTF_SO_BROADCAST:
+            *optname = IMPL_SO_BROADCAST;
+            break;
+        case INTF_SO_ACCEPTCONN:
+            *optname = IMPL_SO_ACCEPTCONN;
+            break;
+        case INTF_SO_DONTROUTE:
+            *optname = IMPL_SO_DONTROUTE;
+            break;
+        case INTF_SO_LINGER:
+            *optname = IMPL_SO_LINGER;
+            break;
+        case INTF_SO_OOBINLINE:
+            *optname = IMPL_SO_OOBINLINE;
+            break;
+        case INTF_SO_REUSEPORT:
+            *optname = IMPL_SO_REUSEPORT;
+            break;
+        case INTF_SO_SNDBUF:
+            *optname = IMPL_SO_SNDBUF;
+            break;
+        case INTF_SO_RCVBUF:
+            *optname = IMPL_SO_RCVBUF;
+            break;
+        case INTF_SO_SNDLOWAT:
+            *optname = IMPL_SO_SNDLOWAT;
+            break;
+        case INTF_SO_RCVLOWAT:
+            *optname = IMPL_SO_RCVLOWAT;
+            break;
+        case INTF_SO_SNDTIMEO:
+            *optname = IMPL_SO_SNDTIMEO;
+            break;
+        case INTF_SO_RCVTIMEO:
+            *optname = IMPL_SO_RCVTIMEO;
+            break;
+        case INTF_SO_ERROR:
+            *optname = IMPL_SO_ERROR;
+            break;
+        case INTF_SO_TYPE:
+            *optname = IMPL_SO_TYPE;
+            break;
+        case INTF_SO_NO_CHECK:
+            *optname = IMPL_SO_NO_CHECK;
+            break;
+
+        /*
+         * SO_DONTLINGER (*level = ((int)(~SO_LINGER))),
+         * SO_USELOOPBACK (*level = 0x0040) and
+         * SO_CONTIMEO (*level = 0x1009) are not supported for now.
+         */
+        default:
+            *optname = 0;
+            break;
+    }
+}
+
 static void sockaddr_tolwip(const struct musl_sockaddr *std, struct sockaddr *lwip)
 {
     if (std && lwip)
@@ -972,6 +1092,7 @@ int sys_getsockopt (int socket, int level, int optname, void *optval, socklen_t 
 {
     LOG_I("syscall: getsockopt");
 
+    convert_sockopt(&level, &optname);
     return getsockopt (socket, level, optname, optval, optlen);
 }
 
@@ -979,6 +1100,7 @@ int sys_setsockopt (int socket, int level, int optname, const void *optval, sock
 {
     LOG_I("syscall: setsockopt");
 
+    convert_sockopt(&level, &optname);
     return setsockopt (socket, level, optname, optval, optlen);
 }
 
