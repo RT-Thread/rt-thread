@@ -46,6 +46,9 @@ if GetDepend(['BSP_USING_FDCAN']):
 if GetDepend(['BSP_USING_QSPI']):
     src += Glob('ports/drv_qspi_flash.c')
 
+if GetDepend(['BSP_USING_SPDIFRX']):
+    src += Glob('ports/drv_spdifrx.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')

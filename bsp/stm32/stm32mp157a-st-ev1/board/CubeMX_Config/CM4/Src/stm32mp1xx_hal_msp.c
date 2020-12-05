@@ -29,6 +29,7 @@
 DMA_HandleTypeDef hdma_sai2_a     = {0};
 DMA_HandleTypeDef hdma_sai2_b     = {0};
 DMA_HandleTypeDef hdma_sai4_a     = {0};
+DMA_HandleTypeDef hdma_spdifrx_rx = {0};
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -1616,6 +1617,75 @@ void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef* hfdcan)
   /* USER CODE END FDCAN1_MspDeInit 1 */
   }
 
+}
+
+void HAL_SPDIFRX_MspInit(SPDIFRX_HandleTypeDef* hspdifrx)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+    if(hspdifrx->Instance==SPDIFRX)
+    {
+        if(IS_ENGINEERING_BOOT_MODE())
+        {
+
+            PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SPDIFRX;
+            PeriphClkInit.SpdifrxClockSelection = RCC_SPDIFRXCLKSOURCE_PLL4;
+            if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+            {
+                Error_Handler();
+            }
+        }
+        /* Peripheral clock enable */
+        __HAL_RCC_SPDIFRX_CLK_ENABLE();
+
+        __HAL_RCC_GPIOG_CLK_ENABLE();
+
+        GPIO_InitStruct.Pin = GPIO_PIN_12;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Alternate = GPIO_AF8_SPDIF;
+        HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+        __HAL_RCC_DMAMUX_CLK_ENABLE();
+        __HAL_RCC_DMA1_CLK_ENABLE();
+            
+        hdma_spdifrx_rx.Instance                  = DMA1_Stream7;
+        hdma_spdifrx_rx.Init.Request              = DMA_REQUEST_SPDIF_RX_DT;
+        hdma_spdifrx_rx.Init.Direction            = DMA_PERIPH_TO_MEMORY;
+        hdma_spdifrx_rx.Init.PeriphInc            = DMA_PINC_DISABLE;
+        hdma_spdifrx_rx.Init.MemInc               = DMA_MINC_ENABLE;
+        hdma_spdifrx_rx.Init.PeriphDataAlignment  = DMA_PDATAALIGN_WORD;
+        hdma_spdifrx_rx.Init.MemDataAlignment     = DMA_MDATAALIGN_WORD;
+        hdma_spdifrx_rx.Init.Mode                 = DMA_CIRCULAR;
+        hdma_spdifrx_rx.Init.Priority             = DMA_PRIORITY_HIGH;
+        hdma_spdifrx_rx.Init.FIFOMode             = DMA_FIFOMODE_ENABLE;
+        hdma_spdifrx_rx.Init.FIFOThreshold        = DMA_FIFO_THRESHOLD_FULL;
+        hdma_spdifrx_rx.Init.MemBurst             = DMA_MBURST_SINGLE;
+        hdma_spdifrx_rx.Init.PeriphBurst          = DMA_MBURST_SINGLE; 
+  
+        HAL_DMA_DeInit(&hdma_spdifrx_rx);
+        if (HAL_DMA_Init(&hdma_spdifrx_rx) != HAL_OK)
+        {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(hspdifrx, hdmaDrRx, hdma_spdifrx_rx);
+        
+        HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 0x02, 0);
+        HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
+    }
+}
+
+void HAL_SPDIFRX_MspDeInit(SPDIFRX_HandleTypeDef* hspdifrx)
+{
+    if(hspdifrx->Instance==SPDIFRX)
+    {
+        __HAL_RCC_SPDIFRX_CLK_DISABLE();
+
+        HAL_GPIO_DeInit(GPIOG, GPIO_PIN_12);
+        HAL_DMA_DeInit(hspdifrx->hdmaDrRx);
+    }
 }
 
 /**
