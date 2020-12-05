@@ -30,6 +30,8 @@ DMA_HandleTypeDef hdma_sai2_a     = {0};
 DMA_HandleTypeDef hdma_sai2_b     = {0};
 DMA_HandleTypeDef hdma_sai4_a     = {0};
 DMA_HandleTypeDef hdma_spdifrx_rx = {0};
+DMA_HandleTypeDef hdma_dfsdm1_flt0 = {0};
+DMA_HandleTypeDef hdma_dfsdm1_flt1 = {0};
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -1686,6 +1688,135 @@ void HAL_SPDIFRX_MspDeInit(SPDIFRX_HandleTypeDef* hspdifrx)
         HAL_GPIO_DeInit(GPIOG, GPIO_PIN_12);
         HAL_DMA_DeInit(hspdifrx->hdmaDrRx);
     }
+}
+
+void HAL_DFSDM_ChannelMspInit(DFSDM_Channel_HandleTypeDef* hdfsdm_channel)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+    if(IS_ENGINEERING_BOOT_MODE())
+    {
+        PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_DFSDM1;
+        if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+        {
+          Error_Handler();
+        }
+    }
+    /* Peripheral clock enable */
+    __HAL_RCC_DFSDM1_CLK_ENABLE();
+
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOF_CLK_ENABLE();
+    /**DFSDM1 GPIO Configuration    
+    PC3     ------> DFSDM1_DATIN1
+    PB13     ------> DFSDM1_CKOUT
+    PF13     ------> DFSDM1_DATIN3 
+    */
+    GPIO_InitStruct.Pin         = GPIO_PIN_13;
+    GPIO_InitStruct.Mode        = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull        = GPIO_PULLDOWN;
+    GPIO_InitStruct.Speed       = GPIO_SPEED_FREQ_HIGH;
+    GPIO_InitStruct.Alternate   = GPIO_AF3_DFSDM1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    
+    GPIO_InitStruct.Pin         = GPIO_PIN_3;
+    GPIO_InitStruct.Alternate   = GPIO_AF3_DFSDM1;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_13;
+    GPIO_InitStruct.Alternate = GPIO_AF6_DFSDM1;
+    HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
+}
+
+void HAL_DFSDM_FilterMspInit(DFSDM_Filter_HandleTypeDef* hdfsdm_filter)
+{
+    RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+    
+    if(IS_ENGINEERING_BOOT_MODE())
+    {
+        /** Initializes the peripherals clock 
+        */
+        PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_DFSDM1;
+        if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+        {
+          Error_Handler();
+        }
+    }
+      
+    __HAL_RCC_DFSDM1_CLK_ENABLE();
+      /* DMA controller clock enable */
+    __HAL_RCC_DMAMUX_CLK_ENABLE();
+    __HAL_RCC_DMA2_CLK_ENABLE();
+  
+    if(hdfsdm_filter->Instance == DFSDM1_Filter0)
+    {
+        hdma_dfsdm1_flt0.Instance                   = DMA2_Stream2;
+        hdma_dfsdm1_flt0.Init.Request               = DMA_REQUEST_DFSDM1_FLT0;
+        hdma_dfsdm1_flt0.Init.Direction             = DMA_PERIPH_TO_MEMORY;
+        hdma_dfsdm1_flt0.Init.PeriphInc             = DMA_PINC_DISABLE;
+        hdma_dfsdm1_flt0.Init.MemInc                = DMA_MINC_ENABLE;
+        hdma_dfsdm1_flt0.Init.PeriphDataAlignment   = DMA_PDATAALIGN_WORD;
+        hdma_dfsdm1_flt0.Init.MemDataAlignment      = DMA_MDATAALIGN_WORD;
+        hdma_dfsdm1_flt0.Init.Mode                  = DMA_CIRCULAR;
+        hdma_dfsdm1_flt0.Init.Priority              = DMA_PRIORITY_HIGH;
+        hdma_dfsdm1_flt0.Init.FIFOMode              = DMA_FIFOMODE_ENABLE;
+        hdma_dfsdm1_flt0.Init.FIFOThreshold         = DMA_FIFO_THRESHOLD_FULL;
+        hdma_dfsdm1_flt0.Init.MemBurst              = DMA_MBURST_SINGLE;
+        hdma_dfsdm1_flt0.Init.PeriphBurst           = DMA_PBURST_SINGLE;
+        if (HAL_DMA_Init(&hdma_dfsdm1_flt0) != HAL_OK)
+        {
+          Error_Handler();
+        }
+
+        /* Several peripheral DMA handle pointers point to the same DMA handle.
+         Be aware that there is only one channel to perform all the requested DMAs. */
+        __HAL_LINKDMA(hdfsdm_filter,hdmaReg,hdma_dfsdm1_flt0);
+        
+        HAL_NVIC_SetPriority(DMA2_Stream2_IRQn, 2, 0);
+        HAL_NVIC_EnableIRQ(DMA2_Stream2_IRQn);
+    }
+
+    if(hdfsdm_filter->Instance == DFSDM1_Filter1)
+    {
+        hdma_dfsdm1_flt1.Instance                   = DMA2_Stream1;
+        hdma_dfsdm1_flt1.Init.Request               = DMA_REQUEST_DFSDM1_FLT1;
+        hdma_dfsdm1_flt1.Init.Direction             = DMA_PERIPH_TO_MEMORY;
+        hdma_dfsdm1_flt1.Init.PeriphInc             = DMA_PINC_DISABLE;
+        hdma_dfsdm1_flt1.Init.MemInc                = DMA_MINC_ENABLE;
+        hdma_dfsdm1_flt1.Init.PeriphDataAlignment   = DMA_PDATAALIGN_WORD;
+        hdma_dfsdm1_flt1.Init.MemDataAlignment      = DMA_MDATAALIGN_WORD;
+        hdma_dfsdm1_flt1.Init.Mode                  = DMA_CIRCULAR;
+        hdma_dfsdm1_flt1.Init.Priority              = DMA_PRIORITY_HIGH;
+        hdma_dfsdm1_flt1.Init.FIFOMode              = DMA_FIFOMODE_ENABLE;
+        hdma_dfsdm1_flt1.Init.FIFOThreshold         = DMA_FIFO_THRESHOLD_FULL;
+        hdma_dfsdm1_flt1.Init.MemBurst              = DMA_MBURST_SINGLE;
+        hdma_dfsdm1_flt1.Init.PeriphBurst           = DMA_PBURST_SINGLE;
+        
+        if (HAL_DMA_Init(&hdma_dfsdm1_flt1) != HAL_OK)
+        {
+          Error_Handler();
+        }
+        
+        __HAL_LINKDMA(hdfsdm_filter,hdmaReg,hdma_dfsdm1_flt1);
+        
+        HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 2, 0);
+        HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+    }
+}
+
+void HAL_DFSDM_FilterMspDeInit(DFSDM_Filter_HandleTypeDef* hdfsdm_filter)
+{
+    HAL_DMA_DeInit(hdfsdm_filter->hdmaReg);
+}
+
+void HAL_DFSDM_ChannelMspDeInit(DFSDM_Channel_HandleTypeDef* hdfsdm_channel)
+{
+    __HAL_RCC_DFSDM1_CLK_DISABLE();
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_3);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_13);
+    HAL_GPIO_DeInit(GPIOF, GPIO_PIN_13);
 }
 
 /**
