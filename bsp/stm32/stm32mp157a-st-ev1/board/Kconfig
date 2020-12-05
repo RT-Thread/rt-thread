@@ -104,6 +104,22 @@ menu "Onboard Peripheral Drivers"
         bool "Enable Multi Function eXpander"
         default n
 
+    menuconfig BSP_USING_RS485
+        bool "Enable RS485 "
+        default n
+        if BSP_USING_RS485
+            comment "set rts pin number "
+            config BSP_RS485_RTS_PIN
+                int "RS485 rts pin number"
+                range 1 176
+                default 5
+
+            config RS485_UART_DEVICE_NAME
+            string "the uart name for rs485"
+            default "uart3"
+
+        endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
