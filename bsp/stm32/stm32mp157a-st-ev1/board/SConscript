@@ -61,6 +61,9 @@ if GetDepend(['BSP_USING_WWDG']):
 if GetDepend(['BSP_USING_EXTI']):
     src += Glob('ports/drv_exti.c')
 
+if GetDepend(['BSP_USING_RNG']) or GetDepend(['BSP_USING_HASH']) or GetDepend(['BSP_USING_CRC']) or GetDepend(['BSP_USING_CRYP']):
+    src += Glob('ports/crypto_sample.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
