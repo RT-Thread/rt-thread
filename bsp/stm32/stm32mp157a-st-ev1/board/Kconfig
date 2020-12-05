@@ -68,7 +68,7 @@ menu "Onboard Peripheral Drivers"
                 if BSP_USING_SD_CARD
                     config SD_USING_DFS
                         bool "sd card fatfs"
-                        default n
+                        default y
                 endif
 
             menuconfig BSP_USING_EMMC
