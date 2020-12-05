@@ -25,6 +25,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C3
         default y
 
+    config BSP_USING_PWR
+        bool "Enable PM (power control)"
+        select BSP_USING_LPTIM
+        select BSP_USING_LPTIM1
+        default n
+
     config BSP_USING_NAND
         bool "Enable FMC (MT29F8G08ABACAH4)"
         select RT_USING_FMC
@@ -178,6 +184,16 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_TIM17
                 bool "Enable TIM17"
+                default n
+        endif
+
+    menuconfig BSP_USING_LPTIM
+        bool "Enable lptimer"
+        default n
+        select RT_USING_LPTIMER
+        if BSP_USING_LPTIM
+            config BSP_USING_LPTIM1
+                bool "Enable LPTIM1"
                 default n
         endif
 
