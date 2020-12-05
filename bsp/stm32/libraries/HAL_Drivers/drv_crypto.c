@@ -147,7 +147,7 @@ static rt_uint32_t _rng_rand(struct hwcrypto_rng *ctx)
     {
         return gen_random ;
     }
-
+    
     return 0;
 }
 
