@@ -8,7 +8,7 @@ group = []
 CFLAGS     = ' -nostdinc'
 CPPPATH    = [cwd, cwd + '/libc/include']
 CPPDEFINES = ['__STDC_ISO_10646__=201206L', '_STDC_PREDEF_H']
-LIBS       = ['c', 'm', 'gcc']
+LIBS       = ['c', 'gcc']
 LIBPATH    = [cwd + '/libc/lib']
 
 if rtconfig.PLATFORM == 'gcc':
