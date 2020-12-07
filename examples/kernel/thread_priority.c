@@ -55,7 +55,7 @@ int thread_priority_init()
     else
         tc_stat(TC_STAT_FAILED);
 
-    rt_thread_init(&thread2,
+    result = rt_thread_init(&thread2,
                    "t2",
                    thread2_entry, RT_NULL,
                    &thread2_stack[0], sizeof(thread2_stack),

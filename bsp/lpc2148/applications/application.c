@@ -151,17 +151,21 @@ void thread_led2_entry(void *parameter)
 
 int rt_application_init()
 {
-    rt_thread_init(&thread_led1,
+    rt_err_t result;
+    result = rt_thread_init(&thread_led1,
                    "led1",
                    thread_led1_entry, RT_NULL,
                    &thread_led1_stack[0], sizeof(thread_led1_stack),
                    20, 10);
+    RT_ASSERT(result == RT_EOK);
 
-    rt_thread_init(&thread_led2,
+    result = rt_thread_init(&thread_led2,
                    "led2",
                    thread_led2_entry, RT_NULL,
                    &thread_led2_stack[0], sizeof(thread_led2_stack),
                    25, 8);
+    RT_ASSERT(result == RT_EOK);
+    
     rt_thread_startup(&thread_led1);
     rt_thread_startup(&thread_led2);
 

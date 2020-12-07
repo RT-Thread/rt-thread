@@ -144,14 +144,16 @@ static void rt_thread_entry_led(void* parameter)
 int rt_application_init(void)
 {
 	rt_thread_t tid;
+    rt_err_t state;
 
-	rt_thread_init(&thread_led,
+	state = rt_thread_init(&thread_led,
 			"led",
 			rt_thread_entry_led,
 			RT_NULL,
 			&thread_led_stack[0],
 			sizeof(thread_led_stack),11,5);
-	rt_thread_startup(&thread_led);
+    if (state == RT_EOK) rt_thread_startup(&thread_led);
+
 
 	tid = rt_thread_create("init",
 			rt_init_thread_entry, RT_NULL,

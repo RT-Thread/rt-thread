@@ -47,13 +47,15 @@ static void thread_led2_entry(void* parameter)
 int rt_application_init(void)
 {
     rt_thread_t thread;
+    rt_err_t result;
 
-    rt_thread_init(&thread_led1,
+    result = rt_thread_init(&thread_led1,
                    "led1",
                    thread_led1_entry, RT_NULL,
                    &thread_led1_stack[0], sizeof(thread_led1_stack),
                    20, 10);
-    rt_thread_startup(&thread_led1);
+    if (result == RT_EOK)
+      rt_thread_startup(&thread_led1);
 
     /* create led2 thread */
     thread = rt_thread_create("led2",

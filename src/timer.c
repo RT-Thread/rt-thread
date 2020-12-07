@@ -740,6 +740,7 @@ void rt_system_timer_thread_init(void)
 {
 #ifdef RT_USING_TIMER_SOFT
     int i;
+    rt_err_t result;
 
     for (i = 0;
          i < sizeof(rt_soft_timer_list) / sizeof(rt_soft_timer_list[0]);
@@ -749,7 +750,7 @@ void rt_system_timer_thread_init(void)
     }
 
     /* start software timer thread */
-    rt_thread_init(&timer_thread,
+    result = rt_thread_init(&timer_thread,
                    "timer",
                    rt_thread_timer_entry,
                    RT_NULL,
@@ -757,6 +758,7 @@ void rt_system_timer_thread_init(void)
                    sizeof(timer_thread_stack),
                    RT_TIMER_THREAD_PRIO,
                    10);
+    RT_ASSERT(result == RT_EOK);
 
     /* startup */
     rt_thread_startup(&timer_thread);
