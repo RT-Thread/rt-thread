@@ -49,6 +49,24 @@ int mbox_call(unsigned char ch, int mmu_enable)
     return 0;
 }
 
+int bcm271x_mbox_get_touch(void)
+{
+    mbox[0] = 8*4;                      // length of the message
+    mbox[1] = MBOX_REQUEST;             // this is a request message
+    
+    mbox[2] = MBOX_TAG_GET_TOUCHBUF; 
+    mbox[3] = 4;                        // buffer size
+    mbox[4] = 0;                        // len
+
+    mbox[5] = 0;                       // id
+    mbox[6] = 0;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+
+    return (int)(mbox[5] &  ~0xC0000000);
+}
+
 int bcm271x_notify_reboot(void)
 {
     mbox[0] = 7*4;                          // length of the message

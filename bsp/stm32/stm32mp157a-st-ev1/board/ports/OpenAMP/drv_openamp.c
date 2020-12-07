@@ -12,6 +12,7 @@
 
 #ifdef BSP_USING_OPENAMP
 
+#include <finsh.h>
 #include <drv_openamp.h>
 #include <openamp.h>
 #include <virt_uart.h>
@@ -235,7 +236,10 @@ int rt_hw_openamp_init(void)
     
     rt_hw_openamp_register(&dev_openamp, "openamp", 0, NULL);
     
-    rt_console_set_device("openamp");
+    if (RT_CONSOLE_DEVICE_NAME == "openamp")
+    {
+        rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    }
 
     return RT_EOK;
 }
@@ -288,5 +292,37 @@ static int creat_openamp_thread(void)
     return RT_EOK;
 }
 INIT_APP_EXPORT(creat_openamp_thread);
+
+#ifdef FINSH_USING_MSH
+
+static int console(int argc, char **argv)
+{
+    rt_err_t result = RT_EOK;
+    
+    if (argc > 1)
+    {
+        if (!strcmp(argv[1], "set"))
+        {
+            rt_kprintf("console change to %s\n", argv[2]);
+            rt_console_set_device(argv[2]);
+            finsh_set_device(argv[2]);
+        }
+        else
+        {
+            rt_kprintf("Unknown command. Please enter 'console' for help\n");
+            result = -RT_ERROR;
+        }
+    }
+    else
+    {
+        rt_kprintf("Usage: \n");
+        rt_kprintf("console set <name>   - change console by name\n");
+        result = -RT_ERROR;
+    }
+    return result;
+}
+MSH_CMD_EXPORT(console, set console name);
+
+#endif /* FINSH_USING_MSH */
 
 #endif

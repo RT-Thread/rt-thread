@@ -103,8 +103,8 @@ rt_err_t sd_int(struct sdhci_pdata_t * pdat, rt_uint32_t mask)
     {
         write32(pdat->virt + EMMC_INTERRUPT, r);
         //qemu maybe can not use sdcard
-        //rt_kprintf("send cmd/data timeout wait for %x int: %x, status: %x\n",mask, r, read32(pdat->virt + EMMC_STATUS));
-        //return -RT_ETIMEOUT;
+        rt_kprintf("send cmd/data timeout wait for %x int: %x, status: %x\n",mask, r, read32(pdat->virt + EMMC_STATUS));
+        return -RT_ETIMEOUT;
     }
     else if (r & INT_ERROR_MASK)
     {
@@ -552,9 +552,8 @@ static rt_err_t reset_emmc(struct sdhci_pdata_t * pdat)
 
     // Clear control2
     write32(pdat->virt + EMMC_CONTROL2, 0);
-
-    // Get the base clock rate
-    mmc_base_clock = bcm271x_mbox_clock_get_rate(12);
+    // Get the base clock rate //12
+    mmc_base_clock = bcm271x_mbox_clock_get_rate(EMMC_CLK_ID);
     if(mmc_base_clock == 0)
     {
         rt_kprintf("EMMC: assuming clock rate to be 100MHz\n");
@@ -590,7 +589,6 @@ int raspi_sdmmc_init(void)
     struct rt_mmcsd_host * host = RT_NULL;
     struct sdhci_pdata_t * pdat = RT_NULL;
     struct sdhci_t * sdhci = RT_NULL;
-
 #ifdef BSP_USING_SDIO0
     host = mmcsd_alloc_host();
     if (!host)
@@ -598,7 +596,6 @@ int raspi_sdmmc_init(void)
         rt_kprintf("alloc host failed");
         goto err;
     }
-
     sdhci = rt_malloc(sizeof(struct sdhci_t));
     if (!sdhci)
     {
@@ -608,17 +605,15 @@ int raspi_sdmmc_init(void)
     rt_memset(sdhci, 0, sizeof(struct sdhci_t));
 
     virt = MMC2_BASE_ADDR;
-
     pdat = (struct sdhci_pdata_t *)rt_malloc(sizeof(struct sdhci_pdata_t));
     RT_ASSERT(pdat != RT_NULL);
 
     pdat->virt = (rt_uint32_t)virt;
     reset_emmc(pdat);
-
     sdhci->name = "sd0";
     sdhci->voltages = VDD_33_34;
     sdhci->width = MMCSD_BUSWIDTH_4;
-    sdhci->clock = 250 * 1000 * 1000;
+    sdhci->clock = 1000 * 1000 * 1000;
     sdhci->removeable = RT_TRUE;
 
     sdhci->detect = sdhci_detect;
@@ -634,10 +629,9 @@ int raspi_sdmmc_init(void)
     host->max_seg_size = 2048;
     host->max_dma_segs = 10;
     host->max_blk_size = 512;
-    host->max_blk_count = 4096;
+    host->max_blk_count = 1;
 
     host->private_data = sdhci;
-
     write32((pdat->virt + EMMC_IRPT_EN),0xffffffff);
     write32((pdat->virt + EMMC_IRPT_MASK),0xffffffff);
 #ifdef RT_MMCSD_DBG
