@@ -404,6 +404,10 @@ jobs:
            RTT_TOOL_CHAIN: "sourcery-arm"
 
          - action-version: "1.0"
+           RTT_BSP: "zynqmp-r5-axu4ev"
+           RTT_TOOL_CHAIN: "sourcery-arm"
+
+         - action-version: "1.0"
            RTT_BSP: "frdm-k64f"
            RTT_TOOL_CHAIN: "sourcery-arm"
 
