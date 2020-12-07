@@ -10,8 +10,8 @@
 
 #include <rtthread.h>
 
-int main(int argc, char** argv)
-{   
+int main(int argc, char **argv)
+{
     rt_kprintf("Hi, this is RT-Thread!!\n");
     return 0;
 }
