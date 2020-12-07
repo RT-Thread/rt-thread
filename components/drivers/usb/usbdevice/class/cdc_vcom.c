@@ -947,10 +947,11 @@ static void rt_usb_vcom_init(struct ufunction *func)
                           func);
 
     /* init usb device thread */
-    rt_thread_init(&vcom_thread, "vcom",
+    result = rt_thread_init(&vcom_thread, "vcom",
                    vcom_tx_thread_entry, func,
                    vcom_thread_stack, VCOM_TASK_STK_SIZE,
                    16, 20);
+    RT_ASSERT(result == RT_EOK); 
     result = rt_thread_startup(&vcom_thread);
     RT_ASSERT(result == RT_EOK);       
 }
