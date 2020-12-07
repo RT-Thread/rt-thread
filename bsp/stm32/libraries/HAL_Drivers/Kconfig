@@ -40,7 +40,21 @@ config BSP_USING_RNG
     depends on (SOC_SERIES_STM32L4 || SOC_SERIES_STM32F4 || SOC_SERIES_STM32F7 || \
                 SOC_SERIES_STM32H7 || SOC_SERIES_STM32MP1)
     default n
-    
+
+config BSP_USING_HASH
+    bool "Enable HASH (Hash House Harriers)"
+    select RT_USING_HWCRYPTO
+    select RT_HWCRYPTO_USING_HASH
+    depends on (SOC_SERIES_STM32MP1)
+    default n
+
+config BSP_USING_CRYP
+    bool "Enable CRYP (Encrypt And Decrypt Data)"
+    select RT_USING_HWCRYPTO
+    select RT_HWCRYPTO_USING_CRYP
+    depends on (SOC_SERIES_STM32MP1)
+    default n
+
 config BSP_USING_UDID
     bool "Enable UDID (Unique Device Identifier)"
     select RT_USING_HWCRYPTO

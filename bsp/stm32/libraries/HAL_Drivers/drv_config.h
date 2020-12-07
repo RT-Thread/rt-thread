@@ -73,6 +73,7 @@ extern "C" {
 #include "l4/spi_config.h"
 #include "l4/qspi_config.h"
 #include "l4/adc_config.h"
+#include "l4/dac_config.h"
 #include "l4/tim_config.h"
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
@@ -109,6 +110,7 @@ extern "C" {
 #elif  defined(SOC_SERIES_STM32MP1)
 #include "mp1/dma_config.h"
 #include "mp1/uart_config.h"
+#include "mp1/qspi_config.h"
 #include "mp1/spi_config.h"
 #include "mp1/adc_config.h"
 #include "mp1/dac_config.h"    

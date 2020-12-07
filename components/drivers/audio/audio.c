@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #define DBG_TAG              "audio"
@@ -590,7 +589,6 @@ int rt_audio_samplerate_to_speed(rt_uint32_t bitValue)
         speed = 192000;
         break;
     default:
-
         break;
     }
 
