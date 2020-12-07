@@ -417,46 +417,70 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
 
     if (readfds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)readfds, nfds * sizeof *readfds))
+        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)readfds, sizeof *readfds))
+        {
             return -1;
-        kreadfds = (fd_set *)kmem_get(nfds * sizeof *kreadfds);
+        }
+        kreadfds = (fd_set *)kmem_get(sizeof *kreadfds);
         if (!kreadfds)
+        {
             goto quit;
-        lwp_data_get(&lwp_self()->mmu_info, kreadfds, readfds, nfds * sizeof *kreadfds);
+        }
+        lwp_data_get(&lwp_self()->mmu_info, kreadfds, readfds, sizeof *kreadfds);
     }
     if (writefds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)writefds, nfds * sizeof *writefds))
+        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)writefds, sizeof *writefds))
+        {
             return -1;
-        kwritefds = (fd_set *)kmem_get(nfds * sizeof *kwritefds);
+        }
+        kwritefds = (fd_set *)kmem_get(sizeof *kwritefds);
         if (!kwritefds)
+        {
             goto quit;
-        lwp_data_get(&lwp_self()->mmu_info, kwritefds, writefds, nfds * sizeof *kwritefds);
+        }
+        lwp_data_get(&lwp_self()->mmu_info, kwritefds, writefds, sizeof *kwritefds);
     }
     if (exceptfds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)exceptfds, nfds * sizeof *exceptfds))
+        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)exceptfds, sizeof *exceptfds))
+        {
             return -1;
-        kexceptfds = (fd_set *)kmem_get(nfds * sizeof *kexceptfds);
+        }
+        kexceptfds = (fd_set *)kmem_get(sizeof *kexceptfds);
         if (!kexceptfds)
+        {
             goto quit;
-        lwp_data_get(&lwp_self()->mmu_info, kexceptfds, exceptfds, nfds * sizeof *kexceptfds);
+        }
+        lwp_data_get(&lwp_self()->mmu_info, kexceptfds, exceptfds, sizeof *kexceptfds);
     }
 
     ret = select(nfds, kreadfds, kwritefds, kexceptfds, timeout);
     if (kreadfds)
-        lwp_data_put(&lwp_self()->mmu_info, readfds, kreadfds, nfds * sizeof *kreadfds);
+    {
+        lwp_data_put(&lwp_self()->mmu_info, readfds, kreadfds, sizeof *kreadfds);
+    }
     if (kwritefds)
-        lwp_data_put(&lwp_self()->mmu_info, writefds, kwritefds, nfds * sizeof *kwritefds);
+    {
+        lwp_data_put(&lwp_self()->mmu_info, writefds, kwritefds, sizeof *kwritefds);
+    }
     if (kexceptfds)
-        lwp_data_put(&lwp_self()->mmu_info, exceptfds, kexceptfds, nfds * sizeof *kexceptfds);
+    {
+        lwp_data_put(&lwp_self()->mmu_info, exceptfds, kexceptfds, sizeof *kexceptfds);
+    }
 quit:
     if (kreadfds)
+    {
         kmem_put(kreadfds);
+    }
     if (kwritefds)
+    {
         kmem_put(kwritefds);
+    }
     if (kexceptfds)
+    {
         kmem_put(kexceptfds);
+    }
     return ret;
 #else
     return select(nfds, readfds, writefds, exceptfds, timeout);
