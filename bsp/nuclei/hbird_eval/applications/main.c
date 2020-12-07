@@ -23,8 +23,10 @@ extern void rt_hw_serial_rcvtsk(void *parameter);
 
 void board_serial_init(void)
 {
-    rt_thread_init(&serial_tid, "serrxsim", rt_hw_serial_rcvtsk,
+	rt_err_t result;
+    result = rt_thread_init(&serial_tid, "serrxsim", rt_hw_serial_rcvtsk,
             (void *)NULL, serial_stack, SERIAL_THREAD_STACK_SIZE, 5, 5);
+    RT_ASSERT(result == RT_EOK);
     rt_thread_startup(&serial_tid);
 }
 #endif  /* RT_USING_SERIAL */
