@@ -44,7 +44,7 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
     position = audio->replay->pos;
     dst_size = buf_info->block_size;
 
-    /* check repaly queue is empty */
+    /* check replay queue is empty */
     if (rt_data_queue_peak(&audio->replay->queue, (const void **)&data, &src_size) != RT_EOK)
     {
         /* ack stop event */
@@ -236,7 +236,7 @@ static rt_err_t _audio_dev_init(struct rt_device *dev)
         if (replay->mp == RT_NULL)
         {
             rt_free(replay);
-            LOG_E("create memory pool for repaly failed");
+            LOG_E("create memory pool for replay failed");
             return -RT_ENOMEM;
         }
 
