@@ -88,6 +88,7 @@ static int dance_mouse_init(void)
 {
     int err = 0;
     rt_device_t device = rt_device_find("hidd");
+    rt_err_t state = RT_EOK;
 
     RT_ASSERT(device != RT_NULL);
 
@@ -99,13 +100,15 @@ static int dance_mouse_init(void)
         return -1;
     }
 
-    rt_thread_init(&usb_thread,
+    state = rt_thread_init(&usb_thread,
                    "hidd",
                    usb_thread_entry, device,
                    usb_thread_stack, sizeof(usb_thread_stack),
                    10, 20);
 
-    rt_thread_startup(&usb_thread);
+    if (state == RT_EOK){
+        rt_thread_startup(&usb_thread);
+    }
 
     return 0;
 }
