@@ -22,16 +22,15 @@
 
 #define TRUE 1
 #define FALSE 0
-const struct serial_configure config_uart0 =
-{
-    BAUD_RATE_115200, /* 921600 bits/s */
-    DATA_BITS_8,      /* 8 databits */
-    STOP_BITS_1,      /* 1 stopbit */
-    PARITY_NONE,      /* No parity  */
-    BIT_ORDER_LSB,    /* LSB first sent */
-    NRZ_NORMAL,       /* Normal mode */
-    RT_SERIAL_RB_BUFSZ, /* Buffer size */
-    0
+const struct serial_configure config_uart0 = {                                          
+    BAUD_RATE_115200, /* 921600 bits/s */  
+    DATA_BITS_8,      /* 8 databits */     
+    STOP_BITS_1,      /* 1 stopbit */      
+    PARITY_NONE,      /* No parity  */     
+    BIT_ORDER_LSB,    /* LSB first sent */ 
+    NRZ_NORMAL,       /* Normal mode */    
+    RT_SERIAL_RB_BUFSZ, /* Buffer size */  
+    0                                      
 };
 struct rt_uart_ls2k
 {
