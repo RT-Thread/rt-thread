@@ -123,10 +123,9 @@ title   TFTPBOOT
 
 ## 6. 联系人信息
 
-维护人：[bernard][4],[0xcccccccccccc][5]
+维护人：[bernard][4]
 
 [1]: http://ftp.loongnix.org/loongsonpi/pi_2/doc
 [2]: https://pan.baidu.com/s/17dbdOE4NAJ-qEW7drVRq2w
 [3]: http://ftp.loongnix.org/embedd/ls2k/
 [4]: https://github.com/BernardXiong
-[5]: https://github.com/0xcccccccccccc
