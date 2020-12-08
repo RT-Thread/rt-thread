@@ -309,12 +309,13 @@ struct sal_socket *sal_get_socket(int socket)
 {
     struct sal_socket_table *st = &socket_table;
 
+    socket = socket - SAL_SOCKET_OFFSET;
+
     if (socket < 0 || socket >= (int) st->max_socket)
     {
         return RT_NULL;
     }
 
-    socket = socket - SAL_SOCKET_OFFSET;
     /* check socket structure valid or not */
     RT_ASSERT(st->sockets[socket]->magic == SAL_SOCKET_MAGIC);
 
@@ -975,7 +976,7 @@ int sal_closesocket(int socket)
 
     /* clsoesocket operation not need to vaild network interface status */
     /* valid the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, socket);
+    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, closesocket);
 
     if (pf->skt_ops->closesocket((int) sock->user_data) == 0)
     {
