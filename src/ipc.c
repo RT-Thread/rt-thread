@@ -144,6 +144,8 @@ rt_inline rt_err_t rt_ipc_list_resume(rt_list_t *list)
     /* get thread entry */
     thread = rt_list_entry(list->next, struct rt_thread, tlist);
 
+    thread->error = RT_EOK;
+
     RT_DEBUG_LOG(RT_DEBUG_IPC, ("resume thread:%s\n", thread->name));
 
     /* resume it */
@@ -373,7 +375,7 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
             thread = rt_thread_self();
 
             /* reset thread error number */
-            thread->error = RT_EOK;
+            thread->error = -RT_EINTR;
 
             RT_DEBUG_LOG(RT_DEBUG_IPC, ("sem take: suspend thread - %s\n",
                                         thread->name));
@@ -692,7 +694,7 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                   thread->name, mutex->value, mutex->hold));
 
     /* reset thread error */
-    thread->error = RT_EOK;
+    thread->error = -RT_EINTR;
 
     if (mutex->owner == thread)
     {
@@ -709,9 +711,6 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
     }
     else
     {
-#ifdef RT_USING_SIGNALS
-__again:
-#endif /* end of RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -788,11 +787,6 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
-#ifdef RT_USING_SIGNALS
-                    /* interrupt by signal, try it again */
-                    if (thread->error == -RT_EINTR) goto __again;
-#endif /* end of RT_USING_SIGNALS */
-
                     /* return error */
                     return thread->error;
                 }
@@ -915,7 +909,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                 rt_hw_interrupt_enable(temp); /* enable interrupt */
                 return -RT_EFULL; /* value overflowed */
             }
-            
+
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -1152,6 +1146,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 
                 /* resume thread, and thread list breaks out */
                 rt_thread_resume(thread);
+                thread->error = RT_EOK;
 
                 /* need do a scheduling */
                 need_schedule = RT_TRUE;
@@ -1207,7 +1202,7 @@ rt_err_t rt_event_recv(rt_event_t   event,
     /* get current thread */
     thread = rt_thread_self();
     /* reset thread error */
-    thread->error = RT_EOK;
+    thread->error = -RT_EINTR;
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(event->parent.parent)));
 
@@ -1236,11 +1231,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-            
-        /* fill thread event info */            
+
+        /* fill thread event info */
         thread->event_set = (event->set & set);
         thread->event_info = option;
-        
+
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1541,7 +1536,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     while (mb->entry == mb->size)
     {
         /* reset error number in thread */
-        thread->error = RT_EOK;
+        thread->error = -RT_EINTR;
 
         /* no waiting, return timeout */
         if (timeout == 0)
@@ -1606,7 +1601,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    
+
     if(mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
@@ -1617,7 +1612,7 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
@@ -1696,7 +1691,7 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     while (mb->entry == 0)
     {
         /* reset error number in thread */
-        thread->error = RT_EOK;
+        thread->error = -RT_EINTR;
 
         /* no waiting, return timeout */
         if (timeout == 0)
@@ -2094,7 +2089,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     while ((msg = mq->msg_queue_free) == RT_NULL)
     {
         /* reset error number in thread */
-        thread->error = RT_EOK;
+        thread->error = -RT_EINTR;
 
         /* no waiting, return timeout */
         if (timeout == 0)
@@ -2297,7 +2292,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
         rt_hw_interrupt_enable(temp); /* enable interrupt */
         return -RT_EFULL; /* value overflowed */
     }
-    
+
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
@@ -2369,7 +2364,7 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         RT_DEBUG_IN_THREAD_CONTEXT;
 
         /* reset error number in thread */
-        thread->error = RT_EOK;
+        thread->error = -RT_EINTR;
 
         /* no waiting, return timeout */
         if (timeout == 0)
