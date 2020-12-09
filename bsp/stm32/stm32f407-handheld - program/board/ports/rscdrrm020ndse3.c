@@ -100,6 +100,7 @@ typedef struct
 	uint8_t freq_cfg; // 采样率(配置值)
 	uint16_t freq_val; // 采样率(实际值)
 } WorkModeFreq_T;
+
 static WorkModeFreq_T s_tModeFreqTbl[] = {
 	{RSCDRRM020NDSE3_ADC_NORMAL, RSCDRRM020NDSE3_ADC_20HZ, 20}, 	// 0=20HZ
 	{RSCDRRM020NDSE3_ADC_FAST, RSCDRRM020NDSE3_ADC_20HZ, 40}, 		// 1=40HZ
