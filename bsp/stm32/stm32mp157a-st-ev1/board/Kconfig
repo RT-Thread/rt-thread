@@ -134,6 +134,10 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
+    config BSP_USING_DMA
+        bool "Enable DMA Test"
+        default name
+
     config BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
