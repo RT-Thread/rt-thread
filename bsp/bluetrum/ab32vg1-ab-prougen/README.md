@@ -102,7 +102,13 @@ msh >
 
 ## 注意事项
 
-暂无
+目前的 `cconfig.h` 的生成脚本对 riscv 的工具链识别有问题，可能需要在 `cconfig.h` 中手动添加以下配置
+
+```
+#define HAVE_SIGEVENT 1
+#define HAVE_SIGINFO 1
+#define HAVE_SIGVAL 1
+```
 
 ## 维护人信息
 
