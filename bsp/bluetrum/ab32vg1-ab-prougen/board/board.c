@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, Bluetrum Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,12 +19,40 @@ void cpu_irq_comm(void);
 void set_cpu_irq_comm(void (*irq_hook)(void));
 extern uint32_t __aram_start, __eram_end;
 
-void hal_printf(const char *format, ...)
+void hal_printf(const char *fmt, ...)
 {
-    va_list param;
-    va_start(param, format);
-    rt_kprintf(format, param);
-    va_end(param);
+    rt_device_t console = rt_console_get_device();
+
+    va_list args;
+    rt_size_t length;
+    static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
+    va_start(args, fmt);
+    /* the return value of vsnprintf is the number of bytes that would be
+     * written to buffer had if the size of the buffer been sufficiently
+     * large excluding the terminating null byte. If the output string
+     * would be larger than the rt_log_buf, we have to adjust the output
+     * length. */
+    length = rt_vsnprintf(rt_log_buf, sizeof(rt_log_buf) - 1, fmt, args);
+    if (length > RT_CONSOLEBUF_SIZE - 1)
+        length = RT_CONSOLEBUF_SIZE - 1;
+#ifdef RT_USING_DEVICE
+    if (console == RT_NULL)
+    {
+        rt_hw_console_output(rt_log_buf);
+    }
+    else
+    {
+        rt_uint16_t old_flag = console->open_flag;
+
+        console->open_flag |= RT_DEVICE_FLAG_STREAM;
+        rt_device_write(console, 0, rt_log_buf, length);
+        console->open_flag = old_flag;
+    }
+#else
+    rt_hw_console_output(rt_log_buf);
+#endif
+    va_end(args);
 }
 
 void timer0_isr(int vector, void *param)

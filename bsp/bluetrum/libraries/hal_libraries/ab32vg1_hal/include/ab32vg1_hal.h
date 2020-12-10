@@ -13,6 +13,6 @@ void hal_set_tick_hook(void (*hook)(uint32_t ticks));
 void hal_set_ticks(uint32_t ticks);
 void hal_mdelay(uint32_t nms);
 void hal_udelay(uint16_t nus);
-void hal_printf(const char *format, ...);
+void hal_printf(const char *fmt, ...);
 
 #endif
