@@ -856,7 +856,7 @@ void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable
 static void netdev_list_if(void)
 {
 #define NETDEV_IFCONFIG_MAC_MAX_LEN    6
-#define NETDEV_IFCONFIG_IMEI_MAX_LEN   8
+#define NETDEV_IFCONFIG_IEMI_MAX_LEN   8
 
     rt_ubase_t index;
     rt_slist_t *node  = RT_NULL;
