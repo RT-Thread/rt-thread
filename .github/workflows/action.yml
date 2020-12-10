@@ -24,6 +24,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: ${{ matrix.legs.RTT_BSP }}
     strategy:
       fail-fast: false
       matrix:
