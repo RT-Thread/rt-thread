@@ -1,0 +1,8 @@
+menu "General Purpose UARTs"
+
+menuconfig BSP_USING_UART0
+    bool "Enable UART0"
+    select RT_USING_SERIAL
+    default y
+
+endmenu
