@@ -112,7 +112,7 @@ void hal_uart_write(hal_sfr_t uartx, uint8_t data)
  */
 uint8_t hal_uart_read(hal_sfr_t uartx)
 {
-    return (uartx[UARTxCON] & 0xff);
+    return (uartx[UARTxDATA] & 0xff);
 }
 
 /**
@@ -140,7 +140,7 @@ uint32_t hal_uart_getflag(hal_sfr_t uartx, uint32_t flag)
  */
 void hal_uart_clrflag(hal_sfr_t uartx, uint32_t flag)
 {
-    uartx[UARTxCON] |= flag;
+    uartx[UARTxCPND] |= flag;
 }
 
 /**
