@@ -1,12 +1,5 @@
 #-*- encoding: utf-8 -*-
-#---------------------------------------------------------------------------------
-# @File:   Sconscript for package 
-# @Author: Rice
-# @Date:   2020-07-14 16:57:00(v0.0.1) 
-# 
-# @LICENSE: GPLv3: https://github.com/rtpkgs/buildpkg/blob/master/LICENSE.
-#
-#---------------------------------------------------------------------------------
+
 import os
 from building import * 
 Import('RTT_ROOT')
