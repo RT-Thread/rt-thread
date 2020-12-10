@@ -76,6 +76,9 @@ if GetDepend(['BSP_USING_RS485']):
 if GetDepend(['BSP_USING_TIM14']):
     src += Glob('ports/timer_sample.c')
 
+if GetDepend(['BSP_USING_DMA']):
+    src += Glob('ports/dma_sample.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
