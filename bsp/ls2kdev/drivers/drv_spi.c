@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author                   Notes
+ * 2020-10-28     0xcccccccccccc           Initial Version
+ */
+/**
+ * @addtogroup ls2k
+ */
+/*@{*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -214,3 +227,4 @@ static int loongson_spi_init()
 INIT_BOARD_EXPORT(loongson_spi_init);
 
 #endif
+/*@}*/

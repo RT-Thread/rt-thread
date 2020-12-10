@@ -1,3 +1,16 @@
+/*
+ * Copyright (c) 2006-2020, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author                   Notes
+ * 2020-10-28     0xcccccccccccc           Initial Version
+ */
+/**
+ * @addtogroup ls2k
+ */
+/*@{*/
 #ifndef LS2K_DRV_SPI_H
 #define LS2K_DRV_SPI_H
 
@@ -30,3 +43,4 @@
 #define GET_SPI(addr)            KSEG1_LOAD8(SPI_BASE+addr)
 
 #endif
+/*@}*/
