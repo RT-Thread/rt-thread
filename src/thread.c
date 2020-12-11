@@ -807,7 +807,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
                                        thread->stat));
@@ -899,7 +899,7 @@ void rt_thread_timeout(void *parameter)
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
+    RT_ASSERT((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     /* set error number */

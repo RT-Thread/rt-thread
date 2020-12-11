@@ -720,7 +720,7 @@ void thread_statistics()
         rt_kprintf("%-32.*s %3d", RT_NAME_MAX, thread->name, priority);
 #endif
         if (thread->stat == RT_THREAD_READY)        rt_kprintf("   ready");
-        else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+        else if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
         else if (thread->stat == RT_THREAD_INIT)    rt_kprintf("    init");
         else if (thread->stat == RT_THREAD_CLOSE)   rt_kprintf("   close");
 

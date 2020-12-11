@@ -255,7 +255,7 @@ int lwp_kill(pid_t pid, int sig)
     signal = (1 << sig);
     signal &= ~lwp->signal_mask;
     lwp->signal |= signal;
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         rt_thread_wakeup(thread);
 
@@ -285,7 +285,7 @@ int lwp_thread_kill(rt_thread_t thread, int sig)
     signal = (1 << sig);
     signal &= ~thread->signal_mask;
     thread->signal |= signal;
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         rt_thread_wakeup(thread);
 

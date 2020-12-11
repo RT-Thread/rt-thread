@@ -511,13 +511,20 @@ typedef siginfo_t rt_siginfo_t;
 /*
  * thread state definitions
  */
-#define RT_THREAD_INIT                  0x00                /**< Initialized status */
-#define RT_THREAD_READY                 0x01                /**< Ready status */
-#define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
-#define RT_THREAD_RUNNING               0x03                /**< Running status */
-#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
-#define RT_THREAD_CLOSE                 0x04                /**< Closed status */
-#define RT_THREAD_STAT_MASK             0x07
+#define RT_THREAD_INIT                       0x00                /**< Initialized status */
+#define RT_THREAD_CLOSE                      0x01                /**< Closed status */
+#define RT_THREAD_READY                      0x02                /**< Ready status */
+#define RT_THREAD_RUNNING                    0x03                /**< Running status */
+
+#define RT_THREAD_SUSPEND_MASK               0x04
+#define RT_SIGNAL_COMMON_WAKEUP_MASK         0x02
+#define RT_SIGNAL_KILL_WAKEUP_MASK           0x01
+
+#define RT_THREAD_SUSPEND_INTERRUPTIBLE      (RT_THREAD_SUSPEND_MASK)                                                             /**< Suspend interruptable 0x4 */
+#define RT_THREAD_SUSPEND                    RT_THREAD_SUSPEND_INTERRUPTIBLE
+#define RT_THREAD_SUSPEND_KILLABLE           (RT_THREAD_SUSPEND_MASK | RT_SIGNAL_COMMON_WAKEUP_MASK)                              /**< Suspend with killable 0x6 */
+#define RT_THREAD_SUSPEND_UNINTERRUPTIBLE    (RT_THREAD_SUSPEND_MASK | RT_SIGNAL_COMMON_WAKEUP_MASK | RT_SIGNAL_KILL_WAKEUP_MASK) /**< Suspend with uninterruptable 0x7 */
+#define RT_THREAD_STAT_MASK                  0x07
 
 #define RT_THREAD_STAT_YIELD            0x08                /**< indicate whether remaining_tick has been reloaded since last schedule */
 #define RT_THREAD_STAT_YIELD_MASK       RT_THREAD_STAT_YIELD
