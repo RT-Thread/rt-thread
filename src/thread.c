@@ -206,8 +206,8 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 #ifdef RT_USING_LWP
     thread->lwp = RT_NULL;
     rt_list_init(&(thread->sibling));
-    thread->signal = 0;
-    thread->signal_mask = 0;
+    rt_memset(&thread->signal, 0, sizeof(lwp_sigset_t));
+    rt_memset(&thread->signal_mask, 0, sizeof(lwp_sigset_t));
     thread->signal_mask_bak = 0;
     thread->signal_in_process = 0;
     rt_memset(thread->signal_handler, 0, sizeof thread->signal_handler);
@@ -507,6 +507,35 @@ rt_err_t rt_thread_yield(void)
 RTM_EXPORT(rt_thread_yield);
 
 /**
+ * This function will set a thread's suspend status
+ *
+ * @param thread the thread to be suspend
+ * @param status flag of the thread, must be one of RT_INTERRUPTIBLE RT_KILLABLE RT_UNINTERRUPTIBLE
+ */
+void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+{
+    rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+
+    RT_ASSERT(thread != RT_NULL);
+    switch (suspend_flag)
+    {
+    case RT_INTERRUPTIBLE:
+        stat = RT_THREAD_SUSPEND_INTERRUPTIBLE;
+        break;
+    case RT_KILLABLE:
+        stat = RT_THREAD_SUSPEND_KILLABLE;
+        break;
+    case RT_UNINTERRUPTIBLE:
+        stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+        break;
+    default:
+        RT_ASSERT(0);
+        break;
+    }
+    thread->stat = stat | (thread->stat & ~RT_THREAD_STAT_MASK);
+}
+
+/**
  * This function will let current thread sleep for some ticks.
  *
  * @param tick the sleep ticks
@@ -527,7 +556,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     temp = rt_hw_interrupt_disable();
 
     /* suspend thread */
-    rt_thread_suspend(thread);
+    rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
 
     /* reset the timeout of thread timer and start it */
     rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
@@ -586,7 +615,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         *tick = *tick + inc_tick - rt_tick_get();
 
         /* suspend thread */
-        rt_thread_suspend(thread);
+        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
 
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, tick);
@@ -742,13 +771,14 @@ RTM_EXPORT(rt_thread_control);
  * This function will suspend the specified thread.
  *
  * @param thread the thread to be suspended
+ * @param suspend_flag status flag of the thread to be suspended
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
  *
  * @note if suspend self thread, after this function call, the
  * rt_schedule() must be invoked.
  */
-rt_err_t rt_thread_suspend(rt_thread_t thread)
+rt_err_t rt_thread_suspend(rt_thread_t thread, int suspend_flag)
 {
     register rt_base_t stat;
     register rt_base_t temp;
@@ -777,7 +807,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 
     /* change thread stat */
     rt_schedule_remove_thread(thread);
-    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
+    rt_thread_set_suspend_state(thread, suspend_flag);
 
     /* stop thread timer anyway */
     rt_timer_stop(&(thread->thread_timer));

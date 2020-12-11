@@ -147,7 +147,8 @@ rt_err_t rt_thread_delay(rt_tick_t tick);
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick);
 rt_err_t rt_thread_mdelay(rt_int32_t ms);
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg);
-rt_err_t rt_thread_suspend(rt_thread_t thread);
+void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag);
+rt_err_t rt_thread_suspend(rt_thread_t thread, int suspend_flag);
 rt_err_t rt_thread_resume(rt_thread_t thread);
 #ifdef RT_USING_LWP
 rt_err_t rt_thread_wakeup(rt_thread_t thread);

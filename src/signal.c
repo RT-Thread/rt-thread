@@ -302,7 +302,7 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     }
 
     /* suspend self thread */
-    rt_thread_suspend(tid);
+    rt_thread_suspend(tid, RT_UNINTERRUPTIBLE);
     /* set thread stat as waiting for signal */
     tid->stat |= RT_THREAD_STAT_SIGNAL_WAIT;
 

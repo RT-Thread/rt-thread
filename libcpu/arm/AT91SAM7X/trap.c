@@ -42,7 +42,7 @@ extern struct rt_thread* rt_current_thread;
 void rt_hw_trap_abort(void)
 {
 	rt_kprintf("Abort occured!!! Thread [%s] suspended.\n",rt_current_thread->name);
-	rt_thread_suspend(rt_current_thread);
+	rt_thread_suspend(rt_current_thread, RT_UNINTERRUPTIBLE);
 	rt_schedule();
 
 }

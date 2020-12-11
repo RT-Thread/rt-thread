@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 int lwp_signal_check(void);
-uint32_t lwp_signal_backup(void *user_sp, void *user_pc, void* user_flag);
+int lwp_signal_backup(void *user_sp, void *user_pc, void* user_flag);
 struct rt_user_context *lwp_signal_restore(void);
 lwp_sighandler_t lwp_sighandler_get(int sig);
 void lwp_sighandler_set(int sig, lwp_sighandler_t func);

@@ -410,7 +410,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
             goto quit;
         }
         thread = rt_thread_self();
-        rt_thread_suspend(thread);
+        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
         rt_list_insert_before(&lwp->wait_list, &(thread->tlist));
         rt_schedule();
         if (thread->error == RT_EOK)

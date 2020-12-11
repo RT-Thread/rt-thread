@@ -95,7 +95,7 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 
     if (timeout != 0 && !pt->triggered)
     {
-        rt_thread_suspend(thread);
+        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
         if (timeout > 0)
         {
             rt_timer_control(&(thread->thread_timer),

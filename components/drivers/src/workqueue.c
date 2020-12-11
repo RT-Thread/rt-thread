@@ -61,7 +61,7 @@ static void _workqueue_thread_entry(void *parameter)
         if (rt_list_isempty(&(queue->work_list)))
         {
             /* no software timer exist, suspend self. */
-            rt_thread_suspend(rt_thread_self());
+            rt_thread_suspend(rt_thread_self(), RT_UNINTERRUPTIBLE);
             rt_schedule();
         }
 

@@ -431,7 +431,7 @@ void abort(void)
         rt_thread_t self = rt_thread_self();
 
         rt_kprintf("thread:%-8.*s abort!\n", RT_NAME_MAX, self->name);
-        rt_thread_suspend(self);
+        rt_thread_suspend(self, RT_UNINTERRUPTIBLE);
 
         rt_schedule();
     }

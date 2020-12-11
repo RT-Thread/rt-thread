@@ -85,7 +85,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
                                        rt_uint8_t        flag)
 {
     /* suspend thread */
-    rt_thread_suspend(thread);
+    rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
 
     switch (flag)
     {

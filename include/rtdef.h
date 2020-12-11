@@ -516,6 +516,16 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_READY                      0x02                /**< Ready status */
 #define RT_THREAD_RUNNING                    0x03                /**< Running status */
 
+/*
+ * for rt_thread_set_suspend_state()
+ */
+enum
+{
+    RT_INTERRUPTIBLE = 0,
+    RT_KILLABLE,
+    RT_UNINTERRUPTIBLE,
+};
+
 #define RT_THREAD_SUSPEND_MASK               0x04
 #define RT_SIGNAL_COMMON_WAKEUP_MASK         0x02
 #define RT_SIGNAL_KILL_WAKEUP_MASK           0x01
@@ -589,8 +599,16 @@ struct rt_wakeup
     void *user_data;
 };
 
+#define _LWP_NSIG       64
+#define _LWP_NSIG_BPW   32
+#define _LWP_NSIG_WORDS (_LWP_NSIG / _LWP_NSIG_BPW)
+
 typedef void (*lwp_sighandler_t)(int);
-typedef rt_uint32_t lwp_sigset_t;
+
+typedef struct {
+    unsigned long sig[_LWP_NSIG_WORDS];
+} lwp_sigset_t;
+
 struct rt_user_context
 {
     void *sp;
@@ -691,11 +709,11 @@ struct rt_thread
     rt_uint32_t *kernel_sp;                             /**< kernel stack point */
     rt_list_t   sibling;                                /**< next thread of same process */
 
-    rt_uint32_t signal;
+    lwp_sigset_t signal;
     lwp_sigset_t signal_mask;
-    lwp_sigset_t signal_mask_bak;
+    int signal_mask_bak;
     rt_uint32_t signal_in_process;
-    lwp_sighandler_t signal_handler[32];
+    lwp_sighandler_t signal_handler[_LWP_NSIG];
     struct rt_user_context user_ctx;
 
     struct rt_wakeup wakeup;                            /**< wakeup data */

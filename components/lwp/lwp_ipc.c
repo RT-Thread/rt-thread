@@ -138,7 +138,7 @@ rt_inline rt_err_t rt_channel_list_resume_all(rt_list_t *list)
 rt_inline rt_err_t rt_channel_list_suspend(rt_list_t *list, struct rt_thread *thread)
 {
     /* suspend thread */
-    rt_thread_suspend(thread);
+    rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
 
     rt_list_insert_before(list, &(thread->tlist));  /* list end */
 

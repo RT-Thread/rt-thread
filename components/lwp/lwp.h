@@ -81,11 +81,11 @@ struct rt_lwp
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
 
-    rt_uint32_t signal;
+    lwp_sigset_t signal;
     lwp_sigset_t signal_mask;
-    lwp_sigset_t signal_mask_bak;
+    int signal_mask_bak;
     rt_uint32_t signal_in_process;
-    lwp_sighandler_t signal_handler[32];
+    lwp_sighandler_t signal_handler[_LWP_NSIG];
 
     rt_list_t object_list;
     struct rt_user_context user_ctx;

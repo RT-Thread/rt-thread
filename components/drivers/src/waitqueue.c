@@ -103,7 +103,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     }
 
     rt_wqueue_add(queue, &__wait);
-    rt_thread_suspend(tid);
+    rt_thread_suspend(tid, RT_UNINTERRUPTIBLE);
 
     /* start timer */
     if (tick != RT_WAITING_FOREVER)

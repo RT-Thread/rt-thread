@@ -28,7 +28,7 @@ static void thread2_entry(void* parameter)
     rt_thread_delay(10);
 
     /* 挂起线程1 */
-    rt_thread_suspend(tid1);
+    rt_thread_suspend(tid1, RT_UNINTERRUPTIBLE);
 
     /* 延时10个OS Tick */
     rt_thread_delay(10);
