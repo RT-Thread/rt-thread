@@ -55,7 +55,7 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, bsp_library_type, 'SC
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hal_drivers', 'SConscript')))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libcpu_path_prefix, 'SConscript')))
+objs.extend(SConscript(os.path.join(libcpu_path_prefix, 'cpu', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
