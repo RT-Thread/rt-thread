@@ -7,15 +7,14 @@ CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
-# else:
-#     RTT_ROOT = r'../../..'
+else:
+    RTT_ROOT = r'../../..'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    # EXEC_PATH   = r'/opt/gnu-mcu-eclipse/riscv-none-gcc/8.2.0-2.1-20190425-1021/bin'
     EXEC_PATH   = r'D:/Softwares/RT-ThreadStudio/repo/Extract/ToolChain_Support_Packages/RISC-V/RISC-V-GCC/10.1.0/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
