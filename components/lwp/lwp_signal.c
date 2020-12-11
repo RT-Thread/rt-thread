@@ -116,6 +116,45 @@ rt_inline int next_signal(lwp_sigset_t *pending, lwp_sigset_t *mask)
     return sig;
 }
 
+int lwp_suspend_sigcheck(rt_thread_t thread, int suspend_flag)
+{
+    struct rt_lwp *lwp = (struct rt_lwp*)thread->lwp;
+    int ret = 0;
+
+    switch (suspend_flag)
+    {
+        case RT_INTERRUPTIBLE:
+            if (!lwp_sigisemptyset(&thread->signal))
+            {
+                break;
+            }
+            if (thread->lwp && !lwp_sigisemptyset(&lwp->signal))
+            {
+                break;
+            }
+            ret = 1;
+            break;
+        case RT_KILLABLE:
+            if (lwp_sigismember(&thread->signal, SIGKILL))
+            {
+                break;
+            }
+            if (thread->lwp && lwp_sigismember(&thread->signal, SIGKILL))
+            {
+                break;
+            }
+            ret = 1;
+            break;
+        case RT_UNINTERRUPTIBLE:
+            ret = 1;
+            break;
+        default:
+            RT_ASSERT(0);
+            break;
+    }
+    return ret;
+}
+
 int lwp_signal_check(void)
 {
     rt_base_t level;

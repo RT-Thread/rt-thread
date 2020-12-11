@@ -767,6 +767,9 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 }
 RTM_EXPORT(rt_thread_control);
 
+#ifdef RT_USING_LWP
+int lwp_suspend_sigcheck(rt_thread_t thread, int suspend_flag);
+#endif
 /**
  * This function will suspend the specified thread.
  *
@@ -804,6 +807,14 @@ rt_err_t rt_thread_suspend(rt_thread_t thread, int suspend_flag)
         /* not suspend running status thread on other core */
         RT_ASSERT(thread == rt_thread_self());
     }
+#ifdef RT_USING_LWP
+    if (lwp_suspend_sigcheck(thread, suspend_flag) == 0)
+    {
+        /* not to suspend */
+        rt_hw_interrupt_enable(temp);
+        return -RT_EINTR;
+    }
+#endif
 
     /* change thread stat */
     rt_schedule_remove_thread(thread);

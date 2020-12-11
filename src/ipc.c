@@ -82,10 +82,16 @@ rt_inline rt_err_t rt_ipc_object_init(struct rt_ipc_object *ipc)
  */
 rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
                                        struct rt_thread *thread,
-                                       rt_uint8_t        flag)
+                                       rt_uint8_t        flag,
+                                       int suspend_flag)
 {
+    rt_err_t ret = rt_thread_suspend(thread, suspend_flag);
+
     /* suspend thread */
-    rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     switch (flag)
     {
@@ -329,10 +335,11 @@ RTM_EXPORT(rt_sem_delete);
  *
  * @return the error code
  */
-rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
+static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t time, int suspend_flag)
 {
     register rt_base_t temp;
     struct rt_thread *thread;
+    rt_err_t ret;
 
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
@@ -381,9 +388,15 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
                                         thread->name));
 
             /* suspend thread */
-            rt_ipc_list_suspend(&(sem->parent.suspend_thread),
+            ret = rt_ipc_list_suspend(&(sem->parent.suspend_thread),
                                 thread,
-                                sem->parent.parent.flag);
+                                sem->parent.parent.flag,
+                                suspend_flag);
+            if (ret != RT_EOK)
+            {
+                rt_hw_interrupt_enable(temp);
+                return ret;
+            }
 
             /* has waiting time, start thread timer */
             if (time > 0)
@@ -415,7 +428,24 @@ rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
 
     return RT_EOK;
 }
+
+rt_err_t rt_sem_take(rt_sem_t sem, rt_int32_t time)
+{
+    return _rt_sem_take(sem, time, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_sem_take);
+
+rt_err_t rt_sem_take_interruptible(rt_sem_t sem, rt_int32_t time)
+{
+    return _rt_sem_take(sem, time, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_sem_take_interruptible);
+
+rt_err_t rt_sem_take_killable(rt_sem_t sem, rt_int32_t time)
+{
+    return _rt_sem_take(sem, time, RT_KILLABLE);
+}
+RTM_EXPORT(rt_sem_take_killable);
 
 /**
  * This function will try to take a semaphore and immediately return
@@ -669,10 +699,11 @@ RTM_EXPORT(rt_mutex_delete);
  *
  * @return the error code
  */
-rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
+static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t time, int suspend_flag)
 {
     register rt_base_t temp;
     struct rt_thread *thread;
+    rt_err_t ret;
 
     /* this function must not be used in interrupt even if time = 0 */
     RT_DEBUG_IN_THREAD_CONTEXT;
@@ -761,9 +792,15 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
                 }
 
                 /* suspend current thread */
-                rt_ipc_list_suspend(&(mutex->parent.suspend_thread),
+                ret = rt_ipc_list_suspend(&(mutex->parent.suspend_thread),
                                     thread,
-                                    mutex->parent.parent.flag);
+                                    mutex->parent.parent.flag,
+                                    suspend_flag);
+                if (ret != RT_EOK)
+                {
+                    rt_hw_interrupt_enable(temp);
+                    return ret;
+                }
 
                 /* has waiting time, start thread timer */
                 if (time > 0)
@@ -807,7 +844,24 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     return RT_EOK;
 }
+
+rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
+{
+    return _rt_mutex_take(mutex, time, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_mutex_take);
+
+rt_err_t rt_mutex_take_interruptible(rt_mutex_t mutex, rt_int32_t time)
+{
+    return _rt_mutex_take(mutex, time, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_mutex_take_interruptible);
+
+rt_err_t rt_mutex_take_killable(rt_mutex_t mutex, rt_int32_t time)
+{
+    return _rt_mutex_take(mutex, time, RT_KILLABLE);
+}
+RTM_EXPORT(rt_mutex_take_killable);
 
 /**
  * This function will release a mutex, if there are threads suspended on mutex,
@@ -1178,15 +1232,17 @@ RTM_EXPORT(rt_event_send);
  *
  * @return the error code
  */
-rt_err_t rt_event_recv(rt_event_t   event,
+static rt_err_t _rt_event_recv(rt_event_t   event,
                        rt_uint32_t  set,
                        rt_uint8_t   option,
                        rt_int32_t   timeout,
-                       rt_uint32_t *recved)
+                       rt_uint32_t *recved,
+                       int suspend_flag)
 {
     struct rt_thread *thread;
     register rt_ubase_t level;
     register rt_base_t status;
+    rt_err_t ret;
 
     RT_DEBUG_IN_THREAD_CONTEXT;
 
@@ -1257,9 +1313,15 @@ rt_err_t rt_event_recv(rt_event_t   event,
         thread->event_info = option;
 
         /* put thread to suspended thread list */
-        rt_ipc_list_suspend(&(event->parent.suspend_thread),
+        ret = rt_ipc_list_suspend(&(event->parent.suspend_thread),
                             thread,
-                            event->parent.parent.flag);
+                            event->parent.parent.flag,
+                            suspend_flag);
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(level);
+            return ret;
+        }
 
         /* if there is a waiting timeout, active thread timer */
         if (timeout > 0)
@@ -1298,8 +1360,36 @@ rt_err_t rt_event_recv(rt_event_t   event,
 
     return thread->error;
 }
+
+rt_err_t rt_event_recv(rt_event_t   event,
+                       rt_uint32_t  set,
+                       rt_uint8_t   option,
+                       rt_int32_t   timeout,
+                       rt_uint32_t *recved)
+{
+    return _rt_event_recv(event, set, option, timeout, recved, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_event_recv);
 
+rt_err_t rt_event_recv_interruptible(rt_event_t   event,
+                       rt_uint32_t  set,
+                       rt_uint8_t   option,
+                       rt_int32_t   timeout,
+                       rt_uint32_t *recved)
+{
+    return _rt_event_recv(event, set, option, timeout, recved, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_event_recv_interruptible);
+
+rt_err_t rt_event_recv_killable(rt_event_t   event,
+                       rt_uint32_t  set,
+                       rt_uint8_t   option,
+                       rt_int32_t   timeout,
+                       rt_uint32_t *recved)
+{
+    return _rt_event_recv(event, set, option, timeout, recved, RT_KILLABLE);
+}
+RTM_EXPORT(rt_event_recv_killable);
 /**
  * This function can get or set some extra attributions of an event object.
  *
@@ -1502,13 +1592,15 @@ RTM_EXPORT(rt_mb_delete);
  *
  * @return the error code
  */
-rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
+static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
                          rt_ubase_t   value,
-                         rt_int32_t   timeout)
+                         rt_int32_t   timeout,
+                         int suspend_flag)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;
     rt_uint32_t tick_delta;
+    rt_err_t ret;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -1549,9 +1641,16 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
 
         RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mb->suspend_sender_thread),
+        ret = rt_ipc_list_suspend(&(mb->suspend_sender_thread),
                             thread,
-                            mb->parent.parent.flag);
+                            mb->parent.parent.flag,
+                            suspend_flag);
+
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(temp);
+            return ret;
+        }
 
         /* has waiting time, start thread timer */
         if (timeout > 0)
@@ -1631,8 +1730,30 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
 
     return RT_EOK;
 }
+
+rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
+                         rt_ubase_t   value,
+                         rt_int32_t   timeout)
+{
+    return _rt_mb_send_wait(mb, value, timeout, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_mb_send_wait);
 
+rt_err_t rt_mb_send_wait_interruptible(rt_mailbox_t mb,
+                         rt_ubase_t   value,
+                         rt_int32_t   timeout)
+{
+    return _rt_mb_send_wait(mb, value, timeout, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_mb_send_wait_interruptible);
+
+rt_err_t rt_mb_send_wait_killable(rt_mailbox_t mb,
+                         rt_ubase_t   value,
+                         rt_int32_t   timeout)
+{
+    return _rt_mb_send_wait(mb, value, timeout, RT_KILLABLE);
+}
+RTM_EXPORT(rt_mb_send_wait_killable);
 /**
  * This function will send a mail to mailbox object, if there are threads
  * suspended on mailbox object, it will be waked up. This function will return
@@ -1649,6 +1770,18 @@ rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 }
 RTM_EXPORT(rt_mb_send);
 
+rt_err_t rt_mb_send_interruptible(rt_mailbox_t mb, rt_ubase_t value)
+{
+    return rt_mb_send_wait_interruptible(mb, value, 0);
+}
+RTM_EXPORT(rt_mb_send_interruptible);
+
+rt_err_t rt_mb_send_killable(rt_mailbox_t mb, rt_ubase_t value)
+{
+    return rt_mb_send_wait_killable(mb, value, 0);
+}
+RTM_EXPORT(rt_mb_send_killable);
+
 /**
  * This function will receive a mail from mailbox object, if there is no mail
  * in mailbox object, the thread shall wait for a specified time.
@@ -1659,11 +1792,12 @@ RTM_EXPORT(rt_mb_send);
  *
  * @return the error code
  */
-rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout, int suspend_flag)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;
     rt_uint32_t tick_delta;
+    rt_err_t ret;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
@@ -1706,9 +1840,15 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 
         RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mb->parent.suspend_thread),
+        ret = rt_ipc_list_suspend(&(mb->parent.suspend_thread),
                             thread,
-                            mb->parent.parent.flag);
+                            mb->parent.parent.flag,
+                            suspend_flag);
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(temp);
+            return ret;
+        }
 
         /* has waiting time, start thread timer */
         if (timeout > 0)
@@ -1784,7 +1924,24 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 
     return RT_EOK;
 }
+
+rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+{
+    return _rt_mb_recv(mb, value, timeout, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_mb_recv);
+
+rt_err_t rt_mb_recv_interruptibale(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+{
+    return _rt_mb_recv(mb, value, timeout, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_mb_recv_interruptibale);
+
+rt_err_t rt_mb_recv_killable(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+{
+    return _rt_mb_recv(mb, value, timeout, RT_KILLABLE);
+}
+RTM_EXPORT(rt_mb_recv_killable);
 
 /**
  * This function can get or set some extra attributions of a mailbox object.
@@ -2044,15 +2201,17 @@ RTM_EXPORT(rt_mq_delete);
  *
  * @return the error code
  */
-rt_err_t rt_mq_send_wait(rt_mq_t     mq,
+static rt_err_t _rt_mq_send_wait(rt_mq_t     mq,
                          const void *buffer,
                          rt_size_t   size,
-                         rt_int32_t  timeout)
+                         rt_int32_t  timeout,
+                         int suspend_flag)
 {
     register rt_ubase_t temp;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
     struct rt_thread *thread;
+    rt_err_t ret;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -2102,9 +2261,15 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
 
         RT_DEBUG_IN_THREAD_CONTEXT;
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mq->suspend_sender_thread),
+        ret = rt_ipc_list_suspend(&(mq->suspend_sender_thread),
                             thread,
-                            mq->parent.parent.flag);
+                            mq->parent.parent.flag,
+                            suspend_flag);
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(temp);
+            return ret;
+        }
 
         /* has waiting time, start thread timer */
         if (timeout > 0)
@@ -2203,8 +2368,33 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
 
     return RT_EOK;
 }
+
+rt_err_t rt_mq_send_wait(rt_mq_t     mq,
+                         const void *buffer,
+                         rt_size_t   size,
+                         rt_int32_t  timeout)
+{
+    return _rt_mq_send_wait(mq, buffer, size, timeout, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_mq_send_wait)
 
+rt_err_t rt_mq_send_wait_interruptible(rt_mq_t     mq,
+                         const void *buffer,
+                         rt_size_t   size,
+                         rt_int32_t  timeout)
+{
+    return _rt_mq_send_wait(mq, buffer, size, timeout, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_mq_send_wait_interruptible)
+
+rt_err_t rt_mq_send_wait_killable(rt_mq_t     mq,
+                         const void *buffer,
+                         rt_size_t   size,
+                         rt_int32_t  timeout)
+{
+    return _rt_mq_send_wait(mq, buffer, size, timeout, RT_KILLABLE);
+}
+RTM_EXPORT(rt_mq_send_wait_killable)
 /**
  * This function will send a message to message queue object, if there are
  * threads suspended on message queue object, it will be waked up.
@@ -2221,6 +2411,17 @@ rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size)
 }
 RTM_EXPORT(rt_mq_send);
 
+rt_err_t rt_mq_send_interrupt(rt_mq_t mq, const void *buffer, rt_size_t size)
+{
+    return rt_mq_send_wait_interruptible(mq, buffer, size, 0);
+}
+RTM_EXPORT(rt_mq_send_interrupt);
+
+rt_err_t rt_mq_send_killable(rt_mq_t mq, const void *buffer, rt_size_t size)
+{
+    return rt_mq_send_wait_killable(mq, buffer, size, 0);
+}
+RTM_EXPORT(rt_mq_send_killable);
 /**
  * This function will send an urgent message to message queue object, which
  * means the message will be inserted to the head of message queue. If there
@@ -2325,15 +2526,17 @@ RTM_EXPORT(rt_mq_urgent);
  *
  * @return the error code
  */
-rt_err_t rt_mq_recv(rt_mq_t    mq,
+static rt_err_t _rt_mq_recv(rt_mq_t    mq,
                     void      *buffer,
                     rt_size_t  size,
-                    rt_int32_t timeout)
+                    rt_int32_t timeout,
+                    int suspend_flag)
 {
     struct rt_thread *thread;
     register rt_ubase_t temp;
     struct rt_mq_message *msg;
     rt_uint32_t tick_delta;
+    rt_err_t ret;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -2378,9 +2581,15 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         }
 
         /* suspend current thread */
-        rt_ipc_list_suspend(&(mq->parent.suspend_thread),
+        ret = rt_ipc_list_suspend(&(mq->parent.suspend_thread),
                             thread,
-                            mq->parent.parent.flag);
+                            mq->parent.parent.flag,
+                            suspend_flag);
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(temp);
+            return ret;
+        }
 
         /* has waiting time, start thread timer */
         if (timeout > 0)
@@ -2470,8 +2679,33 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
 
     return RT_EOK;
 }
+
+rt_err_t rt_mq_recv(rt_mq_t    mq,
+                    void      *buffer,
+                    rt_size_t  size,
+                    rt_int32_t timeout)
+{
+    return _rt_mq_recv(mq, buffer, size, timeout, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_mq_recv);
 
+rt_err_t rt_mq_recv_interruptible(rt_mq_t    mq,
+                    void      *buffer,
+                    rt_size_t  size,
+                    rt_int32_t timeout)
+{
+    return _rt_mq_recv(mq, buffer, size, timeout, RT_INTERRUPTIBLE);
+}
+RTM_EXPORT(rt_mq_recv_interruptible);
+
+rt_err_t rt_mq_recv_killable(rt_mq_t    mq,
+                    void      *buffer,
+                    rt_size_t  size,
+                    rt_int32_t timeout)
+{
+    return _rt_mq_recv(mq, buffer, size, timeout, RT_KILLABLE);
+}
+RTM_EXPORT(rt_mq_recv_killable);
 /**
  * This function can get or set some extra attributions of a message queue
  * object.
