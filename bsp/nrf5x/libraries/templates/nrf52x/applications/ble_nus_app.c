@@ -603,7 +603,13 @@ static void _stack_thread(void *parameter)
 
         result = rt_event_recv(stack_event, STACK_EV_DISCON | STACK_EV_DISPATCH | STACK_EV_KEY,
                     RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, next_timeout, &event);
-        RT_ASSERT(result == RT_EOK);
+        if (result == -RT_ETIMEOUT) {
+            LOG_E("wait completed timeout");
+            continue;
+        }else if (result == -RT_ERROR) {
+            LOG_E("event received error");
+            continue;
+        }
 
         if (evt_dispatch_worker() != RT_EOK)
         {

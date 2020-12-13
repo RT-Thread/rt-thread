@@ -203,7 +203,13 @@ jffs2_stop_garbage_collect_thread(struct jffs2_sb_info *c)
                    GC_THREAD_FLAG_HAS_EXIT,
                    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
 				   RT_WAITING_FOREVER,  &e);
-     RT_ASSERT(result == RT_EOK);
+     if (result == -RT_ETIMEOUT) {
+            LOG_E("wait completed timeout");
+            return;
+        }else if (result == -RT_ERROR) {
+            LOG_E("event received error");
+            return;
+        }
 
      // Kill and free the resources ...  this is safe due to the flag
      // from the thread.
@@ -230,7 +236,13 @@ jffs2_garbage_collect_thread(unsigned long data)
                         RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
 				        cyg_current_time() + CYGNUM_JFFS2_GS_THREAD_TICKS,  
 						&flag);
-          RT_ASSERT(result == RT_EOK);
+          if (result == -RT_ETIMEOUT) {
+            LOG_E("wait completed timeout");
+            continue;
+          }else if (result == -RT_ERROR) {
+            LOG_E("event received error");
+            continue;
+          }
 
           if (flag & GC_THREAD_FLAG_STOP)
                break;
