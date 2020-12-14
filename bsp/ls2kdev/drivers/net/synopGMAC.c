@@ -119,7 +119,7 @@ s32 synopGMAC_setup_tx_desc_queue(synopGMACdevice *gmacdev, u32 no_of_desc, u32 
     gmacdev->TxDescCount = 0;
 
     first_desc = (DmaDesc *)plat_alloc_consistent_dmaable_memory(gmacdev, sizeof(DmaDesc) * (no_of_desc), &dma_addr);
-    
+
     if (first_desc == NULL)
     {
         rt_kprintf("Error in Tx Descriptors memory allocation\n");
@@ -300,7 +300,7 @@ static rt_err_t eth_init(rt_device_t device)
 {
     struct eth_device *eth_device = (struct eth_device *)device;
     RT_ASSERT(eth_device != RT_NULL);
-    
+
     s32 ijk;
     s32 status = 0;
     u64 dma_addr;
@@ -490,7 +490,7 @@ rt_err_t rt_eth_tx(rt_device_t device, struct pbuf *p)
         dma_addr = plat_dma_map_single(gmacdev, (void *)pbuf, p->tot_len);
 
         status = synopGMAC_set_tx_qptr(gmacdev, dma_addr, p->tot_len, pbuf, 0, 0, 0, offload_needed, &index, dpr);
-        
+
         if (status < 0)
         {
             rt_kprintf("%s No More Free Tx Descriptors\n", __FUNCTION__);
@@ -501,7 +501,7 @@ rt_err_t rt_eth_tx(rt_device_t device, struct pbuf *p)
     }
 
     synopGMAC_resume_dma_tx(gmacdev);
-    
+
 
     s32 desc_index;
     u64 data1, data2;
@@ -598,48 +598,48 @@ struct pbuf *rt_eth_rx(rt_device_t device)
     }
 
     /*Handle the Receive Descriptors*/
-      desc_index = synopGMAC_get_rx_qptr(gmacdev, &status, &dma_addr1, NULL, &data1, &dma_addr2, NULL, &data2);
+    desc_index = synopGMAC_get_rx_qptr(gmacdev, &status, &dma_addr1, NULL, &data1, &dma_addr2, NULL, &data2);
 
-        if(((u32)desc_index >= RECEIVE_DESC_SIZE) && (desc_index != -1))
+    if (((u32)desc_index >= RECEIVE_DESC_SIZE) && (desc_index != -1))
+    {
+        rt_kprintf("host receive descriptor address pointer = 0x%08x\n", synopGMACReadReg(gmacdev->DmaBase, DmaRxCurrDesc));
+        rt_kprintf("host receive buffer = 0x%08x\n", synopGMACReadReg(gmacdev->DmaBase, DmaRxCurrAddr));
+        rt_kprintf("desc_index error!!!!,tick = %d\n", rt_tick_get());
+        while (1);
+    }
+
+    if (desc_index >= 0 && data1 != 0)
+    {
+        DEBUG_MES("Received Data at Rx Descriptor %d for skb 0x%08x whose status is %08x\n", desc_index, dma_addr1, status);
+
+        if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
         {
-            rt_kprintf("host receive descriptor address pointer = 0x%08x\n",synopGMACReadReg(gmacdev->DmaBase,DmaRxCurrDesc));
-            rt_kprintf("host receive buffer = 0x%08x\n",synopGMACReadReg(gmacdev->DmaBase,DmaRxCurrAddr));
-            rt_kprintf("desc_index error!!!!,tick = %d\n",rt_tick_get());
-            while(1);
+            dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
+            len =  synopGMAC_get_rx_desc_frame_length(status) - 4; //Not interested in Ethernet CRC bytes
+            pbuf = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
+            if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
+            rt_memcpy(pbuf->payload, (char *)data1, len);
+            DEBUG_MES("==get pkg len: %d\n", len);
         }
-
-      if (desc_index >= 0 && data1 != 0)
+        else
         {
-          DEBUG_MES("Received Data at Rx Descriptor %d for skb 0x%08x whose status is %08x\n", desc_index, dma_addr1, status);
-
-          if (synopGMAC_is_rx_desc_valid(status) || SYNOP_PHY_LOOPBACK)
-            {
-                dma_addr1 =  plat_dma_map_single(gmacdev, (void *)data1, RX_BUF_SIZE);
-                len =  synopGMAC_get_rx_desc_frame_length(status)-4; //Not interested in Ethernet CRC bytes    
-                pbuf = pbuf_alloc(PBUF_LINK, len, PBUF_RAM);
-                if (pbuf == 0) rt_kprintf("===error in pbuf_alloc\n");
-                rt_memcpy(pbuf->payload, (char *)data1, len);
-                DEBUG_MES("==get pkg len: %d\n", len);
-            }
-            else
-            {
-                rt_kprintf("s: %08x\n", status);
-                adapter->synopGMACNetStats.rx_errors++;
-                adapter->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
-                adapter->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
-                adapter->synopGMACNetStats.rx_frame_errors  += synopGMAC_is_frame_dribbling_errors(status);
-                adapter->synopGMACNetStats.rx_length_errors += synopGMAC_is_rx_frame_length_errors(status);
-            }
-            desc_index = synopGMAC_set_rx_qptr(gmacdev, dma_addr1, RX_BUF_SIZE, (u64)data1, 0, 0, 0);
-            if (desc_index < 0)
-            {
+            rt_kprintf("s: %08x\n", status);
+            adapter->synopGMACNetStats.rx_errors++;
+            adapter->synopGMACNetStats.collisions       += synopGMAC_is_rx_frame_collision(status);
+            adapter->synopGMACNetStats.rx_crc_errors    += synopGMAC_is_rx_crc(status);
+            adapter->synopGMACNetStats.rx_frame_errors  += synopGMAC_is_frame_dribbling_errors(status);
+            adapter->synopGMACNetStats.rx_length_errors += synopGMAC_is_rx_frame_length_errors(status);
+        }
+        desc_index = synopGMAC_set_rx_qptr(gmacdev, dma_addr1, RX_BUF_SIZE, (u64)data1, 0, 0, 0);
+        if (desc_index < 0)
+        {
 #if SYNOP_RX_DEBUG
-                rt_kprintf("Cannot set Rx Descriptor for data1 %08x\n", (u32)data1);
+            rt_kprintf("Cannot set Rx Descriptor for data1 %08x\n", (u32)data1);
 #endif
-                
-                plat_free_memory((void *)data1);
-            }
+
+            plat_free_memory((void *)data1);
         }
+    }
     rt_sem_release(&sem_lock);
     DEBUG_MES("%s : before return \n", __FUNCTION__);
     return pbuf;
@@ -930,7 +930,7 @@ int rt_hw_eth_init(void)
         rt_kprintf("Error in Memory Allocataion, Founction : %s \n", __FUNCTION__);
     }
     memset((char *)synopGMACadapter, 0, sizeof(struct synopGMACNetworkAdapter));
-    
+
     synopGMACadapter->synopGMACdev    = NULL;
 
     synopGMACadapter->synopGMACdev = (synopGMACdevice *) plat_alloc_memory(sizeof(synopGMACdevice));
@@ -940,13 +940,13 @@ int rt_hw_eth_init(void)
     }
 
     memset((char *)synopGMACadapter->synopGMACdev, 0, sizeof(synopGMACdevice));
-    
+
     /*
      * Attach the device to MAC struct This will configure all the required base addresses
      * such as Mac base, configuration base, phy base address(out of 32 possible phys)
      * */
     synopGMAC_attach(synopGMACadapter->synopGMACdev, (gmac_base + MACBASE), gmac_base + DMABASE, DEFAULT_PHY_BASE, mac_addr0);
-    
+
     init_phy(synopGMACadapter->synopGMACdev);
     synopGMAC_reset(synopGMACadapter->synopGMACdev);
 
@@ -980,7 +980,7 @@ int rt_hw_eth_init(void)
 
     eth_dev.parent.eth_tx            = rt_eth_tx;
     eth_dev.parent.eth_rx            = rt_eth_rx;
-    
+
     eth_device_init(&(eth_dev.parent), "e0");
     eth_device_linkchange(&eth_dev.parent, RT_TRUE);   //linkup the e0 for lwip to check
     return 0;

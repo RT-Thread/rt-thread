@@ -32,7 +32,7 @@ struct init_stack_frame {
 /**
  * shutdown CPU
  */
-void rt_hw_cpu_shutdown(void)
+RT_WEAK void rt_hw_cpu_shutdown(void)
 {
 
 }

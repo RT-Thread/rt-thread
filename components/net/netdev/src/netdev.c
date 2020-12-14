@@ -856,7 +856,7 @@ void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable
 static void netdev_list_if(void)
 {
 #define NETDEV_IFCONFIG_MAC_MAX_LEN    6
-#define NETDEV_IFCONFIG_IEMI_MAX_LEN   8
+#define NETDEV_IFCONFIG_IMEI_MAX_LEN   8
 
     rt_ubase_t index;
     rt_slist_t *node  = RT_NULL;
@@ -887,16 +887,22 @@ static void netdev_list_if(void)
                 rt_kprintf("%02x ", netdev->hwaddr[index]);
             }
         }
-        else if (netdev->hwaddr_len == NETDEV_IFCONFIG_IEMI_MAX_LEN)
+        else if (netdev->hwaddr_len == NETDEV_IFCONFIG_IMEI_MAX_LEN)
         {
             rt_kprintf("IMEI: ");
             for (index = 0; index < netdev->hwaddr_len; index++)
             {
                 /* two numbers are displayed at one time*/
                 if (netdev->hwaddr[index] < 10 && index != netdev->hwaddr_len - 1)
-                    rt_kprintf("0");
-
-                rt_kprintf("%d", netdev->hwaddr[index]);
+                {
+                    rt_kprintf("%02d", netdev->hwaddr[index]);
+                }
+                else
+                {
+                    rt_kprintf("%d", netdev->hwaddr[index]);
+                }
+                
+                
             }
         }
 

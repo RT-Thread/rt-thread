@@ -1,0 +1,35 @@
+menu "Hardware Drivers Config"
+
+    menu "Onboard Peripheral Drivers"
+
+    endmenu
+
+    menu "On-chip Peripheral Drivers"
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+        endif
+
+    menuconfig BSP_USING_SDIO
+        bool "Enable SDIO"
+        default y
+        if BSP_USING_SDIO
+            config BSP_USING_SD0
+                bool "Enable SD0 EMMC"
+                default y
+        endif
+
+    endmenu
+
+    menu "Board extended module Drivers"
+
+    endmenu
+
+endmenu
+

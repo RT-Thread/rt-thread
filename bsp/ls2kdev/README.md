@@ -97,7 +97,7 @@ msh >
 
 ```
 title   TFTPBOOT
- kernel tftfp://10.1.1.118/rtthread.elf
+ kernel tftp://10.1.1.118/rtthread.elf
  args console=tty root=/dev/sda2
  initrd (wd0,0)/initrd.img
 ```
@@ -114,11 +114,12 @@ title   TFTPBOOT
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | UART0|
+| UART | 支持 | UART0\UART4,波特率可调 |
 | GPIO | 支持 | - |
 | PWM | 支持 | - |
 | GMAC | 支持 | 网卡驱动 |
 | RTC  | 支持 | - |
+| SPI | 支持 | - |
 
 ## 6. 联系人信息
 

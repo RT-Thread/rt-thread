@@ -150,7 +150,26 @@ typedef enum {
 
 //External Mass Media Controller (SD Card)
 #define MMC0_BASE_ADDR		(PER_BASE+0x300000)   
-#define MMC2_BASE_ADDR		(PER_BASE+0x340000)  
+#define MMC2_BASE_ADDR		(PER_BASE+0x340000)
+
+#define ETH_IRQ                 (160+29)
+
+//I2C
+#define BSC0_BASE_OFFSET            (0x205000)
+#define BSC1_BASE_OFFSET            (0x804000)
+#define BSC3_BASE_OFFSET            (0x205600)
+#define BSC4_BASE_OFFSET            (0x205800)
+#define BSC5_BASE_OFFSET            (0x205A80)
+#define BSC6_BASE_OFFSET            (0x205C00)
+
+//BSC2 and BSC7 masters are dedicated for use by the 
+//HDMI interfaces and should not be accessed byuser programs.
+#define BSC0_BASE                   (PER_BASE + BSC0_BASE_OFFSET)
+#define BSC1_BASE                   (PER_BASE + BSC1_BASE_OFFSET)
+#define BSC3_BASE                   (PER_BASE + BSC3_BASE_OFFSET)
+#define BSC4_BASE                   (PER_BASE + BSC4_BASE_OFFSET)
+#define BSC5_BASE                   (PER_BASE + BSC5_BASE_OFFSET)
+#define BSC6_BASE                   (PER_BASE + BSC6_BASE_OFFSET)
 
 /* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)

@@ -271,7 +271,47 @@ menu "On-chip Peripheral Drivers"
                         default 5
                 endif
         endif
-
+    config BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config NRFX_TWIM_ENABLED
+            int 
+            default 1
+            config BSP_USING_I2C0
+                bool "Enable I2C0 bus"
+                default n
+            if BSP_USING_I2C0
+                config NRFX_TWIM0_ENABLED
+                int 
+                default 1
+                config BSP_I2C0_SCL_PIN
+                    int "i2c0 scl pin number"
+                    range 0 31
+                    default 27
+                config BSP_I2C0_SDA_PIN
+                    int "I2C0 sda pin number"
+                    range 0 31
+                    default 26
+            endif
+            config BSP_USING_I2C1
+                bool "Enable I2C1 bus"
+                default n
+            if BSP_USING_I2C1
+                config NRFX_TWIM1_ENABLED
+                int 
+                default 1
+                config BSP_I2C1_SCL_PIN
+                    int "i2c1 scl pin number"
+                    range 0 31
+                    default 3
+                config BSP_I2C1_SDA_PIN
+                    int "I2C1 sda pin number"
+                    range 0 31
+                    default 2
+            endif
+        endif
     config BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_PIN

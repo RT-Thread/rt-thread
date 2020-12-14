@@ -159,6 +159,7 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_JLINK_TO_USART
 
 /* On-chip Peripheral Drivers */
 
