@@ -1193,6 +1193,21 @@ void rt_kprintf(const char *fmt, ...)
     rt_size_t length;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
+#ifdef RT_USING_MUTEX
+    static unsigned char kprintf_init_flag = RT_FALSE;
+    static struct rt_mutex kprintf_mutex;
+
+    if(rt_interrupt_get_nest() == 0u && rt_thread_self() != RT_NULL)
+    {
+        if(kprintf_init_flag == RT_FALSE)
+        {
+            rt_mutex_init(&kprintf_mutex, "kprintf", RT_IPC_FLAG_FIFO);
+            kprintf_init_flag = RT_TRUE;
+        }
+        rt_mutex_take(&kprintf_mutex, RT_WAITING_FOREVER);
+    }
+#endif
+
     va_start(args, fmt);
     /* the return value of vsnprintf is the number of bytes that would be
      * written to buffer had if the size of the buffer been sufficiently
@@ -1219,6 +1234,13 @@ void rt_kprintf(const char *fmt, ...)
     rt_hw_console_output(rt_log_buf);
 #endif
     va_end(args);
+
+#ifdef RT_USING_MUTEX
+    if(rt_interrupt_get_nest() == 0u && rt_thread_self() != RT_NULL && kprintf_init_flag == RT_TRUE)
+    {
+        rt_mutex_release(&kprintf_mutex);
+    }
+#endif
 }
 RTM_EXPORT(rt_kprintf);
 #endif
