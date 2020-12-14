@@ -72,7 +72,7 @@ Use a Type-A to Mini-B cable to connect the development board to the PC and turn
 
 After the program is successfully downloaded, the system runs automatically. Observe the running results of the LED on the development board, the LD3 and LD1 will light all the time, and LD2 will flash periodically.
 
-The USB virtual COM port connects to **USART2 by default**, and when the corresponding serial port (**115200-8-1-N**) is opened in the terminal tool, the output information of RT-Thread can be seen when the device is reset:
+The USB virtual COM port connects to **USART3 by default**, and when the corresponding serial port (**115200-8-1-N**) is opened in the terminal tool, the output information of RT-Thread can be seen when the device is reset:
 
 ```shell
  \ | /
@@ -102,7 +102,7 @@ Follow these tutorial videos to learn PuTTy:
 
 ## Advanced Features
 
-This BSP only enables GPIO and USART2 by default. If you need more advanced features such as SPI, I2C, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env) , as follows:
+This BSP only enables GPIO and USART3 by default. If you need more advanced features such as SPI, I2C, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env) , as follows:
 
 1. Open the Env tool under the specific BSP folder;
 2. Enter `menuconfig` command to configure the project, then save and exit;
