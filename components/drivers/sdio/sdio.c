@@ -250,11 +250,14 @@ rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
     rt_int32_t  ret;
     rt_uint32_t left_size;
     rt_uint32_t max_blks, blks;
-    
+
+    RT_ASSERT(func != RT_NULL);
+    RT_ASSERT(func->card != RT_NULL);
+
     left_size = len;
 
     /* Do the bulk of the transfer using block mode (if supported). */
-    if (func->card->cccr.multi_block && (len > sdio_max_block_size(func)))
+    if (func->card->cccr.multi_block && (func->cur_blk_size != 0) && (len > func->cur_blk_size))
     {
         max_blks = MIN(func->card->host->max_blk_count,
                        func->card->host->max_seg_size / func->cur_blk_size);
@@ -485,6 +488,8 @@ static rt_int32_t cistpl_funce_func0(struct rt_mmcsd_card *card,
     card->cis.max_tran_speed = speed_value[(buf[3] >> 3) & 15] *
                 speed_unit[buf[3] & 7];
 
+    card->sdio_function[0]->max_blk_size = card->cis.func0_blk_size;
+
     return 0;
 }
 
@@ -575,22 +580,26 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
             if (tpl_link < 4)
             {
                 LOG_D("bad CISTPL_MANFID length");
-                break;
-            }
-            if (func->num != 0)
-            {
-                func->manufacturer = curr->data[0];
-                func->manufacturer |= curr->data[1] << 8;
-                func->product = curr->data[2];
-                func->product |= curr->data[3] << 8;
             }
             else
             {
-                card->cis.manufacturer = curr->data[0];
-                card->cis.manufacturer |= curr->data[1] << 8;
-                card->cis.product = curr->data[2];
-                card->cis.product |= curr->data[3] << 8;
+                if (func->num != 0)
+                {
+                    func->manufacturer = curr->data[0];
+                    func->manufacturer |= curr->data[1] << 8;
+                    func->product = curr->data[2];
+                    func->product |= curr->data[3] << 8;
+                }
+                else
+                {
+                    card->cis.manufacturer = curr->data[0];
+                    card->cis.manufacturer |= curr->data[1] << 8;
+                    card->cis.product = curr->data[2];
+                    card->cis.product |= curr->data[3] << 8;
+                }
             }
+
+            rt_free(curr);
             break;
         case CISTPL_FUNCE:
             if (func->num != 0)
@@ -604,14 +613,17 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
                        "type %u", tpl_link, curr->data[0]);
             }
 
+            rt_free(curr);
             break;
         case CISTPL_VERS_1:
             if (tpl_link < 2)
             {
                 LOG_D("CISTPL_VERS_1 too short");
             }
+
+            rt_free(curr);
             break;
-        default: 
+        default:
             /* this tuple is unknown to the core */
             curr->next = RT_NULL;
             curr->code = tpl_code;
@@ -930,9 +942,6 @@ err3:
                 sdio_free_cis(host->card->sdio_function[i]);
                 rt_free(host->card->sdio_function[i]);
                 host->card->sdio_function[i] = RT_NULL;
-                rt_free(host->card);
-                host->card = RT_NULL;
-                break;
             }
         }
     }
