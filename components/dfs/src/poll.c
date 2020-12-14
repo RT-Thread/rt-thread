@@ -95,20 +95,22 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 
     if (timeout != 0 && !pt->triggered)
     {
-        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
-        if (timeout > 0)
+        if (rt_thread_suspend(thread, RT_INTERRUPTIBLE) == RT_EOK)
         {
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
-            rt_timer_start(&(thread->thread_timer));
+            if (timeout > 0)
+            {
+                rt_timer_control(&(thread->thread_timer),
+                        RT_TIMER_CTRL_SET_TIME,
+                        &timeout);
+                rt_timer_start(&(thread->thread_timer));
+            }
+
+            rt_hw_interrupt_enable(level);
+
+            rt_schedule();
+
+            level = rt_hw_interrupt_disable();
         }
-
-        rt_hw_interrupt_enable(level);
-
-        rt_schedule();
-
-        level = rt_hw_interrupt_disable();
     }
 
     ret = !pt->triggered;
@@ -140,7 +142,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 
                 /* dealwith the device return error -1*/
                 if (mask < 0)
-                {   
+                {
                     fd_put(f);
                     pollfd->revents = 0;
                     return mask;

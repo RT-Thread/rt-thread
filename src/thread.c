@@ -556,7 +556,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     temp = rt_hw_interrupt_disable();
 
     /* suspend thread */
-    rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
+    rt_thread_suspend(thread, RT_INTERRUPTIBLE);
 
     /* reset the timeout of thread timer and start it */
     rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);

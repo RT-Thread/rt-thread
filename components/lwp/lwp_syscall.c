@@ -667,7 +667,7 @@ rt_err_t sys_sem_delete(rt_sem_t sem)
 
 rt_err_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
 {
-    return rt_sem_take(sem, time);
+    return rt_sem_take_interruptible(sem, time);
 }
 
 rt_err_t sys_sem_release(rt_sem_t sem)
@@ -687,7 +687,7 @@ rt_err_t sys_mutex_delete(rt_mutex_t mutex)
 
 rt_err_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
-    return rt_mutex_take(mutex, time);
+    return rt_mutex_take_interruptible(mutex, time);
 }
 
 rt_err_t sys_mutex_release(rt_mutex_t mutex)
