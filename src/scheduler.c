@@ -90,12 +90,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         rt_ubase_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-#ifdef RT_USING_FINSH
-        {
-            extern long list_thread(void);
-            list_thread();
-        }
-#endif
+
         level = rt_hw_interrupt_disable();
         while (level);
     }

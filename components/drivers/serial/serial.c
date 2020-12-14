@@ -24,6 +24,7 @@
  * 2018-12-08     Ernest Chen  add DMA choice
  * 2020-09-14     WillianChan  add a line feed to the carriage return character
  *                             when using interrupt tx
+ * 2020-12-14     Meco Man     add function of setting window's size(TIOCSWINSZ)
  */
 
 #include <rthw.h>
@@ -221,7 +222,10 @@ rt_inline int _serial_poll_rx(struct rt_serial_device *serial, rt_uint8_t *data,
         *data = ch;
         data ++; length --;
 
-        if (ch == '\n') break;
+        if(serial->parent.open_flag & RT_DEVICE_FLAG_STREAM)
+        {
+            if (ch == '\n') break;
+        }
     }
 
     return size - length;
@@ -1009,7 +1013,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
 
             break;
-
+#ifdef RT_USING_POSIX
 #ifdef RT_USING_POSIX_TERMIOS
         case TCGETA:
             {
@@ -1101,8 +1105,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCXONC:
             break;
-#endif
-#ifdef RT_USING_POSIX
+#endif /*RT_USING_POSIX_TERMIOS*/
         case FIONREAD:
             {
                 rt_size_t recved = 0;
@@ -1115,7 +1118,15 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 *(rt_size_t *)args = recved;
             }
             break;
-#endif
+        case TIOCSWINSZ:
+            {
+                struct winsize* p_winsize;
+
+                p_winsize = (struct winsize*)args;
+                rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
+            }
+            break;
+#endif /*RT_USING_POSIX*/
         default :
             /* control device */
             ret = serial->ops->control(serial, cmd, args);

@@ -41,6 +41,13 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default n
 
+    config BSP_USING_OV2640
+        bool "Enable camera (ov2640)"
+        select BSP_USING_DCMI
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -98,26 +105,53 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            comment "Notice: PH4 --> 116; PH5 --> 117"
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 1 176
-                default 116
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 1 176
-                default 117
-        endif
+    menuconfig BSP_USING_I2C
+    bool "Enable I2C BUS (software simulation)"
+    select RT_USING_I2C
+    select RT_USING_I2C_BITOPS
+    select RT_USING_PIN
+    default n
+    if BSP_USING_I2C
+        menuconfig BSP_USING_I2C1
+            bool "Enable I2C1 BUS (software simulation)"
+            default n
+            if BSP_USING_I2C1
+                comment "Notice: PH4 --> 116; PH5 --> 117"
+                config BSP_I2C1_SCL_PIN
+                    int "i2c1 scl pin number"
+                    range 1 176
+                    default 116
+                config BSP_I2C1_SDA_PIN
+                    int "I2C1 sda pin number"
+                    range 1 176
+                    default 117
+                        menuconfig BSP_USING_I2C2
+                    bool "Enable I2C2 BUS (software simulation)"
+                    default n
+            endif
+
+            menuconfig BSP_USING_I2C2
+            bool "Enable I2C2 BUS (software simulation)"
+            default n
+            if BSP_USING_I2C2
+                comment "Notice: PH13 --> 125; PH15 --> 127"
+                config BSP_I2C2_SCL_PIN
+                    int "i2c2 scl pin number"
+                    range 1 176
+                    default 127
+                config BSP_I2C2_SDA_PIN
+                    int "I2C2 sda pin number"
+                    range 1 176
+                    default 125
+            endif
+    endif
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
+        default n
+
+    config BSP_USING_DCMI
+        bool "Enable DCMI"
         default n
 
     menuconfig BSP_USING_ONCHIP_RTC
