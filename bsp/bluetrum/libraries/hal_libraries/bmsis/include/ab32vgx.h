@@ -23,12 +23,6 @@
 #define WEAK                    __attribute__((weak))
 #define PACKED                  __attribute__((packed))
 
-// #define WDT_CLR()               WDTCON = 0xa
-// #define WDT_EN()                WDTCON = 0x110
-// #define WDT_DIS()               WDTCON = 0xaa0
-// #define WDT_RST()               WDTCON = 0xa000110; while (1)
-// #define WDT_RST_DELAY()         WDTCON = 0xa100110; while (1)
-
 #define BYTE0(n)                ((unsigned char)(n))
 #define BYTE1(n)                ((unsigned char)((n)>>8))
 #define BYTE2(n)                ((unsigned char)((n)>>16))

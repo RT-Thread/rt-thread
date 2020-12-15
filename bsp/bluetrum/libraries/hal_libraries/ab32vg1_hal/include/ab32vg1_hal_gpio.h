@@ -80,8 +80,6 @@ enum
 #define GPIO_PIN_6          (BIT(6))
 #define GPIO_PIN_7          (BIT(7))
 
-#define __HAL_GPIO_SET_DIR(__PORT__, __PIN__, __DIR__) (__DIR__) ? (GPIOx_REG((__PORT__), (GPIOxDIR)) |= BIT(__PIN__)) : (GPIOx_REG((__PORT__), (GPIOxDIR)) &= ~BIT(__PIN__))
-
 /* Include GPIO HAL Extended module */
 #include "ab32vg1_hal_gpio_ex.h"
 

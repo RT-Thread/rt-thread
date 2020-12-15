@@ -34,5 +34,5 @@ void hal_udelay(uint16_t nus)
    }
 }
 
-WEAK void hal_printf(const char *format, ...)
+WEAK void hal_printf(const char *fmt, ...)
 {}

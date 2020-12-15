@@ -102,6 +102,8 @@ msh >
 
 ## 注意事项
 
+波特率默认为 1.5M，需要使用 [Downloader](https://github.com/BLUETRUM/Downloader) 下载 `.dcf` 到芯片
+
 编译报错的时候，如果出现重复定义的报错，可能需要在 `cconfig.h` 中手动添加以下配置
 
 ```

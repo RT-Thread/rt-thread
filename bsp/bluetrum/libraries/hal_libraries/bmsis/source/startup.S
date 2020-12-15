@@ -9,44 +9,18 @@
 .global _start
 .section .reset, "ax"
 _start:
+
     //load comm
     la      a0, __comm_vma
     la      a1, __comm_lma
     la      a2, __comm_size
+    call    0x84044
 
-    /* memcpy start */
-    //先按32 BYTE一个循环来copy
-    mv      t0, a0              //备份dst
-    srli    t1, a2, 5           //长度除32的商
-
-    slli    t1, t1, 5
-    add     t1, a0, t1          //t1存放对齐的结束地址
-
-    _memcpy_loop1:              //8 WORDS every cycle
-    lw      a2, 0(a1)
-    lw      a3, 4(a1)
-    lw      a4, 8(a1)
-    lw      a5, 12(a1)
-    sw      a2, 0(a0)
-    sw      a3, 4(a0)
-    sw      a4, 8(a0)
-    sw      a5, 12(a0)
-
-    lw      a2, 16(a1)
-    lw      a3, 20(a1)
-    lw      a4, 24(a1)
-    lw      a5, 28(a1)
-    sw      a2, 16(a0)
-    sw      a3, 20(a0)
-    sw      a4, 24(a0)
-    sw      a5, 28(a0)
-
-    addi    a0, a0, 32
-    addi    a1, a1, 32
-    blt     a0, t1, _memcpy_loop1
-
-    mv      a0, t0              //返回dst
-    /* memcpy end */
+    //load ram1
+    la      a0, __ram1_vma
+    la      a1, __ram1_lma
+    la      a2, __ram1_size
+    call    0x84044
 
     la      a0, __irq_stack_start           //Stack清成0x23
     li      a1, 0x23
@@ -83,7 +57,6 @@ _start:
     mret
 
     .global cpu_irq_comm
-    .section .com_text.irq
 cpu_irq_comm:
     la      a5, __irq_stack
     mv      sp, a5

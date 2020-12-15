@@ -17,7 +17,7 @@ void timer0_cfg(uint32_t ticks);
 void rt_soft_isr(int vector, void *param);
 void cpu_irq_comm(void);
 void set_cpu_irq_comm(void (*irq_hook)(void));
-extern uint32_t __aram_start, __eram_end;
+extern uint32_t __heap_start, __heap_end;
 
 void hal_printf(const char *fmt, ...)
 {
@@ -108,7 +108,7 @@ void rt_hw_board_init(void)
     rt_hw_systick_init();
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init(&__aram_start, &__eram_end);
+    rt_system_heap_init(&__heap_start, &__heap_end);
 #endif
 
 #ifdef RT_USING_PIN
