@@ -187,7 +187,7 @@ jffs2_stop_garbage_collect_thread(struct jffs2_sb_info *c)
 {
      struct super_block *sb=OFNI_BS_2SFFJ(c);
      cyg_mtab_entry *mte;
-	   rt_uint32_t  e;
+     rt_uint32_t  e;
      rt_err_t result;
 	 
      //RT_ASSERT(sb->s_gc_thread_handle);
@@ -203,13 +203,16 @@ jffs2_stop_garbage_collect_thread(struct jffs2_sb_info *c)
                    GC_THREAD_FLAG_HAS_EXIT,
                    RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
 				   RT_WAITING_FOREVER,  &e);
-     if (result == -RT_ETIMEOUT) {
-            LOG_E("wait completed timeout");
-            return;
-        }else if (result == -RT_ERROR) {
-            LOG_E("event received error");
-            return;
-        }
+     if (result == -RT_ETIMEOUT) 
+     {
+       LOG_E("wait completed timeout");
+       return;
+     }
+     else if (result == -RT_ERROR)
+     {
+       LOG_E("event received error");
+       return;
+     }
 
      // Kill and free the resources ...  this is safe due to the flag
      // from the thread.
@@ -236,10 +239,13 @@ jffs2_garbage_collect_thread(unsigned long data)
                         RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
 				        cyg_current_time() + CYGNUM_JFFS2_GS_THREAD_TICKS,  
 						&flag);
-          if (result == -RT_ETIMEOUT) {
+          if (result == -RT_ETIMEOUT) 
+          {
             LOG_E("wait completed timeout");
             continue;
-          }else if (result == -RT_ERROR) {
+          }
+          else if (result == -RT_ERROR) 
+          {
             LOG_E("event received error");
             continue;
           }
