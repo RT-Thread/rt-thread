@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-5-30     bernard       the first version
  */
-
+#include <rtthread.h>
 #include <stdio.h>
 
 int main(int argc, char** argv)

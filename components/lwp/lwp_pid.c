@@ -119,6 +119,63 @@ out:
     return lwp;
 }
 
+static void lwp_user_obj_free(struct rt_lwp *lwp)
+{
+    rt_base_t level = 0;
+    struct rt_list_node *list = RT_NULL, *node = RT_NULL;
+    struct rt_object *object = RT_NULL;
+
+    list = &(lwp->object_list), node = list->next;
+
+    level = rt_hw_interrupt_disable();
+    while (list != node)
+    {
+        object = rt_list_entry(node, struct rt_object, lwp_obj_list);
+        node = node->next;
+
+        /* remove from kernel object list */
+        switch (object->type)
+        {
+        case RT_Object_Class_Thread:
+        {
+            rt_thread_t tid = (rt_thread_t)object;
+            if (tid->stat != RT_THREAD_CLOSE)
+            {
+                rt_thread_delete(tid);
+            }
+            break;
+        }
+        case RT_Object_Class_Semaphore:
+            rt_sem_delete((rt_sem_t)object);
+            break;
+        case RT_Object_Class_Mutex:
+            rt_mutex_delete((rt_mutex_t)object);
+            break;
+        case RT_Object_Class_Event:
+            rt_event_delete((rt_event_t)object);
+            break;
+        case RT_Object_Class_MailBox:
+            rt_mb_delete((rt_mailbox_t)object);
+            break;
+        case RT_Object_Class_MessageQueue:
+            rt_mq_delete((rt_mq_t)object);
+            break;
+        case RT_Object_Class_Device:
+            rt_device_close((rt_device_t)object);
+            break;
+        case RT_Object_Class_Timer:
+            rt_timer_delete((rt_timer_t)object);
+            break;
+        case RT_Object_Class_Channel:
+            break;
+        default:
+            LOG_E("input object type(%d) error", object->type);
+            break;
+        }
+    }
+    rt_hw_interrupt_enable(level);
+}
+
 void lwp_free(struct rt_lwp* lwp)
 {
     rt_base_t level;
@@ -142,6 +199,7 @@ void lwp_free(struct rt_lwp* lwp)
     {
         /* auto clean fds */
         __exit_files(lwp);
+        lwp_user_obj_free(lwp);
         rt_free(lwp->fdt.fds);
         lwp->fdt.fds = RT_NULL;
     }
@@ -224,63 +282,6 @@ void lwp_free(struct rt_lwp* lwp)
     rt_hw_interrupt_enable(level);
 }
 
-void lwp_user_obj_free(struct rt_lwp *lwp)
-{
-    rt_base_t level;
-    struct rt_list_node *list = RT_NULL, *node = RT_NULL;
-    struct rt_object *object = RT_NULL;
-
-    list = &(lwp->object_list), node = list->next;
-
-    level = rt_hw_interrupt_disable();
-    for ( ;list != node; )
-    {
-        object = rt_list_entry(node, struct rt_object, lwp_obj_list);
-        node = node->next;
-
-        /* remove from kernel object list */
-        switch (object->type)
-        {
-        case RT_Object_Class_Thread:
-        {
-            rt_thread_t tid = (rt_thread_t)object;
-            if (tid->stat != RT_THREAD_CLOSE)
-            {
-                rt_thread_delete(tid);
-            }
-            break;
-        }
-        case RT_Object_Class_Semaphore:
-            rt_sem_delete((rt_sem_t)object);
-            break;
-        case RT_Object_Class_Mutex:
-            rt_mutex_delete((rt_mutex_t)object);
-            break;
-        case RT_Object_Class_Event:
-            rt_event_delete((rt_event_t)object);
-            break;
-        case RT_Object_Class_MailBox:
-            rt_mb_delete((rt_mailbox_t)object);
-            break;
-        case RT_Object_Class_MessageQueue:
-            rt_mq_delete((rt_mq_t)object);
-            break;
-        case RT_Object_Class_Device:
-            rt_device_close((rt_device_t)object);
-            break;
-        case RT_Object_Class_Timer:
-            rt_timer_delete((rt_timer_t)object);
-            break;
-        case RT_Object_Class_Channel:
-            break;
-        default:
-            LOG_E("input object type(%d) error", object->type);
-            break;
-        }
-    }
-    rt_hw_interrupt_enable(level);
-}
-
 void lwp_ref_inc(struct rt_lwp *lwp)
 {
     rt_base_t level;
@@ -311,7 +312,6 @@ void lwp_ref_dec(struct rt_lwp *lwp)
                 rt_raw_channel_send(gdb_get_server_channel(), &msg);
             }
 #endif
-            lwp_user_obj_free(lwp);
             lwp_free(lwp);
         }
     }

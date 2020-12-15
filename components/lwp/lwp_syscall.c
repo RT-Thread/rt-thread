@@ -76,6 +76,126 @@ static void kmem_put(void *kptr)
 }
 #endif
 
+/* The same socket option is defined differently in the user interfaces and the
+ * implementation. The options should be converted in the kernel. */
+
+/* socket levels */
+#define INTF_SOL_SOCKET     1
+#define IMPL_SOL_SOCKET     0xFFF
+
+/* socket option name */
+#define INTF_SO_REUSEADDR   2
+#define INTF_SO_KEEPALIVE   9
+#define INTF_SO_BROADCAST   6
+#define INTF_SO_ACCEPTCONN  30
+#define INTF_SO_DONTROUTE   5
+#define INTF_SO_LINGER      13
+#define INTF_SO_OOBINLINE   10
+#define INTF_SO_REUSEPORT   15
+#define INTF_SO_SNDBUF      7
+#define INTF_SO_RCVBUF      8
+#define INTF_SO_SNDLOWAT    19
+#define INTF_SO_RCVLOWAT    18
+#define INTF_SO_SNDTIMEO    21
+#define INTF_SO_RCVTIMEO    20
+#define INTF_SO_ERROR       4
+#define INTF_SO_TYPE        3
+#define INTF_SO_NO_CHECK    11
+
+#define IMPL_SO_REUSEADDR   0x0004
+#define IMPL_SO_KEEPALIVE   0x0008
+#define IMPL_SO_BROADCAST   0x0020
+#define IMPL_SO_ACCEPTCONN  0x0002
+#define IMPL_SO_DONTROUTE   0x0010
+#define IMPL_SO_LINGER      0x0080
+#define IMPL_SO_OOBINLINE   0x0100
+#define IMPL_SO_REUSEPORT   0x0200
+#define IMPL_SO_SNDBUF      0x1001
+#define IMPL_SO_RCVBUF      0x1002
+#define IMPL_SO_SNDLOWAT    0x1003
+#define IMPL_SO_RCVLOWAT    0x1004
+#define IMPL_SO_SNDTIMEO    0x1005
+#define IMPL_SO_RCVTIMEO    0x1006
+#define IMPL_SO_ERROR       0x1007
+#define IMPL_SO_TYPE        0x1008
+#define IMPL_SO_NO_CHECK    0x100a
+
+static void convert_sockopt(int *level, int *optname)
+{
+    switch (*level)
+    {
+        case INTF_SOL_SOCKET:
+            *level = IMPL_SOL_SOCKET;
+            break;
+        default:
+            break;
+    }
+
+    switch (*optname)
+    {
+        case INTF_SO_REUSEADDR:
+            *optname = IMPL_SO_REUSEADDR;
+            break;
+        case INTF_SO_KEEPALIVE:
+            *optname = IMPL_SO_KEEPALIVE;
+            break;
+        case INTF_SO_BROADCAST:
+            *optname = IMPL_SO_BROADCAST;
+            break;
+        case INTF_SO_ACCEPTCONN:
+            *optname = IMPL_SO_ACCEPTCONN;
+            break;
+        case INTF_SO_DONTROUTE:
+            *optname = IMPL_SO_DONTROUTE;
+            break;
+        case INTF_SO_LINGER:
+            *optname = IMPL_SO_LINGER;
+            break;
+        case INTF_SO_OOBINLINE:
+            *optname = IMPL_SO_OOBINLINE;
+            break;
+        case INTF_SO_REUSEPORT:
+            *optname = IMPL_SO_REUSEPORT;
+            break;
+        case INTF_SO_SNDBUF:
+            *optname = IMPL_SO_SNDBUF;
+            break;
+        case INTF_SO_RCVBUF:
+            *optname = IMPL_SO_RCVBUF;
+            break;
+        case INTF_SO_SNDLOWAT:
+            *optname = IMPL_SO_SNDLOWAT;
+            break;
+        case INTF_SO_RCVLOWAT:
+            *optname = IMPL_SO_RCVLOWAT;
+            break;
+        case INTF_SO_SNDTIMEO:
+            *optname = IMPL_SO_SNDTIMEO;
+            break;
+        case INTF_SO_RCVTIMEO:
+            *optname = IMPL_SO_RCVTIMEO;
+            break;
+        case INTF_SO_ERROR:
+            *optname = IMPL_SO_ERROR;
+            break;
+        case INTF_SO_TYPE:
+            *optname = IMPL_SO_TYPE;
+            break;
+        case INTF_SO_NO_CHECK:
+            *optname = IMPL_SO_NO_CHECK;
+            break;
+
+        /*
+         * SO_DONTLINGER (*level = ((int)(~SO_LINGER))),
+         * SO_USELOOPBACK (*level = 0x0040) and
+         * SO_CONTIMEO (*level = 0x1009) are not supported for now.
+         */
+        default:
+            *optname = 0;
+            break;
+    }
+}
+
 static void sockaddr_tolwip(const struct musl_sockaddr *std, struct sockaddr *lwip)
 {
     if (std && lwip)
@@ -297,46 +417,70 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
 
     if (readfds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)readfds, nfds * sizeof *readfds))
+        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)readfds, sizeof *readfds))
+        {
             return -1;
-        kreadfds = (fd_set *)kmem_get(nfds * sizeof *kreadfds);
+        }
+        kreadfds = (fd_set *)kmem_get(sizeof *kreadfds);
         if (!kreadfds)
+        {
             goto quit;
-        lwp_data_get(&lwp_self()->mmu_info, kreadfds, readfds, nfds * sizeof *kreadfds);
+        }
+        lwp_data_get(&lwp_self()->mmu_info, kreadfds, readfds, sizeof *kreadfds);
     }
     if (writefds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)writefds, nfds * sizeof *writefds))
+        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)writefds, sizeof *writefds))
+        {
             return -1;
-        kwritefds = (fd_set *)kmem_get(nfds * sizeof *kwritefds);
+        }
+        kwritefds = (fd_set *)kmem_get(sizeof *kwritefds);
         if (!kwritefds)
+        {
             goto quit;
-        lwp_data_get(&lwp_self()->mmu_info, kwritefds, writefds, nfds * sizeof *kwritefds);
+        }
+        lwp_data_get(&lwp_self()->mmu_info, kwritefds, writefds, sizeof *kwritefds);
     }
     if (exceptfds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)exceptfds, nfds * sizeof *exceptfds))
+        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)exceptfds, sizeof *exceptfds))
+        {
             return -1;
-        kexceptfds = (fd_set *)kmem_get(nfds * sizeof *kexceptfds);
+        }
+        kexceptfds = (fd_set *)kmem_get(sizeof *kexceptfds);
         if (!kexceptfds)
+        {
             goto quit;
-        lwp_data_get(&lwp_self()->mmu_info, kexceptfds, exceptfds, nfds * sizeof *kexceptfds);
+        }
+        lwp_data_get(&lwp_self()->mmu_info, kexceptfds, exceptfds, sizeof *kexceptfds);
     }
 
     ret = select(nfds, kreadfds, kwritefds, kexceptfds, timeout);
     if (kreadfds)
-        lwp_data_put(&lwp_self()->mmu_info, readfds, kreadfds, nfds * sizeof *kreadfds);
+    {
+        lwp_data_put(&lwp_self()->mmu_info, readfds, kreadfds, sizeof *kreadfds);
+    }
     if (kwritefds)
-        lwp_data_put(&lwp_self()->mmu_info, writefds, kwritefds, nfds * sizeof *kwritefds);
+    {
+        lwp_data_put(&lwp_self()->mmu_info, writefds, kwritefds, sizeof *kwritefds);
+    }
     if (kexceptfds)
-        lwp_data_put(&lwp_self()->mmu_info, exceptfds, kexceptfds, nfds * sizeof *kexceptfds);
+    {
+        lwp_data_put(&lwp_self()->mmu_info, exceptfds, kexceptfds, sizeof *kexceptfds);
+    }
 quit:
     if (kreadfds)
+    {
         kmem_put(kreadfds);
+    }
     if (kwritefds)
+    {
         kmem_put(kwritefds);
+    }
     if (kexceptfds)
+    {
         kmem_put(kexceptfds);
+    }
     return ret;
 #else
     return select(nfds, readfds, writefds, exceptfds, timeout);
@@ -813,11 +957,28 @@ void sys_exit_critical(void)
 }
 
 /* syscall: "sys_log" ret: "int" args: "const char*" "size" */
+static int __sys_log_enable = 0;
+static int sys_log_enable(int argc, char** argv)
+{
+    if (argc == 1)
+    {
+        rt_kprintf("sys_log = %d\n", __sys_log_enable);
+        return 0;
+    }
+    else
+    {
+        __sys_log_enable = atoi(argv[1]);
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(sys_log_enable, sys_log, sys_log 1(enable)/0(disable));
+
 int sys_log(const char* log, int size)
 {
     rt_device_t console = rt_console_get_device();
 
-    if (console) rt_device_write(console, -1, log, size);
+    if (console && __sys_log_enable) rt_device_write(console, -1, log, size);
 
     return 0;
 }
@@ -955,6 +1116,7 @@ int sys_getsockopt (int socket, int level, int optname, void *optval, socklen_t 
 {
     LOG_I("syscall: getsockopt");
 
+    convert_sockopt(&level, &optname);
     return getsockopt (socket, level, optname, optval, optlen);
 }
 
@@ -962,6 +1124,7 @@ int sys_setsockopt (int socket, int level, int optname, const void *optval, sock
 {
     LOG_I("syscall: setsockopt");
 
+    convert_sockopt(&level, &optname);
     return setsockopt (socket, level, optname, optval, optlen);
 }
 
@@ -1029,9 +1192,9 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
     if (from)
     {
         struct sockaddr sa;
-        sockaddr_tolwip(from, &sa);
 
         ret = recvfrom(socket, kmem, len, flgs, &sa, fromlen);
+        sockaddr_tomusl(&sa, from);
     } else
         ret = recvfrom(socket, kmem, len, flgs, NULL, NULL);
 
@@ -1043,10 +1206,12 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
 #else
     if (from)
     {
-        struct sockaddr sa;
-        sockaddr_tolwip(from, &sa);
+        int ret = -1;
+        struct sockaddr sa = {0};
 
-        return recvfrom(socket, mem, len, flgs, &sa, fromlen);
+        ret = recvfrom(socket, mem, len, flgs, &sa, fromlen);
+        sockaddr_tomusl(&sa, from);
+        return ret;
     }
 
     return recvfrom(socket, mem, len, flags, NULL, NULL);
@@ -1118,10 +1283,28 @@ int sys_send(int socket, const void *dataptr, size_t size, int flags)
 
 int sys_socket(int domain, int type, int protocol)
 {
+    int fd = -1;
+    int nonblock = 0;
     /* not support SOCK_CLOEXEC type */
     if (type & SOCK_CLOEXEC) type &= ~SOCK_CLOEXEC;
+    if (type & SOCK_NONBLOCK)
+    {
+        nonblock = 1;
+        type &= ~SOCK_NONBLOCK;
+    }
 
-    return socket(domain, type, protocol);
+    fd = socket(domain, type, protocol);
+    if (fd < 0)
+    {
+        goto out;
+    }
+    if (nonblock)
+    {
+        fcntl(fd, F_SETFL, O_NONBLOCK);
+    }
+
+out:
+    return fd;
 }
 
 int sys_closesocket(int socket)
@@ -1239,6 +1422,7 @@ int sys_getaddrinfo(const char *nodename, const char *servname, const struct mus
         /* set up addrinfo */
         res->ai_family = k_res->ai_family;
         res->ai_flags  = k_res->ai_flags;
+        res->ai_next = NULL;
 
         if (hints != NULL)
         {
