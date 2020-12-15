@@ -1,107 +1,103 @@
-# NUCLEO-L496ZG 开发板的 BSP 说明
+# STM32L496-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为 ST 官方 (144)NUCLEO-L496ZG 开发板的 BSP (板级支持包) 说明。
+## MCU: STM32L496ZG @80MHz, 1024KB FLASH, 320KB RAM
 
-主要内容如下：
+The STM32L496xx devices are the ultra-low-power microcontrollers based on the high-performance Arm® Cortex®-M4 32-bit RISC core operating at a frequency of up to 80 MHz. The Cortex-M4 core features a Floating point unit (FPU) single precision which supports all Arm® single-precision data-processing instructions and data types. It also implements a full set of DSP instructions and a memory protection unit (MPU) which enhances application security.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The STM32L496xx devices embed high-speed memories (up to 1 Mbyte of Flash memory, 320 Kbyte of SRAM), a flexible external memory controller (FSMC) for static memories (for devices with packages of 100 pins and more), a Quad SPI flash memories interface (available on all packages) and an extensive range of enhanced I/Os and peripherals connected to two APB buses, two AHB buses and a 32-bit multi-AHB bus matrix.
+The STM32L496xx devices embed several protection mechanisms for embedded Flash memory and SRAM: readout protection, write protection, proprietary code readout protection and Firewall.
+The devices offer up to three fast 12-bit ADCs (5 Msps), two comparators, two operational amplifiers, two DAC channels, an internal voltage reference buffer, a low-power RTC, two general-purpose 32-bit timer, two 16-bit PWM timers dedicated to motor control, seven general-purpose 16-bit timers, and two 16-bit low-power timers. The devices support four digital filters for external sigma delta modulators (DFSDM).
+In addition, up to 24 capacitive sensing channels are available. The devices also embed an integrated LCD driver 8x40 or 4x44, with internal step-up converter.
+They also feature standard and advanced communication interfaces.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+#### KEY FEATURES
 
-## 开发板介绍
+- Ultra-low-power with FlexPowerControl
+  - 1.71 V to 3.6 V power supply
+  - -40 °C to 85/125 °C temperature range
+  - 320 nA in VBAT mode: supply for RTC and 32x32-bit backup registers
+  - 25 nA Shutdown mode (5 wakeup pins)
+  - 108 nA Standby mode (5 wakeup pins)
+  - 426 nA Standby mode with RTC
+  - 2.57 µA Stop 2 mode, 2.86 µA Stop 2 with RTC
+  - 91 µA/MHz run mode (LDO Mode)
+  - 37 μA/MHz run mode (@3.3 V SMPS Mode)
+  - Batch acquisition mode (BAM)
+  - 5 µs wakeup from Stop mode
+  - Brown out reset (BOR) in all modes except shutdown
+  - Interconnect matrix
+- Core: Arm® 32-bit Cortex®-M4 CPU with FPU, Adaptive real-time accelerator (ART Accelerator™) allowing 0-wait-state execution from Flash memory, frequency up to 80 MHz, MPU, 100 DMIPS and DSP instructions
+- Performance benchmark
+  - 1.25 DMIPS/MHz (Drystone 2.1)
+  - 273.55 Coremark® (3.42 Coremark/MHz @ 80 MHz)
+- Energy benchmark
+  - 279 ULPMark™ CP score
+  - 80.2 ULPMark™ PP score
+- 16 x timers: 2 x 16-bit advanced motor-control, 2 x 32-bit and 5 x 16-bit general purpose, 2 x 16-bit basic, 2 x low-power 16-bit timers (available in Stop mode), 2 x watchdogs, SysTick timer
+- RTC with HW calendar, alarms and calibration
+- Up to 136 fast I/Os, most 5 V-tolerant, up to 14 I/Os with independent supply down to 1.08 V
+- Dedicated Chrom-ART Accelerator™ for enhanced graphic content creation (DMA2D)
+- 8- to 14-bit camera interface up to 32 MHz (black&white) or 10 MHz (color)
+- Memories
+  - Up to 1 MB Flash, 2 banks read-while-write, proprietary code readout protection
+  - 320 KB of SRAM including 64 KB with hardware parity check
+  - External memory interface for static memories supporting SRAM, PSRAM, NOR and NAND memories
+  - Dual-flash Quad SPI memory interface
 
-NUCLEO-L496ZG 是 ST 公司推出的一款针对 STM32L4 系列设计的 Cortex-M4 Nucleo-144 开发板，支持 mbed，兼容 Arduino、还带有ST Zio和 ST Morpho 扩展接口，可连接微控制器的所有周边外设。
-
-开发板外观如下图所示：
-
-![board](figures/board.png)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32L496ZG，主频 80MHz，1MB FLASH ，320KB RAM
-- 常用外设
-  - LED：3个，LED1 (绿色，PB0),LED2（蓝色，PB7），LED3（红色，PB14）
-  - 按键：1个，K1（PC13）
-- 常用接口：USB OTG 等
-- 调试接口，标准 ST-LINK/SWD
-
-开发板更多详细信息请参考【NUCLEO-L496ZG】 [L496ZG开发板介绍](https://www.st.com/content/st_com/zh/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-l496zg.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |                                       |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     |                                        |
-| UART              |     支持     | LPUART1                                |
-
-## 使用说明
-
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+- Clock Sources
+  - 4 to 48 MHz crystal oscillator
+  - 32 kHz crystal oscillator for RTC (LSE)
+  - Internal 16 MHz factory-trimmed RC (±1%)
+  - Internal low-power 32 kHz RC (±5%)
+  - Internal multispeed 100 kHz to 48 MHz oscillator, auto-trimmed by LSE (better than ±0.25% accuracy)
+  - Internal 48 MHz with clock recovery
+  - 3 PLLs for system clock, USB, audio, ADC
+- LCD 8 × 40 or 4 × 44 with step-up converter
+- Up to 24 capacitive sensing channels: support touchkey, linear and rotary touch sensors
+- 4 x digital filters for sigma delta modulator
+- Rich analog peripherals (independent supply)
+  - 3 × 12-bit ADC 5 Msps, up to 16-bit with hardware oversampling, 200 µA/Msps
+  - 2 x 12-bit DAC output channels, low-power sample and hold
+  - 2 x operational amplifiers with built-in PGA
+  - 2 x ultra-low-power comparators
+- 20 x communication interfaces
+  - USB OTG 2.0 full-speed, LPM and BCD
+  - 2 x SAIs (serial audio interface)
+  - 4 x I2C FM+(1 Mbit/s), SMBus/PMBus
+  - 5 x U(S)ARTs (ISO 7816, LIN, IrDA, modem)
+  - 1 x LPUART
+  - 3 x SPIs (4 x SPIs with the Quad SPI)
+  - 2 x CAN (2.0B Active) and SDMMC
+  - SWPMI single wire protocol master I/F
+  - IRTIM (Infrared interface)
+- 14-channel DMA controller
+- True random number generator
+- CRC calculation unit, 96-bit unique ID
+- Development support: serial wire debug (SWD), JTAG, Embedded Trace Macrocell™
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK4、MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Read more
 
-#### 硬件连接
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32L496ZG ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l496zg.html#documentation) |          STM32L496ZG datasheet and other resources           |
 
-使用数据线连接开发板到 PC，打开电源开关。
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Maintained By
 
-> 工程默认配置使用 ST-LINK 仿真器下载程序，在通过  ST-LINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+<super_mcu@qq.com>
 
-#### 运行结果
 
-下载程序成功之后，系统会自动运行，蓝色的 LED2 以 500MS 周期闪烁。
 
-连接开发板ST-LINK到 PC , 会发现有串口, 在终端工具里打开相应的串口（115200-8-1-N）, 复位设备后，可以看到 RT-Thread 的输出信息:
+## Translated By
 
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.2 build Oct  2 2019
- 2006 - 2019 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
+Meco Man @ RT-Thread Community
 
-此 BSP 默认只开启了 GPIO 和 LPUART1 的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
-
-1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-- 开机时如果不能打印 RT-Thread 版本信息，请重新选择 PC 端串口调试软件的串口号或将 BSP 中串口的 GPIO 速率调低
-
-## 联系人信息
-
-维护人:
-
--  [super_mcu] 邮箱：<super_mcu@qq.com>
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf
