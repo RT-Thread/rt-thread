@@ -105,10 +105,13 @@ static int dance_mouse_init(void)
                    usb_thread_entry, device,
                    usb_thread_stack, sizeof(usb_thread_stack),
                    10, 20);
-
-    if (state == RT_EOK){
-        rt_thread_startup(&usb_thread);
+    if (state != RT_EOK)
+    {
+        LOG_E("thread init failed!\n");
+        return (int)state;
     }
+    
+    rt_thread_startup(&usb_thread);
 
     return 0;
 }

@@ -78,10 +78,13 @@ int rt_application_init()
                    RT_NULL,
                    &thread_led1_stack[0],
                    sizeof(thread_led1_stack),11,5);
-
-    if (state == RT_EOK){
-      rt_thread_startup(&thread_led1);
+    if (state != RT_EOK)
+    {
+        LOG_E("thread init failed!\n");
+        return (int)state;
     }
+    
+    rt_thread_startup(&thread_led1);
 
     return 0;
 }

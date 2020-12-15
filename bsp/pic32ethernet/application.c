@@ -54,8 +54,13 @@ int rt_application_init(void)
                    thread_led1_entry, RT_NULL,
                    &thread_led1_stack[0], sizeof(thread_led1_stack),
                    20, 10);
-    if (result == RT_EOK)
-      rt_thread_startup(&thread_led1);
+    if (result != RT_EOK)
+    {
+        LOG_E("thread init failed!\n");
+        return (int)result;
+    }
+
+    rt_thread_startup(&thread_led1);
 
     /* create led2 thread */
     thread = rt_thread_create("led2",
