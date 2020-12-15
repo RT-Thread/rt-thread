@@ -1183,11 +1183,11 @@ void rt_kputs(const char *str)
 }
 
 /**
- * This function will print a formatted string on system console
+ * This function will print a formatted string on system console (non thread safe)
  *
  * @param fmt the format
  */
-void rt_kprintf(const char *fmt, ...)
+RT_WEAK void rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;
