@@ -315,6 +315,11 @@ static int nu_fmc_init(void)
     SYS_LockReg();
 
     g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_FIFO);
+    if (g_mutex_fmc == RT_NULL) 
+    {
+        LOG_E("Create mutex for nu_fmc_lock failed!");
+        return -(int)RT_ERROR;
+    }
 
     return (int)RT_EOK;
 }

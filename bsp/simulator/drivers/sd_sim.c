@@ -136,6 +136,11 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
     device = &(sd->parent);
 
     lock = rt_mutex_create("lock", RT_IPC_FLAG_FIFO);
+    if (lock == RT_NULL) 
+    {
+        LOG_E("Create mutex in rt_hw_sdcard_init failed!");
+        return -RT_ERROR;
+    }
 
     /* open sd card file, if not exist, then create it  */
     sd->file = fopen(SDCARD_SIM, "rb+");
