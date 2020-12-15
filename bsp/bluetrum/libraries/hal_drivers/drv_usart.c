@@ -187,7 +187,7 @@ int rt_hw_usart_init(void)
         uart_obj[i].config          = &uart_config[i];
         uart_obj[i].serial.ops      = &ab32_uart_ops;
         uart_obj[i].serial.config   = config;
-        uart_obj[0].serial.config.baud_rate = 1500000;
+        uart_obj[i].serial.config.baud_rate = 1500000;
 
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[i].serial, uart_obj[i].config->name,

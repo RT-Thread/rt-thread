@@ -19,6 +19,7 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_DEBUG
 
 /* Inter-Thread communication */
 
@@ -62,7 +63,6 @@
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
 #define FINSH_USING_DESCRIPTION
-#define FINSH_ECHO_DISABLE_DEFAULT
 #define FINSH_THREAD_PRIORITY 20
 #define FINSH_THREAD_STACK_SIZE 4096
 #define FINSH_CMD_SIZE 80
@@ -154,9 +154,18 @@
 /* games: games run on RT-Thread console */
 
 
-/* General Purpose UARTs */
+/* Hardware Drivers Config */
+
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_USB_TO_USART
+
+/* On-chip Peripheral Drivers */
 
 #define BSP_USING_UART0
+
+/* Board extended module Drivers */
+
 #define BOARD_BLUETRUM_EVB
 
 #endif
