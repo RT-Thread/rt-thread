@@ -418,6 +418,10 @@ int lwp_thread_kill(rt_thread_t thread, int sig)
     if (sig == 0 || sig > _LWP_NSIG)
         return ret;
     level = rt_hw_interrupt_disable();
+    if (!thread->lwp)
+    {
+        goto out;
+    }
     if (lwp_sigismember(&thread->signal_mask, sig)) /* if signal masked */
     {
         goto out;
