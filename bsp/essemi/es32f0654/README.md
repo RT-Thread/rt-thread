@@ -92,19 +92,19 @@ msh >
 
     a）如果需要使用内核用例，先配置rt-thread内核，如图：
 
-    ![](D:\liuhy\history\rt-thread\lhy-rtt\rt-thread\bsp\essemi\es32f0654\figures\内核配置.PNG)
+    ![](figures\内核配置.PNG)
 
     然后配置内核用例，如图：
 
-    ![](D:\liuhy\history\rt-thread\lhy-rtt\rt-thread\bsp\essemi\es32f0654\figures\内核用例.PNG)
+    ![](figures\内核用例.PNG)
 
     b）如果需要使用驱动用例：先使能驱动，如图：
 
-    ![](D:\liuhy\history\rt-thread\lhy-rtt\rt-thread\bsp\essemi\es32f0654\figures\驱动配置.PNG)
+    ![](figures\驱动配置.PNG)
 
     然后配置驱动用例，如图：
 
-    ![](D:\liuhy\history\rt-thread\lhy-rtt\rt-thread\bsp\essemi\es32f0654\figures\驱动用例.PNG)
+    ![](figures\驱动用例.PNG)
 
     
 
