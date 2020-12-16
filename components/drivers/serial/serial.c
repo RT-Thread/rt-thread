@@ -127,6 +127,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 {
     int size = 0;
     rt_device_t device;
+    int wait_ret;
 
     device = (rt_device_t)fd->data;
 
@@ -137,14 +138,21 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
         {
             if (fd->flags & O_NONBLOCK)
             {
-                size = -EAGAIN;
                 break;
             }
 
-            rt_wqueue_wait(&(device->wait_queue), 0, RT_WAITING_FOREVER);
+            wait_ret = rt_wqueue_wait_interruptible(&(device->wait_queue), 0, RT_WAITING_FOREVER);
+            if (wait_ret != RT_EOK)
+            {
+                break;
+            }
         }
     }while (size <= 0);
 
+    if (size < 0)
+    {
+        size = 0;
+    }
     return size;
 }
 

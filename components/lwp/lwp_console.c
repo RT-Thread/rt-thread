@@ -235,6 +235,7 @@ static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     struct rt_console_device *console;
     struct rt_lwp *lwp;
     struct rt_wqueue *wq;
+    int wait_ret;
 
     console = (struct rt_console_device *)fd->data;
     RT_ASSERT(console != RT_NULL);
@@ -256,9 +257,17 @@ static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
         {
             break;
         }
-        rt_wqueue_wait(wq, 0, RT_WAITING_FOREVER);
+        wait_ret = rt_wqueue_wait_interruptible(wq, 0, RT_WAITING_FOREVER);
+        if (wait_ret != 0)
+        {
+            break;
+        }
     }
     rt_hw_interrupt_enable(level);
+    if (size < 0)
+    {
+        size = 0;
+    }
     return size;
 }
 
