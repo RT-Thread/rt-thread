@@ -41,93 +41,93 @@
   * @brief TIMER counter mode
   */
 typedef enum {
-	TIMER_CNT_MODE_UP      = 0,	/**< Counter mode up */
-	TIMER_CNT_MODE_DOWN    = 1,	/**< Counter mode down */
-	TIMER_CNT_MODE_CENTER1 = 2,	/**< Counter mode center1 */
-	TIMER_CNT_MODE_CENTER2 = 3,	/**< Counter mode center2 */
-	TIMER_CNT_MODE_CENTER3 = 4,	/**< Counter mode center3 */
+	TIMER_CNT_MODE_UP      = 0U,	/**< Counter mode up */
+	TIMER_CNT_MODE_DOWN    = 1U,	/**< Counter mode down */
+	TIMER_CNT_MODE_CENTER1 = 2U,	/**< Counter mode center1 */
+	TIMER_CNT_MODE_CENTER2 = 3U,	/**< Counter mode center2 */
+	TIMER_CNT_MODE_CENTER3 = 4U,	/**< Counter mode center3 */
 } timer_cnt_mode_t;
 
 /**
   * @brief TIMER clock division
   */
 typedef enum {
-	TIMER_CLOCK_DIV1 = 0,	/**< No prescaler is used */
-	TIMER_CLOCK_DIV2 = 1,	/** Clock is divided by 2 */
-	TIMER_CLOCK_DIV4 = 2,	/** Clock is divided by 4 */
+	TIMER_CLOCK_DIV1 = 0U,	/**< No prescaler is used */
+	TIMER_CLOCK_DIV2 = 1U,	/** Clock is divided by 2 */
+	TIMER_CLOCK_DIV4 = 2U,	/** Clock is divided by 4 */
 } timer_clock_division_t;
 
 /**
   * @brief TIMER output compare and PWM modes
   */
 typedef enum {
-	TIMER_OC_MODE_TIMERING       = 0,	/**< Output compare mode is timering */
-	TIMER_OC_MODE_ACTIVE         = 1,	/**< Output compare mode is active */
-	TIMER_OC_MODE_INACTIVE       = 2,	/**< Output compare mode is inactive */
-	TIMER_OC_MODE_TOGGLE         = 3,	/**< Output compare mode is toggle */
-	TIMER_OC_MODE_FORCE_INACTIVE = 4,	/**< Output compare mode is force inactive */
-	TIMER_OC_MODE_FORCE_ACTIVE   = 5,	/**< Output compare mode is force active */
-	TIMER_OC_MODE_PWM1           = 6,	/**< Output compare mode is pwm1 */
-	TIMER_OC_MODE_PWM2           = 7,	/**< Output compare mode is pwm2 */
+	TIMER_OC_MODE_TIMERING       = 0U,	/**< Output compare mode is timering */
+	TIMER_OC_MODE_ACTIVE         = 1U,	/**< Output compare mode is active */
+	TIMER_OC_MODE_INACTIVE       = 2U,	/**< Output compare mode is inactive */
+	TIMER_OC_MODE_TOGGLE         = 3U,	/**< Output compare mode is toggle */
+	TIMER_OC_MODE_FORCE_INACTIVE = 4U,	/**< Output compare mode is force inactive */
+	TIMER_OC_MODE_FORCE_ACTIVE   = 5U,	/**< Output compare mode is force active */
+	TIMER_OC_MODE_PWM1           = 6U,	/**< Output compare mode is pwm1 */
+	TIMER_OC_MODE_PWM2           = 7U,	/**< Output compare mode is pwm2 */
 } timer_oc_mode_t;
 
 /**
   * @brief TIMER output compare polarity
   */
 typedef enum {
-	TIMER_OC_POLARITY_HIGH = 0,	/**< Output compare polarity is high */
-	TIMER_OC_POLARITY_LOW  = 1,	/**< Output compare polarity is low */
+	TIMER_OC_POLARITY_HIGH = 0U,	/**< Output compare polarity is high */
+	TIMER_OC_POLARITY_LOW  = 1U,	/**< Output compare polarity is low */
 } timer_oc_polarity_t;
 
 /**
   * @brief TIMER complementary output compare polarity
   */
 typedef enum {
-	TIMER_OCN_POLARITY_HIGH = 0,	/**< Complementary output compare polarity is high */
-	TIMER_OCN_POLARITY_LOW  = 1,	/**< Complementary output compare polarity is low */
+	TIMER_OCN_POLARITY_HIGH = 0U,	/**< Complementary output compare polarity is high */
+	TIMER_OCN_POLARITY_LOW  = 1U,	/**< Complementary output compare polarity is low */
 } timer_ocn_polarity_t;
 
 /**
   * @brief TIMER output compare idle state
   */
 typedef enum {
-	TIMER_OC_IDLE_RESET = 0,	/**< Output compare idle state is reset */
-	TIMER_OC_IDLE_SET   = 1,	/**< Output compare idle state is set */
+	TIMER_OC_IDLE_RESET = 0U,	/**< Output compare idle state is reset */
+	TIMER_OC_IDLE_SET   = 1U,	/**< Output compare idle state is set */
 } timer_oc_idle_t;
 
 /**
   * @brief TIMER complementary output compare idle state
   */
 typedef enum {
-	TIMER_OCN_IDLE_RESET = 0,	/**< Complementary output compare idle state is reset */
-	TIMER_OCN_IDLE_SET   = 1,	/**< Complementary output compare idle state is set */
+	TIMER_OCN_IDLE_RESET = 0U,	/**< Complementary output compare idle state is reset */
+	TIMER_OCN_IDLE_SET   = 1U,	/**< Complementary output compare idle state is set */
 } timer_ocn_idle_t;
 
 /**
   * @brief TIMER channel
   */
 typedef enum {
-	TIMER_CHANNEL_1   = 0,		/**< Channel 1 */
-	TIMER_CHANNEL_2   = 1,		/**< Channel 2 */
-	TIMER_CHANNEL_3   = 2,		/**< Channel 3 */
-	TIMER_CHANNEL_4   = 4,		/**< Channel 4 */
-	TIMER_CHANNEL_ALL = 0xF,	/**< All channel */
+	TIMER_CHANNEL_1   = 0U,		/**< Channel 1 */
+	TIMER_CHANNEL_2   = 1U,		/**< Channel 2 */
+	TIMER_CHANNEL_3   = 2U,		/**< Channel 3 */
+	TIMER_CHANNEL_4   = 3U,		/**< Channel 4 */
+	TIMER_CHANNEL_ALL = 0xFU,	/**< All channel */
 } timer_channel_t;
 
 /**
   * @brief TIMER one pulse mode
   */
 typedef enum {
-	TIMER_OP_MODE_REPEAT = 0,	/**< Repetitive */
-	TIMER_OP_MODE_SINGLE = 1,	/**< single */
+	TIMER_OP_MODE_REPEAT = 0U,	/**< Repetitive */
+	TIMER_OP_MODE_SINGLE = 1U,	/**< single */
 } timer_op_mode_t;
 
 /**
   * @brief TIMER one pulse output channel
   */
 typedef enum {
-	TIMER_OP_OUTPUT_CHANNEL_1 = 0,	/**< One pulse output channal 1 */
-	TIMER_OP_OUTPUT_CHANNEL_2 = 1,	/**< One pulse output channal 2 */
+	TIMER_OP_OUTPUT_CHANNEL_1 = 0U,	/**< One pulse output channal 1 */
+	TIMER_OP_OUTPUT_CHANNEL_2 = 1U,	/**< One pulse output channal 2 */
 } timer_op_output_channel_t;
 
 /**
@@ -158,22 +158,22 @@ typedef struct {
   * @brief State structures definition
   */
 typedef enum {
-	TIMER_STATE_RESET     = 0x00,	/**< Peripheral not yet initialized or disabled */
-	TIMER_STATE_READY     = 0x01,	/**< Peripheral Initialized and ready for use */
-	TIMER_STATE_BUSY      = 0x02,	/**< An internal process is ongoing */
-	TIMER_STATE_TIMEREOUT = 0x03,	/**< Timeout state */
-	TIMER_STATE_ERROR     = 0x04,	/**< Reception process is ongoing */
+	TIMER_STATE_RESET     = 0x00U,	/**< Peripheral not yet initialized or disabled */
+	TIMER_STATE_READY     = 0x01U,	/**< Peripheral Initialized and ready for use */
+	TIMER_STATE_BUSY      = 0x02U,	/**< An internal process is ongoing */
+	TIMER_STATE_TIMEREOUT = 0x03U,	/**< Timeout state */
+	TIMER_STATE_ERROR     = 0x04U,	/**< Reception process is ongoing */
 } timer_state_t;
 
 /**
   * @brief Active channel structures definition
   */
 typedef enum {
-	TIMER_ACTIVE_CHANNEL_1       = 0x01,	/**< The active channel is 1 */
-	TIMER_ACTIVE_CHANNEL_2       = 0x02,	/**< The active channel is 2 */
-	TIMER_ACTIVE_CHANNEL_3       = 0x04,	/**< The active channel is 3 */
-	TIMER_ACTIVE_CHANNEL_4       = 0x08,	/**< The active channel is 4 */
-	TIMER_ACTIVE_CHANNEL_CLEARED = 0x00,	/**< All active channels cleared */
+	TIMER_ACTIVE_CHANNEL_1       = 0x01U,	/**< The active channel is 1 */
+	TIMER_ACTIVE_CHANNEL_2       = 0x02U,	/**< The active channel is 2 */
+	TIMER_ACTIVE_CHANNEL_3       = 0x04U,	/**< The active channel is 3 */
+	TIMER_ACTIVE_CHANNEL_4       = 0x08U,	/**< The active channel is 4 */
+	TIMER_ACTIVE_CHANNEL_CLEARED = 0x00U,	/**< All active channels cleared */
 } timer_active_channel_t;
 
 /**
@@ -185,6 +185,11 @@ typedef struct timer_handle_s {
 	timer_active_channel_t ch;	/**< Active channel */
 	lock_state_t lock;		/**< Locking object */
 	timer_state_t state;		/**< TIMER operation state */
+	
+#ifdef ALD_DMA
+	dma_handle_t hdma1;              /**< Timer DMA handle parameters */
+	dma_handle_t hdma2;
+#endif
 
 	void (*period_elapse_cbk)(struct timer_handle_s *arg);		/**< Period elapse callback */
 	void (*delay_elapse_cbk)(struct timer_handle_s *arg);		/**< Delay_elapse callback */
@@ -201,36 +206,36 @@ typedef struct timer_handle_s {
   * @brief TIMER encoder mode
   */
 typedef enum {
-	TIMER_ENC_MODE_TI1  = 1,	/**< encoder mode 1 */
-	TIMER_ENC_MODE_TI2  = 2,	/**< encoder mode 2 */
-	TIMER_ENC_MODE_TI12 = 3,	/**< encoder mode 3 */
+	TIMER_ENC_MODE_TI1  = 1U,	/**< encoder mode 1 */
+	TIMER_ENC_MODE_TI2  = 2U,	/**< encoder mode 2 */
+	TIMER_ENC_MODE_TI12 = 3U,	/**< encoder mode 3 */
 } timer_encoder_mode_t;
 
 /**
   * @brief TIMER input capture polarity
   */
 typedef enum {
-	TIMER_IC_POLARITY_RISE = 0,	/**< Input capture polarity rising */
-	TIMER_IC_POLARITY_FALL = 1,	/**< Input capture polarity falling */
+	TIMER_IC_POLARITY_RISE = 0U,	/**< Input capture polarity rising */
+	TIMER_IC_POLARITY_FALL = 1U,	/**< Input capture polarity falling */
 } timer_ic_polarity_t;
 
 /**
   *@brief TIMER input capture selection
   */
 typedef enum {
-	TIMER_IC_SEL_DIRECT   = 1,	/**< IC1 -- TI1 */
-	TIMER_IC_SEL_INDIRECT = 2,	/**< IC1 -- TI2 */
-	TIMER_IC_SEL_TRC      = 3,	/**< IC1 -- TRC */
+	TIMER_IC_SEL_DIRECT   = 1U,	/**< IC1 -- TI1 */
+	TIMER_IC_SEL_INDIRECT = 2U,	/**< IC1 -- TI2 */
+	TIMER_IC_SEL_TRC      = 3U,	/**< IC1 -- TRC */
 } timer_ic_select_t;
 
 /**
   * @brief TIMER input capture prescaler
   */
 typedef enum {
-	TIMER_IC_PSC_DIV1 = 0,	/**< Capture performed once every 1 events */
-	TIMER_IC_PSC_DIV2 = 1,	/**< Capture performed once every 2 events */
-	TIMER_IC_PSC_DIV4 = 2,	/**< Capture performed once every 4 events */
-	TIMER_IC_PSC_DIV8 = 3,	/**< Capture performed once every 4 events */
+	TIMER_IC_PSC_DIV1 = 0U,	/**< Capture performed once every 1 events */
+	TIMER_IC_PSC_DIV2 = 1U,	/**< Capture performed once every 2 events */
+	TIMER_IC_PSC_DIV4 = 2U,	/**< Capture performed once every 4 events */
+	TIMER_IC_PSC_DIV8 = 3U,	/**< Capture performed once every 4 events */
 } timer_ic_prescaler_t;
 
 /**
@@ -276,31 +281,31 @@ typedef struct {
 /** @brief TIMER clear input source
   */
 typedef enum {
-	TIMER_INPUT_NONE  = 0,	/**< Clear input none */
-	TIMER_INPUT_ETR   = 1,	/**< Clear input etr */
+	TIMER_INPUT_NONE  = 0U,	/**< Clear input none */
+	TIMER_INPUT_ETR   = 1U,	/**< Clear input etr */
 } timer_clear_input_source_t;
 
 /** @brief TIMER clear input polarity
   */
 typedef enum {
-	TIMER_POLARITY_NO_INV = 0,	/**< Polarity for ETRx pin */
-	TIMER_POLARITY_INV    = 1,	/**< Polarity for ETRx pin */
+	TIMER_POLARITY_NO_INV = 0U,	/**< Polarity for ETRx pin */
+	TIMER_POLARITY_INV    = 1U,	/**< Polarity for ETRx pin */
 } timer_clear_input_polarity_t;
 
 /** @brief TIMER clear input polarity
   */
 typedef enum {
-	TIMER_ETR_PSC_DIV1 = 0,	/**< No prescaler is used */
-	TIMER_ETR_PSC_DIV2 = 1,	/**< ETR input source is divided by 2 */
-	TIMER_ETR_PSC_DIV4 = 2,	/**< ETR input source is divided by 4 */
-	TIMER_ETR_PSC_DIV8 = 3,	/**< ETR input source is divided by 8 */
+	TIMER_ETR_PSC_DIV1 = 0U,	/**< No prescaler is used */
+	TIMER_ETR_PSC_DIV2 = 1U,	/**< ETR input source is divided by 2 */
+	TIMER_ETR_PSC_DIV4 = 2U,	/**< ETR input source is divided by 4 */
+	TIMER_ETR_PSC_DIV8 = 3U,	/**< ETR input source is divided by 8 */
 } timer_etr_psc_t;
 
 /** @brief TIMER CHnREF Clear Select
   */
 typedef enum {
-	TIMER_CHNREF_CLR_CMP_IN = 0, /**< Comparator CMP_IN */
-	TIMER_CHNREF_CLR_ETF = 1, /**< External Trigger Signal ETF */
+	TIMER_CHNREF_CLR_CMP_IN = 0U, /**< Comparator CMP_IN */
+	TIMER_CHNREF_CLR_ETF    = 1U, /**< External Trigger Signal ETF */
 }timer_chnref_clr_sel_t;/**
   * @brief  TIMER clear input configuration handle structure definition
   */
@@ -316,26 +321,26 @@ typedef struct {
 /** @brief TIMER clock source
   */
 typedef enum {
-	TIMER_SRC_ETRMODE2 = 0,	/**< Clock source is etr mode2 */
-	TIMER_SRC_INTER    = 1,	/**< Clock source is etr internal */
-	TIMER_SRC_ITR0     = 2,	/**< Clock source is etr itr0 */
-	TIMER_SRC_ITR1     = 3,	/**< Clock source is etr itr1 */
-	TIMER_SRC_ITR2     = 4,	/**< Clock source is etr itr2 */
-	TIMER_SRC_ITR3     = 5,	/**< Clock source is etr itr3 */
-	TIMER_SRC_TI1ED    = 6,	/**< Clock source is etr ti1ed */
-	TIMER_SRC_TI1      = 7,	/**< Clock source is etr ti1 */
-	TIMER_SRC_TI2      = 8,	/**< Clock source is etr ti2 */
-	TIMER_SRC_ETRMODE1 = 9,	/**< Clock source is etr mode1 */
+	TIMER_SRC_ETRMODE2 = 0U,	/**< Clock source is etr mode2 */
+	TIMER_SRC_INTER    = 1U,	/**< Clock source is etr internal */
+	TIMER_SRC_ITR0     = 2U,	/**< Clock source is etr itr0 */
+	TIMER_SRC_ITR1     = 3U,	/**< Clock source is etr itr1 */
+	TIMER_SRC_ITR2     = 4U,	/**< Clock source is etr itr2 */
+	TIMER_SRC_ITR3     = 5U,	/**< Clock source is etr itr3 */
+	TIMER_SRC_TI1ED    = 6U,	/**< Clock source is etr ti1ed */
+	TIMER_SRC_TI1      = 7U,	/**< Clock source is etr ti1 */
+	TIMER_SRC_TI2      = 8U,	/**< Clock source is etr ti2 */
+	TIMER_SRC_ETRMODE1 = 9U,	/**< Clock source is etr mode1 */
 } timer_clock_source_t;
 
 /** @brief TIMER clock polarity
   */
 typedef enum {
-	TIMER_CLK_POLARITY_INV    = 1,	/**< Polarity for ETRx clock sources */
-	TIMER_CLK_POLARITY_NO_INV = 0,	/**< Polarity for ETRx clock sources */
-	TIMER_CLK_POLARITY_RISE   = 0,	/**< Polarity for TIx clock sources */
-	TIMER_CLK_POLARITY_FALL   = 1,	/**< Polarity for TIx clock sources */
-	TIMER_CLK_POLARITY_BOTH   = 3,	/**< Polarity for TIx clock sources */
+	TIMER_CLK_POLARITY_INV    = 1U,	/**< Polarity for ETRx clock sources */
+	TIMER_CLK_POLARITY_NO_INV = 0U,	/**< Polarity for ETRx clock sources */
+	TIMER_CLK_POLARITY_RISE   = 0U,	/**< Polarity for TIx clock sources */
+	TIMER_CLK_POLARITY_FALL   = 1U,	/**< Polarity for TIx clock sources */
+	TIMER_CLK_POLARITY_BOTH   = 3U,	/**< Polarity for TIx clock sources */
 } timer_clock_polarity_t;
 
 /**
@@ -352,28 +357,28 @@ typedef struct {
   * @brief TIMER slave mode
   */
 typedef enum {
-	TIMER_MODE_DISABLE   = 0,	/**< Slave mode is disable */
-	TIMER_MODE_ENC1      = 1,	/**< Slave mode is encoder1 */
-	TIMER_MODE_ENC2      = 2,	/**< Slave mode is encoder2 */
-	TIMER_MODE_ENC3      = 3,	/**< Slave mode is encoder3 */
-	TIMER_MODE_RESET     = 4,	/**< Slave mode is reset */
-	TIMER_MODE_GATED     = 5,	/**< Slave mode is gated */
-	TIMER_MODE_TRIG      = 6,	/**< Slave mode is trigger */
-	TIMER_MODE_EXTERNAL1 = 7,	/**< Slave mode is external1 */
+	TIMER_MODE_DISABLE   = 0U,	/**< Slave mode is disable */
+	TIMER_MODE_ENC1      = 1U,	/**< Slave mode is encoder1 */
+	TIMER_MODE_ENC2      = 2U,	/**< Slave mode is encoder2 */
+	TIMER_MODE_ENC3      = 3U,	/**< Slave mode is encoder3 */
+	TIMER_MODE_RESET     = 4U,	/**< Slave mode is reset */
+	TIMER_MODE_GATED     = 5U,	/**< Slave mode is gated */
+	TIMER_MODE_TRIG      = 6U,	/**< Slave mode is trigger */
+	TIMER_MODE_EXTERNAL1 = 7U,	/**< Slave mode is external1 */
 } timer_slave_mode_t;
 
 /**
   * @brief TIMER ts definition
   */
 typedef enum {
-	TIMER_TS_ITR0    = 0,	/**< ITR0 */
-	TIMER_TS_ITR1    = 1,	/**< ITR1 */
-	TIMER_TS_ITR2    = 2,	/**< ITR2 */
-	TIMER_TS_ITR3    = 3,	/**< ITR3 */
-	TIMER_TS_TI1F_ED = 4,	/**< TI1F_ED */
-	TIMER_TS_TI1FP1  = 5,	/**< TI1FP1 */
-	TIMER_TS_TI2FP2  = 6,	/**< TI2FP2 */
-	TIMER_TS_ETRF    = 7,	/**< ETRF */
+	TIMER_TS_ITR0    = 0U,	/**< ITR0 */
+	TIMER_TS_ITR1    = 1U,	/**< ITR1 */
+	TIMER_TS_ITR2    = 2U,	/**< ITR2 */
+	TIMER_TS_ITR3    = 3U,	/**< ITR3 */
+	TIMER_TS_TI1F_ED = 4U,	/**< TI1F_ED */
+	TIMER_TS_TI1FP1  = 5U,	/**< TI1FP1 */
+	TIMER_TS_TI2FP2  = 6U,	/**< TI2FP2 */
+	TIMER_TS_ETRF    = 7U,	/**< ETRF */
 } timer_ts_t;
 
 /**
@@ -401,18 +406,18 @@ typedef struct {
   * @brief TIMER lock level
   */
 typedef enum {
-	TIMER_LOCK_LEVEL_OFF = 0,	/**< Lock off */
-	TIMER_LOCK_LEVEL_1   = 1,	/**< Lock level 1 */
-	TIMER_LOCK_LEVEL_2   = 2,	/**< Lock level 2 */
-	TIMER_LOCK_LEVEL_3   = 3,	/**< Lock level 3 */
+	TIMER_LOCK_LEVEL_OFF = 0U,	/**< Lock off */
+	TIMER_LOCK_LEVEL_1   = 1U,	/**< Lock level 1 */
+	TIMER_LOCK_LEVEL_2   = 2U,	/**< Lock level 2 */
+	TIMER_LOCK_LEVEL_3   = 3U,	/**< Lock level 3 */
 } timer_lock_level_t;
 
 /**
   * @brief TIMER break polarity
   */
 typedef enum {
-	TIMER_BREAK_POLARITY_LOW  = 0,	/**< LOW */
-	TIMER_BREAK_POLARITY_HIGH = 1,	/**< HIGH */
+	TIMER_BREAK_POLARITY_LOW  = 0U,	/**< LOW */
+	TIMER_BREAK_POLARITY_HIGH = 1U,	/**< HIGH */
 } timer_break_polarity_t;
 
 /**
@@ -448,14 +453,14 @@ typedef struct {
   * @brief TIMER master mode selection
   */
 typedef enum {
-	TIMER_TRGO_RESET  = 0,	/**< RESET */
-	TIMER_TRGO_ENABLE = 1,	/**< ENABLE */
-	TIMER_TRGO_UPDATE = 2,	/**< UPDATE */
-	TIMER_TRGO_OC1    = 3,	/**< OC1 */
-	TIMER_TRGO_OC1REF = 4,	/**< OC1REF */
-	TIMER_TRGO_OC2REF = 5,	/**< OC2REF */
-	TIMER_TRGO_OC3REF = 6,	/**< OC3REF */
-	TIMER_TRGO_OC4REF = 7,	/**< OC4REF */
+	TIMER_TRGO_RESET  = 0U,	/**< RESET */
+	TIMER_TRGO_ENABLE = 1U,	/**< ENABLE */
+	TIMER_TRGO_UPDATE = 2U,	/**< UPDATE */
+	TIMER_TRGO_OC1    = 3U,	/**< OC1 */
+	TIMER_TRGO_OC1REF = 4U,	/**< OC1REF */
+	TIMER_TRGO_OC2REF = 5U,	/**< OC2REF */
+	TIMER_TRGO_OC3REF = 6U,	/**< OC3REF */
+	TIMER_TRGO_OC4REF = 7U,	/**< OC4REF */
 } timer_master_mode_sel_t;
 
 /**
@@ -996,7 +1001,7 @@ void ald_timer_base_stop(timer_handle_t *hperh);
 void ald_timer_base_start_by_it(timer_handle_t *hperh);
 void ald_timer_base_stop_by_it(timer_handle_t *hperh);
 #ifdef ALD_DMA
-ald_status_t ald_timer_base_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_base_start_by_dma(timer_handle_t *hperh, 
                                   uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_base_stop_by_dma(timer_handle_t *hperh);
 #endif
@@ -1015,7 +1020,7 @@ void ald_timer_oc_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_oc_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA
 ald_status_t ald_timer_oc_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                      dma_handle_t *hdma, uint16_t *buf, uint32_t len, uint8_t dma_ch);
+                      uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_oc_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
 #endif
 /**
@@ -1036,7 +1041,7 @@ void ald_timer_pwm_set_duty(timer_handle_t *hperh, timer_channel_t ch, uint16_t 
 void ald_timer_pwm_set_input(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA
 ald_status_t ald_timer_pwm_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                      dma_handle_t *hdma, uint16_t *buf, uint32_t len, uint8_t dma_ch);
+                      uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_pwm_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
 #endif
 /**
@@ -1054,7 +1059,7 @@ void ald_timer_ic_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ic_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA
 ald_status_t ald_timer_ic_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                      dma_handle_t *hdma, uint16_t *buf, uint32_t len, uint8_t dma_ch);
+                     uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_ic_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
 #endif
 /**
@@ -1078,15 +1083,15 @@ void ald_timer_one_pulse_stop_by_it(timer_handle_t *hperh, timer_op_output_chann
   * @{
   */
 /* Timer encoder functions */
-ald_status_t ald_timer_encoder_init(timer_handle_t *hperh,  timer_encoder_init_t *config);
+ald_status_t ald_timer_encoder_init(timer_handle_t *hperh, timer_encoder_init_t *config);
 void ald_timer_encoder_start(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_encoder_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_encoder_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_encoder_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA
 ald_status_t ald_timer_encoder_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                           dma_handle_t *hdma1, dma_handle_t *hdma2, uint16_t *buf1,
-			   uint16_t *buf2, uint32_t len, uint8_t dma_ch1, uint8_t dma_ch2);
+                           uint16_t *buf1, uint16_t *buf2, uint32_t len, 
+			   uint8_t dma_ch1, uint8_t dma_ch2);
 void ald_timer_encoder_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
 #endif
 /**
@@ -1103,7 +1108,7 @@ void ald_timer_hall_sensor_stop(timer_handle_t *hperh);
 void ald_timer_hall_sensor_start_by_it(timer_handle_t *hperh);
 void ald_timer_hall_sensor_stop_by_it(timer_handle_t *hperh);
 #ifdef ALD_DMA
-ald_status_t ald_timer_hall_sensor_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_hall_sensor_start_by_dma(timer_handle_t *hperh, 
 		                       uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_hall_sensor_stop_by_dma(timer_handle_t *hperh);
 #endif
@@ -1120,7 +1125,7 @@ void ald_timer_ocn_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ocn_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_ocn_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA
-ald_status_t ald_timer_ocn_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_ocn_start_by_dma(timer_handle_t *hperh,
 		          timer_channel_t ch, uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_ocn_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
 #endif
@@ -1137,7 +1142,7 @@ void ald_timer_pwmn_stop(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwmn_start_by_it(timer_handle_t *hperh, timer_channel_t ch);
 void ald_timer_pwmn_stop_by_it(timer_handle_t *hperh, timer_channel_t ch);
 #ifdef ALD_DMA
-ald_status_t ald_timer_pwmn_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_pwmn_start_by_dma(timer_handle_t *hperh, 
 		          timer_channel_t ch, uint16_t *buf, uint32_t len, uint8_t dma_ch);
 void ald_timer_pwmn_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch);
 #endif
