@@ -1,109 +1,115 @@
-# STM32H743-st-nucleo 开发板 BSP 说明
+# STM32H743-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为 tyustli 为 STM32H743-st-nucleo 开发板提供的 BSP (板级支持包) 说明。
+## MCU: STM32H743ZI @480MHz, 2MB FLASH,  1MB RAM
 
-主要内容如下：
+STM32H742xI/G and STM32H743xI/G devices are based on the high-performance Arm® Cortex®-M7 32-bit RISC core operating at up to 480 MHz. The Cortex® -M7 core features a floating point unit (FPU) which supports Arm® double-precision (IEEE 754 compliant) and single-precision data-processing instructions and data types. STM32H742xI/G and STM32H743xI/G devices support a full set of DSP instructions and a memory protection unit (MPU) to enhance application security.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+STM32H742xI/G and STM32H743xI/G devices incorporate high-speed embedded memories with a dual-bank Flash memory of up to 2 Mbytes, up to 1 Mbyte of RAM (including 192 Kbytes of TCM RAM, up to 864 Kbytes of user SRAM and 4 Kbytes of backup SRAM), as well as an extensive range of enhanced I/Os and peripherals connected to APB buses, AHB buses, 2x32-bit multi-AHB bus matrix and a multi layer AXI interconnect supporting internal and external memory access.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+#### KEY FEATURES
 
-## 开发板介绍
+- Core
+  - 32-bit Arm® Cortex®-M7 core with double-precision FPU and L1 cache: 16 Kbytes of data and 16 Kbytes of instruction cache; frequency up to 480 MHz, MPU, 1027 DMIPS/ 2.14 DMIPS/MHz (Dhrystone 2.1), and DSP instructions
+- Memories
+  - Up to 2 Mbytes of Flash memory with read-while-write support
+  - Up to 1 Mbyte of RAM: 192 Kbytes of TCM RAM (inc. 64 Kbytes of ITCM RAM + 128 Kbytes of DTCM RAM for time critical routines), Up to 864 Kbytes of user SRAM, and 4 Kbytes of SRAM in Backup domain
+  - Dual mode Quad-SPI memory interface running up to 133 MHz
+  - Flexible external memory controller with up to 32-bit data bus: SRAM, PSRAM, SDRAM/LPSDR SDRAM, NOR/NAND Flash memory clocked up to 100 MHz in Synchronous mode
+  - CRC calculation unit
+- Security
+  - ROP, PC-ROP, active tamper
+- General-purpose input/outputs
+  - Up to 168 I/O ports with interrupt capability
+- Reset and power management
+  - 3 separate power domains which can be independently clock-gated or switched off:
+    - D1: high-performance capabilities
+    - D2: communication peripherals and timers
+    - D3: reset/clock control/power management
+  - 1.62 to 3.6 V application supply and I/Os
+  - POR, PDR, PVD and BOR
+  - Dedicated USB power embedding a 3.3 V internal regulator to supply the internal PHYs
+  - Embedded regulator (LDO) with configurable scalable output to supply the digital circuitry
+  - Voltage scaling in Run and Stop mode (6 configurable ranges)
+  - Backup regulator (~0.9 V)
+  - Voltage reference for analog peripheral/VREF+
+  - Low-power modes: Sleep, Stop, Standby and VBAT supporting battery charging
+- Low-power consumption
+  - VBAT battery operating mode with charging capability
+  - CPU and domain power state monitoring pins
+  - 2.95 μA in Standby mode (Backup SRAM OFF, RTC/LSE ON)
+- Clock management
+  - Internal oscillators: 64 MHz HSI, 48 MHz HSI48, 4 MHz CSI, 32 kHz LSI
+  - External oscillators: 4-48 MHz HSE, 32.768 kHz LSE
+  - 3× PLLs (1 for the system clock, 2 for kernel clocks) with Fractional mode
+- Interconnect matrix
 
-STM32H743 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 400Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32H743 的芯片性能。
+- 4 DMA controllers to unload the CPU
+  - 1× high-speed master direct memory access controller (MDMA) with linked list support
+  - 2× dual-port DMAs with FIFO
+  - 1× basic DMA with request router capabilities
+- Up to 35 communication peripherals
+  - 4× I2Cs FM+ interfaces (SMBus/PMBus)
+  - 4× USARTs/4x UARTs (ISO7816 interface, LIN, IrDA, up to 12.5 Mbit/s) and 1x LPUART
+  - 6× SPIs, 3 with muxed duplex I2S audio class accuracy via internal audio PLL or external clock, 1x I2S in LP domain (up to 150 MHz)
+  - 4x SAIs (serial audio interface)
+  - SPDIFRX interface
+  - SWPMI single-wire protocol master I/F
+  - MDIO Slave interface
+  - 2× SD/SDIO/MMC interfaces (up to 125 MHz)
+  - 2× CAN controllers: 2 with CAN FD, 1 with time-triggered CAN (TT-CAN)
+  - 2× USB OTG interfaces (1FS, 1HS/FS) crystal-less solution with LPM and BCD
+  - Ethernet MAC interface with DMA controller
+  - HDMI-CEC
+  - 8- to 14-bit camera interface (up to 80 MHz)
+- 11 analog peripherals
+  - 3× ADCs with 16-bit max. resolution (up to 36 channels, up to 3.6 MSPS)
+  - 1× temperature sensor
+  - 2× 12-bit D/A converters (1 MHz)
+  - 2× ultra-low-power comparators
+  - 2× operational amplifiers (7.3 MHz bandwidth)
+  - 1× digital filters for sigma delta modulator (DFSDM) with 8 channels/4 filters
+- Graphics
+  - LCD-TFT controller up to XGA resolution
+  - Chrom-ART graphical hardware Accelerator™ (DMA2D) to reduce CPU load
+  - Hardware JPEG Codec
+- Up to 22 timers and watchdogs
+  - 1× high-resolution timer (2.1 ns max resolution)
+  - 2× 32-bit timers with up to 4 IC/OC/PWM or pulse counter and quadrature (incremental) encoder input (up to 240 MHz)
+  - 2× 16-bit advanced motor control timers (up to 240 MHz)
+  - 10× 16-bit general-purpose timers (up to 240 MHz)
+  - 5× 16-bit low-power timers (up to 240 MHz)
+  - 2× watchdogs (independent and window)
+  - 1× SysTick timer
+  - RTC with sub-second accuracy and hardware calendar
+- Debug mode
+  - SWD & JTAG interfaces
+  - 4-Kbyte Embedded Trace Buffer
+- True random number generators (3 oscillators each)
+- 96-bit unique ID
 
-开发板外观如下图所示：
-
-![board](figures/board.jpg)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32H743，主频 400MHz，2MB FLASH ，1MB RAM
-- 常用接口：USB 转串口、以太网接口、arduino 接口等
-- 调试接口，标准 JTAG/SWD
-
-开发板更多详细信息请参考 ST [STM32H743](https://www.st.com/en/evaluation-tools/nucleo-h743zi.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     |  
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | |
-| UART              |     支持     |   UART3                                   |
 
 
-## 使用说明
+## Read more
 
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-144_BSP_Introduction](../docs/STM32_Nucleo-144_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-144 boards (**Must-Read**) |
+| [STM32H743ZI ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32h743zi.html#documentation) |          STM32H743ZI datasheet and other resources           |
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Maintained By
 
-#### 硬件连接
+[tyustli](https://github.com/tyustli)
 
-使用数据线连接开发板到 PC，打开电源开关。
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Translated By
 
-> 工程默认配置使用 ST_LINK 仿真器下载程序，在通过 ST_LINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+Meco Man @ RT-Thread Community
 
-#### 运行结果
-
-下载程序成功之后，系统会自动运行，LED闪烁。
-
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
-
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.1 build Mar 5 2019
- 2006 - 2019 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
-
-此 BSP 默认只开启了 GPIO 和 串口3 的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
-
-1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-- 调试串口为串口3 映射说明
-
-    PD8     ------> USART3_TX
-
-    PD9     ------> USART3_RX 
-
-## 联系人信息
-
-维护人:
-
--  [tyustli](https://github.com/tyustli)
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf
