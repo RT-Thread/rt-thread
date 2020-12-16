@@ -40,4 +40,6 @@
 int     isatty      (int fd);
 char *  ttyname     (int desc);
 
+unsigned int sleep(unsigned int seconds);
+
 #endif /* _SYS_UNISTD_H */
