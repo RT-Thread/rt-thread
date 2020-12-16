@@ -5,10 +5,9 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2020-12-16     Meco Man     add usleep
  */
-#include <stdlib.h>
 #include <rtthread.h>
-
 #include <unistd.h>
 
 unsigned int sleep(unsigned int seconds)
@@ -20,4 +19,9 @@ unsigned int sleep(unsigned int seconds)
     delta_tick = rt_tick_get() - delta_tick;
 
     return seconds - delta_tick/RT_TICK_PER_SECOND;
+}
+
+int usleep(useconds_t usec)
+{
+    
 }
