@@ -92,19 +92,19 @@ msh >
 
     a）如果需要使用内核用例，先配置rt-thread内核，如图：
 
-    ![kernel_config](figures\k_conf.jpg)
+    ![kernel_config](figures/k_conf.jpg)
 
     然后配置内核用例，如图：
 
-    ![kernel_sample](figures\k_ex.jpg)
+    ![kernel_sample](figures/k_ex.jpg)
 
     b）如果需要使用驱动用例：先使能驱动，如图：
 
-    ![driver_config](figures\d_conf.jpg)
+    ![driver_config](figures/d_conf.jpg)
 
     然后配置驱动用例，如图：
 
-    ![driver_sample](figures\d_ex.jpg)
+    ![driver_sample](figures/d_ex.jpg)
 
     
 
