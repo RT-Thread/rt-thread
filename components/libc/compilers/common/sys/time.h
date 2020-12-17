@@ -36,7 +36,7 @@ struct timeval {
 };
 #endif /* _TIMEVAL_DEFINED */
 
-#ifndef __GNUC__
+#if !defined __GNUC__ && !defined __ICCARM__
 struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
