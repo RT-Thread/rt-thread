@@ -12,6 +12,7 @@
 
 #include "board.h"
 
+void PeriphCommonClock_Config(void);
 /**
 * @brief System Clock Configuration
 * @retval None
@@ -124,6 +125,12 @@ void SystemClock_Config(void)
     /**Set the HSE division factor for RTC clock
     */
     __HAL_RCC_RTC_HSEDIV(24);
+    
+    /* Configure the peripherals common clocks */
+    if(IS_ENGINEERING_BOOT_MODE())
+    {
+        PeriphCommonClock_Config();
+    }
 }
 
 

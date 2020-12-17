@@ -84,7 +84,6 @@ void HAL_MspInit(void)
     if (IS_ENGINEERING_BOOT_MODE())
     {
         __HAL_RCC_SYSRAM_CLK_ENABLE();
-        __HAL_RCC_RETRAM_CLK_ENABLE();
     }
   
     HAL_NVIC_SetPriority(RCC_WAKEUP_IRQn, 0, 0);
