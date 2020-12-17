@@ -397,17 +397,27 @@ static void uart_isr(struct rt_serial_device *serial)
 static void dma_isr(struct rt_serial_device *serial)
 {
     struct stm32_uart *uart;
-    rt_size_t recv_total_index, recv_len;
+    rt_size_t recv_total_index;
+    rt_size_t recv_len = 0;
     rt_base_t level;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
-    if ((__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_TC) != RESET) ||
-            (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_HT) != RESET))
+    if (__HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_TC) != RESET)
     {
         level = rt_hw_interrupt_disable();
-        recv_total_index = serial->config.bufsz - __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
+        recv_total_index = 0;
+
+        recv_len = serial->config.bufsz - uart->dma_rx.last_index;
+
+        uart->dma_rx.last_index = recv_total_index;
+        rt_hw_interrupt_enable(level);
+    }
+    else if( __HAL_DMA_GET_IT_SOURCE(&(uart->dma_rx.handle), DMA_IT_HT) != RESET )
+    {
+        level = rt_hw_interrupt_disable();
+        recv_total_index = serial->config.bufsz/2;
         if (recv_total_index == 0)
         {
             recv_len = serial->config.bufsz - uart->dma_rx.last_index;
@@ -418,11 +428,10 @@ static void dma_isr(struct rt_serial_device *serial)
         }
         uart->dma_rx.last_index = recv_total_index;
         rt_hw_interrupt_enable(level);
-
-        if (recv_len)
-        {
-            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
-        }
+    }
+    if (recv_len)
+    {
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
     }
 }
 #endif
