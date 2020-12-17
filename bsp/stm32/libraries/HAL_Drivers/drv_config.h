@@ -51,6 +51,7 @@ extern "C" {
 #include "f4/qspi_config.h"
 #include "f4/usbd_config.h"
 #include "f4/adc_config.h"
+#include "f4/dac_config.h"
 #include "f4/tim_config.h"
 #include "f4/sdio_config.h"
 #include "f4/pwm_config.h"
