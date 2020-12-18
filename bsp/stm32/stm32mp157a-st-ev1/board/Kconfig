@@ -77,7 +77,7 @@ menu "Onboard Peripheral Drivers"
                 if BSP_USING_EMMC
                     config EMMC_USING_DFS
                         bool "emmc card fatfs"
-                        default n
+                        default y
                 endif
         endif
 
