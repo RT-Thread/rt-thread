@@ -263,6 +263,15 @@ struct rt_user_context *lwp_signal_restore(void)
     return ctx;
 }
 
+rt_inline int _lwp_check_ignore(int sig)
+{
+    if (sig == SIGCHLD || sig == SIGCONT)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 void sys_exit(int value);
 lwp_sighandler_t lwp_sighandler_get(int sig)
 {
@@ -281,6 +290,10 @@ lwp_sighandler_t lwp_sighandler_get(int sig)
         func = rt_thread_self()->signal_handler[sig - 1];
         if (!func)
         {
+            if (_lwp_check_ignore(sig))
+            {
+                goto out;
+            }
             lwp = (struct rt_lwp*)thread->lwp;
             main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
             if (thread == main_thread)
@@ -306,10 +319,15 @@ lwp_sighandler_t lwp_sighandler_get(int sig)
         func = lwp->signal_handler[sig - 1];
         if (!func)
         {
+            if (_lwp_check_ignore(sig))
+            {
+                goto out;
+            }
             main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
             lwp_thread_kill(main_thread, SIGKILL);
         }
     }
+out:
     rt_hw_interrupt_enable(level);
     return func;
 }
