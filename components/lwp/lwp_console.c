@@ -78,7 +78,12 @@ static void console_rx_notify(struct rt_device *dev)
         }
         else if (ch == CHAR_CTRL_C) /* ctrl-c */
         {
-            lwp_terminate(console->foreground);
+            struct rt_lwp *lwp = console->foreground;
+
+            if (lwp)
+            {
+                lwp_kill(lwp_to_pid(lwp), SIGINT);
+            }
         }
         else
         {
