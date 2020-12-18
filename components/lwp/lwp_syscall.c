@@ -1069,16 +1069,54 @@ rt_size_t sys_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt
 /* network interfaces */
 int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 {
-    struct sockaddr sa;
-    sockaddr_tolwip(addr, &sa);
+    int ret;
+    struct sockaddr ksa;
+    struct musl_sockaddr kmusladdr;
+    socklen_t uaddrlen;
+    socklen_t kaddrlen;
 
-    return accept(socket, &sa, addrlen);
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, addrlen, sizeof (socklen_t *)))
+    {
+        return -1;
+    }
+    lwp_data_get(&lwp_self()->mmu_info, &uaddrlen, addrlen, sizeof (socklen_t *));
+    if (!uaddrlen)
+    {
+        return -1;
+    }
+
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, addr, uaddrlen))
+    {
+        return -1;
+    }
+
+    kaddrlen = sizeof(struct sockaddr);
+    ret = accept(socket, &ksa, &kaddrlen);
+    if (ret >= 0)
+    {
+        sockaddr_tomusl(&ksa, &kmusladdr);
+        if (uaddrlen > sizeof(struct musl_sockaddr))
+        {
+            uaddrlen = sizeof(struct musl_sockaddr);
+        }
+        lwp_data_put(&lwp_self()->mmu_info, addr, &kmusladdr, uaddrlen);
+        lwp_data_put(&lwp_self()->mmu_info, addrlen, &uaddrlen, sizeof (socklen_t *));
+    }
+    return ret;
 }
 
 int sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)name, namelen))
+    {
+        return -1;
+    }
+    lwp_data_get(&lwp_self()->mmu_info, &kname, (void*)name, namelen);
+
+    sockaddr_tolwip(&kname, &sa);
 
     return bind(socket, &sa, namelen);
 }
@@ -1092,10 +1130,38 @@ int sys_getpeername (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 {
     int ret;
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+    socklen_t unamelen;
+    socklen_t knamelen;
 
-    ret = getpeername (socket, &sa, namelen);
-    if (name) sockaddr_tomusl(&sa, name);
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, namelen, sizeof (socklen_t *)))
+    {
+        return -1;
+    }
+    lwp_data_get(&lwp_self()->mmu_info, &unamelen, namelen, sizeof (socklen_t *));
+    if (!unamelen)
+    {
+        return -1;
+    }
+
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, name, unamelen))
+    {
+        return -1;
+    }
+
+    knamelen = sizeof(struct sockaddr);
+    ret = getpeername (socket, &sa, &knamelen);
+
+    if (ret == 0)
+    {
+        sockaddr_tomusl(&sa, &kname);
+        if (unamelen > sizeof(struct musl_sockaddr))
+        {
+            unamelen = sizeof(struct musl_sockaddr);
+        }
+        lwp_data_put(&lwp_self()->mmu_info, name, &kname, unamelen);
+        lwp_data_put(&lwp_self()->mmu_info, namelen, &unamelen, sizeof (socklen_t *));
+    }
 
     return ret;
 }
@@ -1104,11 +1170,37 @@ int sys_getsockname (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 {
     int ret;
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+    socklen_t unamelen;
+    socklen_t knamelen;
 
-    ret = getsockname (socket, &sa, namelen);
-    if (name) sockaddr_tomusl(&sa, name);
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, namelen, sizeof (socklen_t *)))
+    {
+        return -1;
+    }
+    lwp_data_get(&lwp_self()->mmu_info, &unamelen, namelen, sizeof (socklen_t *));
+    if (!unamelen)
+    {
+        return -1;
+    }
 
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, name, unamelen))
+    {
+        return -1;
+    }
+
+    knamelen = sizeof(struct sockaddr);
+    ret = getsockname (socket, &sa, &knamelen);
+    if (ret == 0)
+    {
+        sockaddr_tomusl(&sa, &kname);
+        if (unamelen > sizeof(struct musl_sockaddr))
+        {
+            unamelen = sizeof(struct musl_sockaddr);
+        }
+        lwp_data_put(&lwp_self()->mmu_info, name, &kname, unamelen);
+        lwp_data_put(&lwp_self()->mmu_info, namelen, &unamelen, sizeof (socklen_t *));
+    }
     return ret;
 }
 
@@ -1131,7 +1223,15 @@ int sys_setsockopt (int socket, int level, int optname, const void *optval, sock
 int sys_connect(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+
+    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)name, namelen))
+    {
+        return -1;
+    }
+    lwp_data_get(&lwp_self()->mmu_info, &kname, (void*)name, namelen);
+
+    sockaddr_tolwip(&kname, &sa);
 
     return connect(socket, &sa, namelen);
 }
