@@ -26,7 +26,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-
+DMA_HandleTypeDef hdma_hash_in    = {0};
+DMA_HandleTypeDef hdma_cryp_in    = {0};
+DMA_HandleTypeDef hdma_cryp_out   = {0};
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -58,8 +60,7 @@
 
 /* USER CODE END 0 */
                         
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-                    /**
+/**
   * Initializes the Global MSP.
   */
 void HAL_MspInit(void)
@@ -73,10 +74,10 @@ void HAL_MspInit(void)
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */
-#if !defined(BSP_USING_OPENAMP)
-    __HAL_RCC_SYSRAM_CLK_ENABLE();
-    __HAL_RCC_RETRAM_CLK_ENABLE();
-#endif
+    if (IS_ENGINEERING_BOOT_MODE()) 
+    {
+        __HAL_RCC_SYSRAM_CLK_ENABLE();
+    }
 
     HAL_NVIC_SetPriority(RCC_WAKEUP_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(RCC_WAKEUP_IRQn);
@@ -943,6 +944,107 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef *hI2c)
 }
 
 /**
+* @brief SD MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hsd: SD handle pointer
+* @retval None
+*/
+void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  
+  if(hsd->Instance==SDMMC1)
+  {
+  /* USER CODE BEGIN SDMMC1_MspInit 0 */
+    if (IS_ENGINEERING_BOOT_MODE())
+    {
+        /** Initializes the peripherals clock 
+        */
+        PeriphClkInit.Sdmmc12ClockSelection = RCC_SDMMC12CLKSOURCE_PLL4;
+        PeriphClkInit.PeriphClockSelection  = RCC_PERIPHCLK_SDMMC12;
+        if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+        {
+            Error_Handler();
+        }
+    }
+  /* USER CODE END SDMMC1_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_SDMMC1_CLK_ENABLE();
+  
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
+    /**SDMMC1 GPIO Configuration    
+    PC8     ------> SDMMC1_D0
+    PC9     ------> SDMMC1_D1
+    PC10     ------> SDMMC1_D2
+    PC11     ------> SDMMC1_D3
+    PC12     ------> SDMMC1_CK
+    PD2     ------> SDMMC1_CMD 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11 
+                          |GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF12_SDIO1;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_2;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+    __HAL_RCC_SDMMC1_FORCE_RESET();
+    __HAL_RCC_SDMMC1_RELEASE_RESET();
+  
+    /* SDMMC1 interrupt Init */
+    HAL_NVIC_SetPriority(SDMMC1_IRQn, 2, 0);
+    HAL_NVIC_EnableIRQ(SDMMC1_IRQn);
+  /* USER CODE BEGIN SDMMC1_MspInit 1 */
+
+  /* USER CODE END SDMMC1_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief SD MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hsd: SD handle pointer
+* @retval None
+*/
+void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
+{
+  if(hsd->Instance==SDMMC1)
+  {
+  /* USER CODE BEGIN SDMMC1_MspDeInit 0 */
+
+  /* USER CODE END SDMMC1_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_SDMMC1_CLK_DISABLE();
+  
+    /**SDMMC1 GPIO Configuration    
+    PC8     ------> SDMMC1_D0
+    PC9     ------> SDMMC1_D1
+    PC10     ------> SDMMC1_D2
+    PC11     ------> SDMMC1_D3
+    PC12     ------> SDMMC1_CK
+    PD2     ------> SDMMC1_CMD 
+    */
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11 
+                          |GPIO_PIN_12);
+
+    HAL_GPIO_DeInit(GPIOD, GPIO_PIN_2);
+
+    /* SDMMC1 interrupt DeInit */
+    HAL_NVIC_DisableIRQ(SDMMC1_IRQn);
+  /* USER CODE BEGIN SDMMC1_MspDeInit 1 */
+
+  /* USER CODE END SDMMC1_MspDeInit 1 */
+  }
+
+}
+
+/**
   * @brief  DeInitializes I2C MSP.
   * @param  hI2c : I2C handler
   * @retval None
@@ -966,6 +1068,250 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef *hI2c)
     }
 }
 
+/**
+* @brief CRC MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hcrc: CRC handle pointer
+* @retval None
+*/
+void HAL_CRC_MspInit(CRC_HandleTypeDef* hcrc)
+{
+  if(hcrc->Instance==CRC2)
+  {
+  /* USER CODE BEGIN CRC2_MspInit 0 */
+
+  /* USER CODE END CRC2_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_CRC2_CLK_ENABLE();
+  /* USER CODE BEGIN CRC2_MspInit 1 */
+
+  /* USER CODE END CRC2_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief CRC MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hcrc: CRC handle pointer
+* @retval None
+*/
+void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
+{
+  if(hcrc->Instance==CRC2)
+  {
+  /* USER CODE BEGIN CRC2_MspDeInit 0 */
+
+  /* USER CODE END CRC2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_CRC2_CLK_DISABLE();
+  /* USER CODE BEGIN CRC2_MspDeInit 1 */
+
+  /* USER CODE END CRC2_MspDeInit 1 */
+  }
+
+}
+
+/**
+* @brief RNG MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hrng: RNG handle pointer
+* @retval None
+*/
+void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  if(hrng->Instance==RNG2)
+  {
+  /* USER CODE BEGIN RNG2_MspInit 0 */
+
+  /* USER CODE END RNG2_MspInit 0 */
+  if(IS_ENGINEERING_BOOT_MODE())
+  {
+  /** Initializes the peripherals clock 
+  */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RNG2;
+    PeriphClkInit.Rng2ClockSelection = RCC_RNG2CLKSOURCE_CSI;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+  }
+
+    /* Peripheral clock enable */
+    __HAL_RCC_RNG2_CLK_ENABLE();
+  /* USER CODE BEGIN RNG2_MspInit 1 */
+
+  /* USER CODE END RNG2_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief RNG MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hrng: RNG handle pointer
+* @retval None
+*/
+void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
+{
+  if(hrng->Instance==RNG2)
+  {
+  /* USER CODE BEGIN RNG2_MspDeInit 0 */
+
+  /* USER CODE END RNG2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_RNG2_CLK_DISABLE();
+  /* USER CODE BEGIN RNG2_MspDeInit 1 */
+
+  /* USER CODE END RNG2_MspDeInit 1 */
+  }
+
+}
+
+/**
+* @brief HASH MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hhash: HASH handle pointer
+* @retval None
+*/
+void HAL_HASH_MspInit(HASH_HandleTypeDef* hhash)
+{
+  /* USER CODE BEGIN HASH2_MspInit 0 */
+  /* USER CODE END HASH2_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_HASH2_CLK_ENABLE();
+  /* USER CODE BEGIN HASH2_MspInit 1 */
+    __HAL_RCC_DMAMUX_CLK_ENABLE();
+    
+    /* Peripheral DMA init*/
+    hdma_hash_in.Instance = DMA2_Stream7;
+    hdma_hash_in.Init.Request = DMA_REQUEST_HASH2_IN;
+    hdma_hash_in.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_hash_in.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_hash_in.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_hash_in.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+    hdma_hash_in.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+    hdma_hash_in.Init.Mode = DMA_NORMAL;
+    hdma_hash_in.Init.Priority = DMA_PRIORITY_HIGH;
+    hdma_hash_in.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+    hdma_hash_in.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_HALFFULL;
+    hdma_hash_in.Init.MemBurst = DMA_MBURST_SINGLE;
+    hdma_hash_in.Init.PeriphBurst = DMA_PBURST_SINGLE;
+
+    if (HAL_DMA_DeInit(&hdma_hash_in) != HAL_OK)
+    {
+      Error_Handler();
+    }
+    if (HAL_DMA_Init(&hdma_hash_in) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(hhash,hdmain,hdma_hash_in);
+  /* USER CODE END HASH2_MspInit 1 */
+
+}
+
+/**
+* @brief HASH MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hhash: HASH handle pointer
+* @retval None
+*/
+void HAL_HASH_MspDeInit(HASH_HandleTypeDef* hhash)
+{
+  /* USER CODE BEGIN HASH2_MspDeInit 0 */
+
+  /* USER CODE END HASH2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_HASH2_CLK_DISABLE();
+  /* USER CODE BEGIN HASH2_MspDeInit 1 */
+
+  /* USER CODE END HASH2_MspDeInit 1 */
+
+}
+
+#if defined (CRYP1) || defined (CRYP2)
+void HAL_CRYP_MspInit(CRYP_HandleTypeDef* hcryp)
+{
+    if(hcryp->Instance==CRYP2)
+    {
+        /* Peripheral clock enable */
+        __HAL_RCC_CRYP2_CLK_ENABLE();
+        __HAL_RCC_DMAMUX_CLK_ENABLE();
+
+       /* Peripheral DMA init*/
+        hdma_cryp_in.Instance = DMA2_Stream6;
+        hdma_cryp_in.Init.Request = DMA_REQUEST_CRYP2_IN;
+        hdma_cryp_in.Init.Direction = DMA_MEMORY_TO_PERIPH;
+        hdma_cryp_in.Init.PeriphInc = DMA_PINC_DISABLE;
+        hdma_cryp_in.Init.MemInc = DMA_MINC_ENABLE;
+        hdma_cryp_in.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+        hdma_cryp_in.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+        hdma_cryp_in.Init.Mode = DMA_NORMAL;
+        hdma_cryp_in.Init.Priority = DMA_PRIORITY_HIGH;
+        hdma_cryp_in.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+        if (HAL_DMA_DeInit(&hdma_cryp_in) != HAL_OK)
+        {
+            Error_Handler();
+        }
+        if (HAL_DMA_Init(&hdma_cryp_in) != HAL_OK)
+        {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(hcryp,hdmain,hdma_cryp_in);
+
+        hdma_cryp_out.Instance = DMA2_Stream5;
+        hdma_cryp_out.Init.Request = DMA_REQUEST_CRYP2_OUT;
+        hdma_cryp_out.Init.Direction = DMA_PERIPH_TO_MEMORY;
+        hdma_cryp_out.Init.PeriphInc = DMA_PINC_DISABLE;
+        hdma_cryp_out.Init.MemInc = DMA_MINC_ENABLE;
+        hdma_cryp_out.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+        hdma_cryp_out.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+        hdma_cryp_out.Init.Mode = DMA_NORMAL;
+        hdma_cryp_out.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+        hdma_cryp_out.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+        if (HAL_DMA_DeInit(&hdma_cryp_out) != HAL_OK)
+        {
+            Error_Handler();
+        }
+        if (HAL_DMA_Init(&hdma_cryp_out) != HAL_OK)
+        {
+            Error_Handler();
+        }
+
+        __HAL_LINKDMA(hcryp,hdmaout,hdma_cryp_out);
+
+      /* USER CODE BEGIN CRYP_MspInit 1 */
+
+      /* USER CODE END CRYP_MspInit 1 */
+    }
+}
+
+void HAL_CRYP_MspDeInit(CRYP_HandleTypeDef* hcryp)
+{
+
+  if(hcryp->Instance==CRYP2)
+  {
+  /* USER CODE BEGIN CRYP_MspDeInit 0 */
+
+  /* USER CODE END CRYP_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_CRYP2_CLK_DISABLE();
+
+    /* Peripheral DMA DeInit*/
+    HAL_DMA_DeInit(hcryp->hdmain);
+    HAL_DMA_DeInit(hcryp->hdmaout);
+  }
+  /* USER CODE BEGIN CRYP_MspDeInit 1 */
+
+  /* USER CODE END CRYP_MspDeInit 1 */
+
+}
+#endif
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None

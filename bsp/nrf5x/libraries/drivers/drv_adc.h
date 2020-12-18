@@ -16,6 +16,8 @@
 #include <hal/nrf_saadc.h>
 #include <drivers/include/nrfx_saadc.h>
 
+#define ADC_NAME "adc"
+
 /* 
     previous definition in application
     

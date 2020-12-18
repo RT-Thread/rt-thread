@@ -331,7 +331,6 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     _rt_timer_remove(timer);
     /* change status of timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-    rt_hw_interrupt_enable(level);
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(timer->parent)));
 
@@ -341,9 +340,6 @@ rt_err_t rt_timer_start(rt_timer_t timer)
      */
     RT_ASSERT(timer->init_tick < RT_TICK_MAX / 2);
     timer->timeout_tick = rt_tick_get() + timer->init_tick;
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
 
 #ifdef RT_USING_TIMER_SOFT
     if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
@@ -579,7 +575,7 @@ void rt_timer_check(void)
             {
                 continue;
             }
-
+            rt_list_remove(&(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
@@ -667,7 +663,7 @@ void rt_soft_timer_check(void)
             {
                 continue;
             }
-
+            rt_list_remove(&(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
             if ((t->parent.flag & RT_TIMER_FLAG_PERIODIC) &&
                 (t->parent.flag & RT_TIMER_FLAG_ACTIVATED))
             {
