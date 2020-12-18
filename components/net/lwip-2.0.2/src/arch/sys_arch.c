@@ -508,7 +508,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout)
             t = timeout / (1000/RT_TICK_PER_SECOND);
     }
 
-    ret = rt_mb_recv(*mbox, (rt_ubase_t *)msg, t);
+    ret = rt_mb_recv_interruptibale(*mbox, (rt_ubase_t *)msg, t);
     if(ret != RT_EOK)
     {
         return SYS_ARCH_TIMEOUT;
