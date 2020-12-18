@@ -385,17 +385,33 @@ size_t lwp_put_to_user(void *dst, void *src, size_t size)
     return lwp_data_put(m_info, dst, src, size);
 }
 
-int lwp_data_access_ok(rt_mmu_info *mmu_info, void *addr, size_t size)
+int lwp_user_access_ok(void *addr, size_t size)
 {
     void *addr_start, *addr_end, *next_page;
     void *tmp_addr;
+    struct rt_lwp *lwp = lwp_self();
+    rt_mmu_info *mmu_info = RT_NULL;
 
+    if (!lwp)
+    {
+        return 0;
+    }
     if (!size || !addr)
     {
         return 0;
     }
     addr_start = addr;
     addr_end = addr + size;
+    if (addr_start >= (void*)KERNEL_VADDR_START)
+    {
+        return 0;
+    }
+    if (addr_start > (void *)KERNEL_VADDR_START)
+    {
+        return 0;
+    }
+
+    mmu_info = &lwp->mmu_info;
     next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
