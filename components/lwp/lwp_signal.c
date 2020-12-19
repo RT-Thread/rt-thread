@@ -278,7 +278,6 @@ lwp_sighandler_t lwp_sighandler_get(int sig)
     lwp_sighandler_t func = RT_NULL;
     struct rt_lwp *lwp;
     rt_thread_t thread;
-    rt_thread_t main_thread;
     rt_base_t level;
 
     if (sig == 0 || sig > _LWP_NSIG)
@@ -294,22 +293,6 @@ lwp_sighandler_t lwp_sighandler_get(int sig)
             {
                 goto out;
             }
-            lwp = (struct rt_lwp*)thread->lwp;
-            main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-            if (thread == main_thread)
-            {
-                rt_thread_t sub_thread;
-                rt_list_t *s_list = lwp->t_grp.next;
-                rt_list_t *m_list = lwp->t_grp.prev;
-
-                while (s_list != m_list)
-                {
-                    sub_thread = rt_list_entry(s_list, struct rt_thread, sibling);
-                    /* kill all sub threads */
-                    s_list = sub_thread->sibling.next;
-                    lwp_thread_kill(sub_thread, SIGKILL);
-                }
-            }
             sys_exit(0);
         }
     }
@@ -323,8 +306,8 @@ lwp_sighandler_t lwp_sighandler_get(int sig)
             {
                 goto out;
             }
-            main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-            lwp_thread_kill(main_thread, SIGKILL);
+            lwp_terminate(lwp);
+            sys_exit(0);
         }
     }
 out:
