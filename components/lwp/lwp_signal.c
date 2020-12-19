@@ -358,7 +358,7 @@ int lwp_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
     }
     if (oset)
     {
-        oset = rt_memcpy(oset, &lwp->signal_mask, sizeof(lwp_sigset_t));
+        rt_memcpy(oset, &lwp->signal_mask, sizeof(lwp_sigset_t));
     }
     rt_memcpy(&lwp->signal_mask, sigset, sizeof(lwp_sigset_t));
     lwp_sigdelset(&lwp->signal_mask, SIGKILL);
@@ -380,7 +380,7 @@ int lwp_thread_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
 
     if (oset)
     {
-        oset = rt_memcpy(oset, &thread->signal_mask, sizeof(lwp_sigset_t));
+        rt_memcpy(oset, &thread->signal_mask, sizeof(lwp_sigset_t));
     }
     rt_memcpy(&thread->signal_mask, sigset, sizeof(lwp_sigset_t));
     lwp_sigdelset(&thread->signal_mask, SIGKILL);

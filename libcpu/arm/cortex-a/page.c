@@ -62,7 +62,7 @@ static struct page * addr_to_page(void *addr)
     {
         return 0;
     }
-    off = addr - page_addr;
+    off = (size_t)((char*)addr - (char*)page_addr);
     off >>= ARCH_PAGE_SHIFT;
     if (off >= page_nr)
     {
@@ -77,7 +77,7 @@ static void* page_to_addr(struct page* p)
     {
         return 0;
     }
-    return page_addr + ((p - page_start) << ARCH_PAGE_SHIFT);
+    return (void*)((char*)page_addr + ((p - page_start) << ARCH_PAGE_SHIFT));
 }
 
 static inline struct page *buddy_get(struct page *p, uint32_t size_bits)

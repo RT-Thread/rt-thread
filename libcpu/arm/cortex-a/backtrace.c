@@ -361,11 +361,11 @@ error:
 #ifdef RT_BACKTRACE_FUNCTION_NAME
 static char *unwind_get_function_name(void *address)
 {
-    uint32_t flag_word = *(uint32_t *)(address - 4);
+    uint32_t flag_word = *(uint32_t *)((char*)address - 4);
 
     if ((flag_word & 0xff000000) == 0xff000000)
     {
-        return (char *)(address - 4 - (flag_word & 0x00ffffff));
+        return (char *)((char*)address - 4 - (flag_word & 0x00ffffff));
     }
     return RT_NULL;
 }
@@ -384,7 +384,7 @@ int unwind_frame(struct stackframe *frame, const struct unwind_idx **origin_idx,
     /* store the highest address on the stack to avoid crossing it*/
     low = frame->sp;
     rt_c_thread = rt_thread_self();
-    ctrl.sp_high = (unsigned long)(rt_c_thread->stack_addr + rt_c_thread->stack_size);
+    ctrl.sp_high = (unsigned long)((char*)rt_c_thread->stack_addr + rt_c_thread->stack_size);
 
     LOG_D("%s(pc = %08lx lr = %08lx sp = %08lx)", __func__,
             frame->pc, frame->lr, frame->sp);

@@ -524,7 +524,7 @@ void RTOS_SetErrno(const int err)
 }
 int RTOS_GetErrno()
 {
-    int err;
+    int err = 0;
 #if 0
     rt_base_t level;
     level = rt_hw_interrupt_disable();

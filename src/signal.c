@@ -201,7 +201,7 @@ void *rt_signal_check(void* context)
 
             rt_hw_interrupt_enable(level);
             sig_context = rt_hw_stack_init((void *)_signal_entry, context,
-                    (void *)(context - 32), RT_NULL);
+                    (void*)((char*)context - 32), RT_NULL);
             return sig_context;
         }
     }

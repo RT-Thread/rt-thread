@@ -39,7 +39,7 @@ void lwp_mmu_switch(struct rt_thread *thread)
     if (thread->lwp)
     {
         l = (struct rt_lwp*)thread->lwp;
-        new_mmu_table = (void*)l->mmu_info.vtable + l->mmu_info.pv_off;
+        new_mmu_table = (void*)((char*)l->mmu_info.vtable + l->mmu_info.pv_off);
 #ifdef LWP_DEBUG
         {
             int i;
@@ -93,7 +93,7 @@ static void free_area(struct rt_lwp *lwp, void *addr, size_t size, int auto_free
     void *va, *pa;
     int i;
 
-    for (va = addr, i = 0; i < size; va += ARCH_PAGE_SIZE, i += ARCH_PAGE_SIZE)
+    for (va = addr, i = 0; i < size; va = (void*)((char*)va + ARCH_PAGE_SIZE), i += ARCH_PAGE_SIZE)
     {
         pa = rt_hw_mmu_v2p(&lwp->mmu_info, va);
         if (pa)
@@ -101,7 +101,7 @@ static void free_area(struct rt_lwp *lwp, void *addr, size_t size, int auto_free
             rt_hw_mmu_unmap(&lwp->mmu_info, va, ARCH_PAGE_SIZE);
             if (auto_free)
             {
-                rt_pages_free(pa - PV_OFFSET, 0);
+                rt_pages_free((void*)((char*)pa - PV_OFFSET), 0);
             }
         }
     }
@@ -205,7 +205,7 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
     rt_hw_interrupt_enable(level);
     if (ret)
     {
-        ret += offset;
+        ret = (void*)((char*)ret + offset);
     }
     return ret;
 }
@@ -263,7 +263,7 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t ma
     rt_hw_interrupt_enable(level);
     if (ret)
     {
-        ret += offset;
+        ret = (void*)((char*)ret + offset);
     }
     return ret;
 }
@@ -346,7 +346,7 @@ size_t lwp_get_from_user(void *dst, void *src, size_t size)
     {
         return 0;
     }
-    if (src + size > (void*)KERNEL_VADDR_START)
+    if ((void*)((char*)src + size) > (void*)KERNEL_VADDR_START)
     {
         return 0;
     }
@@ -371,7 +371,7 @@ size_t lwp_put_to_user(void *dst, void *src, size_t size)
     {
         return 0;
     }
-    if (dst + size > (void*)KERNEL_VADDR_START)
+    if ((void*)((char*)dst + size) > (void*)KERNEL_VADDR_START)
     {
         return 0;
     }
@@ -401,7 +401,7 @@ int lwp_user_access_ok(void *addr, size_t size)
         return 0;
     }
     addr_start = addr;
-    addr_end = addr + size;
+    addr_end = (void*)((char*)addr + size);
     if (addr_start >= (void*)KERNEL_VADDR_START)
     {
         return 0;
@@ -415,7 +415,7 @@ int lwp_user_access_ok(void *addr, size_t size)
     next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
-        size_t len = next_page - addr_start;
+        size_t len = (char*)next_page - (char*)addr_start;
 
         if (size < len)
         {
@@ -426,9 +426,9 @@ int lwp_user_access_ok(void *addr, size_t size)
         {
             return 0;
         }
-        addr_start += len;
+        addr_start = (void*)((char*)addr_start + len);
         size -= len;
-        next_page += ARCH_PAGE_SIZE;
+        next_page = (void*)((char*)next_page + ARCH_PAGE_SIZE);
     } while (addr_start < addr_end);
     return 1;
 }
@@ -446,11 +446,11 @@ size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
     }
     tmp_dst = dst;
     addr_start = src;
-    addr_end = src + size;
+    addr_end = (void*)((char*)src + size);
     next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
-        size_t len = next_page - addr_start;
+        size_t len = (char*)next_page - (char*)addr_start;
 
         if (size < len)
         {
@@ -461,12 +461,12 @@ size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
         {
             break;
         }
-        tmp_src = rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET;
+        tmp_src = (void*)((char*)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
         rt_memcpy(tmp_dst, tmp_src, len);
-        tmp_dst += len;
-        addr_start += len;
+        tmp_dst = (void*)((char*)tmp_dst + len);
+        addr_start = (void*)((char*)addr_start + len);
         size -= len;
-        next_page += ARCH_PAGE_SIZE;
+        next_page = (void*)((char*)next_page + ARCH_PAGE_SIZE);
         copy_len += len;
     } while (addr_start < addr_end);
     return copy_len;
@@ -485,11 +485,11 @@ size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
     }
     tmp_src = src;
     addr_start = dst;
-    addr_end = dst + size;
+    addr_end = (void*)((char*)dst + size);
     next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
-        size_t len = next_page - addr_start;
+        size_t len = (char*)next_page - (char*)addr_start;
 
         if (size < len)
         {
@@ -500,12 +500,12 @@ size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
         {
             break;
         }
-        tmp_dst = rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET;
+        tmp_dst = (void*)((char*)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
         rt_memcpy(tmp_dst, tmp_src, len);
-        tmp_src += len;
-        addr_start += len;
+        tmp_src = (void*)((char*)tmp_src + len);
+        addr_start = (void*)((char*)addr_start + len);
         size -= len;
-        next_page += ARCH_PAGE_SIZE;
+        next_page = (void*)((char*)next_page + ARCH_PAGE_SIZE);
         copy_len += len;
     } while (addr_start < addr_end);
     return copy_len;
@@ -516,7 +516,7 @@ void lwp_data_cache_flush(rt_mmu_info *mmu_info, void *vaddr, size_t size)
     void *paddr;
 
     paddr = rt_hw_mmu_v2p(mmu_info, vaddr);
-    paddr -= PV_OFFSET;
+    paddr = (void*)((char*)paddr - PV_OFFSET);
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, paddr, size);
 }
