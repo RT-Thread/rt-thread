@@ -133,8 +133,29 @@ typedef enum
 #define TMR2CNT           SFR_RW (SFR0_BASE + 0x3c*4)
 #define TMR2PR            SFR_RW (SFR0_BASE + 0x3d*4)
 
+//------------------------- SFR Group1 ---------------------------------------//
+#define AUBUFDATA       SFR_RW (SFR1_BASE + 0x01*4)
+#define AUBUFCON        SFR_RW (SFR1_BASE + 0x02*4)
+#define AUBUFSTARTADDR  SFR_RW (SFR1_BASE + 0x03*4)
+#define AUBUFSIZE       SFR_RW (SFR1_BASE + 0x04*4)
+#define AUBUFFIFOCNT    SFR_RW (SFR1_BASE + 0x05*4)
+#define AUBUF1DATA      SFR_RW (SFR1_BASE + 0x06*4)
+#define AUBUF1CON       SFR_RW (SFR1_BASE + 0x07*4)
+#define AUBUF1STARTADDR SFR_RW (SFR1_BASE + 0x08*4)
+#define AUBUF1SIZE      SFR_RW (SFR1_BASE + 0x09*4)
+#define AUBUF1FIFOCNT   SFR_RW (SFR1_BASE + 0x0a*4)
+
 #define DACDIGCON0      SFR_RW (SFR1_BASE + 0x10*4)
 #define DACVOLCON       SFR_RW (SFR1_BASE + 0x11*4)
+#define AU0LMIXCOEF     SFR_RW (SFR1_BASE + 0x12*4)
+#define AU0RMIXCOEF     SFR_RW (SFR1_BASE + 0x13*4)
+#define AU1LMIXCOEF     SFR_RW (SFR1_BASE + 0x14*4)
+#define AU1RMIXCOEF     SFR_RW (SFR1_BASE + 0x15*4)
+
+#define AUANGCON0       SFR_RW (SFR1_BASE + 0x3c*4)
+#define AUANGCON1       SFR_RW (SFR1_BASE + 0x3d*4)
+#define AUANGCON2       SFR_RW (SFR1_BASE + 0x3e*4)
+#define AUANGCON3       SFR_RW (SFR1_BASE + 0x3f*4)
 
 #define USBCON0         SFR_RW (SFR3_BASE + 0x00*4)
 #define USBCON1         SFR_RW (SFR3_BASE + 0x01*4)
@@ -148,6 +169,7 @@ typedef enum
 #define PLL1DIV         SFR_RW (SFR3_BASE + 0x24*4)
 #define PLL0CON         SFR_RW (SFR3_BASE + 0x26*4)
 #define PLL1CON         SFR_RW (SFR3_BASE + 0x27*4)
+#define PLL2CON         SFR_RW (SFR3_BASE + 0x28*4)
 #define XO26MCON        SFR_RW (SFR3_BASE + 0x29*4)
 #define CLKCON2         SFR_RW (SFR3_BASE + 0x2a*4)
 #define CLKGAT0         SFR_RW (SFR3_BASE + 0x2c*4)
@@ -174,6 +196,7 @@ typedef enum
 #define PICPR           SFR_RW (SFR5_BASE + 0x12*4)
 #define PICADR          SFR_RW (SFR5_BASE + 0x13*4)
 #define PICPND          SFR_RW (SFR5_BASE + 0x14*4)
+#define EPICCON         SFR_RW (SFR5_BASE + 0x1e*4)
 #define EPC             SFR_RW (SFR5_BASE + 0x1f*4)
 
 #define SADCDAT0        SFR_RO (SFR5_BASE + 0x20*4)
