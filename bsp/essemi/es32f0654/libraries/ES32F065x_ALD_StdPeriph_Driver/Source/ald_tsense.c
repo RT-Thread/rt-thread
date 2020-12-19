@@ -61,26 +61,39 @@ tsense_cbk __tsense_cbk;
 
 /**
   * @brief  Initializes the TSENSE according to the specified
-  *         parameters in the tsense_init_t.
-  * @param  init: Pointer to a tsense_init_t structure that contains
-  *         the configuration information.
   * @retval None
   */
-void ald_tsense_init(tsense_init_t *init)
+void ald_tsense_init(void)
 {
-    assert_param(IS_TSENSE_UPDATE_CYCLE(init->cycle));
-    assert_param(IS_TSENSE_OUTPUT_MODE(init->mode));
+	uint16_t tempt, temptinv;
+	uint32_t tscic, tscicinv;
 
-    TSENSE_UNLOCK();
-    TSENSE->CR = 0;
+	TSENSE_UNLOCK();
+	TSENSE->CR = 0;
 
-    MODIFY_REG(TSENSE->CR, TSENSE_CR_TSU_MSK, init->cycle << TSENSE_CR_TSU_POSS);
-    MODIFY_REG(TSENSE->CR, TSENSE_CR_TOM_MSK, init->mode << TSENSE_CR_TOM_POSS);
-    MODIFY_REG(TSENSE->CR, TSENSE_CR_CTN_MSK, init->ctn << TSENSE_CR_CTN_POS);
-    MODIFY_REG(TSENSE->PSR, TSENSE_PSR_PRS_MSK, init->psc << TSENSE_PSR_PRS_POSS);
-    TSENSE_LOCK();
+	MODIFY_REG(TSENSE->CR, TSENSE_CR_CTN_MSK, 0x1 << TSENSE_CR_CTN_POS);
+	MODIFY_REG(TSENSE->CR, TSENSE_CR_TSU_MSK, 0x4 << TSENSE_CR_TSU_POSS);
+	MODIFY_REG(TSENSE->CR, TSENSE_CR_TOM_MSK, 0x3 << TSENSE_CR_TOM_POSS);
+	MODIFY_REG(TSENSE->PSR, TSENSE_PSR_PRS_MSK, 0x1 << TSENSE_PSR_PRS_POSS);
 
-    return;
+	TSENSE->HTGR = 0x88F18;
+	TSENSE->LTGR = 0x85C39;
+	tempt        = *(volatile uint16_t *)0x40348;
+	temptinv     = *(volatile uint16_t *)0x4034A;
+	tscic        = *(volatile uint32_t *)0x40350;
+	tscicinv     = *(volatile uint32_t *)0x40358;
+
+	if ((tempt == (uint16_t)(~temptinv)) && (tscic == (~tscicinv))) {
+		TSENSE->TBDR    = tempt;
+		TSENSE->TCALBDR = (tscic & 0x1FFFFFF) >> 6;
+	}
+	else {
+		TSENSE->TBDR    = 0x1E00;
+		TSENSE->TCALBDR = 0x1FE70;
+	}
+
+	TSENSE_LOCK();
+	return;
 }
 
 /**
@@ -90,26 +103,23 @@ void ald_tsense_init(tsense_init_t *init)
   */
 void ald_tsense_source_select(tsense_source_sel_t sel)
 {
-    assert_param(IS_TSENSE_SOURCE_SEL(sel));
+	assert_param(IS_TSENSE_SOURCE_SEL(sel));
 
-    BKPC_UNLOCK();
-    MODIFY_REG(BKPC->PCCR, BKPC_PCCR_TSENSECS_MSK, sel << BKPC_PCCR_TSENSECS_POSS);
+	BKPC_UNLOCK();
+	MODIFY_REG(BKPC->PCCR, BKPC_PCCR_TSENSECS_MSK, sel << BKPC_PCCR_TSENSECS_POSS);
 
-    if (sel == TSENSE_SOURCE_LOSC)
-    {
-        SET_BIT(BKPC->CR, BKPC_CR_LOSCEN_MSK);
-    }
-    else if (sel == TSENSE_SOURCE_LRC)
-    {
-        SET_BIT(BKPC->CR, BKPC_CR_LRCEN_MSK);
-    }
-    else
-    {
-        ; /* do nothing */
-    }
+	if (sel == TSENSE_SOURCE_LOSC) {
+		SET_BIT(BKPC->CR, BKPC_CR_LOSCEN_MSK);
+	}
+	else if (sel == TSENSE_SOURCE_LRC) {
+		SET_BIT(BKPC->CR, BKPC_CR_LRCEN_MSK);
+	}
+	else {
+		; /* do nothing */
+	}
 
-    BKPC_LOCK();
-    return;
+	BKPC_LOCK();
+	return;
 }
 /**
   * @}
@@ -140,27 +150,40 @@ void ald_tsense_source_select(tsense_source_sel_t sel)
   */
 ald_status_t ald_tsense_get_value(uint16_t *tsense)
 {
-    uint32_t tmp = 0;
+	uint32_t tmp = 0;
 
-    TSENSE_UNLOCK();
-    SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
-    SET_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
-    TSENSE_LOCK();
+	TSENSE_UNLOCK();
+	SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
+	SET_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+	TSENSE_LOCK();
 
-    while ((!(READ_BIT(TSENSE->IF, TSENSE_IF_TSENSE_MSK))) && (tmp++ < 1000000));
+	while ((!(READ_BIT(TSENSE->IF, TSENSE_IF_TSENSE_MSK))) && (tmp++ < 1000000));
 
-    if (tmp >= 1000000)
-        return TIMEOUT;
+	if (tmp >= 1000000) {
+		TSENSE_UNLOCK();
+		CLEAR_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+		TSENSE_LOCK();
+		return TIMEOUT;
+	}
 
-    TSENSE_UNLOCK();
-    SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
-    TSENSE_LOCK();
+	TSENSE_UNLOCK();
+	SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
+	TSENSE_LOCK();
 
-    if (READ_BIT(TSENSE->DR, TSENSE_DR_ERR_MSK))
-        return ERROR;
+	if (READ_BIT(TSENSE->DR, TSENSE_DR_ERR_MSK)) {
+		TSENSE_UNLOCK();
+		CLEAR_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+		TSENSE_LOCK();
+		return ERROR;
+	}
 
-    *tsense = READ_BITS(TSENSE->DR, TSENSE_DR_DATA_MSK, TSENSE_DR_DATA_POSS);
-    return OK;
+	*tsense = READ_BITS(TSENSE->DR, TSENSE_DR_DATA_MSK, TSENSE_DR_DATA_POSS);
+
+	TSENSE_UNLOCK();
+	CLEAR_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+	TSENSE_LOCK();
+
+	return OK;
 }
 
 /**
@@ -170,15 +193,15 @@ ald_status_t ald_tsense_get_value(uint16_t *tsense)
   */
 void ald_tsense_get_value_by_it(tsense_cbk cbk)
 {
-    __tsense_cbk = cbk;
+	__tsense_cbk = cbk;
 
-    TSENSE_UNLOCK();
-    SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
-    SET_BIT(TSENSE->IE, TSENSE_IE_TSENSE_MSK);
-    SET_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
-    TSENSE_LOCK();
+	TSENSE_UNLOCK();
+	SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
+	SET_BIT(TSENSE->IE, TSENSE_IE_TSENSE_MSK);
+	SET_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+	TSENSE_LOCK();
 
-    return;
+	return;
 }
 
 /**
@@ -187,25 +210,32 @@ void ald_tsense_get_value_by_it(tsense_cbk cbk)
   */
 void ald_tsense_irq_handler(void)
 {
-    TSENSE_UNLOCK();
-    SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
-    TSENSE_LOCK();
+	TSENSE_UNLOCK();
+	SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
+	TSENSE_LOCK();
 
-    if (__tsense_cbk == NULL)
-        return;
+	if (__tsense_cbk == NULL) {
+		TSENSE_UNLOCK();
+		CLEAR_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+		TSENSE_LOCK();
+		return;
+	}
 
-    if (READ_BIT(TSENSE->DR, TSENSE_DR_ERR_MSK))
-    {
-        __tsense_cbk(0, ERROR);
-        return;
-    }
+	if (READ_BIT(TSENSE->DR, TSENSE_DR_ERR_MSK)) {
+		TSENSE_UNLOCK();
+		CLEAR_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+		TSENSE_LOCK();
+		__tsense_cbk(0, ERROR);
+		return;
+	}
 
-    __tsense_cbk(READ_BITS(TSENSE->DR, TSENSE_DR_DATA_MSK, TSENSE_DR_DATA_POSS), OK);
+	__tsense_cbk(READ_BITS(TSENSE->DR, TSENSE_DR_DATA_MSK, TSENSE_DR_DATA_POSS), OK);
 
-    TSENSE_UNLOCK();
-    SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
-    TSENSE_LOCK();
-    return;
+	TSENSE_UNLOCK();
+	SET_BIT(TSENSE->IFCR, TSENSE_IFCR_TSENSE_MSK);
+	CLEAR_BIT(TSENSE->CR, TSENSE_CR_EN_MSK);
+	TSENSE_LOCK();
+	return;
 }
 /**
   * @}

@@ -36,54 +36,36 @@
 /** @defgroup SYSCFG_Public_Macros SYSCFG Public Macros
   * @{
   */
-#define SYSCFG_LOCK()  		WRITE_REG(SYSCFG->PROT, 0x0)
-#define SYSCFG_UNLOCK()		WRITE_REG(SYSCFG->PROT, 0x55AA6996)
+#define SYSCFG_LOCK()  		WRITE_REG(SYSCFG->PROT, 0x0U)
+#define SYSCFG_UNLOCK()		WRITE_REG(SYSCFG->PROT, 0x55AA6996U)
 #define GET_SYSCFG_LOCK()	READ_BIT(SYSCFG->PROT, SYSCFG_PROT_PROT_MSK)
 
-#define BOOT_FROM_BOOT_ROM()					\
-do {								\
-	SYSCFG_UNLOCK();					\
-	SET_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BRRMPEN_MSK);	\
-	CLEAR_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BFRMPEN_MSK);	\
-	SYSCFG_LOCK();						\
-} while (0)
-
-#define BOOT_FROM_BOOT_FLASH()					\
-do {								\
-	SYSCFG_UNLOCK();					\
-	CLEAR_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BRRMPEN_MSK);	\
-	SET_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BFRMPEN_MSK);	\
-	SYSCFG_LOCK();						\
-} while (0)
-
-#define BOOT_FROM_FLASH()					\
-do {								\
-	SYSCFG_UNLOCK();					\
-	CLEAR_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BRRMPEN_MSK);	\
-	CLEAR_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BFRMPEN_MSK);	\
-	SYSCFG_LOCK();						\
-} while (0)
+#define SYSCFG_BOOTFLASH_MAPPING_ENABLE()	SET_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BFRMPEN_MSK)
+#define SYSCFG_BOOTFLASH_MAPPING_DISABLE()	CLEAR_BIT(SYSCFG->MEMRMP, SYSCFG_MEMRMP_BFRMPEN_MSK)
 /**
   * @}
   */
 
-
 /** @defgroup SYSCFG_Public_Functions SYSCFG Public Functions
   * @{
   */
+/**
+  * @brief  Set the offset of the interrup vector map
+  * @param  offset: Offset of the interrup vector map
+  * @param  status: ENABLE/DISABLE
+  * @retval None
+  */
 __STATIC_INLINE__ void ald_vtor_config(uint32_t offset, type_func_t status)
 {
-	SCB->VTOR = status ? (offset & ~0x3F) : 0;
+	SCB->VTOR = status ? (offset & ~0x3FU) : 0;
 	return;
 }
 /**
   * @}
   */
-
 /**
   * @}
   */
-
 /**
   * @}
   */

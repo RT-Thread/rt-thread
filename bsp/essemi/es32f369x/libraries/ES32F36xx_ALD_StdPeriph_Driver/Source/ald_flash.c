@@ -167,7 +167,7 @@ end:
   */
 __RAMFUNC ald_status_t flash_word_program(uint32_t addr, uint32_t *data, uint32_t len, uint32_t fifo)
 {
-	uint16_t i;
+	uint16_t i = 0;
 	uint16_t prog_len;
 	uint32_t *p_data = data;
 	uint16_t op_cmd = OP_CMD;

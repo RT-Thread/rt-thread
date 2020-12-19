@@ -73,7 +73,7 @@
 /** @defgroup DMA_Private_Variables DMA Private Variables
   * @{
   */
-dma_descriptor_t dma0_ctrl_base[28] __attribute__((aligned(512)));
+dma_descriptor_t dma0_ctrl_base[28] __attribute__ ((aligned(512)));
 dma_call_back_t dma0_cbk[6];
 /**
   * @}
@@ -93,74 +93,74 @@ dma_call_back_t dma0_cbk[6];
   */
 static void dma_config_base(DMA_TypeDef *DMAx, dma_cycle_ctrl_t mode, dma_config_t *p)
 {
-    dma_descriptor_t *descr;
+	dma_descriptor_t *descr;
 
-    assert_param(IS_DMA(DMAx));
-    assert_param(IS_CYCLECTRL_TYPE(mode));
-    assert_param(p->src != NULL);
-    assert_param(p->dst != NULL);
-    assert_param(IS_DMA_DATA_SIZE(p->size));
-    assert_param(IS_DMA_DATASIZE_TYPE(p->data_width));
-    assert_param(IS_DMA_DATAINC_TYPE(p->src_inc));
-    assert_param(IS_DMA_DATAINC_TYPE(p->dst_inc));
-    assert_param(IS_DMA_ARBITERCONFIG_TYPE(p->R_power));
-    assert_param(IS_FUNC_STATE(p->primary));
-    assert_param(IS_FUNC_STATE(p->burst));
-    assert_param(IS_FUNC_STATE(p->high_prio));
-    assert_param(IS_FUNC_STATE(p->iterrupt));
-    assert_param(IS_DMA_MSEL_TYPE(p->msel));
-    assert_param(IS_DMA_MSIGSEL_TYPE(p->msigsel));
-    assert_param(IS_DMA_CHANNEL(p->channel));
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_CYCLECTRL_TYPE(mode));
+	assert_param(p->src != NULL);
+	assert_param(p->dst != NULL);
+	assert_param(IS_DMA_DATA_SIZE(p->size));
+	assert_param(IS_DMA_DATASIZE_TYPE(p->data_width));
+	assert_param(IS_DMA_DATAINC_TYPE(p->src_inc));
+	assert_param(IS_DMA_DATAINC_TYPE(p->dst_inc));
+	assert_param(IS_DMA_ARBITERCONFIG_TYPE(p->R_power));
+	assert_param(IS_FUNC_STATE(p->primary));
+	assert_param(IS_FUNC_STATE(p->burst));
+	assert_param(IS_FUNC_STATE(p->high_prio));
+	assert_param(IS_FUNC_STATE(p->interrupt));
+	assert_param(IS_DMA_MSEL_TYPE(p->msel));
+	assert_param(IS_DMA_MSIGSEL_TYPE(p->msigsel));
+	assert_param(IS_DMA_CHANNEL(p->channel));
 
-    if (p->primary)
-        descr = (dma_descriptor_t *)(DMAx->CTRLBASE) + p->channel;
-    else
-        descr = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + p->channel;
+	if (p->primary)
+		descr = (dma_descriptor_t *)(DMAx->CTRLBASE) + p->channel;
+	else
+		descr = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + p->channel;
 
-    if (p->src_inc == DMA_DATA_INC_NONE)
-        descr->src = p->src;
-    else
-        descr->src = (void *)((uint32_t)p->src + ((p->size - 1) << p->data_width));
+	if (p->src_inc == DMA_DATA_INC_NONE)
+		descr->src = p->src;
+	else
+		descr->src = (void *)((uint32_t)p->src + ((p->size - 1) << (uint32_t)p->src_inc));
 
-    if (p->dst_inc == DMA_DATA_INC_NONE)
-        descr->dst = p->dst;
-    else
-        descr->dst = (void *)((uint32_t)p->dst + ((p->size - 1) << p->data_width));
+	if (p->dst_inc == DMA_DATA_INC_NONE)
+		descr->dst = p->dst;
+	else
+		descr->dst = (void *)((uint32_t)p->dst + ((p->size - 1) << (uint32_t)p->dst_inc));
 
-    descr->ctrl.cycle_ctrl    = mode;
-    descr->ctrl.next_useburst = 0;
-    descr->ctrl.n_minus_1     = p->size - 1;
-    descr->ctrl.R_power       = p->R_power;
-    descr->ctrl.src_prot_ctrl = 0,
-                descr->ctrl.dst_prot_ctrl = 0,
-                            descr->ctrl.src_size      = p->data_width;
-    descr->ctrl.src_inc       = p->src_inc;
-    descr->ctrl.dst_size      = p->data_width;
-    descr->ctrl.dst_inc       = p->dst_inc;
+	descr->ctrl.cycle_ctrl    = mode;
+	descr->ctrl.next_useburst = 0;
+	descr->ctrl.n_minus_1     = p->size - 1;
+	descr->ctrl.R_power       = p->R_power;
+	descr->ctrl.src_prot_ctrl = 0,
+	descr->ctrl.dst_prot_ctrl = 0,
+	descr->ctrl.src_size      = p->data_width;
+	descr->ctrl.src_inc       = p->src_inc;
+	descr->ctrl.dst_size      = p->data_width;
+	descr->ctrl.dst_inc       = p->dst_inc;
 
-    if (p->primary)
-        WRITE_REG(DMAx->CHPRIALTCLR, (1 << p->channel));
-    else
-        WRITE_REG(DMAx->CHPRIALTSET, (1 << p->channel));
+	if (p->primary)
+		WRITE_REG(DMAx->CHPRIALTCLR, (1 << p->channel));
+	else
+		WRITE_REG(DMAx->CHPRIALTSET, (1 << p->channel));
 
-    if (p->burst)
-        WRITE_REG(DMAx->CHUSEBURSTSET, (1 << p->channel));
-    else
-        WRITE_REG(DMAx->CHUSEBURSTCLR, (1 << p->channel));
+	if (p->burst)
+		WRITE_REG(DMAx->CHUSEBURSTSET, (1 << p->channel));
+	else
+		WRITE_REG(DMAx->CHUSEBURSTCLR, (1 << p->channel));
 
-    if (p->high_prio)
-        WRITE_REG(DMAx->CHPRSET, (1 << p->channel));
-    else
-        WRITE_REG(DMAx->CHPRCLR, (1 << p->channel));
+	if (p->high_prio)
+		WRITE_REG(DMAx->CHPRSET, (1 << p->channel));
+	else
+		WRITE_REG(DMAx->CHPRCLR, (1 << p->channel));
 
-    if (p->iterrupt)
-        SET_BIT(DMAx->IER, (1 << p->channel));
-    else
-        CLEAR_BIT(DMAx->IER, (1 << p->channel));
+	if (p->interrupt)
+		SET_BIT(DMAx->IER, (1 << p->channel));
+	else
+		CLEAR_BIT(DMAx->IER, (1 << p->channel));
 
-    MODIFY_REG(DMAx->CH_SELCON[p->channel], DMA_CH0_SELCON_MSEL_MSK, p->msel << DMA_CH0_SELCON_MSEL_POSS);
-    MODIFY_REG(DMAx->CH_SELCON[p->channel], DMA_CH0_SELCON_MSIGSEL_MSK, p->msigsel << DMA_CH0_SELCON_MSIGSEL_POSS);
-    return;
+	MODIFY_REG(DMAx->CH_SELCON[p->channel], DMA_CH0_SELCON_MSEL_MSK, p->msel << DMA_CH0_SELCON_MSEL_POSS);
+	MODIFY_REG(DMAx->CH_SELCON[p->channel], DMA_CH0_SELCON_MSIGSEL_MSK, p->msigsel << DMA_CH0_SELCON_MSIGSEL_POSS);
+	return;
 }
 
 /**
@@ -169,31 +169,27 @@ static void dma_config_base(DMA_TypeDef *DMAx, dma_cycle_ctrl_t mode, dma_config
   */
 void ald_dma_irq_handler(void)
 {
-    uint32_t i, reg = DMA0->IFLAG;
+	uint32_t i, reg = DMA0->IFLAG;
 
-    for (i = 0; i < DMA_CH_COUNT; ++i)
-    {
-        if (READ_BIT(reg, (1 << i)))
-        {
-            if (dma0_cbk[i].cplt_cbk != NULL)
-                dma0_cbk[i].cplt_cbk(dma0_cbk[i].cplt_arg);
+	for (i = 0; i < DMA_CH_COUNT; ++i) {
+		if (READ_BIT(reg, (1 << i))) {
+			if (dma0_cbk[i].cplt_cbk != NULL)
+				dma0_cbk[i].cplt_cbk(dma0_cbk[i].cplt_arg);
 
-            ald_dma_clear_flag_status(DMA0, i);
-        }
-    }
+			ald_dma_clear_flag_status(DMA0, i);
+		}
+	}
 
-    if (READ_BIT(reg, (1U << DMA_ERR)))
-    {
-        ald_dma_clear_flag_status(DMA0, DMA_ERR);
+	if (READ_BIT(reg, (1U << DMA_ERR))) {
+		ald_dma_clear_flag_status(DMA0, DMA_ERR);
 
-        for (i = 0; i < DMA_CH_COUNT; ++i)
-        {
-            if (((DMA0->CHENSET >> i) & 0x1) && (dma0_cbk[i].err_cbk != NULL))
-                dma0_cbk[i].err_cbk(dma0_cbk[i].err_arg);
-        }
-    }
+		for (i = 0; i < DMA_CH_COUNT; ++i) {
+			if (((DMA0->CHENSET >> i) & 0x1) && (dma0_cbk[i].err_cbk != NULL))
+				dma0_cbk[i].err_cbk(dma0_cbk[i].err_arg);
+		}
+	}
 
-    return;
+	return;
 }
 /**
   * @}
@@ -230,6 +226,9 @@ void ald_dma_irq_handler(void)
     (+) ald_dma_config_struct(): Configure dma_config_t
         structure using default parameter.
 
+    (+) ald_dma_config_sg_alt_desc(): Configure dma_descriptor_t 
+        structure using specified parameter. This function used
+	in scatter-gather mode(memory or peripheral).
     @endverbatim
   * @{
   */
@@ -241,24 +240,24 @@ void ald_dma_irq_handler(void)
   */
 void ald_dma_reset(DMA_TypeDef *DMAx)
 {
-    uint32_t i;
+	uint32_t i;
 
-    assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA(DMAx));
 
-    WRITE_REG(DMAx->CFG, 0x0);
-    WRITE_REG(DMAx->CHUSEBURSTCLR, 0xFFF);
-    WRITE_REG(DMAx->CHREQMASKCLR, 0xFFF);
-    WRITE_REG(DMAx->CHENCLR, 0xFFF);
-    WRITE_REG(DMAx->CHPRIALTCLR, 0xFFF);
-    WRITE_REG(DMAx->CHPRCLR, 0xFFF);
-    WRITE_REG(DMAx->ERRCLR, 0x1);
-    WRITE_REG(DMAx->IER, 0x0);
-    WRITE_REG(DMAx->ICFR, 0x80000FFF);
+	WRITE_REG(DMAx->CFG, 0x0);
+	WRITE_REG(DMAx->CHUSEBURSTCLR, 0xFFF);
+	WRITE_REG(DMAx->CHREQMASKCLR, 0xFFF);
+	WRITE_REG(DMAx->CHENCLR, 0xFFF);
+	WRITE_REG(DMAx->CHPRIALTCLR, 0xFFF);
+	WRITE_REG(DMAx->CHPRCLR, 0xFFF);
+	WRITE_REG(DMAx->ERRCLR, 0x1);
+	WRITE_REG(DMAx->IER, 0x0);
+	WRITE_REG(DMAx->ICFR, 0x80000FFF);
 
-    for (i = 0; i < DMA_CH_COUNT; ++i)
-        WRITE_REG(DMAx->CH_SELCON[i], 0x0);
+	for (i = 0; i < DMA_CH_COUNT; ++i)
+		WRITE_REG(DMAx->CH_SELCON[i], 0x0);
 
-    return;
+	return;
 }
 
 /**
@@ -269,20 +268,20 @@ void ald_dma_reset(DMA_TypeDef *DMAx)
   */
 void ald_dma_init(DMA_TypeDef *DMAx)
 {
-    assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA(DMAx));
 
-    memset(dma0_ctrl_base, 0x0, sizeof(dma0_ctrl_base));
-    memset(dma0_cbk, 0x0, sizeof(dma0_cbk));
+	memset(dma0_ctrl_base, 0x0, sizeof(dma0_ctrl_base));
+	memset(dma0_cbk, 0x0, sizeof(dma0_cbk));
 
-    ald_dma_reset(DMAx);
-    NVIC_SetPriority(DMA_IRQn, 2);
-    NVIC_EnableIRQ(DMA_IRQn);
-    SET_BIT(DMAx->IER, DMA_IER_DMAERRIE_MSK);
+	ald_dma_reset(DMAx);
+	NVIC_SetPriority(DMA_IRQn, 2);
+	NVIC_EnableIRQ(DMA_IRQn);
+	SET_BIT(DMAx->IER, DMA_IER_DMAERRIE_MSK);
 
-    WRITE_REG(DMAx->CTRLBASE, (uint32_t)&dma0_ctrl_base);
-    SET_BIT(DMAx->CFG, DMA_CFG_MASTER_ENABLE_MSK);
+	WRITE_REG(DMAx->CTRLBASE, (uint32_t)&dma0_ctrl_base);
+	SET_BIT(DMAx->CFG, DMA_CFG_MASTER_ENABLE_MSK);
 
-    return;
+	return;
 }
 
 /**
@@ -293,16 +292,53 @@ void ald_dma_init(DMA_TypeDef *DMAx)
   */
 void ald_dma_config_struct(dma_config_t *p)
 {
-    p->data_width = DMA_DATA_SIZE_BYTE;
-    p->src_inc    = DMA_DATA_INC_BYTE;
-    p->dst_inc    = DMA_DATA_INC_BYTE;
-    p->R_power    = DMA_R_POWER_1;
-    p->primary    = ENABLE;
-    p->burst      = DISABLE;
-    p->high_prio  = DISABLE;
-    p->iterrupt   = ENABLE;
+	p->data_width = DMA_DATA_SIZE_BYTE;
+	p->src_inc    = DMA_DATA_INC_BYTE;
+	p->dst_inc    = DMA_DATA_INC_BYTE;
+	p->R_power    = DMA_R_POWER_1;
+	p->primary    = ENABLE;
+	p->burst      = DISABLE;
+	p->high_prio  = DISABLE;
+	p->interrupt  = ENABLE;
 
-    return;
+	return;
+}
+
+/**
+  * @brief  Configure dma_descriptor_t structure using specified parameter.
+  * @note   This function used in scatter-gather mode(memory or peripheral).
+  * @param  desc: Address of the alternate descriptor.
+  * @param  config: Pointer to the dma_config_t structure.
+  * @param  memory: Memory or peripheral scatter-gather.
+  * @retval None
+  */
+void ald_dma_config_sg_alt_desc(dma_descriptor_t *desc, dma_config_t *config, uint8_t memory)
+{
+	if ((desc == NULL) || (config == NULL))
+		return;
+
+	if (config->src_inc == DMA_DATA_INC_NONE)
+		desc->src = config->src;
+	else
+		desc->src = (void *)((uint32_t)config->src + ((config->size - 1) << (uint32_t)config->data_width));
+
+	if (config->dst_inc == DMA_DATA_INC_NONE)
+		desc->dst = config->dst;
+	else
+		desc->dst = (void *)((uint32_t)config->dst + ((config->size - 1) << (uint32_t)config->data_width));
+
+	desc->ctrl.cycle_ctrl    = memory ? DMA_CYCLE_CTRL_MEM_SG_ALTERNATE : DMA_CYCLE_CTRL_PER_SG_ALTERNATE;
+	desc->ctrl.next_useburst = memory ? 0 : 1;
+	desc->ctrl.n_minus_1     = config->size - 1;
+	desc->ctrl.R_power       = config->R_power;
+	desc->ctrl.src_prot_ctrl = 0;
+	desc->ctrl.dst_prot_ctrl = 0;
+	desc->ctrl.src_size      = config->data_width;
+	desc->ctrl.src_inc       = config->src_inc;
+	desc->ctrl.dst_size      = config->data_width;
+	desc->ctrl.dst_inc       = config->dst_inc;
+
+	return;
 }
 
 /**
@@ -328,6 +364,7 @@ void ald_dma_config_struct(dma_config_t *p)
         (++) ald_dma_config_auto_easy(): Configure DMA channel according
 	     to the specified parameter. If you want use the dma easily,
              you can invoke this function.
+        (++) ald_dma_config_sg_mem(): Carry data used scatter-gather mode.
     (+) Carry data from peripheral to memory or from memory to peripheral,
         this mode APIs are:
 	(++) ald_dma_config_basic(): Configure DMA channel according to
@@ -336,6 +373,8 @@ void ald_dma_config_struct(dma_config_t *p)
         (++) ald_dma_config_basic_easy(): Configure DMA channel according
 	     to the specified parameter. If you want use the dma easily,
              you can invoke this function.
+        (++) ald_dma_ping_pong(): Carry data used ping-pong mode.
+        (++) ald_dma_config_sg_per(): Carry data used scatter-gather mode.
 
     @endverbatim
   * @{
@@ -351,17 +390,17 @@ void ald_dma_config_struct(dma_config_t *p)
   */
 void ald_dma_config_auto(dma_handle_t *hperh)
 {
-    dma0_cbk[hperh->config.channel].cplt_cbk = hperh->cplt_cbk;
-    dma0_cbk[hperh->config.channel].err_cbk  = hperh->err_cbk;
-    dma0_cbk[hperh->config.channel].cplt_arg = hperh->cplt_arg;
-    dma0_cbk[hperh->config.channel].err_arg  = hperh->err_arg;
-    dma_config_base(hperh->perh, DMA_CYCLE_CTRL_AUTO, &hperh->config);
+	dma0_cbk[hperh->config.channel].cplt_cbk = hperh->cplt_cbk;
+	dma0_cbk[hperh->config.channel].err_cbk  = hperh->err_cbk;
+	dma0_cbk[hperh->config.channel].cplt_arg = hperh->cplt_arg;
+	dma0_cbk[hperh->config.channel].err_arg  = hperh->err_arg;
+	dma_config_base(hperh->perh, DMA_CYCLE_CTRL_AUTO, &hperh->config);
 
-    ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
-    WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
-    SET_BIT(hperh->perh->CHSWREQ, (1 << hperh->config.channel));
+	ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
+	WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
+	SET_BIT(hperh->perh->CHSWREQ, (1 << hperh->config.channel));
 
-    return;
+	return;
 }
 
 /**
@@ -376,38 +415,34 @@ void ald_dma_config_auto(dma_handle_t *hperh)
   */
 void ald_dma_restart_auto(dma_handle_t *hperh, void *src, void *dst, uint16_t size)
 {
-    dma_descriptor_t *descr;
+	dma_descriptor_t *descr;
 
-    if (hperh->config.primary)
-        descr = (dma_descriptor_t *)(hperh->perh->CTRLBASE) + hperh->config.channel;
-    else
-        descr = (dma_descriptor_t *)(hperh->perh->ALTCTRLBASE) + hperh->config.channel;
+	if (hperh->config.primary)
+		descr = (dma_descriptor_t *)(hperh->perh->CTRLBASE) + hperh->config.channel;
+	else
+		descr = (dma_descriptor_t *)(hperh->perh->ALTCTRLBASE) + hperh->config.channel;
 
-    if (src)
-    {
-        if (hperh->config.src_inc == DMA_DATA_INC_NONE)
-            descr->src = src;
-        else
-            descr->src = (void *)((uint32_t)src + ((size - 1) << hperh->config.data_width));
-    }
+	if (src) {
+		if (hperh->config.src_inc == DMA_DATA_INC_NONE)
+			descr->src = src;
+		else
+			descr->src = (void *)((uint32_t)src + ((size - 1) << (uint32_t)hperh->config.data_width));
+	}
 
-    if (dst)
-    {
-        if (hperh->config.dst_inc == DMA_DATA_INC_NONE)
-            descr->dst = dst;
-        else
-            descr->dst = (void *)((uint32_t)dst + ((size - 1) << hperh->config.data_width));
-    }
+	if (dst) {
+		if (hperh->config.dst_inc == DMA_DATA_INC_NONE)
+			descr->dst = dst;
+		else
+			descr->dst = (void *)((uint32_t)dst + ((size - 1) << (uint32_t)hperh->config.data_width));
+	}
 
-    ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
-    descr->ctrl.cycle_ctrl = DMA_CYCLE_CTRL_AUTO;
-    descr->ctrl.n_minus_1  = size - 1;
-    WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
-    SET_BIT(hperh->perh->CHSWREQ, (1 << hperh->config.channel));
-    return;
+	ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
+	descr->ctrl.cycle_ctrl = DMA_CYCLE_CTRL_AUTO;
+	descr->ctrl.n_minus_1  = size - 1;
+	WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
+	SET_BIT(hperh->perh->CHSWREQ, (1 << hperh->config.channel));
+	return;
 }
-
-
 
 /**
   * @brief  Configure DMA channel according to the specified parameter.
@@ -420,33 +455,32 @@ void ald_dma_restart_auto(dma_handle_t *hperh, void *src, void *dst, uint16_t si
   * @param  size: The total number of DMA transfers that DMA cycle contains
   * @param  channel: Channel index which will be used.
   * @param  cbk: DMA complete callback function
-  *
   * @retval None
   */
 void ald_dma_config_auto_easy(DMA_TypeDef *DMAx, void *src, void *dst,
-                              uint16_t size, uint8_t channel, void (*cbk)(void *arg))
+                       uint16_t size, uint8_t channel, void (*cbk)(void *arg))
 {
-    dma_handle_t hperh;
+	dma_handle_t hperh;
 
-    assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA(DMAx));
 
-    ald_dma_config_struct(&hperh.config);
-    hperh.config.src     = src;
-    hperh.config.dst     = dst;
-    hperh.config.size    = size;
-    hperh.config.msel    = DMA_MSEL_NONE;
-    hperh.config.msigsel = DMA_MSIGSEL_NONE;
-    hperh.config.channel = channel;
+	ald_dma_config_struct(&hperh.config);
+	hperh.config.src     = src;
+	hperh.config.dst     = dst;
+	hperh.config.size    = size;
+	hperh.config.msel    = DMA_MSEL_NONE;
+	hperh.config.msigsel = DMA_MSIGSEL_NONE;
+	hperh.config.channel = channel;
 
-    hperh.perh     = DMAx;
-    hperh.cplt_cbk = cbk;
-    hperh.cplt_arg = NULL;
-    hperh.err_cbk  = NULL;
+	hperh.perh     = DMAx;
+	hperh.cplt_cbk = cbk;
+	hperh.cplt_arg = NULL;
+	hperh.err_cbk  = NULL;
 
-    ald_dma_clear_flag_status(DMAx, channel);
-    ald_dma_config_auto(&hperh);
+	ald_dma_clear_flag_status(DMAx, channel);
+	ald_dma_config_auto(&hperh);
 
-    return;
+	return;
 }
 
 /**
@@ -460,16 +494,16 @@ void ald_dma_config_auto_easy(DMA_TypeDef *DMAx, void *src, void *dst,
   */
 void ald_dma_config_basic(dma_handle_t *hperh)
 {
-    dma0_cbk[hperh->config.channel].cplt_cbk = hperh->cplt_cbk;
-    dma0_cbk[hperh->config.channel].err_cbk  = hperh->err_cbk;
-    dma0_cbk[hperh->config.channel].cplt_arg = hperh->cplt_arg;
-    dma0_cbk[hperh->config.channel].err_arg  = hperh->err_arg;
+	dma0_cbk[hperh->config.channel].cplt_cbk = hperh->cplt_cbk;
+	dma0_cbk[hperh->config.channel].err_cbk  = hperh->err_cbk;
+	dma0_cbk[hperh->config.channel].cplt_arg = hperh->cplt_arg;
+	dma0_cbk[hperh->config.channel].err_arg  = hperh->err_arg;
 
-    ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
-    dma_config_base(hperh->perh, DMA_CYCLE_CTRL_BASIC, &hperh->config);
-    WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
+	ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
+	dma_config_base(hperh->perh, DMA_CYCLE_CTRL_BASIC, &hperh->config);
+	WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
 
-    return;
+	return;
 }
 
 /**
@@ -484,35 +518,33 @@ void ald_dma_config_basic(dma_handle_t *hperh)
   */
 void ald_dma_restart_basic(dma_handle_t *hperh, void *src, void *dst, uint16_t size)
 {
-    dma_descriptor_t *descr;
+	dma_descriptor_t *descr;
 
-    if (hperh->config.primary)
-        descr = (dma_descriptor_t *)(hperh->perh->CTRLBASE) + hperh->config.channel;
-    else
-        descr = (dma_descriptor_t *)(hperh->perh->ALTCTRLBASE) + hperh->config.channel;
+	if (hperh->config.primary)
+		descr = (dma_descriptor_t *)(hperh->perh->CTRLBASE) + hperh->config.channel;
+	else
+		descr = (dma_descriptor_t *)(hperh->perh->ALTCTRLBASE) + hperh->config.channel;
 
-    if (src)
-    {
-        if (hperh->config.src_inc == DMA_DATA_INC_NONE)
-            descr->src = src;
-        else
-            descr->src = (void *)((uint32_t)src + ((size - 1) << hperh->config.data_width));
-    }
+	if (src) {
+		if (hperh->config.src_inc == DMA_DATA_INC_NONE)
+			descr->src = src;
+		else
+			descr->src = (void *)((uint32_t)src + ((size - 1) << (uint32_t)hperh->config.data_width));
+	}
 
-    if (dst)
-    {
-        if (hperh->config.dst_inc == DMA_DATA_INC_NONE)
-            descr->dst = dst;
-        else
-            descr->dst = (void *)((uint32_t)dst + ((size - 1) << hperh->config.data_width));
-    }
+	if (dst) {
+		if (hperh->config.dst_inc == DMA_DATA_INC_NONE)
+			descr->dst = dst;
+		else
+			descr->dst = (void *)((uint32_t)dst + ((size - 1) << (uint32_t)hperh->config.data_width));
+	}
 
-    ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
-    descr->ctrl.cycle_ctrl = DMA_CYCLE_CTRL_BASIC;
-    descr->ctrl.n_minus_1  = size - 1;
-    WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
+	ald_dma_clear_flag_status(hperh->perh, hperh->config.channel);
+	descr->ctrl.cycle_ctrl = DMA_CYCLE_CTRL_BASIC;
+	descr->ctrl.n_minus_1  = size - 1;
+	WRITE_REG(hperh->perh->CHENSET, (1 << hperh->config.channel));
 
-    return;
+	return;
 }
 
 /**
@@ -528,42 +560,248 @@ void ald_dma_restart_basic(dma_handle_t *hperh, void *src, void *dst, uint16_t s
   * @param  msigsel: Input signal to DMA channel @ref dma_msigsel_t
   * @param  channel: Channel index which will be used
   * @param  cbk: DMA complete callback function
-  *
   * @retval None
-  *
- */
+  */
 void ald_dma_config_basic_easy(DMA_TypeDef *DMAx, void *src, void *dst, uint16_t size, dma_msel_t msel,
-                               dma_msigsel_t msigsel, uint8_t channel, void (*cbk)(void *arg))
+		dma_msigsel_t msigsel, uint8_t channel, void (*cbk)(void *arg))
 {
-    dma_handle_t hperh;
+	dma_handle_t hperh;
 
-    assert_param(IS_DMA(DMAx));
-    ald_dma_config_struct(&hperh.config);
+	assert_param(IS_DMA(DMAx));
+	ald_dma_config_struct(&hperh.config);
 
-    if (((uint32_t)src) >= 0x40000000)
-        hperh.config.src_inc = DMA_DATA_INC_NONE;
+	if (((uint32_t)src) >= 0x40000000)
+		hperh.config.src_inc = DMA_DATA_INC_NONE;
 
-    if (((uint32_t)dst) >= 0x40000000)
-        hperh.config.dst_inc = DMA_DATA_INC_NONE;
+	if (((uint32_t)dst) >= 0x40000000)
+		hperh.config.dst_inc = DMA_DATA_INC_NONE;
 
-    hperh.config.src     = src;
-    hperh.config.dst     = dst;
-    hperh.config.size    = size;
-    hperh.config.msel    = msel;
-    hperh.config.msigsel = msigsel;
-    hperh.config.channel = channel;
+	hperh.config.src     = src;
+	hperh.config.dst     = dst;
+	hperh.config.size    = size;
+	hperh.config.msel    = msel;
+	hperh.config.msigsel = msigsel;
+	hperh.config.channel = channel;
 
-    hperh.perh     = DMAx;
-    hperh.cplt_cbk = cbk;
-    hperh.cplt_arg = NULL;
-    hperh.err_cbk  = NULL;
+	hperh.perh     = DMAx;
+	hperh.cplt_cbk = cbk;
+	hperh.cplt_arg = NULL;
+	hperh.err_cbk  = NULL;
 
-    ald_dma_clear_flag_status(DMAx, channel);
-    ald_dma_config_basic(&hperh);
+	ald_dma_clear_flag_status(DMAx, channel);
+	ald_dma_config_basic(&hperh);
 
-    return;
+	return;
 }
 
+/**
+  * @brief  Configure DMA channel according to the specified parameter.
+  *         The DMA mode is ping-pong.
+  * @note   The ping-pong mode does not support memory to memory.
+  * @param  DMAx: Pointer to DMA peripheral.
+  * @param  config: Pointer to the dma_config_t structure which contains
+  *         the specified parameters.
+  * @param  first: Whether it is the first transmission. 1-first, 0-not first.
+  * @param  cbk: DMA complete callback function.
+  * @retval None
+  */
+void ald_dma_config_ping_pong(DMA_TypeDef *DMAx, dma_config_t *config,
+                                      uint8_t first, void (*cbk)(void *arg))
+{
+	dma_descriptor_t *desc;
+
+	assert_param(IS_DMA(DMAx));
+	assert_param(config->src != NULL);
+	assert_param(config->dst != NULL);
+	assert_param(IS_DMA_DATA_SIZE(config->size));
+	assert_param(IS_DMA_DATASIZE_TYPE(config->data_width));
+	assert_param(IS_DMA_DATAINC_TYPE(config->src_inc));
+	assert_param(IS_DMA_DATAINC_TYPE(config->dst_inc));
+	assert_param(IS_DMA_ARBITERCONFIG_TYPE(config->R_power));
+	assert_param(IS_FUNC_STATE(config->primary));
+	assert_param(IS_FUNC_STATE(config->burst));
+	assert_param(IS_FUNC_STATE(config->high_prio));
+	assert_param(IS_FUNC_STATE(config->interrupt));
+	assert_param(IS_DMA_MSEL_TYPE(config->msel));
+	assert_param(IS_DMA_MSIGSEL_TYPE(config->msigsel));
+	assert_param(IS_DMA_CHANNEL(config->channel));
+
+	dma0_cbk[config->channel].cplt_cbk = cbk;
+	dma0_cbk[config->channel].err_cbk  = NULL;
+	dma0_cbk[config->channel].cplt_arg = NULL;
+	dma0_cbk[config->channel].err_arg  = NULL;
+
+	if (config->primary)
+		desc = (dma_descriptor_t *)(DMAx->CTRLBASE) + config->channel;
+	else
+		desc = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + config->channel;
+
+	if (config->src_inc == DMA_DATA_INC_NONE)
+		desc->src = config->src;
+	else
+		desc->src = (void *)((uint32_t)config->src + ((config->size - 1) << (uint32_t)config->data_width));
+
+	if (config->dst_inc == DMA_DATA_INC_NONE)
+		desc->dst = config->dst;
+	else
+		desc->dst = (void *)((uint32_t)config->dst + ((config->size - 1) << (uint32_t)config->data_width));
+
+	desc->ctrl.cycle_ctrl    = DMA_CYCLE_CTRL_PINGPONG;
+	desc->ctrl.next_useburst = 0;
+	desc->ctrl.n_minus_1     = config->size - 1;
+	desc->ctrl.R_power       = config->R_power;
+	desc->ctrl.src_prot_ctrl = 0,
+	desc->ctrl.dst_prot_ctrl = 0,
+	desc->ctrl.src_size      = config->data_width;
+	desc->ctrl.src_inc       = config->src_inc;
+	desc->ctrl.dst_size      = config->data_width;
+	desc->ctrl.dst_inc       = config->dst_inc;
+
+	if (!first)
+		return;
+
+	if (config->primary)
+		WRITE_REG(DMAx->CHPRIALTCLR, (1 << config->channel));
+	else
+		WRITE_REG(DMAx->CHPRIALTSET, (1 << config->channel));
+
+	if (config->burst)
+		WRITE_REG(DMAx->CHUSEBURSTSET, (1 << config->channel));
+	else
+		WRITE_REG(DMAx->CHUSEBURSTCLR, (1 << config->channel));
+
+	if (config->high_prio)
+		WRITE_REG(DMAx->CHPRSET, (1 << config->channel));
+	else
+		WRITE_REG(DMAx->CHPRCLR, (1 << config->channel));
+
+	if (config->interrupt)
+		SET_BIT(DMAx->IER, (1 << config->channel));
+	else
+		CLEAR_BIT(DMAx->IER, (1 << config->channel));
+
+	MODIFY_REG(DMAx->CH_SELCON[config->channel], DMA_CH0_SELCON_MSEL_MSK, config->msel << DMA_CH0_SELCON_MSEL_POSS);
+	MODIFY_REG(DMAx->CH_SELCON[config->channel], DMA_CH0_SELCON_MSIGSEL_MSK, config->msigsel << DMA_CH0_SELCON_MSIGSEL_POSS);
+
+	WRITE_REG(DMAx->ICFR, (1 << config->channel));
+	WRITE_REG(DMAx->CHENSET, (1 << config->channel));
+
+	return;
+}
+
+/**
+  * @brief  Configure DMA channel according to the specified parameter.
+  *         The DMA mode is memory scatter-gather.
+  * @param  DMAx: Pointer to DMA peripheral.
+  * @param  desc: Pointer to first alternate descriptor.
+  * @param  nr: Number of the alternate descriptor.
+  * @param  channel: Channel index which will be used.
+  * @param  cbk: DMA complete callback function.
+  * @retval None
+ */
+void ald_dma_config_sg_mem(DMA_TypeDef *DMAx, dma_descriptor_t *desc, uint32_t nr,
+	                          uint8_t channel, void (*cbk)(void *arg))
+{
+	dma_descriptor_t *tmp  = (dma_descriptor_t *)(DMAx->CTRLBASE) + channel;
+	dma_descriptor_t *_tmp = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + channel;
+
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_CHANNEL(channel));
+
+	if ((desc == NULL) || (nr == 0))
+		return;
+
+	dma0_cbk[channel].cplt_cbk = cbk;
+	dma0_cbk[channel].err_cbk  = NULL;
+	dma0_cbk[channel].cplt_arg = NULL;
+	dma0_cbk[channel].err_arg  = NULL;
+
+	tmp->src = (void *)((uint32_t)desc + (((nr << 2) - 1) << DMA_DATA_INC_WORD));
+	tmp->dst = (void *)((uint32_t)_tmp + ((4 - 1) << DMA_DATA_INC_WORD));
+	tmp->ctrl.cycle_ctrl    = DMA_CYCLE_CTRL_MEM_SG_PRIMARY;
+	tmp->ctrl.next_useburst = 0;
+	tmp->ctrl.n_minus_1     = (nr << 2) - 1;
+	tmp->ctrl.R_power       = DMA_R_POWER_4;
+	tmp->ctrl.src_prot_ctrl = 0,
+	tmp->ctrl.dst_prot_ctrl = 0,
+	tmp->ctrl.src_size      = DMA_DATA_SIZE_WORD;
+	tmp->ctrl.src_inc       = DMA_DATA_INC_WORD;
+	tmp->ctrl.dst_size      = DMA_DATA_SIZE_WORD;
+	tmp->ctrl.dst_inc       = DMA_DATA_INC_WORD;
+
+	desc[nr - 1].ctrl.cycle_ctrl = DMA_CYCLE_CTRL_AUTO;
+	WRITE_REG(DMAx->CHPRIALTCLR, (1 << channel));
+	WRITE_REG(DMAx->CHUSEBURSTCLR, (1 << channel));
+	WRITE_REG(DMAx->CHPRCLR, (1 << channel));
+
+	WRITE_REG(DMAx->ICFR, (1 << channel));
+	SET_BIT(DMAx->IER, (1 << channel));
+	WRITE_REG(DMAx->CHENSET, (1 << channel));
+	SET_BIT(DMAx->CHSWREQ, (1 << channel));
+
+	return;
+}
+
+/**
+  * @brief  Configure DMA channel according to the specified parameter.
+  *         The DMA mode is peripheral scatter-gather.
+  * @note   The size of the first transmission must be 5.
+  * @param  DMAx: Pointer to DMA peripheral.
+  * @param  desc: Pointer to first alternate descriptor.
+  * @param  nr: Number of the alternate descriptor.
+  * @param  burst: 1-Enable burst, 0-Disable burst.
+  * @param  msel: Input source to DMA channel @ref dma_msel_t
+  * @param  msigsel: Input signal to DMA channel @ref dma_msigsel_t
+  * @param  channel: Channel index which will be used.
+  * @param  cbk: DMA complete callback function.
+  * @retval None
+ */
+void ald_dma_config_sg_per(DMA_TypeDef *DMAx, dma_descriptor_t *desc, uint32_t nr, uint8_t burst,
+                    dma_msel_t msel, dma_msigsel_t msigsel, uint8_t channel, void (*cbk)(void *arg))
+{
+	dma_descriptor_t *tmp  = (dma_descriptor_t *)(DMAx->CTRLBASE) + channel;
+	dma_descriptor_t *_tmp = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + channel;
+
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_MSEL_TYPE(msel));
+	assert_param(IS_DMA_MSIGSEL_TYPE(msigsel));
+	assert_param(IS_DMA_CHANNEL(channel));
+
+	if ((desc == NULL) || (nr == 0))
+		return;
+
+	dma0_cbk[channel].cplt_cbk = cbk;
+	dma0_cbk[channel].err_cbk  = NULL;
+	dma0_cbk[channel].cplt_arg = NULL;
+	dma0_cbk[channel].err_arg  = NULL;
+
+	tmp->src = (void *)((uint32_t)desc + (((nr << 2) - 1) << DMA_DATA_INC_WORD));
+	tmp->dst = (void *)((uint32_t)_tmp + ((4 - 1) << DMA_DATA_INC_WORD));
+	tmp->ctrl.cycle_ctrl    = DMA_CYCLE_CTRL_PER_SG_PRIMARY;
+	tmp->ctrl.next_useburst = 0;
+	tmp->ctrl.n_minus_1     = (nr << 2) - 1;
+	tmp->ctrl.R_power       = DMA_R_POWER_4;
+	tmp->ctrl.src_prot_ctrl = 0,
+	tmp->ctrl.dst_prot_ctrl = 0,
+	tmp->ctrl.src_size      = DMA_DATA_SIZE_WORD;
+	tmp->ctrl.src_inc       = DMA_DATA_INC_WORD;
+	tmp->ctrl.dst_size      = DMA_DATA_SIZE_WORD;
+	tmp->ctrl.dst_inc       = DMA_DATA_INC_WORD;
+
+	desc[nr - 1].ctrl.cycle_ctrl = DMA_CYCLE_CTRL_BASIC;
+	WRITE_REG(DMAx->CHPRIALTCLR, (1 << channel));
+	burst ? (DMAx->CHUSEBURSTSET = (1 << channel)) : (DMAx->CHUSEBURSTCLR, (1 << channel));
+	WRITE_REG(DMAx->CHPRCLR, (1 << channel));
+
+	MODIFY_REG(DMAx->CH_SELCON[channel], DMA_CH0_SELCON_MSEL_MSK, msel << DMA_CH0_SELCON_MSEL_POSS);
+	MODIFY_REG(DMAx->CH_SELCON[channel], DMA_CH0_SELCON_MSIGSEL_MSK, msigsel << DMA_CH0_SELCON_MSIGSEL_POSS);
+
+	WRITE_REG(DMAx->ICFR, (1 << channel));
+	SET_BIT(DMAx->IER, (1 << channel));
+	WRITE_REG(DMAx->CHENSET, (1 << channel));
+
+	return;
+}
 /**
   * @}
   */
@@ -605,28 +843,26 @@ void ald_dma_config_basic_easy(DMA_TypeDef *DMAx, void *src, void *dst, uint16_t
   */
 void ald_dma_channel_config(DMA_TypeDef *DMAx, uint8_t channel, type_func_t state)
 {
-    dma_descriptor_t *descr, *alt_descr;
+	dma_descriptor_t *descr, *alt_descr;
 
-    assert_param(IS_DMA(DMAx));
-    assert_param(IS_DMA_CHANNEL(channel));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_CHANNEL(channel));
+	assert_param(IS_FUNC_STATE(state));
 
-    descr     = (dma_descriptor_t *)(DMAx->CTRLBASE) + channel;
-    alt_descr = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + channel;
+	descr     = (dma_descriptor_t *)(DMAx->CTRLBASE) + channel;
+	alt_descr = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + channel;
 
-    if (state)
-    {
-        WRITE_REG(DMAx->CHENSET, (1 << channel));
-    }
-    else
-    {
-        memset(descr, 0x00, sizeof(dma_descriptor_t));
-        memset(alt_descr, 0x00, sizeof(dma_descriptor_t));
-        WRITE_REG(DMAx->CH_SELCON[channel], 0x0);
-        WRITE_REG(DMAx->CHENCLR, (1 << channel));
-    }
+	if (state) {
+		WRITE_REG(DMAx->CHENSET, (1 << channel));
+	}
+	else {
+		memset(descr, 0x00, sizeof(dma_descriptor_t));
+		memset(alt_descr, 0x00, sizeof(dma_descriptor_t));
+		WRITE_REG(DMAx->CH_SELCON[channel], 0x0);
+		WRITE_REG(DMAx->CHENCLR, (1 << channel));
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -643,16 +879,16 @@ void ald_dma_channel_config(DMA_TypeDef *DMAx, uint8_t channel, type_func_t stat
   */
 void ald_dma_interrupt_config(DMA_TypeDef *DMAx, uint8_t channel, type_func_t state)
 {
-    assert_param(IS_DMA(DMAx));
-    assert_param(IS_DMA_IT_TYPE(channel));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_IT_TYPE(channel));
+	assert_param(IS_FUNC_STATE(state));
 
-    if (state)
-        SET_BIT(DMAx->IER, (1 << channel));
-    else
-        CLEAR_BIT(DMAx->IER, (1 << channel));
+	if (state)
+		SET_BIT(DMAx->IER, (1 << channel));
+	else
+		CLEAR_BIT(DMAx->IER, (1 << channel));
 
-    return;
+	return;
 }
 
 /**
@@ -668,13 +904,13 @@ void ald_dma_interrupt_config(DMA_TypeDef *DMAx, uint8_t channel, type_func_t st
   */
 it_status_t ald_dma_get_it_status(DMA_TypeDef *DMAx, uint8_t channel)
 {
-    assert_param(IS_DMA(DMAx));
-    assert_param(IS_DMA_IT_TYPE(channel));
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_IT_TYPE(channel));
 
-    if (READ_BIT(DMAx->IER, (1 << channel)))
-        return SET;
+	if (READ_BIT(DMAx->IER, (1 << channel)))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -690,13 +926,13 @@ it_status_t ald_dma_get_it_status(DMA_TypeDef *DMAx, uint8_t channel)
   */
 flag_status_t ald_dma_get_flag_status(DMA_TypeDef *DMAx, uint8_t channel)
 {
-    assert_param(IS_DMA(DMAx));
-    assert_param(IS_DMA_IT_TYPE(channel));
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_IT_TYPE(channel));
 
-    if (READ_BIT(DMAx->IFLAG, (1 << channel)))
-        return SET;
+	if (READ_BIT(DMAx->IFLAG, (1 << channel)))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -709,11 +945,42 @@ flag_status_t ald_dma_get_flag_status(DMA_TypeDef *DMAx, uint8_t channel)
   */
 void ald_dma_clear_flag_status(DMA_TypeDef *DMAx, uint8_t channel)
 {
-    assert_param(IS_DMA(DMAx));
-    assert_param(IS_DMA_IT_TYPE(channel));
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_IT_TYPE(channel));
 
-    WRITE_REG(DMAx->ICFR, (1 << channel));
-    return;
+	WRITE_REG(DMAx->ICFR, (1 << channel));
+	return;
+}
+
+/**
+  * @brief  Get the completion status of the descriptor
+  * @param  DMAx: Pointer to DMA peripheral
+  * @param  channel: Channel index
+  * @retval Completion status:
+  *           - DMA_DESCP_CPLT_PRI: Primary descriptor has been completed
+  *           - DMA_DESCP_CPLT_ALT: Alternate descriptor has been completed
+  *           - DMA_DESCP_CPLT_ALL: Both primary and alternate descriptors have been completed
+  */
+dma_descrp_cplt_t ald_dma_descriptor_cplt_get(DMA_TypeDef *DMAx, uint8_t channel)
+{
+	uint8_t pri, alt;
+	dma_descriptor_t *desc;
+
+	assert_param(IS_DMA(DMAx));
+	assert_param(IS_DMA_IT_TYPE(channel));
+
+	desc = (dma_descriptor_t *)(DMAx->CTRLBASE) + channel;
+	pri  = desc->ctrl.cycle_ctrl;
+	desc = (dma_descriptor_t *)(DMAx->ALTCTRLBASE) + channel;
+	alt  = desc->ctrl.cycle_ctrl;
+
+	if ((pri == 0) && (alt == 0))
+		return DMA_DESCP_CPLT_ALL;
+
+	if (pri == 0)
+		return DMA_DESCP_CPLT_PRI;
+	else
+		return DMA_DESCP_CPLT_ALT;
 }
 /**
   * @}

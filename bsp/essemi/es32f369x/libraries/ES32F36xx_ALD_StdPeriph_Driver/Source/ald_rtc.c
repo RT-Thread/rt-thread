@@ -311,7 +311,7 @@ void ald_rtc_source_select(rtc_source_sel_t sel)
   * @param  format: Data format.
   * @retval ALD status.
   */
-ald_status_t  ald_rtc_set_time(rtc_time_t *time, rtc_format_t format)
+ald_status_t ald_rtc_set_time(rtc_time_t *time, rtc_format_t format)
 {
 	uint32_t tmp;
 
@@ -336,7 +336,6 @@ ald_status_t  ald_rtc_set_time(rtc_time_t *time, rtc_format_t format)
 
 	RTC_UNLOCK();
 	WRITE_REG(RTC->TIME, tmp);
-	WRITE_REG(RTC->SSEC, time->sub_sec);
 	RTC_LOCK();
 
 	tmp = ald_get_tick();
@@ -798,12 +797,12 @@ void ald_rtc_set_tamper(rtc_tamper_t *tamper)
 	MODIFY_REG(RTC->TAMPCON, RTC_TAMPCON_TAMPFLT_MSK, tamper->dur << RTC_TAMPCON_TAMPFLT_POSS);
 
 	if (tamper->idx == RTC_TAMPER_0) {
-		MODIFY_REG(RTC->TAMPCON, RTC_TAMPCON_TAMP1LV_MSK, tamper->trig << RTC_TAMPCON_TAMP1LV_POS);
-		SET_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP1EN_MSK);
+		MODIFY_REG(RTC->TAMPCON, RTC_TAMPCON_TAMP0LV_MSK, tamper->trig << RTC_TAMPCON_TAMP0LV_POS);
+		SET_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP0EN_MSK);
 	}
 	else {
-		MODIFY_REG(RTC->TAMPCON, RTC_TAMPCON_TAMP2LV_MSK, tamper->trig << RTC_TAMPCON_TAMP2LV_POS);
-		SET_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP2EN_MSK);
+		MODIFY_REG(RTC->TAMPCON, RTC_TAMPCON_TAMP1LV_MSK, tamper->trig << RTC_TAMPCON_TAMP1LV_POS);
+		SET_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP1EN_MSK);
 	}
 
 	RTC_LOCK();
@@ -824,9 +823,9 @@ void ald_rtc_cancel_tamper(rtc_tamper_idx_t idx)
 	RTC_UNLOCK();
 
 	if (idx == RTC_TAMPER_0)
-		CLEAR_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP1EN_MSK);
+		CLEAR_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP0EN_MSK);
 	else
-		CLEAR_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP2EN_MSK);
+		CLEAR_BIT(RTC->TAMPCON, RTC_TAMPCON_TAMP1EN_MSK);
 
 	RTC_LOCK();
 	return;
