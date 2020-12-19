@@ -34,6 +34,6 @@ if not GetDepend('FINSH_USING_MSH_ONLY'):
 
 CPPPATH = [cwd]
 
-group = DefineGroup('FinSH', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
+group = DefineGroup('finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
 
 Return('group')

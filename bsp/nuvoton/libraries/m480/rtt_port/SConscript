@@ -30,6 +30,6 @@ elif GetDepend('BOARD_USING_HSOTG') and ( GetDepend('BSP_USING_USBD') or GetDepe
     print '[Hint] You already select BOARD_USING_HSOTG. Please de-select BSP_USING_USBD and BSP_USING_USBH options.'
     sys.exit(1)
 else:
-    group = DefineGroup('m480_rttport', src, depend = [''], CPPPATH = CPPPATH)
+    group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

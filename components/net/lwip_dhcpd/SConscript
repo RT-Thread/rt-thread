@@ -9,6 +9,6 @@ else:
 
 CPPPATH = [cwd]
 
-group = DefineGroup('LwIP', src, depend = ['RT_USING_LWIP', 'LWIP_USING_DHCPD'], CPPPATH = CPPPATH)
+group = DefineGroup('lwIP', src, depend = ['RT_USING_LWIP', 'LWIP_USING_DHCPD'], CPPPATH = CPPPATH)
 
 Return('group')
