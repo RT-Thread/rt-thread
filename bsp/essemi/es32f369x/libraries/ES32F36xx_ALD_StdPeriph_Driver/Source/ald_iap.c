@@ -136,6 +136,101 @@ uint32_t ald_iap_program_words(uint32_t addr, uint8_t *data, uint32_t len, uint3
 
 	return !status;
 }
+
+/**
+  * @brief  Erases a specified page of dataflash.
+  * @param  addr: The beginning address of the page to be erased.
+  * @retval The result:
+  *           - 0: SUCCESS
+  *           - 1: ERROR
+  */
+uint32_t ald_iap_erase_page_df(uint32_t addr)
+{
+	uint32_t status;
+	IAP_PE iap_pe = (IAP_PE)(*(uint32_t *)IAP_PageErase_DF);
+
+	__disable_irq();
+	status = (*iap_pe)(addr);
+	__enable_irq();
+
+	return !status;
+}
+
+/**
+  * @brief  Programs a word at a specified address of dataflash.
+  * @param  addr: Specifies the address to be programmed.
+  *         Bit0-1 must be zero.
+  * @param  data: Specifies the data to be programmed.
+  * @retval The result:
+  *           - 0: SUCCESS
+  *           - 1: ERROR
+  */
+uint32_t ald_iap_program_word_df(uint32_t addr, uint32_t data)
+{
+	uint32_t status;
+	IAP_WP iap_wp = (IAP_WP)(*(uint32_t *)IAP_WordProgram_DF);
+
+	if (addr & 0x3)
+		return 1;
+
+	__disable_irq();
+	status = (*iap_wp)(addr, data);
+	__enable_irq();
+
+	return !status;
+}
+
+/**
+  * @brief  Programs double words at a specified address of dataflash.
+  * @param  addr: Specifies the address to be programmed.
+  *         Bit0-1 must be zero.
+  * @param  data_l: Specifies the LSB data to be programmed.
+  * @param  data_h: Specifies the MSB data to be programmed.
+  * @retval The result:
+  *           - 0: SUCCESS
+  *           - 1: ERROR
+  */
+uint32_t ald_iap_program_dword_df(uint32_t addr, uint32_t data_l, uint32_t data_h)
+{
+	uint32_t status;
+	IAP_DWP iap_dwp = (IAP_DWP)(*(uint32_t *)IAP_DWordProgram_DF);
+
+	if (addr & 0x3)
+		return 1;
+
+	__disable_irq();
+	status = (*iap_dwp)(addr, data_l, data_h);
+	__enable_irq();
+
+	return !status;
+}
+
+/**
+  * @brief  Programs datas at a specified address of dataflash.
+  * @param  addr: Specifies the address to be programmed.
+  *         Bit0-1 must be zero.
+  * @param  data: Specifies the data to be programmed.
+  * @param  len: Specifies the data length to be programmed.
+  *         Bit0-1 must be zero.
+  * @param  erase: Erase page flag before programming.
+  * @retval The result:
+  *           - 0: SUCCESS
+  *           - 1: ERROR
+  */
+uint32_t ald_iap_program_words_df(uint32_t addr, uint8_t *data, uint32_t len, uint32_t erase)
+{
+	uint32_t status;
+	IAP_WSP iap_wsp = (IAP_WSP)(*(uint32_t *)IAP_WordsProgram_DF);
+
+	if ((addr & 0x3) || (len & 0x3))
+		return 1;
+
+	__disable_irq();
+	status = (*iap_wsp)(addr, data, len, erase);
+	__enable_irq();
+
+	return !status;
+}
 /**
   * @}
   */
@@ -143,7 +238,6 @@ uint32_t ald_iap_program_words(uint32_t addr, uint8_t *data, uint32_t len, uint3
 /**
   * @}
   */
-
 /**
   * @}
   */

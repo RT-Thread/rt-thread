@@ -173,7 +173,7 @@ uint8_t __frame_mode = 0;
 /** @addtogroup USART_Private_Functions   USART Private Functions
   * @{
   */
-static void usart_set_config(usart_handle_t *hperh);
+static void usart_set_config (usart_handle_t *hperh);
 static ald_status_t __usart_send_by_it(usart_handle_t *hperh);
 static ald_status_t __usart_end_send_by_it(usart_handle_t *hperh);
 static ald_status_t __usart_recv_by_it(usart_handle_t *hperh);
@@ -181,9 +181,9 @@ static ald_status_t __usart_recv_frame_cplt(usart_handle_t *hperh);
 static ald_status_t __usart_recv_by_it_sync(usart_handle_t *hperh);
 static ald_status_t __usart_send_recv_by_it_sync(usart_handle_t *hperh);
 #ifdef ALD_DMA
-    static void usart_dma_send_cplt(void *arg);
-    static void usart_dma_recv_cplt(void *arg);
-    static void usart_dma_error(void *arg);
+static void usart_dma_send_cplt(void *arg);
+static void usart_dma_recv_cplt(void *arg);
+static void usart_dma_error(void *arg);
 #endif
 static ald_status_t usart_wait_flag(usart_handle_t *hperh, usart_flag_t flag, flag_status_t status, uint32_t timeout);
 /**
@@ -247,20 +247,20 @@ static ald_status_t usart_wait_flag(usart_handle_t *hperh, usart_flag_t flag, fl
   */
 void ald_usart_reset(usart_handle_t *hperh)
 {
-    assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART(hperh->perh));
 
-    hperh->state = USART_STATE_BUSY;
-    USART_DISABLE(hperh);
+	hperh->state = USART_STATE_BUSY;
+	USART_DISABLE(hperh);
 
-    WRITE_REG(hperh->perh->CON0, 0x0);
-    WRITE_REG(hperh->perh->CON1, 0x0);
-    WRITE_REG(hperh->perh->CON2, 0x0);
+	WRITE_REG(hperh->perh->CON0, 0x0);
+	WRITE_REG(hperh->perh->CON1, 0x0);
+	WRITE_REG(hperh->perh->CON2, 0x0);
 
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_RESET;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_RESET;
 
-    __UNLOCK(hperh);
-    return;
+	__UNLOCK(hperh);
+	return;
 }
 
 /**
@@ -272,30 +272,29 @@ void ald_usart_reset(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_init(usart_handle_t *hperh)
 {
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_HARDWARE_FLOW_CONTROL(hperh->init.fctl));
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_FUNC_STATE(hperh->init.over_sampling));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_HARDWARE_FLOW_CONTROL(hperh->init.fctl));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
 
-    ald_usart_reset(hperh);
-    hperh->state = USART_STATE_BUSY;
-    USART_DISABLE(hperh);
-    usart_set_config(hperh);
+	ald_usart_reset(hperh);
+	hperh->state = USART_STATE_BUSY;
+	USART_DISABLE(hperh);
+	usart_set_config(hperh);
 
-    /* In asynchronous mode, the following bits must be kept cleared:
-     *   - LINEN and CLKEN bits in the USART_CR2 register,
-     *   - SCEN, HDSEL and IREN  bits in the USART_CR3 register.
-     */
-    CLEAR_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
+	/* In asynchronous mode, the following bits must be kept cleared:
+	 *   - LINEN and CLKEN bits in the USART_CR2 register,
+	 *   - SCEN, HDSEL and IREN  bits in the USART_CR3 register.
+	 */
+	CLEAR_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
 
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_READY;
-    USART_ENABLE(hperh);
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_READY;
+	USART_ENABLE(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -307,28 +306,27 @@ ald_status_t ald_usart_init(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_half_duplex_init(usart_handle_t *hperh)
 {
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_FUNC_STATE(hperh->init.over_sampling));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
 
-    ald_usart_reset(hperh);
-    hperh->state = USART_STATE_BUSY;
-    USART_DISABLE(hperh);
-    usart_set_config(hperh);
+	ald_usart_reset(hperh);
+	hperh->state = USART_STATE_BUSY;
+	USART_DISABLE(hperh);
+	usart_set_config(hperh);
 
-    /* In half-duplex mode, the following bits must be kept cleared:
-     *   - LINEN and CLKEN bits in the USART_CR2 register,
-     *   - SCEN and IREN bits in the USART_CR3 register.*/
-    CLEAR_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
-    SET_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
+	/* In half-duplex mode, the following bits must be kept cleared:
+	 *   - LINEN and CLKEN bits in the USART_CR2 register,
+	 *   - SCEN and IREN bits in the USART_CR3 register.*/
+	CLEAR_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
+	SET_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
 
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_READY;
-    USART_ENABLE(hperh);
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_READY;
+	USART_ENABLE(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -345,32 +343,31 @@ ald_status_t ald_usart_half_duplex_init(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_multi_processor_init(usart_handle_t *hperh, uint8_t addr, usart_wakeup_t wakeup)
 {
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_WAKEUP(wakeup));
-    assert_param(IS_USART_ADDRESS(addr));
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_FUNC_STATE(hperh->init.over_sampling));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_WAKEUP(wakeup));
+	assert_param(IS_USART_ADDRESS(addr));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
 
-    ald_usart_reset(hperh);
-    hperh->state = USART_STATE_BUSY;
-    USART_DISABLE(hperh);
-    usart_set_config(hperh);
+	ald_usart_reset(hperh);
+	hperh->state = USART_STATE_BUSY;
+	USART_DISABLE(hperh);
+	usart_set_config(hperh);
 
-    /* In Multi-Processor mode, the following bits must be kept cleared:
-     *   - LINEN and CLKEN bits in the USART_CR2 register,
-     *   - SCEN, HDSEL and IREN  bits in the USART_CR3 register */
-    CLEAR_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_ADDR_MSK, addr << USART_CON1_ADDR_POSS);
-    MODIFY_REG(hperh->perh->CON0, USART_CON0_WKMOD_MSK, wakeup << USART_CON0_WKMOD_POS);
+	/* In Multi-Processor mode, the following bits must be kept cleared:
+	 *   - LINEN and CLKEN bits in the USART_CR2 register,
+	 *   - SCEN, HDSEL and IREN  bits in the USART_CR3 register */
+	CLEAR_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_ADDR_MSK, addr << USART_CON1_ADDR_POSS);
+	MODIFY_REG(hperh->perh->CON0, USART_CON0_WKMOD_MSK, wakeup << USART_CON0_WKMOD_POS);
 
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_READY;
-    USART_ENABLE(hperh);
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_READY;
+	USART_ENABLE(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -383,31 +380,30 @@ ald_status_t ald_usart_multi_processor_init(usart_handle_t *hperh, uint8_t addr,
   */
 ald_status_t ald_usart_clock_init(usart_handle_t *hperh, usart_clock_init_t *init)
 {
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_FUNC_STATE(hperh->init.over_sampling));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
 
-    ald_usart_reset(hperh);
-    hperh->state = USART_STATE_BUSY;
-    USART_DISABLE(hperh);
-    usart_set_config(hperh);
+	ald_usart_reset(hperh);
+	hperh->state = USART_STATE_BUSY;
+	USART_DISABLE(hperh);
+	usart_set_config(hperh);
 
-    /* In Multi-Processor mode, the following bits must be kept cleared:
-     *   - LINEN and CLKEN bits in the USART_CR2 register,
-     *   - SCEN, HDSEL and IREN  bits in the USART_CR3 register */
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_SCKEN_MSK, init->clk << USART_CON1_SCKEN_POS);
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_SCKPOL_MSK, init->polarity << USART_CON1_SCKPOL_POS);
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_SCKPHA_MSK, init->phase << USART_CON1_SCKPHA_POS);
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_LBCP_MSK, init->last_bit << USART_CON1_LBCP_POS);
+	/* In Multi-Processor mode, the following bits must be kept cleared:
+	 *   - LINEN and CLKEN bits in the USART_CR2 register,
+	 *   - SCEN, HDSEL and IREN  bits in the USART_CR3 register */
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_SCKEN_MSK, init->clk << USART_CON1_SCKEN_POS);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_SCKPOL_MSK, init->polarity << USART_CON1_SCKPOL_POS);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_SCKPHA_MSK, init->phase << USART_CON1_SCKPHA_POS);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_LBCP_MSK, init->last_bit << USART_CON1_LBCP_POS);
 
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_READY;
-    USART_ENABLE(hperh);
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_READY;
+	USART_ENABLE(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -485,57 +481,50 @@ ald_status_t ald_usart_clock_init(usart_handle_t *hperh, usart_clock_init_t *ini
   */
 ald_status_t ald_usart_send(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_RX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
-    hperh->err_code = USART_ERROR_NONE;
-    SET_BIT(hperh->state, USART_STATE_TX_MASK);
+	__LOCK(hperh);
+	hperh->err_code = USART_ERROR_NONE;
+	SET_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
 
-    while (hperh->tx_count-- > 0)
-    {
-        if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = USART_STATE_READY;
-            return TIMEOUT;
-        }
+	while (hperh->tx_count-- > 0) {
+		if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = USART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-        {
-            if (hperh->init.parity == USART_PARITY_NONE)
-            {
-                WRITE_REG(hperh->perh->DATA, (*(uint16_t *)buf & (uint16_t)0x01FF));
-                buf += 2;
-            }
-            else
-            {
-                WRITE_REG(hperh->perh->DATA, *buf++);
-            }
-        }
-        else
-        {
-            WRITE_REG(hperh->perh->DATA, *buf++);
-        }
-    }
+		if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+			if (hperh->init.parity == USART_PARITY_NONE) {
+				WRITE_REG(hperh->perh->DATA, (*(uint16_t *)buf & (uint16_t)0x01FF));
+				buf += 2;
+			}
+			else {
+				WRITE_REG(hperh->perh->DATA, *buf++);
+			}
+		}
+		else {
+			WRITE_REG(hperh->perh->DATA, *buf++);
+		}
+	}
 
-    if (usart_wait_flag(hperh, USART_FLAG_TC, SET, timeout) != OK)
-    {
-        __UNLOCK(hperh);
-        hperh->state = USART_STATE_READY;
-        return TIMEOUT;
-    }
+	if (usart_wait_flag(hperh, USART_FLAG_TC, SET, timeout) != OK) {
+		__UNLOCK(hperh);
+		hperh->state = USART_STATE_READY;
+		return TIMEOUT;
+	}
 
-    CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
-    __UNLOCK(hperh);
+	CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -549,54 +538,48 @@ ald_status_t ald_usart_send(usart_handle_t *hperh, uint8_t *buf, uint16_t size, 
   */
 ald_status_t ald_usart_recv(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return  ERROR;
 
-    __LOCK(hperh);
-    hperh->err_code = USART_ERROR_NONE;
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	__LOCK(hperh);
+	hperh->err_code = USART_ERROR_NONE;
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
 
-    while (hperh->rx_count-- > 0)
-    {
-        if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = USART_STATE_READY;
-            return TIMEOUT;
-        }
+	while (hperh->rx_count-- > 0) {
+		if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = USART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-        {
-            if (hperh->init.parity == USART_PARITY_NONE)
-            {
-                *(uint16_t *)buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
-                buf += 2;
-            }
-            else
-            {
-                *buf = (uint8_t)(hperh->perh->DATA & 0xFF);
-                buf += 1;
-            }
-        }
-        else
-        {
-            if (hperh->init.parity == USART_PARITY_NONE)
-                *buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-            else
-                *buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
-        }
-    }
+		if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+			if (hperh->init.parity == USART_PARITY_NONE) {
+				*(uint16_t *)buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
+				buf += 2;
+			}
+			else {
+				*buf = (uint8_t)(hperh->perh->DATA & 0xFF);
+				buf += 1;
+			}
+		}
+		else {
+			if (hperh->init.parity == USART_PARITY_NONE)
+				*buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+			else
+				*buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
+		}
+	}
 
-    CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
-    __UNLOCK(hperh);
+	CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -609,24 +592,24 @@ ald_status_t ald_usart_recv(usart_handle_t *hperh, uint8_t *buf, uint16_t size, 
   */
 ald_status_t ald_usart_send_by_it(usart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_RX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_TX_MASK);
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    hperh->tx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config(hperh, USART_IT_TXE, ENABLE);
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config(hperh, USART_IT_TXE, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -639,26 +622,26 @@ ald_status_t ald_usart_send_by_it(usart_handle_t *hperh, uint8_t *buf, uint16_t 
   */
 ald_status_t ald_usart_recv_by_it(usart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -671,27 +654,27 @@ ald_status_t ald_usart_recv_by_it(usart_handle_t *hperh, uint8_t *buf, uint16_t 
   */
 ald_status_t ald_usart_recv_frame_by_it(usart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
-    __frame_mode = 1;
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
+	__frame_mode = 1;
 
-    return OK;
+	return OK;
 }
 
 #ifdef ALD_DMA
@@ -706,54 +689,53 @@ ald_status_t ald_usart_recv_frame_by_it(usart_handle_t *hperh, uint8_t *buf, uin
   */
 ald_status_t ald_usart_send_by_dma(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_RX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_TX_MASK);
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
 
-    /* Configure callback function */
-    hperh->hdmatx.cplt_cbk = usart_dma_send_cplt;
-    hperh->hdmatx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.err_cbk  = usart_dma_error;
-    hperh->hdmatx.err_arg  = (void *)hperh;
+	/* Configure callback function */
+	hperh->hdmatx.cplt_cbk = usart_dma_send_cplt;
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.err_cbk  = usart_dma_error;
+	hperh->hdmatx.err_arg  = (void *)hperh;
 
-    /* Configure USART DMA transmit */
-    ald_dma_config_struct(&hperh->hdmatx.config);
-    hperh->hdmatx.config.src     = (void *)buf;
-    hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size    = size;
-    hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
-    hperh->hdmatx.config.channel = channel;
+	/* Configure USART DMA transmit */
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.src     = (void *)buf;
+	hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size    = size;
+	hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
+	hperh->hdmatx.config.channel = channel;
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    ald_dma_config_basic(&hperh->hdmatx);
+	ald_dma_config_basic(&hperh->hdmatx);
 
-    __UNLOCK(hperh);
-    ald_usart_clear_flag_status(hperh, USART_FLAG_TC);
-    SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	__UNLOCK(hperh);
+	ald_usart_clear_flag_status(hperh, USART_FLAG_TC);
+	SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -769,52 +751,51 @@ ald_status_t ald_usart_send_by_dma(usart_handle_t *hperh, uint8_t *buf, uint16_t
   */
 ald_status_t ald_usart_recv_by_dma(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_READY) && (hperh->state != USART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->err_code = USART_ERROR_NONE;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->err_code = USART_ERROR_NONE;
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    /* Configure callback function */
-    hperh->hdmarx.cplt_cbk = usart_dma_recv_cplt;
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmarx.err_cbk  = usart_dma_error;
-    hperh->hdmarx.err_arg  = (void *)hperh;
+	/* Configure callback function */
+	hperh->hdmarx.cplt_cbk = usart_dma_recv_cplt;
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.err_cbk  = usart_dma_error;
+	hperh->hdmarx.err_arg  = (void *)hperh;
 
-    /* Configure DMA Receive */
-    ald_dma_config_struct(&hperh->hdmarx.config);
-    hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
-    hperh->hdmarx.config.dst     = (void *)buf;
-    hperh->hdmarx.config.size    = size;
-    hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
-    hperh->hdmarx.config.channel = channel;
+	/* Configure DMA Receive */
+	ald_dma_config_struct(&hperh->hdmarx.config);
+	hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst     = (void *)buf;
+	hperh->hdmarx.config.size    = size;
+	hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
+	hperh->hdmarx.config.channel = channel;
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    ald_dma_config_basic(&hperh->hdmarx);
+	ald_dma_config_basic(&hperh->hdmarx);
 
-    __UNLOCK(hperh);
-    SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	__UNLOCK(hperh);
+	SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
 
-    return OK;
+	return OK;
 }
 #endif
 /**
@@ -890,50 +871,45 @@ ald_status_t ald_usart_recv_by_dma(usart_handle_t *hperh, uint8_t *buf, uint16_t
   */
 ald_status_t ald_usart_send_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	if ((buf == NULL) || (size == 0))
+		return  ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_TX;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_TX;
 
-    while (hperh->tx_count-- > 0)
-    {
-        if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = USART_STATE_READY;
-            return TIMEOUT;
-        }
+	while (hperh->tx_count-- > 0) {
+		if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = USART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        if ((hperh->init.word_length == USART_WORD_LENGTH_9B) && (hperh->init.parity == USART_PARITY_NONE))
-        {
-            WRITE_REG(hperh->perh->DATA, (*(uint16_t *)buf & 0x1FF));
-            buf += 2;
-        }
-        else
-        {
-            WRITE_REG(hperh->perh->DATA, *buf++);
-        }
-    }
+		if ((hperh->init.word_length == USART_WORD_LENGTH_9B) && (hperh->init.parity == USART_PARITY_NONE)) {
+			WRITE_REG(hperh->perh->DATA, (*(uint16_t *)buf & 0x1FF));
+			buf += 2;
+		}
+		else {
+			WRITE_REG(hperh->perh->DATA, *buf++);
+		}
+    	}
 
-    if (usart_wait_flag(hperh, USART_FLAG_TC, SET, timeout) != OK)
-    {
-        __UNLOCK(hperh);
-        hperh->state = USART_STATE_READY;
-        return TIMEOUT;
-    }
+	if (usart_wait_flag(hperh, USART_FLAG_TC, SET, timeout) != OK) {
+		__UNLOCK(hperh);
+		hperh->state = USART_STATE_READY;
+		return TIMEOUT;
+	}
 
-    hperh->state = USART_STATE_READY;
-    __UNLOCK(hperh);
+	hperh->state = USART_STATE_READY;
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -947,71 +923,63 @@ ald_status_t ald_usart_send_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t s
   */
 ald_status_t ald_usart_recv_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	if ((buf == NULL) || (size == 0))
+		return  ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_RX;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_RX;
 
-    while (hperh->rx_count-- > 0)
-    {
-        if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = USART_STATE_READY;
-            return TIMEOUT;
-        }
+	while (hperh->rx_count-- > 0) {
+		if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = USART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-        {
-            WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & 0x1FF));
+		if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+			WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & 0x1FF));
 
-            if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK)
-            {
-                __UNLOCK(hperh);
-                hperh->state = USART_STATE_READY;
-                return TIMEOUT;
-            }
+			if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK) {
+				__UNLOCK(hperh);
+				hperh->state = USART_STATE_READY;
+				return TIMEOUT;
+			}
 
-            if (hperh->init.parity == USART_PARITY_NONE)
-            {
-                *(uint16_t *)buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
-                buf += 2;
-            }
-            else
-            {
-                *buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-            }
-        }
-        else
-        {
-            WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & 0xFF));
+			if (hperh->init.parity == USART_PARITY_NONE) {
+				*(uint16_t *)buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
+				buf += 2;
+			}
+			else {
+				*buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+			}
+		}
+		else {
+			WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & 0xFF));
 
-            if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK)
-            {
-                __UNLOCK(hperh);
-                hperh->state = USART_STATE_READY;
-                return TIMEOUT;
-            }
+			if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK) {
+				__UNLOCK(hperh);
+				hperh->state = USART_STATE_READY;
+				return TIMEOUT;
+			}
 
-            if (hperh->init.parity == USART_PARITY_NONE)
-                *buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-            else
-                *buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
-        }
-    }
+			if (hperh->init.parity == USART_PARITY_NONE)
+				*buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+			else
+				*buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
+		}
+	}
 
-    hperh->state = USART_STATE_READY;
-    __UNLOCK(hperh);
+	hperh->state = USART_STATE_READY;
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1026,83 +994,73 @@ ald_status_t ald_usart_recv_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t s
   */
 ald_status_t ald_usart_send_recv_sync(usart_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size, uint32_t timeout)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((tx_buf == NULL) || (rx_buf == NULL) || (size == 0))
-        return  ERROR;
+	if ((tx_buf == NULL) || (rx_buf == NULL) || (size == 0))
+		return  ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_RX;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_RX;
 
-    while (hperh->tx_count-- > 0)
-    {
-        --hperh->rx_count;
+	while (hperh->tx_count-- > 0) {
+		--hperh->rx_count;
 
-        if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = USART_STATE_READY;
-            return TIMEOUT;
-        }
+		if (usart_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = USART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-        {
-            if (hperh->init.parity == USART_PARITY_NONE)
-            {
-                WRITE_REG(hperh->perh->DATA, (*(uint16_t *)tx_buf & 0x1FF));
-                tx_buf += 2;
-            }
-            else
-            {
-                WRITE_REG(hperh->perh->DATA, *tx_buf++);
-            }
+		if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+			if (hperh->init.parity == USART_PARITY_NONE) {
+				WRITE_REG(hperh->perh->DATA, (*(uint16_t *)tx_buf & 0x1FF));
+				tx_buf += 2;
+			}
+			else {
+				WRITE_REG(hperh->perh->DATA, *tx_buf++);
+			}
 
-            if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK)
-            {
-                __UNLOCK(hperh);
-                hperh->state = USART_STATE_READY;
-                return TIMEOUT;
-            }
+			if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK) {
+				__UNLOCK(hperh);
+				hperh->state = USART_STATE_READY;
+				return TIMEOUT;
+			}
 
-            if (hperh->init.parity == USART_PARITY_NONE)
-            {
-                *(uint16_t *)rx_buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
-                rx_buf += 2;
-            }
-            else
-            {
-                *rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-            }
-        }
-        else
-        {
-            WRITE_REG(hperh->perh->DATA, *tx_buf++);
+			if (hperh->init.parity == USART_PARITY_NONE) {
+				*(uint16_t *)rx_buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
+				rx_buf += 2;
+			}
+			else {
+				*rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+			}
+		}
+		else {
+			WRITE_REG(hperh->perh->DATA, *tx_buf++);
 
-            if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK)
-            {
-                __UNLOCK(hperh);
-                hperh->state = USART_STATE_READY;
-                return TIMEOUT;
-            }
+			if (usart_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK) {
+				__UNLOCK(hperh);
+				hperh->state = USART_STATE_READY;
+				return TIMEOUT;
+			}
 
-            if (hperh->init.parity == USART_PARITY_NONE)
-                *rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-            else
-                *rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
-        }
-    }
+			if (hperh->init.parity == USART_PARITY_NONE)
+				*rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+			else
+				*rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
+		}
+	}
 
-    hperh->state = USART_STATE_READY;
-    __UNLOCK(hperh);
+	hperh->state = USART_STATE_READY;
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1116,33 +1074,33 @@ ald_status_t ald_usart_send_recv_sync(usart_handle_t *hperh, uint8_t *tx_buf, ui
   */
 ald_status_t ald_usart_send_by_it_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_TX;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_TX;
 
-    /* The USART Error Interrupts: (Frame error, Noise error, Overrun error)
-     * are not managed by the USART transmit process to avoid the overrun interrupt
-     * when the USART mode is configured for transmit and receive "USART_MODE_TX_RX"
-     * to benefit for the frame error and noise interrupts the USART mode should be
-     * configured only for transmit "USART_MODE_TX"
-     * The __ALD_USART_ENABLE_IT(hperh, USART_IT_ERR) can be used to enable the Frame error,
-     * Noise error interrupt
-     */
+	/* The USART Error Interrupts: (Frame error, Noise error, Overrun error)
+	 * are not managed by the USART transmit process to avoid the overrun interrupt
+	 * when the USART mode is configured for transmit and receive "USART_MODE_TX_RX"
+	 * to benefit for the frame error and noise interrupts the USART mode should be
+	 * configured only for transmit "USART_MODE_TX"
+	 * The __ALD_USART_ENABLE_IT(hperh, USART_IT_ERR) can be used to enable the Frame error,
+	 * Noise error interrupt
+	 */
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config(hperh, USART_IT_TXE, ENABLE);
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config(hperh, USART_IT_TXE, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1155,27 +1113,27 @@ ald_status_t ald_usart_send_by_it_sync(usart_handle_t *hperh, uint8_t *buf, uint
   */
 ald_status_t ald_usart_recv_by_it_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_RX;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_RX;
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
 
-    WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & (uint16_t)0x01FF));
-    return OK;
+	WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & (uint16_t)0x01FF));
+	return OK;
 }
 
 /**
@@ -1189,30 +1147,30 @@ ald_status_t ald_usart_recv_by_it_sync(usart_handle_t *hperh, uint8_t *buf, uint
   */
 ald_status_t ald_usart_send_recv_by_it_sync(usart_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf,  uint16_t size)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((tx_buf == NULL) || (rx_buf == NULL) || (size == 0))
-        return ERROR;
+	if ((tx_buf == NULL) || (rx_buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_buf   = rx_buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->tx_buf   = tx_buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_TX_RX;
+	hperh->rx_buf   = rx_buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->tx_buf   = tx_buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_TX_RX;
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_TXE, ENABLE);
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config(hperh, USART_IT_RXNE, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_PE, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_ERR, ENABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_TXE, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 #ifdef ALD_DMA
@@ -1227,54 +1185,53 @@ ald_status_t ald_usart_send_recv_by_it_sync(usart_handle_t *hperh, uint8_t *tx_b
   */
 ald_status_t ald_usart_send_by_dma_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_TX;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_TX;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
 
-    /* Configure callback function */
-    hperh->hdmatx.cplt_cbk = usart_dma_send_cplt;
-    hperh->hdmatx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.err_cbk  = usart_dma_error;
-    hperh->hdmatx.err_arg  = (void *)hperh;
+	/* Configure callback function */
+	hperh->hdmatx.cplt_cbk = usart_dma_send_cplt;
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.err_cbk  = usart_dma_error;
+	hperh->hdmatx.err_arg  = (void *)hperh;
 
-    /* Configure DMA transmit */
-    ald_dma_config_struct(&hperh->hdmatx.config);
-    hperh->hdmatx.config.src     = (void *)buf;
-    hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size    = size;
-    hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
-    hperh->hdmatx.config.channel = channel;
+	/* Configure DMA transmit */
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.src     = (void *)buf;
+	hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size    = size;
+	hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
+	hperh->hdmatx.config.channel = channel;
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    ald_dma_config_basic(&hperh->hdmatx);
+	ald_dma_config_basic(&hperh->hdmatx);
 
-    __UNLOCK(hperh);
-    ald_usart_clear_flag_status(hperh, USART_FLAG_TC);
-    SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	__UNLOCK(hperh);
+	ald_usart_clear_flag_status(hperh, USART_FLAG_TC);
+	SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1291,82 +1248,79 @@ ald_status_t ald_usart_send_by_dma_sync(usart_handle_t *hperh, uint8_t *buf, uin
   */
 ald_status_t ald_usart_recv_by_dma_sync(usart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t tx_channel, uint8_t rx_channel)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_RX;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_RX;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	/* Configure DMA callback function */
+	hperh->hdmarx.cplt_cbk = usart_dma_recv_cplt;
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.err_cbk  = usart_dma_error;
+	hperh->hdmarx.err_arg  = (void *)hperh;
 
-    /* Configure DMA callback function */
-    hperh->hdmarx.cplt_cbk = usart_dma_recv_cplt;
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmarx.err_cbk  = usart_dma_error;
-    hperh->hdmarx.err_arg  = (void *)hperh;
+	/* Configure DMA receive*/
+	ald_dma_config_struct(&hperh->hdmarx.config);
+	hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst     = (void *)buf;
+	hperh->hdmarx.config.size    = size;
+	hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
+	hperh->hdmarx.config.channel = rx_channel;
 
-    /* Configure DMA receive*/
-    ald_dma_config_struct(&hperh->hdmarx.config);
-    hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
-    hperh->hdmarx.config.dst     = (void *)buf;
-    hperh->hdmarx.config.size    = size;
-    hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
-    hperh->hdmarx.config.channel = rx_channel;
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	ald_dma_config_basic(&hperh->hdmarx);
 
-    ald_dma_config_basic(&hperh->hdmarx);
+	/* Enable the USART transmit DMA channel: the transmit channel is used in order
+	 * to generate in the non-blocking mode the clock to the slave device,
+	 * this mode isn't a simplex receive mode but a full-duplex receive one
+	 */
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.src     = (void *)buf;
+	hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size    = size;
+	hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
+	hperh->hdmatx.config.channel = tx_channel;
 
-    /* Enable the USART transmit DMA channel: the transmit channel is used in order
-     * to generate in the non-blocking mode the clock to the slave device,
-     * this mode isn't a simplex receive mode but a full-duplex receive one
-     */
-    ald_dma_config_struct(&hperh->hdmatx.config);
-    hperh->hdmatx.config.src     = (void *)buf;
-    hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size    = size;
-    hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
-    hperh->hdmatx.config.channel = tx_channel;
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	ald_dma_config_basic(&hperh->hdmatx);
 
-    ald_dma_config_basic(&hperh->hdmatx);
+	USART_CLEAR_OREFLAG(hperh);
+	__UNLOCK(hperh);
+	SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
 
-    USART_CLEAR_OREFLAG(hperh);
-    __UNLOCK(hperh);
-    SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -1382,86 +1336,83 @@ ald_status_t ald_usart_recv_by_dma_sync(usart_handle_t *hperh, uint8_t *buf, uin
   * @retval Status, see @ref ald_status_t.
   */
 ald_status_t ald_usart_send_recv_by_dma_sync(usart_handle_t *hperh, uint8_t *tx_buf,
-        uint8_t *rx_buf, uint16_t size, uint8_t tx_channel, uint8_t rx_channel)
+                    uint8_t *rx_buf, uint16_t size, uint8_t tx_channel, uint8_t rx_channel)
 {
-    if (hperh->state != USART_STATE_READY)
-        return BUSY;
+	if (hperh->state != USART_STATE_READY)
+		return BUSY;
 
-    if ((tx_buf == NULL) || (rx_buf == NULL) || (size == 0))
-        return ERROR;
+	if ((tx_buf == NULL) || (rx_buf == NULL) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_buf   = rx_buf;
-    hperh->rx_size  = size;
-    hperh->tx_buf   = tx_buf;
-    hperh->tx_size  = size;
-    hperh->err_code = USART_ERROR_NONE;
-    hperh->state    = USART_STATE_BUSY_TX_RX;
+	hperh->rx_buf   = rx_buf;
+	hperh->rx_size  = size;
+	hperh->tx_buf   = tx_buf;
+	hperh->tx_size  = size;
+	hperh->err_code = USART_ERROR_NONE;
+	hperh->state    = USART_STATE_BUSY_TX_RX;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	/* Configure DMA callback function */
+	hperh->hdmarx.cplt_cbk = usart_dma_recv_cplt;
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.cplt_cbk = usart_dma_send_cplt;
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.err_cbk  = usart_dma_error;
+	hperh->hdmatx.err_arg  = (void *)hperh;
+	hperh->hdmarx.err_cbk  = usart_dma_error;
+	hperh->hdmarx.err_arg  = (void *)hperh;
 
-    /* Configure DMA callback function */
-    hperh->hdmarx.cplt_cbk = usart_dma_recv_cplt;
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.cplt_cbk = usart_dma_send_cplt;
-    hperh->hdmatx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.err_cbk  = usart_dma_error;
-    hperh->hdmatx.err_arg  = (void *)hperh;
-    hperh->hdmarx.err_cbk  = usart_dma_error;
-    hperh->hdmarx.err_arg  = (void *)hperh;
+	/* Configure DMA receive */
+	ald_dma_config_struct(&hperh->hdmarx.config);
+	hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst     = (void *)rx_buf;
+	hperh->hdmarx.config.size    = size;
+	hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
+	hperh->hdmarx.config.channel = rx_channel;
 
-    /* Configure DMA receive */
-    ald_dma_config_struct(&hperh->hdmarx.config);
-    hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
-    hperh->hdmarx.config.dst     = (void *)rx_buf;
-    hperh->hdmarx.config.size    = size;
-    hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
-    hperh->hdmarx.config.channel = rx_channel;
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	ald_dma_config_basic(&hperh->hdmarx);
 
-    ald_dma_config_basic(&hperh->hdmarx);
+	/* Configure DMA transmit*/
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.src     = (void *)tx_buf;
+	hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size    = size;
+	hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
+	hperh->hdmatx.config.channel = tx_channel;
 
-    /* Configure DMA transmit*/
-    ald_dma_config_struct(&hperh->hdmatx.config);
-    hperh->hdmatx.config.src     = (void *)tx_buf;
-    hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size    = size;
-    hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
-    hperh->hdmatx.config.channel = tx_channel;
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
+			&& (hperh->init.parity == USART_PARITY_NONE)) {
+		hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B)
-            && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	ald_dma_config_basic(&hperh->hdmatx);
 
-    ald_dma_config_basic(&hperh->hdmatx);
+	ald_usart_clear_flag_status(hperh, USART_FLAG_TC);
+	USART_CLEAR_OREFLAG(hperh);
+	__UNLOCK(hperh);
+	SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
 
-    ald_usart_clear_flag_status(hperh, USART_FLAG_TC);
-    USART_CLEAR_OREFLAG(hperh);
-    __UNLOCK(hperh);
-    SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-
-    return OK;
+	return OK;
 }
 #endif
 /**
@@ -1481,29 +1432,25 @@ ald_status_t ald_usart_send_recv_by_dma_sync(usart_handle_t *hperh, uint8_t *tx_
   */
 ald_status_t ald_usart_dma_pause(usart_handle_t *hperh)
 {
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    if (hperh->state == USART_STATE_BUSY_TX)
-    {
-        CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-    }
-    else if (hperh->state == USART_STATE_BUSY_RX)
-    {
-        CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    }
-    else if (hperh->state == USART_STATE_BUSY_TX_RX)
-    {
-        CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-        CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    }
-    else
-    {
-        __UNLOCK(hperh);
-        return ERROR;
-    }
+	if (hperh->state == USART_STATE_BUSY_TX) {
+		CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	}
+	else if (hperh->state == USART_STATE_BUSY_RX) {
+		CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	}
+	else if (hperh->state == USART_STATE_BUSY_TX_RX) {
+		CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+		CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	}
+	else {
+		__UNLOCK(hperh);
+		return ERROR;
+	}
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -1514,31 +1461,27 @@ ald_status_t ald_usart_dma_pause(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_dma_resume(usart_handle_t *hperh)
 {
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    if (hperh->state == USART_STATE_BUSY_TX)
-    {
-        SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-    }
-    else if (hperh->state == USART_STATE_BUSY_RX)
-    {
-        USART_CLEAR_OREFLAG(hperh);
-        SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    }
-    else if (hperh->state == USART_STATE_BUSY_TX_RX)
-    {
-        USART_CLEAR_OREFLAG(hperh);
-        SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-        SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    }
-    else
-    {
-        __UNLOCK(hperh);
-        return ERROR;
-    }
+	if (hperh->state == USART_STATE_BUSY_TX) {
+		SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	}
+	else if (hperh->state == USART_STATE_BUSY_RX) {
+		USART_CLEAR_OREFLAG(hperh);
+		SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	}
+	else if (hperh->state == USART_STATE_BUSY_TX_RX) {
+		USART_CLEAR_OREFLAG(hperh);
+		SET_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+		SET_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	}
+	else {
+		__UNLOCK(hperh);
+		return ERROR;
+	}
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -1549,11 +1492,11 @@ ald_status_t ald_usart_dma_resume(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_dma_stop(usart_handle_t *hperh)
 {
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
 
-    hperh->state = USART_STATE_READY;
-    return OK;
+	hperh->state = USART_STATE_READY;
+	return OK;
 }
 #endif
 /**
@@ -1564,102 +1507,87 @@ ald_status_t ald_usart_dma_stop(usart_handle_t *hperh)
   */
 void ald_usart_irq_handler(usart_handle_t *hperh)
 {
-    uint32_t flag;
-    uint32_t source;
+	uint32_t flag;
+	uint32_t source;
 
-    /* Handle parity error */
-    flag   = ald_usart_get_flag_status(hperh, USART_FLAG_PE);
-    source = ald_usart_get_it_status(hperh, USART_IT_PE);
+	/* Handle parity error */
+	flag   = ald_usart_get_flag_status(hperh, USART_FLAG_PE);
+	source = ald_usart_get_it_status(hperh, USART_IT_PE);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= USART_ERROR_PE;
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= USART_ERROR_PE;
+	/* Handle frame error */
+	flag   = ald_usart_get_flag_status(hperh, USART_FLAG_FE);
+	source = ald_usart_get_it_status(hperh, USART_IT_ERR);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= USART_ERROR_FE;
 
-    /* Handle frame error */
-    flag   = ald_usart_get_flag_status(hperh, USART_FLAG_FE);
-    source = ald_usart_get_it_status(hperh, USART_IT_ERR);
+	/* Handle noise error */
+	flag = ald_usart_get_flag_status(hperh, USART_FLAG_NE);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= USART_ERROR_NE;
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= USART_ERROR_FE;
+	/* Handle overrun error */
+	flag = ald_usart_get_flag_status(hperh, USART_FLAG_ORE);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= USART_ERROR_ORE;
 
-    /* Handle noise error */
-    flag = ald_usart_get_flag_status(hperh, USART_FLAG_NE);
+	/* Handle idle error */
+	flag   = ald_usart_get_flag_status(hperh, USART_FLAG_IDLE);
+	source = ald_usart_get_it_status(hperh, USART_IT_IDLE);
+	if ((flag != RESET) && (source != RESET))
+		__usart_recv_frame_cplt(hperh);
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= USART_ERROR_NE;
+	/* Handle asynchronous */
+	if (READ_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK) == 0) {
+		/* Receiver */
+		flag   = ald_usart_get_flag_status(hperh, USART_FLAG_RXNE);
+		source = ald_usart_get_it_status(hperh, USART_IT_RXNE);
+		if ((flag != RESET) && (source != RESET))
+			__usart_recv_by_it(hperh);
 
-    /* Handle overrun error */
-    flag = ald_usart_get_flag_status(hperh, USART_FLAG_ORE);
+		/* Transmitter */
+		flag   = ald_usart_get_flag_status(hperh, USART_FLAG_TXE);
+		source = ald_usart_get_it_status(hperh, USART_IT_TXE);
+		if ((flag != RESET) && (source != RESET))
+			__usart_send_by_it(hperh);
+	}
+	else {	/* Handle synchronous */
+		/* Receiver */
+		flag   = ald_usart_get_flag_status(hperh, USART_FLAG_RXNE);
+		source = ald_usart_get_it_status(hperh, USART_IT_RXNE);
+		if ((flag != RESET) && (source != RESET)) {
+			if (hperh->state == USART_STATE_BUSY_RX)
+				__usart_recv_by_it_sync(hperh);
+			else
+				__usart_send_recv_by_it_sync(hperh);
+		}
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= USART_ERROR_ORE;
+		/* Transmitter */
+		flag   = ald_usart_get_flag_status(hperh, USART_FLAG_TXE);
+		source = ald_usart_get_it_status(hperh, USART_IT_TXE);
+		if ((flag != RESET) && (source != RESET)) {
+			if (hperh->state == USART_STATE_BUSY_TX)
+				__usart_send_by_it(hperh);
+			else
+				__usart_send_recv_by_it_sync(hperh);
+		}
+	}
 
-    /* Handle idle error */
-    flag   = ald_usart_get_flag_status(hperh, USART_FLAG_IDLE);
-    source = ald_usart_get_it_status(hperh, USART_IT_IDLE);
+	/* Handle transmitter end */
+	flag   = ald_usart_get_flag_status(hperh, USART_FLAG_TC);
+	source = ald_usart_get_it_status(hperh, USART_IT_TC);
+	if ((flag != RESET) && (source != RESET))
+		__usart_end_send_by_it(hperh);
 
-    if ((flag != RESET) && (source != RESET))
-        __usart_recv_frame_cplt(hperh);
+	/* Handle error */
+	if (hperh->err_code != USART_ERROR_NONE) {
+		USART_CLEAR_PEFLAG(hperh);
+		hperh->state = USART_STATE_READY;
 
-    /* Handle asynchronous */
-    if (READ_BIT(hperh->perh->CON1, USART_CON1_SCKEN_MSK) == 0)
-    {
-        /* Receiver */
-        flag   = ald_usart_get_flag_status(hperh, USART_FLAG_RXNE);
-        source = ald_usart_get_it_status(hperh, USART_IT_RXNE);
-
-        if ((flag != RESET) && (source != RESET))
-            __usart_recv_by_it(hperh);
-
-        /* Transmitter */
-        flag   = ald_usart_get_flag_status(hperh, USART_FLAG_TXE);
-        source = ald_usart_get_it_status(hperh, USART_IT_TXE);
-
-        if ((flag != RESET) && (source != RESET))
-            __usart_send_by_it(hperh);
-    }
-    else  	/* Handle synchronous */
-    {
-        /* Receiver */
-        flag   = ald_usart_get_flag_status(hperh, USART_FLAG_RXNE);
-        source = ald_usart_get_it_status(hperh, USART_IT_RXNE);
-
-        if ((flag != RESET) && (source != RESET))
-        {
-            if (hperh->state == USART_STATE_BUSY_RX)
-                __usart_recv_by_it_sync(hperh);
-            else
-                __usart_send_recv_by_it_sync(hperh);
-        }
-
-        /* Transmitter */
-        flag   = ald_usart_get_flag_status(hperh, USART_FLAG_TXE);
-        source = ald_usart_get_it_status(hperh, USART_IT_TXE);
-
-        if ((flag != RESET) && (source != RESET))
-        {
-            if (hperh->state == USART_STATE_BUSY_TX)
-                __usart_send_by_it(hperh);
-            else
-                __usart_send_recv_by_it_sync(hperh);
-        }
-    }
-
-    /* Handle transmitter end */
-    flag   = ald_usart_get_flag_status(hperh, USART_FLAG_TC);
-    source = ald_usart_get_it_status(hperh, USART_IT_TC);
-
-    if ((flag != RESET) && (source != RESET))
-        __usart_end_send_by_it(hperh);
-
-    /* Handle error */
-    if (hperh->err_code != USART_ERROR_NONE)
-    {
-        USART_CLEAR_PEFLAG(hperh);
-        hperh->state = USART_STATE_READY;
-
-        if (hperh->error_cbk != NULL)
-            hperh->error_cbk(hperh);
-    }
+		if (hperh->error_cbk != NULL)
+			hperh->error_cbk(hperh);
+	}
 }
 
 /**
@@ -1701,16 +1629,16 @@ void ald_usart_irq_handler(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_multi_processor_enter_mute_mode(usart_handle_t *hperh)
 {
-    assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART(hperh->perh));
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->state = USART_STATE_BUSY;
-    SET_BIT(hperh->perh->CON0, USART_CON0_RXWK_MSK);
-    hperh->state = USART_STATE_READY;
+	hperh->state = USART_STATE_BUSY;
+	SET_BIT(hperh->perh->CON0, USART_CON0_RXWK_MSK);
+	hperh->state = USART_STATE_READY;
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -1721,16 +1649,16 @@ ald_status_t ald_usart_multi_processor_enter_mute_mode(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_multi_processor_exit_mute_mode(usart_handle_t *hperh)
 {
-    assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART(hperh->perh));
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->state = USART_STATE_BUSY;
-    CLEAR_BIT(hperh->perh->CON0, USART_CON0_RXWK_MSK);
-    hperh->state = USART_STATE_READY;
+	hperh->state = USART_STATE_BUSY;
+	CLEAR_BIT(hperh->perh->CON0, USART_CON0_RXWK_MSK);
+	hperh->state = USART_STATE_READY;
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -1741,15 +1669,15 @@ ald_status_t ald_usart_multi_processor_exit_mute_mode(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_half_duplex_enable_send(usart_handle_t *hperh)
 {
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->state = USART_STATE_BUSY;
-    SET_BIT(hperh->perh->CON0, USART_CON0_RXEN_MSK);
-    SET_BIT(hperh->perh->CON0, USART_CON0_TXEN_MSK);
-    hperh->state = USART_STATE_READY;
+	hperh->state = USART_STATE_BUSY;
+	SET_BIT(hperh->perh->CON0, USART_CON0_RXEN_MSK);
+	SET_BIT(hperh->perh->CON0, USART_CON0_TXEN_MSK);
+	hperh->state = USART_STATE_READY;
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -1760,15 +1688,15 @@ ald_status_t ald_usart_half_duplex_enable_send(usart_handle_t *hperh)
   */
 ald_status_t ald_usart_half_duplex_enable_recv(usart_handle_t *hperh)
 {
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->state = USART_STATE_BUSY;
-    SET_BIT(hperh->perh->CON0, USART_CON0_RXEN_MSK);
-    SET_BIT(hperh->perh->CON0, USART_CON0_TXEN_MSK);
-    hperh->state = USART_STATE_READY;
+	hperh->state = USART_STATE_BUSY;
+	SET_BIT(hperh->perh->CON0, USART_CON0_RXEN_MSK);
+	SET_BIT(hperh->perh->CON0, USART_CON0_TXEN_MSK);
+	hperh->state = USART_STATE_READY;
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -1785,16 +1713,16 @@ ald_status_t ald_usart_half_duplex_enable_recv(usart_handle_t *hperh)
   */
 void ald_usart_dma_req_config(usart_handle_t *hperh, usart_dma_req_t req, type_func_t state)
 {
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_DMAREQ(req));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_DMAREQ(req));
+	assert_param(IS_FUNC_STATE(state));
 
-    if (state != DISABLE)
-        SET_BIT(hperh->perh->CON2, req);
-    else
-        CLEAR_BIT(hperh->perh->CON2, req);
+	if (state != DISABLE)
+		SET_BIT(hperh->perh->CON2, req);
+	else
+		CLEAR_BIT(hperh->perh->CON2, req);
 
-    return;
+	return;
 }
 
 /**
@@ -1818,39 +1746,37 @@ void ald_usart_dma_req_config(usart_handle_t *hperh, usart_dma_req_t req, type_f
   */
 void ald_usart_interrupt_config(usart_handle_t *hperh, usart_it_t it, type_func_t state)
 {
-    uint8_t idx;
+	uint8_t idx;
 
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_CONFIG_IT(it));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_CONFIG_IT(it));
+	assert_param(IS_FUNC_STATE(state));
 
-    idx = (it >> 16) & 0x7;
-    it &= 0xFFFF;
+	idx = (it >> 16) & 0x7;
+	it &= 0xFFFF;
 
-    if (state)
-    {
-        if (idx == 1)
-            SET_BIT(hperh->perh->CON0, it);
-        else if (idx == 2)
-            SET_BIT(hperh->perh->CON1, it);
-        else if (idx == 4)
-            SET_BIT(hperh->perh->CON2, it);
-        else
-            ;
-    }
-    else
-    {
-        if (idx == 1)
-            CLEAR_BIT(hperh->perh->CON0, it);
-        else if (idx == 2)
-            CLEAR_BIT(hperh->perh->CON1, it);
-        else if (idx == 4)
-            CLEAR_BIT(hperh->perh->CON2, it);
-        else
-            ;
-    }
+	if (state) {
+		if (idx == 1)
+			SET_BIT(hperh->perh->CON0, it);
+		else if (idx == 2)
+			SET_BIT(hperh->perh->CON1, it);
+		else if (idx == 4)
+			SET_BIT(hperh->perh->CON2, it);
+		else
+			;
+	}
+	else {
+		if (idx == 1)
+			CLEAR_BIT(hperh->perh->CON0, it);
+		else if (idx == 2)
+			CLEAR_BIT(hperh->perh->CON1, it);
+		else if (idx == 4)
+			CLEAR_BIT(hperh->perh->CON2, it);
+		else
+			;
+	}
 
-    return;
+	return;
 }
 
 /** @brief  Check whether the specified USART flag is set or not.
@@ -1864,15 +1790,15 @@ void ald_usart_interrupt_config(usart_handle_t *hperh, usart_it_t it, type_func_
   */
 flag_status_t ald_usart_get_flag_status(usart_handle_t *hperh, usart_flag_t flag)
 {
-    flag_status_t status = RESET;
+	flag_status_t status = RESET;
 
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_FLAG(flag));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_FLAG(flag));
 
-    if (READ_BIT(hperh->perh->STAT, flag))
-        status = SET;
+	if (READ_BIT(hperh->perh->STAT, flag))
+		status = SET;
 
-    return status;
+	return status;
 }
 
 /** @brief  Clear the specified USART pending flags.
@@ -1894,10 +1820,10 @@ flag_status_t ald_usart_get_flag_status(usart_handle_t *hperh, usart_flag_t flag
   */
 void ald_usart_clear_flag_status(usart_handle_t *hperh, usart_flag_t flag)
 {
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_CLEAR_FLAG(flag));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_CLEAR_FLAG(flag));
 
-    CLEAR_BIT(hperh->perh->STAT, flag);
+	CLEAR_BIT(hperh->perh->STAT, flag);
 }
 
 /**
@@ -1922,42 +1848,37 @@ void ald_usart_clear_flag_status(usart_handle_t *hperh, usart_flag_t flag)
   */
 it_status_t ald_usart_get_it_status(usart_handle_t *hperh, usart_it_t it)
 {
-    uint8_t idx;
-    it_status_t status = RESET;
+	uint8_t idx;
+	it_status_t status = RESET;
 
-    /* Check the parameters */
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_GET_IT(it));
+	/* Check the parameters */
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_GET_IT(it));
 
-    idx = (it >> 16) & 0x7;
-    it &= 0xFFFF;
+	idx = (it >> 16) & 0x7;
+	it &= 0xFFFF;
 
-    if (idx == 0)
-    {
-        if (READ_BIT(hperh->perh->STAT, it))
-            status = SET;
-    }
-    else if (idx == 1)
-    {
-        if (READ_BIT(hperh->perh->CON0, it))
-            status = SET;
-    }
-    else if (idx == 2)
-    {
-        if (READ_BIT(hperh->perh->CON1, it))
-            status = SET;
-    }
-    else if (idx == 4)
-    {
-        if (READ_BIT(hperh->perh->CON2, it))
-            status = SET;
-    }
-    else
-    {
-        /* do nothing */
-    }
+	if (idx == 0) {
+		if (READ_BIT(hperh->perh->STAT, it))
+			status = SET;
+	}
+	else if (idx == 1) {
+		if (READ_BIT(hperh->perh->CON0, it))
+			status = SET;
+	}
+	else if (idx == 2) {
+		if (READ_BIT(hperh->perh->CON1, it))
+			status = SET;
+	}
+	else if (idx == 4) {
+		if (READ_BIT(hperh->perh->CON2, it))
+			status = SET;
+	}
+	else {
+		/* do nothing */
+	}
 
-    return status;
+	return status;
 }
 
 /**
@@ -1990,7 +1911,7 @@ it_status_t ald_usart_get_it_status(usart_handle_t *hperh, usart_it_t it)
   */
 usart_state_t ald_usart_get_state(usart_handle_t *hperh)
 {
-    return hperh->state;
+	return hperh->state;
 }
 
 /**
@@ -2001,7 +1922,7 @@ usart_state_t ald_usart_get_state(usart_handle_t *hperh)
   */
 uint32_t ald_usart_get_error(usart_handle_t *hperh)
 {
-    return hperh->err_code;
+	return hperh->err_code;
 }
 
 /**
@@ -2025,11 +1946,11 @@ uint32_t ald_usart_get_error(usart_handle_t *hperh)
   */
 static void usart_dma_send_cplt(void *arg)
 {
-    usart_handle_t *hperh = (usart_handle_t *)arg;
+	usart_handle_t *hperh = (usart_handle_t *)arg;
 
-    hperh->tx_count = 0;
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-    ald_usart_interrupt_config(hperh, USART_IT_TC, ENABLE);
+	hperh->tx_count = 0;
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	ald_usart_interrupt_config(hperh, USART_IT_TC, ENABLE);
 }
 
 /**
@@ -2040,14 +1961,14 @@ static void usart_dma_send_cplt(void *arg)
   */
 static void usart_dma_recv_cplt(void *arg)
 {
-    usart_handle_t *hperh = (usart_handle_t *)arg;
+	usart_handle_t *hperh = (usart_handle_t *)arg;
 
-    hperh->rx_count = 0;
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
-    CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
+	hperh->rx_count = 0;
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    if (hperh->rx_cplt_cbk != NULL)
-        hperh->rx_cplt_cbk(hperh);
+	if (hperh->rx_cplt_cbk != NULL)
+		hperh->rx_cplt_cbk(hperh);
 }
 
 /**
@@ -2058,18 +1979,18 @@ static void usart_dma_recv_cplt(void *arg)
   */
 static void usart_dma_error(void *arg)
 {
-    usart_handle_t *hperh = (usart_handle_t *)arg;
+	usart_handle_t *hperh = (usart_handle_t *)arg;
 
-    hperh->rx_count  = 0;
-    hperh->tx_count  = 0;
-    hperh->state     = USART_STATE_READY;
-    hperh->err_code |= USART_ERROR_DMA;
+	hperh->rx_count  = 0;
+	hperh->tx_count  = 0;
+	hperh->state     = USART_STATE_READY;
+	hperh->err_code |= USART_ERROR_DMA;
 
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_TXDMAEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_RXDMAEN_MSK);
 
-    if (hperh->error_cbk != NULL)
-        hperh->error_cbk(hperh);
+	if (hperh->error_cbk != NULL)
+		hperh->error_cbk(hperh);
 }
 #endif
 /**
@@ -2083,27 +2004,25 @@ static void usart_dma_error(void *arg)
   */
 static ald_status_t usart_wait_flag(usart_handle_t *hperh, usart_flag_t flag, flag_status_t status, uint32_t timeout)
 {
-    uint32_t tick;
+	uint32_t tick;
 
-    if (timeout == 0)
-        return OK;
+	if (timeout == 0)
+		return OK;
 
-    tick = ald_get_tick();
+	tick = ald_get_tick();
 
-    while ((ald_usart_get_flag_status(hperh, flag)) != status)
-    {
-        if (((ald_get_tick()) - tick) > timeout)
-        {
-            ald_usart_interrupt_config(hperh, USART_IT_TXE, DISABLE);
-            ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
-            ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
-            ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
+	while ((ald_usart_get_flag_status(hperh, flag)) != status) {
+		if (((ald_get_tick()) - tick) > timeout) {
+			ald_usart_interrupt_config(hperh, USART_IT_TXE, DISABLE);
+			ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
+			ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
+			ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
 
-            return TIMEOUT;
-        }
-    }
+			return TIMEOUT;
+		}
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -2114,26 +2033,23 @@ static ald_status_t usart_wait_flag(usart_handle_t *hperh, usart_flag_t flag, fl
   */
 static ald_status_t __usart_send_by_it(usart_handle_t *hperh)
 {
-    if ((hperh->state != USART_STATE_BUSY_TX) && (hperh->state != USART_STATE_BUSY_TX_RX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_BUSY_TX) && (hperh->state != USART_STATE_BUSY_TX_RX))
+		return BUSY;
 
-    if ((hperh->init.word_length == USART_WORD_LENGTH_9B) && (hperh->init.parity == USART_PARITY_NONE))
-    {
-        WRITE_REG(hperh->perh->DATA, (uint16_t)(*(uint16_t *)hperh->tx_buf & (uint16_t)0x01FF));
-        hperh->tx_buf += 2;
-    }
-    else
-    {
-        WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
-    }
+	if ((hperh->init.word_length == USART_WORD_LENGTH_9B) && (hperh->init.parity == USART_PARITY_NONE)) {
+		WRITE_REG(hperh->perh->DATA, (uint16_t)(*(uint16_t *)hperh->tx_buf & (uint16_t)0x01FF));
+		hperh->tx_buf += 2;
+	}
+	else {
+		WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
+	}
 
-    if (--hperh->tx_count == 0)
-    {
-        ald_usart_interrupt_config(hperh, USART_IT_TXE, DISABLE);
-        ald_usart_interrupt_config(hperh, USART_IT_TC, ENABLE);
-    }
+	if (--hperh->tx_count == 0) {
+		ald_usart_interrupt_config(hperh, USART_IT_TXE, DISABLE);
+		ald_usart_interrupt_config(hperh, USART_IT_TC, ENABLE);
+	}
 
-    return OK;
+	return OK;
 }
 
 
@@ -2145,13 +2061,13 @@ static ald_status_t __usart_send_by_it(usart_handle_t *hperh)
   */
 static ald_status_t __usart_end_send_by_it(usart_handle_t *hperh)
 {
-    ald_usart_interrupt_config(hperh, USART_IT_TC, DISABLE);
-    CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
+	ald_usart_interrupt_config(hperh, USART_IT_TC, DISABLE);
+	CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    if (hperh->tx_cplt_cbk != NULL)
-        hperh->tx_cplt_cbk(hperh);
+	if (hperh->tx_cplt_cbk != NULL)
+		hperh->tx_cplt_cbk(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -2162,49 +2078,43 @@ static ald_status_t __usart_end_send_by_it(usart_handle_t *hperh)
   */
 static ald_status_t __usart_recv_by_it(usart_handle_t *hperh)
 {
-    if ((hperh->state != USART_STATE_BUSY_RX) && (hperh->state != USART_STATE_BUSY_TX_RX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_BUSY_RX) && (hperh->state != USART_STATE_BUSY_TX_RX))
+		return BUSY;
 
-    if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-    {
-        if (hperh->init.parity == USART_PARITY_NONE)
-        {
-            *(uint16_t *)hperh->rx_buf = (uint16_t)(hperh->perh->DATA & (uint16_t)0x01FF);
-            hperh->rx_buf += 2;
-        }
-        else
-        {
-            *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-        }
-    }
-    else
-    {
-        if (hperh->init.parity == USART_PARITY_NONE)
-            *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-        else
-            *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
-    }
+	if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+		if (hperh->init.parity == USART_PARITY_NONE) {
+			*(uint16_t *)hperh->rx_buf = (uint16_t)(hperh->perh->DATA & (uint16_t)0x01FF);
+			hperh->rx_buf += 2;
+		}
+		else {
+			*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+		}
+    	}
+	else {
+		if (hperh->init.parity == USART_PARITY_NONE)
+			*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+		else
+			*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
+	}
 
-    if (__frame_mode && ((ald_usart_get_it_status(hperh, USART_IT_IDLE)) == RESET))
-        ald_usart_interrupt_config(hperh, USART_IT_IDLE, ENABLE);
+	if (__frame_mode && ((ald_usart_get_it_status(hperh, USART_IT_IDLE)) == RESET))
+		ald_usart_interrupt_config(hperh, USART_IT_IDLE, ENABLE);
 
-    if (--hperh->rx_count == 0)
-    {
-        ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
-        CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
-        __frame_mode = 0;
+	if (--hperh->rx_count == 0) {
+		ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
+		CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
+		__frame_mode = 0;
 
-        if (hperh->state == USART_STATE_READY)
-        {
-            ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
-            ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
-        }
+		if (hperh->state == USART_STATE_READY) {
+			ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
+			ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
+		}
 
-        if (hperh->rx_cplt_cbk != NULL)
-            hperh->rx_cplt_cbk(hperh);
-    }
+		if (hperh->rx_cplt_cbk != NULL)
+			hperh->rx_cplt_cbk(hperh);
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -2215,26 +2125,25 @@ static ald_status_t __usart_recv_by_it(usart_handle_t *hperh)
   */
 static ald_status_t __usart_recv_frame_cplt(usart_handle_t *hperh)
 {
-    if ((hperh->state != USART_STATE_BUSY_RX) && (hperh->state != USART_STATE_BUSY_TX_RX))
-        return BUSY;
+	if ((hperh->state != USART_STATE_BUSY_RX) && (hperh->state != USART_STATE_BUSY_TX_RX))
+		return BUSY;
 
-    ald_usart_interrupt_config(hperh, USART_IT_IDLE, DISABLE);
-    ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
-    CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
+	ald_usart_interrupt_config(hperh, USART_IT_IDLE, DISABLE);
+	ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
+	CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    __frame_mode    = 0;
-    hperh->rx_size -= hperh->rx_count;
+	__frame_mode    = 0;
+	hperh->rx_size -= hperh->rx_count;
 
-    if (hperh->state == USART_STATE_READY)
-    {
-        ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
-        ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
-    }
+	if (hperh->state == USART_STATE_READY) {
+		ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
+		ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
+	}
 
-    if (hperh->rx_cplt_cbk != NULL)
-        hperh->rx_cplt_cbk(hperh);
+	if (hperh->rx_cplt_cbk != NULL)
+		hperh->rx_cplt_cbk(hperh);
 
-    return OK;
+	return OK;
 }
 
 
@@ -2247,48 +2156,43 @@ static ald_status_t __usart_recv_frame_cplt(usart_handle_t *hperh)
   */
 static ald_status_t __usart_recv_by_it_sync(usart_handle_t *hperh)
 {
-    if (hperh->state != USART_STATE_BUSY_RX)
-        return BUSY;
+	if (hperh->state != USART_STATE_BUSY_RX)
+		return BUSY;
 
-    if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-    {
+	if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
 
-        if (hperh->init.parity == USART_PARITY_NONE)
-        {
-            *(uint16_t *)hperh->rx_buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
-            hperh->rx_buf += 2;
-        }
-        else
-        {
-            *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-        }
+		if (hperh->init.parity == USART_PARITY_NONE) {
+			*(uint16_t *)hperh->rx_buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
+			hperh->rx_buf += 2;
+		}
+		else {
+			*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+		}
 
-        if (--hperh->rx_count != 0x00)
-            WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & 0x1FF));
-    }
-    else
-    {
-        if (hperh->init.parity == USART_PARITY_NONE)
-            *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-        else
-            *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
+		if (--hperh->rx_count != 0x00)
+			WRITE_REG(hperh->perh->DATA, (DUMMY_DATA & 0x1FF));
+	}
+	else {
+		if (hperh->init.parity == USART_PARITY_NONE)
+			*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+		else
+			*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
 
-        if (--hperh->rx_count != 0x00)
-            hperh->perh->DATA = (DUMMY_DATA & 0xFF);
-    }
+		if (--hperh->rx_count != 0x00)
+			hperh->perh->DATA = (DUMMY_DATA & 0xFF);
+	}
 
-    if (hperh->rx_count == 0)
-    {
-        ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
-        ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
-        ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
-        hperh->state = USART_STATE_READY;
+	if (hperh->rx_count == 0) {
+		ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
+		ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
+		ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
+		hperh->state = USART_STATE_READY;
 
-        if (hperh->rx_cplt_cbk != NULL)
-            hperh->rx_cplt_cbk(hperh);
-    }
+		if (hperh->rx_cplt_cbk != NULL)
+			hperh->rx_cplt_cbk(hperh);
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -2299,76 +2203,63 @@ static ald_status_t __usart_recv_by_it_sync(usart_handle_t *hperh)
   */
 static ald_status_t __usart_send_recv_by_it_sync(usart_handle_t *hperh)
 {
-    if (hperh->state != USART_STATE_BUSY_TX_RX)
-        return BUSY;
+	if (hperh->state != USART_STATE_BUSY_TX_RX)
+		return BUSY;
 
-    if (hperh->tx_count != 0)
-    {
-        if (ald_usart_get_flag_status(hperh, USART_FLAG_TXE) != RESET)
-        {
-            if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-            {
-                if (hperh->init.parity == USART_PARITY_NONE)
-                {
-                    WRITE_REG(hperh->perh->DATA, (uint16_t)(*(uint16_t *)hperh->tx_buf & 0x1FF));
-                    hperh->tx_buf += 2;
-                }
-                else
-                {
-                    WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
-                }
-            }
-            else
-            {
-                WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
-            }
+	if (hperh->tx_count != 0) {
+		if (ald_usart_get_flag_status(hperh, USART_FLAG_TXE) != RESET) {
+ 			if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+				if (hperh->init.parity == USART_PARITY_NONE) {
+					WRITE_REG(hperh->perh->DATA, (uint16_t)(*(uint16_t *)hperh->tx_buf & 0x1FF));
+					hperh->tx_buf += 2;
+				}
+				else {
+					WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
+				}
+			}
+			else {
+				WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
+			}
 
-            if (--hperh->tx_count == 0)
-                ald_usart_interrupt_config(hperh, USART_IT_TXE, DISABLE);
-        }
-    }
+			if (--hperh->tx_count == 0)
+				ald_usart_interrupt_config(hperh, USART_IT_TXE, DISABLE);
+		}
+	}
 
-    if (hperh->rx_count != 0)
-    {
-        if (ald_usart_get_flag_status(hperh, USART_FLAG_RXNE) != RESET)
-        {
-            if (hperh->init.word_length == USART_WORD_LENGTH_9B)
-            {
-                if (hperh->init.parity == USART_PARITY_NONE)
-                {
-                    *(uint16_t *)hperh->rx_buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
-                    hperh->rx_buf += 2;
-                }
-                else
-                {
-                    *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-                }
-            }
-            else
-            {
-                if (hperh->init.parity == USART_PARITY_NONE)
-                    *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-                else
-                    *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
-            }
+	if (hperh->rx_count != 0) {
+		if (ald_usart_get_flag_status(hperh, USART_FLAG_RXNE) != RESET) {
+			if (hperh->init.word_length == USART_WORD_LENGTH_9B) {
+				if (hperh->init.parity == USART_PARITY_NONE) {
+					*(uint16_t *)hperh->rx_buf = (uint16_t)(hperh->perh->DATA & 0x1FF);
+					hperh->rx_buf += 2;
+				}
+				else {
+					*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+				}
+			}
+			else {
+				if (hperh->init.parity == USART_PARITY_NONE)
+					*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+				else
+					*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0x7F);
+			}
 
-            --hperh->rx_count;
-        }
-    }
+			--hperh->rx_count;
+		}
+	}
 
-    if (hperh->rx_count == 0)
-    {
-        ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
-        ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
-        ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
+	if (hperh->rx_count == 0) {
+		ald_usart_interrupt_config(hperh, USART_IT_RXNE, DISABLE);
+		ald_usart_interrupt_config(hperh, USART_IT_PE, DISABLE);
+		ald_usart_interrupt_config(hperh, USART_IT_ERR, DISABLE);
 
-        hperh->state = USART_STATE_READY;
+		hperh->state = USART_STATE_READY;
 
-        if (hperh->tx_rx_cplt_cbk != NULL)
-            hperh->tx_rx_cplt_cbk(hperh);
-    }
+		if (hperh->tx_rx_cplt_cbk != NULL)
+			hperh->tx_rx_cplt_cbk(hperh);
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -2377,79 +2268,59 @@ static ald_status_t __usart_send_recv_by_it_sync(usart_handle_t *hperh)
   *         the configuration information for the specified USART module.
   * @retval None
   */
-static void usart_set_config(usart_handle_t *hperh)
+static void usart_set_config (usart_handle_t *hperh)
 {
-    uint32_t tmp;
-    uint32_t integer;
-    uint32_t fractional;
+	uint32_t tmp;
+	uint32_t integer;
+	uint32_t fractional;
 
-    /* Check the parameters */
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_BAUDRATE(hperh->init.baud));
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_USART_STOPBITS(hperh->init.stop_bits));
-    assert_param(IS_USART_PARITY(hperh->init.parity));
-    assert_param(IS_USART_MODE(hperh->init.mode));
-    assert_param(IS_USART_HARDWARE_FLOW_CONTROL(hperh->init.fctl));
+	/* Check the parameters */
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_BAUDRATE(hperh->init.baud));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
+	assert_param(IS_USART_STOPBITS(hperh->init.stop_bits));
+	assert_param(IS_USART_PARITY(hperh->init.parity));
+	assert_param(IS_USART_MODE(hperh->init.mode));
+	assert_param(IS_USART_HARDWARE_FLOW_CONTROL(hperh->init.fctl));
 
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_STPLEN_MSK, hperh->init.stop_bits << USART_CON1_STPLEN_POSS);
-    tmp = READ_REG(hperh->perh->CON0);
-    MODIFY_REG(tmp, USART_CON0_DLEN_MSK, hperh->init.word_length << USART_CON0_DLEN_POS);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_STPLEN_MSK, hperh->init.stop_bits << USART_CON1_STPLEN_POSS);
+	tmp = READ_REG(hperh->perh->CON0);
+	MODIFY_REG(tmp, USART_CON0_DLEN_MSK, hperh->init.word_length << USART_CON0_DLEN_POS);
 
-    if (hperh->init.parity == USART_PARITY_NONE)
-        CLEAR_BIT(tmp, USART_CON0_PEN_MSK);
-    else
-        SET_BIT(tmp, USART_CON0_PEN_MSK);
+	if (hperh->init.parity == USART_PARITY_NONE)
+		CLEAR_BIT(tmp, USART_CON0_PEN_MSK);
+	else
+		SET_BIT(tmp, USART_CON0_PEN_MSK);
 
-    if (hperh->init.parity == USART_PARITY_ODD)
-        SET_BIT(tmp, USART_CON0_PSEL_MSK);
-    else
-        CLEAR_BIT(tmp, USART_CON0_PSEL_MSK);
+	if (hperh->init.parity == USART_PARITY_ODD)
+		SET_BIT(tmp, USART_CON0_PSEL_MSK);
+	else
+		CLEAR_BIT(tmp, USART_CON0_PSEL_MSK);
 
-    WRITE_REG(hperh->perh->CON0, tmp);
-    MODIFY_REG(hperh->perh->CON2, USART_CON2_RTSEN_MSK, (hperh->init.fctl & 0x1) << USART_CON2_RTSEN_POS);
-    MODIFY_REG(hperh->perh->CON2, USART_CON2_CTSEN_MSK, ((hperh->init.fctl >> 1) & 0x1) << USART_CON2_CTSEN_POS);
-    MODIFY_REG(hperh->perh->CON0, USART_CON0_RXEN_MSK, (hperh->init.mode & 0x1) << USART_CON0_RXEN_POS);
-    MODIFY_REG(hperh->perh->CON0, USART_CON0_TXEN_MSK, ((hperh->init.mode >> 1) & 0x1) << USART_CON0_TXEN_POS);
+	WRITE_REG(hperh->perh->CON0, tmp);
+	MODIFY_REG(hperh->perh->CON2, USART_CON2_RTSEN_MSK, (hperh->init.fctl & 0x1) << USART_CON2_RTSEN_POS);
+	MODIFY_REG(hperh->perh->CON2, USART_CON2_CTSEN_MSK, ((hperh->init.fctl >> 1) & 0x1) << USART_CON2_CTSEN_POS);
+	MODIFY_REG(hperh->perh->CON0, USART_CON0_RXEN_MSK, (hperh->init.mode & 0x1) << USART_CON0_RXEN_POS);
+	MODIFY_REG(hperh->perh->CON0, USART_CON0_TXEN_MSK, ((hperh->init.mode >> 1) & 0x1) << USART_CON0_TXEN_POS);
 
-    if (hperh->init.over_sampling)
-        SET_BIT(hperh->perh->CON0, (1 << 15));
+	/* Determine the integer part */
+	integer = ((25 * ald_cmu_get_pclk1_clock()) / (4 * (hperh->init.baud)));
+	tmp     = (integer / 100) << 4;
 
-    /* Determine the integer part */
-    if (READ_BIT(hperh->perh->CON0, (1 << 15)))
-    {
-        /* Integer part computing in case Oversampling mode is 8 Samples */
-        integer = ((25 * ald_cmu_get_pclk1_clock()) / (2 * (hperh->init.baud)));
-    }
-    else
-    {
-        /* Integer part computing in case Oversampling mode is 16 Samples */
-        integer = ((25 * ald_cmu_get_pclk1_clock()) / (4 * (hperh->init.baud)));
-    }
+	/* Determine the fractional part */
+	fractional = integer - (100 * (tmp >> 4));
+	tmp       |= ((((fractional * 16) + 50) / 100) & ((uint8_t)0x0F));
+	WRITE_REG(hperh->perh->BAUDCON, (uint16_t)tmp);
 
-    tmp = (integer / 100) << 4;
-
-    /* Determine the fractional part */
-    fractional = integer - (100 * (tmp >> 4));
-
-    /* Implement the fractional part in the register */
-    if (READ_BIT(hperh->perh->CON0, (1 << 15)))
-        tmp |= ((((fractional * 8) + 50) / 100) & ((uint8_t)0x07));
-    else
-        tmp |= ((((fractional * 16) + 50) / 100) & ((uint8_t)0x0F));
-
-    WRITE_REG(hperh->perh->BAUDCON, (uint16_t)tmp);
-    return;
+	return;
 }
 /**
   * @}
   */
-
 #endif /* ALD_USART */
 /**
   * @}
   */
-
 /**
   * @}
   */

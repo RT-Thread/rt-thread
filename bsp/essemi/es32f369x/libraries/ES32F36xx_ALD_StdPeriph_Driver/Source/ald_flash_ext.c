@@ -212,7 +212,6 @@ ald_status_t ald_flash_write(uint32_t addr, uint8_t *buf, uint16_t len)
 
 			index2     = 0;
 			index      = FLASH_PAGE_ADDR(start_write_addr);
-			para       = FLASH_PAGE_ADDR(start_write_addr) + FLASH_PAGE_SIZE;
 			len_index  = FLASH_PAGE_SIZE;
 		}
 		else {
@@ -250,7 +249,7 @@ ald_status_t ald_flash_write(uint32_t addr, uint8_t *buf, uint16_t len)
   */
 ald_status_t ald_flash_erase(uint32_t addr, uint16_t len)
 {
-	int32_t	index;
+	uint32_t index;
 	int32_t para;
 	int32_t start_erase_addr;
 	int32_t end_erase_addr;
