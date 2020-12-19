@@ -13,8 +13,8 @@
 #include <rthw.h>
 #include "ab32vgx.h"
 
-uint32_t irq_mask AT(.bss.irq_tbl);
-void *tbl_irq_vector[IRQ_TOTAL_NUM] AT(.bss.irq_tbl);
+uint32_t irq_mask;
+void *tbl_irq_vector[IRQ_TOTAL_NUM];
 void (*cpu_irq_comm_hook)(void);
 
 void set_cpu_irq_comm(void (*irq_hook)(void))
@@ -22,7 +22,6 @@ void set_cpu_irq_comm(void (*irq_hook)(void))
     cpu_irq_comm_hook = irq_hook;
 }
 
-AT(.com_text.irq)
 void cpu_irq_comm_do(void)
 {
 	void (*pfnct)(void);
@@ -35,6 +34,20 @@ void cpu_irq_comm_do(void)
             }
         }
 	}
+}
+
+void rt_hw_irq_enable(int vector)
+{
+    if (vector < IRQ_TOTAL_NUM) {
+        PICEN |= BIT(vector);
+    }
+}
+
+void rt_hw_irq_disable(int vector)
+{
+    if (vector < IRQ_TOTAL_NUM) {
+        PICEN &= ~BIT(vector);
+    }
 }
 
 void rt_hw_interrupt_init(void)
@@ -58,7 +71,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int              vector,
     rt_isr_handler_t old_handler = RT_NULL;
 
     if (vector < IRQ_TOTAL_NUM) {
-        uint32_t cpu_ie = PICCON&BIT(0);
+        uint32_t cpu_ie = PICCON & BIT(0);
         PICCON &= ~BIT(0);
         old_handler = tbl_irq_vector[vector];
         tbl_irq_vector[vector] = handler;

@@ -9,6 +9,9 @@ ab32vg1_hal_msp.c
 ''')
 CPPPATH = [cwd]
 
+if GetDepend(['RT_USING_AUDIO']):
+    src += Glob('ports/audio/drv_sound.c')
+
 group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
 
 objs = [group]

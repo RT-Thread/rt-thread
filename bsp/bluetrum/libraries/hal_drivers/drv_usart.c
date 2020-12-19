@@ -136,8 +136,8 @@ static int ab32_getc(struct rt_serial_device *serial)
 
     ch = -1;
     if(hal_uart_getflag(uart->handle.instance, UART_FLAG_RXPND) != HAL_RESET) {
-        hal_uart_clrflag(uart->handle.instance, UART_FLAG_RXPND);
         ch = hal_uart_read(uart->handle.instance);
+        hal_uart_clrflag(uart->handle.instance, UART_FLAG_RXPND);
     }
 
     return ch;
@@ -156,10 +156,10 @@ static void uart_isr(int vector, void *param)
     {
         rt_hw_serial_isr(&(uart_obj[UART0_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
     }
-    if(hal_uart_getflag(UART1_BASE, UART_FLAG_RXPND))       //RX one byte finish
-    {
-        rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
-    }
+    // if(hal_uart_getflag(UART1_BASE, UART_FLAG_RXPND))       //RX one byte finish
+    // {
+    //     rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
+    // }
 
     rt_interrupt_leave();
 }
