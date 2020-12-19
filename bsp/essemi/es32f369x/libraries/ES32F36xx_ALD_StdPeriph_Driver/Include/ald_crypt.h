@@ -40,119 +40,119 @@
   * @brief CRYPT encrypt or decrypt select
   */
 typedef enum {
-	CRYPT_DECRYPT = 0,	/**< Decrypt */
-	CRYPT_ENCRYPT = 1,	/**< Encrypt */
+	CRYPT_DECRYPT = 0U,	/**< Decrypt */
+	CRYPT_ENCRYPT = 1U,	/**< Encrypt */
 } crypt_encs_t;
 
 /**
   * @brief CRYPT aes key select
   */
 typedef enum {
-	CRYPT_BITS_128 = 0,	/**< 128bit key for aes */
-	CRYPT_BITS_192 = 1,	/**< 192bit key for aes */
-	CRYPT_BITS_256 = 2,	/**< 256bit key for aes */
+	CRYPT_BITS_128 = 0U,	/**< 128bit key for aes */
+	CRYPT_BITS_192 = 1U,	/**< 192bit key for aes */
+	CRYPT_BITS_256 = 2U,	/**< 256bit key for aes */
 } crypt_aesks_t;
 
 /**
   * @brief CRYPT mode select
   */
 typedef enum {
-	CRYPT_MODE_ECB = 0,	/**< ECB */
-	CRYPT_MODE_CBC = 1,	/**< CBC */
-	CRYPT_MODE_CTR = 2,	/**< CTR */
+	CRYPT_MODE_ECB = 0U,	/**< ECB */
+	CRYPT_MODE_CBC = 1U,	/**< CBC */
+	CRYPT_MODE_CTR = 2U,	/**< CTR */
 } crypt_mode_t;
 
 /**
   * @brief CRYPT data type
   */
 typedef enum {
-	CRYPT_DATA_CHANGE_NO = 0,	/**< No exchange */
-	CRYPT_DATA_CHANGE_16 = 1,	/**< 16bit exchange */
-	CRYPT_DATA_CHANGE_8  = 2,	/**< 8bit exchange */
-	CRYPT_DATA_CHANGE_1  = 3,	/**< 1bit exchange */
+	CRYPT_DATA_CHANGE_NO = 0U,	/**< No exchange */
+	CRYPT_DATA_CHANGE_16 = 1U,	/**< 16bit exchange */
+	CRYPT_DATA_CHANGE_8  = 2U,	/**< 8bit exchange */
+	CRYPT_DATA_CHANGE_1  = 3U,	/**< 1bit exchange */
 } crypt_datatype_t;
 
 /**
   * @brief CRYPT des key select
   */
 typedef enum {
-	CRYPT_KEYS_2 = 0,	/**< 2 key for des */
-	CRYPT_KEYS_3 = 1,	/**< 3 key for des */
-	CRYPT_KEYS_1 = 2,	/**< 1 key for des */
+	CRYPT_KEYS_2 = 0U,	/**< 2 key for des */
+	CRYPT_KEYS_3 = 1U,	/**< 3 key for des */
+	CRYPT_KEYS_1 = 2U,	/**< 1 key for des */
 } crypt_desks_t;
 
 /**
   * @brief CRYPT crypt select
   */
 typedef enum {
-	CRYPT_CRYSEL_AES = 0,	/**< AES */
-	CRYPT_CRYSEL_DES = 1,	/**< DES */
+	CRYPT_CRYSEL_AES = 0U,	/**< AES */
+	CRYPT_CRYSEL_DES = 1U,	/**< DES */
 } crypt_crysel_t;
 
 /**
   * @brief CRYPT interrupt
   */
 typedef enum {
-	CRYPT_IT_IT = 0x80,	/**< Interrupt */
+	CRYPT_IT_IT = 0x80U,	/**< Interrupt */
 } crypt_it_t;
 
 /**
   * @brief CRYPT interrupt flag
   */
 typedef enum {
-	CRYPT_FLAG_AESIF = 0x1,  	/**< Aes flag */
-	CRYPT_FLAG_DESIF = 0x2,  	/**< Des flag */
-	CRYPT_FLAG_DONE  = 0x100,	/**< Complete flag */
+	CRYPT_FLAG_AESIF = 0x1U,  	/**< Aes flag */
+	CRYPT_FLAG_DESIF = 0x2U,  	/**< Des flag */
+	CRYPT_FLAG_DONE  = 0x100U,	/**< Complete flag */
 } crypt_flag_t;
 
 /**
   * @brief CRYPT key select
   */
 typedef enum {
-	CRYPT_AES_BITS_128 = 0x4,	/**< 128bit key of aes */
-	CRYPT_AES_BITS_192 = 0x6,	/**< 192bit key of aes */
-	CRYPT_AES_BITS_256 = 0x8,	/**< 192bit key of ase */
-	CRYPT_DES_KEYS_1   = 0x12,	/**< 1 key of des */
-	CRYPT_DES_KEYS_2   = 0x14,	/**< 2 key of des */
-	CRYPT_DES_KEYS_3   = 0x16,	/**< 3 key of des */
+	CRYPT_AES_BITS_128 = 0x4U,	/**< 128bit key of aes */
+	CRYPT_AES_BITS_192 = 0x6U,	/**< 192bit key of aes */
+	CRYPT_AES_BITS_256 = 0x8U,	/**< 192bit key of ase */
+	CRYPT_DES_KEYS_1   = 0x12U,	/**< 1 key of des */
+	CRYPT_DES_KEYS_2   = 0x14U,	/**< 2 key of des */
+	CRYPT_DES_KEYS_3   = 0x16U,	/**< 3 key of des */
 } crypt_ks_t;
 
 /**
   * @brief CRYPT state structures definition
   */
 typedef enum {
-	CRYPT_STATE_RESET = 0x0,	/**< Peripheral is not initialized */
-	CRYPT_STATE_READY = 0x1,	/**< Peripheral Initialized and ready for use */
-	CRYPT_STATE_BUSY  = 0x2,	/**< An internal process is ongoing */
-	CRYPT_STATE_ERROR = 0x4,	/**< Error */
+	CRYPT_STATE_RESET = 0x0U,	/**< Peripheral is not initialized */
+	CRYPT_STATE_READY = 0x1U,	/**< Peripheral Initialized and ready for use */
+	CRYPT_STATE_BUSY  = 0x2U,	/**< An internal process is ongoing */
+	CRYPT_STATE_ERROR = 0x4U,	/**< Error */
 } crypt_state_t;
 
 /**
   * @brief CRYPT key length
   */
 typedef enum {
-	KEY_2_LEN = 2,	/**< Key's lenth is 2 */
-	KEY_4_LEN = 4,	/**< Key's lenth is 4 */
-	KEY_6_LEN = 6,	/**< Key's lenth is 6 */
-	KEY_8_LEN = 8,	/**< Key's lenth is 8 */
+	KEY_2_LEN = 2U,	/**< Key's lenth is 2 */
+	KEY_4_LEN = 4U,	/**< Key's lenth is 4 */
+	KEY_6_LEN = 6U,	/**< Key's lenth is 6 */
+	KEY_8_LEN = 8U,	/**< Key's lenth is 8 */
 } crypt_key_len_t;
 
 /**
   * @brief CRYPT iv length
   */
 typedef enum {
-	IV_2_LEN = 2,	/**< iv's lenth is 2 */
-	IV_4_LEN = 4,	/**< iv's lenth is 4 */
+	IV_2_LEN = 2U,	/**< iv's lenth is 2 */
+	IV_4_LEN = 4U,	/**< iv's lenth is 4 */
 } crypt_ivr_len_t;
 
 /**
   * @brief CRYPT data type
   */
 typedef enum {
-	DATA_32_BIT = 0,	/**< 32 bit data,don't swap */
-	DATA_16_BIT = 1,	/**< 16 bit data,swap */
-	DATA_8_BIT  = 2,	/**< 8 bit data,swap */
-	DATA_1_BIT  = 3,	/**< 1 bit data, swap */
+	DATA_32_BIT = 0U,	/**< 32 bit data,don't swap */
+	DATA_16_BIT = 1U,	/**< 16 bit data,swap */
+	DATA_8_BIT  = 2U,	/**< 8 bit data,swap */
+	DATA_1_BIT  = 3U,	/**< 1 bit data, swap */
 } crypt_data_t;
 
 /**
@@ -199,7 +199,7 @@ typedef struct crypt_handle_s {
   */
 #define CRYPT_GO(handle) 		(SET_BIT((handle)->perh->CON, CRYPT_CON_GO_MSK))
 #define CRYPT_FIFOEN_ENABLE(handle) 	(SET_BIT((handle)->perh->CON, CRYPT_CON_FIFOEN_MSK))
-#define CRYPT_FIFOEN_DISABLE(handle) 	(CLEAR_BIT(handle)->perh->CON, CRYPT_CON_FIFOEN_MSK))
+#define CRYPT_FIFOEN_DISABLE(handle) 	(CLEAR_BIT((handle)->perh->CON, CRYPT_CON_FIFOEN_MSK))
 #define CRYPT_IVEN_ENABLE(handle) 	(SET_BIT((handle)->perh->CON, CRYPT_CON_IVEN_MSK))
 #define CRYPT_IVEN_DISABLE(handle) 	(CLEAR_BIT((handle)->perh->CON, CRYPT_CON_IVEN_MSK))
 #define CRYPT_IE_ENABLE(handle)		(SET_BIT((handle)->perh->CON, CRYPT_CON_IE_MSK))
