@@ -44,8 +44,6 @@
   */
 ald_status_t ald_pis_create(pis_handle_t *hperh)
 {
-	pis_divide_t temp;
-
 	if (hperh == NULL)
 		return ERROR;
 
@@ -61,10 +59,9 @@ ald_status_t ald_pis_create(pis_handle_t *hperh)
 
 	/* get location of consumer in channel and position of con0/con1
 	 * accord to comsumer_trig information */
-	temp.HalfWord       = (hperh->init.consumer_trig);
-	hperh->consumer_ch  = (pis_ch_t)(temp.ch);
-	hperh->consumer_con = (pis_con_t)(temp.con);
-	hperh->consumer_pos = (1 << temp.shift);
+	hperh->consumer_ch  = (pis_ch_t)(hperh->init.consumer_trig & 0x0F);
+	hperh->consumer_con = (pis_con_t)((hperh->init.consumer_trig >> 4) & 0x0F);
+	hperh->consumer_pos = (1U << (uint32_t)((hperh->init.consumer_trig >> 8) & 0xFF));
 
 	if (hperh->perh->CH_CON[hperh->consumer_ch] != 0) {
 		__UNLOCK(hperh);
@@ -136,7 +133,7 @@ ald_status_t ald_pis_destroy(pis_handle_t *hperh)
 
 	__LOCK(hperh);
 
-	CLEAR_BIT(PIS->CH_OER, (1 << hperh->consumer_ch));
+	CLEAR_BIT(PIS->CH_OER, (1U << (uint32_t)hperh->consumer_ch));
 	WRITE_REG(hperh->perh->CH_CON[hperh->consumer_ch], 0x0);
 
 	switch (hperh->consumer_con) {

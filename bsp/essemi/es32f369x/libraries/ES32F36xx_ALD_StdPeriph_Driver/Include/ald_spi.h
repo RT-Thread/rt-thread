@@ -40,67 +40,67 @@
   * @brief clock phase
   */
 typedef enum {
-	SPI_CPHA_FIRST  = 0,	/**< Transiting data in the first edge */
-	SPI_CPHA_SECOND = 1,	/**< Transiting data in the seconde edge */
+	SPI_CPHA_FIRST  = 0U,	/**< Transiting data in the first edge */
+	SPI_CPHA_SECOND = 1U,	/**< Transiting data in the seconde edge */
 } spi_cpha_t;
 
 /**
   * @brief clock polarity
   */
 typedef enum {
-	SPI_CPOL_LOW  = 0,	/**< Polarity hold low when spi-bus is idle */
-	SPI_CPOL_HIGH = 1,	/**< Polarity hold high when spi-bus is idle */
+	SPI_CPOL_LOW  = 0U,	/**< Polarity hold low when spi-bus is idle */
+	SPI_CPOL_HIGH = 1U,	/**< Polarity hold high when spi-bus is idle */
 } spi_cpol_t;
 
 /**
   * @brief master selection
   */
 typedef enum {
-	SPI_MODE_SLAVER = 0,	/**< Slave mode */
-	SPI_MODE_MASTER = 1,	/**< Master mode */
+	SPI_MODE_SLAVER = 0U,	/**< Slave mode */
+	SPI_MODE_MASTER = 1U,	/**< Master mode */
 } spi_mode_t;
 
 /**
   * @brief baud rate control
   */
 typedef enum {
-	SPI_BAUD_2   = 0,	/**< fpclk/2 */
-	SPI_BAUD_4   = 1,	/**< fpclk/4 */
-	SPI_BAUD_8   = 2,	/**< fpclk/8 */
-	SPI_BAUD_16  = 3,	/**< fpclk/16 */
-	SPI_BAUD_32  = 4,	/**< fpclk/32 */
-	SPI_BAUD_64  = 5,	/**< fpclk/64 */
-	SPI_BAUD_128 = 6,	/**< fpclk/128 */
-	SPI_BAUD_256 = 7,	/**< fpclk/256 */
+	SPI_BAUD_2   = 0U,	/**< fpclk/2 */
+	SPI_BAUD_4   = 1U,	/**< fpclk/4 */
+	SPI_BAUD_8   = 2U,	/**< fpclk/8 */
+	SPI_BAUD_16  = 3U,	/**< fpclk/16 */
+	SPI_BAUD_32  = 4U,	/**< fpclk/32 */
+	SPI_BAUD_64  = 5U,	/**< fpclk/64 */
+	SPI_BAUD_128 = 6U,	/**< fpclk/128 */
+	SPI_BAUD_256 = 7U,	/**< fpclk/256 */
 } spi_baud_t;
 
 /**
   * @brief frame format
   */
 typedef enum {
-	SPI_FIRSTBIT_MSB = 0,	/**< MSB transmitted first */
-	SPI_FIRSTBIT_LSB = 1,	/**< LSB transmitted first */
+	SPI_FIRSTBIT_MSB = 0U,	/**< MSB transmitted first */
+	SPI_FIRSTBIT_LSB = 1U,	/**< LSB transmitted first */
 } spi_firstbit_t;
 
 /**
   * @brief data frame format
   */
 typedef enum {
-	SPI_DATA_SIZE_8  = 0,	/**< 8-bit data frame format is selected for transmission/reception */
-	SPI_DATA_SIZE_16 = 1,	/**< 16-bit data frame format is selected for transmission/reception */
+	SPI_DATA_SIZE_8  = 0U,	/**< 8-bit data frame format is selected for transmission/reception */
+	SPI_DATA_SIZE_16 = 1U,	/**< 16-bit data frame format is selected for transmission/reception */
 } spi_datasize_t;
 
 /**
   * @brief SPI error status
   */
 typedef enum {
-	SPI_ERROR_NONE = 0,	/**< none */
-	SPI_ERROR_MODF = 1,	/**< mode fault */
-	SPI_ERROR_CRC  = 2,	/**< crc error */
-	SPI_ERROR_FRE  = 4,	/**< frame error */ 
-	SPI_ERROR_RXOV = 8,	/**< receive over error */
-	SPI_ERROR_TXOV = 0x10,	/**< dma error  */
-	SPI_ERROR_FLAG = 0x20,	/**< interrupt flag error */
+	SPI_ERROR_NONE = 0U,	/**< none */
+	SPI_ERROR_MODF = 1U,	/**< mode fault */
+	SPI_ERROR_CRC  = 2U,	/**< crc error */
+	SPI_ERROR_FRE  = 4U,	/**< frame error */ 
+	SPI_ERROR_RXOV = 8U,	/**< receive over error */
+	SPI_ERROR_TXOV = 0x10U,	/**< dma error  */
+	SPI_ERROR_FLAG = 0x20U,	/**< interrupt flag error */
 } spi_error_t;
 
 /**
@@ -141,14 +141,14 @@ typedef enum {
   * @brief SPI state structures definition
   */
 typedef enum {
-	SPI_STATE_RESET      = 0x00,	/**< Peripheral is not initialized */
-	SPI_STATE_READY      = 0x01,	/**< Peripheral Initialized and ready for use */
-	SPI_STATE_BUSY       = 0x02,	/**< an internal process is ongoing */
-	SPI_STATE_BUSY_TX    = 0x11,	/**< transmit is ongoing */
-	SPI_STATE_BUSY_RX    = 0x21,	/**< receive is ongoing */
-	SPI_STATE_BUSY_TX_RX = 0x31,	/**< transmit and receive are ongoing */
-	SPI_STATE_TIMEOUT    = 0x03,	/**< Timeout state */
-	SPI_STATE_ERROR      = 0x04,	/**< Error */
+	SPI_STATE_RESET      = 0x00U,	/**< Peripheral is not initialized */
+	SPI_STATE_READY      = 0x01U,	/**< Peripheral Initialized and ready for use */
+	SPI_STATE_BUSY       = 0x02U,	/**< an internal process is ongoing */
+	SPI_STATE_BUSY_TX    = 0x11U,	/**< transmit is ongoing */
+	SPI_STATE_BUSY_RX    = 0x21U,	/**< receive is ongoing */
+	SPI_STATE_BUSY_TX_RX = 0x31U,	/**< transmit and receive are ongoing */
+	SPI_STATE_TIMEOUT    = 0x03U,	/**< Timeout state */
+	SPI_STATE_ERROR      = 0x04U,	/**< Error */
 } spi_state_t;
 
 
@@ -156,26 +156,26 @@ typedef enum {
   * @brief SPI direction definition
   */
 typedef enum {
-	SPI_DIRECTION_2LINES        = 0,	/**< 2 lines */
-	SPI_DIRECTION_2LINES_RXONLY = 1,	/**< 2 lines only rx */
-	SPI_DIRECTION_1LINE         = 2,	/**< 1 line */
-	SPI_DIRECTION_1LINE_RX      = 3,	/**< 1 line only rx */
+	SPI_DIRECTION_2LINES        = 0U,	/**< 2 lines */
+	SPI_DIRECTION_2LINES_RXONLY = 1U,	/**< 2 lines only rx */
+	SPI_DIRECTION_1LINE         = 2U,	/**< 1 line */
+	SPI_DIRECTION_1LINE_RX      = 3U,	/**< 1 line only rx */
 } spi_direction_t;
 
 /**
   * @brief SPI dma request definition
   */
 typedef enum {
-	SPI_DMA_REQ_TX = 0,	/**< TX dma request */
-	SPI_DMA_REQ_RX = 1,	/**< RX dma request */
+	SPI_DMA_REQ_TX = 0U,	/**< TX dma request */
+	SPI_DMA_REQ_RX = 1U,	/**< RX dma request */
 } spi_dma_req_t;
 
 /**
   * @brief SPI crc length definition
   */
 typedef enum {
-	SPI_FRAME_MOTOROLA = 0, /**< SPI motorola mode */
-	SPI_FRAME_TI = 1        /**< SPI TI mode */
+	SPI_FRAME_MOTOROLA = 0U,	/**< SPI motorola mode */
+	SPI_FRAME_TI       = 1U,	/**< SPI TI mode */
 } spi_frame_t;
 
 /**
@@ -199,9 +199,9 @@ typedef enum {
   * @brief SPI TXE/RXNE status definition
   */
 typedef enum {
-	SPI_SR_TXE      = 0,	/**< SR.TXE set */
-	SPI_SR_RXNE     = 1,	/**< SR.RXTH set */
-	SPI_SR_TXE_RXNE = 2,	/**< SR.TXE and SR.RXNE set */
+	SPI_SR_TXE      = 0U,	/**< SR.TXE set */
+	SPI_SR_RXNE     = 1U,	/**< SR.RXTH set */
+	SPI_SR_TXE_RXNE = 2U,	/**< SR.TXE and SR.RXNE set */
 } spi_sr_status_t;
 
 
@@ -362,13 +362,24 @@ void ald_spi_reset(spi_handle_t *hperh);
 /**
   * @}
   */
-
 /** @addtogroup SPI_Public_Functions_Group2
   * @{
   */
 int32_t ald_spi_send_byte_fast(spi_handle_t *hperh, uint8_t data);
 int32_t ald_spi_send_byte_fast_1line(spi_handle_t *hperh, uint8_t data);
 uint8_t ald_spi_recv_byte_fast(spi_handle_t *hperh, int *status);
+ald_status_t ald_spi_send_bytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout);
+ald_status_t ald_spi_master_recv_bytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size);
+ald_status_t ald_spi_slave_recv_bytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout);
+ald_status_t ald_spi_send_dbytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout);
+ald_status_t ald_spi_master_recv_dbytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size);
+ald_status_t ald_spi_slave_recv_dbytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout);
+/**
+  * @}
+  */
+/** @addtogroup SPI_Public_Functions_Group3
+  * @{
+  */
 ald_status_t ald_spi_send(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout);
 ald_status_t ald_spi_recv(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout);
 ald_status_t ald_spi_send_recv(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size, uint32_t timeout);
@@ -386,8 +397,7 @@ ald_status_t ald_spi_dma_stop(spi_handle_t *hperh);
 /**
   * @}
   */
-
-/** @addtogroup SPI_Public_Functions_Group3
+/** @addtogroup SPI_Public_Functions_Group4
   * @{
   */
 void ald_spi_irq_handler(spi_handle_t *hperh);
@@ -401,8 +411,7 @@ void ald_spi_clear_flag_status(spi_handle_t *hperh, spi_flag_t flag);
 /**
   * @}
   */
-
-/** @addtogroup SPI_Public_Functions_Group4
+/** @addtogroup SPI_Public_Functions_Group5
   * @{
   */
 spi_state_t ald_spi_get_state(spi_handle_t *hperh);
@@ -410,15 +419,12 @@ uint32_t ald_spi_get_error(spi_handle_t *hperh);
 /**
   * @}
   */
-
 /**
   * @}
   */
-
 /**
   * @}
   */
-
 /**
   * @}
   */

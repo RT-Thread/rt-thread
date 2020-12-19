@@ -86,6 +86,22 @@ msh>
 
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
 
+    a）如果需要使用内核用例，先配置rt-thread内核，如图：
+
+    ![kernel_config](figures/k_conf.jpg)
+
+    然后配置内核用例，如图：
+
+    ![kernel_samples](figures/k_ex.jpg)
+
+    b）如果需要使用驱动用例：先使能驱动，如图：
+
+    ![driver_config](figures/d_conf.jpg)
+
+    然后配置驱动用例，如图：
+
+    ![driver_sample](figures/d_ex.jpg)
+
 3. 输入`pkgs --update`命令更新软件包。
 
 4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
@@ -94,7 +110,7 @@ msh>
 
 ## 4. 联系人信息
 
-- [wangyongquan](https://github.com/wangyq2018) 
+- [liuhongyan](https://gitee.com/liuhongyan98) 
 
 ## 5. 参考
 
