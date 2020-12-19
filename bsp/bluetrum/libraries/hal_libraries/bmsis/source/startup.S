@@ -56,6 +56,43 @@ _start:
     jal x0, low_prio_irq
     mret
 
+    .org    0x80
+#define METHOD 1
+#if METHOD == 1
+    addi    sp, sp, -6*4
+    lw      a0, PICEN(zero)
+    lw      a1, EPC(zero)
+    lw      a2, EPICCON(zero)
+    sw      a0, 3*4(sp)
+    sw      a1, 4*4(sp)
+    sw      a2, 5*4(sp)
+    andi    a0, a0, 1
+    sw      a0, PICEN(zero)
+    la      a0, 0f
+    sw      a0, EPC(zero)
+    j       0x84020
+0:
+    sw      a0, 0(sp)
+    sw      a1, 4(sp)
+    sw      a2, 8(sp)
+
+    lw      a0, 3*4(sp)
+    lw      a1, 4*4(sp)
+    lw      a2, 5*4(sp)
+    sw      a0, PICEN(zero)
+    sw      a1, EPC(zero)
+    sw      a2, EPICCON(zero)
+
+    lw      a0, 0(sp)
+    lw      a1, 4(sp)
+    lw      a2, 8(sp)
+    addi    sp, sp, 6*4
+    mret
+    .align  4
+1:  .word   0, 0
+    j       0x84020
+#endif
+
     .global cpu_irq_comm
 cpu_irq_comm:
     la      a5, __irq_stack
