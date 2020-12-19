@@ -15,6 +15,6 @@ NuPinConfig/nutool_pincfg.c
 src += Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd, cwd + '/NuClockConfig', cwd + '/NuPinConfig']
 
-group = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

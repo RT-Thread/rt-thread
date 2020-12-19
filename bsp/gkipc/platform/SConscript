@@ -18,6 +18,6 @@ elif GetDepend('BOARD_GK7102S_HZD_JXH42'):
 elif GetDepend('BOARD_GK7102C_JH'):
     CPPDEFINES += ['-DGK7102C_JH']
           
-group = DefineGroup('platform', src, depend = [''], CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 Return('group')

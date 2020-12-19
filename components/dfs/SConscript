@@ -13,7 +13,7 @@ CPPPATH = [cwd + "/include"]
 if GetDepend('RT_USING_POSIX'):
     src += ['src/poll.c', 'src/select.c']
 
-group = DefineGroup('FileSystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
+group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS'], CPPPATH = CPPPATH)
 
 if GetDepend('RT_USING_DFS'):
     # search in the file system implementation
