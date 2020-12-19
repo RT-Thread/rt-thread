@@ -123,6 +123,10 @@ config RT_USING_NULL
     bool "Using NULL device drivers"
     default n
 
+config RT_USING_RANDOM
+    bool "Using RANDOM device drivers"
+    default n
+
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
