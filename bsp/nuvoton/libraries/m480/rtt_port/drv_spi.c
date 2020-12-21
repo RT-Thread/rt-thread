@@ -342,25 +342,38 @@ exit_nu_pdma_spi_tx_config:
 static rt_size_t nu_spi_pdma_transmit(struct nu_spi *spi_bus, const uint8_t *send_addr, uint8_t *recv_addr, int length, uint8_t bytes_per_word)
 {
     rt_err_t result = RT_EOK;
+    rt_uint32_t u32Offset = 0;
+    rt_uint32_t u32TransferCnt = length / bytes_per_word;
+    rt_uint32_t u32TxCnt = 0;
 
     /* Get base address of spi register */
     SPI_T *spi_base = spi_bus->spi_base;
 
-    result = nu_pdma_spi_rx_config(spi_bus, recv_addr, length, bytes_per_word);
-    RT_ASSERT(result == RT_EOK);
-    result = nu_pdma_spi_tx_config(spi_bus, send_addr, length, bytes_per_word);
-    RT_ASSERT(result == RT_EOK);
+    do
+    {
+        u32TxCnt = (u32TransferCnt > NU_PDMA_MAX_TXCNT) ? NU_PDMA_MAX_TXCNT : u32TransferCnt;
+        result = nu_pdma_spi_rx_config(spi_bus, (recv_addr == RT_NULL) ? recv_addr : &recv_addr[u32Offset], (u32TxCnt * bytes_per_word), bytes_per_word);
+        RT_ASSERT(result == RT_EOK);
 
-    /* Trigger TX/RX PDMA transfer. */
-    SPI_TRIGGER_TX_RX_PDMA(spi_base);
+        result = nu_pdma_spi_tx_config(spi_bus, (send_addr == RT_NULL) ? send_addr : &send_addr[u32Offset], (u32TxCnt * bytes_per_word), bytes_per_word);
+        RT_ASSERT(result == RT_EOK);
 
-    /* Wait RX-PDMA transfer done */
-    rt_sem_take(spi_bus->m_psSemBus, RT_WAITING_FOREVER);
+        /* Trigger TX/RX PDMA transfer. */
+        SPI_TRIGGER_TX_RX_PDMA(spi_base);
 
-    /* Stop TX/RX DMA transfer. */
-    SPI_DISABLE_TX_RX_PDMA(spi_base);
+        /* Wait RX-PDMA transfer done */
+        rt_sem_take(spi_bus->m_psSemBus, RT_WAITING_FOREVER);
 
-    return result;
+        /* Stop TX/RX DMA transfer. */
+        SPI_DISABLE_TX_RX_PDMA(spi_base);
+
+        u32TransferCnt -= u32TxCnt;
+        u32Offset += u32TxCnt;
+
+    }
+    while (u32TransferCnt > 0);
+
+    return length;
 }
 
 rt_err_t nu_hw_spi_pdma_allocate(struct nu_spi *spi_bus)

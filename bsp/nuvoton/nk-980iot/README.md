@@ -1,0 +1,102 @@
+# NK-980IoT
+## 1. Introduction
+Nuvoton Technology provides industrial IoT development platform using NUC980DK61Y microprocessor, which is an industrial IoT open platform, including complete hardware design and software reference design. The platform is powered by Nuvoton ARM9 MPU with a 300 MHz internal speed and up to 128 MB DDR memory, single 10/100 Ethernet port, 2 high-speed USB hosts, 1 Gb SPI NAND Flash memory, microphone input, stereo headphone output and Arduino compatible interface. The platform supports embedded Linux OS which provides all IoT protocols you need, users can use this platform to quickly develop a plenty of IoT applications.
+
+[![NK-980IOT](https://i.imgur.com/bKvBJLA.png "NK-980IOT")](https://i.imgur.com/bKvBJLA.png "NK-980IOT")
+
+
+### 1.1 MCU specification
+
+|  | Features |
+| -- | -- |
+| Part NO. | NUC980DK61Y |
+| MCU ARCH. | 32-bit ARM926EJ-STM |
+| Operation frequency | 300 MHz |
+| Embedded SDRAM size | Built-in 64MB (Up to 128 MB DDR memory) |
+| Crypto engine |  AES, RSA, ECC, HMAC and SHA crypto accelerator |
+| RMII interface |  10/100 Mbps x2 |
+| USB 2.0 |  High Speed Host x1, High Speed Host/Device x1 |
+| Audio |  Mono microphone / Stereo headphone |
+| Extern storage |  1 Gbit SPI-NAND Flash |
+| SD card slot |  SD |
+| EBI interface |  External memory expansion interface |
+
+### 1.2 Interface
+
+| Interface |
+| -- |
+| Arduino UNO |
+| A RJ45 Ethernet |
+| An USB 2.0 HS port |
+| An USB 2.0 HS OTG port |
+| A microSD slot |
+| A 3.5mm Audio connector |
+| An EBI connector |
+| An ICE connector |
+
+### 1.3 On-board devices
+
+| Device | Description | Driver supporting status |
+| -- | -- | -- |
+|Ethernet PHY | IP101GR | Supported |
+|Button |  | Supported |
+|LEDs |  | Supported |
+|Audio Codec | NAU88L22, Supports MIC and earphone | Not ready |
+|SPI NAND flash | W25Q32 | Not ready |
+|Virtual COM | For console | Need to install virtual com port driver. |
+
+## 2. Supported compiler
+Support GCC, MDK4 and MDK5 IDE/compilers. More information of these compiler version as following:
+
+| IDE/Compiler  | Tested version            |
+| ---------- | ---------------------------- |
+| MDK4       | 4.76                         |
+| MDK5       | 5.26.2                       |
+| GCC        | GCC 5.4.1 20160919 (release) |
+
+Notice: Please install ICE driver for development.
+
+## 3. Program firmware
+### 3.1 SDRAM Downloading using NuWriter
+You can use NuWriter to download rtthread.bin into SDRAM, then run it.
+[![SDRAM Downloading using NuWriter](https://i.imgur.com/NvbzsRp.gif "SDRAM Downloading using NuWriter")](https://i.imgur.com/NvbzsRp.gif "SDRAM Downloading using NuWriter")
+<br>
+Choose type: DDR/SRAM<br>
+<< Press Re-Connect >><br>
+Choose file: Specify your rtthread.bin file.<br>
+Execute Address: 0x0<br>
+Option: Download and run<br>
+<br>
+
+### 3.2 SPI NOR flash using NuWriter
+You can use NuWriter to program rtthread.bin into SPI NOR flash.
+[![SPI NOR flash](https://i.imgur.com/8OtXGSQ.gif "SPI NOR flash")](https://i.imgur.com/8OtXGSQ.gif "SPI NOR flash using NuWriter")
+<br>
+Choose type: SPI<br>
+<< Press Re-Connect >><br>
+Choose file: Specify your rtthread.bin file.<br>
+Image Type: Loader<br>
+Execute Address: 0x0<br>
+<< Press Program >><br>
+<br>
+
+## 4. Test
+You can use Tera Term terminate emulator (or other software) to type commands of RTT. All parameters of serial communication are shown in below image. Here, you can find out the corresponding port number of Nuvoton Virtual Com Port in window device manager.
+
+[![Serial settings](https://i.imgur.com/5NYuSNM.png "Serial settings")](https://i.imgur.com/5NYuSNM.png "Serial settings")
+
+## 5. Purchase
+* [Nuvoton Direct][1]
+
+## 6. Resources
+* [Download board schematics][2]
+* [Download NK-980IOT Quick Start Guide][3]
+* [Download MCU TRM][4]
+* [Download NuWriter][5]
+
+  [1]: https://direct.nuvoton.com/tw/numaker-iiot-nuc980
+  [2]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=UG1020190308162722
+  [3]: http://www.nuvoton.com/resource-download.jsp?tp_GUID=UG0520190311115040
+  [4]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-NUC980-1
+  [5]: https://github.com/OpenNuvoton/NUC980_NuWriter
+  

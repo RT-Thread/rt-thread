@@ -25,6 +25,11 @@
 /* Private define ---------------------------------------------------------------*/
 #define NU_CRYPTO_CRC_NAME  "nu_CRC"
 
+#define CRC_32_POLY     0x04C11DB7
+#define CRC_CCITT_POLY  0x00001021
+#define CRC_16_POLY     0x00008005
+#define CRC_8_POLY      0x00000007
+
 /* Private variables ------------------------------------------------------------*/
 
 static struct rt_mutex s_CRC_mutex;
@@ -85,7 +90,6 @@ static rt_uint32_t nu_crc_run(
     return u32CalChecksum;
 }
 
-
 rt_err_t nu_crc_init(void)
 {
     SYS_ResetModule(CRC_RST);
@@ -103,30 +107,29 @@ rt_uint32_t nu_crc_update(struct hwcrypto_crc *ctx, const rt_uint8_t *in, rt_siz
     //select CRC operation mode
     switch (ctx->crc_cfg.poly)
     {
-    case 0x04C11DB7:
+    case CRC_32_POLY:
         u32OpMode = CRC_32;
         break;
-    case 0x00001021:
+    case CRC_CCITT_POLY:
         u32OpMode = CRC_CCITT;
         break;
-    case 0x00008005:
+    case CRC_16_POLY:
         u32OpMode = CRC_16;
         break;
-    case 0x00000007:
+    case CRC_8_POLY:
         u32OpMode = CRC_8;
         break;
     default:
         return 0;
     }
 
+    u32CRCAttr |= (ctx->crc_cfg.flags & CRC_FLAG_REFOUT) ? CRC_CHECKSUM_RVS : 0; //CRC Checksum Reverse
+    u32CRCAttr |= (ctx->crc_cfg.flags & CRC_FLAG_REFIN) ? CRC_WDATA_RVS : 0;  //CRC Write Data Reverse
 
-    u32CRCAttr |= ctx->crc_cfg.flags & CRC_FLAG_REFOUT ? CRC_CHECKSUM_RVS : 0; //CRC Checksum Reverse
-    u32CRCAttr |= ctx->crc_cfg.flags & CRC_FLAG_REFIN ? CRC_WDATA_RVS : 0;  //CRC Write Data Reverse
-
-    //Calcluate CRC checksum, using config's last value as CRC seed
+    //Calculate CRC checksum, using config's last value as CRC seed
     crc_result = nu_crc_run(u32OpMode, ctx->crc_cfg.last_val, u32CRCAttr, (uint8_t *)in, length);
 
-    //update CRC result to config's last vaule
+    //update CRC result to config's last value
     ctx->crc_cfg.last_val = crc_result;
     return crc_result ^ 0x00 ^ ctx->crc_cfg.xorout;
 }
