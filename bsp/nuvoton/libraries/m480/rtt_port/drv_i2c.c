@@ -202,9 +202,9 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t *nu_i2c,
         if (ret != RT_EOK) /* for timeout condition */
             return -RT_EIO;
 
-        if (   (I2C_GET_STATUS(nu_i2c->I2C)
-            != ((flags & RT_I2C_RD) ? u32I2C_MASTER_STATUS_RECEIVE_ADDRESS_ACK : u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK))
-            && !ignore_nack)
+        if ((I2C_GET_STATUS(nu_i2c->I2C)
+                != ((flags & RT_I2C_RD) ? u32I2C_MASTER_STATUS_RECEIVE_ADDRESS_ACK : u32I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK))
+                && !ignore_nack)
         {
             LOG_E("sending address failed\n");
             return -RT_EIO;

@@ -369,7 +369,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
             /*set the filter message object*/
             if (filter_cfg->items[i].mode == 1)
             {
-                if (CAN_SetRxMsgObjAndMsk(can_base, MSG(i + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask, FALSE) == FALSE)
+                if (CAN_SetRxMsgObjAndMsk(can_base, MSG(filter_cfg->items[i].hdr + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask, FALSE) == FALSE)
                 {
                     return -(RT_ERROR);
                 }
@@ -378,7 +378,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
 
             {
                 /*set the filter message object*/
-                if (CAN_SetRxMsgAndMsk(can_base, MSG(i + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask) == FALSE)
+                if (CAN_SetRxMsgAndMsk(can_base, MSG(filter_cfg->items[i].hdr + RX_MSG_ID_INDEX), filter_cfg->items[i].ide, filter_cfg->items[i].id, filter_cfg->items[i].mask) == FALSE)
                 {
                     return -(RT_ERROR);
                 }
@@ -439,7 +439,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
     }
     break;
     default:
-       return -(RT_EINVAL);
+        return -(RT_EINVAL);
 
     }
 
@@ -507,7 +507,8 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
-    can->hdr->connected = 1;
+    pmsg->hdr = boxno - RX_MSG_ID_INDEX;
+    can->hdr[pmsg->hdr].connected = 1;
 #endif
 
     /* Standard ID (11 bits)*/

@@ -54,7 +54,6 @@ struct nu_pdma_memfun_actor
 {
     int         m_i32ChannID;
     uint32_t    m_u32Result;
-    uint32_t    m_u32TrigTransferCnt;
     rt_sem_t    m_psSemMemFun;
 } ;
 typedef struct nu_pdma_memfun_actor *nu_pdma_memfun_actor_t;
@@ -553,6 +552,8 @@ rt_err_t nu_pdma_desc_setup(int i32ChannID, nu_pdma_desc_t dma_desc, uint32_t u3
         goto exit_nu_pdma_desc_setup;
     else if ((u32AddrSrc % (u32DataWidth / 8)) || (u32AddrDst % (u32DataWidth / 8)))
         goto exit_nu_pdma_desc_setup;
+    else if ( i32TransferCnt > NU_PDMA_MAX_TXCNT )
+        goto exit_nu_pdma_desc_setup;
 
     psPeriphCtl = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos].m_spPeripCtl;
 
@@ -701,9 +702,10 @@ static rt_err_t nu_pdma_sgtbls_valid(nu_pdma_desc_t head)
 
         node = (nu_pdma_desc_t)(node->NEXT + PDMA->SCATBA);
 
-    } while (((uint32_t)node != PDMA->SCATBA) && (node != head));
+    }
+    while (((uint32_t)node != PDMA->SCATBA) && (node != head));
 
-     return RT_EOK;
+    return RT_EOK;
 }
 
 static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_desc_t head, uint32_t u32IdleTimeout_us)
@@ -718,7 +720,7 @@ static void _nu_pdma_transfer(int i32ChannID, uint32_t u32Peripheral, nu_pdma_de
     PDMA_SetTransferMode(PDMA,
                          i32ChannID,
                          u32Peripheral,
-                         (head != NULL) ? 1 : 0,
+                         (head->NEXT != 0) ? 1 : 0,
                          (uint32_t)head);
 
     /* If peripheral is M2M, trigger it. */
@@ -747,7 +749,7 @@ rt_err_t nu_pdma_transfer(int i32ChannID, uint32_t u32DataWidth, uint32_t u32Add
     if (ret != RT_EOK)
         goto exit_nu_pdma_transfer;
 
-    _nu_pdma_transfer(i32ChannID, psPeriphCtl->m_u32Peripheral, NULL, u32IdleTimeout_us);
+    _nu_pdma_transfer(i32ChannID, psPeriphCtl->m_u32Peripheral,  &PDMA->DSCT[i32ChannID], u32IdleTimeout_us);
 
     ret = RT_EOK;
 
@@ -765,7 +767,7 @@ rt_err_t nu_pdma_sg_transfer(int i32ChannID, nu_pdma_desc_t head, uint32_t u32Id
         goto exit_nu_pdma_sg_transfer;
     else if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
         goto exit_nu_pdma_sg_transfer;
-    else if ( (ret=nu_pdma_sgtbls_valid(head)) != RT_EOK ) /* Check SG-tbls. */
+    else if ((ret = nu_pdma_sgtbls_valid(head)) != RT_EOK) /* Check SG-tbls. */
         goto exit_nu_pdma_sg_transfer;
 
     psPeriphCtl = &nu_pdma_chn_arr[i32ChannID - NU_PDMA_CH_Pos].m_spPeripCtl;
@@ -912,11 +914,14 @@ static int nu_pdma_memfun_employ(void)
     return idx;
 }
 
-static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int count, nu_pdma_memctrl_t eMemCtl)
+static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, unsigned int u32TransferCnt, nu_pdma_memctrl_t eMemCtl)
 {
     nu_pdma_memfun_actor_t psMemFunActor = NULL;
     int idx;
     rt_size_t ret = 0;
+    rt_uint32_t u32Offset = 0;
+    rt_uint32_t u32TxCnt = 0;
+
     while (1)
     {
         /* Employ actor */
@@ -925,37 +930,51 @@ static rt_size_t nu_pdma_memfun(void *dest, void *src, uint32_t u32DataWidth, un
 
         psMemFunActor = &nu_pdma_memfun_actor_arr[idx];
 
-        psMemFunActor->m_u32TrigTransferCnt = count;
-
-        /* Set PDMA memory control to eMemCtl. */
-        nu_pdma_channel_memctrl_set(psMemFunActor->m_i32ChannID, eMemCtl);
-
-        /* Register ISR callback function */
-        nu_pdma_callback_register(psMemFunActor->m_i32ChannID, nu_pdma_memfun_cb, (void *)psMemFunActor, NU_PDMA_EVENT_ABORT | NU_PDMA_EVENT_TRANSFER_DONE);
-
-        psMemFunActor->m_u32Result = 0;
-
-        /* Trigger it */
-        nu_pdma_transfer(psMemFunActor->m_i32ChannID, u32DataWidth, (uint32_t)src, (uint32_t)dest, count, 0);
-
-        /* Wait it done. */
-        rt_sem_take(psMemFunActor->m_psSemMemFun, RT_WAITING_FOREVER);
-
-        /* Give result if get NU_PDMA_EVENT_TRANSFER_DONE.*/
-        if (psMemFunActor->m_u32Result & NU_PDMA_EVENT_TRANSFER_DONE)
+        do
         {
-            ret = psMemFunActor->m_u32TrigTransferCnt;
-        }
-        else
-        {
-            ret = psMemFunActor->m_u32TrigTransferCnt - nu_pdma_non_transfer_count_get(psMemFunActor->m_i32ChannID);
-        }
 
-        /* Terminate it if get ABORT event */
-        if (psMemFunActor->m_u32Result & NU_PDMA_EVENT_ABORT)
-        {
-            nu_pdma_channel_terminate(psMemFunActor->m_i32ChannID);
+            u32TxCnt = (u32TransferCnt > NU_PDMA_MAX_TXCNT) ? NU_PDMA_MAX_TXCNT : u32TransferCnt;
+
+            /* Set PDMA memory control to eMemCtl. */
+            nu_pdma_channel_memctrl_set(psMemFunActor->m_i32ChannID, eMemCtl);
+
+            /* Register ISR callback function */
+            nu_pdma_callback_register(psMemFunActor->m_i32ChannID, nu_pdma_memfun_cb, (void *)psMemFunActor, NU_PDMA_EVENT_ABORT | NU_PDMA_EVENT_TRANSFER_DONE);
+
+            psMemFunActor->m_u32Result = 0;
+
+            /* Trigger it */
+            nu_pdma_transfer(psMemFunActor->m_i32ChannID,
+                             u32DataWidth,
+                             (eMemCtl & 0x2ul) ? (uint32_t)src + u32Offset : (uint32_t)src, /* Src address is Inc or not. */
+                             (eMemCtl & 0x1ul) ? (uint32_t)dest + u32Offset : (uint32_t)dest, /* Dst address is Inc or not. */
+                             u32TxCnt,
+                             0);
+
+            /* Wait it done. */
+            rt_sem_take(psMemFunActor->m_psSemMemFun, RT_WAITING_FOREVER);
+
+            /* Give result if get NU_PDMA_EVENT_TRANSFER_DONE.*/
+            if (psMemFunActor->m_u32Result & NU_PDMA_EVENT_TRANSFER_DONE)
+            {
+                ret +=  u32TxCnt;
+            }
+            else
+            {
+                ret += (u32TxCnt - nu_pdma_non_transfer_count_get(psMemFunActor->m_i32ChannID));
+            }
+
+            /* Terminate it if get ABORT event */
+            if (psMemFunActor->m_u32Result & NU_PDMA_EVENT_ABORT)
+            {
+                nu_pdma_channel_terminate(psMemFunActor->m_i32ChannID);
+                break;
+            }
+
+            u32TransferCnt -= u32TxCnt;
+            u32Offset += u32TxCnt;
         }
+        while (u32TransferCnt > 0);
 
         rt_mutex_take(nu_pdma_memfun_actor_pool_lock, RT_WAITING_FOREVER);
         nu_pdma_memfun_actor_mask &= ~(1 << idx);
@@ -979,10 +998,34 @@ rt_size_t nu_pdma_mempush(void *dest, void *src, uint32_t data_width, unsigned i
 
 void *nu_pdma_memcpy(void *dest, void *src, unsigned int count)
 {
-    if (count == nu_pdma_memfun(dest, src, 8, count, eMemCtl_SrcInc_DstInc))
+    int i = 0;
+    uint32_t u32Offset = 0;
+    uint32_t u32Remaining = count;
+
+    for (i = 4; (i > 0) && (u32Remaining > 0) ; i >>= 1)
+    {
+        uint32_t u32src   = (uint32_t)src + u32Offset;
+        uint32_t u32dest  = (uint32_t)dest + u32Offset;
+
+        if (((u32src % i) == (u32dest % i)) &&
+                ((u32src % i) == 0) &&
+                (RT_ALIGN_DOWN(u32Remaining, i) >= i))
+        {
+            uint32_t u32TXCnt = u32Remaining / i;
+            if (u32TXCnt != nu_pdma_memfun((void *)u32dest, (void *)u32src, i * 8, u32TXCnt, eMemCtl_SrcInc_DstInc))
+                goto exit_nu_pdma_memcpy;
+
+            u32Offset += (u32TXCnt * i);
+            u32Remaining -= (u32TXCnt * i);
+        }
+    }
+
+    if (count == u32Offset)
         return dest;
-    else
-        return NULL;
+
+exit_nu_pdma_memcpy:
+
+    return NULL;
 }
 
 /**

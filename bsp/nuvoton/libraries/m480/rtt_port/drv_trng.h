@@ -18,4 +18,3 @@ void nu_trng_open(void);
 rt_uint32_t nu_trng_rand(struct hwcrypto_rng *ctx);
 
 #endif
-

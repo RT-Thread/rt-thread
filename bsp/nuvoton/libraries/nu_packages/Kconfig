@@ -47,6 +47,14 @@ menu "Nuvoton Packages Config"
                     Choose this option if you the ili9341 device is with EBI interface.
             endchoice
 
+            config NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
+                bool "Create an offscreen framebuffer."
+                default n
+
+            config NU_PKG_ILI9341_HORIZONTAL
+                bool "Set horizontal view. (320x240)"
+                default n
+
         endif
 
 endmenu
