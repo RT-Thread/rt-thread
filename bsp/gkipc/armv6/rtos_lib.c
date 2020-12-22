@@ -663,7 +663,7 @@ U32 msleep( U32 msecs )
 
 U32 RTOS_SuspendThread( RTOS_ThreadT threadHandle )
 {
-    return rt_thread_suspend((rt_thread_t)threadHandle, RT_UNINTERRUPTIBLE);
+    return rt_thread_suspend_witch_flag((rt_thread_t)threadHandle, RT_UNINTERRUPTIBLE);
 }
 
 U32 RTOS_WakeupThread( RTOS_ThreadT threadHandle )

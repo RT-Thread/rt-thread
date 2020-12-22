@@ -55,7 +55,7 @@ rt_err_t rt_completion_wait(struct rt_completion *completion,
             thread->error = RT_EOK;
 
             /* suspend thread */
-            rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
+            rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
             /* add to suspended list */
             rt_list_insert_before(&(completion->suspended_list),
                                   &(thread->tlist));

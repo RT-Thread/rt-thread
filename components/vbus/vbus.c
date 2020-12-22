@@ -230,7 +230,7 @@ static void _bus_out_entry(void *param)
             /* kick the guest, hoping this could force it do the work */
             rt_vbus_tick(0, RT_VBUS_GUEST_VIRQ);
 
-            rt_thread_suspend(rt_thread_self(), RT_UNINTERRUPTIBLE);
+            rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
             rt_schedule();
 
             RT_VBUS_OUT_RING->blocked = 0;
@@ -334,7 +334,7 @@ rt_err_t rt_vbus_post(rt_uint8_t id,
         /* We only touch the _chn_suspended_threads in thread, so lock the
          * scheduler is enough. */
         rt_enter_critical();
-        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
 
         rt_list_insert_after(&_chn_suspended_threads[id], &thread->tlist);
         if (timeout > 0)

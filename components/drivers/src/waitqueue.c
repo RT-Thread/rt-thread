@@ -103,7 +103,7 @@ static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int susp
         goto __exit_wakeup;
     }
 
-    ret = rt_thread_suspend(tid, RT_INTERRUPTIBLE);
+    ret = rt_thread_suspend_with_flag(tid, RT_INTERRUPTIBLE);
     if (ret != RT_EOK)
     {
         rt_hw_interrupt_enable(level);

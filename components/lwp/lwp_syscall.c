@@ -275,7 +275,7 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
     if (!nbyte)
         return 0;
 
-    if (!lwp_user_access_ok((void*)buf, nbyte))
+    if (!lwp_user_accessable((void*)buf, nbyte))
         return 0;
 
     kmem = kmem_get(nbyte);
@@ -303,7 +303,7 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
     if (!nbyte)
         return 0;
 
-    if (!lwp_user_access_ok((void*)buf, nbyte))
+    if (!lwp_user_accessable((void*)buf, nbyte))
         return 0;
 
     kmem = kmem_get(nbyte);
@@ -334,7 +334,7 @@ int sys_open(const char *name, int flag, ...)
     rt_size_t len;
     char *kname;
 
-    if (!lwp_user_access_ok((void*)name, 1))
+    if (!lwp_user_accessable((void*)name, 1))
         return -1;
 
     len = rt_strlen(name);
@@ -391,7 +391,7 @@ int sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     int ret;
     struct pollfd *kfds;
 
-    if (!lwp_user_access_ok((void*)fds, nfds * sizeof *fds))
+    if (!lwp_user_accessable((void*)fds, nfds * sizeof *fds))
         return -1;
 
     kfds = (struct pollfd *)kmem_get(nfds * sizeof *kfds);
@@ -417,7 +417,7 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
 
     if (readfds)
     {
-        if (!lwp_user_access_ok((void*)readfds, sizeof *readfds))
+        if (!lwp_user_accessable((void*)readfds, sizeof *readfds))
         {
             return -1;
         }
@@ -430,7 +430,7 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
     }
     if (writefds)
     {
-        if (!lwp_user_access_ok((void*)writefds, sizeof *writefds))
+        if (!lwp_user_accessable((void*)writefds, sizeof *writefds))
         {
             return -1;
         }
@@ -443,7 +443,7 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
     }
     if (exceptfds)
     {
-        if (!lwp_user_access_ok((void*)exceptfds, sizeof *exceptfds))
+        if (!lwp_user_accessable((void*)exceptfds, sizeof *exceptfds))
         {
             return -1;
         }
@@ -494,7 +494,7 @@ int sys_unlink(const char *pathname)
     rt_size_t len;
     char *kname;
 
-    if (!lwp_user_access_ok((void*)pathname, 1))
+    if (!lwp_user_accessable((void*)pathname, 1))
         return -1;
 
     len = rt_strlen(pathname);
@@ -525,7 +525,7 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 
     dbg_log(DBG_LOG, "sys_nanosleep\n");
 
-    if (!lwp_user_access_ok((void*)rqtp, sizeof *rqtp))
+    if (!lwp_user_accessable((void*)rqtp, sizeof *rqtp))
         return -1;
 
     lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
@@ -535,7 +535,7 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 
     if (rmtp)
     {
-        if (!lwp_user_access_ok((void*)rmtp, sizeof *rmtp))
+        if (!lwp_user_accessable((void*)rmtp, sizeof *rmtp))
             return -1;
 
         tick = rt_tick_get() - tick;
@@ -571,7 +571,7 @@ int sys_gettimeofday(struct timeval *tp, struct timezone *tzp)
 #ifdef RT_USING_USERSPACE
     if (tp)
     {
-        if (!lwp_user_access_ok((void*)tp, sizeof *tp))
+        if (!lwp_user_accessable((void*)tp, sizeof *tp))
             return -1;
 
         t_k.tv_sec = rt_tick_get() / RT_TICK_PER_SECOND;
@@ -1075,7 +1075,7 @@ int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
     socklen_t uaddrlen;
     socklen_t kaddrlen;
 
-    if (!lwp_user_access_ok(addrlen, sizeof (socklen_t *)))
+    if (!lwp_user_accessable(addrlen, sizeof (socklen_t *)))
     {
         return -1;
     }
@@ -1085,7 +1085,7 @@ int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
         return -1;
     }
 
-    if (!lwp_user_access_ok(addr, uaddrlen))
+    if (!lwp_user_accessable(addr, uaddrlen))
     {
         return -1;
     }
@@ -1110,7 +1110,7 @@ int sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namelen)
     struct sockaddr sa;
     struct musl_sockaddr kname;
 
-    if (!lwp_user_access_ok((void*)name, namelen))
+    if (!lwp_user_accessable((void*)name, namelen))
     {
         return -1;
     }
@@ -1134,7 +1134,7 @@ int sys_getpeername (int socket, struct musl_sockaddr *name, socklen_t *namelen)
     socklen_t unamelen;
     socklen_t knamelen;
 
-    if (!lwp_user_access_ok(namelen, sizeof (socklen_t *)))
+    if (!lwp_user_accessable(namelen, sizeof (socklen_t *)))
     {
         return -1;
     }
@@ -1144,7 +1144,7 @@ int sys_getpeername (int socket, struct musl_sockaddr *name, socklen_t *namelen)
         return -1;
     }
 
-    if (!lwp_user_access_ok(name, unamelen))
+    if (!lwp_user_accessable(name, unamelen))
     {
         return -1;
     }
@@ -1174,7 +1174,7 @@ int sys_getsockname (int socket, struct musl_sockaddr *name, socklen_t *namelen)
     socklen_t unamelen;
     socklen_t knamelen;
 
-    if (!lwp_user_access_ok(namelen, sizeof (socklen_t *)))
+    if (!lwp_user_accessable(namelen, sizeof (socklen_t *)))
     {
         return -1;
     }
@@ -1184,7 +1184,7 @@ int sys_getsockname (int socket, struct musl_sockaddr *name, socklen_t *namelen)
         return -1;
     }
 
-    if (!lwp_user_access_ok(name, unamelen))
+    if (!lwp_user_accessable(name, unamelen))
     {
         return -1;
     }
@@ -1225,7 +1225,7 @@ int sys_connect(int socket, const struct musl_sockaddr *name, socklen_t namelen)
     struct sockaddr sa;
     struct musl_sockaddr kname;
 
-    if (!lwp_user_access_ok((void*)name, namelen))
+    if (!lwp_user_accessable((void*)name, namelen))
     {
         return -1;
     }
@@ -1278,7 +1278,7 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
     if (!len)
         return -1;
 
-    if (!lwp_user_access_ok((void*)mem, len))
+    if (!lwp_user_accessable((void*)mem, len))
         return -1;
 
     kmem = kmem_get(len);
@@ -1340,7 +1340,7 @@ int sys_sendto(int socket, const void *dataptr, size_t size, int flags,
     if (!size)
         return -1;
 
-    if (!lwp_user_access_ok((void*)dataptr, size))
+    if (!lwp_user_accessable((void*)dataptr, size))
         return -1;
 
     kmem = kmem_get(size);
@@ -1722,7 +1722,7 @@ int sys_access(const char *filename, int mode)
     rt_size_t len;
     char *kname;
 
-    if (!lwp_user_access_ok((void*)filename, 1))
+    if (!lwp_user_accessable((void*)filename, 1))
         return -1;
 
     len = rt_strlen(filename);

@@ -385,7 +385,7 @@ size_t lwp_put_to_user(void *dst, void *src, size_t size)
     return lwp_data_put(m_info, dst, src, size);
 }
 
-int lwp_user_access_ok(void *addr, size_t size)
+int lwp_user_accessable(void *addr, size_t size)
 {
     void *addr_start, *addr_end, *next_page;
     void *tmp_addr;

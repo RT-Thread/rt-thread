@@ -205,7 +205,7 @@ rt_err_t rt_prio_queue_pop(struct rt_prio_queue *que,
 
         thread = rt_thread_self();
         thread->error = RT_EOK;
-        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
 
         rt_list_insert_before(&(que->suspended_pop_list), &(thread->tlist));
 

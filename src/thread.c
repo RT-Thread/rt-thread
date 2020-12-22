@@ -556,7 +556,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     temp = rt_hw_interrupt_disable();
 
     /* suspend thread */
-    rt_thread_suspend(thread, RT_INTERRUPTIBLE);
+    rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
 
     /* reset the timeout of thread timer and start it */
     rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
@@ -615,7 +615,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         *tick = *tick + inc_tick - rt_tick_get();
 
         /* suspend thread */
-        rt_thread_suspend(thread, RT_UNINTERRUPTIBLE);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
 
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, tick);
@@ -781,7 +781,7 @@ int lwp_suspend_sigcheck(rt_thread_t thread, int suspend_flag);
  * @note if suspend self thread, after this function call, the
  * rt_schedule() must be invoked.
  */
-rt_err_t rt_thread_suspend(rt_thread_t thread, int suspend_flag)
+rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
 {
     register rt_base_t stat;
     register rt_base_t temp;
@@ -829,7 +829,14 @@ rt_err_t rt_thread_suspend(rt_thread_t thread, int suspend_flag)
     RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
     return RT_EOK;
 }
+RTM_EXPORT(rt_thread_suspend_with_flag);
+
+rt_err_t rt_thread_suspend(rt_thread_t thread)
+{
+    return rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_thread_suspend);
+
 
 /**
  * This function will resume a thread and put it to system ready queue.

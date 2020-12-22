@@ -95,7 +95,7 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 
     if (timeout != 0 && !pt->triggered)
     {
-        if (rt_thread_suspend(thread, RT_INTERRUPTIBLE) == RT_EOK)
+        if (rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE) == RT_EOK)
         {
             if (timeout > 0)
             {

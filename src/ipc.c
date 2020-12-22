@@ -85,7 +85,7 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
                                        rt_uint8_t        flag,
                                        int suspend_flag)
 {
-    rt_err_t ret = rt_thread_suspend(thread, suspend_flag);
+    rt_err_t ret = rt_thread_suspend_with_flag(thread, suspend_flag);
 
     /* suspend thread */
     if (ret != RT_EOK)
