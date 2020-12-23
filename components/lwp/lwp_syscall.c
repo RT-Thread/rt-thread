@@ -1747,6 +1747,12 @@ int sys_access(const char *filename, int mode)
     return (ret >= 0)? 0: ret;
 }
 
+int sys_pipe(int fd[2])
+{
+    /* not implemented */
+    return -1;
+}
+
 const static void* func_table[] =
 {
     (void*)sys_exit,            /* 01 */
@@ -1890,6 +1896,7 @@ const static void* func_table[] =
     (void *)sys_set_thread_area,
     (void *)sys_set_tid_address,
     (void *)sys_access,
+    (void *)sys_pipe,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
