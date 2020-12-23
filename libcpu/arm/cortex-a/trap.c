@@ -103,12 +103,12 @@ static int check_debug_event(struct rt_hw_exp_stack *regs, uint32_t pc_adj)
             dmb();
             thread_info.thread->debug_suspend = 1;
             dsb();
-            rt_thread_suspend(thread_info.thread);
+            rt_thread_suspend_witch_flag(thread_info.thread, RT_UNINTERRUPTIBLE);
             rt_raw_channel_send(gdb_get_server_channel(), &msg);
             rt_schedule();
             while (thread_info.thread->debug_suspend)
             {
-                rt_thread_suspend(thread_info.thread);
+                rt_thread_suspend_witch_flag(thread_info.thread, RT_UNINTERRUPTIBLE);
                 rt_schedule();
             }
             return ret;

@@ -511,13 +511,30 @@ typedef siginfo_t rt_siginfo_t;
 /*
  * thread state definitions
  */
-#define RT_THREAD_INIT                  0x00                /**< Initialized status */
-#define RT_THREAD_READY                 0x01                /**< Ready status */
-#define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
-#define RT_THREAD_RUNNING               0x03                /**< Running status */
-#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
-#define RT_THREAD_CLOSE                 0x04                /**< Closed status */
-#define RT_THREAD_STAT_MASK             0x07
+#define RT_THREAD_INIT                       0x00                /**< Initialized status */
+#define RT_THREAD_CLOSE                      0x01                /**< Closed status */
+#define RT_THREAD_READY                      0x02                /**< Ready status */
+#define RT_THREAD_RUNNING                    0x03                /**< Running status */
+
+/*
+ * for rt_thread_suspend_with_flag()
+ */
+enum
+{
+    RT_INTERRUPTIBLE = 0,
+    RT_KILLABLE,
+    RT_UNINTERRUPTIBLE,
+};
+
+#define RT_THREAD_SUSPEND_MASK               0x04
+#define RT_SIGNAL_COMMON_WAKEUP_MASK         0x02
+#define RT_SIGNAL_KILL_WAKEUP_MASK           0x01
+
+#define RT_THREAD_SUSPEND_INTERRUPTIBLE      (RT_THREAD_SUSPEND_MASK)                                                             /**< Suspend interruptable 0x4 */
+#define RT_THREAD_SUSPEND                    RT_THREAD_SUSPEND_INTERRUPTIBLE
+#define RT_THREAD_SUSPEND_KILLABLE           (RT_THREAD_SUSPEND_MASK | RT_SIGNAL_COMMON_WAKEUP_MASK)                              /**< Suspend with killable 0x6 */
+#define RT_THREAD_SUSPEND_UNINTERRUPTIBLE    (RT_THREAD_SUSPEND_MASK | RT_SIGNAL_COMMON_WAKEUP_MASK | RT_SIGNAL_KILL_WAKEUP_MASK) /**< Suspend with uninterruptable 0x7 */
+#define RT_THREAD_STAT_MASK                  0x07
 
 #define RT_THREAD_STAT_YIELD            0x08                /**< indicate whether remaining_tick has been reloaded since last schedule */
 #define RT_THREAD_STAT_YIELD_MASK       RT_THREAD_STAT_YIELD
@@ -582,8 +599,16 @@ struct rt_wakeup
     void *user_data;
 };
 
+#define _LWP_NSIG       64
+#define _LWP_NSIG_BPW   32
+#define _LWP_NSIG_WORDS (_LWP_NSIG / _LWP_NSIG_BPW)
+
 typedef void (*lwp_sighandler_t)(int);
-typedef rt_uint32_t lwp_sigset_t;
+
+typedef struct {
+    unsigned long sig[_LWP_NSIG_WORDS];
+} lwp_sigset_t;
+
 struct rt_user_context
 {
     void *sp;
@@ -684,11 +709,11 @@ struct rt_thread
     rt_uint32_t *kernel_sp;                             /**< kernel stack point */
     rt_list_t   sibling;                                /**< next thread of same process */
 
-    rt_uint32_t signal;
+    lwp_sigset_t signal;
     lwp_sigset_t signal_mask;
-    lwp_sigset_t signal_mask_bak;
+    int signal_mask_bak;
     rt_uint32_t signal_in_process;
-    lwp_sighandler_t signal_handler[32];
+    lwp_sighandler_t signal_handler[_LWP_NSIG];
     struct rt_user_context user_ctx;
 
     struct rt_wakeup wakeup;                            /**< wakeup data */

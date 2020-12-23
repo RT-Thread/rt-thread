@@ -72,7 +72,7 @@ static rt_size_t rt_pipe_read(rt_device_t dev,
         read_nbytes = rt_ringbuffer_get(&(pipe->ringbuffer), (rt_uint8_t *)buffer, size);
         if (read_nbytes == 0)
         {
-            rt_thread_suspend(thread);
+            rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
             /* waiting on suspended read list */
             rt_list_insert_before(&(pipe->suspended_read_list),
                                   &(thread->tlist));
@@ -160,7 +160,7 @@ static rt_size_t rt_pipe_write(rt_device_t dev,
         if (write_nbytes == 0)
         {
             /* pipe full, waiting on suspended write list */
-            rt_thread_suspend(thread);
+            rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
             /* waiting on suspended read list */
             rt_list_insert_before(&(pipe->suspended_write_list),
                                   &(thread->tlist));

@@ -206,8 +206,8 @@ static rt_err_t _rt_thread_init(struct rt_thread *thread,
 #ifdef RT_USING_LWP
     thread->lwp = RT_NULL;
     rt_list_init(&(thread->sibling));
-    thread->signal = 0;
-    thread->signal_mask = 0;
+    rt_memset(&thread->signal, 0, sizeof(lwp_sigset_t));
+    rt_memset(&thread->signal_mask, 0, sizeof(lwp_sigset_t));
     thread->signal_mask_bak = 0;
     thread->signal_in_process = 0;
     rt_memset(thread->signal_handler, 0, sizeof thread->signal_handler);
@@ -527,7 +527,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     temp = rt_hw_interrupt_disable();
 
     /* suspend thread */
-    rt_thread_suspend(thread);
+    rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
 
     /* reset the timeout of thread timer and start it */
     rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
@@ -586,7 +586,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         *tick = *tick + inc_tick - rt_tick_get();
 
         /* suspend thread */
-        rt_thread_suspend(thread);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
 
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, tick);
@@ -738,17 +738,45 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 }
 RTM_EXPORT(rt_thread_control);
 
+#ifdef RT_USING_LWP
+int lwp_suspend_sigcheck(rt_thread_t thread, int suspend_flag);
+#endif
+
+static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+{
+    rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+
+    RT_ASSERT(thread != RT_NULL);
+    switch (suspend_flag)
+    {
+    case RT_INTERRUPTIBLE:
+        stat = RT_THREAD_SUSPEND_INTERRUPTIBLE;
+        break;
+    case RT_KILLABLE:
+        stat = RT_THREAD_SUSPEND_KILLABLE;
+        break;
+    case RT_UNINTERRUPTIBLE:
+        stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+        break;
+    default:
+        RT_ASSERT(0);
+        break;
+    }
+    thread->stat = stat | (thread->stat & ~RT_THREAD_STAT_MASK);
+}
+
 /**
  * This function will suspend the specified thread.
  *
  * @param thread the thread to be suspended
+ * @param suspend_flag status flag of the thread to be suspended
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
  *
  * @note if suspend self thread, after this function call, the
  * rt_schedule() must be invoked.
  */
-rt_err_t rt_thread_suspend(rt_thread_t thread)
+rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
 {
     register rt_base_t stat;
     register rt_base_t temp;
@@ -774,10 +802,18 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
         /* not suspend running status thread on other core */
         RT_ASSERT(thread == rt_thread_self());
     }
+#ifdef RT_USING_LWP
+    if (lwp_suspend_sigcheck(thread, suspend_flag) == 0)
+    {
+        /* not to suspend */
+        rt_hw_interrupt_enable(temp);
+        return -RT_EINTR;
+    }
+#endif
 
     /* change thread stat */
     rt_schedule_remove_thread(thread);
-    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
+    rt_thread_set_suspend_state(thread, suspend_flag);
 
     /* stop thread timer anyway */
     rt_timer_stop(&(thread->thread_timer));
@@ -788,7 +824,14 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
     return RT_EOK;
 }
+RTM_EXPORT(rt_thread_suspend_with_flag);
+
+rt_err_t rt_thread_suspend(rt_thread_t thread)
+{
+    return rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
+}
 RTM_EXPORT(rt_thread_suspend);
+
 
 /**
  * This function will resume a thread and put it to system ready queue.
@@ -807,7 +850,7 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume:  %s\n", thread->name));
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_SUSPEND)
+    if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
         RT_DEBUG_LOG(RT_DEBUG_THREAD, ("thread resume: thread disorder, %d\n",
                                        thread->stat));
@@ -899,7 +942,7 @@ void rt_thread_timeout(void *parameter)
 
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND);
+    RT_ASSERT((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     /* set error number */

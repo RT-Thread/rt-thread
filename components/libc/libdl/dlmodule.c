@@ -128,7 +128,7 @@ static void _dlmodule_exit(void)
                     (thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
                 {
                     rt_timer_stop(&(thread->thread_timer));
-                    rt_thread_suspend(thread);
+                    rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
                 }
             }
         }

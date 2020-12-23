@@ -415,7 +415,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     {
         /* check whether timer thread is ready */
         if ((soft_timer_status == RT_SOFT_TIMER_IDLE) &&
-           ((timer_thread.stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+           ((timer_thread.stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
         {
             /* resume timer thread to check soft timer */
             rt_thread_resume(&timer_thread);
@@ -710,7 +710,7 @@ static void rt_thread_timer_entry(void *parameter)
         if (next_timeout == RT_TICK_MAX)
         {
             /* no software timer exist, suspend self. */
-            rt_thread_suspend(rt_thread_self());
+            rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
             rt_schedule();
         }
         else

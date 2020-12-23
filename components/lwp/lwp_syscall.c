@@ -275,7 +275,7 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
     if (!nbyte)
         return 0;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)buf, nbyte))
+    if (!lwp_user_accessable((void*)buf, nbyte))
         return 0;
 
     kmem = kmem_get(nbyte);
@@ -284,7 +284,7 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
 
     ret = read(fd, kmem, nbyte);
     if (ret)
-        lwp_data_put(&lwp_self()->mmu_info, buf, kmem, ret);
+        lwp_put_to_user(buf, kmem, ret);
 
     kmem_put(kmem);
     return ret;
@@ -303,14 +303,14 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
     if (!nbyte)
         return 0;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)buf, nbyte))
+    if (!lwp_user_accessable((void*)buf, nbyte))
         return 0;
 
     kmem = kmem_get(nbyte);
     if (!kmem)
         return 0;
 
-    lwp_data_get(&lwp_self()->mmu_info, kmem, (void *)buf, nbyte);
+    lwp_get_from_user(kmem, (void *)buf, nbyte);
     ret = write(fd, kmem, nbyte);
 
     kmem_put(kmem);
@@ -334,7 +334,7 @@ int sys_open(const char *name, int flag, ...)
     rt_size_t len;
     char *kname;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)name, 1))
+    if (!lwp_user_accessable((void*)name, 1))
         return -1;
 
     len = rt_strlen(name);
@@ -345,7 +345,7 @@ int sys_open(const char *name, int flag, ...)
     if (!kname)
         return -1;
 
-    lwp_data_get(&lwp_self()->mmu_info, kname, (void *)name, len + 1);
+    lwp_get_from_user(kname, (void *)name, len + 1);
     ret = open(kname, flag, 0);
 
     kmem_put(kname);
@@ -378,7 +378,7 @@ int sys_fstat(int file, struct stat *buf)
     struct stat statbuff;
 
     ret = fstat(file, &statbuff);
-    lwp_data_put(&lwp_self()->mmu_info, buf, &statbuff, sizeof statbuff);
+    lwp_put_to_user(buf, &statbuff, sizeof statbuff);
     return ret;
 #else
     return fstat(file, buf);
@@ -391,16 +391,16 @@ int sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     int ret;
     struct pollfd *kfds;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)fds, nfds * sizeof *fds))
+    if (!lwp_user_accessable((void*)fds, nfds * sizeof *fds))
         return -1;
 
     kfds = (struct pollfd *)kmem_get(nfds * sizeof *kfds);
     if (!kfds)
         return -1;
 
-    lwp_data_get(&lwp_self()->mmu_info, kfds, fds, nfds * sizeof *kfds);
+    lwp_get_from_user(kfds, fds, nfds * sizeof *kfds);
     ret = poll(kfds, nfds, timeout);
-    lwp_data_put(&lwp_self()->mmu_info, fds, kfds, nfds * sizeof *kfds);
+    lwp_put_to_user(fds, kfds, nfds * sizeof *kfds);
 
     kmem_put(kfds);
     return ret;
@@ -417,7 +417,7 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
 
     if (readfds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)readfds, sizeof *readfds))
+        if (!lwp_user_accessable((void*)readfds, sizeof *readfds))
         {
             return -1;
         }
@@ -426,11 +426,11 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
         {
             goto quit;
         }
-        lwp_data_get(&lwp_self()->mmu_info, kreadfds, readfds, sizeof *kreadfds);
+        lwp_get_from_user(kreadfds, readfds, sizeof *kreadfds);
     }
     if (writefds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)writefds, sizeof *writefds))
+        if (!lwp_user_accessable((void*)writefds, sizeof *writefds))
         {
             return -1;
         }
@@ -439,11 +439,11 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
         {
             goto quit;
         }
-        lwp_data_get(&lwp_self()->mmu_info, kwritefds, writefds, sizeof *kwritefds);
+        lwp_get_from_user(kwritefds, writefds, sizeof *kwritefds);
     }
     if (exceptfds)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)exceptfds, sizeof *exceptfds))
+        if (!lwp_user_accessable((void*)exceptfds, sizeof *exceptfds))
         {
             return -1;
         }
@@ -452,21 +452,21 @@ int sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, s
         {
             goto quit;
         }
-        lwp_data_get(&lwp_self()->mmu_info, kexceptfds, exceptfds, sizeof *kexceptfds);
+        lwp_get_from_user(kexceptfds, exceptfds, sizeof *kexceptfds);
     }
 
     ret = select(nfds, kreadfds, kwritefds, kexceptfds, timeout);
     if (kreadfds)
     {
-        lwp_data_put(&lwp_self()->mmu_info, readfds, kreadfds, sizeof *kreadfds);
+        lwp_put_to_user(readfds, kreadfds, sizeof *kreadfds);
     }
     if (kwritefds)
     {
-        lwp_data_put(&lwp_self()->mmu_info, writefds, kwritefds, sizeof *kwritefds);
+        lwp_put_to_user(writefds, kwritefds, sizeof *kwritefds);
     }
     if (kexceptfds)
     {
-        lwp_data_put(&lwp_self()->mmu_info, exceptfds, kexceptfds, sizeof *kexceptfds);
+        lwp_put_to_user(exceptfds, kexceptfds, sizeof *kexceptfds);
     }
 quit:
     if (kreadfds)
@@ -494,7 +494,7 @@ int sys_unlink(const char *pathname)
     rt_size_t len;
     char *kname;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)pathname, 1))
+    if (!lwp_user_accessable((void*)pathname, 1))
         return -1;
 
     len = rt_strlen(pathname);
@@ -505,7 +505,7 @@ int sys_unlink(const char *pathname)
     if (!kname)
         return -1;
 
-    lwp_data_get(&lwp_self()->mmu_info, kname, (void *)pathname, len + 1);
+    lwp_get_from_user(kname, (void *)pathname, len + 1);
     ret = unlink(kname);
 
     kmem_put(kname);
@@ -525,17 +525,17 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 
     dbg_log(DBG_LOG, "sys_nanosleep\n");
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)rqtp, sizeof *rqtp))
+    if (!lwp_user_accessable((void*)rqtp, sizeof *rqtp))
         return -1;
 
-    lwp_data_get(&lwp_self()->mmu_info, &rqtp_k, (void *)rqtp, sizeof rqtp_k);
+    lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
 
     tick = rqtp_k.tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp_k.tv_nsec * RT_TICK_PER_SECOND)/ 1000000000;
     rt_thread_delay(tick);
 
     if (rmtp)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)rmtp, sizeof *rmtp))
+        if (!lwp_user_accessable((void*)rmtp, sizeof *rmtp))
             return -1;
 
         tick = rt_tick_get() - tick;
@@ -543,7 +543,7 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
         rmtp_k.tv_sec = tick/RT_TICK_PER_SECOND;
         rmtp_k.tv_nsec = (tick%RT_TICK_PER_SECOND) * (1000000000/RT_TICK_PER_SECOND);
 
-        lwp_data_put(&lwp_self()->mmu_info, rmtp, (void *)&rmtp_k, sizeof rmtp_k);
+        lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
     }
 #else
     dbg_log(DBG_LOG, "sys_nanosleep\n");
@@ -571,13 +571,13 @@ int sys_gettimeofday(struct timeval *tp, struct timezone *tzp)
 #ifdef RT_USING_USERSPACE
     if (tp)
     {
-        if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)tp, sizeof *tp))
+        if (!lwp_user_accessable((void*)tp, sizeof *tp))
             return -1;
 
         t_k.tv_sec = rt_tick_get() / RT_TICK_PER_SECOND;
         t_k.tv_usec = (rt_tick_get() % RT_TICK_PER_SECOND) * (1000000 / RT_TICK_PER_SECOND);
 
-        lwp_data_put(&lwp_self()->mmu_info, tp, (void *)&t_k, sizeof t_k);
+        lwp_put_to_user(tp, (void *)&t_k, sizeof t_k);
     }
 #else
     if (tp)
@@ -667,7 +667,7 @@ rt_err_t sys_sem_delete(rt_sem_t sem)
 
 rt_err_t sys_sem_take(rt_sem_t sem, rt_int32_t time)
 {
-    return rt_sem_take(sem, time);
+    return rt_sem_take_interruptible(sem, time);
 }
 
 rt_err_t sys_sem_release(rt_sem_t sem)
@@ -687,7 +687,7 @@ rt_err_t sys_mutex_delete(rt_mutex_t mutex)
 
 rt_err_t sys_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 {
-    return rt_mutex_take(mutex, time);
+    return rt_mutex_take_interruptible(mutex, time);
 }
 
 rt_err_t sys_mutex_release(rt_mutex_t mutex)
@@ -1069,16 +1069,54 @@ rt_size_t sys_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt
 /* network interfaces */
 int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 {
-    struct sockaddr sa;
-    sockaddr_tolwip(addr, &sa);
+    int ret;
+    struct sockaddr ksa;
+    struct musl_sockaddr kmusladdr;
+    socklen_t uaddrlen;
+    socklen_t kaddrlen;
 
-    return accept(socket, &sa, addrlen);
+    if (!lwp_user_accessable(addrlen, sizeof (socklen_t *)))
+    {
+        return -1;
+    }
+    lwp_get_from_user(&uaddrlen, addrlen, sizeof (socklen_t *));
+    if (!uaddrlen)
+    {
+        return -1;
+    }
+
+    if (!lwp_user_accessable(addr, uaddrlen))
+    {
+        return -1;
+    }
+
+    kaddrlen = sizeof(struct sockaddr);
+    ret = accept(socket, &ksa, &kaddrlen);
+    if (ret >= 0)
+    {
+        sockaddr_tomusl(&ksa, &kmusladdr);
+        if (uaddrlen > sizeof(struct musl_sockaddr))
+        {
+            uaddrlen = sizeof(struct musl_sockaddr);
+        }
+        lwp_put_to_user(addr, &kmusladdr, uaddrlen);
+        lwp_put_to_user(addrlen, &uaddrlen, sizeof (socklen_t *));
+    }
+    return ret;
 }
 
 int sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+
+    if (!lwp_user_accessable((void*)name, namelen))
+    {
+        return -1;
+    }
+    lwp_get_from_user(&kname, (void*)name, namelen);
+
+    sockaddr_tolwip(&kname, &sa);
 
     return bind(socket, &sa, namelen);
 }
@@ -1092,10 +1130,38 @@ int sys_getpeername (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 {
     int ret;
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+    socklen_t unamelen;
+    socklen_t knamelen;
 
-    ret = getpeername (socket, &sa, namelen);
-    if (name) sockaddr_tomusl(&sa, name);
+    if (!lwp_user_accessable(namelen, sizeof (socklen_t *)))
+    {
+        return -1;
+    }
+    lwp_get_from_user(&unamelen, namelen, sizeof (socklen_t *));
+    if (!unamelen)
+    {
+        return -1;
+    }
+
+    if (!lwp_user_accessable(name, unamelen))
+    {
+        return -1;
+    }
+
+    knamelen = sizeof(struct sockaddr);
+    ret = getpeername (socket, &sa, &knamelen);
+
+    if (ret == 0)
+    {
+        sockaddr_tomusl(&sa, &kname);
+        if (unamelen > sizeof(struct musl_sockaddr))
+        {
+            unamelen = sizeof(struct musl_sockaddr);
+        }
+        lwp_put_to_user(name, &kname, unamelen);
+        lwp_put_to_user(namelen, &unamelen, sizeof (socklen_t *));
+    }
 
     return ret;
 }
@@ -1104,11 +1170,37 @@ int sys_getsockname (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 {
     int ret;
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+    socklen_t unamelen;
+    socklen_t knamelen;
 
-    ret = getsockname (socket, &sa, namelen);
-    if (name) sockaddr_tomusl(&sa, name);
+    if (!lwp_user_accessable(namelen, sizeof (socklen_t *)))
+    {
+        return -1;
+    }
+    lwp_get_from_user(&unamelen, namelen, sizeof (socklen_t *));
+    if (!unamelen)
+    {
+        return -1;
+    }
 
+    if (!lwp_user_accessable(name, unamelen))
+    {
+        return -1;
+    }
+
+    knamelen = sizeof(struct sockaddr);
+    ret = getsockname (socket, &sa, &knamelen);
+    if (ret == 0)
+    {
+        sockaddr_tomusl(&sa, &kname);
+        if (unamelen > sizeof(struct musl_sockaddr))
+        {
+            unamelen = sizeof(struct musl_sockaddr);
+        }
+        lwp_put_to_user(name, &kname, unamelen);
+        lwp_put_to_user(namelen, &unamelen, sizeof (socklen_t *));
+    }
     return ret;
 }
 
@@ -1131,7 +1223,15 @@ int sys_setsockopt (int socket, int level, int optname, const void *optval, sock
 int sys_connect(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
     struct sockaddr sa;
-    sockaddr_tolwip(name, &sa);
+    struct musl_sockaddr kname;
+
+    if (!lwp_user_accessable((void*)name, namelen))
+    {
+        return -1;
+    }
+    lwp_get_from_user(&kname, (void*)name, namelen);
+
+    sockaddr_tolwip(&kname, &sa);
 
     return connect(socket, &sa, namelen);
 }
@@ -1178,7 +1278,7 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
     if (!len)
         return -1;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)mem, len))
+    if (!lwp_user_accessable((void*)mem, len))
         return -1;
 
     kmem = kmem_get(len);
@@ -1199,7 +1299,7 @@ int sys_recvfrom(int socket, void *mem, size_t len, int flags,
         ret = recvfrom(socket, kmem, len, flgs, NULL, NULL);
 
     if (ret > 0)
-        lwp_data_put(&lwp_self()->mmu_info, mem, kmem, len);
+        lwp_put_to_user(mem, kmem, len);
 
     kmem_put(kmem);
     return ret;
@@ -1240,14 +1340,14 @@ int sys_sendto(int socket, const void *dataptr, size_t size, int flags,
     if (!size)
         return -1;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)dataptr, size))
+    if (!lwp_user_accessable((void*)dataptr, size))
         return -1;
 
     kmem = kmem_get(size);
     if (!kmem)
         return -1;
 
-    lwp_data_get(&lwp_self()->mmu_info, kmem, (void *)dataptr, size);
+    lwp_get_from_user(kmem, (void *)dataptr, size);
 
     if (to)
     {
@@ -1622,7 +1722,7 @@ int sys_access(const char *filename, int mode)
     rt_size_t len;
     char *kname;
 
-    if (!lwp_data_access_ok(&lwp_self()->mmu_info, (void*)filename, 1))
+    if (!lwp_user_accessable((void*)filename, 1))
         return -1;
 
     len = rt_strlen(filename);
@@ -1633,7 +1733,7 @@ int sys_access(const char *filename, int mode)
     if (!kname)
         return -1;
 
-    lwp_data_get(&lwp_self()->mmu_info, kname, (void *)filename, len + 1);
+    lwp_get_from_user(kname, (void *)filename, len + 1);
     ret = open(kname, mode, 0);
     kmem_put(kname);
 #else

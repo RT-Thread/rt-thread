@@ -63,7 +63,7 @@ rt_inline rt_err_t rt_wm_que_inc(struct rt_watermark_queue *wg,
 
         thread = rt_thread_self();
         thread->error = RT_EOK;
-        rt_thread_suspend(thread);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
         rt_list_insert_after(&wg->suspended_threads, &thread->tlist);
         if (timeout > 0)
         {

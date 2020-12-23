@@ -524,7 +524,7 @@ void RTOS_SetErrno(const int err)
 }
 int RTOS_GetErrno()
 {
-    int err;
+    int err = 0;
 #if 0
     rt_base_t level;
     level = rt_hw_interrupt_disable();
@@ -663,7 +663,7 @@ U32 msleep( U32 msecs )
 
 U32 RTOS_SuspendThread( RTOS_ThreadT threadHandle )
 {
-    return rt_thread_suspend((rt_thread_t)threadHandle);
+    return rt_thread_suspend_witch_flag((rt_thread_t)threadHandle, RT_UNINTERRUPTIBLE);
 }
 
 U32 RTOS_WakeupThread( RTOS_ThreadT threadHandle )
@@ -720,7 +720,7 @@ void thread_statistics()
         rt_kprintf("%-32.*s %3d", RT_NAME_MAX, thread->name, priority);
 #endif
         if (thread->stat == RT_THREAD_READY)        rt_kprintf("   ready");
-        else if (thread->stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+        else if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
         else if (thread->stat == RT_THREAD_INIT)    rt_kprintf("    init");
         else if (thread->stat == RT_THREAD_CLOSE)   rt_kprintf("   close");
 

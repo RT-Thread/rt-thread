@@ -29,7 +29,7 @@ int arch_expand_user_stack(void *addr)
     {
         void *map = lwp_map_user(lwp_self(), (void*)stack_addr, ARCH_PAGE_SIZE);
 
-        if (map || lwp_data_access_ok(&lwp_self()->mmu_info, addr, 1))
+        if (map || lwp_user_accessable(addr, 1))
         {
             ret = 1;
         }

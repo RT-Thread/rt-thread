@@ -18,7 +18,7 @@ static void thread1_entry(void* parameter)
 
     /* 挂起自身 */
     rt_kprintf("suspend thread self\n");
-    rt_thread_suspend(tid1);
+    rt_thread_suspend_witch_flag(tid1, RT_UNINTERRUPTIBLE);
     /* 主动执行线程调度 */
     rt_schedule();
 

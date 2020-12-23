@@ -410,7 +410,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
             goto quit;
         }
         thread = rt_thread_self();
-        rt_thread_suspend(thread);
+        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
         rt_list_insert_before(&lwp->wait_list, &(thread->tlist));
         rt_schedule();
         if (thread->error == RT_EOK)
@@ -464,7 +464,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
 
     stat = (thread->stat & RT_THREAD_STAT_MASK);
     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-    else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+    else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
     else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
     else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
     else if (stat == RT_THREAD_RUNNING) rt_kprintf(" running");
@@ -694,7 +694,7 @@ void lwp_request_thread_exit(rt_thread_t thread_to_exit)
         {
             thread->exit_request = LWP_EXIT_REQUEST_TRIGGERED;
         }
-        if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+        if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
         {
             thread->error = RT_EINTR;
             dsb();
@@ -734,7 +734,7 @@ void lwp_terminate(struct rt_lwp *lwp)
         {
             thread->exit_request = LWP_EXIT_REQUEST_TRIGGERED;
         }
-        if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+        if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
         {
             thread->error = RT_EINTR;
             dsb();

@@ -138,11 +138,14 @@ rt_inline rt_err_t rt_channel_list_resume_all(rt_list_t *list)
 rt_inline rt_err_t rt_channel_list_suspend(rt_list_t *list, struct rt_thread *thread)
 {
     /* suspend thread */
-    rt_thread_suspend(thread);
+    rt_err_t ret = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
 
-    rt_list_insert_before(list, &(thread->tlist));  /* list end */
+    if (ret == RT_EOK)
+    {
+        rt_list_insert_before(list, &(thread->tlist));  /* list end */
+    }
 
-    return RT_EOK;
+    return ret;
 }
 
 
@@ -407,15 +410,16 @@ static rt_err_t _rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_ms
     {
         case RT_IPC_STAT_IDLE:
         case RT_IPC_STAT_ACTIVE:
-            /*
-             * If there is no thread waiting for messages, chain the message
-             * into the list.
-             */
-            rt_list_insert_before(&ch->wait_msg, &msg->mlist);
             if (need_reply)
             {
+                ret = rt_channel_list_suspend(&ch->wait_thread, thread_send);
+                if (ret != RT_EOK)
+                {
+                    _ipc_msg_free(msg);
+                    rt_hw_interrupt_enable(temp);
+                    return ret;
+                }
                 rt_thread_wakeup_set(thread_send, wakeup_sender_wait_recv, (void*)ch);
-                rt_channel_list_suspend(&ch->wait_thread, thread_send);
                 if (time > 0)
                 {
                     rt_timer_control(&(thread_send->thread_timer),
@@ -431,6 +435,11 @@ static rt_err_t _rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_ms
                     rt_timer_start(&(thread_send->thread_timer));
                 }
             }
+            /*
+             * If there is no thread waiting for messages, chain the message
+             * into the list.
+             */
+            rt_list_insert_before(&ch->wait_msg, &msg->mlist);
             break;
         case RT_IPC_STAT_WAIT:
             /*
@@ -440,16 +449,18 @@ static rt_err_t _rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_ms
              */
             RT_ASSERT(ch->parent.suspend_thread.next != &ch->parent.suspend_thread);
 
-            thread_recv = rt_list_entry(ch->parent.suspend_thread.next, struct rt_thread, tlist);
-            thread_recv->msg_ret = msg;     /* to the first suspended receiver */
-            thread_recv->error = RT_EOK;
-            rt_channel_list_resume(&ch->parent.suspend_thread);
             if (need_reply)
             {
+                ret = rt_channel_list_suspend(&ch->wait_thread, thread_send);
+                if (ret != RT_EOK)
+                {
+                    _ipc_msg_free(msg);
+                    rt_hw_interrupt_enable(temp);
+                    return ret;
+                }
                 ch->reply = thread_send;    /* record the current waiting sender */
                 ch->stat = RT_IPC_STAT_ACTIVE;
                 rt_thread_wakeup_set(thread_send, wakeup_sender_wait_reply, (void*)ch);
-                rt_channel_list_suspend(&ch->wait_thread, thread_send);
                 if (time > 0)
                 {
                     rt_timer_control(&(thread_send->thread_timer),
@@ -469,6 +480,10 @@ static rt_err_t _rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_ms
             {
                 ch->stat = RT_IPC_STAT_IDLE;
             }
+            thread_recv = rt_list_entry(ch->parent.suspend_thread.next, struct rt_thread, tlist);
+            thread_recv->msg_ret = msg;     /* to the first suspended receiver */
+            thread_recv->error = RT_EOK;
+            rt_channel_list_resume(&ch->parent.suspend_thread);
             break;
         default:
             break;
@@ -683,8 +698,13 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
         /* no valid message, we must wait */
         thread = rt_thread_self();
 
+        ret = rt_channel_list_suspend(&ch->parent.suspend_thread, thread);
+        if (ret != RT_EOK)
+        {
+            rt_hw_interrupt_enable(temp);
+            return ret;
+        }
         rt_thread_wakeup_set(thread, wakeup_receiver, (void*)ch);
-        rt_channel_list_suspend(&ch->parent.suspend_thread, thread);
         ch->stat = RT_IPC_STAT_WAIT;/* no valid suspended senders */
         thread->error = RT_EOK;
         if (time > 0)

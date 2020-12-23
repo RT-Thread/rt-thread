@@ -36,15 +36,15 @@ void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, s
         memcpy(&v2, rel_dyn_start + rel_off + 4, 4);
         */
 
-        addr = rt_hw_mmu_v2p(m_info, rel_dyn_start + rel_off);
-        addr -= PV_OFFSET;
+        addr = rt_hw_mmu_v2p(m_info, (void*)((char*)rel_dyn_start + rel_off));
+        addr = (void*)((char*)addr - PV_OFFSET);
         memcpy(&v1, addr, 4);
-        addr = rt_hw_mmu_v2p(m_info, rel_dyn_start + rel_off + 4);
-        addr -= PV_OFFSET;
+        addr = rt_hw_mmu_v2p(m_info, (void*)((char*)rel_dyn_start + rel_off + 4));
+        addr = (void*)((char*)addr - PV_OFFSET);
         memcpy(&v2, addr, 4);
 
-        addr = rt_hw_mmu_v2p(m_info, text_start + v1);
-        addr -= PV_OFFSET;
+        addr = rt_hw_mmu_v2p(m_info, (void*)((char*)text_start + v1));
+        addr = (void*)((char*)addr - PV_OFFSET);
         if ((v2 & 0xff) == R_ARM_RELATIVE)
         {
             // *(uint32_t*)(text_start + v1) += (uint32_t)text_start;
@@ -57,7 +57,7 @@ void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, s
             if (t) /* 0 is UDF */
             {
                 // *(uint32_t*)(text_start + v1) = (uint32_t)(text_start + dynsym[t].st_value);
-                *(uint32_t*)addr = (uint32_t)(text_start + dynsym[t].st_value);
+                *(uint32_t*)addr = (uint32_t)((char*)text_start + dynsym[t].st_value);
             }
         }
     }
@@ -70,7 +70,7 @@ void lwp_elf_reloc(rt_mmu_info *m_info, void *text_start, void *rel_dyn_start, s
         {
             //*got_item += (uint32_t)text_start;
             addr = rt_hw_mmu_v2p(m_info, got_item);
-            addr -= PV_OFFSET;
+            addr = (void*)((char*)addr - PV_OFFSET);
             *(uint32_t *)addr += (uint32_t)text_start;
         }
     }
@@ -89,12 +89,12 @@ void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, v
     {
         uint32_t v1, v2;
 
-        memcpy(&v1, rel_dyn_start + rel_off, 4);
-        memcpy(&v2, rel_dyn_start + rel_off + 4, 4);
+        memcpy(&v1, (void*)((char*)rel_dyn_start + rel_off), 4);
+        memcpy(&v2, (void*)((char*)rel_dyn_start + rel_off + 4), 4);
 
         if ((v2 & 0xff) == R_ARM_RELATIVE)
         {
-            *(uint32_t*)(text_start + v1) += (uint32_t)text_start;
+            *(uint32_t*)((char*)text_start + v1) += (uint32_t)text_start;
         }
         else if ((v2 & 0xff) == R_ARM_ABS32)
         {
@@ -102,7 +102,7 @@ void lwp_elf_reloc(void *text_start, void *rel_dyn_start, size_t rel_dyn_size, v
             t = (v2 >> 8);
             if (t) /* 0 is UDF */
             {
-                *(uint32_t*)(text_start + v1) = (uint32_t)(text_start + dynsym[t].st_value);
+                *(uint32_t*)((char*)text_start + v1) = (uint32_t)((char*)text_start + dynsym[t].st_value);
             }
         }
     }

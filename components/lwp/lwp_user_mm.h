@@ -36,10 +36,10 @@ int lwp_munmap(void *addr, size_t length);
 
 size_t lwp_get_from_user(void *dst, void *src, size_t size);
 size_t lwp_put_to_user(void *dst, void *src, size_t size);
+int lwp_user_accessable(void *addr, size_t size);
 
 size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size);
 size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size);
-int lwp_data_access_ok(rt_mmu_info *mmu_info, void *addr, size_t size);
 void lwp_data_cache_flush(rt_mmu_info *mmu_info, void *vaddr, size_t size);
 
 #ifdef __cplusplus

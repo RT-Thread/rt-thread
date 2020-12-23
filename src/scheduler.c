@@ -315,7 +315,7 @@ void rt_schedule(void)
     }
 
 #ifdef RT_USING_SIGNALS
-    if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((current_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* if current_thread signal is in pending */
 
@@ -559,7 +559,7 @@ void rt_scheduler_do_irq_switch(void *context)
     current_thread = pcpu->current_thread;
 
 #ifdef RT_USING_SIGNALS
-    if ((current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND)
+    if ((current_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* if current_thread signal is in pending */
 

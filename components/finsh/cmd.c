@@ -221,7 +221,7 @@ long list_thread(void)
 #endif /*RT_USING_SMP*/
                     stat = (thread->stat & RT_THREAD_STAT_MASK);
                     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
-                    else if (stat == RT_THREAD_SUSPEND) rt_kprintf(" suspend");
+                    else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
                     else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
                     else if (stat == RT_THREAD_CLOSE)   rt_kprintf(" close  ");
                     else if (stat == RT_THREAD_RUNNING) rt_kprintf(" running");

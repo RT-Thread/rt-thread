@@ -665,9 +665,9 @@ err:
         for (i = 0; i < npages; i++)
         {
             pa = rt_hw_mmu_v2p(mmu_info, va);
-            pa -= mmu_info->pv_off;
+            pa = (void*)((char*)pa - mmu_info->pv_off);
             rt_pages_free(pa, 0);
-            va += ARCH_PAGE_SIZE;
+            va = (void*)((char*)va + ARCH_PAGE_SIZE);
         }
 
         __rt_hw_mmu_unmap(mmu_info, v_addr, npages);
@@ -707,7 +707,7 @@ void *_rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void *v_addr, size_t size, size
         if (ret == 0)
         {
             rt_hw_cpu_tlb_invalidate();
-            return (void*)vaddr + offset;
+            return (void*)((char*)vaddr + offset);
         }
     }
     return 0;

@@ -410,7 +410,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         if (!va)
             return -RT_ERROR;
         pa = rt_hw_mmu_v2p(m_info, va);
-        process_header = pa - PV_OFFSET;
+        process_header = (uint8_t*)pa - PV_OFFSET;
 #else
         process_header = (uint8_t *)rt_malloc(process_header_size);
         if (!process_header)
@@ -523,14 +523,14 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                     while (size)
                     {
                         pa = rt_hw_mmu_v2p(m_info, va);
-                        va_self = pa - PV_OFFSET;
+                        va_self = (void*)((char*)pa - PV_OFFSET);
                         LOG_D("va_self = %p pa = %p", va_self, pa);
                         tmp_len = (size < ARCH_PAGE_SIZE) ? size : ARCH_PAGE_SIZE;
                         tmp_len = load_fread(va_self, 1, tmp_len, fd);
                         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, va_self, tmp_len);
                         read_len += tmp_len;
                         size -= tmp_len;
-                        va += ARCH_PAGE_SIZE;
+                        va = (void*)((char*)va + ARCH_PAGE_SIZE);
                     }
                 }
 #else
@@ -541,7 +541,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             if (pheader.p_filesz < pheader.p_memsz)
             {
 #ifdef RT_USING_USERSPACE
-                void *va = lwp->text_entry + pheader.p_filesz;
+                void *va = (void*)((char*)lwp->text_entry + pheader.p_filesz);
                 void *va_self;
                 void *pa;
                 uint32_t size = pheader.p_memsz - pheader.p_filesz;
@@ -554,12 +554,12 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                 {
                     size_s = (size < ARCH_PAGE_SIZE - off) ? size : ARCH_PAGE_SIZE - off;
                     pa = rt_hw_mmu_v2p(m_info, va);
-                    va_self = pa - PV_OFFSET;
-                    memset(va_self + off, 0, size_s);
-                    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, va_self + off, size_s);
+                    va_self = (void*)((char*)pa - PV_OFFSET);
+                    memset((void*)((char*)va_self + off), 0, size_s);
+                    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)((char*)va_self + off), size_s);
                     off = 0;
                     size -= size_s;
-                    va += ARCH_PAGE_SIZE;
+                    va = (void*)((char*)va + ARCH_PAGE_SIZE);
                 }
 #else
                 memset((uint8_t *)lwp->text_entry + pheader.p_filesz, 0, (size_t)(pheader.p_memsz - pheader.p_filesz));

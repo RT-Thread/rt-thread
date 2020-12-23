@@ -74,13 +74,14 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
         rt_schedule();
 }
 
-int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
+static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int suspend_flag)
 {
     int tick;
     rt_thread_t tid = rt_thread_self();
     rt_timer_t  tmr = &(tid->thread_timer);
     struct rt_wqueue_node __wait;
     rt_base_t level;
+    rt_err_t ret;
 
     /* current context checking */
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -102,8 +103,14 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
         goto __exit_wakeup;
     }
 
+    ret = rt_thread_suspend_with_flag(tid, RT_INTERRUPTIBLE);
+    if (ret != RT_EOK)
+    {
+        rt_hw_interrupt_enable(level);
+        /* suspend failed */
+        return -RT_EINTR;
+    }
     rt_wqueue_add(queue, &__wait);
-    rt_thread_suspend(tid);
 
     /* start timer */
     if (tick != RT_WAITING_FOREVER)
@@ -127,4 +134,19 @@ __exit_wakeup:
     rt_wqueue_remove(&__wait);
 
     return 0;
+}
+
+int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
+{
+    return _rt_wqueue_wait(queue, condition, msec, RT_UNINTERRUPTIBLE);
+}
+
+int rt_wqueue_wait_killable(rt_wqueue_t *queue, int condition, int msec)
+{
+    return _rt_wqueue_wait(queue, condition, msec, RT_KILLABLE);
+}
+
+int rt_wqueue_wait_interruptible(rt_wqueue_t *queue, int condition, int msec)
+{
+    return _rt_wqueue_wait(queue, condition, msec, RT_INTERRUPTIBLE);
 }
