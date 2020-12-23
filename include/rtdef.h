@@ -517,7 +517,7 @@ typedef siginfo_t rt_siginfo_t;
 #define RT_THREAD_RUNNING                    0x03                /**< Running status */
 
 /*
- * for rt_thread_set_suspend_state()
+ * for rt_thread_suspend_with_flag()
  */
 enum
 {

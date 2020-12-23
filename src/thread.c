@@ -507,35 +507,6 @@ rt_err_t rt_thread_yield(void)
 RTM_EXPORT(rt_thread_yield);
 
 /**
- * This function will set a thread's suspend status
- *
- * @param thread the thread to be suspend
- * @param status flag of the thread, must be one of RT_INTERRUPTIBLE RT_KILLABLE RT_UNINTERRUPTIBLE
- */
-void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
-{
-    rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-
-    RT_ASSERT(thread != RT_NULL);
-    switch (suspend_flag)
-    {
-    case RT_INTERRUPTIBLE:
-        stat = RT_THREAD_SUSPEND_INTERRUPTIBLE;
-        break;
-    case RT_KILLABLE:
-        stat = RT_THREAD_SUSPEND_KILLABLE;
-        break;
-    case RT_UNINTERRUPTIBLE:
-        stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-        break;
-    default:
-        RT_ASSERT(0);
-        break;
-    }
-    thread->stat = stat | (thread->stat & ~RT_THREAD_STAT_MASK);
-}
-
-/**
  * This function will let current thread sleep for some ticks.
  *
  * @param tick the sleep ticks
@@ -770,6 +741,30 @@ RTM_EXPORT(rt_thread_control);
 #ifdef RT_USING_LWP
 int lwp_suspend_sigcheck(rt_thread_t thread, int suspend_flag);
 #endif
+
+static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+{
+    rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+
+    RT_ASSERT(thread != RT_NULL);
+    switch (suspend_flag)
+    {
+    case RT_INTERRUPTIBLE:
+        stat = RT_THREAD_SUSPEND_INTERRUPTIBLE;
+        break;
+    case RT_KILLABLE:
+        stat = RT_THREAD_SUSPEND_KILLABLE;
+        break;
+    case RT_UNINTERRUPTIBLE:
+        stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+        break;
+    default:
+        RT_ASSERT(0);
+        break;
+    }
+    thread->stat = stat | (thread->stat & ~RT_THREAD_STAT_MASK);
+}
+
 /**
  * This function will suspend the specified thread.
  *
