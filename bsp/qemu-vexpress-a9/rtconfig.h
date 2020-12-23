@@ -122,6 +122,7 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_RANDOM
 #define RT_USING_MTD_NOR
 #define RT_USING_MTD_NAND
 #define RT_MTD_NAND_DEBUG
@@ -276,6 +277,12 @@
 
 
 /* games: games run on RT-Thread console */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
