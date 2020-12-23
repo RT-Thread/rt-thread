@@ -286,7 +286,7 @@ void rt_hw_context_switch(rt_uint32_t from,
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
 
     // make sure the event is not already signaled
-    WinThread = (win_thread_t *)rt_interrupt_from_thread;
+    win_thread_t *WinThread = (win_thread_t *)rt_interrupt_from_thread;
     ResetEvent(WinThread->YieldEvent);
 
     /*
