@@ -23,13 +23,13 @@
 
 #define TX_FIFO_SIZE         (4096)
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFC2000)))
+__attribute__((at(0x2FFC2000))) static rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE];
 #elif defined ( __GNUC__ )
-__attribute__((at(0x2FFC2000)))
+static rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE] __attribute__((section(".AudioSection")));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFC2000
+__no_init static rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE];
 #endif
-static rt_uint8_t AUDIO_TX_FIFO[TX_FIFO_SIZE];
 
 struct sound_device
 {
@@ -348,7 +348,7 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
     
     RT_ASSERT(audio != RT_NULL);
     snd_dev = (struct sound_device *)audio->parent.user_data;
-
+    
     if (stream == AUDIO_STREAM_REPLAY)
     {
         LOG_D("open sound device");
@@ -367,15 +367,11 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
 
 static rt_err_t sound_stop(struct rt_audio_device *audio, int stream)
 {
-    struct sound_device *device;
     RT_ASSERT(audio != RT_NULL);
-    device = (struct sound_device *)audio->parent.user_data;
     
     if (stream == AUDIO_STREAM_REPLAY)
     {
         HAL_SAI_DMAStop(&hsai_BlockA2);
-        
-        rt_device_close(device->decoder);
 
         LOG_D("close sound device");
     }
