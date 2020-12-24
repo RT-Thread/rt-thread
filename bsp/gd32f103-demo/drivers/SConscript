@@ -1,0 +1,26 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+CPPPATH = [cwd]
+
+if GetDepend('BSP_USING_USART'):
+    src += ['drv_usart.c']
+
+if GetDepend('BSP_USING_ONCHIP_FLASH'):
+    src += ['drv_flash.c']
+    src += ['ports/fal_flash_gd32f1_port.c']
+    src += ['ports/ef_fal_port.c']
+    CPPPATH += ['ports/']
+
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
