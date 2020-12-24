@@ -171,7 +171,7 @@ int lwp_signal_check(void)
         goto out;
     }
 
-    lwp = thread->lwp;
+    lwp = (struct rt_lwp*)thread->lwp;
 
     if (lwp->signal_in_process)
     {
@@ -217,7 +217,7 @@ int lwp_signal_backup(void *user_sp, void *user_pc, void* user_flag)
     }
     else
     {
-        lwp = thread->lwp;
+        lwp = (struct rt_lwp*)thread->lwp;
         lwp->user_ctx.sp = user_sp;
         lwp->user_ctx.pc = user_pc;
         lwp->user_ctx.flag = user_flag;
@@ -251,7 +251,7 @@ struct rt_user_context *lwp_signal_restore(void)
     }
     else
     {
-        lwp = thread->lwp;
+        lwp = (struct rt_lwp*)thread->lwp;
         ctx = &lwp->user_ctx;
         RT_ASSERT(lwp->signal_in_process != 0);
         lwp->signal_in_process = 0;
@@ -341,17 +341,93 @@ void lwp_thread_sighandler_set(int sig, lwp_sighandler_t func)
     rt_hw_interrupt_enable(level);
 }
 
-int lwp_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
+int lwp_sigaction(int sig, const struct lwp_sigaction *act,
+             struct lwp_sigaction *oact, size_t sigsetsize)
+{
+    rt_base_t level;
+    struct rt_lwp *lwp;
+    int ret = -RT_EINVAL;
+    lwp_sigset_t newset;
+
+    level = rt_hw_interrupt_disable();
+    lwp = (struct rt_lwp*)rt_thread_self()->lwp;
+    if (!lwp)
+    {
+        goto out;
+    }
+    if (sigsetsize != sizeof(lwp_sigset_t))
+    {
+        goto out;
+    }
+    if (!act && !oact)
+    {
+        goto out;
+    }
+    if (oact)
+    {
+        oact->sa_mask = lwp->signal_mask;
+        oact->sa_flags = 0;
+        oact->sa_restorer = RT_NULL;
+        oact->__sa_handler._sa_handler = lwp->signal_handler[sig - 1];
+    }
+    if (act)
+    {
+        newset = act->sa_mask;
+        lwp_sigdelset(&newset, SIGKILL);
+        lwp_sigdelset(&newset, SIGSTOP);
+        lwp->signal_mask = newset;
+        lwp_sighandler_set(sig, act->__sa_handler._sa_handler);
+    }
+    ret = 0;
+out:
+    rt_hw_interrupt_enable(level);
+    return ret;
+}
+
+rt_inline void sigorsets(lwp_sigset_t *dset, const lwp_sigset_t *set0, const lwp_sigset_t *set1)
+{
+    switch (_LWP_NSIG_WORDS)
+    {
+        case 4:
+            dset->sig[3] = set0->sig[3] | set1->sig[3];
+            dset->sig[2] = set0->sig[2] | set1->sig[2];
+        case 2:
+            dset->sig[1] = set0->sig[1] | set1->sig[1];
+        case 1:
+            dset->sig[0] = set0->sig[0] | set1->sig[0];
+        default:
+            return;
+    }
+}
+
+rt_inline void sigandsets(lwp_sigset_t *dset, const lwp_sigset_t *set0, const lwp_sigset_t *set1)
+{
+    switch (_LWP_NSIG_WORDS)
+    {
+        case 4:
+            dset->sig[3] = set0->sig[3] & set1->sig[3];
+            dset->sig[2] = set0->sig[2] & set1->sig[2];
+        case 2:
+            dset->sig[1] = set0->sig[1] & set1->sig[1];
+        case 1:
+            dset->sig[0] = set0->sig[0] & set1->sig[0];
+        default:
+            return;
+    }
+}
+
+int lwp_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset)
 {
     int ret = -1;
     rt_base_t level;
     struct rt_lwp *lwp;
     struct rt_thread *thread;
+    lwp_sigset_t newset;
 
     level = rt_hw_interrupt_disable();
 
     thread = rt_thread_self();
-    lwp = thread->lwp;
+    lwp = (struct rt_lwp*)thread->lwp;
     if (!lwp)
     {
         goto out;
@@ -360,20 +436,41 @@ int lwp_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
     {
         rt_memcpy(oset, &lwp->signal_mask, sizeof(lwp_sigset_t));
     }
-    rt_memcpy(&lwp->signal_mask, sigset, sizeof(lwp_sigset_t));
-    lwp_sigdelset(&lwp->signal_mask, SIGKILL);
-    lwp_sigdelset(&lwp->signal_mask, SIGSTOP);
-    ret = 0;
 
+    if (sigset)
+    {
+        switch (how)
+        {
+            case SIG_BLOCK:
+                sigorsets(&newset, &lwp->signal_mask, sigset);
+                break;
+            case SIG_UNBLOCK:
+                sigandsets(&newset, &lwp->signal_mask, sigset);
+                break;
+            case SIG_SETMASK:
+                newset = *sigset;
+                break;
+            default:
+                ret = RT_EINVAL;
+                goto out;
+        }
+
+        lwp_sigdelset(&newset, SIGKILL);
+        lwp_sigdelset(&newset, SIGSTOP);
+
+        lwp->signal_mask = newset;
+    }
+    ret = 0;
 out:
     rt_hw_interrupt_enable(level);
     return ret;
 }
 
-int lwp_thread_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
+int lwp_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset)
 {
     rt_base_t level;
     struct rt_thread *thread;
+    lwp_sigset_t newset;
 
     level = rt_hw_interrupt_disable();
     thread = rt_thread_self();
@@ -382,10 +479,30 @@ int lwp_thread_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
     {
         rt_memcpy(oset, &thread->signal_mask, sizeof(lwp_sigset_t));
     }
-    rt_memcpy(&thread->signal_mask, sigset, sizeof(lwp_sigset_t));
-    lwp_sigdelset(&thread->signal_mask, SIGKILL);
-    lwp_sigdelset(&thread->signal_mask, SIGSTOP);
 
+    if (sigset)
+    {
+        switch (how)
+        {
+            case SIG_BLOCK:
+                sigorsets(&newset, &thread->signal_mask, sigset);
+                break;
+            case SIG_UNBLOCK:
+                sigandsets(&newset, &thread->signal_mask, sigset);
+                break;
+            case SIG_SETMASK:
+                newset = *sigset;
+                break;
+            default:
+                goto out;
+        }
+
+        lwp_sigdelset(&newset, SIGKILL);
+        lwp_sigdelset(&newset, SIGSTOP);
+
+        thread->signal_mask = newset;
+    }
+out:
     rt_hw_interrupt_enable(level);
     return 0;
 }

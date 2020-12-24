@@ -1427,14 +1427,103 @@ rt_err_t sys_thread_mdelay(rt_int32_t ms)
     return rt_thread_mdelay(ms);
 }
 
-void sys_sighandler_set(int sig, lwp_sighandler_t func)
+int sys_sigaction(int sig, const struct sigaction *act,
+                     struct sigaction *oact, size_t sigsetsize)
 {
-    lwp_sighandler_set(sig, func);
+    int ret = -RT_EINVAL;
+    struct lwp_sigaction kact, *pkact = RT_NULL;
+    struct lwp_sigaction koact, *pkoact = RT_NULL;
+
+    if (!sigsetsize)
+    {
+        goto out;
+    }
+    if (sigsetsize > sizeof(lwp_sigset_t))
+    {
+        sigsetsize = sizeof(lwp_sigset_t);
+        goto out;
+    }
+    if (!act && !oact)
+    {
+        goto out;
+    }
+    if (oact)
+    {
+        if (!lwp_user_accessable((void*)oact, sigsetsize))
+        {
+            goto out;
+        }
+        pkoact = &koact;
+    }
+    if (act)
+    {
+        if (!lwp_user_accessable((void*)act, sigsetsize))
+        {
+            goto out;
+        }
+        kact.__sa_handler._sa_handler = act->sa_handler;
+        memcpy(&kact.sa_mask, &act->sa_mask, sigsetsize);
+        pkact = &kact;
+    }
+
+    ret = lwp_sigaction(sig, pkact, pkoact, sigsetsize);
+    if (ret == 0)
+    {
+        lwp_put_to_user(&oact->sa_handler, &pkoact->__sa_handler._sa_handler, sizeof(void (*)(int)));
+        lwp_put_to_user(&oact->sa_mask, &pkoact->sa_mask, sigsetsize);
+        lwp_put_to_user(&oact->sa_flags, &pkoact->sa_flags, sizeof(int));
+        lwp_put_to_user(&oact->sa_restorer, &pkoact->sa_restorer, sizeof(void (*)(void)));
+    }
+out:
+    return ret;
 }
 
-int sys_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
+int sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t size)
 {
-    return lwp_sigprocmask(sigset, oset);
+    int ret = -1;
+    lwp_sigset_t newset, *pnewset = RT_NULL;
+    lwp_sigset_t oldset, *poldset = RT_NULL;
+
+    if (!size)
+    {
+        return ret;
+    }
+    if (!oset && !sigset)
+    {
+        return ret;
+    }
+    if (size > sizeof(lwp_sigset_t))
+    {
+        size = sizeof(lwp_sigset_t);
+        return ret;
+    }
+    if (oset)
+    {
+        if (!lwp_user_accessable((void*)oset, size))
+        {
+            return ret;
+        }
+        poldset = &oldset;
+    }
+    if (sigset)
+    {
+        if (!lwp_user_accessable((void*)oset, size))
+        {
+            return ret;
+        }
+        lwp_get_from_user(&newset, (void*)sigset, size);
+        pnewset = &newset;
+    }
+    ret = lwp_sigprocmask(how, pnewset, poldset);
+    if (ret < 0)
+    {
+        return ret;
+    }
+    if (oset)
+    {
+        lwp_put_to_user(oset, poldset, size);
+    }
+    return ret;
 }
 
 int sys_thread_kill(rt_thread_t thread, int sig)
@@ -1447,9 +1536,51 @@ void sys_thread_sighandler_set(int sig, lwp_sighandler_t func)
     lwp_thread_sighandler_set(sig, func);
 }
 
-int sys_thread_sigprocmask(const lwp_sigset_t *sigset, lwp_sigset_t *oset)
+int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset, size_t size)
 {
-    return lwp_thread_sigprocmask(sigset, oset);
+    int ret = -1;
+    lwp_sigset_t newset, *pnewset = RT_NULL;
+    lwp_sigset_t oldset, *poldset = RT_NULL;
+
+    if (!size)
+    {
+        return ret;
+    }
+    if (!oset && !sigset)
+    {
+        return ret;
+    }
+    if (size != sizeof(lwp_sigset_t))
+    {
+        return ret;
+    }
+    if (oset)
+    {
+        if (!lwp_user_accessable((void*)oset, size))
+        {
+            return ret;
+        }
+        poldset = &oldset;
+    }
+    if (sigset)
+    {
+        if (!lwp_user_accessable((void*)oset, size))
+        {
+            return ret;
+        }
+        lwp_get_from_user(&newset, (void*)sigset, sizeof(lwp_sigset_t));
+        pnewset = &newset;
+    }
+    ret = lwp_thread_sigprocmask(how, pnewset, poldset);
+    if (ret < 0)
+    {
+        return ret;
+    }
+    if (oset)
+    {
+        lwp_put_to_user(oset, poldset, sizeof(lwp_sigset_t));
+    }
+    return ret;
 }
 
 int32_t sys_waitpid(int32_t pid, int *status, int options)
@@ -1866,7 +1997,7 @@ const static void* func_table[] =
     (void *)sys_notimpl,    //(void *)rt_work_submit,
     (void *)sys_notimpl,    //(void *)rt_wqueue_wakeup,
     (void *)sys_thread_mdelay,
-    (void*)sys_sighandler_set,
+    (void*)sys_sigaction,
     (void*)sys_sigprocmask,
     (void*)sys_thread_kill,
     (void*)sys_thread_sighandler_set,
