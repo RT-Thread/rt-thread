@@ -609,6 +609,16 @@ typedef struct {
     unsigned long sig[_LWP_NSIG_WORDS];
 } lwp_sigset_t;
 
+struct lwp_sigaction {
+    union {
+        void (*_sa_handler)(int);
+        void (*_sa_sigaction)(int, siginfo_t *, void *);
+    } __sa_handler;
+    lwp_sigset_t sa_mask;
+    int sa_flags;
+    void (*sa_restorer)(void);
+};
+
 struct rt_user_context
 {
     void *sp;
