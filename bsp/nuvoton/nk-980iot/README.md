@@ -1,6 +1,6 @@
 # NK-980IoT
 ## 1. Introduction
-Nuvoton Technology provides industrial IoT development platform using NUC980DK61Y microprocessor, which is an industrial IoT open platform, including complete hardware design and software reference design. The platform is powered by Nuvoton ARM9 MPU with a 300 MHz internal speed and up to 128 MB DDR memory, single 10/100 Ethernet port, 2 high-speed USB hosts, 1 Gb SPI NAND Flash memory, microphone input, stereo headphone output and Arduino compatible interface. The platform supports embedded Linux OS which provides all IoT protocols you need, users can use this platform to quickly develop a plenty of IoT applications.
+Nuvoton Technology provides industrial IoT development platform using NUC980DK61Y microprocessor, which is an industrial IoT open platform, including complete hardware design and software reference design. The platform is powered by Nuvoton ARM9 MPU with a 300 MHz internal speed and up to 128 MB DDR memory, single 10/100 Ethernet port, 2 high-speed USB hosts, 1 Gb SPI NAND Flash memory, microphone input, stereo headphone output and Arduino compatible interface.
 
 [![NK-980IOT](https://i.imgur.com/bKvBJLA.png "NK-980IOT")](https://i.imgur.com/bKvBJLA.png "NK-980IOT")
 
@@ -10,7 +10,7 @@ Nuvoton Technology provides industrial IoT development platform using NUC980DK61
 |  | Features |
 | -- | -- |
 | Part NO. | NUC980DK61Y |
-| MCU ARCH. | 32-bit ARM926EJ-STM |
+| CPU ARCH. | 32-bit ARM926EJ-STM |
 | Operation frequency | 300 MHz |
 | Embedded SDRAM size | Built-in 64MB (Up to 128 MB DDR memory) |
 | Crypto engine |  AES, RSA, ECC, HMAC and SHA crypto accelerator |
@@ -41,9 +41,9 @@ Nuvoton Technology provides industrial IoT development platform using NUC980DK61
 |Ethernet PHY | IP101GR | Supported |
 |Button |  | Supported |
 |LEDs |  | Supported |
-|Audio Codec | NAU88L22, Supports MIC and earphone | Not ready |
-|SPI NAND flash | W25Q32 | Not ready |
-|Virtual COM | For console | Need to install virtual com port driver. |
+|Audio Codec | NAU8822, Supports MIC and earphone | Supported |
+|SPI NAND flash | W25N01GVZE1G | Not ready |
+|Virtual COM | For console | Ready.(Need to install VCOM driver) |
 
 ## 2. Supported compiler
 Support GCC, MDK4 and MDK5 IDE/compilers. More information of these compiler version as following:
@@ -66,6 +66,8 @@ Choose type: DDR/SRAM<br>
 Choose file: Specify your rtthread.bin file.<br>
 Execute Address: 0x0<br>
 Option: Download and run<br>
+<< Press Download >><br>
+Enjoy!! <br>
 <br>
 
 ### 3.2 SPI NOR flash using NuWriter
@@ -78,6 +80,10 @@ Choose file: Specify your rtthread.bin file.<br>
 Image Type: Loader<br>
 Execute Address: 0x0<br>
 << Press Program >><br>
+<< Press OK & Wait it down >><br>
+<< Set Power-on setting to SPI NOR booting >><br>
+<< Press Reset button on board >><br>
+Enjoy!! <br>
 <br>
 
 ## 4. Test
@@ -89,9 +95,9 @@ You can use Tera Term terminate emulator (or other software) to type commands of
 * [Nuvoton Direct][1]
 
 ## 6. Resources
-* [Download board schematics][2]
+* [Download Board Schematics][2]
 * [Download NK-980IOT Quick Start Guide][3]
-* [Download MCU TRM][4]
+* [Download TRM][4]
 * [Download NuWriter][5]
 
   [1]: https://direct.nuvoton.com/tw/numaker-iiot-nuc980

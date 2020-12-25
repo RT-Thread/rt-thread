@@ -6,16 +6,16 @@
 *
 * Change Logs:
 * Date            Author           Notes
-* 2020-2-7        Wayne            First version
+* 2020-12-12      Wayne            First version
 *
 ******************************************************************************/
 
 #ifndef __DRV_I2S_H__
 #define __DRV_I2S_H__
 
-#include <rtdevice.h>
+#include <rtthread.h>
+#include <drv_sys.h>
 #include <NuMicro.h>
-#include <drv_pdma.h>
 
 #if !defined(NU_I2S_DMA_FIFO_SIZE)
     #define NU_I2S_DMA_FIFO_SIZE (2048)
@@ -33,6 +33,11 @@
 #endif
 
 #define NU_I2S_DMA_BUF_BLOCK_SIZE (NU_I2S_DMA_FIFO_SIZE/NU_I2S_DMA_BUF_BLOCK_NUMBER)
+
+#if ( NU_I2S_DMA_BUF_BLOCK_SIZE > RT_AUDIO_RECORD_PIPE_SIZE )
+    #error "Specified I2S DMA buffer size is small than PIPE size in RT driver."
+    #error "You should enlarge RT_AUDIO_RECORD_PIPE_SIZE. "
+#endif
 
 typedef enum
 {
@@ -71,11 +76,7 @@ typedef nu_acodec_ops *nu_acodec_ops_t;
 
 struct nu_i2s_dai
 {
-    int16_t pdma_perp;
-    int8_t  pdma_chanid;
     rt_uint8_t *fifo;
-    int16_t  fifo_block_idx;
-    nu_pdma_desc_t pdma_descs[NU_I2S_DMA_BUF_BLOCK_NUMBER];
 };
 typedef struct nu_i2s_dai *nu_i2s_dai_t;
 
@@ -85,8 +86,9 @@ struct nu_i2s
     struct rt_audio_configure config;
 
     char *name;
-    I2S_T *i2s_base;
-    uint32_t i2s_rst;
+    IRQn_Type irqn;
+    E_SYS_IPRST rstidx;
+    E_SYS_IPCLK clkidx;
 
     struct nu_i2s_dai i2s_dais[NU_I2S_DAI_CNT];
     nu_acodec_ops_t AcodecOps;

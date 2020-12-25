@@ -6,7 +6,7 @@
 *
 * Change Logs:
 * Date            Author       Notes
-* 2020-1-16       Wayne        First version
+* 2020-12-12      Wayne        First version
 *
 ******************************************************************************/
 
@@ -93,8 +93,6 @@ static void SpiFlash_ExitQspiMode(struct rt_qspi_device *qspi_device)
 
 static int rt_hw_spiflash_init(void)
 {
-    /* Here, we use Dual I/O to drive the SPI flash by default. */
-    /* If you want to use Quad I/O, you can modify to 4 from 2 and crossover D2/D3 pin of SPI flash. */
     if (nu_qspi_bus_attach_device("qspi0", "qspi01", 4, SpiFlash_EnterQspiMode, SpiFlash_ExitQspiMode) != RT_EOK)
         return -1;
 
@@ -194,25 +192,25 @@ static void at_wifi_set(int argc, char **argv)
 #endif /* BOARD_USING_ESP8266  */
 
 
-#if defined(BOARD_USING_NAU88L25) && defined(NU_PKG_USING_NAU88L25)
-#include <acodec_nau88l25.h>
-S_NU_NAU88L25_CONFIG sCodecConfig =
+#if defined(BOARD_USING_NAU8822) && defined(NU_PKG_USING_NAU8822)
+#include <acodec_nau8822.h>
+S_NU_NAU8822_CONFIG sCodecConfig =
 {
     .i2c_bus_name = "i2c0",
 
     .i2s_bus_name = "sound0",
 
-    .pin_phonejack_en = NU_GET_PININDEX(NU_PE, 13),
+    .pin_phonejack_en = 0,
 
     .pin_phonejack_det = 0,
 };
 
-int rt_hw_nau88l25_port(void)
+int rt_hw_nau8822_port(void)
 {
-    if (nu_hw_nau88l25_init(&sCodecConfig) != RT_EOK)
+    if (nu_hw_nau8822_init(&sCodecConfig) != RT_EOK)
         return -1;
 
     return 0;
 }
-INIT_COMPONENT_EXPORT(rt_hw_nau88l25_port);
-#endif /* BOARD_USING_NAU88L25 */
+INIT_COMPONENT_EXPORT(rt_hw_nau8822_port);
+#endif /* BOARD_USING_NAU8822 */

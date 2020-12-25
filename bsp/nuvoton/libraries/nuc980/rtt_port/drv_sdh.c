@@ -166,7 +166,6 @@ static void SDH_IRQHandler(int vector, void *param)
     nu_sdh_t sdh = (nu_sdh_t)param;
     SDH_T *sdh_base = sdh->base;
     unsigned int volatile isr;
-    unsigned int volatile ier;
     SDH_INFO_T *pSD = sdh->info;
 
     // FMI data abort interrupt
@@ -325,7 +324,7 @@ static rt_size_t nu_sdh_write(rt_device_t dev, rt_off_t pos, const void *buffer,
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(buffer != RT_NULL);
 
-    rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
+    result = rt_sem_take(&sdh->lock, RT_WAITING_FOREVER);
     RT_ASSERT(result == RT_EOK);
 
     /* Check alignment. */
@@ -479,9 +478,9 @@ exit_nu_sdh_hotplug_is_mounted:
 static rt_err_t nu_sdh_hotplug_mount(nu_sdh_t sdh)
 {
     rt_err_t ret = RT_ERROR;
-    DIR *t;
 
 #if defined(RT_USING_DFS)
+    DIR *t;
 
     if (nu_sdh_hotplug_is_mounted(sdh->mounted_point) == RT_TRUE)
     {
