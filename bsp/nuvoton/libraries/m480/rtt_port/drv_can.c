@@ -166,33 +166,31 @@ static void nu_can_isr(nu_can_t can)
     CAN_T *can_base = ((nu_can_t)can)->can_base;
 
     /* Get interrupt event */
-    u32IIDRstatus = can_base->IIDR;
+    u32IIDRstatus = CAN_GET_INT_PENDING_STATUS(can_base);
 
     if (u32IIDRstatus == 0x00008000)       /* Check Status Interrupt Flag (Error status Int and Status change Int) */
     {
         /**************************/
         /* Status Change interrupt*/
         /**************************/
-        if (can_base->STATUS & CAN_STATUS_RXOK_Msk)
-        {
-
-#ifndef RT_CAN_USING_HDR
-            /* Using as Lisen,Loopback,Loopback+Lisen mode*/
-            rt_hw_can_isr(&can->dev, RT_CAN_EVENT_RX_IND);
-#endif
-            can_base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
-            rt_kprintf("RX OK INT\n") ;
-        }
-
         if (can_base->STATUS & CAN_STATUS_TXOK_Msk)
         {
-
+            can_base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
 #ifndef RT_CAN_USING_HDR
             /* Using as Lisen,Loopback,Loopback+Lisen mode*/
             rt_hw_can_isr(&can->dev, RT_CAN_EVENT_TX_DONE);
 #endif
-            can_base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
-            rt_kprintf("TX OK INT\n") ;
+            //rt_kprintf("[%s]TX OK INT\n", can->name) ;
+        }
+
+        if (can_base->STATUS & CAN_STATUS_RXOK_Msk)
+        {
+            can_base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
+#ifndef RT_CAN_USING_HDR
+            /* Using as Lisen,Loopback,Loopback+Lisen mode*/
+            rt_hw_can_isr(&can->dev, RT_CAN_EVENT_RX_IND);
+#endif
+            //rt_kprintf("[%s]RX OK INT\n", can->name) ;
         }
 
         /**************************/
@@ -200,12 +198,12 @@ static void nu_can_isr(nu_can_t can)
         /**************************/
         if (can_base->STATUS & CAN_STATUS_EWARN_Msk)
         {
-            rt_kprintf("EWARN INT\n") ;
+            rt_kprintf("[%s]EWARN INT\n", can->name) ;
         }
 
         if (can_base->STATUS & CAN_STATUS_BOFF_Msk)
         {
-            rt_kprintf("BOFF INT\n") ;
+            rt_kprintf("[%s]BUSOFF INT\n", can->name) ;
 
             /* Do Init to release busoff pin */
             can_base->CON = (CAN_CON_INIT_Msk | CAN_CON_CCE_Msk);
@@ -215,17 +213,19 @@ static void nu_can_isr(nu_can_t can)
     }
 #ifdef RT_CAN_USING_HDR
     /*Number of Message Object which caused the interrupt*/
-    else if (u32IIDRstatus != 0 && u32IIDRstatus <= 32)
+    else if (u32IIDRstatus > 0 && u32IIDRstatus <= 32)
     {
-        rt_kprintf("=> Interrupt Pointer = %d\n", can_base->IIDR - 1);
+        rt_kprintf("=> Interrupt Pointer = %d\n", u32IIDRstatus - 1);
         /*Message RAM 0~15 for CAN Tx using*/
-        if (u32IIDRstatus < 16)
+        if (u32IIDRstatus <= 16)
+            //rt_kprintf("[%s-Tx]IntId = %d\n", can->name, u32IIDRstatus);
             rt_hw_can_isr(&can->dev, RT_CAN_EVENT_TX_DONE);
         else /*Message RAM 16~31 for CAN Rx using*/
         {
-            rt_hw_can_isr(&can->dev, (RT_CAN_EVENT_RX_IND | (((can_base->IIDR) - 1) << 8)));
+            //rt_kprintf("[%s-Rx]IntId = %d\n", can->name, u32IIDRstatus);
+            rt_hw_can_isr(&can->dev, (RT_CAN_EVENT_RX_IND | ((u32IIDRstatus - 1) << 8)));
         }
-        CAN_CLR_INT_PENDING_BIT(can_base, ((can_base->IIDR) - 1));     /* Clear Interrupt Pending */
+        CAN_CLR_INT_PENDING_BIT(can_base, (u32IIDRstatus - 1));     /* Clear Interrupt Pending */
     }
 #endif
 
@@ -316,7 +316,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
     CAN_T *can_base = ((nu_can_t)can)->can_base;
 
     RT_ASSERT(can_base != RT_NULL);
-    /* Check baudrate */
+    /* Check baud rate */
     RT_ASSERT(can->config.baud_rate != 0);
 
     switch (cmd)
@@ -359,8 +359,8 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
 
-    case RT_CAN_CMD_SET_FILTER:
 #ifdef RT_CAN_USING_HDR
+    case RT_CAN_CMD_SET_FILTER:
         filter_cfg = (struct rt_can_filter_config *)arg;
 
         for (int i = 0; i < filter_cfg->count; i++)
@@ -384,8 +384,9 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
                 }
             }
         }
-#endif
         break;
+#endif
+
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL && argval != RT_CAN_MODE_LISEN &&
@@ -399,6 +400,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
             return nu_can_configure(can, &can->config);
         }
         break;
+
     case RT_CAN_CMD_SET_BAUD:
         argval = (rt_uint32_t) arg;
         if (argval != CAN1MBaud && argval != CAN800kBaud && argval != CAN500kBaud && argval != CAN250kBaud &&
@@ -412,6 +414,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
             return nu_can_configure(can, &can->config);
         }
         break;
+
     case RT_CAN_CMD_SET_PRIV:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_PRIV && argval != RT_CAN_MODE_NOPRIV)
@@ -503,7 +506,11 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
     RT_ASSERT(buf != RT_NULL);
 
     /* get data */
-    CAN_Receive(can_base, boxno, &tMsg);
+    if (CAN_Receive(can_base, boxno, &tMsg) == FALSE)
+    {
+        rt_kprintf("No available RX Msg.\n");
+        return -(RT_ERROR);
+    }
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
@@ -522,6 +529,7 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
         pmsg->ide = RT_CAN_EXTID;
         pmsg->id  = tMsg.Id;
     }
+
     if (tMsg.FrameType == CAN_DATA_FRAME)
     {
         /* Data frame */
@@ -532,9 +540,10 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
         /* Remote frame */
         pmsg->rtr = RT_CAN_RTR;
     }
-    pmsg->len = tMsg.DLC ;
-    rt_memcpy(pmsg->data, tMsg.Data, pmsg->len);
 
+    pmsg->len = tMsg.DLC ;
+
+    rt_memcpy(pmsg->data, tMsg.Data, pmsg->len);
 
     return RT_EOK;
 }

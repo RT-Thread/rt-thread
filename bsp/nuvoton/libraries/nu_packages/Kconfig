@@ -24,6 +24,11 @@ menu "Nuvoton Packages Config"
         select BSP_USING_I2C
         default n
 
+    config NU_PKG_USING_NAU8822
+        bool "NAU8822 Audio Codec."
+        select BSP_USING_I2C
+        default n
+
     config NU_PKG_USING_ILI9341
         bool "ILI9341 LCD Panel"
         select BSP_USING_GPIO

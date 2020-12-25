@@ -11,6 +11,7 @@
 | EMAC | RT_Device_Class_NetIf | ***e[0-1]*** |
 | GPIO | RT_Device_Class_Miscellaneous (Pin) | ***gpio*** |
 | I2C | RT_Device_Class_I2CBUS | ***i2c[0-3]*** |
+| I2S | RT_Device_Class_Sound | ***sound0*** |
 | PDMA | N/A | ***N/A*** |
 | QSPI | RT_Device_Class_SPIBUS | ***qspi[0]*** |
 | RTC | RT_Device_Class_RTC | ***rtc*** |
@@ -25,4 +26,4 @@
 ## Resources
 * [Download NUC980 TRM][1]
 
-  [1]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-M480
+  [1]: https://www.nuvoton.com/resource-download.jsp?tp_GUID=DA05-NUC980-1

@@ -111,6 +111,7 @@ extern "C"
 */
 
 int32_t i2sOpen(void);
+void i2sClose(void);
 void i2sInit(void);
 int32_t i2sIoctl(uint32_t cmd, uint32_t arg0, uint32_t arg1);
 void i2sSetSampleRate(uint32_t u32SourceClockRate, uint32_t u32SampleRate, uint32_t u32DataBit, uint32_t u32Channel);

@@ -27,6 +27,7 @@
 #include "nu_pwm.h"
 #include "nu_crypto.h"
 #include "nu_can.h"
+#include "nu_i2s.h"
 
 #include "nu_sys.h"
 

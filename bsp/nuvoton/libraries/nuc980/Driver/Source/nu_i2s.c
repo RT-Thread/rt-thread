@@ -202,9 +202,6 @@ void i2sClose(void)
     // reset i2s interface
     outpw(REG_SYS_AHBIPRST, inpw(REG_SYS_AHBIPRST) | (1 << 8));
     outpw(REG_SYS_AHBIPRST, inpw(REG_SYS_AHBIPRST) & ~(1 << 8));
-
-    // disable i2s engine clock
-    outpw(REG_CLK_HCLKEN, inpw(REG_CLK_HCLKEN) & ~(1 << 24));
 }
 
 /**

@@ -148,8 +148,8 @@ INIT_ENV_EXPORT(filesystem_init);
 extern rt_err_t ramdisk_init(const char *dev_name, rt_uint8_t *disk_addr, rt_size_t block_size, rt_size_t num_block);
 int ramdisk_device_init(void)
 {
-    /* Create a 16MB RAMDISK */
-    return (int)ramdisk_init(RAMDISK_NAME, NULL, 512, 2048 * 4);
+    /* Create a 8MB RAMDISK */
+    return (int)ramdisk_init(RAMDISK_NAME, NULL, 512, 2 * 8192);
 }
 INIT_DEVICE_EXPORT(ramdisk_device_init);
 #endif

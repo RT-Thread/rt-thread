@@ -18,9 +18,9 @@ menu "Hardware Drivers Config"
             default n
 
 
-        config BOARD_USING_NAU8822L
-            bool "NAU8822L Audio Codec supporting(over i2s, i2c2)"
-            select NU_PKG_USING_NAU8822L
+        config BOARD_USING_NAU8822
+            bool "NAU8822 Audio Codec supporting(over i2s, i2c0)"
+            select NU_PKG_USING_NAU8822
             select BSP_USING_I2C0
             select BSP_USING_I2S
             select BSP_USING_I2S0

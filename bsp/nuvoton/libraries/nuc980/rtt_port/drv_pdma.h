@@ -18,10 +18,6 @@
 #include <NuMicro.h>
 #include <board.h>
 
-#ifndef NU_PDMA_SGTBL_POOL_SIZE
-    #define NU_PDMA_SGTBL_POOL_SIZE (16)
-#endif
-
 #define NU_PDMA_CAP_NONE    (0 << 0)
 
 #define NU_PDMA_EVENT_ABORT          (1 << 0)

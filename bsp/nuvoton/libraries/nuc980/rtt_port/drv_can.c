@@ -137,33 +137,31 @@ static void nu_can_isr(int vector, void *param)
     CAN_T *base = psNuCAN->base;
 
     /* Get interrupt event */
-    u32IIDRstatus = base->IIDR;
+    u32IIDRstatus = CAN_GET_INT_PENDING_STATUS(base);
 
     if (u32IIDRstatus == 0x00008000)       /* Check Status Interrupt Flag (Error status Int and Status change Int) */
     {
         /**************************/
         /* Status Change interrupt*/
         /**************************/
-        if (base->STATUS & CAN_STATUS_RXOK_Msk)
-        {
-
-#ifndef RT_CAN_USING_HDR
-            /* Using as Lisen,Loopback,Loopback+Lisen mode*/
-            rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_RX_IND);
-#endif
-            base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
-            rt_kprintf("%s: RX\n", psNuCAN->name) ;
-        }
-
         if (base->STATUS & CAN_STATUS_TXOK_Msk)
         {
-
+            base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
+            //rt_kprintf("%s: TX\n", psNuCAN->name) ;
 #ifndef RT_CAN_USING_HDR
             /* Using as Lisen,Loopback,Loopback+Lisen mode*/
             rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
 #endif
-            base->STATUS &= ~CAN_STATUS_TXOK_Msk;    /* Clear Tx Ok status*/
-            rt_kprintf("%s: TX\n", psNuCAN->name) ;
+        }
+
+        if (base->STATUS & CAN_STATUS_RXOK_Msk)
+        {
+            base->STATUS &= ~CAN_STATUS_RXOK_Msk;   /* Clear Rx Ok status*/
+            //rt_kprintf("%s: RX\n", psNuCAN->name) ;
+#ifndef RT_CAN_USING_HDR
+            /* Using as Lisen,Loopback,Loopback+Lisen mode*/
+            rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_RX_IND);
+#endif
         }
 
         /**************************/
@@ -183,22 +181,29 @@ static void nu_can_isr(int vector, void *param)
             base->CON &= (~(CAN_CON_INIT_Msk | CAN_CON_CCE_Msk));
             while (base->CON & CAN_CON_INIT_Msk);
         }
+
+        if (base->STATUS & CAN_STATUS_LEC_Msk)
+        {
+            rt_kprintf("[%s] Last Error Code %03x\n", psNuCAN->name, base->STATUS & CAN_STATUS_LEC_Msk) ;
+        }
+
     }
 #ifdef RT_CAN_USING_HDR
-    /*Number of Message Object which caused the interrupt*/
-    else if (u32IIDRstatus != 0 && u32IIDRstatus <= 32)
+    /*IntId: 0x0001-0x0020, Number of Message Object which caused the interrupt.*/
+    else if (u32IIDRstatus > 0 && u32IIDRstatus <= 32)
     {
-        rt_kprintf("=> Interrupt Pointer = %d\n", base->IIDR - 1);
         /*Message RAM 0~15 for CAN Tx using*/
-        if (u32IIDRstatus < 16)
+        if (u32IIDRstatus <= 16)
         {
+            //rt_kprintf("[%s-Tx]IntId = %d\n", psNuCAN->name, u32IIDRstatus);
             rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
         }
         else /*Message RAM 16~31 for CAN Rx using*/
         {
-            rt_hw_can_isr(&psNuCAN->dev, (RT_CAN_EVENT_RX_IND | (((base->IIDR) - 1) << 8)));
+            //rt_kprintf("[%s-Rx]IntId = %d\n",  psNuCAN->name, u32IIDRstatus);
+            rt_hw_can_isr(&psNuCAN->dev, (RT_CAN_EVENT_RX_IND | ((u32IIDRstatus - 1) << 8)));
         }
-        CAN_CLR_INT_PENDING_BIT(base, ((base->IIDR) - 1));     /* Clear Interrupt Pending */
+        CAN_CLR_INT_PENDING_BIT(base, (u32IIDRstatus - 1));     /* Clear Interrupt Pending */
     }
 #endif
 
@@ -362,6 +367,7 @@ static rt_err_t nu_can_control(struct rt_can_device *can, int cmd, void *arg)
         }
         break;
 #endif
+
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t) arg;
         if (argval != RT_CAN_MODE_NORMAL && argval != RT_CAN_MODE_LISEN &&
@@ -436,8 +442,10 @@ static int nu_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_
 
     RT_ASSERT(base != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
+
     /* Check the parameters */
     RT_ASSERT(IS_CAN_DLC(pmsg->len));
+
     /* Standard ID (11 bits)*/
     if (pmsg->ide == RT_CAN_STDID)
     {
@@ -484,7 +492,11 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
     RT_ASSERT(buf != RT_NULL);
 
     /* get data */
-    CAN_Receive(base, boxno, &tMsg);
+    if (CAN_Receive(base, boxno, &tMsg) == FALSE)
+    {
+        rt_kprintf("No available RX Msg.\n");
+        return -(RT_ERROR);
+    }
 
 #ifdef RT_CAN_USING_HDR
     /* Hardware filter messages are valid */
@@ -503,6 +515,7 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
         pmsg->ide = RT_CAN_EXTID;
         pmsg->id  = tMsg.Id;
     }
+
     if (tMsg.FrameType == CAN_DATA_FRAME)
     {
         /* Data frame */
@@ -513,9 +526,10 @@ static int nu_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t boxn
         /* Remote frame */
         pmsg->rtr = RT_CAN_RTR;
     }
-    pmsg->len = tMsg.DLC ;
-    rt_memcpy(pmsg->data, tMsg.Data, pmsg->len);
 
+    pmsg->len = tMsg.DLC ;
+
+    rt_memcpy(pmsg->data, tMsg.Data, pmsg->len);
 
     return RT_EOK;
 }
