@@ -169,12 +169,12 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_USB_TO_USART
+#define BSP_USING_AUDIO
+#define BSP_USING_AUDIO_PLAY
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_UART0
-#define BSP_USING_AUDIO
-#define BSP_USING_AUDIO_PLAY
 
 /* Board extended module Drivers */
 
