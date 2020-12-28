@@ -20,6 +20,6 @@ if rtconfig.PLATFORM == 'gcc':
 if rtconfig.PLATFORM == 'iar':
     src += Glob('*_iar.S')
 
-group = DefineGroup('cpu', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
 Return('group')

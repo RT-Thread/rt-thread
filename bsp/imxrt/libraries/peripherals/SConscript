@@ -11,6 +11,6 @@ if GetDepend('BSP_USING_PHY') and GetDepend('PHY_USING_KSZ8081'):
 
 path = [cwd]
 
-group = DefineGroup('Peripherals', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 
 Return('group')
