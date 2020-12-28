@@ -118,7 +118,8 @@ struct rt_serial_rx_fifo
 
 struct rt_serial_tx_fifo
 {
-    struct rt_completion completion;
+    rt_bool_t activated;
+    struct rt_ringbuffer *rb;
 };
 
 /* 
@@ -127,12 +128,6 @@ struct rt_serial_tx_fifo
 struct rt_serial_rx_dma
 {
     rt_bool_t activated;
-};
-
-struct rt_serial_tx_dma
-{
-    rt_bool_t activated;
-    struct rt_data_queue data_queue;
 };
 
 struct rt_serial_device

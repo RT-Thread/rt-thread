@@ -128,3 +128,61 @@ __exit_wakeup:
 
     return 0;
 }
+
+int rt_wqueue_wait_with_wakeup(rt_wqueue_t *queue, int condition, int msec, rt_wqueue_func_t wakeup)
+{
+    int tick;
+    rt_thread_t tid = rt_thread_self();
+    rt_timer_t  tmr = &(tid->thread_timer);
+    struct rt_wqueue_node __wait;
+    rt_base_t level;
+
+    /* current context checking */
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    tick = rt_tick_from_millisecond(msec);
+
+    if ((condition) || (tick == 0))
+        return 0;
+
+    __wait.polling_thread = rt_thread_self();
+    __wait.key = 0;
+    if(wakeup == RT_NULL)
+        __wait.wakeup = __wqueue_default_wake;
+    else
+        __wait.wakeup = wakeup;
+    rt_list_init(&__wait.list);
+
+    level = rt_hw_interrupt_disable();
+    if (queue->flag == RT_WQ_FLAG_WAKEUP)
+    {
+        /* already wakeup */
+        goto __exit_wakeup;
+    }
+
+    rt_wqueue_add(queue, &__wait);
+    rt_thread_suspend(tid);
+
+    /* start timer */
+    if (tick != RT_WAITING_FOREVER)
+    {
+        rt_timer_control(tmr,
+                         RT_TIMER_CTRL_SET_TIME,
+                         &tick);
+
+        rt_timer_start(tmr);
+    }
+    rt_hw_interrupt_enable(level);
+
+    rt_schedule();
+
+    level = rt_hw_interrupt_disable();
+
+__exit_wakeup:
+    queue->flag = 0;
+    rt_hw_interrupt_enable(level);
+
+    rt_wqueue_remove(&__wait);
+
+    return 0;
+}

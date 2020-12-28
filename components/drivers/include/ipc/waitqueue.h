@@ -43,6 +43,7 @@ rt_inline void rt_wqueue_init(rt_wqueue_t *queue)
 void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node);
 void rt_wqueue_remove(struct rt_wqueue_node *node);
 int  rt_wqueue_wait(rt_wqueue_t *queue, int condition, int timeout);
+int rt_wqueue_wait_with_wakeup(rt_wqueue_t *queue, int condition, int msec, rt_wqueue_func_t wakeup);
 void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key);
 
 #define DEFINE_WAIT_FUNC(name, function)                \
