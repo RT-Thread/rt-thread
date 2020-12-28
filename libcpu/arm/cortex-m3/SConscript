@@ -18,6 +18,8 @@ if rtconfig.PLATFORM == 'gcc':
 if rtconfig.PLATFORM == 'iar':
     src += Glob('*_iar.S')
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+CPPDEFINES = ['RT_USING_ASM_MEMCPY']
+
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

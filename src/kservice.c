@@ -207,6 +207,7 @@ RTM_EXPORT(rt_memset);
  *
  * @return the address of destination memory
  */
+#ifndef RT_USING_ASM_MEMCPY
 void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_USING_TINY_SIZE
@@ -279,6 +280,7 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 #endif
 }
 RTM_EXPORT(rt_memcpy);
+#endif
 
 /**
  * This function will move memory content from source address to destination
