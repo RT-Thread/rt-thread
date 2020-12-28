@@ -114,4 +114,4 @@ msh >
 
 维护人:
 
--  [华大半导体CDT](), 邮箱：<>
+-  [华大半导体CDT](http://www.hdsc.com.cn/mcu.htm), 邮箱：<mcu@hdsc.com.cn>
