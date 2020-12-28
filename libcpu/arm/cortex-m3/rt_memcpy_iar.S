@@ -45,7 +45,7 @@
 ;
 ;               size        Number of data buffer octets to copy.
 ;
-; Return(s)   : none.
+; Return(s)   : pdest       Pointer to destination memory buffer.
 ;
 ; Caller(s)   : Application.
 ;
@@ -87,7 +87,7 @@ rt_memcpy_2:
 
 rt_memcpy_3:
         STMFD       SP!, {R3-R12}           ; save registers on stack
-
+        PUSH        {R0}                    ; save pdest 
 
 chk_align_32:                               ; check if both dest & src 32-bit aligned
         AND         R3, R0, #0x03
@@ -265,6 +265,7 @@ copy_08_2:
 
 
 rt_memcpy_end:
+        POP         {R0}                    ; pop pdest
         LDMFD       SP!, {R3-R12}           ; restore registers from stack
         BX          LR                      ; return
 
