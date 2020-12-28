@@ -19,6 +19,15 @@
 #include "raspi4.h"
 #include "drv_eth.h"
 
+//#define ETH_RX_POLL
+
+#define DBG_LEVEL   DBG_LOG
+#include <rtdbg.h>
+#define LOG_TAG                "drv.eth"
+
+static int link_speed = 0;
+static int link_flag = 0;
+
 #define RECV_CACHE_BUF          (1024)
 #define SEND_DATA_NO_CACHE      (0x08200000)
 #define RECV_DATA_NO_CACHE      (0x08400000)
@@ -33,6 +42,11 @@
 #define lower_32_bits(n)        ((rt_uint32_t)(n))
 
 #define BIT(nr)                 (1UL << (nr))
+
+static rt_thread_t link_thread_tid = RT_NULL;
+#define LINK_THREAD_STACK_SIZE   (1024)
+#define LINK_THREAD_PRIORITY     (20)
+#define LINK_THREAD_TIMESLICE    (10)
 
 static rt_uint32_t tx_index = 0;
 static rt_uint32_t rx_index = 0;
@@ -54,6 +68,7 @@ struct rt_eth_dev
 };
 static struct rt_eth_dev eth_dev;
 static struct rt_semaphore sem_lock;
+static struct rt_semaphore link_ack;
 
 static inline rt_uint32_t read32(void *addr)
 {
@@ -65,19 +80,36 @@ static inline void write32(void *addr, rt_uint32_t value)
     (*((volatile unsigned int*)(addr))) = value;
 }
 
-void eth_rx_irq(void *param)
+static void eth_rx_irq(int irq, void *param)
 {
+#ifndef ETH_RX_POLL
+    rt_uint32_t val = 0;
+    val = read32(MAC_REG + GENET_INTRL2_CPU_STAT);
+    val &= ~read32(MAC_REG + GENET_INTRL2_CPU_STAT_MASK);
+    write32(MAC_REG + GENET_INTRL2_CPU_CLEAR, val);
+    if (val & GENET_IRQ_RXDMA_DONE)
+    {
+        eth_device_ready(&eth_dev.parent);
+    }
+
+    if (val & GENET_IRQ_TXDMA_DONE)
+    {
+        //todo
+    }
+#else
     eth_device_ready(&eth_dev.parent);
+#endif
 }
 
 /* We only support RGMII (as used on the RPi4). */
 static int bcmgenet_interface_set(void)
 {
     int phy_mode = PHY_INTERFACE_MODE_RGMII;
-    switch (phy_mode) {
+    switch (phy_mode)
+    {
     case PHY_INTERFACE_MODE_RGMII:
     case PHY_INTERFACE_MODE_RGMII_RXID:
-        write32(MAC_REG + SYS_PORT_CTRL,PORT_MODE_EXT_GPHY);
+        write32(MAC_REG + SYS_PORT_CTRL, PORT_MODE_EXT_GPHY);
         break;
     default:
         rt_kprintf("unknown phy mode: %d\n", MAC_REG);
@@ -94,10 +126,10 @@ static void bcmgenet_umac_reset(void)
     write32((MAC_REG + SYS_RBUF_FLUSH_CTRL), reg);
 
     reg &= ~BIT(1);
-    write32((MAC_REG + SYS_RBUF_FLUSH_CTRL),reg);
+    write32((MAC_REG + SYS_RBUF_FLUSH_CTRL), reg);
 
     DELAY_MICROS(10);
-    write32((MAC_REG + SYS_RBUF_FLUSH_CTRL),0);
+    write32((MAC_REG + SYS_RBUF_FLUSH_CTRL), 0);
     DELAY_MICROS(10);
     write32(MAC_REG + UMAC_CMD, 0);
     write32(MAC_REG + UMAC_CMD, (CMD_SW_RESET | CMD_LCL_LOOP_EN));
@@ -145,7 +177,7 @@ static int bcmgenet_mdio_write(rt_uint32_t addr, rt_uint32_t reg, rt_uint32_t va
 {
     int count = 10000;
     rt_uint32_t val;
-    val = MDIO_WR | (addr << MDIO_PMD_SHIFT) |(reg << MDIO_REG_SHIFT) | (0xffff & value);
+    val = MDIO_WR | (addr << MDIO_PMD_SHIFT) | (reg << MDIO_REG_SHIFT) | (0xffff & value);
     write32(MAC_REG + MDIO_CMD, val);
 
     rt_uint32_t reg_val = read32(MAC_REG + MDIO_CMD);
@@ -158,7 +190,6 @@ static int bcmgenet_mdio_write(rt_uint32_t addr, rt_uint32_t reg, rt_uint32_t va
     reg_val = read32(MAC_REG + MDIO_CMD);
 
     return reg_val & 0xffff;
-    
 }
 
 static int bcmgenet_mdio_read(rt_uint32_t addr, rt_uint32_t reg)
@@ -179,7 +210,7 @@ static int bcmgenet_mdio_read(rt_uint32_t addr, rt_uint32_t reg)
 
     reg_val = read32(MAC_REG + MDIO_CMD);
 
-    return reg_val & 0xffff;    
+    return reg_val & 0xffff;
 }
 
 static int bcmgenet_gmac_write_hwaddr(void)
@@ -207,9 +238,9 @@ static int get_ethernet_uid(void)
     uid_low = bcmgenet_mdio_read(1, BCM54213PE_PHY_IDENTIFIER_LOW);
     uid = (uid_high << 16 | uid_low);
 
-    if(BCM54213PE_VERSION_B1 == uid)
+    if (BCM54213PE_VERSION_B1 == uid)
     {
-        rt_kprintf("version is B1\n");
+        LOG_I("version is B1\n");
     }
     return uid;
 }
@@ -219,7 +250,7 @@ static void bcmgenet_mdio_init(void)
     rt_uint32_t ret = 0;
     /*get ethernet uid*/
     ret = get_ethernet_uid();
-    if(ret == 0)
+    if (ret == 0)
     {
         return;
     }
@@ -236,19 +267,21 @@ static void bcmgenet_mdio_init(void)
     /* read status reg */
     bcmgenet_mdio_read(1, BCM54213PE_IEEE_EXTENDED_STATUS);
     bcmgenet_mdio_read(1, BCM54213PE_AUTO_NEGOTIATION_ADV);
+
     bcmgenet_mdio_read(1, BCM54213PE_MII_STATUS);
     bcmgenet_mdio_read(1, BCM54213PE_CONTROL);
     /* half full duplex capability */
     bcmgenet_mdio_write(1, BCM54213PE_CONTROL, (CONTROL_HALF_DUPLEX_CAPABILITY | CONTROL_FULL_DUPLEX_CAPABILITY));
     bcmgenet_mdio_read(1, BCM54213PE_MII_CONTROL);
+
     /* set mii control */
-    bcmgenet_mdio_write(1,BCM54213PE_MII_CONTROL,(MII_CONTROL_AUTO_NEGOTIATION_ENABLED | MII_CONTROL_AUTO_NEGOTIATION_RESTART| MII_CONTROL_PHY_FULL_DUPLEX| MII_CONTROL_SPEED_SELECTION));
+    bcmgenet_mdio_write(1, BCM54213PE_MII_CONTROL, (MII_CONTROL_AUTO_NEGOTIATION_ENABLED | MII_CONTROL_AUTO_NEGOTIATION_RESTART | MII_CONTROL_PHY_FULL_DUPLEX | MII_CONTROL_SPEED_SELECTION));
 }
 
 static void rx_ring_init(void)
 {
     write32(MAC_REG + RDMA_REG_BASE + DMA_SCB_BURST_SIZE, DMA_MAX_BURST_LENGTH);
-    write32(MAC_REG + RDMA_RING_REG_BASE + DMA_START_ADDR,0x0 );
+    write32(MAC_REG + RDMA_RING_REG_BASE + DMA_START_ADDR, 0x0);
     write32(MAC_REG + RDMA_READ_PTR, 0x0);
     write32(MAC_REG + RDMA_WRITE_PTR, 0x0);
     write32(MAC_REG + RDMA_RING_REG_BASE + DMA_END_ADDR, RX_DESCS * DMA_DESC_SIZE / 4 - 1);
@@ -257,7 +290,7 @@ static void rx_ring_init(void)
     write32(MAC_REG + RDMA_CONS_INDEX, 0x0);
     write32(MAC_REG + RDMA_RING_REG_BASE + DMA_RING_BUF_SIZE, (RX_DESCS << DMA_RING_SIZE_SHIFT) | RX_BUF_LENGTH);
     write32(MAC_REG + RDMA_XON_XOFF_THRESH, DMA_FC_THRESH_VALUE);
-    write32(MAC_REG + RDMA_REG_BASE + DMA_RING_CFG,1 << DEFAULT_Q);
+    write32(MAC_REG + RDMA_REG_BASE + DMA_RING_CFG, 1 << DEFAULT_Q);
 }
 
 static void tx_ring_init(void)
@@ -268,13 +301,13 @@ static void tx_ring_init(void)
     write32(MAC_REG + TDMA_READ_PTR, 0x0);
     write32(MAC_REG + TDMA_READ_PTR, 0x0);
     write32(MAC_REG + TDMA_WRITE_PTR, 0x0);
-    write32(MAC_REG + TDMA_RING_REG_BASE + DMA_END_ADDR,TX_DESCS * DMA_DESC_SIZE / 4 - 1);
+    write32(MAC_REG + TDMA_RING_REG_BASE + DMA_END_ADDR, TX_DESCS * DMA_DESC_SIZE / 4 - 1);
     write32(MAC_REG + TDMA_PROD_INDEX, 0x0);
     write32(MAC_REG + TDMA_CONS_INDEX, 0x0);
-    write32(MAC_REG + TDMA_RING_REG_BASE + DMA_MBUF_DONE_THRESH,0x1);
-    write32(MAC_REG + TDMA_FLOW_PERIOD,0x0);
+    write32(MAC_REG + TDMA_RING_REG_BASE + DMA_MBUF_DONE_THRESH, 0x1);
+    write32(MAC_REG + TDMA_FLOW_PERIOD, 0x0);
     write32(MAC_REG + TDMA_RING_REG_BASE + DMA_RING_BUF_SIZE, (TX_DESCS << DMA_RING_SIZE_SHIFT) | RX_BUF_LENGTH);
-    write32(MAC_REG + TDMA_REG_BASE + DMA_RING_CFG,1 << DEFAULT_Q);
+    write32(MAC_REG + TDMA_REG_BASE + DMA_RING_CFG, 1 << DEFAULT_Q);
 }
 
 static void rx_descs_init(void)
@@ -284,55 +317,21 @@ static void rx_descs_init(void)
     void *desc_base = (void *)RX_DESC_BASE;
 
     len_stat = (RX_BUF_LENGTH << DMA_BUFLENGTH_SHIFT) | DMA_OWN;
-    for (i = 0; i < RX_DESCS; i++) {
+    for (i = 0; i < RX_DESCS; i++)
+    {
         write32((desc_base + i * DMA_DESC_SIZE + DMA_DESC_ADDRESS_LO), lower_32_bits((uintptr_t)&rxbuffs[i * RX_BUF_LENGTH]));
-        write32((desc_base + i * DMA_DESC_SIZE + DMA_DESC_ADDRESS_HI),upper_32_bits((uintptr_t)&rxbuffs[i * RX_BUF_LENGTH]));
-        write32((desc_base + i * DMA_DESC_SIZE + DMA_DESC_LENGTH_STATUS),len_stat);
+        write32((desc_base + i * DMA_DESC_SIZE + DMA_DESC_ADDRESS_HI), upper_32_bits((uintptr_t)&rxbuffs[i * RX_BUF_LENGTH]));
+        write32((desc_base + i * DMA_DESC_SIZE + DMA_DESC_LENGTH_STATUS), len_stat);
     }
-}
-
-static int phy_startup(void)
-{
-    int count = 1000000;
-    while ((bcmgenet_mdio_read(1, BCM54213PE_MII_STATUS) & MII_STATUS_LINK_UP) && (--count))
-    DELAY_MICROS(1);
-    if(count > 0)
-    {
-        rt_kprintf("bcmgenet: PHY startup ok!\n");
-    }
-    else
-    {
-        rt_kprintf("bcmgenet: PHY startup err!\n");
-        return 1;
-    }
-
-    if(bcmgenet_mdio_read(1, BCM54213PE_STATUS) == 0)
-    {
-        //todo
-    }
-    else
-    {
-        rt_kprintf("bcmgenet: BCM54213PE_STATUS err!\n");
-    }
-
-    if(bcmgenet_mdio_read(1, BCM54213PE_CONTROL) == (CONTROL_FULL_DUPLEX_CAPABILITY| CONTROL_HALF_DUPLEX_CAPABILITY))
-    {
-        //todo
-    }
-    else
-    {
-        rt_kprintf("bcmgenet: BCM54213PE_CONTROL err!\n");
-    }
-
-    return 0;
 }
 
 static int bcmgenet_adjust_link(void)
 {
     rt_uint32_t speed;
-    rt_uint32_t phy_dev_speed = SPEED_100;
-    
-    switch (phy_dev_speed) {
+    rt_uint32_t phy_dev_speed = link_speed;
+
+    switch (phy_dev_speed)
+    {
     case SPEED_1000:
         speed = UMAC_SPEED_1000;
         break;
@@ -358,6 +357,14 @@ static int bcmgenet_adjust_link(void)
     return 0;
 }
 
+void link_irq(void *param)
+{
+    if ((bcmgenet_mdio_read(1, BCM54213PE_MII_STATUS) & MII_STATUS_LINK_UP) != 0)
+    {
+        rt_sem_release(&link_ack);
+    }
+}
+
 static int bcmgenet_gmac_eth_start(void)
 {
     rt_uint32_t ret;
@@ -375,23 +382,17 @@ static int bcmgenet_gmac_eth_start(void)
     /* Enable RX/TX DMA */
     bcmgenet_enable_dma();
 
-    /* read PHY properties over the wire from generic PHY set-up */
-    ret = phy_startup();
-    if (ret) {
-        rt_kprintf("bcmgenet: PHY startup failed: %d\n", ret);
-        return ret;
-    }
-
     /* Update MAC registers based on PHY property */
     ret = bcmgenet_adjust_link();
-    if (ret) {
+    if(ret)
+    {
         rt_kprintf("bcmgenet: adjust PHY link failed: %d\n", ret);
         return ret;
     }
 
     /* wait tx index clear */
     while ((read32(MAC_REG + TDMA_CONS_INDEX) != 0) && (--count))
-    DELAY_MICROS(1);
+        DELAY_MICROS(1);
 
     tx_index = read32(MAC_REG + TDMA_CONS_INDEX);
     write32(MAC_REG + TDMA_PROD_INDEX, tx_index);
@@ -410,6 +411,8 @@ static int bcmgenet_gmac_eth_start(void)
     rx_tx_en |= (CMD_TX_EN | CMD_RX_EN);
 
     write32(MAC_REG + UMAC_CMD, rx_tx_en);
+    //IRQ
+    write32(MAC_REG + GENET_INTRL2_CPU_CLEAR_MASK, GENET_IRQ_TXDMA_DONE | GENET_IRQ_RXDMA_DONE);
     return 0;
 }
 
@@ -424,6 +427,7 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
     if(prod_index == index_flag)
     {
         cur_recv_cnt = index_flag;
+        index_flag = 0x7fffffff;
         //no buff
         return 0;
     }
@@ -433,7 +437,7 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
         {
             return 0;
         }
-        
+
         desc_base = RX_DESC_BASE + rx_index * DMA_DESC_SIZE;
         length = read32(desc_base + DMA_DESC_LENGTH_STATUS);
         length = (length >> DMA_BUFLENGTH_SHIFT) & DMA_BUFLENGTH_MASK;
@@ -452,6 +456,11 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
         write32(MAC_REG + RDMA_CONS_INDEX, cur_recv_cnt);
 
         cur_recv_cnt = cur_recv_cnt + 1;
+
+        if(cur_recv_cnt > 0xffff)
+        {
+            cur_recv_cnt = 0;
+        }
         prev_recv_cnt = cur_recv_cnt;
 
         return length;
@@ -460,52 +469,120 @@ static rt_uint32_t bcmgenet_gmac_eth_recv(rt_uint8_t **packetp)
 
 static int bcmgenet_gmac_eth_send(void *packet, int length)
 {
-    void* desc_base = (TX_DESC_BASE + tx_index * DMA_DESC_SIZE);
+    void *desc_base = (TX_DESC_BASE + tx_index * DMA_DESC_SIZE);
     rt_uint32_t len_stat = length << DMA_BUFLENGTH_SHIFT;
 
     rt_uint32_t prod_index, cons;
     rt_uint32_t tries = 100;
-    
+
     prod_index = read32(MAC_REG + TDMA_PROD_INDEX);
 
     len_stat |= 0x3F << DMA_TX_QTAG_SHIFT;
     len_stat |= DMA_TX_APPEND_CRC | DMA_SOP | DMA_EOP;
 
-    write32((desc_base + DMA_DESC_ADDRESS_LO),SEND_DATA_NO_CACHE);
-    write32((desc_base + DMA_DESC_ADDRESS_HI),0);
-    write32((desc_base + DMA_DESC_LENGTH_STATUS),len_stat);
+    write32((desc_base + DMA_DESC_ADDRESS_LO), SEND_DATA_NO_CACHE);
+    write32((desc_base + DMA_DESC_ADDRESS_HI), 0);
+    write32((desc_base + DMA_DESC_LENGTH_STATUS), len_stat);
 
-    if(++tx_index>= TX_DESCS)
+    tx_index = tx_index + 1;
+    prod_index = prod_index + 1;
+
+    if (prod_index == 0xe000)
+    {
+        write32(MAC_REG + TDMA_PROD_INDEX, 0);
+        prod_index = 0;
+    }
+
+    if (tx_index == 256)
     {
         tx_index = 0;
     }
-    prod_index++;
-    /* Start Transmisson */
-    write32(MAC_REG + TDMA_PROD_INDEX,prod_index);
 
-    do {
+    /* Start Transmisson */
+    write32(MAC_REG + TDMA_PROD_INDEX, prod_index);
+
+    do
+    {
         cons = read32(MAC_REG + TDMA_CONS_INDEX);
     } while ((cons & 0xffff) < prod_index && --tries);
+
     if (!tries)
     {
+        rt_kprintf("send err! tries is %d\n", tries);
         return -1;
     }
     return 0;
 }
 
+static void link_task_entry(void *param)
+{
+    struct eth_device *eth_device = (struct eth_device *)param;
+    RT_ASSERT(eth_device != RT_NULL);
+    struct rt_eth_dev *dev = &eth_dev;
+    //start mdio
+    bcmgenet_mdio_init();
+    //start timer link
+    rt_timer_init(&dev->link_timer, "link_timer",
+                  link_irq,
+                  NULL,
+                  100,
+                  RT_TIMER_FLAG_PERIODIC);
+    rt_timer_start(&dev->link_timer);
+
+    //link wait forever
+    rt_sem_take(&link_ack, RT_WAITING_FOREVER);
+    eth_device_linkchange(&eth_dev.parent, RT_TRUE); //link up
+    rt_timer_stop(&dev->link_timer);
+
+    //set mac
+    bcmgenet_gmac_write_hwaddr();
+    bcmgenet_gmac_write_hwaddr();
+
+    //check link speed
+    if ((bcmgenet_mdio_read(1, BCM54213PE_STATUS) & (1 << 10)) || (bcmgenet_mdio_read(1, BCM54213PE_STATUS) & (1 << 11)))
+    {
+        link_speed = 1000;
+        rt_kprintf("Support link mode Speed 1000M\n");
+    }
+    else if ((bcmgenet_mdio_read(1, 0x05) & (1 << 7)) || (bcmgenet_mdio_read(1, 0x05) & (1 << 8)) || (bcmgenet_mdio_read(1, 0x05) & (1 << 9)))
+    {
+        link_speed = 100;
+        rt_kprintf("Support link mode Speed 100M\n");
+    }
+    else
+    {
+        link_speed = 10;
+        rt_kprintf("Support link mode Speed 10M\n");
+    }
+
+    bcmgenet_gmac_eth_start();
+    //irq or poll
+#ifdef ETH_RX_POLL
+    rt_timer_init(&dev->rx_poll_timer, "rx_poll_timer",
+                  eth_rx_irq,
+                  NULL,
+                  1,
+                  RT_TIMER_FLAG_PERIODIC);
+
+    rt_timer_start(&dev->rx_poll_timer);
+#else
+    rt_hw_interrupt_install(ETH_IRQ, eth_rx_irq, NULL, "eth_irq");
+    rt_hw_interrupt_umask(ETH_IRQ);
+#endif
+    link_flag = 1;
+}
+
 static rt_err_t bcmgenet_eth_init(rt_device_t device)
 {
-    struct eth_device *eth_device = (struct eth_device *)device;
-    RT_ASSERT(eth_device != RT_NULL);
     rt_uint32_t ret = 0;
     rt_uint32_t hw_reg = 0;
-    struct rt_eth_dev *dev = &eth_dev;
-    
+
     /* Read GENET HW version */
     rt_uint8_t major = 0;
     hw_reg = read32(MAC_REG + SYS_REV_CTRL);
     major = (hw_reg >> 24) & 0x0f;
-    if (major != 6) {
+    if (major != 6)
+    {
         if (major == 5)
             major = 4;
         else if (major == 0)
@@ -514,13 +591,12 @@ static rt_err_t bcmgenet_eth_init(rt_device_t device)
         rt_kprintf("Uns upported GENETv%d.%d\n", major, (hw_reg >> 16) & 0x0f);
         return RT_ERROR;
     }
-
     /* set interface */
     ret = bcmgenet_interface_set();
     if (ret)
     {
         return ret;
-    }    
+    }
 
     /* rbuf clear */
     write32(MAC_REG + SYS_RBUF_FLUSH_CTRL, 0);
@@ -530,21 +606,11 @@ static rt_err_t bcmgenet_eth_init(rt_device_t device)
     /* issue soft reset with (rg)mii loopback to ensure a stable rxclk */
     write32(MAC_REG + UMAC_CMD, CMD_SW_RESET | CMD_LCL_LOOP_EN);
 
-    bcmgenet_mdio_init();
-
-    bcmgenet_gmac_write_hwaddr();
-    bcmgenet_gmac_write_hwaddr();
-
-    bcmgenet_gmac_eth_start();
-
-    //irq or poll
-    rt_timer_init(&dev->rx_poll_timer, "rx_poll_timer",
-                  eth_rx_irq,
-                  NULL,
-                  1,
-                  RT_TIMER_FLAG_PERIODIC);
-
-    rt_timer_start(&dev->rx_poll_timer);
+    link_thread_tid = rt_thread_create("link", link_task_entry, (void *)device,
+                                       LINK_THREAD_STACK_SIZE,
+                                       LINK_THREAD_PRIORITY, LINK_THREAD_TIMESLICE);
+    if (link_thread_tid != RT_NULL)
+        rt_thread_startup(link_thread_tid);
 
     return RT_EOK;
 }
@@ -554,10 +620,12 @@ static rt_err_t bcmgenet_eth_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case NIOCTL_GADDR:
-        if (args) rt_memcpy(args, eth_dev.dev_addr, 6);
-        else return -RT_ERROR;
+        if (args)
+            rt_memcpy(args, eth_dev.dev_addr, 6);
+        else
+            return -RT_ERROR;
         break;
-    default :
+    default:
         break;
     }
     return RT_EOK;
@@ -565,15 +633,17 @@ static rt_err_t bcmgenet_eth_control(rt_device_t dev, int cmd, void *args)
 
 rt_err_t rt_eth_tx(rt_device_t device, struct pbuf *p)
 {
-    rt_uint32_t sendbuf = SEND_DATA_NO_CACHE;
+    rt_uint32_t sendbuf = (rt_uint32_t)SEND_DATA_NO_CACHE;
     /* lock eth device */
-    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-    //struct rt_eth_dev *dev = (struct rt_eth_dev *) device;
-    pbuf_copy_partial(p, (void *)&send_cache_pbuf[0], p->tot_len, 0);
-    rt_memcpy((void *)sendbuf, send_cache_pbuf, p->tot_len);
+    if (link_flag == 1)
+    {
+        rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
+        pbuf_copy_partial(p, (void *)&send_cache_pbuf[0], p->tot_len, 0);
+        rt_memcpy((void *)sendbuf, send_cache_pbuf, p->tot_len);
 
-    bcmgenet_gmac_eth_send((void *)sendbuf, p->tot_len);
-    rt_sem_release(&sem_lock);
+        bcmgenet_gmac_eth_send((void *)sendbuf, p->tot_len);
+        rt_sem_release(&sem_lock);
+    }
     return RT_EOK;
 }
 
@@ -583,16 +653,17 @@ struct pbuf *rt_eth_rx(rt_device_t device)
     int recv_len = 0;
     rt_uint32_t addr_point[8];
     struct pbuf *pbuf = RT_NULL;
-    rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
-
-    recv_len = bcmgenet_gmac_eth_recv((rt_uint8_t **)&addr_point[0]);
-
-    if(recv_len > 0)
+    if (link_flag == 1)
     {
-        pbuf = pbuf_alloc(PBUF_LINK, recv_len, PBUF_RAM);
-        rt_memcpy(pbuf->payload, (char *)addr_point[0], recv_len);
+        rt_sem_take(&sem_lock, RT_WAITING_FOREVER);
+        recv_len = bcmgenet_gmac_eth_recv((rt_uint8_t **)&addr_point[0]);
+        if (recv_len > 0)
+        {
+            pbuf = pbuf_alloc(PBUF_LINK, recv_len, PBUF_RAM);
+            rt_memcpy(pbuf->payload, (char *)addr_point[0], recv_len);
+        }
+        rt_sem_release(&sem_lock);
     }
-    rt_sem_release(&sem_lock);
     return pbuf;
 }
 
@@ -601,11 +672,11 @@ int rt_hw_eth_init(void)
     rt_uint8_t mac_addr[6];
     
     rt_sem_init(&sem_lock, "eth_lock", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&link_ack, "link_ack", 0, RT_IPC_FLAG_FIFO);
 
     memset(&eth_dev, 0, sizeof(eth_dev));
     memset((void *)SEND_DATA_NO_CACHE, 0, sizeof(DMA_DISC_ADDR_SIZE));
     memset((void *)RECV_DATA_NO_CACHE, 0, sizeof(DMA_DISC_ADDR_SIZE));
-
     bcm271x_mbox_hardware_get_mac_address(&mac_addr[0]);
 
     eth_dev.iobase = MAC_REG;
@@ -629,9 +700,8 @@ int rt_hw_eth_init(void)
     eth_dev.parent.eth_tx            = rt_eth_tx;
     eth_dev.parent.eth_rx            = rt_eth_rx;
 
-
     eth_device_init(&(eth_dev.parent), "e0");
-    eth_device_linkchange(&eth_dev.parent, RT_TRUE);   //linkup the e0 for lwip to check
+    eth_device_linkchange(&eth_dev.parent, RT_FALSE);   //link down
     return 0;
 }
 INIT_COMPONENT_EXPORT(rt_hw_eth_init);

@@ -106,6 +106,14 @@ config ARCH_RISCV
 config ARCH_RISCV_FPU
     bool
 
+config ARCH_RISCV_FPU_S
+    select ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV_FPU_D
+    select ARCH_RISCV_FPU
+    bool
+
 config ARCH_RISCV32
     select ARCH_RISCV
     bool

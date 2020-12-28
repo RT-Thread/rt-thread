@@ -54,6 +54,7 @@
   */
 
 #include "ald_i2s.h"
+#include "ald_cmu.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -73,6 +74,7 @@
 static ald_status_t i2s_wait_status(i2s_handle_t *hperh, i2s_status_t state, flag_status_t status, uint32_t timeout);
 static void __i2s_send_by_it(i2s_handle_t *hperh);
 static void __i2s_recv_by_it(i2s_handle_t *hperh);
+static void __i2s_tx_recv_by_it(i2s_handle_t *hperh);
 #ifdef ALD_DMA
 static void i2s_dma_send_cplt(void *arg);
 static void i2s_dma_recv_cplt(void *arg);
@@ -125,8 +127,8 @@ static void i2s_dma_error(void *arg);
   */
 void ald_i2s_reset(i2s_handle_t *hperh)
 {
-	hperh->perh->I2SCFG    = 0x0;
-	hperh->perh->I2SPR    = 0x0;
+	hperh->perh->I2SCFG = 0x0;
+	hperh->perh->I2SPR  = 0x0;
 
 	I2S_RESET_HANDLE_STATE(hperh);
 	__UNLOCK(hperh);
@@ -143,40 +145,62 @@ void ald_i2s_reset(i2s_handle_t *hperh)
   */
 ald_status_t ald_i2s_init(i2s_handle_t *hperh)
 {
-	uint32_t tmp = 0;
+	uint32_t tmp = 0, clk, _div;
+
+	if (hperh == NULL)
+		return ERROR;
 
 	assert_param(IS_I2S(hperh->perh));
 	assert_param(IS_I2S_CH_LEN(hperh->init.ch_len));
 	assert_param(IS_I2S_DATE_LEN(hperh->init.data_len));
 	assert_param(IS_I2S_CPOL(hperh->init.polarity));
 	assert_param(IS_I2S_STANDARD(hperh->init.standard));
-	assert_param(IS_FUNC_STATE(hperh->init.ext_ck));
+	assert_param(IS_FUNC_STATE(hperh->init.ext_clk_en));
 	assert_param(IS_FUNC_STATE(hperh->init.mck_en));
 	assert_param(IS_I2S_PCMS(hperh->init.pcm_frame));
-	assert_param(IS_I2S_ODD(hperh->init.odd));
-	assert_param(IS_I2S_DIV(hperh->init.div));
-
-	if (hperh == NULL)
-		return ERROR;
 
 	ald_i2s_reset(hperh);
+	
+	tmp |= (hperh->init.ext_clk_en << SPI_I2SPR_EXTCKEN_POS);
+	
+	/* Get I2S clock */
+	if (hperh->init.ext_clk_en)
+		clk = hperh->init.ext_clk;
+	else
+		clk = ald_cmu_get_pclk1_clock();
 
-	tmp = hperh->perh->I2SPR;
-
-	tmp |= ((hperh->init.ext_ck << SPI_I2SPR_EXTCKEN_POS) | (hperh->init.odd << SPI_I2SPR_ODD_POS) |
-		(hperh->init.div << SPI_I2SPR_I2SDIV_POSS));
+	if (hperh->init.mck_en) { 
+		_div = ((clk / hperh->init.sampling) >> 8);
+	}
+	else {
+		if (hperh->init.ch_len == I2S_WIDE_16)
+			_div = ((clk / hperh->init.sampling) >> 5);
+		else
+			_div = ((clk / hperh->init.sampling) >> 6);
+	}
+	
+	if (_div & 0x1) {
+		SET_BIT(tmp, SPI_I2SPR_ODD_MSK);
+		--_div;
+	}
+	else {
+		CLEAR_BIT(tmp, SPI_I2SPR_ODD_MSK);
+	}
+	
+	if (hperh->init.standard != I2S_STD_PCM)
+		MODIFY_REG(tmp, SPI_I2SPR_I2SDIV_MSK, (_div >> 1) << SPI_I2SPR_I2SDIV_POSS);
+	else
+		MODIFY_REG(tmp, SPI_I2SPR_I2SDIV_MSK, _div << SPI_I2SPR_I2SDIV_POSS);
 
 	hperh->perh->I2SPR = tmp;
 
-	tmp = hperh->perh->I2SCFG;
-
+	tmp  = hperh->perh->I2SCFG;
 	tmp |= ((hperh->init.ch_len << SPI_I2SCFG_CHLEN_POS) | (hperh->init.data_len << SPI_I2SCFG_DATLEN_POSS) |
 		(hperh->init.polarity << SPI_I2SCFG_CKPOL_POS) | (hperh->init.standard << SPI_I2SCFG_I2SSTD_POSS) |
 		(1 << SPI_I2SCFG_I2SMOD_POS));
-
 	hperh->perh->I2SCFG = tmp;
 
-	if (hperh->init.standard == I2S_PCM_STANDARD)
+	if (hperh->init.standard == I2S_STD_PCM)
 		hperh->perh->I2SCFG |= (hperh->init.pcm_frame << SPI_I2SCFG_PCMSYNC_POS);
 
 	hperh->err_code = I2S_ERROR_NONE;
@@ -227,62 +251,47 @@ ald_status_t ald_i2s_init(i2s_handle_t *hperh)
   * @param  timeout: Timeout duration
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_i2s_master_send(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint32_t timeout)
+ald_status_t ald_i2s_master_send(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint32_t timeout)
 {
 	assert_param(IS_I2S(hperh->perh));
 
 	if (hperh->state != I2S_STATE_READY)
 		return BUSY;
-
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
-
 	hperh->state    = I2S_STATE_BUSY_TX;
 	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->tx_buf   = buf;
-	hperh->tx_size  = size;
-	hperh->tx_count = size;
-	hperh->rx_buf   = NULL;
-	hperh->rx_size  = 0;
-	hperh->rx_count = 0;
 
 	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_MASTER_TRANSMIT << SPI_I2SCFG_I2SCFG_POSS);
 
 	if (hperh->init.mck_en)
 		MODIFY_REG(hperh->perh->I2SPR, SPI_I2SPR_MCKOE_MSK, hperh->init.mck_en << SPI_I2SPR_MCKOE_POS);
-
 	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
 		I2S_ENABLE(hperh);
 
-	while (hperh->tx_count > 0) {
+	while (size > 0) {
 		if (i2s_wait_status(hperh, I2S_STATUS_TXE, SET, timeout) != OK) {
 			I2S_DISABLE(hperh);
 
 			hperh->state = I2S_STATE_READY;
-			__UNLOCK(hperh);
 			return TIMEOUT;
 		}
 
-		hperh->side = READ_BIT(hperh->perh->STAT, SPI_STAT_CHSIDE_MSK);
-		hperh->perh->DATA = *hperh->tx_buf;
-		hperh->tx_buf++;
-		--hperh->tx_count;
+		hperh->side = READ_BITS(hperh->perh->STAT, SPI_STAT_CHSIDE_MSK, SPI_STAT_CHSIDE_POS);
+		hperh->perh->DATA = *buf++;
+		--size;
 	}
 
  	if ((i2s_wait_status(hperh, I2S_STATUS_TXE, SET, timeout) != OK)
 			|| (i2s_wait_status(hperh, I2S_STATUS_BUSY, RESET, timeout) != OK)) {
  		I2S_DISABLE(hperh);
  		hperh->state = I2S_STATE_READY;
- 		__UNLOCK(hperh);
  		return TIMEOUT;
  	}
 
  	I2S_DISABLE(hperh);
 	hperh->state = I2S_STATE_READY;
-	__UNLOCK(hperh);
 
 	return OK;
 }
@@ -295,7 +304,7 @@ ald_status_t ald_i2s_master_send(i2s_handle_t *hperh, uint16_t *buf, uint16_t si
   * @param  timeout: Timeout duration
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_i2s_master_recv(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint32_t timeout)
+ald_status_t ald_i2s_master_recv(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint32_t timeout)
 {
 	assert_param(IS_I2S(hperh->perh));
 
@@ -304,160 +313,29 @@ ald_status_t ald_i2s_master_recv(i2s_handle_t *hperh, uint16_t *buf, uint16_t si
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
 	hperh->state    = I2S_STATE_BUSY_RX;
 	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->rx_buf   = buf;
-	hperh->rx_size  = size;
-	hperh->rx_count = size;
-	hperh->tx_buf   = NULL;
-	hperh->tx_size  = 0;
-	hperh->tx_count = 0;
 
 	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_MASTER_RECEIVE << SPI_I2SCFG_I2SCFG_POSS);
 
 	if (hperh->init.mck_en)
 		MODIFY_REG(hperh->perh->I2SPR, SPI_I2SPR_MCKOE_MSK, hperh->init.mck_en << SPI_I2SPR_MCKOE_POS);
-
 	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
 		I2S_ENABLE(hperh);
 
-	while (hperh->rx_count > 0) {
-		*((uint16_t *)&(hperh->perh->DATA)) = 0xffff;
+	while (size > 0) {
+		hperh->perh->DATA = 0xffff;
 		if (i2s_wait_status(hperh, I2S_STATUS_RXE, RESET, timeout) != OK) {
 			I2S_DISABLE(hperh);
 			hperh->state = I2S_STATE_READY;
-			__UNLOCK(hperh);
 			return TIMEOUT;
 		}
 
-		*hperh->rx_buf = hperh->perh->DATA;
-		hperh->rx_buf++;
-		--hperh->rx_count;
-
+		*buf++ = hperh->perh->DATA;
+		--size;
 	}
 
 	hperh->state = I2S_STATE_READY;
-	__UNLOCK(hperh);
-
-	return OK;
-}
-
-/**
-  * @brief  Slave mode transmit an amount of data in blocking mode.
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  buf: Pointer to data buffer
-  * @param  size: Amount of data to be sent
-  * @param  timeout: Timeout duration
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_i2s_slave_send(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint32_t timeout)
-{
-	uint8_t loop;
-	assert_param(IS_I2S(hperh->perh));
-
-	if (hperh->state != I2S_STATE_READY)
-		return BUSY;
-
-	if (buf == NULL || size == 0)
-		return ERROR;
-
-	__LOCK(hperh);
-
-	hperh->state    = I2S_STATE_BUSY_TX;
-	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->tx_buf   = buf;
-	hperh->tx_size  = size;
-	hperh->tx_count = size;
-	hperh->rx_buf   = NULL;
-	hperh->rx_size  = 0;
-	hperh->rx_count = 0;
-
-	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_SLAVE_TRANSMIT << SPI_I2SCFG_I2SCFG_POSS);
-
-	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
-		I2S_ENABLE(hperh);
-
-	while (hperh->tx_count > 0) {
-		if (i2s_wait_status(hperh, I2S_STATUS_TXE, SET, timeout) != OK) {
-			I2S_DISABLE(hperh);
-
-			hperh->state = I2S_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-
-		hperh->side = READ_BIT(hperh->perh->STAT, SPI_STAT_CHSIDE_MSK);
-		hperh->perh->DATA = *hperh->tx_buf;
-		hperh->tx_buf++;
-		--hperh->tx_count;
-	}
-
- 	if (i2s_wait_status(hperh, I2S_STATUS_TXE, SET, timeout) != OK) {
- 		I2S_DISABLE(hperh);
- 		hperh->state = I2S_STATE_READY;
- 		__UNLOCK(hperh);
- 		return TIMEOUT;
- 	}
-
-	for (loop = 0; loop < 200; loop++);
- 	I2S_DISABLE(hperh);
-	hperh->state = I2S_STATE_READY;
-	__UNLOCK(hperh);
-
-	return OK;
-}
-
-/**
-  * @brief  Slave mode receive an amount of data in blocking mode.
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  buf: Pointer to data buffer
-  * @param  size: Amount of data to be received
-  * @param  timeout: Timeout duration
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_i2s_slave_recv(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint32_t timeout)
-{
-	assert_param(IS_I2S(hperh->perh));
-
-	if (hperh->state != I2S_STATE_READY)
-		return BUSY;
-	if (buf == NULL || size == 0)
-		return ERROR;
-
-	__LOCK(hperh);
-	hperh->state    = I2S_STATE_BUSY_RX;
-	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->rx_buf   = buf;
-	hperh->rx_size  = size;
-	hperh->rx_count = size;
-	hperh->tx_buf   = NULL;
-	hperh->tx_size  = 0;
-	hperh->tx_count = 0;
-
-	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_SLAVE_RECEIVE << SPI_I2SCFG_I2SCFG_POSS);
-
-	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
-		I2S_ENABLE(hperh);
-
-	while (hperh->rx_count > 0) {
-		if (i2s_wait_status(hperh, I2S_STATUS_RXE, RESET, timeout) != OK) {
-			I2S_DISABLE(hperh);
-			hperh->state = I2S_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-		*hperh->rx_buf = hperh->perh->DATA;
-		hperh->rx_buf++;
-		--hperh->rx_count;
-	}
-
-	hperh->state = I2S_STATE_READY;
-	__UNLOCK(hperh);
-
 	return OK;
 }
 
@@ -468,7 +346,7 @@ ald_status_t ald_i2s_slave_recv(i2s_handle_t *hperh, uint16_t *buf, uint16_t siz
   * @param  size: Amount of data to be sent
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_i2s_master_send_by_it(i2s_handle_t *hperh, uint16_t *buf, uint16_t size)
+ald_status_t ald_i2s_master_send_by_it(i2s_handle_t *hperh, uint16_t *buf, uint32_t size)
 {
 	assert_param(IS_I2S(hperh->perh));
 
@@ -477,28 +355,26 @@ ald_status_t ald_i2s_master_send_by_it(i2s_handle_t *hperh, uint16_t *buf, uint1
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
 	hperh->state    = I2S_STATE_BUSY_TX;
 	hperh->err_code = I2S_ERROR_NONE;
-
 	hperh->tx_buf   = buf;
 	hperh->tx_size  = size;
 	hperh->tx_count = size;
 	hperh->rx_buf   = NULL;
 	hperh->rx_size  = 0;
 	hperh->rx_count = 0;
-
+	
+	WRITE_REG(hperh->perh->ICR, 0xffffffff);
+	
+	I2S_DISABLE(hperh);
 	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_MASTER_TRANSMIT << SPI_I2SCFG_I2SCFG_POSS);
 
 	if (hperh->init.mck_en)
 		MODIFY_REG(hperh->perh->I2SPR, SPI_I2SPR_MCKOE_MSK, hperh->init.mck_en << SPI_I2SPR_MCKOE_POS);
-
 	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
 		I2S_ENABLE(hperh);
 
 	ald_i2s_interrupt_config(hperh, I2S_IT_TXE, ENABLE);
-
-	__UNLOCK(hperh);
 	return OK;
 }
 
@@ -509,7 +385,7 @@ ald_status_t ald_i2s_master_send_by_it(i2s_handle_t *hperh, uint16_t *buf, uint1
   * @param  size: Amount of data to be sent
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_i2s_master_recv_by_it(i2s_handle_t *hperh, uint16_t *buf, uint16_t size)
+ald_status_t ald_i2s_master_recv_by_it(i2s_handle_t *hperh, uint16_t *buf, uint32_t size)
 {
 	assert_param(IS_I2S(hperh->perh));
 
@@ -518,107 +394,28 @@ ald_status_t ald_i2s_master_recv_by_it(i2s_handle_t *hperh, uint16_t *buf, uint1
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
-	hperh->state    = I2S_STATE_BUSY_RX;
+	hperh->state    = I2S_STATE_BUSY_TX_RX;
 	hperh->err_code = I2S_ERROR_NONE;
-
 	hperh->rx_buf   = buf;
 	hperh->rx_size  = size;
 	hperh->rx_count = size;
-	hperh->tx_buf   = NULL;
-	hperh->tx_size  = 0;
-	hperh->tx_count = 0;
+	hperh->tx_buf   = 0;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	
+	WRITE_REG(hperh->perh->ICR, 0xffffffff);
 
+	I2S_DISABLE(hperh);
 	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_MASTER_RECEIVE << SPI_I2SCFG_I2SCFG_POSS);
 
 	if (hperh->init.mck_en)
 		MODIFY_REG(hperh->perh->I2SPR, SPI_I2SPR_MCKOE_MSK, hperh->init.mck_en << SPI_I2SPR_MCKOE_POS);
 
-	ald_i2s_interrupt_config(hperh, I2S_IT_RXF, ENABLE);
-
-	__UNLOCK(hperh);
-
 	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
 		I2S_ENABLE(hperh);
-
-	return OK;
-}
-
-/**
-  * @brief  Wraps up slave mode transmission in non blocking mode.
-  * @param  hperh: pointer to a i2s_handle_t structure.
-  * @param  buf: Pointer to data transmitted buffer
-  * @param  size: Amount of data to be sent
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_i2s_slave_send_by_it(i2s_handle_t *hperh, uint16_t *buf, uint16_t size)
-{
-	assert_param(IS_I2S(hperh->perh));
-
-	if (hperh->state != I2S_STATE_READY)
-		return BUSY;
-	if (buf == NULL || size == 0)
-		return ERROR;
-
-	__LOCK(hperh);
-	hperh->state    = I2S_STATE_BUSY_TX;
-	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->tx_buf   = buf;
-	hperh->tx_size  = size;
-	hperh->tx_count = size - 1;
-	hperh->rx_buf   = NULL;
-	hperh->rx_size  = 0;
-	hperh->rx_count = 0;
-
-	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_SLAVE_TRANSMIT << SPI_I2SCFG_I2SCFG_POSS);
-
-	ald_i2s_interrupt_config(hperh, I2S_IT_TXE, ENABLE);
-
-	__UNLOCK(hperh);
-
-	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
-		I2S_ENABLE(hperh);
-
-	return OK;
-}
-
-/**
-  * @brief  Slave mode receives an amount of data in non blocking mode
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  buf: Pointer to data received buffer
-  * @param  size: Amount of data to be sent
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_i2s_slave_recv_by_it(i2s_handle_t *hperh, uint16_t *buf, uint16_t size)
-{
-	assert_param(IS_I2S(hperh->perh));
-
-	if (hperh->state != I2S_STATE_READY)
-		return BUSY;
-	if (buf == NULL || size == 0)
-		return ERROR;
-
-	__LOCK(hperh);
-	hperh->state    = I2S_STATE_BUSY_RX;
-	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->rx_buf   = buf;
-	hperh->rx_size  = size;
-	hperh->rx_count = size;
-	hperh->tx_buf   = NULL;
-	hperh->tx_size  = 0;
-	hperh->tx_count = 0;
-
-	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_SLAVE_RECEIVE << SPI_I2SCFG_I2SCFG_POSS);
-
-
-	__UNLOCK(hperh);
-
-	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
-		I2S_ENABLE(hperh);
-
+	
 	ald_i2s_interrupt_config(hperh, I2S_IT_RXTH, ENABLE);
+	ald_i2s_interrupt_config(hperh, I2S_IT_TXE, ENABLE);
 
 	return OK;
 }
@@ -632,7 +429,7 @@ ald_status_t ald_i2s_slave_recv_by_it(i2s_handle_t *hperh, uint16_t *buf, uint16
   * @param  channel: DMA channel as I2S transmit
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_i2s_master_send_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint8_t channel)
+ald_status_t ald_i2s_master_send_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint8_t channel)
 {
 	assert_param(IS_I2S(hperh->perh));
 
@@ -641,44 +438,44 @@ ald_status_t ald_i2s_master_send_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
 	hperh->state    = I2S_STATE_BUSY_TX;
 	hperh->err_code = I2S_ERROR_NONE;
-
 	hperh->tx_buf   = buf;
 	hperh->tx_size  = size;
 	hperh->tx_count = size;
 	hperh->rx_buf   = NULL;
 	hperh->rx_size  = 0;
 	hperh->rx_count = 0;
+	
+	WRITE_REG(hperh->perh->ICR, 0xffffffff);
+
+	I2S_DISABLE(hperh);
 
 	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_MASTER_TRANSMIT << SPI_I2SCFG_I2SCFG_POSS);
 
 	if (hperh->init.mck_en)
 		MODIFY_REG(hperh->perh->I2SPR, SPI_I2SPR_MCKOE_MSK, hperh->init.mck_en << SPI_I2SPR_MCKOE_POS);
 
-	hperh->hdma.cplt_arg = (void *)hperh;
-	hperh->hdma.cplt_cbk = i2s_dma_send_cplt;
-	hperh->hdma.err_arg  = (void *)hperh;
-	hperh->hdma.err_cbk  = i2s_dma_error;
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.cplt_cbk = i2s_dma_send_cplt;
+	hperh->hdmatx.err_arg  = (void *)hperh;
+	hperh->hdmatx.err_cbk  = i2s_dma_error;
 
 	/* Configure I2S DMA transmit */
-	ald_dma_config_struct(&(hperh->hdma.config));
-	hperh->hdma.perh              = DMA0;
-	hperh->hdma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hperh->hdma.config.src        = (void *)buf;
-	hperh->hdma.config.dst        = (void *)&hperh->perh->DATA;
-	hperh->hdma.config.size       = size;
-	hperh->hdma.config.src_inc    = DMA_DATA_INC_HALFWORD;
-	hperh->hdma.config.dst_inc    = DMA_DATA_INC_NONE;
-	hperh->hdma.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-	hperh->hdma.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
-	hperh->hdma.config.channel    = channel;
-	hperh->hdma.config.burst      = ENABLE;
-	ald_dma_config_basic(&(hperh->hdma));
-
+	ald_dma_config_struct(&(hperh->hdmatx.config));
+	hperh->hdmatx.perh              = DMA0;
+	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmatx.config.src        = (void *)buf;
+	hperh->hdmatx.config.dst        = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size       = size;
+	hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
+	hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
+	hperh->hdmatx.config.channel    = channel;
+	hperh->hdmatx.config.burst      = ENABLE;
+	ald_dma_config_basic(&(hperh->hdmatx));
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_TX, ENABLE);
-	__UNLOCK(hperh);
 
 	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
 		I2S_ENABLE(hperh);
@@ -691,179 +488,82 @@ ald_status_t ald_i2s_master_send_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint
   * @param  hperh: Pointer to a i2s_handle_t structure.
   * @param  buf: Pointer to data buffer
   * @param  size: Amount of data to be sent
-  * @param  channel: DMA channel as I2S transmit
+  * @param  dma_ch: DMA channel for I2S receive
+  * @param  _dma_ch: DMA channel for sending clock
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_i2s_master_recv_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint8_t channel)
+ald_status_t ald_i2s_master_recv_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint32_t size, uint8_t dma_ch, uint8_t _dma_ch)
 {
 	assert_param(IS_I2S(hperh->perh));
-
+		
 	if (hperh->state != I2S_STATE_READY)
 		return BUSY;
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
 	hperh->state    = I2S_STATE_BUSY_RX;
 	hperh->err_code = I2S_ERROR_NONE;
-
 	hperh->rx_buf   = buf;
 	hperh->rx_size  = size;
 	hperh->rx_count = size;
 	hperh->tx_buf   = NULL;
 	hperh->tx_size  = 0;
 	hperh->tx_count = 0;
+	buf[size - 1]   = 0xFFFF;
+	
+	WRITE_REG(hperh->perh->ICR, 0xffffffff);
+
+	I2S_DISABLE(hperh);
 
 	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_MASTER_RECEIVE << SPI_I2SCFG_I2SCFG_POSS);
 
 	if (hperh->init.mck_en)
 		MODIFY_REG(hperh->perh->I2SPR, SPI_I2SPR_MCKOE_MSK, hperh->init.mck_en << SPI_I2SPR_MCKOE_POS);
 
-	hperh->hdma.cplt_arg = (void *)hperh;
-	hperh->hdma.cplt_cbk = i2s_dma_recv_cplt;
-	hperh->hdma.err_arg  = (void *)hperh;
-	hperh->hdma.err_cbk  = i2s_dma_error;
-
-	/* Configure DMA Receive */
-	ald_dma_config_struct(&(hperh->hdma.config));
-
-	hperh->hdma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hperh->hdma.config.src        = (void *)&hperh->perh->DATA;
-	hperh->hdma.config.dst        = (void *)buf;
-	hperh->hdma.config.size       = size;
-	hperh->hdma.config.src_inc    = DMA_DATA_INC_NONE;
-	hperh->hdma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-	hperh->hdma.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-	hperh->hdma.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
-	hperh->hdma.config.channel    = channel;
-	hperh->hdma.config.burst      = ENABLE;
-	ald_dma_config_basic(&(hperh->hdma));
-
-	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_RX, ENABLE);
-	__UNLOCK(hperh);
-
-	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
-		I2S_ENABLE(hperh);
-
-	return OK;
-}
-
-/**
-  * @brief  Slave mode transmit an amount of data used dma channel
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  buf: Pointer to data buffer
-  * @param  size: Amount of data to be sent
-  * @param  channel: DMA channel as I2S transmit
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_i2s_slave_send_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint8_t channel)
-{
-	assert_param(IS_I2S(hperh->perh));
-
-	if (hperh->state != I2S_STATE_READY)
-		return BUSY;
-	if (buf == NULL || size == 0)
-		return ERROR;
-
-	__LOCK(hperh);
-	hperh->state    = I2S_STATE_BUSY_TX;
-	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->tx_buf   = buf;
-	hperh->tx_size  = size;
-	hperh->tx_count = size;
-	hperh->rx_buf   = NULL;
-	hperh->rx_size  = 0;
-	hperh->rx_count = 0;
-
-	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_SLAVE_TRANSMIT << SPI_I2SCFG_I2SCFG_POSS);
-
-	hperh->hdma.cplt_arg = (void *)hperh;
-	hperh->hdma.cplt_cbk = i2s_dma_send_cplt;
-	hperh->hdma.err_arg  = (void *)hperh;
-	hperh->hdma.err_cbk  = i2s_dma_error;
-
-	/* Configure I2S DMA transmit */
-	ald_dma_config_struct(&(hperh->hdma.config));
-
-	hperh->hdma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hperh->hdma.config.src        = (void *)buf;
-	hperh->hdma.config.dst        = (void *)&hperh->perh->DATA;
-	hperh->hdma.config.size       = size;
-	hperh->hdma.config.src_inc    = DMA_DATA_INC_HALFWORD;
-	hperh->hdma.config.dst_inc    = DMA_DATA_INC_NONE;
-	hperh->hdma.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-	hperh->hdma.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
-	hperh->hdma.config.channel    = channel;
-	hperh->hdma.config.burst      = ENABLE;
-	ald_dma_config_basic(&(hperh->hdma));
-
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.cplt_cbk = i2s_dma_send_cplt;
+	hperh->hdmatx.err_arg  = (void *)hperh;
+	hperh->hdmatx.err_cbk  = i2s_dma_error;
+	
+	ald_dma_config_struct(&(hperh->hdmatx.config));
+	hperh->hdmatx.perh              = DMA0;
+	hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmatx.config.src        = (void *)&buf[size - 1];
+	hperh->hdmatx.config.dst        = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size       = size;
+	hperh->hdmatx.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
+	hperh->hdmatx.config.burst      = ENABLE;
+	hperh->hdmatx.config.channel    = _dma_ch;
+	ald_dma_config_basic(&(hperh->hdmatx));
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_TX, ENABLE);
-	__UNLOCK(hperh);
-
-	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
-		I2S_ENABLE(hperh);
-
-	return OK;
-}
-
-/**
-  * @brief  Slave mode receive an amount of data used dma channel
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  buf: Pointer to data buffer
-  * @param  size: Amount of data to be sent
-  * @param  channel: DMA channel as I2S transmit
-  * @retval Status, see @ref ald_status_t.
-  */
-ald_status_t ald_i2s_slave_recv_by_dma(i2s_handle_t *hperh, uint16_t *buf, uint16_t size, uint8_t channel)
-{
-	assert_param(IS_I2S(hperh->perh));
-
-	if (hperh->state != I2S_STATE_READY)
-		return BUSY;
-	if (buf == NULL || size == 0)
-		return ERROR;
-
-	__LOCK(hperh);
-	hperh->state    = I2S_STATE_BUSY_RX;
-	hperh->err_code = I2S_ERROR_NONE;
-
-	hperh->rx_buf   = buf;
-	hperh->rx_size  = size;
-	hperh->rx_count = size;
-	hperh->tx_buf   = NULL;
-	hperh->tx_size  = 0;
-	hperh->tx_count = 0;
-
-	MODIFY_REG(hperh->perh->I2SCFG, SPI_I2SCFG_I2SCFG_MSK, I2S_SLAVE_RECEIVE << SPI_I2SCFG_I2SCFG_POSS);
-
-	hperh->hdma.cplt_arg = (void *)hperh;
-	hperh->hdma.cplt_cbk = i2s_dma_recv_cplt;
-	hperh->hdma.err_arg  = (void *)hperh;
-	hperh->hdma.err_cbk  = i2s_dma_error;
+	
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.cplt_cbk = i2s_dma_recv_cplt;
+	hperh->hdmarx.err_arg  = (void *)hperh;
+	hperh->hdmarx.err_cbk  = i2s_dma_error;
 
 	/* Configure DMA Receive */
-	ald_dma_config_struct(&(hperh->hdma.config));
-
-	hperh->hdma.perh              = DMA0;
-	hperh->hdma.config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hperh->hdma.config.src        = (void *)&hperh->perh->DATA;
-	hperh->hdma.config.dst        = (void *)buf;
-	hperh->hdma.config.size       = size;
-	hperh->hdma.config.src_inc    = DMA_DATA_INC_NONE;
-	hperh->hdma.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-	hperh->hdma.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-	hperh->hdma.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
-	hperh->hdma.config.channel    = channel;
-	hperh->hdma.config.burst      = ENABLE;
-	ald_dma_config_basic(&(hperh->hdma));
-
+	ald_dma_config_struct(&(hperh->hdmarx.config));
+	hperh->hdmarx.perh              = DMA0;
+	hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmarx.config.src        = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst        = (void *)buf;
+	hperh->hdmarx.config.size       = size;
+	hperh->hdmarx.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+	hperh->hdmarx.config.msel       = hperh->perh == I2S0 ? DMA_MSEL_SPI0 : (hperh->perh == I2S1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmarx.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
+	hperh->hdmarx.config.channel    = dma_ch;
+	hperh->hdmarx.config.burst      = ENABLE;
+	ald_dma_config_basic(&(hperh->hdmarx));
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_RX, ENABLE);
-	__UNLOCK(hperh);
 
 	if (READ_BIT(hperh->perh->I2SCFG, SPI_I2SCFG_I2SE_MSK) == 0)
 		I2S_ENABLE(hperh);
-
+	
 	return OK;
 }
 
@@ -876,10 +576,8 @@ ald_status_t ald_i2s_dma_pause(i2s_handle_t *hperh)
 {
 	assert_param(IS_I2S(hperh->perh));
 
-	__LOCK(hperh);
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_TX, DISABLE);
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_RX, DISABLE);
-	__UNLOCK(hperh);
 
 	return OK;
 }
@@ -893,10 +591,8 @@ ald_status_t ald_i2s_dma_resume(i2s_handle_t *hperh)
 {
 	assert_param(IS_I2S(hperh->perh));
 
-	__LOCK(hperh);
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_TX, ENABLE);
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_RX, ENABLE);
-	__UNLOCK(hperh);
 
 	return OK;
 }
@@ -910,10 +606,8 @@ ald_status_t ald_i2s_dma_stop(i2s_handle_t *hperh)
 {
 	assert_param(IS_I2S(hperh->perh));
 
-	__LOCK(hperh);
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_TX, DISABLE);
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_RX, DISABLE);
-	__UNLOCK(hperh);
 
 	hperh->state = I2S_STATE_READY;
 	return OK;
@@ -951,27 +645,29 @@ ald_status_t ald_i2s_dma_stop(i2s_handle_t *hperh)
   */
 void ald_i2s_irq_handler(i2s_handle_t *hperh)
 {
-	if ((ald_i2s_get_it_status(hperh, I2S_IT_RXTH) != RESET) && (ald_i2s_get_it_flag_status(hperh, I2S_IF_RXTH) != RESET)) {
+	if (ald_i2s_get_mask_flag_status(hperh, I2S_IF_RXTH) == SET) {
 		ald_i2s_clear_flag_status(hperh, I2S_IF_RXTH);
-		if (hperh->state == I2S_STATE_BUSY_RX)
+		if ((hperh->state == I2S_STATE_BUSY_TX_RX) || (hperh->state == I2S_STATE_BUSY_RX))
 			__i2s_recv_by_it(hperh);
 	}
-	if ((ald_i2s_get_it_status(hperh, I2S_IT_TXE) != RESET) && (ald_i2s_get_it_flag_status(hperh, I2S_IF_TXE) != RESET)) {
+
+	if (ald_i2s_get_mask_flag_status(hperh, I2S_IF_TXE) == SET) {
 		ald_i2s_clear_flag_status(hperh, I2S_IF_TXE);
 		if (hperh->state == I2S_STATE_BUSY_TX)
 			__i2s_send_by_it(hperh);
+		else if (hperh->state == I2S_STATE_BUSY_TX_RX)
+			__i2s_tx_recv_by_it(hperh);
+			
 	}
 
-
 	if (hperh->err_code != I2S_ERROR_NONE) {
-		ald_i2s_interrupt_config(hperh, I2S_IT_RXF, DISABLE);
+		ald_i2s_interrupt_config(hperh, I2S_IT_RXTH, DISABLE);
 		ald_i2s_interrupt_config(hperh, I2S_IT_TXE, DISABLE);
 		hperh->state = I2S_STATE_READY;
 
 		if (hperh->err_cbk)
 			hperh->err_cbk(hperh);
 	}
-
 
 	return;
 }
@@ -993,9 +689,9 @@ void ald_i2s_interrupt_config(i2s_handle_t *hperh, i2s_it_t it, type_func_t stat
 	assert_param(IS_FUNC_STATE(state));
 
 	if (state == ENABLE)
-		hperh->perh->IER |= (uint32_t)it;
+		hperh->perh->IER = (uint32_t)it;
 	else
-		hperh->perh->IDR |= (uint32_t)it;
+		hperh->perh->IDR = (uint32_t)it;
 
 	return;
 }
@@ -1040,7 +736,7 @@ void ald_i2s_dma_req_config(i2s_handle_t *hperh, i2s_dma_req_t req, type_func_t 
   *           - SET
   *           - RESET
   */
-flag_status_t i2s_get_status(i2s_handle_t *hperh, i2s_status_t status)
+flag_status_t ald_i2s_get_status(i2s_handle_t *hperh, i2s_status_t status)
 {
 	assert_param(IS_I2S(hperh->perh));
 	assert_param(IS_I2S_STATUS(status));
@@ -1071,7 +767,24 @@ it_status_t ald_i2s_get_it_status(i2s_handle_t *hperh, i2s_it_t it)
 	return RESET;
 }
 
+/** @brief  Check whether the specified I2S interrupt flag is set or not.
+  * @param  hperh: Pointer to a i2s_handle_t structure.
+  * @param  flag: specifies the flag to check.
+  *         This parameter can be one of the @ref i2s_flag_t.
+  * @retval Status
+  *           - SET
+  *           - RESET
+  */
+flag_status_t ald_i2s_get_flag_status(i2s_handle_t *hperh, i2s_flag_t flag)
+{
+	assert_param(IS_I2S(hperh->perh));
+	assert_param(IS_I2S_IF(flag));
 
+	if (hperh->perh->RIF & flag)
+		return SET;
+
+	return RESET;
+}
 
 /** @brief  Check whether the specified I2S interrupt flag is set or not.
   * @param  hperh: Pointer to a i2s_handle_t structure.
@@ -1081,12 +794,12 @@ it_status_t ald_i2s_get_it_status(i2s_handle_t *hperh, i2s_it_t it)
   *           - SET
   *           - RESET
   */
-flag_status_t ald_i2s_get_it_flag_status(i2s_handle_t *hperh, i2s_flag_t flag)
+flag_status_t ald_i2s_get_mask_flag_status(i2s_handle_t *hperh, i2s_flag_t flag)
 {
 	assert_param(IS_I2S(hperh->perh));
 	assert_param(IS_I2S_IF(flag));
 
-	if (hperh->perh->RIF & flag)
+	if (hperh->perh->IFM & flag)
 		return SET;
 
 	return RESET;
@@ -1103,60 +816,9 @@ void ald_i2s_clear_flag_status(i2s_handle_t *hperh, i2s_flag_t flag)
 	assert_param(IS_I2S(hperh->perh));
 	assert_param(IS_I2S_IF(flag));
 
-
-	hperh->perh->ICR |= flag;
+	hperh->perh->ICR = flag;
 	return;
 }
-
-/**
-  * @brief  This function wait I2S status until timeout.
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  flag: specifies the I2S flag to check.
-  * @param  status: The new Flag status (SET or RESET).
-  * @param  timeout: Timeout duration
-  * @retval Status, see @ref ald_status_t.
-  */
-static ald_status_t i2s_wait_status(i2s_handle_t *hperh, i2s_status_t flag, flag_status_t status, uint32_t timeout)
-{
-	uint32_t tick = ald_get_tick();
-
-	assert_param(timeout > 0);
-
-	while ((i2s_get_status(hperh, flag)) != status) {
-		if (((ald_get_tick()) - tick) > timeout) {
-			ald_i2s_interrupt_config(hperh, I2S_IT_TXE, DISABLE);
-			ald_i2s_interrupt_config(hperh, I2S_IT_RXF, DISABLE);
-			return TIMEOUT;
-		}
-	}
-
-	return OK;
-}
-
-/**
-  * @brief  This function wait I2S busy status until timeout.
-  * @param  hperh: Pointer to a i2s_handle_t structure.
-  * @param  status: The new Flag status (SET or RESET).
-  * @param  timeout: Timeout duration
-  * @retval Status, see @ref ald_status_t.
-  */
-static ald_status_t i2s_wait_bsy_flag(i2s_handle_t *hperh, flag_status_t status, uint32_t timeout)
-{
-	uint32_t tick = ald_get_tick();
-
-	assert_param(timeout > 0);
-
-	while (READ_BIT(hperh->perh->STAT, SPI_STAT_BUSY_MSK) != status) {
-		if (((ald_get_tick()) - tick) > timeout) {
-			ald_i2s_interrupt_config(hperh, I2S_IT_TXE, DISABLE);
-			ald_i2s_interrupt_config(hperh, I2S_IT_RXF, DISABLE);
-			return TIMEOUT;
-		}
-	}
-
-	return OK;
-}
-
 /**
   * @}
   */
@@ -1201,7 +863,6 @@ uint32_t ald_i2s_get_error(i2s_handle_t *hperh)
 /**
   * @}
   */
-
 /**
   * @}
   */
@@ -1210,6 +871,30 @@ uint32_t ald_i2s_get_error(i2s_handle_t *hperh)
   * @brief   I2S Private functions
   * @{
   */
+/**
+  * @brief  This function wait I2S status until timeout.
+  * @param  hperh: Pointer to a i2s_handle_t structure.
+  * @param  flag: specifies the I2S flag to check.
+  * @param  status: The new Flag status (SET or RESET).
+  * @param  timeout: Timeout duration
+  * @retval Status, see @ref ald_status_t.
+  */
+static ald_status_t i2s_wait_status(i2s_handle_t *hperh, i2s_status_t flag, flag_status_t status, uint32_t timeout)
+{
+	uint32_t tick = ald_get_tick();
+
+	assert_param(timeout > 0);
+
+	while ((ald_i2s_get_status(hperh, flag)) != status) {
+		if (((ald_get_tick()) - tick) > timeout) {
+			ald_i2s_interrupt_config(hperh, I2S_IT_TXE, DISABLE);
+			ald_i2s_interrupt_config(hperh, I2S_IT_RXTH, DISABLE);
+			return TIMEOUT;
+		}
+	}
+
+	return OK;
+}
 
 /**
   * @brief  handle program when an tx empty interrupt flag arrived in non block mode
@@ -1218,14 +903,18 @@ uint32_t ald_i2s_get_error(i2s_handle_t *hperh)
   */
 static void __i2s_send_by_it(i2s_handle_t *hperh)
 {
+	int cnt = 8000;
+
 	if (hperh->tx_count == 0) {
 		ald_i2s_interrupt_config(hperh, I2S_IT_TXE, DISABLE);
 		hperh->state = I2S_STATE_READY;
 
-		if ((i2s_wait_bsy_flag(hperh, RESET, 1000)) != OK) {
+		while ((hperh->perh->STAT & SPI_STAT_BUSY_MSK) && (--cnt));
+		if (cnt == 0) {
 			if (hperh->err_cbk)
 				hperh->err_cbk(hperh);
 
+			ald_i2s_interrupt_config(hperh, I2S_IT_RXTH, DISABLE);
 			return;
 		}
 
@@ -1235,9 +924,8 @@ static void __i2s_send_by_it(i2s_handle_t *hperh)
 		return;
 	}
 
-	hperh->side = READ_BIT(hperh->perh->STAT, SPI_STAT_CHSIDE_MSK);
-	hperh->perh->DATA = *hperh->tx_buf;
-	hperh->tx_buf++;
+	hperh->side = READ_BITS(hperh->perh->STAT, SPI_STAT_CHSIDE_MSK, SPI_STAT_CHSIDE_POS);
+	hperh->perh->DATA = *hperh->tx_buf++;
 	--hperh->tx_count;
 
 	return;
@@ -1250,9 +938,10 @@ static void __i2s_send_by_it(i2s_handle_t *hperh)
   */
 static void __i2s_recv_by_it(i2s_handle_t *hperh)
 {
-	*hperh->rx_buf = hperh->perh->DATA;
-	hperh->rx_buf++;
-	--hperh->rx_count;
+	while (READ_BITS(hperh->perh->STAT, SPI_STAT_RXFLV_MSK, SPI_STAT_RXFLV_POSS)) {
+		*(hperh->rx_buf++) = hperh->perh->DATA;
+		--hperh->rx_count;
+	}
 
 	if (hperh->rx_count == 0) {
 		ald_i2s_interrupt_config(hperh, I2S_IT_RXTH, DISABLE);
@@ -1265,6 +954,22 @@ static void __i2s_recv_by_it(i2s_handle_t *hperh)
 	return;
 }
 
+/**
+  * @brief  handle program when an rx no empty interrupt flag arrived in non block mode
+  * @param  hperh: Pointer to a i2s_handle_t structure.
+  * @retval None.
+  */
+static void __i2s_tx_recv_by_it(i2s_handle_t *hperh)
+{
+	if (hperh->tx_count != 0) {
+		ald_i2s_clear_flag_status(hperh, I2S_IF_TXE);
+		hperh->perh->DATA = 0xffff;
+		--hperh->tx_count;
+		if (hperh->tx_count == 0) 
+			ald_i2s_interrupt_config(hperh, I2S_IT_TXE, DISABLE);
+	} 
+}
+
 #ifdef ALD_DMA
 /**
   * @brief  DMA I2S transmit process complete callback.
@@ -1273,13 +978,15 @@ static void __i2s_recv_by_it(i2s_handle_t *hperh)
   */
 static void i2s_dma_send_cplt(void *arg)
 {
+	int cnt = 8000;
 	i2s_handle_t *hperh = (i2s_handle_t *)arg;
 
 	hperh->tx_count = 0;
 	ald_i2s_dma_req_config(hperh, I2S_DMA_REQ_TX, DISABLE);
 	hperh->state = I2S_STATE_READY;
 
-	if ((i2s_wait_bsy_flag(hperh, RESET, 1000)) != OK)
+	while ((hperh->perh->STAT & SPI_STAT_BUSY_MSK) && (--cnt));
+	if (cnt == 0)
 		hperh->err_code |= I2S_ERROR_FLAG;
 
 	if (hperh->err_code == I2S_ERROR_NONE) {
@@ -1342,11 +1049,11 @@ static void i2s_dma_error(void *arg)
 	return;
 }
 
-#endif /* ALD_DMA */
+#endif
 /**
   * @}
   */
-#endif /* ALD_I2S */
+#endif
 /**
   * @}
   */

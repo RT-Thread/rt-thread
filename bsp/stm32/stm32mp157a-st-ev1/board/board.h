@@ -23,23 +23,23 @@ extern "C" {
 #endif
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x10000000)  
-#if defined(BSP_USING_OPENAMP)
-#define STM32_FLASH_SIZE             (64 * 1024)
-#else
-#define STM32_FLASH_SIZE             (256 * 1024)    
-#endif
+#define STM32_FLASH_SIZE             (192 * 1024)
 #define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-    
-#if defined(BSP_USING_OPENAMP)    
-#define STM32_SRAM_BEGIN             (uint32_t)0x10020000 
-#else
-#define STM32_SRAM_BEGIN             (uint32_t)0x2FFF0000     
-#endif
-#define STM32_SRAM_SIZE              (64)    
-#define STM32_SRAM_END               (STM32_SRAM_BEGIN + (STM32_SRAM_SIZE * 1024))
 
-#define HEAP_BEGIN                    STM32_SRAM_BEGIN
+#define STM32_SRAM_SIZE           (64)
+#define STM32_SRAM_END            (0x10030000 + 64 * 1024)  	
+
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+extern int Image$$RW_IRAM1$$ZI$$Limit;
+#define HEAP_BEGIN      (&Image$$RW_IRAM1$$ZI$$Limit)
+#elif __ICCARM__
+#pragma section="CSTACK"
+#define HEAP_BEGIN      (__segment_end("CSTACK"))
+#else
+extern int __bss_end;
+#define HEAP_BEGIN      (&__bss_end)
+#endif
 #define HEAP_END                      STM32_SRAM_END
 
 void SystemClock_Config(void);
@@ -51,4 +51,3 @@ extern void _Error_Handler(char *s, int num);
 #endif
 
 #endif
-

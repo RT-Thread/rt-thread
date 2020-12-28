@@ -63,11 +63,14 @@ void ald_rmu_bor_config(rmu_bor_filter_t flt, rmu_bor_vol_t vol, type_func_t sta
 /**
   * @brief  Get specified reset status
   * @param  state: Speicifies the type of the reset,
-  * @retval The status: SET/RESET.
+  * @retval The status.
   */
-flag_status_t ald_rmu_get_reset_status(rmu_state_t state)
+uint32_t ald_rmu_get_reset_status(rmu_state_t state)
 {
 	assert_param(IS_RMU_STATE(state));
+
+	if (state == RMU_RST_ALL)
+		return RMU->RSTSR;
 
 	if (READ_BIT(RMU->RSTSR, state))
 		return SET;
@@ -101,7 +104,7 @@ void ald_rmu_reset_periperal(rmu_peripheral_t perh)
 
 	assert_param(IS_RMU_PERH(perh));
 
-	idx = (perh >> 27) & 0x7;
+	idx = ((uint32_t)perh >> 27) & 0x7;
 	pos = perh & ~(0x7 << 27);
 	SYSCFG_UNLOCK();
 

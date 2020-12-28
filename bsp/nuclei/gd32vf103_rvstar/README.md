@@ -4,7 +4,7 @@
 
 **RVSTAR开发板** 是由[芯来科技Nuclei](https://nucleisys.com/)公司推出的基于采用芯来科技RISC-V架构处理器芯片的GD32VF103的开发板。
 
-更多关于 **RVSTAR开发板** 开发板的详细资料请参见 [RVSTAR开发板快速入门](https://www.rvmcu.com/quickstart-quickstart-index-u-RV_STAR.html)
+更多关于 **RVSTAR开发板** 开发板的详细资料请参见 [RVSTAR开发板快速入门](https://www.rvmcu.com/quickstart-doc-u-rvstar.html)
 
 ### 板载资源
 
@@ -103,7 +103,7 @@ A debugging session is active.
         Inferior 1 [Remote target] will be detached.
 
 Quit anyway? (y or n) [answered Y; input not from terminal]
-Remote communication error.  Target disconnected.: Success.
+[Inferior 1 (Remote target) detached]
 ~~~
 
 下载程序之后, 连接串口(115200-N-8-1), 可以看到 RT-Thread 的输出信息：
