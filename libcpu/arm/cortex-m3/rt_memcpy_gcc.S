@@ -267,7 +267,7 @@ copy_08_2:
 
 
 rt_memcpy_end:
-        POP         {R0}                    ; pop pdest
+        POP         {R0}                    @ pop pdest
         LDMFD       SP!, {R3-R12}           @ restore registers from stack
         BX          LR                      @ return
 
