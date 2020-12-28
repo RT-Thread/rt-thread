@@ -58,7 +58,7 @@ void SysTick_Handler(void)
 
 uint32_t HAL_GetTick(void)
 {
-    return rt_tick_get() * 1000 / RT_TICK_PER_SECOND;
+    return rt_hw_1ms_tick_get();
 }
 
 void HAL_SuspendTick(void)

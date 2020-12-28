@@ -13,6 +13,7 @@
  * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
  * 2011-06-26     Bernard      add rt_tick_set function.
  * 2018-11-22     Jesven       add per cpu tick
+ * 2020-12-29     Meco Man     add function rt_hw_1ms_tick_get()
  */
 
 #include <rthw.h>
@@ -115,6 +116,22 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
     return tick;
 }
 RTM_EXPORT(rt_tick_from_millisecond);
+
+/**
+ * This function provides a tick value ALWAYS in millisecond
+ *
+ * @return 1ms-based tick
+ */
+RT_WEAK rt_tick_t rt_hw_1ms_tick_get(void)
+{
+#if 1000 % RT_TICK_PER_SECOND == 0
+    return rt_tick_get() * (1000U / RT_TICK_PER_SECOND);
+#else
+    #warning "rt-thread cannot provide a correct 1ms-based tick any longer,\
+    please redefine this function in another file by using a high-precision hard-timer."
+    return 0;
+#endif
+}
 
 /**@}*/
 
