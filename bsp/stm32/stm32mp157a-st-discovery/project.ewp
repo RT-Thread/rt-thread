@@ -231,6 +231,7 @@
           <state>VIRTIO_SLAVE_ONLY</state>
           <state>STM32MP157Axx</state>
           <state>__LOG_TRACE_IO_</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -363,13 +364,14 @@
           <state>$PROJ_DIR$\board\CubeMX_Config\CM4\Inc</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Core\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\board\ports\audio</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -1306,6 +1308,7 @@
           <state>VIRTIO_SLAVE_ONLY</state>
           <state>STM32MP157Axx</state>
           <state>__LOG_TRACE_IO_</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1438,13 +1441,14 @@
           <state>$PROJ_DIR$\board\CubeMX_Config\CM4\Inc</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Core\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\board\ports\audio</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -2157,7 +2161,7 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
+    <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2316,7 +2320,7 @@
     </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Src\stm32mp1xx_hal.c</name>
     </file>
