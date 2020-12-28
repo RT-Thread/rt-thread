@@ -44,7 +44,7 @@ enable_int_ret:
 
 /* Macro for saving task context */
 .macro save_context
-    addi    sp, sp, -120
+    addi    sp, sp, -124
 
     /* Save Context */
     sw      x1, 0(sp)
@@ -79,6 +79,8 @@ enable_int_ret:
 
     lw      a5, EPC(zero)                  //Saves current program counter (EPC) as task program counter
     sw      a5, 116(sp)
+    lw      a5, EPICCON(zero)
+    sw      a5, 120(sp)
 
     sw      sp, rt_cur_thread_sp, a4                       //store sp in preempted tasks tcb
     .endm
@@ -93,6 +95,8 @@ enable_int_ret:
     /* Load task program counter  EPC*/
     lw      a5, 116(sp)
     sw      a5, EPC(zero)
+    lw      a5, 120(sp)
+    sw      a5, EPICCON(zero)
 
     /* Restore registers,
        Skip global pointer because that does not change */
@@ -126,7 +130,7 @@ enable_int_ret:
     lw      x30, 108(sp)
     lw      x31, 112(sp)
 
-    addi    sp, sp, 120
+    addi    sp, sp, 124
     mret
     .endm
 

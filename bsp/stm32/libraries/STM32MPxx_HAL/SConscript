@@ -104,10 +104,6 @@ if GetDepend(['BSP_USING_DFSDM']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_dfsdm.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_dfsdm_ex.c']
 
-if GetDepend(['BSP_USING_SDMMC']):
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_ll_sdmmc.c']
-    src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_sd.c']
-
 if GetDepend(['BSP_USING_HASH']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_hash.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_hash_ex.c']
@@ -129,6 +125,6 @@ path = [cwd + '/STM32MP1xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
-group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

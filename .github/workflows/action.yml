@@ -140,6 +140,7 @@ jobs:
       - name: Install Tools
         shell: bash
         run: |
+          sudo apt-get update
           sudo apt-get -qq install gcc-multilib libsdl-dev scons
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV

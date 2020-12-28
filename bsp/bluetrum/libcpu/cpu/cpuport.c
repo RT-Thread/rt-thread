@@ -40,6 +40,8 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stk  = (rt_uint32_t *)stack_addr;
 
     stk--;
+    *stk = (rt_uint32_t)0x10003;         /* Start address */
+    stk--;
 	*stk = (rt_uint32_t)tentry;			/* Start address */
 	stk -= 22;
 	*stk = (rt_uint32_t)parameter;	    /* Register a0  parameter*/

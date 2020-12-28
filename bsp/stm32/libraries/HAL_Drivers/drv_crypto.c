@@ -9,6 +9,7 @@
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  * 2020-11-26     thread-liu   add hash
  * 2020-11-26     thread-liu   add cryp
+ * 2020-12-11     WKJay        fix build problem
  */
 
 #include <rtthread.h>
@@ -628,6 +629,7 @@ static void _crypto_reset(struct rt_hwcrypto_ctx *ctx)
     }
 }
 
+#if defined(HASH2_IN_DMA_INSTANCE)
 void HASH2_DMA_IN_IRQHandler(void)
 {
     extern DMA_HandleTypeDef hdma_hash_in;
@@ -640,7 +642,9 @@ void HASH2_DMA_IN_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif
 
+#if defined(CRYP2_IN_DMA_INSTANCE)
 void CRYP2_DMA_IN_IRQHandler(void)
 {   
     extern DMA_HandleTypeDef hdma_cryp_in;
@@ -653,7 +657,9 @@ void CRYP2_DMA_IN_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif
 
+#if defined (CRYP2_OUT_DMA_INSTANCE)
 void CRYP2_DMA_OUT_IRQHandler(void)
 {
     extern DMA_HandleTypeDef hdma_cryp_out;
@@ -666,6 +672,7 @@ void CRYP2_DMA_OUT_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif
 
 static const struct rt_hwcrypto_ops _ops =
 {
