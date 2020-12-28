@@ -134,6 +134,11 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context));
  */
 void rt_hw_us_delay(rt_uint32_t us);
 
+/*
+ * provides a tick value ALWAYS in millisecond
+ */
+rt_tick_t rt_hw_1ms_tick_get(void);
+
 #ifdef RT_USING_SMP
 typedef union {
     unsigned long slock;

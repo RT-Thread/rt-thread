@@ -32,6 +32,7 @@
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 
 #include "lwip/sys.h"
 #include "lwip/opt.h"
@@ -617,7 +618,7 @@ u32_t sys_jiffies(void)
 
 u32_t sys_now(void)
 {
-	return rt_tick_get() * (1000 / RT_TICK_PER_SECOND);
+    return rt_hw_1ms_tick_get();
 }
 
 #ifdef RT_LWIP_PPP
