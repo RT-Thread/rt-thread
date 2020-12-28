@@ -16,8 +16,7 @@
 
 #ifdef RT_USING_SPI
 
-#define RPI_CORE_CLK_HZ        (250000000)
-#define BSP_SPI_MAX_HZ         (30* 1000 *1000)
+#define RPI_CORE_CLK_HZ        (500 * 1000 * 1000)
 #define SPITIMEOUT             0x0FFF
 
 static rt_uint8_t raspi_byte_reverse_table[] =
@@ -76,35 +75,35 @@ static rt_err_t raspi_spi_configure(struct rt_spi_device *device, struct rt_spi_
 {
     RT_ASSERT(cfg != RT_NULL);
     RT_ASSERT(device != RT_NULL);
-    rt_uint16_t divider;
     struct raspi_spi_device* hw_config = (struct raspi_spi_device *)(device->parent.user_data);
     struct raspi_spi_hw_config *hwcfg = (struct raspi_spi_hw_config *)hw_config->spi_hw_config;
     // spi clear fifo
-    SPI_REG_CS(hwcfg->hw_base) = (SPI_CS_CLEAR_TX | SPI_CS_CLEAR_RX);
+    SPI_REG_CS(hwcfg->hw_base) |= (SPI_CS_CLEAR_TX | SPI_CS_CLEAR_RX);
     if(cfg->mode & RT_SPI_CPOL)
     {
         SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CPOL;
+    }
+    else
+    {
+        SPI_REG_CS(hwcfg->hw_base) &= ~SPI_CS_CPOL;
     }
 
     if(cfg->mode & RT_SPI_CPHA)
     {
         SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CPHA;
+    }else
+    {
+        SPI_REG_CS(hwcfg->hw_base) &= ~SPI_CS_CPHA;
     }
 
     if(cfg->mode & RT_SPI_CS_HIGH)
     {
         SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CSPOL_HIGH;   
     }
-
-    //set clk
-    if (cfg->max_hz > BSP_SPI_MAX_HZ)
-        cfg->max_hz = BSP_SPI_MAX_HZ;
-
-    divider = (rt_uint16_t) ((rt_uint32_t) RPI_CORE_CLK_HZ / cfg->max_hz);
-    divider &= 0xFFFE;
-
-    SPI_REG_CLK(hwcfg->hw_base) = divider;
-
+    else
+    {
+        SPI_REG_CS(hwcfg->hw_base) &= ~SPI_CS_CSPOL_HIGH;   
+    }
     return RT_EOK;
 }
 
@@ -120,13 +119,6 @@ static rt_err_t spi_transfernb(struct raspi_spi_hw_config *hwcfg, rt_uint8_t* tb
 {
     rt_uint32_t TXCnt=0;
     rt_uint32_t RXCnt=0;
-    
-    /* Clear TX and RX fifos */
-    SPI_REG_CS(hwcfg->hw_base) |= (SPI_CS_CLEAR_TX | SPI_CS_CLEAR_RX);
-
-    /* Set TA = 1 */
-    SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_TA;
-
     /* Use the FIFO's to reduce the interbyte times */
     while ((TXCnt < len) || (RXCnt < len))
     {
@@ -145,9 +137,6 @@ static rt_err_t spi_transfernb(struct raspi_spi_hw_config *hwcfg, rt_uint8_t* tb
     }
     /* Wait for DONE to be set */
     while (!(SPI_REG_CS(hwcfg->hw_base) & SPI_CS_DONE));
-    /* Set TA = 0, and also set the barrier */
-    SPI_REG_CS(hwcfg->hw_base) |= (0 & SPI_CS_TA);
-
     return RT_EOK;
 }
 
@@ -159,31 +148,54 @@ static rt_uint32_t raspi_spi_xfer(struct rt_spi_device *device, struct rt_spi_me
     RT_ASSERT(device->bus != RT_NULL);
     RT_ASSERT(device->parent.user_data != RT_NULL);
     RT_ASSERT(message->send_buf != RT_NULL || message->recv_buf != RT_NULL);
-
     struct rt_spi_configuration config = device->config;
     struct raspi_spi_device * hw_config = (struct raspi_spi_device *)device->parent.user_data;
     GPIO_PIN cs_pin = (GPIO_PIN)hw_config->cs_pin;
     struct raspi_spi_hw_config *hwcfg = (struct raspi_spi_hw_config *)hw_config->spi_hw_config;
 
+    //mode MSB
     if (config.mode & RT_SPI_MSB)
     {
-        flag = 0;
+        flag = 1;
     }   
     else
     {
-        flag = 1;
+        flag = 0;
     }
 
+    //max_hz
+    if(config.max_hz == 0)
+    {
+        SPI_REG_CLK(hwcfg->hw_base) = 0;
+    }
+    else
+    {
+        SPI_REG_CLK(hwcfg->hw_base) = (RPI_CORE_CLK_HZ / (config.max_hz));
+    }
+    
+    //cs_pin spi0.0
+    if(cs_pin == GPIO_PIN_8)
+    {
+        SPI_REG_CS(hwcfg->hw_base) &= (~(3 << 0));
+    }
+    else if(cs_pin == GPIO_PIN_7)//spi0.1
+    {
+        SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CHIP_SELECT_1;
+    }
+
+    //Clear TX and RX fifos
+    SPI_REG_CS(hwcfg->hw_base) |= (SPI_CS_CLEAR_TX | SPI_CS_CLEAR_RX);
     if (message->cs_take)
     {
-        (config.mode & RT_SPI_CS_HIGH)?prev_raspi_pin_write(cs_pin, 1):prev_raspi_pin_write(cs_pin, 0);
+        SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_TA;
     }
-
     res = spi_transfernb(hwcfg, (rt_uint8_t *)message->send_buf, (rt_uint8_t *)message->recv_buf, (rt_int32_t)message->length, flag);
     if (message->cs_release)
     {
-        (config.mode & RT_SPI_CS_HIGH)?prev_raspi_pin_write(cs_pin, 0):prev_raspi_pin_write(cs_pin, 1);
+        //Set TA = 0, and also set the barrier
+        SPI_REG_CS(hwcfg->hw_base) &= (~SPI_CS_TA);
     }
+
     if (res != RT_EOK)
            return RT_ERROR;
 
@@ -212,18 +224,6 @@ rt_err_t raspi_spi_hw_init(struct raspi_spi_hw_config *hwcfg)
 #endif
     //clear rx and tx
     SPI_REG_CS(hwcfg->hw_base) = (SPI_CS_CLEAR_TX | SPI_CS_CLEAR_RX);
-    //enable chip select
-#if defined (BSP_USING_SPI0_DEVICE0)
-    SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CHIP_SELECT_0;
-#endif
-
-#if defined (BSP_USING_SPI0_DEVICE1)
-    SPI_REG_CS(hwcfg->hw_base) |= SPI_CS_CHIP_SELECT_1;
-#endif
-    
-#if defined (BSP_USING_SPI0_DEVICE0) && defined (BSP_USING_SPI0_DEVICE1)
-    HWREG32(SPI_REG_CS(hwcfg->hw_base)) |= (SPI_CS_CHIP_SELECT_0 | SPI_CS_CHIP_SELECT_1);
-#endif
     return RT_EOK;
 }
 
@@ -273,6 +273,7 @@ struct raspi_spi_device raspi_spi0_device1 =
     .device_name = SPI0_DEVICE1_NAME,
     .spi_bus = &spi0_bus,
     .spi_device = &spi0_device1,
+    .spi_hw_config = &raspi_spi0_hw,
     .cs_pin = GPIO_PIN_7,
 };
 #endif

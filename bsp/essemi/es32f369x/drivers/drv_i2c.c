@@ -37,7 +37,7 @@ static void _i2c_init(void)
 
     /* Initialize I2C Pin */
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
-    gpio_instruct.odos = GPIO_PUSH_PULL;
+    gpio_instruct.odos = GPIO_OPEN_DRAIN;
     gpio_instruct.pupd = GPIO_PUSH_UP;
     gpio_instruct.podrv = GPIO_OUT_DRIVE_1;
     gpio_instruct.nodrv = GPIO_OUT_DRIVE_0_1;

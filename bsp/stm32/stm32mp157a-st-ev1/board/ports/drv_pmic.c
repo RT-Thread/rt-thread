@@ -19,6 +19,8 @@
 #define LOG_TAG              "drv.pmic"
 #include <drv_log.h>
 
+#define I2C_NAME "i2c3"
+
 static struct rt_i2c_bus_device *pmic_dev = RT_NULL;
 
 /* i2c read reg */
@@ -796,47 +798,47 @@ static rt_err_t rt_hw_pmic_init_register(void)
     stpmu1_write_reg(BUCK_ICC_TURNOFF_REG, 0x30);
     stpmu1_write_reg(LDO_ICC_TURNOFF_REG, 0x3b);
 
-  /* vddcore */
-  STPMU1_Regulator_Voltage_Set(STPMU1_BUCK1, 1200);
-  STPMU1_Regulator_Enable(STPMU1_BUCK1);
+    /* vddcore */
+    STPMU1_Regulator_Voltage_Set(STPMU1_BUCK1, 1200);
+    STPMU1_Regulator_Enable(STPMU1_BUCK1);
 
-  /* vddddr */
-  STPMU1_Regulator_Voltage_Set(STPMU1_BUCK2, 1350);
-  STPMU1_Regulator_Enable(STPMU1_BUCK2);
+    /* vddddr */
+    STPMU1_Regulator_Voltage_Set(STPMU1_BUCK2, 1350);
+    STPMU1_Regulator_Enable(STPMU1_BUCK2);
 
-  /* vdd */
-  STPMU1_Regulator_Voltage_Set(STPMU1_BUCK3, 3300);
-  STPMU1_Regulator_Enable(STPMU1_BUCK3);
+    /* vdd */
+    STPMU1_Regulator_Voltage_Set(STPMU1_BUCK3, 3300);
+    STPMU1_Regulator_Enable(STPMU1_BUCK3);
 
-  /* 3v3 */
-  STPMU1_Regulator_Voltage_Set(STPMU1_BUCK4, 3300);
-  STPMU1_Regulator_Enable(STPMU1_BUCK4);
+    /* 3v3 */
+    STPMU1_Regulator_Voltage_Set(STPMU1_BUCK4, 3300);
+    STPMU1_Regulator_Enable(STPMU1_BUCK4);
 
-  /* vdda */
-  STPMU1_Regulator_Voltage_Set(STPMU1_LDO1, 2900);
-  STPMU1_Regulator_Enable(STPMU1_LDO1);
+    /* vdda */
+    STPMU1_Regulator_Voltage_Set(STPMU1_LDO1, 2900);
+    STPMU1_Regulator_Enable(STPMU1_LDO1);
 
-  /* 2v8 */
-  STPMU1_Regulator_Voltage_Set(STPMU1_LDO2, 2800);
-  STPMU1_Regulator_Enable(STPMU1_LDO2);
+    /* 2v8 */
+    STPMU1_Regulator_Voltage_Set(STPMU1_LDO2, 2800);
+    STPMU1_Regulator_Enable(STPMU1_LDO2);
 
-  /* vtt_ddr  lod3 mode buck2/2 */
-  STPMU1_Regulator_Voltage_Set(STPMU1_LDO3, 0xFFFF);
-  STPMU1_Regulator_Enable(STPMU1_LDO3);
+    /* vtt_ddr  lod3 mode buck2/2 */
+    STPMU1_Regulator_Voltage_Set(STPMU1_LDO3, 0xFFFF);
+    STPMU1_Regulator_Enable(STPMU1_LDO3);
 
-  /* vdd_usb */
-  STPMU1_Regulator_Voltage_Set(STPMU1_LDO4, 3300);
-  STPMU1_Regulator_Enable(STPMU1_LDO4);
+    /* vdd_usb */
+    STPMU1_Regulator_Voltage_Set(STPMU1_LDO4, 3300);
+    STPMU1_Regulator_Enable(STPMU1_LDO4);
 
-  /* vdd_sd */
-  STPMU1_Regulator_Voltage_Set(STPMU1_LDO5, 2900);
-  STPMU1_Regulator_Enable(STPMU1_LDO5);
+    /* vdd_sd */
+    STPMU1_Regulator_Voltage_Set(STPMU1_LDO5, 2900);
+    STPMU1_Regulator_Enable(STPMU1_LDO5);
 
-  /* 1v8 */
-  STPMU1_Regulator_Voltage_Set(STPMU1_LDO6, 1800);
-  STPMU1_Regulator_Enable(STPMU1_LDO6);
+    /* 1v8 */
+    STPMU1_Regulator_Voltage_Set(STPMU1_LDO6, 1800);
+    STPMU1_Regulator_Enable(STPMU1_LDO6);
 
-  STPMU1_Regulator_Enable(STPMU1_VREFDDR);
+    STPMU1_Regulator_Enable(STPMU1_VREFDDR);
 
     return RT_EOK;
 }
@@ -884,7 +886,7 @@ static int pmic_init(void)
     {
         BSP_PMIC_MspInit();
         
-        result = rt_hw_pmic_init("i2c3");
+        result = rt_hw_pmic_init(I2C_NAME);
         if(result != RT_EOK)
         {
             LOG_D("stpmic init failed: %02x", result);

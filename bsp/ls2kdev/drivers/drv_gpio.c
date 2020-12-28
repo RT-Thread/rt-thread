@@ -25,7 +25,8 @@ static void loongson_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t
     gpio = (void *)device->user_data;
     m = (rt_uint64_t)1 << pin;
 
-    switch (mode) {
+    switch (mode)
+    {
     case PIN_MODE_OUTPUT:
         gpio->GPIO0_OEN &= ~m;
         break;
@@ -52,7 +53,8 @@ static void loongson_pin_write(struct rt_device *device, rt_base_t pin, rt_base_
     struct loongson_gpio *gpio;
     rt_uint64_t m;
 
-    if (pin < 0 || pin >= 60) {
+    if (pin < 0 || pin >= 60)
+    {
         rt_kprintf("error\n");
         return;
     }
@@ -90,11 +92,11 @@ static rt_err_t loongson_pin_attach_irq(struct rt_device *device, rt_int32_t pin
 
     gpio = (void *)device->user_data;
 
-    if(pin < 4)
+    if (pin < 4)
     {
         index = pin;
     }
-    else if(pin < 32)
+    else if (pin < 32)
     {
         index = 5;
     }
@@ -102,7 +104,7 @@ static rt_err_t loongson_pin_attach_irq(struct rt_device *device, rt_int32_t pin
     {
         index = 6;
     }
-    
+
     _g_gpio_irq_tbl[index].irq_cb[pin]    = hdr;
     _g_gpio_irq_tbl[index].irq_arg[pin]   = args;
     _g_gpio_irq_tbl[index].irq_type[pin]  = mode;
@@ -120,11 +122,11 @@ static rt_err_t loongson_pin_detach_irq(struct rt_device *device, rt_int32_t pin
     gpio = (void *)device->user_data;
 
     rt_uint8_t index;
-    if(pin < 4)
+    if (pin < 4)
     {
         index = pin;
     }
-    else if(pin < 32)
+    else if (pin < 32)
     {
         index = 5;
     }
@@ -146,11 +148,11 @@ static rt_err_t loongson_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     gpio = (void *)device->user_data;
 
     rt_uint8_t index;
-    if(pin < 4)
+    if (pin < 4)
     {
         index = pin;
     }
-    else if(pin < 32)
+    else if (pin < 32)
     {
         index = 5;
     }
@@ -173,23 +175,23 @@ static void gpio_irq_handler(int irq, void *param)
     rt_uint32_t value;
     rt_uint32_t tmpvalue;
 
-    if(irq == LS2K_GPIO0_INT_IRQ)
+    if (irq == LS2K_GPIO0_INT_IRQ)
     {
         pin = 0;
     }
-    else if(irq == LS2K_GPIO1_INT_IRQ)
+    else if (irq == LS2K_GPIO1_INT_IRQ)
     {
         pin = 1;
     }
-    else if(irq == LS2K_GPIO2_INT_IRQ)
+    else if (irq == LS2K_GPIO2_INT_IRQ)
     {
         pin = 2;
     }
-    else if(irq == LS2K_GPIO3_INT_IRQ)
+    else if (irq == LS2K_GPIO3_INT_IRQ)
     {
         pin = 3;
     }
-    else if(irq == LS2K_GPIO_INTLO_IRQ)
+    else if (irq == LS2K_GPIO_INTLO_IRQ)
     {
         pin = 4;
     }
@@ -197,12 +199,12 @@ static void gpio_irq_handler(int irq, void *param)
     {
         pin = 32;
     }
-    
+
     while (value)
     {
         if ((value & 0x1) && (irq_def->irq_cb[pin] != RT_NULL))
         {
-            if(irq_def->state[pin])
+            if (irq_def->state[pin])
             {
                 irq_def->irq_cb[pin](irq_def->irq_arg[pin]);
             }
@@ -212,7 +214,8 @@ static void gpio_irq_handler(int irq, void *param)
     }
 }
 
-static struct rt_pin_ops loongson_pin_ops = {
+static struct rt_pin_ops loongson_pin_ops =
+{
     .pin_mode  = loongson_pin_mode,
     .pin_write = loongson_pin_write,
     .pin_read  = loongson_pin_read,

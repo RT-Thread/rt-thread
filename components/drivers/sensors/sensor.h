@@ -48,6 +48,7 @@ extern "C" {
 #define RT_SENSOR_CLASS_DUST           (14) /* Dust sensor       */
 #define RT_SENSOR_CLASS_ECO2           (15) /* eCO2 sensor       */
 #define RT_SENSOR_CLASS_GNSS           (16) /* GPS/GNSS sensor   */
+#define RT_SENSOR_CLASS_TOF            (17) /* TOF sensor        */
 
 /* Sensor vendor types */
 

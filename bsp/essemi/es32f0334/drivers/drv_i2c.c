@@ -7,6 +7,7 @@
  * Date           Author        Notes
  * 2019-03-19     wangyq        the first version
  * 2019-11-01     wangyq        update libraries
+ * 2020-12-15     liuhy         update libraries
  */
 
 #include <rtthread.h>
@@ -29,7 +30,7 @@ static void _i2c_init(void)
 
     /* Initialize I2C Pin */
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
-    gpio_instruct.odos = GPIO_PUSH_PULL;
+    gpio_instruct.odos = GPIO_OPEN_DRAIN;
     gpio_instruct.pupd = GPIO_PUSH_UP;
     gpio_instruct.odrv = GPIO_OUT_DRIVE_NORMAL;
     gpio_instruct.flt  = GPIO_FILTER_DISABLE;

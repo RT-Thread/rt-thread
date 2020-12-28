@@ -84,7 +84,7 @@
   */
 static void can_rx_fifo_release(can_handle_t *hperh, can_rx_fifo_t num);
 static ald_status_t __can_send_by_it(can_handle_t *hperh, uint8_t err);
-static ald_status_t __can_recv_by_it(can_handle_t *hperh, uint8_t num);
+static ald_status_t __can_recv_by_it(can_handle_t *hperh, can_rx_fifo_t num);
 /**
   * @}
   */
@@ -200,10 +200,8 @@ ald_status_t ald_can_filter_config(can_handle_t *hperh, can_filter_t *config)
 	assert_param(IS_CAN_FILTER_SCALE(config->scale));
 	assert_param(IS_CAN_FILTER_FIFO(config->fifo));
 	assert_param(IS_FUNC_STATE(config->active));
-	assert_param(IS_CAN_BANKNUMBER(config->bank_number));
 
 	pos = 1 << config->number;
-
 	SET_BIT(hperh->perh->FLTCON, CAN_FLTCON_FLTINI_MSK);
 	CLEAR_BIT(hperh->perh->FLTGO, pos);
 
@@ -355,7 +353,7 @@ ald_status_t ald_can_send_by_it(can_handle_t *hperh, can_tx_msg_t *msg)
 	assert_param(IS_CAN_RTR(msg->rtr));
 	assert_param(IS_CAN_DATA_LEN(msg->len));
 
-	if ((hperh->state != CAN_STATE_READY) && (hperh->state != CAN_STATE_BUSY_RX))
+	if ((hperh->state & CAN_STATE_TX_MASK) || ((hperh->state & 0xF) != CAN_STATE_READY))
 		return BUSY;
 
 	if (READ_BIT(hperh->perh->TXSTAT, CAN_TXSTAT_TXM0EF_MSK))
@@ -416,9 +414,10 @@ ald_status_t ald_can_recv(can_handle_t *hperh, can_rx_fifo_t num, can_rx_msg_t *
 
 	assert_param(IS_CAN_ALL(hperh->perh));
 	assert_param(IS_CAN_FIFO(num));
+	assert_param(msg != NULL);
 
 	__LOCK(hperh);
-	SET_BIT(hperh->state, CAN_STATE_RX_MASK);
+	SET_BIT(hperh->state, num == CAN_RX_FIFO0 ? CAN_STATE_RX0_MASK : CAN_STATE_RX1_MASK);
 	tick = ald_get_tick();
 
 	while (CAN_RX_MSG_PENDING(hperh, num) == 0) {
@@ -451,7 +450,7 @@ ald_status_t ald_can_recv(can_handle_t *hperh, can_rx_fifo_t num, can_rx_msg_t *
 	msg->data[7] = (hperh->perh->RxFIFO[num].RXFDH >> 24) & 0xFF;
 
 	can_rx_fifo_release(hperh, num);
-	CLEAR_BIT(hperh->state, CAN_STATE_RX_MASK);
+	CLEAR_BIT(hperh->state, num == CAN_RX_FIFO0 ? CAN_STATE_RX0_MASK : CAN_STATE_RX1_MASK);
 	__UNLOCK(hperh);
 
 	return OK;
@@ -468,12 +467,22 @@ ald_status_t ald_can_recv_by_it(can_handle_t *hperh, can_rx_fifo_t num, can_rx_m
 {
 	assert_param(IS_CAN_ALL(hperh->perh));
 	assert_param(IS_CAN_FIFO(num));
+	assert_param(msg != NULL);
 
-	if ((hperh->state != CAN_STATE_READY) && (hperh->state != CAN_STATE_BUSY_TX))
-		return BUSY;
+	if (num == CAN_RX_FIFO0) {
+		if ((hperh->state & CAN_STATE_RX0_MASK) || ((hperh->state & 0xF) != CAN_STATE_READY))
+			return BUSY;
 
-	SET_BIT(hperh->state, CAN_STATE_RX_MASK);
-	hperh->rx_msg = msg;
+		SET_BIT(hperh->state, CAN_STATE_RX0_MASK);
+		hperh->rx0_msg = msg;
+	}
+	else {
+		if ((hperh->state & CAN_STATE_RX1_MASK) || ((hperh->state & 0xF) != CAN_STATE_READY))
+			return BUSY;
+
+		SET_BIT(hperh->state, CAN_STATE_RX1_MASK);
+		hperh->rx1_msg = msg;
+	}
 
 	ald_can_interrupt_config(hperh, CAN_IT_WARN, ENABLE);
 	ald_can_interrupt_config(hperh, CAN_IT_PERR, ENABLE);
@@ -857,8 +866,8 @@ flag_status_t ald_can_get_flag_status(can_handle_t *hperh, can_flag_t flag)
   */
 void ald_can_clear_flag_status(can_handle_t *hperh, can_flag_t flag)
 {
-	uint32_t idx   = (flag >> 20) & 0x7;
-	uint32_t _flag = flag & 0xFF8FFFFF;
+	uint32_t idx   = ((uint32_t)flag >> 20) & 0x7;
+	uint32_t _flag = flag & 0xFF8FFFFFU;
 
 	assert_param(IS_CAN_CLEAR_FLAG(flag));
 
@@ -979,46 +988,90 @@ static ald_status_t __can_send_by_it(can_handle_t *hperh, uint8_t err)
 }
 
 /**
+  * @brief  Check whether the data in the mailbox is contaminated.
+  * @param  hperh:  Pointer to a can_handle_t structure.
+  * @param  num: Specify the FIFO number
+  * @retval status:
+  *           - 0: Data is valid
+  *           - 1: Data is invalid
+  */
+static int __can_rx_check(can_handle_t *hperh, can_rx_fifo_t num)
+{
+	int i;
+
+	if (!(hperh->perh->RESERVED0[0] & 0x200000U))
+		return 0;
+
+	if (num == CAN_RX_FIFO0) {
+		for (i = 0; i < 3; ++i) {
+			if (hperh->perh->RXF0 & 0x3)
+				SET_BIT(hperh->perh->RXF0, CAN_RXF0_FREE_MSK);
+			else
+				break;
+		}
+	}
+	else {
+		for (i = 0; i < 3; ++i) {
+			if (hperh->perh->RXF1 & 0x3)
+				SET_BIT(hperh->perh->RXF1, CAN_RXF1_FREE_MSK);
+			else
+				break;
+		}
+	}
+
+	hperh->perh->RESERVED0[0] |= 0x200000U;
+	return 1;
+}
+
+/**
   * @brief  Receives a correct CAN frame using interrupt.
   * @param  hperh:  Pointer to a can_handle_t structure.
   * @param  num: Specify the FIFO number
   * @retval Status, see ald_status_t.
   */
-static ald_status_t __can_recv_by_it(can_handle_t *hperh, uint8_t num)
+static ald_status_t __can_recv_by_it(can_handle_t *hperh, can_rx_fifo_t num)
 {
 	uint32_t stid, exid;
+	can_rx_msg_t *_msg;
+
+	if (__can_rx_check(hperh, num))
+		return ERROR;
 
 	stid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_STDID_MSK, CAN_RXF0ID_STDID_POSS);
 	exid = READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_EXID_MSK, CAN_RXF0ID_EXID_POSS);
-	hperh->rx_msg->type = (can_id_type_t)READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_IDE_MSK, CAN_RXF0ID_IDE_POS);
 
-	if (hperh->rx_msg->type == CAN_ID_STD)
-		hperh->rx_msg->std = stid;
+	_msg = num == CAN_RX_FIFO0 ? hperh->rx0_msg : hperh->rx1_msg;
+	_msg->type = (can_id_type_t)READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_IDE_MSK, CAN_RXF0ID_IDE_POS);
+
+	if (_msg->type == CAN_ID_STD)
+		_msg->std = stid;
 	else
-		hperh->rx_msg->ext = (stid << 18) | exid;
+		_msg->ext = (stid << 18) | exid;
 
-	hperh->rx_msg->rtr     = (can_remote_req_t)READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_RTR_MSK, CAN_RXF0ID_RTR_POS);
-	hperh->rx_msg->len     = READ_BITS(hperh->perh->RxFIFO[num].RXFINF, CAN_RXF0INF_DLEN_MSK, CAN_RXF0INF_DLEN_POSS);
-	hperh->rx_msg->fmi     = READ_BITS(hperh->perh->RxFIFO[num].RXFINF, CAN_RXF0INF_FLTIDX_MSK, CAN_RXF0INF_FLTIDX_POSS);
-	hperh->rx_msg->data[0] = hperh->perh->RxFIFO[num].RXFDL & 0xFF;
-	hperh->rx_msg->data[1] = (hperh->perh->RxFIFO[num].RXFDL >> 8) & 0xFF;
-	hperh->rx_msg->data[2] = (hperh->perh->RxFIFO[num].RXFDL >> 16) & 0xFF;
-	hperh->rx_msg->data[3] = (hperh->perh->RxFIFO[num].RXFDL >> 24) & 0xFF;
-	hperh->rx_msg->data[4] = hperh->perh->RxFIFO[num].RXFDH & 0xFF;
-	hperh->rx_msg->data[5] = (hperh->perh->RxFIFO[num].RXFDH >> 8) & 0xFF;
-	hperh->rx_msg->data[6] = (hperh->perh->RxFIFO[num].RXFDH >> 16) & 0xFF;
-	hperh->rx_msg->data[7] = (hperh->perh->RxFIFO[num].RXFDH >> 24) & 0xFF;
+	_msg->rtr     = (can_remote_req_t)READ_BITS(hperh->perh->RxFIFO[num].RXFID, CAN_RXF0ID_RTR_MSK, CAN_RXF0ID_RTR_POS);
+	_msg->len     = READ_BITS(hperh->perh->RxFIFO[num].RXFINF, CAN_RXF0INF_DLEN_MSK, CAN_RXF0INF_DLEN_POSS);
+	_msg->fmi     = READ_BITS(hperh->perh->RxFIFO[num].RXFINF, CAN_RXF0INF_FLTIDX_MSK, CAN_RXF0INF_FLTIDX_POSS);
+	_msg->data[0] = hperh->perh->RxFIFO[num].RXFDL & 0xFF;
+	_msg->data[1] = (hperh->perh->RxFIFO[num].RXFDL >> 8) & 0xFF;
+	_msg->data[2] = (hperh->perh->RxFIFO[num].RXFDL >> 16) & 0xFF;
+	_msg->data[3] = (hperh->perh->RxFIFO[num].RXFDL >> 24) & 0xFF;
+	_msg->data[4] = hperh->perh->RxFIFO[num].RXFDH & 0xFF;
+	_msg->data[5] = (hperh->perh->RxFIFO[num].RXFDH >> 8) & 0xFF;
+	_msg->data[6] = (hperh->perh->RxFIFO[num].RXFDH >> 16) & 0xFF;
+	_msg->data[7] = (hperh->perh->RxFIFO[num].RXFDH >> 24) & 0xFF;
 
 	if (num == CAN_RX_FIFO0) {
 		can_rx_fifo_release(hperh, CAN_RX_FIFO0);
 		ald_can_interrupt_config(hperh, CAN_IT_FP0, DISABLE);
+		CLEAR_BIT(hperh->state, CAN_STATE_RX0_MASK);
 	}
 	else {
 		can_rx_fifo_release(hperh, CAN_RX_FIFO1);
 		ald_can_interrupt_config(hperh, CAN_IT_FP1, DISABLE);
+		CLEAR_BIT(hperh->state, CAN_STATE_RX1_MASK);
 	}
 
-	if (hperh->state == CAN_STATE_BUSY_RX) {
+	if (hperh->state == CAN_STATE_READY) {
 		ald_can_interrupt_config(hperh, CAN_IT_WARN, DISABLE);
 		ald_can_interrupt_config(hperh, CAN_IT_PERR, DISABLE);
 		ald_can_interrupt_config(hperh, CAN_IT_BOF, DISABLE);
@@ -1026,10 +1079,8 @@ static ald_status_t __can_recv_by_it(can_handle_t *hperh, uint8_t num)
 		ald_can_interrupt_config(hperh, CAN_IT_ERR, DISABLE);
 	}
 
-	CLEAR_BIT(hperh->state, CAN_STATE_RX_MASK);
-
 	if (hperh->rx_cplt_cbk)
-		hperh->rx_cplt_cbk(hperh);
+		hperh->rx_cplt_cbk(hperh, num);
 
 	return OK;
 }

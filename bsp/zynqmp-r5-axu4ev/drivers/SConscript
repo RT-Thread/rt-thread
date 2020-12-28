@@ -1,0 +1,26 @@
+from building import *
+
+cwd  = GetCurrentDir()
+src  = Glob('*.c')
+list = os.listdir(cwd)
+CPPPATH = [cwd]
+objs = []
+
+if not GetDepend('BSP_USING_UART'):
+    SrcRemove(src, ['drv_uart.c'])
+
+if not GetDepend('BSP_USING_SDIO'):
+    SrcRemove(src, ['drv_sdcard.c'])
+
+if not GetDepend('RT_USING_PIN'):
+    SrcRemove(src, ['drv_gpio.c'])
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+objs = objs + group
+
+Return('objs')
