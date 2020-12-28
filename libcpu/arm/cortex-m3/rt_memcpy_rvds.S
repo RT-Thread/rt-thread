@@ -23,7 +23,7 @@
 ;                                           PUBLIC FUNCTIONS
 ;********************************************************************************************************
 
-        EXPORT  rt_memcpy
+        EXPORT  rt_memcpy_asm
 
 
 ;********************************************************************************************************
@@ -37,7 +37,7 @@
 
 
 ;********************************************************************************************************
-;                                             rt_memcpy()
+;                                             rt_memcpy_asm()
 ;
 ; Description : Copy data octets from one buffer to another buffer.
 ;
@@ -68,11 +68,11 @@
 ;                   (b) MUST   be implemented with non-conditional branches.
 ;********************************************************************************************************
 
-; void  rt_memcpy (void        *pdest,       ;  ==>  R0
-;                  void        *psrc,        ;  ==>  R1
-;                  rt_ubase_t   size)        ;  ==>  R2
+; void  rt_memcpy_asm (void        *pdest,       ;  ==>  R0
+;                      void        *psrc,        ;  ==>  R1
+;                      rt_ubase_t   size)        ;  ==>  R2
 
-rt_memcpy
+rt_memcpy_asm
         CMP         R0, #0
         BNE         rt_memcpy_1
         BX          LR                      ; return if pdest == NULL
