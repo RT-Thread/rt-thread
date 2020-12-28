@@ -12,6 +12,6 @@ elif rtconfig.PLATFORM == 'gcc':
 elif rtconfig.PLATFORM == 'armcc':
         src += Glob('*_rvds.S')
 
-group = DefineGroup('AM335x', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

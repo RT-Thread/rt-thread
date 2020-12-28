@@ -52,31 +52,31 @@ extern uint32_t __systick_interval;
   * @brief  ALD Status structures definition
   */
 typedef enum {
-	OK      = 0x0,	/**< OK */
-	ERROR   = 0x1,	/**< ERROR */
-	BUSY    = 0x2,	/**< BUSY */
-	TIMEOUT = 0x3	/**< TIMEOUT */
+	OK      = 0x0U,	/**< OK */
+	ERROR   = 0x1U,	/**< ERROR */
+	BUSY    = 0x2U,	/**< BUSY */
+	TIMEOUT = 0x3U,	/**< TIMEOUT */
 } ald_status_t;
 
 /**
   * @brief NVIC Preemption Priority Group
   */
 typedef enum {
-	NVIC_PRIORITY_GROUP_0 = 0x7,	/**< 0-bits for pre-emption priority 4-bits for subpriority */
-	NVIC_PRIORITY_GROUP_1 = 0x6,	/**< 1-bits for pre-emption priority 3-bits for subpriority */
-	NVIC_PRIORITY_GROUP_2 = 0x5,	/**< 2-bits for pre-emption priority 2-bits for subpriority */
-	NVIC_PRIORITY_GROUP_3 = 0x4,	/**< 3-bits for pre-emption priority 1-bits for subpriority */
-	NVIC_PRIORITY_GROUP_4 = 0x3,	/**< 4-bits for pre-emption priority 0-bits for subpriority */
+	NVIC_PRIORITY_GROUP_0 = 0x7U,	/**< 0-bits for pre-emption priority 4-bits for subpriority */
+	NVIC_PRIORITY_GROUP_1 = 0x6U,	/**< 1-bits for pre-emption priority 3-bits for subpriority */
+	NVIC_PRIORITY_GROUP_2 = 0x5U,	/**< 2-bits for pre-emption priority 2-bits for subpriority */
+	NVIC_PRIORITY_GROUP_3 = 0x4U,	/**< 3-bits for pre-emption priority 1-bits for subpriority */
+	NVIC_PRIORITY_GROUP_4 = 0x3U,	/**< 4-bits for pre-emption priority 0-bits for subpriority */
 } nvic_priority_group_t;
 
 /**
   * @brief  SysTick interval definition
   */
 typedef enum {
-	SYSTICK_INTERVAL_1MS    = 1000,	/**< Interval is 1ms */
-	SYSTICK_INTERVAL_10MS   = 100,	/**< Interval is 10ms */
-	SYSTICK_INTERVAL_100MS  = 10,	/**< Interval is 100ms */
-	SYSTICK_INTERVAL_1000MS = 1,	/**< Interval is 1s */
+	SYSTICK_INTERVAL_1MS    = 1000U,	/**< Interval is 1ms */
+	SYSTICK_INTERVAL_10MS   = 100U,		/**< Interval is 10ms */
+	SYSTICK_INTERVAL_100MS  = 10U,		/**< Interval is 100ms */
+	SYSTICK_INTERVAL_1000MS = 1U,		/**< Interval is 1s */
 } systick_interval_t;
 /**
   * @}
@@ -85,16 +85,10 @@ typedef enum {
 /** @defgroup ALD_Public_Macros Public Macros
   * @{
   */
-#define ALD_MAX_DELAY	0xFFFFFFFF
-
+#define ALD_MAX_DELAY	0xFFFFFFFFU
 #define IS_BIT_SET(reg, bit)	(((reg) & (bit)) != RESET)
 #define IS_BIT_CLR(reg, bit)	(((reg) & (bit)) == RESET)
 #define RESET_HANDLE_STATE(x)	((x)->state = 0)
-#define DWT_CR		*(uint32_t *)0xE0001000
-#define DWT_CYCCNT	*(volatile uint32_t *)0xE0001004
-#define DEM_CR		*(uint32_t *)0xE000EDFC
-#define DEM_CR_TRCENA	(1U << 24)
-#define DWT_CR_CYCCNTEA	(1U << 0)
 #define __LOCK(x)			\
 do {					\
 	if ((x)->lock == LOCK) {	\
@@ -120,6 +114,15 @@ do {			\
 /** @defgroup ALD_Private_Macros Private Macros
   * @{
   */
+#define MCU_UID0_ADDR	0x000803E0U
+#define MCU_UID1_ADDR	0x000803E8U
+#define MCU_UID2_ADDR	0x000803F0U
+#define MCU_CHIPID_ADDR	0x000803F8U
+#define DWT_CR		*(uint32_t *)0xE0001000U
+#define DWT_CYCCNT	*(volatile uint32_t *)0xE0001004U
+#define DEM_CR		*(uint32_t *)0xE000EDFCU
+#define DEM_CR_TRCENA	(1U << 24)
+#define DWT_CR_CYCCNTEA	(1U << 0)
 #define IS_PREEMPT_PRIO(x)	((x) < 16)
 #define IS_SUB_PRIO(x)		((x) < 16)
 #define IS_SYSTICK_INTERVAL(x)	(((x) == SYSTICK_INTERVAL_1MS)   || \
@@ -158,12 +161,14 @@ uint32_t ald_get_tick(void);
 void ald_suspend_tick(void);
 void ald_resume_tick(void);
 uint32_t ald_get_ald_version(void);
+void ald_flash_wait_config(uint8_t cycle);
 ald_status_t ald_wait_flag(uint32_t *reg, uint32_t bit, flag_status_t status, uint32_t timeout);
 void ald_mcu_irq_config(IRQn_Type irq, uint8_t preempt_prio, uint8_t sub_prio, type_func_t status);
-uint32_t ald_mcu_get_cpu_id(void);
 void ald_mcu_timestamp_init(void);
 uint32_t ald_mcu_get_timestamp(void);
-
+uint32_t ald_mcu_get_cpu_id(void);
+void ald_mcu_get_uid(uint8_t *buf);
+uint32_t ald_mcu_get_chipid(void);
 /**
   * @}
   */

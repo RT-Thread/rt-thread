@@ -2,8 +2,6 @@
 
 static uint32_t hw_ticks = 0;
 
-void timer0_cfg(uint32_t ticks);
-
 static void (*tick_cfg_hook)(uint32_t ticks) = HAL_NULL;
 
 void hal_set_tick_hook(void (*hook)(uint32_t ticks))

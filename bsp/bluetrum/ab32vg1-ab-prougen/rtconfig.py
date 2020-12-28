@@ -58,6 +58,7 @@ if PLATFORM == 'gcc':
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 POST_ACTION += './riscv32-elf-xmaker -b rtthread.xm\n'
+POST_ACTION += './riscv32-elf-xmaker -b download.xm\n'
 
 def dist_handle(BSP_ROOT, dist_dir):
     import sys

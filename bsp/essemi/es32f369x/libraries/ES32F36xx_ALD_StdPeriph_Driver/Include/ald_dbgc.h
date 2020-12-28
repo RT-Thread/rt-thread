@@ -42,31 +42,31 @@
   * @brief Debug mode select
   */
 typedef enum {
-	DEBC_MODE_SLEEP   = (1u << 0),	/**< Sleep mode */
-	DEBC_MODE_STOP1   = (1u << 1),	/**< STOP1 mode */
-	DEBC_MODE_STOP2   = (1u << 2),	/**< STOP2 mode */
-	DEBC_MODE_STANDBY = (1u << 3),	/**< Standby mode */
+	DEBC_MODE_SLEEP   = (1U << 0),	/**< Sleep mode */
+	DEBC_MODE_STOP1   = (1U << 1),	/**< STOP1 mode */
+	DEBC_MODE_STOP2   = (1U << 2),	/**< STOP2 mode */
+	DEBC_MODE_STANDBY = (1U << 3),	/**< Standby mode */
 } dbgc_mode_t;
 
 /**
   * @brief Debug peripheral select
   */
 typedef enum {
-	DEBC_PERH_TIMER0  = (1u << 0),			/**< AD16C4T0 */
-	DEBC_PERH_TIMER1  = (1u << 1),			/**< BS16T0 */
-	DEBC_PERH_TIMER2  = (1u << 2),			/**< GP16C2T0 */
-	DEBC_PERH_TIMER3  = (1u << 3),			/**< GP16C2T1 */
-	DEBC_PERH_TIMER4  = (1u << 4),			/**< BS16T1 */
-	DEBC_PERH_TIMER5  = (1u << 5),			/**< BS16T2 */
-	DEBC_PERH_TIMER6  = (1u << 6),			/**< GP16C4T0 */
-	DEBC_PERH_TIMER7  = (1u << 7),			/**< BS16T3 */
-	DEBC_PERH_I2C0    = (1u << 8),			/**< I2C0 SMBUS */
-	DEBC_PERH_I2C1    = (1u << 9),			/**< I2C1 SMBUS */
-	DEBC_PERH_CAN     = (1u << 12),			/**< CAN */
-	DEBC_PERH_LPTIM0  = (1u << 0)  | (1u << 16),	/**< LPTIM0 */
-	DEBC_PERH_IWDT    = (1u << 8)  | (1u << 16),	/**< IWDT */
-	DEBC_PERH_WWDT    = (1u << 9)  | (1u << 16),	/**< WWDT */
-	DEBC_PERH_RTC     = (1u << 10) | (1u << 16),	/**< RTC */
+	DEBC_PERH_TIMER0  = (1U << 0),			/**< AD16C4T0 */
+	DEBC_PERH_TIMER1  = (1U << 1),			/**< BS16T0 */
+	DEBC_PERH_TIMER2  = (1U << 2),			/**< GP16C2T0 */
+	DEBC_PERH_TIMER3  = (1U << 3),			/**< GP16C2T1 */
+	DEBC_PERH_TIMER4  = (1U << 4),			/**< BS16T1 */
+	DEBC_PERH_TIMER5  = (1U << 5),			/**< BS16T2 */
+	DEBC_PERH_TIMER6  = (1U << 6),			/**< GP16C4T0 */
+	DEBC_PERH_TIMER7  = (1U << 7),			/**< BS16T3 */
+	DEBC_PERH_I2C0    = (1U << 8),			/**< I2C0 SMBUS */
+	DEBC_PERH_I2C1    = (1U << 9),			/**< I2C1 SMBUS */
+	DEBC_PERH_CAN     = (1U << 12),			/**< CAN */
+	DEBC_PERH_LPTIM0  = (1U << 0)  | (1U << 16),	/**< LPTIM0 */
+	DEBC_PERH_IWDT    = (1U << 8)  | (1U << 16),	/**< IWDT */
+	DEBC_PERH_WWDT    = (1U << 9)  | (1U << 16),	/**< WWDT */
+	DEBC_PERH_RTC     = (1U << 10) | (1U << 16),	/**< RTC */
 } dbgc_perh_t;
 /**
   * @}
