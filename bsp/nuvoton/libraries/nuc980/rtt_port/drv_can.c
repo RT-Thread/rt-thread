@@ -192,13 +192,13 @@ static void nu_can_isr(int vector, void *param)
     /*IntId: 0x0001-0x0020, Number of Message Object which caused the interrupt.*/
     else if (u32IIDRstatus > 0 && u32IIDRstatus <= 32)
     {
-        /*Message RAM 0~15 for CAN Tx using*/
-        if (u32IIDRstatus <= 16)
+        /*Message RAM 0~RX_MSG_ID_INDEX for CAN Tx using*/
+        if (u32IIDRstatus <= RX_MSG_ID_INDEX)
         {
             //rt_kprintf("[%s-Tx]IntId = %d\n", psNuCAN->name, u32IIDRstatus);
             rt_hw_can_isr(&psNuCAN->dev, RT_CAN_EVENT_TX_DONE);
         }
-        else /*Message RAM 16~31 for CAN Rx using*/
+        else /*Message RAM RX_MSG_ID_INDEX~31 for CAN Rx using*/
         {
             //rt_kprintf("[%s-Rx]IntId = %d\n",  psNuCAN->name, u32IIDRstatus);
             rt_hw_can_isr(&psNuCAN->dev, (RT_CAN_EVENT_RX_IND | ((u32IIDRstatus - 1) << 8)));

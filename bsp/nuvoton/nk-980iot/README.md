@@ -42,8 +42,10 @@ Nuvoton Technology provides industrial IoT development platform using NUC980DK61
 |Button |  | Supported |
 |LEDs |  | Supported |
 |Audio Codec | NAU8822, Supports MIC and earphone | Supported |
+|USB Device | VCOM + MStorage | Supported |
+|2xUSB Host | MStorage | Not ready |
 |SPI NAND flash | W25N01GVZE1G | Not ready |
-|Virtual COM | For console | Ready.(Need to install VCOM driver) |
+|VCOM | For console | Ready.(Need to install VCOM driver) |
 
 ## 2. Supported compiler
 Support GCC, MDK4 and MDK5 IDE/compilers. More information of these compiler version as following:

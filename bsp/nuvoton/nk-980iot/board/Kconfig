@@ -39,44 +39,31 @@ menu "Hardware Drivers Config"
             default y
 
         choice
-            prompt "Select FS/HS USB Ports"
+            prompt "Select HS USB Ports"
 
             config BOARD_USING_USB_NONE
                 bool "Without any USB function"
                 help
                     Choose this option if you need not USB functions.
 
-            config BOARD_USING_HSUSBD
-                select BSP_USING_HSUSBD
-                bool "Enable HSUSBD(over USB2.0)"
-                help
-                    Choose this option if you need HSUSBD function mode.
-
-            config BOARD_USING_HSUSBD_USBH
+            config BOARD_USING_USB_HOST
                 select BSP_USING_USBH
-                select BSP_USING_HSUSBD
-                bool "Enable HSUSBD(over USB2.0) and USBH(over USB1.1)"
+                bool "Enable USBH"
                 help
-                    Choose this option if you need HSUSBD and USBH function mode at the same time.
+                    Choose this option if you need USB HOST function mode.
 
-            config BOARD_USING_HSUSBH
-                select BSP_USING_HSUSBH
-                bool "Enable HSUSBH(over USB2.0)"
+            config BOARD_USING_USB_OTG
+                select BSP_USING_OTG
+                bool "Enable OTG"
                 help
-                    Choose this option if you need HSUSBH function mode.
+                    Choose this option if you need USB HOST function mode.
 
-            config BOARD_USING_HSUSBH_USBD
-                select BSP_USING_HSUSBH
-                select BSP_USING_USBD
-                bool "Enable HSUSBH(over USB2.0) and USBD(over USB1.1)"
+            config BOARD_USING_USB_OTG_HOST
+                select BSP_USING_USBH
+                select BSP_USING_OTG
+                bool "Enable OTG AND USBH"
                 help
-                    Choose this option if you need HSUSBH and USBD function mode at the same time.
-
-            config BOARD_USING_HSOTG
-                select BSP_USING_HSOTG
-                bool "Enable HSOTG(over USB2.0)"
-                help
-                    Choose this option if you need HSOTG function mode.
+                    Choose this option if you need both USB ports function mode.
 
         endchoice
 

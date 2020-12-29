@@ -6,6 +6,7 @@ if GetDepend('NU_PKG_USING_DEMO'):
     src = Split("""
     usbd_hid_dance_mouse.c
     slcd_show_tick.c
+    usbd_cdc_vcom_echo.c
     """)
     CPPPATH = [cwd]
     group = DefineGroup('nu_pkgs_demo', src, depend = [''], CPPPATH = CPPPATH)

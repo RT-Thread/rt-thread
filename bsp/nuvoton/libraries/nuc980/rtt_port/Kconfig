@@ -628,24 +628,15 @@ config SOC_SERIES_NUC980
         default n
 
     config BSP_USING_USBD
-        bool "Enable Full-Speed USB Device Controller(USBD)"
-        select RT_USING_USB_DEVICE
-
-    config BSP_USING_HSUSBD
-        bool "Enable High-Speed USB Device Controller(HSUSBD)"
+        bool "Enable USB Device Controller(USBD)"
         select RT_USING_USB_DEVICE
 
     config BSP_USING_USBH
-        bool "Enable Full-Speed USB Host Controller(USBH)"
+        bool "Enable USB Host Controller(USBH)"
         select RT_USING_USB_HOST
         select RT_USBH_MSTORAGE
 
-    config BSP_USING_HSUSBH
-        bool "Enable High-Speed USB Host Controller(HSUSBH)"
-        select RT_USING_USB_HOST
-        select RT_USBH_MSTORAGE
-
-    config BSP_USING_HSOTG
-        bool "Enable High-Speed USB On-The-Go(HSOTG)"
-        select BSP_USING_HSUSBH
-        select BSP_USING_HSUSBD
+    config BSP_USING_OTG
+        bool "Enable USB On-The-Go(OTG)"
+        select BSP_USING_USBH
+        select BSP_USING_USBD

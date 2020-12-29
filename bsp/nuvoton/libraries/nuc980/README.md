@@ -16,6 +16,7 @@
 | QSPI | RT_Device_Class_SPIBUS | ***qspi[0]*** |
 | RTC | RT_Device_Class_RTC | ***rtc*** |
 | PWM | RT_Device_Class_Miscellaneous (PWM) | ***pwm[0-1]*** |
+| USBD | RT_Device_Class_USBDevice | ***usbd*** |
 | SC (UART function) | RT_Device_Class_Char | ***scuart[0-1]*** |
 | SDH | RT_Device_Class_Block | ***sdh[0-1]*** |
 | SPI | RT_Device_Class_SPIBUS | ***spi[0-1]*** |

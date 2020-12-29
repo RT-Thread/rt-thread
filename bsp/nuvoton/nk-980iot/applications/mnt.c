@@ -32,6 +32,7 @@
 
 #if defined(PKG_USING_RAMDISK)
     #define RAMDISK_NAME         "ramdisk0"
+    #define RAMDISK_UDC          "ramdisk1"
     #define MOUNT_POINT_RAMDISK0 "/"
 #endif
 
@@ -40,7 +41,42 @@
     #define MOUNT_POINT_SPIFLASH0 "/mnt/"PARTITION_NAME_FILESYSTEM
 #endif
 
+#ifdef RT_USING_DFS_MNTTABLE
+
+/*
+const char   *device_name;
+const char   *path;
+const char   *filesystemtype;
+unsigned long rwflag;
+const void   *data;
+*/
+
+const struct dfs_mount_tbl mount_table[] =
+{
+    { RAMDISK_UDC, "/ramdisk_udc", "elm", 0, RT_NULL },
+    {0},
+};
+#endif
+
+
 #if defined(PKG_USING_RAMDISK)
+
+extern rt_err_t ramdisk_init(const char *dev_name, rt_uint8_t *disk_addr, rt_size_t block_size, rt_size_t num_block);
+int ramdisk_device_init(void)
+{
+    rt_err_t result = RT_EOK;
+
+    /* Create a 8MB RAMDISK */
+    result = ramdisk_init(RAMDISK_NAME, NULL, 512, 2 * 8192);
+    RT_ASSERT(result == RT_EOK);
+
+    /* Create a 4MB RAMDISK */
+    result = ramdisk_init(RAMDISK_UDC, NULL, 512, 2 * 4096);
+    RT_ASSERT(result == RT_EOK);
+
+    return 0;
+}
+INIT_DEVICE_EXPORT(ramdisk_device_init);
 
 /* Recursive mkdir */
 static int mkdir_p(const char *dir, const mode_t mode)
@@ -115,11 +151,19 @@ exit_mkdir_p:
 /* Initialize the filesystem */
 int filesystem_init(void)
 {
+    rt_err_t result = RT_EOK;
+
     // ramdisk as root
-    if (rt_device_find(RAMDISK_NAME))
+    if (!rt_device_find(RAMDISK_NAME))
     {
-        // format the ramdisk
-        dfs_mkfs("elm", RAMDISK_NAME);
+        LOG_E("cannot find %s device", RAMDISK_NAME);
+        goto exit_filesystem_init;
+    }
+    else
+    {
+        /* Format these ramdisk */
+        result = (rt_err_t)dfs_mkfs("elm", RAMDISK_NAME);
+        RT_ASSERT(result == RT_EOK);
 
         /* mount ramdisk0 as root directory */
         if (dfs_mount(RAMDISK_NAME, "/", "elm", 0, RT_NULL) == 0)
@@ -127,6 +171,7 @@ int filesystem_init(void)
             LOG_I("ramdisk mounted on \"/\".");
 
             /* now you can create dir dynamically. */
+            mkdir_p("/ramdisk_udc", 0x777);
             mkdir_p("/mnt", 0x777);
             mkdir_p("/cache", 0x777);
             mkdir_p("/download", 0x777);
@@ -137,21 +182,27 @@ int filesystem_init(void)
         else
         {
             LOG_E("root folder creation failed!\n");
+            goto exit_filesystem_init;
         }
-        return RT_EOK;
     }
-    LOG_E("cannot find %s device", RAMDISK_NAME);
-    return -RT_ERROR;
+
+    if (!rt_device_find(RAMDISK_UDC))
+    {
+        LOG_E("cannot find %s device", RAMDISK_UDC);
+        goto exit_filesystem_init;
+    }
+    else
+    {
+        /* Format these ramdisk */
+        result = (rt_err_t)dfs_mkfs("elm", RAMDISK_UDC);
+        RT_ASSERT(result == RT_EOK);
+    }
+
+exit_filesystem_init:
+
+    return -result;
 }
 INIT_ENV_EXPORT(filesystem_init);
-
-extern rt_err_t ramdisk_init(const char *dev_name, rt_uint8_t *disk_addr, rt_size_t block_size, rt_size_t num_block);
-int ramdisk_device_init(void)
-{
-    /* Create a 8MB RAMDISK */
-    return (int)ramdisk_init(RAMDISK_NAME, NULL, 512, 2 * 8192);
-}
-INIT_DEVICE_EXPORT(ramdisk_device_init);
 #endif
 
 #if defined(BOARD_USING_STORAGE_SPIFLASH)
