@@ -9,7 +9,7 @@ libinspath = libcwd + '/libraries/lib'
 
 CPPDEFINES = ['-DDEBUG']
 
-group = DefineGroup('gh', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES, LIBINSPATH = libinspath)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES, LIBINSPATH = libinspath)
 
 list = os.listdir(cwd)
 for d in list:

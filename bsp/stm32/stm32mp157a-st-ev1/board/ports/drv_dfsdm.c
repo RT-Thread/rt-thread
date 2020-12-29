@@ -18,34 +18,34 @@
 #define LOG_TAG             "drv.dfsdm"
 #include <drv_log.h>
 
-#define          FILTER_FIFO_SIZE         (1024)
+#define FILTER_FIFO_SIZE    (1024)
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFC8000)))
+__attribute__((at(0x2FFC8000))) static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
 #elif defined ( __GNUC__ )
-__attribute__((at(0x2FFC8000)))
+static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE] __attribute__((section(".Filter0Section")));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFC8000
+__no_init static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
 #endif
-rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
+
+#if defined(__CC_ARM) || defined(__CLANG_ARM)
+__attribute__((at(0x2FFC9000))) static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE];
+#elif defined ( __GNUC__ )
+static rt_int32_t FILTER0_FIFO[FILTER_FIFO_SIZE] __attribute__((section(".Filter1Section")));
+#elif defined(__ICCARM__)
+#pragma location = 0x2FFC9000
+__no_init static rt_int32_t FILTER1_FIFO[FILTER_FIFO_SIZE];
+#endif
 
 #define PALY_SIZE 2048
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFCA000)))
+__attribute__((at(0x2FFCA000))) static rt_int16_t PLAY_BUF[PALY_SIZE];
 #elif defined ( __GNUC__ )
-__attribute__((at(0x2FFCA000)))
+__attribute__((at(0x2FFCA000))) __attribute__((section(".DfsdmSection")));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFCA000
+ __no_init static rt_int16_t PLAY_BUF[PALY_SIZE];
 #endif
-static rt_int16_t PLAY_BUF[PALY_SIZE];
-    
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFC9000)))
-#elif defined ( __GNUC__ )
-__attribute__((at(0x2FFC9000)))
-#elif defined(__ICCARM__)
-#pragma location = 0x2FFC9000
-#endif
-rt_int32_t FILTER1_FIFO[FILTER_FIFO_SIZE];
 
 static volatile rt_uint8_t DmaLeftRecBuffCplt  = 0;
 static volatile rt_uint8_t DmaRightRecBuffCplt = 0;

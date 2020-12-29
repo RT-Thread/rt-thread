@@ -49,13 +49,14 @@ struct rthw_sdio
 };
 
 #define EMMC_BUFF_SIZE       4096
+#define EMMC_BUFF_ADDR       0x2FFCB000
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((at(0x2FFCB000)));
-#elif defined(__ICCARM__)
-#pragma location = 0x2FFCB000
-rt_uint8_t cache_buf[EMMC_BUFF_SIZE];
+__attribute__((at(EMMC_BUFF_ADDR))) static rt_uint8_t cache_buf[EMMC_BUFF_SIZE];
 #elif defined ( __GNUC__ )
-rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((at(0x2FFCB000)));
+static rt_uint8_t cache_buf[EMMC_BUFF_SIZE] __attribute__((section(".eMMCSection")));
+#elif defined(__ICCARM__)
+#pragma location = EMMC_BUFF_ADDR
+__no_init static rt_uint8_t cache_buf[EMMC_BUFF_SIZE];
 #endif
 
 #if defined(EMMC_RX_DUMP) || defined(EMMC_TX_DUMP)
@@ -558,7 +559,7 @@ int rt_hw_sdio_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_sdio_init);
 
-#if defined(EMMC_USING_DFS)
+#if defined(BSP_USING_EMMC_FS)
 int mnt_init(void)
 {
     rt_device_t sd = RT_NULL;

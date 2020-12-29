@@ -33,22 +33,22 @@ rt_base_t level;
 #if defined(__ICCARM__)
 /* transmit buffer */
 #pragma location = TX_ADD_BASE
-static uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
+__no_init static rt_uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE];
 /* Receive buffer */
 #pragma location = RX_ADD_BASE
-static uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
+__no_init static rt_uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE];
 /* Transmit DMA descriptors */
 #pragma location = TX_DMA_ADD_BASE
-static TxDmaDesc txDmaDesc[ETH_TXBUFNB];
+__no_init static TxDmaDesc txDmaDesc[ETH_TXBUFNB];
 /* Receive DMA descriptors */
 #pragma location = RX_DMA_ADD_BASE
-static RxDmaDesc rxDmaDesc[ETH_RXBUFNB];
+__no_init static RxDmaDesc rxDmaDesc[ETH_RXBUFNB];
 
 #elif defined(__CC_ARM) || defined(__CLANG_ARM)
 /* transmit buffer */
-static uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((at(TX_ADD_BASE)));
+static rt_uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((at(TX_ADD_BASE)));
 /* Receive buffer */
-static uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((at(RX_ADD_BASE)));
+static rt_uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((at(RX_ADD_BASE)));
 /* Transmit DMA descriptors */
 static TxDmaDesc txDmaDesc[ETH_TXBUFNB] __attribute__((at(TX_DMA_ADD_BASE)));
 /* Receive DMA descriptors */
@@ -56,13 +56,13 @@ static RxDmaDesc rxDmaDesc[ETH_RXBUFNB] __attribute__((at(RX_DMA_ADD_BASE)));
 
 #elif defined ( __GNUC__ )
 /* transmit buffer */
-static uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((at(TX_ADD_BASE)));
+static rt_uint8_t txBuffer[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__((section(".TxArraySection")));
 /* Receive buffer */
-static uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((at(RX_ADD_BASE)));
+static rt_uint8_t rxBuffer[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__((section(".RxArraySection")));
 /* Transmit DMA descriptors */
-static TxDmaDesc txDmaDesc[ETH_TXBUFNB] __attribute__((at(TX_DMA_ADD_BASE)));
+static TxDmaDesc txDmaDesc[ETH_TXBUFNB] __attribute__((section(".TxDecripSection")));
 /* Receive DMA descriptors */
-static RxDmaDesc rxDmaDesc[ETH_RXBUFNB] __attribute__((at(RX_DMA_ADD_BASE)));
+static RxDmaDesc rxDmaDesc[ETH_RXBUFNB] __attribute__((section(".RxDecripSection")));
 #endif
 
 //Current transmit descriptor
