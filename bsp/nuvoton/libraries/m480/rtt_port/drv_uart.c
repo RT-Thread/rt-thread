@@ -546,7 +546,7 @@ static rt_err_t nu_pdma_uart_rx_config(struct rt_serial_device *serial, uint8_t 
                                        nu_pdma_uart_rx_cb,
                                        (void *)serial,
                                        NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT);
-    if ( result != RT_EOK )
+    if (result != RT_EOK)
     {
         goto exit_nu_pdma_uart_rx_config;
     }
@@ -557,7 +557,7 @@ static rt_err_t nu_pdma_uart_rx_config(struct rt_serial_device *serial, uint8_t 
                               (uint32_t)pu8Buf,
                               i32TriggerLen,
                               1000);  //Idle-timeout, 1ms
-    if ( result != RT_EOK )
+    if (result != RT_EOK)
     {
         goto exit_nu_pdma_uart_rx_config;
     }
