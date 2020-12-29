@@ -590,6 +590,9 @@ static int rt_hw_nu_emac_init(void)
     rt_err_t ret = RT_EOK;
     char szTmp[32];
 
+    /* MDC CLK divider */
+    outpw(REG_CLK_DIVCTL8, (inpw(REG_CLK_DIVCTL8) & ~0xFF) | 0xA0);
+
     for (i = (EMAC_START + 1); i < EMAC_CNT; i++)
     {
         nu_emac_t psNuEMAC = (nu_emac_t)&nu_emac_arr[i];
@@ -623,9 +626,6 @@ static int rt_hw_nu_emac_init(void)
         ret = eth_device_init(&psNuEMAC->eth, psNuEMAC->name);
         RT_ASSERT(ret == RT_EOK);
     }
-
-    /* MDC CLK divider */
-    outpw(REG_CLK_DIVCTL8, (inpw(REG_CLK_DIVCTL8) & ~0xFF) | 0xA0);
 
     return 0;
 }

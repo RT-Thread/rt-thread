@@ -217,8 +217,6 @@ void machine_shutdown(void)
     /* Unlock */
     SYS_UnlockReg();
 
-    // TODO
-
     while (1);
 }
 
