@@ -23,13 +23,12 @@
 
 static struct rt_thread usb_thread;
 ALIGN(RT_ALIGN_SIZE)
-static char usb_thread_stack[512];
+static char usb_thread_stack[1024];
 static struct rt_semaphore tx_sem_complete;
 
 static rt_err_t event_hid_in(rt_device_t dev, void *buffer)
 {
-    rt_sem_release(&tx_sem_complete);
-    return RT_EOK;
+    return rt_sem_release(&tx_sem_complete);
 }
 
 static void usb_thread_entry(void *parameter)
@@ -38,6 +37,7 @@ static void usb_thread_entry(void *parameter)
     uint8_t u8MouseIdx = 0;
     uint8_t u8MoveLen=0, u8MouseMode = 1;
     uint8_t pu8Buf[4];
+    rt_err_t result = RT_EOK;
 
     rt_device_t device = (rt_device_t)parameter;
 
@@ -78,7 +78,8 @@ static void usb_thread_entry(void *parameter)
         else
         {
             /* Wait it done. */
-            rt_sem_take(&tx_sem_complete, RT_WAITING_FOREVER);
+            result = rt_sem_take(&tx_sem_complete, RT_WAITING_FOREVER);
+            RT_ASSERT( result== RT_EOK );
         }
 
     } // while(1)
@@ -86,29 +87,27 @@ static void usb_thread_entry(void *parameter)
 
 static int dance_mouse_init(void)
 {
-    int err = 0;
+    rt_err_t ret = RT_EOK;
     rt_device_t device = rt_device_find("hidd");
 
     RT_ASSERT(device != RT_NULL);
 
-    err = rt_device_open(device, RT_DEVICE_FLAG_WRONLY);
+    ret = rt_device_open(device, RT_DEVICE_FLAG_WRONLY);
+    RT_ASSERT(ret == RT_EOK);
 
-    if (err != RT_EOK)
-    {
-        LOG_E("open dev failed!\n");
-        return -1;
-    }
-
-    rt_thread_init(&usb_thread,
+    ret = rt_thread_init(&usb_thread,
                    "hidd",
                    usb_thread_entry, device,
                    usb_thread_stack, sizeof(usb_thread_stack),
                    10, 20);
+    RT_ASSERT(ret == RT_EOK);
 
-    rt_thread_startup(&usb_thread);
+    ret = rt_thread_startup(&usb_thread);
+    RT_ASSERT(ret == RT_EOK);
 
     return 0;
 }
 INIT_APP_EXPORT(dance_mouse_init);
 
 #endif /* #if defined(RT_USB_DEVICE_HID) && (defined(BSP_USING_USBD) || defined(BSP_USING_HSUSBD)) */
+

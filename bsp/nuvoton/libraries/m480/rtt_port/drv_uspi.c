@@ -493,7 +493,7 @@ static void nu_uspi_transfer(struct nu_uspi *uspi_bus, uint8_t *tx, uint8_t *rx,
     /* DMA transfer constrains */
     if ((uspi_bus->pdma_chanid_rx >= 0) &&
             !((uint32_t)tx % bytes_per_word) &&
-            !((uint32_t)rx % bytes_per_word) )
+            !((uint32_t)rx % bytes_per_word))
         nu_uspi_pdma_transmit(uspi_bus, tx, rx, length, bytes_per_word);
     else
         nu_uspi_transmission_with_poll(uspi_bus, tx, rx, length, bytes_per_word);

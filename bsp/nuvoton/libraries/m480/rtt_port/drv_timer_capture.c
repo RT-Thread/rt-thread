@@ -13,6 +13,10 @@
 #include <rtconfig.h>
 
 #if defined(BSP_USING_TIMER_CAPTURE)
+#if defined(BSP_USING_TIMER0_CAPTURE)|| \
+    defined(BSP_USING_TIMER1_CAPTURE)|| \
+    defined(BSP_USING_TIMER2_CAPTURE)|| \
+    defined(BSP_USING_TIMER3_CAPTURE)
 
 #include <rtdevice.h>
 #include <NuMicro.h>
@@ -150,8 +154,6 @@ static rt_err_t nu_capture_get_pulsewidth(struct rt_inputcapture_device *inputca
 
 static rt_err_t nu_timer_init(nu_capture_t *nu_capture)
 {
-    rt_err_t ret = RT_ERROR;
-
     SYS_UnlockReg();
 
 #if defined(BSP_USING_TIMER0_CAPTURE)
@@ -160,8 +162,6 @@ static rt_err_t nu_timer_init(nu_capture_t *nu_capture)
         /* Enable TIMER0 clock */
         CLK_EnableModuleClock(TMR0_MODULE);
         CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0SEL_PCLK0, 0);
-
-        ret = RT_EOK;
         goto exit_nu_timer_init;
     }
 #endif
@@ -171,8 +171,6 @@ static rt_err_t nu_timer_init(nu_capture_t *nu_capture)
         /* Enable TIMER1 clock */
         CLK_EnableModuleClock(TMR1_MODULE);
         CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR1SEL_PCLK0, 0);
-
-        ret = RT_EOK;
         goto exit_nu_timer_init;
     }
 #endif
@@ -182,8 +180,6 @@ static rt_err_t nu_timer_init(nu_capture_t *nu_capture)
         /* Enable TIMER2 clock */
         CLK_EnableModuleClock(TMR2_MODULE);
         CLK_SetModuleClock(TMR2_MODULE, CLK_CLKSEL1_TMR2SEL_PCLK1, 0);
-
-        ret = RT_EOK;
         goto exit_nu_timer_init;
     }
 #endif
@@ -193,12 +189,17 @@ static rt_err_t nu_timer_init(nu_capture_t *nu_capture)
         /* Enable TIMER3 clock */
         CLK_EnableModuleClock(TMR3_MODULE);
         CLK_SetModuleClock(TMR3_MODULE, CLK_CLKSEL1_TMR3SEL_PCLK1, 0);
+        goto exit_nu_timer_init;
     }
 #endif
 
-exit_nu_timer_init:
     SYS_LockReg();
-    return -(ret);
+    return -(RT_ERROR);
+
+exit_nu_timer_init:
+
+    SYS_LockReg();
+    return RT_EOK;
 }
 
 static rt_err_t nu_capture_init(struct rt_inputcapture_device *inputcapture)
@@ -240,6 +241,9 @@ static rt_err_t nu_capture_open(struct rt_inputcapture_device *inputcapture)
 
     /* Enable Timer NVIC */
     NVIC_EnableIRQ(nu_capture->irq);
+
+    /* Reset counter before openning. */
+    TIMER_ResetCounter(nu_capture->timer);
 
     TIMER_Open(nu_capture->timer, TIMER_CONTINUOUS_MODE, 1);
     TIMER_SET_PRESCALE_VALUE(nu_capture->timer, cal_time_prescale(nu_capture));
@@ -318,5 +322,5 @@ static int nu_timer_capture_device_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(nu_timer_capture_device_init);
-
+#endif //#if defined(BSP_USING_TIMER*_CAPTURE)
 #endif //#if defined(BSP_USING_TIMER_CAPTURE)

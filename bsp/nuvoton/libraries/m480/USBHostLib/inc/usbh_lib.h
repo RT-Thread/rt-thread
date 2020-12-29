@@ -141,7 +141,7 @@ typedef int (UAC_CB_FUNC)(struct uac_dev_t *dev, uint8_t *data, int len);    /*!
 /*                                                                  */
 /*------------------------------------------------------------------*/
 extern void usbh_core_init(void);
-extern int  usbh_pooling_root_hubs(void);
+extern int  usbh_polling_root_hubs(void);
 extern void usbh_install_conn_callback(CONN_FUNC *conn_func, CONN_FUNC *disconn_func);
 extern void usbh_suspend(void);
 extern void usbh_resume(void);

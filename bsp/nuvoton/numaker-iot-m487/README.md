@@ -17,19 +17,19 @@ NuMaker-IoT-M487 provides multiple networking, interfaces, audio recording, play
 
 ### 1.2 Interface
 
-| Interface | 
+| Interface |
 | -- |
 | Arduino UNO |
 | mikroBUS |
 | NuMaker-Brick I2C |
-| RJ45 Ethernet | 
+| RJ45 Ethernet |
 | USB 1.1/2.0 OTG ports |
 | A microSD slot |
 | A 3.5mm Audio connector |
 
 ### 1.3 On-board devices
 
-| Device | Descirption | Driver supporting status |
+| Device | Description | Driver supporting status |
 | -- | -- | -- |
 |SPI flash | W25Q32 | Supported |
 |Ethernet PHY| IP101GR | Supported |
