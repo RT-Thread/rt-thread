@@ -27,6 +27,8 @@
 #endif
 
 #ifdef RT_USING_LWP
+#include <lwp.h>
+#include <lwp_user_mm.h>
 #include <lwp_console.h>
 #endif
 
@@ -77,6 +79,7 @@ RTM_EXPORT(rt_get_errno);
 void rt_set_errno(rt_err_t error)
 {
     rt_thread_t tid;
+    pthread_t ptid;
 
     if (rt_interrupt_get_nest() != 0)
     {
@@ -95,6 +98,21 @@ void rt_set_errno(rt_err_t error)
     }
 
     tid->error = error;
+#ifdef RT_USING_LWP
+    /* is a process's thread */
+    if (tid->lwp && tid->thread_idr)
+    {
+        if (error < 0)
+        {
+            error = -error;
+        }
+        ptid = (pthread_t)((size_t)tid->thread_idr - sizeof(struct __pthread));
+        if (lwp_user_accessable(ptid, sizeof(struct __pthread)))
+        {
+            lwp_put_to_user(&ptid->errno_val, &error, sizeof(ptid->errno_val));
+        }
+    }
+#endif
 }
 RTM_EXPORT(rt_set_errno);
 
