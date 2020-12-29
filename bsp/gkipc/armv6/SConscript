@@ -5,6 +5,6 @@ src	= Glob('*.c')
 src += Glob('*.s')
 path = [cwd, cwd + '../../../include', cwd + '/../libraries/inc', cwd + '/../drivers']
 
-group = DefineGroup('armv6', src, depend = [''], CPPPATH = path)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = path)
 
 Return('group')

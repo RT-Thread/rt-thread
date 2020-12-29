@@ -10,7 +10,7 @@
 
 #include "board.h"
 
-#if defined(BSP_USING_SD_CARD)
+#if defined(BSP_USING_SDCARD)
 #include <dfs_fs.h>
 
 #define DRV_DEBUG
@@ -41,14 +41,15 @@ struct rt_completion rx_comp;
 
 /* SYSRAM SDMMC1/2 accesses */
 #define SDIO_BUFF_SIZE       512
+#define SDCARD_ADDR          0x2FFC0000
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFC0000)))
+__attribute__((at(SDCARD_ADDR))) static rt_uint32_t cache_buf[SDIO_BUFF_SIZE];
 #elif defined ( __GNUC__ )
-__attribute__((at(0x2FFC0000)))
+static rt_uint32_t cache_buf[SDIO_BUFF_SIZE] __attribute__((section(".SdCardSection")));
 #elif defined(__ICCARM__)
-#pragma location = 0x2FFC0000
+#pragma location = SDCARD_ADDR 
+__no_init static rt_uint32_t cache_buf[SDIO_BUFF_SIZE];
 #endif
-static rt_uint32_t cache_buf[SDIO_BUFF_SIZE];
 
 #if defined(SDMMC_RX_DUMP) || defined(SDMMC_TX_DUMP)
 #define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
@@ -378,7 +379,7 @@ int rt_hw_sdcard_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_sdcard_init);
 
-#if defined(SD_USING_DFS)
+#if defined(BSP_USING_SDCARD_FS)
 int mnt_init(void)
 {
     rt_device_t sd_dev = RT_NULL;

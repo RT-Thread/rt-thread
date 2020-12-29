@@ -5,6 +5,6 @@ src     = Glob('*.c')
 CPPPATH = [cwd]
 
 
-group = DefineGroup('cpu', src, depend = [], CPPPATH = CPPPATH)
+group = DefineGroup('CPU', src, depend = [], CPPPATH = CPPPATH)
 
 Return('group')

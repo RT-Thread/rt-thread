@@ -28,23 +28,22 @@
 #define JPEG_LINE_SIZE  1 * 1024
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFCC000)))
+__attribute__((at(0x2FFCC000))) static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE];
 #elif defined(__GNUC__)
-__attribute__((at(0x2FFCC000)))
+static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE] __attribute__((section(".Dcmi0Section")));
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFCC000
+__no_init static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE];
 #endif
-static rt_int32_t JPEG_DATA_BUF[JPEG_BUF_SIZE];
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-__attribute__((at(0x2FFDC000)))
+__attribute__((at(0x2FFDC000))) static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE];
 #elif defined(__GNUC__)
-__attribute__((at(0x2FFDC000)))             
+static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]  __attribute__((section(".Dcmi1Section")));            
 #elif defined(__ICCARM__)
 #pragma location = 0x2FFDC000
+__no_init static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]; 
 #endif
-static rt_int32_t JPEG_LINE_BUF[2][JPEG_LINE_SIZE]; 
-
 
 volatile rt_uint32_t jpeg_data_len = 0;
 volatile rt_uint8_t  jpeg_data_ok  = 0;

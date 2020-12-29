@@ -12,7 +12,7 @@ if rtconfig.CROSS_TOOL == 'gcc':
 elif rtconfig.CROSS_TOOL == 'iar':
     libs += ['libsmartconfig_armcm4_iar']
 
-group = DefineGroup('smartconfig', src, depend = ['RT_USING_SMARTCONFIG_LIB'], CPPPATH = path, LIBS = libs, LIBPATH = libpath)
+group = DefineGroup('Libraries', src, depend = ['RT_USING_SMARTCONFIG_LIB'], CPPPATH = path, LIBS = libs, LIBPATH = libpath)
 
 Return('group')
 

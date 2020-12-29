@@ -18,6 +18,6 @@ if GetDepend('RT_USING_LWIP'):
 
 CPPPATH = [cwd]
 
-group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
