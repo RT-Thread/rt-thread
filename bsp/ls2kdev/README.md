@@ -102,7 +102,7 @@ title   TFTPBOOT
  initrd (wd0,0)/initrd.img
 ```
 
-其中`tftfp://10.1.1.118/rtthread.elf`中的`10.1.1.118`为tftp服务器的ip地址。
+其中`tftp://10.1.1.118/rtthread.elf`中的`10.1.1.118`为tftp服务器的ip地址。
 
 **第三步：**
 
