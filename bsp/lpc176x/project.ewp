@@ -155,6 +155,7 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>__RTTHREAD__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -284,14 +285,13 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
-          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\CMSIS\CMSIS\Include</state>
@@ -1037,6 +1037,7 @@
         <option>
           <name>CCDefines</name>
           <state>NDEBUG</state>
+          <state>__RTTHREAD__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1166,14 +1167,13 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src</state>
-          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\CMSIS\CM3\DeviceSupport\NXP\LPC17xx</state>
           <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\ipv4</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\include</state>
+          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip-2.0.2\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\CMSIS\CMSIS\Include</state>
@@ -1765,57 +1765,6 @@
     </settings>
   </configuration>
   <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\cpu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\signal.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
     <name>Applications</name>
     <file>
       <name>$PROJ_DIR$\applications\application.c</name>
@@ -1837,6 +1786,24 @@
     </file>
   </group>
   <group>
+    <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+  </group>
+  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>
@@ -1852,24 +1819,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\uart.c</name>
-    </file>
-  </group>
-  <group>
-    <name>cpu</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
     </file>
   </group>
   <group>
@@ -1912,7 +1861,52 @@
     </file>
   </group>
   <group>
-    <name>libc</name>
+    <name>Kernel</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\components.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\memheap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\signal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\timer.c</name>
+    </file>
   </group>
   <group>
     <name>lwIP</name>
