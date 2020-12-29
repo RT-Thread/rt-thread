@@ -9,6 +9,9 @@
  */
 #include <rthw.h>
 #include <rtthread.h>
+
+#ifdef PKG_USING_LWEXT4
+
 #include <dfs.h>
 #include <dfs_fs.h>
 #include <dfs_file.h>
@@ -17,6 +20,9 @@
 #include <blk_device.h>
 #include <stdint.h>
 #include <pci.h>
+
+#define EXT4_DEBUG_ALL  (0xFFFFFFFF)
+#define EXT4_DEBUG_NO   (0)
 
 int mount_ssd(void)
 {
@@ -28,7 +34,7 @@ int mount_ssd(void)
         return;
     }
     
-    //ext4_dmask_set(0xFFFFFFFF);
+    ext4_dmask_set(EXT4_DEBUG_NO);
     blk_device_init(blkdev);
     dfs_mount("dwc_ahsata_blk","/","ext",0,(void *)1);
     dfs_mount("dwc_ahsata_blk","/boot","ext",0,(void *)0);
@@ -37,3 +43,5 @@ int mount_ssd(void)
 }
 
 INIT_ENV_EXPORT(mount_ssd);
+
+#endif
