@@ -1,0 +1,8 @@
+
+if RT_USING_TESTCASE
+    menu "utest demo"
+        config TC_USING_UTEST_DEMO_TC
+            bool "Enable demo test"
+            default n
+    endmenu
+endif
