@@ -1190,32 +1190,38 @@ int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
     socklen_t uaddrlen;
     socklen_t kaddrlen;
 
-    if (!lwp_user_accessable(addrlen, sizeof (socklen_t *)))
+    if (addr)
     {
-        return -1;
-    }
-    lwp_get_from_user(&uaddrlen, addrlen, sizeof (socklen_t *));
-    if (!uaddrlen)
-    {
-        return -1;
-    }
+        if (!lwp_user_accessable(addrlen, sizeof (socklen_t *)))
+        {
+            return -1;
+        }
+        lwp_get_from_user(&uaddrlen, addrlen, sizeof (socklen_t *));
+        if (!uaddrlen)
+        {
+            return -1;
+        }
 
-    if (!lwp_user_accessable(addr, uaddrlen))
-    {
-        return -1;
+        if (!lwp_user_accessable(addr, uaddrlen))
+        {
+            return -1;
+        }
     }
 
     kaddrlen = sizeof(struct sockaddr);
     ret = accept(socket, &ksa, &kaddrlen);
     if (ret >= 0)
     {
-        sockaddr_tomusl(&ksa, &kmusladdr);
-        if (uaddrlen > sizeof(struct musl_sockaddr))
+        if (addr)
         {
-            uaddrlen = sizeof(struct musl_sockaddr);
+            sockaddr_tomusl(&ksa, &kmusladdr);
+            if (uaddrlen > sizeof(struct musl_sockaddr))
+            {
+                uaddrlen = sizeof(struct musl_sockaddr);
+            }
+            lwp_put_to_user(addr, &kmusladdr, uaddrlen);
+            lwp_put_to_user(addrlen, &uaddrlen, sizeof (socklen_t *));
         }
-        lwp_put_to_user(addr, &kmusladdr, uaddrlen);
-        lwp_put_to_user(addrlen, &uaddrlen, sizeof (socklen_t *));
     }
     return ret;
 }
