@@ -618,7 +618,7 @@ u32_t sys_jiffies(void)
 
 u32_t sys_now(void)
 {
-    return rt_hw_1ms_tick_get();
+    return rt_tick_get_millisecond();
 }
 
 #ifdef RT_LWIP_PPP
