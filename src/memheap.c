@@ -712,6 +712,20 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 }
 RTM_EXPORT(rt_calloc);
 
+void rt_memory_info(rt_uint32_t *total,
+                    rt_uint32_t *used,
+                    rt_uint32_t *max_used)
+{
+    if (total != RT_NULL)
+        *total = _heap.pool_size;
+
+    if (used  != RT_NULL)
+        *used = _heap.pool_size - _heap.available_size;
+
+    if (max_used != RT_NULL)
+        *max_used = _heap.max_used_size;
+}
+
 #endif
 
 #endif

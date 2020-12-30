@@ -22,6 +22,10 @@
 #include "usb.h"
 #include "usbh_lib.h"
 
+#if !defined(NU_USBHOST_HUB_POLLING_INTERVAL)
+    #define NU_USBHOST_HUB_POLLING_INTERVAL    (100)
+#endif
+
 #define NU_MAX_USBH_PORT    2        //USB1.1 + USB2.0 port
 #define NU_MAX_USBH_PIPE    16
 #define NU_USBH_THREAD_STACK_SIZE    2048
@@ -51,6 +55,7 @@ typedef struct nu_port_ctrl
 struct nu_usbh_dev
 {
     uhcd_t uhcd;
+    rt_thread_t polling_thread;
     S_NU_RH_PORT_CTRL asPortCtrl[NU_MAX_USBH_PORT];
 };
 
@@ -290,7 +295,6 @@ static rt_err_t nu_open_pipe(upipe_t pipe)
 
 static rt_err_t nu_close_pipe(upipe_t pipe)
 {
-    int i;
     S_NU_RH_PORT_CTRL *psPortCtrl;
     S_NU_PORT_DEV *psPortDev;
 
@@ -309,6 +313,7 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
         {
             if (psPortDev->pUDev)
             {
+                int i;
                 for (i = 0; i < NU_MAX_USBH_PIPE; i++)
                 {
                     if (psPortDev->apsEPInfo[i] != NULL)
@@ -320,7 +325,6 @@ static rt_err_t nu_close_pipe(upipe_t pipe)
                 free_device(psPortDev->pUDev);
                 psPortDev->pUDev = NULL;
             }
-            psPortDev->port_num = 0;
         }
     }
 
@@ -615,8 +619,8 @@ static void nu_usbh_rh_thread_entry(void *parameter)
 {
     while (1)
     {
-        usbh_pooling_root_hubs();
-        rt_thread_delay(10);
+        usbh_polling_root_hubs();
+        rt_thread_mdelay(NU_USBHOST_HUB_POLLING_INTERVAL);
     }
 }
 
@@ -674,6 +678,8 @@ static void nu_hcd_disconnect_callback(
         return;
     }
 
+    port_index = i + 1;
+
     for (i = 0; i < NU_MAX_USBH_PIPE; i++)
     {
         if (psPortCtrl->sRHPortDev.apsEPInfo[i] != NULL)
@@ -682,10 +688,9 @@ static void nu_hcd_disconnect_callback(
         }
     }
 
-    port_index = i + 1;
     psPortCtrl->sRHPortDev.pUDev = NULL;
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnnect\n"));
+    RT_DEBUG_LOG(RT_DEBUG_USB, ("usb disconnect\n"));
     rt_usbh_root_hub_disconnect_handler(s_sUSBHDev.uhcd, port_index);
 }
 
@@ -701,22 +706,21 @@ static struct uhcd_ops nu_uhcd_ops =
 
 static rt_err_t nu_hcd_init(rt_device_t device)
 {
-    rt_thread_t thread;
-
+    struct nu_usbh_dev * pNuUSBHDev = (struct nu_usbh_dev *)device;
     usbh_core_init();
 
     //install connect/disconnect callback
     usbh_install_conn_callback(nu_hcd_connect_callback, nu_hcd_disconnect_callback);
-    usbh_pooling_root_hubs();
+    usbh_polling_root_hubs();
 
     //create thread for polling usbh port status
     /* create usb hub thread */
-    thread = rt_thread_create("usbh_drv", nu_usbh_rh_thread_entry, RT_NULL,
+    pNuUSBHDev->polling_thread = rt_thread_create("usbh_drv", nu_usbh_rh_thread_entry, RT_NULL,
                               NU_USBH_THREAD_STACK_SIZE, 8, 20);
-    if (thread != RT_NULL)
+    if ( pNuUSBHDev->polling_thread != RT_NULL)
     {
         /* startup usb host thread */
-        rt_thread_startup(thread);
+        rt_thread_startup( pNuUSBHDev->polling_thread );
     }
     else
     {
@@ -742,6 +746,54 @@ uint32_t usbh_tick_from_millisecond(uint32_t msec)
     return rt_tick_from_millisecond(msec);
 }
 
+#if defined(RT_USING_PM)
+
+/* device pm suspend() entry. */
+static int usbhost_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
+{
+    struct nu_usbh_dev * pNuUSBHDev = (struct nu_usbh_dev *)device;
+
+    RT_ASSERT(pNuUSBHDev!=RT_NULL);
+    switch (mode)
+    {
+    case PM_SLEEP_MODE_LIGHT:
+    case PM_SLEEP_MODE_DEEP:
+        pNuUSBHDev->polling_thread->stat = RT_THREAD_READY;
+        rt_thread_suspend(pNuUSBHDev->polling_thread);
+        break;
+
+    default:
+        break;
+    }
+
+    return (int)RT_EOK;
+}
+
+/* device pm resume() entry. */
+static void usbhost_pm_resume(const struct rt_device *device, rt_uint8_t mode)
+{
+    struct nu_usbh_dev * pNuUSBHDev = (struct nu_usbh_dev *)device;
+    RT_ASSERT(pNuUSBHDev!=RT_NULL);
+
+    switch (mode)
+    {
+    case PM_SLEEP_MODE_LIGHT:
+    case PM_SLEEP_MODE_DEEP:
+        rt_thread_resume(pNuUSBHDev->polling_thread);
+        break;
+
+    default:
+        break;
+    }
+}
+
+static struct rt_device_pm_ops device_pm_ops =
+{
+    .suspend = usbhost_pm_suspend,
+    .resume = usbhost_pm_resume,
+    .frequency_change = RT_NULL
+};
+#endif
 
 int nu_usbh_register(void)
 {
@@ -760,9 +812,6 @@ int nu_usbh_register(void)
 #endif
 
 #if defined(BSP_USING_USBH)
-    /* Enable USBD and OTG clock */
-    CLK_EnableModuleClock(USBD_MODULE);
-    CLK_EnableModuleClock(OTG_MODULE);
     /* Set USB Host role */
     SYS->USBPHY = (SYS->USBPHY & ~SYS_USBPHY_USBROLE_Msk) | (0x1u << SYS_USBPHY_USBROLE_Pos);
     SYS->USBPHY |= SYS_USBPHY_USBEN_Msk | SYS_USBPHY_SBO_Msk ;
@@ -775,11 +824,7 @@ int nu_usbh_register(void)
     rt_memset(&s_sUSBHDev, 0x0, sizeof(struct nu_usbh_dev));
 
     uhcd_t uhcd = (uhcd_t)rt_malloc(sizeof(struct uhcd));
-    if (uhcd == RT_NULL)
-    {
-        rt_kprintf("uhcd malloc failed\r\n");
-        return -RT_ERROR;
-    }
+    RT_ASSERT(res != RT_NULL);
 
     rt_memset((void *)uhcd, 0, sizeof(struct uhcd));
 
@@ -792,23 +837,18 @@ int nu_usbh_register(void)
     s_sUSBHDev.uhcd = uhcd;
 
     res = rt_device_register(&uhcd->parent, "usbh", RT_DEVICE_FLAG_DEACTIVATE);
-    if (res != RT_EOK)
-    {
-        rt_kprintf("register usb host failed res = %d\r\n", res);
-        return -RT_ERROR;
-    }
+    RT_ASSERT(res == RT_EOK);
 
-    /*initialize the usb host functin */
+    /*initialize the usb host function */
     res = rt_usb_host_init();
+    RT_ASSERT(res == RT_EOK);
 
+#if defined(RT_USING_PM)
+    rt_pm_device_register(&uhcd->parent, &device_pm_ops);
+#endif
+		
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(nu_usbh_register);
 
 #endif
-
-
-
-
-
-

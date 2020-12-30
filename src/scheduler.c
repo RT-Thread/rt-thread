@@ -43,7 +43,7 @@ rt_uint8_t rt_thread_ready_table[32];
 #ifndef RT_USING_SMP
 extern volatile rt_uint8_t rt_interrupt_nest;
 static rt_int16_t rt_scheduler_lock_nest;
-struct rt_thread *rt_current_thread;
+struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /*RT_USING_SMP*/
 

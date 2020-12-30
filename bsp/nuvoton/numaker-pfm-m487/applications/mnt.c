@@ -132,12 +132,3 @@ exit_mnt_init_spiflash0:
 INIT_ENV_EXPORT(mnt_init_spiflash0);
 #endif
 
-#if defined(PKG_USING_FAL)
-int mnt_init_fal(void)
-{
-    fal_init();
-    return 0;
-}
-INIT_ENV_EXPORT(mnt_init_fal);
-#endif
-
