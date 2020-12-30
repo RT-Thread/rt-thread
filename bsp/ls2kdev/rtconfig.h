@@ -219,9 +219,9 @@
 
 /* system packages */
 
-#define PKG_USING_LWEXT4
-#define RT_USING_DFS_LWEXT4
-#define PKG_USING_LWEXT4_LATEST_VERSION
+
+/* Micrium: Micrium software products porting for RT-Thread */
+
 
 /* peripheral libraries and drivers */
 
@@ -230,6 +230,9 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* games: games run on RT-Thread console */
 
 #define SOC_LS2K1000
 

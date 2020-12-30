@@ -225,6 +225,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32L053xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1293,6 +1294,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32L053xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -2143,7 +2145,7 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
+    <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2275,7 +2277,7 @@
     </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Device\ST\STM32L0xx\Source\Templates\system_stm32l0xx.c</name>
     </file>

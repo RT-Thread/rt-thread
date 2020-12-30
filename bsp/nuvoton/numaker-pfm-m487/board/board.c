@@ -10,6 +10,7 @@
 *
 ******************************************************************************/
 
+#include <rtconfig.h>
 #include <rtthread.h>
 #include <NuMicro.h>
 #include "drv_uart.h"
@@ -17,14 +18,6 @@
 #include "nutool_pincfg.h"
 #include "nutool_modclkcfg.h"
 
-#ifdef __CC_ARM
-    extern int Image$$RW_IRAM1$$ZI$$Limit;
-#elif __ICCARM__
-    #pragma section="HEAP"
-#else
-    extern int __bss_end;
-    extern int __ram_top;
-#endif
 
 /**
  * This function will initial M487 board.
@@ -55,16 +48,8 @@ void rt_hw_board_init(void)
     /* Lock protected registers */
     SYS_LockReg();
 
-
 #ifdef RT_USING_HEAP
-#ifdef __CC_ARM
-    rt_system_heap_init((void *)&Image$$RW_IRAM1$$ZI$$Limit, (void *)SRAM_END);
-#elif __ICCARM__
-    rt_system_heap_init(__segment_end("HEAP"), (void *)SRAM_END);
-#else
-    /* init memory system */
-    rt_system_heap_init((void *)&__bss_end, (void *)&__ram_top);
-#endif
+    rt_system_heap_init(HEAP_BEGIN, HEAP_END);
 #endif /* RT_USING_HEAP */
 
 #if defined(BSP_USING_UART)

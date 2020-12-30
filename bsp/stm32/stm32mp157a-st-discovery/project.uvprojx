@@ -273,7 +273,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x20000</Size>
+                <Size>0x30000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -297,8 +297,8 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x10020000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x10030000</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>CORE_CM4, __LOG_TRACE_IO_, METAL_MAX_DEVICE_REGIONS=2, VIRTIO_SLAVE_ONLY, NO_ATOMIC_64_SUPPORT, STM32MP157Axx, METAL_INTERNAL, USE_HAL_DRIVER</Define>
+              <Define>CORE_CM4, __LOG_TRACE_IO_, METAL_MAX_DEVICE_REGIONS=2, VIRTIO_SLAVE_ONLY, NO_ATOMIC_64_SUPPORT, STM32MP157Axx, __RTTHREAD__, METAL_INTERNAL, USE_HAL_DRIVER</Define>
               <Undefine />
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\CM4\Inc;board\ports;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc;..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include;..\libraries\STM32MPxx_HAL\CMSIS\Core\Include;..\libraries\STM32MPxx_HAL\CMSIS\Include</IncludePath>
+              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\CM4\Inc;board\ports;board\ports\audio;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc;..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include;..\libraries\STM32MPxx_HAL\CMSIS\Core\Include;..\libraries\STM32MPxx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,7 +388,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -739,7 +739,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>STM32_HAL</GroupName>
+          <GroupName>Libraries</GroupName>
           <Files>
             <File>
               <FileName>stm32mp1xx_hal.c</FileName>
@@ -921,11 +921,6 @@
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc />
-        <LayUrl />
-        <LayKeys />
-        <LayCat />
-        <LayLic />
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>

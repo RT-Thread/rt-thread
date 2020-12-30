@@ -73,7 +73,7 @@ SECTIONS
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
 
-        /* This is used by the startup in order to initialize the .data secion */
+        /* This is used by the startup in order to initialize the .data section */
         _sidata = .;
     } > CODE
     __exidx_end = .;
@@ -91,7 +91,7 @@ SECTIONS
     .data : AT (_sidata)
     {
         . = ALIGN(4);
-        /* This is used by the startup in order to initialize the .data secion */
+        /* This is used by the startup in order to initialize the .data section */
         _sdata = . ;
 
         *(.data)
@@ -99,7 +99,7 @@ SECTIONS
         *(.gnu.linkonce.d*)
 
         . = ALIGN(4);
-        /* This is used by the startup in order to initialize the .data secion */
+        /* This is used by the startup in order to initialize the .data section */
         _edata = . ;
     } >DATA
 
@@ -107,7 +107,7 @@ SECTIONS
     .bss :
     {
         . = ALIGN(4);
-        /* This is used by the startup in order to initialize the .bss secion */
+        /* This is used by the startup in order to initialize the .bss section */
         _sbss = .;
 
         *(.bss)
@@ -115,7 +115,7 @@ SECTIONS
         *(COMMON)
 
         . = ALIGN(4);
-        /* This is used by the startup in order to initialize the .bss secion */
+        /* This is used by the startup in order to initialize the .bss section */
         _ebss = . ;
         
         *(.bss.init)

@@ -19,6 +19,7 @@
 #include <NuMicro.h>
 #include <nu_bitutil.h>
 #include <drv_gpio.h>
+#include <stdlib.h>
 
 /* Private define ---------------------------------------------------------------*/
 
@@ -34,6 +35,7 @@ static int nu_gpio_read(struct rt_device *device, rt_base_t pin);
 static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint32_t mode, void (*hdr)(void *args), void *args);
 static rt_err_t nu_gpio_detach_irq(struct rt_device *device, rt_int32_t pin);
 static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled);
+static rt_base_t nu_gpio_pin_get(const char *name);
 
 /* Private variables ------------------------------------------------------------*/
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[IRQ_MAX_NUM];
@@ -45,7 +47,7 @@ static struct rt_pin_ops nu_gpio_ops =
     nu_gpio_attach_irq,
     nu_gpio_detach_irq,
     nu_gpio_irq_enable,
-    RT_NULL,
+    nu_gpio_pin_get,
 };
 
 static IRQn_Type au32GPIRQ[NU_PORT_CNT] = {GPA_IRQn, GPB_IRQn, GPC_IRQn, GPD_IRQn, GPE_IRQn, GPF_IRQn, GPG_IRQn, GPH_IRQn};
@@ -100,6 +102,31 @@ static void pin_irq_hdr(rt_uint32_t irq_status, rt_uint32_t port_index)
         // Clear the served bit.
         irq_status &= ~pin_mask;
     }
+}
+
+static rt_base_t nu_gpio_pin_get(const char *name)
+{
+    /* Get pin number by name,such as PA.0, PF12 */
+    if ((name[2] == '\0') || ((name[2] == '.') && (name[3] == '\0')))
+        return -(RT_EINVAL);
+
+    long number;
+
+    if ((name[2] == '.'))
+        number = atol(&name[3]);
+    else
+        number = atol(&name[2]);
+
+    if (number > 15)
+        return -(RT_EINVAL);
+
+    if (name[1] >= 'A' && name[1] <= 'H')
+        return ((name[1] - 'A') * 0x10) + number;
+
+    if (name[1] >= 'a' && name[1] <= 'h')
+        return ((name[1] - 'a') * 0x10) + number;
+
+    return -(RT_EINVAL);
 }
 
 static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)

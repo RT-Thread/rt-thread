@@ -91,16 +91,17 @@ typedef volatile struct soft_time_handle soft_time_handle_t;
 /* Private functions ------------------------------------------------------------*/
 static rt_err_t wdt_init(rt_watchdog_t *dev);
 static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args);
+static uint32_t wdt_get_module_clock(void);
 static uint32_t wdt_get_working_hz(void);
 static void soft_time_init(soft_time_handle_t *const soft_time);
 static void soft_time_setup(uint32_t wanted_sec, uint32_t hz, soft_time_handle_t *const soft_time);
 static void soft_time_feed_dog(soft_time_handle_t *const soft_time);
 
 #if defined(RT_USING_PM)
-static int wdt_pm_suspend(const struct rt_device *device, rt_uint8_t mode);
-static void wdt_pm_resume(const struct rt_device *device, rt_uint8_t mode);
-static int wdt_pm_frequency_change(const struct rt_device *device, rt_uint8_t mode);
-static void soft_time_freqeucy_change(uint32_t new_hz, soft_time_handle_t *const soft_time);
+    static int wdt_pm_suspend(const struct rt_device *device, rt_uint8_t mode);
+    static void wdt_pm_resume(const struct rt_device *device, rt_uint8_t mode);
+    static int wdt_pm_frequency_change(const struct rt_device *device, rt_uint8_t mode);
+    static void soft_time_freqeucy_change(uint32_t new_hz, soft_time_handle_t *const soft_time);
 #endif
 
 /* Public functions -------------------------------------------------------------*/
@@ -118,7 +119,6 @@ static struct rt_watchdog_ops ops_wdt =
 
 static struct rt_device_pm_ops device_pm_ops =
 {
-
     .suspend = wdt_pm_suspend,
     .resume = wdt_pm_resume,
     .frequency_change = wdt_pm_frequency_change
@@ -177,12 +177,6 @@ static void wdt_pm_resume(const struct rt_device *device, rt_uint8_t mode)
     default:
         break;
     }
-}
-
-
-static uint32_t wdt_get_module_clock(void)
-{
-    return (CLK_GetModuleClockSource(WDT_MODULE) << CLK_CLKSEL1_WDTSEL_Pos);
 }
 
 
@@ -285,6 +279,12 @@ static rt_err_t wdt_init(rt_watchdog_t *dev)
     hw_wdt_init();
 
     return RT_EOK;
+}
+
+
+static uint32_t wdt_get_module_clock(void)
+{
+    return (CLK_GetModuleClockSource(WDT_MODULE) << CLK_CLKSEL1_WDTSEL_Pos);
 }
 
 
@@ -408,6 +408,7 @@ static rt_err_t wdt_control(rt_watchdog_t *dev, int cmd, void *args)
 
     case RT_DEVICE_CTRL_WDT_START:
 
+        WDT_RESET_COUNTER();
         WDT_Open(MIN_TOUTSEL, WDT_RESET_DELAY_1026CLK, TRUE, TRUE);
         WDT_EnableInt();
         break;
