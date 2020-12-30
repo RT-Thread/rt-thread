@@ -358,7 +358,7 @@ int sys_open(const char *name, int flag, ...)
 /* syscall: "close" ret: "int" args: "int" */
 int sys_close(int fd)
 {
-    if ((0 <= fd) && (fd <= 2))
+    if ((0 <= fd) && (fd <= DFS_FD_OFFSET))
     {
         return 0;
     }
