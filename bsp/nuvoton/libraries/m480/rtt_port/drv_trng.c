@@ -15,8 +15,8 @@
 #if (defined(BSP_USING_TRNG) && defined(RT_HWCRYPTO_USING_RNG))
 
 #include <rtdevice.h>
-#include <stdlib.h>
 #include "NuMicro.h"
+#include <stdlib.h>
 
 #define NU_CRYPTO_TRNG_NAME "nu_TRNG"
 

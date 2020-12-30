@@ -13,9 +13,9 @@ ES-PDS-ES32F369x 是东软载波微电子官方推出的一款基于 ARM Cortex-
 
 开发板外观如下图所示：
 
-ES-PDS-ES32F369x-V1.2
+ES-PDS-ES32F369x-V1.3
 
-![ES32F0654](figures/ES-PDS-ES32F369x-V1.2.jpg)
+![ES32F0654](figures/ES-PDS-ES32F369x-V1.3.jpg)
 
 该开发板常用 **板载资源** 如下：
 
@@ -32,15 +32,19 @@ ES-PDS-ES32F369x-V1.2
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注**         |
-| :----------- | :----------: | :--------------- |
-| SPI FLASH    |     支持     | SPI0             |
-| **片上外设** | **支持情况** | **备注**         |
-| GPIO         |     支持     | 50 GPIOs         |
-| UART         |     支持     | UART0/1/2/3/4/5  |
-| SPI          |     支持     | SPI0/1/2         |
-| I2C          |     支持     | I2C0/1           |
-| CAN          |     支持     | CAN0             |
+| **板载外设** | **支持情况** | **备注**        |
+| :----------- | :----------: | :-------------- |
+| SPI FLASH    |     支持     | SPI0            |
+| **片上外设** | **支持情况** | **备注**        |
+| GPIO         |     支持     | 50 GPIOs        |
+| UART         |     支持     | UART0/1/2/3/4/5 |
+| SPI          |     支持     | SPI0/1/2        |
+| I2C          |     支持     | I2C0/1          |
+| CAN          |     支持     | CAN0            |
+| PWM          |     支持     | PWM0/1          |
+| TIMER        |     支持     | TIMER0/1        |
+| RTC          |     支持     | RTC             |
+| ADC          |     支持     | ADC0            |
 
 ### 1.2  注意事项
 
@@ -56,7 +60,7 @@ ES-PDS-ES32F369x-V1.2
 
 使用ESlinkⅡ(mini)连接开发板如下图所示：
 
-ESLinkⅡ(mini) + ES-PDS-ES32F369x-V1.2
+ESLinkⅡ(mini) + ES-PDS-ES32F369x-V1.3
 
 ![ESLinkII](figures/ESLinkII-mini.jpg)
 
@@ -82,6 +86,22 @@ msh>
 
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
 
+    a）如果需要使用内核用例，先配置rt-thread内核，如图：
+
+    ![kernel_config](figures/k_conf.jpg)
+
+    然后配置内核用例，如图：
+
+    ![kernel_samples](figures/k_ex.jpg)
+
+    b）如果需要使用驱动用例：先使能驱动，如图：
+
+    ![driver_config](figures/d_conf.jpg)
+
+    然后配置驱动用例，如图：
+
+    ![driver_sample](figures/d_ex.jpg)
+
 3. 输入`pkgs --update`命令更新软件包。
 
 4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
@@ -90,7 +110,7 @@ msh>
 
 ## 4. 联系人信息
 
-- [wangyongquan](https://github.com/wangyq2018) 
+- [liuhongyan](https://gitee.com/liuhongyan98) 
 
 ## 5. 参考
 

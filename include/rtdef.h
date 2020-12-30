@@ -33,6 +33,7 @@
  * 2019-05-17     Bernard      change version number to v4.0.2
  * 2019-12-20     Bernard      change version number to v4.0.3
  * 2020-08-10     Meco Man     add macro for struct rt_device_ops
+ * 2020-10-23     Meco Man     define maximum value of ipc type
  */
 
 #ifndef __RT_DEF_H__
@@ -101,6 +102,13 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UINT16_MAX                   0xffff          /**< Maxium number of UINT16 */
 #define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
+
+/* maximum value of ipc type */
+#define RT_SEM_VALUE_MAX                RT_UINT16_MAX   /**< Maxium number of semaphore .value */
+#define RT_MUTEX_VALUE_MAX              RT_UINT16_MAX   /**< Maxium number of mutex .value */
+#define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maxium number of mutex .hold */
+#define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
+#define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
 
 #if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #define __CLANG_ARM
@@ -863,6 +871,7 @@ enum rt_device_class_type
     RT_Device_Class_Miscellaneous,                      /**< Miscellaneous device */
     RT_Device_Class_Sensor,                             /**< Sensor device */
     RT_Device_Class_Touch,                              /**< Touch device */
+    RT_Device_Class_PHY,                                /**< PHY device */
     RT_Device_Class_Unknown                             /**< unknown device */
 };
 

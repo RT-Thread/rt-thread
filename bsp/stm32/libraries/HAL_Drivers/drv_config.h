@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
+ * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  */
  
 #ifndef __DRV_CONFIG_H__
@@ -50,6 +51,7 @@ extern "C" {
 #include "f4/qspi_config.h"
 #include "f4/usbd_config.h"
 #include "f4/adc_config.h"
+#include "f4/dac_config.h"
 #include "f4/tim_config.h"
 #include "f4/sdio_config.h"
 #include "f4/pwm_config.h"
@@ -72,6 +74,7 @@ extern "C" {
 #include "l4/spi_config.h"
 #include "l4/qspi_config.h"
 #include "l4/adc_config.h"
+#include "l4/dac_config.h"
 #include "l4/tim_config.h"
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
@@ -100,6 +103,7 @@ extern "C" {
 #include "h7/spi_config.h"
 #include "h7/qspi_config.h"
 #include "h7/adc_config.h"
+#include "h7/dac_config.h"
 #include "h7/tim_config.h"
 #include "h7/sdio_config.h"
 #include "h7/pwm_config.h"
@@ -107,11 +111,21 @@ extern "C" {
 #elif  defined(SOC_SERIES_STM32MP1)
 #include "mp1/dma_config.h"
 #include "mp1/uart_config.h"
+#include "mp1/qspi_config.h"
 #include "mp1/spi_config.h"
 #include "mp1/adc_config.h"
 #include "mp1/dac_config.h"    
 #include "mp1/tim_config.h"
 #include "mp1/pwm_config.h"    
+#elif  defined(SOC_SERIES_STM32WB)
+#include "wb/adc_config.h"
+#include "wb/dma_config.h"
+#include "wb/pwm_config.h"
+#include "wb/qspi_config.h" 
+#include "wb/spi_config.h"
+#include "wb/tim_config.h"
+#include "wb/uart_config.h"
+#include "wb/usbd_config.h"
 #endif
 
 #ifdef __cplusplus

@@ -25,17 +25,6 @@ static rt_tick_t rt_tick = 0;
 #endif
 
 /**
- * This function will initialize system tick and set it to zero.
- * @ingroup SystemInit
- *
- * @deprecated since 1.1.0, this function does not need to be invoked
- * in the system initialization.
- */
-void rt_system_tick_init(void)
-{
-}
-
-/**
  * @addtogroup Clock
  */
 
@@ -91,8 +80,7 @@ void rt_tick_increase(void)
 
         thread->stat |= RT_THREAD_STAT_YIELD;
 
-        /* yield */
-        rt_thread_yield();
+        rt_schedule();
     }
 
     /* check timer */

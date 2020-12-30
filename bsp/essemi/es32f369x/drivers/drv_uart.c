@@ -39,7 +39,7 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
     gpio_initstructure.odos = GPIO_PUSH_PULL;
     gpio_initstructure.pupd = GPIO_PUSH_UP;
     gpio_initstructure.podrv = GPIO_OUT_DRIVE_1;
-    gpio_initstructure.nodrv = GPIO_OUT_DRIVE_0_1;
+    gpio_initstructure.nodrv = GPIO_OUT_DRIVE_1;
     gpio_initstructure.flt  = GPIO_FILTER_DISABLE;
     gpio_initstructure.type = GPIO_TYPE_TTL;
 
@@ -109,8 +109,8 @@ static rt_err_t es32f3x_configure(struct rt_serial_device *serial, struct serial
     ald_cmu_perh_clock_config(CMU_PERH_UART5, ENABLE);
 #endif /* uart5 gpio init */
 
-    ald_uart_tx_fifo_config(&uart->huart, UART_TXFIFO_EMPTY, 1);
-    ald_uart_rx_fifo_config(&uart->huart, UART_RXFIFO_1BYTE, 1);
+    ald_uart_tx_fifo_config(&uart->huart, UART_TXFIFO_EMPTY);
+    ald_uart_rx_fifo_config(&uart->huart, UART_RXFIFO_1BYTE);
 
     uart->huart.init.mode        = UART_MODE_UART;
     uart->huart.init.baud        = cfg->baud_rate;

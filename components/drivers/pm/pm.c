@@ -8,6 +8,7 @@
  * 2012-06-02     Bernard      the first version
  * 2018-08-02     Tanek        split run and sleep modes, support custom mode
  * 2019-04-28     Zero-Free    improve PM mode and device ops interface
+ * 2020-11-23     zhangsz      update pm mode select
  */
 
 #include <rthw.h>
@@ -214,8 +215,6 @@ static void _pm_change_sleep_mode(struct rt_pm *pm, rt_uint8_t mode)
  */
 void rt_system_power_manager(void)
 {
-    rt_uint8_t mode;
-
     if (_pm_init_flag == 0)
         return;
 
@@ -223,8 +222,7 @@ void rt_system_power_manager(void)
     _pm_frequency_scaling(&_pm);
 
     /* Low Power Mode Processing */
-    mode = _pm_select_sleep_mode(&_pm);
-    _pm_change_sleep_mode(&_pm, mode);
+    _pm_change_sleep_mode(&_pm, _pm.sleep_mode);
 }
 
 /**
@@ -248,6 +246,7 @@ void rt_pm_request(rt_uint8_t mode)
     pm = &_pm;
     if (pm->modes[mode] < 255)
         pm->modes[mode] ++;
+    _pm_select_sleep_mode(pm);
     rt_hw_interrupt_enable(level);
 }
 
@@ -273,6 +272,7 @@ void rt_pm_release(rt_uint8_t mode)
     pm = &_pm;
     if (pm->modes[mode] > 0)
         pm->modes[mode] --;
+    _pm_select_sleep_mode(pm);
     rt_hw_interrupt_enable(level);
 }
 
@@ -515,6 +515,10 @@ void rt_system_pm_init(const struct rt_pm_ops *ops,
 
     pm->device_pm = RT_NULL;
     pm->device_pm_number = 0;
+
+#if IDLE_THREAD_STACK_SIZE <= 256
+    #error "[pm.c ERR] IDLE Stack Size Too Small!"
+#endif
 
     _pm_init_flag = 1;
 }

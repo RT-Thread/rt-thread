@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2020-06-18     thread-liu        the first version
+ * 2020-10-09     thread-liu   Porting for stm32h7xx
  */
 
 #include <board.h>
@@ -21,6 +22,10 @@ static DAC_HandleTypeDef dac_config[] =
 {
 #ifdef BSP_USING_DAC1
     DAC1_CONFIG,
+#endif
+    
+#ifdef BSP_USING_DAC2
+    DAC2_CONFIG,
 #endif
 };
 
@@ -38,7 +43,7 @@ static rt_err_t stm32_dac_enabled(struct rt_dac_device *device, rt_uint32_t chan
     RT_ASSERT(device != RT_NULL);
     stm32_dac_handler = device->parent.user_data;
 
-#if defined(SOC_SERIES_STM32MP1)
+#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
         HAL_DAC_Start(stm32_dac_handler, channel);
 #endif
     
@@ -51,7 +56,7 @@ static rt_err_t stm32_dac_disabled(struct rt_dac_device *device, rt_uint32_t cha
     RT_ASSERT(device != RT_NULL);
     stm32_dac_handler = device->parent.user_data;
     
-#if defined(SOC_SERIES_STM32MP1)
+#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
     HAL_DAC_Stop(stm32_dac_handler, channel);
 #endif
     
@@ -91,22 +96,22 @@ static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t ch
 
     rt_memset(&DAC_ChanConf, 0, sizeof(DAC_ChanConf));
     
-#if defined(SOC_SERIES_STM32MP1)
-    if (channel <= 2 && channel > 0)
+#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
+    if ((channel <= 2) && (channel > 0))
     {
         /* set stm32 dac channel */
         dac_channel =  stm32_dac_get_channel(channel);
     }
     else
     {
-      LOG_E("dac channel must be between 1 and 2.");  
+      LOG_E("dac channel must be 1 or 2.");  
       return -RT_ERROR;
     }
 #endif  
     
-#if defined(SOC_SERIES_STM32MP1)
-    DAC_ChanConf.DAC_Trigger=DAC_TRIGGER_NONE;             
-    DAC_ChanConf.DAC_OutputBuffer=DAC_OUTPUTBUFFER_DISABLE;
+#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
+    DAC_ChanConf.DAC_Trigger      = DAC_TRIGGER_NONE;             
+    DAC_ChanConf.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
 #endif    
     /* config dac out channel*/
     if (HAL_DAC_ConfigChannel(stm32_dac_handler, &DAC_ChanConf, dac_channel) != HAL_OK)

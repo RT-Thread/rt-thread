@@ -27,6 +27,8 @@
 *  The context switch is managed by the threads.So the task stack does not have to be managed directly,
 *  although the stack stack is still used to hold an WinThreadState structure this is the only thing it
 *  will be ever hold.
+*  YieldEvent used to make sure the thread does not execute before asynchronous SuspendThread() operation
+*  actually being performed.
 *  the structure indirectly maps the task handle to a thread handle
 *********************************************************************************************************
 */
@@ -35,6 +37,7 @@ typedef struct
     void            *Param;                     //Thread param
     void            (*Entry)(void *);           //Thread entry
     void            (*Exit)(void);                      //Thread exit
+    HANDLE          YieldEvent;
     HANDLE          ThreadHandle;
     DWORD           ThreadID;
 }win_thread_t;
@@ -171,6 +174,11 @@ rt_uint8_t* rt_hw_stack_init(void *pEntry,void *pParam,rt_uint8_t *pStackAddr,vo
     pWinThread->ThreadHandle = NULL;
     pWinThread->ThreadID = 0;
 
+    pWinThread->YieldEvent = CreateEvent(NULL,
+                                         FALSE,
+                                         FALSE,
+                                         NULL);
+
     /* Create the winthread */
     pWinThread->ThreadHandle = CreateThread(NULL,
                                             0,
@@ -277,6 +285,19 @@ void rt_hw_context_switch(rt_uint32_t from,
     //trigger YIELD exception(cause contex switch)
     TriggerSimulateInterrupt(CPU_INTERRUPT_YIELD);
 
+    // make sure the event is not already signaled
+    win_thread_t *WinThread = (win_thread_t *)rt_interrupt_from_thread;
+    ResetEvent(WinThread->YieldEvent);
+
+    /*
+     * enable interrupt in advance so that scheduler can be executed.please note that interrupt
+     * maybe disable twice before.
+     */
+    rt_hw_interrupt_enable(0);
+    rt_hw_interrupt_enable(0);
+
+    // wait to suspend.
+    WaitForSingleObject(WinThread->YieldEvent, INFINITE);
 } /*** rt_hw_context_switch ***/
 
 /*
@@ -578,6 +599,7 @@ void RegisterSimulateInterrupt(rt_uint32_t IntIndex,rt_uint32_t (*IntHandler)(vo
             if ((WinThreadFrom != NULL) && (WinThreadFrom->ThreadHandle != NULL))
             {
                 SuspendThread(WinThreadFrom->ThreadHandle);
+                SetEvent(WinThreadFrom->YieldEvent);
             }
 
             ResumeThread(WinThreadTo->ThreadHandle);

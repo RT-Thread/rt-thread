@@ -20,7 +20,7 @@ if rtconfig.PLATFORM == 'iar':
         if LooseVersion(IARVersion()) < LooseVersion("8.20.1"):
             CPPDEFINES = CPPDEFINES + ['_DLIB_THREAD_SUPPORT']
 
-    group = DefineGroup('dlib', src, depend = ['RT_USING_LIBC'], 
+    group = DefineGroup('libc', src, depend = ['RT_USING_LIBC'], 
         CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

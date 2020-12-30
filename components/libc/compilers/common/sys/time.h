@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2020-09-07     Meco Man     combine gcc armcc iccarm
  */
 #ifndef _SYS_TIME_H_
 #define _SYS_TIME_H_
@@ -14,6 +15,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+ * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
+ */
+#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
+#define _TIMESPEC_DEFINED
+#endif
+
 
 #ifndef _TIMEVAL_DEFINED
 #define _TIMEVAL_DEFINED
@@ -27,23 +36,12 @@ struct timeval {
 };
 #endif /* _TIMEVAL_DEFINED */
 
-/*
- * Skip define timespec for IAR version over 8.10.1 where __VER__ is 8010001.
- */
-#if defined ( __ICCARM__ ) && (__VER__ >= 8010001)
-#define _TIMESPEC_DEFINED
-#endif
-
-#ifndef _TIMESPEC_DEFINED
-#define _TIMESPEC_DEFINED
-/*
- * Structure defined by POSIX.1b to be like a timeval.
- */
+#if !defined __GNUC__ && !defined __ICCARM__
 struct timespec {
     time_t  tv_sec;     /* seconds */
     long    tv_nsec;    /* and nanoseconds */
 };
-#endif /* _TIMESPEC_DEFINED */ 
+#endif
 
 struct timezone {
   int tz_minuteswest;   /* minutes west of Greenwich */

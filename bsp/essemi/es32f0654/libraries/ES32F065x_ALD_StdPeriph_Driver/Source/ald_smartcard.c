@@ -122,9 +122,9 @@ static ald_status_t __smartcard_end_send_by_it(smartcard_handle_t *hsmartcard);
 static ald_status_t __smartcard_recv_by_it(smartcard_handle_t *hperh);
 static void smartcard_set_config(smartcard_handle_t *hperh);
 #ifdef ALD_DMA
-    static void smartcard_dma_send_cplt(void *arg);
-    static void smartcard_dma_recv_cplt(void *arg);
-    static void smartcard_dma_error(void *arg);
+static void smartcard_dma_send_cplt(void *arg);
+static void smartcard_dma_recv_cplt(void *arg);
+static void smartcard_dma_error(void *arg);
 #endif
 static ald_status_t smartcard_wait_flag(smartcard_handle_t *hperh, usart_flag_t flag, flag_status_t status, uint32_t timeout);
 /**
@@ -204,33 +204,33 @@ static ald_status_t smartcard_wait_flag(smartcard_handle_t *hperh, usart_flag_t 
   */
 ald_status_t ald_smartcard_init(smartcard_handle_t *hperh)
 {
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_USART_STOPBITS(hperh->init.stop_bits));
-    assert_param(IS_USART_PARITY(hperh->init.parity));
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_FUNC_STATE(hperh->init.nack));
-    assert_param(IS_SMARTCARD_PRESCALER(hperh->init.prescaler));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
+	assert_param(IS_USART_STOPBITS(hperh->init.stop_bits));
+	assert_param(IS_USART_PARITY(hperh->init.parity));
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_FUNC_STATE(hperh->init.nack));
+	assert_param(IS_SMARTCARD_PRESCALER(hperh->init.prescaler));
 
-    if (hperh->state == SMARTCARD_STATE_RESET)
-        hperh->lock = UNLOCK;
+	if (hperh->state == SMARTCARD_STATE_RESET)
+		hperh->lock = UNLOCK;
 
-    hperh->state = SMARTCARD_STATE_BUSY;
-    SMARTCARD_DISABLE(hperh);
+	hperh->state = SMARTCARD_STATE_BUSY;
+	SMARTCARD_DISABLE(hperh);
 
-    MODIFY_REG(hperh->perh->GP, USART_GP_PSC_MSK, hperh->init.prescaler << USART_GP_PSC_POSS);
-    MODIFY_REG(hperh->perh->GP, USART_GP_GTVAL_MSK, hperh->init.guard_time << USART_GP_GTVAL_POSS);
-    smartcard_set_config(hperh);
+	MODIFY_REG(hperh->perh->GP, USART_GP_PSC_MSK, hperh->init.prescaler << USART_GP_PSC_POSS);
+	MODIFY_REG(hperh->perh->GP, USART_GP_GTVAL_MSK, hperh->init.guard_time << USART_GP_GTVAL_POSS);
+	smartcard_set_config(hperh);
 
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_IREN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_HDPSEL_MSK);
 
-    SMARTCARD_ENABLE(hperh);
-    MODIFY_REG(hperh->perh->CON2, USART_CON2_NACK_MSK, hperh->init.nack << USART_CON2_NACK_POS);
-    SET_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
+	SMARTCARD_ENABLE(hperh);
+	MODIFY_REG(hperh->perh->CON2, USART_CON2_NACK_MSK, hperh->init.nack << USART_CON2_NACK_POS);
+	SET_BIT(hperh->perh->CON2, USART_CON2_SMARTEN_MSK);
 
-    hperh->err_code = SMARTCARD_ERROR_NONE;
-    hperh->state    = SMARTCARD_STATE_READY;
-    return OK;
+	hperh->err_code = SMARTCARD_ERROR_NONE;
+	hperh->state    = SMARTCARD_STATE_READY;
+	return OK;
 }
 
 /**
@@ -241,22 +241,22 @@ ald_status_t ald_smartcard_init(smartcard_handle_t *hperh)
   */
 ald_status_t ald_smartcard_reset(smartcard_handle_t *hperh)
 {
-    assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART(hperh->perh));
 
-    hperh->state = SMARTCARD_STATE_BUSY;
-    SMARTCARD_DISABLE(hperh);
+	hperh->state = SMARTCARD_STATE_BUSY;
+	SMARTCARD_DISABLE(hperh);
 
-    WRITE_REG(hperh->perh->CON0, 0x0);
-    WRITE_REG(hperh->perh->CON1, 0x0);
-    WRITE_REG(hperh->perh->CON2, 0x0);
-    WRITE_REG(hperh->perh->BAUDCON, 0x0);
-    WRITE_REG(hperh->perh->GP, 0x0);
+	WRITE_REG(hperh->perh->CON0, 0x0);
+	WRITE_REG(hperh->perh->CON1, 0x0);
+	WRITE_REG(hperh->perh->CON2, 0x0);
+	WRITE_REG(hperh->perh->BAUDCON, 0x0);
+	WRITE_REG(hperh->perh->GP, 0x0);
 
-    hperh->err_code = SMARTCARD_ERROR_NONE;
-    hperh->state    = SMARTCARD_STATE_RESET;
-    __UNLOCK(hperh);
+	hperh->err_code = SMARTCARD_ERROR_NONE;
+	hperh->state    = SMARTCARD_STATE_RESET;
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 /**
   * @}
@@ -322,42 +322,38 @@ ald_status_t ald_smartcard_reset(smartcard_handle_t *hperh)
   */
 ald_status_t ald_smartcard_send(smartcard_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_RX))
+		return BUSY;
+	if ((buf == NULL) || (size == 0))
+		return  ERROR;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	__LOCK(hperh);
+	hperh->err_code = SMARTCARD_ERROR_NONE;
+	SET_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    __LOCK(hperh);
-    hperh->err_code = SMARTCARD_ERROR_NONE;
-    SET_BIT(hperh->state, USART_STATE_TX_MASK);
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
 
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
+	while (hperh->tx_count-- > 0) {
+		if (smartcard_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK) {
+			hperh->state = SMARTCARD_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    while (hperh->tx_count-- > 0)
-    {
-        if (smartcard_wait_flag(hperh, USART_FLAG_TXE, SET, timeout) != OK)
-        {
-            hperh->state = SMARTCARD_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+		WRITE_REG(hperh->perh->DATA, *buf++);
+	}
 
-        WRITE_REG(hperh->perh->DATA, *buf++);
-    }
+	if (smartcard_wait_flag(hperh, USART_FLAG_TC, SET, timeout) != OK) {
+		hperh->state = SMARTCARD_STATE_READY;
+		__UNLOCK(hperh);
+		return TIMEOUT;
+	}
 
-    if (smartcard_wait_flag(hperh, USART_FLAG_TC, SET, timeout) != OK)
-    {
-        hperh->state = SMARTCARD_STATE_READY;
-        __UNLOCK(hperh);
-        return TIMEOUT;
-    }
+	CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
+	__UNLOCK(hperh);
 
-    CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
-    __UNLOCK(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -371,35 +367,32 @@ ald_status_t ald_smartcard_send(smartcard_handle_t *hperh, uint8_t *buf, uint16_
   */
 ald_status_t ald_smartcard_recv(smartcard_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_TX))
+		return BUSY;
+	if ((buf == NULL) || (size == 0))
+		return  ERROR;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	__LOCK(hperh);
+	hperh->err_code = SMARTCARD_ERROR_NONE;
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    __LOCK(hperh);
-    hperh->err_code = SMARTCARD_ERROR_NONE;
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
 
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
+	while (hperh->rx_count-- > 0) {
+		if (smartcard_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK) {
+			hperh->state = SMARTCARD_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    while (hperh->rx_count-- > 0)
-    {
-        if (smartcard_wait_flag(hperh, USART_FLAG_RXNE, SET, timeout) != OK)
-        {
-            hperh->state = SMARTCARD_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+		*buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+	}
 
-        *buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
-    }
+	__UNLOCK(hperh);
+	CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    __UNLOCK(hperh);
-    CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -412,25 +405,24 @@ ald_status_t ald_smartcard_recv(smartcard_handle_t *hperh, uint8_t *buf, uint16_
   */
 ald_status_t ald_smartcard_send_by_it(smartcard_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_RX))
+		return BUSY;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_TX_MASK);
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = SMARTCARD_ERROR_NONE;
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = SMARTCARD_ERROR_NONE;
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, ENABLE);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TXE, ENABLE);
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, ENABLE);
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TXE, ENABLE);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -443,26 +435,25 @@ ald_status_t ald_smartcard_send_by_it(smartcard_handle_t *hperh, uint8_t *buf, u
   */
 ald_status_t ald_smartcard_recv_by_it(smartcard_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_TX))
+		return BUSY;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = SMARTCARD_ERROR_NONE;
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = SMARTCARD_ERROR_NONE;
+	__UNLOCK(hperh);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_RXNE, ENABLE);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_PE, ENABLE);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, ENABLE);
 
-    __UNLOCK(hperh);
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_RXNE, ENABLE);
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_PE, ENABLE);
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, ENABLE);
-
-    return OK;
+	return OK;
 }
 
 #ifdef ALD_DMA
@@ -477,44 +468,43 @@ ald_status_t ald_smartcard_recv_by_it(smartcard_handle_t *hperh, uint8_t *buf, u
   */
 ald_status_t ald_smartcard_send_by_dma(smartcard_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_RX))
+		return BUSY;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_TX_MASK);
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = SMARTCARD_ERROR_NONE;
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = SMARTCARD_ERROR_NONE;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	hperh->hdmatx.cplt_cbk = smartcard_dma_send_cplt;
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.err_cbk  = smartcard_dma_error;
+	hperh->hdmatx.err_arg  = (void *)hperh;
 
-    hperh->hdmatx.cplt_cbk = smartcard_dma_send_cplt;
-    hperh->hdmatx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.err_cbk  = smartcard_dma_error;
-    hperh->hdmatx.err_arg  = (void *)hperh;
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.src     = (void *)buf;
+	hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size    = size;
+	hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
+	hperh->hdmatx.config.channel = channel;
+	ald_dma_config_basic(&hperh->hdmatx);
 
-    ald_dma_config_struct(&hperh->hdmatx.config);
-    hperh->hdmatx.config.src     = (void *)buf;
-    hperh->hdmatx.config.dst     = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size    = size;
-    hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmatx.config.msigsel = DMA_MSIGSEL_USART_TXEMPTY;
-    hperh->hdmatx.config.channel = channel;
-    ald_dma_config_basic(&hperh->hdmatx);
+	ald_usart_clear_flag_status((usart_handle_t *)hperh, USART_FLAG_TC);
+	__UNLOCK(hperh);
+	ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_TX, ENABLE);
 
-    ald_usart_clear_flag_status((usart_handle_t *)hperh, USART_FLAG_TC);
-    __UNLOCK(hperh);
-    ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_TX, ENABLE);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -529,43 +519,42 @@ ald_status_t ald_smartcard_send_by_dma(smartcard_handle_t *hperh, uint8_t *buf, 
   */
 ald_status_t ald_smartcard_recv_by_dma(smartcard_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_READY) && (hperh->state != SMARTCARD_STATE_BUSY_TX))
+		return BUSY;
+	if ((buf == NULL) || (size == 0))
+		return ERROR;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	__LOCK(hperh);
+	SET_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    __LOCK(hperh);
-    SET_BIT(hperh->state, USART_STATE_RX_MASK);
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = SMARTCARD_ERROR_NONE;
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = SMARTCARD_ERROR_NONE;
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	hperh->hdmarx.cplt_cbk = smartcard_dma_recv_cplt;
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.err_cbk  = smartcard_dma_error;
+	hperh->hdmarx.err_arg  = (void *)hperh;
 
-    hperh->hdmarx.cplt_cbk = smartcard_dma_recv_cplt;
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmarx.err_cbk  = smartcard_dma_error;
-    hperh->hdmarx.err_arg  = (void *)hperh;
+	ald_dma_config_struct(&hperh->hdmarx.config);
+	hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst     = (void *)buf;
+	hperh->hdmarx.config.size    = size;
+	hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
+	hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
+	hperh->hdmarx.config.channel = channel;
+	ald_dma_config_basic(&hperh->hdmarx);
 
-    ald_dma_config_struct(&hperh->hdmarx.config);
-    hperh->hdmarx.config.src     = (void *)&hperh->perh->DATA;
-    hperh->hdmarx.config.dst     = (void *)buf;
-    hperh->hdmarx.config.size    = size;
-    hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmarx.config.msel    = hperh->perh == USART0 ? DMA_MSEL_USART0 : DMA_MSEL_USART1;
-    hperh->hdmarx.config.msigsel = DMA_MSIGSEL_USART_RNR;
-    hperh->hdmarx.config.channel = channel;
-    ald_dma_config_basic(&hperh->hdmarx);
+	__UNLOCK(hperh);
+	ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_RX, ENABLE);
 
-    __UNLOCK(hperh);
-    ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_RX, ENABLE);
-
-    return OK;
+	return OK;
 }
 #endif
 
@@ -577,65 +566,57 @@ ald_status_t ald_smartcard_recv_by_dma(smartcard_handle_t *hperh, uint8_t *buf, 
   */
 void ald_smartcard_irq_handler(smartcard_handle_t *hperh)
 {
-    uint32_t flag;
-    uint32_t source;
+	uint32_t flag;
+	uint32_t source;
 
-    /* Handle parity error */
-    flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_PE);
-    source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_PE);
+	/* Handle parity error */
+	flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_PE);
+	source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_PE);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= SMARTCARD_ERROR_PE;
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= SMARTCARD_ERROR_PE;
+	/* Handle frame error */
+	flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_FE);
+	source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_ERR);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= SMARTCARD_ERROR_FE;
 
-    /* Handle frame error */
-    flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_FE);
-    source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_ERR);
+	/* Handle noise error */
+	flag = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_NE);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= SMARTCARD_ERROR_NE;
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= SMARTCARD_ERROR_FE;
+	/* Handle overrun error */
+	flag = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_ORE);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= SMARTCARD_ERROR_ORE;
 
-    /* Handle noise error */
-    flag = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_NE);
+	/* Handle receive */
+	flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_RXNE);
+	source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_RXNE);
+	if ((flag != RESET) && (source != RESET))
+		__smartcard_recv_by_it(hperh);
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= SMARTCARD_ERROR_NE;
+	/* Handle transmit */
+	flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_TXE);
+	source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_TXE);
+	if ((flag != RESET) && (source != RESET))
+		__smartcard_send_by_it(hperh);
 
-    /* Handle overrun error */
-    flag = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_ORE);
+	/* Handle transmit complete */
+	flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_TC);
+	source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_TC);
+	if ((flag != RESET) && (source != RESET))
+		__smartcard_end_send_by_it(hperh);
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= SMARTCARD_ERROR_ORE;
+	/* Handle error */
+	if (hperh->err_code != SMARTCARD_ERROR_NONE) {
+		USART_CLEAR_PEFLAG(hperh);
+		hperh->state = SMARTCARD_STATE_READY;
 
-    /* Handle receive */
-    flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_RXNE);
-    source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_RXNE);
-
-    if ((flag != RESET) && (source != RESET))
-        __smartcard_recv_by_it(hperh);
-
-    /* Handle transmit */
-    flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_TXE);
-    source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_TXE);
-
-    if ((flag != RESET) && (source != RESET))
-        __smartcard_send_by_it(hperh);
-
-    /* Handle transmit complete */
-    flag   = ald_usart_get_flag_status((usart_handle_t *)hperh, USART_FLAG_TC);
-    source = ald_usart_get_it_status((usart_handle_t *)hperh, USART_IT_TC);
-
-    if ((flag != RESET) && (source != RESET))
-        __smartcard_end_send_by_it(hperh);
-
-    /* Handle error */
-    if (hperh->err_code != SMARTCARD_ERROR_NONE)
-    {
-        USART_CLEAR_PEFLAG(hperh);
-        hperh->state = SMARTCARD_STATE_READY;
-
-        if (hperh->error_cbk)
-            hperh->error_cbk(hperh);
-    }
+		if (hperh->error_cbk)
+			hperh->error_cbk(hperh);
+	}
 }
 /**
   * @}
@@ -668,7 +649,7 @@ void ald_smartcard_irq_handler(smartcard_handle_t *hperh)
   */
 smartcard_state_t ald_smartcard_get_state(smartcard_handle_t *hperh)
 {
-    return hperh->state;
+	return hperh->state;
 }
 
 /**
@@ -679,7 +660,7 @@ smartcard_state_t ald_smartcard_get_state(smartcard_handle_t *hperh)
   */
 uint32_t ald_smartcard_get_error(smartcard_handle_t *hperh)
 {
-    return hperh->err_code;
+	return hperh->err_code;
 }
 
 /**
@@ -704,13 +685,13 @@ uint32_t ald_smartcard_get_error(smartcard_handle_t *hperh)
   */
 static void smartcard_dma_send_cplt(void *arg)
 {
-    smartcard_handle_t *hperh = (smartcard_handle_t *)arg;
+	smartcard_handle_t* hperh = ( smartcard_handle_t *)arg;
 
-    hperh->tx_count = 0;
-    ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_TX, DISABLE);
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TC, ENABLE);
+	hperh->tx_count = 0;
+	ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_TX, DISABLE);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TC, ENABLE);
 
-    return;
+	return;
 }
 
 /**
@@ -721,16 +702,16 @@ static void smartcard_dma_send_cplt(void *arg)
   */
 static void smartcard_dma_recv_cplt(void *arg)
 {
-    smartcard_handle_t *hperh = (smartcard_handle_t *)arg;
+	smartcard_handle_t* hperh = ( smartcard_handle_t* )arg;
 
-    hperh->rx_count = 0;
-    ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_RX, DISABLE);
-    CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
+	hperh->rx_count = 0;
+	ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_RX, DISABLE);
+	CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
 
-    if (hperh->rx_cplt_cbk)
-        hperh->rx_cplt_cbk(hperh);
+	if (hperh->rx_cplt_cbk)
+		hperh->rx_cplt_cbk(hperh);
 
-    return;
+	return;
 }
 
 /**
@@ -741,20 +722,20 @@ static void smartcard_dma_recv_cplt(void *arg)
   */
 static void smartcard_dma_error(void *arg)
 {
-    smartcard_handle_t *hperh = (smartcard_handle_t *)arg;
+	smartcard_handle_t* hperh = ( smartcard_handle_t* )arg;
 
-    hperh->rx_count = 0;
-    hperh->tx_count = 0;
-    hperh->err_code = SMARTCARD_ERROR_DMA;
-    hperh->state    = SMARTCARD_STATE_READY;
+	hperh->rx_count = 0;
+	hperh->tx_count = 0;
+	hperh->err_code = SMARTCARD_ERROR_DMA;
+	hperh->state    = SMARTCARD_STATE_READY;
 
-    ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_TX, DISABLE);
-    ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_RX, DISABLE);
+	ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_TX, DISABLE);
+	ald_usart_dma_req_config((usart_handle_t *)hperh, USART_DMA_REQ_RX, DISABLE);
 
-    if (hperh->error_cbk)
-        hperh->error_cbk(hperh);
+	if (hperh->error_cbk)
+		hperh->error_cbk(hperh);
 
-    return;
+	return;
 }
 #endif
 
@@ -769,27 +750,25 @@ static void smartcard_dma_error(void *arg)
   */
 static ald_status_t smartcard_wait_flag(smartcard_handle_t *hperh, usart_flag_t flag, flag_status_t status, uint32_t timeout)
 {
-    uint32_t tick;
+	uint32_t tick;
 
-    if (timeout == 0)
-        return OK;
+	if (timeout == 0)
+		return OK;
 
-    tick = ald_get_tick();
+	tick = ald_get_tick();
 
-    while ((ald_usart_get_flag_status((usart_handle_t *)hperh, flag)) != status)
-    {
-        if (((ald_get_tick()) - tick) > timeout)
-        {
-            ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TXE, DISABLE);
-            ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_RXNE, DISABLE);
-            ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_PE, DISABLE);
-            ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, DISABLE);
+	while ((ald_usart_get_flag_status((usart_handle_t *)hperh, flag)) != status) {
+		if (((ald_get_tick()) - tick) > timeout) {
+			ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TXE, DISABLE);
+			ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_RXNE, DISABLE);
+			ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_PE, DISABLE);
+			ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, DISABLE);
 
-            return TIMEOUT;
-        }
-    }
+			return TIMEOUT;
+		}
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -802,18 +781,17 @@ static ald_status_t smartcard_wait_flag(smartcard_handle_t *hperh, usart_flag_t 
   */
 static ald_status_t __smartcard_send_by_it(smartcard_handle_t *hperh)
 {
-    if ((hperh->state != SMARTCARD_STATE_BUSY_TX) && (hperh->state != SMARTCARD_STATE_BUSY_TX_RX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_BUSY_TX) && (hperh->state != SMARTCARD_STATE_BUSY_TX_RX))
+		return BUSY;
 
-    WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
+	WRITE_REG(hperh->perh->DATA, *hperh->tx_buf++);
 
-    if (--hperh->tx_count == 0)
-    {
-        ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TXE, DISABLE);
-        ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TC, ENABLE);
-    }
+	if (--hperh->tx_count == 0) {
+		ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TXE, DISABLE);
+		ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TC, ENABLE);
+	}
 
-    return OK;
+	return OK;
 }
 
 
@@ -825,16 +803,16 @@ static ald_status_t __smartcard_send_by_it(smartcard_handle_t *hperh)
   */
 static ald_status_t __smartcard_end_send_by_it(smartcard_handle_t *hperh)
 {
-    ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TC, DISABLE);
-    CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
+	ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_TC, DISABLE);
+	CLEAR_BIT(hperh->state, USART_STATE_TX_MASK);
 
-    if (hperh->state == SMARTCARD_STATE_READY)
-        ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, DISABLE);
+	if (hperh->state == SMARTCARD_STATE_READY)
+		ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, DISABLE);
 
-    if (hperh->tx_cplt_cbk)
-        hperh->tx_cplt_cbk(hperh);
+	if (hperh->tx_cplt_cbk)
+		hperh->tx_cplt_cbk(hperh);
 
-    return OK;
+	return OK;
 }
 
 
@@ -846,23 +824,22 @@ static ald_status_t __smartcard_end_send_by_it(smartcard_handle_t *hperh)
   */
 static ald_status_t __smartcard_recv_by_it(smartcard_handle_t *hperh)
 {
-    if ((hperh->state != SMARTCARD_STATE_BUSY_RX) && (hperh->state != SMARTCARD_STATE_BUSY_TX_RX))
-        return BUSY;
+	if ((hperh->state != SMARTCARD_STATE_BUSY_RX) && (hperh->state != SMARTCARD_STATE_BUSY_TX_RX))
+		return BUSY;
 
-    *hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
+	*hperh->rx_buf++ = (uint8_t)(hperh->perh->DATA & 0xFF);
 
-    if (--hperh->rx_count == 0)
-    {
-        ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_RXNE, DISABLE);
-        ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_PE, DISABLE);
-        ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, DISABLE);
-        CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
+	if (--hperh->rx_count == 0) {
+		ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_RXNE, DISABLE);
+		ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_PE, DISABLE);
+		ald_usart_interrupt_config((usart_handle_t *)hperh, USART_IT_ERR, DISABLE);
+		CLEAR_BIT(hperh->state, USART_STATE_RX_MASK);
 
-        if (hperh->rx_cplt_cbk)
-            hperh->rx_cplt_cbk(hperh);
-    }
+		if (hperh->rx_cplt_cbk)
+			hperh->rx_cplt_cbk(hperh);
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -873,68 +850,65 @@ static ald_status_t __smartcard_recv_by_it(smartcard_handle_t *hperh)
   */
 static void smartcard_set_config(smartcard_handle_t *hperh)
 {
-    uint32_t tmp;
-    uint32_t integer;
-    uint32_t fractional;
+	uint32_t tmp;
+	uint32_t integer;
+	uint32_t fractional;
 
-    /* Check the parameters */
-    assert_param(IS_USART(hperh->perh));
-    assert_param(IS_USART_BAUDRATE(hperh->init.baud));
-    assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_USART_STOPBITS(hperh->init.stop_bits));
-    assert_param(IS_USART_PARITY(hperh->init.parity));
-    assert_param(IS_USART_MODE(hperh->init.mode));
+	/* Check the parameters */
+	assert_param(IS_USART(hperh->perh));
+	assert_param(IS_USART_BAUDRATE(hperh->init.baud));
+	assert_param(IS_USART_WORD_LENGTH(hperh->init.word_length));
+	assert_param(IS_USART_STOPBITS(hperh->init.stop_bits));
+	assert_param(IS_USART_PARITY(hperh->init.parity));
+	assert_param(IS_USART_MODE(hperh->init.mode));
 
-    MODIFY_REG(hperh->perh->CON1, USART_CON1_STPLEN_MSK, hperh->init.stop_bits << USART_CON1_STPLEN_POSS);
-    tmp = READ_REG(hperh->perh->CON0);
-    MODIFY_REG(tmp, USART_CON0_DLEN_MSK, hperh->init.word_length << USART_CON0_DLEN_POS);
+	MODIFY_REG(hperh->perh->CON1, USART_CON1_STPLEN_MSK, hperh->init.stop_bits << USART_CON1_STPLEN_POSS);
+	tmp = READ_REG(hperh->perh->CON0);
+	MODIFY_REG(tmp, USART_CON0_DLEN_MSK, hperh->init.word_length << USART_CON0_DLEN_POS);
 
-    if (hperh->init.parity == USART_PARITY_NONE)
-        CLEAR_BIT(tmp, USART_CON0_PEN_MSK);
-    else
-        SET_BIT(tmp, USART_CON0_PEN_MSK);
+	if (hperh->init.parity == USART_PARITY_NONE)
+		CLEAR_BIT(tmp, USART_CON0_PEN_MSK);
+	else
+		SET_BIT(tmp, USART_CON0_PEN_MSK);
 
-    if (hperh->init.parity == USART_PARITY_ODD)
-        SET_BIT(tmp, USART_CON0_PSEL_MSK);
-    else
-        CLEAR_BIT(tmp, USART_CON0_PSEL_MSK);
+	if (hperh->init.parity == USART_PARITY_ODD)
+		SET_BIT(tmp, USART_CON0_PSEL_MSK);
+	else
+		CLEAR_BIT(tmp, USART_CON0_PSEL_MSK);
 
-    WRITE_REG(hperh->perh->CON0, tmp);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_RTSEN_MSK);
-    CLEAR_BIT(hperh->perh->CON2, USART_CON2_CTSEN_MSK);
-    MODIFY_REG(hperh->perh->CON0, USART_CON0_RXEN_MSK, (hperh->init.mode & 0x1) << USART_CON0_RXEN_POS);
-    MODIFY_REG(hperh->perh->CON0, USART_CON0_TXEN_MSK, ((hperh->init.mode >> 1) & 0x1) << USART_CON0_TXEN_POS);
-    tmp = READ_REG(hperh->perh->CON1);
-    SET_BIT(tmp, USART_CON1_SCKEN_MSK);
-    MODIFY_REG(tmp, USART_CON1_SCKPOL_MSK, hperh->init.polarity << USART_CON1_SCKPOL_POS);
-    MODIFY_REG(tmp, USART_CON1_SCKPHA_MSK, hperh->init.phase << USART_CON1_SCKPHA_POS);
-    MODIFY_REG(tmp, USART_CON1_LBCP_MSK, hperh->init.last_bit << USART_CON1_LBCP_POS);
+	WRITE_REG(hperh->perh->CON0, tmp);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_RTSEN_MSK);
+	CLEAR_BIT(hperh->perh->CON2, USART_CON2_CTSEN_MSK);
+	MODIFY_REG(hperh->perh->CON0, USART_CON0_RXEN_MSK, (hperh->init.mode & 0x1) << USART_CON0_RXEN_POS);
+	MODIFY_REG(hperh->perh->CON0, USART_CON0_TXEN_MSK, ((hperh->init.mode >> 1) & 0x1) << USART_CON0_TXEN_POS);
+	tmp = READ_REG(hperh->perh->CON1);
+	SET_BIT(tmp, USART_CON1_SCKEN_MSK);
+	MODIFY_REG(tmp, USART_CON1_SCKPOL_MSK, hperh->init.polarity << USART_CON1_SCKPOL_POS);
+	MODIFY_REG(tmp, USART_CON1_SCKPHA_MSK, hperh->init.phase << USART_CON1_SCKPHA_POS);
+	MODIFY_REG(tmp, USART_CON1_LBCP_MSK, hperh->init.last_bit << USART_CON1_LBCP_POS);
 
-    /* Determine the integer part */
-    if (READ_BIT(hperh->perh->CON0, (1 << 15)))
-    {
-        /* Integer part computing in case Oversampling mode is 8 Samples */
-        integer = ((25 * ald_cmu_get_pclk1_clock()) / (2 * (hperh->init.baud)));
-    }
-    else
-    {
-        /* Integer part computing in case Oversampling mode is 16 Samples */
-        integer = ((25 * ald_cmu_get_pclk1_clock()) / (4 * (hperh->init.baud)));
-    }
+	/* Determine the integer part */
+	if (READ_BIT(hperh->perh->CON0, (1 << 15))) {
+		/* Integer part computing in case Oversampling mode is 8 Samples */
+		integer = ((25 * ald_cmu_get_pclk1_clock()) / (2 * (hperh->init.baud)));
+	}
+	else {
+		/* Integer part computing in case Oversampling mode is 16 Samples */
+		integer = ((25 * ald_cmu_get_pclk1_clock()) / (4 * (hperh->init.baud)));
+	}
+	tmp = (integer / 100) << 4;
 
-    tmp = (integer / 100) << 4;
+	/* Determine the fractional part */
+	fractional = integer - (100 * (tmp >> 4));
 
-    /* Determine the fractional part */
-    fractional = integer - (100 * (tmp >> 4));
+	/* Implement the fractional part in the register */
+	if (READ_BIT(hperh->perh->CON0, (1 << 15)))
+    		tmp |= ((((fractional * 8) + 50) / 100)) & ((uint8_t)0x07);
+	else
+		tmp |= ((((fractional * 16) + 50) / 100)) & ((uint8_t)0x0F);
 
-    /* Implement the fractional part in the register */
-    if (READ_BIT(hperh->perh->CON0, (1 << 15)))
-        tmp |= ((((fractional * 8) + 50) / 100)) & ((uint8_t)0x07);
-    else
-        tmp |= ((((fractional * 16) + 50) / 100)) & ((uint8_t)0x0F);
-
-    WRITE_REG(hperh->perh->BAUDCON, (uint16_t)tmp);
-    return;
+	WRITE_REG(hperh->perh->BAUDCON, (uint16_t)tmp);
+	return;
 }
 
 /**

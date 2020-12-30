@@ -5,11 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2020-12-16     Meco Man     add usleep
  */
 #ifndef _SYS_UNISTD_H
 #define _SYS_UNISTD_H
 
-#include <rtthread.h>
+#include <rtconfig.h>
+#include "types.h"
 
 #ifdef RT_USING_DFS
 
@@ -36,14 +38,39 @@
 #define _FNDELAY    _FNONBLOCK  /* non blocking I/O (4.2 style) */
 #define _FNOCTTY    0x8000  /* don't assign a ctty on this open */
 
+
+#ifndef O_RDONLY
 #define O_RDONLY    0       /* +1 == FREAD */
+#endif
+#ifndef O_WRONLY
 #define O_WRONLY    1       /* +1 == FWRITE */
+#endif
+#ifndef O_RDWR
 #define O_RDWR      2       /* +1 == FREAD|FWRITE */
+#endif
+#ifndef O_APPEND
 #define O_APPEND    _FAPPEND
+#endif
+#ifndef O_CREAT
 #define O_CREAT     _FCREAT
+#endif
+#ifndef O_TRUNC
 #define O_TRUNC     _FTRUNC
+#endif
+#ifndef O_EXCL
 #define O_EXCL      _FEXCL
+#endif
+#ifndef O_SYNC
 #define O_SYNC      _FSYNC
 #endif
+
+#endif
+
+
+int     isatty      (int fd);
+char *  ttyname     (int desc);
+
+unsigned int sleep(unsigned int seconds);
+int usleep(useconds_t usec);
 
 #endif /* _SYS_UNISTD_H */

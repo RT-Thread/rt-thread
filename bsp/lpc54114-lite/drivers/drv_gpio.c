@@ -38,6 +38,48 @@ struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
     {-1, 0, RT_NULL, RT_NULL},    
 };
 
+static rt_base_t lpc_pin_get(const char *name)
+{
+    rt_base_t pin = 0;
+    int hw_port_num, hw_pin_num = 0;
+    int i, name_len = 1;
+    int mul = 1;
+
+    name_len = rt_strlen(name);
+
+    if ((name_len < 4) || (name_len >= 6))
+    {
+        return -RT_EINVAL;
+    }
+    if ((name[0] != 'P') || (name[2] != '.'))
+    {
+        return -RT_EINVAL;
+    }
+
+    if ((name[1] >= '0') && (name[1] <= '9'))
+    {
+        hw_port_num = (int)(name[1] - '0');
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    for (i = name_len - 1; i > 2; i--)
+    {
+        hw_pin_num += ((int)(name[i] - '0') * mul);
+        mul = mul * 10;
+    }
+
+    pin = 32 * hw_port_num + hw_pin_num;
+
+    if ((pin > PIN_MAX_VAL) || (pin < 0))
+    {
+        return -RT_EINVAL;
+    }
+    return pin;
+}
+
 /* Configure pin mode. pin 0~63 means PIO0_0 ~ PIO1_31 */
 static void lpc_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
 {
@@ -288,7 +330,8 @@ const static struct rt_pin_ops _lpc_pin_ops =
     lpc_pin_read,
     lpc_pin_attach_irq,
     lpc_pin_detach_irq,
-    lpc_pin_irq_enable,    
+    lpc_pin_irq_enable,
+    lpc_pin_get,
 };
 
 int rt_hw_pin_init(void)

@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = GetCurrentDir()
+
+CCFLAGS = ' -c -ffunction-sections'
+
+group   = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH, CCFLAGS=CCFLAGS)
+
+Return('group')

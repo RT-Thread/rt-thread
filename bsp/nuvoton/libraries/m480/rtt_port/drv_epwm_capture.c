@@ -12,6 +12,7 @@
 #include <rtconfig.h>
 
 #if defined(BSP_USING_EPWM_CAPTURE)
+#if ((BSP_USING_EPWM0_CAPTURE_CHMSK+BSP_USING_EPWM1_CAPTURE_CHMSK)!=0)
 #include <rtdevice.h>
 #include <NuMicro.h>
 
@@ -73,7 +74,7 @@ static rt_err_t CalPulseWidth(nu_capture_t *nu_capture)
         bWrapAroundFlag = RT_TRUE;
     }
 
-    /* Read the capture counter value if falling/risning edge */
+    /* Read the capture counter value if falling/rising edge */
     if (EPWM_GetCaptureIntFlag(nu_capture->epwm, nu_capture->u8Channel) == 1)//Rising edge
     {
         EPWM_ClearCaptureIntFlag(nu_capture->epwm, nu_capture->u8Channel, EPWM_CAPTURE_INT_RISING_LATCH);
@@ -294,7 +295,7 @@ void EPWM1P1_IRQHandler(void)
 void EPWM1P2_IRQHandler(void)
 {
     /* enter interrupt */
-    rt_interrupt_enter()
+    rt_interrupt_enter();
 
     /* Avoid excessive iteration by monitoring enabled channels */
 #if (BSP_USING_EPWM1_CAPTURE_CHMSK&(0x1<<EPWM_CH4CH5_POS))
@@ -366,7 +367,7 @@ static rt_err_t nu_epwm_init(nu_capture_t *nu_capture)
             /* Enable EPWM0 clock */
             SYS_UnlockReg();
             CLK_EnableModuleClock(EPWM0_MODULE);
-            CLK_SetModuleClock(EPWM0_MODULE, CLK_CLKSEL2_EPWM0SEL_PLL, (uint32_t)NULL);
+            CLK_SetModuleClock(EPWM0_MODULE, CLK_CLKSEL2_EPWM0SEL_PLL, 0);
             SYS_LockReg();
             bEPWM0Inited = RT_TRUE;
         }
@@ -379,7 +380,7 @@ static rt_err_t nu_epwm_init(nu_capture_t *nu_capture)
             /* Enable EPWM1 clock */
             SYS_UnlockReg();
             CLK_EnableModuleClock(EPWM1_MODULE);
-            CLK_SetModuleClock(EPWM1_MODULE, CLK_CLKSEL2_EPWM1SEL_PLL, (uint32_t)NULL);
+            CLK_SetModuleClock(EPWM1_MODULE, CLK_CLKSEL2_EPWM1SEL_PLL, 0);
             SYS_LockReg();
             bEPWM1Inited = RT_TRUE;
         }
@@ -416,7 +417,7 @@ static rt_err_t nu_capture_open(struct rt_inputcapture_device *inputcapture)
 
     nu_capture = (nu_capture_t *) inputcapture;
 
-    /* Set capture time as 1000 nano second */
+    /* Set capture time as 1000 nanosecond */
     EPWM_ConfigCaptureChannel(nu_capture->epwm, nu_capture->u8Channel, 1000, 0);
 
     /* Enable capture rising/falling edge interrupt */
@@ -500,10 +501,10 @@ int nu_epwm_capture_device_init(void)
             rt_device_inputcapture_register(&nu_epwm1_capture[i].parent, nu_epwm1_device_name[i], &nu_epwm1_capture[i]);
         }
     }
-#endif //#if (BSP_USING_EPWM1_CAPTURE_CHMSK!=0) 
+#endif //#if (BSP_USING_EPWM1_CAPTURE_CHMSK!=0)
     return 0;
 
 }
 INIT_DEVICE_EXPORT(nu_epwm_capture_device_init);
-
+#endif  //#if ((BSP_USING_EPWM0_CAPTURE_CHMSK+BSP_USING_EPWM1_CAPTURE_CHMSK)!=0)
 #endif //#if defined(BSP_USING_EPWM_CAPTURE)

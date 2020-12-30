@@ -1,0 +1,25 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+board.c
+ab32vg1_hal_msp.c
+''')
+CPPPATH = [cwd]
+
+if GetDepend(['RT_USING_AUDIO']):
+    src += Glob('ports/audio/drv_sound.c')
+
+group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
+
+objs = [group]
+
+list = os.listdir(cwd)
+
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        objs = objs + SConscript(os.path.join(item, 'SConscript'))
+
+Return('objs')

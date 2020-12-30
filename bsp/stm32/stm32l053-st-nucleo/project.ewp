@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>29</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -65,7 +65,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>8.11.3.13977</state>
+          <state>8.40.1.21529</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>STM32L475VE	ST STM32L475VE</state>
+          <state>STM32L053R8	ST STM32L053R8</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -111,12 +111,12 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
+          <state>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
-          <state>39</state>
+          <version>27</version>
+          <state>35</state>
         </option>
         <option>
           <name>OGUseCmsis</name>
@@ -132,22 +132,22 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
-          <state>39</state>
+          <version>27</version>
+          <state>35</state>
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>STM32L475VE	ST STM32L475VE</state>
+          <state>STM32L053R8	ST STM32L053R8</state>
         </option>
         <option>
           <name>FPU2</name>
           <version>0</version>
-          <state>4</state>
+          <state>0</state>
         </option>
         <option>
           <name>NrRegs</name>
           <version>0</version>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>NEON</name>
@@ -155,8 +155,8 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
-          <state>39</state>
+          <version>27</version>
+          <state>35</state>
         </option>
         <option>
           <name>OGCMSISPackSelectDevice</name>
@@ -197,7 +197,16 @@
         </option>
         <option>
           <name>DSPExtension</name>
-          <state>1</state>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZoneModes</name>
+          <version>0</version>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -205,7 +214,7 @@
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>34</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -216,6 +225,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32L053xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -351,7 +361,6 @@
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Device\ST\STM32L0xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
@@ -469,6 +478,10 @@
         <option>
           <name>IccRTTI2</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>OICompilerExtraOption</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -690,7 +703,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>20</version>
+        <version>23</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -1002,6 +1015,30 @@
           <name>IlinkLocaleSelect</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkTrustzoneImportLibraryOut</name>
+          <state>###Unitialized###</state>
+        </option>
+        <option>
+          <name>OILinkExtraOption</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -1041,7 +1078,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>29</version>
+        <version>31</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1146,7 +1183,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>25</version>
+          <version>27</version>
           <state>1</state>
         </option>
         <option>
@@ -1163,7 +1200,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>25</version>
+          <version>27</version>
           <state>0</state>
         </option>
         <option>
@@ -1186,7 +1223,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>25</version>
+          <version>27</version>
           <state>0</state>
         </option>
         <option>
@@ -1230,13 +1267,22 @@
           <name>DSPExtension</name>
           <state>0</state>
         </option>
+        <option>
+          <name>TrustZone</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>TrustZoneModes</name>
+          <version>0</version>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>34</version>
+        <version>35</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1245,7 +1291,9 @@
         </option>
         <option>
           <name>CCDefines</name>
+          <state />
           <state>STM32L053xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1381,7 +1429,6 @@
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Device\ST\STM32L0xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
@@ -1499,6 +1546,10 @@
         <option>
           <name>IccRTTI2</name>
           <state>0</state>
+        </option>
+        <option>
+          <name>OICompilerExtraOption</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -1720,7 +1771,7 @@
       <name>ILINK</name>
       <archiveVersion>0</archiveVersion>
       <data>
-        <version>20</version>
+        <version>23</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -2032,6 +2083,30 @@
           <name>IlinkLocaleSelect</name>
           <state>1</state>
         </option>
+        <option>
+          <name>IlinkTrustzoneImportLibraryOut</name>
+          <state>###Unitialized###</state>
+        </option>
+        <option>
+          <name>OILinkExtraOption</name>
+          <state>1</state>
+        </option>
+        <option>
+          <name>IlinkRawBinaryFile2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySymbol2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinarySegment2</name>
+          <state />
+        </option>
+        <option>
+          <name>IlinkRawBinaryAlign2</name>
+          <state />
+        </option>
       </data>
     </settings>
     <settings>
@@ -2062,82 +2137,13 @@
     </settings>
   </configuration>
   <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
     <name>Applications</name>
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
   <group>
-    <name>Drivers</name>
-    <file>
-      <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32l0xx_hal_msp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Device\ST\STM32L0xx\Source\Templates\iar\startup_stm32l053xx.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
-    </file>
-  </group>
-  <group>
-    <name>cpu</name>
+    <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2185,6 +2191,27 @@
     </file>
   </group>
   <group>
+    <name>Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\board\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32l0xx_hal_msp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Device\ST\STM32L0xx\Source\Templates\iar\startup_stm32l053xx.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
+    </file>
+  </group>
+  <group>
     <name>finsh</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
@@ -2197,10 +2224,52 @@
     </file>
   </group>
   <group>
-    <name>libc</name>
+    <name>Kernel</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32L0xx_HAL\CMSIS\Device\ST\STM32L0xx\Source\Templates\system_stm32l0xx.c</name>
     </file>

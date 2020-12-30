@@ -21,3 +21,6 @@ def dist_do_building(BSP_ROOT, dist_dir=None):
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+
+    print("=> copy bsp peripherals")
+    bsp_copy_files(os.path.join(library_path, 'peripherals'), os.path.join(library_dir, 'peripherals'))
