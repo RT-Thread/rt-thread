@@ -13,7 +13,7 @@
  * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
  * 2011-06-26     Bernard      add rt_tick_set function.
  * 2018-11-22     Jesven       add per cpu tick
- * 2020-12-29     Meco Man     add function rt_hw_1ms_tick_get()
+ * 2020-12-29     Meco Man     add function rt_tick_get_millisecond()
  */
 
 #include <rthw.h>
