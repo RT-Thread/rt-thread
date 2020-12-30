@@ -118,14 +118,14 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
 RTM_EXPORT(rt_tick_from_millisecond);
 
 /**
- * This function provides a tick value ALWAYS in millisecond
+ * This function will provide the passed millisecond from boot.
  *
- * @return 1ms-based tick
+ * @return passed millisecond from boot
  */
-RT_WEAK rt_tick_t rt_hw_1ms_tick_get(void)
+RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
 {
-#if 1000 % RT_TICK_PER_SECOND == 0
-    return rt_tick_get() * (1000U / RT_TICK_PER_SECOND);
+#if 1000 % RT_TICK_PER_SECOND == 0u
+    return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
 #else
     #warning "rt-thread cannot provide a correct 1ms-based tick any longer,\
     please redefine this function in another file by using a high-precision hard-timer."
