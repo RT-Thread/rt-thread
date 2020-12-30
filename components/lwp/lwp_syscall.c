@@ -384,8 +384,8 @@ void sys_exit_group(int status)
 ssize_t sys_read(int fd, void *buf, size_t nbyte)
 {
 #ifdef RT_USING_USERSPACE
-    void *kmem;
-    ssize_t ret;
+    void *kmem = RT_NULL;
+    ssize_t ret = -1;
 
     if (!nbyte)
     {
@@ -408,7 +408,9 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
 
     ret = read(fd, kmem, nbyte);
     if (ret)
+    {
         lwp_put_to_user(buf, kmem, ret);
+    }
 
     kmem_put(kmem);
     return ret;
@@ -421,8 +423,8 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
 ssize_t sys_write(int fd, const void *buf, size_t nbyte)
 {
 #ifdef RT_USING_USERSPACE
-    void *kmem;
-    ssize_t ret;
+    void *kmem = RT_NULL;
+    ssize_t ret = -1;
 
     if (!nbyte)
     {
@@ -463,9 +465,9 @@ off_t sys_lseek(int fd, off_t offset, int whence)
 int sys_open(const char *name, int flag, ...)
 {
 #ifdef RT_USING_USERSPACE
-    int ret;
-    rt_size_t len;
-    char *kname;
+    int ret = -1;
+    rt_size_t len = 0;
+    char *kname = RT_NULL;
 
     if (!lwp_user_accessable((void*)name, 1))
     {
@@ -516,7 +518,7 @@ int sys_ioctl(int fd, unsigned long cmd, void* data)
 int sys_fstat(int file, struct stat *buf)
 {
 #ifdef RT_USING_USERSPACE
-    int ret;
+    int ret = -1;
     struct stat statbuff;
 
     ret = fstat(file, &statbuff);
@@ -530,8 +532,8 @@ int sys_fstat(int file, struct stat *buf)
 int sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
 #ifdef RT_USING_USERSPACE
-    int ret;
-    struct pollfd *kfds;
+    int ret = -1;
+    struct pollfd *kfds = RT_NULL;
 
     if (!lwp_user_accessable((void*)fds, nfds * sizeof *fds))
     {
@@ -644,9 +646,9 @@ quit:
 int sys_unlink(const char *pathname)
 {
 #ifdef RT_USING_USERSPACE
-    int ret;
-    rt_size_t len;
-    char *kname;
+    int ret = -1;
+    rt_size_t len = 0;
+    char *kname = RT_NULL;
 
     if (!lwp_user_accessable((void*)pathname, 1))
     {
@@ -696,7 +698,7 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 
     lwp_get_from_user(&rqtp_k, (void *)rqtp, sizeof rqtp_k);
 
-    tick = rqtp_k.tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp_k.tv_nsec * RT_TICK_PER_SECOND)/ 1000000000;
+    tick = rqtp_k.tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp_k.tv_nsec * RT_TICK_PER_SECOND) / 1000000000;
     rt_thread_delay(tick);
 
     if (rmtp)
@@ -709,23 +711,23 @@ int sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 
         tick = rt_tick_get() - tick;
         /* get the passed time */
-        rmtp_k.tv_sec = tick/RT_TICK_PER_SECOND;
-        rmtp_k.tv_nsec = (tick%RT_TICK_PER_SECOND) * (1000000000/RT_TICK_PER_SECOND);
+        rmtp_k.tv_sec = tick / RT_TICK_PER_SECOND;
+        rmtp_k.tv_nsec = (tick % RT_TICK_PER_SECOND) * (1000000000 / RT_TICK_PER_SECOND);
 
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
     }
 #else
     dbg_log(DBG_LOG, "sys_nanosleep\n");
 
-    tick = rqtp->tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp->tv_nsec * RT_TICK_PER_SECOND)/ 1000000000;
+    tick = rqtp->tv_sec * RT_TICK_PER_SECOND + ((uint64_t)rqtp->tv_nsec * RT_TICK_PER_SECOND) / 1000000000;
     rt_thread_delay(tick);
 
     if (rmtp)
     {
         tick = rt_tick_get() - tick;
         /* get the passed time */
-        rmtp->tv_sec = tick/RT_TICK_PER_SECOND;
-        rmtp->tv_nsec = (tick%RT_TICK_PER_SECOND) * (1000000000/RT_TICK_PER_SECOND);
+        rmtp->tv_sec = tick / RT_TICK_PER_SECOND;
+        rmtp->tv_nsec = (tick % RT_TICK_PER_SECOND) * (1000000000 / RT_TICK_PER_SECOND);
     }
 #endif
 
@@ -1029,7 +1031,12 @@ rt_thread_t sys_thread_create(void *arg[])
         rt_set_errno(EINVAL);
         return RT_NULL;
     }
-    tid = rt_thread_create((const char*)arg[0], lwp_user_thread, (void*)arg[2], ALLOC_KERNEL_STACK_SIZE, (rt_uint8_t)(size_t)arg[4], (rt_uint32_t)arg[5]);
+    tid = rt_thread_create((const char*)arg[0],
+            lwp_user_thread,
+            (void*)arg[2],
+            ALLOC_KERNEL_STACK_SIZE,
+            (rt_uint8_t)(size_t)arg[4],
+            (rt_uint32_t)arg[5]);
     if (!tid)
     {
         goto fail;
@@ -1243,7 +1250,7 @@ rt_size_t sys_device_write(rt_device_t dev, rt_off_t pos, const void *buffer, rt
 /* network interfaces */
 int sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 {
-    int ret;
+    int ret = -1;
     struct sockaddr ksa;
     struct musl_sockaddr kmusladdr;
     socklen_t uaddrlen;
@@ -1312,7 +1319,7 @@ int sys_shutdown(int socket, int how)
 
 int sys_getpeername (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 {
-    int ret;
+    int ret = -1;
     struct sockaddr sa;
     struct musl_sockaddr kname;
     socklen_t unamelen;
@@ -1355,7 +1362,7 @@ int sys_getpeername (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 
 int sys_getsockname (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 {
-    int ret;
+    int ret = -1;
     struct sockaddr sa;
     struct musl_sockaddr kname;
     socklen_t unamelen;
@@ -1915,7 +1922,7 @@ int sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
         struct hostent **result, int *err)
 {
     int ret_val = -1;
-    int sal_ret, sal_err;
+    int sal_ret = -1 , sal_err = -1;
     struct hostent sal_he;
     struct hostent *sal_result = NULL;
     char *sal_buf = NULL;
@@ -1955,12 +1962,15 @@ int sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
     sal_ret = sal_gethostbyname_r(k_name, &sal_he, sal_buf, HOSTENT_BUFSZ, &sal_result, &sal_err);
     if (sal_ret == 0)
     {
-        int index, cnt;
+        int index = 0, cnt = 0;
         char *ptr = buf;
 
         /* get counter */
         index = 0;
-        while (sal_he.h_addr_list[index] != NULL) index ++;
+        while (sal_he.h_addr_list[index] != NULL)
+        {
+            index ++;
+        }
         cnt = index + 1;
 
         /* update user space hostent */
@@ -2027,10 +2037,10 @@ struct libc_dirent {
 };
 int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
 {
-    int ret;
+    int ret = -1;
     struct dfs_fd *dfs_fd;
     size_t cnt = (nbytes / sizeof(struct libc_dirent));
-    size_t rtt_nbytes;
+    size_t rtt_nbytes = 0;
     struct dirent *rtt_dirp;
 
     if (cnt == 0)
@@ -2050,7 +2060,7 @@ int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
     fd_put(dfs_fd);
     if (ret)
     {
-        size_t i;
+        size_t i = 0;
         cnt = ret / sizeof(struct dirent);
         for (i = 0; i < cnt; i++)
         {
@@ -2087,10 +2097,10 @@ long sys_set_tid_address(int *tidptr)
 
 int sys_access(const char *filename, int mode)
 {
-    int ret;
+    int ret = -1;
 #ifdef RT_USING_USERSPACE
-    rt_size_t len;
-    char *kname;
+    rt_size_t len = 0;
+    char *kname = RT_NULL;
 
     if (!lwp_user_accessable((void*)filename, 1))
     {
