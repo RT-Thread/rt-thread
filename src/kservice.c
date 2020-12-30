@@ -79,7 +79,6 @@ RTM_EXPORT(rt_get_errno);
 void rt_set_errno(rt_err_t error)
 {
     rt_thread_t tid;
-    pthread_t ptid;
 
     if (rt_interrupt_get_nest() != 0)
     {
@@ -102,6 +101,8 @@ void rt_set_errno(rt_err_t error)
     /* is a process's thread */
     if (tid->lwp && tid->thread_idr)
     {
+        pthread_t ptid;
+
         if (error < 0)
         {
             error = -error;
