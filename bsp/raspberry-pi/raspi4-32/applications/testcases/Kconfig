@@ -1,0 +1,13 @@
+
+menuconfig RT_USING_TESTCASE
+    bool "testcase: Enable Test"
+    default n
+    select RT_USING_UTEST
+    select RT_USING_ULOG
+    select ULOG_USING_ISR_LOG
+
+if RT_USING_TESTCASE
+
+    source "applications/testcases/demo/Kconfig"
+
+endif

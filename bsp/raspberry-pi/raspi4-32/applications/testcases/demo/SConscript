@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+
+if GetDepend(['TC_USING_UTEST_DEMO_TC']):
+    src += Glob('test_tc.c')
+
+CPPPATH = [cwd]
+group   = DefineGroup('utest', src, depend = ["RT_USING_TESTCASE"], CPPPATH = CPPPATH)
+
+Return('group')

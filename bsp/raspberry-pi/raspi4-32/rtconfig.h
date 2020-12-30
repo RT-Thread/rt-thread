@@ -39,7 +39,7 @@
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40003
 #define ARCH_ARMV8
@@ -194,6 +194,23 @@
 
 /* Utilities */
 
+#define RT_USING_ULOG
+#define ULOG_OUTPUT_LVL_D
+#define ULOG_OUTPUT_LVL 7
+#define ULOG_USING_ISR_LOG
+#define ULOG_ASSERT_ENABLE
+#define ULOG_LINE_BUF_SIZE 128
+
+/* log format */
+
+#define ULOG_USING_COLOR
+#define ULOG_OUTPUT_TIME
+#define ULOG_OUTPUT_LEVEL
+#define ULOG_OUTPUT_TAG
+#define ULOG_BACKEND_USING_CONSOLE
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
 
 /* RT-Thread online packages */
 
@@ -240,12 +257,11 @@
 
 /* games: games run on RT-Thread console */
 
+#define RT_USING_TESTCASE
 
-/* Privated Packages of RealThread */
+/* utest demo */
 
-
-/* Network Utilities */
-
+#define TC_USING_UTEST_DEMO_TC
 #define BCM2711_SOC
 
 /* Hardware Drivers Config */

@@ -17,6 +17,7 @@ config PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+source "applications/testcases/Kconfig"
 
 config BCM2711_SOC
     bool
