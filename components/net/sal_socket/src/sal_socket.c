@@ -299,17 +299,6 @@ int sal_check_netdev_internet_up(struct netdev *netdev)
 
     rt_delayed_work_init(net_work, check_netdev_internet_up_work, (void *)netdev);
     rt_work_submit(&(net_work->work), RT_TICK_PER_SECOND);
-#else
-    if(netdev_is_link_up(netdev))
-    {
-        netdev->flags |= NETDEV_FLAG_INTERNET_UP;
-    }
-    else
-    {
-        netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
-    }
-    LOG_D("You have shut down internet check function, internet status is subject to link status.");
-
 #endif /* SAL_INTERNET_CHECK */
     return 0;
 }
