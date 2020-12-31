@@ -45,7 +45,7 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
     dst_size = buf_info->block_size;
 
     /* check replay queue is empty */
-    if (rt_data_queue_peak(&audio->replay->queue, (const void **)&data, &src_size) != RT_EOK)
+    if (rt_data_queue_peek(&audio->replay->queue, (const void **)&data, &src_size) != RT_EOK)
     {
         /* ack stop event */
         if (audio->replay->event & REPLAY_EVT_STOP)
@@ -64,7 +64,7 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
         /* copy data from memory pool to hardware device fifo */
         while (index < dst_size)
         {
-            result = rt_data_queue_peak(&audio->replay->queue, (const void **)&data, &src_size);
+            result = rt_data_queue_peek(&audio->replay->queue, (const void **)&data, &src_size);
             if (result != RT_EOK)
             {
                 LOG_D("under run %d, remain %d", audio->replay->pos, remain_bytes);
