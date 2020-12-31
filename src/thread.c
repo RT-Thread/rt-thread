@@ -862,38 +862,7 @@ RTM_EXPORT(rt_thread_timeout);
  */
 rt_thread_t rt_thread_find(char *name)
 {
-    struct rt_object_information *information;
-    struct rt_object *object;
-    struct rt_list_node *node;
-
-    /* enter critical */
-    if (rt_thread_self() != RT_NULL)
-        rt_enter_critical();
-
-    /* try to find device object */
-    information = rt_object_get_information(RT_Object_Class_Thread);
-    RT_ASSERT(information != RT_NULL);
-    for (node  = information->object_list.next;
-         node != &(information->object_list);
-         node  = node->next)
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-        if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
-        {
-            /* leave critical */
-            if (rt_thread_self() != RT_NULL)
-                rt_exit_critical();
-
-            return (rt_thread_t)object;
-        }
-    }
-
-    /* leave critical */
-    if (rt_thread_self() != RT_NULL)
-        rt_exit_critical();
-
-    /* not found */
-    return RT_NULL;
+    return (rt_thread_t)rt_object_find(name, RT_Object_Class_Thread);
 }
 RTM_EXPORT(rt_thread_find);
 
