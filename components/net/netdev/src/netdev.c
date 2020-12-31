@@ -901,8 +901,8 @@ static void netdev_list_if(void)
                 {
                     rt_kprintf("%d", netdev->hwaddr[index]);
                 }
-                
-                
+
+
             }
         }
 
@@ -911,8 +911,10 @@ static void netdev_list_if(void)
         else rt_kprintf(" DOWN");
         if (netdev->flags & NETDEV_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
         else rt_kprintf(" LINK_DOWN");
+#ifdef SAL_INTERNET_CHECK
         if (netdev->flags & NETDEV_FLAG_INTERNET_UP) rt_kprintf(" INTERNET_UP");
         else rt_kprintf(" INTERNET_DOWN");
+#endif
         if (netdev->flags & NETDEV_FLAG_DHCP) rt_kprintf(" DHCP_ENABLE");
         else rt_kprintf(" DHCP_DISABLE");
         if (netdev->flags & NETDEV_FLAG_ETHARP) rt_kprintf(" ETHARP");
