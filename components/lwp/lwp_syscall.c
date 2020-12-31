@@ -529,10 +529,103 @@ int sys_fstat(int file, struct stat *buf)
 #endif
 }
 
+/* DFS and lwip definitions */
+#define IMPL_POLLIN     (0x01)
+
+#define IMPL_POLLOUT    (0x02)
+
+#define IMPL_POLLERR    (0x04)
+#define IMPL_POLLHUP    (0x08)
+#define IMPL_POLLNVAL   (0x10)
+
+/* musl definitions */
+#define INTF_POLLIN     0x001
+#define INTF_POLLPRI    0x002
+#define INTF_POLLOUT    0x004
+#define INTF_POLLERR    0x008
+#define INTF_POLLHUP    0x010
+#define INTF_POLLNVAL   0x020
+#define INTF_POLLRDNORM 0x040
+#define INTF_POLLRDBAND 0x080
+#define INTF_POLLWRNORM 0x100
+#define INTF_POLLWRBAND 0x200
+#define INTF_POLLMSG    0x400
+#define INTF_POLLRDHUP  0x2000
+
+#define INTF_POLLIN_MASK    (INTF_POLLIN | INTF_POLLRDNORM | INTF_POLLRDBAND | INTF_POLLPRI)
+#define INTF_POLLOUT_MASK   (INTF_POLLOUT | INTF_POLLWRNORM | INTF_POLLWRBAND)
+
+static void musl2dfs_events(short *events)
+{
+    short origin_e = *events;
+    short result_e = 0;
+
+    if (origin_e & INTF_POLLIN_MASK)
+    {
+        result_e |= IMPL_POLLIN;
+    }
+
+    if (origin_e & INTF_POLLOUT_MASK)
+    {
+        result_e |= IMPL_POLLOUT;
+    }
+
+    if (origin_e & INTF_POLLERR)
+    {
+        result_e |= IMPL_POLLERR;
+    }
+
+    if (origin_e & INTF_POLLHUP)
+    {
+        result_e |= IMPL_POLLHUP;
+    }
+
+    if (origin_e & INTF_POLLNVAL)
+    {
+        result_e |= IMPL_POLLNVAL;
+    }
+
+    *events = result_e;
+}
+
+static void dfs2musl_events(short *events)
+{
+    short origin_e = *events;
+    short result_e = 0;
+
+    if (origin_e & IMPL_POLLIN)
+    {
+        result_e |= INTF_POLLIN_MASK;
+    }
+
+    if (origin_e & IMPL_POLLOUT)
+    {
+        result_e |= INTF_POLLOUT_MASK;
+    }
+
+    if (origin_e & IMPL_POLLERR)
+    {
+        result_e |= INTF_POLLERR;
+    }
+
+    if (origin_e & IMPL_POLLHUP)
+    {
+        result_e |= INTF_POLLHUP;
+    }
+
+    if (origin_e & IMPL_POLLNVAL)
+    {
+        result_e |= INTF_POLLNVAL;
+    }
+
+    *events = result_e;
+}
+
 int sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
-#ifdef RT_USING_USERSPACE
     int ret = -1;
+    int i = 0;
+#ifdef RT_USING_USERSPACE
     struct pollfd *kfds = RT_NULL;
 
     if (!lwp_user_accessable((void*)fds, nfds * sizeof *fds))
@@ -549,13 +642,38 @@ int sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     }
 
     lwp_get_from_user(kfds, fds, nfds * sizeof *kfds);
+
+    for (i = 0; i < nfds; i++)
+    {
+        musl2dfs_events(&kfds[i].events);
+    }
     ret = poll(kfds, nfds, timeout);
-    lwp_put_to_user(fds, kfds, nfds * sizeof *kfds);
+    if (ret > 0)
+    {
+        for (i = 0; i < nfds; i++)
+        {
+            dfs2musl_events(&kfds->revents);
+        }
+        lwp_put_to_user(fds, kfds, nfds * sizeof *kfds);
+    }
 
     kmem_put(kfds);
     return ret;
 #else
-    return poll(fds, nfds, timeout);
+    for (i = 0; i < nfds; i++)
+    {
+        musl2dfs_events(&fds->events);
+    }
+    ret = poll(fds, nfds, timeout);
+    if (ret > 0)
+    {
+        for (i = 0; i < nfds; i++)
+        {
+            dfs2musl_events(&fds->revents);
+        }
+    }
+
+    return ret;
 #endif
 }
 
