@@ -2142,6 +2142,93 @@ int sys_pipe(int fd[2])
     return -1;
 }
 
+int sys_clock_settime(clockid_t clk, const struct timespec *ts)
+{
+    rt_device_t device;
+    time_t now;
+
+    device = rt_device_find("rtc");
+    if (device == RT_NULL)
+    {
+        return -ENODEV;
+    }
+
+#ifdef RT_USING_USERSPACE
+    size_t size = sizeof(struct timespec);
+    struct timespec *kts = NULL;
+
+    if (!lwp_user_accessable((void*)ts, size))
+        return -EINVAL;
+
+    kts = kmem_get(size);
+    if (!kts)
+        return -ENOMEM;
+
+    lwp_get_from_user(kts, (void *)ts, size);
+    now = kts->tv_sec;
+
+    kmem_put(kts);
+#else
+    now = ts->tv_sec;
+#endif
+    return rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &now);
+}
+
+int sys_clock_gettime(clockid_t clk, struct timespec *ts)
+{
+    int ret = 0;
+    rt_device_t device;
+    time_t now;
+
+    device = rt_device_find("rtc");
+    if (device == RT_NULL)
+    {
+        return -ENODEV;
+    }
+    ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &now);
+
+#ifdef RT_USING_USERSPACE
+    size_t size = sizeof(struct timespec);
+    struct timespec *kts = NULL;
+
+    if (!lwp_user_accessable((void*)ts, size))
+        return -EINVAL;
+
+    kts = kmem_get(size);
+    if (!kts)
+        return -ENOMEM;
+
+    kts->tv_sec = now;
+    kts->tv_nsec = 0;
+    lwp_put_to_user(ts, kts, size);
+
+    kmem_put(kts);
+#else
+    ts->tv_sec = now;
+    ts->tv_nsec = 0;
+#endif
+    return ret;
+}
+
+int sys_clock_getres(clockid_t clk, struct timespec *ts)
+{
+#ifdef RT_USING_USERSPACE
+    struct timespec kts;
+    size_t size = sizeof(struct timespec);
+
+    if (!lwp_user_accessable((void*)ts, size))
+        return -EINVAL;
+
+    kts.tv_sec = 1;
+    kts.tv_nsec = 0;
+    lwp_put_to_user(ts, &kts, size);
+#else
+    ts->tv_sec = 1;
+    ts->tv_nsec = 0;
+#endif
+    return 0;
+}
+
 const static void* func_table[] =
 {
     (void*)sys_exit,            /* 01 */
@@ -2286,6 +2373,9 @@ const static void* func_table[] =
     (void *)sys_set_tid_address,
     (void *)sys_access,
     (void *)sys_pipe,
+    (void *)sys_clock_settime,
+    (void *)sys_clock_gettime,
+    (void *)sys_clock_getres,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
