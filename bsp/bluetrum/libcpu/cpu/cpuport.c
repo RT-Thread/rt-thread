@@ -14,7 +14,6 @@
 volatile rt_ubase_t  rt_interrupt_from_thread = 0;
 volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
 volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
-volatile rt_uint32_t rt_switch_flag = 0;
 rt_uint32_t rt_cur_thread_sp = 0;
 
 /**
@@ -42,13 +41,13 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     stk--;
     *stk = (rt_uint32_t)0x10003;         /* Start address */
     stk--;
-	*stk = (rt_uint32_t)tentry;			/* Start address */
-	stk -= 22;
-	*stk = (rt_uint32_t)parameter;	    /* Register a0  parameter*/
-	stk -= 6;
-	*stk = (rt_uint32_t)tp;             /* Register thread pointer */
-	stk --;
-	*stk = (rt_uint32_t)texit;          /* Register ra   texit*/
+    *stk = (rt_uint32_t)tentry;			/* Start address */
+    stk -= 22;
+    *stk = (rt_uint32_t)parameter;	    /* Register a0  parameter*/
+    stk -= 6;
+    *stk = (rt_uint32_t)tp;             /* Register thread pointer */
+    stk --;
+    *stk = (rt_uint32_t)texit;          /* Register ra   texit*/
 
     /* return task's current stack address */
     return (rt_uint8_t *)stk;

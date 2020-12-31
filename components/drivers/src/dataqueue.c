@@ -264,7 +264,7 @@ __exit:
 }
 RTM_EXPORT(rt_data_queue_pop);
 
-rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
+rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
                             const void** data_ptr,
                             rt_size_t *size)
 {
@@ -287,7 +287,7 @@ rt_err_t rt_data_queue_peak(struct rt_data_queue *queue,
 
     return RT_EOK;
 }
-RTM_EXPORT(rt_data_queue_peak);
+RTM_EXPORT(rt_data_queue_peek);
 
 void rt_data_queue_reset(struct rt_data_queue *queue)
 {
