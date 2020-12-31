@@ -1268,7 +1268,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             tx_dma = (struct rt_serial_tx_dma*) serial->serial_tx;
 
             rt_data_queue_pop(&(tx_dma->data_queue), &last_data_ptr, &data_size, 0);
-            if (rt_data_queue_peak(&(tx_dma->data_queue), &data_ptr, &data_size) == RT_EOK)
+            if (rt_data_queue_peek(&(tx_dma->data_queue), &data_ptr, &data_size) == RT_EOK)
             {
                 /* transmit next data node */
                 tx_dma->activated = RT_TRUE;
