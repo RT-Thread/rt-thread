@@ -21,7 +21,9 @@
 #include <sal.h>
 #include <netdev.h>
 
+#ifdef SAL_INTERNET_CHECK
 #include <ipc/workqueue.h>
+#endif
 
 /* check system workqueue stack size */
 #if RT_SYSTEM_WORKQUEUE_STACKSIZE < 1536
@@ -45,7 +47,7 @@ struct sal_socket_table
 struct sal_netdev_res_table
 {
     struct addrinfo *res;
-    struct netdev *netdev; 
+    struct netdev *netdev;
 };
 
 #ifdef SAL_USING_TLS
@@ -131,7 +133,7 @@ int sal_init(void)
 
     /*init the dev_res table */
     rt_memset(sal_dev_res_tbl,  0, sizeof(sal_dev_res_tbl));
-    
+
     /* create sal socket lock */
     rt_mutex_init(&sal_core_lock, "sal_lock", RT_IPC_FLAG_FIFO);
 
@@ -142,6 +144,7 @@ int sal_init(void)
 }
 INIT_COMPONENT_EXPORT(sal_init);
 
+#ifdef SAL_INTERNET_CHECK
 /* check SAL network interface device internet status */
 static void check_netdev_internet_up_work(struct rt_work *work, void *work_data)
 {
@@ -271,6 +274,7 @@ __exit:
         skt_ops->closesocket(sockfd);
     }
 }
+#endif /* SAL_INTERNET_CHECK */
 
 /**
  * This function will check SAL network interface device internet status.
@@ -279,10 +283,12 @@ __exit:
  */
 int sal_check_netdev_internet_up(struct netdev *netdev)
 {
+    RT_ASSERT(netdev);
+
+#ifdef SAL_INTERNET_CHECK
     /* workqueue for network connect */
     struct rt_delayed_work *net_work = RT_NULL;
 
-    RT_ASSERT(netdev);
 
     net_work = (struct rt_delayed_work *)rt_calloc(1, sizeof(struct rt_delayed_work));
     if (net_work == RT_NULL)
@@ -293,7 +299,18 @@ int sal_check_netdev_internet_up(struct netdev *netdev)
 
     rt_delayed_work_init(net_work, check_netdev_internet_up_work, (void *)netdev);
     rt_work_submit(&(net_work->work), RT_TICK_PER_SECOND);
+#else
+    if(netdev_is_link_up(netdev))
+    {
+        netdev->flags |= NETDEV_FLAG_INTERNET_UP;
+    }
+    else
+    {
+        netdev->flags &= ~NETDEV_FLAG_INTERNET_UP;
+    }
+    LOG_D("You have shut down internet check function, internet status is subject to link status.");
 
+#endif /* SAL_INTERNET_CHECK */
     return 0;
 }
 
@@ -1138,7 +1155,7 @@ int sal_getaddrinfo(const char *nodename,
         }
 
         RT_ASSERT((i < SAL_SOCKETS_NUM));
-        
+
     }
 
     return ret;
