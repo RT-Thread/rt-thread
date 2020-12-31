@@ -14,7 +14,7 @@ if not GetDepend('BSP_USING_WDT'):
 if not GetDepend('BSP_USING_BULETOOTH'):
     SrcRemove(src, ['drv_bluetooth.c'])
 
-group = DefineGroup('driver', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory
 list = os.listdir(cwd)

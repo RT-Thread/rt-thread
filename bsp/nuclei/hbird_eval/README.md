@@ -1,10 +1,14 @@
-# 芯来科技蜂鸟FPGA评估板 #
+# 芯来科技蜂鸟FPGA评估板
 
 ## 简介
 
-**蜂鸟FPGA评估板** 是由芯来科技公司推出的用于测试评估芯来RISC-V内核处理器的FPGA评估板。
+**蜂鸟FPGA系列评估板** 是由芯来科技公司推出的用于一系列测试评估芯来RISC-V内核处理器的FPGA评估板。
 
-更多关于 **蜂鸟FPGA评估板** 开发板的详细资料请参见 [蜂鸟FPGA评估板](https://nucleisys.com/developboard.php)
+更多关于 **蜂鸟FPGA评估板** 开发板的详细资料请参见:
+
+* [Nuclei DDR200T开发板](https://nucleisys.com/developboard.php#ddr200t)
+* [Nuclei MCU200T开发板](https://nucleisys.com/developboard.php#mcu200t)
+* [蜂鸟开发板](https://nucleisys.com/developboard.php#hbird100t)
 
 ### 板载资源
 
@@ -57,7 +61,9 @@ export PATH=~/Software/Nuclei/gcc/bin:~/Software/Nuclei/openocd/bin:$PATH
 
 ## 烧写及执行
 
-### [驱动设置](https://nucleisys.com/developboard.php)
+### 驱动设置
+
+驱动安装设置，请参考[Nuclei FPGA开发板介绍](https://nucleisys.com/upload/files/fpga/doc/Nuclei_FPGA_DebugKit_Intro_202012.pdf)
 
 ### 编译程序
 
@@ -110,7 +116,7 @@ A debugging session is active.
         Inferior 1 [Remote target] will be detached.
 
 Quit anyway? (y or n) [answered Y; input not from terminal]
-Remote communication error.  Target disconnected.: Success.
+[Inferior 1 (Remote target) detached]
 ~~~
 
 下载程序之后, 连接**串口(57600-N-8-1)**, 可以看到 RT-Thread 的输出信息:

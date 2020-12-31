@@ -375,8 +375,6 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
     rt_int32_t i, ret;
     rt_uint16_t ignore_nack;
 
-    LOG_D("send start condition");
-    i2c_start(ops);
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
@@ -386,6 +384,11 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
             if (i)
             {
                 i2c_restart(ops);
+            }
+            else
+            {
+                LOG_D("send start condition");
+                i2c_start(ops);
             }
             ret = i2c_bit_send_address(bus, msg);
             if ((ret != RT_EOK) && !ignore_nack)
@@ -423,8 +426,11 @@ static rt_size_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    LOG_D("send stop condition");
-    i2c_stop(ops);
+    if (!(msg->flags & RT_I2C_NO_STOP))
+    {
+        LOG_D("send stop condition");
+        i2c_stop(ops);
+    }
 
     return ret;
 }

@@ -28,7 +28,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g0xx_hal_conf.h"
-#include <rtthread.h>
 
 /** @addtogroup STM32G0xx_HAL_Driver
   * @{

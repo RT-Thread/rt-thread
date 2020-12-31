@@ -78,6 +78,31 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 
 #endif
 
+/* must be invoke witch rt_hw_interrupt_disable */
+static void _thread_cleanup_execute(rt_thread_t thread)
+{
+    register rt_base_t level;
+#ifdef RT_USING_MODULE
+    struct rt_dlmodule *module = RT_NULL;
+#endif
+    level = rt_hw_interrupt_disable();
+#ifdef RT_USING_MODULE
+    module = (struct rt_dlmodule*)thread->module_id;
+    if (module)
+    {
+        dlmodule_destroy(module);
+    }
+#endif
+    /* invoke thread cleanup */
+    if (thread->cleanup != RT_NULL)
+        thread->cleanup(thread);
+
+#ifdef RT_USING_SIGNALS
+    rt_thread_free_sig(thread);
+#endif
+    rt_hw_interrupt_enable(level);
+}
+
 void rt_thread_exit(void)
 {
     struct rt_thread *thread;
@@ -89,6 +114,8 @@ void rt_thread_exit(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
+    _thread_cleanup_execute(thread);
+
     /* remove from schedule */
     rt_schedule_remove_thread(thread);
     /* change stat */
@@ -97,8 +124,7 @@ void rt_thread_exit(void)
     /* remove it from timer list */
     rt_timer_detach(&thread->thread_timer);
 
-    if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
-        thread->cleanup == RT_NULL)
+    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
     {
         rt_object_detach((rt_object_t)thread);
     }
@@ -353,14 +379,15 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
         rt_schedule_remove_thread(thread);
     }
 
+    _thread_cleanup_execute(thread);
+
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
 
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
-    if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
-        thread->cleanup == RT_NULL)
+    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
     {
         rt_object_detach((rt_object_t)thread);
     }
@@ -454,6 +481,8 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
         /* remove from schedule */
         rt_schedule_remove_thread(thread);
     }
+
+    _thread_cleanup_execute(thread);
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -976,38 +1005,7 @@ RTM_EXPORT(rt_thread_timeout);
  */
 rt_thread_t rt_thread_find(char *name)
 {
-    struct rt_object_information *information;
-    struct rt_object *object;
-    struct rt_list_node *node;
-
-    /* enter critical */
-    if (rt_thread_self() != RT_NULL)
-        rt_enter_critical();
-
-    /* try to find device object */
-    information = rt_object_get_information(RT_Object_Class_Thread);
-    RT_ASSERT(information != RT_NULL);
-    for (node  = information->object_list.next;
-         node != &(information->object_list);
-         node  = node->next)
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-        if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
-        {
-            /* leave critical */
-            if (rt_thread_self() != RT_NULL)
-                rt_exit_critical();
-
-            return (rt_thread_t)object;
-        }
-    }
-
-    /* leave critical */
-    if (rt_thread_self() != RT_NULL)
-        rt_exit_critical();
-
-    /* not found */
-    return RT_NULL;
+    return (rt_thread_t)rt_object_find(name, RT_Object_Class_Thread);
 }
 RTM_EXPORT(rt_thread_find);
 

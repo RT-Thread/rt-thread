@@ -35,91 +35,91 @@ extern "C" {
   * @brief ALD QSPI state
   */
 typedef enum {
-	QSPI_STATE_BUSY_TX = 0x11,	/**< Data Transmission process is ongoing */
-	QSPI_STATE_BUSY_RX = 0x21,	/**< Data Reception process is ongoing */
+	QSPI_STATE_BUSY_TX = 0x11U,	/**< Data Transmission process is ongoing */
+	QSPI_STATE_BUSY_RX = 0x21U,	/**< Data Reception process is ongoing */
 } qspi_state_t;
 
 /**
   * @brief QSPI Instruction Transfer Type
   */
 typedef enum {
-	QSPI_XFER_SINGLE = 0x00,	/**< Instruction shifted on DQ0 only*/
-	QSPI_XFER_DUAL   = 0x01,	/**< Instruction,Address and data sent on DQ0 and DQ1*/
-	QSPI_XFER_QUAD   = 0x02,	/**< Instruction,Address and data sent on DQ0,DQ1 and DQ2*/
+	QSPI_XFER_SINGLE = 0x00U,	/**< Instruction shifted on DQ0 only*/
+	QSPI_XFER_DUAL   = 0x01U,	/**< Instruction,Address and data sent on DQ0 and DQ1*/
+	QSPI_XFER_QUAD   = 0x02U,	/**< Instruction,Address and data sent on DQ0,DQ1 and DQ2*/
 } qspi_xfer_t;
 
 /**
  * @brief QSPI Indirect Access SRAM fill level
  */	
 typedef enum {
-	QSPI_SRAM_RD = 0,	/**< SRAM fill level(indirect write partition)in units of words(4bytes)*/
-	QSPI_SRAM_WR = 1,	/**< SRAM fill level(indirect read partition)in units of words(4bytes)*/
+	QSPI_SRAM_RD = 0U,	/**< SRAM fill level(indirect write partition)in units of words(4bytes)*/
+	QSPI_SRAM_WR = 1U,	/**< SRAM fill level(indirect read partition)in units of words(4bytes)*/
 } qspi_sram_t;
 
 /** 
   * @brief QSPI Clock Phase 
   */
 typedef enum {
-	QSPI_CPHA_1E = 0,	/**< First edge*/
-	QSPI_CPHA_2E = 1,	/**< Second edge*/
+	QSPI_CPHA_1E = 0U,	/**< First edge*/
+	QSPI_CPHA_2E = 1U,	/**< Second edge*/
 } qspi_cpha_t;
 
 /** 
   * @brief QSPI_Clock_Polarity QSPI Clock Polarity
   */
 typedef enum {
-	QSPI_CPOL_L = 0,	/**< QSPI clock polarity low */
-	QSPI_CPOL_H = 1,	/**< QSPI clock polarity high */
+	QSPI_CPOL_L = 0U,	/**< QSPI clock polarity low */
+	QSPI_CPOL_H = 1U,	/**< QSPI clock polarity high */
 } qspi_cpol_t;
 
 /** 
   * @brief QSPI peripheral select decode
   */
 typedef enum {
-	QSPI_SINGLE_CHIP = 0x0,	/**< Only 1 of 4 selects n_ss_out[3:0] is active */
-	QSPI_MULTI_CHIP  = 0x1,	/**< Allow external 4-to-16 decode */
+	QSPI_SINGLE_CHIP = 0x0U,	/**< Only 1 of 4 selects n_ss_out[3:0] is active */
+	QSPI_MULTI_CHIP  = 0x1U,	/**< Allow external 4-to-16 decode */
 } qspi_nss_decode_t;
 
 /** 
   * @brief QSPI_Baud_Rate_Clock_Prescaler QSPI Baud Rate Clock Prescaler
   */
 typedef enum {
-	QSPI_DIV_2  = 0x0,	/**< Master mode baud rate dibisor 2*/
-	QSPI_DIV_4  = 0x1,	/**< Master mode baud rate dibisor 4*/
-	QSPI_DIV_6  = 0x2,	/**< Master mode baud rate dibisor 6*/
-	QSPI_DIV_8  = 0x3,	/**< Master mode baud rate dibisor 8*/
-	QSPI_DIV_10 = 0x4,	/**< Master mode baud rate dibisor 10*/
-	QSPI_DIV_12 = 0x5,	/**< Master mode baud rate dibisor 12*/
-	QSPI_DIV_14 = 0x6,	/**< Master mode baud rate dibisor 14*/
-	QSPI_DIV_16 = 0x7,	/**< Master mode baud rate dibisor 16*/
-	QSPI_DIV_18 = 0x8,	/**< Master mode baud rate dibisor 18*/
-	QSPI_DIV_20 = 0x9,	/**< Master mode baud rate dibisor 20*/
-	QSPI_DIV_22 = 0xA,	/**< Master mode baud rate dibisor 22*/
-	QSPI_DIV_24 = 0xB,	/**< Master mode baud rate dibisor 24*/
-	QSPI_DIV_26 = 0xC,	/**< Master mode baud rate dibisor 26*/
-	QSPI_DIV_28 = 0xD,	/**< Master mode baud rate dibisor 28*/
-	QSPI_DIV_30 = 0xE,	/**< Master mode baud rate dibisor 30*/
-	QSPI_DIV_32 = 0xF,	/**< Master mode baud rate dibisor 32*/
+	QSPI_DIV_2  = 0x0U,	/**< Master mode baud rate dibisor 2*/
+	QSPI_DIV_4  = 0x1U,	/**< Master mode baud rate dibisor 4*/
+	QSPI_DIV_6  = 0x2U,	/**< Master mode baud rate dibisor 6*/
+	QSPI_DIV_8  = 0x3U,	/**< Master mode baud rate dibisor 8*/
+	QSPI_DIV_10 = 0x4U,	/**< Master mode baud rate dibisor 10*/
+	QSPI_DIV_12 = 0x5U,	/**< Master mode baud rate dibisor 12*/
+	QSPI_DIV_14 = 0x6U,	/**< Master mode baud rate dibisor 14*/
+	QSPI_DIV_16 = 0x7U,	/**< Master mode baud rate dibisor 16*/
+	QSPI_DIV_18 = 0x8U,	/**< Master mode baud rate dibisor 18*/
+	QSPI_DIV_20 = 0x9U,	/**< Master mode baud rate dibisor 20*/
+	QSPI_DIV_22 = 0xAU,	/**< Master mode baud rate dibisor 22*/
+	QSPI_DIV_24 = 0xBU,	/**< Master mode baud rate dibisor 24*/
+	QSPI_DIV_26 = 0xCU,	/**< Master mode baud rate dibisor 26*/
+	QSPI_DIV_28 = 0xDU,	/**< Master mode baud rate dibisor 28*/
+	QSPI_DIV_30 = 0xEU,	/**< Master mode baud rate dibisor 30*/
+	QSPI_DIV_32 = 0xFU,	/**< Master mode baud rate dibisor 32*/
 } qspi_clk_div_t;
 
 /** 
   * @brief QSPI Peripheral chip select decode
   */
 typedef enum {
-	QSPI_CS_NSS0 = 0x0,	/**< NSS0 active*/
-	QSPI_CS_NSS1 = 0x1,	/**< NSS1 active*/ 
-	QSPI_CS_NSS2 = 0x3,	/**< NSS2 active*/
-	QSPI_CS_NSS3 = 0x7,	/**< NSS3 active*/
+	QSPI_CS_NSS0 = 0x0U,	/**< NSS0 active*/
+	QSPI_CS_NSS1 = 0x1U,	/**< NSS1 active*/ 
+	QSPI_CS_NSS2 = 0x3U,	/**< NSS2 active*/
+	QSPI_CS_NSS3 = 0x7U,	/**< NSS3 active*/
 } qspi_nss_t;
 
 /** 
   *@brief Size of flash connected to CS[x](x = 0 ~ 3)pin
   */
 typedef enum {
-	QSPI_NSS_512M = 0x0,	/**< size of 512Mb*/
-        QSPI_NSS_1G   = 0x1,	/**< size of 1Gb*/
-        QSPI_NSS_2G   = 0x2,	/**< size of 2Gb*/
-        QSPI_NSS_4G   = 0x3,	/**< size of 3Gb*/
+	QSPI_NSS_512M = 0x0U,	/**< size of 512Mb*/
+        QSPI_NSS_1G   = 0x1U,	/**< size of 1Gb*/
+        QSPI_NSS_2G   = 0x2U,	/**< size of 2Gb*/
+        QSPI_NSS_4G   = 0x3U,	/**< size of 3Gb*/
 } qspi_nss_size_t;
 
 /** 
@@ -139,8 +139,8 @@ typedef struct {
   * @brief QSPI Sample Edge Selection
   */
 typedef enum {
-	QSPI_FALLING_E = 0x0,	/**< Data outputs from flash are sampled on falling edge of the ref_clk*/
-	QSPI_RISING_E  = 0x1,	/**< Data outputs from flash are sampled on rising edge of the ref_clk*/
+	QSPI_FALLING_E = 0x0U,	/**< Data outputs from flash are sampled on falling edge of the ref_clk*/
+	QSPI_RISING_E  = 0x1U,	/**< Data outputs from flash are sampled on rising edge of the ref_clk*/
 } qspi_data_sampled_t;
 
 /**
@@ -451,10 +451,10 @@ typedef enum {
   * @defgroup QSPI_Public_Macros QSPI Public Macros
   * @{
   */
-#define QSPI_MEMORY_ADDRESS			0x90000000
-#define QSPI_SRAM_SIZE				255
+#define QSPI_MEMORY_ADDRESS			0x90000000U
+#define QSPI_SRAM_SIZE				255U
 #define QSPI_TIMEOUT_DEFAULT_VALUE		5000U /* 5s */	
-#define QSPI_SRAM_DEPTH 			0xFF
+#define QSPI_SRAM_DEPTH 			0xFFU
 #define QSPI_DAC_ENABLE(hperh)			SET_BIT((hperh)->perh->CR, QSPI_CR_DACEN_MSK)
 #define QSPI_DAC_DISABLE(hperh)			CLEAR_BIT((hperh)->perh->CR, QSPI_CR_DACEN_MSK)
 #define QSPI_LEGACY_SPI_ENABLE(hperh)		SET_BIT((hperh)->perh->CR, QSPI_CR_LIMEN_MSK)

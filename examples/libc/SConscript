@@ -1,6 +1,6 @@
 from building import *
 
 src   = Glob('*.c')
-group = DefineGroup('libc_test', src, depend = ['RT_USING_NEWLIB', 'RT_USING_PTHREADS'])
+group = DefineGroup('UTest', src, depend = ['RT_USING_NEWLIB', 'RT_USING_PTHREADS'])
 
 Return('group')

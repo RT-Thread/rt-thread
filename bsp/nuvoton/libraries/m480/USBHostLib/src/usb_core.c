@@ -80,7 +80,7 @@ void  usbh_core_init()
   * @retval   0   No any hub port status changes found.
   * @retval   1   There's hub port status changes.
   */
-int  usbh_pooling_root_hubs(void)
+int  usbh_polling_root_hubs(void)
 {
     int   ret, change = 0;
 

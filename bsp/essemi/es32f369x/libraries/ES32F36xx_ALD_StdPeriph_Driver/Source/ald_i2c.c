@@ -513,6 +513,7 @@ ald_status_t ald_i2c_master_send(i2c_handle_t *hperh, uint16_t dev_addr, uint8_t
 	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
 	while (size > 0) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA  = (*buf++);
 		size--;
 		hperh->xfer_count++;
@@ -690,6 +691,7 @@ ald_status_t ald_i2c_slave_send(i2c_handle_t *hperh, uint8_t *buf, uint32_t size
 	SET_BIT(hperh->perh->FCON, I2C_FCON_TXFRST_MSK);
 
 	for (i = 0; i < 16; i++) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = (*buf++);
 		--size;
 		hperh->xfer_count++;
@@ -706,6 +708,7 @@ ald_status_t ald_i2c_slave_send(i2c_handle_t *hperh, uint8_t *buf, uint32_t size
 			goto ERROR;
 
 		for (i = 0; i < 8; i++) {
+			while(hperh->perh->STAT & (0x1 << 1));
 			hperh->perh->TXDATA = (*buf++);
 			--size;
 			hperh->xfer_count++;
@@ -1318,6 +1321,7 @@ ald_status_t ald_i2c_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, uint16_t 
 
 	hperh->xfer_count += 2;
 	while (size > 0) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = (*buf++);
 		--size;
 		hperh->xfer_count++;
@@ -1543,6 +1547,7 @@ ald_status_t ald_i2c_mem_write_by_it(i2c_handle_t *hperh, uint16_t dev_addr, uin
 	I2C_CLEAR_IT(hperh , I2C_IT_TC);
 	I2C_CLEAR_IT(hperh , I2C_IT_TCR);
 
+	while(hperh->perh->STAT & (0x1 << 1));
 	hperh->perh->TXDATA = (*hperh->p_buff++);
 	hperh->xfer_count++;
 
@@ -2153,6 +2158,7 @@ static ald_status_t i2c_master_send_tc(i2c_handle_t *hperh)
 static ald_status_t i2c_master_send_txe(i2c_handle_t *hperh)
 {
 	if (hperh->xfer_count != hperh->xfer_size) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = (*hperh->p_buff++);
 		hperh->xfer_count++;
 	}
@@ -2195,9 +2201,14 @@ static ald_status_t i2c_master_recv_tc(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_master_recv_rxne(i2c_handle_t *hperh)
 {
-	if (hperh->xfer_size - hperh->xfer_count > 0) {
-		(*hperh->p_buff++) = hperh->perh->RXDATA;
-		hperh->xfer_count++;
+	while (READ_BITS(hperh->perh->FCON, I2C_FCON_RXFLV_MSK, I2C_FCON_RXFLV_POSS) > 0) {
+		if (hperh->xfer_size - hperh->xfer_count > 0) {
+			(*hperh->p_buff++) = hperh->perh->RXDATA;
+			hperh->xfer_count++;
+		}
+		else {
+			return OK;
+		}
 	}
 
 	return OK;
@@ -2212,6 +2223,7 @@ static ald_status_t i2c_master_recv_rxne(i2c_handle_t *hperh)
 static ald_status_t i2c_slave_send_txe(i2c_handle_t *hperh)
 {
 	if (hperh->xfer_size > hperh->xfer_count) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = (*hperh->p_buff++);
 		hperh->xfer_count++;
 	}
@@ -2227,9 +2239,14 @@ static ald_status_t i2c_slave_send_txe(i2c_handle_t *hperh)
  */
 static ald_status_t i2c_slave_recv_rxne(i2c_handle_t *hperh)
 {
-	if (hperh->xfer_size > hperh->xfer_count) {
-		(*hperh->p_buff++) = hperh->perh->RXDATA;
-		hperh->xfer_count++;
+	while (READ_BITS(hperh->perh->FCON, I2C_FCON_RXFLV_MSK, I2C_FCON_RXFLV_POSS) > 0) {
+		if (hperh->xfer_size > hperh->xfer_count) {
+			(*hperh->p_buff++) = hperh->perh->RXDATA;
+			hperh->xfer_count++;
+		}
+		else {
+			return OK;
+		}
 	}
 
 	return OK;
@@ -2326,14 +2343,17 @@ static ald_status_t i2c_req_mem_write(i2c_handle_t *hperh, uint16_t dev_addr, ui
 	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
 	if (add_size == I2C_MEMADD_SIZE_8BIT) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
 	}
 	else {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_MSB(mem_addr);
 
 		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK)
 			return ERROR;
-
+		
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
 	}
 
@@ -2365,9 +2385,11 @@ static ald_status_t i2c_req_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uin
 	SET_BIT(hperh->perh->CON2, I2C_CON2_START_MSK);
 
 	if (add_size == I2C_MEMADD_SIZE_8BIT) {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
 	}
 	else {
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_MSB(mem_addr);
 
 		if (i2c_wait_txe_to_timeout(hperh, timeout) != OK) {
@@ -2380,6 +2402,7 @@ static ald_status_t i2c_req_mem_read(i2c_handle_t *hperh, uint16_t dev_addr, uin
 			}
 		}
 
+		while(hperh->perh->STAT & (0x1 << 1));
 		hperh->perh->TXDATA = I2C_MEM_ADD_LSB(mem_addr);
 	}
 
