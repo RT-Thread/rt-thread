@@ -2199,13 +2199,15 @@ rt_err_t sys_get_errno(void)
     return rt_get_errno();
 }
 
-void sys_set_thread_area(void *p)
+int sys_set_thread_area(void *p)
 {
     rt_thread_t thread;
 
     thread = rt_thread_self();
     thread->thread_idr = p;
     lwp_set_thread_area(p);
+
+    return 0;
 }
 
 long sys_set_tid_address(int *tidptr)
