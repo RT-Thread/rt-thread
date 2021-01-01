@@ -71,21 +71,21 @@ static int serial_fops_open(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        LOG_D("fops open: O_RDONLY!");
-        flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDONLY;
-        break;
-    case O_WRONLY:
-        LOG_D("fops open: O_WRONLY!");
-        flags = RT_DEVICE_FLAG_WRONLY;
-        break;
-    case O_RDWR:
-        LOG_D("fops open: O_RDWR!");
-        flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDWR;
-        break;
-    default:
-        LOG_E("fops open: unknown mode - %d!", fd->flags & O_ACCMODE);
-        break;
+        case O_RDONLY:
+            LOG_D("fops open: O_RDONLY!");
+            flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDONLY;
+            break;
+        case O_WRONLY:
+            LOG_D("fops open: O_WRONLY!");
+            flags = RT_DEVICE_FLAG_WRONLY;
+            break;
+        case O_RDWR:
+            LOG_D("fops open: O_RDWR!");
+            flags = RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_RDWR;
+            break;
+        default:
+            LOG_E("fops open: unknown mode - %d!", fd->flags & O_ACCMODE);
+            break;
     }
 
     if ((fd->flags & O_ACCMODE) != O_WRONLY)
@@ -759,14 +759,17 @@ static rt_err_t rt_serial_close(struct rt_device *dev)
 #ifdef RT_SERIAL_USING_DMA
     else if (dev->open_flag & RT_DEVICE_FLAG_DMA_RX)
     {
-        if (serial->config.bufsz == 0) {
+        if (serial->config.bufsz == 0)
+        {
             struct rt_serial_rx_dma* rx_dma;
 
             rx_dma = (struct rt_serial_rx_dma*)serial->serial_rx;
             RT_ASSERT(rx_dma != RT_NULL);
 
             rt_free(rx_dma);
-        } else {
+        }
+        else
+        {
             struct rt_serial_rx_fifo* rx_fifo;
 
             rx_fifo = (struct rt_serial_rx_fifo*)serial->serial_rx;
