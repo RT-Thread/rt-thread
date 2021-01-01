@@ -133,7 +133,7 @@ static int serial_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 
     do
     {
-        size = rt_device_read(device, -1,  buf, count);
+        size = rt_device_read(device, -1, buf, count);
         if (size <= 0)
         {
             if (fd->flags & O_NONBLOCK)
@@ -1105,6 +1105,16 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCXONC:
             break;
+        case TIOCSWINSZ:
+            {
+                struct winsize* p_winsize;
+
+                p_winsize = (struct winsize*)args;
+                rt_enter_critical();
+                rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
+                rt_exit_critical();
+            }
+            break;
 #endif /*RT_USING_POSIX_TERMIOS*/
         case FIONREAD:
             {
@@ -1116,14 +1126,6 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 rt_hw_interrupt_enable(level);
 
                 *(rt_size_t *)args = recved;
-            }
-            break;
-        case TIOCSWINSZ:
-            {
-                struct winsize* p_winsize;
-
-                p_winsize = (struct winsize*)args;
-                rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
             }
             break;
 #endif /*RT_USING_POSIX*/
