@@ -26,6 +26,9 @@ if GetDepend('RT_USING_MEMHEAP') == False:
 if GetDepend('RT_USING_USERHEAP'):
     SrcRemove(src, ['mem.c', 'slab.c'])
 
+if GetDepend('RT_USING_SIGNALS') == False:
+    SrcRemove(src, ['signal.c'])
+
 if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
