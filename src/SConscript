@@ -6,9 +6,6 @@ src = Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
 
-if GetDepend('RT_USING_MODULE') == False:
-    SrcRemove(src, ['module.c'])
-
 if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SMALL_MEM') == False:
     SrcRemove(src, ['mem.c'])
 
