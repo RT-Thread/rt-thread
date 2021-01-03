@@ -1658,7 +1658,7 @@ RTM_EXPORT(rt_mb_send);
 /**
  * This function will send an urgent mail to mailbox object, if there are threads
  * suspended on mailbox object, it will be waked up. This function will return
- * immediately, if you want blocking send, use rt_mb_urgent_wait instead.
+ * immediately.
  *
  * @param mb the mailbox object
  * @param value the mail
