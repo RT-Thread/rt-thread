@@ -37,7 +37,7 @@
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
- * 2021-01-03     Meco Man     add rt_mb_urgent() and rt_mb_urgent_wait()
+ * 2021-01-03     Meco Man     add rt_mb_urgent()
  */
 
 #include <rtthread.h>
@@ -1656,107 +1656,27 @@ rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value)
 RTM_EXPORT(rt_mb_send);
 
 /**
- * This function will send an urgent mail to mailbox object. If the mailbox is full,
- * current thread will be suspended until timeout.
+ * This function will send an urgent mail to mailbox object, if there are threads
+ * suspended on mailbox object, it will be waked up. This function will return
+ * immediately, if you want blocking send, use rt_mb_urgent_wait instead.
  *
  * @param mb the mailbox object
  * @param value the mail
- * @param timeout the waiting time
  *
  * @return the error code
  */
-rt_err_t rt_mb_urgent_wait(rt_mailbox_t mb,
-                           rt_ubase_t   value,
-                           rt_int32_t   timeout)
+rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
 {
-    struct rt_thread *thread;
     register rt_ubase_t temp;
-    rt_uint32_t tick_delta;
 
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
 
-    /* initialize delta tick */
-    tick_delta = 0;
-    /* get current thread */
-    thread = rt_thread_self();
-
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
 
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
-
-    /* for non-blocking call */
-    if (mb->entry == mb->size && timeout == 0)
-    {
-        rt_hw_interrupt_enable(temp);
-
-        return -RT_EFULL;
-    }
-
-    /* mailbox is full */
-    while (mb->entry == mb->size)
-    {
-        /* reset error number in thread */
-        thread->error = RT_EOK;
-
-        /* no waiting, return timeout */
-        if (timeout == 0)
-        {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
-
-            return -RT_EFULL;
-        }
-
-        RT_DEBUG_IN_THREAD_CONTEXT;
-        /* suspend current thread */
-        rt_ipc_list_suspend(&(mb->suspend_sender_thread),
-                            thread,
-                            mb->parent.parent.flag);
-
-        /* has waiting time, start thread timer */
-        if (timeout > 0)
-        {
-            /* get the start tick of timer */
-            tick_delta = rt_tick_get();
-
-            RT_DEBUG_LOG(RT_DEBUG_IPC, ("mb_send_wait: start timer of thread:%s\n",
-                                        thread->name));
-
-            /* reset the timeout of thread timer and start it */
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
-            rt_timer_start(&(thread->thread_timer));
-        }
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(temp);
-
-        /* re-schedule */
-        rt_schedule();
-
-        /* resume from suspend state */
-        if (thread->error != RT_EOK)
-        {
-            /* return error */
-            return thread->error;
-        }
-
-        /* disable interrupt */
-        temp = rt_hw_interrupt_disable();
-
-        /* if it's not waiting forever and then re-calculate timeout tick */
-        if (timeout > 0)
-        {
-            tick_delta = rt_tick_get() - tick_delta;
-            timeout -= tick_delta;
-            if (timeout < 0)
-                timeout = 0;
-        }
-    }
 
     /* rewind to the previous position */
     if(mb->out_offset > 0)
@@ -1799,22 +1719,6 @@ rt_err_t rt_mb_urgent_wait(rt_mailbox_t mb,
     rt_hw_interrupt_enable(temp);
 
     return RT_EOK;
-}
-RTM_EXPORT(rt_mb_urgent_wait);
-
-/**
- * This function will send an urgent mail to mailbox object, if there are threads
- * suspended on mailbox object, it will be waked up. This function will return
- * immediately, if you want blocking send, use rt_mb_urgent_wait instead.
- *
- * @param mb the mailbox object
- * @param value the mail
- *
- * @return the error code
- */
-rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
-{
-    return rt_mb_urgent_wait(mb, value, 0);
 }
 RTM_EXPORT(rt_mb_urgent);
 
