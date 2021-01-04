@@ -257,11 +257,22 @@ void nu_pdma_channel_terminate(int i32ChannID)
     int i;
     uint32_t u32EnabledChans;
     int ch_mask = 0;
+    rt_err_t result;
 
     if (!(nu_pdma_chn_mask & (1 << i32ChannID)))
         goto exit_pdma_channel_terminate;
 
-    rt_mutex_take(g_mutex_res, RT_WAITING_FOREVER);
+    result = rt_mutex_take(g_mutex_res, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        goto exit_pdma_channel_terminate;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        goto exit_pdma_channel_terminate;
+    }
 
     // Suspend all channels.
     u32EnabledChans = nu_pdma_chn_mask & NU_PDMA_CH_Msk;
@@ -624,11 +635,16 @@ static void nu_pdma_sgtbls_token_free(nu_pdma_desc_t psSgtbls)
 rt_err_t nu_pdma_sgtbls_allocate(nu_pdma_desc_t *ppsSgtbls, int num)
 {
     int i, j, idx;
+    rt_err_t result = RT_EOK;
 
     RT_ASSERT(ppsSgtbls != NULL);
     RT_ASSERT(num <= NU_PDMA_SG_TBL_MAXSIZE);
 
-    rt_mutex_take(g_mutex_sg, RT_WAITING_FOREVER);
+    result = rt_mutex_take(g_mutex_sg, RT_WAITING_FOREVER);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
 
     for (i = 0; i < num; i++)
     {
@@ -645,7 +661,7 @@ rt_err_t nu_pdma_sgtbls_allocate(nu_pdma_desc_t *ppsSgtbls, int num)
 
     rt_mutex_release(g_mutex_sg);
 
-    return RT_EOK;
+    return result;
 
 fail_nu_pdma_sgtbls_allocate:
 
@@ -666,11 +682,22 @@ fail_nu_pdma_sgtbls_allocate:
 void nu_pdma_sgtbls_free(nu_pdma_desc_t *ppsSgtbls, int num)
 {
     int i;
+    rt_err_t result;
 
     RT_ASSERT(ppsSgtbls != NULL);
     RT_ASSERT(num <= NU_PDMA_SG_TBL_MAXSIZE);
 
-    rt_mutex_take(g_mutex_sg, RT_WAITING_FOREVER);
+    result = rt_mutex_take(g_mutex_sg, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return;
+    }
 
     for (i = 0; i < num; i++)
     {
