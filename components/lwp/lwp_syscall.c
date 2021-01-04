@@ -1521,16 +1521,12 @@ int sys_getsockname (int socket, struct musl_sockaddr *name, socklen_t *namelen)
 
 int sys_getsockopt (int socket, int level, int optname, void *optval, socklen_t *optlen)
 {
-    LOG_I("syscall: getsockopt");
-
     convert_sockopt(&level, &optname);
     return getsockopt (socket, level, optname, optval, optlen);
 }
 
 int sys_setsockopt (int socket, int level, int optname, const void *optval, socklen_t optlen)
 {
-    LOG_I("syscall: setsockopt");
-
     convert_sockopt(&level, &optname);
     return setsockopt (socket, level, optname, optval, optlen);
 }
@@ -1955,8 +1951,6 @@ int sys_getaddrinfo(const char *nodename, const char *servname, const struct mus
     char *k_nodename = NULL;
     char *k_servname = NULL;
     struct addrinfo *k_hints = NULL;
-
-    LOG_I("syscall: getaddrinfo");
 
     if (nodename)
     {
