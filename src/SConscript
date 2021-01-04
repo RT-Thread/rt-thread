@@ -6,9 +6,6 @@ src = Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
 
-if GetDepend('RT_USING_MODULE') == False:
-    SrcRemove(src, ['module.c'])
-
 if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SMALL_MEM') == False:
     SrcRemove(src, ['mem.c'])
 
@@ -23,12 +20,20 @@ if GetDepend('RT_USING_MEMHEAP') == False:
     if GetDepend('RT_USING_MEMHEAP_AS_HEAP'):
         SrcRemove(src, ['mem.c'])
 
+if GetDepend('RT_USING_USERHEAP'):
+    SrcRemove(src, ['mem.c', 'slab.c'])
+
+if GetDepend('RT_USING_SIGNALS') == False:
+    SrcRemove(src, ['signal.c'])
+
 if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
 if GetDepend('RT_USING_SMP') == False:
     SrcRemove(src, ['cpu.c'])
 
-group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH)
+CPPDEFINES = ['__RTTHREAD__']
+
+group = DefineGroup('Kernel', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

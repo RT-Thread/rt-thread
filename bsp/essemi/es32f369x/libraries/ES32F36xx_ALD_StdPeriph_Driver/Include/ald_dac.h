@@ -36,103 +36,103 @@
   * @{
   */
 /**
-  * @brief ADC channel
+  * @brief DAC channel
   */
 typedef enum {
-	DAC_CHANNEL_0    = 1,	/**< ADC channel 0 */
-	DAC_CHANNEL_1    = 2,	/**< ADC channel 1 */
-	DAC_CHANNEL_COMB = 3,	/**< ADC channel 0 and 1 */
+	DAC_CHANNEL_0    = 1U,	/**< DAC channel 0 */
+	DAC_CHANNEL_1    = 2U,	/**< DAC channel 1 */
+	DAC_CHANNEL_COMB = 3U,	/**< DAC channel 0 and 1 */
 } dac_channel_t;
 
 /**
-  * @brief Dac convert mode
+  * @brief DAC convert mode
   */
 typedef enum {
-	DAC_CONV_MODE_CONTINUOUS = 0,	/**< ADC set in continuous mode */
-	DAC_CONV_MODE_SAMPLEHOLD = 1,	/**< ADC set in sample/hold mode */
-	DAC_CONV_MODE_SAMPLEOFF  = 2,	/**< ADC set in sample/shut off mode */
+	DAC_CONV_MODE_CONTINUOUS = 0U,	/**< DAC set in continuous mode */
+	DAC_CONV_MODE_SAMPLEHOLD = 1U,	/**< DAC set in sample/hold mode */
+	DAC_CONV_MODE_SAMPLEOFF  = 2U,	/**< DAC set in sample/shut off mode */
 } dac_conv_mode_t;
 
 /**
-  * @brief ADC out mode
+  * @brief DAC out mode
   */
 typedef enum {
-	DAC_OUTPUT_DISABLE = 0,	/**< ADC output disable */
-	DAC_OUTPUT_PIN     = 1,	/**< ADC output to pin enable */
-	DAC_OUTPUT_ADC     = 2,	/**< ADC output to adc and acmp enable */
-	DAC_OUTPUT_PIN_ADC = 3,	/**< ADC output to pin, adc and acmp enable */
+	DAC_OUTPUT_DISABLE = 0U,	/**< DAC output disable */
+	DAC_OUTPUT_PIN     = 1U,	/**< DAC output to pin enable */
+	DAC_OUTPUT_ADC     = 2U,	/**< DAC output to adc and acmp enable */
+	DAC_OUTPUT_PIN_ADC = 3U,	/**< DAC output to pin, adc and acmp enable */
 } dac_out_mode_t;
 
 /**
-  * @brief ADC prs input channel
+  * @brief DAC pis input channel
   */
 typedef enum {
-	DAC_PIS_CH_0  = 0,	/**< PIS channel 0 triggers ADC channel conversion */
-	DAC_PIS_CH_1  = 1,	/**< PIS channel 1 triggers ADC channel conversion */
-	DAC_PIS_CH_2  = 2,	/**< PIS channel 2 triggers ADC channel conversion */
-	DAC_PIS_CH_3  = 3,	/**< PIS channel 3 triggers ADC channel conversion */
-	DAC_PIS_CH_4  = 4,	/**< PIS channel 4 triggers ADC channel conversion */
-	DAC_PIS_CH_5  = 5,	/**< PIS channel 5 triggers ADC channel conversion */
-	DAC_PIS_CH_6  = 6,	/**< PIS channel 6 triggers ADC channel conversion */
-	DAC_PIS_CH_7  = 7,	/**< PIS channel 7 triggers ADC channel conversion */
-	DAC_PIS_CH_8  = 8,	/**< PIS channel 8 triggers ADC channel conversion */
-	DAC_PIS_CH_9  = 9,	/**< PIS channel 9 triggers ADC channel conversion */
-	DAC_PIS_CH_10 = 10,	/**< PIS channel 10 triggers ADC channel conversion */
-	DAC_PIS_CH_11 = 11,	/**< PIS channel 11 triggers ADC channel conversion */
+	DAC_PIS_CH_0  = 0U,	/**< PIS channel 0 triggers DAC channel conversion */
+	DAC_PIS_CH_1  = 1U,	/**< PIS channel 1 triggers DAC channel conversion */
+	DAC_PIS_CH_2  = 2U,	/**< PIS channel 2 triggers DAC channel conversion */
+	DAC_PIS_CH_3  = 3U,	/**< PIS channel 3 triggers DAC channel conversion */
+	DAC_PIS_CH_4  = 4U,	/**< PIS channel 4 triggers DAC channel conversion */
+	DAC_PIS_CH_5  = 5U,	/**< PIS channel 5 triggers DAC channel conversion */
+	DAC_PIS_CH_6  = 6U,	/**< PIS channel 6 triggers DAC channel conversion */
+	DAC_PIS_CH_7  = 7U,	/**< PIS channel 7 triggers DAC channel conversion */
+	DAC_PIS_CH_8  = 8U,	/**< PIS channel 8 triggers DAC channel conversion */
+	DAC_PIS_CH_9  = 9U,	/**< PIS channel 9 triggers DAC channel conversion */
+	DAC_PIS_CH_10 = 10U,	/**< PIS channel 10 triggers DAC channel conversion */
+	DAC_PIS_CH_11 = 11U,	/**< PIS channel 11 triggers DAC channel conversion */
 } dac_pissel_t;
 
 /**
-  * @brief ADC negative reference voltage definition
+  * @brief DAC negative reference voltage definition
   */
 typedef enum {
-	DAC_NEG_REF_VSS   = 0x0,	/**< DAC negative regerence voltage vss */
-	DAC_NEG_REF_VREFN = 0x1,	/**< DAC negative regerence voltage vrefn */
+	DAC_NEG_REF_VSS   = 0x0U,	/**< DAC negative regerence voltage vss */
+	DAC_NEG_REF_VREFN = 0x1U,	/**< DAC negative regerence voltage vrefn */
 } dac_neg_ref_t;
 
 /**
-  * @brief ADC positive reference voltage definition
+  * @brief DAC positive reference voltage definition
   */
 typedef enum {
-	DAC_POS_REF_VDD        = 0x0,	/**< DAC posotove reference is VDD */
-	DAC_POS_REF_2V         = 0x1,	/**< DAC posotove reference is internal 2V */
-	DAC_POS_REF_VREEFP     = 0x2,	/**< DAC posotove reference is VREEFP */
-	DAC_POS_REF_VREEFP_BUF = 0x3,	/**< DAC posotove reference is VREEFP BUFFER */
+	DAC_POS_REF_VDD        = 0x0U,	/**< DAC posotove reference is VDD */
+	DAC_POS_REF_2V         = 0x1U,	/**< DAC posotove reference is internal 2V */
+	DAC_POS_REF_VREEFP     = 0x2U,	/**< DAC posotove reference is VREEFP */
+	DAC_POS_REF_VREEFP_BUF = 0x3U,	/**< DAC posotove reference is VREEFP BUFFER */
 } dac_pos_ref_t;
 
 /**
   * @brief Refresh interval select
   */
 typedef enum {
-	DAC_REFRESH_8  = 0,	/**< Channel refreshed every 8 cycles */
-	DAC_REFRESH_16 = 1,	/**< Channel refreshed every 16 cycles */
-	DAC_REFRESH_32 = 2,	/**< Channel refreshed every 32 cycles */
-	DAC_REFRESH_64 = 3,	/**< Channel refreshed every 64 cycles */
+	DAC_REFRESH_8  = 0U,	/**< Channel refreshed every 8 cycles */
+	DAC_REFRESH_16 = 1U,	/**< Channel refreshed every 16 cycles */
+	DAC_REFRESH_32 = 2U,	/**< Channel refreshed every 32 cycles */
+	DAC_REFRESH_64 = 3U,	/**< Channel refreshed every 64 cycles */
 } dac_refresh_t;
 
 /**
-  * @brief Dac prescale
+  * @brief DAC prescale
   */
 typedef enum {
-	DAC_PRES_DIV_1   = 0,	/**< No division */
-	DAC_PRES_DIV_2   = 1,	/**< 2 clock division */
-	DAC_PRES_DIV_4   = 2,	/**< 4 clock division */
-	DAC_PRES_DIV_8   = 3,	/**< 8 clock division */
-	DAC_PRES_DIV_16  = 4,	/**< 16 clock division */
-	DAC_PRES_DIV_32  = 5,	/**< 32 clock division */
-	DAC_PRES_DIV_64  = 6,	/**< 64 clock division */
-	DAC_PRES_DIV_128 = 7,	/**< 128 clock division */
+	DAC_PRES_DIV_1   = 0U,	/**< No division */
+	DAC_PRES_DIV_2   = 1U,	/**< 2 clock division */
+	DAC_PRES_DIV_4   = 2U,	/**< 4 clock division */
+	DAC_PRES_DIV_8   = 3U,	/**< 8 clock division */
+	DAC_PRES_DIV_16  = 4U,	/**< 16 clock division */
+	DAC_PRES_DIV_32  = 5U,	/**< 32 clock division */
+	DAC_PRES_DIV_64  = 6U,	/**< 64 clock division */
+	DAC_PRES_DIV_128 = 7U,	/**< 128 clock division */
 } dac_prescale_div_t;
 
 /**
-  * @brief Dac output trigger select
+  * @brief DAC output trigger select
   */
 typedef enum {
-	DAC_TRIGGER_BY_DATA = 0,	/**< Channel is triggered by CHxDATA or COMBDATA write */
-	DAC_TRIGGER_BY_PIS  = 1,	/**< Channel is triggered by PIS input */
+	DAC_TRIGGER_BY_DATA = 0U,	/**< Channel is triggered by CHxDATA or COMBDATA write */
+	DAC_TRIGGER_BY_PIS  = 1U,	/**< Channel is triggered by PIS input */
 } dac_trigger_t;
 
 /**
-  * @brief Dac interrupt type
+  * @brief DAC interrupt type
   */
 typedef enum {
 	DAC_IT_CH0    = (1U << 0),	/**< Channel 0 conversion complete interrupt */
@@ -142,7 +142,7 @@ typedef enum {
 } dac_it_t;
 
 /**
-  * @brief Dac interrupt flag type
+  * @brief DAC interrupt flag type
   */
 typedef enum {
 	DAC_FLAG_CH0    = (1U << 0),	/**< Channel 0 conversion complete interrupt flag */
@@ -152,7 +152,7 @@ typedef enum {
 } dac_flag_t;
 
 /**
-  * @brief Dac state flag
+  * @brief DAC state flag
   */
 typedef enum {
 	DAC_CH0_BSY = (1U << 0),	/**< Channel_0 is BUSY */
@@ -160,7 +160,7 @@ typedef enum {
 } dac_status_t;
 
 /**
-  * @brief Dac init structure definition
+  * @brief DAC init structure definition
   */
 typedef struct {
 	dac_conv_mode_t conv_mode;	/**< Conversion mode */
@@ -176,21 +176,21 @@ typedef struct {
 } dac_init_t;
 
 /**
-  * @brief Dac channel initialize structure definition
+  * @brief DAC channel initialize structure definition
   */
 typedef struct {
-	type_func_t enable;	/**< Dac channel output enable/disable */
+	type_func_t enable;	/**< DAC channel output enable/disable */
 	dac_trigger_t trigger;	/**< Select channel conversion trigger */
 	type_func_t refresh_en;	/**< Set automatic refresh of channel function */
 	dac_pissel_t pis_ch;	/**< Select channel pis input channel */
 } dac_channel_config_t;
 
 /**
-  * @brief  Dac handle Structure definition
+  * @brief  DAC handle Structure definition
   */
 typedef struct dac_handle_s {
 	DAC_TypeDef *perh;	/**< Register base address */
-	dac_init_t init;	/**< Dac initialize parameters */
+	dac_init_t init;	/**< DAC initialize parameters */
 	lock_state_t lock;	/**< Locking object */
 
 	void (*cbk)(struct dac_handle_s *arg, uint32_t event);	/**< DAC event callback */

@@ -58,24 +58,24 @@ static void liointc_init(void)
 //set irq mode
 void liointc_set_irq_mode(int irq, int mode)
 {
-    if(irq < 32)
+    if (irq < 32)
     {
-        if(mode == PIN_IRQ_MODE_RISING)
+        if (mode == PIN_IRQ_MODE_RISING)
         {
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_POL)  |= (0x0 << (irq));
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_EDGE) |= (0x1 << (irq));
         }
-        else if(mode == PIN_IRQ_MODE_FALLING)
+        else if (mode == PIN_IRQ_MODE_FALLING)
         {
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_POL)  |= (0x1 << (irq));
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_EDGE) |= (0x1 << (irq));
         }
-        else if(mode == PIN_IRQ_MODE_HIGH_LEVEL)
+        else if (mode == PIN_IRQ_MODE_HIGH_LEVEL)
         {
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_POL)  |= (0x1 << (irq));
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_EDGE) |= (0x0 << (irq));
         }
-        else if(mode == PIN_IRQ_MODE_LOW_LEVEL)
+        else if (mode == PIN_IRQ_MODE_LOW_LEVEL)
         {
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_POL)  |= (0x0 << (irq));
             HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_EDGE) |= (0x0 << (irq));
@@ -88,22 +88,22 @@ void liointc_set_irq_mode(int irq, int mode)
     }
     else
     {
-        if(mode == PIN_IRQ_MODE_RISING)
+        if (mode == PIN_IRQ_MODE_RISING)
         {
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_POL)  |= (0x0 << (irq - 32));
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_EDGE) |= (0x1 << (irq - 32));
         }
-        else if(mode == PIN_IRQ_MODE_FALLING)
+        else if (mode == PIN_IRQ_MODE_FALLING)
         {
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_POL)  |= (0x1 << (irq - 32));
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_EDGE) |= (0x1 << (irq - 32));
         }
-        else if(mode == PIN_IRQ_MODE_HIGH_LEVEL)
+        else if (mode == PIN_IRQ_MODE_HIGH_LEVEL)
         {
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_POL)  |= (0x1 << (irq - 32));
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_EDGE) |= (0x0 << (irq - 32));
         }
-        else if(mode == PIN_IRQ_MODE_LOW_LEVEL)
+        else if (mode == PIN_IRQ_MODE_LOW_LEVEL)
         {
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_POL)  |= (0x0 << (irq - 32));
             HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_EDGE) |= (0x0 << (irq - 32));
@@ -166,7 +166,7 @@ void rt_hw_interrupt_init(void)
 }
 
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-                                         void *param, const char *name)
+        void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
@@ -181,7 +181,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         irq_handle_table[vector].param = param;
     }
 
-    if(vector <= 32)
+    if (vector <= 32)
     {
         mips_unmask_cpu_irq(2);
     }
@@ -189,7 +189,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     {
         mips_unmask_cpu_irq(3);
     }
-     
+
     return old_handler;
 }
 
@@ -213,11 +213,11 @@ void rt_do_mips_cpu_irq(rt_uint32_t ip)
 
 void rt_hw_interrupt_umask(int irq)
 {
-    if(irq < LIOINTC0_IRQBASE + 32)
+    if (irq < LIOINTC0_IRQBASE + 32)
     {
         HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_ENABLE) = (1 << irq);
     }
-    else if(irq < LIOINTC1_IRQBASE + 32)
+    else if (irq < LIOINTC1_IRQBASE + 32)
     {
         HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_ENABLE) = (1 << (irq - 32));
     }
@@ -225,11 +225,11 @@ void rt_hw_interrupt_umask(int irq)
 
 void rt_hw_interrupt_mask(int irq)
 {
-    if(irq < LIOINTC0_IRQBASE + 32)
+    if (irq < LIOINTC0_IRQBASE + 32)
     {
         HWREG32(LIOINTC0_BASE + LIOINTC_REG_INTC_DISABLE) = (1 << irq);
     }
-    else if(irq < LIOINTC1_IRQBASE + 32)
+    else if (irq < LIOINTC1_IRQBASE + 32)
     {
         HWREG32(LIOINTC1_BASE + LIOINTC_REG_INTC_DISABLE) = (1 << (irq - 32));
     }

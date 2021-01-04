@@ -44,14 +44,14 @@
   */
 void ald_lptim_reset(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    hperh->state = LPTIM_STATE_BUSY;
-    LPTIM_DISABLE(hperh);
-    hperh->state = LPTIM_STATE_RESET;
-    __UNLOCK(hperh);
+	hperh->state = LPTIM_STATE_BUSY;
+	LPTIM_DISABLE(hperh);
+	hperh->state = LPTIM_STATE_RESET;
+	__UNLOCK(hperh);
 
-    return;
+	return;
 }
 
 /**
@@ -63,14 +63,14 @@ void ald_lptim_reset(lptim_handle_t *hperh)
   */
 void ald_lptim_trigger_config(lptim_handle_t *hperh, lptim_trigger_init_t *config)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_TRIGEN(config->mode));
-    assert_param(IS_LPTIM_TRIGSEL(config->sel));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_TRIGEN(config->mode));
+	assert_param(IS_LPTIM_TRIGSEL(config->sel));
 
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_TRIGEN_MSK, (config->mode) << LP16T_CON0_TRIGEN_POSS);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_TRIGSEL_MSK, (config->sel) << LP16T_CON0_TRIGSEL_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_TRIGEN_MSK, (config->mode) << LP16T_CON0_TRIGEN_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_TRIGSEL_MSK, (config->sel) << LP16T_CON0_TRIGSEL_POSS);
 
-    return;
+	return;
 }
 
 /**
@@ -82,14 +82,14 @@ void ald_lptim_trigger_config(lptim_handle_t *hperh, lptim_trigger_init_t *confi
   */
 void ald_lptim_clock_source_config(lptim_handle_t *hperh, lptim_clock_source_init_t *config)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_CKSEL(config->sel));
-    assert_param(IS_LPTIM_CKPOL(config->polarity));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_CKSEL(config->sel));
+	assert_param(IS_LPTIM_CKPOL(config->polarity));
 
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_CKSEL_MSK, (config->sel) << LP16T_CON0_CKSEL_POS);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_CKPOL_MSK, (config->polarity) << LP16T_CON0_CKPOL_POS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_CKSEL_MSK, (config->sel) << LP16T_CON0_CKSEL_POS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_CKPOL_MSK, (config->polarity) << LP16T_CON0_CKPOL_POS);
 
-    return;
+	return;
 }
 
 /**
@@ -101,12 +101,12 @@ void ald_lptim_clock_source_config(lptim_handle_t *hperh, lptim_clock_source_ini
   */
 void ald_lptim_trigger_filter_config(lptim_handle_t *hperh, lptim_trgflt_t flt)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_TRGFLT(flt));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_TRGFLT(flt));
 
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_TRGFLT_MSK, flt << LP16T_CON0_TRGFLT_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_TRGFLT_MSK, flt << LP16T_CON0_TRGFLT_POSS);
 
-    return;
+	return;
 }
 
 /**
@@ -118,19 +118,145 @@ void ald_lptim_trigger_filter_config(lptim_handle_t *hperh, lptim_trgflt_t flt)
   */
 void ald_lptim_clock_filter_config(lptim_handle_t *hperh, lptim_ckflt_t flt)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_TRGFLT(flt));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_CKFLT(flt));
 
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_CKFLT_MSK, flt << LP16T_CON0_CKFLT_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_CKFLT_MSK, flt << LP16T_CON0_CKFLT_POSS);
 
-    return;
+	return;
 }
 /**
   * @}
   */
 
-/** @defgroup LPTIM_Public_Functions_Group2 LPTIM output toggle functions
-  *  @brief    LPTime output toggle functions
+/** @defgroup LPTIM_Public_Functions_Group2 LPTIM base functions
+  *  @brief   LPTIM base functions
+  *
+  * @verbatim
+  ==============================================================================
+                  ##### Low Pow Time Base functions #####
+  ==============================================================================
+  [..]
+    This section provides functions allowing to:
+    (+) Initialize the LPTIM .
+    (+) Start the LPTIM.
+    (+) Stop the LPTIM.
+    (+) Start the LPTIM and enable interrupt.
+    (+) Stop the LPTIM and disable interrupt.
+
+    @endverbatim
+  * @{
+  */
+/**
+  * @brief  Initializes the TIM according to the specified
+  *		parameters in the tim_handle_t.
+  * @param  hperh: LPTIM handle
+  * @retval Status, see @ref ald_status_t.
+  */
+ald_status_t ald_lptim_base_init(lptim_handle_t *hperh)
+{
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_PRESC(hperh->init.psc));
+
+	__LOCK(hperh);
+	hperh->state = LPTIM_STATE_BUSY;
+
+	ald_cmu_lptim0_clock_select(hperh->init.clock);
+
+	WRITE_REG(hperh->perh->UPDATE, 1);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_NONE << LP16T_CON0_WAVE_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
+	WRITE_REG(hperh->perh->ARR, hperh->init.arr);
+	WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
+	WRITE_REG(hperh->perh->UPDATE, 0);
+
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
+
+	hperh->state = LPTIM_STATE_READY;
+	__UNLOCK(hperh);
+	return OK;
+}
+
+/**
+  * @brief  Starts the LPTIM.
+  * @param  hperh: LPTIM handle
+  * @retval None
+  */
+void ald_lptim_base_start(lptim_handle_t *hperh)
+{
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
+
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
+
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
+}
+
+/**
+  * @brief  Stops the LPTIM.
+  * @param  hperh: LPTIM handle
+  * @retval None
+  */
+void ald_lptim_base_stop(lptim_handle_t *hperh)
+{
+	assert_param(IS_LPTIM(hperh->perh));
+
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
+}
+
+/**
+  * @brief  Starts the LPTIM in interrupt mode.
+  * @param  hperh: LPTIM handle
+  * @retval None
+  */
+void ald_lptim_base_start_by_it(lptim_handle_t *hperh)
+{
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
+
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, ENABLE);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
+
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
+}
+
+/**
+  * @brief  Stops the LPTIM Output toggle in interrupt mode.
+  * @param  hperh: LPTIM handle
+  * @retval None
+  */
+void ald_lptim_base_stop_by_it(lptim_handle_t *hperh)
+{
+	assert_param(IS_LPTIM(hperh->perh));
+
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, DISABLE);
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
+}
+/**
+  * @}
+  */
+
+/** @defgroup LPTIM_Public_Functions_Group3 LPTIM output toggle functions
+  *  @brief   LPTIM output toggle functions
   *
   * @verbatim
   ==============================================================================
@@ -155,28 +281,27 @@ void ald_lptim_clock_filter_config(lptim_handle_t *hperh, lptim_ckflt_t flt)
   */
 ald_status_t ald_lptim_toggle_init(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_PRESC(hperh->init.psc));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_PRESC(hperh->init.psc));
 
-    __LOCK(hperh);
-    hperh->state = LPTIM_STATE_BUSY;
+	__LOCK(hperh);
+	hperh->state = LPTIM_STATE_BUSY;
 
-    ald_cmu_lptim0_clock_select(hperh->init.clock);
+	ald_cmu_lptim0_clock_select(hperh->init.clock);
 
-    WRITE_REG(hperh->perh->UPDATE, 1);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_TOGGLE << LP16T_CON0_WAVE_POSS);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
-    WRITE_REG(hperh->perh->ARR, hperh->init.arr);
-    WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
-    WRITE_REG(hperh->perh->UPDATE, 0);
+	WRITE_REG(hperh->perh->UPDATE, 1);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_TOGGLE << LP16T_CON0_WAVE_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
+	WRITE_REG(hperh->perh->ARR, hperh->init.arr);
+	WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
+	WRITE_REG(hperh->perh->UPDATE, 0);
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
-
-    hperh->state = LPTIM_STATE_READY;
-    __UNLOCK(hperh);
-    return OK;
+	hperh->state = LPTIM_STATE_READY;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -186,21 +311,19 @@ ald_status_t ald_lptim_toggle_init(lptim_handle_t *hperh)
   */
 void ald_lptim_toggle_start(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_MODE(hperh->init.mode));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
 
-    LPTIM_ENABLE(hperh);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
 
-    if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
-        LPTIM_CNTSTART(hperh);
-    else
-        LPTIM_SNGSTART(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -210,13 +333,11 @@ void ald_lptim_toggle_start(lptim_handle_t *hperh)
   */
 void ald_lptim_toggle_stop(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    LPTIM_DISABLE(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -226,22 +347,20 @@ void ald_lptim_toggle_stop(lptim_handle_t *hperh)
   */
 void ald_lptim_toggle_start_by_it(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_MODE(hperh->init.mode));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
 
-    ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, ENABLE);
-    LPTIM_ENABLE(hperh);
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, ENABLE);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
 
-    if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
-        LPTIM_CNTSTART(hperh);
-    else
-        LPTIM_SNGSTART(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -251,21 +370,19 @@ void ald_lptim_toggle_start_by_it(lptim_handle_t *hperh)
   */
 void ald_lptim_toggle_stop_by_it(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, DISABLE);
-    LPTIM_DISABLE(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, DISABLE);
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 /**
   * @}
   */
 
-/** @defgroup LPTIM_Public_Functions_Group3 LPTIM output pulse functions
-  *  @brief    LPTime output pulse functions
+/** @defgroup LPTIM_Public_Functions_Group4 LPTIM output pulse functions
+  *  @brief   LPTIM output pulse functions
   *
   * @verbatim
   ==============================================================================
@@ -290,27 +407,26 @@ void ald_lptim_toggle_stop_by_it(lptim_handle_t *hperh)
   */
 ald_status_t ald_lptim_pulse_init(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_PRESC(hperh->init.psc));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_PRESC(hperh->init.psc));
 
-    __LOCK(hperh);
-    hperh->state = LPTIM_STATE_BUSY;
-    ald_cmu_lptim0_clock_select(hperh->init.clock);
+	__LOCK(hperh);
+	hperh->state = LPTIM_STATE_BUSY;
+	ald_cmu_lptim0_clock_select(hperh->init.clock);
 
-    WRITE_REG(hperh->perh->UPDATE, 1);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_PULSE << LP16T_CON0_WAVE_POSS);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
-    WRITE_REG(hperh->perh->ARR, hperh->init.arr);
-    WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
-    WRITE_REG(hperh->perh->UPDATE, 0);
+	WRITE_REG(hperh->perh->UPDATE, 1);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_PULSE << LP16T_CON0_WAVE_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
+	WRITE_REG(hperh->perh->ARR, hperh->init.arr);
+	WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
+	WRITE_REG(hperh->perh->UPDATE, 0);
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
-
-    hperh->state = LPTIM_STATE_READY;
-    __UNLOCK(hperh);
-    return OK;
+	hperh->state = LPTIM_STATE_READY;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -320,21 +436,19 @@ ald_status_t ald_lptim_pulse_init(lptim_handle_t *hperh)
   */
 void ald_lptim_pulse_start(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_MODE(hperh->init.mode));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
 
-    LPTIM_ENABLE(hperh);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
 
-    if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
-        LPTIM_CNTSTART(hperh);
-    else
-        LPTIM_SNGSTART(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -344,13 +458,12 @@ void ald_lptim_pulse_start(lptim_handle_t *hperh)
   */
 void ald_lptim_pulse_stop(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    LPTIM_DISABLE(hperh);
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	return;
 }
 
 /**
@@ -360,22 +473,20 @@ void ald_lptim_pulse_stop(lptim_handle_t *hperh)
   */
 void ald_lptim_pulse_start_by_it(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_MODE(hperh->init.mode));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
 
-    ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, ENABLE);
-    LPTIM_ENABLE(hperh);
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, ENABLE);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
 
-    if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
-        LPTIM_CNTSTART(hperh);
-    else
-        LPTIM_SNGSTART(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -385,21 +496,20 @@ void ald_lptim_pulse_start_by_it(lptim_handle_t *hperh)
   */
 void ald_lptim_pulse_stop_by_it(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, DISABLE);
-    LPTIM_DISABLE(hperh);
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_ARRMAT, DISABLE);
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	return;
 }
 /**
   * @}
   */
 
-/** @defgroup LPTIM_Public_Functions_Group4 LPTIM output pwm functions
-  *  @brief    LPTime output pwm functions
+/** @defgroup LPTIM_Public_Functions_Group5 LPTIM output pwm functions
+  *  @brief   LPTIM output pwm functions
   *
   * @verbatim
   ==============================================================================
@@ -424,26 +534,25 @@ void ald_lptim_pulse_stop_by_it(lptim_handle_t *hperh)
   */
 ald_status_t ald_lptim_pwm_init(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_PRESC(hperh->init.psc));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_PRESC(hperh->init.psc));
 
-    __LOCK(hperh);
-    hperh->state = LPTIM_STATE_BUSY;
+	__LOCK(hperh);
+	hperh->state = LPTIM_STATE_BUSY;
 
-    WRITE_REG(hperh->perh->UPDATE, 1);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_PWM << LP16T_CON0_WAVE_POSS);
-    MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
-    WRITE_REG(hperh->perh->ARR, hperh->init.arr);
-    WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
-    WRITE_REG(hperh->perh->UPDATE, 0);
+	WRITE_REG(hperh->perh->UPDATE, 1);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_WAVE_MSK, LPTIM_WAVE_PWM << LP16T_CON0_WAVE_POSS);
+	MODIFY_REG(hperh->perh->CON0, LP16T_CON0_PRESC_MSK, (hperh->init.psc) << LP16T_CON0_PRESC_POSS);
+	WRITE_REG(hperh->perh->ARR, hperh->init.arr);
+	WRITE_REG(hperh->perh->CMP, hperh->init.cmp);
+	WRITE_REG(hperh->perh->UPDATE, 0);
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_ARRWBSY_MSK));
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CMPWBSY_MSK));
-
-    hperh->state = LPTIM_STATE_READY;
-    __UNLOCK(hperh);
-    return OK;
+	hperh->state = LPTIM_STATE_READY;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -453,21 +562,19 @@ ald_status_t ald_lptim_pwm_init(lptim_handle_t *hperh)
   */
 void ald_lptim_pwm_start(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_MODE(hperh->init.mode));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
 
-    LPTIM_ENABLE(hperh);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
 
-    if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
-        LPTIM_CNTSTART(hperh);
-    else
-        LPTIM_SNGSTART(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -477,13 +584,12 @@ void ald_lptim_pwm_start(lptim_handle_t *hperh)
   */
 void ald_lptim_pwm_stop(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    LPTIM_DISABLE(hperh);
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	return;
 }
 
 /**
@@ -493,22 +599,20 @@ void ald_lptim_pwm_stop(lptim_handle_t *hperh)
   */
 void ald_lptim_pwm_start_by_it(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_MODE(hperh->init.mode));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_MODE(hperh->init.mode));
 
-    ald_lptim_interrupt_config(hperh, LPTIM_IT_CMPMAT, ENABLE);
-    LPTIM_ENABLE(hperh);
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_CMPMAT, ENABLE);
+	LPTIM_ENABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
+		LPTIM_CNTSTART(hperh);
+	else
+		LPTIM_SNGSTART(hperh);
 
-    if (hperh->init.mode == LPTIM_MODE_CONTINUOUS)
-        LPTIM_CNTSTART(hperh);
-    else
-        LPTIM_SNGSTART(hperh);
-
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
+	return;
 }
 
 /**
@@ -518,21 +622,20 @@ void ald_lptim_pwm_start_by_it(lptim_handle_t *hperh)
   */
 void ald_lptim_pwm_stop_by_it(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    ald_lptim_interrupt_config(hperh, LPTIM_IT_CMPMAT, DISABLE);
-    LPTIM_DISABLE(hperh);
+	ald_lptim_interrupt_config(hperh, LPTIM_IT_CMPMAT, DISABLE);
+	LPTIM_DISABLE(hperh);
+	while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
 
-    while (READ_BIT(hperh->perh->SYNCSTAT, LP16T_SYNCSTAT_CON1WBSY_MSK));
-
-    return;
+	return;
 }
 /**
   * @}
   */
 
 
-/** @defgroup LPTIM_Public_Functions_Group5 Control functions
+/** @defgroup LPTIM_Public_Functions_Group6 Control functions
   * @brief LPTIM Control functions
   *
   * @{
@@ -544,39 +647,36 @@ void ald_lptim_pwm_stop_by_it(lptim_handle_t *hperh)
   */
 void ald_lptim_irq_handler(lptim_handle_t *hperh)
 {
-    assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM(hperh->perh));
 
-    /* Output compare event */
-    if (((ald_lptim_get_it_status(hperh, LPTIM_IT_CMPMAT)) != RESET) &&
-            ((ald_lptim_get_flag_status(hperh, LPTIM_FLAG_CMPMAT)) != RESET))
-    {
-        ald_lptim_clear_flag_status(hperh, LPTIM_FLAG_CMPMAT);
+	/* Output compare event */
+	if (((ald_lptim_get_it_status(hperh, LPTIM_IT_CMPMAT)) != RESET) &&
+                           ((ald_lptim_get_flag_status(hperh, LPTIM_FLAG_CMPMAT)) != RESET)) {
+		ald_lptim_clear_flag_status(hperh, LPTIM_FLAG_CMPMAT);
 
-        if (hperh->cmp_cbk)
-            hperh->cmp_cbk(hperh);
-    }
+		if (hperh->cmp_cbk)
+			hperh->cmp_cbk(hperh);
+	}
 
-    /* Output update event */
-    if (((ald_lptim_get_it_status(hperh, LPTIM_IT_ARRMAT)) != RESET) &&
-            ((ald_lptim_get_flag_status(hperh, LPTIM_FLAG_ARRMAT)) != RESET))
-    {
-        ald_lptim_clear_flag_status(hperh, LPTIM_FLAG_ARRMAT);
+	/* Output update event */
+	if (((ald_lptim_get_it_status(hperh, LPTIM_IT_ARRMAT)) != RESET) &&
+                           ((ald_lptim_get_flag_status(hperh, LPTIM_FLAG_ARRMAT)) != RESET)) {
+		ald_lptim_clear_flag_status(hperh, LPTIM_FLAG_ARRMAT);
 
-        if (hperh->update_cbk)
-            hperh->update_cbk(hperh);
-    }
+		if (hperh->update_cbk)
+			hperh->update_cbk(hperh);
+	}
 
-    /* Trigger event */
-    if (((ald_lptim_get_it_status(hperh, LPTIM_IT_EXTTRIG)) != RESET) &&
-            ((ald_lptim_get_flag_status(hperh, LPTIM_FLAG_EXTTRIG)) != RESET))
-    {
-        ald_lptim_clear_flag_status(hperh, LPTIM_FLAG_EXTTRIG);
+	/* Trigger event */
+	if (((ald_lptim_get_it_status(hperh, LPTIM_IT_EXTTRIG)) != RESET) &&
+                           ((ald_lptim_get_flag_status(hperh, LPTIM_FLAG_EXTTRIG)) != RESET)) {
+		ald_lptim_clear_flag_status(hperh, LPTIM_FLAG_EXTTRIG);
 
-        if (hperh->trig_cbk)
-            hperh->trig_cbk(hperh);
-    }
+		if (hperh->trig_cbk)
+			hperh->trig_cbk(hperh);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -592,16 +692,15 @@ void ald_lptim_irq_handler(lptim_handle_t *hperh)
   */
 void ald_lptim_interrupt_config(lptim_handle_t *hperh, lptim_it_t it, type_func_t state)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_IT(it));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_IT(it));
+	assert_param(IS_FUNC_STATE(state));
 
-    if (state == ENABLE)
-        SET_BIT(hperh->perh->IER, (uint32_t)it);
-    else
-        CLEAR_BIT(hperh->perh->IER, (uint32_t)it);
-
-    return;
+	if (state == ENABLE)
+		SET_BIT(hperh->perh->IER, (uint32_t)it);
+	else
+		CLEAR_BIT(hperh->perh->IER, (uint32_t)it);
+	return;
 }
 
 /**
@@ -616,13 +715,13 @@ void ald_lptim_interrupt_config(lptim_handle_t *hperh, lptim_it_t it, type_func_
   */
 it_status_t ald_lptim_get_it_status(lptim_handle_t *hperh, lptim_it_t it)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_IT(it));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_IT(it));
 
-    if (READ_BIT(hperh->perh->IER, it))
-        return SET;
+	if (READ_BIT(hperh->perh->IER, it))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /** @brief  Check whether the specified LPTIM flag is set or not.
@@ -636,13 +735,13 @@ it_status_t ald_lptim_get_it_status(lptim_handle_t *hperh, lptim_it_t it)
   */
 flag_status_t ald_lptim_get_flag_status(lptim_handle_t *hperh, lptim_flag_t flag)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_FLAG(flag));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_FLAG(flag));
 
-    if (READ_BIT(hperh->perh->ISR, flag))
-        return SET;
+	if (READ_BIT(hperh->perh->ISR, flag))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /** @brief  Clear the specified LPTIM pending flags.
@@ -654,18 +753,18 @@ flag_status_t ald_lptim_get_flag_status(lptim_handle_t *hperh, lptim_flag_t flag
   */
 void ald_lptim_clear_flag_status(lptim_handle_t *hperh, lptim_flag_t flag)
 {
-    assert_param(IS_LPTIM(hperh->perh));
-    assert_param(IS_LPTIM_FLAG(flag));
+	assert_param(IS_LPTIM(hperh->perh));
+	assert_param(IS_LPTIM_FLAG(flag));
 
-    WRITE_REG(hperh->perh->IFC, (uint32_t)flag);
-    return;
+	WRITE_REG(hperh->perh->IFC, (uint32_t)flag);
+	return;
 }
 /**
   * @}
   */
 
-/** @defgroup LPTIM_Public_Functions_Group6 Peripheral State functions
- *  @brief   Peripheral State functions
+/** @defgroup LPTIM_Public_Functions_Group7 Peripheral State functions
+ *  @brief    Peripheral State functions
  *
  * @verbatim
   ==============================================================================
@@ -685,7 +784,7 @@ void ald_lptim_clear_flag_status(lptim_handle_t *hperh, lptim_flag_t flag)
   */
 lptim_state_t ald_lptim_get_state(lptim_handle_t *hperh)
 {
-    return hperh->state;
+	return hperh->state;
 }
 /**
   * @}

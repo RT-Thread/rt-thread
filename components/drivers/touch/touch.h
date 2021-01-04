@@ -45,6 +45,9 @@ extern "C" {
 #define  RT_TOUCH_CTRL_SET_X_TO_Y        (5)   /* Set X Y coordinate exchange */
 #define  RT_TOUCH_CTRL_DISABLE_INT       (6)   /* Disable interrupt */
 #define  RT_TOUCH_CTRL_ENABLE_INT        (7)   /* Enable interrupt */
+#define  RT_TOUCH_CTRL_POWER_ON          (8)   /* Touch Power On */
+#define  RT_TOUCH_CTRL_POWER_OFF         (9)   /* Touch Power Off */
+#define  RT_TOUCH_CTRL_GET_STATUS        (10)  /* Get Touch Power Status */
 
 /* Touch event */
 #define RT_TOUCH_EVENT_NONE              (0)   /* Touch none */
@@ -63,7 +66,9 @@ struct rt_touch_info
 
 struct rt_touch_config
 {
+#ifdef RT_TOUCH_PIN_IRQ
     struct rt_device_pin_mode   irq_pin;       /* Interrupt pin, The purpose of this pin is to notification read data */
+#endif
     char                        *dev_name;     /* The name of the communication device */
     void                        *user_data;
 };
@@ -99,6 +104,9 @@ int rt_hw_touch_register(rt_touch_t    touch,
                          const char    *name,
                          rt_uint32_t   flag,
                          void          *data);
+
+/* if you doesn't use pin device. you must call this function in your touch irq callback */
+void rt_hw_touch_isr(rt_touch_t touch);
 
 #ifdef __cplusplus
 }

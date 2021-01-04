@@ -8,8 +8,6 @@
  * 2017-11-16     ZYH          first version
  */
 #include <rthw.h>
-#include <rtthread.h>
-#include <rtservice.h>
 #include <rtdevice.h>
 #include <drivers/usb_device.h>
 #include "winusb.h"

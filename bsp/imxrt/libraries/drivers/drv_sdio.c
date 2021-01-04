@@ -200,34 +200,11 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
     case RESP_R5:
         fsl_command.responseType = kCARD_ResponseTypeR5;
         break;
-    /*
-    case RESP_R5B:
-        fsl_command.responseType = kCARD_ResponseTypeR5b;
-        break;
-    */
     default:
         RT_ASSERT(NULL);
     }
 
-    // command type
-    /*
-    switch (cmd->flags & CMD_MASK)
-    {
-    case CMD_AC:
-        break;
-    case CMD_ADTC:
-        break;
-    case CMD_BC:
-        break;
-    case CMD_BCR:
-        break;
-    }
-    */
-
     fsl_command.flags = 0;
-    //fsl_command.response
-    //fsl_command.responseErrorFlags
-
     fsl_content.command = &fsl_command;
 
     if (data)
@@ -370,11 +347,6 @@ static void _mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
         else
             RT_ASSERT(RT_NULL);
     }
-    else
-    {
-        //CLOCK_DisableClock(mmcsd->ip_clock);
-    }
-
 }
 
 #ifdef DEBUG
@@ -384,19 +356,6 @@ static void log_toggle(int en)
 }
 FINSH_FUNCTION_EXPORT(log_toggle, toglle log dumple);
 #endif
-
-//static rt_int32_t _mmc_get_card_status(struct rt_mmcsd_host *host)
-//{
-//    MMCSD_DGB("%s, start\n", __func__);
-//    MMCSD_DGB("%s, end\n", __func__);
-//
-//    return 0;
-//}
-//
-//static void _mmc_enable_sdio_irq(struct rt_mmcsd_host *host, rt_int32_t enable)
-//{
-//
-//}
 
 static const struct rt_mmcsd_host_ops ops =
 {

@@ -215,9 +215,9 @@
         <option>
           <name>CCDefines</name>
           <state />
-          <state>RT_USING_DLIBC</state>
-          <state>_DLIB_FILE_DESCRIPTOR</state>
           <state>STM32WB55xx</state>
+          <state>__RTTHREAD__</state>
+          <state>RT_USING_DLIBC</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -344,11 +344,9 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\.</state>
@@ -1251,9 +1249,9 @@
         </option>
         <option>
           <name>CCDefines</name>
-          <state>RT_USING_DLIBC</state>
-          <state>_DLIB_FILE_DESCRIPTOR</state>
           <state>STM32WB55xx</state>
+          <state>__RTTHREAD__</state>
+          <state>RT_USING_DLIBC</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1380,11 +1378,9 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\.</state>
@@ -2080,7 +2076,7 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
+    <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2128,42 +2124,6 @@
     </file>
   </group>
   <group>
-    <name>dlib</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\rmtx.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
-    </file>
-  </group>
-  <group>
     <name>Drivers</name>
     <file>
       <name>$PROJ_DIR$\board\board.c</name>
@@ -2185,30 +2145,6 @@
     </file>
   </group>
   <group>
-    <name>Filesystem</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_file.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_fs.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_posix.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\poll.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\select.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs\devfs.c</name>
-    </file>
-  </group>
-  <group>
     <name>finsh</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
@@ -2218,9 +2154,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_file.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\finsh_compiler.c</name>
@@ -2304,73 +2237,103 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\unistd.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\libc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\rmtx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\stdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\CMSIS\Device\ST\STM32WBxx\Source\Templates\system_stm32wbxx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_comp.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_comp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_cortex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cortex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_crc.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_crc_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_crc_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_cryp.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cryp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_cryp_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_cryp_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_dma.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_dma_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_exti.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_pwr.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_pwr_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_pwr_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_rcc.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_rcc_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rcc_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_rng.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_rng.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_uart.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_uart_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_uart_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_usart.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_usart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\STM32wbxx_hal_usart_ex.c</name>
+      <name>$PROJ_DIR$\..\libraries\STM32WBxx_HAL\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_usart_ex.c</name>
     </file>
   </group>
 </project>

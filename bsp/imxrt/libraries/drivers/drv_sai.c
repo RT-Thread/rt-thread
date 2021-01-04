@@ -1,11 +1,13 @@
 /*
- * File: drv_sound.c
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2012-2019, Shanghai Real-Thread Technology Co., Ltd
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-4-30     misonyo     the first version.
  */
-
-
-
+ 
 #include <rtthread.h>
 #include <rthw.h>
 #include <rtdef.h>

@@ -125,6 +125,7 @@
   */
 
 #include "ald_cmu.h"
+#include "ald_flash.h"
 
 
 /** @addtogroup ES32FXXX_ALD
@@ -140,7 +141,7 @@
   * @defgroup CMU_Private_Variables CMU Private Variables
   * @{
   */
-uint32_t __system_clock  = 24000000;
+uint32_t __system_clock  = 24000000U;
 /**
   * @}
   */
@@ -383,6 +384,7 @@ ald_status_t ald_cmu_clock_config(cmu_clock_t clk, uint32_t clock)
 		break;
 
 	case CMU_CLOCK_PLL1:
+		for (cnt = 0; cnt < 5000; ++cnt);
 		MODIFY_REG(CMU->CSR, CMU_CSR_CFT_CMD_MSK, 0xAA << CMU_CSR_CFT_CMD_POSS);
 		MODIFY_REG(CMU->CSR, CMU_CSR_SYS_CMD_MSK, CMU_CLOCK_PLL1 << CMU_CSR_SYS_CMD_POSS);
 		while (READ_BIT(CMU->CSR, CMU_CSR_SYS_RDYN_MSK) && (--cnt));
@@ -409,7 +411,7 @@ ald_status_t ald_cmu_clock_config(cmu_clock_t clk, uint32_t clock)
 		if (clock == 72000000) {
 			ald_cmu_div_config(CMU_PCLK_2, CMU_DIV_4);
 		}
-		if (clock == 48000000) {
+		if ((clock == 48000000) || (clock == 36000000)) {
 			ald_cmu_div_config(CMU_PCLK_2, CMU_DIV_2);
 		}
 
@@ -596,6 +598,18 @@ uint32_t ald_cmu_get_hclk1_clock(void)
 }
 
 /**
+  * @brief  Get AHB2 clock.
+  * @retval The value of AHB2 clock.
+  */
+uint32_t ald_cmu_get_hclk2_clock(void)
+{
+	uint32_t sys_div = READ_BITS(CMU->CFGR, CMU_CFGR_SYSDIV_MSK, CMU_CFGR_SYSDIV_POSS);
+	uint32_t ahb_div = READ_BITS(CMU->CFGR, CMU_CFGR_HCLK2DIV_MSK, CMU_CFGR_HCLK2DIV_POSS);
+
+	return (__system_clock >> sys_div) >> ahb_div;
+}
+
+/**
   * @brief  Get SYS clock
   * @retval The value of SYS clock
   */
@@ -740,6 +754,25 @@ void ald_cmu_pll_safe_config(type_func_t status)
 
 	SYSCFG_LOCK();
 	return;
+}
+
+/**
+  * @brief  Get current clock source.
+  * @param  type: Type of source: HOSC/LOSC/PLL.
+  * @retval Status:
+  *              - 0: Current clock is HOSC, LOSC or PLL
+  *              - 1: Current clock is HRC, LRC or HRC
+  */
+uint32_t ald_cmu_current_clock_source_get(cmu_clock_safe_type_t type)
+{
+	assert_param(IS_CMU_SAFE_CLOCK_TYPE(type));
+
+	if (type == CMU_SAFE_CLK_HOSC)
+		return READ_BITS(CMU->HOSMCR, CMU_HOSMCR_CLKS_MSK, CMU_HOSMCR_CLKS_POS);
+	else if (type == CMU_SAFE_CLK_LOSC)
+		return READ_BITS(CMU->LOSMCR, CMU_LOSMCR_CLKS_MSK, CMU_LOSMCR_CLKS_POS);
+	else
+		return READ_BITS(CMU->PULMCR, CMU_PULMCR_CLKS_MSK, CMU_PULMCR_CLKS_POS);
 }
 
 /**
@@ -1016,6 +1049,12 @@ void ald_cmu_usb_clock_config(cmu_usb_clock_sel_t clock, cmu_usb_div_t div)
 	assert_param(IS_CMU_USB_DIV(div));
 
 	SYSCFG_UNLOCK();
+
+	if (clock == CMU_USB_CLOCK_SEL_HRC)
+		SET_BIT(SYSCFG->USBCFG, SYSCFG_USBCFG_CLKRDYBP_MSK);
+	else
+		CLEAR_BIT(SYSCFG->USBCFG, SYSCFG_USBCFG_CLKRDYBP_MSK);
+
 	MODIFY_REG(CMU->PERICR, CMU_PERICR_USBPHYCS_MSK, clock << CMU_PERICR_USBPHYCS_POSS);
 	MODIFY_REG(CMU->PERIDIVR, CMU_PERIDIVR_USBPHYDIV_MSK, div << CMU_PERIDIVR_USBPHYDIV_POSS);
 	SYSCFG_LOCK();

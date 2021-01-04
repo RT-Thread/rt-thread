@@ -17,8 +17,8 @@
 *                                             CPU INTERRUPT PRIORITY
 *********************************************************************************************************
 */
-#define CPU_INTERRUPT_YIELD         0x00
-#define CPU_INTERRUPT_TICK          0x01
+#define CPU_INTERRUPT_YIELD         0x01 // should be set to the lowest priority.
+#define CPU_INTERRUPT_TICK          0x00
 
 
 

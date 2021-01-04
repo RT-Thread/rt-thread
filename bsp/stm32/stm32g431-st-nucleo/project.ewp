@@ -220,6 +220,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32G431xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1255,6 +1256,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32G431xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -2077,7 +2079,7 @@
     </file>
   </group>
   <group>
-    <name>cpu</name>
+    <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2209,7 +2211,7 @@
     </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32G4xx_HAL\CMSIS\Device\ST\STM32G4xx\Source\Templates\system_stm32g4xx.c</name>
     </file>

@@ -1764,8 +1764,12 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     ++ mb->out_offset;
     if (mb->out_offset >= mb->size)
         mb->out_offset = 0;
+
     /* decrease message entry */
-    mb->entry --;
+    if(mb->entry > 0)
+    {
+        mb->entry --;
+    }
 
     /* resume suspended thread */
     if (!rt_list_isempty(&(mb->suspend_sender_thread)))
@@ -2439,7 +2443,10 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         mq->msg_queue_tail = RT_NULL;
 
     /* decrease message entry */
-    mq->entry --;
+    if(mq->entry > 0)
+    {
+        mq->entry --;
+    }
 
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);

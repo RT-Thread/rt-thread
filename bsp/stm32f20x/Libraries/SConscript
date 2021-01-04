@@ -64,6 +64,6 @@ if GetDepend('RT_USING_LWIP') == True:
 	
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER']
-group = DefineGroup('STM32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

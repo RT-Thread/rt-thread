@@ -1,7 +1,11 @@
 /*
- * File: drv_sound.h
+ * Copyright (c) 2006-2018, RT-Thread Development Team
  *
- * COPYRIGHT (C) 2012-2018, Shanghai Real-Thread Technology Co., Ltd
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2018-4-30     misonyo     the first version.
  */
 
 #ifndef __DRV_SOUND_H_
