@@ -1,3 +1,205 @@
+# RT-Thread v4.0.3 Change Log
+
+Change log since v4.0.2
+
+## Kernel
+
+* Add `__RTTHREAD__` global macro definition
+* Add user heap options
+* Fix bug of rt_memheap_detach
+* Add rt_memory_info() for memheap.c
+* Add rt_object_get_length/rt_object_get_pointers APIs
+* Fix double release for thread
+* Fix thread control bug about `RT_THREAD_CTRL_CLOSE` command
+* Avoid deadlock (rt_hw_interrupt_disable and rt_enter_critical when enable smp)
+* Fix the issue of judging the ready_table of pcpu when multi-core rt_schedule_remove_thread
+* Fix the issue that the yield operation cannot release the cpu in time
+* Fix the iterator failure for softtimer list timeout check
+* Fix rt_timer_list_next_timeout multi-task safe
+* Add timer working status query function to software timer
+* Fix the software issue when the system timer thread is pending
+* Fix the timer/software timer handling issue if the timeout function starts/stops/deletes this timer.
+* Fix an issue with rt_timer_start being broken and destroying the timer list
+* Fix the bug that the linked list is still mounted when the single timer is not modified
+* Add function rt_tick_get_millisecond()
+* Fix the delay_until issue
+* Add mb mq value overflow-check code
+* Fix the rt_event_recv function, if the event met without blocking, assigning thread->event_set/event_info will goes well
+* Add the definition of the maximum value of ipc type
+* Remove the call of rt_system_object_init/rt_system_tick_init from the code.
+* Removes component configuration macro `RT_USING_FINSH` from the kernel
+* Use object_find to implement thread_find/device_find
+* The cleanup operation is executed before the current thread exits
+
+## Components
+
+* Fix assert in the sys_arch_mbox_fetch function when close socket
+* Add dhcp start or stop function to start or stop dhcp.
+* Change rt_data_queue_peak to rt_data_queue_peek.
+* Update elmfat to R0.14 patch 1.
+* Add SAL_INTERNET_CHECK configuration item to support turning on or off the network status check
+* Solve the issue that the do_pollfd function processing the underlying network device returns error -1
+* Fix the issue that when the network card device calls to close dhcp, the bottom layer no need to call the dhcp_stop function to close dhcp
+* Add the function of judging the network card up and down in the sal_accept function
+* Modify the spelling error of the macro definition, modify the printing error when printing the IMEI number
+* Fix the issue that the server closed the connection when web socket requests the data that comes back from the server, and the socket status is incorrectly judged at that point
+* Fix the issue of incorrect sal_getaddrinfo release when sal socket supports multiple network cards
+* Update AT socket
+  * Support alloc socket dynamically with at device
+  * Update AT_SW_VERSION and adjust at_socket_ops
+  * Adjust where the AT socket callback function
+  * Fix at_client, avoid creating the same client repeatedly and prevent working exceptions and memory leaks.
+  * Fix the bug that rx_notice out of sync when the data is received after last rt_device_read() is zero
+* [FinSH] rm command supports recursive deletion of folders
+* Add clear command for FINSH
+* [posix] Implement usleep function
+* Fix the issue of pthreads compilation error when using the new version of newlib; at the same time solve the problem of pthreads under 64-bit;
+* [dlmodule] Fix crash when dlmodule exits
+* Add priority & stack_size param parsing for dlmodule
+* libc adds getline/getdelim functions
+* Change the header file included in some libc files from <rtthread.h> to <rtconfig.h> to narrow the scope of inclusion to prevent recursive compilation
+* [jffs2] error check of rt_event_recv()
+* Add rt_data_queue_deinit and fix bug of dataqueue
+* Change log in device driver framework
+  * [pin] Add rt_pin_get to pin frame
+  * [PM] Update RT-Thread PM2.0 framework
+  * [audio] Fix compile warning, undefine var
+  * [serial] Fix the crash caused when the serial port receiving buffer is full and ULOG_USING_ISR_LOG is not turned on
+  * [wlan] Add raw frame send interface and Management frame filter interface
+  * [Sensor] Add vendor info and sensor types for cmd
+  * [Sensor] Support custom commands for rt_sensor_control
+  * [sensor] Support TOF sensor class 
+  * [SFUD] Update the 'sf bench' command.
+  * [spi] Fix "response+1" causing hard fault of unaligned access to SPI memory of STM32 HAL library
+  * [RTC] Optimize RTC alarm function, add alarm function for SOFT_RTC
+  * [hwtimer] When getting the timer count, prevent overflow update due to the interruption
+  * [dirver/i2c] i2c driver supports bus lock, STOP control
+  * [usb] Fix bug in device descriptor that MAC OS enumeration failed
+  * Fix the bug that USB cannot recognize composite device normally
+  * Fix USB host core bugs
+    * Limit >4 USB ports hubs
+    * Double free intf
+    * dname buffer size is too small
+    * Reset child pointer after detaching instance
+
+## BSP and CPU porting
+
+* Add license info and code cleanup for vexpress-a9 BSP
+* Add HDSC hc32f4a0 BSP support
+* Add support for Cypress PSoC6 series products
+* Fix the lpc55 issue under Linux/GCC
+* [qemu] Fix spelling mistakes of code in drv_pl041.c
+* [loongson] Update the SPI driver and UART driver on the Loongson 2K1000 platform
+* [allwinner_tina]Fix spi driver bug
+* [smartfusion2]Support Microsemi SmartFusion2 family FPGA
+* [imxrt] Add ethernet configuration for imxrt1064-nxp-evk
+* Add support for architecture sparc-v8 and soc bm3803.
+* [libc] libc adds getline/getdelim functions (posix.1-2008)
+* Add support for c28x mcu hardware fpu
+* [at32] Add link detecting thread for ethernet driver
+* Fix gcc assembly option in rtconfig.py for imxrt1064-nxp-evk
+* [IMXRT]Fix scons --dist in IMXRT BSP
+* [ls2kdev] Initial gpio driver without irq support on ls2kdev
+* Optimize BSP dist handle process
+* [nrfx] Add the qspi_flash of nordic pdk
+* [nrf5x] Add the BSP of nrf5x, which support UART, SPI, PWM, ADC, i2c drivers and rtc device driver
+* [nrfx] Add the on-chip flash for nrf5x
+* [RISC-V:K210]Add UART1~3 support for K210
+* [Nuclei] Add Nuclei RISC-V Processor support
+* Update BSP for mini2440
+* Add soc timer cntpct
+* LPC55S69: Add NS project and TFM support on LPC55S69
+* Make MicroPython runs on Raspi3-64 BSP
+* Add rt_hw_us_delay for W60x
+* [imxrt] [driver] Add usb device driver
+* Fix raspi4-32
+  * Add: dma driver,  bsc driver, dsi lcd/touch driver, waveshare spi lcd/touch driver, watchdog driver, hdmi driver, sdio driver, gpio interrupt
+  * Fix: eth driver, spi driver, uart driver
+* Add more BSP on BSP framework:
+  * At32/at32f403a-start
+  * At32/at32f407-start
+  * bluetrum/ab32vg1-ab-prougen
+  * bm3803
+  * cypress/psoc6-pioneerkit_modus
+  * essemi/es32f0271
+  * essemi/es32f369x
+  * essemi/es32f0654
+  * lpc55sxx/lpc55s69_nxp_evk_ns
+  * ls2kdev
+  * nrf5x
+  * nuclei/gd32vf103_rvstar
+  * nuclei/hbird_eval
+  * nuvoton/nk-980iot
+  * nuvoton/numaker-iot-m487
+  * nuvoton/numaker-pfm-m487
+  * raspi2
+  * raspi3-32
+  * raspi3-64
+  * raspi4-32
+  * raspi4-64
+  * smartfusion2
+  * thead-smart
+  * tm4c123 BSP
+  * zynqmp-r5-axu4ev
+
+* Add more STM32 BSP based on new STM32 BSP framework:
+  * STM32L431-BearPi
+  * stm32f103-blue-pill
+  * stm32f103-onenet-nbiot
+  * stm32f410-st-nucleo
+  * stm32f411-atk-nano
+  * stm32f413-st-nucleo
+  * stm32g070-st-nucleo
+  * stm32h747-st-discovery
+  * stm32l010-st-nucleo
+  * stm32l412-st-nucleo
+  * stm32l433-st-nucleo
+  * stm32l496-st-nucleo
+  * stm32mp157a-st-discovery
+  * stm32mp157a-st-ev1
+  * stm32wb55-st-nucleo
+* New STM32 BSP framework:
+  * Add dcmi, ov2640 and SD Card driver for stm32h743
+  * Fix bug that caused system crash by changing the run_mode in low power mode
+  * Fix issue when using gcc to compile the chips of stm G4 series, but chip doesn't work
+  * drv_flash_f7.c supports single bank mode
+  * Add stm32f103-atk-warshipv3 sram driver
+  * Update void HAL_Delay(__IO uint32_t Delay)
+  * Add PWM9_CONFIG default configuration and TIM3_CONFIG default configuration
+  * [stm32f103-atk-warshipv3] Add sdcard driver
+  * Add English readme for stm32
+  * Add dac and can driver for stm32l4 and stm32f4
+  * openamp driver and add rs485 driver for stm32mp157a
+  * Optimize the pin-index algorithm
+  * [stm32f769-disco] Support ethernet device
+  * Add C++ Support
+  * Fix the clock configuration issue of STM32 hardware timer
+  * Adjust the interrupt priority configuration of some peripherals of the STM32 series BSP
+  * Fix stm32 f1 series rtc bug
+  * Support SPI/ADC/TIME on-chip peripheral driver
+  * [stm32h743-atk-apollo]Support stm32h7 uart dma
+  * Add stm32h743-atk-apollo support for pcf8574 and uart2
+  * Support stm32h743-atk-apollo pcf8574 and uart2(485)
+  * Update bsp/stm32/stm32h743-st-nucleo
+  * Fix ADC channel Configuration bug for SMT32F0/L0/H7
+  * Add support for onboard AP6181
+  * Fix UART DMA TX
+  * Add pm support by cubemx tool for stm32l4
+  * Add stm32f407-atk-explorer sram driver
+  * Fix PWM timer init about pwm
+  * [stm32f103-atk-warshipv3]Add sdcard driver
+  * Add stm32f103-atk-warshipv3 sram driver
+
+## Tools
+
+* Add C++ support for eclipse target
+* Keep user's lib configuration while running --target=eclipse
+* Add Libraries when perform `scons --dist`
+* Update tools/building.py and add `tackanalysis` option 
+* Improve the logic of generating `rtconfig.h` files in scons with command `scons --menuconfig`
+* Fix makeimg.py wrong on linux
+* Add Studio IDE dist feature for stm32 BSP
+
 # RT-Thread v4.0.2 Change Log
 
 Change log since v4.0.1

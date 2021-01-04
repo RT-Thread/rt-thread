@@ -147,9 +147,9 @@ static rt_err_t es32f3_get_adc_value(struct rt_adc_device *device, rt_uint32_t c
     RT_ASSERT(value != RT_NULL);
 
     /* config adc channel */
-    nm_config.channel       = es32f3_adc_get_channel(channel);
-    nm_config.rank          = ADC_NCH_RANK_1;
-    nm_config.samp_time = ADC_SAMPLETIME_4;
+    nm_config.ch       = es32f3_adc_get_channel(channel);
+    nm_config.idx          = ADC_NCH_IDX_1;
+    nm_config.samp = ADC_SAMPLETIME_4;
     ald_adc_normal_channel_config(_hadc, &nm_config);
 
     ald_adc_normal_start(_hadc);
@@ -173,16 +173,16 @@ int rt_hw_adc_init(void)
 
     /* adc function initialization */
     _h_adc0.perh = ADC0;
-    _h_adc0.init.data_align = ADC_DATAALIGN_RIGHT;
-    _h_adc0.init.scan_mode = DISABLE;
-    _h_adc0.init.cont_mode = DISABLE;
-    _h_adc0.init.disc_mode = ADC_ALL_DISABLE;
-    _h_adc0.init.disc_nbr = ADC_DISC_NBR_1;
-    _h_adc0.init.conv_res = ADC_CONV_RES_10;
-    _h_adc0.init.clk_div = ADC_CKDIV_128;
+    _h_adc0.init.align = ADC_DATAALIGN_RIGHT;
+    _h_adc0.init.scan = DISABLE;
+    _h_adc0.init.cont = DISABLE;
+    _h_adc0.init.disc = ADC_ALL_DISABLE;
+    _h_adc0.init.disc_nr = ADC_DISC_NR_1;
+    _h_adc0.init.data_bit = ADC_CONV_BIT_12;
+    _h_adc0.init.div = ADC_CKDIV_128;
     _h_adc0.init.nche_sel = ADC_NCHESEL_MODE_ALL;
-    _h_adc0.init.neg_ref = ADC_NEG_REF_VSS;
-    _h_adc0.init.pos_ref = ADC_POS_REF_VDD;
+    _h_adc0.init.n_ref = ADC_NEG_REF_VSS;
+    _h_adc0.init.p_ref = ADC_POS_REF_VDD;
     ald_adc_init(&_h_adc0);
 
     rt_hw_adc_register(&_device_adc0, "adc0", &es32f3_adc_ops, &_h_adc0);

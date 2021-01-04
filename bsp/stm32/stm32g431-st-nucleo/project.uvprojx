@@ -333,7 +333,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_HAL_DRIVER, STM32G431xx</Define>
+              <Define>USE_HAL_DRIVER, __RTTHREAD__, STM32G431xx</Define>
               <Undefine />
               <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;board\CubeMX_Config\Inc;..\libraries\HAL_Drivers;..\libraries\HAL_Drivers\config;..\..\..\components\finsh;.;..\..\..\include;..\..\..\components\libc\compilers\common;..\libraries\STM32G4xx_HAL\STM32G4xx_HAL_Driver\Inc;..\libraries\STM32G4xx_HAL\CMSIS\Device\ST\STM32G4xx\Include;..\libraries\STM32G4xx_HAL\CMSIS\Include</IncludePath>
             </VariousControls>
@@ -387,7 +387,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -671,7 +671,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>STM32_HAL</GroupName>
+          <GroupName>Libraries</GroupName>
           <Files>
             <File>
               <FileName>system_stm32g4xx.c</FileName>

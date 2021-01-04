@@ -53,6 +53,17 @@
 #define MDIO_REG_SHIFT              (16)
 #define MDIO_REG_MASK               (0x1f)
 
+#define  GENET_INTRL2_OFF               (0x0200)
+#define  GENET_INTRL2_CPU_STAT          (GENET_INTRL2_OFF + 0x00)
+#define  GENET_INTRL2_CPU_CLEAR         (GENET_INTRL2_OFF + 0x08)
+#define  GENET_INTRL2_CPU_STAT_MASK     (GENET_INTRL2_OFF + 0x0c)
+#define  GENET_INTRL2_CPU_SET_MASK      (GENET_INTRL2_OFF + 0x10)
+#define  GENET_INTRL2_CPU_CLEAR_MASK    (GENET_INTRL2_OFF + 0x14)
+#define  GENET_IRQ_MDIO_ERROR           BIT(24)
+#define  GENET_IRQ_MDIO_DONE            BIT(23)
+#define  GENET_IRQ_TXDMA_DONE           BIT(16)
+#define  GENET_IRQ_RXDMA_DONE           BIT(13)
+
 #define CMD_TX_EN                   BIT(0)
 #define CMD_RX_EN                   BIT(1)
 #define UMAC_SPEED_10               (0)

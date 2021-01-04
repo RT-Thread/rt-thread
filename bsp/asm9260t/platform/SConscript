@@ -8,5 +8,5 @@ CPPPATH = [cwd]
 # The set of source files associated with this SConscript file.
 src = Glob('*.c')
 
-group = DefineGroup('platform', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')

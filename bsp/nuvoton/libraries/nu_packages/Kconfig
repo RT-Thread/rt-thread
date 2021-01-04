@@ -24,6 +24,11 @@ menu "Nuvoton Packages Config"
         select BSP_USING_I2C
         default n
 
+    config NU_PKG_USING_NAU8822
+        bool "NAU8822 Audio Codec."
+        select BSP_USING_I2C
+        default n
+
     config NU_PKG_USING_ILI9341
         bool "ILI9341 LCD Panel"
         select BSP_USING_GPIO
@@ -46,6 +51,14 @@ menu "Nuvoton Packages Config"
                 help
                     Choose this option if you the ili9341 device is with EBI interface.
             endchoice
+
+            config NU_PKG_ILI9341_WITH_OFFSCREEN_FRAMEBUFFER
+                bool "Create an offscreen framebuffer."
+                default n
+
+            config NU_PKG_ILI9341_HORIZONTAL
+                bool "Set horizontal view. (320x240)"
+                default n
 
         endif
 

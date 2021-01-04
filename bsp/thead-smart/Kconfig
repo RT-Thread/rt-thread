@@ -25,6 +25,8 @@ config SOC_THEAD_SMART
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select ARCH_RISCV32
+    select ARCH_RISCV_FPU_S
     default y
 
 if RT_USING_SERIAL

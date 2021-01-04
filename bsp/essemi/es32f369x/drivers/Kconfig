@@ -123,6 +123,13 @@ menu "Hardware Drivers Config"
                 default n
         endmenu
 
+        menu "PM Drivers"
+            config BSP_USING_PM
+                bool "Using PM"
+                select RT_USING_PM
+                default n
+        endmenu
+
     endmenu
 
     menu "Onboard Peripheral Drivers"
@@ -130,6 +137,55 @@ menu "Hardware Drivers Config"
     endmenu
 
     menu "Offboard Peripheral Drivers"
+
+    endmenu
+
+
+    menu "Peripheral Drivers test example"
+
+        config BSP_USING_EXAMPLE_ADC_VOL
+            bool "BSP_USING_EXAMPLE_ADC_VOL"
+            default n
+        
+        config BSP_USING_EXAMPLE_HWTIMER
+            bool "BSP_USING_EXAMPLE_HWTIMER"
+            default n
+
+        config BSP_USING_EXAMPLE_I2C
+            bool "BSP_USING_EXAMPLE_I2C"
+            default n
+
+        config BSP_USING_EXAMPLE_LED_BLINK
+            bool "BSP_USING_EXAMPLE_LED_BLINK"
+            default y
+
+        config BSP_USING_EXAMPLE_PIN_BEEP
+            bool "BSP_USING_EXAMPLE_PIN_BEEP"
+            default y
+
+        config BSP_USING_EXAMPLE_PWM_LED
+            bool "BSP_USING_EXAMPLE_PWM_LED"
+            default n
+
+        config BSP_USING_EXAMPLE_RTC
+            bool "BSP_USING_EXAMPLE_RTC"
+            default n
+
+        config BSP_USING_EXAMPLE_SPI
+            bool "BSP_USING_EXAMPLE_SPI"
+            default n
+
+        config BSP_USING_EXAMPLE_UART
+            bool "BSP_USING_EXAMPLE_UART"
+            default y
+
+        config BSP_USING_EXAMPLE_CAN
+            bool "BSP_USING_EXAMPLE_CAN"
+            default n
+
+        config BSP_USING_EXAMPLE_PM
+            bool "BSP_USING_EXAMPLE_PM"
+            default n
 
     endmenu
 

@@ -38,16 +38,10 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x40003
-
-/* RT-Thread CPU arch and features */
-
-
-/* risc-v arch */
-
 #define ARCH_RISCV
-#define ARCH_RISCV_32
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_S
+#define ARCH_RISCV32
 
 /* RT-Thread Components */
 

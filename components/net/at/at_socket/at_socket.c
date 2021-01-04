@@ -821,24 +821,17 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
             goto __exit;
         }
         else
-        {
-            if (sock->state == AT_SOCKET_CONNECT)
+        {         
+
+            /* get receive buffer to receiver ring buffer */
+            rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
+            recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *) mem, len);
+            rt_mutex_release(sock->recv_lock);
+            if (recv_len > 0)
             {
-                /* get receive buffer to receiver ring buffer */
-                rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-                recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *) mem, len);
-                rt_mutex_release(sock->recv_lock);
-                if (recv_len > 0)
-                {
-                    break;
-                }
+                break;
             }
-            else
-            {
-                LOG_D("received data exit, current socket (%d) is closed by remote.", socket);
-                result = 0;
-                goto __exit;
-            }
+
         }
     }
 
