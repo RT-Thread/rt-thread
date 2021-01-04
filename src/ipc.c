@@ -1534,7 +1534,6 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     if (mb->entry == mb->size && timeout == 0)
     {
         rt_hw_interrupt_enable(temp);
-
         return -RT_EFULL;
     }
 
@@ -1678,8 +1677,14 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     /* disable interrupt */
     temp = rt_hw_interrupt_disable();
 
+    if (mb->entry == mb->size)
+    {
+        rt_hw_interrupt_enable(temp);
+        return -RT_EFULL;
+    }
+
     /* rewind to the previous position */
-    if(mb->out_offset > 0)
+    if (mb->out_offset > 0)
     {
         mb->out_offset --;
     }
@@ -1691,7 +1696,7 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     /* set ptr */
     mb->msg_pool[mb->out_offset] = value;
 
-    if(mb->entry < RT_MB_ENTRY_MAX)
+    if (mb->entry < RT_MB_ENTRY_MAX)
     {
         /* increase message entry */
         mb->entry ++;
