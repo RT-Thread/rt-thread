@@ -35,7 +35,9 @@ static rt_size_t _mtd_read(rt_device_t dev,
                            void       *buffer,
                            rt_size_t   size)
 {
-    return size;
+    struct rt_mtd_nor_device *device = (struct rt_mtd_nor_device *)dev;
+
+    return device->ops->read(device, pos + device->block_start, buffer, size);
 }
 
 static rt_size_t _mtd_write(rt_device_t dev,
@@ -43,7 +45,9 @@ static rt_size_t _mtd_write(rt_device_t dev,
                             const void *buffer,
                             rt_size_t   size)
 {
-    return size;
+    struct rt_mtd_nor_device *device = (struct rt_mtd_nor_device *)dev;
+
+    return device->ops->write(device, pos + device->block_start, buffer, size);
 }
 
 static rt_err_t _mtd_control(rt_device_t dev, int cmd, void *args)
