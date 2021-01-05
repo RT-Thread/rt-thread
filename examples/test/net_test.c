@@ -217,7 +217,7 @@ void tcpecho_socket_entry(void *parameter)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(TCP_SOCKET_ECHO_PORT);
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    rt_memset(&(server_addr.sin_zero),8, sizeof(server_addr.sin_zero));
+    rt_memset(&(server_addr.sin_zero),0, sizeof(server_addr.sin_zero));
 
     /* bind to server address */
     if (bind(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
