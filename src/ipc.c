@@ -1696,16 +1696,8 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     /* set ptr */
     mb->msg_pool[mb->out_offset] = value;
 
-    if (mb->entry < RT_MB_ENTRY_MAX)
-    {
-        /* increase message entry */
-        mb->entry ++;
-    }
-    else
-    {
-        rt_hw_interrupt_enable(temp); /* enable interrupt */
-        return -RT_EFULL; /* value overflowed */
-    }
+    /* increase message entry */
+    mb->entry ++;
 
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
