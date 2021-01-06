@@ -1,0 +1,26 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Glob('GD32F1xx_standard_peripheral/Source/*.c')
+src += [cwd + '/CMSIS/GD/GD32F1xx/Source/system_gd32f1xx.c']
+
+#add for startup script
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [cwd + '/CMSIS/GD/GD32F1xx/Source/GCC/startup_gd32.s']
+    src += [cwd + '/CMSIS/GD/GD32F1xx/Source/GCC/isr_tab.s']
+
+path = [
+    cwd + '/CMSIS/GD/GD32F1xx/Include',
+    cwd + '/CMSIS',
+    cwd + '/GD32F1xx_standard_peripheral/Include',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'GD32F1XX']
+
+group = DefineGroup('GD32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
