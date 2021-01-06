@@ -37,6 +37,7 @@
  * 2020-07-29     Meco Man     fix thread->event_set/event_info when received an 
  *                             event without pending
  * 2020-10-11     Meco Man     add value overflow-check code
+ * 2021-01-03     Meco Man     add rt_mb_urgent()
  */
 
 #include <rtthread.h>
@@ -1533,7 +1534,6 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     if (mb->entry == mb->size && timeout == 0)
     {
         rt_hw_interrupt_enable(temp);
-
         return -RT_EFULL;
     }
 
@@ -1653,6 +1653,71 @@ rt_err_t rt_mb_send(rt_mailbox_t mb, rt_ubase_t value)
     return rt_mb_send_wait(mb, value, 0);
 }
 RTM_EXPORT(rt_mb_send);
+
+/**
+ * This function will send an urgent mail to mailbox object, if there are threads
+ * suspended on mailbox object, it will be waked up. This function will return
+ * immediately.
+ *
+ * @param mb the mailbox object
+ * @param value the mail
+ *
+ * @return the error code
+ */
+rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
+{
+    register rt_ubase_t temp;
+
+    /* parameter check */
+    RT_ASSERT(mb != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
+
+    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mb->parent.parent)));
+
+    /* disable interrupt */
+    temp = rt_hw_interrupt_disable();
+
+    if (mb->entry == mb->size)
+    {
+        rt_hw_interrupt_enable(temp);
+        return -RT_EFULL;
+    }
+
+    /* rewind to the previous position */
+    if (mb->out_offset > 0)
+    {
+        mb->out_offset --;
+    }
+    else
+    {
+        mb->out_offset = mb->size - 1;
+    }
+
+    /* set ptr */
+    mb->msg_pool[mb->out_offset] = value;
+
+    /* increase message entry */
+    mb->entry ++;
+
+    /* resume suspended thread */
+    if (!rt_list_isempty(&mb->parent.suspend_thread))
+    {
+        rt_ipc_list_resume(&(mb->parent.suspend_thread));
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(temp);
+
+        rt_schedule();
+
+        return RT_EOK;
+    }
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(temp);
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_mb_urgent);
 
 /**
  * This function will receive a mail from mailbox object, if there is no mail
