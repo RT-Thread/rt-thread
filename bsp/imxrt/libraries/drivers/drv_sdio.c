@@ -335,7 +335,6 @@ static void _mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
     if (usdhc_clk)
     {
         USDHC_SetSdClock(mmcsd->usdhc_host.base, src_clk, usdhc_clk);
-        //CLOCK_EnableClock(mmcsd->ip_clock);
 
         /* Change bus width */
         if (bus_width == MMCSD_BUS_WIDTH_8)
