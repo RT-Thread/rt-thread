@@ -2252,8 +2252,7 @@ int sys_access(const char *filename, int mode)
 
 int sys_pipe(int fd[2])
 {
-    /* not implemented */
-    return -1;
+    return pipe(fd);
 }
 
 int sys_clock_settime(clockid_t clk, const struct timespec *ts)
