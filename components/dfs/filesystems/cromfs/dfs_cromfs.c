@@ -688,7 +688,7 @@ static int dfs_cromfs_read(struct dfs_fd *file, void *buf, size_t count)
     return length;
 }
 
-static int dfs_cromfs_lseek(struct dfs_fd *file, rt_off_t offset)
+static int dfs_cromfs_lseek(struct dfs_fd *file, off_t offset)
 {
     if (offset <= file->size)
     {
