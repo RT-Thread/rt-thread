@@ -341,7 +341,7 @@ static uint32_t cromfs_blk_read_bytes(cromfs_info *ci, uint32_t pos, void *buf, 
         start_blk++;
         if (sector_nr)
         {
-            ret_len = rt_device_read(ci->device, start_blk, buf + off_s, sector_nr);
+            ret_len = rt_device_read(ci->device, start_blk, (char*)buf + off_s, sector_nr);
             if (ret_len != sector_nr)
                 goto end;
             start_blk += sector_nr;
@@ -351,7 +351,7 @@ static uint32_t cromfs_blk_read_bytes(cromfs_info *ci, uint32_t pos, void *buf, 
         ret_len = rt_device_read(ci->device, start_blk, block_buff, 1);
         if (ret_len != 1)
             goto end;
-        memcpy(buf + off_s, block_buff, size);
+        memcpy((char*)buf + off_s, block_buff, size);
     }
     ret = size_bak;
 end:
@@ -676,7 +676,7 @@ static int dfs_cromfs_read(struct dfs_fd *file, void *buf, size_t count)
                 return 0;
             di_mem = cromfs_dirent_cache_get(ci, fi->partition_pos, fi->size);
             if (di_mem)
-                memcpy(buf, di_mem + file->pos, length);
+                memcpy(buf, (char*)di_mem + file->pos, length);
             rt_mutex_release(&ci->lock);
             if (!di_mem)
                 return 0;
@@ -688,7 +688,7 @@ static int dfs_cromfs_read(struct dfs_fd *file, void *buf, size_t count)
     return length;
 }
 
-static int dfs_cromfs_lseek(struct dfs_fd *file, rt_off_t offset)
+static int dfs_cromfs_lseek(struct dfs_fd *file, off_t offset)
 {
     if (offset <= file->size)
     {
@@ -929,7 +929,10 @@ static int dfs_cromfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_
 
     result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
+    {
+        free(dirent);
         return -EINTR;
+    }
     di_mem = cromfs_dirent_cache_get(ci, fi->partition_pos, fi->size);
     if (di_mem)
         memcpy(dirent, di_mem, fi->size);
