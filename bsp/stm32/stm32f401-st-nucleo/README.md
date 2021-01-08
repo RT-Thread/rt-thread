@@ -18,9 +18,7 @@ By reading the Quickly Get Started section developers can quickly get their hand
 
 The STM32 Nucleo-64 is a development board based on STM32F401RE, which contains a Cortex-M4 core. The maximum main frequency is 84 MHz, and it has a wealth of on-board resources that can take full advantage of the STM32F401RE's chip performance.
 
-![board.jpg](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32f401-st-nucleo/figures/board.jpg?raw=true)
-
-
+![board](figures/board.jpg)
 
 The mainly-used **on-board resources** are shown as follows:
 
