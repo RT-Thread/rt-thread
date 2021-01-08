@@ -929,7 +929,10 @@ static int dfs_cromfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_
 
     result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
+    {
+        free(dirent);
         return -EINTR;
+    }
     di_mem = cromfs_dirent_cache_get(ci, fi->partition_pos, fi->size);
     if (di_mem)
         memcpy(dirent, di_mem, fi->size);
