@@ -83,6 +83,7 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 #define RT_USING_RTC
+#define RT_USING_SPI
 #define RT_USING_WDT
 
 /* Using USB */
@@ -169,5 +170,11 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_SPI
+#define BSP_USING_SPI2
+
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_SPI_LCD
 
 #endif
