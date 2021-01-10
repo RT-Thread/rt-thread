@@ -974,6 +974,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
         case 'X':
             flags |= LARGE;
+            break;
         case 'x':
             base = 16;
             break;
@@ -981,6 +982,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         case 'd':
         case 'i':
             flags |= SIGN;
+            break;
         case 'u':
             break;
 
