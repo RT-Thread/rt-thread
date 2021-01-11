@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+src += Glob('*.c')
+
+CPPPATH = [cwd]
+
+group = DefineGroup('devices', src, depend = ['BSP_USING_SPI_LCD'], CPPPATH = CPPPATH)
+
+Return('group')
