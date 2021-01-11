@@ -110,9 +110,6 @@ elif PLATFORM == 'armclang':
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
 
-    CFLAGS += ' -D__MICROLIB '
-    AFLAGS += ' --pd "__MICROLIB SETA 1" '
-    LFLAGS += ' --library_type=microlib '
     EXEC_PATH += '/ARM/ARMCLANG/bin/'
 
     if BUILD == 'debug':
