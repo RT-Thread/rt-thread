@@ -325,6 +325,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI0 bus"
                 default y
             if BSP_USING_SPI0
+                config NRFX_SPI0_ENABLED
+                    int "Enable SPI0 instance"
+                    default 1
                 config BSP_SPI0_SCK_PIN
                     int "SPI0 sck pin number set"
                     range 0 47
@@ -347,6 +350,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 bus"
                 default n
             if BSP_USING_SPI1
+                config NRFX_SPI1_ENABLED
+                    int "Enable SPI1 instance"
+                    default 1
                 config BSP_SPI1_SCK_PIN
                     int "SPI0 sck pin number set"
                     range 0 47
@@ -369,6 +375,9 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2 bus"
                 default n
             if BSP_USING_SPI2
+                config NRFX_SPI2_ENABLED
+                    int "Enable SPI2 instance"
+                    default 1
                 config BSP_SPI2_SCK_PIN
                     int "SPI0 sck pin number set"
                     range 0 47
