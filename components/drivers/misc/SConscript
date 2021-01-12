@@ -26,6 +26,9 @@ if GetDepend(['RT_USING_INPUT_CAPTURE']):
 if GetDepend(['RT_USING_NULL']):
     src = src + ['rt_null.c']
 
+if GetDepend(['RT_USING_ZERO']):
+    src = src + ['rt_zero.c']
+
 if GetDepend(['RT_USING_RANDOM']):
     src = src + ['rt_random.c']
 
