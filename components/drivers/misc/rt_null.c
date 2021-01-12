@@ -14,8 +14,7 @@ static struct rt_device null_dev;
 
 static rt_size_t null_read    (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    rt_memset(buffer, 0, size);
-    return size;
+    return 0;
 }
 
 static rt_size_t null_write   (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size)
