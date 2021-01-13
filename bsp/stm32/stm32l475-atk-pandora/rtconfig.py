@@ -104,23 +104,26 @@ elif PLATFORM == 'armclang':
     TARGET_EXT = 'axf'
 
     DEVICE = ' --cpu Cortex-M4.fp '
-    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
+    CFLAGS = ' -xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 '
+    CFLAGS += ' -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 '
+    CFLAGS += ' -mfloat-abi=hard -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
+    CFLAGS += ' -gdwarf-3 -ffunction-sections '
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict --scatter "board\linker_scripts\link.sct"'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
+    LFLAGS += ' --list rt-thread.map '
+    LFLAGS += ' --strict --scatter "board\linker_scripts\link.sct" '
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
 
     EXEC_PATH += '/ARM/ARMCLANG/bin/'
 
     if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
+        CFLAGS += ' -g -O1' # armclang recommend
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
-
-
-    CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
+        
+    CXXFLAGS = CFLAGS
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
