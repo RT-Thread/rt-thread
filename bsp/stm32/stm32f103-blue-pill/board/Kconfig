@@ -97,6 +97,12 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
+
+    config BSP_USING_USBD
+        bool "Enable USB device"
+        select RT_USING_USB_DEVICE
+        default n
+
     source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu
