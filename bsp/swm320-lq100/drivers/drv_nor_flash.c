@@ -32,7 +32,18 @@ static rt_size_t swm320_read(struct rt_mtd_nor_device *device,
                              rt_uint8_t *data,
                              rt_size_t size)
 {
-    rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    int ret = rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
+
     memcpy(data, ((const void *)(NORFLM_BASE + position)), size);
     rt_mutex_release(&flash_lock);
     return size;
@@ -45,7 +56,18 @@ static rt_size_t swm320_write(struct rt_mtd_nor_device *device,
 {
     rt_size_t i;
     const rt_uint16_t *hwdata = (const rt_uint16_t *)data;
-    rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    int ret = rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
+
     for (i = 0; i < size / 2; i++)
     {
         NORFL_Write(position, hwdata[i]);
@@ -59,7 +81,18 @@ static rt_err_t swm320_erase_block(struct rt_mtd_nor_device *device,
                                    rt_off_t offset,
                                    rt_uint32_t length)
 {
-    rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    rt_err_t ret = rt_mutex_take(&flash_lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
+    
     NORFL_SectorErase(offset);
     rt_mutex_release(&flash_lock);
     return RT_EOK;

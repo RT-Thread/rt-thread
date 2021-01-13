@@ -87,7 +87,10 @@ static rt_size_t fh_i2c_xfer(struct rt_i2c_bus_device *dev,
 
     rt_completion_init(&i2c_drv->transfer_completion);
 
-	ret = rt_mutex_take(i2c_drv->lock, RT_WAITING_FOREVER );
+    ret = rt_mutex_take(i2c_drv->lock, RT_WAITING_FOREVER);
+	if (ret != RT_EOK) {
+		goto done;
+	}
 
 	i2c_drv->msgs = msgs;
 	i2c_drv->msgs_num = num;
