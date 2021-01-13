@@ -1,0 +1,26 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd     = os.path.join(str(Dir('#')), 'drivers')
+
+# add the general drivers.
+src = Split("""
+board.c
+""")
+
+CPPPATH = [cwd]
+
+# add uart drivers.
+if GetDepend('RT_USING_SERIAL'):
+    src += ['drv_usart.c']
+
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+if GetDepend('RT_USING_ADC'):
+    src += ['drv_adc.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
