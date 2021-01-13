@@ -73,7 +73,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu Cortex-M4.fp '
     CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
     AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict --scatter "board\linker_scripts\link.sct"'
+    LFLAGS = DEVICE + r' --info sizes --info totals --info unused --info veneers --list rt-thread.map --strict --scatter "board\linker_scripts\link.sct"'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
 
@@ -111,7 +111,7 @@ elif PLATFORM == 'armclang':
     AFLAGS = DEVICE + ' --apcs=interwork '
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
     LFLAGS += ' --list rt-thread.map '
-    LFLAGS += ' --strict --scatter "board\linker_scripts\link.sct" '
+    LFLAGS += r' --strict --scatter "board\linker_scripts\link.sct" '
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
 
