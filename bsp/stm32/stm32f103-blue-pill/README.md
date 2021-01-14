@@ -212,7 +212,7 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 
 
-### 4.1 How to use USB virtual com
+### 4.1 How to use USB virtual com as a console device
 
 #### 4.1.1 Step 1
 
@@ -253,7 +253,7 @@ vconsole_switch(dev);
 
 #### 4.1.5 Step 5
 
-Re-plug the USB cable and you will find a new serial (virtual com) device is found in your computer. If you reset or reboot the blue pill board, you still need to re-plug the USB cable.
+Download the new program to your blue pill board. Re-plug the USB cable and you will find that a new serial (virtual com) device is found in your computer. Now, you can get rid of the UART-USB adapter by using USB as a console and send commands through USB cable. If you reset or reboot the blue pill board, you still need to re-plug the USB cable. 
 
 
 
