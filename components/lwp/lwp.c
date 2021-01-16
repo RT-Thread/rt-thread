@@ -739,6 +739,7 @@ void lwp_cleanup(struct rt_thread *tid)
     level = rt_hw_interrupt_disable();
     lwp = (struct rt_lwp *)tid->lwp;
 
+    lwp_tid_put(tid->tid);
     rt_list_remove(&tid->sibling);
     lwp_ref_dec(lwp);
     rt_hw_interrupt_enable(level);
@@ -870,6 +871,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
         {
             struct rt_lwp *lwp_self;
 
+            tid->tid = 0;
             LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_uint32_t)tid->stack_addr, (rt_uint32_t)tid->stack_addr + tid->stack_size);
             level = rt_hw_interrupt_disable();
             lwp_self = (struct rt_lwp *)rt_thread_self()->lwp;

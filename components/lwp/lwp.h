@@ -116,6 +116,11 @@ void lwp_set_thread_area(void *p);
 void* rt_cpu_get_thread_idr(void);
 void rt_cpu_set_thread_idr(void *p);
 
+int lwp_tid_get(void);
+void lwp_tid_put(int tid);
+rt_thread_t lwp_tid_get_thread(int tid);
+void lwp_tid_set_thread(int tid, rt_thread_t thread);
+
 #ifdef RT_USING_USERSPACE
 void lwp_mmu_switch(struct rt_thread *thread);
 #endif

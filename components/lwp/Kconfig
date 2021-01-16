@@ -32,3 +32,8 @@ config LWP_CONSOLE_INPUT_BUFFER_SIZE
     int "The input buffer size of lwp console device"
     default 1024
     depends on RT_USING_LWP
+
+config LWP_TID_MAX_NR
+    int "The maximum number of lwp thread id"
+    default 64
+    depends on RT_USING_LWP

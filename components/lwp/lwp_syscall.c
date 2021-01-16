@@ -76,6 +76,8 @@ static void kmem_put(void *kptr)
 }
 #endif
 
+int sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
+
 /* The same socket option is defined differently in the user interfaces and the
  * implementation. The options should be converted in the kernel. */
 
@@ -343,7 +345,7 @@ static void lwp_user_thread(void *parameter)
     user_stack &= ~7; //align 8
     set_user_context((void*)user_stack);
 
-    lwp_user_entry(parameter, tid->user_entry, lwp->data_entry, (void*)user_stack);
+    lwp_user_entry(parameter, tid->user_entry, lwp->data_entry, RT_NULL);
 }
 
 /* thread/process */
@@ -359,6 +361,14 @@ void sys_exit(int value)
     lwp = (struct rt_lwp*)tid->lwp;
 
     level = rt_hw_interrupt_disable();
+    if (tid->clear_child_tid)
+    {
+        int t = 0;
+        int *clear_child_tid = tid->clear_child_tid;
+
+        tid->clear_child_tid = RT_NULL;
+        lwp_put_to_user(clear_child_tid, &t, sizeof t);
+    }
     main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
     if (main_thread == tid)
     {
@@ -1135,7 +1145,7 @@ rt_thread_t sys_thread_create(void *arg[])
     rt_base_t level;
     void *user_stack = 0;
     struct rt_lwp *lwp = 0;
-    rt_thread_t tid;
+    rt_thread_t thread;
 
     lwp = rt_thread_self()->lwp;
     lwp_ref_inc(lwp);
@@ -1147,30 +1157,31 @@ rt_thread_t sys_thread_create(void *arg[])
     if (!user_stack)
     {
         rt_set_errno(EINVAL);
-        return RT_NULL;
+        goto fail;
     }
-    tid = rt_thread_create((const char*)arg[0],
+    thread = rt_thread_create((const char*)arg[0],
             lwp_user_thread,
             (void*)arg[2],
             ALLOC_KERNEL_STACK_SIZE,
             (rt_uint8_t)(size_t)arg[4],
             (rt_uint32_t)arg[5]);
-    if (!tid)
+    if (!thread)
     {
         goto fail;
     }
 
-    tid->cleanup = lwp_cleanup;
-    tid->user_entry = (void (*)(void *))arg[1];
-    tid->user_stack = (void *)user_stack;
-    tid->user_stack_size = (uint32_t)arg[3];
-    tid->lwp = (void*)lwp;
+    thread->cleanup = lwp_cleanup;
+    thread->user_entry = (void (*)(void *))arg[1];
+    thread->user_stack = (void *)user_stack;
+    thread->user_stack_size = (uint32_t)arg[3];
+    thread->lwp = (void*)lwp;
+    thread->tid = 0;
 
     level = rt_hw_interrupt_disable();
-    rt_list_insert_after(&lwp->t_grp, &tid->sibling);
+    rt_list_insert_after(&lwp->t_grp, &thread->sibling);
     rt_hw_interrupt_enable(level);
 
-    return tid;
+    return thread;
 
 fail:
 #ifndef RT_USING_USERSPACE
@@ -1184,6 +1195,154 @@ fail:
         lwp_ref_dec(lwp);
     }
     return RT_NULL;
+}
+
+#define CLONE_VM    0x00000100
+#define CLONE_FS    0x00000200
+#define CLONE_FILES 0x00000400
+#define CLONE_SIGHAND   0x00000800
+#define CLONE_PTRACE    0x00002000
+#define CLONE_VFORK 0x00004000
+#define CLONE_PARENT    0x00008000
+#define CLONE_THREAD    0x00010000
+#define CLONE_NEWNS 0x00020000
+#define CLONE_SYSVSEM   0x00040000
+#define CLONE_SETTLS    0x00080000
+#define CLONE_PARENT_SETTID 0x00100000
+#define CLONE_CHILD_CLEARTID    0x00200000
+#define CLONE_DETACHED  0x00400000
+#define CLONE_UNTRACED  0x00800000
+#define CLONE_CHILD_SETTID  0x01000000
+#define CLONE_NEWCGROUP 0x02000000
+#define CLONE_NEWUTS    0x04000000
+#define CLONE_NEWIPC    0x08000000
+#define CLONE_NEWUSER   0x10000000
+#define CLONE_NEWPID    0x20000000
+#define CLONE_NEWNET    0x40000000
+#define CLONE_IO    0x80000000
+
+/* arg[] -> flags
+ *          stack
+ *          new_tid
+ *          tls
+ *          set_clear_tid_address
+ *          quit_func
+ *          start_args
+ *          */
+#define SYS_CLONE_ARGS_NR 7
+int lwp_set_thread_context(void *new_thread_stack, void *origin_thread_stack, void *user_stack, void **thread_sp, int tid);
+long sys_clone(void *arg[])
+{
+    rt_base_t level;
+    struct rt_lwp *lwp = 0;
+    rt_thread_t thread = RT_NULL;
+    rt_thread_t self = RT_NULL;
+    int tid = -1;
+
+    unsigned long flags = 0;
+    void *user_stack = RT_NULL;
+    int *new_tid = RT_NULL;
+    void *tls = RT_NULL;
+    /*
+       musl call flags (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND
+       | CLONE_THREAD | CLONE_SYSVSEM | CLONE_SETTLS
+       | CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID | CLONE_DETACHED);
+       */
+
+    /* check args */
+    if (!lwp_user_accessable(arg, sizeof(void *[SYS_CLONE_ARGS_NR])))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    flags = (unsigned long)(size_t)arg[0];
+    if ((flags & (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_THREAD | CLONE_SYSVSEM))
+            != (CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_THREAD | CLONE_SYSVSEM))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    user_stack = arg[1];
+    new_tid = (int *)arg[2];
+    tls = (void *)arg[3];
+
+    if ((flags & CLONE_PARENT_SETTID) == CLONE_PARENT_SETTID)
+    {
+        if (!lwp_user_accessable(new_tid, sizeof(int)))
+        {
+            rt_set_errno(EINVAL);
+            return -1;
+        }
+    }
+
+    self = rt_thread_self();
+    lwp = self->lwp;
+    lwp_ref_inc(lwp);
+    if (!user_stack)
+    {
+        rt_set_errno(EINVAL);
+        goto fail;
+    }
+    if ((tid = lwp_tid_get()) == -1)
+    {
+        rt_set_errno(ENOMEM);
+        goto fail;
+    }
+    thread = rt_thread_create((const char*)"pthread",
+            RT_NULL,
+            RT_NULL,
+            ALLOC_KERNEL_STACK_SIZE,
+            self->init_priority,
+            self->init_tick);
+    if (!thread)
+    {
+        goto fail;
+    }
+
+    thread->cleanup = lwp_cleanup;
+    thread->user_entry = RT_NULL;
+    thread->user_stack = RT_NULL;
+    thread->user_stack_size = 0;
+    thread->lwp = (void*)lwp;
+    thread->tid = tid;
+
+    if ((flags & CLONE_SETTLS) == CLONE_SETTLS)
+    {
+        thread->thread_idr = tls;
+    }
+    if ((flags & CLONE_PARENT_SETTID) == CLONE_PARENT_SETTID)
+    {
+        *new_tid = (int)(tid);
+    }
+    if ((flags & CLONE_CHILD_CLEARTID) == CLONE_CHILD_CLEARTID)
+    {
+        thread->clear_child_tid = (int*)arg[4];
+    }
+
+    level = rt_hw_interrupt_disable();
+    rt_list_insert_after(&lwp->t_grp, &thread->sibling);
+    rt_hw_interrupt_enable(level);
+
+    /* copy origin stack */
+    rt_memcpy(thread->stack_addr, self->stack_addr, ALLOC_KERNEL_STACK_SIZE);
+    lwp_tid_set_thread(tid, thread);
+    tid = lwp_set_thread_context((void*)((char*)thread->stack_addr + ALLOC_KERNEL_STACK_SIZE),
+            (void*)((char*)self->stack_addr + ALLOC_KERNEL_STACK_SIZE), user_stack, &thread->sp, tid);
+    if (tid)
+    {
+        rt_thread_startup(thread);
+    }
+    return (long)tid;
+
+fail:
+    lwp_tid_put(tid);
+    if (lwp)
+    {
+        lwp_ref_dec(lwp);
+    }
+    return -1;
 }
 
 rt_err_t sys_thread_delete(rt_thread_t thread)
@@ -2206,7 +2365,10 @@ int sys_set_thread_area(void *p)
 
 long sys_set_tid_address(int *tidptr)
 {
-    return 0;
+    rt_thread_t thread = rt_thread_self();
+
+    thread->clear_child_tid = tidptr;
+    return thread->tid;
 }
 
 int sys_access(const char *filename, int mode)
@@ -2400,47 +2562,47 @@ const static void* func_table[] =
     SYSCALL_USPACE(sys_mmap2),
     SYSCALL_USPACE(sys_munmap),
 
-    SYSCALL_USPACE(sys_shmget),
+    SYSCALL_USPACE(sys_shmget), /* 55 */
     SYSCALL_USPACE(sys_shmrm),
     SYSCALL_USPACE(sys_shmat),
     SYSCALL_USPACE(sys_shmdt),
 
     (void *)sys_device_init,
-    (void *)sys_device_register,
+    (void *)sys_device_register, /* 60 */
     (void *)sys_device_control,
     (void *)sys_device_find,
     (void *)sys_device_open,
     (void *)sys_device_close,
-    (void *)sys_device_read,
+    (void *)sys_device_read,    /* 65 */
     (void *)sys_device_write,
 
     (void *)sys_stat,
     (void *)sys_thread_find,
 
     SYSCALL_NET(sys_accept),
-    SYSCALL_NET(sys_bind),
+    SYSCALL_NET(sys_bind),      /* 70 */
     SYSCALL_NET(sys_shutdown),
     SYSCALL_NET(sys_getpeername),
     SYSCALL_NET(sys_getsockname),
     SYSCALL_NET(sys_getsockopt),
-    SYSCALL_NET(sys_setsockopt),
+    SYSCALL_NET(sys_setsockopt), /* 75 */
     SYSCALL_NET(sys_connect),
     SYSCALL_NET(sys_listen),
     SYSCALL_NET(sys_recv),
     SYSCALL_NET(sys_recvfrom),
-    SYSCALL_NET(sys_send),
+    SYSCALL_NET(sys_send),      /* 80 */
     SYSCALL_NET(sys_sendto),
     SYSCALL_NET(sys_socket),
 
     SYSCALL_NET(sys_closesocket),
     SYSCALL_NET(sys_getaddrinfo),
-    SYSCALL_NET(sys_gethostbyname2_r),
+    SYSCALL_NET(sys_gethostbyname2_r), /* 85 */
 
     (void *)sys_notimpl,    //(void *)network,
     (void *)sys_notimpl,    //(void *)network,
     (void *)sys_notimpl,    //(void *)network,
     (void *)sys_notimpl,    //(void *)network,
-    (void *)sys_notimpl,    //(void *)network,
+    (void *)sys_notimpl,    //(void *)network, /* 90 */
     (void *)sys_notimpl,    //(void *)network,
     (void *)sys_notimpl,    //(void *)network,
     (void *)sys_notimpl,    //(void *)network,
@@ -2451,44 +2613,45 @@ const static void* func_table[] =
     (void *)sys_notimpl,
 #endif
 
-    (void *)sys_notimpl,    //(void *)sys_hw_interrupt_disable,
+    (void *)sys_notimpl,    //(void *)sys_hw_interrupt_disable, /* 95 */
     (void *)sys_notimpl,    //(void *)sys_hw_interrupt_enable,
 
     (void *)sys_tick_get,
     (void *)sys_exit_group,
 
     (void *)sys_notimpl,    //(void *)rt_delayed_work_init,
-    (void *)sys_notimpl,    //(void *)rt_work_submit,
+    (void *)sys_notimpl,    //(void *)rt_work_submit,           /* 100 */
     (void *)sys_notimpl,    //(void *)rt_wqueue_wakeup,
     (void *)sys_thread_mdelay,
-    (void*)sys_sigaction,
-    (void*)sys_sigprocmask,
-    (void*)sys_thread_kill,
-    (void*)sys_thread_sighandler_set,
-    (void*)sys_thread_sigprocmask,
-    (void*)sys_notimpl,
-    (void*)sys_notimpl,
-    (void*)sys_waitpid,
+    (void *)sys_sigaction,
+    (void *)sys_sigprocmask,
+    (void *)sys_thread_kill,      /* 105 */
+    (void *)sys_thread_sighandler_set,
+    (void *)sys_thread_sigprocmask,
+    (void *)sys_notimpl,
+    (void *)sys_notimpl,
+    (void *)sys_waitpid,          /* 110 */
 
     (void *)sys_timer_create,
     (void *)sys_timer_delete,
     (void *)sys_timer_start,
     (void *)sys_timer_stop,
-    (void *)sys_timer_control,
+    (void *)sys_timer_control,  /* 115 */
     (void *)sys_getcwd,
     (void *)sys_chdir,
     (void *)sys_unlink,
     (void *)sys_mkdir,
-    (void *)sys_rmdir,
+    (void *)sys_rmdir,          /* 120 */
     (void *)sys_getdents,
     (void *)sys_get_errno,
     (void *)sys_set_thread_area,
     (void *)sys_set_tid_address,
-    (void *)sys_access,
+    (void *)sys_access,         /* 125 */
     (void *)sys_pipe,
     (void *)sys_clock_settime,
     (void *)sys_clock_gettime,
     (void *)sys_clock_getres,
+    (void *)sys_clone,           /* 130 */
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
