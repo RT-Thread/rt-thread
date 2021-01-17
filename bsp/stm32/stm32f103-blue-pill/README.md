@@ -218,7 +218,7 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 Enable USB device.
 
-![putty](figures/usb_device1.png)
+![usb_device1](figures/usb_device1.png)
 
 
 
@@ -226,7 +226,7 @@ Enable USB device.
 
 Enable USB Device Driver and enable to use device as CDC device.
 
-![putty](figures/usb_device2.png)
+![usb_device2](figures/usb_device2.png)
 
 
 
@@ -234,7 +234,7 @@ Enable USB Device Driver and enable to use device as CDC device.
 
 Select VC (virtual console) software package.
 
-![putty](figures/vconsole.png)
+![vconsole](figures/vconsole.png)
 
 
 
@@ -247,7 +247,7 @@ rt_device_t dev = rt_device_find("vcom");
 vconsole_switch(dev);
 ```
 
-![putty](figures/usb_code.png)
+![usb_code](figures/usb_code.png)
 
 
 
