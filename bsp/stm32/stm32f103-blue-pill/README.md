@@ -2,6 +2,8 @@
 
  [[中文]](README_zh.md)
 
+[TOC]
+
 This document records the introduction of the BSP (board support package) provided by the RT-Thread development team for the STM32F103C8 Blue Pill development board.
 
 The document is covered in four parts:
@@ -13,9 +15,11 @@ The document is covered in four parts:
 
 By reading the ***Quickly Get Started*** section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
+Video tutorial: https://www.youtube.com/watch?v=0PwBBYXQ08g
 
 
-## MCU Resources
+
+## 1 MCU Resources
 
 The STM32F103xx medium-density performance line family incorporates the high-performance ARM®Cortex®-M3 32-bit RISC core operating at a 72 MHz frequency, high-speed embedded memories (Flash memory up to 128 Kbytes and SRAM up to 20 Kbytes), and an extensive range of enhanced I/Os and peripherals connected to two APB buses. All devices offer two 12-bit ADCs, three general purpose 16-bit timers plus one PWM timer, as well as standard and advanced communication interfaces: up to two I2Cs and SPIs, three USARTs, an USB and a CAN.
 
@@ -70,7 +74,7 @@ KEY FEATURES
 
 
 
-## Onboard Resources
+## 2 Onboard Resources
 
 - MCU：STM32F103C8T6 @72MHz, 64KB FLASH , 20KB RAM
 
@@ -87,11 +91,11 @@ KEY FEATURES
 
 
 
-## Quickly Get Started
+## 3 Quickly Get Started
 
 This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-### Use ST-LINK Debugger to connect the Blue Pill Board
+### 3.1 Use ST-LINK Debugger to connect the Blue Pill Board
 
 ST-LINK driver: 
 
@@ -112,7 +116,7 @@ ST-LINK driver:
 
 
 
-### Use FTDI adapter(USB to UART) to connect the Blue Pill Board's PA9(Tx) and PA10(Rx) pins
+### 3.2 Use FTDI adapter(USB to UART) to connect the Blue Pill Board's PA9(Tx) and PA10(Rx) pins
 
 FTDI adapter driver:
 
@@ -134,7 +138,7 @@ You can use other USB to UART adapters to replace FTDI adapter.
 
 
 
-### Make sure Jumper Position (Both 0 Position)
+### 3.3 Make sure Jumper Position (Both 0 Position)
 
 | BOOTx | High / Low |
 | :---: | :--------: |
@@ -145,7 +149,7 @@ You can use other USB to UART adapters to replace FTDI adapter.
 
 
 
-### Compile and Download
+### 3.4 Compile and Download
 
 - Double-click the `project.uvprojx` file to open the MDK-Keil5 project  (**NOT** `template.uvprojx` file)
 - Click the “option for target” button
@@ -161,7 +165,7 @@ You can also follow this video to configurate *Blue Pill BSP* Keil5 project:
 
 
 
-### Running Results
+### 3.5 Running Results
 
 After the program is successfully downloaded, the system runs automatically. Observe the running results of the LED on the development board, and you will see the LED is flashing periodically.
 
@@ -177,7 +181,7 @@ msh >
 
 
 
-### Terminal tool - PuTTy 
+### 3.6 Terminal tool - PuTTy 
 
 If you have no terminal tool software available, you can download *PuTTy*:
 
@@ -195,7 +199,7 @@ These two videos will show you how to use PuTTy:
 
 
 
-## **Advanced Features**
+## 4 **Advanced Features**
 
 This BSP only enables GPIO and USART1 by default. If you need more advanced features such as SPI, ADC, or to add software packages, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env), as follows:
 
@@ -208,7 +212,52 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 
 
-## Read more
+### 4.1 How to use USB virtual com as a console device
+
+#### 4.1.1 Step 1
+
+Enable USB device.
+
+![putty](figures/usb_device1.png)
+
+
+
+#### 4.1.2 Step 2
+
+Enable USB Device Driver and enable to use device as CDC device.
+
+![putty](figures/usb_device2.png)
+
+
+
+#### 4.1.3 Step 3
+
+Select VC (virtual console) software package.
+
+![putty](figures/vconsole.png)
+
+
+
+#### 4.1.4 Step 4
+
+Add these codes in main function which is located in 'Applications' folder, and don't forget to include `vconsole.h`.
+
+```c
+rt_device_t dev = rt_device_find("vcom");
+vconsole_switch(dev);
+```
+
+![putty](figures/usb_code.png)
+
+
+
+#### 4.1.5 Step 5
+
+Download the new program to your blue pill board. Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1) device in your computer. Then, you can use the USB instead of the UART-USB adapter as a console and send commands through USB cable. If you reset or reboot the blue pill board, you'll still need to re-plug the USB cable. 
+
+
+
+## 5 Read more
 
 - [[STM32 Blue Pill Board Schematic]](https://stm32duinoforum.com/forum/images/c/c1/wiki_subdomain/Vcc-gnd.com-STM32F103C8-schematic.pdf)
 - [[STM32 Blue Pill vs Black Pill Microcontroller Boards]](https://www.youtube.com/watch?v=QCdnO43RBK4&t=875s)
@@ -219,7 +268,7 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 
 
-## Maintained By
+## 6 Maintained By
 
 Meco Man @ RT-Thread Community
 
