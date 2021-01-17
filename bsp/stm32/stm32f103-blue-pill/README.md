@@ -253,7 +253,7 @@ vconsole_switch(dev);
 
 #### 4.1.5 Step 5
 
-Download the new program to your blue pill board. Re-plug the USB cable and you will find that a new serial (virtual com, 115200) device is found in your computer. Now, you can get rid of the UART-USB adapter by using USB as a console and send commands through USB cable. If you reset or reboot the blue pill board, you still need to re-plug the USB cable. 
+Download the new program to your blue pill board. Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1) device in your computer. Then, you can use the USB instead of the UART-USB adapter as a console and send commands through USB cable. If you reset or reboot the blue pill board, you'll still need to re-plug the USB cable. 
 
 
 
