@@ -312,8 +312,19 @@ struct pbuf *rt_cme_eth_rx(rt_device_t dev)
     ETH_RX_DESC *desc;
     uint32_t framelength;
     struct rt_cme_eth * cme_eth = (struct rt_cme_eth *)dev;
+    rt_err_t result;
 
-    rt_mutex_take(&cme_eth->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&cme_eth->lock, RT_WAITING_FOREVER);
+    if (result == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        goto _exit;
+    }
+    else if (result == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        goto _exit;
+    }
 
     desc = ETH_AcquireFreeRxDesc();
     if(desc == RT_NULL)

@@ -61,11 +61,12 @@ if GetDepend(['BSP_USING_CAN']):
 if GetDepend(['BSP_USING_ETH']):
     src += ['MIMXRT1052/drivers/fsl_enet.c']
 
-if GetDepend(['RT_USING_SDIO']):
-    src += ['MIMXRT1052/drivers/']
-
+if GetDepend(['BSP_USING_SDIO']):
+    src += ['MIMXRT1052/drivers/fsl_usdhc.c']
+    
 if GetDepend(['RT_USING_AUDIO']):
     src += ['MIMXRT1052/drivers/fsl_sai.c']
+    src += ['MIMXRT1052/drivers/fsl_sai_edma.c']
 
 if GetDepend(['BSP_USING_LTDC']):
     src += ['MIMXRT1052/drivers/']
@@ -75,6 +76,7 @@ if GetDepend(['BSP_USING_DMA']):
     src += ['MIMXRT1052/drivers/fsl_edma.c']
     src += ['MIMXRT1052/drivers/fsl_lpuart_edma.c']
     src += ['MIMXRT1052/drivers/fsl_lpspi_edma.c']
+    
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
