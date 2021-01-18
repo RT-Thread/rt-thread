@@ -378,6 +378,8 @@ RT_WEAK rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     }
 #endif /* ULOG_USING_COLOR */
 
+    log_buf[log_len] = '\0';
+
     return log_len;
 }
 
