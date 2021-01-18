@@ -218,7 +218,7 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
     if 'dist_handle' in Env:
         print("=> start dist handle")
         dist_handle = Env['dist_handle']
-        dist_handle(BSP_ROOT)
+        dist_handle(BSP_ROOT, dist_dir)
 
     # get all source files from program
     for item in program:
