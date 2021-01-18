@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-10-30     CDT          first version
+ * 2021-01-18     CDT          modify i2c gpio init
  */
 
 
@@ -81,8 +82,8 @@ static void hc32_i2c_gpio_init(struct hc32_i2c *i2c)
 {
     struct hc32_soft_i2c_config* cfg = (struct hc32_soft_i2c_config*)i2c->ops.data;
 
-    rt_pin_mode(cfg->scl_pin, PIN_MODE_OUTPUT);
-    rt_pin_mode(cfg->sda_pin, PIN_MODE_OUTPUT);
+    rt_pin_mode(cfg->scl_pin, PIN_MODE_OUTPUT_OD);
+    rt_pin_mode(cfg->sda_pin, PIN_MODE_OUTPUT_OD);
 
     rt_pin_write(cfg->scl_pin, PIN_HIGH);
     rt_pin_write(cfg->sda_pin, PIN_HIGH);
@@ -97,8 +98,6 @@ static void hc32_i2c_gpio_init(struct hc32_i2c *i2c)
 static void hc32_set_sda(void *data, rt_int32_t state)
 {
     struct hc32_soft_i2c_config* cfg = (struct hc32_soft_i2c_config*)data;
-
-    rt_pin_mode(cfg->sda_pin, PIN_MODE_OUTPUT);
 
     if (state)
         rt_pin_write(cfg->sda_pin, PIN_HIGH);
@@ -116,8 +115,6 @@ static void hc32_set_scl(void *data, rt_int32_t state)
 {
     struct hc32_soft_i2c_config* cfg = (struct hc32_soft_i2c_config*)data;
 
-    rt_pin_mode(cfg->scl_pin, PIN_MODE_OUTPUT);
-
     if (state)
         rt_pin_write(cfg->scl_pin, PIN_HIGH);
     else
@@ -133,8 +130,6 @@ static rt_int32_t hc32_get_sda(void *data)
 {
     struct hc32_soft_i2c_config* cfg = (struct hc32_soft_i2c_config*)data;
 
-    rt_pin_mode(cfg->sda_pin, PIN_MODE_INPUT);
-
     return rt_pin_read(cfg->sda_pin);
 }
 
@@ -146,8 +141,6 @@ static rt_int32_t hc32_get_sda(void *data)
 static rt_int32_t hc32_get_scl(void *data)
 {
     struct hc32_soft_i2c_config* cfg = (struct hc32_soft_i2c_config*)data;
-
-    rt_pin_mode(cfg->scl_pin, PIN_MODE_INPUT);
 
     return rt_pin_read(cfg->scl_pin);
 }
