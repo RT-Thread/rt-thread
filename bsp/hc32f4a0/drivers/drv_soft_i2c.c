@@ -9,7 +9,6 @@
  * 2021-01-18     CDT          modify i2c gpio init
  */
 
-
 /*******************************************************************************
  * Include files
  ******************************************************************************/
@@ -66,9 +65,7 @@ static const struct hc32_soft_i2c_config soft_i2c_config[] =
 #endif
 };
 
-
 static struct hc32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
-
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -202,7 +199,6 @@ int hc32_hw_i2c_init(void)
     return RT_EOK;
 }
 INIT_BOARD_EXPORT(hc32_hw_i2c_init);
-
 
 #endif /* RT_USING_I2C */
 

@@ -9,7 +9,6 @@
  * 2021-01-18     CDT          MOdify SRAM_SIZE
  */
 
-
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
