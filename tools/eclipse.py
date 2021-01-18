@@ -13,7 +13,7 @@ import glob
 import xml.etree.ElementTree as etree
 from xml.etree.ElementTree import SubElement
 
-import studio
+import rt_studio
 from building import *
 from utils import *
 from utils import _make_path_relative
@@ -511,13 +511,13 @@ def TargetEclipse(env, reset=False, prj_name=None):
 
     # generate cproject file
     if not os.path.exists('.cproject'):
-        if studio.gen_cproject_file(os.path.abspath(".cproject")) is False:
+        if rt_studio.gen_cproject_file(os.path.abspath(".cproject")) is False:
             print('Fail!')
             return
 
     # generate project file
     if not os.path.exists('.project'):
-        if studio.gen_project_file(os.path.abspath(".project")) is False:
+        if rt_studio.gen_project_file(os.path.abspath(".project")) is False:
             print('Fail!')
             return
 
@@ -527,20 +527,20 @@ def TargetEclipse(env, reset=False, prj_name=None):
             file = os.path.abspath("template.uvprojx")
         else:
             file = os.path.abspath("template.uvproj")
-        chip_name = studio.get_mcu_info(file)
-        if studio.gen_projcfg_ini_file(chip_name, prj_name, os.path.abspath(".settings/projcfg.ini")) is False:
+        chip_name = rt_studio.get_mcu_info(file)
+        if rt_studio.gen_projcfg_ini_file(chip_name, prj_name, os.path.abspath(".settings/projcfg.ini")) is False:
             print('Fail!')
             return
 
     # enable lowwer .s file compiled in eclipse cdt
     if not os.path.exists('.settings/org.eclipse.core.runtime.prefs'):
-        if studio.gen_org_eclipse_core_runtime_prefs(
+        if rt_studio.gen_org_eclipse_core_runtime_prefs(
                 os.path.abspath(".settings/org.eclipse.core.runtime.prefs")) is False:
             print('Fail!')
             return
 
     # add clean2 target to fix issues when files too many
-    if studio.gen_makefile_targets(os.path.abspath("makefile.targets")) is False:
+    if rt_studio.gen_makefile_targets(os.path.abspath("makefile.targets")) is False:
         print('Fail!')
         return
 
