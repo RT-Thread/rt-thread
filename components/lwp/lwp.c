@@ -821,6 +821,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
     char *argv_last = argv[argc - 1];
     int bg = 0;
     struct process_aux *aux;
+    int tid = 0;
 
     if (filename == RT_NULL)
         return -RT_ERROR;
@@ -834,9 +835,15 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
     }
     LOG_D("lwp malloc : %p, size: %d!", lwp, sizeof(struct rt_lwp));
 
+    if ((tid = lwp_tid_get()) == 0)
+    {
+        lwp_ref_dec(lwp);
+        return -ENOMEM;
+    }
 #ifdef RT_USING_USERSPACE
     if (lwp_user_space_init(lwp) != 0)
     {
+        lwp_tid_put(tid);
         lwp_ref_dec(lwp);
         return -ENOMEM;
     }
@@ -850,6 +857,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
 
     if ((aux = lwp_argscopy(lwp, argc, argv, envp)) == RT_NULL)
     {
+        lwp_tid_put(tid);
         lwp_ref_dec(lwp);
         return -ENOMEM;
     }
@@ -857,7 +865,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
     result = lwp_load(filename, lwp, RT_NULL, 0, aux);
     if (result == RT_EOK)
     {
-        rt_thread_t tid;
+        rt_thread_t thread = RT_NULL;
 
         lwp_copy_stdio_fdt(lwp);
 
@@ -865,14 +873,15 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
         thread_name = strrchr(filename, '/');
         thread_name = thread_name ? thread_name + 1 : filename;
 
-        tid = rt_thread_create(thread_name, lwp_thread_entry, RT_NULL,
+        thread = rt_thread_create(thread_name, lwp_thread_entry, RT_NULL,
                                1024 * 4, 25, 200);
-        if (tid != RT_NULL)
+        if (thread != RT_NULL)
         {
             struct rt_lwp *lwp_self;
 
-            tid->tid = 0;
-            LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_uint32_t)tid->stack_addr, (rt_uint32_t)tid->stack_addr + tid->stack_size);
+            thread->tid = tid;
+            lwp_tid_set_thread(tid, thread);
+            LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_uint32_t)thread->stack_addr, (rt_uint32_t)thread->stack_addr + thread->stack_size);
             level = rt_hw_interrupt_disable();
             lwp_self = (struct rt_lwp *)rt_thread_self()->lwp;
             if (lwp_self)
@@ -882,8 +891,8 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
                 lwp_self->first_child = lwp;
                 lwp->parent = lwp_self;
             }
-            tid->lwp = lwp;
-            rt_list_insert_after(&lwp->t_grp, &tid->sibling);
+            thread->lwp = lwp;
+            rt_list_insert_after(&lwp->t_grp, &thread->sibling);
 
 #ifdef RT_USING_GDBSERVER
             if (debug)
@@ -898,11 +907,12 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
             }
             rt_hw_interrupt_enable(level);
 
-            rt_thread_startup(tid);
+            rt_thread_startup(thread);
             return lwp_to_pid(lwp);
         }
     }
 
+    lwp_tid_put(tid);
     lwp_ref_dec(lwp);
 
     return -RT_ERROR;

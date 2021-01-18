@@ -368,6 +368,7 @@ void sys_exit(int value)
 
         tid->clear_child_tid = RT_NULL;
         lwp_put_to_user(clear_child_tid, &t, sizeof t);
+        sys_futex(tid->clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
     }
     main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
     if (main_thread == tid)
@@ -1142,10 +1143,11 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size);
 
 rt_thread_t sys_thread_create(void *arg[])
 {
-    rt_base_t level;
+    rt_base_t level = 0;
     void *user_stack = 0;
     struct rt_lwp *lwp = 0;
-    rt_thread_t thread;
+    rt_thread_t thread = RT_NULL;
+    int tid = 0;
 
     lwp = rt_thread_self()->lwp;
     lwp_ref_inc(lwp);
@@ -1157,6 +1159,11 @@ rt_thread_t sys_thread_create(void *arg[])
     if (!user_stack)
     {
         rt_set_errno(EINVAL);
+        goto fail;
+    }
+    if ((tid = lwp_tid_get()) == 0)
+    {
+        rt_set_errno(ENOMEM);
         goto fail;
     }
     thread = rt_thread_create((const char*)arg[0],
@@ -1175,7 +1182,8 @@ rt_thread_t sys_thread_create(void *arg[])
     thread->user_stack = (void *)user_stack;
     thread->user_stack_size = (uint32_t)arg[3];
     thread->lwp = (void*)lwp;
-    thread->tid = 0;
+    thread->tid = tid;
+    lwp_tid_set_thread(tid, thread);
 
     level = rt_hw_interrupt_disable();
     rt_list_insert_after(&lwp->t_grp, &thread->sibling);
@@ -1184,6 +1192,7 @@ rt_thread_t sys_thread_create(void *arg[])
     return thread;
 
 fail:
+    lwp_tid_put(tid);
 #ifndef RT_USING_USERSPACE
     if (user_stack)
     {
@@ -1233,11 +1242,11 @@ fail:
 int lwp_set_thread_context(void *new_thread_stack, void *origin_thread_stack, void *user_stack, void **thread_sp, int tid);
 long sys_clone(void *arg[])
 {
-    rt_base_t level;
+    rt_base_t level = 0;
     struct rt_lwp *lwp = 0;
     rt_thread_t thread = RT_NULL;
     rt_thread_t self = RT_NULL;
-    int tid = -1;
+    int tid = 0;
 
     unsigned long flags = 0;
     void *user_stack = RT_NULL;
@@ -1285,7 +1294,7 @@ long sys_clone(void *arg[])
         rt_set_errno(EINVAL);
         goto fail;
     }
-    if ((tid = lwp_tid_get()) == -1)
+    if ((tid = lwp_tid_get()) == 0)
     {
         rt_set_errno(ENOMEM);
         goto fail;
@@ -2363,7 +2372,7 @@ int sys_set_thread_area(void *p)
     return 0;
 }
 
-long sys_set_tid_address(int *tidptr)
+int sys_set_tid_address(int *tidptr)
 {
     rt_thread_t thread = rt_thread_self();
 
@@ -2503,6 +2512,8 @@ int sys_clock_getres(clockid_t clk, struct timespec *ts)
 #endif
     return 0;
 }
+
+int sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
 
 const static void* func_table[] =
 {
@@ -2652,6 +2663,7 @@ const static void* func_table[] =
     (void *)sys_clock_gettime,
     (void *)sys_clock_getres,
     (void *)sys_clone,           /* 130 */
+    (void *)sys_futex,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
