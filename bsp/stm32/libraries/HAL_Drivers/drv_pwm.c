@@ -9,8 +9,10 @@
  */
 
 #include <board.h>
+
 #ifdef RT_USING_PWM
 #include "drv_config.h"
+#include <drivers/rt_drv_pwm.h>
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.pwm"
@@ -167,13 +169,27 @@ static rt_err_t drv_pwm_enable(TIM_HandleTypeDef *htim, struct rt_pwm_configurat
     /* Converts the channel number to the channel number of Hal library */
     rt_uint32_t channel = 0x04 * (configuration->channel - 1);
 
-    if (!enable)
+    if (!configuration->complementary)
     {
-        HAL_TIM_PWM_Stop(htim, channel);
+        if (!enable)
+        {
+            HAL_TIM_PWM_Stop(htim, channel);
+        }
+        else
+        {
+            HAL_TIM_PWM_Start(htim, channel);
+        }
     }
-    else
+    else if (configuration->complementary)
     {
-        HAL_TIM_PWM_Start(htim, channel);
+        if (!enable)
+        {
+            HAL_TIMEx_PWMN_Stop(htim, channel);
+        }
+        else
+        {
+            HAL_TIMEx_PWMN_Start(htim, channel);
+        }
     }
 
     return RT_EOK;
@@ -187,21 +203,23 @@ static rt_err_t drv_pwm_get(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
-    if (htim->Instance == TIM4) 
+    if (htim->Instance == TIM4)
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
     if (0)
 #endif
     {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
+#else
+        tim_clock = HAL_RCC_GetPCLK2Freq();
 #endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
@@ -234,7 +252,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     if (htim->Instance == TIM9 || htim->Instance == TIM10 || htim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7)
     if (htim->Instance == TIM15 || htim->Instance == TIM16 || htim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32MP1)
     if (htim->Instance == TIM4)
@@ -244,11 +262,13 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
         tim_clock = HAL_RCC_GetPCLK2Freq() * 2;
+#else
+        tim_clock = HAL_RCC_GetPCLK2Freq();
 #endif
     }
     else
     {
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         tim_clock = HAL_RCC_GetPCLK1Freq();
 #else
         tim_clock = HAL_RCC_GetPCLK1Freq() * 2;
