@@ -1,3 +1,129 @@
+# RT-Thread v3.1.5 Change Log
+
+Change log since v3.1.4
+
+## Kernel
+
+* Add `__RTTHREAD__` global macro definition
+* Add user heap options
+* Fix bug of rt_memheap_detach
+* Add rt_memory_info() for memheap.c
+* Add rt_object_get_length/rt_object_get_pointers APIs
+* Fix double release for thread
+* Fix the iterator failure for softtimer list timeout check
+* Fix rt_timer_list_next_timeout multi-task safe
+* Add timer working status query function to software timer
+* Fix the software issue when the system timer thread is pending
+* Fix the timer/software timer handling issue if the timeout function starts/stops/deletes this timer.
+* Fix an issue with rt_timer_start being broken and destroying the timer list
+* Fix the bug that the linked list is still mounted when the single timer is not modified
+* Fix the delay_until issue
+* Use object_find to implement thread_find/device_find
+* The cleanup operation is executed before the current thread exits
+
+## Components
+
+* Change rt_data_queue_peak to rt_data_queue_peek.
+* Solve the issue that the do_pollfd function processing the underlying network device returns error -1
+* Fix the issue that when the network card device calls to close dhcp, the bottom layer no need to call the dhcp_stop function to close dhcp
+* Modify the spelling error of the macro definition, modify the printing error when printing the IMEI number
+* Fix the issue that the server closed the connection when web socket requests the data that comes back from the server, and the socket status is incorrectly judged at that point
+* Fix the issue of incorrect sal_getaddrinfo release when sal socket supports multiple network cards
+* Update AT socket
+  * Support alloc socket dynamically with at device
+  * Update AT_SW_VERSION and adjust at_socket_ops
+  * Adjust where the AT socket callback function
+  * Fix at_client, avoid creating the same client repeatedly and prevent working exceptions and memory leaks.
+  * Fix the bug that rx_notice out of sync when the data is received after last rt_device_read() is zero
+* [posix] Implement usleep function
+* [dlmodule] Fix crash when dlmodule exits
+* Add priority & stack_size param parsing for dlmodule
+* Change the header file included in some libc files from <rtthread.h> to <rtconfig.h> to narrow the scope of inclusion to prevent recursive compilation
+* [jffs2] error check of rt_event_recv()
+* Add rt_data_queue_deinit and fix bug of dataqueue
+* Change log in device driver framework
+  * [pin] Add rt_pin_get to pin frame
+  * [audio] Fix compile warning, undefine var, and fixed re-include of audio
+  * [serial] Fix the crash caused when the serial port receiving buffer is full and ULOG_USING_ISR_LOG is not turned on
+  * [wlan] Add raw frame send interface and Management frame filter interface
+  * [Sensor] Add user-commands range limitation
+  * [spi] Fix "response+1" causing hard fault of unaligned access to SPI memory of STM32 HAL library
+  * [hwtimer] When getting the timer count, prevent overflow update due to the interruption
+  * [dirver/i2c] i2c driver supports bus lock, STOP control
+  * [usb] Fix bug in device descriptor that MAC OS enumeration failed
+  * Fix the bug that USB cannot recognize composite device normally
+  * Fix USB host core bugs
+    * Limit >4 USB ports hubs
+    * Double free intf
+    * dname buffer size is too small
+    * Reset child pointer after detaching instance
+
+## BSP and CPU porting
+
+* Add license info and code cleanup for vexpress-a9 BSP
+* [qemu] Fix spelling mistakes of code in drv_pl041.c
+* [allwinner_tina]Fix spi driver bug
+* Optimize BSP dist handle process
+* [nrf5x] Add the BSP of nrf5x, which support UART, SPI, PWM, ADC, i2c drivers and rtc device driver
+* [nrfx] Add the on-chip flash for nrf5x
+* Update BSP for mini2440
+* Add rt_hw_us_delay for W60x
+* Add more STM32 BSP based on new STM32 BSP framework:
+  * stm32f103-blue-pill
+  * stm32f103-onenet-nbiot
+  * stm32f407-st-discovery
+  * stm32f410-st-nucleo
+  * stm32f411-atk-nano
+  * stm32f411-weact-MiniF4
+  * stm32f413-st-nucleo
+  * stm32g070-st-nucleo
+  * stm32h747-st-discovery
+  * stm32l010-st-nucleo
+  * stm32l412-st-nucleo
+  * stm32l431-BearPi
+  * stm32l433-st-nucleo
+  * stm32l496-st-nucleo
+  * stm32mp157a-st-discovery
+  * stm32mp157a-st-ev1
+  * stm32wb55-st-nucleo
+* New STM32 BSP framework:
+  * Fix bug that caused system crash by changing the run_mode in low power mode
+  * drv_flash_f7.c supports single bank mode
+  * Add stm32f103-atk-warshipv3 sram driver
+  * Update void HAL_Delay(__IO uint32_t Delay)
+  * Add PWM9_CONFIG default configuration and TIM3_CONFIG default configuration
+  * [stm32f103-atk-warshipv3] Add sdcard driver
+  * Add English readme for stm32
+  * Add dac and can driver for stm32l4 and stm32f4
+  * openamp driver and add rs485 driver for stm32mp157a
+  * Optimize the pin-index algorithm
+  * Add C++ Support
+  * Fix the clock configuration issue of STM32 hardware timer
+  * Adjust the interrupt priority configuration of some peripherals of the STM32 series BSP
+  * Fix stm32 f1 series rtc bug
+  * Support SPI/ADC/TIME on-chip peripheral driver
+  * [stm32h743-atk-apollo]Support stm32h7 uart dma
+  * Add stm32h743-atk-apollo support for pcf8574 and uart2
+  * Support stm32h743-atk-apollo pcf8574 and uart2(485)
+  * Update bsp/stm32/stm32h743-st-nucleo
+  * Fix ADC channel Configuration bug for SMT32F0/L0/H7
+  * Add support for onboard AP6181
+  * Add pm support by cubemx tool for stm32l4
+  * Add stm32f407-atk-explorer sram driver
+  * Fix PWM timer init about pwm
+  * [stm32f103-atk-warshipv3]Add sdcard driver
+  * Add stm32f103-atk-warshipv3 sram driver
+
+## Tools
+
+* Update tools/building.py and add `tackanalysis` option 
+* Improve the logic of generating `rtconfig.h` files in scons with command `scons --menuconfig`
+* Add `get_file_md5` function for meunconfig.py
+* keep user's lib configuration while running --target=eclipse
+* Optimize project group sort by name
+
+
+
 # RT-Thread v3.1.4 Change Log
 
 Change log since v3.1.3
