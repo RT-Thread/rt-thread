@@ -117,6 +117,9 @@ rt_inline rt_err_t rt_ipc_list_suspend(rt_list_t        *list,
                 rt_list_insert_before(list, &(thread->tlist));
         }
         break;
+
+    default:
+        break;  
     }
 
     return RT_EOK;
@@ -458,7 +461,17 @@ rt_err_t rt_sem_release(rt_sem_t sem)
         need_schedule = RT_TRUE;
     }
     else
-        sem->value ++; /* increase value */
+    {
+        if(sem->value < RT_SEM_VALUE_MAX)
+        {
+            sem->value ++; /* increase value */
+        }
+        else
+        {
+            rt_hw_interrupt_enable(temp); /* enable interrupt */
+            return -RT_EFULL; /* value overflowed */
+        }
+    }
 
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);
@@ -680,12 +693,22 @@ rt_err_t rt_mutex_take(rt_mutex_t mutex, rt_int32_t time)
 
     if (mutex->owner == thread)
     {
-        /* it's the same thread */
-        mutex->hold ++;
+        if(mutex->hold < RT_MUTEX_HOLD_MAX)
+        {
+            /* it's the same thread */
+            mutex->hold ++;
+        }
+        else
+        {
+            rt_hw_interrupt_enable(temp); /* enable interrupt */
+            return -RT_EFULL; /* value overflowed */
+        }
     }
     else
     {
+#ifdef RT_USING_SIGNALS
 __again:
+#endif /* end of RT_USING_SIGNALS */
         /* The value of mutex is 1 in initial status. Therefore, if the
          * value is great than 0, it indicates the mutex is avaible.
          */
@@ -697,7 +720,15 @@ __again:
             /* set mutex owner and original priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-            mutex->hold ++;
+            if(mutex->hold < RT_MUTEX_HOLD_MAX)
+            {
+                mutex->hold ++;
+            }
+            else
+            {
+                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                return -RT_EFULL; /* value overflowed */
+            }
         }
         else
         {
@@ -754,8 +785,10 @@ __again:
 
                 if (thread->error != RT_EOK)
                 {
+#ifdef RT_USING_SIGNALS
                     /* interrupt by signal, try it again */
                     if (thread->error == -RT_EINTR) goto __again;
+#endif /* end of RT_USING_SIGNALS */
 
                     /* return error */
                     return thread->error;
@@ -852,7 +885,15 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
             /* set new owner and priority */
             mutex->owner             = thread;
             mutex->original_priority = thread->current_priority;
-            mutex->hold ++;
+            if(mutex->hold < RT_MUTEX_HOLD_MAX)
+            {
+                mutex->hold ++;
+            }
+            else
+            {
+                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                return -RT_EFULL; /* value overflowed */
+            }
 
             /* resume thread */
             rt_ipc_list_resume(&(mutex->parent.suspend_thread));
@@ -861,9 +902,17 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         }
         else
         {
-            /* increase value */
-            mutex->value ++;
-
+            if(mutex->value < RT_MUTEX_VALUE_MAX)
+            {
+                /* increase value */
+                mutex->value ++;
+            }
+            else
+            {
+                rt_hw_interrupt_enable(temp); /* enable interrupt */
+                return -RT_EFULL; /* value overflowed */
+            }
+            
             /* clear owner */
             mutex->owner             = RT_NULL;
             mutex->original_priority = 0xff;
@@ -1080,6 +1129,13 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
                     status = RT_EOK;
                 }
             }
+            else
+            {
+                /* enable interrupt */
+                rt_hw_interrupt_enable(level);
+
+                return -RT_EINVAL;
+            }
 
             /* move node to the next */
             n = n->next;
@@ -1177,7 +1233,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
         /* set received event */
         if (recved)
             *recved = (event->set & set);
-
+            
+        /* fill thread event info */            
+        thread->event_set = (event->set & set);
+        thread->event_info = option;
+        
         /* received event */
         if (option & RT_EVENT_FLAG_CLEAR)
             event->set &= ~set;
@@ -1186,6 +1246,11 @@ rt_err_t rt_event_recv(rt_event_t   event,
     {
         /* no waiting */
         thread->error = -RT_ETIMEOUT;
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        return -RT_ETIMEOUT;
     }
     else
     {
@@ -1538,9 +1603,18 @@ rt_err_t rt_mb_send_wait(rt_mailbox_t mb,
     ++ mb->in_offset;
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
-    /* increase message entry */
-    mb->entry ++;
-
+    
+    if(mb->entry < RT_MB_ENTRY_MAX)
+    {
+        /* increase message entry */
+        mb->entry ++;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        return -RT_EFULL; /* value overflowed */
+    }
+    
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
@@ -1687,8 +1761,12 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
     ++ mb->out_offset;
     if (mb->out_offset >= mb->size)
         mb->out_offset = 0;
+
     /* decrease message entry */
-    mb->entry --;
+    if(mb->entry > 0)
+    {
+        mb->entry --;
+    }
 
     /* resume suspended thread */
     if (!rt_list_isempty(&(mb->suspend_sender_thread)))
@@ -2102,8 +2180,16 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     if (mq->msg_queue_head == RT_NULL)
         mq->msg_queue_head = msg;
 
-    /* increase message entry */
-    mq->entry ++;
+    if(mq->entry < RT_MQ_ENTRY_MAX)
+    {
+        /* increase message entry */
+        mq->entry ++;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        return -RT_EFULL; /* value overflowed */
+    }
 
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
@@ -2202,9 +2288,17 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     if (mq->msg_queue_tail == RT_NULL)
         mq->msg_queue_tail = msg;
 
-    /* increase message entry */
-    mq->entry ++;
-
+    if(mq->entry < RT_MQ_ENTRY_MAX)
+    {
+        /* increase message entry */
+        mq->entry ++;
+    }
+    else
+    {
+        rt_hw_interrupt_enable(temp); /* enable interrupt */
+        return -RT_EFULL; /* value overflowed */
+    }
+    
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
@@ -2346,7 +2440,10 @@ rt_err_t rt_mq_recv(rt_mq_t    mq,
         mq->msg_queue_tail = RT_NULL;
 
     /* decrease message entry */
-    mq->entry --;
+    if(mq->entry > 0)
+    {
+        mq->entry --;
+    }
 
     /* enable interrupt */
     rt_hw_interrupt_enable(temp);

@@ -12,6 +12,7 @@
  * 2010-05-17     swkyer       first version
  * 2010-09-04     bernard      move the beginning entry to 0x80200000
  * 2018-05-12     zhuangwei    use -Ttext
+ * 2019-12-04     Jiaxun Yang  Adapt new memory layout
  */
 
 OUTPUT_ARCH(mips)
@@ -20,13 +21,19 @@ GROUP(-lgcc -lc)
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x80000000 ;
-
     . = ALIGN(4);
     .text : 
     {
-		start = ABSOLUTE(.);
-		*(.start);
+	start = ABSOLUTE(.);
+	 *(.selfboot);
+	 *(.selfboot_data);
+	. = ALIGN(4);
+	__selfboot_end = .;
+	. = ALIGN(0x1000);
+	__ebase_entry = .;
+     	KEEP(*(.exc_vectors))
+     	__ebase_end = .;
+	 *(.start);
          *(.text)
          *(.text.*)
          *(.rodata)
@@ -73,6 +80,15 @@ SECTIONS
          
          *(.sdata)
          *(.sdata.*)
+    }
+    _edata = .;
+
+    .stack :
+    {
+        . = ALIGN(8);
+        _system_stack_start = .;
+        . = . + 0x400; /* 1kb system stack */
+        _system_stack = .;
     }
 
     .sbss : 

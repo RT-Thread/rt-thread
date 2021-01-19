@@ -333,7 +333,7 @@
               <MiscControls />
               <Define />
               <Undefine />
-              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\CoreSupport;Libraries\CMSIS\DeviceSupport;Libraries\SWM320_StdPeriph_Driver;..\..\libcpu\arm\cortex-m4;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;drivers;Libraries\CMSIS\CoreSupport;Libraries\CMSIS\DeviceSupport;Libraries\SWM320_StdPeriph_Driver;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,6 +388,13 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -667,21 +674,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CORTEX-M4</GroupName>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
-            </File>
-          </Files>
+          <GroupName>cpu</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -701,6 +694,20 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>
@@ -875,16 +882,6 @@
               <FileName>finsh_token.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\finsh_token.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libc</GroupName>
-          <Files>
-            <File>
-              <FileName>time.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\time.c</FilePath>
             </File>
           </Files>
         </Group>

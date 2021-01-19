@@ -36,6 +36,9 @@ if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
 if GetDepend(['RT_USING_ADC']):
     src += Glob('drv_adc.c')
 
+if GetDepend(['RT_USING_DAC']):
+    src += Glob('drv_dac.c')
+
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
 
@@ -55,6 +58,9 @@ if GetDepend('BSP_USING_LCD_MIPI'):
 if GetDepend('BSP_USING_ONCHIP_RTC'):
     src += ['drv_rtc.c']
 
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32G0']):
+    src += ['drv_flash/drv_flash_g0.c']
+
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F0']):
     src += ['drv_flash/drv_flash_f0.c']
 
@@ -72,10 +78,16 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
     src += ['drv_flash/drv_flash_l4.c']
-	
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32H7']):
+    src += ['drv_flash/drv_flash_h7.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32WB']):
+    src += ['drv_flash/drv_flash_wb.c']
+
 if GetDepend('RT_USING_HWCRYPTO'):
     src += ['drv_crypto.c']
-	
+
 if GetDepend(['BSP_USING_WDT']):
     src += ['drv_wdt.c']
 
@@ -87,6 +99,9 @@ if GetDepend(['BSP_USING_USBD']):
 
 if GetDepend(['BSP_USING_PULSE_ENCODER']):
     src += ['drv_pulse_encoder.c']
+
+if GetDepend(['BSP_USING_USBH']):
+    src += ['drv_usbh.c']
 
 src += ['drv_common.c']
 

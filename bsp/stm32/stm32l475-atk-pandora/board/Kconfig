@@ -71,6 +71,37 @@ menu "Onboard Peripheral Drivers"
             bool "Enable Audio Record"
             default n
         endif
+        
+    config BSP_USING_WIFI
+            bool "Enable WiFi (AP6181)"
+            select PKG_USING_WLAN_WICED
+            select BSP_USING_STM32_SDIO
+            select PKG_USING_STM32_SDIO
+            select BSP_USING_QSPI_FLASH
+            select BSP_USING_ON_CHIP_FLASH
+            select RT_USING_WIFI
+            select RT_WLAN_PROT_LWIP_PBUF_FORCE
+            select RT_USING_LWIP
+            select RT_USING_LIBC
+            select RT_USING_POSIX
+            select RT_USING_DFS
+            select PKG_USING_FAL
+            select PKG_USING_EASYFLASH
+            select RT_USING_WIFI_6181_LIB
+            select RT_USING_OTA_LIB
+            select RT_USING_SAL
+            default n
+
+            if BSP_USING_WIFI
+                config BSP_USING_WIFI_THREAD_INIT
+                    bool "Using Thread Initialize WiFi"
+                    default n
+
+                config BSP_USING_WIFI_AUTO_INIT
+                    bool "Using WiFi Automatically Initialization"
+                    depends on RT_USING_COMPONENTS_INIT
+                    default y
+            endif
 
 endmenu
 
@@ -277,6 +308,16 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -304,6 +345,15 @@ menu "On-chip Peripheral Drivers"
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
         default n
+
+    config BSP_USING_STM32_SDIO
+            bool "Enable SDIO"
+            select RT_USING_SDIO
+            select PKG_USING_STM32_SDIO
+            default n
+            help
+            BSP_USING_STM32_SDIO use drv_sdio_adapter.c,and
+            BSP_USING_SDIO use drv_sdio.c
    
     source "../libraries/HAL_Drivers/Kconfig"
     

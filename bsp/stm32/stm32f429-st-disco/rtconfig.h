@@ -26,12 +26,13 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+#define RT_USING_SIGNALS
 
 /* Memory Management */
 
 #define RT_USING_MEMPOOL
 #define RT_USING_MEMHEAP
-#define RT_USING_SMALL_MEM
+#define RT_USING_MEMHEAP_AS_HEAP
 #define RT_USING_HEAP
 
 /* Kernel Device Object */
@@ -40,7 +41,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x30104
+#define RT_VER_NUM 0x40003
 #define ARCH_ARM
 #define RT_USING_CPU_FFS
 #define ARCH_ARM_CORTEX_M
@@ -69,6 +70,7 @@
 #define FINSH_CMD_SIZE 80
 #define FINSH_USING_MSH
 #define FINSH_USING_MSH_DEFAULT
+#define FINSH_USING_MSH_ONLY
 #define FINSH_ARG_MAX 10
 
 /* Device virtual file system */
@@ -90,6 +92,7 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -165,11 +168,18 @@
 
 #define SOC_STM32F429ZI
 
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_SDRAM
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_FMC
+#define BSP_USING_LCD
+#define BSP_USING_LTDC
 
 /* Board extended module Drivers */
 

@@ -26,6 +26,12 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART3
         default n
+    
+    config BSP_USING_SRAM
+        bool "Enable SRAM"
+        select BSP_USING_EXT_FMC_IO
+        select BSP_USING_FMC
+        default n
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (W25Q128 spi1)"
@@ -267,6 +273,16 @@ menu "On-chip Peripheral Drivers"
                 default 25
         endif
 
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+        endif
+
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -296,6 +312,26 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
+    config BSP_USING_USBD
+        bool "Enable USB Device"
+        select RT_USING_USB_DEVICE
+        default n
+
+    menuconfig BSP_USING_USBH
+        bool "Enable USB Host"
+        select RT_USING_USB_HOST
+        default n
+        if BSP_USING_USBH
+            menuconfig RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                    string "Udisk mount dir"
+                    default "/"
+                endif
+        endif
+
     menuconfig BSP_USING_PULSE_ENCODER
         bool "Enable Pulse Encoder"
         default n
@@ -306,7 +342,14 @@ menu "On-chip Peripheral Drivers"
                 default n
 
         endif
+    
+    config BSP_USING_EXT_FMC_IO
+        bool
+        default n
 
+    config BSP_USING_FMC
+        bool
+        default n
  source "../libraries/HAL_Drivers/Kconfig"
     
 endmenu

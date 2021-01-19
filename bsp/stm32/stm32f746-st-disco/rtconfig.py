@@ -13,14 +13,14 @@ if os.getenv('RTT_ROOT'):
 # cross_tool provides the cross compiler
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
-    PLATFORM 	= 'gcc'
-    EXEC_PATH 	= '/usr/local/Cellar/arm-none-eabi-gcc/7-2017-q4-major/gcc/bin/'
+    PLATFORM    = 'gcc'
+    EXEC_PATH   = r'/usr/local/Cellar/arm-none-eabi-gcc/7-2017-q4-major/gcc/bin/'
 elif CROSS_TOOL == 'keil':
-    PLATFORM 	= 'armcc'
-    EXEC_PATH 	= r'C:/Keil_v5'
+    PLATFORM    = 'armcc'
+    EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
-	PLATFORM 	= 'iar'
-	EXEC_PATH 	= r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
+    PLATFORM    = 'iar'
+    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.0'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
@@ -145,3 +145,10 @@ elif PLATFORM == 'iar':
 
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = ''
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    cwd_path = os.getcwd()
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

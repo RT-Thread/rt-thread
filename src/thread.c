@@ -26,8 +26,8 @@
                                bug when thread has not startup.
  */
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <rtthread.h>
 
 extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread *rt_current_thread;
@@ -78,6 +78,31 @@ void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
 
 #endif
 
+/* must be invoke witch rt_hw_interrupt_disable */
+static void _thread_cleanup_execute(rt_thread_t thread)
+{
+    register rt_base_t level;
+#ifdef RT_USING_MODULE
+    struct rt_dlmodule *module = RT_NULL;
+#endif
+    level = rt_hw_interrupt_disable();
+#ifdef RT_USING_MODULE
+    module = (struct rt_dlmodule*)thread->module_id;
+    if (module)
+    {
+        dlmodule_destroy(module);
+    }
+#endif
+    /* invoke thread cleanup */
+    if (thread->cleanup != RT_NULL)
+        thread->cleanup(thread);
+
+#ifdef RT_USING_SIGNALS
+    rt_thread_free_sig(thread);
+#endif
+    rt_hw_interrupt_enable(level);
+}
+
 void rt_thread_exit(void)
 {
     struct rt_thread *thread;
@@ -89,6 +114,8 @@ void rt_thread_exit(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
+    _thread_cleanup_execute(thread);
+
     /* remove from schedule */
     rt_schedule_remove_thread(thread);
     /* change stat */
@@ -97,8 +124,7 @@ void rt_thread_exit(void)
     /* remove it from timer list */
     rt_timer_detach(&thread->thread_timer);
 
-    if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
-        thread->cleanup == RT_NULL)
+    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
     {
         rt_object_detach((rt_object_t)thread);
     }
@@ -108,11 +134,11 @@ void rt_thread_exit(void)
         rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
     }
 
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
     /* switch to next task */
     rt_schedule();
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
 }
 
 static rt_err_t _rt_thread_init(struct rt_thread *thread,
@@ -314,11 +340,16 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread));
 
+    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
+        return RT_EOK;
+
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
         rt_schedule_remove_thread(thread);
     }
+
+    _thread_cleanup_execute(thread);
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -326,8 +357,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
-    if ((rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE) &&
-        thread->cleanup == RT_NULL)
+    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
     {
         rt_object_detach((rt_object_t)thread);
     }
@@ -413,11 +443,16 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread) == RT_FALSE);
 
+    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
+        return RT_EOK;
+
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
         rt_schedule_remove_thread(thread);
     }
+
+    _thread_cleanup_execute(thread);
 
     /* release thread timer */
     rt_timer_detach(&(thread->thread_timer));
@@ -559,7 +594,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
     if (rt_tick_get() - *tick < inc_tick)
     {
-        *tick = rt_tick_get() - *tick + inc_tick;
+        *tick = *tick + inc_tick - rt_tick_get();
 
         /* suspend thread */
         rt_thread_suspend(thread);
@@ -594,7 +629,7 @@ RTM_EXPORT(rt_thread_delay_until);
 /**
  * This function will let current thread delay for some milliseconds.
  *
- * @param tick the delay time
+ * @param ms the delay ms time
  *
  * @return RT_EOK
  */
@@ -615,7 +650,8 @@ RTM_EXPORT(rt_thread_mdelay);
  * @param cmd the control command, which includes
  *  RT_THREAD_CTRL_CHANGE_PRIORITY for changing priority level of thread;
  *  RT_THREAD_CTRL_STARTUP for starting a thread;
- *  RT_THREAD_CTRL_CLOSE for delete a thread.
+ *  RT_THREAD_CTRL_CLOSE for delete a thread;
+ *  RT_THREAD_CTRL_BIND_CPU for bind the thread to a CPU.
  * @param arg the argument of control command
  *
  * @return RT_EOK
@@ -676,9 +712,17 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
     case RT_THREAD_CTRL_STARTUP:
         return rt_thread_startup(thread);
 
-#ifdef RT_USING_HEAP
     case RT_THREAD_CTRL_CLOSE:
-        return rt_thread_delete(thread);
+
+        if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
+        {
+            return rt_thread_detach(thread);
+        }
+#ifdef RT_USING_HEAP
+        else
+        {
+            return rt_thread_delete(thread);
+        }
 #endif
 
     default:
@@ -721,8 +765,8 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
     temp = rt_hw_interrupt_disable();
 
     /* change thread stat */
-    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
     rt_schedule_remove_thread(thread);
+    thread->stat = RT_THREAD_SUSPEND | (thread->stat & ~RT_THREAD_STAT_MASK);
 
     /* stop thread timer anyway */
     rt_timer_stop(&(thread->thread_timer));
@@ -821,38 +865,7 @@ RTM_EXPORT(rt_thread_timeout);
  */
 rt_thread_t rt_thread_find(char *name)
 {
-    struct rt_object_information *information;
-    struct rt_object *object;
-    struct rt_list_node *node;
-
-    /* enter critical */
-    if (rt_thread_self() != RT_NULL)
-        rt_enter_critical();
-
-    /* try to find device object */
-    information = rt_object_get_information(RT_Object_Class_Thread);
-    RT_ASSERT(information != RT_NULL);
-    for (node  = information->object_list.next;
-         node != &(information->object_list);
-         node  = node->next)
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-        if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
-        {
-            /* leave critical */
-            if (rt_thread_self() != RT_NULL)
-                rt_exit_critical();
-
-            return (rt_thread_t)object;
-        }
-    }
-
-    /* leave critical */
-    if (rt_thread_self() != RT_NULL)
-        rt_exit_critical();
-
-    /* not found */
-    return RT_NULL;
+    return (rt_thread_t)rt_object_find(name, RT_Object_Class_Thread);
 }
 RTM_EXPORT(rt_thread_find);
 

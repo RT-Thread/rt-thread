@@ -97,6 +97,13 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UINT32_MAX                   0xffffffff      /**< Maxium number of UINT32 */
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maxium number of tick */
 
+/* maximum value of ipc type */
+#define RT_SEM_VALUE_MAX                RT_UINT16_MAX   /**< Maxium number of semaphore .value */
+#define RT_MUTEX_VALUE_MAX              RT_UINT16_MAX   /**< Maxium number of mutex .value */
+#define RT_MUTEX_HOLD_MAX               RT_UINT8_MAX    /**< Maxium number of mutex .hold */
+#define RT_MB_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of mailbox .entry */
+#define RT_MQ_ENTRY_MAX                 RT_UINT16_MAX   /**< Maxium number of message queue .entry */
+
 #if defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #define __CLANG_ARM
 #endif
@@ -368,20 +375,20 @@ typedef struct rt_object *rt_object_t;                  /**< Type for kernel obj
  */
 enum rt_object_class_type
 {
-    RT_Object_Class_Null   = 0,                         /**< The object is not used. */
-    RT_Object_Class_Thread,                             /**< The object is a thread. */
-    RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
-    RT_Object_Class_Mutex,                              /**< The object is a mutex. */
-    RT_Object_Class_Event,                              /**< The object is a event. */
-    RT_Object_Class_MailBox,                            /**< The object is a mail box. */
-    RT_Object_Class_MessageQueue,                       /**< The object is a message queue. */
-    RT_Object_Class_MemHeap,                            /**< The object is a memory heap */
-    RT_Object_Class_MemPool,                            /**< The object is a memory pool. */
-    RT_Object_Class_Device,                             /**< The object is a device */
-    RT_Object_Class_Timer,                              /**< The object is a timer. */
-    RT_Object_Class_Module,                             /**< The object is a module. */
-    RT_Object_Class_Unknown,                            /**< The object is unknown. */
-    RT_Object_Class_Static = 0x80                       /**< The object is a static object. */
+    RT_Object_Class_Null          = 0x00,      /**< The object is not used. */
+    RT_Object_Class_Thread        = 0x01,      /**< The object is a thread. */
+    RT_Object_Class_Semaphore     = 0x02,      /**< The object is a semaphore. */
+    RT_Object_Class_Mutex         = 0x03,      /**< The object is a mutex. */
+    RT_Object_Class_Event         = 0x04,      /**< The object is a event. */
+    RT_Object_Class_MailBox       = 0x05,      /**< The object is a mail box. */
+    RT_Object_Class_MessageQueue  = 0x06,      /**< The object is a message queue. */
+    RT_Object_Class_MemHeap       = 0x07,      /**< The object is a memory heap. */
+    RT_Object_Class_MemPool       = 0x08,      /**< The object is a memory pool. */
+    RT_Object_Class_Device        = 0x09,      /**< The object is a device. */
+    RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
+    RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
+    RT_Object_Class_Unknown       = 0x0c,      /**< The object is unknown. */
+    RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
 /**
@@ -427,6 +434,7 @@ struct rt_object_information
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
 #define RT_TIMER_CTRL_SET_ONESHOT       0x2             /**< change timer to one shot */
 #define RT_TIMER_CTRL_SET_PERIODIC      0x3             /**< change timer to periodic */
+#define RT_TIMER_CTRL_GET_STATE         0x4             /**< get timer run state active or deactive*/
 
 #ifndef RT_TIMER_SKIP_LIST_LEVEL
 #define RT_TIMER_SKIP_LIST_LEVEL          1
@@ -846,6 +854,7 @@ enum rt_device_class_type
 #define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
 #define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
 #define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
+#define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
 
 #define RT_DEVICE_CTRL_SET_INT          0x10            /**< set interrupt */
 #define RT_DEVICE_CTRL_CLR_INT          0x11            /**< clear interrupt */

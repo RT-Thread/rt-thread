@@ -6,7 +6,8 @@
 MEMORY
 {
     ROM (rx) : ORIGIN = 0x08000000, LENGTH = 2048k /* 2048KB flash */
-    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  128k  /* 128KB sram */
+    RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 192K sram */
+    RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;
@@ -88,7 +89,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } > RAM
+    } > RAM1
 
     .stack : 
     {
@@ -97,7 +98,7 @@ SECTIONS
         . = . + _system_stack_size;
         . = ALIGN(4);
         _estack = .;
-    } > RAM
+    } > RAM1
 
     __bss_start = .;
     .bss :
@@ -115,7 +116,7 @@ SECTIONS
         _ebss = . ;
         
         *(.bss.init)
-    } > RAM
+    } > RAM1
     __bss_end = .;
 
     _end = .;

@@ -8,8 +8,6 @@
  * 2017-11-16     ZYH          first version
  */
 #include <rthw.h>
-#include <rtthread.h>
-#include <rtservice.h>
 #include <rtdevice.h>
 #include <drivers/usb_device.h>
 #include "winusb.h"
@@ -121,7 +119,7 @@ const static char* _ustring[] =
 ALIGN(4)
 struct usb_os_proerty winusb_proerty[] = 
 {
-    USB_OS_PROERTY_DESC(USB_OS_PROERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
+    USB_OS_PROPERTY_DESC(USB_OS_PROPERTY_TYPE_REG_SZ,"DeviceInterfaceGUID",RT_WINUSB_GUID),
 };
 
 ALIGN(4)

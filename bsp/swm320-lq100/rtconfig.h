@@ -40,7 +40,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x30104
+#define RT_VER_NUM 0x40000
 
 /* RT-Thread Components */
 
@@ -75,27 +75,28 @@
 #define RT_USING_DEVICE_IPC
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
-#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_HWTIMER
 #define RT_USING_PIN
 #define RT_USING_PWM
+
+/* Using WiFi */
+
 
 /* Using USB */
 
 
 /* POSIX layer and C standard library */
 
-#define RT_LIBC_USING_TIME
 
 /* Network */
 
 /* Socket abstraction layer */
 
 
-/* Network interface device */
-
-
 /* light weight TCP/IP stack */
+
+
+/* Modbus master and slave stack */
 
 
 /* AT commands */

@@ -216,6 +216,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32F103xE</state>
+          <state>__RTTHREAD__</state>
           <state>RT_USING_DLIBC</state>
           <state>USE_HAL_DRIVER</state>
         </option>
@@ -1250,6 +1251,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32F103xE</state>
+          <state>__RTTHREAD__</state>
           <state>RT_USING_DLIBC</state>
           <state>USE_HAL_DRIVER</state>
         </option>
@@ -2069,6 +2071,93 @@
     </settings>
   </configuration>
   <group>
+    <name>Applications</name>
+    <file>
+      <name>$PROJ_DIR$\applications\main.c</name>
+    </file>
+  </group>
+  <group>
+    <name>CPU</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+  </group>
+  <group>
+    <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\pipe.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\board\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\iar\startup_stm32f103xe.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
+    </file>
+  </group>
+  <group>
+    <name>finsh</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+    </file>
+  </group>
+  <group>
     <name>Kernel</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
@@ -2117,100 +2206,10 @@
     </file>
   </group>
   <group>
-    <name>Applications</name>
-    <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
-    </file>
-  </group>
-  <group>
-    <name>Drivers</name>
-    <file>
-      <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\iar\startup_stm32f103xe.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
-    </file>
-  </group>
-  <group>
-    <name>CORTEX-M3</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-  </group>
-  <group>
-    <name>DeviceDrivers</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\pipe.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringblk_buf.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\ringbuffer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\waitqueue.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\src\workqueue.c</name>
-    </file>
-  </group>
-  <group>
-    <name>finsh</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
-    </file>
-  </group>
-  <group>
     <name>libc</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\time.c</name>
     </file>
-  </group>
-  <group>
-    <name>dlib</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
@@ -2246,7 +2245,7 @@
     </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\system_stm32f1xx.c</name>
     </file>
@@ -2273,9 +2272,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_cec.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_sram.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_gpio.c</name>

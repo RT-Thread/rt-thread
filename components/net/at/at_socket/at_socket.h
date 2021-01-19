@@ -56,6 +56,7 @@ typedef enum
 } at_socket_evt_t;
 
 struct at_socket;
+struct at_device;
 
 typedef void (*at_evt_cb_t)(struct at_socket *socket, at_socket_evt_t event, const char *buff, size_t bfsz);
 
@@ -70,6 +71,7 @@ struct at_socket_ops
     int (*at_send)(struct at_socket *socket, const char *buff, size_t bfsz, enum at_socket_type type);
     int (*at_domain_resolve)(const char *name, char ip[16]);
     void (*at_set_event_cb)(at_socket_evt_t event, at_evt_cb_t cb);
+    int (*at_socket)(struct at_device *device, enum at_socket_type type);
 };
 
 /* AT receive package list structure */

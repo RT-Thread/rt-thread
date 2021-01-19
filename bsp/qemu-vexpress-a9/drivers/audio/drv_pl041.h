@@ -1,21 +1,7 @@
 /*
- * File      : drv_pl041.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2017, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along
- *  with this program; if not, write to the Free Software Foundation, Inc.,
- *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -158,10 +144,10 @@
 #define MAINFR_TXB   (1 << 1)	/* transmit busy */
 #define MAINFR_RXB   (1 << 0)	/* receive busy */
 
-#define PL041_CHANNLE_LEFT_DAC    (0x1 << 3)
-#define PL041_CHANNLE_RIGHT_DAC   (0x1 << 3)
-#define PL041_CHANNLE_LEFT_ADC    (0x1 << 3)
-#define PL041_CHANNLE_RIGHT_ADC   (0x1 << 3)
+#define PL041_CHANNEL_LEFT_DAC    (0x1 << 3)
+#define PL041_CHANNEL_RIGHT_DAC   (0x1 << 3)
+#define PL041_CHANNEL_LEFT_ADC    (0x1 << 3)
+#define PL041_CHANNEL_RIGHT_ADC   (0x1 << 3)
 
 struct reg_pl041
 {
@@ -225,13 +211,13 @@ typedef void (*pl041_irq_fun_t)(rt_uint32_t status, void * user_data);
 rt_err_t aaci_pl041_init(void);
 void aaci_ac97_write(rt_uint16_t reg, rt_uint16_t val);
 rt_uint16_t aaci_ac97_read(rt_uint16_t reg);
-int aaci_pl041_channle_cfg(int channle, pl041_cfg_t cfg);
-int aaci_pl041_channle_write(int channle, rt_uint16_t *buff, int count);
-int aaci_pl041_channle_read(int channle, rt_uint16_t *buff, int count);
-int aaci_pl041_channle_enable(int channle);
-int aaci_pl041_channle_disable(int channle);
-rt_err_t aaci_pl041_irq_register(int channle, pl041_irq_fun_t fun, void *user_data);
-rt_err_t aaci_pl041_irq_unregister(int channle);
-void aaci_pl041_irq_disable(int channle, rt_uint32_t vector);
-void aaci_pl041_irq_enable(int channle, rt_uint32_t vector);
+int aaci_pl041_channel_cfg(int channel, pl041_cfg_t cfg);
+int aaci_pl041_channel_write(int channel, rt_uint16_t *buff, int count);
+int aaci_pl041_channel_read(int channel, rt_uint16_t *buff, int count);
+int aaci_pl041_channel_enable(int channel);
+int aaci_pl041_channel_disable(int channel);
+rt_err_t aaci_pl041_irq_register(int channel, pl041_irq_fun_t fun, void *user_data);
+rt_err_t aaci_pl041_irq_unregister(int channel);
+void aaci_pl041_irq_disable(int channel, rt_uint32_t vector);
+void aaci_pl041_irq_enable(int channel, rt_uint32_t vector);
 #endif

@@ -141,6 +141,9 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
 
 
@@ -148,6 +151,15 @@
 
 
 /* samples: kernel and components samples */
+
+
+/* games: games run on RT-Thread console */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32L4

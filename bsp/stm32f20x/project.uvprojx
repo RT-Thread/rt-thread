@@ -346,7 +346,7 @@
               <MiscControls />
               <Define>RT_USING_ARM_LIBC, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>.;..\..\include;applications;.;Drivers;Libraries\STM32F2xx_StdPeriph_Driver\inc;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx;Libraries\CMSIS\CM3\CoreSupport;Libraries\CMSIS\Include;..\..\libcpu\arm\cortex-m3;..\..\libcpu\arm\common;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
+              <IncludePath>.;..\..\include;applications;.;Drivers;Libraries\STM32F2xx_StdPeriph_Driver\inc;Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F2xx;Libraries\CMSIS\CM3\CoreSupport;Libraries\CMSIS\Include;..\..\libcpu\arm\common;..\..\libcpu\arm\cortex-m3;..\..\components\dfs\include;..\..\components\dfs\filesystems\devfs;..\..\components\dfs\filesystems\elmfat;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\compilers\armlibc;..\..\components\libc\compilers\common</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -397,6 +397,13 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -802,21 +809,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CORTEX-M3</GroupName>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
-            </File>
-          </Files>
+          <GroupName>cpu</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -836,6 +829,20 @@
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
             </File>
           </Files>
         </Group>

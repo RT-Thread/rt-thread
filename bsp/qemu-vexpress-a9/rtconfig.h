@@ -93,6 +93,8 @@
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_3
 #define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 2
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 4096
@@ -217,6 +219,23 @@
 
 /* Utilities */
 
+#define RT_USING_ULOG
+#define ULOG_OUTPUT_LVL_D
+#define ULOG_OUTPUT_LVL 7
+#define ULOG_USING_ISR_LOG
+#define ULOG_ASSERT_ENABLE
+#define ULOG_LINE_BUF_SIZE 128
+
+/* log format */
+
+#define ULOG_USING_COLOR
+#define ULOG_OUTPUT_TIME
+#define ULOG_OUTPUT_LEVEL
+#define ULOG_OUTPUT_TAG
+#define ULOG_BACKEND_USING_CONSOLE
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
 
 /* RT-Thread online packages */
 
@@ -249,6 +268,9 @@
 /* system packages */
 
 
+/* Micrium: Micrium software products porting for RT-Thread */
+
+
 /* peripheral libraries and drivers */
 
 
@@ -257,6 +279,123 @@
 
 /* samples: kernel and components samples */
 
+
+/* games: games run on RT-Thread console */
+
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+#define RT_USING_TESTCASE
+#define RT_USING_TESTCASE_GENERAL
+
+/* kernel test */
+
+/* ipc */
+
+#define TC_USING_IPC_SEMAPHORE_TC
+#define TC_USING_IPC_MUTEX_TC
+#define TC_USING_IPC_EVENT_TC
+#define TC_USING_IPC_MAILBOX_TC
+#define TC_USING_IPC_MESSAGEQUEUE_TC
+#define TC_USING_IPC_SIGNAL_TC
+
+/* kservice test */
+
+
+/* thread */
+
+
+/* object */
+
+
+/* memory */
+
+
+/* timer */
+
+
+/* smp */
+
+
+/* component test */
+
+/* cplusplus test */
+
+/* thread */
+
+
+/* ipc */
+
+
+/* dfs: Device virtual file system */
+
+
+/* drivers */
+
+/* i2c */
+
+
+/* spi */
+
+
+/* wlan */
+
+
+/* uart */
+
+
+/* hwcrypto */
+
+
+/* sensor */
+
+
+/* finsh shell */
+
+
+/* libc */
+
+
+/* at */
+
+/* netdev */
+
+
+/* lwIP */
+
+
+/* SAL */
+
+
+/* Utilities */
+
+/* utest selftest */
+
+
+/* packages test */
+
+/* iot */
+
+/* netutils */
+
+
+/* webclient */
+
+
+/* Paho MQTT */
+
+
+/* system */
+
+/* fal */
+
+
+/* realthread-packages test */
+
+#define PKG_USING_TESTCASES_LATEST_VERSION
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
 #define RT_USING_UART1
