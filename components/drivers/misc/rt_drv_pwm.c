@@ -126,7 +126,7 @@ rt_err_t rt_device_pwm_register(struct rt_device_pwm *device, const char *name, 
     return result;
 }
 
-rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel, rt_uint8_t complementary)
+rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel)
 {
     rt_err_t result = RT_EOK;
     struct rt_pwm_configuration configuration = {0};
@@ -136,14 +136,14 @@ rt_err_t rt_pwm_enable(struct rt_device_pwm *device, int channel, rt_uint8_t com
         return -RT_EIO;
     }
 
-    configuration.channel = channel;
-    configuration.complementary = complementary ? (RT_TRUE) : (RT_FALSE);
+    configuration.channel = (channel > 0) ? (channel) : (-channel);         /* Make it is positive num forever */
+    configuration.complementary = (channel > 0) ? (RT_FALSE) : (RT_TRUE);   /* If nagetive, it's complementary */
     result = rt_device_control(&device->parent, PWM_CMD_ENABLE, &configuration);
 
     return result;
 }
 
-rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel, rt_uint8_t complementary)
+rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel)
 {
     rt_err_t result = RT_EOK;
     struct rt_pwm_configuration configuration = {0};
@@ -153,8 +153,8 @@ rt_err_t rt_pwm_disable(struct rt_device_pwm *device, int channel, rt_uint8_t co
         return -RT_EIO;
     }
 
-    configuration.channel = channel;
-    configuration.complementary = complementary ? (RT_TRUE) : (RT_FALSE);
+    configuration.channel = (channel > 0) ? (channel) : (-channel);         /* Make it is positive num forever */
+    configuration.complementary = (channel > 0) ? (RT_FALSE) : (RT_TRUE);   /* If nagetive, it's complementary */
     result = rt_device_control(&device->parent, PWM_CMD_DISABLE, &configuration);
 
     return result;
@@ -204,10 +204,10 @@ static int pwm_enable(int argc, char **argv)
     int result = 0;
     struct rt_device_pwm *device = RT_NULL;
 
-    if (argc != 4)
+    if (argc != 3)
     {
-        rt_kprintf("Usage: pwm_enable pwm1 1 1\n");
-        rt_kprintf("       pwm_enable <pwm_dev> <channel> <complementary> \n");
+        rt_kprintf("Usage: pwm_enable pwm1 1\n");
+        rt_kprintf("       pwm_enable <pwm_dev> <channel/-channel>\n");
         result = -RT_ERROR;
         goto _exit;
     }
@@ -219,22 +219,23 @@ static int pwm_enable(int argc, char **argv)
         goto _exit;
     }
 
-    result = rt_pwm_enable(device, atoi(argv[2]), atoi(argv[3]));
+    /* If channel is complementary(1), make the channel number to nagetive */
+    result = rt_pwm_enable(device, atoi(argv[2]));
 
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_enable, pwm_enable <pwm_dev> <channel> <complementary>);
+MSH_CMD_EXPORT(pwm_enable, pwm_enable <pwm_dev> <channel/-channel>);
 
 static int pwm_disable(int argc, char **argv)
 {
     int result = 0;
     struct rt_device_pwm *device = RT_NULL;
 
-    if (argc != 4)
+    if (argc != 3)
     {
-        rt_kprintf("Usage: pwm_enable pwm1 1 1\n");
-        rt_kprintf("       pwm_disable <pwm_dev> <channel> <complementary> \n");
+        rt_kprintf("Usage: pwm_disable pwm1 1\n");
+        rt_kprintf("       pwm_disable <pwm_dev> <channel/-channel> \n");
         result = -RT_ERROR;
         goto _exit;
     }
@@ -246,12 +247,13 @@ static int pwm_disable(int argc, char **argv)
         goto _exit;
     }
 
-    result = rt_pwm_disable(device, atoi(argv[2]), atoi(argv[3]));
+    /* If channel is complementary(1), make the channel number to nagetive */
+    result = rt_pwm_disable(device, atoi(argv[2]));
 
 _exit:
     return result;
 }
-MSH_CMD_EXPORT(pwm_disable, pwm_disable <pwm_dev> <channel> <complementary>);
+MSH_CMD_EXPORT(pwm_disable, pwm_disable <pwm_dev> <channel/-channel>);
 
 static int pwm_set(int argc, char **argv)
 {
