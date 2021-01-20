@@ -43,7 +43,7 @@ extern "C" {
 */
 __STATIC_INLINE int nu_clz(uint32_t x)
 {
-    return __CLZ(x);
+    return x ? __CLZ(x):32;
 }
 
 /* Count Leading Ones in word - Find Highest Zero
@@ -65,7 +65,9 @@ __STATIC_INLINE int nu_clo(uint32_t x)
 */
 __STATIC_INLINE int nu_ctz(uint32_t x)
 {
-    int c = __CLZ(x & -x);
+    int c = 32;
+    if (x)
+        c = __CLZ(x & -x);
     return x ? 31 - c : c;
 }
 

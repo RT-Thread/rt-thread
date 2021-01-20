@@ -51,14 +51,14 @@
   */
 uint32_t ald_iap_erase_page(uint32_t addr)
 {
-    uint32_t status;
-    IAP_PE iap_pe = (IAP_PE)(*(uint32_t *)IAP_PE_ADDR);
+	uint32_t status;
+	IAP_PE iap_pe = (IAP_PE)(*(uint32_t *)IAP_PE_ADDR);
 
-    __disable_irq();
-    status = (*iap_pe)(addr);
-    __enable_irq();
+	__disable_irq();
+	status = (*iap_pe)(addr);
+	__enable_irq();
 
-    return !status;
+	return !status;
 }
 
 /**
@@ -72,17 +72,17 @@ uint32_t ald_iap_erase_page(uint32_t addr)
   */
 uint32_t ald_iap_program_word(uint32_t addr, uint32_t data)
 {
-    uint32_t status;
-    IAP_WP iap_wp = (IAP_WP)(*(uint32_t *)IAP_WP_ADDR);
+	uint32_t status;
+	IAP_WP iap_wp = (IAP_WP)(*(uint32_t *)IAP_WP_ADDR);
 
-    if (addr & 0x3)
-        return 1;
+	if (addr & 0x3)
+		return 1;
 
-    __disable_irq();
-    status = (*iap_wp)(addr, data);
-    __enable_irq();
+	__disable_irq();
+	status = (*iap_wp)(addr, data);
+	__enable_irq();
 
-    return !status;
+	return !status;
 }
 
 /**
@@ -97,17 +97,17 @@ uint32_t ald_iap_program_word(uint32_t addr, uint32_t data)
   */
 uint32_t ald_iap_program_dword(uint32_t addr, uint32_t data_l, uint32_t data_h)
 {
-    uint32_t status;
-    IAP_DWP iap_dwp = (IAP_DWP)(*(uint32_t *)IAP_DWP_ADDR);
+	uint32_t status;
+	IAP_DWP iap_dwp = (IAP_DWP)(*(uint32_t *)IAP_DWP_ADDR);
 
-    if (addr & 0x3)
-        return 1;
+	if (addr & 0x3)
+		return 1;
 
-    __disable_irq();
-    status = (*iap_dwp)(addr, data_l, data_h);
-    __enable_irq();
+	__disable_irq();
+	status = (*iap_dwp)(addr, data_l, data_h);
+	__enable_irq();
 
-    return !status;
+	return !status;
 }
 
 /**
@@ -124,17 +124,17 @@ uint32_t ald_iap_program_dword(uint32_t addr, uint32_t data_l, uint32_t data_h)
   */
 uint32_t ald_iap_program_words(uint32_t addr, uint8_t *data, uint32_t len, uint32_t erase)
 {
-    uint32_t status;
-    IAP_WSP iap_wsp = (IAP_WSP)(*(uint32_t *)IAP_WSP_ADDR);
+	uint32_t status;
+	IAP_WSP iap_wsp = (IAP_WSP)(*(uint32_t *)IAP_WSP_ADDR);
 
-    if ((addr & 0x3) || (len & 0x3))
-        return 1;
+	if ((addr & 0x3) || (len & 0x3))
+		return 1;
 
-    __disable_irq();
-    status = (*iap_wsp)(addr, data, len, erase);
-    __enable_irq();
+	__disable_irq();
+	status = (*iap_wsp)(addr, data, len, erase);
+	__enable_irq();
 
-    return !status;
+	return !status;
 }
 /**
   * @}

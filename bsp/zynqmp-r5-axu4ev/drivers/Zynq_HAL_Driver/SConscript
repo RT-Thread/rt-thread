@@ -1,0 +1,17 @@
+from building import *
+
+cwd  = GetCurrentDir()
+src  = Glob('*.c')
+CPPPATH = [cwd]
+objs = []
+
+group = DefineGroup('ZYNQMP_HAL', src, depend = [''], CPPPATH = CPPPATH)
+
+if GetDepend('BSP_USING_SDIO'):
+    objs = objs + SConscript('sdps_v3_9/SConscript')
+if GetDepend('RT_USING_PIN'):
+    objs = objs + SConscript('gpiops_v3_7/SConscript')
+
+objs = objs + group
+
+Return('objs')

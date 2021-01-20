@@ -54,9 +54,15 @@ static void ili9341_write_data_16bit(uint16_t data)
     rt_spi_transfer(&ili9341_spi_device, (const void *)&data, NULL, 2);
 }
 
-void ili9341_send_pixel_data(rt_uint16_t color)
+void ili9341_send_pixel_data(rt_uint16_t pixel)
 {
-    ili9341_write_data_16bit(color);
+    ili9341_write_data_16bit(pixel);
+}
+
+void ili9341_send_pixels(rt_uint16_t *pixels, int len)
+{
+    ili9341_change_datawidth(16);
+    rt_spi_transfer(&ili9341_spi_device, (const void *)pixels, NULL, len);
 }
 
 static rt_err_t ili9341_spi_send_then_recv(struct rt_spi_device *device,

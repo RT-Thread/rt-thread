@@ -13,11 +13,71 @@ CubeMX_Config/Common/System/system_stm32mp1xx.c
 CubeMX_Config/CM4/Src/stm32mp1xx_hal_msp.c
 ''')
 
+if GetDepend(['BSP_USING_SPI1']):
+    src += Glob('ports/spi_sample.c')
+
 if GetDepend(['BSP_USING_PMIC']):
     src += Glob('ports/drv_pmic.c')
 
 if GetDepend(['BSP_USING_NAND']):
     src += Glob('ports/drv_nand.c')
+
+if GetDepend(['BSP_USING_GBE']):
+    src += Glob('ports/eth/drv_eth.c')
+
+if GetDepend(['BSP_USING_SDCARD']):
+    src += Glob('ports/drv_sdcard.c')
+
+if GetDepend(['BSP_USING_EMMC']):
+    src += Glob('ports/drv_emmc.c')
+
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('ports/drv_wm8994.c')
+    src += Glob('ports/drv_sound.c')
+
+if GetDepend(['BSP_USING_DCMI']):
+    src += Glob('ports/drv_dcmi.c')
+    src += Glob('ports/drv_ov5640.c')
+
+if GetDepend(['BSP_USING_MFX']):
+    src += Glob('ports/drv_mfx.c')
+    src += Glob('ports/mfxstm32l152.c')
+
+if GetDepend(['BSP_USING_FDCAN']):
+    src += Glob('ports/drv_fdcan.c')
+
+if GetDepend(['BSP_USING_QSPI']):
+    src += Glob('ports/drv_qspi_flash.c')
+
+if GetDepend(['BSP_USING_SPDIFRX']):
+    src += Glob('ports/drv_spdifrx.c')
+
+if GetDepend(['BSP_USING_DFSDM']):
+    src += Glob('ports/drv_dfsdm.c')
+
+if GetDepend(['BSP_USING_WWDG']):
+    src += Glob('ports/drv_wwdg.c')
+
+if GetDepend(['BSP_USING_EXTI']):
+    src += Glob('ports/drv_exti.c')
+
+if GetDepend(['BSP_USING_RNG']) or GetDepend(['BSP_USING_HASH']) or GetDepend(['BSP_USING_CRC']) or GetDepend(['BSP_USING_CRYP']):
+    src += Glob('ports/crypto_sample.c')
+
+if GetDepend(['BSP_USING_PWR']):
+    src += Glob('ports/drv_pwr.c')
+
+if GetDepend(['BSP_USING_LPTIM1']):
+    src += Glob('ports/drv_lptim.c')
+
+if GetDepend(['BSP_USING_RS485']):
+    src += Glob('ports/drv_rs485.c')
+
+if GetDepend(['BSP_USING_TIM14']):
+    src += Glob('ports/timer_sample.c')
+
+if GetDepend(['BSP_USING_DMA']):
+    src += Glob('ports/dma_sample.c')
 
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
@@ -44,6 +104,9 @@ if GetDepend(['BSP_USING_OPENAMP']):
     path += [cwd + '/ports/OpenAMP/libmetal/lib/include']
     path += [cwd + '/ports/OpenAMP/virtual_driver']
     path += [cwd + '/CubeMX_Config/CM4/Inc']
+
+if GetDepend(['BSP_USING_GBE']):
+    path += [cwd + '/ports/eth']
 
 startup_path_prefix = SDK_LIB
 

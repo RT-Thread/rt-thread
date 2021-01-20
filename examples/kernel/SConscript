@@ -35,7 +35,7 @@ memp_simple.c
 tc_sample.c
 """)
 
-group = DefineGroup('examples', src,
+group = DefineGroup('Examples', src,
                     depend = ['RT_USING_TC'],
                     CPPPATH=[GetCurrentDir()])
 

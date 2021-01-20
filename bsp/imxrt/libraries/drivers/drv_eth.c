@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
+ * 2020-10-14     wangqiang    use phy device in phy monitor thread
  */
 
 #include <rtthread.h>
@@ -19,7 +20,6 @@
 
 #include "fsl_enet.h"
 #include "fsl_gpio.h"
-#include "fsl_phy.h"
 #include "fsl_cache.h"
 #include "fsl_iomuxc.h"
 #include "fsl_common.h"
@@ -537,31 +537,47 @@ struct pbuf *rt_imxrt_eth_rx(rt_device_t dev)
     return NULL;
 }
 
+#ifdef BSP_USING_PHY
+static struct rt_phy_device *phy_dev = RT_NULL;
 static void phy_monitor_thread_entry(void *parameter)
 {
-    phy_speed_t speed;
-    phy_duplex_t duplex;
-    bool link = false;
+    rt_uint32_t speed;
+    rt_uint32_t duplex;
+    rt_bool_t link = RT_FALSE;
 
-    imxrt_enet_phy_reset_by_gpio();
-
-    PHY_Init(imxrt_eth_device.enet_base, PHY_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+    phy_dev = (struct rt_phy_device *)rt_device_find("rtt-phy");
+    if ((RT_NULL == phy_dev) || (RT_NULL == phy_dev->ops))
+    {
+        // TODO print warning information
+        LOG_E("Can not find phy device called \"rtt-phy\"");
+        return ;
+    }
+    if (RT_NULL == phy_dev->ops->init)
+    {
+        LOG_E("phy driver error!");
+        return ;
+    }
+    rt_phy_status status = phy_dev->ops->init(imxrt_eth_device.enet_base, PHY_DEVICE_ADDRESS, CLOCK_GetFreq(kCLOCK_AhbClk));
+    if (PHY_STATUS_OK != status)
+    {
+        LOG_E("Phy device initialize unsuccessful!\n");
+        return ;
+    }
 
     while (1)
     {
-        bool new_link = false;
-        status_t status = PHY_GetLinkStatus(imxrt_eth_device.enet_base, PHY_ADDRESS, &new_link);
+        rt_bool_t new_link = RT_FALSE;
+        rt_phy_status status = phy_dev->ops->get_link_status(&new_link);
 
-        if ((status == kStatus_Success) && (link != new_link))
+        if ((PHY_STATUS_OK == status) && (link != new_link))
         {
             link = new_link;
 
-            if (link)   // link up
+            if (link) // link up
             {
-                PHY_GetLinkSpeedDuplex(imxrt_eth_device.enet_base,
-                                       PHY_ADDRESS, &speed, &duplex);
+                phy_dev->ops->get_link_speed_duplex(&speed, &duplex);
 
-                if (kPHY_Speed10M == speed)
+                if (PHY_SPEED_10M == speed)
                 {
                     dbg_log(DBG_LOG, "10M\n");
                 }
@@ -570,7 +586,7 @@ static void phy_monitor_thread_entry(void *parameter)
                     dbg_log(DBG_LOG, "100M\n");
                 }
 
-                if (kPHY_HalfDuplex == duplex)
+                if (PHY_HALF_DUPLEX == duplex)
                 {
                     dbg_log(DBG_LOG, "half dumplex\n");
                 }
@@ -579,8 +595,7 @@ static void phy_monitor_thread_entry(void *parameter)
                     dbg_log(DBG_LOG, "full dumplex\n");
                 }
 
-                if ((imxrt_eth_device.speed != (enet_mii_speed_t)speed)
-                        || (imxrt_eth_device.duplex != (enet_mii_duplex_t)duplex))
+                if ((imxrt_eth_device.speed != (enet_mii_speed_t)speed) || (imxrt_eth_device.duplex != (enet_mii_duplex_t)duplex))
                 {
                     imxrt_eth_device.speed = (enet_mii_speed_t)speed;
                     imxrt_eth_device.duplex = (enet_mii_duplex_t)duplex;
@@ -605,6 +620,7 @@ static void phy_monitor_thread_entry(void *parameter)
         rt_thread_delay(RT_TICK_PER_SECOND * 2);
     }
 }
+#endif
 
 static int rt_hw_imxrt_eth_init(void)
 {
@@ -657,6 +673,7 @@ static int rt_hw_imxrt_eth_init(void)
 
     /* start phy monitor */
     {
+        #ifdef BSP_USING_PHY
         rt_thread_t tid;
         tid = rt_thread_create("phy",
                                phy_monitor_thread_entry,
@@ -666,6 +683,7 @@ static int rt_hw_imxrt_eth_init(void)
                                2);
         if (tid != RT_NULL)
             rt_thread_startup(tid);
+        #endif
     }
 
     return state;
@@ -673,50 +691,47 @@ static int rt_hw_imxrt_eth_init(void)
 INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
-#ifdef RT_USING_FINSH
+#if defined(RT_USING_FINSH) && defined(RT_USING_PHY)
 #include <finsh.h>
 
-void phy_read(uint32_t phyReg)
+void phy_read(rt_uint32_t phy_reg)
 {
-    uint32_t data;
-    status_t status;
+    rt_uint32_t data;
 
-    status = PHY_Read(imxrt_eth_device.enet_base, PHY_ADDRESS, phyReg, &data);
-    if (kStatus_Success == status)
+    rt_phy_status status = phy_dev->ops->read(phy_reg, &data);
+    if (PHY_STATUS_OK == status)
     {
-        rt_kprintf("PHY_Read: %02X --> %08X", phyReg, data);
+        rt_kprintf("PHY_Read: %02X --> %08X", phy_reg, data);
     }
     else
     {
-        rt_kprintf("PHY_Read: %02X --> faild", phyReg);
+        rt_kprintf("PHY_Read: %02X --> faild", phy_reg);
     }
 }
 
-void phy_write(uint32_t phyReg, uint32_t data)
+void phy_write(rt_uint32_t phy_reg, rt_uint32_t data)
 {
-    status_t status;
-
-    status = PHY_Write(imxrt_eth_device.enet_base, PHY_ADDRESS, phyReg, data);
-    if (kStatus_Success == status)
+    rt_phy_status status = phy_dev->ops->write(phy_reg, data);
+    if (PHY_STATUS_OK == status)
     {
-        rt_kprintf("PHY_Write: %02X --> %08X\n", phyReg, data);
+        rt_kprintf("PHY_Write: %02X --> %08X\n", phy_reg, data);
     }
     else
     {
-        rt_kprintf("PHY_Write: %02X --> faild\n", phyReg);
+        rt_kprintf("PHY_Write: %02X --> faild\n", phy_reg);
     }
 }
 
 void phy_dump(void)
 {
-    uint32_t data;
-    status_t status;
+    rt_uint32_t data;
+    rt_phy_status status;
 
     int i;
     for (i = 0; i < 32; i++)
     {
-        status = PHY_Read(imxrt_eth_device.enet_base, PHY_ADDRESS, i, &data);
-        if (kStatus_Success != status)
+        status = phy_dev->ops->read(i, &data);
+        if (PHY_STATUS_OK != status)
         {
             rt_kprintf("phy_dump: %02X --> faild", i);
             break;
@@ -730,10 +745,11 @@ void phy_dump(void)
         {
             rt_kprintf("%02X --> %08X\n", i, data);
         }
-
     }
 }
+#endif
 
+#if defined(RT_USING_FINSH) && defined(RT_USING_LWIP)
 void enet_reg_dump(void)
 {
     ENET_Type *enet_base = imxrt_eth_device.enet_base;

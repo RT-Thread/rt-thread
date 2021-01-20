@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018/10/28     Bernard      The unify RISC-V porting implementation
  * 2018/12/27     Jesven       Add SMP support
+ * 2020/11/20     BalanceTWK   Add FPU support
  */
 
 #include "cpuport.h"
@@ -47,7 +48,7 @@ rt_hw_context_switch_to:
 
 #ifdef RT_USING_SMP
     mv   a0,   a1
-    jal  rt_cpus_lock_status_restore
+    call  rt_cpus_lock_status_restore
 #endif
     LOAD a0,   2 * REGBYTES(sp)
     csrw mstatus, a0
@@ -72,6 +73,43 @@ rt_hw_context_switch:
      *     mstatus.mie -> sp(2)
      *     x(i)        -> sp(i-4)
      */
+#ifdef ARCH_RISCV_FPU
+    addi    sp, sp, -32 * FREGBYTES
+
+    FSTORE  f0, 0 * FREGBYTES(sp)
+    FSTORE  f1, 1 * FREGBYTES(sp)
+    FSTORE  f2, 2 * FREGBYTES(sp)
+    FSTORE  f3, 3 * FREGBYTES(sp)
+    FSTORE  f4, 4 * FREGBYTES(sp)
+    FSTORE  f5, 5 * FREGBYTES(sp)
+    FSTORE  f6, 6 * FREGBYTES(sp)
+    FSTORE  f7, 7 * FREGBYTES(sp)
+    FSTORE  f8, 8 * FREGBYTES(sp)
+    FSTORE  f9, 9 * FREGBYTES(sp)
+    FSTORE  f10, 10 * FREGBYTES(sp)
+    FSTORE  f11, 11 * FREGBYTES(sp)
+    FSTORE  f12, 12 * FREGBYTES(sp)
+    FSTORE  f13, 13 * FREGBYTES(sp)
+    FSTORE  f14, 14 * FREGBYTES(sp)
+    FSTORE  f15, 15 * FREGBYTES(sp)
+    FSTORE  f16, 16 * FREGBYTES(sp)
+    FSTORE  f17, 17 * FREGBYTES(sp)
+    FSTORE  f18, 18 * FREGBYTES(sp)
+    FSTORE  f19, 19 * FREGBYTES(sp)
+    FSTORE  f20, 20 * FREGBYTES(sp)
+    FSTORE  f21, 21 * FREGBYTES(sp)
+    FSTORE  f22, 22 * FREGBYTES(sp)
+    FSTORE  f23, 23 * FREGBYTES(sp)
+    FSTORE  f24, 24 * FREGBYTES(sp)
+    FSTORE  f25, 25 * FREGBYTES(sp)
+    FSTORE  f26, 26 * FREGBYTES(sp)
+    FSTORE  f27, 27 * FREGBYTES(sp)
+    FSTORE  f28, 28 * FREGBYTES(sp)
+    FSTORE  f29, 29 * FREGBYTES(sp)
+    FSTORE  f30, 30 * FREGBYTES(sp)
+    FSTORE  f31, 31 * FREGBYTES(sp)
+
+#endif
     addi  sp,  sp, -32 * REGBYTES
     STORE sp,  (a0)
 
@@ -123,7 +161,7 @@ save_mpie:
 
 #ifdef RT_USING_SMP
     mv   a0,   a2
-    jal  rt_cpus_lock_status_restore
+    call  rt_cpus_lock_status_restore
 #endif /*RT_USING_SMP*/
 
     j rt_hw_context_switch_exit
@@ -174,7 +212,7 @@ rt_hw_context_switch_exit:
 
     LOAD x1,   1 * REGBYTES(sp)
 
-    li    t0, 0x00001800
+    li    t0, 0x00007800
     csrw  mstatus, t0
     LOAD a0,   2 * REGBYTES(sp)
     csrs mstatus, a0
@@ -209,4 +247,42 @@ rt_hw_context_switch_exit:
     LOAD x31, 31 * REGBYTES(sp)
 
     addi sp,  sp, 32 * REGBYTES
+
+#ifdef ARCH_RISCV_FPU
+    FLOAD   f0, 0 * FREGBYTES(sp)
+    FLOAD   f1, 1 * FREGBYTES(sp)
+    FLOAD   f2, 2 * FREGBYTES(sp)
+    FLOAD   f3, 3 * FREGBYTES(sp)
+    FLOAD   f4, 4 * FREGBYTES(sp)
+    FLOAD   f5, 5 * FREGBYTES(sp)
+    FLOAD   f6, 6 * FREGBYTES(sp)
+    FLOAD   f7, 7 * FREGBYTES(sp)
+    FLOAD   f8, 8 * FREGBYTES(sp)
+    FLOAD   f9, 9 * FREGBYTES(sp)
+    FLOAD   f10, 10 * FREGBYTES(sp)
+    FLOAD   f11, 11 * FREGBYTES(sp)
+    FLOAD   f12, 12 * FREGBYTES(sp)
+    FLOAD   f13, 13 * FREGBYTES(sp)
+    FLOAD   f14, 14 * FREGBYTES(sp)
+    FLOAD   f15, 15 * FREGBYTES(sp)
+    FLOAD   f16, 16 * FREGBYTES(sp)
+    FLOAD   f17, 17 * FREGBYTES(sp)
+    FLOAD   f18, 18 * FREGBYTES(sp)
+    FLOAD   f19, 19 * FREGBYTES(sp)
+    FLOAD   f20, 20 * FREGBYTES(sp)
+    FLOAD   f21, 21 * FREGBYTES(sp)
+    FLOAD   f22, 22 * FREGBYTES(sp)
+    FLOAD   f23, 23 * FREGBYTES(sp)
+    FLOAD   f24, 24 * FREGBYTES(sp)
+    FLOAD   f25, 25 * FREGBYTES(sp)
+    FLOAD   f26, 26 * FREGBYTES(sp)
+    FLOAD   f27, 27 * FREGBYTES(sp)
+    FLOAD   f28, 28 * FREGBYTES(sp)
+    FLOAD   f29, 29 * FREGBYTES(sp)
+    FLOAD   f30, 30 * FREGBYTES(sp)
+    FLOAD   f31, 31 * FREGBYTES(sp)
+
+    addi    sp, sp, 32 * FREGBYTES
+#endif
+
     mret

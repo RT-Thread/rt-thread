@@ -50,6 +50,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, light:%5d lux, timestamp:%5d", num, sensor_data->data.light, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_PROXIMITY:
+    case RT_SENSOR_CLASS_TOF:
         LOG_I("num:%3d, distance:%5d, timestamp:%5d", num, sensor_data->data.proximity, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HR:

@@ -289,7 +289,7 @@ rt_hw_context_switch_interrupt_do:
   ld.w    r12, r12[0]
   lda.w   r11, rt_interrupt_to_thread	/* Get new thread SP */
   ld.w    r11, r11[0]
-  st.w    r12[0], sp					/* Store old thead SP */
+  st.w    r12[0], sp					/* Store old thread SP */
   ld.w    sp, r11[0]					/* Load new thread SP */
   ldm     sp++, r0-r7					/* Pop R0-R7 (new thread) */
   rete									/* RETE pops R8-R12, LR, PC, SR automatically */

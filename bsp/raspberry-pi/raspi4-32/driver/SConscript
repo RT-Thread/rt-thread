@@ -1,10 +1,20 @@
+# RT-Thread building script for component
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp')
+src     = Glob('*.c') + Glob('*.cpp') + Glob('*.a')
 CPPPATH = [cwd, str(Dir('#'))]
 
-group = DefineGroup('driver', src, depend = [''], CPPPATH = CPPPATH)
+if not GetDepend('BSP_USING_ETH'):
+    SrcRemove(src, ['drv_eth.c'])
+if not GetDepend('BSP_USING_SPI'):
+    SrcRemove(src, ['drv_spi.c'])
+if not GetDepend('BSP_USING_WDT'):
+    SrcRemove(src, ['drv_wdt.c'])
+if not GetDepend('BSP_USING_BULETOOTH'):
+    SrcRemove(src, ['drv_bluetooth.c'])
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory
 list = os.listdir(cwd)

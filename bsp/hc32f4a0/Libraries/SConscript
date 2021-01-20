@@ -1,0 +1,70 @@
+# RT-Thread building script for bridge
+
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/Device/HDSC/HC32F4A0/Source/system_hc32f4a0.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_clk.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_dma.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_efm.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_gpio.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_icg.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_interrupts.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_pwc.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_sram.c
+HC32F4A0_StdPeriph_Driver/src/hc32f4a0_utility.c
+""")
+
+#src += Glob('HC32F4A0_StdPeriph_Driver/src/*.c')
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_usart.c']
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_tmr0.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_i2c.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_spi.c']
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_qspi.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_can.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_adc.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_rtc.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_wdt.c']
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_swdt.c']
+
+if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
+    src += ['HC32F4A0_StdPeriph_Driver/src/hc32f4a0_tmra.c']
+
+#add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src + ['CMSIS/Device/HDSC/HC32F4A0/Source/GCC/startup_hc32f4a0.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['CMSIS/Device/HDSC/HC32F4A0/Source/ARM/startup_hc32f4a0.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['CMSIS/Device/HDSC/HC32F4A0/Source/IAR/startup_hc32f4a0.s']
+
+#add headfile script 
+path = [cwd + '/CMSIS/Include', 
+    cwd + '/CMSIS/Device/HDSC/HC32F4A0/Include',
+    cwd + '/HC32F4A0_StdPeriph_Driver/inc']
+
+CPPDEFINES = ['USE_DDL_DRIVER', rtconfig.MCU_TYPE, '__DEBUG']
+
+group = DefineGroup('HC32_StdPeriph', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

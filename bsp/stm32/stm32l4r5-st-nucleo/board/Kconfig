@@ -215,7 +215,7 @@ menu "Hardware Drivers Config"
             select RT_USING_PWM
             if BSP_USING_PWM
                 config BSP_USING_PWM1
-                    bool "Using PWM1
+                    bool "Using PWM1"
                     default n
                     if BSP_USING_PWM1
                         config BSP_USING_PWM1_CH1

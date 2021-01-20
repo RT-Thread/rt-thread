@@ -157,12 +157,24 @@ menu "On-chip Peripheral Drivers"
         endif
 
     
-    menuconfig BSP_USING_UART
-        bool "Enable UART"
+    config BSP_USING_UART
+		bool "Enable UART"
         default y
         select RT_USING_SERIAL
-
-        if BSP_USING_UART
+		if BSP_USING_UART
+		choice
+		prompt "UART or UARTE"
+		default NRFX_USING_UART
+		help
+			Select the UART or UARTE
+		config NRFX_USING_UART
+			bool "UART"
+		
+		config NRFX_USING_UARTE
+			bool "UARTE"
+		endchoice
+		endif
+        if BSP_USING_UART&&NRFX_USING_UART
             config NRFX_UART_ENABLED
             int 
             default 1
@@ -183,11 +195,72 @@ menu "On-chip Peripheral Drivers"
                         range 0 31
                         default 6
                 endif
-            config BSP_USING_UART1
-                bool "Enable UART1"
-                default n
         endif
+        if BSP_USING_UART&&NRFX_USING_UARTE
+            config NRFX_UARTE_ENABLED
+            int 
+            default 1
 
+            config BSP_USING_UART0
+                bool "Enable UARTE0"
+                default n 
+                if BSP_USING_UART0
+                    config NRFX_UARTE0_ENABLED
+                    int 
+                    default 1
+                    config BSP_UART0_RX_PIN
+                        int "uarte0 rx pin number"
+                        range 0 31
+                        default 8
+                    config BSP_UART0_TX_PIN
+                        int "uarte0 tx pin number"
+                        range 0 31
+                        default 6
+                endif
+        endif
+        
+    config BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            config NRFX_TWIM_ENABLED
+            int 
+            default 1
+            config BSP_USING_I2C0
+                bool "Enable I2C0 bus"
+                default n
+            if BSP_USING_I2C0
+                config NRFX_TWIM0_ENABLED
+                int 
+                default 1
+                config BSP_I2C0_SCL_PIN
+                    int "i2c0 scl pin number"
+                    range 0 31
+                    default 27
+                config BSP_I2C0_SDA_PIN
+                    int "I2C0 sda pin number"
+                    range 0 31
+                    default 26
+            endif
+            config BSP_USING_I2C1
+                bool "Enable I2C1 bus"
+                default n
+            if BSP_USING_I2C1
+                config NRFX_TWIM1_ENABLED
+                int 
+                default 1
+                config BSP_I2C1_SCL_PIN
+                    int "i2c1 scl pin number"
+                    range 0 31
+                    default 3
+                config BSP_I2C1_SDA_PIN
+                    int "I2C1 sda pin number"
+                    range 0 31
+                    default 2
+            endif
+        endif
+        
     config BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_PIN

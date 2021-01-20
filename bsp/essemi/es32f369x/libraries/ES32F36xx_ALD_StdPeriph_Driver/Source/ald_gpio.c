@@ -93,9 +93,9 @@
             init.odos  = GPIO_PUSH_PULL;
             init.pupd  = GPIO_PUSH_UP;
             init.podrv = GPIO_OUT_DRIVE_6;
-			init.nodrv = GPIO_OUT_DRIVE_6;
+            init.nodrv = GPIO_OUT_DRIVE_6;
             init.flt   = GPIO_FILTER_DISABLE;
-            init.type  = GPIO_TYPE_TTL;
+            init.type  = GPIO_TYPE_CMOS;
             init.func  = GPIO_FUNC_1;
 
    (#) In case of external interrupt/event mode selection, user need invoke
@@ -332,12 +332,12 @@ void ald_gpio_exti_init(GPIO_TypeDef *GPIOx, uint16_t pin, exti_init_t *init)
 
 	/* Select external interrupt line */
 	if (i <= 7) {
-		EXTI->EXTIPSR0 &= ~(0x7 << (i * 4));
+		EXTI->EXTIPSR0 &= ~(0x7U << (i * 4));
 		EXTI->EXTIPSR0 |= (port << (i * 4));
 	}
 	else {
 		i -= 8;
-		EXTI->EXTIPSR1 &= ~(0x7 << (i * 4));
+		EXTI->EXTIPSR1 &= ~(0x7U << (i * 4));
 		EXTI->EXTIPSR1 |= (port << (i * 4));
 	}
 
@@ -376,8 +376,6 @@ void ald_gpio_exti_init(GPIO_TypeDef *GPIOx, uint16_t pin, exti_init_t *init)
   * @param  GPIOx: Where x can be (A--H) to select the GPIO peripheral.
   * @param  pin: Specifies the pin to read.
   * @retval The input pin value
-  *         - BIT_SET
-  *         - BIT_RESET
   */
 uint8_t ald_gpio_read_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
@@ -385,10 +383,9 @@ uint8_t ald_gpio_read_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
 	assert_param(IS_GPIO_PIN(pin));
 
 	if (READ_BIT(GPIOx->DIN, pin))
-		return BIT_SET;
-
+		return 1;
 	else
-		return BIT_RESET;
+		return 0;
 }
 
 /**
@@ -513,8 +510,6 @@ void ald_gpio_write_port(GPIO_TypeDef *GPIOx, uint16_t val)
 	WRITE_REG(GPIOx->DOUT, val);
 	return;
 }
-
-
 /**
   * @}
   */

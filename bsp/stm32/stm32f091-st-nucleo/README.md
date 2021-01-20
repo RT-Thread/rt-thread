@@ -1,4 +1,4 @@
-# STM32F091RC-Nucleo BSP (Board Support Package) Execution Instruction
+# STM32F091-Nucleo BSP Introduction
 
 [中文页](README_zh.md) |
 
@@ -14,11 +14,13 @@ The document is covered in three parts:
 
 By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
+
+
 ## STM32F091RC-Nucleo Resources Introduction
 
 The STM32F091RC-Nucleo is a development board that contains a ARM Cortex-M0. The maximum main frequency is 48 MHz, and it has a wealth of on-board resources that can take full advantage of the STM32F091's chip performance.
 
-[![board](https://github.com/RT-Thread/rt-thread/raw/master/bsp/stm32/stm32f091-st-nucleo/figures/board.jpg)](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32f091-st-nucleo/figures/board.jpg)
+[![board](figures\board.jpg)](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32f091-st-nucleo/figures/board.jpg)
 
 The mainly-used resources of this board are shown as follows:
 
@@ -27,7 +29,11 @@ The mainly-used resources of this board are shown as follows:
 - External FLASH: None
 - Common peripherals -Button: one, user (has the wake-up feature, PC13)
 - Common-used interfaces: USB, Arduino interface, etc.
-- Debug interface: standard SWD For more details about this board, please refer to [ST official](https://www.st.com/en/evaluation-tools/stm32-nucleo-boards.html?querycriteria=productId=LN1847).
+- Debug interface: Standard SWD interface.
+
+### For more details about this board, please refer to [ST official](https://www.st.com/en/evaluation-tools/stm32-nucleo-boards.html?querycriteria=productId=LN1847).
+
+
 
 ## **Peripheral Condition**
 
@@ -48,9 +54,9 @@ Each peripheral supporting condition for this BSP is as follows:
 | FLASH                       | Support     |                                                              |
 | IWGSupport                  |             |                                                              |
 
-## Execution Instruction
 
-### Quickly Get Started
+
+## Quickly Get Started
 
 This BSP provides MDK4, MDK5, and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 

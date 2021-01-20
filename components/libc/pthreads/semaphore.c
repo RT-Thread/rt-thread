@@ -64,7 +64,7 @@ static sem_t *posix_sem_find(const char* name)
 
     for (iter = posix_sem_list; iter != RT_NULL; iter = iter->next)
     {
-        object = (rt_object_t)&(iter->sem);
+        object = (rt_object_t)iter->sem;
 
         if (strncmp(object->name, name, RT_NAME_MAX) == 0)
         {

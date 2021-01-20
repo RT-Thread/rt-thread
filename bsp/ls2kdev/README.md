@@ -97,12 +97,12 @@ msh >
 
 ```
 title   TFTPBOOT
- kernel tftfp://10.1.1.118/rtthread.elf
+ kernel tftp://10.1.1.118/rtthread.elf
  args console=tty root=/dev/sda2
  initrd (wd0,0)/initrd.img
 ```
 
-其中`tftfp://10.1.1.118/rtthread.elf`中的`10.1.1.118`为tftp服务器的ip地址。
+其中`tftp://10.1.1.118/rtthread.elf`中的`10.1.1.118`为tftp服务器的ip地址。
 
 **第三步：**
 
@@ -110,17 +110,37 @@ title   TFTPBOOT
 
 以上三步完成之后，重启系统，就可以省略每次都需要进入pmon的输入命令的麻烦，板子上电后，可以自动从系统TFTP服务器中获取固件，然后启动，大大提高调试代码效率。
 
-## 5. 支持情况
+## 5.SATA接口的SSD文件系统支持
+
+当前已经支持SATA接口的SSD文件系统驱动，需要通过menuconfig
+
+```
+RT-Thread online packages  --->
+	 			system packages  --->
+	 				lwext4: an excellent choice of ext2/3/4 filesystem for microcontrollers
+```
+
+然后输入下面的命令更新软件包
+
+```
+pkgs --update
+```
+
+输入`scons`编译代码即可使用SATA接口的SSD文件系统。
+
+## 6. 支持情况
 
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
-| UART | 支持 | UART0|
+| UART | 支持 | UART0\UART4,波特率可调 |
 | GPIO | 支持 | - |
 | PWM | 支持 | - |
 | GMAC | 支持 | 网卡驱动 |
 | RTC  | 支持 | - |
+| SPI | 支持 | - |
+| SATA SSD | 支持 | 需要打开lwext4软件包 |
 
-## 6. 联系人信息
+## 7. 联系人信息
 
 维护人：[bernard][4]
 

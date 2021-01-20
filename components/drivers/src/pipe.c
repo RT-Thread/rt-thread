@@ -41,16 +41,16 @@ static int pipe_fops_open(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        pipe->readers ++;
-        break;
-    case O_WRONLY:
-        pipe->writers ++;
-        break;
-    case O_RDWR:
-        pipe->readers ++;
-        pipe->writers ++;
-        break;
+        case O_RDONLY:
+            pipe->readers ++;
+            break;
+        case O_WRONLY:
+            pipe->writers ++;
+            break;
+        case O_RDWR:
+            pipe->readers ++;
+            pipe->writers ++;
+            break;
     }
     device->ref_count ++;
 
@@ -73,16 +73,16 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        pipe->readers --;
-        break;
-    case O_WRONLY:
-        pipe->writers --;
-        break;
-    case O_RDWR:
-        pipe->readers --;
-        pipe->writers --;
-        break;
+        case O_RDONLY:
+            pipe->readers --;
+            break;
+        case O_WRONLY:
+            pipe->writers --;
+            break;
+        case O_RDWR:
+            pipe->readers --;
+            pipe->writers --;
+            break;
     }
 
     if (pipe->writers == 0)
@@ -123,15 +123,15 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 
     switch (cmd)
     {
-    case FIONREAD:
-        *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
-        break;
-    case FIONWRITE:
-        *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
-        break;
-    default:
-        ret = -EINVAL;
-        break;
+        case FIONREAD:
+            *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
+            break;
+        case FIONWRITE:
+            *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
+            break;
+        default:
+            ret = -EINVAL;
+            break;
     }
 
     return ret;

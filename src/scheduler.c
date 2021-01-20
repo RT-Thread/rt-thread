@@ -43,7 +43,7 @@ rt_uint8_t rt_thread_ready_table[32];
 #ifndef RT_USING_SMP
 extern volatile rt_uint8_t rt_interrupt_nest;
 static rt_int16_t rt_scheduler_lock_nest;
-struct rt_thread *rt_current_thread;
+struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /*RT_USING_SMP*/
 
@@ -90,12 +90,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         rt_ubase_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-#ifdef RT_USING_FINSH
-        {
-            extern long list_thread(void);
-            list_thread();
-        }
-#endif
+
         level = rt_hw_interrupt_disable();
         while (level);
     }
