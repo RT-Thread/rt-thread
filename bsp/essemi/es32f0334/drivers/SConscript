@@ -2,6 +2,8 @@ from building import *
 
 cwd = GetCurrentDir()
 
+objs = []
+
 # add the general drivers.
 src = Split('''
 board.c
@@ -50,5 +52,43 @@ if GetDepend(['BSP_USING_ADC']):
 
 CPPPATH = [cwd]
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+objs = objs + group
 
-Return('group')
+src   = []
+cwd   = GetCurrentDir()
+include_path = [cwd]
+
+if GetDepend('BSP_USING_EXAMPLE_ADC_VOL'):
+    src += ['bsp_driver_example/adc_vol_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_HWTIMER'):
+    src += ['bsp_driver_example/hwtimer_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_I2C'):
+    src += ['bsp_driver_example/i2c_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_LED_BLINK'):
+    src += ['bsp_driver_example/led_blink_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_PIN_BEEP'):
+    src += ['bsp_driver_example/pin_beep_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_PWM_LED'):
+    src += ['bsp_driver_example/pwm_led_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_RTC'):
+    src += ['bsp_driver_example/rtc_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_UART'):
+    src += ['bsp_driver_example/uart_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_SPI'):
+    src += ['bsp_driver_example/spi_sample.c']
+
+if GetDepend('BSP_USING_EXAMPLE_PM'):
+    src += ['bsp_driver_example/pm_sample.c']
+
+group = DefineGroup('bsp-drivers-test-samples', src, depend = [''], CPPPATH = include_path)
+
+objs = objs + group
+Return('objs')

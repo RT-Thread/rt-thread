@@ -37,6 +37,26 @@ if GetDepend(['BSP_USING_TIM14']):
 if GetDepend(['BSP_USING_PMIC']):
     src += Glob('ports/drv_pmic.c')
 
+if GetDepend(['BSP_USING_RS485']):
+    src += Glob('ports/drv_rs485.c')
+
+if GetDepend(['BSP_USING_GBE']):
+    src += Glob('ports/drv_eth.c')
+
+if GetDepend(['BSP_USING_SDMMC']):
+    src += Glob('ports/drv_sdio.c')
+
+if GetDepend(['BSP_USING_AUDIO']):
+    src += Glob('ports/audio/drv_cs42l51.c')
+    src += Glob('ports/audio/drv_sound.c')
+    src += Glob('ports/audio/audio_play.c')
+
+if GetDepend(['BSP_USING_AUDIO_RECORD']):
+    src += Glob('ports/audio/drv_mic.c')
+
+if GetDepend(['(BSP_USING_RNG)']) or GetDepend(['(BSP_USING_HASH)']) or GetDepend(['(BSP_USING_CRC)']) or GetDepend(['BSP_USING_CRYP']):
+    src += Glob('ports/crypto/crypto_sample.c')
+
 if GetDepend(['BSP_USING_OPENAMP']):
     src +=  Glob('CubeMX_Config/CM4/Src/ipcc.c')
     src +=  Glob('CubeMX_Config/CM4/Src/openamp.c')
@@ -55,6 +75,7 @@ if GetDepend(['BSP_USING_OPENAMP']):
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/CM4/Inc']
 path += [cwd + '/ports']
+path += [cwd + '/ports/audio']
 
 if GetDepend(['BSP_USING_OPENAMP']):
     path += [cwd + '/ports/OpenAMP']

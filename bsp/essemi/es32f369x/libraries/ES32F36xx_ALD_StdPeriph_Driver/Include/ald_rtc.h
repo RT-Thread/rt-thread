@@ -39,26 +39,26 @@ extern "C" {
   * @brief Hours format
   */
 typedef enum {
-	RTC_HOUR_FORMAT_24 = 0x0,	/**< 24-hours format */
-	RTC_HOUR_FORMAT_12 = 0x1,	/**< 12-hours format */
+	RTC_HOUR_FORMAT_24 = 0x0U,	/**< 24-hours format */
+	RTC_HOUR_FORMAT_12 = 0x1U,	/**< 12-hours format */
 } rtc_hour_format_t;
 
 /**
   * @brief Output mode
   */
 typedef enum {
-	RTC_OUTPUT_DISABLE = 0x0,	/**< Disable output */
-	RTC_OUTPUT_ALARM_A = 0x1,	/**< Output alarm_a signal */
-	RTC_OUTPUT_ALARM_B = 0x2,	/**< Output alarm_b signal */
-	RTC_OUTPUT_WAKEUP  = 0x3,	/**< Output wakeup signal */
+	RTC_OUTPUT_DISABLE = 0x0U,	/**< Disable output */
+	RTC_OUTPUT_ALARM_A = 0x1U,	/**< Output alarm_a signal */
+	RTC_OUTPUT_ALARM_B = 0x2U,	/**< Output alarm_b signal */
+	RTC_OUTPUT_WAKEUP  = 0x3U,	/**< Output wakeup signal */
 } rtc_output_select_t;
 
 /**
   * @brief Output polarity
   */
 typedef enum {
-	RTC_OUTPUT_POLARITY_HIGH = 0x0,	/**< Polarity is high */
-	RTC_OUTPUT_POLARITY_LOW  = 0x1,	/**< Polarity is low */
+	RTC_OUTPUT_POLARITY_HIGH = 0x0U,	/**< Polarity is high */
+	RTC_OUTPUT_POLARITY_LOW  = 0x1U,	/**< Polarity is low */
 } rtc_output_polarity_t;
 
 /**
@@ -76,10 +76,10 @@ typedef struct {
   * @brief Source select
   */
 typedef enum {
-	RTC_SOURCE_LOSC        = 0x0,	/**< LOSC */
-	RTC_SOURCE_LRC         = 0x1,	/**< LRC */
-	RTC_SOURCE_HRC_DIV_1M  = 0x2,	/**< HRC divide to 1MHz */
-	RTC_SOURCE_HOSC_DIV_1M = 0x3,	/**< HOSC divide to 1MHz */
+	RTC_SOURCE_LOSC        = 0x0U,	/**< LOSC */
+	RTC_SOURCE_LRC         = 0x1U,	/**< LRC */
+	RTC_SOURCE_HRC_DIV_1M  = 0x2U,	/**< HRC divide to 1MHz */
+	RTC_SOURCE_HOSC_DIV_1M = 0x3U,	/**< HOSC divide to 1MHz */
 } rtc_source_sel_t;
 
 /**
@@ -106,57 +106,57 @@ typedef struct {
   * @brief Data format
   */
 typedef enum {
-	RTC_FORMAT_DEC = 0,	/**< Decimal */
-	RTC_FORMAT_BCD = 1,	/**< BSD */
+	RTC_FORMAT_DEC = 0U,	/**< Decimal */
+	RTC_FORMAT_BCD = 1U,	/**< BSD */
 } rtc_format_t;
 
 /**
   * @brief Index of alarm
   */
 typedef enum {
-	RTC_ALARM_A = 0x0,	/**< Alarm-A */
-	RTC_ALARM_B = 0x1,	/**< Alarm-B */
+	RTC_ALARM_A = 0x0U,	/**< Alarm-A */
+	RTC_ALARM_B = 0x1U,	/**< Alarm-B */
 } rtc_alarm_idx_t;
 
 /**
   * @brief Alarm mask
   */
 typedef enum {
-	RTC_ALARM_MASK_NONE     = 0x0,		/**< Mask is disable */
+	RTC_ALARM_MASK_NONE     = 0x0U,		/**< Mask is disable */
 	RTC_ALARM_MASK_WEEK_DAY = (1U << 30),	/**< Mask week or day */
 	RTC_ALARM_MASK_HOUR     = (1U << 23),	/**< Mask hour */
 	RTC_ALARM_MASK_MINUTE   = (1U << 15),	/**< Mask minute */
 	RTC_ALARM_MASK_SECOND   = (1U << 7),	/**< Mask second */
-	RTC_ALARM_MASK_ALL      = 0x40808080,	/**< Mask all */
+	RTC_ALARM_MASK_ALL      = 0x40808080U,	/**< Mask all */
 } rtc_alarm_mask_t;
 
 /**
   * @brief Alarm sub-second mask
   */
 typedef enum {
-	RTC_ALARM_SS_MASK_NONE  = 0xF,	/**< Mask is disable */
-	RTC_ALARM_SS_MASK_14_1  = 0x1,	/**< Mask bit(1-14) */
-	RTC_ALARM_SS_MASK_14_2  = 0x2,	/**< Mask bit(2-14) */
-	RTC_ALARM_SS_MASK_14_3  = 0x3,	/**< Mask bit(3-14) */
-	RTC_ALARM_SS_MASK_14_4  = 0x4,	/**< Mask bit(4-14) */
-	RTC_ALARM_SS_MASK_14_5  = 0x5,	/**< Mask bit(5-14) */
-	RTC_ALARM_SS_MASK_14_6  = 0x6,	/**< Mask bit(6-14) */
-	RTC_ALARM_SS_MASK_14_7  = 0x7,	/**< Mask bit(7-14) */
-	RTC_ALARM_SS_MASK_14_8  = 0x8,	/**< Mask bit(8-14) */
-	RTC_ALARM_SS_MASK_14_9  = 0x9,	/**< Mask bit(9-14) */
-	RTC_ALARM_SS_MASK_14_10 = 0xA,	/**< Mask bit(10-14) */
-	RTC_ALARM_SS_MASK_14_11 = 0xB,	/**< Mask bit(11-14) */
-	RTC_ALARM_SS_MASK_14_12 = 0xC,	/**< Mask bit(12-14) */
-	RTC_ALARM_SS_MASK_14_13 = 0xD,	/**< Mask bit(13-14) */
-	RTC_ALARM_SS_MASK_14    = 0xE,	/**< Mask bit14 */
-	RTC_ALARM_SS_MASK_ALL   = 0x0,	/**< Mask bit(0-14) */
+	RTC_ALARM_SS_MASK_NONE  = 0xFU,	/**< Mask is disable */
+	RTC_ALARM_SS_MASK_14_1  = 0x1U,	/**< Mask bit(1-14) */
+	RTC_ALARM_SS_MASK_14_2  = 0x2U,	/**< Mask bit(2-14) */
+	RTC_ALARM_SS_MASK_14_3  = 0x3U,	/**< Mask bit(3-14) */
+	RTC_ALARM_SS_MASK_14_4  = 0x4U,	/**< Mask bit(4-14) */
+	RTC_ALARM_SS_MASK_14_5  = 0x5U,	/**< Mask bit(5-14) */
+	RTC_ALARM_SS_MASK_14_6  = 0x6U,	/**< Mask bit(6-14) */
+	RTC_ALARM_SS_MASK_14_7  = 0x7U,	/**< Mask bit(7-14) */
+	RTC_ALARM_SS_MASK_14_8  = 0x8U,	/**< Mask bit(8-14) */
+	RTC_ALARM_SS_MASK_14_9  = 0x9U,	/**< Mask bit(9-14) */
+	RTC_ALARM_SS_MASK_14_10 = 0xAU,	/**< Mask bit(10-14) */
+	RTC_ALARM_SS_MASK_14_11 = 0xBU,	/**< Mask bit(11-14) */
+	RTC_ALARM_SS_MASK_14_12 = 0xCU,	/**< Mask bit(12-14) */
+	RTC_ALARM_SS_MASK_14_13 = 0xDU,	/**< Mask bit(13-14) */
+	RTC_ALARM_SS_MASK_14    = 0xEU,	/**< Mask bit14 */
+	RTC_ALARM_SS_MASK_ALL   = 0x0U,	/**< Mask bit(0-14) */
 } rtc_sub_second_mask_t;
 
 /**
   * @brief Alarm select week or day */
 typedef enum {
-	RTC_SELECT_DAY  = 0x0,	/**< Alarm select day */
-	RTC_SELECT_WEEK = 0x1,	/**< Alarm select week */
+	RTC_SELECT_DAY  = 0x0U,	/**< Alarm select day */
+	RTC_SELECT_WEEK = 0x1U,	/**< Alarm select week */
 } rtc_week_day_sel_t;
 
 /**
@@ -179,56 +179,56 @@ typedef struct {
   * @brief Time stamp signel select
   */
 typedef enum {
-	RTC_TS_SIGNAL_SEL_TAMPER0 = 0,	/**< Select tamper0 */
-	RTC_TS_SIGNAL_SEL_TAMPER1 = 1,	/**< Select tamper1 */
+	RTC_TS_SIGNAL_SEL_TAMPER0 = 0U,	/**< Select tamper0 */
+	RTC_TS_SIGNAL_SEL_TAMPER1 = 1U,	/**< Select tamper1 */
 } rtc_ts_signal_sel_t;
 
 /**
   * @brief Time stamp trigger style
   */
 typedef enum {
-	RTC_TS_RISING_EDGE  = 0,	/**< Rising edge */
-	RTC_TS_FALLING_EDGE = 1,	/**< Falling edge */
+	RTC_TS_RISING_EDGE  = 0U,	/**< Rising edge */
+	RTC_TS_FALLING_EDGE = 1U,	/**< Falling edge */
 } rtc_ts_trigger_style_t;
 
 /**
   * @brief Index of tamper
   */
 typedef enum {
-	RTC_TAMPER_0 = 0,	/**< Tamper0 */
-	RTC_TAMPER_1 = 1,	/**< Tamper1 */
+	RTC_TAMPER_0 = 0U,	/**< Tamper0 */
+	RTC_TAMPER_1 = 1U,	/**< Tamper1 */
 } rtc_tamper_idx_t;
 
 /**
   * @brief Tamper trigger type
   */
 typedef enum {
-	RTC_TAMPER_TRIGGER_LOW  = 0,	/**< High trigger */
-	RTC_TAMPER_TRIGGER_HIGH = 1,	/**< Low trigger */
+	RTC_TAMPER_TRIGGER_LOW  = 0U,	/**< High trigger */
+	RTC_TAMPER_TRIGGER_HIGH = 1U,	/**< Low trigger */
 } rtc_tamper_trigger_t;
 
 /**
   * @brief Tamper sampling frequency
   */
 typedef enum {
-	RTC_TAMPER_SAMPLING_FREQ_32768 = 0,	/**< RTCCLK / 32768 */
-	RTC_TAMPER_SAMPLING_FREQ_16384 = 1,	/**< RTCCLK / 16384 */
-	RTC_TAMPER_SAMPLING_FREQ_8192  = 2,	/**< RTCCLK / 8192 */
-	RTC_TAMPER_SAMPLING_FREQ_4096  = 3,	/**< RTCCLK / 4096 */
-	RTC_TAMPER_SAMPLING_FREQ_2048  = 4,	/**< RTCCLK / 2048 */
-	RTC_TAMPER_SAMPLING_FREQ_1024  = 5,	/**< RTCCLK / 1024 */
-	RTC_TAMPER_SAMPLING_FREQ_512   = 6,	/**< RTCCLK / 512 */
-	RTC_TAMPER_SAMPLING_FREQ_256   = 7,	/**< RTCCLK / 256 */
+	RTC_TAMPER_SAMPLING_FREQ_32768 = 0U,	/**< RTCCLK / 32768 */
+	RTC_TAMPER_SAMPLING_FREQ_16384 = 1U,	/**< RTCCLK / 16384 */
+	RTC_TAMPER_SAMPLING_FREQ_8192  = 2U,	/**< RTCCLK / 8192 */
+	RTC_TAMPER_SAMPLING_FREQ_4096  = 3U,	/**< RTCCLK / 4096 */
+	RTC_TAMPER_SAMPLING_FREQ_2048  = 4U,	/**< RTCCLK / 2048 */
+	RTC_TAMPER_SAMPLING_FREQ_1024  = 5U,	/**< RTCCLK / 1024 */
+	RTC_TAMPER_SAMPLING_FREQ_512   = 6U,	/**< RTCCLK / 512 */
+	RTC_TAMPER_SAMPLING_FREQ_256   = 7U,	/**< RTCCLK / 256 */
 } rtc_tamper_sampling_freq_t;
 
 /**
   * @brief Tamper filter time
   */
 typedef enum {
-	RTC_TAMPER_DURATION_1 = 0,	/**< Duration 1 sampling */
-	RTC_TAMPER_DURATION_2 = 1,	/**< Duration 2 sampling */
-	RTC_TAMPER_DURATION_4 = 2,	/**< Duration 4 sampling */
-	RTC_TAMPER_DURATION_8 = 3,	/**< Duration 8 sampling */
+	RTC_TAMPER_DURATION_1 = 0U,	/**< Duration 1 sampling */
+	RTC_TAMPER_DURATION_2 = 1U,	/**< Duration 2 sampling */
+	RTC_TAMPER_DURATION_4 = 2U,	/**< Duration 4 sampling */
+	RTC_TAMPER_DURATION_8 = 3U,	/**< Duration 8 sampling */
 } rtc_tamper_duration_t;
 
 /**
@@ -246,70 +246,70 @@ typedef struct {
   * @brief Wake-up clock
   */
 typedef enum {
-	RTC_WAKEUP_CLOCK_DIV_16   = 0,	/**< RTCCLK / 16 */
-	RTC_WAKEUP_CLOCK_DIV_8    = 1,	/**< RTCCLK / 8 */
-	RTC_WAKEUP_CLOCK_DIV_4    = 2,	/**< RTCCLK / 4 */
-	RTC_WAKEUP_CLOCK_DIV_2    = 3,	/**< RTCCLK / 2 */
-	RTC_WAKEUP_CLOCK_1HZ      = 4,	/**< 1Hz */
-	RTC_WAKEUP_CLOCK_1HZ_PULS = 6,	/**< 1Hz and WUT + 65536 */
+	RTC_WAKEUP_CLOCK_DIV_16   = 0U,	/**< RTCCLK / 16 */
+	RTC_WAKEUP_CLOCK_DIV_8    = 1U,	/**< RTCCLK / 8 */
+	RTC_WAKEUP_CLOCK_DIV_4    = 2U,	/**< RTCCLK / 4 */
+	RTC_WAKEUP_CLOCK_DIV_2    = 3U,	/**< RTCCLK / 2 */
+	RTC_WAKEUP_CLOCK_1HZ      = 4U,	/**< 1Hz */
+	RTC_WAKEUP_CLOCK_1HZ_PULS = 6U,	/**< 1Hz and WUT + 65536 */
 } rtc_wakeup_clock_t;
 
 /**
   * @brief RTC clock output type
   */
 typedef enum {
-	RTC_CLOCK_OUTPUT_32768 = 0,	/**< 32768Hz */
-	RTC_CLOCK_OUTPUT_1024  = 1,	/**< 1024Hz */
-	RTC_CLOCK_OUTPUT_32    = 2,	/**< 32Hz */
-	RTC_CLOCK_OUTPUT_1     = 3,	/**< 1Hz */
-	RTC_CLOCK_OUTPUT_CAL_1 = 4,	/**< 1Hz after calibration */
-	RTC_CLOCK_OUTPUT_EXA_1 = 5,	/**< Exact 1Hz */
+	RTC_CLOCK_OUTPUT_32768 = 0U,	/**< 32768Hz */
+	RTC_CLOCK_OUTPUT_1024  = 1U,	/**< 1024Hz */
+	RTC_CLOCK_OUTPUT_32    = 2U,	/**< 32Hz */
+	RTC_CLOCK_OUTPUT_1     = 3U,	/**< 1Hz */
+	RTC_CLOCK_OUTPUT_CAL_1 = 4U,	/**< 1Hz after calibration */
+	RTC_CLOCK_OUTPUT_EXA_1 = 5U,	/**< Exact 1Hz */
 } rtc_clock_output_t;
 
 /**
   * @ Calibration frequency
   */
 typedef enum {
-	RTC_CALI_FREQ_10_SEC = 0,	/**< Calibrate every 10 seconds */
-	RTC_CALI_FREQ_20_SEC = 1,	/**< Calibrate every 20 seconds */
-	RTC_CALI_FREQ_1_MIN  = 2,	/**< Calibrate every 1 minute */
-	RTC_CALI_FREQ_2_MIN  = 3,	/**< Calibrate every 2 minutes */
-	RTC_CALI_FREQ_5_MIN  = 4,	/**< Calibrate every 5 minutes */
-	RTC_CALI_FREQ_10_MIN = 5,	/**< Calibrate every 10 minutes */
-	RTC_CALI_FREQ_20_MIN = 6,	/**< Calibrate every 20 minutes */
-	RTC_CALI_FREQ_1_SEC  = 7,	/**< Calibrate every 1 second */
+	RTC_CALI_FREQ_10_SEC = 0U,	/**< Calibrate every 10 seconds */
+	RTC_CALI_FREQ_20_SEC = 1U,	/**< Calibrate every 20 seconds */
+	RTC_CALI_FREQ_1_MIN  = 2U,	/**< Calibrate every 1 minute */
+	RTC_CALI_FREQ_2_MIN  = 3U,	/**< Calibrate every 2 minutes */
+	RTC_CALI_FREQ_5_MIN  = 4U,	/**< Calibrate every 5 minutes */
+	RTC_CALI_FREQ_10_MIN = 5U,	/**< Calibrate every 10 minutes */
+	RTC_CALI_FREQ_20_MIN = 6U,	/**< Calibrate every 20 minutes */
+	RTC_CALI_FREQ_1_SEC  = 7U,	/**< Calibrate every 1 second */
 } rtc_cali_freq_t;
 
 /**
   * @brief Temperature compensate type
   */
 typedef enum {
-	RTC_CALI_TC_NONE          = 0,	/**< Temperature compensate disable */
-	RTC_CALI_TC_AUTO_BY_HW    = 1,	/**< Temperature compensate by hardware */
-	RTC_CALI_TC_AUTO_BY_SF    = 2,	/**< Temperature compensate by software */
-	RTC_CALI_TC_AUTO_BY_HW_SF = 3,	/**< Temperature compensate by hardware, trigger by software */
+	RTC_CALI_TC_NONE          = 0U,	/**< Temperature compensate disable */
+	RTC_CALI_TC_AUTO_BY_HW    = 1U,	/**< Temperature compensate by hardware */
+	RTC_CALI_TC_AUTO_BY_SF    = 2U,	/**< Temperature compensate by software */
+	RTC_CALI_TC_AUTO_BY_HW_SF = 3U,	/**< Temperature compensate by hardware, trigger by software */
 } rtc_cali_tc_t;
 
 /**
   * @ Calculate frequency
   */
 typedef enum {
-	RTC_CALI_CALC_FREQ_10_SEC = 0,	/**< Calculate every 10 seconds */
-	RTC_CALI_CALC_FREQ_20_SEC = 1,	/**< Calculate every 20 seconds */
-	RTC_CALI_CALC_FREQ_1_MIN  = 2,	/**< Calculate every 1 minute */
-	RTC_CALI_CALC_FREQ_2_MIN  = 3,	/**< Calculate every 2 minutes */
-	RTC_CALI_CALC_FREQ_5_MIN  = 4,	/**< Calculate every 5 minutes */
-	RTC_CALI_CALC_FREQ_10_MIN = 5,	/**< Calculate every 10 minutes */
-	RTC_CALI_CALC_FREQ_20_MIN = 6,	/**< Calculate every 20 minutes */
-	RTC_CALI_CALC_FREQ_1_HOUR = 7,	/**< Calculate every 1 hour */
+	RTC_CALI_CALC_FREQ_10_SEC = 0U,	/**< Calculate every 10 seconds */
+	RTC_CALI_CALC_FREQ_20_SEC = 1U,	/**< Calculate every 20 seconds */
+	RTC_CALI_CALC_FREQ_1_MIN  = 2U,	/**< Calculate every 1 minute */
+	RTC_CALI_CALC_FREQ_2_MIN  = 3U,	/**< Calculate every 2 minutes */
+	RTC_CALI_CALC_FREQ_5_MIN  = 4U,	/**< Calculate every 5 minutes */
+	RTC_CALI_CALC_FREQ_10_MIN = 5U,	/**< Calculate every 10 minutes */
+	RTC_CALI_CALC_FREQ_20_MIN = 6U,	/**< Calculate every 20 minutes */
+	RTC_CALI_CALC_FREQ_1_HOUR = 7U,	/**< Calculate every 1 hour */
 } rtc_cali_calc_freq_t;
 
 /**
   * @brief Calibration algorithm
   */
 typedef enum {
-	RTC_CALI_CALC_4 = 0,	/**< 4-polynomial */
-	RTC_CALI_CALC_2 = 1,	/**< 2-parabola */
+	RTC_CALI_CALC_4 = 0U,	/**< 4-polynomial */
+	RTC_CALI_CALC_2 = 1U,	/**< 2-parabola */
 } rtc_cali_calc_t;
 
 /**
@@ -375,8 +375,8 @@ typedef enum {
 /** @defgroup RTC_Public_Macro RTC Public Macros
   * @{
   */
-#define RTC_UNLOCK()		(WRITE_REG(RTC->WPR, 0x55AAAA55))
-#define RTC_LOCK()		(WRITE_REG(RTC->WPR, 0x0))
+#define RTC_UNLOCK()		(WRITE_REG(RTC->WPR, 0x55AAAA55U))
+#define RTC_LOCK()		(WRITE_REG(RTC->WPR, 0x0U))
 #define RTC_BY_PASS_ENABLE()			\
 do {						\
 	RTC_UNLOCK();				\
@@ -420,8 +420,8 @@ do {						\
 /** @defgroup CAN_Private_Macros CAN Private Macros
   * @{
   */
-#define RTC_CALI_UNLOCK()	(WRITE_REG(RTC->CALWPR, 0x699655AA))
-#define RTC_CALI_LOCK()		(WRITE_REG(RTC->CALWPR, 0x0))
+#define RTC_CALI_UNLOCK()	(WRITE_REG(RTC->CALWPR, 0x699655AAU))
+#define RTC_CALI_LOCK()		(WRITE_REG(RTC->CALWPR, 0x0U))
 #define ALARM_MASK_ALL		0x40808080
 #define RTC_TIMEOUT_VALUE	100
 

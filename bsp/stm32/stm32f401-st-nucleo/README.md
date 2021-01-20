@@ -1,4 +1,4 @@
-# STM32F401 Nucleo-64 BSP (Board Support Package) Execution Instruction
+# STM32F401 Nucleo-64 BSP Introduction
 
 [中文页](README_zh.md) |
 
@@ -18,9 +18,7 @@ By reading the Quickly Get Started section developers can quickly get their hand
 
 The STM32 Nucleo-64 is a development board based on STM32F401RE, which contains a Cortex-M4 core. The maximum main frequency is 84 MHz, and it has a wealth of on-board resources that can take full advantage of the STM32F401RE's chip performance.
 
-![board.jpg](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32f401-st-nucleo/figures/board.jpg?raw=true)
-
-
+![board](figures/board.jpg)
 
 The mainly-used **on-board resources** are shown as follows:
 
@@ -33,9 +31,11 @@ The mainly-used **on-board resources** are shown as follows:
 - Common-used interface: USB, Arduino Uno, and ST morpho
 - Debug interface: ST-LINK/V2-1 
 
-For more details about this board, please refer to the ST official documentation: [STM32 Nucleo-64 development board with STM32F401RE MCU](https://www.st.com/zh/evaluation-tools/nucleo-f401re.html)
+#### For more details about this board, please refer to the [ST official documentation](https://www.st.com/zh/evaluation-tools/nucleo-f401re.html)
 
-## Peripheral Condition
+
+
+### Peripheral Condition
 
 Each peripheral supporting condition for this BSP is as follows:
 
@@ -45,11 +45,11 @@ Each peripheral supporting condition for this BSP is as follows:
 | UART                           | Support     | UART2                               |
 | SPI                            | Support     | SPI1                                |
 
-## Execution Instruction
 
-### Quickly Get Started
 
-This BSP provides MDK5 and IAR projects for developers. Also support GCC development environment Here's an example of the MDK5 development environment, to introduce how to run the system.
+## Quickly Get Started
+
+This BSP provides MDK5 and IAR projects for developers. Also support GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
 #### Hardware Connection
 
@@ -57,7 +57,7 @@ Use a Type-A to Mini-B cable to connect the development board to the PC and turn
 
 #### Compile And Download
 
-Double-click the project.uvprojx file, to open the MDK5 project, compile and download the program to the board.
+Double-click the `project.uvprojx` file, to open the MDK5 project, compile and download the program to the board.
 
 > By default, the project uses ST_LINK simulator to download the program, when the ST_LINK connects the board, clicking the download button can download the program to the board.
 
@@ -93,8 +93,6 @@ This BSP only enables GPIO and serial port 2 by default. If need more advanced f
 
 According to the pin number specification, in the new stm32 bsp framework, the GPIO driver is managed in a sequential numbering manner.
 
-## Notes
-
 The pin serial number corresponds to the pin name as shown in the following table:
 
 | STM32 Pin Name | Pin Sequence Number |
@@ -104,3 +102,8 @@ The pin serial number corresponds to the pin name as shown in the following tabl
 | PC0 - PC15     | 32 - 47             |
 | PD0 - ...      | 48 - ...            |
 
+
+
+## Maintained By
+
+[shaoguoji](https://github.com/shaoguoji)  752147916@qq.com

@@ -50,7 +50,7 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
-            menuconfig BSP_USING_SPI
+        menuconfig BSP_USING_SPI
             bool "Enable SPI"
             select RT_USING_SPI
             default n
@@ -66,6 +66,32 @@ menu "Hardware Drivers Config"
             config BSP_USING_SPI0_DEVICE1
                 bool "Enable SPI0 DEVICE1"
                 select BSP_USING_SPI0_BUS
+                default n
+        endif
+
+        menuconfig BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default n
+
+        if BSP_USING_I2C   
+            config BSP_USING_I2C0
+                bool "Enable I2C0 BUS"
+                default n
+            config BSP_USING_I2C1
+                bool "Enable I2C1 BUS"
+                default n
+            config BSP_USING_I2C3
+                bool "Enable I2C3 BUS"
+                default n
+            config BSP_USING_I2C4
+                bool "Enable I2C4 BUS"
+                default n
+            config BSP_USING_I2C5
+                bool "Enable I2C5 BUS"
+                default n
+            config BSP_USING_I2C6
+                bool "Enable I2C6 BUS"
                 default n
         endif
 
@@ -91,6 +117,14 @@ menu "Hardware Drivers Config"
         config BSP_USING_WDT
             bool "Enable WDT"
             select RT_USING_WDT
+            default n
+
+        config BSP_USING_ETH
+            bool "Enable ETH"
+            default n
+
+        config BSP_USING_BULETOOTH
+            bool "Enable BULETOOTH"
             default n
 
         menuconfig BSP_USING_RTC
@@ -119,14 +153,37 @@ menu "Hardware Drivers Config"
     endmenu
 
     menu "Board Peripheral Drivers"
-        menuconfig BSP_USING_HDMI
-            bool "Enable HDMI"
+        menuconfig BSP_USING_LCD
+            bool "Enable LCD"
             default n
 
-        if BSP_USING_HDMI
+        if BSP_USING_LCD
             config BSP_USING_HDMI_DISPLAY
                 bool "HDMI DISPLAY"
                 default n
+            config BSP_USING_DSI_DISPLAY
+                bool "DSI DISPLAY"
+                default n
+            config BSP_USING_ILI9486
+                bool "ILI9486 DISPLAY"
+                default n
         endif
+
+        menuconfig BSP_USING_TOUCH
+            bool "Enable Touch"
+            default n
+
+        if BSP_USING_TOUCH
+            config BSP_USING_DSI_TOUCH_DEV
+                bool "DSI TOUCH"
+                default n
+            config BSP_USING_XPT_TOUCH_DEV
+                bool "XPT TOUCH"
+                default n
+        endif
+
+        config USING_LCD_CONSOLE
+            bool "LCD CONSOLE"
+            default n
     endmenu
 endmenu

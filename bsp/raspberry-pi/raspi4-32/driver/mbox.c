@@ -49,6 +49,70 @@ int mbox_call(unsigned char ch, int mmu_enable)
     return 0;
 }
 
+int bcm271x_mbox_get_touch(void)
+{
+    mbox[0] = 8*4;                      // length of the message
+    mbox[1] = MBOX_REQUEST;             // this is a request message
+    
+    mbox[2] = MBOX_TAG_GET_TOUCHBUF; 
+    mbox[3] = 4;                        // buffer size
+    mbox[4] = 0;                        // len
+
+    mbox[5] = 0;                       // id
+    mbox[6] = 0;
+
+    mbox[7] = MBOX_TAG_LAST;
+    mbox_call(8, MMU_DISABLE);
+
+    return (int)(mbox[5] &  ~0xC0000000);
+}
+
+int bcm271x_notify_reboot(void)
+{
+    mbox[0] = 7*4;                          // length of the message
+    mbox[1] = MBOX_REQUEST;                 // this is a request message
+    mbox[2] = MBOX_TAG_NOTIFY_REBOOT;       // (the tag id)
+    mbox[3] = 0x00000004;                   // length + 4
+    mbox[4] = 0x00000000;                   // size of the data
+    mbox[5] = 0x00000000;                   // request
+
+    mbox[6] = MBOX_TAG_LAST; 
+    mbox_call(8, MMU_DISABLE);
+    return 0;
+}
+
+int bcm271x_notify_xhci_reset(void)
+{
+    mbox[0] = 7*4;                          // length of the message
+    mbox[1] = MBOX_REQUEST;                 // this is a request message
+    mbox[2] = MBOX_TAG_NOTIFY_XHCI_RESET;   // (the tag id)
+    mbox[3] = 0x00000004;                   // length + 4
+    mbox[4] = 0x00000004;                   // size of the data
+    mbox[5] = 0x00100000;                   // request
+    mbox[6] = MBOX_TAG_LAST; 
+    mbox_call(8, MMU_DISABLE);
+    return 0;
+}
+
+int bcm271x_gpu_enable(void)
+{
+    mbox[0] = 12*4;                          // length of the message
+    mbox[1] = MBOX_REQUEST;                  // this is a request message
+    
+    mbox[2] = MBOX_TAG_CLOCK_SET_RATE;
+    mbox[3] = 0x00000008;                   // (the tag id)
+    mbox[4] = 0x00000008;                   // (the tag id)
+    mbox[5] = 5;                            // V3D
+    mbox[6] = 250 * 1000 * 1000;
+    mbox[7] = MBOX_TAG_ENABLE_QPU;                   // (the tag id)
+    mbox[8] = 0x00000004;                   // (size of the buffer)
+    mbox[9] = 0x00000004;                   // (size of the data)
+    mbox[10] = 0x00000001;
+    mbox[11] = MBOX_TAG_LAST;               // end tag
+    mbox_call(8, MMU_DISABLE);
+    return mbox[1];
+}
+
 int bcm271x_mbox_hardware_get_model(void)
 {
     mbox[0] = 8*4;                          // length of the message

@@ -14,12 +14,22 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART4
         default y
+        
+    config BSP_USING_EXTI
+        bool "Enable exti sample"
+        default n
 
     config BSP_USING_PMIC
         bool "Enable PMIC"
         select BSP_USING_I2C
         select BSP_USING_I2C3
         default y
+
+    config BSP_USING_PWR
+        bool "Enable PM (power control)"
+        select BSP_USING_LPTIM
+        select BSP_USING_LPTIM1
+        default n
 
     config BSP_USING_NAND
         bool "Enable FMC (MT29F8G08ABACAH4)"
@@ -28,10 +38,89 @@ menu "Onboard Peripheral Drivers"
         select RT_MTD_NAND_DEBUG
         default n
 
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI FLASH (MX25L51245G)"
+        select BSP_USING_QSPI
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        default n
+
     config BSP_USING_OPENAMP
         bool "Enable OpenAMP"
         select RT_USING_OPENAMP
         default n
+
+    config BSP_USING_GBE
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+
+    menuconfig BSP_USING_SDMMC
+        bool "Enable SDMMC"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        if BSP_USING_SDMMC
+            menuconfig BSP_USING_SDCARD
+                bool "Enable sd card"
+                select BSP_USING_PMIC
+                default n
+                if BSP_USING_SDCARD
+                    config BSP_USING_SDCARD_FS
+                        bool "sd card fatfs"
+                        default y
+                endif
+
+            menuconfig BSP_USING_EMMC
+                bool "Enable eMMC (32 Gbits)"
+                default n
+                if BSP_USING_EMMC
+                    config BSP_USING_EMMC_FS
+                        bool "emmc card fatfs"
+                        default y
+                endif
+        endif
+
+    config BSP_USING_AUDIO
+        bool "Enable Audio Device (WM8994)"
+        select RT_USING_AUDIO
+        select BSP_USING_PMIC
+        select BSP_USING_SDMMC
+        select BSP_USING_SDCARD
+        select SD_USING_DFS
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        default n
+
+    config BSP_USING_DCMI
+        bool "Enable CAMERA (ov5640)"
+        select BSP_USING_MFX
+        select BSP_USING_PMIC
+	select BSP_USING_SDMMC
+        select BSP_USING_SDCARD
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        default n
+
+    config BSP_USING_MFX
+        bool "Enable Multi Function eXpander"
+        default n
+
+    menuconfig BSP_USING_RS485
+        bool "Enable RS485 "
+        default n
+        if BSP_USING_RS485
+            comment "set rts pin number "
+            config BSP_RS485_RTS_PIN
+                int "RS485 rts pin number"
+                range 1 176
+                default 5
+
+            config RS485_UART_DEVICE_NAME
+            string "the uart name for rs485"
+            default "uart3"
+
+        endif
 
 endmenu
 
@@ -41,6 +130,32 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+    config BSP_USING_WWDG
+        bool "Enable WWDG"
+        select RT_USING_WWDG
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_DMA
+        bool "Enable DMA Test"
+        default name
+
+    config BSP_USING_QSPI
+        bool "Enable QSPI BUS"
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        default n
+    
+    config BSP_USING_SPDIFRX
+        bool "Enable spdifrx"
+        select BSP_USING_AUDIO
+        default n
+
+    config BSP_USING_DFSDM
+        bool "Enable dfsdm"
+        select BSP_USING_AUDIO
+        default n
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         select RT_USING_SERIAL
@@ -48,11 +163,11 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART3
                 bool "Enable UART3"
-                default y
+                default n
 
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
 
             config BSP_UART3_TX_USING_DMA
@@ -62,7 +177,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_UART4
                 bool "Enable UART4"
-                default y
+                default n
 
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
@@ -91,6 +206,16 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_TIM17
                 bool "Enable TIM17"
+                default n
+        endif
+
+    menuconfig BSP_USING_LPTIM
+        bool "Enable lptimer"
+        default n
+        select RT_USING_LPTIMER
+        if BSP_USING_LPTIM
+            config BSP_USING_LPTIM1
+                bool "Enable LPTIM1"
                 default n
         endif
 
@@ -185,21 +310,20 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
         if BSP_USING_SPI
-            config BSP_USING_SPI5
-                bool "Enable SPI5 BUS"
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
                 default n
 
-            config BSP_SPI5_TX_USING_DMA
-                bool "Enable SPI5 TX DMA"
-                depends on BSP_USING_SPI5
-                default n
-
-            config BSP_SPI5_RX_USING_DMA
-                bool "Enable SPI5 RX DMA"
-                depends on BSP_USING_SPI5
-                select BSP_SPI5_TX_USING_DMA
-                default n
         endif
+
+    menuconfig BSP_USING_FDCAN
+    bool "Enable FDCAN"
+    default n
+    if BSP_USING_FDCAN
+        config BSP_USING_FDCAN1
+            bool "Enable FDCAN1"
+            default n
+    endif
 
  source "../libraries/HAL_Drivers/Kconfig"
 

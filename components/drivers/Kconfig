@@ -97,11 +97,15 @@ if RT_USING_I2C
         default y
 
     if RT_USING_I2C_BITOPS
-	config RT_I2C_BITOPS_DEBUG
+        config RT_I2C_BITOPS_DEBUG
             bool "Use simulate I2C debug message"
             default n
     endif
 endif
+
+config RT_USING_PHY
+    bool "Using ethernet phy device drivers"
+    default n
 
 config RT_USING_PIN
     bool "Using generic GPIO device drivers"
@@ -287,6 +291,11 @@ endif
 config RT_USING_TOUCH
     bool "Using Touch device drivers"
     default n
+    if RT_USING_TOUCH
+        config RT_TOUCH_PIN_IRQ
+        bool "touch irq use pin irq"
+        default n
+    endif
 
 menuconfig RT_USING_HWCRYPTO
         bool "Using Hardware Crypto drivers"

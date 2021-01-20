@@ -35,8 +35,53 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_OPENAMP
         bool "Enable OpenAMP"
-        select RT_USING_OPENAMP
         default n
+
+    menuconfig BSP_USING_RS485
+        bool "Enable RS485 "
+        default n
+        if BSP_USING_RS485
+            comment "set rts pin number "
+            config BSP_RS485_RTS_PIN
+                int "RS485 rts pin number"
+                range 1 176
+                default 5
+
+            config RS485_UART_DEVICE_NAME
+            string "the uart name for rs485"
+            default "uart3"
+        endif
+    
+    config BSP_USING_GBE
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        
+    config BSP_USING_SDMMC
+        bool "Enable SDMMC (SD card)"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+    menuconfig BSP_USING_AUDIO
+        bool "Enable Audio Device"
+        select RT_USING_AUDIO
+        select BSP_USING_PMIC
+        select BSP_USING_SDMMC
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
+        default n
+
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
+
+            config BSP_USING_AUDIO_RECORD
+            bool "Enable Audio Record"
+            default n
+        endif
 
 endmenu
 
@@ -59,12 +104,10 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART3
                 bool "Enable UART3"
                 default y
-
             config BSP_UART3_RX_USING_DMA
                 bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
-
             config BSP_UART3_TX_USING_DMA
                 bool "Enable UART3 TX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
@@ -73,12 +116,10 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default y
-
             config BSP_UART4_RX_USING_DMA
                 bool "Enable UART4 RX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                 default n
-
             config BSP_UART4_TX_USING_DMA
                 bool "Enable UART4 TX DMA"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
@@ -185,7 +226,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 117
                 endif
-	    menuconfig BSP_USING_I2C3
+            menuconfig BSP_USING_I2C3
                 bool "Enable I2C3 BUS (software simulation)"
                 default n
                 if BSP_USING_I2C3
@@ -199,6 +240,21 @@ menu "On-chip Peripheral Drivers"
                         range 1 191
                         default 181
                 endif
+            menuconfig BSP_USING_I2C4
+                bool "Enable I2C4 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C4
+                    comment "Notice: PD12 --> 60; PF15 --> 95" 
+                    config BSP_I2C4_SCL_PIN
+                        int "i2c4 scl pin number"
+                        range 1 191
+                        default 60
+                    config BSP_I2C4_SDA_PIN
+                        int "I2C4 sda pin number"
+                        range 1 191
+                        default 95
+                endif
+
         endif
 
     menuconfig BSP_USING_SPI

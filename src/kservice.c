@@ -541,7 +541,7 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2020 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2021 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
@@ -1116,7 +1116,7 @@ RTM_EXPORT(rt_console_get_device);
  *
  * @param name the name of new console device
  *
- * @return the old console device handler
+ * @return the old console device handler on successful, or RT_NULL on failure.
  */
 rt_device_t rt_console_set_device(const char *name)
 {
@@ -1127,6 +1127,10 @@ rt_device_t rt_console_set_device(const char *name)
 
     /* find new console device */
     new_device = rt_device_find(name);
+    
+    /* check whether it's a same device */
+    if (new_device == old_device) return RT_NULL;
+    
     if (new_device != RT_NULL)
     {
         if (_console_device != RT_NULL)

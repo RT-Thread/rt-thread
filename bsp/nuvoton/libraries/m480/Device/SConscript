@@ -20,6 +20,6 @@ elif rtconfig.CROSS_TOOL == 'iar':
 
 path = [cwd + '/Nuvoton/M480/Include',]
 
-group = DefineGroup('m480_device', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

@@ -1,0 +1,36 @@
+menu "Hardware Drivers Config"
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USB_TO_USART
+        bool "Enable USB TO USART (uart0)"
+        select BSP_USING_UART
+        select BSP_USING_UART0
+        default y
+
+    menuconfig BSP_USING_AUDIO
+        bool "Enable Audio Device"
+        select RT_USING_AUDIO
+        default n
+
+        if BSP_USING_AUDIO
+            config BSP_USING_AUDIO_PLAY
+            bool "Enable Audio Play"
+            default y
+        endif
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    menuconfig BSP_USING_UART0
+        bool "Enable UART0"
+        select RT_USING_SERIAL
+        default y
+
+endmenu
+
+menu "Board extended module Drivers"
+endmenu
+
+endmenu

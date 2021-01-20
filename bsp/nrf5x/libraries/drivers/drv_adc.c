@@ -183,7 +183,7 @@ int rt_hw_adc_init(void)
 {
     int result = RT_EOK;
     uint8_t i;
-    char name_buf[6] = {'S', 'A', 'A', 'D', 'C', 0};
+    char name_buf[6] = ADC_NAME;
     
     for(i = 0; i < 8; i++)
     {
@@ -221,22 +221,43 @@ INIT_BOARD_EXPORT(rt_hw_adc_init);
 /*test saadc*/
 #include <drv_adc.h>
 
+#define SAMPLE_ADC_MODE_SINGLE_ENDED    0   //single-ended mode
+#define SAMPLE_ADC_MODE_DIFFERENTIAL    1   //differential mode
+
+#define SAMPLE_ADC_AIN1     1
+#define SAMPLE_ADC_AIN2     2
+#define SAMPLE_ADC_AIN7     7
+#define SAMPLE_ADC_AIN_NC   0   //disable input of AINx
+
+#define SAMPLE_ADC_CHANNEL_0   0
+#define SAMPLE_ADC_CHANNEL_1   1
+#define SAMPLE_ADC_CHANNEL_5   5
+
 void saadc_sample(void)
 {
     drv_nrfx_saadc_channel_t channel_config;
     rt_uint32_t result; 
     
     rt_adc_device_t adc_dev;
-    adc_dev = (rt_adc_device_t)rt_device_find("SAADC");
+    adc_dev = (rt_adc_device_t)rt_device_find(ADC_NAME);
     adc_dev->parent.user_data = &channel_config;
     
-    channel_config = (drv_nrfx_saadc_channel_t){.mode = 0, .pin_p = 1, .pin_n = 1, .channel_num = 0};
+    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED, 
+                                                .pin_p = SAMPLE_ADC_AIN1, 
+                                                .pin_n = SAMPLE_ADC_AIN_NC, 
+                                                .channel_num = SAMPLE_ADC_CHANNEL_0};
     rt_adc_enable(adc_dev, channel_config.channel_num);
         
-    channel_config = (drv_nrfx_saadc_channel_t){.mode = 0, .pin_p = 2, .pin_n = 1, .channel_num = 1};
+    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED, 
+                                                .pin_p = SAMPLE_ADC_AIN2, 
+                                                .pin_n = SAMPLE_ADC_AIN_NC, 
+                                                .channel_num = SAMPLE_ADC_CHANNEL_1};
     rt_adc_enable(adc_dev, channel_config.channel_num);
     
-    channel_config = (drv_nrfx_saadc_channel_t){.mode = 0, .pin_p = 7, .pin_n = 1, .channel_num = 5};
+    channel_config = (drv_nrfx_saadc_channel_t){.mode = SAMPLE_ADC_MODE_SINGLE_ENDED, 
+                                                .pin_p = SAMPLE_ADC_AIN7, 
+                                                .pin_n = SAMPLE_ADC_AIN_NC, 
+                                                .channel_num = SAMPLE_ADC_CHANNEL_5};
     rt_adc_enable(adc_dev, channel_config.channel_num);
     
     int count = 1; 

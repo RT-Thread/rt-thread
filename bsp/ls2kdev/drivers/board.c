@@ -67,7 +67,7 @@ void rt_hw_timer_handler(void)
  */
 void rt_hw_timer_init(void)
 {
-    write_c0_compare(CPU_HZ/2/RT_TICK_PER_SECOND);
+    write_c0_compare(CPU_HZ / 2 / RT_TICK_PER_SECOND);
     write_c0_count(0);
     mips_unmask_cpu_irq(7);
 }
@@ -90,16 +90,16 @@ void rt_hw_board_init(void)
     /* init hardware UART device */
     rt_hw_uart_init();
     /* set console device */
-    rt_console_set_device("uart");
+    rt_console_set_device("uart0");
 #endif
 
 #ifdef RT_USING_HEAP
-    rt_system_heap_init((void*)RT_HW_HEAP_BEGIN, (void*)RT_HW_HEAP_END);
+    rt_system_heap_init((void *)RT_HW_HEAP_BEGIN, (void *)RT_HW_HEAP_END);
 #endif
 
     /* init operating system timer */
     rt_hw_timer_init();
-    
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif

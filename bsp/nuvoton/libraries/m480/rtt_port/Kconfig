@@ -941,6 +941,13 @@ config SOC_SERIES_M480
         select RT_USING_USB_HOST
         select RT_USBH_MSTORAGE
 
+    if BSP_USING_USBH || BSP_USING_HSUSBH
+        config NU_USBHOST_HUB_POLLING_INTERVAL
+            int "USB Root Hub Polling Interval(in Mili-seconds)"
+            range 100 2000
+            default 100
+    endif
+
     config BSP_USING_HSOTG
         bool "Enable High-Speed USB On-The-Go(HSOTG)"
         select BSP_USING_HSUSBH

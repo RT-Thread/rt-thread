@@ -42,6 +42,15 @@ void ili9341_send_pixel_data(rt_uint16_t color)
     ili9341_write_data(color);
 }
 
+void ili9341_send_pixels(rt_uint16_t *pixels, int len)
+{
+    int i = 0;
+    int size = len / sizeof(rt_uint16_t);
+
+    while (i < size)
+        ili9341_write_data(pixels[i]);
+}
+
 void ili9341_set_column(uint16_t StartCol, uint16_t EndCol)
 {
     ili9341_send_cmd(0x2A);

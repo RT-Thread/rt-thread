@@ -31,6 +31,7 @@
 #define NU_PDMA_UNUSED                  (-1)
 
 #define NU_PDMA_SG_LIMITED_DISTANCE     ((PDMA_DSCT_NEXT_NEXT_Msk>>PDMA_DSCT_NEXT_NEXT_Pos)+1)
+#define NU_PDMA_MAX_TXCNT               ((PDMA_DSCT_CTL_TXCNT_Msk>>PDMA_DSCT_CTL_TXCNT_Pos) + 1)
 
 typedef enum
 {
