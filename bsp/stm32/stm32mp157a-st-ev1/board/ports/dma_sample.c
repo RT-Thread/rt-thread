@@ -10,168 +10,100 @@
 
 #include <board.h>
 
-#if defined(BSP_USING_DMA)
+#if defined(BSP_UART3_RX_USING_DMA) || defined(BSP_USING_UART3)
 
-#define BUFFER_SIZE 32        /* DMA max buffer size */
+#include <rtthread.h>
 
-static DMA_HandleTypeDef hdma_memtomem_dma1_stream5 = {0}; /* Using dma1 stream5 to test */
+#define SAMPLE_UART_NAME       "uart3"      /* serial device name */
 
-static const rt_uint32_t DMA_Src_Buffer[BUFFER_SIZE] =
+struct rx_msg
 {
-    0x01020304, 0x05060708, 0x090A0B0C, 0x0D0E0F10,
-    0x11121314, 0x15161718, 0x191A1B1C, 0x1D1E1F20,
-    0x21222324, 0x25262728, 0x292A2B2C, 0x2D2E2F30,
-    0x31323334, 0x35363738, 0x393A3B3C, 0x3D3E3F40,
-    0x41424344, 0x45464748, 0x494A4B4C, 0x4D4E4F50,
-    0x51525354, 0x55565758, 0x595A5B5C, 0x5D5E5F60,
-    0x61626364, 0x65666768, 0x696A6B6C, 0x6D6E6F70,
-    0x71727374, 0x75767778, 0x797A7B7C, 0x7D7E7F80
+    rt_device_t dev;
+    rt_size_t size;
 };
-static rt_uint32_t DMA_Dst_Buffer[BUFFER_SIZE];
+static rt_device_t serial;
+static struct rt_messagequeue rx_mq;
 
-#define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
-static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
+static rt_err_t uart_input(rt_device_t dev, rt_size_t size)
 {
-    unsigned char *buf = (unsigned char *)ptr;
-    int i, j;
+    struct rx_msg msg;
+    rt_err_t result;
+    msg.dev = dev;
+    msg.size = size;
 
-    for (i = 0; i < buflen; i += 16)
+    result = rt_mq_send(&rx_mq, &msg, sizeof(msg));
+    if ( result == -RT_EFULL)
     {
-        rt_kprintf("%08X: ", i);
-
-        for (j = 0; j < 16; j++)
-        {
-            if (i + j < buflen)
-            {
-                rt_kprintf("%02X ", buf[i + j]);
-            }
-            else
-            {
-                rt_kprintf("   ");
-            }
-        }
-        rt_kprintf(" ");
-
-        for (j = 0; j < 16; j++)
-        {
-            if (i + j < buflen)
-            {
-                rt_kprintf("%c", __is_print(buf[i + j]) ? buf[i + j] : '.');
-            }
-        }
-        rt_kprintf("\n");
+        rt_kprintf("message queue full！\n");
     }
-}
-
-void DMA1_Stream5_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    HAL_DMA_IRQHandler(&hdma_memtomem_dma1_stream5);
-    
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-
-static void MX_DMA_Init(void)
-{
-    /* DMA controller clock enable */
-    __HAL_RCC_DMA1_CLK_ENABLE();
-    __HAL_RCC_DMAMUX_CLK_ENABLE();
-
-    /* Configure DMA request hdma_memtomem_dma1_stream5 on DMA1_Stream5 */
-    hdma_memtomem_dma1_stream5.Instance = DMA1_Stream5;
-    hdma_memtomem_dma1_stream5.Init.Request = DMA_REQUEST_MEM2MEM;
-    hdma_memtomem_dma1_stream5.Init.Direction = DMA_MEMORY_TO_MEMORY;
-    hdma_memtomem_dma1_stream5.Init.PeriphInc = DMA_PINC_ENABLE;
-    hdma_memtomem_dma1_stream5.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_memtomem_dma1_stream5.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    hdma_memtomem_dma1_stream5.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-    hdma_memtomem_dma1_stream5.Init.Mode = DMA_NORMAL;
-    hdma_memtomem_dma1_stream5.Init.Priority = DMA_PRIORITY_LOW;
-    hdma_memtomem_dma1_stream5.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-    hdma_memtomem_dma1_stream5.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-    hdma_memtomem_dma1_stream5.Init.MemBurst = DMA_MBURST_INC4;
-    hdma_memtomem_dma1_stream5.Init.PeriphBurst = DMA_PBURST_INC4;
-    if (HAL_DMA_Init(&hdma_memtomem_dma1_stream5) != HAL_OK)
-    {
-        Error_Handler();
-    }
-
-    /* DMA interrupt init */
-    /* DMA1_Stream5_IRQn interrupt configuration */
-    HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
-}
-
-static void TransferComplete(DMA_HandleTypeDef *DmaHandle)
-{
-    rt_kprintf("dma dst buffer :\n");
-    dump_hex((rt_uint8_t *)DMA_Dst_Buffer, sizeof(DMA_Dst_Buffer));
-
-    rt_kprintf("============ dma transfer success ============\n");
-    
-    rt_memset(DMA_Dst_Buffer, 0x00, sizeof(DMA_Dst_Buffer));
-}
-
-static void TransferError(DMA_HandleTypeDef *DmaHandle)
-{
-    rt_kprintf("============ dma transfer error ============\n");
-}
-
-static int rt_hw_dma_init(void)
-{
-    rt_err_t result = RT_EOK;
-    
-    MX_DMA_Init();
-    /* Select Callbacks functions called after Transfer complete and Transfer error */
-    HAL_DMA_RegisterCallback(&hdma_memtomem_dma1_stream5, HAL_DMA_XFER_CPLT_CB_ID, TransferComplete);
-    HAL_DMA_RegisterCallback(&hdma_memtomem_dma1_stream5, HAL_DMA_XFER_ERROR_CB_ID, TransferError);
-
     return result;
 }
-INIT_APP_EXPORT(rt_hw_dma_init);
 
-static int dma_transfer_test()
+static void serial_thread_entry(void *parameter)
 {
-    rt_kprintf("============ dma travsfer start ============\n");
-    
-    rt_kprintf("dma src buffer :\n");
-    dump_hex((rt_uint8_t *)DMA_Src_Buffer, sizeof(DMA_Src_Buffer));
+    struct rx_msg msg;
+    rt_err_t result;
+    rt_uint32_t rx_length;
+    static char rx_buffer[RT_SERIAL_RB_BUFSZ + 1];
 
-    if (HAL_DMA_Start_IT(&hdma_memtomem_dma1_stream5, (rt_uint32_t)&DMA_Src_Buffer, (rt_uint32_t)&DMA_Dst_Buffer, BUFFER_SIZE) != HAL_OK)
+    while (1)
     {
-        /* Transfer Error */
-        return -RT_ERROR;
-    }
-
-    return RT_EOK;
-}
-
-int dma_sample(int argc, char **argv)
-{
-    if (argc > 1)
-    {
-        if (!rt_strcmp(argv[1], "start"))
+        rt_memset(&msg, 0, sizeof(msg));
+        result = rt_mq_recv(&rx_mq, &msg, sizeof(msg), RT_WAITING_FOREVER);
+        if (result == RT_EOK)
         {
-           rt_kprintf("dma test start\n");
-           dma_transfer_test();
-           return RT_EOK;
-        }
-        else
-        {
-            goto _exit;
+            rx_length = rt_device_read(msg.dev, 0, rx_buffer, msg.size);
+            rx_buffer[rx_length] = '\0';
+            rt_device_write(serial, 0, rx_buffer, rx_length);
         }
     }
-_exit:
-    {
-        rt_kprintf("Usage:\n");
-        rt_kprintf("dma_sample start         - start dma \n");
-    }
-    
-    return RT_EOK;
 }
-MSH_CMD_EXPORT(dma_sample, dma test);
 
-#endif /* USE_DMA_SAMPLE */
+static int uart_dma_sample(int argc, char *argv[])
+{
+    rt_err_t ret = RT_EOK;
+    char uart_name[RT_NAME_MAX];
+    static char msg_pool[256];
+    char str[] = "hello RT-Thread!\r\n";
+
+    if (argc == 2)
+    {
+        rt_strncpy(uart_name, argv[1], RT_NAME_MAX);
+    }
+    else
+    {
+        rt_strncpy(uart_name, SAMPLE_UART_NAME, RT_NAME_MAX);
+    }
+
+    serial = rt_device_find(uart_name);
+    if (!serial)
+    {
+        rt_kprintf("find %s failed!\n", uart_name);
+        return RT_ERROR;
+    }
+
+    rt_mq_init(&rx_mq, "rx_mq",
+               msg_pool,                 
+               sizeof(struct rx_msg),    
+               sizeof(msg_pool), 
+               RT_IPC_FLAG_FIFO);
+
+    rt_device_open(serial, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
+    rt_device_set_rx_indicate(serial, uart_input);
+    rt_device_write(serial, 0, str, (sizeof(str) - 1));
+
+    rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 1024, 25, 10);
+    if (thread != RT_NULL)
+    {
+        rt_thread_startup(thread);
+    }
+    else
+    {
+        ret = RT_ERROR;
+    }
+
+    return ret;
+}
+MSH_CMD_EXPORT(uart_dma_sample, uart device dma sample);
+
+#endif /* BSP_USING_DMA */

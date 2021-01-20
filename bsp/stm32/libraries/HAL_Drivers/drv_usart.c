@@ -870,14 +870,16 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
     || defined(SOC_SERIES_STM32G4)|| defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32WB)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
-        tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc);
-
+        tmpreg = READ_BIT(RCC->AHB1ENR, dma_config->dma_rcc); 
+#elif defined(SOC_SERIES_STM32MP1)
+        /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
+        SET_BIT(RCC->MP_AHB2ENSETR, dma_config->dma_rcc);
+        tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, dma_config->dma_rcc);
 #if (defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)) && defined(DMAMUX1)
         /* enable DMAMUX clock for L4+ and G4 */
         __HAL_RCC_DMAMUX1_CLK_ENABLE();   
 #elif defined(SOC_SERIES_STM32MP1)
     __HAL_RCC_DMAMUX_CLK_ENABLE();
-    __HAL_RCC_DMA2_CLK_ENABLE();
 #endif
 
 #endif
