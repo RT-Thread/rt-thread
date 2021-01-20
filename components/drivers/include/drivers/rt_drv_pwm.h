@@ -19,7 +19,7 @@
 #define PWM_CMD_SET         (128 + 2)
 #define PWM_CMD_GET         (128 + 3)
 #define PWMN_CMD_ENABLE     (128 + 4)
-#define PWMN_CMD_DISABLE    (128 + 5)/
+#define PWMN_CMD_DISABLE    (128 + 5)
 
 struct rt_pwm_configuration
 {
