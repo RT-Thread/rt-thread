@@ -326,14 +326,28 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
-
     if (HAL_TIM_Base_Init(tim) != HAL_OK)
     {
         LOG_E("%s pwm init failed", device->name);
         result = -RT_ERROR;
         goto __exit;
     }
+    tim->State = HAL_TIM_STATE_RESET;
     if (HAL_TIM_PWM_Init(tim) != HAL_OK)
+    {
+        LOG_E("%s pwm init failed", device->name);
+        result = -RT_ERROR;
+        goto __exit;
+    }
+    tim->State = HAL_TIM_STATE_RESET;
+    if (HAL_TIM_OC_Init(tim) != HAL_OK)
+    {
+        LOG_E("%s pwm init failed", device->name);
+        result = -RT_ERROR;
+        goto __exit;
+    }
+    tim->State = HAL_TIM_STATE_RESET;
+    if (HAL_TIM_IC_Init(tim) != HAL_OK)
     {
         LOG_E("%s pwm init failed", device->name);
         result = -RT_ERROR;
