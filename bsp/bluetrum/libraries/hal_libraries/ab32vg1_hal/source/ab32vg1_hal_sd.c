@@ -1,9 +1,7 @@
 #include "ab32vg1_hal.h"
-#include "ab32vg1_ll_sdio.h"
 
+#undef HAL_SD_MODULE_ENABLED
 #ifdef HAL_SD_MODULE_ENABLED
-
-#include <stdbool.h>
 
 #define HAL_LOG(...)     hal_printf(__VA_ARGS__)
 
@@ -27,20 +25,6 @@
 #define RSP_BUSY_TIMEOUT            2400000     //大约2s
 #define RSP_TIMEOUT                 6000        //大约5ms
 
-enum
-{
-    SDCON = 0, /* [20]:BUSY [19:17]:CRCS [16]:DCRCE [15]:NRPS [1]:Data bus width [0]:SD enable */
-    SDCPND,
-    SDBAUD,
-    SDCMD,
-    SDARG3,
-    SDARG2,
-    SDARG1,
-    SDARG0,
-    SDDMAADR,
-    SDDMACNT,
-};
-
 uint8_t sysclk_update_baud(uint8_t baud);
 
 void sdio_setbaud(hal_sfr_t sdiox, uint8_t baud)
@@ -50,14 +34,18 @@ void sdio_setbaud(hal_sfr_t sdiox, uint8_t baud)
 
 void sdio_init(hal_sfr_t sdiox, sdio_init_t init)
 {
-    /* Set clock */
-    sdio_setbaud(sdiox, 199);
-
     sdiox[SDCON] = 0;
+
     hal_udelay(20);
-    sdiox[SDCON] |= BIT(0);     /* SD control enable */
-    sdiox[SDCON] |= BIT(3);     /* Keep clock output */
-    sdiox[SDCON] |= BIT(5);     /* Data interrupt enable */
+    sdiox[SDCON] |= BIT(0);                 /* SD control enable */
+    sdio_setbaud(sdiox, init->clock_div);   /* Set clock */
+    if (init->clock_power_save == SDMMC_CLOCK_POWER_SAVE_DISABLE) {
+        sdiox[SDCON] |= BIT(3);                 /* Keep clock output */
+    } else {
+        sdiox[SDCON] &= ~BIT(3);                 /* Keep clock output */
+    }
+    sdiox[SDCON] |= BIT(5);                 /* Data interrupt enable */
+
     hal_mdelay(40);
 }
 
@@ -89,16 +77,18 @@ bool sdio_check_rsp(hal_sfr_t sdiox)
     return !(sdiox[SDCON] & BIT(15));
 }
 
-bool sdio_send_cmd(hal_sfr_t sdiox, uint32_t cmd, uint32_t arg)
+bool sdio_send_cmd(hal_sfr_t sdiox, uint32_t cmd, uint32_t arg, uint8_t *abend)
 {
     uint32_t time_out = (cmd & CBUSY) ? RSP_BUSY_TIMEOUT : RSP_TIMEOUT;
-    sdiox[SDCMD] = cmd;
     sdiox[SDARG3] = arg;
+    sdiox[SDCMD] = cmd;
 
     while (sdio_check_finish(sdiox) == false) {
         if (--time_out == 0) {
             HAL_LOG("cmd time out\n");
-            // card.abend = 1;
+            if (abend != HAL_NULL) {
+                *abend = 1;
+            }
             return false;
         }
     }
@@ -108,57 +98,258 @@ bool sdio_send_cmd(hal_sfr_t sdiox, uint32_t cmd, uint32_t arg)
 
 uint8_t sdio_get_cmd_rsp(hal_sfr_t sdiox)
 {
-    return -1;
+    return sdiox[SDCMD];
 }
 
-uint32_t sdio_get_rsp(hal_sfr_t sdiox, uint32_t rsp)
+uint32_t sdio_get_rsp(hal_sfr_t sdiox, uint32_t rsp_reg)
 {
-    return -1;
+    return sdiox[rsp_reg];
 }
 
 void sdio_read_kick(hal_sfr_t sdiox, void* buf)
-{}
+{
+    sdiox[SDDMAADR] = DMA_ADR(buf);
+    sdiox[SDDMACNT] = 512;
+}
 
 void sdio_write_kick(hal_sfr_t sdiox, void* buf)
-{}
+{
+    sdiox[SDDMAADR] = DMA_ADR(buf);
+    sdiox[SDDMACNT] = BIT(18) | BIT(17) | BIT(16) | 512;
+}
 
 bool sdio_isbusy(hal_sfr_t sdiox)
 {
     return false;
 }
 
-void sdmmc_go_idle_state(hal_sfr_t sdiox)
+bool sdmmc_cmd_go_idle_state(sd_handle_t hsd)
 {
-    // hal_sfr_t sdiox = hsd->instance;
-    sdio_send_cmd(sdiox, 0x00 | RSP_NO, 0);
+    return sdio_send_cmd(hsd->instance, 0 | RSP_NO, hsd->sdcard.rca, &(hsd->sdcard.abend));
 }
 
-void sdmmc_send_if_cond(hal_sfr_t sdiox)
+bool sdmmc_cmd_send_if_cond(sd_handle_t hsd)
 {
-    // hal_sfr_t sdiox = hsd->instance;
-    sdio_send_cmd(sdiox, 0x08 | RSP_7, SDMMC_CHECK_PATTERM);
+    return sdio_send_cmd(hsd->instance, 8 | RSP_7, SDMMC_CHECK_PATTERM, &(hsd->sdcard.abend));
+}
+
+bool sdmmc_cmd_all_send_cid(sd_handle_t hsd)
+{
+    return sdio_send_cmd(hsd->instance, 2 | RSP_2, 0, &(hsd->sdcard.abend));
+}
+
+void sdmmc_cmd_set_rel_addr(sd_handle_t hsd)
+{
+    hal_sfr_t sdiox = hsd->instance;
+
+    if (hsd->sdcard.type == CARD_MMC) {
+        hsd->sdcard.rca = 0x00010000;
+        sdio_send_cmd(sdiox, 3 | RSP_1, hsd->sdcard.rca, &(hsd->sdcard.abend));
+    } else {
+        sdio_send_cmd(sdiox, 3 | RSP_6, 0, &(hsd->sdcard.abend));
+        hsd->sdcard.rca = sdio_get_rsp(sdiox, SDARG3) & 0xffff0000;
+    }
+}
+
+void sdmmc_cmd_send_csd(sd_handle_t hsd)
+{
+    hal_sfr_t sdiox = hsd->instance;
+
+    sdio_send_cmd(sdiox, 9 | RSP_2, hsd->sdcard.rca, &(hsd->sdcard.abend));
+    if (hsd->sdcard.type == CARD_MMC) {
+        //
+    } else {
+        if (hsd->sdcard.flag_sdhc == 1) {
+            hsd->sdcard.capacity =   (sdio_get_rsp(sdiox, SDARG2) << 24) & 0x00ff0000;   /* rspbuf[8] */
+            hsd->sdcard.capacity |=  ((sdio_get_rsp(sdiox, SDARG1) >> 16) & 0x0000ffff); /* rspbuf[9] rspbuf[10] */
+            hsd->sdcard.capacity +=  1;
+            hsd->sdcard.capacity <<= 10;
+        }
+    }
+    HAL_LOG("sd capacity=%d\n", hsd->sdcard.capacity);
+}
+
+void sdmmc_cmd_select_card(sd_handle_t hsd)
+{
+    sdio_send_cmd(hsd->instance, 7 | RSP_1B, hsd->sdcard.rca, &(hsd->sdcard.abend));
+}
+
+bool sdmmc_cmd_read_multiblock(sd_handle_t hsd)
+{
+    return sdio_send_cmd(hsd->instance, REQ_MULTREAD, hsd->sdcard.rca, &(hsd->sdcard.abend));
+}
+
+bool sdmmc_cmd_app(sd_handle_t hsd)
+{
+    return sdio_send_cmd(hsd->instance, 55 | RSP_1, hsd->sdcard.rca, &(hsd->sdcard.abend));
+}
+
+bool sdmmc_acmd_op_cond(sd_handle_t hsd, uint32_t voltage)
+{
+    /* SEND CMD55 APP_CMD with RCA */
+    if (sdmmc_cmd_app(hsd)) {
+        /* Send CMD41 */
+        if (sdio_send_cmd(hsd->instance, 41 | RSP_3, voltage, &(hsd->sdcard.abend))) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /*************************  HAL ************************************/
 
-
-static void sd_poweron(sd_handle_t hsd)
+static bool sd_type_identification(sd_handle_t hsd)
 {
-    sdmmc_go_idle_state(hsd->instance);
-    sdmmc_send_if_cond(hsd->instance);
-    if (hsd->instance[SDCMD] == 0x08) {
-        hsd->sdcard.type = CARD_V2;
-        HAL_LOG("SD 2.0\n");
+    uint8_t retry = hsd->cfg.identification_retry;
+    while (retry-- > 0)
+    {
+        /* CMD0: GO_IDLE_STATE */
+        sdmmc_cmd_go_idle_state(hsd);
+
+        /* CMD8: SEND_IF_COND: Command available only on V2.0 cards */
+        if (sdmmc_cmd_send_if_cond(hsd)) {
+            if (sdio_get_cmd_rsp(hsd->instance) == 0x08) {
+                hsd->sdcard.type = CARD_V2;
+                HAL_LOG("SD 2.0\n");
+                return true;
+            }
+            continue;
+        }
+        if (sdmmc_acmd_op_cond(hsd, 0x00ff8000)) {
+            hsd->sdcard.type = CARD_V1;
+            HAL_LOG("SD 1.0\n");
+            return true;
+        }
+        hal_mdelay(20);
     }
+    return false;
+}
+
+static bool sd_go_ready_try(sd_handle_t hsd)
+{
+    uint32_t tmp = 0;
+    switch (hsd->sdcard.type)
+    {
+    case CARD_V1:
+        sdmmc_acmd_op_cond(hsd, 0x00ff8000);
+        break;
+    
+    case CARD_V2:
+        sdmmc_acmd_op_cond(hsd, 0x40ff8000);
+        break;
+    default:
+        break;
+    }
+
+    if (0 == (hsd->instance[SDARG3] & BIT(31))) {
+        return false; // no ready
+    }
+
+    if ((hsd->sdcard.type == CARD_V2) && (hsd->instance[SDARG3] & BIT(30))) {
+        HAL_LOG("SDHC\n");
+        hsd->sdcard.flag_sdhc = 1;
+    }
+
+    return true;
+}
+
+static bool sd_go_ready(sd_handle_t hsd)
+{
+    if (hsd->sdcard.type == CARD_INVAL) {
+        return false;
+    }
+
+    uint8_t retry = hsd->cfg.go_ready_retry;
+    while (retry-- > 0)
+    {
+        if (sd_go_ready_try(hsd) == true) {
+            return true;
+        }
+        hal_mdelay(20);
+    }
+
+    return false;
+}
+
+static bool sd_poweron(sd_handle_t hsd)
+{
+    if (sd_type_identification(hsd) == false) {
+        HAL_LOG("card invalid\n");
+        return false;
+    }
+
+    if (sd_go_ready(hsd) == false) {
+        HAL_LOG("no ready\n");
+        return false;
+    }
+
+    return true;
+}
+
+static void sd_init_card(sd_handle_t hsd)
+{
+    /* Send CMD2 ALL_SEND_CID */
+    sdmmc_cmd_all_send_cid(hsd);
+    /* Send CMD3 SET_REL_ADDR */
+    sdmmc_cmd_set_rel_addr(hsd);
+    /* Send CMD9 SEND_CSD */
+    sdmmc_cmd_send_csd(hsd);
+    /* Select the Card */
+    sdmmc_cmd_select_card(hsd);
+
+    hsd->init.clock_div         = 3;
+    hsd->init.clock_power_save  = SDMMC_CLOCK_POWER_SAVE_ENABLE;
+
+    sdio_init(hsd->instance, &(hsd->init));
+}
+
+static bool sd_read_wait(sd_handle_t hsd)
+{
+    bool ret = false;
+    hal_sfr_t sdiox = hsd->instance;
+
+
+
+    return ret;
+}
+
+static void sd_read_start(sd_handle_t hsd, void *buf, uint32_t lba)
+{
+    if (hsd->sdcard.rw_state == HAL_SD_RW_STATE_READ) {
+
+    } else {
+        if (hsd->sdcard.rw_state == HAL_SD_RW_STATE_WRITE) {
+
+        }
+        sdio_read_kick(hsd->instance, buf);
+        sdmmc_cmd_read_multiblock(hsd);
+    }
+
+    hsd->sdcard.rw_state = HAL_SD_RW_STATE_READ;
+    // hsd->sdcard.rw_lba
+}
+
+static bool sd_read_try(sd_handle_t hsd, void *buf, uint32_t lba)
+{
+    HAL_LOG("read: %08x\n", lba);
+
+    if (hsd->sdcard.capacity < lba) {
+        lba = hsd->sdcard.capacity - 1;
+    }
+    sd_read_start(hsd, buf, lba);
+    return 0;
 }
 
 void hal_sd_initcard(sd_handle_t hsd)
 {
-    struct sdio_init init = {0};
     hal_sfr_t sdiox = hsd->instance;
 
-    sdio_init(sdiox, &init);
+    hsd->init.clock_div         = 119; /* SD clk 240KHz when system clk is 48MHz */
+    hsd->init.clock_power_save  = SDMMC_CLOCK_POWER_SAVE_DISABLE;
+
+    sdio_init(sdiox, &(hsd->init));
     sd_poweron(hsd);
+    sd_init_card(hsd);
 }
 
 WEAK void hal_sd_mspinit(sd_handle_t hsd)
@@ -171,6 +362,11 @@ hal_error_t hal_sd_init(sd_handle_t hsd)
         return -HAL_ERROR;
     }
 
+    hsd->cfg.go_ready_retry         = 200;
+    hsd->cfg.identification_retry   = 5;
+    hsd->cfg.rw_init_retry          = 3;
+    hsd->cfg.rw_retry               = 3;
+
     hal_sd_mspinit(hsd);
     hal_sd_initcard(hsd);
 
@@ -179,6 +375,27 @@ hal_error_t hal_sd_init(sd_handle_t hsd)
 
 void hal_sd_deinit(uint32_t sdx)
 {
+}
+
+bool hal_sd_read(sd_handle_t hsd, void *buf, uint32_t lba)
+{
+    uint8_t init_retry = hsd->cfg.rw_init_retry;
+
+    while (init_retry-- > 0)
+    {
+        uint8_t retry = hsd->cfg.rw_retry;
+        while (retry-- > 0)
+        {
+            if (sd_read_try(hsd, buf, lba)) {
+                return true;
+            }
+        }
+        hsd->sdcard.state = HAL_SD_STATE_INVAL; 
+        
+        hal_mdelay(20);
+    }
+
+    return false;
 }
 
 #endif
