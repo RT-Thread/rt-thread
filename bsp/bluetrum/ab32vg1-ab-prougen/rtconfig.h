@@ -176,6 +176,8 @@
 
 #define BSP_USING_UART0
 
+/* On-chip Peripheral Drivers */
+
 /* Board extended module Drivers */
 
 #define BOARD_BLUETRUM_EVB

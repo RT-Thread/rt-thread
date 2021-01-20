@@ -19,6 +19,34 @@ menu "Onboard Peripheral Drivers"
             default y
         endif
 
+    config BSP_USING_SDCARD
+        bool "Enable SDCARD"
+        select BSP_USING_SDIO
+        default n
+
+    if BSP_USING_SDCARD
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        default 24000000
+    endif
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    menuconfig BSP_USING_UART0
+        bool "Enable UART0"
+        select RT_USING_SERIAL
+        default y
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
