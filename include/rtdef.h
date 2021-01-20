@@ -496,6 +496,13 @@ typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
 
 #define RT_SIG_MAX          32
+
+#else
+
+#ifdef RT_USING_LWP
+#include <libc/libc_signal.h>
+#endif
+
 #endif
 /**@}*/
 
