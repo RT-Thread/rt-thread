@@ -111,6 +111,7 @@ struct rt_lwp* lwp_new(void)
     pid_struct.pidmap[i] = lwp;
     rt_list_init(&lwp->t_grp);
     rt_list_init(&lwp->object_list);
+    rt_list_init(&lwp->futex_list);
     rt_wqueue_init(&lwp->wait_queue);
 
     lwp->ref = 1;
@@ -167,6 +168,9 @@ static void lwp_user_obj_free(struct rt_lwp *lwp)
             rt_timer_delete((rt_timer_t)object);
             break;
         case RT_Object_Class_Channel:
+            break;
+        case RT_Object_Class_Custom:
+            rt_custom_object_destroy(object);
             break;
         default:
             LOG_E("input object type(%d) error", object->type);

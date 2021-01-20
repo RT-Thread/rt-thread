@@ -404,7 +404,8 @@ enum rt_object_class_type
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
     RT_Object_Class_Channel       = 0x0c,      /**< The object is a channel */
-    RT_Object_Class_Unknown       = 0x0d,      /**< The object is unknown. */
+    RT_Object_Class_Custom        = 0x0d,      /**< The object is a custom object */
+    RT_Object_Class_Unknown       = 0x0e,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 

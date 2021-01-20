@@ -55,6 +55,12 @@ rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_uint8_t rt_object_get_type(rt_object_t object);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
 
+#ifdef RT_USING_HEAP
+/* custom object */
+rt_object_t rt_custom_object_create(const char *name, void *data, void (*data_destroy)(void *));
+void rt_custom_object_destroy(rt_object_t obj);
+#endif
+
 #ifdef RT_USING_HOOK
 void rt_object_attach_sethook(void (*hook)(struct rt_object *object));
 void rt_object_detach_sethook(void (*hook)(struct rt_object *object));

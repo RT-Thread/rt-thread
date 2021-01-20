@@ -92,6 +92,7 @@ struct rt_lwp
 
     struct rt_wqueue wait_queue; /*for console */
 
+    rt_list_t futex_list;
 #ifdef RT_USING_GDBSERVER
     int debug;
     uint32_t bak_first_ins;

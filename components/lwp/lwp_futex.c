@@ -18,35 +18,23 @@
 struct rt_futex
 {
     int *uaddr;
-
     rt_list_t list;
-    struct rt_lwp *lwp;
     rt_list_t waiting_thread;
 };
-static rt_list_t _futex_list = RT_LIST_OBJECT_INIT(_futex_list);
 
-struct rt_futex* futex_create(int *uaddr, struct rt_lwp *lwp)
+static struct rt_mutex _futex_lock;
+
+static int futex_system_init(void)
 {
-    struct rt_futex *futex = RT_NULL;
-
-    futex = (struct rt_futex *)rt_malloc(sizeof(struct rt_futex));
-    if (futex)
-    {
-        futex->uaddr = uaddr;
-        futex->lwp = lwp;
-
-        rt_list_init(&(futex->list));
-        rt_list_init(&(futex->waiting_thread));
-
-        /* insert into futex list */
-        rt_list_insert_before(&_futex_list, &(futex->list));
-    }
-    return futex;
+    rt_mutex_init(&_futex_lock, "futexList", RT_IPC_FLAG_FIFO);
+    return 0;
 }
+INIT_PREV_EXPORT(futex_system_init);
 
-void futex_destory(struct rt_futex *futex)
+void futex_destory(void *data)
 {
     rt_base_t level = 0;
+    struct rt_futex *futex = (struct rt_futex *)data;
 
     if (futex)
     {
@@ -55,8 +43,6 @@ void futex_destory(struct rt_futex *futex)
         rt_list_remove(&(futex->list));
         rt_hw_interrupt_enable(level);
 
-        /* wakeup all threads in suspending list */
-
         /* release object */
         rt_free(futex);
     }
@@ -64,24 +50,50 @@ void futex_destory(struct rt_futex *futex)
     return ;
 }
 
+struct rt_futex* futex_create(int *uaddr, struct rt_lwp *lwp)
+{
+    struct rt_futex *futex = RT_NULL;
+    struct rt_object *obj = RT_NULL;
+
+    if (!lwp)
+    {
+        return RT_NULL;
+    }
+    futex = (struct rt_futex *)rt_malloc(sizeof(struct rt_futex));
+    if (!futex)
+    {
+        return RT_NULL;
+    }
+    obj = rt_custom_object_create("futex", (void *)futex, futex_destory);
+    if (!obj)
+    {
+        rt_free(futex);
+        return RT_NULL;
+    }
+
+    futex->uaddr = uaddr;
+    rt_list_init(&(futex->list));
+    rt_list_init(&(futex->waiting_thread));
+
+    /* insert into futex list */
+    rt_list_insert_before(&lwp->futex_list, &(futex->list));
+    return futex;
+}
+
 static struct rt_futex* futex_get(void *uaddr, struct rt_lwp *lwp)
 {
-    rt_base_t level = 0;
     struct rt_futex *futex = RT_NULL;
     rt_list_t *node = RT_NULL;
 
-    level = rt_hw_interrupt_disable();
-
-    rt_list_for_each(node, &_futex_list)
+    rt_list_for_each(node, &lwp->futex_list)
     {
         futex = rt_list_entry(node, struct rt_futex, list);
 
-        if (futex->uaddr == uaddr && futex->lwp == lwp) break;
+        if (futex->uaddr == uaddr) break;
     }
-    rt_hw_interrupt_enable(level);
 
     /* no this futex in the list */
-    if (node == &_futex_list) futex = RT_NULL;
+    if (node == &lwp->futex_list) futex = RT_NULL;
 
     return futex;
 }
@@ -91,15 +103,16 @@ int futex_wait(struct rt_futex *futex, int value, const struct timespec *timeout
     rt_base_t level = 0;
     rt_err_t ret = -RT_EINTR;
 
-    level = rt_hw_interrupt_disable();
     if (*(futex->uaddr) == value)
     {
         rt_thread_t thread = rt_thread_self();
 
+        level = rt_hw_interrupt_disable();
         ret = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
 
         if (ret < 0)
         {
+            rt_mutex_release(&_futex_lock);
             rt_hw_interrupt_enable(level);
             rt_set_errno(EINTR);
             return ret;
@@ -119,6 +132,7 @@ int futex_wait(struct rt_futex *futex, int value, const struct timespec *timeout
                     &time);
             rt_timer_start(&(thread->thread_timer));
         }
+        rt_mutex_release(&_futex_lock);
         rt_hw_interrupt_enable(level);
 
         /* do schedule */
@@ -129,7 +143,6 @@ int futex_wait(struct rt_futex *futex, int value, const struct timespec *timeout
     }
     else
     {
-        rt_hw_interrupt_enable(level);
         rt_set_errno(EAGAIN);
     }
 
@@ -138,9 +151,8 @@ int futex_wait(struct rt_futex *futex, int value, const struct timespec *timeout
 
 void futex_wake(struct rt_futex *futex, int number)
 {
-    rt_base_t level = 0;
+    rt_base_t level = rt_hw_interrupt_disable();
 
-    level = rt_hw_interrupt_disable();
     while (!rt_list_isempty(&(futex->waiting_thread)) && number)
     {
         rt_thread_t thread;
@@ -155,6 +167,7 @@ void futex_wake(struct rt_futex *futex, int number)
 
         number --;
     }
+    rt_mutex_release(&_futex_lock);
     rt_hw_interrupt_enable(level);
 
     /* do schedule */
@@ -164,10 +177,10 @@ void futex_wake(struct rt_futex *futex, int number)
 int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
           int *uaddr2, int val3)
 {
-    rt_base_t level = 0;
+    struct rt_lwp *lwp = RT_NULL;
     struct rt_futex *futex = RT_NULL;
-    struct rt_lwp *lwp = lwp_self();
     int ret = 0;
+    rt_err_t lock_ret = 0;
 
     if (!lwp_user_accessable(uaddr, sizeof(int)))
     {
@@ -183,7 +196,14 @@ int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
         }
     }
 
-    level = rt_hw_interrupt_disable();
+    lock_ret = rt_mutex_take_interruptible(&_futex_lock, RT_WAITING_FOREVER);
+    if (lock_ret != RT_EOK)
+    {
+        rt_set_errno(EAGAIN);
+        return -RT_EINTR;
+    }
+
+    lwp = lwp_self();
     futex = futex_get(uaddr, lwp);
     if (futex == RT_NULL)
     {
@@ -191,24 +211,26 @@ int sys_futex(int *uaddr, int op, int val, const struct timespec *timeout,
         futex = futex_create(uaddr, lwp);
         if (futex == RT_NULL)
         {
-            rt_hw_interrupt_enable(level);
+            rt_mutex_release(&_futex_lock);
             rt_set_errno(ENOMEM);
             return -RT_ENOMEM;
         }
     }
-    rt_hw_interrupt_enable(level);
 
     switch (op)
     {
         case FUTEX_WAIT:
             ret = futex_wait(futex, val, timeout);
+            /* _futex_lock is released by futex_wait */
             break;
 
         case FUTEX_WAKE:
             futex_wake(futex, val);
+            /* _futex_lock is released by futex_wake */
             break;
 
         default:
+            rt_mutex_release(&_futex_lock);
             rt_set_errno(ENOSYS);
             ret = -ENOSYS;
             break;

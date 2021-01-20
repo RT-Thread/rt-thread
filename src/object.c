@@ -26,6 +26,13 @@
 #include <lwp.h>
 #endif
 
+struct rt_custom_object
+{
+    struct rt_object parent;
+    void (*destroy)(void *);
+    void *data;
+};
+
 /*
  * define object_info for the number of rt_object_container items.
  */
@@ -62,6 +69,9 @@ enum rt_object_info_type
 #endif
 #ifdef RT_USING_LWP
     RT_Object_Info_Channel,                            /**< The object is a IPC channel */
+#endif
+#ifdef RT_USING_HEAP
+    RT_Object_Info_Custom,                             /**< The object is a custom object */
 #endif
     RT_Object_Info_Unknown,                            /**< The object is unknown. */
 };
@@ -113,6 +123,7 @@ static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] 
 #ifdef RT_USING_LWP
     /* initialize object container - module */
     {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel)},
+    {RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object)},
 #endif
 };
 
@@ -615,5 +626,59 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 
     return RT_NULL;
 }
+
+#ifdef RT_USING_HEAP
+/**
+ * This function will create a custom object
+ * container.
+ *
+ * @param name the specified name of object.
+ * @param type the type of object
+ * @param data the custom data
+ * @param data_destroy the custom object destroy callback
+ *
+ * @return the found object or RT_NULL if there is no this object
+ * in object container.
+ *
+ * @note this function shall not be invoked in interrupt status.
+ */
+
+rt_object_t rt_custom_object_create(const char *name, void *data, void (*data_destroy)(void *))
+{
+    struct rt_custom_object *cobj = RT_NULL;
+
+    cobj = (struct rt_custom_object *)rt_object_allocate(RT_Object_Class_Custom, name);
+    if (!cobj)
+    {
+        return RT_NULL;
+    }
+    cobj->destroy = data_destroy;
+    cobj->data = data;
+    return (struct rt_object *)cobj;
+}
+
+/**
+ * This function will destroy a custom object
+ * container.
+ *
+ * @param name the specified name of object.
+ *
+ * @note this function shall not be invoked in interrupt status.
+ */
+void rt_custom_object_destroy(rt_object_t obj)
+{
+    struct rt_custom_object *cobj = (struct rt_custom_object *)obj;
+
+    if (!obj || obj->type != RT_Object_Class_Custom)
+    {
+        return;
+    }
+    if (cobj->destroy)
+    {
+        cobj->destroy(cobj->data);
+    }
+    rt_object_delete(obj);
+}
+#endif
 
 /**@}*/
