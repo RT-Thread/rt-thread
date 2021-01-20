@@ -404,7 +404,8 @@ enum rt_object_class_type
     RT_Object_Class_Timer         = 0x0a,      /**< The object is a timer. */
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
     RT_Object_Class_Channel       = 0x0c,      /**< The object is a channel */
-    RT_Object_Class_Unknown       = 0x0d,      /**< The object is unknown. */
+    RT_Object_Class_Custom        = 0x0d,      /**< The object is a custom object */
+    RT_Object_Class_Unknown       = 0x0e,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
@@ -495,6 +496,13 @@ typedef void (*rt_sighandler_t)(int signo);
 typedef siginfo_t rt_siginfo_t;
 
 #define RT_SIG_MAX          32
+
+#else
+
+#ifdef RT_USING_LWP
+#include <libc/libc_signal.h>
+#endif
+
 #endif
 /**@}*/
 
@@ -734,6 +742,8 @@ struct rt_thread
     int debug_suspend;
     struct rt_hw_exp_stack *regs;
     void * thread_idr;                                 /** lwp thread indicator */
+    int tid;
+    int *clear_child_tid;
 #endif
 #endif
 

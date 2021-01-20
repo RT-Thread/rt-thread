@@ -232,6 +232,7 @@
 #define RT_CH_MSG_MAX_NR 1024
 #define RT_LWP_SHM_MAX_NR 64
 #define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
 
 /* RT-Thread online packages */
 

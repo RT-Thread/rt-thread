@@ -63,6 +63,35 @@ set_user_context:
     mov pc, lr
 
 /*
+int lwp_set_thread_context(void *new_thread_stack, void *origin_thread_stack, void *user_stack, void **thread_sp, int tid);
+*/
+.global lwp_set_thread_context
+lwp_set_thread_context:
+    sub r12, r1, sp /* origin, r12 = origin sp offset */
+    sub r0, r0, r12 /* new sp */
+    stmfd r0!, {lr}
+    stmfd r0!, {lr}
+    stmfd r0!, {r12}
+    sub r12, sp, fp  /* new, r1 = origin fp offset */
+    sub r1, r0, r12
+    add r1, #12  /* new fp */
+    stmfd r0!, {r1} /* fp */
+    stmfd r0!, {r1 - r10}
+    mov r12, #0
+    stmfd r0!, {r12} /* new thread return value */
+    mrs r1, cpsr
+    stmfd r0!, {r1} /* spsr */
+    mov r1, #0
+    stmfd r0!, {r1} /* now user lr is 0 */
+    stmfd r0!, {r2} /* user sp */
+#ifdef RT_USING_FPU
+    stmfd r0!, {r1} /* not use fpu */
+#endif
+    str r0, [r3]
+    ldr r0, [sp]
+    mov pc, lr
+
+/*
  * void SVC_Handler(void);
  */
 .global vector_swi

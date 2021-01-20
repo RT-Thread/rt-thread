@@ -92,6 +92,7 @@ struct rt_lwp
 
     struct rt_wqueue wait_queue; /*for console */
 
+    rt_list_t futex_list;
 #ifdef RT_USING_GDBSERVER
     int debug;
     uint32_t bak_first_ins;
@@ -115,6 +116,11 @@ void lwp_wait_subthread_exit(void);
 void lwp_set_thread_area(void *p);
 void* rt_cpu_get_thread_idr(void);
 void rt_cpu_set_thread_idr(void *p);
+
+int lwp_tid_get(void);
+void lwp_tid_put(int tid);
+rt_thread_t lwp_tid_get_thread(int tid);
+void lwp_tid_set_thread(int tid, rt_thread_t thread);
 
 #ifdef RT_USING_USERSPACE
 void lwp_mmu_switch(struct rt_thread *thread);
@@ -163,6 +169,10 @@ struct __pthread {
     uintptr_t *dtv_copy;
 };
 #endif
+
+/* for futex op */
+#define FUTEX_WAIT  0
+#define FUTEX_WAKE  1
 
 #ifdef __cplusplus
 }
