@@ -88,8 +88,20 @@ static int uart_dma_sample(int argc, char *argv[])
                sizeof(msg_pool), 
                RT_IPC_FLAG_FIFO);
 
-    rt_device_open(serial, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
-    rt_device_set_rx_indicate(serial, uart_input);
+    ret = rt_device_open(serial, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_DMA_RX);
+    if (ret != RT_EOK)
+    {
+        rt_kprintf("serial device open fail!.\n");
+        return -RT_ERROR;
+    }
+    
+    ret = rt_device_set_rx_indicate(serial, uart_input);
+    if (ret != RT_EOK)
+    {
+        rt_kprintf("set rx indicate fail!.\n");
+        return -RT_ERROR;
+    }
+    
     rt_device_write(serial, 0, str, (sizeof(str) - 1));
 
     rt_thread_t thread = rt_thread_create("serial", serial_thread_entry, RT_NULL, 1024, 25, 10);
