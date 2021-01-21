@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2021, Bluetrum Development Team
- *
+ * Copyright (c) 2020-2021, Bluetrum Development Team
+ * 
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
- * 2021-01-20     greedyhao         first version
+ * 2020-11-30     greedyhao         first version
  */
 
 #include "drv_sdio.h"

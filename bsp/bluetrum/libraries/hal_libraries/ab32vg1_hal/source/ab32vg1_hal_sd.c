@@ -1,6 +1,5 @@
 #include "ab32vg1_hal.h"
 
-#undef HAL_SD_MODULE_ENABLED
 #ifdef HAL_SD_MODULE_ENABLED
 
 #define HAL_LOG(...)     hal_printf(__VA_ARGS__)
