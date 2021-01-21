@@ -281,34 +281,25 @@ lwp_sighandler_t lwp_sighandler_get(int sig)
     rt_base_t level;
 
     if (sig == 0 || sig > _LWP_NSIG)
+    {
         return func;
+    }
     level = rt_hw_interrupt_disable();
     thread = rt_thread_self();
-    if (thread->signal_in_process)
+    lwp = (struct rt_lwp*)thread->lwp;
+
+    func = lwp->signal_handler[sig - 1];
+    if (!func)
     {
-        func = rt_thread_self()->signal_handler[sig - 1];
-        if (!func)
+        if (_lwp_check_ignore(sig))
         {
-            if (_lwp_check_ignore(sig))
-            {
-                goto out;
-            }
-            sys_exit(0);
+            goto out;
         }
-    }
-    else
-    {
-        lwp = (struct rt_lwp*)thread->lwp;
-        func = lwp->signal_handler[sig - 1];
-        if (!func)
+        if (lwp->signal_in_process)
         {
-            if (_lwp_check_ignore(sig))
-            {
-                goto out;
-            }
             lwp_terminate(lwp);
-            sys_exit(0);
         }
+        sys_exit(0);
     }
 out:
     rt_hw_interrupt_enable(level);
@@ -325,19 +316,6 @@ void lwp_sighandler_set(int sig, lwp_sighandler_t func)
         return;
     level = rt_hw_interrupt_disable();
     ((struct rt_lwp*)rt_thread_self()->lwp)->signal_handler[sig - 1] = func;
-    rt_hw_interrupt_enable(level);
-}
-
-void lwp_thread_sighandler_set(int sig, lwp_sighandler_t func)
-{
-    rt_base_t level;
-
-    if (sig == 0 || sig > _LWP_NSIG)
-        return;
-    if (sig == SIGKILL || sig == SIGSTOP)
-        return;
-    level = rt_hw_interrupt_disable();
-    rt_thread_self()->signal_handler[sig - 1] = func;
     rt_hw_interrupt_enable(level);
 }
 

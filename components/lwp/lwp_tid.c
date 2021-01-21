@@ -27,7 +27,7 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-static rt_thread_t lwp_tid_ary[LWP_TID_MAX_NR + 1];
+static rt_thread_t lwp_tid_ary[LWP_TID_MAX_NR];
 static rt_thread_t *lwp_tid_free_head = RT_NULL;
 static int lwp_tid_ary_alloced = 1; /* 0 is reserved */
 
@@ -75,7 +75,13 @@ rt_thread_t lwp_tid_get_thread(int tid)
 
     if (tid > 0 && tid < LWP_TID_MAX_NR)
     {
-        thread = lwp_tid_free_head[tid];
+        thread = lwp_tid_ary[tid];
+        if ((thread >= (rt_thread_t)lwp_tid_ary)
+                && (thread < (rt_thread_t)(lwp_tid_ary + LWP_TID_MAX_NR + 1)))
+        {
+            /* the tid is not used */
+            thread = RT_NULL;
+        }
     }
     return thread;
 }

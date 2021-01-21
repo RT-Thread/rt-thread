@@ -731,7 +731,6 @@ struct rt_thread
     lwp_sigset_t signal_mask;
     int signal_mask_bak;
     rt_uint32_t signal_in_process;
-    lwp_sighandler_t signal_handler[_LWP_NSIG];
     struct rt_user_context user_ctx;
 
     struct rt_wakeup wakeup;                            /**< wakeup data */
