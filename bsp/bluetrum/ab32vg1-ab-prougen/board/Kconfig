@@ -49,15 +49,6 @@ menu "On-chip Peripheral Drivers"
 
 endmenu
 
-menu "On-chip Peripheral Drivers"
-
-    menuconfig BSP_USING_UART0
-        bool "Enable UART0"
-        select RT_USING_SERIAL
-        default y
-
-endmenu
-
 menu "Board extended module Drivers"
 endmenu
 
