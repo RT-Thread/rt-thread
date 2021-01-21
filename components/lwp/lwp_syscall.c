@@ -2030,14 +2030,18 @@ int sys_sigprocmask(int how, const sigset_t *sigset, sigset_t *oset, size_t size
     return ret;
 }
 
-int sys_thread_kill(rt_thread_t thread, int sig)
-{
-    return lwp_thread_kill(thread, sig);
-}
 
-void sys_thread_sighandler_set(int sig, lwp_sighandler_t func)
+int sys_tkill(int tid, int sig)
 {
-    lwp_thread_sighandler_set(sig, func);
+    rt_thread_t thread = RT_NULL;
+
+    if (tid <= 0)
+    {
+        rt_set_errno(EINVAL);
+        return -RT_EINVAL;
+    }
+    thread = lwp_tid_get_thread(tid);
+    return lwp_thread_kill(thread, sig);
 }
 
 int sys_thread_sigprocmask(int how, const lwp_sigset_t *sigset, lwp_sigset_t *oset, size_t size)
@@ -2636,8 +2640,8 @@ const static void* func_table[] =
     (void *)sys_thread_mdelay,
     (void *)sys_sigaction,
     (void *)sys_sigprocmask,
-    (void *)sys_thread_kill,      /* 105 */
-    (void *)sys_thread_sighandler_set,
+    (void *)sys_tkill,             /* 105 */
+    (void *)sys_notimpl,
     (void *)sys_thread_sigprocmask,
     (void *)sys_notimpl,
     (void *)sys_notimpl,
