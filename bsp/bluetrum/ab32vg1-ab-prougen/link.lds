@@ -34,9 +34,17 @@ SECTIONS
     } > init
 
     .ram1 __ram1_vma : {
-        *components*drivers**.o(.text* .rodata*)
-        *device.o(.text*)
-        . = ALIGN(32);
+        . = ALIGN(4);
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+        *components*drivers**.o (.text*)
+        *device.o (.text*)
+        *components.o (.text*)
+        *idle.o (.text*)
     } > ram1 AT > flash
 
     .rti : {
@@ -60,15 +68,23 @@ SECTIONS
     } > ram1 AT > flash
 
     .comm : {
+        . = ALIGN(4);
         KEEP(*(.vector))
-        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *romfs.o *lib_a**.o) *(.text*)
+        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *romfs.o 
+        *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
+        *letf2.o *multf3.o *subtf3.o *fixtfsi.o *floatsitf.o *extenddftf2.o
+        *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o) *(.text)
         *finsh*shell.o (.text*)
-        EXCLUDE_FILE (*components*libc**.o *romfs.o *lib_a**.o) *(.rodata*)
-        *(.srodata*)
+        *(.text.unlikely)
+        *(.text.startup)
+        EXCLUDE_FILE (*components*libc**.o *romfs.o *lib_a**.o *cp-demangle.o
+        *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
+        *(.rodata.name)
+        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o) *(.rodata.str1.4)
+        EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
         *(.rela*)
         *(.data*)
 	    *(.sdata*)
-        . = ALIGN(512);
     } > comm AT > flash
 
     .bss (NOLOAD):
@@ -98,6 +114,7 @@ SECTIONS
     .flash : {
         *(.text*)
         *(.rodata*)
+        *(.srodata*)
         . = ALIGN(512);
     } > flash
 }
