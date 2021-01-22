@@ -23,16 +23,16 @@ typedef struct sdio_init* sdio_init_t;
 
 enum
 {
-    SDCON = 0, /* [20]:BUSY [19:17]:CRCS [16]:DCRCE [15]:NRPS [1]:Data bus width [0]:SD enable */
-    SDCPND,
-    SDBAUD,
-    SDCMD,
-    SDARG3,
-    SDARG2,
-    SDARG1,
-    SDARG0,
-    SDDMAADR,
-    SDDMACNT,
+    SDxCON = 0, /* [20]:BUSY [19:17]:CRCS [16]:DCRCE [15]:NRPS [1]:Data bus width [0]:SD enable */
+    SDxCPND,
+    SDxBAUD,
+    SDxCMD,
+    SDxARG3,
+    SDxARG2,
+    SDxARG1,
+    SDxARG0,
+    SDxDMAADR,
+    SDxDMACNT,
 };
 
 #endif

@@ -149,10 +149,10 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
         return;
     }
 
-    cmd->resp[0] = hw_sdio[SDARG3];
-    cmd->resp[1] = hw_sdio[SDARG2];
-    cmd->resp[2] = hw_sdio[SDARG1];
-    cmd->resp[3] = hw_sdio[SDARG0];
+    cmd->resp[0] = hw_sdio[SDxARG3];
+    cmd->resp[1] = hw_sdio[SDxARG2];
+    cmd->resp[2] = hw_sdio[SDxARG1];
+    cmd->resp[3] = hw_sdio[SDxARG0];
 
     if (!(status & HW_SDIO_CON_NRPS)) {
         cmd->err = RT_EOK;
@@ -289,8 +289,8 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     }
 
     /* send cmd */
-    hw_sdio[SDARG3] = cmd->arg;
-    hw_sdio[SDCMD]  = reg_cmd;
+    hw_sdio[SDxARG3] = cmd->arg;
+    hw_sdio[SDxCMD]  = reg_cmd;
 
     /* wait cmd completed */
     rthw_sdio_wait_completed(sdio);
@@ -309,15 +309,15 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
                             rt_tick_from_millisecond(5000), &status) != RT_EOK)
             {
                 LOG_E("wait completed timeout");
-                LOG_E("SDCON=0x%X SDCMD=0x%X\n", hw_sdio[SDCON], hw_sdio[SDCMD]);
+                LOG_E("SDxCON=0x%X SDxCMD=0x%X\n", hw_sdio[SDxCON], hw_sdio[SDxCMD]);
                 cmd->err = -RT_ETIMEOUT;
             }
 
             if (data_flag & DATA_DIR_WRITE) {
-                if (((hw_sdio[SDCON] & HW_SDIO_CON_CRCS) >> 17) != 2) {
+                if (((hw_sdio[SDxCON] & HW_SDIO_CON_CRCS) >> 17) != 2) {
                     LOG_E("Write CRC error!");
                     cmd->err = -RT_ERROR;
-                    hw_sdio[SDCPND] = HW_SDIO_CON_DFLAG;
+                    hw_sdio[SDxCPND] = HW_SDIO_CON_DFLAG;
                 }
             }
         } while(++pkg->xfer_blks != data->blks);
@@ -427,26 +427,26 @@ static void rthw_sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *
     switch (io_cfg->power_mode)
     {
     case MMCSD_POWER_OFF:
-        hw_sdio[SDCON] &= ~BIT(0);
+        hw_sdio[SDxCON] &= ~BIT(0);
         break;
     case MMCSD_POWER_UP:
         sd_baud = 199;
-        hw_sdio[SDCON] = 0;
+        hw_sdio[SDxCON] = 0;
         rt_thread_mdelay(1);
 
-        hw_sdio[SDCON] |= BIT(0);                 /* SD control enable */
-        hw_sdio[SDBAUD] = sysclk_update_baud(sd_baud);
-        hw_sdio[SDCON] |= BIT(3);                 /* Keep clock output */
-        hw_sdio[SDCON] |= BIT(4);
-        hw_sdio[SDCON] |= BIT(5);                 /* Data interrupt enable */
+        hw_sdio[SDxCON] |= BIT(0);                 /* SD control enable */
+        hw_sdio[SDxBAUD] = sysclk_update_baud(sd_baud);
+        hw_sdio[SDxCON] |= BIT(3);                 /* Keep clock output */
+        hw_sdio[SDxCON] |= BIT(4);
+        hw_sdio[SDxCON] |= BIT(5);                 /* Data interrupt enable */
 
         hal_mdelay(40);
         break;
     case MMCSD_POWER_ON:
         if (clk == SDIO_MAX_FREQ) {
-            hw_sdio[SDCON] &= ~BIT(3);
+            hw_sdio[SDxCON] &= ~BIT(3);
             sd_baud = 3;
-            hw_sdio[SDBAUD] = sysclk_update_baud(sd_baud);
+            hw_sdio[SDxBAUD] = sysclk_update_baud(sd_baud);
         }
         break;
     default:
@@ -501,17 +501,17 @@ void rthw_sdio_irq_process(struct rt_mmcsd_host *host)
     int complete = 0;
     struct rthw_sdio *sdio = host->private_data;
     hal_sfr_t hw_sdio = sdio->sdio_des.hw_sdio;
-    rt_uint32_t intstatus = hw_sdio[SDCON];
+    rt_uint32_t intstatus = hw_sdio[SDxCON];
 
     /* clear flag */
     if (intstatus & HW_SDIO_CON_CFLAG) {
         complete = 1;
-        hw_sdio[SDCPND] = HW_SDIO_CON_CFLAG;
+        hw_sdio[SDxCPND] = HW_SDIO_CON_CFLAG;
     }
 
     if (intstatus & HW_SDIO_CON_DFLAG) {
         complete = 1;
-        hw_sdio[SDCPND] = HW_SDIO_CON_DFLAG;
+        hw_sdio[SDxCPND] = HW_SDIO_CON_DFLAG;
     }
 
     if (complete)
@@ -602,8 +602,8 @@ static rt_err_t _dma_txconfig(rt_uint32_t *src, int Size)
 {
     hal_sfr_t sdiox = sdio_config->instance;
 
-    sdiox[SDDMAADR] = DMA_ADR(src);
-    sdiox[SDDMACNT] = BIT(18) | BIT(17) | BIT(16) | Size;
+    sdiox[SDxDMAADR] = DMA_ADR(src);
+    sdiox[SDxDMACNT] = BIT(18) | BIT(17) | BIT(16) | Size;
     return RT_EOK;
 }
 
@@ -611,8 +611,8 @@ static rt_err_t _dma_rxconfig(rt_uint32_t *dst, int Size)
 {
     hal_sfr_t sdiox = sdio_config->instance;
 
-    sdiox[SDDMAADR] = DMA_ADR(dst);
-    sdiox[SDDMACNT] = (Size);
+    sdiox[SDxDMAADR] = DMA_ADR(dst);
+    sdiox[SDxDMACNT] = (Size);
     return RT_EOK;
 }
 
