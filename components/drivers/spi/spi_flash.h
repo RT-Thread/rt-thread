@@ -14,9 +14,6 @@
 
 #include <rtdevice.h>
 
-#ifdef RT_USING_MTD_NOR
-#include "drivers/mtd_nor.h"
-#endif
 
 struct spi_flash_device
 {
