@@ -28,22 +28,22 @@ uint8_t sysclk_update_baud(uint8_t baud);
 
 void sdio_setbaud(hal_sfr_t sdiox, uint8_t baud)
 {
-    sdiox[SDBAUD] = sysclk_update_baud(baud);
+    sdiox[SDxBAUD] = sysclk_update_baud(baud);
 }
 
 void sdio_init(hal_sfr_t sdiox, sdio_init_t init)
 {
-    sdiox[SDCON] = 0;
+    sdiox[SDxCON] = 0;
 
     hal_udelay(20);
-    sdiox[SDCON] |= BIT(0);                 /* SD control enable */
+    sdiox[SDxCON] |= BIT(0);                 /* SD control enable */
     sdio_setbaud(sdiox, init->clock_div);   /* Set clock */
     if (init->clock_power_save == SDMMC_CLOCK_POWER_SAVE_DISABLE) {
-        sdiox[SDCON] |= BIT(3);                 /* Keep clock output */
+        sdiox[SDxCON] |= BIT(3);                 /* Keep clock output */
     } else {
-        sdiox[SDCON] &= ~BIT(3);                 /* Keep clock output */
+        sdiox[SDxCON] &= ~BIT(3);                 /* Keep clock output */
     }
-    sdiox[SDCON] |= BIT(5);                 /* Data interrupt enable */
+    sdiox[SDxCON] |= BIT(5);                 /* Data interrupt enable */
 
     hal_mdelay(40);
 }
@@ -57,8 +57,8 @@ void sdio_init(hal_sfr_t sdiox, sdio_init_t init)
  */
 bool sdio_check_finish(hal_sfr_t sdiox)
 {
-    if (sdiox[SDCON] & BIT(12)) {
-        sdiox[SDCPND] = BIT(12);
+    if (sdiox[SDxCON] & BIT(12)) {
+        sdiox[SDxCPND] = BIT(12);
         return true;
     }
     return false;
@@ -73,14 +73,14 @@ bool sdio_check_finish(hal_sfr_t sdiox)
  */
 bool sdio_check_rsp(hal_sfr_t sdiox)
 {
-    return !(sdiox[SDCON] & BIT(15));
+    return !(sdiox[SDxCON] & BIT(15));
 }
 
 bool sdio_send_cmd(hal_sfr_t sdiox, uint32_t cmd, uint32_t arg, uint8_t *abend)
 {
     uint32_t time_out = (cmd & CBUSY) ? RSP_BUSY_TIMEOUT : RSP_TIMEOUT;
-    sdiox[SDARG3] = arg;
-    sdiox[SDCMD] = cmd;
+    sdiox[SDxARG3] = arg;
+    sdiox[SDxCMD] = cmd;
 
     while (sdio_check_finish(sdiox) == false) {
         if (--time_out == 0) {
@@ -97,7 +97,7 @@ bool sdio_send_cmd(hal_sfr_t sdiox, uint32_t cmd, uint32_t arg, uint8_t *abend)
 
 uint8_t sdio_get_cmd_rsp(hal_sfr_t sdiox)
 {
-    return sdiox[SDCMD];
+    return sdiox[SDxCMD];
 }
 
 uint32_t sdio_get_rsp(hal_sfr_t sdiox, uint32_t rsp_reg)
@@ -107,14 +107,14 @@ uint32_t sdio_get_rsp(hal_sfr_t sdiox, uint32_t rsp_reg)
 
 void sdio_read_kick(hal_sfr_t sdiox, void* buf)
 {
-    sdiox[SDDMAADR] = DMA_ADR(buf);
-    sdiox[SDDMACNT] = 512;
+    sdiox[SDxDMAADR] = DMA_ADR(buf);
+    sdiox[SDxDMACNT] = 512;
 }
 
 void sdio_write_kick(hal_sfr_t sdiox, void* buf)
 {
-    sdiox[SDDMAADR] = DMA_ADR(buf);
-    sdiox[SDDMACNT] = BIT(18) | BIT(17) | BIT(16) | 512;
+    sdiox[SDxDMAADR] = DMA_ADR(buf);
+    sdiox[SDxDMACNT] = BIT(18) | BIT(17) | BIT(16) | 512;
 }
 
 bool sdio_isbusy(hal_sfr_t sdiox)
@@ -146,7 +146,7 @@ void sdmmc_cmd_set_rel_addr(sd_handle_t hsd)
         sdio_send_cmd(sdiox, 3 | RSP_1, hsd->sdcard.rca, &(hsd->sdcard.abend));
     } else {
         sdio_send_cmd(sdiox, 3 | RSP_6, 0, &(hsd->sdcard.abend));
-        hsd->sdcard.rca = sdio_get_rsp(sdiox, SDARG3) & 0xffff0000;
+        hsd->sdcard.rca = sdio_get_rsp(sdiox, SDxARG3) & 0xffff0000;
     }
 }
 
@@ -159,8 +159,8 @@ void sdmmc_cmd_send_csd(sd_handle_t hsd)
         //
     } else {
         if (hsd->sdcard.flag_sdhc == 1) {
-            hsd->sdcard.capacity =   (sdio_get_rsp(sdiox, SDARG2) << 24) & 0x00ff0000;   /* rspbuf[8] */
-            hsd->sdcard.capacity |=  ((sdio_get_rsp(sdiox, SDARG1) >> 16) & 0x0000ffff); /* rspbuf[9] rspbuf[10] */
+            hsd->sdcard.capacity =   (sdio_get_rsp(sdiox, SDxARG2) << 24) & 0x00ff0000;   /* rspbuf[8] */
+            hsd->sdcard.capacity |=  ((sdio_get_rsp(sdiox, SDxARG1) >> 16) & 0x0000ffff); /* rspbuf[9] rspbuf[10] */
             hsd->sdcard.capacity +=  1;
             hsd->sdcard.capacity <<= 10;
         }
@@ -240,11 +240,11 @@ static bool sd_go_ready_try(sd_handle_t hsd)
         break;
     }
 
-    if (0 == (hsd->instance[SDARG3] & BIT(31))) {
+    if (0 == (hsd->instance[SDxARG3] & BIT(31))) {
         return false; // no ready
     }
 
-    if ((hsd->sdcard.type == CARD_V2) && (hsd->instance[SDARG3] & BIT(30))) {
+    if ((hsd->sdcard.type == CARD_V2) && (hsd->instance[SDxARG3] & BIT(30))) {
         HAL_LOG("SDHC\n");
         hsd->sdcard.flag_sdhc = 1;
     }
