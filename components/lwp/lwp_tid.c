@@ -77,7 +77,7 @@ rt_thread_t lwp_tid_get_thread(int tid)
     {
         thread = lwp_tid_ary[tid];
         if ((thread >= (rt_thread_t)lwp_tid_ary)
-                && (thread < (rt_thread_t)(lwp_tid_ary + LWP_TID_MAX_NR + 1)))
+                && (thread < (rt_thread_t)(lwp_tid_ary + LWP_TID_MAX_NR)))
         {
             /* the tid is not used */
             thread = RT_NULL;
