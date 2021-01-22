@@ -1,31 +1,9 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016 NXP
+ * Copyright 2016 - 2019 NXP
+ * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef _USB_HOST_HCI_H_
@@ -36,9 +14,9 @@
  ******************************************************************************/
 
 /*! @brief USB host lock */
-#define USB_HostLock() USB_OsaMutexLock(hostInstance->hostMutex)
+#define USB_HostLock() OSA_MutexLock(hostInstance->hostMutex, RT_WAITING_FOREVER)
 /*! @brief USB host unlock */
-#define USB_HostUnlock() USB_OsaMutexUnlock(hostInstance->hostMutex)
+#define USB_HostUnlock() OSA_MutexUnlock(hostInstance->hostMutex)
 
 /*!
  * @addtogroup usb_host_controller_driver
@@ -56,6 +34,10 @@ typedef enum _usb_host_controller_control
     kUSB_HostPortAttachDisable,            /*!< Disable the port attach event */
     kUSB_HostPortAttachEnable,             /*!< Enable the port attach event */
     kUSB_HostL1Config,                     /*!< L1 suspend Bus control code */
+    kUSB_HostSetChargerType,               /*!< set charger type */
+#if ((defined USB_HOST_CONFIG_COMPLIANCE_TEST) && (USB_HOST_CONFIG_COMPLIANCE_TEST))
+    kUSB_HostTestModeInit, /*!< intialize charger type */
+#endif
 } usb_host_controller_control_t;
 
 /*! @brief USB host controller bus control code */
@@ -97,7 +79,9 @@ typedef struct _usb_host_controller_interface
                                     uint32_t ioctlEvent,
                                     void *ioctlParam); /*!< Control a controller function prototype*/
 } usb_host_controller_interface_t;
-
+#if ((defined USB_HOST_CONFIG_COMPLIANCE_TEST) && (USB_HOST_CONFIG_COMPLIANCE_TEST))
+usb_status_t USB_HostTestModeInit(usb_device_handle deviceHandle);
+#endif
 /*! @}*/
 
 /*!
@@ -110,7 +94,8 @@ typedef struct _usb_host_instance
 {
     void *controllerHandle;                                          /*!< The low level controller handle*/
     host_callback_t deviceCallback;                                  /*!< Device attach/detach callback*/
-    usb_osa_mutex_handle hostMutex;                                  /*!< Host layer mutex*/
+    osa_mutex_handle_t hostMutex;                                    /*!< Host layer mutex*/
+    uint32_t mutexBuffer[(OSA_MUTEX_HANDLE_SIZE + 3) / 4];           /*!< Host layer mutex*/
     usb_host_transfer_t transferList[USB_HOST_CONFIG_MAX_TRANSFERS]; /*!< Transfer resource*/
     usb_host_transfer_t *transferHead;                               /*!< Idle transfer head*/
     const usb_host_controller_interface_t *controllerTable;          /*!< KHCI/EHCI interface*/
@@ -126,6 +111,7 @@ typedef struct _usb_host_instance
     uint8_t controllerId;      /*!< The controller ID*/
 } usb_host_instance_t;
 
+extern usb_host_instance_t g_UsbHostInstance[USB_HOST_CONFIG_MAX_HOST];
 /*! @}*/
 
 #endif /* _USB_HOST_HCI_H_ */

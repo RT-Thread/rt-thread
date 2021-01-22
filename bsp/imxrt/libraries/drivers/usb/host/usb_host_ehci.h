@@ -1,31 +1,9 @@
 /*
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
- * Copyright 2016 NXP
+ * Copyright 2016,2019 NXP
+ * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef _USB_HOST_CONTROLLER_EHCI_H_
@@ -39,95 +17,95 @@
  * Definitions
  ******************************************************************************/
 /* EHCI host macros */
-#define EHCI_HOST_T_INVALID_VALUE (1U)
-#define EHCI_HOST_POINTER_TYPE_ITD (0x00U)
-#define EHCI_HOST_POINTER_TYPE_QH (0x00000002U)
-#define EHCI_HOST_POINTER_TYPE_SITD (0x00000004U)
-#define EHCI_HOST_POINTER_TYPE_FSTN (0x00000006U)
-#define EHCI_HOST_POINTER_TYPE_MASK (0x00000006U)
+#define EHCI_HOST_T_INVALID_VALUE      (1U)
+#define EHCI_HOST_POINTER_TYPE_ITD     (0x00U)
+#define EHCI_HOST_POINTER_TYPE_QH      (0x00000002U)
+#define EHCI_HOST_POINTER_TYPE_SITD    (0x00000004U)
+#define EHCI_HOST_POINTER_TYPE_FSTN    (0x00000006U)
+#define EHCI_HOST_POINTER_TYPE_MASK    (0x00000006U)
 #define EHCI_HOST_POINTER_ADDRESS_MASK (0xFFFFFFE0U)
-#define EHCI_HOST_PID_OUT (0U)
-#define EHCI_HOST_PID_IN (1U)
-#define EHCI_HOST_PID_SETUP (2U)
+#define EHCI_HOST_PID_OUT              (0UL)
+#define EHCI_HOST_PID_IN               (1UL)
+#define EHCI_HOST_PID_SETUP            (2UL)
 
-#define EHCI_HOST_QH_RL_SHIFT (28U)
-#define EHCI_HOST_QH_RL_MASK (0xF0000000U)
-#define EHCI_HOST_QH_C_SHIFT (27U)
-#define EHCI_HOST_QH_MAX_PACKET_LENGTH_SHIFT (16U)
-#define EHCI_HOST_QH_MAX_PACKET_LENGTH_MASK (0x07FF0000U)
-#define EHCI_HOST_QH_H_SHIFT (15U)
-#define EHCI_HOST_QH_DTC_SHIFT (14U)
-#define EHCI_HOST_QH_EPS_SHIFT (12U)
-#define EHCI_HOST_QH_ENDPT_SHIFT (8U)
-#define EHCI_HOST_QH_I_SHIFT (7U)
-#define EHCI_HOST_QH_DEVICE_ADDRESS_SHIFT (0U)
-#define EHCI_HOST_QH_MULT_SHIFT (30U)
-#define EHCI_HOST_QH_PORT_NUMBER_SHIFT (23U)
-#define EHCI_HOST_QH_HUB_ADDR_SHIFT (16U)
-#define EHCI_HOST_QH_UFRAME_CMASK_SHIFT (8U)
-#define EHCI_HOST_QH_UFRAME_SMASK_SHIFT (0U)
-#define EHCI_HOST_QH_STATUS_ERROR_MASK (0x0000007EU)
+#define EHCI_HOST_QH_RL_SHIFT                  (28U)
+#define EHCI_HOST_QH_RL_MASK                   (0xF0000000U)
+#define EHCI_HOST_QH_C_SHIFT                   (27U)
+#define EHCI_HOST_QH_MAX_PACKET_LENGTH_SHIFT   (16U)
+#define EHCI_HOST_QH_MAX_PACKET_LENGTH_MASK    (0x07FF0000U)
+#define EHCI_HOST_QH_H_SHIFT                   (15U)
+#define EHCI_HOST_QH_DTC_SHIFT                 (14U)
+#define EHCI_HOST_QH_EPS_SHIFT                 (12U)
+#define EHCI_HOST_QH_ENDPT_SHIFT               (8U)
+#define EHCI_HOST_QH_I_SHIFT                   (7U)
+#define EHCI_HOST_QH_DEVICE_ADDRESS_SHIFT      (0U)
+#define EHCI_HOST_QH_MULT_SHIFT                (30U)
+#define EHCI_HOST_QH_PORT_NUMBER_SHIFT         (23U)
+#define EHCI_HOST_QH_HUB_ADDR_SHIFT            (16U)
+#define EHCI_HOST_QH_UFRAME_CMASK_SHIFT        (8U)
+#define EHCI_HOST_QH_UFRAME_SMASK_SHIFT        (0U)
+#define EHCI_HOST_QH_STATUS_ERROR_MASK         (0x0000007EU)
 #define EHCI_HOST_QH_STATUS_NOSTALL_ERROR_MASK (0x0000003EU)
 
-#define EHCI_HOST_QTD_DT_SHIFT (31U)
-#define EHCI_HOST_QTD_DT_MASK (0x80000000U)
-#define EHCI_HOST_QTD_TOTAL_BYTES_SHIFT (16U)
-#define EHCI_HOST_QTD_TOTAL_BYTES_MASK (0x7FFF0000U)
-#define EHCI_HOST_QTD_IOC_MASK (0x00008000U)
-#define EHCI_HOST_QTD_C_PAGE_SHIFT (12U)
-#define EHCI_HOST_QTD_CERR_SHIFT (10U)
-#define EHCI_HOST_QTD_CERR_MAX_VALUE (0x00000003U)
-#define EHCI_HOST_QTD_PID_CODE_SHIFT (8U)
-#define EHCI_HOST_QTD_STATUS_SHIFT (0U)
-#define EHCI_HOST_QTD_CURRENT_OFFSET_MASK (0x00000FFFU)
-#define EHCI_HOST_QTD_BUFFER_POINTER_SHIFT (12U)
-#define EHCI_HOST_QTD_STATUS_ACTIVE_MASK (0x00000080U)
-#define EHCI_HOST_QTD_STATUS_MASK (0x000000ffU)
-#define EHCI_HOST_QTD_STATUS_ERROR_MASK (0x0000007EU)
+#define EHCI_HOST_QTD_DT_SHIFT                (31U)
+#define EHCI_HOST_QTD_DT_MASK                 (0x80000000U)
+#define EHCI_HOST_QTD_TOTAL_BYTES_SHIFT       (16U)
+#define EHCI_HOST_QTD_TOTAL_BYTES_MASK        (0x7FFF0000U)
+#define EHCI_HOST_QTD_IOC_MASK                (0x00008000U)
+#define EHCI_HOST_QTD_C_PAGE_SHIFT            (12U)
+#define EHCI_HOST_QTD_CERR_SHIFT              (10U)
+#define EHCI_HOST_QTD_CERR_MAX_VALUE          (0x00000003UL)
+#define EHCI_HOST_QTD_PID_CODE_SHIFT          (8U)
+#define EHCI_HOST_QTD_STATUS_SHIFT            (0U)
+#define EHCI_HOST_QTD_CURRENT_OFFSET_MASK     (0x00000FFFU)
+#define EHCI_HOST_QTD_BUFFER_POINTER_SHIFT    (12U)
+#define EHCI_HOST_QTD_STATUS_ACTIVE_MASK      (0x00000080U)
+#define EHCI_HOST_QTD_STATUS_MASK             (0x000000ffU)
+#define EHCI_HOST_QTD_STATUS_ERROR_MASK       (0x0000007EU)
 #define EHCI_HOST_QTD_STATUS_STALL_ERROR_MASK (0x00000040U)
 
-#define EHCI_HOST_ITD_STATUS_ACTIVE_MASK (0x80000000U)
-#define EHCI_HOST_ITD_TRANSACTION_LEN_SHIFT (16U)
-#define EHCI_HOST_ITD_TRANSACTION_LEN_MASK (0x0FFF0000U)
-#define EHCI_HOST_ITD_IOC_SHIFT (15U)
-#define EHCI_HOST_ITD_PG_SHIFT (12U)
+#define EHCI_HOST_ITD_STATUS_ACTIVE_MASK       (0x80000000U)
+#define EHCI_HOST_ITD_TRANSACTION_LEN_SHIFT    (16U)
+#define EHCI_HOST_ITD_TRANSACTION_LEN_MASK     (0x0FFF0000U)
+#define EHCI_HOST_ITD_IOC_SHIFT                (15U)
+#define EHCI_HOST_ITD_PG_SHIFT                 (12U)
 #define EHCI_HOST_ITD_TRANSACTION_OFFSET_SHIFT (0U)
-#define EHCI_HOST_ITD_TRANSACTION_OFFSET_MASK (0x00000FFFU)
-#define EHCI_HOST_ITD_BUFFER_POINTER_SHIFT (12U)
-#define EHCI_HOST_ITD_ENDPT_SHIFT (8U)
-#define EHCI_HOST_ITD_DEVICE_ADDRESS_SHIFT (0U)
-#define EHCI_HOST_ITD_MAX_PACKET_SIZE_SHIFT (0U)
-#define EHCI_HOST_ITD_MULT_SHIFT (0U)
-#define EHCI_HOST_ITD_DIRECTION_SHIFT (11U)
+#define EHCI_HOST_ITD_TRANSACTION_OFFSET_MASK  (0x00000FFFU)
+#define EHCI_HOST_ITD_BUFFER_POINTER_SHIFT     (12U)
+#define EHCI_HOST_ITD_ENDPT_SHIFT              (8U)
+#define EHCI_HOST_ITD_DEVICE_ADDRESS_SHIFT     (0U)
+#define EHCI_HOST_ITD_MAX_PACKET_SIZE_SHIFT    (0U)
+#define EHCI_HOST_ITD_MULT_SHIFT               (0U)
+#define EHCI_HOST_ITD_DIRECTION_SHIFT          (11U)
 
-#define EHCI_HOST_SITD_STATUS_ACTIVE_MASK (0x00000080U)
-#define EHCI_HOST_SITD_DIRECTION_SHIFT (31U)
-#define EHCI_HOST_SITD_PORT_NUMBER_SHIFT (24U)
-#define EHCI_HOST_SITD_HUB_ADDR_SHIFT (16U)
-#define EHCI_HOST_SITD_ENDPT_SHIFT (8U)
+#define EHCI_HOST_SITD_STATUS_ACTIVE_MASK   (0x00000080U)
+#define EHCI_HOST_SITD_DIRECTION_SHIFT      (31U)
+#define EHCI_HOST_SITD_PORT_NUMBER_SHIFT    (24U)
+#define EHCI_HOST_SITD_HUB_ADDR_SHIFT       (16U)
+#define EHCI_HOST_SITD_ENDPT_SHIFT          (8U)
 #define EHCI_HOST_SITD_DEVICE_ADDRESS_SHIFT (0U)
-#define EHCI_HOST_SITD_CMASK_SHIFT (8U)
-#define EHCI_HOST_SITD_SMASK_SHIFT (0U)
-#define EHCI_HOST_SITD_TOTAL_BYTES_SHIFT (16U)
-#define EHCI_HOST_SITD_TOTAL_BYTES_MASK (0x03FF0000U)
-#define EHCI_HOST_SITD_TP_SHIFT (3U)
-#define EHCI_HOST_SITD_TCOUNT_SHIFT (0U)
-#define EHCI_HOST_SITD_IOC_SHIFT (31U)
+#define EHCI_HOST_SITD_CMASK_SHIFT          (8U)
+#define EHCI_HOST_SITD_SMASK_SHIFT          (0U)
+#define EHCI_HOST_SITD_TOTAL_BYTES_SHIFT    (16U)
+#define EHCI_HOST_SITD_TOTAL_BYTES_MASK     (0x03FF0000U)
+#define EHCI_HOST_SITD_TP_SHIFT             (3U)
+#define EHCI_HOST_SITD_TCOUNT_SHIFT         (0U)
+#define EHCI_HOST_SITD_IOC_SHIFT            (31U)
 
 /* register related MACROs */
-#define EHCI_PORTSC1_W1_BITS (0x0000002AU)
+#define EHCI_PORTSC1_W1_BITS  (0x0000002AU)
 #define EHCI_MAX_UFRAME_VALUE (0x00003FFFU)
 
 /* task event */
-#define EHCI_TASK_EVENT_DEVICE_ATTACH (0x01U)
+#define EHCI_TASK_EVENT_DEVICE_ATTACH    (0x01U)
 #define EHCI_TASK_EVENT_TRANSACTION_DONE (0x02U)
-#define EHCI_TASK_EVENT_DEVICE_DETACH (0x04U)
-#define EHCI_TASK_EVENT_PORT_CHANGE (0x08U)
-#define EHCI_TASK_EVENT_TIMER0 (0x10U)
-#define EHCI_TASK_EVENT_TIMER1 (0x20U)
+#define EHCI_TASK_EVENT_DEVICE_DETACH    (0x04U)
+#define EHCI_TASK_EVENT_PORT_CHANGE      (0x08U)
+#define EHCI_TASK_EVENT_TIMER0           (0x10U)
+#define EHCI_TASK_EVENT_TIMER1           (0x20U)
 
-#define USB_HostEhciLock() USB_OsaMutexLock(ehciInstance->ehciMutex)
-#define USB_HostEhciUnlock() USB_OsaMutexUnlock(ehciInstance->ehciMutex)
+#define USB_HostEhciLock()   (void)OSA_MutexLock(ehciInstance->ehciMutex, USB_OSA_WAIT_TIMEOUT)
+#define USB_HostEhciUnlock() (void)OSA_MutexUnlock(ehciInstance->ehciMutex)
 
 /*******************************************************************************
  * KHCI driver public structures, enumerations, macros, functions
@@ -144,6 +122,8 @@
 #define USB_HOST_EHCI_PORT_CONNECT_DEBOUNCE_DELAY (101U)
 /*! @brief Delay for port reset */
 #define USB_HOST_EHCI_PORT_RESET_DELAY (11U)
+/*! @brief The MAX continuous transfers that application can send. */
+#define USB_HOST_EHCI_ISO_MAX_CONTINUOUS_TRANSFER (8U)
 /*! @brief The SITD inserts a frame interval for putting more SITD continuously.
  * There is an interval when an application sends two FS/LS ISO transfers.
  * When the interval is less than the macro, the two transfers are continuous in the frame list. Otherwise, the two
@@ -171,7 +151,7 @@
  */
 #define USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER (16U)
 /*! @brief Control or bulk transaction timeout value (unit: 100 ms) */
-#define USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE (20U)
+#define USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE (50U)
 
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
 typedef enum _bus_ehci_suspend_request_state
@@ -323,8 +303,10 @@ typedef struct _usb_host_ehci_instance
     usb_host_ehci_pipe_t *ehciPipeIndexBase;   /*!< Pipe buffer's start pointer*/
     usb_host_ehci_pipe_t *ehciPipeList;        /*!< Idle pipe list pointer*/
     usb_host_ehci_pipe_t *ehciRunningPipeList; /*!< Running pipe list pointer*/
-    usb_osa_mutex_handle ehciMutex;            /*!< EHCI mutex*/
-    usb_osa_event_handle taskEventHandle;      /*!< EHCI task event*/
+    osa_mutex_handle_t ehciMutex;              /*!< EHCI mutex*/
+    uint32_t mutexBuffer[(OSA_MUTEX_HANDLE_SIZE + 3) / 4];           /*!< The mutex buffer. */
+    osa_event_handle_t taskEventHandle;                              /*!< EHCI task event*/
+    uint32_t taskEventHandleBuffer[(OSA_EVENT_HANDLE_SIZE + 3) / 4]; /*!< EHCI task event handle buffer*/
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
     uint64_t matchTick;
     USBPHY_Type *registerPhyBase; /*!< The base address of the PHY register */
@@ -355,6 +337,10 @@ typedef struct _usb_host_ehci_data
 #endif
 #if ((defined(USB_HOST_CONFIG_EHCI_MAX_ITD)) && (USB_HOST_CONFIG_EHCI_MAX_ITD > 0U))
     usb_host_ehci_itd_t ehciItd[USB_HOST_CONFIG_EHCI_MAX_ITD]; /*!< Idle ITD list array*/
+    /* add additional 32bytes because the itd cannot cross over 4K boundary,
+     * If one ITD cross over 4K boundary, the code will move 32 bytes for ITD.
+     */
+    uint32_t reserved[8];
 #endif
 #if ((defined(USB_HOST_CONFIG_EHCI_MAX_SITD)) && (USB_HOST_CONFIG_EHCI_MAX_SITD > 0U))
     usb_host_ehci_sitd_t ehciSitd[USB_HOST_CONFIG_EHCI_MAX_SITD]; /*!< Idle SITD list array*/
