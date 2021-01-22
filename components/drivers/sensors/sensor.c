@@ -216,12 +216,6 @@ static rt_err_t rt_sensor_close(rt_device_t dev)
         sensor->config.power = RT_SENSOR_POWER_DOWN;
     }
 
-    /* Sensor disable interrupt */
-    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
-    {
-        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
-    }
-
     if (sensor->module != RT_NULL && sensor->info.fifo_max > 0 && sensor->data_buf != RT_NULL)
     {
         for (i = 0; i < sensor->module->sen_num; i ++)
@@ -239,6 +233,11 @@ static rt_err_t rt_sensor_close(rt_device_t dev)
                 sensor->module->sen[i]->data_buf = RT_NULL;
             }
         }
+    }
+    /* Sensor disable interrupt */
+    if (sensor->config.irq_pin.pin != RT_PIN_NONE)
+    {
+        rt_pin_irq_enable(sensor->config.irq_pin.pin, RT_FALSE);
     }
 
 __exit:
