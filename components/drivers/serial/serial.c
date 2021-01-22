@@ -625,8 +625,7 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
             RT_ASSERT(rx_fifo != RT_NULL);
             rx_fifo->buffer = (rt_uint8_t*) (rx_fifo + 1);
             rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
-            rx_fifo->put_index = 0;
-            rx_fifo->get_index = 0;
+            rx_fifo->get_index = rx_fifo->put_index;
             rx_fifo->is_full = RT_FALSE;
 
             serial->serial_rx = rx_fifo;
