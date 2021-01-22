@@ -14,7 +14,6 @@
 
 #include <rtdevice.h>
 
-
 struct spi_flash_device
 {
     struct rt_device                flash_device;
