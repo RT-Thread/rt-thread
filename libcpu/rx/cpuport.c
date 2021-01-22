@@ -58,7 +58,7 @@ struct stack_frame
 };
 
 /**
- * Initilial the threah stack.
+ * Initilial the thread stack.
  * 
  * @author LXZ (2014/11/8)
  * 
@@ -158,7 +158,7 @@ void rt_hw_context_switch(rt_uint32_t from, rt_uint32_t to)
     ENTER_INTERRUPT();
 }
 /**
- * swithc thread out the interrupt
+ * switch thread out the interrupt
  * 
  * @author LXZ (2014/11/8)
  * 
@@ -182,7 +182,7 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
  * 
  * @author LXZ (2014/11/8)
  */
-void rt_hw_cpu_shutdown(void)
+RT_WEAK void rt_hw_cpu_shutdown(void)
 {
     rt_kprintf("shutdown...\n");
 

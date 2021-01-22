@@ -45,6 +45,10 @@ extern "C" {
 #define RT_SENSOR_CLASS_NOISE          (11) /* Noise Loudness    */
 #define RT_SENSOR_CLASS_STEP           (12) /* Step sensor       */
 #define RT_SENSOR_CLASS_FORCE          (13) /* Force sensor      */
+#define RT_SENSOR_CLASS_DUST           (14) /* Dust sensor       */
+#define RT_SENSOR_CLASS_ECO2           (15) /* eCO2 sensor       */
+#define RT_SENSOR_CLASS_GNSS           (16) /* GPS/GNSS sensor   */
+#define RT_SENSOR_CLASS_TOF            (17) /* TOF sensor        */
 
 /* Sensor vendor types */
 
@@ -56,6 +60,14 @@ extern "C" {
 #define RT_SENSOR_VENDOR_GOERTEK       (5)  /* Goertek */
 #define RT_SENSOR_VENDOR_MIRAMEMS      (6)  /* MiraMEMS */
 #define RT_SENSOR_VENDOR_DALLAS        (7)  /* Dallas */
+#define RT_SENSOR_VENDOR_ASAIR         (8)  /* Aosong */
+#define RT_SENSOR_VENDOR_SHARP         (9)  /* Sharp */
+#define RT_SENSOR_VENDOR_SENSIRION     (10) /* Sensirion */
+#define RT_SENSOR_VENDOR_TI            (11) /* Texas Instruments */
+#define RT_SENSOR_VENDOR_PLANTOWER     (12) /* Plantower */
+#define RT_SENSOR_VENDOR_AMS           (13) /* ams AG */
+#define RT_SENSOR_VENDOR_MAXIM         (14) /* Maxim Integrated */
+
 
 /* Sensor unit types */
 
@@ -73,6 +85,10 @@ extern "C" {
 #define  RT_SENSOR_UNIT_BPM            (11) /* Heart rate              unit: bpm        */
 #define  RT_SENSOR_UNIT_MM             (12) /* Distance                unit: mm         */
 #define  RT_SENSOR_UNIT_MN             (13) /* Force                   unit: mN         */
+#define  RT_SENSOR_UNIT_PPM            (14) /* Concentration           unit: ppm        */
+#define  RT_SENSOR_UNIT_PPB            (15) /* Concentration           unit: ppb        */
+#define  RT_SENSOR_UNIT_DMS            (16) /* Coordinates             unit: DMS        */
+#define  RT_SENSOR_UNIT_DD             (17) /* Coordinates             unit: DD         */
 
 /* Sensor communication interface types */
 
@@ -105,6 +121,8 @@ extern "C" {
 #define  RT_SENSOR_CTRL_SET_MODE       (4)  /* Set sensor's work mode. ex. RT_SENSOR_MODE_POLLING,RT_SENSOR_MODE_INT */
 #define  RT_SENSOR_CTRL_SET_POWER      (5)  /* Set power mode. args type of sensor power mode. ex. RT_SENSOR_POWER_DOWN,RT_SENSOR_POWER_NORMAL */
 #define  RT_SENSOR_CTRL_SELF_TEST      (6)  /* Take a self test */
+
+#define  RT_SENSOR_CTRL_USER_CMD_START 0x100  /* User commands should be greater than 0x100 */
 
 struct rt_sensor_info
 {
@@ -171,6 +189,12 @@ struct sensor_3_axis
     rt_int32_t z;
 };
 
+struct coordinates
+{
+    double longitude;
+    double latitude;
+};
+
 struct rt_sensor_data
 {
     rt_uint32_t         timestamp;          /* The timestamp when the data was received */
@@ -180,6 +204,7 @@ struct rt_sensor_data
         struct sensor_3_axis acce;          /* Accelerometer.       unit: mG          */
         struct sensor_3_axis gyro;          /* Gyroscope.           unit: mdps        */
         struct sensor_3_axis mag;           /* Magnetometer.        unit: mGauss      */
+        struct coordinates   coord;         /* Coordinates          unit: degrees     */
         rt_int32_t           temp;          /* Temperature.         unit: dCelsius    */
         rt_int32_t           humi;          /* Relative humidity.   unit: permillage  */
         rt_int32_t           baro;          /* Pressure.            unit: pascal (Pa) */
@@ -190,6 +215,8 @@ struct rt_sensor_data
         rt_int32_t           noise;         /* Noise Loudness.      unit: HZ          */
         rt_uint32_t          step;          /* Step sensor.         unit: 1           */
         rt_int32_t           force;         /* Force sensor.        unit: mN          */
+        rt_uint32_t          dust;          /* Dust sensor.         unit: ug/m3       */
+        rt_uint32_t          eco2;          /* eCO2 sensor.         unit: ppm         */
     } data;
 };
 

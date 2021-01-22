@@ -1,0 +1,30 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+msp/at32_msp.c
+msp/system_at32f4xx.c
+''')
+
+path = [cwd]
+path += [cwd + '/msp']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/AT32_Std_Driver/CMSIS/AT32/AT32F4xx/src/gcc/startup_at32f407vgt7.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/AT32_Std_Driver/CMSIS/AT32/AT32F4xx/src/mdk/startup_at32f407vgt7.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/AT32_Std_Driver/CMSIS/AT32/AT32F4xx/src/iar/startup_at32f407vgt7.s']
+    
+CPPDEFINES = ['AT32F407VGT7']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

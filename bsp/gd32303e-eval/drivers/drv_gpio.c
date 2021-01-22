@@ -497,6 +497,7 @@ const static struct rt_pin_ops _gd32_pin_ops =
     gd32_pin_attach_irq,
     gd32_pin_detach_irq,
     gd32_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

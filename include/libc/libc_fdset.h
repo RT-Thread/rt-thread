@@ -2,10 +2,6 @@
  * Copyright (c) 2006-2018, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- */
-
-/*
- * File      : libc_errno.h
  *
  * Change Logs:
  * Date           Author       Notes
@@ -17,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || defined(_WIN32)
+#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
 #include <sys/types.h>
 #if defined(HAVE_SYS_SELECT_H)
 #include <sys/select.h>

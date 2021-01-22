@@ -230,7 +230,12 @@
 #define LWIP_DBG_TYPES_ON           (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
 
 /* ---------- Memory options ---------- */
+#ifdef RT_LWIP_MEM_ALIGNMENT
+#define MEM_ALIGNMENT RT_LWIP_MEM_ALIGNMENT
+#else
 #define MEM_ALIGNMENT               4
+#endif
+
 #define MEMP_OVERFLOW_CHECK         1 ////
 #define LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT 1 ////
 //#define MEM_LIBC_MALLOC             1
@@ -529,6 +534,13 @@
  */
 #ifndef LWIP_TCP_KEEPALIVE
 #define LWIP_TCP_KEEPALIVE              1
+#endif
+
+/**
+ * LWIP_NETIF_HOSTNAME==1: Support netif hostname
+ */
+#ifndef LWIP_NETIF_HOSTNAME
+#define LWIP_NETIF_HOSTNAME             1
 #endif
 
 /**

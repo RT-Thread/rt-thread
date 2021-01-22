@@ -13,6 +13,7 @@
  * 2010-07-13     Bernard      fix rt_tick_from_millisecond issue found by kuronca
  * 2011-06-26     Bernard      add rt_tick_set function.
  * 2018-11-22     Jesven       add per cpu tick
+ * 2020-12-29     Meco Man     add function rt_tick_get_millisecond()
  */
 
 #include <rthw.h>
@@ -23,17 +24,6 @@
 #else
 static rt_tick_t rt_tick = 0;
 #endif
-
-/**
- * This function will init system tick and set it to zero.
- * @ingroup SystemInit
- *
- * @deprecated since 1.1.0, this function does not need to be invoked
- * in the system initialization.
- */
-void rt_system_tick_init(void)
-{
-}
 
 /**
  * @addtogroup Clock
@@ -91,8 +81,7 @@ void rt_tick_increase(void)
 
         thread->stat |= RT_THREAD_STAT_YIELD;
 
-        /* yield */
-        rt_thread_yield();
+        rt_schedule();
     }
 
     /* check timer */
@@ -127,6 +116,22 @@ rt_tick_t rt_tick_from_millisecond(rt_int32_t ms)
     return tick;
 }
 RTM_EXPORT(rt_tick_from_millisecond);
+
+/**
+ * This function will provide the passed millisecond from boot.
+ *
+ * @return passed millisecond from boot
+ */
+RT_WEAK rt_tick_t rt_tick_get_millisecond(void)
+{
+#if 1000 % RT_TICK_PER_SECOND == 0u
+    return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
+#else
+    #warning "rt-thread cannot provide a correct 1ms-based tick any longer,\
+    please redefine this function in another file by using a high-precision hard-timer."
+    return 0;
+#endif
+}
 
 /**@}*/
 

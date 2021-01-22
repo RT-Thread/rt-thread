@@ -78,7 +78,7 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     netdev->addr_callback = RT_NULL;
 
     /* fill network interface device */
-    rt_strncpy(netdev->name, name, rt_strlen(name));
+    rt_strncpy(netdev->name, name, RT_NAME_MAX);
     netdev->user_data = user_data;
 
     /* initialize current network interface device single list */
@@ -260,7 +260,7 @@ struct netdev *netdev_get_by_name(const char *name)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
-        if (netdev && (rt_strncmp(netdev->name, name, rt_strlen(netdev->name)) == 0))
+        if (netdev && (rt_strncmp(netdev->name, name, RT_NAME_MAX) == 0))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
@@ -856,7 +856,7 @@ void netdev_low_level_set_dhcp_status(struct netdev *netdev, rt_bool_t is_enable
 static void netdev_list_if(void)
 {
 #define NETDEV_IFCONFIG_MAC_MAX_LEN    6
-#define NETDEV_IFCONFIG_IEMI_MAX_LEN   8
+#define NETDEV_IFCONFIG_IMEI_MAX_LEN   8
 
     rt_ubase_t index;
     rt_slist_t *node  = RT_NULL;
@@ -887,16 +887,22 @@ static void netdev_list_if(void)
                 rt_kprintf("%02x ", netdev->hwaddr[index]);
             }
         }
-        else if (netdev->hwaddr_len == NETDEV_IFCONFIG_IEMI_MAX_LEN)
+        else if (netdev->hwaddr_len == NETDEV_IFCONFIG_IMEI_MAX_LEN)
         {
             rt_kprintf("IMEI: ");
             for (index = 0; index < netdev->hwaddr_len; index++)
             {
                 /* two numbers are displayed at one time*/
                 if (netdev->hwaddr[index] < 10 && index != netdev->hwaddr_len - 1)
-                    rt_kprintf("0");
+                {
+                    rt_kprintf("%02d", netdev->hwaddr[index]);
+                }
+                else
+                {
+                    rt_kprintf("%d", netdev->hwaddr[index]);
+                }
 
-                rt_kprintf("%d", netdev->hwaddr[index]);
+
             }
         }
 
@@ -905,8 +911,10 @@ static void netdev_list_if(void)
         else rt_kprintf(" DOWN");
         if (netdev->flags & NETDEV_FLAG_LINK_UP) rt_kprintf(" LINK_UP");
         else rt_kprintf(" LINK_DOWN");
+#ifdef SAL_INTERNET_CHECK
         if (netdev->flags & NETDEV_FLAG_INTERNET_UP) rt_kprintf(" INTERNET_UP");
         else rt_kprintf(" INTERNET_DOWN");
+#endif
         if (netdev->flags & NETDEV_FLAG_DHCP) rt_kprintf(" DHCP_ENABLE");
         else rt_kprintf(" DHCP_DISABLE");
         if (netdev->flags & NETDEV_FLAG_ETHARP) rt_kprintf(" ETHARP");
@@ -1087,7 +1095,7 @@ int netdev_cmd_ping(char* target_name, rt_uint32_t times, rt_size_t size)
             }
         }
 
-        /* if the response time is more than NETDEV_PING_DELAY, no nead to delay */
+        /* if the response time is more than NETDEV_PING_DELAY, no need to delay */
         delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
         rt_thread_delay(delay_tick);
     }

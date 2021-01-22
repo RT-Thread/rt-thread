@@ -29,11 +29,15 @@ void rt_hw_systick_init(void)
 {
 #if defined (SOC_SERIES_STM32H7)
     HAL_SYSTICK_Config((HAL_RCCEx_GetD1SysClockFreq()) / RT_TICK_PER_SECOND);
+#elif defined (SOC_SERIES_STM32MP1)
+    HAL_SYSTICK_Config(HAL_RCC_GetSystemCoreClockFreq() / RT_TICK_PER_SECOND);
 #else
     HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq() / RT_TICK_PER_SECOND);
 #endif
+#if !defined (SOC_SERIES_STM32MP1)
     HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-    HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+#endif
+    NVIC_SetPriority(SysTick_IRQn, 0xFF);
 }
 
 /**
@@ -54,7 +58,7 @@ void SysTick_Handler(void)
 
 uint32_t HAL_GetTick(void)
 {
-    return rt_tick_get() * 1000 / RT_TICK_PER_SECOND;
+    return rt_tick_get_millisecond();
 }
 
 void HAL_SuspendTick(void)
@@ -67,6 +71,17 @@ void HAL_ResumeTick(void)
 
 void HAL_Delay(__IO uint32_t Delay)
 {
+    if (rt_thread_self())
+    {
+        rt_thread_mdelay(Delay);
+    }
+    else
+    {
+        for (rt_uint32_t count = 0; count < Delay; count++)
+        {
+            rt_hw_us_delay(1000);
+        }
+    }
 }
 
 /* re-implement tick interface for STM32 HAL */
@@ -85,7 +100,7 @@ void _Error_Handler(char *s, int num)
 {
     /* USER CODE BEGIN Error_Handler */
     /* User can add his own implementation to report the HAL error return state */
-    while(1)
+    while (1)
     {
     }
     /* USER CODE END Error_Handler */
@@ -102,10 +117,12 @@ void rt_hw_us_delay(rt_uint32_t us)
     start = SysTick->VAL;
     reload = SysTick->LOAD;
     us_tick = SystemCoreClock / 1000000UL;
-    do {
+    do
+    {
         now = SysTick->VAL;
-        delta = start > now ? start - now : reload + start - now;
-    } while(delta < us_tick * us);
+        delta = start >= now ? start - now : reload + start - now;
+    }
+    while (delta < us_tick * us);
 }
 
 /**

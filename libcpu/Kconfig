@@ -74,8 +74,18 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config ARCH_ARMV8
+    bool
+
 config ARCH_MIPS
     bool
+
+config ARCH_MIPS64
+    bool
+	select ARCH_CPU_64BIT
+	
+config ARCH_CPU_64BIT
+		bool
 
 config ARCH_MIPS_XBURST
     bool
@@ -94,6 +104,14 @@ config ARCH_RISCV
     bool
 
 config ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV_FPU_S
+    select ARCH_RISCV_FPU
+    bool
+
+config ARCH_RISCV_FPU_D
+    select ARCH_RISCV_FPU
     bool
 
 config ARCH_RISCV32

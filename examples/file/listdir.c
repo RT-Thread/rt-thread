@@ -1,56 +1,85 @@
 /*
- * File      : listdir.c
- * This file is part of RT-TestCase in RT-Thread RTOS
- * COPYRIGHT (C) 2010, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2010-02-10     Bernard      first version
+ * 2020-04-12     Jianjia Ma   add msh cmd
  */
 #include <rtthread.h>
 #include <dfs_posix.h>
 
-static char fullpath[256];
 void list_dir(const char* path)
 {
-	DIR *dir;
+    char * fullpath;
+    DIR *dir;
 
-	dir = opendir(path);
-	if (dir != RT_NULL)
-	{
-		struct dirent* dirent;
-		struct stat s;
+    dir = opendir(path);
+    if (dir != RT_NULL)
+    {
+        struct dirent* dirent;
+        struct stat s;
 
-		do
-		{
-			dirent = readdir(dir);
-			if (dirent == RT_NULL) break;
-			rt_memset(&s, 0, sizeof(struct stat));
+        fullpath = rt_malloc(256);
+        if (fullpath == RT_NULL)
+        {
+            closedir(dir);
+            rt_kprintf("no memory\n");
+            return;
+        }
 
-			/* build full path for each file */
-			rt_sprintf(fullpath, "%s/%s", path, dirent->d_name);
+        do
+        {
+            dirent = readdir(dir);
+            if (dirent == RT_NULL) break;
+            rt_memset(&s, 0, sizeof(struct stat));
 
-			stat(fullpath, &s);
-			if ( s.st_mode & DFS_S_IFDIR )
-			{
-				rt_kprintf("%s\t\t<DIR>\n", dirent->d_name);
-			}
-			else
-			{
-				rt_kprintf("%s\t\t%lu\n", dirent->d_name, s.st_size);
-			}
-		} while (dirent != RT_NULL);
+            /* build full path for each file */
+            rt_sprintf(fullpath, "%s/%s", path, dirent->d_name);
 
-		closedir(dir);
-	}
-	else rt_kprintf("open %s directory failed\n", path);
+            stat(fullpath, &s);
+            if ( s.st_mode & S_IFDIR )
+            {
+                rt_kprintf("%s\t\t<DIR>\n", dirent->d_name);
+            }
+            else
+            {
+                rt_kprintf("%s\t\t%lu\n", dirent->d_name, s.st_size);
+            }
+        } while (dirent != RT_NULL);
+
+        closedir(dir);
+    }
+    else
+    {
+        rt_kprintf("open %s directory failed\n", path);
+    }
+
+    rt_free(fullpath);
 }
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 FINSH_FUNCTION_EXPORT(list_dir, list directory);
-#endif
+
+#ifdef FINSH_USING_MSH
+static void cmd_list_dir(int argc, char *argv[])
+{
+    char* filename;
+
+    if(argc == 2)
+    {
+        filename = argv[1];
+    }
+    else
+    {
+        rt_kprintf("Usage: list_dir [file_path]\n");
+        return;
+    }
+    list_dir(filename);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_list_dir, __cmd_list_dir, list directory);
+#endif /* FINSH_USING_MSH */
+#endif /* RT_USING_FINSH */

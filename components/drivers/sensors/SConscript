@@ -7,7 +7,7 @@ src = ['sensor.c']
 CPPPATH = [cwd, cwd + '/../include']
 
 if GetDepend('RT_USING_SENSOR_CMD'):
-    src += ['sensor_cmd.c'];
+    src += ['sensor_cmd.c']
 
 group = DefineGroup('Sensors', src, depend = ['RT_USING_SENSOR', 'RT_USING_DEVICE'], CPPPATH = CPPPATH)
 

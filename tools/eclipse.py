@@ -9,18 +9,20 @@
 # 2019-04-15     armink       fix project update error
 #
 
-import os
-import sys
 import glob
+import xml.etree.ElementTree as etree
+from xml.etree.ElementTree import SubElement
 
+import rt_studio
+from building import *
 from utils import *
 from utils import _make_path_relative
 from utils import xml_indent
 
-import xml.etree.ElementTree as etree
-from xml.etree.ElementTree import SubElement
+MODULE_VER_NUM = 6
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.s', '*.S', '*.asm']
+
 
 def OSPath(path):
     import platform
@@ -56,9 +58,12 @@ def CollectPaths(paths):
     all_paths = list(set(all_paths))
     return sorted(all_paths)
 
+
 '''
 Collect all of files under paths
 '''
+
+
 def CollectFiles(paths, pattern):
     files = []
     for path in paths:
@@ -70,6 +75,7 @@ def CollectFiles(paths, pattern):
                 files = files + glob.glob(path + '/' + item)
 
     return sorted(files)
+
 
 def CollectAllFilesinPath(path, pattern):
     files = []
@@ -89,11 +95,14 @@ def CollectAllFilesinPath(path, pattern):
                 files = files + CollectAllFilesinPath(os.path.join(path, item), pattern)
     return files
 
+
 '''
 Exclude files from infiles
 '''
+
+
 def ExcludeFiles(infiles, files):
-    in_files  = set([OSPath(file) for file in infiles])
+    in_files = set([OSPath(file) for file in infiles])
     exl_files = set([OSPath(file) for file in files])
 
     exl_files = in_files - exl_files
@@ -105,12 +114,12 @@ def ExcludeFiles(infiles, files):
 def ExcludePaths(rootpath, paths):
     ret = []
 
-    files = os.listdir(rootpath)
+    files = os.listdir(OSPath(rootpath))
     for file in files:
         if file.startswith('.'):
             continue
 
-        fullname = os.path.join(rootpath, file)
+        fullname = os.path.join(OSPath(rootpath), file)
 
         if os.path.isdir(fullname):
             # print(fullname)
@@ -132,59 +141,83 @@ def ConverToRttEclipsePathFormat(path):
 def IsRttEclipsePathFormat(path):
     if path.startswith(rtt_path_prefix):
         return True
-    else :
+    else:
         return False
 
 
+# all libs added by scons should be ends with five whitespace as a flag
+rtt_lib_flag = 5 * " "
+
+
+def ConverToRttEclipseLibFormat(lib):
+    return str(lib) + str(rtt_lib_flag)
+
+
+def IsRttEclipseLibFormat(path):
+    if path.endswith(rtt_lib_flag):
+        return True
+    else:
+        return False
+
+
+def IsCppProject():
+    return GetDepend('RT_USING_CPLUSPLUS')
+
+
 def HandleToolOption(tools, env, project, reset):
+    is_cpp_prj = IsCppProject()
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
     CPPDEFINES = project['CPPDEFINES']
     paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
-    compile_include_paths_option = None
-    compile_include_files_option = None
-    compile_defs_option = None
+    compile_include_paths_options = []
+    compile_include_files_options = []
+    compile_defs_options = []
     linker_scriptfile_option = None
     linker_script_option = None
     linker_nostart_option = None
     linker_libs_option = None
     linker_paths_option = None
+
     linker_newlib_nano_option = None
 
     for tool in tools:
 
-        if tool.get('id').find('c.compile') != 1:
+        if tool.get('id').find('compile') != 1:
             options = tool.findall('option')
             # find all compile options
             for option in options:
-                if option.get('id').find('c.compiler.include.paths') != -1 or option.get('id').find('c.compiler.option.includepaths') != -1:
-                    compile_include_paths_option = option
-                elif option.get('id').find('c.compiler.include.files') != -1 or option.get('id').find('c.compiler.option.includefiles') != -1 :
-                    compile_include_files_option = option
-                elif option.get('id').find('c.compiler.defs') != -1 or option.get('id').find('c.compiler.option.definedsymbols') != -1:
-                    compile_defs_option = option
+                if option.get('id').find('compiler.include.paths') != -1 or option.get('id').find('compiler.option.includepaths') != -1:
+                    compile_include_paths_options += [option]
+                elif option.get('id').find('compiler.include.files') != -1 or option.get('id').find('compiler.option.includefiles') != -1 :
+                    compile_include_files_options += [option]
+                elif option.get('id').find('compiler.defs') != -1 or option.get('id').find('compiler.option.definedsymbols') != -1:
+                    compile_defs_options += [option]
 
-        if tool.get('id').find('c.linker') != -1:
+        if tool.get('id').find('linker') != -1:
             options = tool.findall('option')
             # find all linker options
             for option in options:
-                if option.get('id').find('c.linker.scriptfile') != -1:
+                # the project type and option type must equal
+                if is_cpp_prj != (option.get('id').find('cpp.linker') != -1):
+                    continue
+
+                if option.get('id').find('linker.scriptfile') != -1:
                     linker_scriptfile_option = option
-                elif option.get('id').find('c.linker.option.script') != -1:
+                elif option.get('id').find('linker.option.script') != -1:
                     linker_script_option = option
-                elif option.get('id').find('c.linker.nostart') != -1:
+                elif option.get('id').find('linker.nostart') != -1:
                     linker_nostart_option = option
-                elif option.get('id').find('c.linker.libs') != -1 and env.has_key('LIBS'):
+                elif option.get('id').find('linker.libs') != -1:
                     linker_libs_option = option
-                elif option.get('id').find('c.linker.paths') != -1 and env.has_key('LIBPATH'):
+                elif option.get('id').find('linker.paths') != -1 and env.has_key('LIBPATH'):
                     linker_paths_option = option
-                elif option.get('id').find('c.linker.usenewlibnano') != -1:
+                elif option.get('id').find('linker.usenewlibnano') != -1:
                     linker_newlib_nano_option = option
 
     # change the inclue path
-    if compile_include_paths_option is not None :
-        option = compile_include_paths_option
+    for option in compile_include_paths_options:
         # find all of paths in this project
         include_paths = option.findall('listOptionValue')
         for item in include_paths:
@@ -196,8 +229,7 @@ def HandleToolOption(tools, env, project, reset):
         for item in paths:
             SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
     # change the inclue files (default) or definitions
-    if compile_include_files_option is not None:
-        option = compile_include_files_option
+    for option in compile_include_files_options:
         # add '_REENT_SMALL' to CPPDEFINES when --specs=nano.specs has select
         if linker_newlib_nano_option is not None and linker_newlib_nano_option.get('value') == 'true' and '_REENT_SMALL' not in CPPDEFINES:
             CPPDEFINES += ['_REENT_SMALL']
@@ -216,7 +248,7 @@ def HandleToolOption(tools, env, project, reset):
         with open('rtconfig_preinc.h', mode = 'w+') as f:
             f.write(file_header)
             for cppdef in CPPDEFINES:
-                f.write("#define " + cppdef + '\n')
+                f.write("#define " + cppdef.replace('=', ' ') + '\n')
             f.write(file_tail)
         #  change the c.compiler.include.files
         files = option.findall('listOptionValue')
@@ -227,25 +259,25 @@ def HandleToolOption(tools, env, project, reset):
                 break
         if find_ok is False:
             SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': rtt_pre_inc_item})
-    elif compile_defs_option is not None :
-        option = compile_defs_option
-        defs = option.findall('listOptionValue')
-        project_defs = []
-        for item in defs:
-            if reset is True:
-                # clean all old configuration
-                option.remove(item)
+    if len(compile_include_files_options) == 0:
+        for option in compile_defs_options:
+            defs = option.findall('listOptionValue')
+            project_defs = []
+            for item in defs:
+                if reset is True:
+                    # clean all old configuration
+                    option.remove(item)
+                else:
+                    project_defs += [item.get('value')]
+            if len(project_defs) > 0:
+                cproject_defs = set(CPPDEFINES) - set(project_defs)
             else:
-                project_defs += [item.get('value')]
-        if len(project_defs) > 0:
-            cproject_defs = set(CPPDEFINES) - set(project_defs)
-        else:
-            cproject_defs = CPPDEFINES
+                cproject_defs = CPPDEFINES
 
-        # print('c.compiler.defs')
-        cproject_defs = sorted(cproject_defs)
-        for item in cproject_defs:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
+            # print('c.compiler.defs')
+            cproject_defs = sorted(cproject_defs)
+            for item in cproject_defs:
+                SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': item})
 
     # update linker script config
     if linker_scriptfile_option is not None :
@@ -276,23 +308,31 @@ def HandleToolOption(tools, env, project, reset):
         else:
             option.set('value', 'false')
     # update libs
-    if linker_libs_option is not None :
+    if linker_libs_option is not None:
         option = linker_libs_option
         # remove old libs
         for item in option.findall('listOptionValue'):
-            option.remove(item)
+            if IsRttEclipseLibFormat(item.get("value")):
+                option.remove(item)
+
         # add new libs
-        for lib in env['LIBS']:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': lib})
+        if env.has_key('LIBS'):
+            for lib in env['LIBS']:
+                formatedLib = ConverToRttEclipseLibFormat(lib)
+                SubElement(option, 'listOptionValue', {
+                           'builtIn': 'false', 'value': formatedLib})
+
     # update lib paths
-    if linker_paths_option is not None :
+    if linker_paths_option is not None:
         option = linker_paths_option
         # remove old lib paths
         for item in option.findall('listOptionValue'):
-            option.remove(item)
+            if IsRttEclipsePathFormat(item.get('value')):
+                # clean old configuration
+                option.remove(item)
         # add new old lib paths
         for path in env['LIBPATH']:
-            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': path})
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': ConverToRttEclipsePathFormat(RelativeProjectPath(env, path).replace('\\', '/'))})
 
     return
 
@@ -324,7 +364,7 @@ def UpdateProjectStructure(env, prj_name):
     out = open('.project', 'w')
     out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     xml_indent(root)
-    out.write(etree.tostring(root, encoding = 'utf-8'))
+    out.write(etree.tostring(root, encoding='utf-8'))
     out.close()
 
     return
@@ -334,12 +374,13 @@ def GenExcluding(env, project):
     rtt_root = os.path.abspath(env['RTT_ROOT'])
     bsp_root = os.path.abspath(env['BSP_ROOT'])
     coll_dirs = CollectPaths(project['DIRS'])
-    all_paths = [OSPath(path) for path in coll_dirs]
+    all_paths_temp = [OSPath(path) for path in coll_dirs]
+    all_paths = []
 
-    # remove unused path
-    for path in all_paths:
-        if not path.startswith(rtt_root) and not path.startswith(bsp_root):
-            all_paths.remove(path)
+    # add used path
+    for path in all_paths_temp:
+        if path.startswith(rtt_root) or path.startswith(bsp_root):
+            all_paths.append(path)
 
     if bsp_root.startswith(rtt_root):
         # bsp folder is in the RT-Thread root folder, such as the RT-Thread source code on GitHub
@@ -349,8 +390,8 @@ def GenExcluding(env, project):
         check_path = []
         exclude_paths = []
         # analyze the primary folder which relative to BSP_ROOT and in all_paths
-        for path in all_paths :
-            if path.startswith(bsp_root) :
+        for path in all_paths:
+            if path.startswith(bsp_root):
                 folders = RelativeProjectPath(env, path).split('\\')
                 if folders[0] != '.' and '\\' + folders[0] not in check_path:
                     check_path += ['\\' + folders[0]]
@@ -385,16 +426,16 @@ def GenExcluding(env, project):
     env['ExPaths'] = exclude_paths
     env['ExFiles'] = exclude_files
 
-    return  exclude_paths + exclude_files
+    return exclude_paths + exclude_files
 
 
 def RelativeProjectPath(env, path):
     project_root = os.path.abspath(env['BSP_ROOT'])
     rtt_root = os.path.abspath(env['RTT_ROOT'])
-    
+
     if path.startswith(project_root):
         return _make_path_relative(project_root, path)
-    
+
     if path.startswith(rtt_root):
         return 'rt-thread/' + _make_path_relative(rtt_root, path)
 
@@ -412,9 +453,9 @@ def HandleExcludingOption(entry, sourceEntries, excluding):
 
     value = ''
     for item in old_excluding:
-        if item.startswith('//') :
+        if item.startswith('//'):
             old_excluding.remove(item)
-        else :
+        else:
             if value == '':
                 value = item
             else:
@@ -463,13 +504,44 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
     out.close()
 
 
-def TargetEclipse(env, reset = False, prj_name = None):
+def TargetEclipse(env, reset=False, prj_name=None):
     global source_pattern
 
     print('Update eclipse setting...')
 
+    # generate cproject file
     if not os.path.exists('.cproject'):
-        print('no eclipse CDT project found!')
+        if rt_studio.gen_cproject_file(os.path.abspath(".cproject")) is False:
+            print('Fail!')
+            return
+
+    # generate project file
+    if not os.path.exists('.project'):
+        if rt_studio.gen_project_file(os.path.abspath(".project")) is False:
+            print('Fail!')
+            return
+
+    # generate projcfg.ini file
+    if not os.path.exists('.settings/projcfg.ini'):
+        if os.path.exists("template.uvprojx"):
+            file = os.path.abspath("template.uvprojx")
+        else:
+            file = os.path.abspath("template.uvproj")
+        chip_name = rt_studio.get_mcu_info(file)
+        if rt_studio.gen_projcfg_ini_file(chip_name, prj_name, os.path.abspath(".settings/projcfg.ini")) is False:
+            print('Fail!')
+            return
+
+    # enable lowwer .s file compiled in eclipse cdt
+    if not os.path.exists('.settings/org.eclipse.core.runtime.prefs'):
+        if rt_studio.gen_org_eclipse_core_runtime_prefs(
+                os.path.abspath(".settings/org.eclipse.core.runtime.prefs")) is False:
+            print('Fail!')
+            return
+
+    # add clean2 target to fix issues when files too many
+    if rt_studio.gen_makefile_targets(os.path.abspath("makefile.targets")) is False:
+        print('Fail!')
         return
 
     project = ProjectInfo(env)

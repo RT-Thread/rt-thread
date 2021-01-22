@@ -52,8 +52,12 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     QSPI_HandleTypeDef QSPI_Handler_config = QSPI_BUS_CONFIG;
     qspi_bus->QSPI_Handler = QSPI_Handler_config;
 
+#if defined(SOC_SERIES_STM32MP1)
+    while (cfg->max_hz < HAL_RCC_GetACLKFreq() / (i + 1))
+#else
     while (cfg->max_hz < HAL_RCC_GetHCLKFreq() / (i + 1))
-    {
+#endif
+   {
         i++;
         if (i == 255)
         {

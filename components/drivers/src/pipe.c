@@ -19,6 +19,7 @@
 
 static int pipe_fops_open(struct dfs_fd *fd)
 {
+    int rc = 0;
     rt_device_t device;
     rt_pipe_t *pipe;
 
@@ -31,26 +32,32 @@ static int pipe_fops_open(struct dfs_fd *fd)
     if (device->ref_count == 0)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            rc = -RT_ENOMEM;
+            goto __exit;
+        }
     }
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        pipe->readers ++;
-        break;
-    case O_WRONLY:
-        pipe->writers ++;
-        break;
-    case O_RDWR:
-        pipe->readers ++;
-        pipe->writers ++;
-        break;
+        case O_RDONLY:
+            pipe->readers ++;
+            break;
+        case O_WRONLY:
+            pipe->writers ++;
+            break;
+        case O_RDWR:
+            pipe->readers ++;
+            pipe->writers ++;
+            break;
     }
     device->ref_count ++;
 
+__exit:
     rt_mutex_release(&(pipe->lock));
 
-    return 0;
+    return rc;
 }
 
 static int pipe_fops_close(struct dfs_fd *fd)
@@ -66,16 +73,16 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     switch (fd->flags & O_ACCMODE)
     {
-    case O_RDONLY:
-        pipe->readers --;
-        break;
-    case O_WRONLY:
-        pipe->writers --;
-        break;
-    case O_RDWR:
-        pipe->readers --;
-        pipe->writers --;
-        break;
+        case O_RDONLY:
+            pipe->readers --;
+            break;
+        case O_WRONLY:
+            pipe->writers --;
+            break;
+        case O_RDWR:
+            pipe->readers --;
+            pipe->writers --;
+            break;
     }
 
     if (pipe->writers == 0)
@@ -90,7 +97,8 @@ static int pipe_fops_close(struct dfs_fd *fd)
 
     if (device->ref_count == 1)
     {
-        rt_ringbuffer_destroy(pipe->fifo);
+        if (pipe->fifo != RT_NULL)
+            rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
     device->ref_count --;
@@ -115,15 +123,15 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
 
     switch (cmd)
     {
-    case FIONREAD:
-        *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
-        break;
-    case FIONWRITE:
-        *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
-        break;
-    default:
-        ret = -EINVAL;
-        break;
+        case FIONREAD:
+            *((int*)args) = rt_ringbuffer_data_len(pipe->fifo);
+            break;
+        case FIONWRITE:
+            *((int*)args) = rt_ringbuffer_space_len(pipe->fifo);
+            break;
+        default:
+            ret = -EINVAL;
+            break;
     }
 
     return ret;
@@ -315,18 +323,29 @@ static const struct dfs_file_ops pipe_fops =
 rt_err_t  rt_pipe_open (rt_device_t device, rt_uint16_t oflag)
 {
     rt_pipe_t *pipe = (rt_pipe_t *)device;
+    rt_err_t ret = RT_EOK;
 
-    if (device == RT_NULL) return -RT_EINVAL;
+    if (device == RT_NULL)
+    {
+        ret = -RT_EINVAL;
+        goto __exit;
+    }
+    
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
     if (pipe->fifo == RT_NULL)
     {
         pipe->fifo = rt_ringbuffer_create(pipe->bufsz);
+        if (pipe->fifo == RT_NULL)
+        {
+            ret = -RT_ENOMEM;
+        }
     }
 
     rt_mutex_release(&(pipe->lock));
 
-    return RT_EOK;
+__exit:
+    return ret;
 }
 
 rt_err_t  rt_pipe_close  (rt_device_t device)

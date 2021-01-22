@@ -33,10 +33,6 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#ifdef RT_USING_SMP
-rt_hw_spinlock_t _rt_critical_lock;
-#endif /*RT_USING_SMP*/
-
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -47,7 +43,7 @@ rt_uint8_t rt_thread_ready_table[32];
 #ifndef RT_USING_SMP
 extern volatile rt_uint8_t rt_interrupt_nest;
 static rt_int16_t rt_scheduler_lock_nest;
-struct rt_thread *rt_current_thread;
+struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
 #endif /*RT_USING_SMP*/
 
@@ -94,12 +90,7 @@ static void _rt_scheduler_stack_check(struct rt_thread *thread)
         rt_ubase_t level;
 
         rt_kprintf("thread:%s stack overflow\n", thread->name);
-#ifdef RT_USING_FINSH
-        {
-            extern long list_thread(void);
-            list_thread();
-        }
-#endif
+
         level = rt_hw_interrupt_disable();
         while (level);
     }
@@ -350,9 +341,9 @@ void rt_schedule(void)
                 }
                 else
                 {
-                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
+                current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -448,9 +439,9 @@ void rt_schedule(void)
                 }
                 else
                 {
-                    rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     need_insert_from_thread = 1;
                 }
+                rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
 
             if (to_thread != rt_current_thread)
@@ -599,9 +590,9 @@ void rt_scheduler_do_irq_switch(void *context)
                 }
                 else
                 {
-                    current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                     rt_schedule_insert_thread(current_thread);
                 }
+                current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -788,7 +779,7 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
         {
 #if RT_THREAD_PRIORITY_MAX > 32
             pcpu->ready_table[thread->number] &= ~thread->high_mask;
-            if (rt_thread_ready_table[thread->number] == 0)
+            if (pcpu->ready_table[thread->number] == 0)
             {
                 pcpu->priority_group &= ~thread->number_mask;
             }
@@ -851,7 +842,7 @@ void rt_enter_critical(void)
     if (!current_thread)
     {
         rt_hw_local_irq_enable(level);
-        return ;
+        return;
     }
 
     /*
@@ -859,12 +850,15 @@ void rt_enter_critical(void)
      * enough and does not check here
      */
 
-    /* lock scheduler for all cpus */
-    if (current_thread->critical_lock_nest == 0)
     {
-        rt_hw_spin_lock(&_rt_critical_lock);
+        register rt_uint16_t lock_nest = current_thread->cpus_lock_nest;
+        current_thread->cpus_lock_nest++;
+        if (lock_nest == 0)
+        {
+            current_thread->scheduler_lock_nest ++;
+            rt_hw_spin_lock(&_cpus_lock);
+        }
     }
-
     /* critical for local cpu */
     current_thread->critical_lock_nest ++;
 
@@ -910,16 +904,18 @@ void rt_exit_critical(void)
     if (!current_thread)
     {
         rt_hw_local_irq_enable(level);
-        return ;
+        return;
     }
 
     current_thread->scheduler_lock_nest --;
 
     current_thread->critical_lock_nest --;
 
-    if (current_thread->critical_lock_nest == 0)
+    current_thread->cpus_lock_nest--;
+    if (current_thread->cpus_lock_nest == 0)
     {
-        rt_hw_spin_unlock(&_rt_critical_lock);
+        current_thread->scheduler_lock_nest --;
+        rt_hw_spin_unlock(&_cpus_lock);
     }
 
     if (current_thread->scheduler_lock_nest <= 0)

@@ -7,11 +7,12 @@
  * Date           Author        Notes
  * 2019-03-19     wangyq        the first version
  * 2019-11-01     wangyq        update libraries
+ * 2020-12-15     liuhy         update libraries
  */
 
-#include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <rtdbg.h>
 #include "board.h"
 #include "drv_i2c.h"
 #include <ald_i2c.h>
@@ -29,7 +30,7 @@ static void _i2c_init(void)
 
     /* Initialize I2C Pin */
     gpio_instruct.mode = GPIO_MODE_OUTPUT;
-    gpio_instruct.odos = GPIO_PUSH_PULL;
+    gpio_instruct.odos = GPIO_OPEN_DRAIN;
     gpio_instruct.pupd = GPIO_PUSH_UP;
     gpio_instruct.odrv = GPIO_OUT_DRIVE_NORMAL;
     gpio_instruct.flt  = GPIO_FILTER_DISABLE;
@@ -84,7 +85,7 @@ static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
         {
             if (ald_i2c_master_recv(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -92,7 +93,7 @@ static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
         {
             if (ald_i2c_master_send(bus->priv, msg->addr << 1, msg->buf, msg->len, TIMEOUT) != 0)
             {
-                i2c_dbg("i2c bus write failed,i2c bus stop!\n");
+                LOG_E("i2c bus write failed,i2c bus stop!\n");
                 goto out;
             }
         }
@@ -101,7 +102,7 @@ static rt_size_t es32f0_master_xfer(struct rt_i2c_bus_device *bus,
     ret = i;
 
 out:
-    i2c_dbg("send stop condition\n");
+    LOG_E("send stop condition\n");
 
     return ret;
 }

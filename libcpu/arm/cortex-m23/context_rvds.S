@@ -20,7 +20,7 @@
 SCB_VTOR        EQU     0xE000ED08               ; Vector Table Offset Register
 NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state register
 NVIC_SHPR3      EQU     0xE000ED20               ; system priority register (2)
-NVIC_PENDSV_PRI EQU     0x00FF0000               ; PendSV priority value (lowest)
+NVIC_PENDSV_PRI EQU     0xFFFF0000               ; PendSV and SysTick priority value (lowest)
 NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV exception
 
     AREA |.text|, CODE, READONLY, ALIGN=2
@@ -143,7 +143,7 @@ pendsv_exit
     ; restore interrupt
     MSR     PRIMASK, r2
 
-    MOVS    r0, #0x04
+    MOVS    r0, #0x03
     RSBS    r0, r0, #0x00
     BX      r0
     ENDP
@@ -169,7 +169,7 @@ rt_hw_context_switch_to    PROC
     MOVS    r0, #1
     STR     r0, [r1]
 
-    ; set the PendSV exception priority
+    ; set the PendSV and SysTick exception priority
     LDR     r0, =NVIC_SHPR3
     LDR     r1, =NVIC_PENDSV_PRI
     LDR     r2, [r0,#0x00]       ; read
