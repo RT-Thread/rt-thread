@@ -1,31 +1,9 @@
 /*
  * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
- * Copyright 2016 NXP
+ * Copyright 2016 - 2019 NXP
+ * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifndef _USB_HOST_H_
@@ -34,6 +12,7 @@
 #include <usb/include/usb.h>
 #include <usb/include/usb_misc.h>
 #include <usb/include/usb_spec.h>
+#include <usb/include/usb_host_config.h>
 
 /*******************************************************************************
  * Definitions
@@ -68,6 +47,16 @@ typedef enum _usb_host_event
     kUSB_HostEventDetach,          /*!< Device is detached */
     kUSB_HostEventEnumerationDone, /*!< Device's enumeration is done and the device is supported */
     kUSB_HostEventNotSupported,    /*!< Device's enumeration is done and the device is not supported */
+    /*! Device's enumeration failed due to errors
+     * fail reason is put in the high 2 bytes of callback event code.
+     * kStatus_USB_TransferFailed - the transfer failed.
+     * kStatus_USB_TransferCancel - transfer is canceled by application.
+     * kStatus_USB_Error - parsing descriptor failed, the power cannot satisfy device's requirement,
+     *                     device addresss allocation failed, transfer is not enough
+     *                     or the transfer API failed.
+     * kStatus_USB_AllocFail - malloc failed.
+     */
+    kUSB_HostEventEnumerationFail,
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
     kUSB_HostEventNotSuspended,      /*!< Suspend failed */
     kUSB_HostEventSuspended,         /*!< Suspend successful */
@@ -103,7 +92,60 @@ typedef enum _usb_host_dev_info
     kUSB_HostGetConfigurationDes,    /*!< Device's configuration descriptor pointer */
     kUSB_HostGetConfigurationLength, /*!< Device's configuration descriptor pointer */
 } usb_host_dev_info_t;
+/*! @brief Request type */
+typedef enum _usb_host_request_type
+{
+    kRequestDevice = 1U, /*!< Control request object is device */
+    kRequestInterface,   /*!< Control request object is interface */
+    kRequestEndpoint,    /*!< Control request object is endpoint */
+} usb_host_request_type_t;
+/*! @brief For USB_REQUEST_STANDARD_GET_DESCRIPTOR and USB_REQUEST_STANDARD_SET_DESCRIPTOR */
+typedef struct _usb_host_process_descriptor_param
+{
+    uint8_t descriptorType;    /*!< See the usb_spec.h, such as the USB_DESCRIPTOR_TYPE_DEVICE */
+    uint8_t descriptorIndex;   /*!< The descriptor index is used to select a specific descriptor (only for configuration
+                                  and string descriptors) when several descriptors of the same type are implemented in a
+                                  device */
+    uint8_t languageId;        /*!< It specifies the language ID for string descriptors or is reset to zero for other
+                                  descriptors */
+    uint8_t *descriptorBuffer; /*!< Buffer pointer */
+    uint16_t descriptorLength; /*!< Buffer data length */
+} usb_host_process_descriptor_param_t;
+/*! @brief For USB_REQUEST_STANDARD_CLEAR_FEATURE and USB_REQUEST_STANDARD_SET_FEATURE */
+typedef struct _usb_host_process_feature_param
+{
+    uint8_t requestType;         /*!< See the #usb_host_request_type_t */
+    uint8_t featureSelector;     /*!< Set/cleared feature */
+    uint8_t interfaceOrEndpoint; /*!< Interface or end pointer */
+} usb_host_process_feature_param_t;
+/*! @brief For USB_REQUEST_STANDARD_GET_INTERFACE */
+typedef struct _usb_host_get_interface_param
+{
+    uint8_t interface;                 /*!< Interface number */
+    uint8_t *alternateInterfaceBuffer; /*!< Save the transfer result */
+} usb_host_get_interface_param_t;
 
+/*! @brief For USB_REQUEST_STANDARD_GET_STATUS */
+typedef struct _usb_host_get_status_param
+{
+    uint16_t statusSelector; /*!< Interface number, the end pointer number or OTG status selector */
+    uint8_t requestType;     /*!< See the #usb_host_request_type_t */
+    uint8_t *statusBuffer;   /*!< Save the transfer result */
+} usb_host_get_status_param_t;
+
+/*! @brief For USB_REQUEST_STANDARD_SET_INTERFACE */
+typedef struct _usb_host_set_interface_param
+{
+    uint8_t alternateSetting; /*!< Alternate setting value */
+    uint8_t interface;        /*!< Interface number */
+} usb_host_set_interface_param_t;
+
+/*! @brief For USB_REQUEST_STANDARD_SYNCH_FRAME */
+typedef struct _usb_host_synch_frame_param
+{
+    uint8_t endpoint;           /*!< Endpoint number */
+    uint8_t *frameNumberBuffer; /*!< Frame number data buffer */
+} usb_host_synch_frame_param_t;
 /*!
  * @brief Host callback function typedef.
  *
@@ -243,8 +285,8 @@ typedef struct _usb_host_pipe_init
 /*! @brief Cancel transfer parameter structure */
 typedef struct _usb_host_cancel_param
 {
-    usb_host_pipe_handle pipeHandle; /*!< Cancelling pipe handle*/
-    usb_host_transfer_t *transfer;   /*!< Cancelling transfer*/
+    usb_host_pipe_handle pipeHandle; /*!< Canceling pipe handle*/
+    usb_host_transfer_t *transfer;   /*!< Canceling transfer*/
 } usb_host_cancel_param_t;
 
 /*******************************************************************************
@@ -342,7 +384,7 @@ extern usb_status_t USB_HostHelperParseAlternateSetting(usb_host_interface_handl
  * @retval kStatus_USB_InvalidParameter     The deviceHandle instance don't belong to hostHandle instance.
  */
 extern usb_status_t USB_HostRemoveDevice(usb_host_handle hostHandle, usb_device_handle deviceHandle);
-
+#if (defined(USB_HOST_CONFIG_KHCI) && (USB_HOST_CONFIG_KHCI > 0U))
 /*!
  * @brief KHCI task function.
  *
@@ -353,7 +395,8 @@ extern usb_status_t USB_HostRemoveDevice(usb_host_handle hostHandle, usb_device_
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostKhciTaskFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_EHCI) && (USB_HOST_CONFIG_EHCI > 0U))
 /*!
  * @brief EHCI task function.
  *
@@ -364,7 +407,8 @@ extern void USB_HostKhciTaskFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostEhciTaskFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_OHCI) && (USB_HOST_CONFIG_OHCI > 0U))
 /*!
  * @brief OHCI task function.
  *
@@ -375,7 +419,8 @@ extern void USB_HostEhciTaskFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostOhciTaskFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_IP3516HS) && (USB_HOST_CONFIG_IP3516HS > 0U))
 /*!
  * @brief IP3516HS task function.
  *
@@ -386,7 +431,8 @@ extern void USB_HostOhciTaskFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostIp3516HsTaskFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_KHCI) && (USB_HOST_CONFIG_KHCI > 0U))
 /*!
  * @brief Device KHCI ISR function.
  *
@@ -395,7 +441,8 @@ extern void USB_HostIp3516HsTaskFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostKhciIsrFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_EHCI) && (USB_HOST_CONFIG_EHCI > 0U))
 /*!
  * @brief Device EHCI ISR function.
  *
@@ -404,7 +451,8 @@ extern void USB_HostKhciIsrFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostEhciIsrFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_OHCI) && (USB_HOST_CONFIG_OHCI > 0U))
 /*!
  * @brief Device OHCI ISR function.
  *
@@ -413,7 +461,8 @@ extern void USB_HostEhciIsrFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostOhciIsrFunction(void *hostHandle);
-
+#endif
+#if (defined(USB_HOST_CONFIG_IP3516HS) && (USB_HOST_CONFIG_IP3516HS > 0U))
 /*!
  * @brief Device IP3516HS ISR function.
  *
@@ -422,7 +471,7 @@ extern void USB_HostOhciIsrFunction(void *hostHandle);
  * @param[in] hostHandle The host handle.
  */
 extern void USB_HostIp3516HsIsrFunction(void *hostHandle);
-
+#endif
 /*! @}*/
 
 /*!
@@ -566,7 +615,7 @@ extern usb_status_t USB_HostFreeTransfer(usb_host_handle hostHandle, usb_host_tr
  * This function sends the USB standard request packet.
  *
  * @param[in] deviceHandle    The device handle for control transfer.
- * @param[in] usbRequest      A USB standard request code. Se the usb_spec.h.
+ * @param[in] usbRequest      A USB standard request code. See the usb_spec.h.
  * @param[in] transfer        The used transfer.
  * @param[in] param           The parameter structure is different for different request, see
  * usb_host_framework.h.
@@ -694,10 +743,10 @@ extern usb_status_t USB_HostL1ResumeDeviceResquest(usb_host_handle hostHandle,
 /*!
  * @brief Update the lpm param.
  *
- * The function is used to configuure the lpm token.
+ * The function is used to configure the lpm token.
  *
  * @param[in] hostHandle The host handle.
- * @param[in] lpmParam HIRD vaule and whether enable remotewakeup.
+ * @param[in] lpmParam HIRD value and whether enable remotewakeup.
  *
  */
 extern usb_status_t USB_HostL1SleepDeviceResquestConfig(usb_host_handle hostHandle, uint8_t *lpmParam);
@@ -713,6 +762,19 @@ extern usb_status_t USB_HostL1SleepDeviceResquestConfig(usb_host_handle hostHand
  */
 extern usb_status_t USB_HostUpdateHwTick(usb_host_handle hostHandle, uint64_t tick);
 
+#endif
+
+#if ((defined(USB_HOST_CONFIG_BATTERY_CHARGER)) && (USB_HOST_CONFIG_BATTERY_CHARGER > 0U))
+/*!
+ * @brief Set the charger type. It is only supported on RT600 currently.
+ *
+ * The set charger type becomes valid in next attach.
+ *
+ * @param[in] hostHandle The host handle.
+ * @param[in] type.
+ *
+ */
+extern usb_status_t USB_HostSetChargerType(usb_host_handle hostHandle, uint8_t type);
 #endif
 
 /*! @}*/

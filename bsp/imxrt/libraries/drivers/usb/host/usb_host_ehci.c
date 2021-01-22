@@ -1,41 +1,23 @@
 /*
  * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
- * Copyright 2016 NXP
+ * Copyright 2016,2019 - 2020 NXP
+ * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * o Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- *
- * o Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- *
- * o Neither the name of the copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <usb/include/usb_device_config.h>
+#include "fsl_os_abstraction.h"
+#include <usb/include/usb_host_config.h>
 #if ((defined USB_HOST_CONFIG_EHCI) && (USB_HOST_CONFIG_EHCI > 0U))
 #include "usb_host.h"
 #include "usb_host_hci.h"
 #include "usb_host_devices.h"
+#if ((defined USB_HOST_CONFIG_COMPLIANCE_TEST) && (USB_HOST_CONFIG_COMPLIANCE_TEST))
+#include "usb_host_framework.h"
+#endif
 #include "fsl_device_registers.h"
 #include "usb_host_ehci.h"
-#include "usb_phy.h"
+#include <usb/phy/usb_phy.h>
 #if ((defined USB_HOST_CONFIG_COMPLIANCE_TEST) && (USB_HOST_CONFIG_COMPLIANCE_TEST))
 #include "usb_host.h"
 #endif
@@ -44,22 +26,24 @@
  * Definitions
  ******************************************************************************/
 
+#define USB_OSA_WAIT_TIMEOUT RT_WAITING_FOREVER
+
 #if defined(USB_STACK_USE_DEDICATED_RAM) && (USB_STACK_USE_DEDICATED_RAM > 0U)
 
 #error The SOC does not suppoort dedicated RAM case.
 
 #endif
 
-#define USB_HOST_EHCI_BANDWIDTH_DELAY (3500U)
-#define USB_HOST_EHCI_BANDWIDTH_HUB_LS_SETUP (333U)
+#define USB_HOST_EHCI_BANDWIDTH_DELAY             (3500U)
+#define USB_HOST_EHCI_BANDWIDTH_HUB_LS_SETUP      (333U)
 #define USB_HOST_EHCI_BANDWIDTH_FRAME_TOTOAL_TIME (900U)
 
 #if ((defined USB_HOST_CONFIG_COMPLIANCE_TEST) && (USB_HOST_CONFIG_COMPLIANCE_TEST))
-#define USB_HOST_EHCI_TEST_DESCRIPTOR_LENGTH (18U)
-#define USB_HOST_EHCI_PORTSC_PTC_J_STATE (0x01U)
-#define USB_HOST_EHCI_PORTSC_PTC_K_STATE (0x02U)
-#define USB_HOST_EHCI_PORTSC_PTC_SE0_NAK (0x03U)
-#define USB_HOST_EHCI_PORTSC_PTC_PACKET (0x04U)
+#define USB_HOST_EHCI_TEST_DESCRIPTOR_LENGTH     (18U)
+#define USB_HOST_EHCI_PORTSC_PTC_J_STATE         (0x01U)
+#define USB_HOST_EHCI_PORTSC_PTC_K_STATE         (0x02U)
+#define USB_HOST_EHCI_PORTSC_PTC_SE0_NAK         (0x03U)
+#define USB_HOST_EHCI_PORTSC_PTC_PACKET          (0x04U)
 #define USB_HOST_EHCI_PORTSC_PTC_FORCE_ENABLE_HS (0x05U)
 #define USB_HOST_EHCI_PORTSC_PTC_FORCE_ENABLE_FS (0x06U)
 #define USB_HOST_EHCI_PORTSC_PTC_FORCE_ENABLE_LS (0x07U)
@@ -102,7 +86,7 @@ static void USB_HostBandwidthFslsHostComputeCurrent(usb_host_ehci_instance_t *eh
 static void USB_HostBandwidthHsHostComputeCurrentFsls(usb_host_ehci_instance_t *ehciInstance,
                                                       uint32_t hubNumber,
                                                       uint16_t frameIndex,
-                                                      uint8_t frameBandwidths[8]);
+                                                      uint16_t frameBandwidths[8]);
 
 /*!
  * @brief compute current allocated HS bandwidth when ehci work as hi-speed host.
@@ -113,7 +97,7 @@ static void USB_HostBandwidthHsHostComputeCurrentFsls(usb_host_ehci_instance_t *
  */
 static void USB_HostBandwidthHsHostComputeCurrentHsAll(usb_host_ehci_instance_t *ehciInstance,
                                                        uint16_t frameIndex,
-                                                       uint8_t frameBandwidths[8]);
+                                                       uint16_t frameBandwidths[8]);
 
 /*!
  * @brief allocate HS bandwidth when host work as high-speed host.
@@ -586,71 +570,60 @@ extern usb_status_t USB_HostStandardSetGetDescriptor(usb_host_device_instance_t 
 USB_RAM_ADDRESS_ALIGNMENT(4096)
 USB_CONTROLLER_DATA static uint8_t s_UsbHostEhciFrameList1[USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 4];
 
-#define USB_HOST_EHCI_FRAME_LIST_ARRAY \
-    {                                  \
-        &s_UsbHostEhciFrameList1[0]    \
-    }
+static uint8_t usbHostEhciFramListStatus[1] = {0};
 
 USB_RAM_ADDRESS_ALIGNMENT(64) USB_CONTROLLER_DATA static usb_host_ehci_data_t s_UsbHostEhciData1;
-#define USB_HOST_EHCI_DATA_ARRAY \
-    {                            \
-        &s_UsbHostEhciData1      \
-    }
-#elif(USB_HOST_CONFIG_EHCI == 2U)
+#elif (USB_HOST_CONFIG_EHCI == 2U)
 USB_RAM_ADDRESS_ALIGNMENT(4096)
 USB_CONTROLLER_DATA static uint8_t s_UsbHostEhciFrameList1[USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 4];
 USB_RAM_ADDRESS_ALIGNMENT(4096)
 USB_CONTROLLER_DATA static uint8_t s_UsbHostEhciFrameList2[USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 4];
-#define USB_HOST_EHCI_FRAME_LIST_ARRAY                           \
-    {                                                            \
-        &s_UsbHostEhciFrameList1[0], &s_UsbHostEhciFrameList2[0] \
-    }
+static uint8_t usbHostEhciFramListStatus[2] = {0, 0};
 
 USB_RAM_ADDRESS_ALIGNMENT(64) USB_CONTROLLER_DATA static usb_host_ehci_data_t s_UsbHostEhciData1;
 USB_RAM_ADDRESS_ALIGNMENT(64) USB_CONTROLLER_DATA static usb_host_ehci_data_t s_UsbHostEhciData2;
-#define USB_HOST_EHCI_DATA_ARRAY                 \
-    {                                            \
-        &s_UsbHostEhciData1, &s_UsbHostEhciData2 \
-    }
 #else
 #error "Please increase the instance count."
 #endif
+#define USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE (1024U)
+#define USB_HOST_EHCI_MAX_MICRFRAME_VALUE    ((USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE << 3U) - 1U)
 
-static uint8_t s_SlotMaxBandwidth[8] = {125, 125, 125, 125, 125, 125, 50, 0};
+static uint8_t s_SlotMaxBandwidth[8]   = {125, 125, 125, 125, 125, 125, 50, 0};
+static uint8_t s_SlotMaxBandwidthHs[8] = {100, 100, 100, 100, 100, 100, 100, 100};
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
 /*!
-* @brief EHCI NC get USB NC bass address.
-*
-* This function is used to get USB NC bass address.
-*
-* @param[in] controllerId    EHCI controller ID; See the #usb_controller_index_t.
-*
-* @retval USB NC bass address.
-*/
+ * @brief EHCI NC get USB NC bass address.
+ *
+ * This function is used to get USB NC bass address.
+ *
+ * @param[in] controllerId    EHCI controller ID; See the #usb_controller_index_t.
+ *
+ * @retval USB NC bass address.
+ */
 #if (defined(USB_HOST_CONFIG_LOW_POWER_MODE) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
-void *USB_EhciNCGetBase(uint8_t controllerId)
+static void *USB_EhciNCGetBase(uint8_t controllerId)
 {
     void *usbNCBase = NULL;
 #if ((defined FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
     uint32_t instance;
-    uint32_t newinstance = 0;
+    uint32_t newinstance       = 0;
     uint32_t usbnc_base_temp[] = USBNC_BASE_ADDRS;
-    uint32_t usbnc_base[] = USBNC_BASE_ADDRS;
+    uint32_t usbnc_base[]      = USBNC_BASE_ADDRS;
 
-    if (controllerId < kUSB_ControllerEhci0)
+    if (controllerId < (uint8_t)kUSB_ControllerEhci0)
     {
         return NULL;
     }
 
-    controllerId = controllerId - kUSB_ControllerEhci0;
+    controllerId = controllerId - (uint8_t)kUSB_ControllerEhci0;
 
     for (instance = 0; instance < (sizeof(usbnc_base_temp) / sizeof(usbnc_base_temp[0])); instance++)
     {
-        if (usbnc_base_temp[instance])
+        if (usbnc_base_temp[instance] != 0U)
         {
             usbnc_base[newinstance++] = usbnc_base_temp[instance];
         }
@@ -660,7 +633,7 @@ void *USB_EhciNCGetBase(uint8_t controllerId)
         return NULL;
     }
 
-    usbNCBase = (void *)usbnc_base[controllerId];
+    usbNCBase = (void *)(uint8_t *)usbnc_base[controllerId];
 #endif
     return usbNCBase;
 }
@@ -729,19 +702,19 @@ static void USB_HostEhciTestSingleStepGetDeviceDesc(usb_host_ehci_instance_t *eh
         return;
     }
 
-    getDescriptorParam.descriptorLength = sizeof(usb_descriptor_device_t);
-    getDescriptorParam.descriptorLength = 18;
-    getDescriptorParam.descriptorBuffer = (uint8_t *)&deviceInstance->deviceDescriptor;
-    getDescriptorParam.descriptorType = USB_DESCRIPTOR_TYPE_DEVICE;
-    getDescriptorParam.descriptorIndex = 0;
-    getDescriptorParam.languageId = 0;
-    transfer->callbackFn = USB_HostEhciTestCallback;
-    transfer->callbackParam = ehciInstance->hostHandle;
+    getDescriptorParam.descriptorLength  = sizeof(usb_descriptor_device_t);
+    getDescriptorParam.descriptorLength  = 18;
+    getDescriptorParam.descriptorBuffer  = (uint8_t *)&deviceInstance->deviceDescriptor;
+    getDescriptorParam.descriptorType    = USB_DESCRIPTOR_TYPE_DEVICE;
+    getDescriptorParam.descriptorIndex   = 0;
+    getDescriptorParam.languageId        = 0;
+    transfer->callbackFn                 = USB_HostEhciTestCallback;
+    transfer->callbackParam              = ehciInstance->hostHandle;
     transfer->setupPacket->bmRequestType = USB_REQUEST_TYPE_DIR_IN;
-    transfer->setupPacket->bRequest = USB_REQUEST_STANDARD_GET_DESCRIPTOR;
-    transfer->setupPacket->wIndex = 0;
-    transfer->setupPacket->wLength = 0;
-    transfer->setupPacket->wValue = 0;
+    transfer->setupPacket->bRequest      = USB_REQUEST_STANDARD_GET_DESCRIPTOR;
+    transfer->setupPacket->wIndex        = 0;
+    transfer->setupPacket->wLength       = 0;
+    transfer->setupPacket->wValue        = 0;
     USB_HostStandardSetGetDescriptor(deviceInstance, transfer, &getDescriptorParam);
 }
 
@@ -774,8 +747,8 @@ static usb_status_t USB_HostEhciSingleStepQtdListInit(usb_host_ehci_instance_t *
             {
                 qtdPointer->nextQtdPointer = (uint32_t)ehciInstance->ehciQtdHead;
             }
-            qtdPointer = ehciInstance->ehciQtdHead;
-            ehciInstance->ehciQtdHead = (usb_host_ehci_qtd_t *)qtdPointer->nextQtdPointer;
+            qtdPointer                 = ehciInstance->ehciQtdHead;
+            ehciInstance->ehciQtdHead  = (usb_host_ehci_qtd_t *)qtdPointer->nextQtdPointer;
             qtdPointer->nextQtdPointer = 0;
         } while (--qtdNumber);
     }
@@ -795,7 +768,7 @@ static usb_status_t USB_HostEhciSingleStepQtdListInit(usb_host_ehci_instance_t *
         qtdPointer->transferResults[0] =
             ((0x00000000 << EHCI_HOST_QTD_DT_SHIFT) | (8 << EHCI_HOST_QTD_TOTAL_BYTES_SHIFT) |
              (EHCI_HOST_PID_SETUP << EHCI_HOST_QTD_PID_CODE_SHIFT) | (EHCI_HOST_QTD_STATUS_ACTIVE_MASK));
-        dataAddress = (uint32_t)(transfer->setupPacket);
+        dataAddress                    = (uint32_t)(transfer->setupPacket);
         qtdPointer->transferResults[1] = dataAddress; /* current offset is set too */
         /* set buffer pointer no matter data length */
         for (index = 0; index < 4; ++index)
@@ -816,7 +789,7 @@ static usb_status_t USB_HostEhciSingleStepQtdListInit(usb_host_ehci_instance_t *
                 ((0x00000001U << EHCI_HOST_QTD_DT_SHIFT) | (dataLength << EHCI_HOST_QTD_TOTAL_BYTES_SHIFT) |
                  (EHCI_HOST_PID_IN << EHCI_HOST_QTD_PID_CODE_SHIFT) | (EHCI_HOST_QTD_STATUS_ACTIVE_MASK));
 
-            dataAddress = (uint32_t)(transfer->transferBuffer);
+            dataAddress                    = (uint32_t)(transfer->transferBuffer);
             qtdPointer->transferResults[1] = dataAddress; /* current offset is set too */
             /* set buffer pointer no matter data length */
             for (index = 0; index < 4; ++index)
@@ -848,24 +821,24 @@ static usb_status_t USB_HostEhciSingleStepQtdListInit(usb_host_ehci_instance_t *
     transfer->next = NULL;
     if (vltQhPointer->ehciTransferHead == NULL)
     {
-        transfer->next = NULL;
+        transfer->next                 = NULL;
         vltQhPointer->ehciTransferHead = vltQhPointer->ehciTransferTail = transfer;
     }
     else
     {
-        transfer->next = NULL;
+        transfer->next                       = NULL;
         vltQhPointer->ehciTransferTail->next = transfer;
-        vltQhPointer->ehciTransferTail = transfer;
+        vltQhPointer->ehciTransferTail       = transfer;
     }
 
     USB_HostEhciLock();
     /* link qtd to qh (link to end) */
     entryPointer = &(vltQhPointer->nextQtdPointer);
-    dataAddress = *entryPointer; /* dataAddress variable means entry value here */
+    dataAddress  = *entryPointer; /* dataAddress variable means entry value here */
     while ((dataAddress) && (!(dataAddress & EHCI_HOST_T_INVALID_VALUE)))
     {
         entryPointer = (volatile uint32_t *)dataAddress;
-        dataAddress = *entryPointer;
+        dataAddress  = *entryPointer;
     }
     *entryPointer = (uint32_t)qtdPointer;
     USB_HostEhciUnlock();
@@ -888,11 +861,11 @@ static void USB_HostEhciTestSingleStepGetDeviceDescData(usb_host_ehci_instance_t
     {
         return;
     }
-    transfer->callbackFn = USB_HostEhciTestCallback;
-    transfer->callbackParam = ehciInstance->hostHandle;
+    transfer->callbackFn                 = USB_HostEhciTestCallback;
+    transfer->callbackParam              = ehciInstance->hostHandle;
     transfer->setupPacket->bmRequestType = USB_REQUEST_TYPE_DIR_IN;
-    transfer->setupPacket->bRequest = USB_REQUEST_STANDARD_GET_DESCRIPTOR;
-    transfer->setupPacket->wLength = USB_SHORT_TO_LITTLE_ENDIAN(USB_HOST_EHCI_TEST_DESCRIPTOR_LENGTH);
+    transfer->setupPacket->bRequest      = USB_REQUEST_STANDARD_GET_DESCRIPTOR;
+    transfer->setupPacket->wLength       = USB_SHORT_TO_LITTLE_ENDIAN(USB_HOST_EHCI_TEST_DESCRIPTOR_LENGTH);
     transfer->setupPacket->wValue = USB_SHORT_TO_LITTLE_ENDIAN((uint16_t)((uint16_t)USB_DESCRIPTOR_TYPE_DEVICE << 8));
     transfer->setupPacket->wIndex = 0;
     USB_HostEhciSingleStepQtdListInit(ehciInstance, (usb_host_ehci_pipe_t *)(deviceInstance->controlPipe), transfer, 1);
@@ -907,8 +880,8 @@ static void USB_HostEhciTestSingleStepGetDeviceDescData(usb_host_ehci_instance_t
     {
         return;
     }
-    transfer->callbackFn = USB_HostEhciTestCallback;
-    transfer->callbackParam = ehciInstance->hostHandle;
+    transfer->callbackFn     = USB_HostEhciTestCallback;
+    transfer->callbackParam  = ehciInstance->hostHandle;
     transfer->transferBuffer = buffer;
     transfer->transferLength = USB_HOST_EHCI_TEST_DESCRIPTOR_LENGTH;
     USB_HostEhciSingleStepQtdListInit(ehciInstance, (usb_host_ehci_pipe_t *)(deviceInstance->controlPipe), transfer, 2);
@@ -917,8 +890,8 @@ static void USB_HostEhciTestSingleStepGetDeviceDescData(usb_host_ehci_instance_t
     {
         return;
     }
-    transfer->callbackFn = USB_HostEhciTestCallback;
-    transfer->callbackParam = ehciInstance->hostHandle;
+    transfer->callbackFn     = USB_HostEhciTestCallback;
+    transfer->callbackParam  = ehciInstance->hostHandle;
     transfer->transferBuffer = NULL;
     transfer->transferLength = 0;
     USB_HostEhciSingleStepQtdListInit(ehciInstance, (usb_host_ehci_pipe_t *)(deviceInstance->controlPipe), transfer, 3);
@@ -934,7 +907,7 @@ static void USB_HostEhciTestSingleStepGetDeviceDescData(usb_host_ehci_instance_t
     return;
 }
 
-void USB_HostEhciTestModeInit(usb_device_handle deviceHandle)
+static void USB_HostEhciTestModeInit(usb_device_handle deviceHandle)
 {
     uint32_t productId;
     usb_host_device_instance_t *deviceInstance = (usb_host_device_instance_t *)deviceHandle;
@@ -975,6 +948,7 @@ void USB_HostEhciTestModeInit(usb_device_handle deviceHandle)
             USB_HostEhciTestSingleStepGetDeviceDescData(ehciInstance, deviceHandle);
             break;
         default:
+            /*no action */
             break;
     }
 
@@ -1014,60 +988,62 @@ static void USB_HostEhciResumeBus(usb_host_ehci_instance_t *ehciInstance)
 
 static uint32_t USB_HostBandwidthComputeTime(uint8_t speed, uint8_t pipeType, uint8_t direction, uint32_t dataLength)
 {
-    uint32_t result = (3167 + ((1000 * dataLength) * 7U * 8U / 6U)) / 1000;
+    uint32_t result = (3167U + ((1000U * dataLength) * 7U * 8U / 6U)) / 1000U;
 
     if (pipeType == USB_ENDPOINT_ISOCHRONOUS) /* iso */
     {
         if (speed == USB_SPEED_HIGH)
         {
-            result = 38 * 8 * 2083 + 2083 * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
+            result = 38U * 8U * 2083U + 2083U * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
         }
         else if (speed == USB_SPEED_FULL)
         {
             if (direction == USB_IN)
             {
-                result = 7268000 + 83540 * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
+                result = 7268000U + 83540U * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
             }
             else
             {
-                result = 6265000 + 83540 * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
+                result = 6265000U + 83540U * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
             }
         }
         else
         {
+            /*no action*/
         }
     }
     else /* interrupt */
     {
         if (speed == USB_SPEED_HIGH)
         {
-            result = 55 * 8 * 2083 + 2083 * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
+            result = 55U * 8U * 2083U + 2083U * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
         }
         else if (speed == USB_SPEED_FULL)
         {
-            result = 9107000 + 83540 * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
+            result = 9107000U + 83540U * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
         }
         else if (speed == USB_SPEED_LOW)
         {
             if (direction == USB_IN)
             {
-                result = 64060000 + 2000 * USB_HOST_EHCI_BANDWIDTH_HUB_LS_SETUP + 676670 * result +
+                result = 64060000U + 2000U * USB_HOST_EHCI_BANDWIDTH_HUB_LS_SETUP + 676670U * result +
                          USB_HOST_EHCI_BANDWIDTH_DELAY;
             }
             else
             {
-                result = 6265000 + 83540 * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
+                result = 6265000U + 83540U * result + USB_HOST_EHCI_BANDWIDTH_DELAY;
             }
         }
         else
         {
+            /*no action*/
         }
     }
 
-    result /= 1000000;
-    if (result == 0)
+    result /= 1000000U;
+    if (result == 0U)
     {
-        result = 1;
+        result = 1U;
     }
 
     return result;
@@ -1078,7 +1054,7 @@ static void USB_HostBandwidthFslsHostComputeCurrent(usb_host_ehci_instance_t *eh
                                                     uint16_t *frameBandwidth)
 {
     usb_host_ehci_pipe_t *ehciPipePointer;
-
+    void *temp;
     /* clear the bandwidth */
     *frameBandwidth = 0;
 
@@ -1091,26 +1067,28 @@ static void USB_HostBandwidthFslsHostComputeCurrent(usb_host_ehci_instance_t *eh
         {
             /* does pipe allocate bandwidth in frameIndex frame? note: interval is power of 2. */
             if ((frameIndex >= ehciPipePointer->startFrame) &&
-                (!((uint32_t)(frameIndex - ehciPipePointer->startFrame) &
-                   (uint32_t)(ehciPipePointer->pipeCommon.interval - 1))))
+                (0U == ((uint32_t)((uint32_t)frameIndex - ehciPipePointer->startFrame) &
+                        ((uint32_t)ehciPipePointer->pipeCommon.interval - 1U))))
             {
                 *frameBandwidth += ehciPipePointer->dataTime;
             }
         }
-        ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+        temp            = (void *)ehciPipePointer->pipeCommon.next;
+        ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
     }
 }
 
 static void USB_HostBandwidthHsHostComputeCurrentFsls(usb_host_ehci_instance_t *ehciInstance,
                                                       uint32_t hubNumber,
                                                       uint16_t frameIndex,
-                                                      uint8_t frameBandwidths[8])
+                                                      uint16_t frameBandwidths[8])
 {
     usb_host_ehci_pipe_t *ehciPipePointer;
     uint8_t index;
     uint32_t deviceInfo;
+    void *temp;
 
-    for (index = 0; index < 8; ++index)
+    for (index = 0; index < 8U; ++index)
     {
         frameBandwidths[index] = 0;
     }
@@ -1124,47 +1102,50 @@ static void USB_HostBandwidthHsHostComputeCurrentFsls(usb_host_ehci_instance_t *
         {
             /* compute FS/LS bandwidth that blong to same high-speed hub, because FS/LS bandwidth is allocated from
              * first parent high-speed hub */
-            USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
-                                                   kUSB_HostGetDeviceHSHubNumber, &deviceInfo);
+            (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                         (uint32_t)kUSB_HostGetDeviceHSHubNumber, &deviceInfo);
             if (deviceInfo != hubNumber)
             {
-                ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+                temp            = (void *)ehciPipePointer->pipeCommon.next;
+                ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
                 continue;
             }
-            USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                                   &deviceInfo);
+            (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                         (uint32_t)kUSB_HostGetDeviceSpeed, &deviceInfo);
             if (deviceInfo == USB_SPEED_HIGH)
             {
-                ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+                temp            = (void *)ehciPipePointer->pipeCommon.next;
+                ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
                 continue;
             }
 
             /* does pipe allocate bandwidth in frameIndex frame? note: interval is power of 2. */
             if ((frameIndex >= ehciPipePointer->startFrame) &&
-                (!((uint32_t)(frameIndex - ehciPipePointer->startFrame) &
-                   (uint32_t)(ehciPipePointer->pipeCommon.interval - 1))))
+                (0U == ((uint32_t)((uint32_t)frameIndex - ehciPipePointer->startFrame) &
+                        ((uint32_t)ehciPipePointer->pipeCommon.interval - 1U))))
             {
                 if (ehciPipePointer->pipeCommon.pipeType ==
                     USB_ENDPOINT_ISOCHRONOUS) /* iso bandwidth is allocated once */
                 {
-                    frameBandwidths[ehciPipePointer->startUframe + 1] += ehciPipePointer->dataTime;
+                    frameBandwidths[ehciPipePointer->startUframe + 1U] += ehciPipePointer->dataTime;
                 }
                 else /* iso bandwidth is allocated three times */
                 {
-                    frameBandwidths[ehciPipePointer->startUframe + 1] += ehciPipePointer->dataTime;
-                    frameBandwidths[ehciPipePointer->startUframe + 2] += ehciPipePointer->dataTime;
-                    frameBandwidths[ehciPipePointer->startUframe + 3] += ehciPipePointer->dataTime;
+                    frameBandwidths[ehciPipePointer->startUframe + 1U] += ehciPipePointer->dataTime;
+                    frameBandwidths[ehciPipePointer->startUframe + 2U] += ehciPipePointer->dataTime;
+                    frameBandwidths[ehciPipePointer->startUframe + 3U] += ehciPipePointer->dataTime;
                 }
             }
         }
-        ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+        temp            = (void *)ehciPipePointer->pipeCommon.next;
+        ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
     }
 
-    for (index = 0; index < 7; ++index) /*  */
+    for (index = 0; index < 7U; ++index) /*  */
     {
         if (frameBandwidths[index] > s_SlotMaxBandwidth[index])
         {
-            frameBandwidths[index + 1] += (frameBandwidths[index] - s_SlotMaxBandwidth[index]);
+            frameBandwidths[index + 1U] += (frameBandwidths[index] - s_SlotMaxBandwidth[index]);
             frameBandwidths[index] = s_SlotMaxBandwidth[index];
         }
     }
@@ -1172,14 +1153,14 @@ static void USB_HostBandwidthHsHostComputeCurrentFsls(usb_host_ehci_instance_t *
 
 static void USB_HostBandwidthHsHostComputeCurrentHsAll(usb_host_ehci_instance_t *ehciInstance,
                                                        uint16_t frameIndex,
-                                                       uint8_t frameBandwidths[8])
+                                                       uint16_t frameBandwidths[8])
 {
     usb_host_ehci_pipe_t *ehciPipePointer;
-    uint8_t index;
+    uint16_t index;
     uint32_t deviceInfo;
     uint16_t frameInterval;
-
-    for (index = 0; index < 8; ++index)
+    void *temp;
+    for (index = 0; index < 8U; ++index)
     {
         frameBandwidths[index] = 0;
     }
@@ -1192,26 +1173,26 @@ static void USB_HostBandwidthHsHostComputeCurrentHsAll(usb_host_ehci_instance_t 
             (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_INTERRUPT))
         {
             frameInterval = ehciPipePointer->pipeCommon.interval;
-            USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                                   &deviceInfo);
+            (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                         (uint32_t)kUSB_HostGetDeviceSpeed, &deviceInfo);
             if (deviceInfo == USB_SPEED_HIGH) /* high-speed data bandwidth */
             {
                 /* frameInterval means micro-frame here */
                 if (frameIndex >= ehciPipePointer->startFrame)
                 {
-                    if ((frameInterval > 8) &&
-                        (frameIndex * 8 - ehciPipePointer->startFrame * 8 >= ehciPipePointer->startUframe))
+                    if ((frameInterval > 8U) &&
+                        (frameIndex * 8U - ehciPipePointer->startFrame * 8U >= ehciPipePointer->startUframe))
                     {
-                        if (!((uint32_t)(frameIndex * 8 - ehciPipePointer->startFrame * 8 -
-                                         ehciPipePointer->startUframe) &
-                              (uint32_t)(frameInterval - 1)))
+                        if (0U == ((((uint32_t)frameIndex) * 8U - ehciPipePointer->startFrame * 8U -
+                                    ehciPipePointer->startUframe) &
+                                   ((uint32_t)frameInterval - 1U)))
                         {
                             frameBandwidths[ehciPipePointer->startUframe] += ehciPipePointer->dataTime;
                         }
                     }
                     else
                     {
-                        for (index = ehciPipePointer->startUframe; index < 8; index += frameInterval)
+                        for (index = ehciPipePointer->startUframe; index < 8U; index += frameInterval)
                         {
                             frameBandwidths[index] += ehciPipePointer->dataTime;
                         }
@@ -1221,17 +1202,18 @@ static void USB_HostBandwidthHsHostComputeCurrentHsAll(usb_host_ehci_instance_t 
             else /* full-speed split bandwidth */
             {
                 if ((frameIndex >= ehciPipePointer->startFrame) &&
-                    (!((uint32_t)(frameIndex - ehciPipePointer->startFrame) & (uint32_t)(frameInterval - 1))))
+                    (0U == ((uint32_t)((uint32_t)frameIndex - ehciPipePointer->startFrame) &
+                            (uint32_t)((uint32_t)frameInterval - 1U))))
                 {
-                    for (index = 0; index < 8; ++index)
+                    for (index = 0; index < 8U; ++index)
                     {
-                        if ((uint32_t)(ehciPipePointer->uframeSmask) &
-                            (uint32_t)(0x01 << index)) /* start-split micro-frames */
+                        if (0U != ((uint32_t)(ehciPipePointer->uframeSmask) &
+                                   (uint32_t)(0x01UL << index))) /* start-split micro-frames */
                         {
                             frameBandwidths[index] += ehciPipePointer->startSplitTime;
                         }
-                        if ((uint32_t)(ehciPipePointer->uframeCmask) &
-                            (uint32_t)(0x01 << index)) /* complete-split micro-frames */
+                        if (0U != ((uint32_t)(ehciPipePointer->uframeCmask) &
+                                   (uint32_t)(0x01UL << index))) /* complete-split micro-frames */
                         {
                             frameBandwidths[index] += ehciPipePointer->completeSplitTime;
                         }
@@ -1239,17 +1221,20 @@ static void USB_HostBandwidthHsHostComputeCurrentHsAll(usb_host_ehci_instance_t 
                 }
             }
         }
-        ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+        temp            = (void *)ehciPipePointer->pipeCommon.next;
+        ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
     }
 
+#if 0
     for (index = 0; index < 7; ++index) /*  */
     {
-        if (frameBandwidths[index] > s_SlotMaxBandwidth[index])
+        if (frameBandwidths[index] > s_SlotMaxBandwidthHs[index])
         {
-            frameBandwidths[index + 1] += (frameBandwidths[index] - s_SlotMaxBandwidth[index]);
-            frameBandwidths[index] = s_SlotMaxBandwidth[index];
+            frameBandwidths[index + 1] += (frameBandwidths[index] - s_SlotMaxBandwidthHs[index]);
+            frameBandwidths[index] = s_SlotMaxBandwidthHs[index];
         }
     }
+#endif
 }
 
 /*!
@@ -1270,15 +1255,19 @@ static usb_status_t USB_HostBandwidthHsHostAllocateHsCommon(usb_host_ehci_instan
     uint16_t uframeIntervalIndex;
     uint16_t uframeIndex;
     uint16_t frameIndex;
-    uint8_t frameTimes[8];
+    uint16_t frameTimes[8];
 
     frameIndex = 0;
+    for (uint8_t i = 0; i < 8U; ++i)
+    {
+        frameTimes[i] = 0U;
+    }
     USB_HostBandwidthHsHostComputeCurrentHsAll(
         ehciInstance, frameIndex, frameTimes); /* compute the allocated bandwidths in the frameIndex frame */
     for (uframeIntervalIndex = 0; (uframeIntervalIndex < uframeInterval); ++uframeIntervalIndex) /* start micro-frame */
     {
         /* for all the micro-frame in interval uframeInterval */
-        for (uframeIndex = uframeIntervalIndex; uframeIndex < (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 8);
+        for (uframeIndex = uframeIntervalIndex; uframeIndex < (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 8U);
              uframeIndex += uframeInterval)
         {
             if (frameIndex != (uframeIndex >> 3))
@@ -1288,13 +1277,13 @@ static usb_status_t USB_HostBandwidthHsHostAllocateHsCommon(usb_host_ehci_instan
                     ehciInstance, frameIndex,
                     frameTimes); /* compute the allocated bandwidths in the new frameIndex frame */
             }
-            if (frameTimes[uframeIndex & 0x0007] + timeData >
-                s_SlotMaxBandwidth[(uframeIndex & 0x0007)]) /* micro-frame has enough idle bandwidth? */
+            if (frameTimes[uframeIndex & 0x0007U] + timeData >
+                s_SlotMaxBandwidthHs[(uframeIndex & 0x0007U)]) /* micro-frame has enough idle bandwidth? */
             {
                 break; /* fail */
             }
         }
-        if (uframeIndex >= (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 8)) /* success? */
+        if (uframeIndex >= (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE * 8U)) /* success? */
         {
             break;
         }
@@ -1318,91 +1307,97 @@ static usb_status_t USB_HostBandwidthHsHostAllocateIso(usb_host_ehci_instance_t 
                                                        usb_host_ehci_pipe_t *ehciPipePointer)
 {
     usb_status_t status;
-    uint32_t deviceInfo;
-    uint32_t hubNumber;
+    uint32_t deviceInfo          = 0;
+    uint32_t hubNumber           = 0;
     uint16_t uframeIntervalIndex = 0;
-    uint16_t frameIntervalIndex = 0;
+    uint16_t frameIntervalIndex  = 0;
     uint16_t frameIndex;
     uint16_t timeCompleteSplit;
     uint16_t timeStartSplit;
     uint32_t timeData;
     uint8_t SsCsNumber = 0;
     uint16_t frameInterval;
-    uint8_t frameTimes[8];
+    uint16_t frameTimes[8];
     uint8_t allocateOk = 1;
-    uint8_t index;
+    uint16_t index;
 
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                           &deviceInfo);
+    for (uint8_t i = 0; i < 8U; ++i)
+    {
+        frameTimes[i] = 0U;
+    }
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceSpeed, &deviceInfo);
 
     timeData = USB_HostBandwidthComputeTime(
-        deviceInfo, USB_ENDPOINT_ISOCHRONOUS, ehciPipePointer->pipeCommon.direction,
-        ehciPipePointer->pipeCommon.maxPacketSize * ehciPipePointer->pipeCommon.numberPerUframe);
+        (uint8_t)deviceInfo, USB_ENDPOINT_ISOCHRONOUS, ehciPipePointer->pipeCommon.direction,
+        (((uint32_t)ehciPipePointer->pipeCommon.maxPacketSize) * ehciPipePointer->pipeCommon.numberPerUframe));
     /* pipe is high-speed */
     if (deviceInfo == USB_SPEED_HIGH)
     {
         uframeIntervalIndex = 0;
-        status = USB_HostBandwidthHsHostAllocateHsCommon(ehciInstance, ehciPipePointer->uframeInterval, timeData,
-                                                         &uframeIntervalIndex);
+        status              = USB_HostBandwidthHsHostAllocateHsCommon(ehciInstance, ehciPipePointer->uframeInterval,
+                                                         (uint16_t)timeData, &uframeIntervalIndex);
         if (status == kStatus_USB_Success)
         {
-            ehciPipePointer->startFrame = (uframeIntervalIndex / 8);
-            ehciPipePointer->startUframe = (uframeIntervalIndex & 0x0007);
-            ehciPipePointer->dataTime = timeData;
+            ehciPipePointer->startFrame  = (uframeIntervalIndex / 8U);
+            ehciPipePointer->startUframe = (uint8_t)(uframeIntervalIndex & 0x0007U);
+            ehciPipePointer->dataTime    = (uint16_t)timeData;
 
             return kStatus_USB_Success;
         }
     }
     else /* pipe is full-speed or low-speed */
     {
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetHubThinkTime,
-                                               &deviceInfo); /* deviceInfo variable means hub think time */
-        timeData += (deviceInfo * 7 / (6 * 12));
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceHSHubNumber,
-                                               &hubNumber);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetHubThinkTime,
+                                                     &deviceInfo); /* deviceInfo variable means hub think time */
+        timeData += (deviceInfo * 7U / (6U * 12U));
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDeviceHSHubNumber, &hubNumber);
         frameInterval = ehciPipePointer->pipeCommon.interval;
 
         /* compute start-split and complete-split bandwidth */
         if (ehciPipePointer->pipeCommon.direction == USB_OUT)
         {
-            timeStartSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_ISOCHRONOUS, USB_OUT,
-                                                          ehciPipePointer->pipeCommon.maxPacketSize);
+            timeStartSplit = (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_ISOCHRONOUS, USB_OUT,
+                                                                    ehciPipePointer->pipeCommon.maxPacketSize);
             timeCompleteSplit = 0;
         }
         else
         {
-            timeStartSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_ISOCHRONOUS, USB_IN, 1);
-            timeCompleteSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_ISOCHRONOUS, USB_IN,
-                                                             ehciPipePointer->pipeCommon.maxPacketSize);
+            timeStartSplit =
+                (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_ISOCHRONOUS, USB_IN, 1);
+            timeCompleteSplit = (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_ISOCHRONOUS, USB_IN,
+                                                                       ehciPipePointer->pipeCommon.maxPacketSize);
         }
         /* note: bandwidth must put in one frame */
-        for (uframeIntervalIndex = 0; uframeIntervalIndex <= 5; ++uframeIntervalIndex) /* uframe interval */
+        for (uframeIntervalIndex = 0U; uframeIntervalIndex <= 5U; ++uframeIntervalIndex) /* uframe interval */
         {
-            for (frameIntervalIndex = 0; frameIntervalIndex < frameInterval; ++frameIntervalIndex) /* frame interval */
+            for (frameIntervalIndex = 0U; frameIntervalIndex < frameInterval; ++frameIntervalIndex) /* frame interval */
             {
                 allocateOk = 1;
                 for (frameIndex = frameIntervalIndex; frameIndex < USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE;
                      frameIndex += frameInterval) /* check all the frames */
                 {
                     /* compute start-split and complete-split number */
-                    SsCsNumber = (ehciPipePointer->pipeCommon.maxPacketSize + 187) /
-                                 188; /* ss number for iso out; cs number for iso in */
+                    SsCsNumber = (uint8_t)((ehciPipePointer->pipeCommon.maxPacketSize + 187U) /
+                                           188U); /* ss number for iso out; cs number for iso in */
                     if (ehciPipePointer->pipeCommon.direction == USB_OUT) /* ISO OUT */
                     {
-                        if (uframeIntervalIndex + SsCsNumber > 8)
+                        if (uframeIntervalIndex + SsCsNumber > 8U)
                         {
-                            allocateOk = 0;
+                            allocateOk = 0U;
                         }
                     }
                     else
                     {
-                        if (uframeIntervalIndex + 2 + SsCsNumber >
-                            8) /* ISO IN: there are two micro-frame interval between start-split and complete-split */
+                        if (uframeIntervalIndex + 2U + SsCsNumber >
+                            8U) /* ISO IN: there are two micro-frame interval between start-split and complete-split */
                         {
-                            allocateOk = 0;
+                            allocateOk = 0U;
                         }
                     }
-                    if (allocateOk)
+                    if (0U != allocateOk)
                     {
                         /* allocate start-split and complete-split bandwidth */
                         USB_HostBandwidthHsHostComputeCurrentHsAll(ehciInstance, frameIndex, frameTimes);
@@ -1411,9 +1406,9 @@ static usb_status_t USB_HostBandwidthHsHostAllocateIso(usb_host_ehci_instance_t 
                             index = uframeIntervalIndex;
                             for (; index < (uframeIntervalIndex + SsCsNumber); ++index)
                             {
-                                if (frameTimes[index] + timeStartSplit > s_SlotMaxBandwidth[index])
+                                if (frameTimes[index] + timeStartSplit > s_SlotMaxBandwidthHs[index])
                                 {
-                                    allocateOk = 0;
+                                    allocateOk = 0U;
                                     break;
                                 }
                             }
@@ -1421,20 +1416,20 @@ static usb_status_t USB_HostBandwidthHsHostAllocateIso(usb_host_ehci_instance_t 
                         else /* ISO IN */
                         {
                             index = uframeIntervalIndex;
-                            if (frameTimes[index] + timeStartSplit > s_SlotMaxBandwidth[index])
+                            if (frameTimes[index] + timeStartSplit > s_SlotMaxBandwidthHs[index])
                             {
-                                allocateOk = 0;
+                                allocateOk = 0U;
                             }
-                            if (allocateOk)
+                            if (0U != allocateOk)
                             {
                                 index =
                                     uframeIntervalIndex +
-                                    2; /* there are two micro-frames interval between start-split and complete-split */
-                                for (; index < (uframeIntervalIndex + 2 + SsCsNumber); ++index)
+                                    2U; /* there are two micro-frames interval between start-split and complete-split */
+                                for (; index < (uframeIntervalIndex + 2U + SsCsNumber); ++index)
                                 {
-                                    if (frameTimes[index] + timeCompleteSplit > s_SlotMaxBandwidth[index])
+                                    if (frameTimes[index] + timeCompleteSplit > s_SlotMaxBandwidthHs[index])
                                     {
-                                        allocateOk = 0;
+                                        allocateOk = 0U;
                                         break;
                                     }
                                 }
@@ -1443,18 +1438,18 @@ static usb_status_t USB_HostBandwidthHsHostAllocateIso(usb_host_ehci_instance_t 
                     }
 
                     /* allocate data bandwidth */
-                    if (allocateOk)
+                    if (0U != allocateOk)
                     {
                         USB_HostBandwidthHsHostComputeCurrentFsls(ehciInstance, hubNumber, frameIndex, frameTimes);
-                        index = uframeIntervalIndex + 1; /* timeData bandwidth start position */
+                        index = uframeIntervalIndex + 1U; /* timeData bandwidth start position */
                         /* iso must occupy all the uframe bandwidth */
                         {
                             deviceInfo = timeData; /* note: deviceInfo variable means bandwidth here */
-                            while ((index < 8) && (deviceInfo > s_SlotMaxBandwidth[index]))
+                            while ((index < 8U) && (deviceInfo > s_SlotMaxBandwidth[index]))
                             {
-                                if (frameTimes[index] > 0)
+                                if (frameTimes[index] > 0U)
                                 {
-                                    allocateOk = 0;
+                                    allocateOk = 0U;
                                     break;
                                 }
                                 else
@@ -1465,16 +1460,16 @@ static usb_status_t USB_HostBandwidthHsHostAllocateIso(usb_host_ehci_instance_t 
                             }
                         }
                     }
-                    if (allocateOk)
+                    if (0U != allocateOk)
                     {
                         /* data bandwidth can be put in the frame? */
-                        index = uframeIntervalIndex + 1; /* timeData bandwidth start position */
-                        frameTimes[index] += timeData;
-                        for (; index < 7; ++index)
+                        index = uframeIntervalIndex + 1U; /* timeData bandwidth start position */
+                        frameTimes[index] += (uint16_t)timeData;
+                        for (; index < 7U; ++index)
                         {
                             if (frameTimes[index] > s_SlotMaxBandwidth[index])
                             {
-                                frameTimes[index + 1] += (frameTimes[index] - s_SlotMaxBandwidth[index]);
+                                frameTimes[index + 1U] += (frameTimes[index] - s_SlotMaxBandwidth[index]);
                                 frameTimes[index] = s_SlotMaxBandwidth[index];
                             }
                             else
@@ -1488,45 +1483,45 @@ static usb_status_t USB_HostBandwidthHsHostAllocateIso(usb_host_ehci_instance_t 
                         }
                     }
 
-                    if (allocateOk)
+                    if (0U != allocateOk)
                     {
                         break;
                     }
                 }
-                if (allocateOk)
+                if (0U != allocateOk)
                 {
                     break;
                 }
             }
-            if (allocateOk)
+            if (0U != allocateOk)
             {
                 break;
             }
         }
 
-        if (allocateOk)
+        if (0U != allocateOk)
         {
-            ehciPipePointer->startFrame = frameIntervalIndex;
-            ehciPipePointer->startUframe = uframeIntervalIndex;
-            ehciPipePointer->dataTime = timeData;
-            ehciPipePointer->startSplitTime = timeStartSplit;
+            ehciPipePointer->startFrame        = frameIntervalIndex;
+            ehciPipePointer->startUframe       = (uint8_t)uframeIntervalIndex;
+            ehciPipePointer->dataTime          = (uint16_t)timeData;
+            ehciPipePointer->startSplitTime    = timeStartSplit;
             ehciPipePointer->completeSplitTime = timeCompleteSplit;
             if (ehciPipePointer->pipeCommon.direction == USB_OUT)
             {
                 index = uframeIntervalIndex;
                 for (; index < (uframeIntervalIndex + SsCsNumber); ++index)
                 {
-                    ehciPipePointer->uframeSmask = (uint32_t)ehciPipePointer->uframeSmask | (uint32_t)(0x01 << index);
+                    ehciPipePointer->uframeSmask = ehciPipePointer->uframeSmask | (uint8_t)(0x01UL << index);
                 }
             }
             else
             {
-                index = uframeIntervalIndex;
-                ehciPipePointer->uframeSmask = (uint32_t)ehciPipePointer->uframeSmask | (uint32_t)(0x01 << index);
-                index = uframeIntervalIndex + 2;
-                for (; index < (uframeIntervalIndex + 2 + SsCsNumber); ++index)
+                index                        = uframeIntervalIndex;
+                ehciPipePointer->uframeSmask = ehciPipePointer->uframeSmask | (uint8_t)(0x01UL << index);
+                index                        = uframeIntervalIndex + 2U;
+                for (; index < (uframeIntervalIndex + 2U + SsCsNumber); ++index)
                 {
-                    ehciPipePointer->uframeCmask = (uint32_t)ehciPipePointer->uframeCmask | (uint32_t)(0x01 << index);
+                    ehciPipePointer->uframeCmask = ehciPipePointer->uframeCmask | (uint8_t)(0x01UL << index);
                 }
             }
 
@@ -1543,92 +1538,100 @@ static usb_status_t USB_HostBandwidthHsHostAllocateInterrupt(usb_host_ehci_insta
                                                              usb_host_ehci_pipe_t *ehciPipePointer)
 {
     usb_status_t status;
-    uint32_t deviceInfo;
-    uint32_t hubNumber;
+    uint32_t deviceInfo          = 0;
+    uint32_t hubNumber           = 0;
     uint16_t uframeIntervalIndex = 0;
-    uint16_t frameIntervalIndex = 0;
+    uint16_t frameIntervalIndex  = 0;
     uint16_t frameIndex;
     uint16_t timeCompleteSplit;
     uint16_t timeStartSplit;
     uint32_t timeData;
     uint8_t SsCsNumber;
     uint16_t frameInterval;
-    uint8_t frameTimes[8];
+    uint16_t frameTimes[8];
     uint8_t allocateOk = 1;
     uint8_t index;
 
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                           &deviceInfo);
+    for (uint8_t i = 0; i < 8U; ++i)
+    {
+        frameTimes[i] = 0U;
+    }
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceSpeed, &deviceInfo);
 
     timeData = USB_HostBandwidthComputeTime(
-        deviceInfo, USB_ENDPOINT_INTERRUPT, ehciPipePointer->pipeCommon.direction,
-        ehciPipePointer->pipeCommon.maxPacketSize * ehciPipePointer->pipeCommon.numberPerUframe);
+        (uint8_t)deviceInfo, USB_ENDPOINT_INTERRUPT, ehciPipePointer->pipeCommon.direction,
+        (uint32_t)ehciPipePointer->pipeCommon.maxPacketSize * ehciPipePointer->pipeCommon.numberPerUframe);
     /* pipe is high-speed */
     if (deviceInfo == USB_SPEED_HIGH)
     {
         uframeIntervalIndex = 0;
-        status = USB_HostBandwidthHsHostAllocateHsCommon(ehciInstance, ehciPipePointer->uframeInterval, timeData,
-                                                         &uframeIntervalIndex);
+        status              = USB_HostBandwidthHsHostAllocateHsCommon(ehciInstance, ehciPipePointer->uframeInterval,
+                                                         (uint16_t)timeData, &uframeIntervalIndex);
         if (status == kStatus_USB_Success)
         {
-            ehciPipePointer->startFrame = (uframeIntervalIndex / 8);
-            ehciPipePointer->startUframe = (uframeIntervalIndex & 0x0007);
+            ehciPipePointer->startFrame  = (uframeIntervalIndex / 8U);
+            ehciPipePointer->startUframe = (uint8_t)(uframeIntervalIndex & 0x0007U);
             /* for HS interrupt start transaction position */
-            if (ehciPipePointer->uframeInterval >= 8)
+            if (ehciPipePointer->uframeInterval >= 8U)
             {
-                ehciPipePointer->uframeSmask = (0x01 << ehciPipePointer->startUframe);
+                ehciPipePointer->uframeSmask = (0x01U << ehciPipePointer->startUframe);
             }
             else
             {
-                ehciPipePointer->uframeSmask = 0x00u;
-                for (index = ehciPipePointer->startUframe; index < 8; index += ehciPipePointer->uframeInterval)
+                ehciPipePointer->uframeSmask = 0x00U;
+                for (index = ehciPipePointer->startUframe; index < 8U;
+                     index += (uint8_t)ehciPipePointer->uframeInterval)
                 {
                     ehciPipePointer->uframeSmask |= (0x01U << index);
                 }
             }
-            ehciPipePointer->dataTime = timeData;
+            ehciPipePointer->dataTime = (uint16_t)timeData;
 
             return kStatus_USB_Success;
         }
     }
     else /* pipe is full-speed or low-speed */
     {
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetHubThinkTime,
-                                               &deviceInfo);
-        timeData += (deviceInfo * 7 / (6 * 12));
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceHSHubNumber,
-                                               &hubNumber);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetHubThinkTime, &deviceInfo);
+        timeData += (deviceInfo * 7U / (6U * 12U));
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDeviceHSHubNumber, &hubNumber);
         frameInterval = ehciPipePointer->pipeCommon.interval;
-        SsCsNumber = 3; /* complete split number */
+        SsCsNumber    = 3U; /* complete split number */
 
         /* compute start-split and complete-split bandwidth */
         if (ehciPipePointer->pipeCommon.direction == USB_OUT)
         {
-            timeStartSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_OUT,
-                                                          ehciPipePointer->pipeCommon.maxPacketSize) +
-                             USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_OUT, 1);
-            timeCompleteSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_OUT, 0);
+            timeStartSplit = (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_OUT,
+                                                                    ehciPipePointer->pipeCommon.maxPacketSize);
+            timeStartSplit +=
+                (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_OUT, 1U);
+            timeCompleteSplit =
+                (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_OUT, 0U);
         }
         else
         {
-            timeStartSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_IN, 1);
-            timeCompleteSplit = USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_IN,
-                                                             ehciPipePointer->pipeCommon.maxPacketSize) +
-                                USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_IN, 0);
+            timeStartSplit = (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_IN, 1U);
+            timeCompleteSplit = (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_IN,
+                                                                       ehciPipePointer->pipeCommon.maxPacketSize);
+            timeCompleteSplit +=
+                (uint16_t)USB_HostBandwidthComputeTime(USB_SPEED_HIGH, USB_ENDPOINT_INTERRUPT, USB_IN, 0U);
         }
         /* note: bandwidth must put in one frame */
-        for (uframeIntervalIndex = 0; uframeIntervalIndex <= 4; ++uframeIntervalIndex) /* uframe interval */
+        for (uframeIntervalIndex = 0U; uframeIntervalIndex <= 4U; ++uframeIntervalIndex) /* uframe interval */
         {
-            for (frameIntervalIndex = 0; frameIntervalIndex < frameInterval; ++frameIntervalIndex) /* frame interval */
+            for (frameIntervalIndex = 0U; frameIntervalIndex < frameInterval; ++frameIntervalIndex) /* frame interval */
             {
-                allocateOk = 1;
+                allocateOk = 1U;
                 for (frameIndex = frameIntervalIndex; frameIndex < USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE;
                      frameIndex += frameInterval) /* check all the frames */
                 {
                     /* allocate data bandwidth */
                     USB_HostBandwidthHsHostComputeCurrentFsls(ehciInstance, hubNumber, frameIndex, frameTimes);
-                    index = uframeIntervalIndex + 1;
-                    for (; index <= (uframeIntervalIndex + 3); ++index) /* data bandwidth number is 3.
+                    index = (uint8_t)(uframeIntervalIndex + 1U);
+                    for (; index <= (uframeIntervalIndex + 3U); ++index) /* data bandwidth number is 3.
                                                                              uframeIntervalIndex don't exceed 4, so
                                                                              index cannot exceed 7 */
                     {
@@ -1639,60 +1642,61 @@ static usb_status_t USB_HostBandwidthHsHostAllocateInterrupt(usb_host_ehci_insta
                         }
                     }
 
-                    if (allocateOk)
+                    if (0U != allocateOk)
                     {
                         USB_HostBandwidthHsHostComputeCurrentHsAll(ehciInstance, frameIndex, frameTimes);
                         /* allocate start_split bandwidth */
-                        if (frameTimes[uframeIntervalIndex] + timeStartSplit > s_SlotMaxBandwidth[uframeIntervalIndex])
+                        if (frameTimes[uframeIntervalIndex] + timeStartSplit >
+                            s_SlotMaxBandwidthHs[uframeIntervalIndex])
                         {
-                            allocateOk = 0;
+                            allocateOk = 0U;
                         }
-                        if (allocateOk)
+                        if (0U != allocateOk)
                         {
                             /* allocate complete_split bandwidth */
-                            index = uframeIntervalIndex + 2;
+                            index = (uint8_t)uframeIntervalIndex + 2U;
                             /* complete-split number is normal 3. When uframeIntervalIndex is 4, complete-split number
                              * is 2. */
-                            for (; (index <= (uframeIntervalIndex + 1 + SsCsNumber)) && (index < 8); ++index)
+                            for (; (index <= (uframeIntervalIndex + 1U + SsCsNumber)) && (index < 8U); ++index)
                             {
-                                if (frameTimes[index] + timeCompleteSplit > s_SlotMaxBandwidth[index])
+                                if (frameTimes[index] + timeCompleteSplit > s_SlotMaxBandwidthHs[index])
                                 {
-                                    allocateOk = 0;
+                                    allocateOk = 0U;
                                     break;
                                 }
                             }
                         }
                     }
 
-                    if (!allocateOk)
+                    if (0U == allocateOk)
                     {
                         break; /* allocate fail */
                     }
                 }
-                if (allocateOk)
+                if (0U != allocateOk)
                 {
                     break;
                 }
             }
-            if (allocateOk)
+            if (0U != allocateOk)
             {
                 break;
             }
         }
 
-        if (allocateOk)
+        if (0U != allocateOk)
         {
-            ehciPipePointer->startFrame = frameIntervalIndex;
-            ehciPipePointer->startUframe = uframeIntervalIndex;
-            ehciPipePointer->uframeSmask = (0x01 << ehciPipePointer->startUframe);
-            ehciPipePointer->uframeCmask = 0;
-            index = uframeIntervalIndex + 2;
-            for (; (index <= (uframeIntervalIndex + 1 + SsCsNumber)) && (index < 8); ++index)
+            ehciPipePointer->startFrame  = frameIntervalIndex;
+            ehciPipePointer->startUframe = (uint8_t)uframeIntervalIndex;
+            ehciPipePointer->uframeSmask = (0x01u << ehciPipePointer->startUframe);
+            ehciPipePointer->uframeCmask = 0u;
+            index                        = (uint8_t)uframeIntervalIndex + 2u;
+            for (; (index <= (uframeIntervalIndex + 1u + SsCsNumber)) && (index < 8u); ++index)
             {
-                ehciPipePointer->uframeCmask = (uint32_t)ehciPipePointer->uframeCmask | (uint32_t)(0x01 << index);
+                ehciPipePointer->uframeCmask = ehciPipePointer->uframeCmask | (0x01U << index);
             }
-            ehciPipePointer->dataTime = timeData;
-            ehciPipePointer->startSplitTime = timeStartSplit;
+            ehciPipePointer->dataTime          = (uint16_t)timeData;
+            ehciPipePointer->startSplitTime    = timeStartSplit;
             ehciPipePointer->completeSplitTime = timeCompleteSplit;
 
             return kStatus_USB_Success;
@@ -1706,17 +1710,18 @@ static usb_status_t USB_HostBandwidthFslsHostAllocate(usb_host_ehci_instance_t *
                                                       usb_host_ehci_pipe_t *ehciPipePointer)
 {
     uint32_t FslsTime = 0;
-    uint32_t speed = 0;
+    uint32_t speed    = 0;
     uint16_t uframeIntervalIndex;
     uint16_t frameIndex;
     uint16_t frameInterval;
     uint16_t frameTime;
 
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetHubThinkTime,
-                                           &FslsTime);
-    FslsTime += (FslsTime * 7 / (6 * 12));
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed, &speed);
-    FslsTime = FslsTime + USB_HostBandwidthComputeTime(speed, ehciPipePointer->pipeCommon.pipeType,
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetHubThinkTime, &FslsTime);
+    FslsTime += (FslsTime * 7U / (6U * 12U));
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
+    FslsTime = FslsTime + USB_HostBandwidthComputeTime((uint8_t)speed, ehciPipePointer->pipeCommon.pipeType,
                                                        ehciPipePointer->pipeCommon.direction,
                                                        ehciPipePointer->pipeCommon.maxPacketSize);
 
@@ -1740,11 +1745,11 @@ static usb_status_t USB_HostBandwidthFslsHostAllocate(usb_host_ehci_instance_t *
     }
     if (uframeIntervalIndex < ehciPipePointer->uframeInterval)
     {
-        ehciPipePointer->startFrame = (uframeIntervalIndex >> 3);
-        ehciPipePointer->startUframe = (uframeIntervalIndex & 0x0007);
+        ehciPipePointer->startFrame  = (uframeIntervalIndex >> 3);
+        ehciPipePointer->startUframe = (uint8_t)(uframeIntervalIndex & 0x0007U);
         ehciPipePointer->uframeSmask = 0; /* useless */
         ehciPipePointer->uframeCmask = 0;
-        ehciPipePointer->dataTime = FslsTime;
+        ehciPipePointer->dataTime    = (uint16_t)FslsTime;
 
         return kStatus_USB_Success;
     }
@@ -1754,46 +1759,46 @@ static usb_status_t USB_HostBandwidthFslsHostAllocate(usb_host_ehci_instance_t *
 
 static uint8_t USB_HostEhciGet2PowerValue(uint8_t value)
 {
-    if ((value == 0) || (value == 1))
+    if ((value == 0U) || (value == 1U))
     {
         return value;
     }
-    if (value & 0xf0)
+    if (0U != (value & 0xf0U))
     {
-        if (value & 0x80)
+        if (0U != (value & 0x80U))
         {
-            return 128;
+            return 128U;
         }
-        else if (value & 0x40)
+        else if (0U != (value & 0x40U))
         {
-            return 64;
+            return 64U;
         }
-        else if (value & 0x20)
+        else if (0U != (value & 0x20U))
         {
-            return 32;
+            return 32U;
         }
         else
         {
-            return 16;
+            return 16U;
         }
     }
     else
     {
-        if (value & 0x08)
+        if (0U != (value & 0x08U))
         {
-            return 8;
+            return 8U;
         }
-        else if (value & 0x04)
+        else if (0U != (value & 0x04U))
         {
-            return 4;
+            return 4U;
         }
-        else if (value & 0x02)
+        else if (0U != (value & 0x02U))
         {
-            return 2;
+            return 2U;
         }
         else
         {
-            return 1;
+            return 1U;
         }
     }
 }
@@ -1801,8 +1806,9 @@ static uint8_t USB_HostEhciGet2PowerValue(uint8_t value)
 static void USB_HostEhciZeroMem(uint32_t *buffer, uint32_t length)
 {
     /* note: the zero unit is uint32_t */
-    while (length--)
+    while (0U != length)
     {
+        length--;
         *buffer = 0;
         buffer++;
     }
@@ -1811,24 +1817,24 @@ static void USB_HostEhciZeroMem(uint32_t *buffer, uint32_t length)
 static void USB_HostEhciDelay(USBHS_Type *ehciIpBase, uint32_t ms)
 {
     /* note: the max delay time cannot exceed half of max value (0x4000) */
-    int32_t sofStart;
-    int32_t SofEnd;
+    uint32_t sofStart;
+    uint32_t SofEnd;
     uint32_t distance;
 
-    sofStart = (int32_t)(ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
+    sofStart = (ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
 
     do
     {
-        SofEnd = (int32_t)(ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
-        distance = (uint32_t)(SofEnd - sofStart + EHCI_MAX_UFRAME_VALUE + 1);
-    } while ((distance & EHCI_MAX_UFRAME_VALUE) < (ms * 8)); /* compute the distance between sofStart and SofEnd */
+        SofEnd   = (ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
+        distance = (SofEnd + EHCI_MAX_UFRAME_VALUE + 1U - sofStart);
+    } while ((distance & EHCI_MAX_UFRAME_VALUE) < (ms * 8U)); /* compute the distance between sofStart and SofEnd */
 }
 
 static void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance)
 {
     uint32_t stateSync;
 
-    if (!(ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK))
+    if (0U == (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK))
     {
         /* the status must be same when change USBCMD->ASE */
         do
@@ -1839,7 +1845,7 @@ static void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance)
 
         ehciInstance->ehciIpBase->ASYNCLISTADDR = (uint32_t)(ehciInstance->shedFirstQh);
         ehciInstance->ehciIpBase->USBCMD |= USBHS_USBCMD_ASE_MASK;
-        while (!(ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK))
+        while (0U == (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK))
         {
         }
     }
@@ -1857,7 +1863,7 @@ static void USB_HostEhciStopAsync(usb_host_ehci_instance_t *ehciInstance)
     } while ((stateSync == USBHS_USBSTS_AS_MASK) || (stateSync == USBHS_USBCMD_ASE_MASK));
 
     ehciInstance->ehciIpBase->USBCMD &= (uint32_t)(~(uint32_t)USBHS_USBCMD_ASE_MASK); /* disable async schedule */
-    while (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK)
+    while (0U != (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK))
     {
     }
 }
@@ -1866,7 +1872,7 @@ static void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance)
 {
     uint32_t stateSync;
 
-    if (!(ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_PS_MASK))
+    if (0U == (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_PS_MASK))
     {
         /* the status must be same when change USBCMD->PSE */
         do
@@ -1875,11 +1881,11 @@ static void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance)
                          (ehciInstance->ehciIpBase->USBCMD & USBHS_USBCMD_PSE_MASK));
         } while ((stateSync == USBHS_USBSTS_PS_MASK) || (stateSync == USBHS_USBCMD_PSE_MASK));
         ehciInstance->ehciIpBase->PERIODICLISTBASE = (uint32_t)(ehciInstance->ehciFrameList);
-        if (!(ehciInstance->ehciIpBase->USBCMD & USBHS_USBCMD_PSE_MASK))
+        if (0U == (ehciInstance->ehciIpBase->USBCMD & USBHS_USBCMD_PSE_MASK))
         {
             ehciInstance->ehciIpBase->USBCMD |= USBHS_USBCMD_PSE_MASK; /* start periodic schedule */
         }
-        while (!(ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_PS_MASK))
+        while (0U == (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_PS_MASK))
         {
         }
     }
@@ -1898,7 +1904,7 @@ static void USB_HostEhciStopPeriodic(usb_host_ehci_instance_t *ehciInstance)
     } while ((stateSync == USBHS_USBSTS_PS_MASK) || (stateSync == USBHS_USBCMD_PSE_MASK));
 
     ehciInstance->ehciIpBase->USBCMD &= (~USBHS_USBCMD_PSE_MASK); /* stop periodic schedule */
-    while (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_PS_MASK)
+    while (0U != (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_PS_MASK))
     {
     }
 }
@@ -1908,7 +1914,7 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
                                               usb_host_transfer_t *transfer)
 {
     volatile usb_host_ehci_qh_t *vltQhPointer;
-    usb_host_ehci_qtd_t *qtdPointer = NULL;
+    usb_host_ehci_qtd_t *qtdPointer     = NULL;
     usb_host_ehci_qtd_t *BaseQtdPointer = NULL;
     volatile uint32_t *entryPointer;
     uint32_t qtdNumber;
@@ -1921,19 +1927,23 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
     if (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_CONTROL)
     {
         /* assume setup data don't exceed one qtd data size, one qtd can transfer least 16k data */
-        if (transfer->transferLength == 0)
+        if (transfer->transferLength == 0U)
         {
-            qtdNumber = 2;
+            qtdNumber = 2U;
         }
         else
         {
-            qtdNumber = 3;
+            qtdNumber = 3U;
         }
     }
     else
     {
-        qtdNumber =
-            (((transfer->transferLength) & 0xFFFFC000U) >> 14) + (((transfer->transferLength) & 0x00003FFF) ? 1 : 0);
+        qtdNumber = (((transfer->transferLength) & 0xFFFFC000U) >> 14U) +
+                    (0U != ((transfer->transferLength) & 0x00003FFFU) ? 1U : 0U);
+        if (0U == qtdNumber)
+        {
+            qtdNumber = 1U;
+        }
     }
 
     vltQhPointer = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
@@ -1941,20 +1951,21 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
     USB_HostEhciLock();
     if (qtdNumber <= ehciInstance->ehciQtdNumber)
     {
-        ehciInstance->ehciQtdNumber -= qtdNumber;
+        ehciInstance->ehciQtdNumber -= (uint8_t)qtdNumber;
         BaseQtdPointer = ehciInstance->ehciQtdHead;
-        qtdPointer = NULL;
+        qtdPointer     = NULL;
         do
         {
             if (qtdPointer != NULL)
             {
                 qtdPointer->nextQtdPointer = (uint32_t)ehciInstance->ehciQtdHead;
             }
-            qtdPointer = ehciInstance->ehciQtdHead;
-            ehciInstance->ehciQtdHead = (usb_host_ehci_qtd_t *)qtdPointer->nextQtdPointer;
+            qtdPointer                 = ehciInstance->ehciQtdHead;
+            ehciInstance->ehciQtdHead  = (usb_host_ehci_qtd_t *)qtdPointer->nextQtdPointer;
             qtdPointer->nextQtdPointer = 0;
-        } while (--qtdNumber);
-        if (ehciInstance->ehciQtdNumber == 0)
+            --qtdNumber;
+        } while (0U != qtdNumber);
+        if (ehciInstance->ehciQtdNumber == 0U)
         {
             ehciInstance->ehciQtdTail = NULL;
         }
@@ -1970,34 +1981,34 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
     if (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_CONTROL)
     {
         /* setup transaction qtd */
-        qtdPointer = BaseQtdPointer;
+        qtdPointer                          = BaseQtdPointer;
         qtdPointer->alternateNextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
         /* dt: need set; ioc: 0; C_Page: 0; PID Code: SETUP; Status: Active */
-        qtdPointer->transferResults[0] = qtdPointer->transferResults[1] = 0;
+        qtdPointer->transferResults[1] = 0U;
         qtdPointer->transferResults[0] =
-            ((0x00000000 << EHCI_HOST_QTD_DT_SHIFT) | (8 << EHCI_HOST_QTD_TOTAL_BYTES_SHIFT) |
+            ((0x00000000UL << EHCI_HOST_QTD_DT_SHIFT) | (8UL << EHCI_HOST_QTD_TOTAL_BYTES_SHIFT) |
              (EHCI_HOST_PID_SETUP << EHCI_HOST_QTD_PID_CODE_SHIFT) | (EHCI_HOST_QTD_STATUS_ACTIVE_MASK));
-        dataAddress = ((uint32_t)transfer->setupPacket);
+        dataAddress                    = ((uint32_t)transfer->setupPacket);
         qtdPointer->transferResults[1] = dataAddress; /* current offset is set too */
         /* set buffer pointer no matter data length */
-        for (index = 0; index < 4; ++index)
+        for (index = 0; index < 4U; ++index)
         {
-            qtdPointer->bufferPointers[index] = ((dataAddress + (index + 1) * 4 * 1024) & 0xFFFFF000U);
+            qtdPointer->bufferPointers[index] = ((dataAddress + ((uint32_t)index + 1U) * 4U * 1024U) & 0xFFFFF000U);
         }
 
         /* data transaction qtd */
         dataLength = transfer->transferLength;
-        if (dataLength != 0)
+        if (dataLength != 0U)
         {
             qtdPointer = (usb_host_ehci_qtd_t *)(qtdPointer->nextQtdPointer);
 
             qtdPointer->alternateNextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
             /* dt: need set; ioc: 0; C_Page: 0; PID Code: IN/OUT; Status: Active */
-            qtdPointer->transferResults[0] = qtdPointer->transferResults[1] = 0;
+            qtdPointer->transferResults[1] = 0U;
             if (transfer->direction == USB_OUT)
             {
                 qtdPointer->transferResults[0] =
-                    ((0x00000001U << EHCI_HOST_QTD_DT_SHIFT) | (dataLength << EHCI_HOST_QTD_TOTAL_BYTES_SHIFT) |
+                    ((0x00000001UL << EHCI_HOST_QTD_DT_SHIFT) | (dataLength << EHCI_HOST_QTD_TOTAL_BYTES_SHIFT) |
                      (EHCI_HOST_PID_OUT << EHCI_HOST_QTD_PID_CODE_SHIFT) | (EHCI_HOST_QTD_STATUS_ACTIVE_MASK));
             }
             else
@@ -2007,24 +2018,24 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
                      (EHCI_HOST_PID_IN << EHCI_HOST_QTD_PID_CODE_SHIFT) | (EHCI_HOST_QTD_STATUS_ACTIVE_MASK));
             }
 
-            dataAddress = (uint32_t)transfer->transferBuffer;
+            dataAddress                    = (uint32_t)transfer->transferBuffer;
             qtdPointer->transferResults[1] = dataAddress; /* current offset is set too */
             /* set buffer pointer no matter data length */
-            for (index = 0; index < 4; ++index)
+            for (index = 0; index < 4U; ++index)
             {
-                qtdPointer->bufferPointers[index] = ((dataAddress + (index + 1) * 4 * 1024) & 0xFFFFF000U);
+                qtdPointer->bufferPointers[index] = ((dataAddress + ((uint32_t)index + 1U) * 4U * 1024U) & 0xFFFFF000U);
             }
         }
 
         /* status transaction qtd */
-        qtdPointer = (usb_host_ehci_qtd_t *)(qtdPointer->nextQtdPointer);
+        qtdPointer                          = (usb_host_ehci_qtd_t *)(qtdPointer->nextQtdPointer);
         qtdPointer->alternateNextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
         /* dt: dont care; ioc: 1; C_Page: 0; PID Code: IN/OUT; Status: Active */
-        qtdPointer->transferResults[0] = qtdPointer->transferResults[1] = 0;
-        if ((dataLength == 0) || (transfer->direction == USB_OUT))
+        qtdPointer->transferResults[1] = 0;
+        if ((dataLength == 0U) || (transfer->direction == USB_OUT))
         {
             qtdPointer->transferResults[0] =
-                ((0x00000001U << EHCI_HOST_QTD_DT_SHIFT) | (EHCI_HOST_PID_IN << EHCI_HOST_QTD_PID_CODE_SHIFT) |
+                ((0x00000001UL << EHCI_HOST_QTD_DT_SHIFT) | (EHCI_HOST_PID_IN << EHCI_HOST_QTD_PID_CODE_SHIFT) |
                  (EHCI_HOST_QTD_IOC_MASK) | (EHCI_HOST_QTD_STATUS_ACTIVE_MASK));
         }
         else
@@ -2037,12 +2048,11 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
     }
     else
     {
-        dataLength = transfer->transferLength;
         dataAddress = (uint32_t)transfer->transferBuffer;
-        qtdPointer = BaseQtdPointer;
-        while (1)
+        qtdPointer  = BaseQtdPointer;
+        while (1U == 1U)
         {
-            endAddress = dataAddress + (16 * 1024);
+            endAddress = dataAddress + (16U * 1024U);
             if (endAddress > (uint32_t)(transfer->transferBuffer + transfer->transferLength))
             {
                 endAddress = (uint32_t)(transfer->transferBuffer + transfer->transferLength);
@@ -2050,7 +2060,7 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
 
             qtdPointer->alternateNextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
             /* dt: set; ioc: 0; C_Page: 0; PID Code: IN/OUT; Status: Active */
-            qtdPointer->transferResults[0] = qtdPointer->transferResults[1] = 0;
+            qtdPointer->transferResults[1] = 0U;
             if (transfer->direction == USB_OUT)
             {
                 qtdPointer->transferResults[0] =
@@ -2069,13 +2079,13 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
             }
             qtdPointer->transferResults[1] = dataAddress; /* current offset is set too */
             /* set buffer pointer no matter data length */
-            for (index = 0; index < 4; ++index)
+            for (index = 0; index < 4U; ++index)
             {
-                qtdPointer->bufferPointers[index] = ((dataAddress + (index + 1) * 4 * 1024) & 0xFFFFF000U);
+                qtdPointer->bufferPointers[index] = ((dataAddress + ((uint32_t)index + 1U) * 4U * 1024U) & 0xFFFFF000U);
             }
             dataAddress = endAddress; /* for next qtd */
 
-            if (qtdPointer->nextQtdPointer == 0)
+            if (qtdPointer->nextQtdPointer == 0U)
             {
                 break;
             }
@@ -2093,24 +2103,25 @@ static usb_status_t USB_HostEhciQhQtdListInit(usb_host_ehci_instance_t *ehciInst
     transfer->next = NULL;
     if (vltQhPointer->ehciTransferHead == NULL)
     {
-        transfer->next = NULL;
-        vltQhPointer->ehciTransferHead = vltQhPointer->ehciTransferTail = transfer;
+        transfer->next                 = NULL;
+        vltQhPointer->ehciTransferTail = transfer;
+        vltQhPointer->ehciTransferHead = transfer;
     }
     else
     {
-        transfer->next = NULL;
+        transfer->next                       = NULL;
         vltQhPointer->ehciTransferTail->next = transfer;
-        vltQhPointer->ehciTransferTail = transfer;
+        vltQhPointer->ehciTransferTail       = transfer;
     }
 
     USB_HostEhciLock();
     /* link qtd to qh (link to end) */
     entryPointer = &(vltQhPointer->nextQtdPointer);
-    dataAddress = *entryPointer; /* dataAddress variable means entry value here */
-    while ((dataAddress) && (!(dataAddress & EHCI_HOST_T_INVALID_VALUE)))
+    dataAddress  = *entryPointer; /* dataAddress variable means entry value here */
+    while ((0U != dataAddress) && (0U == (dataAddress & EHCI_HOST_T_INVALID_VALUE)))
     {
         entryPointer = (volatile uint32_t *)dataAddress;
-        dataAddress = *entryPointer;
+        dataAddress  = *entryPointer;
     }
     *entryPointer = (uint32_t)BaseQtdPointer;
     USB_HostEhciUnlock();
@@ -2126,7 +2137,7 @@ static uint32_t USB_HostEhciQtdListRelease(usb_host_ehci_instance_t *ehciInstanc
     uint32_t length = 0;
     usb_host_ehci_qtd_t *qtdPointer;
 
-    ehciQtdEnd->nextQtdPointer = 0;
+    ehciQtdEnd->nextQtdPointer = 0U;
 
     /* compute remaining length */
     qtdPointer = ehciQtdStart;
@@ -2141,7 +2152,7 @@ static uint32_t USB_HostEhciQtdListRelease(usb_host_ehci_instance_t *ehciInstanc
 
     /* put releasing qtd to idle qtd list */
     USB_HostEhciLock();
-    if (ehciInstance->ehciQtdNumber == 0)
+    if (ehciInstance->ehciQtdNumber == 0U)
     {
         ehciInstance->ehciQtdHead = ehciQtdStart;
         ehciInstance->ehciQtdTail = ehciQtdEnd;
@@ -2149,7 +2160,7 @@ static uint32_t USB_HostEhciQtdListRelease(usb_host_ehci_instance_t *ehciInstanc
     else
     {
         ehciInstance->ehciQtdTail->nextQtdPointer = (uint32_t)ehciQtdStart;
-        ehciInstance->ehciQtdTail = ehciQtdEnd;
+        ehciInstance->ehciQtdTail                 = ehciQtdEnd;
     }
 
     while (ehciQtdStart != ehciQtdEnd)
@@ -2169,37 +2180,41 @@ static usb_status_t USB_HostEhciQhQtdListDeinit(usb_host_ehci_instance_t *ehciIn
     volatile usb_host_ehci_qh_t *vltQhPointer;
     usb_host_transfer_t *transfer;
     usb_host_transfer_t *nextTransfer;
-    uint8_t needStop = 0;
+    uint32_t currentQtdPointer;
+    uint8_t needStop = 0U;
 
     vltQhPointer = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
 
     USB_HostEhciLock(); /* this API is called from APP, the host task may occupy to access the same resource */
     /* remove qtd from qh */
-    if ((!((uint32_t)vltQhPointer->nextQtdPointer & EHCI_HOST_T_INVALID_VALUE)) ||
-        (!((uint32_t)vltQhPointer->currentQtdPointer & EHCI_HOST_T_INVALID_VALUE)))
+    /*for misra 13.5*/
+    currentQtdPointer = vltQhPointer->currentQtdPointer;
+    if ((0U == ((uint32_t)vltQhPointer->nextQtdPointer & EHCI_HOST_T_INVALID_VALUE)) ||
+        (0U == ((uint32_t)currentQtdPointer & EHCI_HOST_T_INVALID_VALUE)))
     {
         /* need stop async schedule */
-        if ((!(vltQhPointer->horizontalLinkPointer & EHCI_HOST_T_INVALID_VALUE)) &&
+        if ((0U == (vltQhPointer->horizontalLinkPointer & EHCI_HOST_T_INVALID_VALUE)) &&
             (ehciPipePointer->pipeCommon.pipeType != USB_ENDPOINT_INTERRUPT))
         {
-            needStop = 1;
+            needStop = 1U;
         }
-        if (needStop)
+        if (0U != needStop)
         {
             USB_HostEhciStopAsync(ehciInstance);
         }
         vltQhPointer->currentQtdPointer = EHCI_HOST_T_INVALID_VALUE;             /* invalid current qtd */
-        vltQhPointer->nextQtdPointer = EHCI_HOST_T_INVALID_VALUE;                /* invalid next qtd */
+        vltQhPointer->nextQtdPointer    = EHCI_HOST_T_INVALID_VALUE;             /* invalid next qtd */
         vltQhPointer->transferOverlayResults[0] &= (~EHCI_HOST_QTD_STATUS_MASK); /* clear error status */
-        if (needStop)
+        if (0U != needStop)
         {
             USB_HostEhciStartAsync(ehciInstance);
         }
     }
 
     /* remove transfer from the QH transfer list */
-    transfer = vltQhPointer->ehciTransferHead;
-    vltQhPointer->ehciTransferHead = vltQhPointer->ehciTransferTail = NULL;
+    transfer                       = vltQhPointer->ehciTransferHead;
+    vltQhPointer->ehciTransferTail = NULL;
+    vltQhPointer->ehciTransferHead = NULL;
     USB_HostEhciUnlock();
 
     /* release qtd  and transfer callback*/
@@ -2210,8 +2225,9 @@ static usb_status_t USB_HostEhciQhQtdListDeinit(usb_host_ehci_instance_t *ehciIn
             USB_HostEhciQtdListRelease(ehciInstance, (usb_host_ehci_qtd_t *)(transfer->union1.unitHead),
                                        (usb_host_ehci_qtd_t *)(transfer->union2.unitTail));
         transfer->transferSofar = (transfer->transferLength < transfer->transferSofar) ?
-                                      0 :
+                                      0U :
                                       (transfer->transferLength - transfer->transferSofar);
+        /* callback function is different from the current condition */
         transfer->callbackFn(transfer->callbackParam, transfer, kStatus_USB_TransferCancel);
         transfer = nextTransfer;
     }
@@ -2233,13 +2249,14 @@ static usb_status_t USB_HostEhciTransferQtdListDeinit(usb_host_ehci_instance_t *
 
     USB_HostEhciLock(); /* this API is called from APP, the host task may occupy to access the same resource */
     /* remove qtd from qh */
-    qhNextQtdValue = (uint32_t)vltQhPointer->currentQtdPointer;
+    qhNextQtdValue  = (uint32_t)vltQhPointer->currentQtdPointer;
     qtdPointerEntry = *((uint32_t *)qhNextQtdValue + 2); /* note: qtdPointerEntry means qtd status */
-    if ((qhNextQtdValue & EHCI_HOST_T_INVALID_VALUE) || (!(qtdPointerEntry & EHCI_HOST_QTD_STATUS_ACTIVE_MASK)))
+    if ((0U != (qhNextQtdValue & EHCI_HOST_T_INVALID_VALUE)) ||
+        (0U == (qtdPointerEntry & EHCI_HOST_QTD_STATUS_ACTIVE_MASK)))
     {
         qhNextQtdValue = (uint32_t)vltQhPointer->nextQtdPointer;
     }
-    if (!(qhNextQtdValue & EHCI_HOST_T_INVALID_VALUE)) /* there is pending qtd in the qh */
+    if (0U == (qhNextQtdValue & EHCI_HOST_T_INVALID_VALUE)) /* there is pending qtd in the qh */
     {
         /* this qh don't schedule temporarily */
         if (ehciPipePointer->pipeCommon.pipeType != USB_ENDPOINT_INTERRUPT)
@@ -2255,11 +2272,11 @@ static usb_status_t USB_HostEhciTransferQtdListDeinit(usb_host_ehci_instance_t *
 
         /* remove qtd from qh one by one */
         qtdPointerEntry = transfer->union1.unitHead;
-        while (1)
+        while (1U == 1U)
         {
             /* search qh's qtd list for qtdPointerEntry */
             searchQtdEntryPointer = &qhNextQtdValue;
-            while (!((*searchQtdEntryPointer) & EHCI_HOST_T_INVALID_VALUE))
+            while (0U == ((*searchQtdEntryPointer) & EHCI_HOST_T_INVALID_VALUE))
             {
                 if ((*searchQtdEntryPointer) == qtdPointerEntry)
                 {
@@ -2306,13 +2323,15 @@ static usb_status_t USB_HostEhciTransferQtdListDeinit(usb_host_ehci_instance_t *
     transfer->transferSofar =
         USB_HostEhciQtdListRelease(ehciInstance, (usb_host_ehci_qtd_t *)(transfer->union1.unitHead),
                                    (usb_host_ehci_qtd_t *)(transfer->union2.unitTail));
-    transfer->transferSofar =
-        (transfer->transferLength < transfer->transferSofar) ? 0 : (transfer->transferLength - transfer->transferSofar);
+    transfer->transferSofar = (transfer->transferLength < transfer->transferSofar) ?
+                                  0U :
+                                  (transfer->transferLength - transfer->transferSofar);
+    /* callback function is different from the current condition */
     transfer->callbackFn(transfer->callbackParam, transfer, kStatus_USB_TransferCancel);
 
     /* start this qh schedule */
     vltQhPointer->transferOverlayResults[0] &= (~EHCI_HOST_QTD_STATUS_MASK); /* clear error status */
-    if ((qhNextQtdValue != 0) && (!(qhNextQtdValue & EHCI_HOST_T_INVALID_VALUE)))
+    if ((qhNextQtdValue != 0U) && (0U == (qhNextQtdValue & EHCI_HOST_T_INVALID_VALUE)))
     {
         vltQhPointer->nextQtdPointer = qhNextQtdValue;
     }
@@ -2323,9 +2342,14 @@ static usb_status_t USB_HostEhciTransferQtdListDeinit(usb_host_ehci_instance_t *
 static usb_status_t USB_HostEhciQhInit(usb_host_ehci_instance_t *ehciInstance, usb_host_ehci_pipe_t *ehciPipePointer)
 {
     usb_host_ehci_qh_t *qhPointer = NULL;
-    uint32_t address, speed, portNumber, hubNumber;
-    uint32_t controlBits1 = 0;
-    uint32_t controlBits2 = 0;
+    uint32_t address              = 0;
+    uint32_t speed                = 0;
+    uint32_t portNumber           = 0;
+    uint32_t hubNumber            = 0;
+    ;
+    uint32_t controlBits1 = 0U;
+    uint32_t controlBits2 = 0U;
+
     /* get qh */
     USB_HostEhciLock();
     if (ehciInstance->ehciQhList != NULL)
@@ -2345,26 +2369,27 @@ static usb_status_t USB_HostEhciQhInit(usb_host_ehci_instance_t *ehciInstance, u
     ehciPipePointer->ehciQh = (void *)qhPointer;
 
     /* initialize qh */
-    USB_HostEhciZeroMem((uint32_t *)qhPointer, sizeof(usb_host_ehci_qh_t) / 4);
-    qhPointer->horizontalLinkPointer = EHCI_HOST_T_INVALID_VALUE;
-    qhPointer->currentQtdPointer = EHCI_HOST_T_INVALID_VALUE;
-    qhPointer->nextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
+    USB_HostEhciZeroMem((void *)qhPointer, sizeof(usb_host_ehci_qh_t) / 4U);
+    qhPointer->horizontalLinkPointer   = EHCI_HOST_T_INVALID_VALUE;
+    qhPointer->currentQtdPointer       = EHCI_HOST_T_INVALID_VALUE;
+    qhPointer->nextQtdPointer          = EHCI_HOST_T_INVALID_VALUE;
     qhPointer->alternateNextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
-    qhPointer->ehciPipePointer = ehciPipePointer;
-    qhPointer->timeOutLabel = 0;
-    qhPointer->timeOutValue = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed, &speed);
+    qhPointer->ehciPipePointer         = ehciPipePointer;
+    qhPointer->timeOutLabel            = 0;
+    qhPointer->timeOutValue            = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
     /* initialize staticEndpointStates[0] */
     if (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_INTERRUPT)
     {
         /* Software should set the RL field to zero if the queue head is an interrupt endpoint. */
-        controlBits1 |= ((0U << EHCI_HOST_QH_RL_SHIFT) & EHCI_HOST_QH_RL_MASK);
+        controlBits1 |= ((0UL << EHCI_HOST_QH_RL_SHIFT) & EHCI_HOST_QH_RL_MASK);
     }
     else
     {
-        if (ehciPipePointer->pipeCommon.nakCount >= 16)
+        if (ehciPipePointer->pipeCommon.nakCount >= 16U)
         {
-            controlBits1 |= ((15U << EHCI_HOST_QH_RL_SHIFT) & EHCI_HOST_QH_RL_MASK);
+            controlBits1 |= ((15UL << EHCI_HOST_QH_RL_SHIFT) & EHCI_HOST_QH_RL_MASK);
         }
         else
         {
@@ -2376,15 +2401,15 @@ static usb_status_t USB_HostEhciQhInit(usb_host_ehci_instance_t *ehciInstance, u
     {
         if (speed != USB_SPEED_HIGH)
         {
-            controlBits1 |= (1 << EHCI_HOST_QH_C_SHIFT);
+            controlBits1 |= (1UL << EHCI_HOST_QH_C_SHIFT);
         }
-        controlBits1 |= (1 << EHCI_HOST_QH_DTC_SHIFT);
+        controlBits1 |= (1UL << EHCI_HOST_QH_DTC_SHIFT);
     }
     controlBits1 |= ((uint32_t)ehciPipePointer->pipeCommon.maxPacketSize << EHCI_HOST_QH_MAX_PACKET_LENGTH_SHIFT);
     controlBits1 |= (speed << EHCI_HOST_QH_EPS_SHIFT);
     controlBits1 |= ((uint32_t)ehciPipePointer->pipeCommon.endpointAddress << EHCI_HOST_QH_ENDPT_SHIFT);
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceAddress,
-                                           &address);
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceAddress, &address);
     controlBits1 |= (address << EHCI_HOST_QH_DEVICE_ADDRESS_SHIFT);
     qhPointer->staticEndpointStates[0] = controlBits1;
     if (speed == USB_SPEED_HIGH)
@@ -2393,22 +2418,22 @@ static usb_status_t USB_HostEhciQhInit(usb_host_ehci_instance_t *ehciInstance, u
     }
     else
     {
-        controlBits2 |= (0x00000001U << EHCI_HOST_QH_MULT_SHIFT);
+        controlBits2 |= (0x00000001UL << EHCI_HOST_QH_MULT_SHIFT);
     }
     /*initialize staticEndpointStates[1] */
     if (speed != USB_SPEED_HIGH)
     {
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceHSHubNumber,
-                                               &hubNumber);
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceHSHubPort,
-                                               &portNumber);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDeviceHSHubNumber, &hubNumber);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDeviceHSHubPort, &portNumber);
     }
     else
     {
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceHubNumber,
-                                               &hubNumber);
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDevicePortNumber,
-                                               &portNumber);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDeviceHubNumber, &hubNumber);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDevicePortNumber, &portNumber);
     }
     controlBits2 |= (portNumber << EHCI_HOST_QH_PORT_NUMBER_SHIFT);
     controlBits2 |= (hubNumber << EHCI_HOST_QH_HUB_ADDR_SHIFT);
@@ -2425,12 +2450,12 @@ static usb_status_t USB_HostEhciQhDeinit(usb_host_ehci_instance_t *ehciInstance,
 
     qhPointer = (usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
     /* de-initialize qtd from qh */
-    USB_HostEhciQhQtdListDeinit(ehciInstance, ehciPipePointer);
+    (void)USB_HostEhciQhQtdListDeinit(ehciInstance, ehciPipePointer);
 
     /* release QH */
     USB_HostEhciLock();
     qhPointer->horizontalLinkPointer = (uint32_t)ehciInstance->ehciQhList;
-    ehciInstance->ehciQhList = qhPointer;
+    ehciInstance->ehciQhList         = qhPointer;
     USB_HostEhciUnlock();
 
     return kStatus_USB_Success;
@@ -2443,17 +2468,19 @@ static void USB_HostEhciAddQhToFrame(usb_host_ehci_instance_t *ehciInstance,
 {
     volatile uint32_t *frameEntryPointer;
     uint32_t frameEntryValue;
+    void *temp;
 
     /* search for the inserting point by interval */
-    frameEntryPointer = (volatile uint32_t *)(&((uint32_t *)ehciInstance->ehciFrameList)[framePos]);
-    while (frameEntryPointer)
+    temp              = (void *)ehciInstance->ehciFrameList;
+    frameEntryPointer = (volatile uint32_t *)(&((uint32_t *)temp)[framePos]);
+    while (NULL != frameEntryPointer)
     {
         frameEntryValue = *frameEntryPointer;
-        if (frameEntryValue & EHCI_HOST_T_INVALID_VALUE)
+        if (0U != (frameEntryValue & EHCI_HOST_T_INVALID_VALUE))
         {
             /* insert into the end */
             *((uint32_t *)entryPointerValue) = EHCI_HOST_T_INVALID_VALUE;
-            *frameEntryPointer = (entryPointerValue | EHCI_HOST_POINTER_TYPE_QH);
+            *frameEntryPointer               = (entryPointerValue | EHCI_HOST_POINTER_TYPE_QH);
             break;
         }
 
@@ -2467,7 +2494,7 @@ static void USB_HostEhciAddQhToFrame(usb_host_ehci_instance_t *ehciInstance,
         {
             /* insert into this point */
             *((uint32_t *)entryPointerValue) = frameEntryValue;
-            *frameEntryPointer = (entryPointerValue | EHCI_HOST_POINTER_TYPE_QH);
+            *frameEntryPointer               = (entryPointerValue | EHCI_HOST_POINTER_TYPE_QH);
             return;
         }
         else
@@ -2483,14 +2510,15 @@ static void USB_HostEhciRemoveFromFrame(usb_host_ehci_instance_t *ehciInstance,
 {
     volatile uint32_t *frameEntryPointer;
     uint32_t frameEntryValue;
-
+    void *temp;
     /* search for the qh/itd/sitd entry */
-    frameEntryPointer = (volatile uint32_t *)(&((uint32_t *)ehciInstance->ehciFrameList)[framePos]);
+    temp              = (void *)ehciInstance->ehciFrameList;
+    frameEntryPointer = (volatile uint32_t *)(&((uint32_t *)temp)[framePos]);
 
-    while (frameEntryPointer)
+    while (NULL != frameEntryPointer)
     {
         frameEntryValue = *frameEntryPointer;
-        if (frameEntryValue & EHCI_HOST_T_INVALID_VALUE)
+        if (0U != (frameEntryValue & EHCI_HOST_T_INVALID_VALUE))
         {
             return;
         }
@@ -2517,53 +2545,71 @@ static void USB_HostEhciLinkSitd(usb_host_ehci_instance_t *ehciInstance,
     usb_host_ehci_sitd_t *sitdPointer;
     uint32_t distance;
     uint32_t frameInterval;
-    int32_t shouldLinkFrame;
-    int32_t currentFrame;
+    uint32_t shouldLinkFrame;
+    uint32_t currentFrame;
+    void *temp;
 
-    frameInterval = (ehciPipePointer->uframeInterval >> 3);
+    frameInterval = ((uint32_t)ehciPipePointer->uframeInterval >> 3U);
 
-    if (isoPointer->lastLinkFrame == 0xFFFF) /* first link */
+    if (isoPointer->lastLinkFrame == 0xFFFFU) /* first link */
     {
-        currentFrame = ((ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE) >> 3);
+        currentFrame = ((ehciInstance->ehciIpBase->FRINDEX & USB_HOST_EHCI_MAX_MICRFRAME_VALUE) >> 3U);
         currentFrame = ((uint32_t)(currentFrame + USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER) &
-                        (EHCI_MAX_UFRAME_VALUE >> 3)); /* add USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER */
+                        (USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3U)); /* add USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER */
         /* frame should align with interval */
-        currentFrame -= ehciPipePointer->startFrame;
-        currentFrame =
-            ((uint32_t)(currentFrame + frameInterval - 1) & (~(frameInterval - 1))); /* frameInterval is power of 2 */
-        currentFrame += ehciPipePointer->startFrame;
+        if (currentFrame <= ehciPipePointer->startFrame)
+        {
+            currentFrame = ehciPipePointer->startFrame;
+        }
+        else
+        {
+            currentFrame -= ehciPipePointer->startFrame;
+            currentFrame = ((currentFrame + frameInterval - 1U) & (~(frameInterval - 1U)));
+            currentFrame += ehciPipePointer->startFrame;
+        }
     }
     else
     {
         shouldLinkFrame = isoPointer->lastLinkFrame + frameInterval; /* continuous next should link frame */
-        if (shouldLinkFrame > (int32_t)(EHCI_MAX_UFRAME_VALUE >> 3))
+        if (shouldLinkFrame > USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3U)
         {
-            shouldLinkFrame = shouldLinkFrame - ((EHCI_MAX_UFRAME_VALUE >> 3) + 1);
+            shouldLinkFrame = shouldLinkFrame - ((USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3U) + 1U);
         }
-        currentFrame = ((ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE) >> 3);
-        distance = ((shouldLinkFrame - currentFrame + (EHCI_MAX_UFRAME_VALUE >> 3) + 1) &
-                    (EHCI_MAX_UFRAME_VALUE >> 3)); /* get the distance from shouldLinkFrame to currentFrame */
+        currentFrame = ((ehciInstance->ehciIpBase->FRINDEX & USB_HOST_EHCI_MAX_MICRFRAME_VALUE) >> 3U);
+        distance =
+            ((shouldLinkFrame + (USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3U) + 1U - currentFrame) &
+             (USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3)); /* get the distance from shouldLinkFrame to currentFrame */
         /* shouldLinkFrame has add frameInterval, think about the align with interval, so here add (frameInterval *
          * 2) */
-        if ((distance <= (USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER + frameInterval * 2)) && (distance > 0))
+        if ((distance <=
+             (USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER + frameInterval * USB_HOST_EHCI_ISO_MAX_CONTINUOUS_TRANSFER)) &&
+            (distance > 0U))
         {
             currentFrame = shouldLinkFrame;
         }
         else /* re-link */
         {
             currentFrame =
-                ((uint32_t)(currentFrame + USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER) & (EHCI_MAX_UFRAME_VALUE >> 3));
-            if (currentFrame > (int32_t)(EHCI_MAX_UFRAME_VALUE >> 3))
+                ((currentFrame + USB_HOST_EHCI_ISO_BOUNCE_FRAME_NUMBER) & (USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3));
+
+            /*if (currentFrame > (USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3))
             {
-                currentFrame = currentFrame - ((EHCI_MAX_UFRAME_VALUE >> 3) + 1);
-            }
+                currentFrame = currentFrame - ((USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3) + 1U);
+            }*/
             /* frame should align with interval */
-            currentFrame -= ehciPipePointer->startFrame;
-            currentFrame = ((uint32_t)(currentFrame + frameInterval - 1) & (~(frameInterval - 1)));
-            currentFrame += ehciPipePointer->startFrame;
+            if (currentFrame <= ehciPipePointer->startFrame)
+            {
+                currentFrame = ehciPipePointer->startFrame;
+            }
+            else
+            {
+                currentFrame -= ehciPipePointer->startFrame;
+                currentFrame = ((currentFrame + frameInterval - 1U) & (~(frameInterval - 1U)));
+                currentFrame += ehciPipePointer->startFrame;
+            }
         }
     }
-    if (currentFrame >= (int32_t)USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE) /* frame turn around */
+    if (currentFrame >= USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE) /* frame turn around */
     {
         shouldLinkFrame =
             (currentFrame - USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE); /* shouldLinkFrame means inserted frame position */
@@ -2574,14 +2620,14 @@ static void USB_HostEhciLinkSitd(usb_host_ehci_instance_t *ehciInstance,
     }
 
     sitdPointer = (usb_host_ehci_sitd_t *)startEntryPointer;
-    while (sitdPointer)
+    while (NULL != sitdPointer)
     {
-        sitdPointer->frameEntryIndex = shouldLinkFrame;
+        sitdPointer->frameEntryIndex = (uint16_t)shouldLinkFrame;
         /* add to frame list head */
-        sitdPointer->nextLinkPointer = ((uint32_t *)ehciInstance->ehciFrameList)[shouldLinkFrame];
-        ((uint32_t *)ehciInstance->ehciFrameList)[shouldLinkFrame] =
-            ((uint32_t)sitdPointer | EHCI_HOST_POINTER_TYPE_SITD);
-        if (sitdPointer->nextSitdIndex == 0xFF) /* 0xFF is invalid value */
+        temp                                = (void *)ehciInstance->ehciFrameList;
+        sitdPointer->nextLinkPointer        = ((uint32_t *)temp)[shouldLinkFrame];
+        ((uint32_t *)temp)[shouldLinkFrame] = ((uint32_t)sitdPointer | EHCI_HOST_POINTER_TYPE_SITD);
+        if (sitdPointer->nextSitdIndex == 0xFFU) /* 0xFF is invalid value */
         {
             break;
         }
@@ -2589,17 +2635,17 @@ static void USB_HostEhciLinkSitd(usb_host_ehci_instance_t *ehciInstance,
 
         shouldLinkFrame += frameInterval;
         currentFrame += frameInterval;
-        if (shouldLinkFrame >= (int32_t)USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE)
+        if (shouldLinkFrame >= USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE)
         {
             shouldLinkFrame = (shouldLinkFrame - USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE);
         }
     }
 
-    if (currentFrame > (int32_t)(EHCI_MAX_UFRAME_VALUE >> 3))
+    if (currentFrame > (USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3))
     {
-        currentFrame = currentFrame - ((EHCI_MAX_UFRAME_VALUE >> 3) + 1);
+        currentFrame = currentFrame - ((USB_HOST_EHCI_MAX_MICRFRAME_VALUE >> 3) + 1U);
     }
-    isoPointer->lastLinkFrame = currentFrame; /* save the last link frame value */
+    isoPointer->lastLinkFrame = (uint16_t)currentFrame; /* save the last link frame value */
 }
 
 static usb_status_t USB_HostEhciSitdArrayInit(usb_host_ehci_instance_t *ehciInstance,
@@ -2612,33 +2658,35 @@ static usb_status_t USB_HostEhciSitdArrayInit(usb_host_ehci_instance_t *ehciInst
     uint32_t dataLength = 0;
     uint32_t sitdLength = 0;
     uint32_t dataBufferValue;
-    uint32_t hubNumber;
-    uint32_t portNumber;
-    uint32_t address;
+    uint32_t hubNumber  = 0U;
+    uint32_t portNumber = 0U;
+    uint32_t address    = 0U;
     uint32_t tmp;
-    uint8_t index;
+    uint32_t *temp;
+    uint32_t index;
+    int32_t tempIndex;
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceAddress, &address);
 
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceAddress,
-                                           &address);
-
-    sitdNumber = ((transfer->transferLength - 1 + (ehciPipePointer->pipeCommon.maxPacketSize)) /
+    sitdNumber = ((transfer->transferLength - 1U + (ehciPipePointer->pipeCommon.maxPacketSize)) /
                   (ehciPipePointer->pipeCommon.maxPacketSize));
     /* get sitd array */
-    tmp = ehciPipePointer - ehciInstance->ehciPipeIndexBase; /* pipe index */
     /* USB_HostEhciLock(); */
     if (ehciInstance->ehciSitdNumber >= sitdNumber)
     {
-        sitdPointer = ehciInstance->ehciSitdList;
+        sitdPointer               = ehciInstance->ehciSitdList;
         transfer->union1.unitHead = (uint32_t)sitdPointer;
-        for (index = 1; index < sitdNumber; ++index)
+        for (index = 1U; index < sitdNumber; ++index)
         {
-            sitdPointer->nextSitdIndex =
-                (((usb_host_ehci_sitd_t *)sitdPointer->nextLinkPointer) - ehciInstance->ehciSitdIndexBase);
-            sitdPointer = (usb_host_ehci_sitd_t *)sitdPointer->nextLinkPointer;
+            /*misra 10.8*/
+            tempIndex                  = (((usb_host_ehci_sitd_t *)(sitdPointer->nextLinkPointer & 0xFFFFFFFEU)) -
+                         ehciInstance->ehciSitdIndexBase);
+            sitdPointer->nextSitdIndex = (uint8_t)tempIndex;
+            sitdPointer                = (usb_host_ehci_sitd_t *)(sitdPointer->nextLinkPointer & 0xFFFFFFFEU);
         }
         sitdPointer->nextSitdIndex = 0xFF;
-        ehciInstance->ehciSitdList = (usb_host_ehci_sitd_t *)sitdPointer->nextLinkPointer;
-        ehciInstance->ehciSitdNumber -= sitdNumber;
+        ehciInstance->ehciSitdList = (usb_host_ehci_sitd_t *)(sitdPointer->nextLinkPointer & 0xFFFFFFFEU);
+        ehciInstance->ehciSitdNumber -= (uint8_t)sitdNumber;
     }
     else
     {
@@ -2648,15 +2696,16 @@ static usb_status_t USB_HostEhciSitdArrayInit(usb_host_ehci_instance_t *ehciInst
     /* USB_HostEhciUnlock(); */
     transfer->union2.unitTail = (uint32_t)sitdPointer;
     /* initialize sitd array */
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceHubNumber,
-                                           &hubNumber);
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDevicePortNumber,
-                                           &portNumber);
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceHubNumber, &hubNumber);
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDevicePortNumber, &portNumber);
     sitdPointer = (usb_host_ehci_sitd_t *)transfer->union1.unitHead;
-    dataLength = transfer->transferLength;
-    while (sitdNumber--)
+    dataLength  = transfer->transferLength;
+    while (0U != sitdNumber)
     {
-        USB_HostEhciZeroMem((uint32_t *)sitdPointer, 7);
+        sitdNumber--;
+        USB_HostEhciZeroMem((void *)sitdPointer, 7);
         sitdLength = dataLength;
         if (sitdLength > ehciPipePointer->pipeCommon.maxPacketSize)
         {
@@ -2665,7 +2714,7 @@ static usb_status_t USB_HostEhciSitdArrayInit(usb_host_ehci_instance_t *ehciInst
         dataBufferValue = (uint32_t)(transfer->transferBuffer + (transfer->transferLength - dataLength));
         dataLength -= sitdLength; /* update left data length */
         sitdPointer->transferResults[1] = dataBufferValue;
-        sitdPointer->transferResults[2] = ((dataBufferValue + 4 * 1024) & 0xFFFFF000U);
+        sitdPointer->transferResults[2] = ((dataBufferValue + 4U * 1024U) & 0xFFFFF000U);
         sitdPointer->endpointStates[0] =
             (((uint32_t)ehciPipePointer->pipeCommon.direction << EHCI_HOST_SITD_DIRECTION_SHIFT) |
              (portNumber << EHCI_HOST_SITD_PORT_NUMBER_SHIFT) | (hubNumber << EHCI_HOST_SITD_HUB_ADDR_SHIFT) |
@@ -2679,14 +2728,14 @@ static usb_status_t USB_HostEhciSitdArrayInit(usb_host_ehci_instance_t *ehciInst
             sitdPointer->endpointStates[1] = (((uint32_t)ehciPipePointer->uframeCmask << EHCI_HOST_SITD_CMASK_SHIFT) |
                                               ((uint32_t)ehciPipePointer->uframeSmask << EHCI_HOST_SITD_SMASK_SHIFT));
 
-            tmp = (sitdLength + 187) / 188;
-            if (tmp > 1)
+            tmp = (sitdLength + 187U) / 188U;
+            if (tmp > 1U)
             {
-                sitdPointer->transferResults[2] |= (0x01 << EHCI_HOST_SITD_TP_SHIFT); /* for iso split */
+                sitdPointer->transferResults[2] |= (0x01U << EHCI_HOST_SITD_TP_SHIFT); /* for iso split */
             }
             else
             {
-                sitdPointer->transferResults[2] |= (0x00 << EHCI_HOST_SITD_TP_SHIFT); /* for iso split */
+                sitdPointer->transferResults[2] |= (0x00U << EHCI_HOST_SITD_TP_SHIFT); /* for iso split */
             }
             sitdPointer->transferResults[2] |= (tmp << EHCI_HOST_SITD_TCOUNT_SHIFT); /* for iso split */
         }
@@ -2696,26 +2745,29 @@ static usb_status_t USB_HostEhciSitdArrayInit(usb_host_ehci_instance_t *ehciInst
         sitdPointer = (ehciInstance->ehciSitdIndexBase + sitdPointer->nextSitdIndex);
     }
     sitdPointer = (usb_host_ehci_sitd_t *)transfer->union2.unitTail;
-    sitdPointer->transferResults[0] |= (1U << EHCI_HOST_SITD_IOC_SHIFT); /* last set IOC */
+    sitdPointer->transferResults[0] |= (1UL << EHCI_HOST_SITD_IOC_SHIFT); /* last set IOC */
 
     /* link transfer to usb_host_ehci_iso_t transfer list */
     isoPointer = (usb_host_ehci_iso_t *)ehciPipePointer->ehciQh;
     USB_HostEhciLock();
     if (isoPointer->ehciTransferHead == NULL)
     {
-        transfer->next = NULL;
-        isoPointer->ehciTransferHead = isoPointer->ehciTransferTail = transfer;
+        transfer->next               = NULL;
+        isoPointer->ehciTransferTail = transfer;
+        isoPointer->ehciTransferHead = transfer;
     }
     else
     {
-        transfer->next = NULL;
+        transfer->next                     = NULL;
         isoPointer->ehciTransferTail->next = transfer;
-        isoPointer->ehciTransferTail = transfer;
+        isoPointer->ehciTransferTail       = transfer;
     }
     USB_HostEhciUnlock();
 
     /* link itd to frame list (note: initialize frameEntryIndex)*/
-    USB_HostEhciLinkSitd(ehciInstance, ehciPipePointer, (void *)transfer->union1.unitHead);
+    /*misra 11.6*/
+    temp = (uint32_t *)(transfer->union1.unitHead);
+    USB_HostEhciLinkSitd(ehciInstance, ehciPipePointer, (void *)temp);
 
     return kStatus_USB_Success;
 }
@@ -2725,9 +2777,9 @@ static uint32_t USB_HostEhciSitdArrayRelease(usb_host_ehci_instance_t *ehciInsta
                                              usb_host_ehci_sitd_t *endSitdPointer)
 {
     usb_host_ehci_sitd_t *sitdPointer = startSitdPointer;
-    uint32_t leftLength = 0;
+    uint32_t leftLength               = 0;
     /* remove itd from frame list */
-    while (1)
+    while (1U == 1U)
     {
         /* record the transfer's result length */
         leftLength +=
@@ -2737,8 +2789,9 @@ static uint32_t USB_HostEhciSitdArrayRelease(usb_host_ehci_instance_t *ehciInsta
 
         /* release itd */
         /* USB_HostEhciLock(); */
-        sitdPointer->nextLinkPointer = (uint32_t)ehciInstance->ehciSitdList;
-        ehciInstance->ehciSitdList = sitdPointer;
+        /*set next link pointer to invalid in case hardware access invalid sitd structure in special case*/
+        sitdPointer->nextLinkPointer = (((uint32_t)ehciInstance->ehciSitdList) | EHCI_HOST_T_INVALID_VALUE);
+        ehciInstance->ehciSitdList   = sitdPointer;
         ehciInstance->ehciSitdNumber++;
         /* USB_HostEhciUnlock(); */
 
@@ -2762,8 +2815,9 @@ static usb_status_t USB_HostEhciSitdArrayDeinit(usb_host_ehci_instance_t *ehciIn
 
     /* firstly remove the transfer (because host task may occupy to access the resource) */
     USB_HostEhciLock();
-    transfer = isoPointer->ehciTransferHead;
-    isoPointer->ehciTransferHead = isoPointer->ehciTransferTail = NULL;
+    transfer                     = isoPointer->ehciTransferHead;
+    isoPointer->ehciTransferTail = NULL;
+    isoPointer->ehciTransferHead = NULL;
     USB_HostEhciUnlock();
 
     while (transfer != NULL)
@@ -2774,7 +2828,7 @@ static usb_status_t USB_HostEhciSitdArrayDeinit(usb_host_ehci_instance_t *ehciIn
             transfer->transferLength - USB_HostEhciSitdArrayRelease(ehciInstance,
                                                                     (usb_host_ehci_sitd_t *)transfer->union1.unitHead,
                                                                     (usb_host_ehci_sitd_t *)transfer->union2.unitTail);
-        /* transfer callback */
+        /* callback function is different from the current condition */
         transfer->callbackFn(transfer->callbackParam, transfer, kStatus_USB_TransferCancel);
         /* next transfer */
         transfer = nextTransfer;
@@ -2790,50 +2844,66 @@ static uint32_t USB_HostEhciGetItdLinkFrame(usb_host_ehci_instance_t *ehciInstan
                                             uint16_t startUframe,
                                             uint16_t uframeInterval)
 {
-    int32_t shouldLinkUframe;
-    int32_t currentUframe;
-    int32_t distance;
+    uint32_t shouldLinkUframe;
+    uint32_t currentUframe;
+    uint32_t distance;
 
-    if (lastLinkUframe != 0xFFFF)
+    if (lastLinkUframe != 0xFFFFU)
     {
         shouldLinkUframe = lastLinkUframe + uframeInterval;
-        if (shouldLinkUframe > (int32_t)EHCI_MAX_UFRAME_VALUE)
+        if (shouldLinkUframe > USB_HOST_EHCI_MAX_MICRFRAME_VALUE)
         {
-            shouldLinkUframe = shouldLinkUframe - (EHCI_MAX_UFRAME_VALUE + 1);
+            shouldLinkUframe = shouldLinkUframe - (USB_HOST_EHCI_MAX_MICRFRAME_VALUE + 1U);
         }
-        currentUframe = (ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
-        distance = ((shouldLinkUframe - currentUframe + EHCI_MAX_UFRAME_VALUE + 1) &
-                    EHCI_MAX_UFRAME_VALUE); /* get the distance */
+        currentUframe = (ehciInstance->ehciIpBase->FRINDEX & USB_HOST_EHCI_MAX_MICRFRAME_VALUE);
+        distance      = ((shouldLinkUframe + USB_HOST_EHCI_MAX_MICRFRAME_VALUE + 1U - currentUframe) &
+                    USB_HOST_EHCI_MAX_MICRFRAME_VALUE); /* get the distance */
         /* shouldLinkUframe has add uframeInterval, think about the align with interval, so here add (uframeInterval
          * * 2) */
-        if ((distance <= (int32_t)(USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER + (uframeInterval * 2))) && (distance > 2))
+        if ((distance <= ((uint32_t)USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER +
+                          ((uint32_t)uframeInterval * USB_HOST_EHCI_ISO_MAX_CONTINUOUS_TRANSFER))) &&
+            (distance > 2U))
         {
             currentUframe = shouldLinkUframe;
         }
         else /* re-link */
         {
             currentUframe =
-                ((uint32_t)(currentUframe + USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER) & EHCI_MAX_UFRAME_VALUE);
-            if (currentUframe > (int32_t)EHCI_MAX_UFRAME_VALUE)
+                ((currentUframe + USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER) & USB_HOST_EHCI_MAX_MICRFRAME_VALUE);
+            /*if (currentUframe > USB_HOST_EHCI_MAX_MICRFRAME_VALUE)
             {
-                currentUframe = currentUframe - (EHCI_MAX_UFRAME_VALUE + 1);
-            }
+                currentUframe = currentUframe - (USB_HOST_EHCI_MAX_MICRFRAME_VALUE + 1U);
+            }*/
             /* uframe should align with interval */
-            currentUframe -= startUframe;
-            currentUframe = ((uint32_t)(currentUframe + uframeInterval - 1) &
-                             (~((uint32_t)uframeInterval - 1))); /* uframeInterval is power of 2 */
-            currentUframe += startUframe;
+            if (currentUframe <= startUframe)
+            {
+                currentUframe = startUframe;
+            }
+            else
+            {
+                currentUframe -= startUframe;
+                currentUframe = ((uint32_t)(currentUframe + uframeInterval) &
+                                 (~((uint32_t)uframeInterval - 1U))); /* uframeInterval is power of 2 */
+                currentUframe += startUframe;
+            }
         }
     }
     else
     {
-        currentUframe = (ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
-        currentUframe = ((uint32_t)(currentUframe + USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER) & EHCI_MAX_UFRAME_VALUE);
+        currentUframe = (ehciInstance->ehciIpBase->FRINDEX & USB_HOST_EHCI_MAX_MICRFRAME_VALUE);
+        currentUframe = ((currentUframe + USB_HOST_EHCI_ISO_BOUNCE_UFRAME_NUMBER) & USB_HOST_EHCI_MAX_MICRFRAME_VALUE);
         /* uframe should align with interval */
-        currentUframe -= startUframe;
-        currentUframe = ((uint32_t)(currentUframe + uframeInterval - 1) &
-                         (~((uint32_t)uframeInterval - 1))); /* uframeInterval is power of 2 */
-        currentUframe += startUframe;
+        if (currentUframe <= startUframe)
+        {
+            currentUframe = startUframe;
+        }
+        else
+        {
+            currentUframe -= startUframe;
+            currentUframe =
+                ((currentUframe + uframeInterval) & (~(uframeInterval - 1U))); /* uframeInterval is power of 2 */
+            currentUframe += startUframe;
+        }
     }
 
     return currentUframe;
@@ -2845,27 +2915,29 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
 {
     usb_host_ehci_iso_t *isoPointer;
     usb_host_ehci_itd_t *itdPointer = NULL;
+    usb_host_ehci_itd_t *itdHead    = NULL;
     usb_host_ehci_itd_t *tmpItdPointer;
     uint32_t dataLength;        /* the remaining data for sending */
     uint32_t transactionLength; /* the initializing transaction descriptor data length */
     uint32_t itdBufferValue;
     uint32_t itdBufferBaseValue; /* for calculating PG value */
-    uint32_t address;
+    uint32_t address = 0U;
     uint32_t lastShouldLinkUframe;
     uint32_t linkUframe;
-    uint32_t minDataPerItd = ehciPipePointer->pipeCommon.numberPerUframe * ehciPipePointer->pipeCommon.maxPacketSize;
+    uint32_t minDataPerItd =
+        (uint32_t)ehciPipePointer->pipeCommon.numberPerUframe * ehciPipePointer->pipeCommon.maxPacketSize;
     uint8_t maxItdNumber;
-    uint8_t index = 0;
+    uint16_t index = 0;
 
     isoPointer = (usb_host_ehci_iso_t *)ehciPipePointer->ehciQh;
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceAddress,
-                                           &address);
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceAddress, &address);
 
     /* max needed itd number, the actual needed number may be less because micro-frame interval may be less than 8 */
-    maxItdNumber = ((transfer->transferLength - 1 + minDataPerItd) / minDataPerItd);
-    if (ehciPipePointer->uframeInterval < 8)
+    maxItdNumber = (uint8_t)((transfer->transferLength - 1U + minDataPerItd) / minDataPerItd);
+    if (ehciPipePointer->uframeInterval < 8U)
     {
-        maxItdNumber = ((maxItdNumber * ehciPipePointer->uframeInterval + 7) / 8) + 1;
+        maxItdNumber = (uint8_t)((maxItdNumber * ehciPipePointer->uframeInterval + 7U) / 8U) + 1U;
     }
     if (maxItdNumber > ehciInstance->ehciItdNumber)
     {
@@ -2877,43 +2949,46 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
     /* USB_HostEhciLock(); */
     if (isoPointer->ehciTransferHead == NULL)
     {
-        isoPointer->ehciTransferHead = isoPointer->ehciTransferTail = transfer;
+        isoPointer->ehciTransferTail = transfer;
+        isoPointer->ehciTransferHead = transfer;
     }
     else
     {
         isoPointer->ehciTransferTail->next = transfer;
-        isoPointer->ehciTransferTail = transfer;
+        isoPointer->ehciTransferTail       = transfer;
     }
     /* USB_HostEhciUnlock(); */
 
-    dataLength = transfer->transferLength;
-    transfer->union1.unitHead = (uint32_t)NULL;
+    dataLength                = transfer->transferLength;
+    transfer->union1.unitHead = 0U;
     /* get the link micro-frame */
     lastShouldLinkUframe = USB_HostEhciGetItdLinkFrame(
         ehciInstance, isoPointer->lastLinkFrame,
         (uint16_t)((ehciPipePointer->startFrame << 3) + ehciPipePointer->startUframe), ehciPipePointer->uframeInterval);
-    if (lastShouldLinkUframe > EHCI_MAX_UFRAME_VALUE)
+    if (lastShouldLinkUframe > USB_HOST_EHCI_MAX_MICRFRAME_VALUE)
     {
-        linkUframe = lastShouldLinkUframe - (EHCI_MAX_UFRAME_VALUE + 1);
+        linkUframe = lastShouldLinkUframe - (USB_HOST_EHCI_MAX_MICRFRAME_VALUE + 1U);
     }
     else
     {
         linkUframe = lastShouldLinkUframe;
     }
-    while (dataLength)
+    itdHead = ehciInstance->ehciItdList;
+    while (0U != dataLength)
     {
         /* get one idle itd */
         tmpItdPointer = ehciInstance->ehciItdList;
-        ehciInstance->ehciItdList = (usb_host_ehci_itd_t *)tmpItdPointer->nextLinkPointer;
-        ehciInstance->ehciItdNumber -= 1;
         if (tmpItdPointer == NULL)
         {
             return kStatus_USB_Error; /* this should not reach */
         }
+        ehciInstance->ehciItdList = (usb_host_ehci_itd_t *)tmpItdPointer->nextItdPointer;
+        ehciInstance->ehciItdNumber -= 1U;
+
         tmpItdPointer->nextItdPointer = NULL;
 
         /* use the itd */
-        if (transfer->union1.unitHead == (uint32_t)NULL) /* first itd */
+        if (transfer->union1.unitHead == 0U) /* first itd */
         {
             transfer->union1.unitHead = (uint32_t)tmpItdPointer;
         }
@@ -2924,11 +2999,11 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
         itdPointer = tmpItdPointer;
 
         /* itd has been set to all zero when releasing */
-        itdBufferBaseValue = itdBufferValue =
-            (uint32_t)(transfer->transferBuffer + (transfer->transferLength - dataLength));
-        for (index = 0; index < 7; ++index)
+        itdBufferValue     = (uint32_t)(transfer->transferBuffer + (transfer->transferLength - dataLength));
+        itdBufferBaseValue = itdBufferValue;
+        for (index = 0; index < 7U; ++index)
         {
-            itdPointer->bufferPointers[index] = ((itdBufferBaseValue + (index * 4 * 1024)) & 0xFFFFF000U);
+            itdPointer->bufferPointers[index] = ((itdBufferBaseValue + ((uint32_t)index * 4U * 1024U)) & 0xFFFFF000U);
         }
         /* initialize iTD common fields */
         itdPointer->bufferPointers[0] |=
@@ -2939,7 +3014,7 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
              ((uint32_t)ehciPipePointer->pipeCommon.maxPacketSize << EHCI_HOST_ITD_MAX_PACKET_SIZE_SHIFT));
         itdPointer->bufferPointers[2] |= (ehciPipePointer->pipeCommon.numberPerUframe);
         /* initialize transaction descriptors */
-        for (index = (linkUframe & 0x0007); index < 8; index += ehciPipePointer->uframeInterval)
+        for (index = (uint8_t)(linkUframe & 0x0007U); index < 8U; index += ehciPipePointer->uframeInterval)
         {
             transactionLength = ((dataLength > minDataPerItd) ? minDataPerItd : dataLength);
             /* initialize the uframeIndex's transaction descriptor in itd */
@@ -2951,7 +3026,7 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
                  (itdBufferValue & EHCI_HOST_ITD_TRANSACTION_OFFSET_MASK));
             dataLength -= transactionLength;
             itdBufferValue += transactionLength;
-            if (dataLength <= 0)
+            if (dataLength <= 0U)
             {
                 break;
             }
@@ -2959,17 +3034,25 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
     }
 
     transfer->union2.unitTail = (uint32_t)itdPointer;
-    itdPointer->transactions[index] |= (1 << EHCI_HOST_ITD_IOC_SHIFT); /* last set IOC */
+    itdPointer->transactions[index] |= (1UL << EHCI_HOST_ITD_IOC_SHIFT); /* last set IOC */
 
+    itdPointer = itdHead;
     /* link itd to frame list (note: initialize frameEntryIndex)*/
-    while (itdPointer)
+    while (NULL != itdPointer)
     {
-        itdPointer->frameEntryIndex = linkUframe;
-        /* add to frame head */
-        itdPointer->nextLinkPointer = ((uint32_t *)ehciInstance->ehciFrameList)[linkUframe >> 3];
-        *(uint32_t *)((uint32_t *)ehciInstance->ehciFrameList)[linkUframe >> 3] =
-            ((uint32_t)itdPointer | EHCI_HOST_POINTER_TYPE_ITD);
-        itdPointer = itdPointer->nextItdPointer;
+        void *temp                  = (void *)ehciInstance->ehciFrameList;
+        uint32_t *linkPointer       = &((uint32_t *)temp)[linkUframe >> 3];
+        uint32_t linkValue          = *linkPointer;
+        itdPointer->frameEntryIndex = linkUframe >> 3;
+        while ((0U == (linkValue & EHCI_HOST_T_INVALID_VALUE)) &&
+               ((linkValue & EHCI_HOST_POINTER_TYPE_MASK) == EHCI_HOST_POINTER_TYPE_ITD))
+        {
+            linkPointer = (uint32_t *)(linkValue & EHCI_HOST_POINTER_ADDRESS_MASK);
+            linkValue   = *linkPointer;
+        }
+        itdPointer->nextLinkPointer = *linkPointer;
+        *linkPointer                = ((uint32_t)itdPointer | EHCI_HOST_POINTER_TYPE_ITD);
+        itdPointer                  = itdPointer->nextItdPointer;
         if (itdPointer == NULL)
         {
             break;
@@ -2983,11 +3066,11 @@ static usb_status_t USB_HostEhciItdArrayInit(usb_host_ehci_instance_t *ehciInsta
         }
     }
 
-    if (lastShouldLinkUframe > EHCI_MAX_UFRAME_VALUE)
+    if (lastShouldLinkUframe > USB_HOST_EHCI_MAX_MICRFRAME_VALUE)
     {
-        lastShouldLinkUframe = lastShouldLinkUframe - (EHCI_MAX_UFRAME_VALUE + 1);
+        lastShouldLinkUframe = lastShouldLinkUframe - (USB_HOST_EHCI_MAX_MICRFRAME_VALUE + 1U);
     }
-    isoPointer->lastLinkFrame = lastShouldLinkUframe;
+    isoPointer->lastLinkFrame = (uint16_t)lastShouldLinkUframe;
 
     return kStatus_USB_Success;
 }
@@ -3001,23 +3084,24 @@ static uint32_t USB_HostEhciItdArrayRelease(usb_host_ehci_instance_t *ehciInstan
     uint32_t doneLength = 0;
 
     /* remove itd from frame list */
-    while (1)
+    while (1U == 1U)
     {
         /* record the transfer's result length */
-        for (index = 0; index < 8; ++index)
+        for (index = 0U; index < 8U; ++index)
         {
             doneLength += ((itdPointer->transactions[index] & EHCI_HOST_ITD_TRANSACTION_LEN_MASK) >>
                            EHCI_HOST_ITD_TRANSACTION_LEN_SHIFT);
         }
 
         USB_HostEhciRemoveFromFrame(ehciInstance, (uint32_t)itdPointer,
-                                    itdPointer->frameEntryIndex); /* remove from the inserted frame list */
+                                    (uint16_t)itdPointer->frameEntryIndex); /* remove from the inserted frame list */
 
         /* release itd */
         /* USB_HostEhciLock(); */
-        USB_HostEhciZeroMem((uint32_t *)itdPointer, sizeof(usb_host_ehci_itd_t) >> 2);
-        itdPointer->nextLinkPointer = (uint32_t)ehciInstance->ehciItdList;
-        ehciInstance->ehciItdList = itdPointer;
+        /*set next link pointer to invalid in case hardware access invalid itd structure in special case*/
+        itdPointer->nextLinkPointer = EHCI_HOST_T_INVALID_VALUE;
+        itdPointer->nextItdPointer  = (usb_host_ehci_itd_t *)ehciInstance->ehciItdList;
+        ehciInstance->ehciItdList   = itdPointer;
         ehciInstance->ehciItdNumber++;
         /* USB_HostEhciUnlock(); */
 
@@ -3041,14 +3125,15 @@ static usb_status_t USB_HostEhciItdArrayDeinit(usb_host_ehci_instance_t *ehciIns
 
     /* firstly remove the transfer (because host task may occupy to access the resource) */
     USB_HostEhciLock();
-    transfer = isoPointer->ehciTransferHead;
-    isoPointer->ehciTransferHead = isoPointer->ehciTransferTail = NULL;
+    transfer                     = isoPointer->ehciTransferHead;
+    isoPointer->ehciTransferTail = NULL;
+    isoPointer->ehciTransferHead = NULL;
     USB_HostEhciUnlock();
 
     while (transfer != NULL)
     {
         nextTransfer = transfer->next;
-        doneLength = 0;
+        doneLength   = 0;
         /* remove itd from frame list and release itd */
         doneLength = USB_HostEhciItdArrayRelease(ehciInstance, (usb_host_ehci_itd_t *)transfer->union1.unitHead,
                                                  (usb_host_ehci_itd_t *)transfer->union2.unitTail);
@@ -3059,6 +3144,7 @@ static usb_status_t USB_HostEhciItdArrayDeinit(usb_host_ehci_instance_t *ehciIns
             doneLength = transfer->transferLength;
         }
         transfer->transferSofar = doneLength;
+        /* callback function is different from the current condition */
         transfer->callbackFn(transfer->callbackParam, transfer, kStatus_USB_TransferCancel);
 
         /* next transfer */
@@ -3082,7 +3168,7 @@ static usb_status_t USB_HostEhciOpenControlBulk(usb_host_ehci_instance_t *ehciIn
     qhPointer = (usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
 
     /* add qh to async */
-    qhPointer->horizontalLinkPointer = ehciInstance->shedFirstQh->horizontalLinkPointer;
+    qhPointer->horizontalLinkPointer                 = ehciInstance->shedFirstQh->horizontalLinkPointer;
     ehciInstance->shedFirstQh->horizontalLinkPointer = ((uint32_t)qhPointer | EHCI_HOST_POINTER_TYPE_QH);
 
     return kStatus_USB_Success;
@@ -3093,10 +3179,11 @@ static usb_status_t USB_HostEhciCloseControlBulk(usb_host_ehci_instance_t *ehciI
 {
     volatile usb_host_ehci_qh_t *vltPrevQhPointer;
     uint32_t horizontalLinkValue;
-
+    uint32_t *temp;
     /* remove qh from async schedule */
+    temp = (uint32_t *)ehciPipePointer->ehciQh;
     if ((ehciInstance->shedFirstQh->horizontalLinkPointer & EHCI_HOST_POINTER_ADDRESS_MASK) ==
-        (uint32_t)ehciPipePointer->ehciQh) /* the removing qh is the first qh in the async list */
+        (uint32_t)temp) /* the removing qh is the first qh in the async list */
     {
         USB_HostEhciStopAsync(ehciInstance);
         ehciInstance->shedFirstQh->horizontalLinkPointer =
@@ -3110,8 +3197,8 @@ static usb_status_t USB_HostEhciCloseControlBulk(usb_host_ehci_instance_t *ehciI
         while (vltPrevQhPointer != NULL)
         {
             horizontalLinkValue = vltPrevQhPointer->horizontalLinkPointer;
-            if ((horizontalLinkValue & EHCI_HOST_T_INVALID_VALUE) ||
-                ((horizontalLinkValue & EHCI_HOST_POINTER_ADDRESS_MASK) == (uint32_t)ehciPipePointer->ehciQh) ||
+            if ((0U != (horizontalLinkValue & EHCI_HOST_T_INVALID_VALUE)) ||
+                ((horizontalLinkValue & EHCI_HOST_POINTER_ADDRESS_MASK) == (uint32_t)temp) ||
                 ((horizontalLinkValue & EHCI_HOST_POINTER_ADDRESS_MASK) == (uint32_t)ehciInstance->shedFirstQh))
             {
                 break;
@@ -3121,8 +3208,10 @@ static usb_status_t USB_HostEhciCloseControlBulk(usb_host_ehci_instance_t *ehciI
         }
 
         /* remove the qh from async list */
-        if ((vltPrevQhPointer != NULL) && (!(horizontalLinkValue & EHCI_HOST_T_INVALID_VALUE)) &&
-            ((horizontalLinkValue & EHCI_HOST_POINTER_ADDRESS_MASK) == (uint32_t)ehciPipePointer->ehciQh))
+        /*for misra 11.6*/
+        temp = (uint32_t *)ehciPipePointer->ehciQh;
+        if ((vltPrevQhPointer != NULL) && (0U == (horizontalLinkValue & EHCI_HOST_T_INVALID_VALUE)) &&
+            ((horizontalLinkValue & EHCI_HOST_POINTER_ADDRESS_MASK) == (uint32_t)temp))
         {
             USB_HostEhciStopAsync(ehciInstance);
             vltPrevQhPointer->horizontalLinkPointer =
@@ -3140,6 +3229,7 @@ static usb_status_t USB_HostEhciOpenInterrupt(usb_host_ehci_instance_t *ehciInst
 {
     usb_status_t status = kStatus_USB_Success;
     uint32_t frameIndex;
+    uint32_t *temp;
 
     /* allocate bandwidth */
     if (ehciInstance->firstDeviceSpeed == USB_SPEED_HIGH)
@@ -3163,10 +3253,10 @@ static usb_status_t USB_HostEhciOpenInterrupt(usb_host_ehci_instance_t *ehciInst
 
     /* insert QH to frame list */
     for (frameIndex = ehciPipePointer->startFrame; frameIndex < USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE;
-         frameIndex += (ehciPipePointer->uframeInterval / 8))
+         frameIndex += (((uint32_t)ehciPipePointer->uframeInterval + 7U) / 8U))
     {
-        USB_HostEhciAddQhToFrame(ehciInstance, (uint32_t)ehciPipePointer->ehciQh, frameIndex,
-                                 ehciPipePointer->uframeInterval);
+        temp = (uint32_t *)ehciPipePointer->ehciQh;
+        USB_HostEhciAddQhToFrame(ehciInstance, (uint32_t)temp, (uint16_t)frameIndex, ehciPipePointer->uframeInterval);
     }
 
     return kStatus_USB_Success;
@@ -3176,12 +3266,13 @@ static usb_status_t USB_HostEhciCloseInterrupt(usb_host_ehci_instance_t *ehciIns
                                                usb_host_ehci_pipe_t *ehciPipePointer)
 {
     uint32_t frameIndex;
-
+    uint32_t *temp;
     /* remove from frame list */
     for (frameIndex = ehciPipePointer->startFrame; frameIndex < USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE;
-         frameIndex += (ehciPipePointer->uframeInterval / 8))
+         frameIndex += (((uint32_t)ehciPipePointer->uframeInterval + 7U) / 8U))
     {
-        USB_HostEhciRemoveFromFrame(ehciInstance, (uint32_t)ehciPipePointer->ehciQh, frameIndex);
+        temp = (uint32_t *)ehciPipePointer->ehciQh;
+        USB_HostEhciRemoveFromFrame(ehciInstance, (uint32_t)temp, (uint16_t)frameIndex);
     }
     ((usb_host_ehci_qh_t *)ehciPipePointer->ehciQh)->horizontalLinkPointer |=
         EHCI_HOST_T_INVALID_VALUE; /* invalid next qh link */
@@ -3219,11 +3310,11 @@ static usb_status_t USB_HostEhciOpenIso(usb_host_ehci_instance_t *ehciInstance, 
         return kStatus_USB_Error;
     }
     USB_HostEhciLock();
-    isoPointer = ehciInstance->ehciIsoList;
+    isoPointer                = ehciInstance->ehciIsoList;
     ehciInstance->ehciIsoList = ehciInstance->ehciIsoList->next;
     USB_HostEhciUnlock();
     isoPointer->lastLinkFrame = 0xFFFF;
-    ehciPipePointer->ehciQh = isoPointer;
+    ehciPipePointer->ehciQh   = isoPointer;
 
     return status;
 }
@@ -3231,31 +3322,32 @@ static usb_status_t USB_HostEhciOpenIso(usb_host_ehci_instance_t *ehciInstance, 
 static usb_status_t USB_HostEhciCloseIso(usb_host_ehci_instance_t *ehciInstance, usb_host_ehci_pipe_t *ehciPipePointer)
 {
     usb_host_ehci_iso_t *isoPointer;
-    uint32_t speed;
+    uint32_t speed = 0U;
 
     isoPointer = (usb_host_ehci_iso_t *)ehciPipePointer->ehciQh;
 
     if (isoPointer->ehciTransferHead != NULL)
     {
-        USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                               &speed);
+        (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                     (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
         if (speed == USB_SPEED_HIGH)
         {
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD))
-            USB_HostEhciItdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize itd list and free them */
+            (void)USB_HostEhciItdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize itd list and free them */
 #endif
         }
         else
         {
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD))
-            USB_HostEhciSitdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize sitd list and free them */
+            (void)USB_HostEhciSitdArrayDeinit(ehciInstance,
+                                              ehciPipePointer); /* de-initialize sitd list and free them */
 #endif
         }
     }
 
     /* release usb_host_ehci_iso_t */
     USB_HostEhciLock();
-    isoPointer->next = ehciInstance->ehciIsoList;
+    isoPointer->next          = ehciInstance->ehciIsoList;
     ehciInstance->ehciIsoList = isoPointer;
     USB_HostEhciUnlock();
     return kStatus_USB_Success;
@@ -3267,17 +3359,17 @@ static usb_status_t USB_HostEhciResetIP(usb_host_ehci_instance_t *ehciInstance)
 {
     /* reset controller */
     ehciInstance->ehciIpBase->USBCMD = USBHS_USBCMD_RST_MASK;
-    while (ehciInstance->ehciIpBase->USBCMD & USBHS_USBCMD_RST_MASK)
+    while (0U != (ehciInstance->ehciIpBase->USBCMD & USBHS_USBCMD_RST_MASK))
     {
     }
 /* set host mode */
 #if (ENDIANNESS == USB_LITTLE_ENDIAN)
-    ehciInstance->ehciIpBase->USBMODE |= 0x03;
+    ehciInstance->ehciIpBase->USBMODE |= 0x03U;
 #else
-    ehciInstance->ehciIpBase->USBMODE |= (0x03 | (0x01 << USBHS_USBMODE_ES_SHIFT));
+    ehciInstance->ehciIpBase->USBMODE |= (0x03U | (0x01U << USBHS_USBMODE_ES_SHIFT));
 #endif
     /* check frame list size */
-    if (!(ehciInstance->ehciIpBase->HCCPARAMS & USBHS_HCCPARAMS_PFL_MASK))
+    if (0U == (ehciInstance->ehciIpBase->HCCPARAMS & USBHS_HCCPARAMS_PFL_MASK))
     {
 #if ((USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE < 8) || (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE > 1024))
         return kStatus_USB_Error;
@@ -3293,7 +3385,7 @@ static usb_status_t USB_HostEhciStartIP(usb_host_ehci_instance_t *ehciInstance)
 {
     uint32_t tmp = 0;
 
-    if (ehciInstance->ehciIpBase->HCSPARAMS & USBHS_HCSPARAMS_PPC_MASK) /* Ports have power port switches */
+    if (0U != (ehciInstance->ehciIpBase->HCSPARAMS & USBHS_HCSPARAMS_PPC_MASK)) /* Ports have power port switches */
     {
         /* only has one port */
         tmp = ehciInstance->ehciIpBase->PORTSC1;
@@ -3302,41 +3394,41 @@ static usb_status_t USB_HostEhciStartIP(usb_host_ehci_instance_t *ehciInstance)
     }
 
     /* set frame list size */
-    if (ehciInstance->ehciIpBase->HCCPARAMS & USBHS_HCCPARAMS_PFL_MASK)
+    if (0U != (ehciInstance->ehciIpBase->HCCPARAMS & USBHS_HCCPARAMS_PFL_MASK))
     {
 #if (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE <= 64)
         ehciInstance->ehciIpBase->USBCMD |= (USBHS_USBCMD_FS2_MASK);
 #if (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 64)
-        ehciInstance->ehciIpBase->USBCMD |= (0x00 << USBHS_USBCMD_FS_SHIFT);
-#elif(USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 32)
-        ehciInstance->ehciIpBase->USBCMD |= (0x01 << USBHS_USBCMD_FS_SHIFT);
-#elif(USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 16)
-        ehciInstance->ehciIpBase->USBCMD |= (0x02 << USBHS_USBCMD_FS_SHIFT);
-#elif(USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 8)
-        ehciInstance->ehciIpBase->USBCMD |= (0x03 << USBHS_USBCMD_FS_SHIFT);
+        ehciInstance->ehciIpBase->USBCMD |= (0x00U << USBHS_USBCMD_FS_SHIFT);
+#elif (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 32)
+        ehciInstance->ehciIpBase->USBCMD |= (0x01U << USBHS_USBCMD_FS_SHIFT);
+#elif (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 16)
+        ehciInstance->ehciIpBase->USBCMD |= (0x02U << USBHS_USBCMD_FS_SHIFT);
+#elif (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 8)
+        ehciInstance->ehciIpBase->USBCMD |= (0x03U << USBHS_USBCMD_FS_SHIFT);
 #endif
 #else
 #if (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 1024)
-        ehciInstance->ehciIpBase->USBCMD |= (0x00 << USBHS_USBCMD_FS_SHIFT);
-#elif(USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 512)
-        ehciInstance->ehciIpBase->USBCMD |= (0x01 << USBHS_USBCMD_FS_SHIFT);
-#elif(USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 256)
-        ehciInstance->ehciIpBase->USBCMD |= (0x02 << USBHS_USBCMD_FS_SHIFT);
-#elif(USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 128)
-        ehciInstance->ehciIpBase->USBCMD |= (0x03 << USBHS_USBCMD_FS_SHIFT);
+        ehciInstance->ehciIpBase->USBCMD |= (0x00U << USBHS_USBCMD_FS_SHIFT);
+#elif (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 512)
+        ehciInstance->ehciIpBase->USBCMD |= (0x01U << USBHS_USBCMD_FS_SHIFT);
+#elif (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 256)
+        ehciInstance->ehciIpBase->USBCMD |= (0x02U << USBHS_USBCMD_FS_SHIFT);
+#elif (USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE == 128)
+        ehciInstance->ehciIpBase->USBCMD |= (0x03U << USBHS_USBCMD_FS_SHIFT);
 #endif
 #endif
     }
 
     /* start the controller */
-    ehciInstance->ehciIpBase->USBCMD = USBHS_USBCMD_RS_MASK;
+    ehciInstance->ehciIpBase->USBCMD |= USBHS_USBCMD_RS_MASK;
 
     /* set timer0 */
-    ehciInstance->ehciIpBase->GPTIMER0LD = (300 * 1000 - 1); /* 100ms */
+    ehciInstance->ehciIpBase->GPTIMER0LD = (100U * 1000U - 1U); /* 100ms */
 
     /* enable interrupt (USB interrupt enable + USB error interrupt enable + port change detect enable + system error
      * enable + interrupt on async advance enable) + general purpos Timer 0 Interrupt enable */
-    ehciInstance->ehciIpBase->USBINTR |= (0x1000037);
+    ehciInstance->ehciIpBase->USBINTR |= (0x1000037U);
 
     return kStatus_USB_Success;
 }
@@ -3349,7 +3441,7 @@ static usb_status_t USB_HostEhciCancelPipe(usb_host_ehci_instance_t *ehciInstanc
 #if (((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD)) || \
      ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD)))
     usb_host_ehci_iso_t *isoPointer;
-    uint32_t speed;
+    uint32_t speed = 0U;
 #endif
     uint8_t cancelPipe = 0;
 
@@ -3368,24 +3460,24 @@ static usb_status_t USB_HostEhciCancelPipe(usb_host_ehci_instance_t *ehciInstanc
                 if ((qhPointer->ehciTransferHead == transfer) &&
                     (qhPointer->ehciTransferHead == qhPointer->ehciTransferTail)) /* only has this one transfer */
                 {
-                    cancelPipe = 1;
+                    cancelPipe = 1U;
                 }
                 else
                 {
-                    cancelPipe = 0;
+                    cancelPipe = 0U;
                 }
             }
             else
             {
-                cancelPipe = 1;
+                cancelPipe = 1U;
             }
-            if (cancelPipe == 1) /* cancel all pipe */
+            if (cancelPipe == 1U) /* cancel all pipe */
             {
-                USB_HostEhciQhQtdListDeinit(ehciInstance, ehciPipePointer); /* release all the qtd */
+                (void)USB_HostEhciQhQtdListDeinit(ehciInstance, ehciPipePointer); /* release all the qtd */
             }
             else /* cancel one transfer */
             {
-                USB_HostEhciTransferQtdListDeinit(ehciInstance, ehciPipePointer, transfer);
+                (void)USB_HostEhciTransferQtdListDeinit(ehciInstance, ehciPipePointer, transfer);
             }
             break;
 
@@ -3398,24 +3490,25 @@ static usb_status_t USB_HostEhciCancelPipe(usb_host_ehci_instance_t *ehciInstanc
                 return kStatus_USB_Success;
             }
             /* cancel all pipe, don't implement canceling transfer for iso */
-            USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                                   &speed);
+            (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                         (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
             if (speed == USB_SPEED_HIGH)
             {
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD))
-                USB_HostEhciItdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize itd */
+                (void)USB_HostEhciItdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize itd */
 #endif
             }
             else
             {
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD))
-                USB_HostEhciSitdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize sitd */
+                (void)USB_HostEhciSitdArrayDeinit(ehciInstance, ehciPipePointer); /* de-initialize sitd */
 #endif
             }
             break;
 #endif
 
         default:
+            /*no action*/
             break;
     }
 
@@ -3426,26 +3519,26 @@ static usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstanc
 {
     usb_status_t status = kStatus_USB_Success;
     uint32_t portScRegister;
-
-    switch (busControl)
+    usb_host_bus_control_t controlCode = (usb_host_bus_control_t)busControl;
+    switch (controlCode)
     {
         case kUSB_HostBusReset:
             /* reset port */
             portScRegister = ehciInstance->ehciIpBase->PORTSC1;
             portScRegister &= (~EHCI_PORTSC1_W1_BITS);
             ehciInstance->ehciIpBase->PORTSC1 = (portScRegister | USBHS_PORTSC1_PR_MASK);
-            while (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_PR_MASK)
+            while (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_PR_MASK))
             {
             }
             break;
 
         case kUSB_HostBusRestart:
-            ehciInstance->deviceAttached = kEHCIDeviceDetached;
+            ehciInstance->deviceAttached = (uint8_t)kEHCIDeviceDetached;
             ehciInstance->ehciIpBase->USBINTR |= (USBHS_USBINTR_PCE_MASK); /* enable ehci port change interrupt */
             break;
 
         case kUSB_HostBusEnableAttach: /* enable device attach */
-            if (ehciInstance->deviceAttached == kEHCIDeviceDetached)
+            if (ehciInstance->deviceAttached == (uint8_t)kEHCIDeviceDetached)
             {
                 ehciInstance->ehciIpBase->USBINTR |= (USBHS_USBINTR_PCE_MASK); /* enable ehci port change interrupt */
             }
@@ -3456,7 +3549,7 @@ static usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstanc
             break;
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
         case kUSB_HostBusSuspend:
-            if (ehciInstance->ehciIpBase->PORTSC1 && USBHS_PORTSC1_CCS_MASK)
+            if (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
             {
                 /* set timer1 */
                 ehciInstance->ehciIpBase->GPTIMER1LD = (1 * 1000); /* 1ms */
@@ -3465,9 +3558,9 @@ static usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstanc
 
                 USB_HostEhciStopAsync(ehciInstance);
                 USB_HostEhciStopPeriodic(ehciInstance);
-                while (ehciInstance->ehciIpBase->USBSTS & (USBHS_USBSTS_PS_MASK | USBHS_USBSTS_AS_MASK))
+                while (0U != (ehciInstance->ehciIpBase->USBSTS & (USBHS_USBSTS_PS_MASK | USBHS_USBSTS_AS_MASK)))
                 {
-                    __ASM("nop");
+                    __NOP();
                 }
                 ehciInstance->ehciIpBase->PORTSC1 &= ~USBHS_PORTSC1_WKCN_MASK;
                 ehciInstance->ehciIpBase->PORTSC1 |= USBHS_PORTSC1_WKDS_MASK;
@@ -3485,7 +3578,7 @@ static usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstanc
         case kUSB_HostBusResume:
             ehciInstance->ehciIpBase->PORTSC1 &= ~(USBHS_PORTSC1_SUSP_MASK); /* Clear Suspend bit */
             ehciInstance->ehciIpBase->PORTSC1 &= ~USBHS_PORTSC1_PHCD_MASK;
-            if (ehciInstance->deviceAttached != kEHCIDeviceDetached)
+            if (ehciInstance->deviceAttached != (uint8_t)kEHCIDeviceDetached)
             {
                 ehciInstance->busSuspendStatus = kBus_EhciStartResume;
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
@@ -3532,6 +3625,9 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
     uint32_t dataLength;
     uint32_t speed;
 #endif
+    void *temp;
+    uint32_t transferResults;
+    uint32_t transferOverlayResults;
 
     ehciPipePointer = ehciInstance->ehciRunningPipeList; /* check all the running pipes */
     while (ehciPipePointer != NULL)
@@ -3542,43 +3638,45 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
             case USB_ENDPOINT_INTERRUPT:
             case USB_ENDPOINT_CONTROL:
                 vltQhPointer = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh; /* pipe's qh */
-                transfer = vltQhPointer->ehciTransferHead;                             /* qh's transfer */
+                transfer     = vltQhPointer->ehciTransferHead;                         /* qh's transfer */
                 while (transfer != NULL)
                 {
                     nextTransfer = transfer->next;
                     /* normal case */
-                    vltQtdPointer = (volatile usb_host_ehci_qtd_t *)transfer->union2.unitTail;
-                    if ((vltQtdPointer->transferResults[0] & (EHCI_HOST_QTD_IOC_MASK)) &&
-                        (!(vltQtdPointer->transferResults[0] &
-                           EHCI_HOST_QTD_STATUS_ACTIVE_MASK))) /* transfer is done */
+                    vltQtdPointer          = (volatile usb_host_ehci_qtd_t *)transfer->union2.unitTail;
+                    transferResults        = vltQtdPointer->transferResults[0];
+                    transferOverlayResults = vltQhPointer->transferOverlayResults[0];
+                    if ((0U != (transferResults & (EHCI_HOST_QTD_IOC_MASK))) &&
+                        (0U == (transferResults & EHCI_HOST_QTD_STATUS_ACTIVE_MASK))) /* transfer is done */
                     {
-                        qtdStatus = (vltQtdPointer->transferResults[0] & EHCI_HOST_QTD_STATUS_ERROR_MASK);
+                        qtdStatus = (transferResults & EHCI_HOST_QTD_STATUS_ERROR_MASK);
                         transfer->transferSofar =
                             USB_HostEhciQtdListRelease(ehciInstance, (usb_host_ehci_qtd_t *)(transfer->union1.unitHead),
                                                        (usb_host_ehci_qtd_t *)(transfer->union2.unitTail));
                         transfer->transferSofar = (transfer->transferLength < transfer->transferSofar) ?
-                                                      0 :
+                                                      0U :
                                                       (transfer->transferLength - transfer->transferSofar);
 
                         vltQhPointer->ehciTransferHead = transfer->next;
-                        vltQhPointer->timeOutLabel = 0;
-                        vltQhPointer->timeOutValue = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
-                        if (qtdStatus) /* has errors */
+                        vltQhPointer->timeOutLabel     = 0U;
+                        vltQhPointer->timeOutValue     = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
+                        if (0U != qtdStatus) /* has errors */
                         {
-                            if (!(vltQhPointer->transferOverlayResults[0] & EHCI_HOST_QTD_STATUS_ACTIVE_MASK))
+                            if (0U == (transferOverlayResults & EHCI_HOST_QTD_STATUS_ACTIVE_MASK))
                             {
                                 vltQhPointer->transferOverlayResults[0] &=
                                     (~EHCI_HOST_QTD_STATUS_MASK); /* clear error status */
                             }
-                            if (qtdStatus & EHCI_HOST_QH_STATUS_NOSTALL_ERROR_MASK)
+                            if (0U != (qtdStatus & EHCI_HOST_QH_STATUS_NOSTALL_ERROR_MASK))
                             {
+                                /* callback function is different from the current condition */
                                 transfer->callbackFn(transfer->callbackParam, transfer,
                                                      kStatus_USB_TransferFailed); /* transfer fail */
                             }
                             else
                             {
-                                transfer->callbackFn(transfer->callbackParam, transfer,
-                                                     kStatus_USB_TransferStall); /* transfer stall */
+                                /* callback function is different from the current condition */
+                                transfer->callbackFn(transfer->callbackParam, transfer, kStatus_USB_TransferStall);
                             }
                         }
                         else
@@ -3602,8 +3700,8 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
                                     {
                                         break;
                                     }
-                                    ehciClearPipePointer =
-                                        (usb_host_ehci_pipe_t *)ehciClearPipePointer->pipeCommon.next;
+                                    temp                 = (void *)ehciClearPipePointer->pipeCommon.next;
+                                    ehciClearPipePointer = (usb_host_ehci_pipe_t *)temp;
                                 }
 
                                 if ((ehciClearPipePointer != NULL) &&
@@ -3614,18 +3712,19 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
                                         ->transferOverlayResults[0] &= (~EHCI_HOST_QTD_DT_MASK);
                                 }
                             }
+                            /* callback function is different from the current condition */
                             transfer->callbackFn(transfer->callbackParam, transfer,
                                                  kStatus_USB_Success); /* transfer success */
                         }
                     }
-                    else if ((!(vltQhPointer->transferOverlayResults[0] & EHCI_HOST_QTD_STATUS_ACTIVE_MASK)) &&
-                             (vltQhPointer->transferOverlayResults[0] &
-                              EHCI_HOST_QH_STATUS_ERROR_MASK)) /* there is error and transfer is done */
+                    else if ((0U == (transferOverlayResults & EHCI_HOST_QTD_STATUS_ACTIVE_MASK)) &&
+                             (0U != (transferOverlayResults &
+                                     EHCI_HOST_QH_STATUS_ERROR_MASK))) /* there is error and transfer is done */
                     {
-                        qtdStatus = (vltQhPointer->transferOverlayResults[0] & EHCI_HOST_QH_STATUS_ERROR_MASK);
+                        qtdStatus     = (vltQhPointer->transferOverlayResults[0] & EHCI_HOST_QH_STATUS_ERROR_MASK);
                         vltQtdPointer = (volatile usb_host_ehci_qtd_t *)(vltQhPointer->currentQtdPointer);
 
-                        if (((uint32_t)vltQtdPointer & EHCI_HOST_T_INVALID_VALUE) ||
+                        if ((0U != ((uint32_t)vltQtdPointer & EHCI_HOST_T_INVALID_VALUE)) ||
                             (vltQtdPointer == NULL)) /* the error status is unreasonable */
                         {
                             vltQhPointer->transferOverlayResults[0] &=
@@ -3634,13 +3733,13 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
                         else
                         {
                             /* remove qtd from qh */
-                            while ((vltQtdPointer != NULL) && (!(vltQtdPointer->transferResults[0] &
-                                                                 EHCI_HOST_QTD_IOC_MASK))) /* find the IOC qtd */
+                            while ((vltQtdPointer != NULL) &&
+                                   (0U == (transferResults & EHCI_HOST_QTD_IOC_MASK))) /* find the IOC qtd */
                             {
                                 vltQtdPointer = (volatile usb_host_ehci_qtd_t *)vltQtdPointer->nextQtdPointer;
                             }
 
-                            vltQhPointer->nextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
+                            vltQhPointer->nextQtdPointer    = EHCI_HOST_T_INVALID_VALUE;
                             vltQhPointer->currentQtdPointer = EHCI_HOST_T_INVALID_VALUE;
                             vltQhPointer->transferOverlayResults[0] &=
                                 (~EHCI_HOST_QTD_STATUS_MASK); /* clear error status */
@@ -3653,18 +3752,20 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
                                 ehciInstance, (usb_host_ehci_qtd_t *)(transfer->union1.unitHead),
                                 (usb_host_ehci_qtd_t *)(transfer->union2.unitTail));
                             transfer->transferSofar = (transfer->transferLength < transfer->transferSofar) ?
-                                                          0 :
+                                                          0U :
                                                           (transfer->transferLength - transfer->transferSofar);
                             vltQhPointer->ehciTransferHead = transfer->next;
-                            vltQhPointer->timeOutLabel = 0;
-                            vltQhPointer->timeOutValue = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
-                            if (qtdStatus & EHCI_HOST_QH_STATUS_NOSTALL_ERROR_MASK)
+                            vltQhPointer->timeOutLabel     = 0U;
+                            vltQhPointer->timeOutValue     = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
+                            if (0U != (qtdStatus & EHCI_HOST_QH_STATUS_NOSTALL_ERROR_MASK))
                             {
+                                /* callback function is different from the current condition */
                                 transfer->callbackFn(transfer->callbackParam, transfer,
                                                      kStatus_USB_TransferFailed); /* transfer fail */
                             }
                             else
                             {
+                                /* callback function is different from the current condition */
                                 transfer->callbackFn(transfer->callbackParam, transfer,
                                                      kStatus_USB_TransferStall); /* transfer stall */
                             }
@@ -3680,41 +3781,42 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
 #if (((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD)) || \
      ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD)))
             case USB_ENDPOINT_ISOCHRONOUS:
-                qtdStatus = 0; /* qtdStatus means break here, because there is only one break in while for misra */
+                qtdStatus  = 0; /* qtdStatus means break here, because there is only one break in while for misra */
                 isoPointer = (usb_host_ehci_iso_t *)ehciPipePointer->ehciQh; /* pipe's usb_host_ehci_iso_t */
-                transfer = isoPointer->ehciTransferHead;                     /* usb_host_ehci_iso_t's transfer */
+                transfer   = isoPointer->ehciTransferHead;                   /* usb_host_ehci_iso_t's transfer */
                 while (transfer != NULL)
                 {
                     nextTransfer = transfer->next;
-                    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
-                                                           kUSB_HostGetDeviceSpeed, &speed);
+                    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                                 (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
                     if (speed == USB_SPEED_HIGH)
                     {
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD))
                         vltItdPointer =
                             (volatile usb_host_ehci_itd_t *)(transfer->union2.unitTail); /* transfer's last itd */
-                        for (index = 0; index < 8; ++index)
+                        for (index = 0; index < 8U; ++index)
                         {
-                            if (vltItdPointer->transactions[index] & EHCI_HOST_ITD_STATUS_ACTIVE_MASK)
+                            if (0U != (vltItdPointer->transactions[index] & EHCI_HOST_ITD_STATUS_ACTIVE_MASK))
                             {
                                 break;
                             }
                         }
-                        if (index == 8) /* transfer is done */
+                        if (index == 8U) /* transfer is done */
                         {
                             /* remove itd from frame list and release itd */
-                            dataLength = USB_HostEhciItdArrayRelease(ehciInstance,
+                            dataLength                   = USB_HostEhciItdArrayRelease(ehciInstance,
                                                                      (usb_host_ehci_itd_t *)transfer->union1.unitHead,
                                                                      (usb_host_ehci_itd_t *)transfer->union2.unitTail);
-                            transfer->transferSofar = dataLength;
+                            transfer->transferSofar      = dataLength;
                             isoPointer->ehciTransferHead = transfer->next;
+                            /* callback function is different from the current condition */
                             transfer->callbackFn(transfer->callbackParam, transfer,
                                                  kStatus_USB_Success); /* transfer callback success */
                             /* TODO: iso callback error */
                         }
                         else
                         {
-                            qtdStatus = 1; /* break */
+                            qtdStatus = 1U; /* break */
                         }
 #endif
                     }
@@ -3723,26 +3825,27 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD))
                         vltSitdPointer =
                             (volatile usb_host_ehci_sitd_t *)(transfer->union2.unitTail); /* transfer's last sitd */
-                        if (!(vltSitdPointer->transferResults[0] &
-                              EHCI_HOST_SITD_STATUS_ACTIVE_MASK)) /* transfer is done */
+                        if (0U == (vltSitdPointer->transferResults[0] &
+                                   EHCI_HOST_SITD_STATUS_ACTIVE_MASK)) /* transfer is done */
                         {
                             /* remove sitd from frame list and release itd */
                             dataLength = USB_HostEhciSitdArrayRelease(
                                 ehciInstance, (usb_host_ehci_sitd_t *)transfer->union1.unitHead,
                                 (usb_host_ehci_sitd_t *)transfer->union2.unitTail);
-                            transfer->transferSofar = dataLength;
+                            transfer->transferSofar      = transfer->transferLength - dataLength;
                             isoPointer->ehciTransferHead = transfer->next;
+                            /* callback function is different from the current condition */
                             transfer->callbackFn(transfer->callbackParam, transfer,
                                                  kStatus_USB_Success); /* transfer callback success */
                             /* TODO: iso callback error */
                         }
                         else
                         {
-                            qtdStatus = 1; /* break */
+                            qtdStatus = 1U; /* break */
                         }
 #endif
                     }
-                    if (qtdStatus == 1)
+                    if (qtdStatus == 1U)
                     {
                         break;
                     }
@@ -3752,9 +3855,11 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
 #endif
 
             default:
+                /*no action*/
                 break;
         }
-        ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+        temp            = (void *)ehciPipePointer->pipeCommon.next;
+        ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
     }
 }
 
@@ -3762,28 +3867,28 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
 {
     /* note: only has one port */
     uint32_t portScRegister = ehciInstance->ehciIpBase->PORTSC1;
-    int32_t sofStart = 0;
-    int32_t sofCount = 0;
+    uint32_t sofStart       = 0;
+    uint32_t sofCount       = 0;
     uint32_t index;
 
-    if (portScRegister & USBHS_PORTSC1_CSC_MASK) /* connection status change */
+    if (0U != (portScRegister & USBHS_PORTSC1_CSC_MASK)) /* connection status change */
     {
-        sofStart = (int32_t)(ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
+        sofStart = (ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
 
         /* process CSC bit */
-        while (1)
+        while (1U == 1U)
         {
             portScRegister = ehciInstance->ehciIpBase->PORTSC1;
-            if (portScRegister & USBHS_PORTSC1_CSC_MASK)
+            if (0U != (portScRegister & USBHS_PORTSC1_CSC_MASK))
             {
                 /* clear csc bit */
                 portScRegister = ehciInstance->ehciIpBase->PORTSC1;
                 portScRegister &= (~EHCI_PORTSC1_W1_BITS);
                 ehciInstance->ehciIpBase->PORTSC1 = (portScRegister | USBHS_PORTSC1_CSC_MASK);
             }
-            sofCount = (int32_t)(ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
-            if (((sofCount - sofStart + EHCI_MAX_UFRAME_VALUE + 1) & EHCI_MAX_UFRAME_VALUE) >
-                (1 * 8)) /* delay 1ms to clear CSC */
+            sofCount = (ehciInstance->ehciIpBase->FRINDEX & EHCI_MAX_UFRAME_VALUE);
+            if (((sofCount + EHCI_MAX_UFRAME_VALUE + 1U - sofStart) & EHCI_MAX_UFRAME_VALUE) >
+                (1U * 8U)) /* delay 1ms to clear CSC */
             {
                 break;
             }
@@ -3792,10 +3897,10 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
 
     /* process CCS bit */
     portScRegister = ehciInstance->ehciIpBase->PORTSC1;
-    if (portScRegister & USBHS_PORTSC1_CCS_MASK) /* process attach */
+    if (0U != (portScRegister & USBHS_PORTSC1_CCS_MASK)) /* process attach */
     {
-        if ((ehciInstance->deviceAttached == kEHCIDevicePhyAttached) ||
-            (ehciInstance->deviceAttached == kEHCIDeviceAttached))
+        if ((ehciInstance->deviceAttached == (uint8_t)kEHCIDevicePhyAttached) ||
+            (ehciInstance->deviceAttached == (uint8_t)kEHCIDeviceAttached))
         {
             return;
         }
@@ -3806,25 +3911,25 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
         for (index = 0; index < USB_HOST_EHCI_PORT_CONNECT_DEBOUNCE_DELAY; ++index)
         {
             USB_HostEhciDelay(ehciInstance->ehciIpBase, 1);
-            if (!(ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
+            if (0U == (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
             {
                 break;
             }
         }
         if (index < USB_HOST_EHCI_PORT_CONNECT_DEBOUNCE_DELAY) /* CCS is cleared */
         {
-            ehciInstance->deviceAttached = kEHCIDeviceDetached;
+            ehciInstance->deviceAttached = (uint8_t)kEHCIDeviceDetached;
             return;
         }
         /* reset port */
         portScRegister = ehciInstance->ehciIpBase->PORTSC1;
         portScRegister &= (~EHCI_PORTSC1_W1_BITS);
         ehciInstance->ehciIpBase->PORTSC1 = (portScRegister | USBHS_PORTSC1_PR_MASK);
-        while (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_PR_MASK)
+        while (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_PR_MASK))
         {
         }
         ehciInstance->firstDeviceSpeed =
-            ((ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_PSPD_MASK) >> USBHS_PORTSC1_PSPD_SHIFT);
+            (uint8_t)((ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_PSPD_MASK) >> USBHS_PORTSC1_PSPD_SHIFT);
         /* enable ehci phy disconnection */
         if (ehciInstance->firstDeviceSpeed == USB_SPEED_HIGH)
         {
@@ -3834,16 +3939,16 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
         /* wait for reset */
         USB_HostEhciDelay(ehciInstance->ehciIpBase, USB_HOST_EHCI_PORT_RESET_DELAY);
         /* process attach */
-        USB_OsaEventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_DEVICE_ATTACH);
+        (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_DEVICE_ATTACH);
         /* gpt timer start */
         ehciInstance->ehciIpBase->GPTIMER0CTL |=
             (USBHS_GPTIMER0CTL_RUN_MASK | USBHS_GPTIMER0CTL_MODE_MASK | USBHS_GPTIMER0CTL_RST_MASK);
-        ehciInstance->deviceAttached = kEHCIDevicePhyAttached;
+        ehciInstance->deviceAttached = (uint8_t)kEHCIDevicePhyAttached;
     }
     else
     {
-        if ((ehciInstance->deviceAttached == kEHCIDevicePhyAttached) ||
-            (ehciInstance->deviceAttached == kEHCIDeviceAttached))
+        if ((ehciInstance->deviceAttached == (uint8_t)kEHCIDevicePhyAttached) ||
+            (ehciInstance->deviceAttached == (uint8_t)kEHCIDeviceAttached))
         {
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
             ehciInstance->busSuspendStatus = kBus_EhciIdle;
@@ -3854,7 +3959,7 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
             /* disable async and periodic */
             USB_HostEhciStopAsync(ehciInstance);
             USB_HostEhciStopPeriodic(ehciInstance);
-            USB_OsaEventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_DEVICE_DETACH);
+            (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_DEVICE_DETACH);
         }
     }
 }
@@ -3862,11 +3967,12 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
 static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
 {
     volatile usb_host_ehci_qh_t *vltQhPointer;
-    volatile usb_host_ehci_qtd_t *vltQtdPointer;
+    usb_host_ehci_qtd_t *vltQtdPointer;
     usb_host_transfer_t *transfer;
     uint32_t backValue;
-    volatile uint32_t *totalBytesAddress = NULL;
+    volatile uint32_t *totalBytesAddress  = NULL;
     usb_host_ehci_pipe_t *ehciPipePointer = ehciInstance->ehciRunningPipeList;
+    void *temp;
     uint8_t timeoutLabel;
 
     while (ehciPipePointer != NULL)
@@ -3876,13 +3982,13 @@ static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
             case USB_ENDPOINT_BULK:
             case USB_ENDPOINT_CONTROL:
                 vltQhPointer = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh; /* pipe's qh */
-                transfer = vltQhPointer->ehciTransferHead;                             /* qh's transfer */
+                transfer     = vltQhPointer->ehciTransferHead;                         /* qh's transfer */
                 if ((transfer != NULL))                                                /* there is transfering data */
                 {
-                    timeoutLabel = 0;
-                    if (ehciInstance->deviceAttached != kEHCIDeviceAttached)
+                    timeoutLabel = 0U;
+                    if (ehciInstance->deviceAttached != (uint8_t)kEHCIDeviceAttached)
                     {
-                        vltQtdPointer = (volatile usb_host_ehci_qtd_t *)transfer->union2.unitTail;
+                        vltQtdPointer = (usb_host_ehci_qtd_t *)transfer->union2.unitTail;
 
                         vltQhPointer->nextQtdPointer = EHCI_HOST_T_INVALID_VALUE; /* invalid next qtd */
                         vltQhPointer->transferOverlayResults[0] &=
@@ -3891,15 +3997,15 @@ static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
                     }
                     else
                     {
-                        if (vltQhPointer->transferOverlayResults[0] & EHCI_HOST_QTD_STATUS_ACTIVE_MASK)
+                        if (0U != (vltQhPointer->transferOverlayResults[0] & EHCI_HOST_QTD_STATUS_ACTIVE_MASK))
                         {
-                            vltQtdPointer = (volatile usb_host_ehci_qtd_t *)vltQhPointer->currentQtdPointer;
+                            vltQtdPointer     = (usb_host_ehci_qtd_t *)vltQhPointer->currentQtdPointer;
                             totalBytesAddress = &(vltQhPointer->transferOverlayResults[0]);
                         }
                         else
                         {
-                            vltQtdPointer = (volatile usb_host_ehci_qtd_t *)transfer->union2.unitTail;
-                            totalBytesAddress = ((uint32_t *)vltQtdPointer + 2);
+                            vltQtdPointer     = (usb_host_ehci_qtd_t *)transfer->union2.unitTail;
+                            totalBytesAddress = &(vltQtdPointer->transferResults[0]);
                         }
 
                         backValue =
@@ -3908,7 +4014,7 @@ static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
                         if (vltQhPointer->timeOutLabel != backValue) /* use total bytes to reflect the time out */
                         {
                             vltQhPointer->timeOutValue = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
-                            vltQhPointer->timeOutLabel = backValue;
+                            vltQhPointer->timeOutLabel = (uint16_t)backValue;
                         }
                         else
                         {
@@ -3916,7 +4022,7 @@ static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
                              * USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE
                              */
                             (vltQhPointer->timeOutValue)--;
-                            if (vltQhPointer->timeOutValue == 0)
+                            if (vltQhPointer->timeOutValue == 0U)
                             {
                                 /* stop the qh schedule */
                                 USB_HostEhciStopAsync(ehciInstance);
@@ -3931,22 +4037,24 @@ static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
                                     vltQhPointer->transferOverlayResults[0] &=
                                         (~EHCI_HOST_QTD_STATUS_MASK); /* clear error status */
                                     USB_HostEhciStartAsync(ehciInstance);
-                                    timeoutLabel = 1;
+                                    timeoutLabel = 1U;
                                 }
                             }
                         }
                     }
 
-                    if (timeoutLabel == 1)
+                    if (timeoutLabel == 1U)
                     {
                         /* remove qtd from qh */
+                        temp = (void *)vltQhPointer->ehciTransferTail;
                         while ((vltQtdPointer != NULL) &&
-                               (!(vltQtdPointer->transferResults[0] & EHCI_HOST_QTD_IOC_MASK)) &&
-                               (vltQtdPointer != (usb_host_ehci_qtd_t *)vltQhPointer->ehciTransferTail))
+                               (0U == (vltQtdPointer->transferResults[0] & EHCI_HOST_QTD_IOC_MASK)) &&
+                               (vltQtdPointer != (usb_host_ehci_qtd_t *)temp))
                         {
-                            vltQtdPointer = (volatile usb_host_ehci_qtd_t *)vltQtdPointer->nextQtdPointer;
+                            vltQtdPointer = (usb_host_ehci_qtd_t *)vltQtdPointer->nextQtdPointer;
                         }
-                        if ((vltQtdPointer != NULL) && (!(vltQtdPointer->nextQtdPointer & EHCI_HOST_T_INVALID_VALUE)))
+                        if ((vltQtdPointer != NULL) &&
+                            (0U == (vltQtdPointer->nextQtdPointer & EHCI_HOST_T_INVALID_VALUE)))
                         {
                             vltQhPointer->nextQtdPointer =
                                 vltQtdPointer->nextQtdPointer; /* start qh if there are other qtd that don't belong to
@@ -3956,38 +4064,41 @@ static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
                             USB_HostEhciQtdListRelease(ehciInstance, (usb_host_ehci_qtd_t *)(transfer->union1.unitHead),
                                                        (usb_host_ehci_qtd_t *)(transfer->union2.unitTail));
                         transfer->transferSofar = (transfer->transferLength < transfer->transferSofar) ?
-                                                      0 :
+                                                      0U :
                                                       (transfer->transferLength - transfer->transferSofar);
 
                         vltQhPointer->ehciTransferHead = transfer->next;
-                        vltQhPointer->timeOutValue = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
+                        vltQhPointer->timeOutValue     = USB_HOST_EHCI_CONTROL_BULK_TIME_OUT_VALUE;
+                        /* callback function is different from the current condition */
                         transfer->callbackFn(transfer->callbackParam, transfer, kStatus_USB_TransferFailed);
                     }
                 }
                 break;
             default:
+                /*no action*/
                 break;
         }
-        ehciPipePointer = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+        temp            = (void *)ehciPipePointer->pipeCommon.next;
+        ehciPipePointer = (usb_host_ehci_pipe_t *)temp;
     }
 }
 
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
 static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
 {
-    if (ehciInstance->deviceAttached != kEHCIDeviceDetached)
+    if (ehciInstance->deviceAttached != (uint8_t)kEHCIDeviceDetached)
     {
         if (kBus_EhciStartSuspend == ehciInstance->busSuspendStatus)
         {
             usb_host_instance_t *hostPointer = (usb_host_instance_t *)ehciInstance->hostHandle;
 
-            if (0 == ehciInstance->matchTick)
+            if (0U == ehciInstance->matchTick)
             {
                 ehciInstance->matchTick = hostPointer->hwTick;
             }
             else
             {
-                if ((hostPointer->hwTick - ehciInstance->matchTick) >= 5)
+                if ((hostPointer->hwTick - ehciInstance->matchTick) >= 5U)
                 {
                     ehciInstance->ehciIpBase->USBCMD &= ~USBHS_USBCMD_RS_MASK;
                     ehciInstance->ehciIpBase->USBSTS |= USBHS_USBSTS_SRI_MASK;
@@ -4004,9 +4115,9 @@ static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
 
                     ehciInstance->registerPhyBase->PWD = 0xFFFFFFFFU;
 
-                    while (ehciInstance->registerPhyBase->CTRL & (USBPHY_CTRL_UTMI_SUSPENDM_MASK))
+                    while (0U != (ehciInstance->registerPhyBase->CTRL & (USBPHY_CTRL_UTMI_SUSPENDM_MASK)))
                     {
-                        __ASM("nop");
+                        __NOP();
                     }
 
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
@@ -4018,8 +4129,8 @@ static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
                     ehciInstance->ehciIpBase->USBGENCTRL = USBHS_USBGENCTRL_WU_IE_MASK;
 #endif
                     ehciInstance->registerPhyBase->CTRL |= USBPHY_CTRL_CLKGATE_MASK;
-                    hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
-                                                kUSB_HostEventSuspended); /* call host callback function */
+                    (void)hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
+                                                      kUSB_HostEventSuspended); /* call host callback function */
                     ehciInstance->busSuspendStatus = kBus_EhciSuspended;
                 }
             }
@@ -4027,17 +4138,17 @@ static void USB_HostEhciTimer1(usb_host_ehci_instance_t *ehciInstance)
         else if (kBus_EhciStartResume == ehciInstance->busSuspendStatus)
         {
             usb_host_instance_t *hostPointer = (usb_host_instance_t *)ehciInstance->hostHandle;
-            if (!(ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_FPR_MASK))
+            if (0U == (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_FPR_MASK))
             {
                 ehciInstance->ehciIpBase->PORTSC1 &= ~USBHS_PORTSC1_WKDS_MASK;
-                if (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK)
+                if (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
                 {
                     USB_HostEhciStartAsync(ehciInstance);
                     USB_HostEhciStartPeriodic(ehciInstance);
                 }
-                hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
-                                            kUSB_HostEventResumed); /* call host callback function */
-                hostPointer->suspendedDevice = NULL;
+                (void)hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
+                                                  kUSB_HostEventResumed); /* call host callback function */
+                hostPointer->suspendedDevice   = NULL;
                 ehciInstance->busSuspendStatus = kBus_EhciIdle;
                 ehciInstance->ehciIpBase->USBINTR &= ~(USBHS_USBINTR_TIE1_MASK);
             }
@@ -4059,30 +4170,31 @@ usb_status_t USB_HostEhciCreate(uint8_t controllerId,
                                 usb_host_controller_handle *controllerHandle)
 {
     uint32_t index = 0;
-    usb_osa_status_t osaStatus;
+    osa_status_t osaStatus;
     usb_host_ehci_instance_t *ehciInstance;
     uint32_t usbhsBaseAddrs[] = USBHS_BASE_ADDRS;
-    usb_host_ehci_data_t *usbHostEhciData[] = USB_HOST_EHCI_DATA_ARRAY;
-    uint8_t *usbHostEhciFrameList[] = USB_HOST_EHCI_FRAME_LIST_ARRAY;
+    usb_host_ehci_data_t *usbHostEhciData[USB_HOST_CONFIG_EHCI];
     uint32_t *framePointer;
+    void *temp;
+    uint8_t instanceIndex = 0U;
 
-    if ((uint32_t)(controllerId - kUSB_ControllerEhci0) >= (sizeof(usbhsBaseAddrs) / sizeof(usbhsBaseAddrs[0])))
+    if ((controllerId - (uint8_t)kUSB_ControllerEhci0) >= (sizeof(usbhsBaseAddrs) / sizeof(usbhsBaseAddrs[0])))
     {
         return kStatus_USB_ControllerNotFound;
     }
 
     *controllerHandle = NULL;
-    ehciInstance = (usb_host_ehci_instance_t *)USB_OsaMemoryAllocate(
+    ehciInstance      = (usb_host_ehci_instance_t *)OSA_MemoryAllocate(
         sizeof(usb_host_ehci_instance_t)); /* malloc host ehci instance */
     if (ehciInstance == NULL)
     {
         return kStatus_USB_AllocFail;
     }
-    ehciInstance->controllerId = controllerId;
-    ehciInstance->hostHandle = upperLayerHandle;
-    ehciInstance->deviceAttached = kEHCIDeviceDetached;
-    ehciInstance->ehciIpBase = (USBHS_Type *)
-        usbhsBaseAddrs[controllerId - kUSB_ControllerEhci0]; /* operate ehci ip through the base address */
+    ehciInstance->controllerId   = controllerId;
+    ehciInstance->hostHandle     = upperLayerHandle;
+    ehciInstance->deviceAttached = (uint8_t)kEHCIDeviceDetached;
+    ehciInstance->ehciIpBase     = (USBHS_Type *)
+        usbhsBaseAddrs[controllerId - (uint8_t)kUSB_ControllerEhci0]; /* operate ehci ip through the base address */
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
     ehciInstance->busSuspendStatus = kBus_EhciIdle;
 
@@ -4097,95 +4209,150 @@ usb_status_t USB_HostEhciCreate(uint8_t controllerId,
 
 #endif
 
-    if (USB_HostEhciResetIP(ehciInstance) != kStatus_USB_Success) /* reset ehci ip */
+    if ((USB_HostEhciResetIP(ehciInstance) != kStatus_USB_Success) ||
+        ((ehciInstance->controllerId < (uint8_t)kUSB_ControllerEhci0))) /* reset ehci ip */
     {
-        USB_OsaMemoryFree(ehciInstance);
+        OSA_MemoryFree(ehciInstance);
         return kStatus_USB_Error;
     }
 
-    /* initialize ehci frame list */
-    ehciInstance->ehciFrameList = usbHostEhciFrameList[ehciInstance->controllerId - kUSB_ControllerEhci0];
+#if (USB_HOST_CONFIG_EHCI == 1U)
+    if (0U == usbHostEhciFramListStatus[0])
+    {
+        usbHostEhciFramListStatus[0] = 1U;
+        instanceIndex                = 0U;
+        ehciInstance->ehciFrameList  = &s_UsbHostEhciFrameList1[0];
+    }
+#elif (USB_HOST_CONFIG_EHCI == 2U)
+    if (0U == usbHostEhciFramListStatus[0])
+    {
+        usbHostEhciFramListStatus[0] = 1U;
+        instanceIndex                = 0U;
+        ehciInstance->ehciFrameList  = &s_UsbHostEhciFrameList1[0];
+    }
+    else if (0U == usbHostEhciFramListStatus[1])
+    {
+        usbHostEhciFramListStatus[1] = 1U;
+        instanceIndex                = 1U;
+        ehciInstance->ehciFrameList  = &s_UsbHostEhciFrameList2[0];
+    }
+    else
+    {
+        /*no action*/
+    }
+#endif
+    if (ehciInstance->ehciFrameList == NULL)
+    {
+        OSA_MemoryFree(ehciInstance);
+        return kStatus_USB_Error;
+    }
 
-    /* initialize ehci units */
-    ehciInstance->ehciUnitBase = (uint32_t *)(usbHostEhciData[ehciInstance->controllerId - kUSB_ControllerEhci0]);
+#if (USB_HOST_CONFIG_EHCI == 1U)
+    usbHostEhciData[0] = &s_UsbHostEhciData1;
+#elif (USB_HOST_CONFIG_EHCI == 2U)
+    usbHostEhciData[0] = &s_UsbHostEhciData1;
+    usbHostEhciData[1] = &s_UsbHostEhciData2;
+#else
+#error "Please increase the instance count."
+#endif
+
+    temp                       = (void *)usbHostEhciData[instanceIndex];
+    ehciInstance->ehciUnitBase = (uint32_t *)(temp);
     /* initialize qh/qtd/itd/sitd/iso list */
-    ehciInstance->ehciQhList = (usb_host_ehci_qh_t *)((uint32_t)(ehciInstance->ehciUnitBase));
+    ehciInstance->ehciQhList  = (usb_host_ehci_qh_t *)((uint32_t)(ehciInstance->ehciUnitBase));
     ehciInstance->ehciQtdHead = (usb_host_ehci_qtd_t *)((uint32_t)ehciInstance->ehciQhList +
                                                         (sizeof(usb_host_ehci_qh_t) * USB_HOST_CONFIG_EHCI_MAX_QH));
     ehciInstance->ehciItdList = (usb_host_ehci_itd_t *)((uint32_t)ehciInstance->ehciQtdHead +
                                                         (sizeof(usb_host_ehci_qtd_t) * USB_HOST_CONFIG_EHCI_MAX_QTD));
-    ehciInstance->ehciSitdList = ehciInstance->ehciSitdIndexBase =
+#if ((defined(USB_HOST_CONFIG_EHCI_MAX_ITD)) && (USB_HOST_CONFIG_EHCI_MAX_ITD > 0U))
+    /* If one ITD's first 32 bytes and next 32 bytes are in different 4K region,
+     * the ITD need move 32 bytes because the ITD cannot cross over 4K boundary.
+     */
+    index = ((((((uint32_t)(ehciInstance->ehciItdList)) + 4095U) & 0xFFFFF000U) -
+              ((uint32_t)(ehciInstance->ehciItdList))) >>
+             5U);
+    if (((index / 3U) < USB_HOST_CONFIG_EHCI_MAX_ITD) && ((index % 3U) == 1U))
+    {
+        ehciInstance->ehciItdList = (usb_host_ehci_itd_t *)(((uint32_t)(ehciInstance->ehciItdList)) + 32U);
+    }
+#endif
+    ehciInstance->ehciSitdIndexBase =
         (usb_host_ehci_sitd_t *)((uint32_t)ehciInstance->ehciItdList +
                                  (sizeof(usb_host_ehci_itd_t) * USB_HOST_CONFIG_EHCI_MAX_ITD));
-    ehciInstance->ehciIsoList = (usb_host_ehci_iso_t *)((uint32_t)ehciInstance->ehciSitdList +
+    ehciInstance->ehciSitdList = ehciInstance->ehciSitdIndexBase;
+    ehciInstance->ehciIsoList  = (usb_host_ehci_iso_t *)((uint32_t)ehciInstance->ehciSitdList +
                                                         (sizeof(usb_host_ehci_sitd_t) * USB_HOST_CONFIG_EHCI_MAX_SITD));
     ehciInstance->ehciPipeIndexBase =
         (usb_host_ehci_pipe_t *)((uint32_t)ehciInstance->ehciIsoList +
                                  (sizeof(usb_host_ehci_iso_t) * USB_HOST_EHCI_ISO_NUMBER));
-    for (index = 1; index < USB_HOST_CONFIG_EHCI_MAX_QH; ++index)
+    for (index = 1U; index < USB_HOST_CONFIG_EHCI_MAX_QH; ++index)
     {
-        ehciInstance->ehciQhList[index - 1].horizontalLinkPointer = (uint32_t)(&ehciInstance->ehciQhList[index]);
+        ehciInstance->ehciQhList[index - 1U].horizontalLinkPointer = (uint32_t)(&ehciInstance->ehciQhList[index]);
     }
-    ehciInstance->ehciQhList[USB_HOST_CONFIG_EHCI_MAX_QH - 1].horizontalLinkPointer = (uint32_t)NULL;
+    ehciInstance->ehciQhList[USB_HOST_CONFIG_EHCI_MAX_QH - 1U].horizontalLinkPointer = 0U;
     for (index = 1; index < USB_HOST_CONFIG_EHCI_MAX_QTD; ++index)
     {
-        ehciInstance->ehciQtdHead[index - 1].nextQtdPointer = (uint32_t)(&ehciInstance->ehciQtdHead[index]);
+        ehciInstance->ehciQtdHead[index - 1U].nextQtdPointer = (uint32_t)(&ehciInstance->ehciQtdHead[index]);
     }
-    ehciInstance->ehciQtdNumber = USB_HOST_CONFIG_EHCI_MAX_QTD;
-    ehciInstance->ehciQtdHead[USB_HOST_CONFIG_EHCI_MAX_QTD - 1].nextQtdPointer = (uint32_t)NULL;
-    ehciInstance->ehciQtdTail = &ehciInstance->ehciQtdHead[USB_HOST_CONFIG_EHCI_MAX_QTD - 1];
+    ehciInstance->ehciQtdNumber                                                 = USB_HOST_CONFIG_EHCI_MAX_QTD;
+    ehciInstance->ehciQtdHead[USB_HOST_CONFIG_EHCI_MAX_QTD - 1U].nextQtdPointer = 0U;
+    ehciInstance->ehciQtdTail = &ehciInstance->ehciQtdHead[USB_HOST_CONFIG_EHCI_MAX_QTD - 1U];
 
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD))
     for (index = 1; index < USB_HOST_CONFIG_EHCI_MAX_ITD; ++index)
     {
-        ehciInstance->ehciItdList[index - 1].nextLinkPointer = (uint32_t)(&ehciInstance->ehciItdList[index]);
+        ehciInstance->ehciItdList[index - 1U].nextItdPointer =
+            (usb_host_ehci_itd_t *)(&ehciInstance->ehciItdList[index]);
     }
-    ehciInstance->ehciItdNumber = USB_HOST_CONFIG_EHCI_MAX_ITD;
-    ehciInstance->ehciItdList[USB_HOST_CONFIG_EHCI_MAX_ITD - 1].nextLinkPointer = (uint32_t)NULL;
+    ehciInstance->ehciItdNumber                                                 = USB_HOST_CONFIG_EHCI_MAX_ITD;
+    ehciInstance->ehciItdList[USB_HOST_CONFIG_EHCI_MAX_ITD - 1U].nextItdPointer = NULL;
 #endif /* USB_HOST_CONFIG_EHCI_MAX_ITD */
 
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD))
     for (index = 1; index < USB_HOST_CONFIG_EHCI_MAX_SITD; ++index)
     {
-        ehciInstance->ehciSitdList[index - 1].nextLinkPointer = (uint32_t)(&ehciInstance->ehciSitdList[index]);
+        ehciInstance->ehciSitdList[index - 1U].nextLinkPointer = (uint32_t)(&ehciInstance->ehciSitdList[index]);
     }
-    ehciInstance->ehciSitdNumber = USB_HOST_CONFIG_EHCI_MAX_SITD;
-    ehciInstance->ehciSitdList[USB_HOST_CONFIG_EHCI_MAX_SITD - 1].nextLinkPointer = (uint32_t)NULL;
+    ehciInstance->ehciSitdNumber                                                   = USB_HOST_CONFIG_EHCI_MAX_SITD;
+    ehciInstance->ehciSitdList[USB_HOST_CONFIG_EHCI_MAX_SITD - 1U].nextLinkPointer = 0U;
 #endif /* USB_HOST_CONFIG_EHCI_MAX_SITD */
 
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD))
     for (index = 1; index < USB_HOST_EHCI_ISO_NUMBER; ++index)
     {
-        ehciInstance->ehciIsoList[index - 1].next = &ehciInstance->ehciIsoList[index];
+        ehciInstance->ehciIsoList[index - 1U].next = &ehciInstance->ehciIsoList[index];
     }
-    ehciInstance->ehciIsoList[USB_HOST_EHCI_ISO_NUMBER - 1].next = NULL;
+    ehciInstance->ehciIsoList[USB_HOST_EHCI_ISO_NUMBER - 1U].next = NULL;
 #endif
 
     /* initialize pipes */
     ehciInstance->ehciPipeList = ehciInstance->ehciPipeIndexBase;
     for (index = 1; index < USB_HOST_CONFIG_MAX_PIPES; ++index)
     {
-        ehciInstance->ehciPipeList[index - 1].pipeCommon.next = (usb_host_pipe_t *)&ehciInstance->ehciPipeList[index];
+        temp                                                   = (void *)&ehciInstance->ehciPipeList[index];
+        ehciInstance->ehciPipeList[index - 1U].pipeCommon.next = (usb_host_pipe_t *)temp;
     }
     /* initialize mutext */
-    osaStatus = USB_OsaMutexCreate(&ehciInstance->ehciMutex);
-    if (osaStatus != kStatus_USB_OSA_Success)
+    ehciInstance->ehciMutex = (osa_mutex_handle_t)(&ehciInstance->mutexBuffer[0]);
+    osaStatus               = OSA_MutexCreate(ehciInstance->ehciMutex);
+    if (osaStatus != KOSA_StatusSuccess)
     {
 #ifdef HOST_ECHO
         usb_echo("ehci mutex init fail\r\n");
 #endif
-        USB_OsaMemoryFree(ehciInstance);
+        OSA_MemoryFree(ehciInstance);
         return kStatus_USB_Error;
     }
     /* initialize task event */
-    osaStatus = USB_OsaEventCreate(&ehciInstance->taskEventHandle, 1);
-    if (osaStatus != kStatus_USB_OSA_Success)
+    ehciInstance->taskEventHandle = (osa_event_handle_t)&ehciInstance->taskEventHandleBuffer[0];
+    osaStatus                     = OSA_EventCreate(ehciInstance->taskEventHandle, 1);
+    if (osaStatus != KOSA_StatusSuccess)
     {
 #ifdef HOST_ECHO
         usb_echo("ehci event init fail\r\n");
 #endif
-        USB_OsaMutexDestroy(ehciInstance->ehciMutex);
-        USB_OsaMemoryFree(ehciInstance);
+        (void)OSA_MutexDestroy(ehciInstance->ehciMutex);
+        OSA_MemoryFree(ehciInstance);
         return kStatus_USB_Error;
     }
 
@@ -4193,22 +4360,23 @@ usb_status_t USB_HostEhciCreate(uint8_t controllerId,
     ehciInstance->shedFirstQh = ehciInstance->ehciQhList;
     ehciInstance->ehciQhList =
         (usb_host_ehci_qh_t *)(ehciInstance->ehciQhList->horizontalLinkPointer & EHCI_HOST_POINTER_ADDRESS_MASK);
-    ehciInstance->shedFirstQh->staticEndpointStates[0] |= (1 << EHCI_HOST_QH_H_SHIFT); /* first qh */
-    ehciInstance->shedFirstQh->horizontalLinkPointer = EHCI_HOST_T_INVALID_VALUE;
-    ehciInstance->shedFirstQh->currentQtdPointer = EHCI_HOST_T_INVALID_VALUE;
-    ehciInstance->shedFirstQh->nextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
+    ehciInstance->shedFirstQh->staticEndpointStates[0] |= (1UL << EHCI_HOST_QH_H_SHIFT); /* first qh */
+    ehciInstance->shedFirstQh->horizontalLinkPointer   = EHCI_HOST_T_INVALID_VALUE;
+    ehciInstance->shedFirstQh->currentQtdPointer       = EHCI_HOST_T_INVALID_VALUE;
+    ehciInstance->shedFirstQh->nextQtdPointer          = EHCI_HOST_T_INVALID_VALUE;
     ehciInstance->shedFirstQh->alternateNextQtdPointer = EHCI_HOST_T_INVALID_VALUE;
     ehciInstance->shedFirstQh->horizontalLinkPointer =
         (uint32_t)((uint32_t)(ehciInstance->shedFirstQh) | EHCI_HOST_POINTER_TYPE_QH);
 
     /* initialize periodic list */
-    framePointer = (uint32_t *)ehciInstance->ehciFrameList;
+    temp         = (void *)ehciInstance->ehciFrameList;
+    framePointer = (uint32_t *)temp;
     for (index = 0; index < USB_HOST_CONFIG_EHCI_FRAME_LIST_SIZE; ++index)
     {
         framePointer[index] = EHCI_HOST_T_INVALID_VALUE;
     }
 
-    USB_HostEhciStartIP(ehciInstance); /* start ehci ip */
+    (void)USB_HostEhciStartIP(ehciInstance); /* start ehci ip */
 
     *controllerHandle = ehciInstance;
 
@@ -4223,10 +4391,29 @@ usb_status_t USB_HostEhciDestory(usb_host_controller_handle controllerHandle)
     ehciInstance->ehciIpBase->USBINTR = 0;
     /* stop the controller */
     ehciInstance->ehciIpBase->USBCMD = 0;
-    /* free memory */
-    USB_OsaMutexDestroy(ehciInstance->ehciMutex);
-    USB_OsaEventDestroy(ehciInstance->taskEventHandle);
-    USB_OsaMemoryFree(ehciInstance);
+/* free memory */
+#if (USB_HOST_CONFIG_EHCI == 1U)
+    if (ehciInstance->ehciFrameList == &s_UsbHostEhciFrameList1[0])
+    {
+        usbHostEhciFramListStatus[0] = 0;
+    }
+#elif (USB_HOST_CONFIG_EHCI == 2U)
+    if (ehciInstance->ehciFrameList == &s_UsbHostEhciFrameList1[0])
+    {
+        usbHostEhciFramListStatus[0] = 0;
+    }
+    else if (ehciInstance->ehciFrameList == &s_UsbHostEhciFrameList2[0])
+    {
+        usbHostEhciFramListStatus[1] = 0;
+    }
+    else
+    {
+        /*no action*/
+    }
+#endif
+    (void)OSA_MutexDestroy(ehciInstance->ehciMutex);
+    (void)OSA_EventDestroy(ehciInstance->taskEventHandle);
+    OSA_MemoryFree(ehciInstance);
 
     return kStatus_USB_Success;
 }
@@ -4237,15 +4424,17 @@ usb_status_t USB_HostEhciOpenPipe(usb_host_controller_handle controllerHandle,
 {
     usb_host_ehci_pipe_t *ehciPipePointer = NULL;
     usb_status_t status;
-    uint32_t speed;
+    uint32_t speed                         = 0;
     usb_host_ehci_instance_t *ehciInstance = (usb_host_ehci_instance_t *)controllerHandle;
-
+    uint32_t val32;
+    void *temp;
     /* get one pipe */
     USB_HostEhciLock();
     if (ehciInstance->ehciPipeList != NULL)
     {
-        ehciPipePointer = ehciInstance->ehciPipeList;
-        ehciInstance->ehciPipeList = (usb_host_ehci_pipe_t *)ehciPipePointer->pipeCommon.next;
+        ehciPipePointer            = ehciInstance->ehciPipeList;
+        temp                       = (void *)ehciPipePointer->pipeCommon.next;
+        ehciInstance->ehciPipeList = (usb_host_ehci_pipe_t *)temp;
     }
     USB_HostEhciUnlock();
     if (ehciPipePointer == NULL)
@@ -4257,43 +4446,53 @@ usb_status_t USB_HostEhciOpenPipe(usb_host_controller_handle controllerHandle,
     }
 
     /* initialize pipe informations */
-    USB_HostEhciZeroMem((uint32_t *)ehciPipePointer, sizeof(usb_host_ehci_pipe_t) / 4);
-    ehciPipePointer->pipeCommon.deviceHandle = pipeInit->devInstance;
+    USB_HostEhciZeroMem((void *)ehciPipePointer, sizeof(usb_host_ehci_pipe_t) / 4U);
+    ehciPipePointer->pipeCommon.deviceHandle    = pipeInit->devInstance;
     ehciPipePointer->pipeCommon.endpointAddress = pipeInit->endpointAddress;
-    ehciPipePointer->pipeCommon.direction = pipeInit->direction;
-    ehciPipePointer->pipeCommon.interval = pipeInit->interval;
-    ehciPipePointer->pipeCommon.maxPacketSize = pipeInit->maxPacketSize;
-    ehciPipePointer->pipeCommon.pipeType = pipeInit->pipeType;
-    ehciPipePointer->pipeCommon.numberPerUframe = pipeInit->numberPerUframe;
-    if (ehciPipePointer->pipeCommon.numberPerUframe == 0)
+    ehciPipePointer->pipeCommon.direction       = pipeInit->direction;
+    ehciPipePointer->pipeCommon.interval        = pipeInit->interval;
+    ehciPipePointer->pipeCommon.maxPacketSize   = pipeInit->maxPacketSize;
+    ehciPipePointer->pipeCommon.pipeType        = pipeInit->pipeType;
+    ehciPipePointer->pipeCommon.numberPerUframe = pipeInit->numberPerUframe + 1U;
+    if (ehciPipePointer->pipeCommon.numberPerUframe > 3U)
     {
-        ehciPipePointer->pipeCommon.numberPerUframe = 1;
+        ehciPipePointer->pipeCommon.numberPerUframe = 3U;
     }
-    ehciPipePointer->pipeCommon.nakCount = pipeInit->nakCount;
-    ehciPipePointer->pipeCommon.nextdata01 = 0;
-    ehciPipePointer->ehciQh = NULL;
-    USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed, &speed);
-    if (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_ISOCHRONOUS)
+    ehciPipePointer->pipeCommon.nakCount   = pipeInit->nakCount;
+    ehciPipePointer->pipeCommon.nextdata01 = 0U;
+    ehciPipePointer->ehciQh                = NULL;
+    (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                 (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
+    if ((ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_ISOCHRONOUS) ||
+        (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_INTERRUPT))
     {
-        ehciPipePointer->pipeCommon.interval =
-            (1 << (ehciPipePointer->pipeCommon.interval - 1)); /* iso interval is the power of 2 */
-    }
-    else if (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_INTERRUPT)
-    {
-        if (speed == USB_SPEED_HIGH)
+        if (ehciPipePointer->pipeCommon.pipeType == USB_ENDPOINT_ISOCHRONOUS)
         {
             ehciPipePointer->pipeCommon.interval =
-                (1 << (ehciPipePointer->pipeCommon.interval - 1)); /* HS interrupt interval is the power of 2 */
+                (uint16_t)(1UL << (ehciPipePointer->pipeCommon.interval - 1U)); /* iso interval is the power of 2 */
         }
         else
         {
-            ehciPipePointer->pipeCommon.interval = USB_HostEhciGet2PowerValue(
-                ehciPipePointer->pipeCommon
-                    .interval); /* FS/LS interrupt interval should be the power of 2, it is used for ehci bandwidth */
+            if (speed == USB_SPEED_HIGH)
+            {
+                ehciPipePointer->pipeCommon.interval = (uint16_t)(
+                    1UL << (ehciPipePointer->pipeCommon.interval - 1U)); /* HS interrupt interval is the power of 2 */
+            }
+            else
+            {
+                ehciPipePointer->pipeCommon.interval = USB_HostEhciGet2PowerValue(
+                    (uint8_t)ehciPipePointer->pipeCommon.interval); /* FS/LS interrupt interval should be the power of
+                                                              2, it is used for ehci bandwidth */
+            }
         }
-    }
-    else
-    {
+
+        if ((speed == USB_SPEED_HIGH) && (ehciPipePointer->pipeCommon.interval < 8U))
+        {
+            val32 = ehciInstance->ehciIpBase->USBCMD;
+            val32 &= (~USBHS_USBCMD_ITC_MASK);
+            val32 |= USBHS_USBCMD_ITC((ehciPipePointer->pipeCommon.interval));
+            ehciInstance->ehciIpBase->USBCMD = val32;
+        }
     }
 
     /* save the micro-frame interval, it is convenient for the interval process */
@@ -4303,7 +4502,7 @@ usb_status_t USB_HostEhciOpenPipe(usb_host_controller_handle controllerHandle,
     }
     else
     {
-        ehciPipePointer->uframeInterval = 8 * ehciPipePointer->pipeCommon.interval;
+        ehciPipePointer->uframeInterval = 8U * ehciPipePointer->pipeCommon.interval;
     }
 
     /* open pipe */
@@ -4334,15 +4533,17 @@ usb_status_t USB_HostEhciOpenPipe(usb_host_controller_handle controllerHandle,
     {
         /* release pipe */
         USB_HostEhciLock();
-        ehciPipePointer->pipeCommon.next = (usb_host_pipe_t *)ehciInstance->ehciPipeList;
-        ehciInstance->ehciPipeList = ehciPipePointer;
+        temp                             = (void *)ehciInstance->ehciPipeList;
+        ehciPipePointer->pipeCommon.next = (usb_host_pipe_t *)temp;
+        ehciInstance->ehciPipeList       = ehciPipePointer;
         USB_HostEhciUnlock();
         return status;
     }
 
     /* add pipe to run pipe list */
     USB_HostEhciLock();
-    ehciPipePointer->pipeCommon.next = (usb_host_pipe_t *)ehciInstance->ehciRunningPipeList;
+    temp                              = (void *)ehciInstance->ehciRunningPipeList;
+    ehciPipePointer->pipeCommon.next  = (usb_host_pipe_t *)temp;
     ehciInstance->ehciRunningPipeList = ehciPipePointer;
     USB_HostEhciUnlock();
 
@@ -4353,43 +4554,50 @@ usb_status_t USB_HostEhciOpenPipe(usb_host_controller_handle controllerHandle,
 usb_status_t USB_HostEhciClosePipe(usb_host_controller_handle controllerHandle, usb_host_pipe_handle pipeHandle)
 {
     usb_host_ehci_instance_t *ehciInstance = (usb_host_ehci_instance_t *)controllerHandle;
-    usb_host_ehci_pipe_t *ehciPipePointer = (usb_host_ehci_pipe_t *)pipeHandle;
-    usb_host_pipe_t *prevPointer = NULL;
+    usb_host_ehci_pipe_t *ehciPipePointer  = (usb_host_ehci_pipe_t *)pipeHandle;
+    usb_host_pipe_t *prevPointer           = NULL;
+    void *temp;
+    void *tempCurrent;
 
     switch (ehciPipePointer->pipeCommon.pipeType)
     {
         case USB_ENDPOINT_BULK:
         case USB_ENDPOINT_CONTROL:
-            USB_HostEhciCloseControlBulk(ehciInstance, ehciPipePointer);
+            (void)USB_HostEhciCloseControlBulk(ehciInstance, ehciPipePointer);
             break;
 
         case USB_ENDPOINT_INTERRUPT:
-            USB_HostEhciCloseInterrupt(ehciInstance, ehciPipePointer);
+            (void)USB_HostEhciCloseInterrupt(ehciInstance, ehciPipePointer);
             break;
 
 #if (((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD)) || \
      ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD)))
         case USB_ENDPOINT_ISOCHRONOUS:
-            USB_HostEhciCloseIso(ehciInstance, ehciPipePointer);
+            (void)USB_HostEhciCloseIso(ehciInstance, ehciPipePointer);
             break;
 #endif
 
         default:
+            /*no action*/
             break;
     }
 
     /* delete pipe from run pipe list */
     USB_HostEhciLock();
-    prevPointer = (usb_host_pipe_t *)ehciInstance->ehciRunningPipeList;
-    if (prevPointer == (usb_host_pipe_t *)ehciPipePointer)
+    temp        = (void *)ehciInstance->ehciRunningPipeList;
+    prevPointer = (usb_host_pipe_t *)temp;
+    tempCurrent = (void *)ehciPipePointer;
+    if (prevPointer == (usb_host_pipe_t *)tempCurrent)
     {
-        ehciInstance->ehciRunningPipeList = (usb_host_ehci_pipe_t *)(prevPointer->next);
+        temp                              = (void *)prevPointer->next;
+        ehciInstance->ehciRunningPipeList = (usb_host_ehci_pipe_t *)(temp);
     }
     else
     {
         while (prevPointer != NULL)
         {
-            if (prevPointer->next == (usb_host_pipe_t *)ehciPipePointer)
+            temp = (void *)ehciPipePointer;
+            if (prevPointer->next == (usb_host_pipe_t *)temp)
             {
                 prevPointer->next = ehciPipePointer->pipeCommon.next;
                 break;
@@ -4404,8 +4612,9 @@ usb_status_t USB_HostEhciClosePipe(usb_host_controller_handle controllerHandle, 
 
     /* release pipe */
     USB_HostEhciLock();
-    ehciPipePointer->pipeCommon.next = (usb_host_pipe_t *)ehciInstance->ehciPipeList;
-    ehciInstance->ehciPipeList = ehciPipePointer;
+    temp                             = (void *)ehciInstance->ehciPipeList;
+    ehciPipePointer->pipeCommon.next = (usb_host_pipe_t *)temp;
+    ehciInstance->ehciPipeList       = ehciPipePointer;
     USB_HostEhciUnlock();
 
     return kStatus_USB_Success;
@@ -4416,11 +4625,11 @@ usb_status_t USB_HostEhciWritePipe(usb_host_controller_handle controllerHandle,
                                    usb_host_transfer_t *transfer)
 {
     usb_host_ehci_instance_t *ehciInstance = (usb_host_ehci_instance_t *)controllerHandle;
-    usb_host_ehci_pipe_t *ehciPipePointer = (usb_host_ehci_pipe_t *)pipeHandle;
-    usb_status_t status = kStatus_USB_Success;
+    usb_host_ehci_pipe_t *ehciPipePointer  = (usb_host_ehci_pipe_t *)pipeHandle;
+    usb_status_t status                    = kStatus_USB_Success;
 #if (((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD)) || \
      ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD)))
-    uint32_t speed;
+    uint32_t speed = 0U;
 #endif
 
     switch (ehciPipePointer->pipeCommon.pipeType)
@@ -4435,8 +4644,8 @@ usb_status_t USB_HostEhciWritePipe(usb_host_controller_handle controllerHandle,
 #if (((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD)) || \
      ((defined USB_HOST_CONFIG_EHCI_MAX_SITD) && (USB_HOST_CONFIG_EHCI_MAX_SITD)))
         case USB_ENDPOINT_ISOCHRONOUS:
-            USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceSpeed,
-                                                   &speed);
+            (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                         (uint32_t)kUSB_HostGetDeviceSpeed, &speed);
             if (speed == USB_SPEED_HIGH)
             {
 #if ((defined USB_HOST_CONFIG_EHCI_MAX_ITD) && (USB_HOST_CONFIG_EHCI_MAX_ITD))
@@ -4455,6 +4664,7 @@ usb_status_t USB_HostEhciWritePipe(usb_host_controller_handle controllerHandle,
 #endif
 
         default:
+            /*no action*/
             break;
     }
     return status;
@@ -4469,22 +4679,22 @@ usb_status_t USB_HostEhciReadpipe(usb_host_controller_handle controllerHandle,
 
 usb_status_t USB_HostEhciIoctl(usb_host_controller_handle controllerHandle, uint32_t ioctlEvent, void *ioctlParam)
 {
-    usb_status_t status = kStatus_USB_Success;
+    usb_status_t status                    = kStatus_USB_Success;
     usb_host_ehci_instance_t *ehciInstance = (usb_host_ehci_instance_t *)controllerHandle;
     usb_host_cancel_param_t *param;
     usb_host_ehci_pipe_t *ehciPipePointer;
     volatile usb_host_ehci_qh_t *vltQhPointer;
-    uint32_t deviceAddress;
-
+    uint32_t deviceAddress                    = 0;
+    usb_host_controller_control_t controlCode = (usb_host_controller_control_t)ioctlEvent;
     if (controllerHandle == NULL)
     {
         return kStatus_USB_InvalidHandle;
     }
 
-    switch (ioctlEvent)
+    switch (controlCode)
     {
         case kUSB_HostCancelTransfer: /* cancel pipe or one transfer */
-            param = (usb_host_cancel_param_t *)ioctlParam;
+            param  = (usb_host_cancel_param_t *)ioctlParam;
             status = USB_HostEhciCancelPipe(ehciInstance, (usb_host_ehci_pipe_t *)param->pipeHandle, param->transfer);
             break;
 
@@ -4498,18 +4708,19 @@ usb_status_t USB_HostEhciIoctl(usb_host_controller_handle controllerHandle, uint
 
         case kUSB_HostUpdateControlEndpointAddress:
             ehciPipePointer = (usb_host_ehci_pipe_t *)ioctlParam;
-            vltQhPointer = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
+            vltQhPointer    = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
             /* update address */
-            USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle, kUSB_HostGetDeviceAddress,
-                                                   &deviceAddress);
+            (void)USB_HostHelperGetPeripheralInformation(ehciPipePointer->pipeCommon.deviceHandle,
+                                                         (uint32_t)kUSB_HostGetDeviceAddress, &deviceAddress);
             vltQhPointer->staticEndpointStates[0] |= deviceAddress;
+            USB_HostEhciDelay(ehciInstance->ehciIpBase, 2U);
             break;
 
         case kUSB_HostUpdateControlPacketSize:
             ehciPipePointer = (usb_host_ehci_pipe_t *)ioctlParam;
-            vltQhPointer = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
+            vltQhPointer    = (volatile usb_host_ehci_qh_t *)ehciPipePointer->ehciQh;
             USB_HostEhciLock();
-            if (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK)
+            if (0U != (ehciInstance->ehciIpBase->USBSTS & USBHS_USBSTS_AS_MASK))
             {
                 USB_HostEhciStopAsync(ehciInstance);
                 /* update max packet size */
@@ -4527,8 +4738,13 @@ usb_status_t USB_HostEhciIoctl(usb_host_controller_handle controllerHandle, uint
             }
             USB_HostEhciUnlock();
             break;
-
+#if ((defined USB_HOST_CONFIG_COMPLIANCE_TEST) && (USB_HOST_CONFIG_COMPLIANCE_TEST))
+        case kUSB_HostTestModeInit: /* test mode control */
+            USB_HostEhciTestModeInit((usb_host_device_instance_t *)ioctlParam);
+            break;
+#endif
         default:
+            status = kStatus_USB_NotSupported;
             break;
     }
     return status;
@@ -4546,44 +4762,44 @@ void USB_HostEhciTaskFunction(void *hostHandle)
     }
     ehciInstance = (usb_host_ehci_instance_t *)((usb_host_instance_t *)hostHandle)->controllerHandle;
 
-    if (USB_OsaEventWait(ehciInstance->taskEventHandle, 0xFF, 0, 0, &bitSet) ==
-        kStatus_USB_OSA_Success) /* wait all event */
+    if (OSA_EventWait(ehciInstance->taskEventHandle, 0xFF, 0, USB_OSA_WAIT_TIMEOUT, &bitSet) ==
+        KOSA_StatusSuccess) /* wait all event */
     {
-        if (bitSet & EHCI_TASK_EVENT_PORT_CHANGE) /* port change */
+        if (0U != (bitSet & EHCI_TASK_EVENT_PORT_CHANGE)) /* port change */
         {
             USB_HostEhciPortChange(ehciInstance);
         }
 
-        if (bitSet & EHCI_TASK_EVENT_TIMER0) /* timer0 */
+        if (0U != (bitSet & EHCI_TASK_EVENT_TIMER0)) /* timer0 */
         {
             USB_HostEhciTimer0(ehciInstance);
         }
 
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
-        if (bitSet & EHCI_TASK_EVENT_TIMER1) /* timer1 */
+        if (0U != (bitSet & EHCI_TASK_EVENT_TIMER1)) /* timer1 */
         {
             USB_HostEhciTimer1(ehciInstance);
         }
 #endif
 
-        if (ehciInstance->deviceAttached == kEHCIDeviceAttached)
+        if ((ehciInstance->deviceAttached == (uint8_t)kEHCIDeviceAttached))
         {
-            if (bitSet & EHCI_TASK_EVENT_TRANSACTION_DONE) /* transaction done */
+            if (0U != (bitSet & EHCI_TASK_EVENT_TRANSACTION_DONE)) /* transaction done */
             {
                 USB_HostEhciTransactionDone(ehciInstance);
             }
 
-            if (bitSet & EHCI_TASK_EVENT_DEVICE_DETACH) /* device detach */
+            if (0U != (bitSet & EHCI_TASK_EVENT_DEVICE_DETACH)) /* device detach */
             {
                 ehciInstance->ehciIpBase->USBINTR &=
                     (~USBHS_USBINTR_PCE_MASK); /* disable attach, enable when the detach process is done */
-                ehciInstance->deviceAttached = kEHCIDeviceDetached;
-                USB_HostDetachDevice(ehciInstance->hostHandle, 0, 0);
+                ehciInstance->deviceAttached = (uint8_t)kEHCIDeviceDetached;
+                (void)USB_HostDetachDevice(ehciInstance->hostHandle, 0, 0);
             }
         }
-        else if (ehciInstance->deviceAttached != kEHCIDeviceAttached)
+        else if (ehciInstance->deviceAttached != (uint8_t)kEHCIDeviceAttached)
         {
-            if (bitSet & EHCI_TASK_EVENT_DEVICE_ATTACH) /* device is attached */
+            if (0U != (bitSet & EHCI_TASK_EVENT_DEVICE_ATTACH)) /* device is attached */
             {
                 USB_HostEhciStartAsync(ehciInstance);
                 USB_HostEhciStartPeriodic(ehciInstance);
@@ -4591,12 +4807,13 @@ void USB_HostEhciTaskFunction(void *hostHandle)
                 if (USB_HostAttachDevice(ehciInstance->hostHandle, ehciInstance->firstDeviceSpeed, 0, 0, 1,
                                          &deviceHandle) == kStatus_USB_Success)
                 {
-                    ehciInstance->deviceAttached = kEHCIDeviceAttached;
+                    ehciInstance->deviceAttached = (uint8_t)kEHCIDeviceAttached;
                 }
             }
         }
         else
         {
+            /*no action*/
         }
     }
 }
@@ -4616,18 +4833,18 @@ void USB_HostEhciIsrFunction(void *hostHandle)
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
 
 #if (defined(FSL_FEATURE_SOC_USBNC_COUNT) && (FSL_FEATURE_SOC_USBNC_COUNT > 0U))
-    if (ehciInstance->registerNcBase->USB_OTGn_CTRL & USBNC_USB_OTGn_CTRL_WIE_MASK)
+    if (0U != (ehciInstance->registerNcBase->USB_OTGn_CTRL & USBNC_USB_OTGn_CTRL_WIE_MASK))
     {
         usb_host_instance_t *hostPointer = (usb_host_instance_t *)ehciInstance->hostHandle;
         ehciInstance->registerNcBase->USB_OTGn_CTRL &= ~USBNC_USB_OTGn_CTRL_WIE_MASK;
-        hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
-                                    kUSB_HostEventDetectResume); /* call host callback function */
-
-        while (!(ehciInstance->registerNcBase->USB_OTGn_PHY_CTRL_0 & USBNC_USB_OTGn_PHY_CTRL_0_UTMI_CLK_VLD_MASK))
+        (void)hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
+                                          kUSB_HostEventDetectResume); /* call host callback function */
+#if (defined(USBNC_USB_OTGn_PHY_CTRL_0_UTMI_CLK_VLD_MASK))
+        while (0U == (ehciInstance->registerNcBase->USB_OTGn_PHY_CTRL_0 & USBNC_USB_OTGn_PHY_CTRL_0_UTMI_CLK_VLD_MASK))
         {
         }
-
-        if (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK)
+#endif
+        if (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
         {
             USB_HostEhciStartAsync(ehciInstance);
             USB_HostEhciStartPeriodic(ehciInstance);
@@ -4640,25 +4857,27 @@ void USB_HostEhciIsrFunction(void *hostHandle)
         }
         else
         {
+            /*no action*/
         }
     }
     else
     {
+        /*no action*/
     }
 #else
-    if (ehciInstance->ehciIpBase->USBGENCTRL & USBHS_USBGENCTRL_WU_IE_MASK)
+    if (0U != (ehciInstance->ehciIpBase->USBGENCTRL & USBHS_USBGENCTRL_WU_IE_MASK))
     {
         usb_host_instance_t *hostPointer = (usb_host_instance_t *)ehciInstance->hostHandle;
 
-        hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
-                                    kUSB_HostEventDetectResume); /* call host callback function */
+        (void)hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
+                                          kUSB_HostEventDetectResume); /* call host callback function */
 
-        while (!(USBPHY->PLL_SIC & USBPHY_PLL_SIC_PLL_LOCK_MASK))
+        while (0U == (USBPHY->PLL_SIC & USBPHY_PLL_SIC_PLL_LOCK_MASK))
         {
         }
         ehciInstance->ehciIpBase->USBGENCTRL |= USBHS_USBGENCTRL_WU_INT_CLR_MASK;
         ehciInstance->ehciIpBase->USBGENCTRL &= ~USBHS_USBGENCTRL_WU_IE_MASK;
-        if (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK)
+        if (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
         {
             USB_HostEhciStartAsync(ehciInstance);
             USB_HostEhciStartPeriodic(ehciInstance);
@@ -4671,10 +4890,12 @@ void USB_HostEhciIsrFunction(void *hostHandle)
         }
         else
         {
+            /*no action*/
         }
     }
     else
     {
+        /*no action*/
     }
 #endif /* FSL_FEATURE_SOC_USBNC_COUNT */
 
@@ -4682,60 +4903,61 @@ void USB_HostEhciIsrFunction(void *hostHandle)
 
     interruptStatus = ehciInstance->ehciIpBase->USBSTS;
     interruptStatus &= ehciInstance->ehciIpBase->USBINTR;
-    while (interruptStatus) /* there are usb interrupts */
+    while (0U != interruptStatus) /* there are usb interrupts */
     {
         ehciInstance->ehciIpBase->USBSTS = interruptStatus; /* clear interrupt */
 
-        if (interruptStatus & USBHS_USBSTS_SRI_MASK) /* SOF interrupt */
+        if (0U != (interruptStatus & USBHS_USBSTS_SRI_MASK)) /* SOF interrupt */
         {
         }
 
-        if (interruptStatus & USBHS_USBSTS_SEI_MASK) /* system error interrupt */
+        if (0U != (interruptStatus & USBHS_USBSTS_SEI_MASK)) /* system error interrupt */
         {
         }
 
-        if ((interruptStatus & USBHS_USBSTS_UI_MASK) ||
-            (interruptStatus & USBHS_USBSTS_UEI_MASK)) /* USB interrupt or USB error interrupt */
+        if ((0U != (interruptStatus & USBHS_USBSTS_UI_MASK)) ||
+            (0U != (interruptStatus & USBHS_USBSTS_UEI_MASK))) /* USB interrupt or USB error interrupt */
         {
-            USB_OsaEventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_TRANSACTION_DONE);
+            (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_TRANSACTION_DONE);
         }
 
-        if (interruptStatus & USBHS_USBSTS_PCI_MASK) /* port change detect interrupt */
+        if (0U != (interruptStatus & USBHS_USBSTS_PCI_MASK)) /* port change detect interrupt */
         {
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
             usb_host_instance_t *hostPointer = (usb_host_instance_t *)ehciInstance->hostHandle;
-            if (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_FPR_MASK)
+            if (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_FPR_MASK))
             {
                 if (kBus_EhciStartSuspend == ehciInstance->busSuspendStatus)
                 {
-                    if (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK)
+                    if (0U != (ehciInstance->ehciIpBase->PORTSC1 & USBHS_PORTSC1_CCS_MASK))
                     {
                         USB_HostEhciStartAsync(ehciInstance);
                         USB_HostEhciStartPeriodic(ehciInstance);
                     }
-                    hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
-                                                kUSB_HostEventNotSuspended); /* call host callback function */
-                    hostPointer->suspendedDevice = NULL;
+                    (void)hostPointer->deviceCallback(hostPointer->suspendedDevice, NULL,
+                                                      kUSB_HostEventNotSuspended); /* call host callback function */
+                    hostPointer->suspendedDevice   = NULL;
                     ehciInstance->busSuspendStatus = kBus_EhciIdle;
                     ehciInstance->ehciIpBase->USBINTR &= ~(USBHS_USBINTR_TIE1_MASK);
                 }
                 else
                 {
+                    /*no action */
                 }
             }
 #endif
-            USB_OsaEventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_PORT_CHANGE);
+            (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_PORT_CHANGE);
         }
 
-        if (interruptStatus & USBHS_USBSTS_TI0_MASK) /* timer 0 interrupt */
+        if (0U != (interruptStatus & USBHS_USBSTS_TI0_MASK)) /* timer 0 interrupt */
         {
-            USB_OsaEventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_TIMER0);
+            (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_TIMER0);
         }
 
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
-        if (interruptStatus & USBHS_USBSTS_TI1_MASK) /* timer 1 interrupt */
+        if (0U != (interruptStatus & USBHS_USBSTS_TI1_MASK)) /* timer 1 interrupt */
         {
-            USB_OsaEventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_TIMER1);
+            (void)OSA_EventSet(ehciInstance->taskEventHandle, EHCI_TASK_EVENT_TIMER1);
         }
 #endif
 
