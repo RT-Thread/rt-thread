@@ -1,0 +1,240 @@
+menu "Hardware Drivers Config"
+
+config SOC_IMXRT1052CVL5B
+    bool 
+    select SOC_MIMXRT1050_SERIES
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
+        
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+        
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+
+                config BSP_LPUART1_RX_USING_DMA
+                    bool "Enable LPUART1 RX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_RX_DMA_CHANNEL
+                        depends on BSP_LPUART1_RX_USING_DMA
+                        int "Set LPUART1 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART1_TX_USING_DMA
+                    bool "Enable LPUART1 TX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_TX_DMA_CHANNEL
+                        depends on BSP_LPUART1_TX_USING_DMA
+                        int "Set LPUART1 TX DMA channel (0-32)"
+                        default 1
+            config BSP_USING_LPUART4
+                bool "Enable LPUART4"
+                default y
+
+                config BSP_LPUART4_RX_USING_DMA
+                    bool "Enable LPUART4 RX DMA"
+                    depends on BSP_USING_LPUART4
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART4_RX_DMA_CHANNEL
+                        depends on BSP_LPUART4_RX_USING_DMA
+                        int "Set LPUART4 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART4_TX_USING_DMA
+                    bool "Enable LPUART4 TX DMA"
+                    depends on BSP_USING_LPUART4
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART4_TX_DMA_CHANNEL
+                        depends on BSP_LPUART4_TX_USING_DMA
+                        int "Set LPUART4 TX DMA channel (0-32)"
+                        default 1
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM2
+                bool "Enable output pwm2"
+                default n
+                if BSP_USING_PWM2
+                    config BSP_USING_PWM2_CH0
+                        bool "Enable PWM2 channel0"
+                        default n
+                    config BSP_USING_PWM2_CH1
+                        bool "Enable PWM2 channel1"
+                        default n
+                    config BSP_USING_PWM2_CH2
+                        bool "Enable PWM2 channel2"
+                        default n
+                    config BSP_USING_PWM2_CH3
+                        bool "Enable PWM2 channel3"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+                if BSP_USING_I2C1
+                    choice
+                        prompt "Select I2C1 badurate"
+                        default HW_I2C1_BADURATE_100kHZ
+
+                        config HW_I2C1_BADURATE_100kHZ
+                            bool "Badurate 100kHZ"
+
+                        config HW_I2C1_BADURATE_400kHZ
+                            bool "Badurate 400kHZ"
+                    endchoice
+                endif
+            menuconfig BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+                if BSP_USING_I2C2
+                    choice
+                        prompt "Select I2C2 badurate"
+                        default HW_I2C2_BADURATE_100kHZ
+
+                        config HW_I2C2_BADURATE_100kHZ
+                            bool "Badurate 100kHZ"
+
+                        config HW_I2C2_BADURATE_400kHZ
+                            bool "Badurate 400kHZ"
+                    endchoice
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI4
+                bool "Enable SPI4"
+                default n
+
+            config BSP_SPI4_USING_DMA
+                bool "Enable SPI4 DMA xfer"
+                depends on BSP_USING_SPI4
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI4_RX_DMA_CHANNEL
+                depends on BSP_SPI4_USING_DMA
+                int "Set SPI4 RX DMA channel (0-32)"
+                default 4
+
+            config BSP_SPI4_TX_DMA_CHANNEL
+                depends on BSP_SPI4_USING_DMA
+                int "Set SPI4 TX DMA channel (0-32)"
+                default 5
+        endif
+    
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        select RT_USING_PULSE_ENCODER
+        default n
+
+        if BSP_USING_PULSE_ENCODER
+            config BSP_USING_PULSE_ENCODER1
+                bool "Enable PULSE_ENCODER1"
+                default n
+        endif
+
+    menuconfig BSP_USING_USB
+        bool "Enable USB"
+        default n
+        if BSP_USING_USB
+            config BSP_USING_USB0
+                bool "Enable USB0"
+                default n
+            choice
+                prompt "Select USB0 Role"
+                depends on BSP_USING_USB0
+                default BSP_USB0_HOST
+                
+                config BSP_USB0_HOST
+                    bool "Host"
+                    select RT_USING_USB_HOST
+
+                config BSP_USB0_DEVICE
+                    bool "Device"
+                    select RT_USING_USB_DEVICE
+            endchoice
+            config BSP_USING_USB1
+                bool "Enable USB1"
+                default n
+            choice
+                prompt "Select USB1 Role"
+                depends on BSP_USING_USB1
+                default BSP_USB1_HOST
+                
+                config BSP_USB1_HOST
+                    bool "Host"
+                    select RT_USING_USB_HOST
+
+                config BSP_USB1_DEVICE
+                    bool "Device"
+                    select RT_USING_USB_DEVICE
+            endchoice
+        endif
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    config BSP_USING_MPU6050
+        bool "Enable MPU6050 (I2C1:J11 --> SCL; K11 --> SDA)"
+        select BSP_USING_I2C1
+        select PKG_USING_MPU6XXX
+        default n
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
