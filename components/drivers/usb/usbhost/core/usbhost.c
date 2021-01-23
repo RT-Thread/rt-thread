@@ -22,15 +22,15 @@
  * 
  * @return none.
  */
-rt_err_t rt_usb_host_init(void)
+rt_err_t rt_usb_host_init(const char *name)
 {
     ucd_t drv;
     rt_device_t uhc;    
 
-    uhc = rt_device_find(USB_HOST_CONTROLLER_NAME);
+    uhc = rt_device_find(name);
     if(uhc == RT_NULL)
     {
-        rt_kprintf("can't find usb host controller %s\n", USB_HOST_CONTROLLER_NAME);
+        rt_kprintf("can't find usb host controller %s\n", name);
         return -RT_ERROR;
     }
 

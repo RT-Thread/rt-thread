@@ -13,9 +13,9 @@
 
 #define USB_THREAD_STACK_SIZE    4096
 
-static struct rt_messagequeue *usb_mq;
+// static struct rt_messagequeue *usb_mq;
 static struct uclass_driver hub_driver;
-static struct uhub root_hub;
+// static struct uhub root_hub;
 
 static rt_err_t root_hub_ctrl(struct uhcd *hcd, rt_uint16_t port, rt_uint8_t cmd, void *args)
 {
@@ -92,7 +92,7 @@ void rt_usbh_root_hub_connect_handler(struct uhcd *hcd, rt_uint8_t port, rt_bool
     {
         hcd->roothub->port_status[port - 1] |= PORT_LSDA;
     }
-    rt_usbh_event_signal(&msg);
+    rt_usbh_event_signal(hcd, &msg);
 }
 
 void rt_usbh_root_hub_disconnect_handler(struct uhcd *hcd, rt_uint8_t port)
@@ -102,7 +102,7 @@ void rt_usbh_root_hub_disconnect_handler(struct uhcd *hcd, rt_uint8_t port)
     msg.content.hub = hcd->roothub;
     hcd->roothub->port_status[port - 1] |= PORT_CCSC;
     hcd->roothub->port_status[port - 1] &= ~PORT_CCS;
-    rt_usbh_event_signal(&msg);
+    rt_usbh_event_signal(hcd, &msg);
 }
 
 /**
@@ -647,12 +647,13 @@ ucd_t rt_usbh_class_driver_hub(void)
  */
 static void rt_usbh_hub_thread_entry(void* parameter)
 {    
+    uhcd_t hcd = (uhcd_t)parameter;
     while(1)
     {    
         struct uhost_msg msg;
         
         /* receive message */
-        if(rt_mq_recv(usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) 
+        if(rt_mq_recv(hcd->usb_mq, &msg, sizeof(struct uhost_msg), RT_WAITING_FOREVER) 
             != RT_EOK ) continue;
 
         //RT_DEBUG_LOG(RT_DEBUG_USB, ("msg type %d\n", msg.type));
@@ -679,12 +680,12 @@ static void rt_usbh_hub_thread_entry(void* parameter)
  * 
  * @return the error code, RT_EOK on successfully. 
  */
-rt_err_t rt_usbh_event_signal(struct uhost_msg* msg)
+rt_err_t rt_usbh_event_signal(uhcd_t hcd, struct uhost_msg* msg)
 {
     RT_ASSERT(msg != RT_NULL);
 
     /* send message to usb message queue */
-    rt_mq_send(usb_mq, (void*)msg, sizeof(struct uhost_msg));
+    rt_mq_send(hcd->usb_mq, (void*)msg, sizeof(struct uhost_msg));
 
     return RT_EOK;
 }
@@ -698,16 +699,16 @@ rt_err_t rt_usbh_event_signal(struct uhost_msg* msg)
 void rt_usbh_hub_init(uhcd_t hcd)
 {
     rt_thread_t thread;
-    /* link root hub to hcd */
-    root_hub.is_roothub = RT_TRUE;
-    hcd->roothub = &root_hub;
-    root_hub.hcd = hcd;
-    root_hub.num_ports = hcd->num_ports;
+    /* create root hub for hcd */
+    hcd->roothub = rt_malloc(sizeof(struct uhub));
+    hcd->roothub->is_roothub = RT_TRUE;
+    hcd->roothub->hcd = hcd;
+    hcd->roothub->num_ports = hcd->num_ports;
     /* create usb message queue */
-    usb_mq = rt_mq_create("usbh", 32, 16, RT_IPC_FLAG_FIFO);
+    hcd->usb_mq = rt_mq_create(hcd->parent.parent.name, 32, 16, RT_IPC_FLAG_FIFO);
     
     /* create usb hub thread */
-    thread = rt_thread_create("usbh", rt_usbh_hub_thread_entry, RT_NULL, 
+    thread = rt_thread_create(hcd->parent.parent.name, rt_usbh_hub_thread_entry, hcd, 
         USB_THREAD_STACK_SIZE, 8, 20);
     if(thread != RT_NULL)
     {
