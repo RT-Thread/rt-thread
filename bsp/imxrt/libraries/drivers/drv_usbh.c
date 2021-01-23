@@ -590,7 +590,7 @@ int imxrt_usbh_register(void)
         return -RT_ERROR;
     }
     
-    rt_usb_host_init();
+    rt_usb_host_init(usb_host_obj->name);
 #endif
 #ifdef BSP_USB1_HOST
     usb_host_obj = &(imxrt_usb_host_obj[USBH1_INDEX]);
