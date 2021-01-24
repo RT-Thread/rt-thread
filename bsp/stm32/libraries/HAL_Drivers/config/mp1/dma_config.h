@@ -35,7 +35,7 @@ extern "C" {
 
 /* DMA2 stream0 */
 #if defined(BSP_UART3_RX_USING_DMA) && !defined(UART3_RX_DMA_INSTANCE)
-#define UART3_RX_DMA_IRQHandler          DMA2_Stream0_IRQHandler
+#define UART3_DMA_RX_IRQHandler          DMA2_Stream0_IRQHandler
 #define UART3_RX_DMA_RCC                 RCC_MC_AHB2ENSETR_DMA2EN
 #define UART3_RX_DMA_INSTANCE            DMA2_Stream0
 #define UART3_RX_DMA_CHANNEL             DMA_REQUEST_USART3_RX
@@ -50,7 +50,7 @@ extern "C" {
     
 /* DMA2 stream1 */
 #if defined(BSP_UART3_TX_USING_DMA) && !defined(BSP_UART3_TX_USING_INSTANCE)
-#define UART3_TX_DMA_IRQHandler           DMA2_Stream1_IRQHandler
+#define UART3_DMA_TX_IRQHandler           DMA2_Stream1_IRQHandler
 #define UART3_TX_DMA_RCC                  RCC_MC_AHB2ENSETR_DMA2EN
 #define UART3_TX_DMA_INSTANCE             DMA2_Stream1
 #define UART3_TX_DMA_CHANNEL              DMA_REQUEST_USART3_TX
