@@ -5,7 +5,7 @@
 define symbol __ICFEDIT_intvec_start__ = 0x00000000;
 /*-Memory Regions-*/
 define symbol __ICFEDIT_region_text_start__ = 0x10000000;
-define symbol __ICFEDIT_region_text_end__   = 0x1001FFFF;
+define symbol __ICFEDIT_region_text_end__   = 0x1002FFFF;
 define symbol __ICFEDIT_region_data_start__ = 0x10030000;
 define symbol __ICFEDIT_region_data_end__   = 0x1003FFFF;
 /*-Sizes-*/
@@ -26,11 +26,6 @@ define symbol __OPENAMP_region_start__ = 0x10040000;
 define symbol __OPENAMP_region_size__   = 0x8000;
 export symbol __OPENAMP_region_start__;
 export symbol __OPENAMP_region_size__;
-
-define symbol __SDMMC_region_start__   = 0x10048000;
-define symbol __SDMMC_region_size__    = 0x1FFFF;
-export symbol __SDMMC_region_start__;
-export symbol __SDMMC_region_size__;
 
 define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
 define block HEAP      with alignment = 8, size = __ICFEDIT_size_heap__     { };

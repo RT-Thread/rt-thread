@@ -6,9 +6,6 @@ src = Glob('*.c')
 
 CPPPATH = [RTT_ROOT + '/include']
 
-if GetDepend('RT_USING_MODULE') == False:
-    SrcRemove(src, ['module.c'])
-
 if GetDepend('RT_USING_HEAP') == False or GetDepend('RT_USING_SMALL_MEM') == False:
     SrcRemove(src, ['mem.c'])
 
@@ -22,6 +19,12 @@ if GetDepend('RT_USING_MEMHEAP') == False:
     SrcRemove(src, ['memheap.c'])
     if GetDepend('RT_USING_MEMHEAP_AS_HEAP'):
         SrcRemove(src, ['mem.c'])
+
+if GetDepend('RT_USING_USERHEAP'):
+    SrcRemove(src, ['mem.c', 'slab.c'])
+
+if GetDepend('RT_USING_SIGNALS') == False:
+    SrcRemove(src, ['signal.c'])
 
 if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])

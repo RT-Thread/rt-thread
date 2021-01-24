@@ -3236,7 +3236,7 @@ uint32_t SD_HighSpeed(SD_HandleTypeDef *hsd)
         {
           SD_hs[(8U*loop)+count]  = SDMMC_ReadFIFO(hsd->Instance);
         }
-        loop += 8U;
+        loop ++;
       }
 
       if((HAL_GetTick()-Timeout) >=  SDMMC_DATATIMEOUT)
@@ -3351,7 +3351,7 @@ uint32_t SD_UltraHighSpeed(SD_HandleTypeDef *hsd)
         {
           SD_hs[(8U*loop)+count]  = SDMMC_ReadFIFO(hsd->Instance);
         }
-        loop += 8U;
+        loop ++;
       }
       
       if((HAL_GetTick()-Timeout) >=  SDMMC_DATATIMEOUT)

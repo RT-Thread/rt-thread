@@ -20,9 +20,9 @@ if not GetDepend('BSP_USE_STDDRIVER_SOURCE'):
 		libs += ['libstddriver_iar']    
 
 if not libs:
-	group = DefineGroup('m480_stddriver', src, depend = [''], CPPPATH = cpppath)
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath)
 else:
 	src = []
-	group = DefineGroup('m480_stddriver', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
 
 Return('group')

@@ -46,18 +46,18 @@
  */
 void ald_wwdt_init(uint32_t load, wwdt_win_t win, type_func_t interrupt)
 {
-    assert_param(IS_WWDT_WIN_TYPE(win));
-    assert_param(IS_FUNC_STATE(interrupt));
+	assert_param(IS_WWDT_WIN_TYPE(win));
+	assert_param(IS_FUNC_STATE(interrupt));
 
-    WWDT_UNLOCK();
-    WRITE_REG(WWDT->LOAD, load);
-    MODIFY_REG(WWDT->CON, WWDT_CON_WWDTWIN_MSK, win << WWDT_CON_WWDTWIN_POSS);
-    SET_BIT(WWDT->CON, WWDT_CON_CLKS_MSK);
-    SET_BIT(WWDT->CON, WWDT_CON_RSTEN_MSK);
-    MODIFY_REG(WWDT->CON, WWDT_CON_IE_MSK, interrupt << WWDT_CON_IE_POS);
-    WWDT_LOCK();
+	WWDT_UNLOCK();
+	WRITE_REG(WWDT->LOAD, load);
+	MODIFY_REG(WWDT->CON, WWDT_CON_WWDTWIN_MSK, win << WWDT_CON_WWDTWIN_POSS);
+	SET_BIT(WWDT->CON, WWDT_CON_CLKS_MSK);
+	SET_BIT(WWDT->CON, WWDT_CON_RSTEN_MSK);
+	MODIFY_REG(WWDT->CON, WWDT_CON_IE_MSK, interrupt << WWDT_CON_IE_POS);
+	WWDT_LOCK();
 
-    return;
+	return;
 }
 
 /**
@@ -66,11 +66,11 @@ void ald_wwdt_init(uint32_t load, wwdt_win_t win, type_func_t interrupt)
  */
 void ald_wwdt_start(void)
 {
-    WWDT_UNLOCK();
-    SET_BIT(WWDT->CON, WWDT_CON_EN_MSK);
-    WWDT_LOCK();
+	WWDT_UNLOCK();
+	SET_BIT(WWDT->CON, WWDT_CON_EN_MSK);
+	WWDT_LOCK();
 
-    return;
+	return;
 }
 
 /**
@@ -79,7 +79,7 @@ void ald_wwdt_start(void)
  */
 uint32_t ald_wwdt_get_value(void)
 {
-    return WWDT->VALUE;
+	return WWDT->VALUE;
 }
 
 /**
@@ -88,10 +88,10 @@ uint32_t ald_wwdt_get_value(void)
  */
 it_status_t ald_wwdt_get_flag_status(void)
 {
-    if (READ_BIT(WWDT->RIS, WWDT_RIS_WWDTIF_MSK))
-        return SET;
+	if (READ_BIT(WWDT->RIS, WWDT_RIS_WWDTIF_MSK))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -100,8 +100,8 @@ it_status_t ald_wwdt_get_flag_status(void)
  */
 void ald_wwdt_clear_flag_status(void)
 {
-    WRITE_REG(WWDT->INTCLR, 1);
-    return;
+	WRITE_REG(WWDT->INTCLR, 1);
+	return;
 }
 
 /**
@@ -110,11 +110,11 @@ void ald_wwdt_clear_flag_status(void)
  */
 void ald_wwdt_feed_dog(void)
 {
-    WWDT_UNLOCK();
-    WRITE_REG(WWDT->INTCLR, 0x1);
-    WWDT_LOCK();
+	WWDT_UNLOCK();
+	WRITE_REG(WWDT->INTCLR, 0x1);
+	WWDT_LOCK();
 
-    return;
+	return;
 }
 /**
  * @}
@@ -132,16 +132,16 @@ void ald_wwdt_feed_dog(void)
  */
 void ald_iwdt_init(uint32_t load, type_func_t interrupt)
 {
-    assert_param(IS_FUNC_STATE(interrupt));
+	assert_param(IS_FUNC_STATE(interrupt));
 
-    IWDT_UNLOCK();
-    WRITE_REG(IWDT->LOAD, load);
-    SET_BIT(IWDT->CON, IWDT_CON_CLKS_MSK);
-    SET_BIT(IWDT->CON, IWDT_CON_RSTEN_MSK);
-    MODIFY_REG(IWDT->CON, IWDT_CON_IE_MSK, interrupt << IWDT_CON_IE_POS);
-    IWDT_LOCK();
+	IWDT_UNLOCK();
+	WRITE_REG(IWDT->LOAD, load);
+	SET_BIT(IWDT->CON, IWDT_CON_CLKS_MSK);
+	SET_BIT(IWDT->CON, IWDT_CON_RSTEN_MSK);
+	MODIFY_REG(IWDT->CON, IWDT_CON_IE_MSK, interrupt << IWDT_CON_IE_POS);
+	IWDT_LOCK();
 
-    return;
+	return;
 }
 
 /**
@@ -150,11 +150,11 @@ void ald_iwdt_init(uint32_t load, type_func_t interrupt)
  */
 void ald_iwdt_start(void)
 {
-    IWDT_UNLOCK();
-    SET_BIT(IWDT->CON, IWDT_CON_EN_MSK);
-    IWDT_LOCK();
+	IWDT_UNLOCK();
+	SET_BIT(IWDT->CON, IWDT_CON_EN_MSK);
+	IWDT_LOCK();
 
-    return;
+	return;
 }
 
 /**
@@ -163,7 +163,7 @@ void ald_iwdt_start(void)
  */
 uint32_t ald_iwdt_get_value(void)
 {
-    return IWDT->VALUE;
+	return IWDT->VALUE;
 }
 
 /**
@@ -172,10 +172,10 @@ uint32_t ald_iwdt_get_value(void)
  */
 it_status_t ald_iwdt_get_flag_status(void)
 {
-    if (READ_BIT(IWDT->RIS, IWDT_RIS_WDTIF_MSK))
-        return SET;
+	if (READ_BIT(IWDT->RIS, IWDT_RIS_WDTIF_MSK))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -184,8 +184,8 @@ it_status_t ald_iwdt_get_flag_status(void)
  */
 void ald_iwdt_clear_flag_status(void)
 {
-    WRITE_REG(IWDT->INTCLR, 1);
-    return;
+	WRITE_REG(IWDT->INTCLR, 1);
+	return;
 }
 
 /**
@@ -194,11 +194,11 @@ void ald_iwdt_clear_flag_status(void)
  */
 void ald_iwdt_feed_dog(void)
 {
-    IWDT_UNLOCK();
-    WRITE_REG(IWDT->INTCLR, 1);
-    IWDT_LOCK();
+	IWDT_UNLOCK();
+	WRITE_REG(IWDT->INTCLR, 1);
+	IWDT_LOCK();
 
-    return;
+	return;
 }
 /**
  * @}

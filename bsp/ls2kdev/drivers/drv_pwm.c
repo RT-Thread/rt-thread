@@ -28,7 +28,8 @@
 #define CTRL_INVERT (1UL<<9)
 #define CTRL_DZONE  (1UL<<10)
 
-struct loongson_pwm {
+struct loongson_pwm
+{
     rt_uint32_t __PAD0;
     rt_uint32_t low_buffer;
     rt_uint32_t full_buffer;
@@ -91,7 +92,8 @@ static rt_err_t loongson_pwm_ioctl(struct rt_device_pwm *device, int cmd, void *
 
     cfg = (void *)arg;
 
-    switch (cmd) {
+    switch (cmd)
+    {
     case PWM_CMD_ENABLE:
         rc = loongson_pwm_enable(device, cfg->channel);
         break;
@@ -111,18 +113,21 @@ static rt_err_t loongson_pwm_ioctl(struct rt_device_pwm *device, int cmd, void *
     return rc;
 }
 
-struct rt_pwm_ops loongson_pwm_ops = {
+struct rt_pwm_ops loongson_pwm_ops =
+{
     .control = loongson_pwm_ioctl,
 };
 
-struct rt_device_pwm loongson_pwm = {
+struct rt_device_pwm loongson_pwm =
+{
     .ops = &loongson_pwm_ops,
 };
 
 int loongson_pwm_init(void)
 {
     int rc = RT_EOK;
-    static rt_uint32_t *priv[] = {
+    static rt_uint32_t *priv[] =
+    {
         (void *)PWM0_BASE,
         (void *)PWM1_BASE,
         (void *)PWM2_BASE,

@@ -10,6 +10,12 @@ config RT_USING_SAL
 
     if RT_USING_SAL
 
+        config SAL_INTERNET_CHECK
+            bool "Enable the ability that check internet status"
+            default y
+            help
+                The ability that check internet status is provided by RT-Thread.
+
         if RT_USING_LWIP || AT_USING_SOCKET
 
             menu "protocol stack implement"

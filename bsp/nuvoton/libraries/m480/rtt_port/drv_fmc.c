@@ -159,7 +159,7 @@ int nu_fmc_erase(long addr, size_t size)
     uint32_t addr_end = addr + size;
 
 #if defined(NU_SUPPORT_NONALIGN)
-    uint8_t *page_sdtemp = RT_NULL; 
+    uint8_t *page_sdtemp = RT_NULL;
     uint8_t *page_edtemp = RT_NULL;
 
 
@@ -315,6 +315,11 @@ static int nu_fmc_init(void)
     SYS_LockReg();
 
     g_mutex_fmc = rt_mutex_create("nu_fmc_lock", RT_IPC_FLAG_FIFO);
+
+    /* PKG_USING_FAL */
+#if defined(PKG_USING_FAL)
+    fal_init();
+#endif
 
     return (int)RT_EOK;
 }

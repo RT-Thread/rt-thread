@@ -68,6 +68,6 @@ path = [cwd + '/tm4c123_driverlib',
     cwd + '/tm4c123_driverlib/driverlib',
     cwd + '/tm4c123_driverlib/driverlib/inc']
 
-group = DefineGroup('TM4C123_HAL', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')
