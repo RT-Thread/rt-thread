@@ -290,6 +290,12 @@ Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1
 
 
 
+### 4.2 How to extend Blue Pill board’s Flash space
+
+According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM32F103C8 and STM32F103CB use the same type of silicon die, which means STM32F103C8 also has 128KB ROM in theory, but ST locked the high 64KB. Basically, to force the debugger to download program can unlock the high 64KB. There is a good news that **Keil5 will help you to unlock the Blue Pill Board high 64KB block** if you use Blue Pill Board BSP as a template to create your project. You just need to press the "Flash Download" button as usual. What you only need to remember is that Blue Pill board has 128KB of Flash rather than 64KB.
+
+
+
 ## 5 Read more
 
 - [[STM32 Blue Pill Board Schematic]](https://stm32duinoforum.com/forum/images/c/c1/wiki_subdomain/Vcc-gnd.com-STM32F103C8-schematic.pdf)
