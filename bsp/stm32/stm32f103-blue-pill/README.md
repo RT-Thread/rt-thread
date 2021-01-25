@@ -199,7 +199,7 @@ These two videos will show you how to use PuTTy:
 
 
 
-### 3.7 **Peripheral Condition**
+### 3.7 Peripheral Condition
 
 Each peripheral supporting condition for this BSP is as follows:
 
