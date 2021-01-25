@@ -222,6 +222,22 @@ Each peripheral supporting condition for this BSP is as follows:
 
 
 
+### 3.8 MDK-Keil5 Simulator
+
+ If you haven't had a real Blue Pill Board yet, you may use MDK-Keil5 simulator to simulate to run RT-Thread on Blue Pill Board.
+
+![simulator1](figures/simulator1.png)
+
+
+
+![simulator2](figures/simulator2.jpg)
+
+
+
+![simulator3](figures/simulator3.png)
+
+
+
 ## 4 **Advanced Features**
 
 This BSP only enables GPIO and USART1 by default. If you need more advanced features such as SPI, ADC, or to add software packages, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env), as follows:
