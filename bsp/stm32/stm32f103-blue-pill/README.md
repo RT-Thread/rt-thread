@@ -21,10 +21,10 @@ Video tutorial: https://www.youtube.com/watch?v=0PwBBYXQ08g
 
 ## 1 MCU Resources
 
-The STM32F103xx medium-density performance line family incorporates the high-performance ARM®Cortex®-M3 32-bit RISC core operating at a 72 MHz frequency, high-speed embedded memories (Flash memory up to 128 Kbytes and SRAM up to 20 Kbytes), and an extensive range of enhanced I/Os and peripherals connected to two APB buses. All devices offer two 12-bit ADCs, three general purpose 16-bit timers plus one PWM timer, as well as standard and advanced communication interfaces: up to two I2Cs and SPIs, three USARTs, an USB and a CAN.
+The STM32F103Cx medium-density performance line family incorporates the high-performance ARM®Cortex®-M3 32-bit RISC core operating at a 72 MHz frequency, high-speed embedded memories (Flash memory up to 128 Kbytes and SRAM up to 20 Kbytes), and an extensive range of enhanced I/Os and peripherals connected to two APB buses. All devices offer two 12-bit ADCs, three general purpose 16-bit timers plus one PWM timer, as well as standard and advanced communication interfaces: up to two I2Cs and SPIs, three USARTs, an USB and a CAN.
 
 The devices operate from a 2.0 to 3.6 V power supply. They are available in both the –40 to +85 °C temperature range and the –40 to +105 °C extended temperature range. A comprehensive set of power-saving mode allows the design of low-power applications.
-The STM32F103xx medium-density performance line family includes devices in six different package types: from 36 pins to 100 pins. Depending on the device chosen, different sets of peripherals are included, the description below gives an overview of the complete range of peripherals proposed in this family.
+The STM32F103Cx medium-density performance line family includes devices in six different package types: from 36 pins to 100 pins. Depending on the device chosen, different sets of peripherals are included, the description below gives an overview of the complete range of peripherals proposed in this family.
 These features make the STM32F103xx medium-density performance line microcontroller family suitable for a wide range of applications such as motor drives, application control, medical and handheld equipment, PC and gaming peripherals, GPS platforms, industrial applications, PLCs, inverters, printers, scanners, alarm systems, video intercoms, and HVACs.
 
 KEY FEATURES
@@ -76,7 +76,7 @@ KEY FEATURES
 
 ## 2 Onboard Resources
 
-- MCU：STM32F103C8T6 @72MHz, 64KB FLASH , 20KB RAM
+- MCU：STM32F103C8T6 @72MHz, 64KB FLASH (can be extended to 128KB) , 20KB RAM
 
 - Peripherals
   
@@ -214,35 +214,29 @@ Learn how to use RT-Thread ENV, click [Here](https://github.com/RT-Thread/rtthre
 
 ### 4.1 How to use USB virtual com as a console device
 
-#### 4.1.1 Step 1
-
-Enable USB device.
+**Step 1: Enable USB device.**
 
 ![putty](figures/usb_device1.png)
 
 
 
-#### 4.1.2 Step 2
-
-Enable USB Device Driver and enable to use device as CDC device.
+**Step 2: Enable USB Device Driver and enable to use device as CDC device.**
 
 ![putty](figures/usb_device2.png)
 
 
 
-#### 4.1.3 Step 3
-
-Select VC (virtual console) software package.
+**Step 3: Select vconsole (virtual console) software package.**
 
 ![putty](figures/vconsole.png)
 
 
 
-#### 4.1.4 Step 4
-
-Add these codes in main function which is located in 'Applications' folder, and don't forget to include `vconsole.h`.
+**Step 4: Add these codes in main function which is located in 'Applications' folder.**
 
 ```c
+#include <vconsole.h>
+
 rt_device_t dev = rt_device_find("vcom");
 vconsole_switch(dev);
 ```
@@ -251,9 +245,9 @@ vconsole_switch(dev);
 
 
 
-#### 4.1.5 Step 5
+**Step 5: Download the new program to your blue pill board.** 
 
-Download the new program to your blue pill board. Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1) device in your computer. Then, you can use the USB instead of the UART-USB adapter as a console and send commands through USB cable. If you reset or reboot the blue pill board, you'll still need to re-plug the USB cable. 
+Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1) device in your computer. Then, you can use the USB instead of the UART-USB adapter as a console and send commands through USB cable. If you reset or reboot the blue pill board, you'll still need to re-plug the USB cable. 
 
 
 
