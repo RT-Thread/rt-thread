@@ -238,9 +238,9 @@ def get_mcu_info(uvproj_file_path):
             if result:
                 return result.group(1)
             else:
-                return ""
+                return "unknown"
     else:
-        return ""
+        return "unknown"
 
 
 def gen_makefile_targets(output_file_path):

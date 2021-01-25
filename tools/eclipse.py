@@ -523,10 +523,15 @@ def TargetEclipse(env, reset=False, prj_name=None):
 
     # generate projcfg.ini file
     if not os.path.exists('.settings/projcfg.ini'):
-        if os.path.exists("template.uvprojx"):
-            file = os.path.abspath("template.uvprojx")
+    # if search files with uvprojx or uvproj suffix
+        items = os.listdir(".")
+        if len(items) > 0:
+            for item in items:
+                if item.endswith(".uvprojx") or item.endswith(".uvproj"):
+                    file = item
+                    break
         else:
-            file = os.path.abspath("template.uvproj")
+            file = ""
         chip_name = rt_studio.get_mcu_info(file)
         if rt_studio.gen_projcfg_ini_file(chip_name, prj_name, os.path.abspath(".settings/projcfg.ini")) is False:
             print('Fail!')
@@ -540,9 +545,10 @@ def TargetEclipse(env, reset=False, prj_name=None):
             return
 
     # add clean2 target to fix issues when files too many
-    if rt_studio.gen_makefile_targets(os.path.abspath("makefile.targets")) is False:
-        print('Fail!')
-        return
+    if not os.path.exists('makefile.targets'):
+        if rt_studio.gen_makefile_targets(os.path.abspath("makefile.targets")) is False:
+            print('Fail!')
+            return
 
     project = ProjectInfo(env)
 
