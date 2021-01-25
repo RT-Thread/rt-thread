@@ -528,7 +528,7 @@ def TargetEclipse(env, reset=False, prj_name=None):
         if len(items) > 0:
             for item in items:
                 if item.endswith(".uvprojx") or item.endswith(".uvproj"):
-                    file = item
+                    file = os.path.abspath(item)
                     break
         else:
             file = ""
