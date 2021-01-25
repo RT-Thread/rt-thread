@@ -126,14 +126,12 @@ static void lwp_user_obj_free(struct rt_lwp *lwp)
     struct rt_list_node *list = RT_NULL, *node = RT_NULL;
     struct rt_object *object = RT_NULL;
 
-    list = &(lwp->object_list), node = list->next;
+    list = &(lwp->object_list);
 
     level = rt_hw_interrupt_disable();
-    while (list != node)
+    while ((node = list->next) != list)
     {
         object = rt_list_entry(node, struct rt_object, lwp_obj_list);
-        node = node->next;
-
         /* remove from kernel object list */
         switch (object->type)
         {
@@ -168,12 +166,16 @@ static void lwp_user_obj_free(struct rt_lwp *lwp)
             rt_timer_delete((rt_timer_t)object);
             break;
         case RT_Object_Class_Channel:
+            /* remove from object list */
+            rt_list_remove(&object->list);
             break;
         case RT_Object_Class_Custom:
             rt_custom_object_destroy(object);
             break;
         default:
             LOG_E("input object type(%d) error", object->type);
+            /* remove from object list */
+            rt_list_remove(&object->list);
             break;
         }
     }
