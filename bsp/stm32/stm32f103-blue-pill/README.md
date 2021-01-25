@@ -199,6 +199,29 @@ These two videos will show you how to use PuTTy:
 
 
 
+### 3.7 **Peripheral Condition**
+
+Each peripheral supporting condition for this BSP is as follows:
+
+| **On-board Peripherals** | **Support** | **Remark**                                                   |
+| ------------------------ | ----------- | ------------------------------------------------------------ |
+| LED                      | √           | PC13                                                         |
+| USB Virtual Serial Port  | √           | USB CDC                                                      |
+| **On-chip Peripherals**  | **Support** | **Remark**                                                   |
+| GPIO                     | √           |                                                              |
+| UART                     | √           | USART1 / USART2                                              |
+| SPI                      | √           | SPI1                                                         |
+| I2C                      | √           | software simulate                                            |
+| USB                      | √           | USB Device                                                   |
+| ADC                      |             |                                                              |
+| RTC                      | √           | Support for external crystal oscillator and internal low-speed clocks |
+| PWM                      |             |                                                              |
+| FLASH                    |             |                                                              |
+| IWG                      |             |                                                              |
+| UID                      | √           | STM32 Unique Device Identifier                               |
+
+
+
 ## 4 **Advanced Features**
 
 This BSP only enables GPIO and USART1 by default. If you need more advanced features such as SPI, ADC, or to add software packages, you need to configure the BSP with RT-Thread [ENV tool](https://www.rt-thread.io/download.html?download=Env), as follows:
