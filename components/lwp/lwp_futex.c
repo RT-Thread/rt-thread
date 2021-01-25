@@ -18,8 +18,8 @@
 struct rt_futex
 {
     int *uaddr;
-    rt_list_t list;
     rt_list_t waiting_thread;
+    struct lwp_avl_struct node;
 };
 
 static struct rt_mutex _futex_lock;
@@ -39,8 +39,8 @@ void futex_destory(void *data)
     if (futex)
     {
         level = rt_hw_interrupt_disable();
-        /* remove futex from list */
-        rt_list_remove(&(futex->list));
+        /* remove futex from futext avl */
+        lwp_avl_remove(&futex->node, (struct lwp_avl_struct **)futex->node.data);
         rt_hw_interrupt_enable(level);
 
         /* release object */
@@ -72,29 +72,26 @@ struct rt_futex* futex_create(int *uaddr, struct rt_lwp *lwp)
     }
 
     futex->uaddr = uaddr;
-    rt_list_init(&(futex->list));
+    futex->node.avl_key = (avl_key_t)uaddr;
+    futex->node.data = &lwp->futex_head;
     rt_list_init(&(futex->waiting_thread));
 
-    /* insert into futex list */
-    rt_list_insert_before(&lwp->futex_list, &(futex->list));
+    /* insert into futex head */
+    lwp_avl_insert(&futex->node, &lwp->futex_head);
     return futex;
 }
 
 static struct rt_futex* futex_get(void *uaddr, struct rt_lwp *lwp)
 {
     struct rt_futex *futex = RT_NULL;
-    rt_list_t *node = RT_NULL;
+    struct lwp_avl_struct *node = RT_NULL;
 
-    rt_list_for_each(node, &lwp->futex_list)
+    node = lwp_avl_find((avl_key_t)uaddr, lwp->futex_head);
+    if (!node)
     {
-        futex = rt_list_entry(node, struct rt_futex, list);
-
-        if (futex->uaddr == uaddr) break;
+        return RT_NULL;
     }
-
-    /* no this futex in the list */
-    if (node == &lwp->futex_list) futex = RT_NULL;
-
+    futex = rt_container_of(node, struct rt_futex, node);
     return futex;
 }
 
