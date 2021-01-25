@@ -2519,6 +2519,11 @@ int sys_clock_getres(clockid_t clk, struct timespec *ts)
 
 int sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
 
+int sys_pthread_mutex_init(void *umutex);
+int sys_pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout);
+int sys_pthread_mutex_unlock(void *umutex);
+int sys_pthread_mutex_destroy(void *umutex);
+
 const static void* func_table[] =
 {
     (void*)sys_exit,            /* 01 */
@@ -2668,6 +2673,10 @@ const static void* func_table[] =
     (void *)sys_clock_getres,
     (void *)sys_clone,           /* 130 */
     (void *)sys_futex,
+    (void *)sys_pthread_mutex_init,
+    (void *)sys_pthread_mutex_lock_timeout,
+    (void *)sys_pthread_mutex_unlock,
+    (void *)sys_pthread_mutex_destroy, /* 135 */
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

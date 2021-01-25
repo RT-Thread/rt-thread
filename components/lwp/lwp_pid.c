@@ -112,6 +112,7 @@ struct rt_lwp* lwp_new(void)
     rt_list_init(&lwp->t_grp);
     rt_list_init(&lwp->object_list);
     lwp->futex_head = RT_NULL;
+    lwp->pmutex_head = RT_NULL;
     rt_wqueue_init(&lwp->wait_queue);
 
     lwp->ref = 1;

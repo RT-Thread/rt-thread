@@ -93,6 +93,7 @@ struct rt_lwp
     struct rt_wqueue wait_queue; /*for console */
 
     struct lwp_avl_struct *futex_head;
+    struct lwp_avl_struct *pmutex_head;
 #ifdef RT_USING_GDBSERVER
     int debug;
     uint32_t bak_first_ins;
