@@ -81,11 +81,11 @@ static struct rt_pmutex* pmutex_create(void *umutex, struct rt_lwp *lwp)
     }
 
     pmutex->node.avl_key = (avl_key_t)umutex;
-    pmutex->node.data = &lwp->pmutex_head;
+    pmutex->node.data = &lwp->address_search_head;
     pmutex->custom_obj = obj;
 
     /* insert into pmutex head */
-    lwp_avl_insert(&pmutex->node, &lwp->pmutex_head);
+    lwp_avl_insert(&pmutex->node, &lwp->address_search_head);
     return pmutex;
 }
 
@@ -94,7 +94,7 @@ static struct rt_pmutex* pmutex_get(void *umutex, struct rt_lwp *lwp)
     struct rt_pmutex *pmutex = RT_NULL;
     struct lwp_avl_struct *node = RT_NULL;
 
-    node = lwp_avl_find((avl_key_t)umutex, lwp->pmutex_head);
+    node = lwp_avl_find((avl_key_t)umutex, lwp->address_search_head);
     if (!node)
     {
         return RT_NULL;
