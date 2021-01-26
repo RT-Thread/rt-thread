@@ -92,7 +92,7 @@ struct rt_lwp
 
     struct rt_wqueue wait_queue; /*for console */
 
-    struct lwp_avl_struct *futex_head;
+    struct lwp_avl_struct *address_search_head; /* for addressed object fast rearch */
 #ifdef RT_USING_GDBSERVER
     int debug;
     uint32_t bak_first_ins;
@@ -173,6 +173,12 @@ struct __pthread {
 /* for futex op */
 #define FUTEX_WAIT  0
 #define FUTEX_WAKE  1
+
+/* for pmutex op */
+#define PMUTEX_INIT    0
+#define PMUTEX_LOCK    1
+#define PMUTEX_UNLOCK  2
+#define PMUTEX_DESTROY 3
 
 #ifdef __cplusplus
 }

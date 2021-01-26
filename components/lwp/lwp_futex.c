@@ -73,11 +73,11 @@ struct rt_futex* futex_create(int *uaddr, struct rt_lwp *lwp)
 
     futex->uaddr = uaddr;
     futex->node.avl_key = (avl_key_t)uaddr;
-    futex->node.data = &lwp->futex_head;
+    futex->node.data = &lwp->address_search_head;
     rt_list_init(&(futex->waiting_thread));
 
     /* insert into futex head */
-    lwp_avl_insert(&futex->node, &lwp->futex_head);
+    lwp_avl_insert(&futex->node, &lwp->address_search_head);
     return futex;
 }
 
@@ -86,7 +86,7 @@ static struct rt_futex* futex_get(void *uaddr, struct rt_lwp *lwp)
     struct rt_futex *futex = RT_NULL;
     struct lwp_avl_struct *node = RT_NULL;
 
-    node = lwp_avl_find((avl_key_t)uaddr, lwp->futex_head);
+    node = lwp_avl_find((avl_key_t)uaddr, lwp->address_search_head);
     if (!node)
     {
         return RT_NULL;
