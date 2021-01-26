@@ -156,7 +156,7 @@ void futex_wake(struct rt_futex *futex, int number)
 
         thread = rt_list_entry(futex->waiting_thread.next, struct rt_thread, tlist);
         /* remove from waiting list */
-        rt_list_remove(&(thread->list));
+        rt_list_remove(&(thread->tlist));
 
         thread->error = RT_EOK;
         /* resume the suspended thread */
