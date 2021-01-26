@@ -70,21 +70,21 @@ SECTIONS
     .comm : {
         . = ALIGN(4);
         KEEP(*(.vector))
-        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *romfs.o 
-        *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
+        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *dfs*filesystems**.o  
+        *romfs.o *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
         *letf2.o *multf3.o *subtf3.o *fixtfsi.o *floatsitf.o *extenddftf2.o
         *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o) *(.text)
         *finsh*shell.o (.text*)
         *(.text.unlikely)
         *(.text.startup)
-        EXCLUDE_FILE (*components*libc**.o *romfs.o *lib_a**.o *cp-demangle.o
-        *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
+        EXCLUDE_FILE (*components*libc**.o *dfs*filesystems**.o *romfs.o *lib_a**.o 
+        *cp-demangle.o *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
         *(.rodata.name)
-        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o) *(.rodata.str1.4)
+        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o *cp-demangle.o) *(.rodata.str1.4)
         EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
         *(.rela*)
         *(.data*)
-	    *(.sdata*)
+        *(.sdata*)
     } > comm AT > flash
 
     .bss (NOLOAD):
