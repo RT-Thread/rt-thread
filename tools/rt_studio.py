@@ -3,6 +3,7 @@ import re
 from string import Template
 
 import rtconfig
+import shutil
 
 cproject_temp = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
@@ -272,42 +273,50 @@ def gen_org_eclipse_core_runtime_prefs(output_file_path):
 
 
 def gen_cproject_file(output_file_path):
-    CFLAGS = rtconfig.CFLAGS
-    AFLAGS = rtconfig.AFLAGS
-    LFLAGS = rtconfig.LFLAGS
-    if 'CXXFLAGS' in dir(rtconfig):
-        CXXFLAGS = rtconfig.CXXFLAGS
-    else:
-        CXXFLAGS = ""
+	template_file_path = os.path.join(os.path.dirname(output_file_path),"template.cproject")
+	if os.path.exists(template_file_path):
+		try:
+			shutil.copy(template_file_path, output_file_path)
+		except Exception as e:
+			print(e)
+		return True
+	else:
+		CFLAGS = rtconfig.CFLAGS
+		AFLAGS = rtconfig.AFLAGS
+		LFLAGS = rtconfig.LFLAGS
+		if 'CXXFLAGS' in dir(rtconfig):
+			CXXFLAGS = rtconfig.CXXFLAGS
+		else:
+			CXXFLAGS = ""
 
-    if "-T" in LFLAGS:
-        items = str(LFLAGS).split()
-        t_index = items.index("-T")
-        items[t_index] = ""
-        items[t_index + 1] = ""
-        LFLAGS = " ".join(items)
+		if "-T" in LFLAGS:
+			items = str(LFLAGS).split()
+			t_index = items.index("-T")
+			items[t_index] = ""
+			items[t_index + 1] = ""
+			LFLAGS = " ".join(items)
 
-    try:
-        w_str = cproject_temp
-        if "a_misc_flag" in w_str:
-            w_str = w_str.replace("a_misc_flag", AFLAGS)
-        if "c_misc_flag" in w_str:
-            w_str = w_str.replace("c_misc_flag", CFLAGS)
-        if "cpp_misc_flag" in w_str:
-            w_str = w_str.replace("cpp_misc_flag", CXXFLAGS)
-        if "c_link_misc_flag" in w_str:
-            w_str = w_str.replace("c_link_misc_flag", LFLAGS)
-        if "cpp_link_misc_flag" in w_str:
-            w_str = w_str.replace("cpp_link_misc_flag", LFLAGS)
+		try:
+			w_str = cproject_temp
+			if "a_misc_flag" in w_str:
+				w_str = w_str.replace("a_misc_flag", AFLAGS)
+			if "c_misc_flag" in w_str:
+				w_str = w_str.replace("c_misc_flag", CFLAGS)
+			if "cpp_misc_flag" in w_str:
+				w_str = w_str.replace("cpp_misc_flag", CXXFLAGS)
+			if "c_link_misc_flag" in w_str:
+				w_str = w_str.replace("c_link_misc_flag", LFLAGS)
+			if "cpp_link_misc_flag" in w_str:
+				w_str = w_str.replace("cpp_link_misc_flag", LFLAGS)
 
-        dir_name = os.path.dirname(output_file_path)
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-        with open(output_file_path, 'w') as f:
-            f.write(w_str)
-            return True
-    except Exception as e:
-        return False
+			dir_name = os.path.dirname(output_file_path)
+			if not os.path.exists(dir_name):
+				os.makedirs(dir_name)
+			with open(output_file_path, 'w') as f:
+				f.write(w_str)
+				return True
+		except Exception as e:
+			return False
 
 
 def gen_project_file(output_file_path):
