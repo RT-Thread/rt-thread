@@ -18,6 +18,9 @@ if GetDepend('RT_USING_SDIO'):
 
 if GetDepend('RT_USING_I2C'):
     src += ['drv_soft_i2c.c']
+
+if GetDepend('RT_USING_WDT'):
+    src += ['drv_wdt.c']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 objs = [group]
