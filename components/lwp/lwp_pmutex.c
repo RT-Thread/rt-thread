@@ -103,7 +103,7 @@ static struct rt_pmutex* pmutex_get(void *umutex, struct rt_lwp *lwp)
     return pmutex;
 }
 
-int sys_pthread_mutex_init(void *umutex)
+static int _pthread_mutex_init(void *umutex)
 {
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
@@ -153,7 +153,7 @@ int sys_pthread_mutex_init(void *umutex)
     return 0;
 }
 
-int sys_pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
+static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
 {
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
@@ -196,7 +196,7 @@ int sys_pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
     return lock_ret;
 }
 
-int sys_pthread_mutex_unlock(void *umutex)
+static int _pthread_mutex_unlock(void *umutex)
 {
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
@@ -228,7 +228,7 @@ int sys_pthread_mutex_unlock(void *umutex)
     return lock_ret;
 }
 
-int sys_pthread_mutex_destroy(void *umutex)
+static int _pthread_mutex_destroy(void *umutex)
 {
     struct rt_lwp *lwp = RT_NULL;
     struct rt_pmutex *pmutex = RT_NULL;
@@ -258,4 +258,29 @@ int sys_pthread_mutex_destroy(void *umutex)
     rt_mutex_release(&_pmutex_lock);
 
     return RT_EOK;
+}
+
+int sys_pmutex(void *umutex, int op, void *arg)
+{
+    int ret = -RT_EINVAL;
+
+    switch (op)
+    {
+        case PMUTEX_INIT:
+            ret = _pthread_mutex_init(umutex);
+            break;
+        case PMUTEX_LOCK:
+            ret = _pthread_mutex_lock_timeout(umutex, (struct timespec*)arg);
+            break;
+        case PMUTEX_UNLOCK:
+            ret = _pthread_mutex_unlock(umutex);
+            break;
+        case PMUTEX_DESTROY:
+            ret = _pthread_mutex_destroy(umutex);
+            break;
+        default:
+            rt_set_errno(EINVAL);
+            break;
+    }
+    return ret;
 }

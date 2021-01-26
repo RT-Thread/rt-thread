@@ -174,6 +174,12 @@ struct __pthread {
 #define FUTEX_WAIT  0
 #define FUTEX_WAKE  1
 
+/* for pmutex op */
+#define PMUTEX_INIT    0
+#define PMUTEX_LOCK    1
+#define PMUTEX_UNLOCK  2
+#define PMUTEX_DESTROY 3
+
 #ifdef __cplusplus
 }
 #endif
