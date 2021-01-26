@@ -47,6 +47,55 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default n
 
+    menuconfig BSP_USING_I2C1
+        bool "Enable I2C1 BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C1
+            comment "Notice: PE3 --> 16; PE2 --> 15"
+            config BSP_I2C1_SCL_PIN
+                int "I2C1 scl pin number"
+                range 1 27
+                default 16
+            config BSP_I2C1_SDA_PIN
+                int "I2C1 sda pin number"
+                range 1 27
+                default 15
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default n
+
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+
+            config BSP_USING_TIM3
+                bool "Enable TIM3"
+                default n
+
+            config BSP_USING_TIM4
+                bool "Enable TIM4"
+                default n
+                
+            config BSP_USING_TIM5
+                bool "Enable TIM5"
+                default n
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"
