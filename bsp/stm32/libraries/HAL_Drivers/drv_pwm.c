@@ -314,7 +314,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     case PWM_CMD_ENABLE:
         return drv_pwm_enable(htim, configuration, RT_TRUE);
     case PWMN_CMD_DISABLE:
-        configuration->complementary = RT_TRUE;
+        configuration->complementary = RT_FALSE;
     case PWM_CMD_DISABLE:
         return drv_pwm_enable(htim, configuration, RT_FALSE);
     case PWM_CMD_SET:
