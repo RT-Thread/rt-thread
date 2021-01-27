@@ -61,13 +61,42 @@ Change log since v3.1.4
 ## BSP and CPU porting
 
 * Add license info and code cleanup for vexpress-a9 BSP
+
+* Add HDSC hc32f4a0 BSP support
+
+* Fix the lpc55 issue under Linux/GCC
+
 * [qemu] Fix spelling mistakes of code in drv_pl041.c
+
 * [allwinner_tina]Fix spi driver bug
+
 * Optimize BSP dist handle process
+
 * [nrf5x] Add the BSP of nrf5x, which support UART, SPI, PWM, ADC, i2c drivers and rtc device driver
+
 * [nrfx] Add the on-chip flash for nrf5x
+
 * Update BSP for mini2440
+
 * Add rt_hw_us_delay for W60x
+
+* Add more BSP on BSP framework:
+
+  * At32/at32f403a-start
+  * At32/at32f407-start
+  * bluetrum/ab32vg1-ab-prougen
+  * essemi/es32f0271
+  * essemi/es32f369x
+  * essemi/es32f0654
+  * lpc55sxx/lpc55s69
+  * ls2kdev
+  * nrf5x
+  * nuclei/gd32vf103_rvstar
+  * nuclei/hbird_eval
+  * nuvoton/nk-980iot
+  * nuvoton/numaker-iot-m487
+  * nuvoton/numaker-pfm-m487
+  
 * Add more STM32 BSP based on new STM32 BSP framework:
   * stm32f103-blue-pill
   * stm32f103-onenet-nbiot
@@ -86,6 +115,7 @@ Change log since v3.1.4
   * stm32mp157a-st-discovery
   * stm32mp157a-st-ev1
   * stm32wb55-st-nucleo
+  
 * New STM32 BSP framework:
   * Fix bug that caused system crash by changing the run_mode in low power mode
   * drv_flash_f7.c supports single bank mode
