@@ -35,6 +35,7 @@ jobs:
          - {RTT_BSP: "at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "allwinner_tina", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "efm32", RTT_TOOL_CHAIN: "sourcery-arm"} 
+         - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}         
          - {RTT_BSP: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "gkipc", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -45,10 +46,13 @@ jobs:
          - {RTT_BSP: "lm3s8962", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lm3s9b9x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lm4f232", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "tm4c123bsp", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "tm4c129x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc43xx/M4", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc176x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc178x", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc408x", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "lpc1114", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc2148", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc2478", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "lpc5410x", RTT_TOOL_CHAIN: "sourcery-arm"}
@@ -122,6 +126,8 @@ jobs:
          - {RTT_BSP: "frdm-k64f", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "fh8620", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "xplorer4330/M4", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "at32/at32f403a-start", RTT_TOOL_CHAIN: "sourcery-arm"} 
+         - {RTT_BSP: "at32/at32f407-start", RTT_TOOL_CHAIN: "sourcery-arm"} 
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python

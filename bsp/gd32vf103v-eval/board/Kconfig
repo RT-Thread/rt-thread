@@ -1,0 +1,40 @@
+menu "Hardware Drivers Config"
+
+config SOC_GD32VF103V
+    bool
+    select SOC_SERIES_GD32VF103V
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_USART
+        bool "Enable USART (usart0)"
+        select BSP_USING_UART
+        select BSP_USING_UART0
+        default y
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable USART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable USART0"
+                default y
+        endif    
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
