@@ -35,20 +35,6 @@ SECTIONS
 
     .ram1 __ram1_vma : {
         . = ALIGN(4);
-        PROVIDE(__ctors_start__ = .);
-        KEEP (*(SORT(.init_array.*)))
-        KEEP (*(.init_array))
-        PROVIDE(__ctors_end__ = .);
-
-        . = ALIGN(4);
-        *components*drivers**.o (.text*)
-        *device.o (.text*)
-        *components.o (.text*)
-        *idle.o (.text*)
-    } > ram1 AT > flash
-
-    .rti : {
-        . = ALIGN(4);
         /* section information for initial */
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
@@ -64,10 +50,21 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
 
-        . = ALIGN(32);
+        . = ALIGN(4);
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+        *components*drivers**.o (.text*)
+        *components.o (.text*)
+        *idle.o (.text*)
+        *object.o (.text*)
+        *scheduler.o (.text*)
     } > ram1 AT > flash
 
-    .comm : {
+    .comm __comm_vma : {
         . = ALIGN(4);
         KEEP(*(.vector))
         EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *dfs*filesystems**.o  
@@ -124,4 +121,4 @@ __bank_size = SIZEOF(.flash);
 __comm_lma = LOADADDR(.comm);
 __comm_size = SIZEOF(.comm);
 __ram1_lma = LOADADDR(.ram1);
-__ram1_size = SIZEOF(.ram1) + SIZEOF(.rti);
+__ram1_size = SIZEOF(.ram1);
