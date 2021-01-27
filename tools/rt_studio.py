@@ -6,7 +6,7 @@ import rtconfig
 import shutil
 
 # version
-MODULE_VER_NUM = 6
+MODULE_VER_NUM = 1
 
 cproject_temp = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
