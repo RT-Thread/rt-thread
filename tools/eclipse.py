@@ -524,14 +524,13 @@ def TargetEclipse(env, reset=False, prj_name=None):
     # generate projcfg.ini file
     if not os.path.exists('.settings/projcfg.ini'):
     # if search files with uvprojx or uvproj suffix
+        file = ""
         items = os.listdir(".")
         if len(items) > 0:
             for item in items:
                 if item.endswith(".uvprojx") or item.endswith(".uvproj"):
                     file = os.path.abspath(item)
                     break
-        else:
-            file = ""
         chip_name = rt_studio.get_mcu_info(file)
         if rt_studio.gen_projcfg_ini_file(chip_name, prj_name, os.path.abspath(".settings/projcfg.ini")) is False:
             print('Fail!')
