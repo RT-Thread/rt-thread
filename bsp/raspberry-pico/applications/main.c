@@ -5,20 +5,21 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
-#include "board.h"
+#define LED_PIN 25
 
-int main() {
-    const uint LED_PIN = 25;
-
+int main(void)
+{
     rt_kprintf("Hello, RT-Thread!\n");
 
-    gpio_init(LED_PIN);
-    gpio_set_dir(LED_PIN, GPIO_OUT);
-    while (true) {
-        gpio_put(LED_PIN, 1);
+    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
+
+    while (1)
+    {
+        rt_pin_write(LED_PIN, 1);
         rt_thread_mdelay(1000);
-        gpio_put(LED_PIN, 0);
+        rt_pin_write(LED_PIN, 0);
         rt_thread_mdelay(1000);
     }
 }
