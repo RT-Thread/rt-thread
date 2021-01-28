@@ -14,6 +14,7 @@
 #define HAL_WDT_MODULE_ENABLED
 // #define HAL_DAC_MODULE_ENABLED
 #define HAL_SD_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
 
 /*  Includes  */
 #ifdef HAL_GPIO_MODULE_ENABLED
@@ -38,6 +39,10 @@
 
 #ifdef HAL_SD_MODULE_ENABLED
 #include "ab32vg1_hal_sd.h"
+#endif
+
+#ifdef HAL_TIM_MODULE_ENABLED
+#include "ab32vg1_hal_tim.h"
 #endif
 
 #include <assert.h>
