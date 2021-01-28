@@ -213,7 +213,7 @@ Each peripheral supporting condition for this BSP is as follows:
 | SPI                      | √           | SPI1                                                         |
 | I2C                      | √           | software simulate                                            |
 | USB                      | √           | USB Device                                                   |
-| ADC                      |             |                                                              |
+| ADC                      | √           | ADC1 IN1                                                     |
 | RTC                      | √           | Support for external crystal oscillator and internal low-speed clocks |
 | PWM                      |             |                                                              |
 | FLASH                    |             |                                                              |
