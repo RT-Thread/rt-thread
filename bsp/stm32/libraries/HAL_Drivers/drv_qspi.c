@@ -22,7 +22,7 @@
 
 struct stm32_hw_spi_cs
 {
-    uint16_t Pin;
+    uint16_t pin;
 };
 
 struct stm32_qspi_bus
@@ -220,7 +220,7 @@ static rt_uint32_t qspixfer(struct rt_spi_device *device, struct rt_spi_message 
 #ifdef BSP_QSPI_USING_SOFTCS
     if (message->cs_take)
     {
-        rt_pin_write(cs->Pin, 0);
+        rt_pin_write(cs->pin, 0);
     }
 #endif
 
@@ -272,7 +272,7 @@ __exit:
 #ifdef BSP_QSPI_USING_SOFTCS
     if (message->cs_release)
     {
-        rt_pin_write(cs->Pin, 1);
+        rt_pin_write(cs->pin, 1);
     }
 #endif
     return len;
