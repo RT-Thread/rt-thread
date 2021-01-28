@@ -23,9 +23,9 @@ extern "C" {
 
 enum
 {
-    MM_AREA_TYPE_PHY = 0,
-    MM_AREA_TYPE_SHM,
-    MM_AREA_TYPE_AUTO,
+    MM_AREA_TYPE_PHY = 0,  /* mm_area physical address is IO register or reserved memory */
+    MM_AREA_TYPE_SHM,      /* mm_area physical address is shared memory */
+    MM_AREA_TYPE_AUTO,     /* mm_area physical address is alloced from page manager */
     MM_AREA_TYPE_UNKNOW,
 };
 
