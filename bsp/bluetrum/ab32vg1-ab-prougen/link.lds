@@ -35,20 +35,6 @@ SECTIONS
 
     .ram1 __ram1_vma : {
         . = ALIGN(4);
-        PROVIDE(__ctors_start__ = .);
-        KEEP (*(SORT(.init_array.*)))
-        KEEP (*(.init_array))
-        PROVIDE(__ctors_end__ = .);
-
-        . = ALIGN(4);
-        *components*drivers**.o (.text*)
-        *device.o (.text*)
-        *components.o (.text*)
-        *idle.o (.text*)
-    } > ram1 AT > flash
-
-    .rti : {
-        . = ALIGN(4);
         /* section information for initial */
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
@@ -64,27 +50,38 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
 
-        . = ALIGN(32);
+        . = ALIGN(4);
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+        *components*drivers**.o (.text*)
+        *components.o (.text*)
+        *idle.o (.text*)
+        *object.o (.text*)
+        *scheduler.o (.text*)
     } > ram1 AT > flash
 
-    .comm : {
+    .comm __comm_vma : {
         . = ALIGN(4);
         KEEP(*(.vector))
-        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *romfs.o 
-        *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
+        EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *dfs*filesystems**.o  
+        *romfs.o *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
         *letf2.o *multf3.o *subtf3.o *fixtfsi.o *floatsitf.o *extenddftf2.o
         *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o) *(.text)
         *finsh*shell.o (.text*)
         *(.text.unlikely)
         *(.text.startup)
-        EXCLUDE_FILE (*components*libc**.o *romfs.o *lib_a**.o *cp-demangle.o
-        *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
+        EXCLUDE_FILE (*components*libc**.o *dfs*filesystems**.o *romfs.o *lib_a**.o 
+        *cp-demangle.o *divdf3.o *muldf3.o *multf3.o *unwind*.o *_clz.o) *(.rodata)
         *(.rodata.name)
-        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o) *(.rodata.str1.4)
+        EXCLUDE_FILE(*lib_a**.o *cp-demangle.o *cp-demangle.o) *(.rodata.str1.4)
         EXCLUDE_FILE(*lib_a**.o *unwind*.o) *(.srodata)
         *(.rela*)
         *(.data*)
-	    *(.sdata*)
+        *(.sdata*)
     } > comm AT > flash
 
     .bss (NOLOAD):
@@ -124,4 +121,4 @@ __bank_size = SIZEOF(.flash);
 __comm_lma = LOADADDR(.comm);
 __comm_size = SIZEOF(.comm);
 __ram1_lma = LOADADDR(.ram1);
-__ram1_size = SIZEOF(.ram1) + SIZEOF(.rti);
+__ram1_size = SIZEOF(.ram1);
