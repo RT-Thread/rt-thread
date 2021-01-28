@@ -1014,10 +1014,10 @@ void *sys_mmap2(void *addr, size_t length, int prot,
     return lwp_mmap2(addr, length, prot, flags, fd, pgoffset);
 }
 
-extern int lwp_munmap(void *addr, size_t length);
+extern int lwp_munmap(void *addr);
 int sys_munmap(void *addr, size_t length)
 {
-    return lwp_munmap(addr, length);
+    return lwp_munmap(addr);
 }
 #endif
 

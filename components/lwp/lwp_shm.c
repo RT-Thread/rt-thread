@@ -68,8 +68,8 @@ static int _lwp_shmget(size_t key, size_t size, int create)
     int id = -1;
     struct lwp_avl_struct *node_key = 0;
     struct lwp_avl_struct *node_pa = 0;
-    void *page_addr = 0, *page_addr_p;
-    uint32_t bit;
+    void *page_addr = 0, *page_addr_p = RT_NULL;
+    uint32_t bit = 0;
 
     /* try to locate the item with the key in the binary tree */
     node_key = lwp_avl_find(key, shm_tree_key);
@@ -145,10 +145,10 @@ err:
 /* A wrapping function, get the shared memory with interrupts disabled. */
 int lwp_shmget(size_t key, size_t size, int create)
 {
-    int ret;
-    rt_base_t level;
+    int ret = 0;
+    rt_base_t level = 0;
 
-    level= rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     ret = _lwp_shmget(key, size, create);
     rt_hw_interrupt_enable(level);
     return ret;
@@ -158,7 +158,7 @@ int lwp_shmget(size_t key, size_t size, int create)
 static struct lwp_avl_struct *shm_id_to_node(int id)
 {
     struct lwp_avl_struct *node_key = 0;
-    struct lwp_shm_struct *p;
+    struct lwp_shm_struct *p = RT_NULL;
 
     /* check id */
     if (id < 0 || id >= RT_LWP_SHM_MAX_NR)
@@ -182,10 +182,10 @@ static struct lwp_avl_struct *shm_id_to_node(int id)
 /* Free the shared pages, the shared-memory structure and its binary tree node_key. */
 static int _lwp_shmrm(int id)
 {
-    struct lwp_avl_struct *node_key;
-    struct lwp_avl_struct *node_pa;
-    struct lwp_shm_struct* p;
-    uint32_t bit;
+    struct lwp_avl_struct *node_key = RT_NULL;
+    struct lwp_avl_struct *node_pa = RT_NULL;
+    struct lwp_shm_struct* p = RT_NULL;
+    uint32_t bit = 0;
 
     node_key = shm_id_to_node(id);
     if (!node_key)
@@ -210,10 +210,10 @@ static int _lwp_shmrm(int id)
 /* A wrapping function, free the shared memory with interrupt disabled. */
 int lwp_shmrm(int id)
 {
-    int ret;
-    rt_base_t level;
+    int ret = 0;
+    rt_base_t level = 0;
 
-    level= rt_hw_interrupt_disable();
+    level = rt_hw_interrupt_disable();
     ret = _lwp_shmrm(id);
     rt_hw_interrupt_enable(level);
     return ret;
@@ -222,10 +222,10 @@ int lwp_shmrm(int id)
 /* Map the shared memory specified by 'id' to the specified virtual address. */
 static void *_lwp_shmat(int id, void *shm_vaddr)
 {
-    struct rt_lwp *lwp;
-    struct lwp_avl_struct *node_key;
-    struct lwp_shm_struct *p;
-    void *va;
+    struct rt_lwp *lwp  = RT_NULL;
+    struct lwp_avl_struct *node_key = RT_NULL;
+    struct lwp_shm_struct *p = RT_NULL;
+    void *va = RT_NULL;
 
     /* The id is used to locate the node_key in the binary tree, and then get the
      * shared-memory structure linked to the node_key. We don't use the id to refer
@@ -245,7 +245,7 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     {
         return RT_NULL;
     }
-    va = lwp_map_user_phy(lwp, shm_vaddr, (void*)p->addr, p->size, 1);
+    va = lwp_map_user_type(lwp, shm_vaddr, (void*)p->addr, p->size, 1, MM_AREA_TYPE_SHM);
     if (va)
     {
         p->ref++;
@@ -256,8 +256,8 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
 /* A wrapping function: attach the shared memory to the specified address. */
 void *lwp_shmat(int id, void *shm_vaddr)
 {
-    void *ret;
-    rt_base_t level;
+    void *ret = RT_NULL;
+    rt_base_t level = 0;
 
     if (((size_t)shm_vaddr & ARCH_PAGE_MASK) != 0)
     {
@@ -272,10 +272,10 @@ void *lwp_shmat(int id, void *shm_vaddr)
 /* Unmap the shared memory from the address space of the current thread. */
 int _lwp_shmdt(void *shm_vaddr)
 {
-    struct rt_lwp *lwp;
-    void *pa;
-    struct lwp_avl_struct *node_pa;
-    struct lwp_shm_struct* p;
+    struct rt_lwp *lwp = RT_NULL;
+    void *pa = RT_NULL;
+    struct lwp_avl_struct *node_pa = RT_NULL;
+    struct lwp_shm_struct* p = RT_NULL;
 
     lwp = (struct rt_lwp*)rt_thread_self()->lwp;
     if (!lwp)
@@ -296,15 +296,15 @@ int _lwp_shmdt(void *shm_vaddr)
     }
     p->ref--;
 
-    lwp_unmap_user_phy(lwp, shm_vaddr, p->size);
+    lwp_unmap_user_phy(lwp, shm_vaddr);
     return 0;
 }
 
 /* A wrapping function: detach the mapped shared memory. */
 int lwp_shmdt(void *shm_vaddr)
 {
-    int ret;
-    rt_base_t level;
+    int ret = 0;
+    rt_base_t level = 0;
 
     level = rt_hw_interrupt_disable();
     ret = _lwp_shmdt(shm_vaddr);
@@ -316,8 +316,8 @@ int lwp_shmdt(void *shm_vaddr)
 /* Get the virtual address of a shared memory in kernel. */
 void *_lwp_shminfo(int id)
 {
-    struct lwp_avl_struct *node_key;
-    struct lwp_shm_struct *p;
+    struct lwp_avl_struct *node_key = RT_NULL;
+    struct lwp_shm_struct *p = RT_NULL;
 
     /* the share memory is in use only if it exsits in the binary tree */
     node_key = shm_id_to_node(id);
@@ -333,8 +333,8 @@ void *_lwp_shminfo(int id)
 /* A wrapping function: get the virtual address of a shared memory. */
 void *lwp_shminfo(int id)
 {
-    void *vaddr;
-    rt_base_t level;
+    void *vaddr = RT_NULL;
+    rt_base_t level = 0;
 
     level = rt_hw_interrupt_disable();
     vaddr = _lwp_shminfo(id);
@@ -345,7 +345,7 @@ void *lwp_shminfo(int id)
 #ifdef RT_USING_FINSH
 static void _shm_info(struct lwp_avl_struct* node_key, void *data)
 {
-    int id;
+    int id = 0;
     struct lwp_shm_struct* p = (struct lwp_shm_struct*)node_key->data;
 
     id = p - _shm_ary;
@@ -354,7 +354,7 @@ static void _shm_info(struct lwp_avl_struct* node_key, void *data)
 
 void list_shm(void)
 {
-    rt_base_t level;
+    rt_base_t level = 0;
 
     rt_kprintf("   key        paddr      size       id\n");
     rt_kprintf("---------- ---------- ---------- --------\n");

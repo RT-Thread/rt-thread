@@ -24,15 +24,18 @@ extern "C" {
 int lwp_user_space_init(struct rt_lwp *lwp);
 void lwp_unmap_user_space(struct rt_lwp *lwp);
 
-int lwp_unmap_user(struct rt_lwp *lwp, void *va, size_t size);
+int lwp_unmap_user(struct rt_lwp *lwp, void *va);
 void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size);
 
 void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, int cached);
-int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va, size_t size);
+int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va);
+
+void *lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, int cached, int type);
+int lwp_unmap_user_type(struct rt_lwp *lwp, void *va);
 
 int lwp_brk(void *addr);
 void* lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd, off_t pgoffset);
-int lwp_munmap(void *addr, size_t length);
+int lwp_munmap(void *addr);
 
 size_t lwp_get_from_user(void *dst, void *src, size_t size);
 size_t lwp_put_to_user(void *dst, void *src, size_t size);
