@@ -21,14 +21,22 @@
 extern "C" {
 #endif
 
+enum
+{
+    MM_AREA_TYPE_PHY = 0,  /* mm_area physical address is IO register or reserved memory */
+    MM_AREA_TYPE_SHM,      /* mm_area physical address is shared memory */
+    MM_AREA_TYPE_AUTO,     /* mm_area physical address is alloced from page manager */
+    MM_AREA_TYPE_UNKNOW,
+};
+
 struct rt_mm_area_struct
 {
     size_t addr;
     size_t size;
-    int auto_free;
+    int type;
 };
 
-int lwp_map_area_insert(struct lwp_avl_struct **avl_tree, size_t addr, size_t size, int auto_free);
+int lwp_map_area_insert(struct lwp_avl_struct **avl_tree, size_t addr, size_t size, int ma_type);
 void lwp_map_area_remove(struct lwp_avl_struct **avl_tree, size_t addr);
 struct lwp_avl_struct* lwp_map_find(struct lwp_avl_struct* ptree, size_t addr);
 struct lwp_avl_struct* lwp_map_find_first(struct lwp_avl_struct* ptree);
