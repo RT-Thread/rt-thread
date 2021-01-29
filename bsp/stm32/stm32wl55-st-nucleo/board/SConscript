@@ -1,0 +1,31 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32wlxx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/STM32WLxx_HAL/CMSIS/Device/ST/STM32WLxx/Source/Templates/gcc/startup_stm32wle5xx.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/STM32WLxx_HAL/CMSIS/Device/ST/STM32WLxx/Source/Templates/arm/startup_stm32wle5xx.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/STM32WLxx_HAL/CMSIS/Device/ST/STM32WLxx/Source/Templates/iar/startup_stm32wle5xx.s']
+
+CPPDEFINES = ['STM32WLxx'] 
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
