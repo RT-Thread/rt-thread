@@ -128,7 +128,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 
     if (fd >= 0)
     {
-        struct dfs_fd *f = fd_get(fd);
+        struct dfs_fd *f = dfs_fd_get(fd);
         mask = POLLNVAL;
 
         if (f)
@@ -143,14 +143,12 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
                 /* dealwith the device return error -1*/
                 if (mask < 0)
                 {
-                    fd_put(f);
                     pollfd->revents = 0;
                     return mask;
                 }
             }
             /* Mask out unneeded events. */
             mask &= pollfd->events | POLLERR | POLLHUP;
-            fd_put(f);
         }
     }
     pollfd->revents = mask;

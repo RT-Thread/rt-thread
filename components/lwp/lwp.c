@@ -752,10 +752,11 @@ static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
     int fd;
     struct dfs_fd *d;
     struct dfs_fdtable *lwp_fdt;
+    struct dfs_fdtable *fdt;
 
     fd = libc_stdio_get_console();
-    d = fd_get(fd);
-    fd_put(d);
+    fdt = dfs_fdtable_get();
+    d = fdt_fd_get(fdt, fd, 0); /* inc 0 ref count */
 
     fd = fd - DFS_FD_OFFSET;
     if (d == NULL)

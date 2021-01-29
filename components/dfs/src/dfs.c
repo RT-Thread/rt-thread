@@ -239,7 +239,8 @@ int fd_new(void)
  * @return NULL on on this file descriptor or the file descriptor structure
  * pointer.
  */
-struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
+
+struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr)
 {
     struct dfs_fd *d;
 
@@ -262,19 +263,19 @@ struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
         return NULL;
     }
 
-    /* increase the reference count */
-    d->ref_count ++;
+    d->ref_count += ref_inc_nr;
+
     dfs_fd_unlock();
 
     return d;
 }
 
-struct dfs_fd *fd_get(int fd)
+struct dfs_fd *dfs_fd_get(int fd)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    return fdt_fd_get(fdt, fd);
+    return fdt_fd_get(fdt, fd, 0);
 }
 
 /**
@@ -282,7 +283,7 @@ struct dfs_fd *fd_get(int fd)
  *
  * This function will put the file descriptor.
  */
-void fdt_fd_put(struct dfs_fdtable* fdt, struct dfs_fd *fd)
+void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
 {
     RT_ASSERT(fd != NULL);
 
@@ -308,12 +309,12 @@ void fdt_fd_put(struct dfs_fdtable* fdt, struct dfs_fd *fd)
     dfs_fd_unlock();
 }
 
-void fd_put(struct dfs_fd *fd)
+void dfs_fd_release(struct dfs_fd *fd)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    fdt_fd_put(fdt, fd);
+    fdt_fd_release(fdt, fd);
 }
 
 /**

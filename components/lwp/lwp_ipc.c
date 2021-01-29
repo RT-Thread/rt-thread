@@ -795,10 +795,10 @@ static struct dfs_fd *lwp_fd_get(int fdt_type, int fd)
     {
         fdt = dfs_fdtable_get();
     }
-    return fdt_fd_get(fdt, fd);
+    return fdt_fd_get(fdt, fd, 0);
 }
 
-static void lwp_fd_put(int fdt_type, struct dfs_fd *fd)
+static void lwp_fd_release(int fdt_type, struct dfs_fd *fd)
 {
     struct dfs_fdtable *fdt;
 
@@ -810,7 +810,7 @@ static void lwp_fd_put(int fdt_type, struct dfs_fd *fd)
     {
         fdt = dfs_fdtable_get();
     }
-    fdt_fd_put(fdt, fd);
+    fdt_fd_release(fdt, fd);
 }
 
 static int _chfd_alloc(int fdt_type)
@@ -837,8 +837,7 @@ static void _chfd_free(int fd, int fdt_type)
     {
         return;
     }
-    lwp_fd_put(fdt_type, d);
-    lwp_fd_put(fdt_type, d);
+    lwp_fd_release(fdt_type, d);
 }
 
 /* for fops */
@@ -924,7 +923,6 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
 
         /* set socket to the data of dfs_fd */
         d->data = (void *)ch;
-        lwp_fd_put(fdt_type, d);
     }
     else
     {
@@ -945,7 +943,6 @@ static rt_channel_t fd_2_channel(int fdt_type, int fd)
         rt_channel_t ch;
 
         ch = (rt_channel_t)d->data;
-        lwp_fd_put(fdt_type, d);
         if (ch)
         {
             return ch;

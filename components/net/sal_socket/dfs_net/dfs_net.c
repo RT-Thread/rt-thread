@@ -23,13 +23,12 @@ int dfs_net_getsocket(int fd)
     int socket;
     struct dfs_fd *_dfs_fd; 
 
-    _dfs_fd = fd_get(fd);
+    _dfs_fd = dfs_fd_get(fd);
     if (_dfs_fd == NULL) return -1;
 
     if (_dfs_fd->type != FT_SOCKET) socket = -1;
     else socket = (int)_dfs_fd->data;
 
-    fd_put(_dfs_fd); /* put this dfs fd */
     return socket;
 }
 
