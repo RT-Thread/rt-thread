@@ -117,6 +117,11 @@ extern "C" {
 #include "mp1/dac_config.h"    
 #include "mp1/tim_config.h"
 #include "mp1/pwm_config.h"    
+#elif  defined(SOC_SERIES_STM32WL)
+#include "wl/dma_config.h"
+#include "wl/uart_config.h"
+#include "wl/spi_config.h"
+#include "wl/tim_config.h"
 #elif  defined(SOC_SERIES_STM32WB)
 #include "wb/adc_config.h"
 #include "wb/dma_config.h"
