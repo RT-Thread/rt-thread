@@ -8,12 +8,14 @@
  * 2021-01-28     flybreak       first version
  */
 
-#ifndef __USART_H__
-#define __USART_H__
+#ifndef __DRV_GPIO_H__
+#define __DRV_GPIO_H__
 
-#include <rthw.h>
+#include <rtdevice.h>
 #include <rtthread.h>
 
-int rt_hw_uart_init(void);
+#include "board.h"
 
-#endif
+int rt_hw_gpio_init(void);
+
+#endif /* __DRV_GPIO_H__ */
