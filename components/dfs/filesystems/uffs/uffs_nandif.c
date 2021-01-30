@@ -324,7 +324,7 @@ static rt_uint8_t hw_flash_ecc_layout[UFFS_SPARE_LAYOUT_SIZE] =
     0x00, 0x04, 0xFF, 0x00
 };
 
-void uffs_setup_storage(struct uffs_StorageAttrSt *attr,
+RT_WEAK void uffs_setup_storage(struct uffs_StorageAttrSt *attr,
                         struct rt_mtd_nand_device *nand)
 {
     rt_memset(attr, 0, sizeof(struct uffs_StorageAttrSt));

@@ -1,0 +1,2 @@
+pico_simple_hardware_target(dma)
+target_link_libraries(hardware_dma INTERFACE hardware_claim)
