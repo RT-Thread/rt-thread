@@ -143,63 +143,23 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
     return -RT_ERROR;
 }
 
-static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
+static rt_err_t _workqueue_cancel_work(struct rt_work *work)
 {
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    if (queue->work_current == work)
-    {
-        rt_hw_interrupt_enable(level);
-        return -RT_EBUSY;
-    }
     rt_list_remove(&(work->list));
     work->flags &= ~RT_WORK_STATE_PENDING;
-    rt_hw_interrupt_enable(level);
-
-    return RT_EOK;
-}
-
-static rt_err_t _workqueue_cancel_delayed_work(struct rt_work *work)
-{
-    rt_base_t level;
-    int ret = RT_EOK;
-
-    if (!work->workqueue)
+    /* Timer started */
+    if (work->flags & RT_WORK_STATE_SUBMITTING)
     {
-        ret = -EINVAL;
-        goto __exit;
+        rt_timer_stop(&(work->timer));
+        rt_timer_detach(&(work->timer));
+        work->flags &= ~RT_WORK_STATE_SUBMITTING;
     }
-
-    if (work->flags & RT_WORK_STATE_PENDING)
-    {
-        /* Remove from the queue if already submitted */
-        ret = _workqueue_cancel_work(work->workqueue, work);
-        if (ret)
-        {
-            goto __exit;
-        }
-    }
-    else
-    {
-        if (work->flags & RT_WORK_STATE_SUBMITTING)
-        {
-            level = rt_hw_interrupt_disable();
-            rt_timer_stop(&(work->timer));
-            rt_timer_detach(&(work->timer));
-            work->flags &= ~RT_WORK_STATE_SUBMITTING;
-            rt_hw_interrupt_enable(level);
-        }
-    }
-
-    level = rt_hw_interrupt_disable();
-    /* Detach from workqueue */
     work->workqueue = RT_NULL;
-    work->flags &= ~(RT_WORK_STATE_PENDING);
     rt_hw_interrupt_enable(level);
-
-__exit:
-    return ret;
+    return 0;
 }
 
 static void _delayed_work_timeout_handler(void *parameter)
@@ -317,11 +277,11 @@ rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *wo
 
     if (work->type & RT_WORK_TYPE_DELAYED)
     {
-        return _workqueue_cancel_delayed_work(work);
+        return _workqueue_cancel_work(work);
     }
     else
     {
-        return _workqueue_cancel_work(queue, work);
+        return _workqueue_cancel_work(work);
     }
 }
 
