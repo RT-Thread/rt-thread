@@ -4,7 +4,8 @@ from building import *
 
 cwd     = GetCurrentDir()
 src     = []
-CPPPATH = [cwd]
+path    = [cwd]
+path   += [cwd + '/config']
 
 if GetDepend('RT_USING_PIN'):
     src += ['drv_gpio.c']
@@ -12,7 +13,19 @@ if GetDepend('RT_USING_PIN'):
 if GetDepend('RT_USING_SERIAL'):
     src += ['drv_usart.c']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_SDIO'):
+    src += ['drv_sdio.c']
+
+if GetDepend('RT_USING_I2C'):
+    src += ['drv_soft_i2c.c']
+
+if GetDepend('RT_USING_WDT'):
+    src += ['drv_wdt.c']
+
+if GetDepend('RT_USING_HWTIMER'):
+    src += ['drv_hwtimer.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 objs = [group]
 

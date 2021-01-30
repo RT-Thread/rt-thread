@@ -130,6 +130,7 @@ jobs:
          - {RTT_BSP: "at32/at32f403a-start", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "at32/at32f407-start", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm"} 
+         - {RTT_BSP: "raspberry-pico", RTT_TOOL_CHAIN: "sourcery-arm"} 
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
