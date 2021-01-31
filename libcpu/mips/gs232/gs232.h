@@ -17,7 +17,14 @@
 
 #define INTC_BASE			0xBFD01040
 
+#ifdef SOC_LS1B
+#define GS232_INTC_CELLS		4
+#endif
+
+#ifdef SOC_LS1C300
 #define GS232_INTC_CELLS		5
+#endif
+
 #define GS232_NR_IRQS			(32 * GS232_INTC_CELLS)
 
 #define GMAC0_BASE			0xBFE10000
