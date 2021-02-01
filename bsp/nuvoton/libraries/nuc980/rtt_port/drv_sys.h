@@ -243,6 +243,13 @@ typedef enum
 
 } E_SYS_IPCLK;
 
+typedef enum
+{
+    USB0_ID_DEVICE,
+    USB0_ID_HOST,
+    USB0_ID_CNT
+} E_SYS_USB0_ID;
+
 void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_set_priority(int vector, int priority);
 void rt_hw_interrupt_set_type(int vector, int type);
@@ -255,5 +262,6 @@ void nu_systick_udelay(uint32_t delay_us);
 void nu_sys_ip_reset(E_SYS_IPRST eIPRstIdx);
 void nu_sys_ipclk_enable(E_SYS_IPCLK eIPClkIdx);
 void nu_sys_ipclk_disable(E_SYS_IPCLK eIPClkIdx);
+E_SYS_USB0_ID nu_sys_usb0_role(void);
 
 #endif

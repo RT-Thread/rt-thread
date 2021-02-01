@@ -968,8 +968,12 @@ static void nu_pdma_memfun_actor_init(void)
     {
         nu_pdma_memfun_actor_maxnum = i;
         nu_pdma_memfun_actor_mask = ~(((1 << i) - 1));
+
         nu_pdma_memfun_actor_pool_sem = rt_sem_create("mempool_sem", nu_pdma_memfun_actor_maxnum, RT_IPC_FLAG_FIFO);
+        RT_ASSERT(nu_pdma_memfun_actor_pool_sem != RT_NULL);
+
         nu_pdma_memfun_actor_pool_lock = rt_mutex_create("mempool_lock", RT_IPC_FLAG_FIFO);
+        RT_ASSERT(nu_pdma_memfun_actor_pool_lock != RT_NULL);
     }
 }
 
@@ -987,13 +991,15 @@ static void nu_pdma_memfun_cb(void *pvUserData, uint32_t u32Events)
 static int nu_pdma_memfun_employ(void)
 {
     int idx = -1 ;
-    rt_err_t result = 0;
+    rt_err_t result = RT_EOK;
 
     /* Headhunter */
     if (nu_pdma_memfun_actor_pool_sem &&
             ((result = rt_sem_take(nu_pdma_memfun_actor_pool_sem, RT_WAITING_FOREVER)) == RT_EOK))
     {
-        rt_mutex_take(nu_pdma_memfun_actor_pool_lock, RT_WAITING_FOREVER);
+        result = rt_mutex_take(nu_pdma_memfun_actor_pool_lock, RT_WAITING_FOREVER);
+        RT_ASSERT(result == RT_EOK);
+
         /* Find the position of first '0' in nu_pdma_memfun_actor_mask. */
         idx = nu_cto(nu_pdma_memfun_actor_mask);
         if (idx != 32)
@@ -1004,9 +1010,9 @@ static int nu_pdma_memfun_employ(void)
         {
             idx = -1;
         }
-        rt_mutex_release(nu_pdma_memfun_actor_pool_lock);
+        result = rt_mutex_release(nu_pdma_memfun_actor_pool_lock);
+        RT_ASSERT(result == RT_EOK);
     }
-    RT_ASSERT(result == RT_EOK);
 
     return idx;
 }
