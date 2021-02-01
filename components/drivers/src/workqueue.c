@@ -245,19 +245,7 @@ rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *wo
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
 
-    if (time > 0)
-    {
-        work->type |= RT_WORK_TYPE_DELAYED;
-    }
-
-    if (work->type & RT_WORK_TYPE_DELAYED)
-    {
-        return _workqueue_submit_work(queue, work, time);
-    }
-    else
-    {
-        return _workqueue_submit_work(queue, work, 0);
-    }
+    return _workqueue_submit_work(queue, work, time);
 }
 
 rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *work)
@@ -289,17 +277,8 @@ rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *
 
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
 {
-    RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
-
-    if (work->type & RT_WORK_TYPE_DELAYED)
-    {
-        return _workqueue_cancel_work(work);
-    }
-    else
-    {
-        return _workqueue_cancel_work(work);
-    }
+    return _workqueue_cancel_work(work);
 }
 
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work)
