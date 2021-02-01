@@ -306,12 +306,9 @@ rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *wo
 
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work)
 {
-    rt_base_t level;
-
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
 
-    level = rt_hw_interrupt_disable();
     if (queue->work_current == work) /* it's current work in the queue */
     {
         /* wait for work completion */
@@ -319,10 +316,8 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
     }
     else
     {
-        rt_list_remove(&(work->list));
+        _workqueue_cancel_work(work);
     }
-    work->flags &= ~RT_WORK_STATE_PENDING;
-    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }
