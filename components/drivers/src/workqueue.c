@@ -267,24 +267,22 @@ rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *
     RT_ASSERT(work != RT_NULL);
 
     level = rt_hw_interrupt_disable();
-    if (queue->work_current == work)
-    {
-        rt_hw_interrupt_enable(level);
-        return -RT_EBUSY;
-    }
-
     /* NOTE: the work MUST be initialized firstly */
     rt_list_remove(&(work->list));
-
-    rt_list_insert_after(queue->work_list.prev, &(work->list));
-    if (queue->work_current == RT_NULL)
+    rt_list_insert_after(&queue->work_list, &(work->list));
+    /* whether the workqueue is doing work */
+    if (queue->work_current == RT_NULL &&
+        ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
         rt_hw_interrupt_enable(level);
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
         rt_schedule();
     }
-    else rt_hw_interrupt_enable(level);
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
 
     return RT_EOK;
 }
