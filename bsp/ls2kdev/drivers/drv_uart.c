@@ -156,26 +156,32 @@ struct rt_serial_device serial, serial4;
 
 void rt_hw_uart_init(void)
 {
-    struct rt_uart_ls2k *uart, *uart4;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
-    uart = &uart_dev0;
-    uart4 = &uart_dev4;
+#ifdef RT_USING_UART0
+    struct rt_uart_ls2k *uart0;
+    uart0 = &uart_dev0;
     serial.ops    = &ls2k_uart_ops;
     serial.config = config_uart0;
-    serial4.ops = &ls2k_uart_ops;
-    serial4.config = config;
 
-    rt_hw_interrupt_install(uart->IRQ, uart_irq_handler, &serial, "UART0");
-    rt_hw_interrupt_install(uart4->IRQ, uart_irq_handler, &serial4, "UART4");
+    rt_hw_interrupt_install(uart0->IRQ, uart_irq_handler, &serial, "UART0");
     /* register UART device */
     rt_hw_serial_register(&serial,
                           "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          uart);
+                          uart0);
+#endif
+
+#ifdef RT_USING_UART4
+    struct rt_uart_ls2k *uart4;
+    uart4 = &uart_dev4;
+    serial4.ops = &ls2k_uart_ops;
+    serial4.config = config;
+    rt_hw_interrupt_install(uart4->IRQ, uart_irq_handler, &serial4, "UART4");
     rt_hw_serial_register(&serial4,
                           "uart4",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           &uart_dev4);
+#endif
 }
 /*@}*/

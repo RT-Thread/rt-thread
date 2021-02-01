@@ -29,4 +29,13 @@ config SOC_LS2K1000
     select RT_USING_USER_MAIN
     select RT_USING_DEVICE
     default y
-    
+
+if RT_USING_SERIAL
+config RT_USING_UART0
+    bool "Using RT_USING_UART0"
+    default y
+
+config RT_USING_UART4
+    bool "Using RT_USING_UART4"
+    default y
+endif
