@@ -24,6 +24,7 @@ menu "Hardware Drivers Config"
             select BSP_USING_UART1_RX_DMA
             select BSP_USING_UART1_TX_DMA
             select PKG_USING_AT_DEVICE
+            select RT_USING_PKGS
             select AT_DEVICE_USING_ESP8266
             select AT_DEVICE_ESP8266_INIT_ASYN
             default n

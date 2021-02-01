@@ -150,6 +150,7 @@ menu "Hardware Drivers Config"
             bool "Enable mtd nor flash"
             select RT_USING_MTD_NOR
             select PKG_USING_FTL_SRC
+            select RT_USING_PKGS
             default n
 
             if BSP_USING_NOR_FLASH

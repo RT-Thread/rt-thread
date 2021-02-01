@@ -74,6 +74,7 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_SAMPLE
         select PKG_USING_MPU6XXX_LATEST_VERSION
+        select RT_USING_PKGS
         default n
 endmenu
 

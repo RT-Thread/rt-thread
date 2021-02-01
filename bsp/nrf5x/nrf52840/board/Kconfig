@@ -31,6 +31,7 @@ menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_QSPI_FLASH
         select PKG_USING_FAL
+        select RT_USING_PKGS
         bool "Enable QSPI FLASH(MX25R64 8MB)"
         default n
 
@@ -399,6 +400,7 @@ menu "On-chip Peripheral Drivers"
         endif
     config BSP_USING_ON_CHIP_FLASH
         select PKG_USING_FAL
+        select RT_USING_PKGS
         bool "Enable on-chip FLASH"
         default n
 
@@ -489,11 +491,13 @@ config BLE_STACK_USING_NULL
 
 config  BSP_USING_SOFTDEVICE
     select PKG_USING_NRF5X_SDK
+    select RT_USING_PKGS
     bool "Nordic softdevice(perpheral)"
 
 config BSP_USING_NIMBLE
     select PKG_USING_NIMBLE
     select PKG_NIMBLE_BSP_NRF52840
+    select RT_USING_PKGS
     bool "use nimble stack(iot)"
 endchoice
 

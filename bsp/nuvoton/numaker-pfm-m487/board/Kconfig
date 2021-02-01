@@ -97,6 +97,7 @@ menu "Hardware Drivers Config"
                 select PKG_USING_MPU6XXX_LATEST_VERSION
                 select PKG_USING_MPU6XXX_ACCE
                 select PKG_USING_MPU6XXX_GYRO
+                select RT_USING_PKGS
                 select BSP_USING_I2C2
                 default n
 
@@ -135,6 +136,7 @@ menu "Hardware Drivers Config"
                 select BSP_USING_I2C
                 select BSP_USING_I2C2
                 select PKG_USING_AT24CXX
+                select RT_USING_PKGS
                 default n
 
             config BOARD_USING_SRAM0_AS_MEMHEAP

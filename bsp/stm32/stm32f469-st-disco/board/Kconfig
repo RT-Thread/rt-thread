@@ -30,6 +30,7 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SFUD
         select RT_SFUD_USING_QSPI
         select PKG_USING_FAL
+        select RT_USING_PKGS
         select FAL_USING_SFUD_PORT
         default n
         
@@ -37,6 +38,7 @@ menu "Onboard Peripheral Drivers"
         bool "Mount QSPI flash to / with little fs"
         depends on BSP_USING_QSPI_FLASH
         select PKG_USING_LITTLEFS
+        select RT_USING_PKGS
         select RT_USING_MTD_NOR
         select RT_USING_DFS
         default y

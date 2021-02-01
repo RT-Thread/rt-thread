@@ -15,6 +15,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART2
         select BSP_USING_I2C1
         select PKG_USING_PCF8574
+        select RT_USING_PKGS
         default n
 
     config BSP_USING_SDRAM

@@ -147,6 +147,7 @@ menu "Board extended module Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI2
         select PKG_USING_NRF24L01
+        select RT_USING_PKGS
         default n
 
 endmenu

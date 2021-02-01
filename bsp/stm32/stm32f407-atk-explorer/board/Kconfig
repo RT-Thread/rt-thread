@@ -60,6 +60,7 @@ menu "Onboard Peripheral Drivers"
         default n
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
+        select RT_USING_PKGS
 
     config BSP_USING_SDCARD
         bool "Enable SDCARD (sdio)"

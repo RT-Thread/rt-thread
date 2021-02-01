@@ -53,6 +53,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable Ethernet Driver (spi2)"
         default n
         select PKG_USING_WIZNET
+        select RT_USING_PKGS
         select WIZNET_DEVICE_EXTERN_CONFIG
         select BSP_USING_SPI2
         if BSP_USING_ETH

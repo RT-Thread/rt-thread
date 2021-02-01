@@ -36,6 +36,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable MPU 9250 (i2c2)"
         select BSP_USING_I2C2
         select PKG_USING_MPU6XXX
+        select RT_USING_PKGS
         default n
 
     config PHY_USING_LAN8720A
@@ -45,6 +46,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable Ethernet"
         select BSP_USING_I2C2
         select PKG_USING_PCF8574
+        select RT_USING_PKGS
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
         default n

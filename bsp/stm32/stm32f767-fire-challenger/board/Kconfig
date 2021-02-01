@@ -43,6 +43,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable MPU6050 (i2c4)"
         select BSP_USING_I2C4
         select PKG_USING_MPU6XXX
+        select RT_USING_PKGS
         default n
 
     config BSP_USING_POT

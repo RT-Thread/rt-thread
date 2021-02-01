@@ -32,6 +32,7 @@ source "$BSP_DIR/drivers/Kconfig"
 config SOC_AMEBAZ
     bool
     select PKG_USING_REALTEK_AMEBA
+    select RT_USING_PKGS
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

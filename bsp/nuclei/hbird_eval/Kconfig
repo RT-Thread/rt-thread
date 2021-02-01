@@ -23,6 +23,7 @@ config SOC_HUMMINGBIRD
     bool
     select ARCH_RISCV
     select PKG_USING_NUCLEI_SDK
+    select RT_USING_PKGS
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

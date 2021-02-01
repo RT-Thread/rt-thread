@@ -29,6 +29,7 @@ config SOC_SERIES_M480
     config BSP_USING_FMC
         bool "Enable Flash Memory Controller(FMC)"
         select PKG_USING_FAL
+        select RT_USING_PKGS
         default n
 
     config BSP_USING_GPIO

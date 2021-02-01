@@ -37,6 +37,7 @@ menu "Onboard Peripheral Drivers"
         select AT_USING_CLIENT
         select AT_USING_SOCKET
         select PKG_USING_AT_DEVICE
+        select RT_USING_PKGS
         select AT_DEVICE_USING_ESP32
         default n
 endmenu

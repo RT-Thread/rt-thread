@@ -44,6 +44,7 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_LATEST_VERSION
+        select RT_USING_PKGS
         default n
         
     config BSP_USING_AHT10
@@ -53,6 +54,7 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AHT10
         select PKG_USING_AHT10_LATEST_VERSION
+        select RT_USING_PKGS
         default n
 
     menuconfig BSP_USING_AUDIO
@@ -87,6 +89,7 @@ menu "Onboard Peripheral Drivers"
             select RT_USING_DFS
             select PKG_USING_FAL
             select PKG_USING_EASYFLASH
+            select RT_USING_PKGS
             select RT_USING_WIFI_6181_LIB
             select RT_USING_OTA_LIB
             select RT_USING_SAL
@@ -350,6 +353,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable SDIO"
             select RT_USING_SDIO
             select PKG_USING_STM32_SDIO
+            select RT_USING_PKGS
             default n
             help
             BSP_USING_STM32_SDIO use drv_sdio_adapter.c,and
@@ -366,6 +370,7 @@ menu "Board extended module Drivers"
         select BSP_USING_SPI
         select BSP_USING_SPI2
         select PKG_USING_NRF24L01
+        select RT_USING_PKGS
         default n
 
 endmenu

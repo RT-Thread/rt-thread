@@ -16,6 +16,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable Ethernet Driver (spi2)"
         default n
         select PKG_USING_WIZNET
+        select RT_USING_PKGS
         select WIZNET_DEVICE_EXTERN_CONFIG
         select BSP_USING_SPI2
         if BSP_USING_ETH
@@ -42,6 +43,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable LoRa Driver (spi1)"
         default n
         select PKG_USING_SX12XX
+        select RT_USING_PKGS
         select SX12XX_DEVICE_EXTERN_CONFIG
         select BSP_USING_SPI1
         if BSP_USING_LORA

@@ -44,6 +44,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable MPU6050 (i2c1)"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
+        select RT_USING_PKGS
         default n
     
     config PHY_USING_LAN8720A

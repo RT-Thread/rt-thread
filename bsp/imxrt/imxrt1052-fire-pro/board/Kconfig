@@ -176,12 +176,14 @@ menu "Onboard Peripheral Drivers"
         bool "Enable MPU6050 (I2C1:J11 --> SCL; K11 --> SDA)"
         select BSP_USING_I2C1
         select PKG_USING_MPU6XXX
+        select RT_USING_PKGS
         default n
 
     menuconfig BSP_USING_AP3216C
         bool "Enable AP3216C (I2C1:J11 --> SCL; K11 --> SDA)"
         select BSP_USING_I2C1
         select PKG_USING_AP3216C
+        select RT_USING_PKGS
         default n
         if BSP_USING_AP3216C
             config AP3216C_USING_HW_INT
