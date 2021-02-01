@@ -164,17 +164,36 @@ static rt_err_t _workqueue_cancel_work(struct rt_work *work)
 
 static void _delayed_work_timeout_handler(void *parameter)
 {
-    struct rt_work *delayed_work;
+    struct rt_work *work;
+    struct rt_workqueue *queue;
     rt_base_t level;
 
-    delayed_work = (struct rt_work *)parameter;
+    work = (struct rt_work *)parameter;
+    queue = work->workqueue;
+    RT_ASSERT(queue != RT_NULL);
+
     level = rt_hw_interrupt_disable();
-    rt_timer_stop(&(delayed_work->timer));
-    rt_timer_detach(&(delayed_work->timer));
-    delayed_work->flags &= ~RT_WORK_STATE_SUBMITTING;
-    delayed_work->type &= ~RT_WORK_TYPE_DELAYED;
-    rt_hw_interrupt_enable(level);
-    _workqueue_submit_work(delayed_work->workqueue, delayed_work, 0);
+    rt_timer_detach(&(work->timer));
+    work->flags &= ~RT_WORK_STATE_SUBMITTING;
+    /* insert work queue */
+    if (queue->work_current != work)
+    {
+        rt_list_insert_after(queue->work_list.prev, &(work->list));
+        work->flags |= RT_WORK_STATE_PENDING;
+    }
+    /* whether the workqueue is doing work */
+    if (queue->work_current == RT_NULL &&
+        ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
+    {
+        rt_hw_interrupt_enable(level);
+        /* resume work thread */
+        rt_thread_resume(queue->work_thread);
+        rt_schedule();
+    }
+    else
+    {
+        rt_hw_interrupt_enable(level);
+    }
 }
 
 struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_size, rt_uint8_t priority)
