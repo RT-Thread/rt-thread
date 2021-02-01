@@ -23,10 +23,10 @@
   - For record function: Run it w/o parameter.
   - For replay function: Run it with parameter.
 */
-static void audio_test(int argc, char **argv)
+static int audio_test(int argc, char **argv)
 {
 #define DEF_MAX_ARGV_NUM 8
-    int smplrate[] = {8000, 11025, 16000, 22050, 32000, 44100, 48000};
+    int smplrate[] = {8000, 16000, 44100, 48000};
     int smplbit[] = {16};
     int chnum[] = {1, 2};
     struct wavrecord_info info;
@@ -74,6 +74,8 @@ static void audio_test(int argc, char **argv)
             } // k
         } // j
     } // i
+
+    return 0;
 }
 
 #ifdef FINSH_USING_MSH

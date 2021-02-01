@@ -412,7 +412,8 @@ static int rt_hw_sdh_init(void)
     rt_err_t ret = RT_EOK;
     rt_uint32_t flags = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE;
 
-    rt_event_init(&sdh_event, "sdh_event", RT_IPC_FLAG_FIFO);
+    ret = rt_event_init(&sdh_event, "sdh_event", RT_IPC_FLAG_FIFO);
+    RT_ASSERT(ret == RT_EOK);
 
     for (i = (SDH_START + 1); i < SDH_CNT; i++)
     {
@@ -428,7 +429,8 @@ static int rt_hw_sdh_init(void)
         /* Private */
         nu_sdh_arr[i].dev.user_data = (void *)&nu_sdh_arr[i];
 
-        rt_sem_init(&nu_sdh_arr[i].lock, "sdhlock", 1, RT_IPC_FLAG_FIFO);
+        ret = rt_sem_init(&nu_sdh_arr[i].lock, "sdhlock", 1, RT_IPC_FLAG_FIFO);
+        RT_ASSERT(ret == RT_EOK);
 
         rt_hw_interrupt_install(nu_sdh_arr[i].irqn, SDH_IRQHandler, (void *)&nu_sdh_arr[i], nu_sdh_arr[i].name);
         rt_hw_interrupt_umask(nu_sdh_arr[i].irqn);
@@ -437,9 +439,8 @@ static int rt_hw_sdh_init(void)
 
         nu_sys_ip_reset(nu_sdh_arr[i].rstidx);
 
-        SDH_Open(nu_sdh_arr[i].base, CardDetect_From_GPIO);
-
         nu_sdh_arr[i].pbuf = RT_NULL;
+
         ret = rt_device_register(&nu_sdh_arr[i].dev, nu_sdh_arr[i].name, flags);
         RT_ASSERT(ret == RT_EOK);
     }
@@ -591,7 +592,10 @@ static void sdh_hotplugger(void *param)
 
     for (i = (SDH_START + 1); i < SDH_CNT; i++)
     {
-        if (SDH_IS_CARD_PRESENT(nu_sdh_arr[i].base))
+        /* Try to detect SD card on selected port. */
+        SDH_Open(nu_sdh_arr[i].base, CardDetect_From_GPIO);
+        if (!SDH_Probe(nu_sdh_arr[i].base) &&
+                SDH_IS_CARD_PRESENT(nu_sdh_arr[i].base))
         {
             nu_sdh_hotplug_mount(&nu_sdh_arr[i]);
         }

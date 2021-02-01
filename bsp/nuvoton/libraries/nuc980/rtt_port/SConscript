@@ -9,6 +9,6 @@ CPPPATH = [cwd]
 group = []
 
 # USB driver constrain
-group = DefineGroup('nuc980_rttport', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
