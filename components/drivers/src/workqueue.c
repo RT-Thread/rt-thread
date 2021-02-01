@@ -304,6 +304,7 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
     struct rt_list_node *node, *next;
     RT_ASSERT(queue != RT_NULL);
 
+    // TODO: cancel delay work
     rt_enter_critical();
     for (node = queue->work_list.next; node != &(queue->work_list); node = next)
     {
@@ -337,14 +338,15 @@ rt_err_t rt_work_cancel(struct rt_work *work)
 int rt_work_sys_workqueue_init(void)
 {
     if (sys_workq != RT_NULL)
-        return 0;
+        return RT_EOK;
 
     sys_workq = rt_workqueue_create("sys_work", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     RT_SYSTEM_WORKQUEUE_PRIORITY);
+    RT_ASSERT(sys_workq != RT_NULL);
 
     return RT_EOK;
 }
 
-INIT_PREV_EXPORT(rt_work_sys_workqueue_init);
+INIT_DEVICE_EXPORT(rt_work_sys_workqueue_init);
 #endif
 #endif
