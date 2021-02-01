@@ -232,5 +232,7 @@
 /* samples: kernel and components samples */
 
 #define SOC_LS2K1000
+#define RT_USING_UART0
+#define RT_USING_UART4
 
 #endif
