@@ -33,39 +33,31 @@ menu "Hardware Drivers Config"
             default y
 
         config BOARD_USING_STORAGE_SPIFLASH
-            bool "SPIFLASH supporting(over qspi0)"
+            bool "SPI NOR FLASH supporting(over qspi0)"
             select BSP_USING_QSPI
             select BSP_USING_QSPI0
+            default n
+
+        config BOARD_USING_STORAGE_SPINAND
+            bool "SPI NAND FLASH supporting(over qspi0)"
+            select BSP_USING_QSPI
+            select BSP_USING_QSPI0
+            select NU_PKG_USING_SPINAND
             default y
 
-        choice
-            prompt "Select HS USB Ports"
+        config BOARD_USING_USB0_DEVICE_HOST
+            select BSP_USING_USBH
+            select BSP_USING_USBD
+            bool "Enable USB0 Device/Host"
+            help
+                Choose this option if you need USB device or host function mode.
+                    If you need USB host, please remember short to ground on JP1 jumper.
 
-            config BOARD_USING_USB_NONE
-                bool "Without any USB function"
-                help
-                    Choose this option if you need not USB functions.
-
-            config BOARD_USING_USB_HOST
-                select BSP_USING_USBH
-                bool "Enable USBH"
-                help
-                    Choose this option if you need USB HOST function mode.
-
-            config BOARD_USING_USB_OTG
-                select BSP_USING_OTG
-                bool "Enable OTG"
-                help
-                    Choose this option if you need USB HOST function mode.
-
-            config BOARD_USING_USB_OTG_HOST
-                select BSP_USING_USBH
-                select BSP_USING_OTG
-                bool "Enable OTG AND USBH"
-                help
-                    Choose this option if you need both USB ports function mode.
-
-        endchoice
+        config BOARD_USING_USB1_HOST
+            select BSP_USING_USBH
+            bool "Enable USB1 Host"
+            help
+                Choose this option if you need USB1 HOST.
 
     endmenu
 

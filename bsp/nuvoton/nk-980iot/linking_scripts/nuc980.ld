@@ -50,7 +50,7 @@ SECTIONS
         . = ALIGN(4);
 
         /* section information for utest */
-		. = ALIGN(4);
+        . = ALIGN(4);
         __rt_utest_tc_tab_start = .;
         KEEP(*(UtestTcTab))
         __rt_utest_tc_tab_end = .;

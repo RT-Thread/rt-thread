@@ -62,4 +62,10 @@ menu "Nuvoton Packages Config"
 
         endif
 
+    config NU_PKG_USING_SPINAND
+        bool "SPI NAND flash."
+        select BSP_USING_QSPI
+        select RT_USING_MTD_NAND
+        default n
+
 endmenu
