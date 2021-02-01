@@ -18,9 +18,9 @@ if not GetDepend('BSP_USE_STDDRIVER_SOURCE'):
 		libs += ['libstddriver_gcc']
 
 if not libs:
-	group = DefineGroup('nuc980_driver', src, depend = [''], CPPPATH = cpppath)
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath)
 else:
 	src = []
-	group = DefineGroup('nuc980_driver', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
+	group = DefineGroup('Libraries', src, depend = [''], CPPPATH = cpppath, LIBS = libs, LIBPATH = libpath)
 
 Return('group')

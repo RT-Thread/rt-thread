@@ -27,8 +27,10 @@ static int s_i32TRNGEnable = 0;
 static rt_uint32_t nu_trng_run(void)
 {
     uint32_t u32RNGValue;
+    rt_err_t result;
 
-    rt_mutex_take(&s_TRNG_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_TRNG_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     TRNG_Open();
 
@@ -38,13 +40,18 @@ static rt_uint32_t nu_trng_run(void)
         u32RNGValue = rand();
     }
 
-    rt_mutex_release(&s_TRNG_mutex);
+    result = rt_mutex_release(&s_TRNG_mutex);
+    RT_ASSERT(result == RT_EOK);
+
     return u32RNGValue;
 }
 
 rt_err_t nu_trng_init(void)
 {
-    rt_mutex_init(&s_TRNG_mutex, NU_CRYPTO_TRNG_NAME, RT_IPC_FLAG_FIFO);
+    rt_err_t result;
+
+    result = rt_mutex_init(&s_TRNG_mutex, NU_CRYPTO_TRNG_NAME, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
 
     if ((SYS->CSERVER & SYS_CSERVER_VERSION_Msk) == 0x0)
     {
