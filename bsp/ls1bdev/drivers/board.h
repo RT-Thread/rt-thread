@@ -19,7 +19,7 @@
 void rt_hw_board_init(void);
 
 /* 64M SDRAM */
-#define RT_HW_HEAP_END	(0x80000000 + 64 * 1024 * 1024)
+#define RT_HW_HEAP_END	(0x80000000 + RT_MEM_SIZE * 1024 * 1024)
 #define CPU_HZ			(125 * 1000000)
 
 #endif

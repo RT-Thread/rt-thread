@@ -10,15 +10,12 @@
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 100
+#define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
-#define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
+#define IDLE_THREAD_STACK_SIZE 1024
 #define RT_DEBUG
 
 /* Inter-Thread communication */
@@ -40,8 +37,8 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x40002
+#define RT_CONSOLE_DEVICE_NAME "uart5"
+#define RT_VER_NUM 0x40003
 
 /* RT-Thread Components */
 
@@ -114,9 +111,6 @@
 /* Utilities */
 
 
-/* RT-Thread MIPS CPU */
-
-
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
@@ -157,7 +151,9 @@
 /* samples: kernel and components samples */
 
 #define SOC_LS1B
-#define RT_USING_UART0
+#define RT_MEM_SIZE 256
+#define RT_OSC_CLK 25000000
+#define RT_USING_UART5
 #define RT_UART_RX_BUFFER_SIZE 64
 
 #endif
