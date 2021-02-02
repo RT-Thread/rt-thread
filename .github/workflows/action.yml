@@ -172,5 +172,6 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
+          source ~/.env/env.sh
           pkgs --update
           scons -C bsp/$RTT_BSP
