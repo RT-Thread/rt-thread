@@ -368,7 +368,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 else if (filter_cfg->items[i].ide == RT_CAN_EXTID)
                 {
                     id_h = (filter_cfg->items[i].id >> 13) & 0xFFFF;
-                    id_l = ((filter_cfg->items[i].id << 3)          | 
+                    id_l = ((filter_cfg->items[i].id << 3)   | 
                             (filter_cfg->items[i].ide << 2)  | 
                             (filter_cfg->items[i].rtr << 1)) & 0xFFFF;
                     mask_h = ((filter_cfg->items[i].mask << 3) >> 16) & 0xFFFF;
