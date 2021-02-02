@@ -474,6 +474,45 @@ extern usb_status_t USB_HostEhciIoctl(usb_host_controller_handle controllerHandl
                                       uint32_t ioctlEvent,
                                       void *ioctlParam);
 
+/*!
+ * @brief control ehci bus.
+ *
+ * @param ehciInstance  ehci instance pointer.
+ * @param bus_control   control code.
+ *
+ * @return kStatus_USB_Success or error codes.
+ */
+extern usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstance, uint8_t busControl);
+
+/*!
+ * @brief ehci port change interrupt process function.
+ *
+ * @param ehciInstance      ehci instance pointer.
+ */
+extern void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance);
+
+/*!
+ * @brief ehci timer0 interrupt process function.
+ * cancel control/bulk transfer that time out.
+ *
+ * @param ehciInstance      ehci instance pointer.
+ */
+extern void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance);
+
+/*!
+ * @brief host ehci start async schedule.
+ *
+ * @param ehciInstance    ehci instance pointer.
+ */
+extern void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance);
+
+/*!
+ * @brief host ehci start periodic schedule.
+ *
+ * @param ehciInstance    ehci instance pointer.
+ */
+extern void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance);
+
 /*! @}*/
 
 #ifdef __cplusplus

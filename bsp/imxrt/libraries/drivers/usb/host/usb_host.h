@@ -12,7 +12,6 @@
 #include <usb/include/usb.h>
 #include <usb/include/usb_misc.h>
 #include <usb/include/usb_spec.h>
-#include <usb/include/usb_host_config.h>
 
 /*******************************************************************************
  * Definitions

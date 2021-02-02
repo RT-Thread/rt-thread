@@ -5,8 +5,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "fsl_os_abstraction.h"
-#include <usb/include/usb_device_config.h>
+#include <usb/include/usb_host_config.h>
 #include "usb_host.h"
 #include "usb_host_hci.h"
 #include "usb_host_devices.h"

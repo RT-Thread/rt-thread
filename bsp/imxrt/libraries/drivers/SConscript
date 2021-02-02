@@ -64,7 +64,7 @@ if GetDepend('RT_USING_USB_DEVICE'):
 
 if GetDepend('RT_USING_USB_DEVICE') or GetDepend('RT_USING_USB_HOST'):
     src += Glob('usb/phy/*.c')
-    CPPDEFINES += ['ENDIANNESS']
+    CPPDEFINES += ['ENDIANNESS','USE_RTOS']
     
 if GetDepend('RT_USING_USB_HOST'):
     src += ['drv_usbh.c']

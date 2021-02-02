@@ -45,6 +45,16 @@ rt_err_t rt_usb_host_init(const char *name)
     drv = rt_usbh_class_driver_storage();
     rt_usbh_class_driver_register(drv);
 #endif
+#ifdef RT_USBH_HID
+    /* register mass storage class driver */
+    drv = rt_usbh_class_driver_hid();
+    rt_usbh_class_driver_register(drv);
+#ifdef RT_USBH_HID_MOUSE
+    uprotocal_t protocal;
+    protocal = rt_usbh_hid_protocal_mouse();
+    rt_usbh_hid_protocal_register(protocal);
+#endif
+#endif
 
     /* register hub class driver */
     drv = rt_usbh_class_driver_hub();
