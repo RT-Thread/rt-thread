@@ -7,7 +7,6 @@
  */
 
 #include <usb/include/usb_host_config.h>
-#include <fsl_os_abstraction.h>
 #include "fsl_common.h"
 #include "usb_host.h"
 #include "usb_host_hci.h"

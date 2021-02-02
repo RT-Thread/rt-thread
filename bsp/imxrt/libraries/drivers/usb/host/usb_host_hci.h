@@ -14,7 +14,7 @@
  ******************************************************************************/
 
 /*! @brief USB host lock */
-#define USB_HostLock() OSA_MutexLock(hostInstance->hostMutex, RT_WAITING_FOREVER)
+#define USB_HostLock() OSA_MutexLock(hostInstance->hostMutex, USB_OSA_WAIT_TIMEOUT)
 /*! @brief USB host unlock */
 #define USB_HostUnlock() OSA_MutexUnlock(hostInstance->hostMutex)
 

@@ -52,9 +52,6 @@ if GetDepend(['BSP_USING_SDRAM']):
 if GetDepend(['BSP_USING_LCD']):
     src += ['MIMXRT1052/drivers/fsl_elcdif.c']
 
-if GetDepend(['RT_USING_USB_HOST']) or GetDepend(['RT_USING_USB_DEVICE']):
-    src += ['MIMXRT1052/drivers/fsl_usdhc.c']
-
 if GetDepend(['BSP_USING_CAN']):
     src += ['MIMXRT1052/drivers/fsl_flexcan.c']
 

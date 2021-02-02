@@ -415,7 +415,6 @@ osa_status_t OSA_SemaphoreWait(osa_semaphore_handle_t semaphoreHandle, uint32_t 
 osa_status_t OSA_SemaphorePost(osa_semaphore_handle_t semaphoreHandle)
 {
     assert(semaphoreHandle);
-    osa_status_t status = KOSA_StatusError;
     rt_sem_t sem   = (rt_sem_t)(void *)(uint32_t *)(*(uint32_t *)semaphoreHandle);
     rt_sem_release(sem);
     return KOSA_StatusSuccess;
@@ -547,7 +546,6 @@ osa_status_t OSA_EventCreate(osa_event_handle_t eventHandle, uint8_t autoClear)
  *END**************************************************************************/
 osa_status_t OSA_EventSet(osa_event_handle_t eventHandle, osa_event_flags_t flagsToSet)
 {
-    rt_bool_t taskToWake = RT_FALSE;
     rt_err_t result;
     assert(eventHandle);
     osa_event_struct_t *pEventStruct = (osa_event_struct_t *)eventHandle;
@@ -643,7 +641,7 @@ osa_status_t OSA_EventWait(osa_event_handle_t eventHandle,
                            osa_event_flags_t *pSetFlags)
 {
     assert(eventHandle);
-    rt_uint8_t option;
+    rt_uint8_t option = 0;
     rt_uint32_t timeoutTicks;
     rt_uint32_t flagsSave;
     osa_event_struct_t *pEventStruct = (osa_event_struct_t *)eventHandle;
@@ -669,7 +667,7 @@ osa_status_t OSA_EventWait(osa_event_handle_t eventHandle,
     {
         option |= RT_EVENT_FLAG_CLEAR;
     }
-    option |= waitAll ? RT_EVENT_FLAG_AND : RT_EVENT_FLAG_AND;\
+    option |= waitAll ? RT_EVENT_FLAG_AND : RT_EVENT_FLAG_OR;
 
     rt_err_t status = rt_event_recv(pEventStruct->handle, (rt_uint32_t)flagsToWait, option, timeoutTicks, &flagsSave);
 
@@ -681,11 +679,11 @@ osa_status_t OSA_EventWait(osa_event_handle_t eventHandle,
 
     if (RT_EOK != status)
     {
-        return KOSA_StatusSuccess;
+        return KOSA_StatusTimeout;
     }
     else
     {
-        return KOSA_StatusTimeout;
+        return KOSA_StatusSuccess;
     }
 }
 
@@ -749,7 +747,6 @@ osa_status_t OSA_MsgQCreate(osa_msgq_handle_t msgqHandle, uint32_t msgNo, uint32
 osa_status_t OSA_MsgQPut(osa_msgq_handle_t msgqHandle, osa_msg_handle_t pMessage)
 {
     assert(msgqHandle);
-    rt_bool_t taskToWake = RT_FALSE;
     rt_mq_t handler    = (rt_mq_t)(void *)(uint32_t *)(*(uint32_t *)msgqHandle);
 
     if (RT_EOK == rt_mq_send(handler, pMessage, handler->msg_size))

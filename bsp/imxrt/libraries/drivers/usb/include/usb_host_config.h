@@ -1,63 +1,40 @@
 /*
- * Copyright 2015-2016, Freescale Semiconductor, Inc.
- * Copyright 2016-2021 NXP
+ * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
+ * Copyright 2016 - 2019 NXP
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice, this list
- *   of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice, this
- *   list of conditions and the following disclaimer in the documentation and/or
- *   other materials provided with the distribution.
- * 
- * 3. Neither the name of copyright holder nor the names of its
- *   contributors may be used to endorse or promote products derived from this
- *   software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __USB_HOST_CONFIG_H__
-#define __USB_HOST_CONFIG_H__
+#ifndef _USB_HOST_CONFIG_H_
+#define _USB_HOST_CONFIG_H_
 
 /* Host Controller Enable */
 /*!
- * @brief host khci instance count, meantime it indicates khci enable or disabled.
- *        - if 0, host khci driver is disabled.
- *        - if greater than 0, host khci driver is enabled.
+ * @brief host khci instance count, meantime it indicates khci enable or disable.
+ *        - if 0, host khci driver is disable.
+ *        - if greater than 0, host khci driver is enable.
  */
 #define USB_HOST_CONFIG_KHCI (0U)
 
 /*!
- * @brief host ehci instance count, meantime it indicates ehci enable or disabled.
- *        - if 0, host ehci driver is disabled.
- *        - if greater than 0, host ehci driver is enabled.
+ * @brief host ehci instance count, meantime it indicates ehci enable or disable.
+ *        - if 0, host ehci driver is disable.
+ *        - if greater than 0, host ehci driver is enable.
  */
-#define USB_HOST_CONFIG_EHCI (1U)
+#define USB_HOST_CONFIG_EHCI (2U)
 
 /*!
- * @brief host ohci instance count, meantime it indicates ohci enable or disabled.
- *        - if 0, host ohci driver is disabled.
- *        - if greater than 0, host ohci driver is enabled.
+ * @brief host ohci instance count, meantime it indicates ohci enable or disable.
+ *        - if 0, host ohci driver is disable.
+ *        - if greater than 0, host ohci driver is enable.
  */
 #define USB_HOST_CONFIG_OHCI (0U)
 
 /*!
- * @brief host ip3516hs instance count, meantime it indicates ohci enable or disabled.
- *        - if 0, host ip3516hs driver is disabled.
- *        - if greater than 0, host ip3516hs driver is enabled.
+ * @brief host ip3516hs instance count, meantime it indicates ohci enable or disable.
+ *        - if 0, host ip3516hs driver is disable.
+ *        - if greater than 0, host ip3516hs driver is enable.
  */
 #define USB_HOST_CONFIG_IP3516HS (0U)
 
@@ -71,25 +48,16 @@
     (USB_HOST_CONFIG_KHCI + USB_HOST_CONFIG_EHCI + USB_HOST_CONFIG_OHCI + USB_HOST_CONFIG_IP3516HS)
 
 /*!
- * @brief hub pipe max count.
- * pipe is the host driver resource for device endpoint, one endpoint needs one pipe.
- * @remarks A HUB usually uses two pipes.
- */
-#define USB_HOST_CONFIG_HUB_MAX_PIPES (2U)
-
-/*!
  * @brief host pipe max count.
- * pipe is the host driver resource for device endpoint, one endpoint needs one pipe.
- * @remarks Depends on the total number of device interfaces and HUB usage.
+ * pipe is the host driver resource for device endpoint, one endpoint need one pipe.
  */
-#define USB_HOST_CONFIG_MAX_PIPES (USB_HOST_CONFIG_HUB_MAX_PIPES + 2U * USB_HOST_CONFIG_INTERFACE_MAX_EP)
+#define USB_HOST_CONFIG_MAX_PIPES (16U)
 
 /*!
  * @brief host transfer max count.
- * transfer is the host driver resource for data transmission mission, one transmission mission needs one transfer.
- * @remarks Depends on the total number of device interfaces.
+ * transfer is the host driver resource for data transmission mission, one transmission mission need one transfer.
  */
-#define USB_HOST_CONFIG_MAX_TRANSFERS (USB_HOST_CONFIG_MAX_PIPES)
+#define USB_HOST_CONFIG_MAX_TRANSFERS (16U)
 
 /*!
  * @brief the max endpoint for one interface.
@@ -106,7 +74,6 @@
 /*!
  * @brief the max power for one device.
  * the max power the host can provide for one device.
- * Expressed in 2 mA units (i.e. 250 = 500 mA).
  */
 #define USB_HOST_CONFIG_MAX_POWER (250U)
 
@@ -135,7 +102,7 @@
 /*! @brief if 1, enable usb compliance test codes; if 0, disable usb compliance test codes. */
 #define USB_HOST_CONFIG_COMPLIANCE_TEST (0U)
 
-/*! @brief if 1, class driver clear stall automatically; if 0, class driver doesn't clear stall. */
+/*! @brief if 1, class driver clear stall automatically; if 0, class driver don't clear stall. */
 #define USB_HOST_CONFIG_CLASS_AUTO_CLEAR_STALL (0U)
 
 /* KHCI configuration */
@@ -159,25 +126,23 @@
 
 /*!
  * @brief ehci QH max count.
- * @remarks Depends on the total number of device interfaces.
  */
-#define USB_HOST_CONFIG_EHCI_MAX_QH (USB_HOST_CONFIG_MAX_PIPES)
+#define USB_HOST_CONFIG_EHCI_MAX_QH (8U)
 
 /*!
  * @brief ehci QTD max count.
  */
-#define USB_HOST_CONFIG_EHCI_MAX_QTD (USB_HOST_CONFIG_EHCI_MAX_QH)
+#define USB_HOST_CONFIG_EHCI_MAX_QTD (8U)
 
 /*!
  * @brief ehci ITD max count.
  */
-#define USB_HOST_CONFIG_EHCI_MAX_ITD (USB_HOST_CONFIG_EHCI_MAX_SITD)
+#define USB_HOST_CONFIG_EHCI_MAX_ITD (0U)
 
 /*!
  * @brief ehci SITD max count.
- * @remarks Depends on the total number of device interfaces that can have isochronous endpoints.
  */
-#define USB_HOST_CONFIG_EHCI_MAX_SITD (2U * USB_HOST_CONFIG_INTERFACE_MAX_EP)
+#define USB_HOST_CONFIG_EHCI_MAX_SITD (0U)
 
 #endif
 
@@ -186,31 +151,25 @@
 
 /*!
  * @brief ohci ED max count.
- * @remarks Depends on the total number of device interfaces.
  */
-#define USB_HOST_CONFIG_OHCI_MAX_ED (USB_HOST_CONFIG_MAX_PIPES)
+#define USB_HOST_CONFIG_OHCI_MAX_ED (8U)
 
 /*!
  * @brief ohci GTD max count.
  */
-#define USB_HOST_CONFIG_OHCI_MAX_GTD (USB_HOST_CONFIG_OHCI_MAX_ED)
+#define USB_HOST_CONFIG_OHCI_MAX_GTD (8U)
 
 /*!
  * @brief ohci ITD max count.
- * @remarks Depends on the total number of device interfaces that can have isochronous endpoints.
  */
-#define USB_HOST_CONFIG_OHCI_MAX_ITD (2U * USB_HOST_CONFIG_INTERFACE_MAX_EP)
+#define USB_HOST_CONFIG_OHCI_MAX_ITD (8U)
 
 #endif
 
 /* OHCI configuration */
 #if ((defined USB_HOST_CONFIG_IP3516HS) && (USB_HOST_CONFIG_IP3516HS))
 
-/*!
- * @brief ohci PIPE max count.
- * @remarks Depends on the total number of device interfaces.
- */
-#define USB_HOST_CONFIG_IP3516HS_MAX_PIPE (USB_HOST_CONFIG_MAX_PIPES)
+#define USB_HOST_CONFIG_IP3516HS_MAX_PIPE (32U)
 
 /*!
  * @brief ohci ED max count.
@@ -220,63 +179,69 @@
 /*!
  * @brief ohci GTD max count.
  */
-#define USB_HOST_CONFIG_IP3516HS_MAX_INT (USB_HOST_CONFIG_IP3516HS_MAX_ATL)
+#define USB_HOST_CONFIG_IP3516HS_MAX_INT (32U)
 
 /*!
  * @brief ohci ITD max count.
- * @remarks Depends on the existence of device interfaces that can have isochronous endpoints.
  */
-#define USB_HOST_CONFIG_IP3516HS_MAX_ISO (USB_HOST_CONFIG_IP3516HS_MAX_ATL)
+#define USB_HOST_CONFIG_IP3516HS_MAX_ISO (0U)
 
 #endif
 
 /*!
- * @brief host HUB class instance count, meantime it indicates HUB class enable or disabled.
- *        - if 0, host HUB class driver is disabled.
- *        - if greater than 0, host HUB class driver is enabled.
+ * @brief host HUB class instance count, meantime it indicates HUB class enable or disable.
+ *        - if 0, host HUB class driver is disable.
+ *        - if greater than 0, host HUB class driver is enable.
  */
 #define USB_HOST_CONFIG_HUB (0U)
 
 /*!
- * @brief host HID class instance count, meantime it indicates HID class enable or disabled.
- *        - if 0, host HID class driver is disabled.
- *        - if greater than 0, host HID class driver is enabled.
+ * @brief host HID class instance count, meantime it indicates HID class enable or disable.
+ *        - if 0, host HID class driver is disable.
+ *        - if greater than 0, host HID class driver is enable.
  */
 #define USB_HOST_CONFIG_HID (0U)
 
 /*!
- * @brief host MSD class instance count, meantime it indicates MSD class enable or disabled.
- *        - if 0, host MSD class driver is disabled.
- *        - if greater than 0, host MSD class driver is enabled.
+ * @brief host MSD class instance count, meantime it indicates MSD class enable or disable.
+ *        - if 0, host MSD class driver is disable.
+ *        - if greater than 0, host MSD class driver is enable.
  */
 #define USB_HOST_CONFIG_MSD (0U)
 
 /*!
- * @brief host CDC class instance count, meantime it indicates CDC class enable or disabled.
- *        - if 0, host CDC class driver is disabled.
- *        - if greater than 0, host CDC class driver is enabled.
+ * @brief host CDC class instance count, meantime it indicates CDC class enable or disable.
+ *        - if 0, host CDC class driver is disable.
+ *        - if greater than 0, host CDC class driver is enable.
  */
-#define USB_HOST_CONFIG_CDC (1U)
+#define USB_HOST_CONFIG_CDC (0U)
 
 /*!
- * @brief host AUDIO class instance count, meantime it indicates AUDIO class enable or disabled.
- *        - if 0, host AUDIO class driver is disabled.
- *        - if greater than 0, host AUDIO class driver is enabled.
+ * @brief host AUDIO class instance count, meantime it indicates AUDIO class enable or disable.
+ *        - if 0, host AUDIO class driver is disable.
+ *        - if greater than 0, host AUDIO class driver is enable.
  */
 #define USB_HOST_CONFIG_AUDIO (0U)
 
 /*!
- * @brief host PHDC class instance count, meantime it indicates PHDC class enable or disabled.
- *        - if 0, host PHDC class driver is disabled.
- *        - if greater than 0, host PHDC class driver is enabled.
+ * @brief host PHDC class instance count, meantime it indicates PHDC class enable or disable.
+ *        - if 0, host PHDC class driver is disable.
+ *        - if greater than 0, host PHDC class driver is enable.
  */
 #define USB_HOST_CONFIG_PHDC (0U)
 
 /*!
- * @brief host printer class instance count, meantime it indicates printer class enable or disabled.
- *        - if 0, host printer class driver is disabled.
- *        - if greater than 0, host printer class driver is enabled.
+ * @brief host printer class instance count, meantime it indicates printer class enable or disable.
+ *        - if 0, host printer class driver is disable.
+ *        - if greater than 0, host printer class driver is enable.
  */
 #define USB_HOST_CONFIG_PRINTER (0U)
 
-#endif /* __USB_HOST_CONFIG_H__ */
+/*!
+ * @brief host charger detect enable or disable. It is only supported on RT600 currently.
+ *        - if 0, host charger detect is disable.
+ *        - if greater than 0, host charger detect is enable.
+ */
+#define USB_HOST_CONFIG_BATTERY_CHARGER (0U)
+
+#endif /* _USB_HOST_CONFIG_H_ */

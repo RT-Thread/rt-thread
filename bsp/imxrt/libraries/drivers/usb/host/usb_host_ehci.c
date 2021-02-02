@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "fsl_os_abstraction.h"
 #include <usb/include/usb_host_config.h>
 #if ((defined USB_HOST_CONFIG_EHCI) && (USB_HOST_CONFIG_EHCI > 0U))
 #include "usb_host.h"
@@ -25,8 +24,6 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-
-#define USB_OSA_WAIT_TIMEOUT RT_WAITING_FOREVER
 
 #if defined(USB_STACK_USE_DEDICATED_RAM) && (USB_STACK_USE_DEDICATED_RAM > 0U)
 
@@ -160,25 +157,11 @@ static void USB_HostEhciZeroMem(uint32_t *buffer, uint32_t length);
 static void USB_HostEhciDelay(USBHS_Type *ehciIpBase, uint32_t ms);
 
 /*!
- * @brief host ehci start async schedule.
- *
- * @param ehciInstance    ehci instance pointer.
- */
-static void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance);
-
-/*!
  * @brief host ehci stop async schedule.
  *
  * @param ehciInstance    ehci instance pointer.
  */
 static void USB_HostEhciStopAsync(usb_host_ehci_instance_t *ehciInstance);
-
-/*!
- * @brief host ehci start periodic schedule.
- *
- * @param ehciInstance    ehci instance pointer.
- */
-static void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance);
 
 /*!
  * @brief host ehci stop periodic schedule.
@@ -500,36 +483,13 @@ static usb_status_t USB_HostEhciCancelPipe(usb_host_ehci_instance_t *ehciInstanc
                                            usb_host_transfer_t *transfer);
 
 /*!
- * @brief control ehci bus.
- *
- * @param ehciInstance  ehci instance pointer.
- * @param bus_control   control code.
- *
- * @return kStatus_USB_Success or error codes.
- */
-static usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstance, uint8_t busControl);
-
-/*!
  * @brief ehci transaction done process function.
  *
  * @param ehciInstance      ehci instance pointer.
  */
 void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance);
 
-/*!
- * @brief ehci port change interrupt process function.
- *
- * @param ehciInstance      ehci instance pointer.
- */
-static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance);
 
-/*!
- * @brief ehci timer0 interrupt process function.
- * cancel control/bulk transfer that time out.
- *
- * @param ehciInstance      ehci instance pointer.
- */
-static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance);
 
 #if ((defined(USB_HOST_CONFIG_LOW_POWER_MODE)) && (USB_HOST_CONFIG_LOW_POWER_MODE > 0U))
 /*!
@@ -1830,7 +1790,7 @@ static void USB_HostEhciDelay(USBHS_Type *ehciIpBase, uint32_t ms)
     } while ((distance & EHCI_MAX_UFRAME_VALUE) < (ms * 8U)); /* compute the distance between sofStart and SofEnd */
 }
 
-static void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance)
+void USB_HostEhciStartAsync(usb_host_ehci_instance_t *ehciInstance)
 {
     uint32_t stateSync;
 
@@ -1868,7 +1828,7 @@ static void USB_HostEhciStopAsync(usb_host_ehci_instance_t *ehciInstance)
     }
 }
 
-static void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance)
+void USB_HostEhciStartPeriodic(usb_host_ehci_instance_t *ehciInstance)
 {
     uint32_t stateSync;
 
@@ -3515,7 +3475,7 @@ static usb_status_t USB_HostEhciCancelPipe(usb_host_ehci_instance_t *ehciInstanc
     return kStatus_USB_Success;
 }
 
-static usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstance, uint8_t busControl)
+usb_status_t USB_HostEhciControlBus(usb_host_ehci_instance_t *ehciInstance, uint8_t busControl)
 {
     usb_status_t status = kStatus_USB_Success;
     uint32_t portScRegister;
@@ -3863,7 +3823,7 @@ void USB_HostEhciTransactionDone(usb_host_ehci_instance_t *ehciInstance)
     }
 }
 
-static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
+void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
 {
     /* note: only has one port */
     uint32_t portScRegister = ehciInstance->ehciIpBase->PORTSC1;
@@ -3964,7 +3924,7 @@ static void USB_HostEhciPortChange(usb_host_ehci_instance_t *ehciInstance)
     }
 }
 
-static void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
+void USB_HostEhciTimer0(usb_host_ehci_instance_t *ehciInstance)
 {
     volatile usb_host_ehci_qh_t *vltQhPointer;
     usb_host_ehci_qtd_t *vltQtdPointer;
