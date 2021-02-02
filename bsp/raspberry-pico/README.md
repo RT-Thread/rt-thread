@@ -33,7 +33,7 @@ Support GCC 6 and above compilers.
 
 ### Step 1: build
 
-```
+```bash
 scons -c
 scons
 ```
@@ -42,11 +42,9 @@ scons
 
 ### Step 2: flash
 
-Run the following command in the linux environment.
+scons generates a UF2 file:
 
-```
-./libraries/generated/elf2uf2 rtthread-pico.elf rtthread-pico.uf2
-```
+![elf2uf2](figures/elf2uf2.png)
 
 - Copy the rtthread-pico.uf2 file to the "RPI-RP2" disk
 - Then led blink.
@@ -55,7 +53,7 @@ Run the following command in the linux environment.
 
 The output information on serial port should be like this:
 
-```
+```bash
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.3 build Jan 28 2021
