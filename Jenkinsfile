@@ -20,6 +20,7 @@ pipeline {
 
                 script {
                     def bsp_array = [
+                        ['bsp/nrf5x', 'sourcery-arm'],
                         ['CME_M7', 'sourcery-arm'],
                         // ['apollo2', 'sourcery-arm'], /* CI compile not support */
                         ['asm9260t', 'sourcery-arm'],

@@ -30,6 +30,7 @@ jobs:
       matrix:
        legs:
          - {RTT_BSP: "CME_M7", RTT_TOOL_CHAIN: "sourcery-arm"}
+         - {RTT_BSP: "nrf5x/nrf52840", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "apollo2", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "asm9260t", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "at91sam9260", RTT_TOOL_CHAIN: "sourcery-arm"} 
@@ -171,4 +172,5 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
         run: |
+          pkgs --update
           scons -C bsp/$RTT_BSP
