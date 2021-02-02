@@ -303,6 +303,14 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
+                if (filter_cfg->items[i].hdr == -1)
+                {
+                    drv_can->FilterConfig.FilterBank = i;
+                }
+                else
+                {
+                    drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
+                }
                 drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr;
                 drv_can->FilterConfig.FilterIdHigh = (filter_cfg->items[i].id >> 13) & 0xFFFF;
                 drv_can->FilterConfig.FilterIdLow = ((filter_cfg->items[i].id << 3) | 
