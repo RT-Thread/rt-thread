@@ -1,0 +1,306 @@
+menu "Hardware Drivers Config"
+
+config SOC_SWM320
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0 (A2/RX,A3/TX)"
+                default y
+            config BSP_USING_UART1
+                bool "Enable UART1 (C2/RX,C3/TX)"
+                default n
+            config BSP_USING_UART2
+                bool "Enable UART2 (C4/RX,C5/TX)"
+                default n
+            config BSP_USING_UART3
+                bool "Enable UART3 (C6/RX,C7/TX)"
+                default n
+        endif
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0"
+                default n
+                if BSP_USING_ADC0
+                    config BSP_USING_ADC0_CHN0
+                        bool "Enable ADC0_CHN0"
+                        default n
+                    config BSP_USING_ADC0_CHN1
+                        bool "Enable ADC0_CHN1"
+                        default n
+                    config BSP_USING_ADC0_CHN2
+                        bool "Enable ADC0_CHN2"
+                        default n
+                    config BSP_USING_ADC0_CHN3
+                        bool "Enable ADC0_CHN3"
+                        default n
+                    config BSP_USING_ADC0_CHN4
+                        bool "Enable ADC0_CHN4(A12)"
+                        default n
+                    config BSP_USING_ADC0_CHN5
+                        bool "Enable ADC0_CHN5(A11)"
+                        default n
+                    config BSP_USING_ADC0_CHN6
+                        bool "Enable ADC0_CHN6(A10)"
+                        default n
+                    config BSP_USING_ADC0_CHN7
+                        bool "Enable ADC0_CHN7(A9)"
+                        default n
+                endif
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+                if BSP_USING_ADC1
+                    config BSP_USING_ADC1_CHN0
+                        bool "Enable ADC1_CHN0(C7)"
+                        default n
+                    config BSP_USING_ADC1_CHN1
+                        bool "Enable ADC1_CHN1(C6)"
+                        default n
+                    config BSP_USING_ADC1_CHN2
+                        bool "Enable ADC1_CHN2(C5)"
+                        default n
+                    config BSP_USING_ADC1_CHN3
+                        bool "Enable ADC1_CHN3(C4)"
+                        default n
+                    config BSP_USING_ADC1_CHN4
+                        bool "Enable ADC1_CHN4(N0)"
+                        default n
+                    config BSP_USING_ADC1_CHN5
+                        bool "Enable ADC1_CHN5(N1)"
+                        default n
+                    config BSP_USING_ADC1_CHN6
+                        bool "Enable ADC1_CHN6(N2)"
+                        default n
+                    config BSP_USING_ADC1_CHN7
+                        bool "Enable ADC1_CHN7"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM0
+                bool "Enable TIM0"
+                default n
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+            config BSP_USING_TIM3
+                bool "Enable TIM3"
+                default n
+
+            config BSP_USING_TIM4
+                bool "Enable TIM4"
+                default n
+            config BSP_USING_TIM5
+                bool "Enable TIM5"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS (software simulation)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+                if BSP_USING_I2C0
+                    comment "Notice: PC2 --> 28; PC3 --> 29"
+                    config BSP_I2C0_SCL_PIN
+                        int "I2C0 scl pin number"
+                        range 0 99
+                        default 28
+                    config BSP_I2C0_SDA_PIN
+                        int "I2C0 sda pin number"
+                        range 0 99
+                        default 29
+                endif
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+                if BSP_USING_I2C1
+                    comment "Notice: PC6 --> 32; PC7 --> 33"
+                    config BSP_I2C1_SCL_PIN
+                        int "I2C1 scl pin number"
+                        range 0 99
+                        default 32
+                    config BSP_I2C1_SDA_PIN
+                        int "I2C1 sda pin number"
+                        range 0 99
+                        default 33
+                endif
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        config BSP_USING_PWM0
+            bool "Enable PWM0"
+            default n
+            if BSP_USING_PWM0
+                config BSP_USING_PWM0A
+                    bool "Enable PWM0A (C2)"
+                    default n
+                config BSP_USING_PWM0B
+                    bool "Enable PWM0B (C4)"
+                    default n
+            endif
+        config BSP_USING_PWM1
+            bool "Enable PWM1"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1A
+                    bool "Enable PWM1A (C3)"
+                    default n
+                config BSP_USING_PWM1B
+                    bool "Enable PWM1B (C5)"
+                    default n
+            endif
+        config BSP_USING_PWM2
+            bool "Enable PWM2"
+            default n
+            if BSP_USING_PWM2
+                config BSP_USING_PWM2A
+                    bool "Enable PWM2A (N4)"
+                    default n
+                config BSP_USING_PWM2B
+                    bool "Enable PWM2B (N6)"
+                    default n
+            endif
+        config BSP_USING_PWM3
+            bool "Enable PWM3"
+            default n
+            if BSP_USING_PWM3
+                config BSP_USING_PWM3A
+                    bool "Enable PWM3A (N3)"
+                    default n
+                config BSP_USING_PWM3B
+                    bool "Enable PWM3B (N5)"
+                    default n
+            endif
+        config BSP_USING_PWM4
+            bool "Enable PWM4"
+            default n
+            if BSP_USING_PWM4
+                config BSP_USING_PWM4A
+                    bool "Enable PWM4A (N8)"
+                    default n
+                config BSP_USING_PWM4B
+                    bool "Enable PWM4B (N10)"
+                    default n
+            endif
+        config BSP_USING_PWM5
+            bool "Enable PWM5"
+            default n
+            if BSP_USING_PWM5
+                config BSP_USING_PWM5A
+                    bool "Enable PWM5A (N7)"
+                    default n
+                config BSP_USING_PWM5B
+                    bool "Enable PWM5B (N9)"
+                    default n
+            endif
+        endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS(CS/A12,MISO/A11,MOSI/A10,CLK/A9)"
+                default n
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS(CS/C4,MISO/C5,MOSI/C6,CLK/C7)"
+                default n
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+    config BSP_USING_CRC
+        bool "Enable CRC (CRC-32 0x04C11DB7 Polynomial)"
+        select RT_USING_HWCRYPTO
+        select RT_HWCRYPTO_USING_CRC
+        default n
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_SDIO
+        bool "Enable SDCARD (sdio)"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+    menuconfig BSP_USING_EXT_SRAM
+        bool "Enable external sram"
+        select RT_USING_MEMHEAP
+        select RT_USING_MEMHEAP_AS_HEAP
+        default n
+        if BSP_USING_EXT_SRAM
+            config BSP_EXT_SRAM_SIZE
+            hex "external sram size"
+            default 0x100000
+        endif
+
+        menuconfig BSP_USING_NOR_FLASH
+        bool "Enable mtd nor flash"
+        select RT_USING_MTD_NOR
+        select PKG_USING_FTL_SRC
+        default n
+        if BSP_USING_NOR_FLASH
+            config BSP_NOR_FLASH_SIZE
+                hex "mtd nor flash size"
+                default 0x1000000
+            config BSP_NOR_FLASH_SECTOR_SIZE
+                hex "mtd nor flsah sector"
+                default 0x10000
+        endif
+endmenu
+
+menu "Offboard Peripheral Drivers"
+
+endmenu
+
+endmenu

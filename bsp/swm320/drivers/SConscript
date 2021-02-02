@@ -1,0 +1,52 @@
+from building import *
+
+cwd     = GetCurrentDir()
+
+CPPPATH = [cwd]
+
+src     = Split('''
+                board.c
+                ''')
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_uart.c']
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['drv_adc.c']
+
+if GetDepend(['RT_USING_HWTIMER']):
+    src += ['drv_hwtimer.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_soft_i2c.c']
+
+if GetDepend(['RT_USING_PWM']):
+    src += ['drv_pwm.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['drv_rtc.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['drv_wdt.c']
+
+if GetDepend(['RT_USING_SDIO']):
+    src += ['drv_sdio.c']
+
+if GetDepend(['RT_USING_HWCRYPTO']):
+    src += ['drv_crypto.c']
+
+if GetDepend(['BSP_USING_EXT_SRAM']):
+    src += ['drv_sram.c']
+
+if  GetDepend(['BSP_USING_NOR_FLASH']):
+    src += ['drv_nor_flash.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
