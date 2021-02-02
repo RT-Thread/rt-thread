@@ -37,21 +37,21 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
             return -1;
         }
 
-        d = dfs_fd_get(fd);
+        d = fd_get(fd, 0);
         if(d)
         {
             /* this is a socket fd */
-            d->type = FT_SOCKET;
-            d->path = NULL;
+            d->fnode->type = FT_SOCKET;
+            d->fnode->path = NULL;
 
-            d->fops = dfs_net_get_fops();
+            d->fnode->fops = dfs_net_get_fops();
 
-            d->flags = O_RDWR; /* set flags as read and write */
-            d->size = 0;
+            d->fnode->flags = O_RDWR; /* set flags as read and write */
+            d->fnode->size = 0;
             d->pos = 0;
 
             /* set socket to the data of dfs_fd */
-            d->data = (void *) new_socket;
+            d->fnode->data = (void *) new_socket;
 
             return fd;
         }
@@ -86,7 +86,7 @@ int shutdown(int s, int how)
         return -1;
     }
 
-    d = dfs_fd_get(s);
+    d = fd_get(s, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -204,29 +204,29 @@ int socket(int domain, int type, int protocol)
 
         return -1;
     }
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
 
     /* create socket  and then put it to the dfs_fd */
     socket = sal_socket(domain, type, protocol);
     if (socket >= 0)
     {
         /* this is a socket fd */
-        d->type = FT_SOCKET;
-        d->path = NULL;
+        d->fnode->type = FT_SOCKET;
+        d->fnode->path = NULL;
 
-        d->fops = dfs_net_get_fops();
+        d->fnode->fops = dfs_net_get_fops();
 
-        d->flags = O_RDWR; /* set flags as read and write */
-        d->size = 0;
+        d->fnode->flags = O_RDWR; /* set flags as read and write */
+        d->fnode->size = 0;
         d->pos = 0;
 
         /* set socket to the data of dfs_fd */
-        d->data = (void *) socket;
+        d->fnode->data = (void *) socket;
     }
     else
     {
         /* release fd */
-        dfs_fd_release(d);
+        fd_release(d);
 
         rt_set_errno(-ENOMEM);
 
@@ -250,7 +250,7 @@ int closesocket(int s)
         return -1;
     }
 
-    d = dfs_fd_get(s);
+    d = fd_get(s, 0);
     if (d == RT_NULL)
     {
         rt_set_errno(-EBADF);
@@ -268,7 +268,7 @@ int closesocket(int s)
     }
 
     /* socket has been closed, delete it from file system fd */
-    dfs_fd_release(d);
+    fd_release(d);
 
     return error;
 }

@@ -59,56 +59,56 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     }
 
     LOG_D("open in filesystem:%s", fs->ops->name);
-    fd->fs    = fs;             /* set file system */
-    fd->fops  = fs->ops->fops;  /* set file ops */
+    fd->fnode->fs    = fs;             /* set file system */
+    fd->fnode->fops  = fs->ops->fops;  /* set file ops */
 
     /* initialize the fd item */
-    fd->type  = FT_REGULAR;
-    fd->flags = flags;
-    fd->size  = 0;
+    fd->fnode->type  = FT_REGULAR;
+    fd->fnode->flags = flags;
+    fd->fnode->size  = 0;
     fd->pos   = 0;
-    fd->data  = fs;
+    fd->fnode->data  = fs;
 
     if (!(fs->ops->flags & DFS_FS_FLAG_FULLPATH))
     {
         if (dfs_subdir(fs->path, fullpath) == NULL)
-            fd->path = rt_strdup("/");
+            fd->fnode->path = rt_strdup("/");
         else
-            fd->path = rt_strdup(dfs_subdir(fs->path, fullpath));
+            fd->fnode->path = rt_strdup(dfs_subdir(fs->path, fullpath));
         rt_free(fullpath);
-        LOG_D("Actual file path: %s", fd->path);
+        LOG_D("Actual file path: %s", fd->fnode->path);
     }
     else
     {
-        fd->path = fullpath;
+        fd->fnode->path = fullpath;
     }
 
     /* specific file system open routine */
-    if (fd->fops->open == NULL)
+    if (fd->fnode->fops->open == NULL)
     {
         /* clear fd */
-        rt_free(fd->path);
-        fd->path = NULL;
+        rt_free(fd->fnode->path);
+        fd->fnode->path = NULL;
 
         return -ENOSYS;
     }
 
-    if ((result = fd->fops->open(fd)) < 0)
+    if ((result = fd->fnode->fops->open(fd)) < 0)
     {
         /* clear fd */
-        rt_free(fd->path);
-        fd->path = NULL;
+        rt_free(fd->fnode->path);
+        fd->fnode->path = NULL;
 
         LOG_D("%s open failed", fullpath);
 
         return result;
     }
 
-    fd->flags |= DFS_F_OPEN;
+    fd->fnode->flags |= DFS_F_OPEN;
     if (flags & O_DIRECTORY)
     {
-        fd->type = FT_DIRECTORY;
-        fd->flags |= DFS_F_DIRECTORY;
+        fd->fnode->type = FT_DIRECTORY;
+        fd->fnode->flags |= DFS_F_DIRECTORY;
     }
 
     LOG_D("open successful");
@@ -129,15 +129,15 @@ int dfs_file_close(struct dfs_fd *fd)
     if (fd == NULL)
         return -ENXIO;
 
-    if (fd->fops->close != NULL)
-        result = fd->fops->close(fd);
+    if (fd->fnode->fops->close != NULL)
+        result = fd->fnode->fops->close(fd);
 
     /* close fd error, return */
     if (result < 0)
         return result;
 
-    rt_free(fd->path);
-    fd->path = NULL;
+    rt_free(fd->fnode->path);
+    fd->fnode->path = NULL;
 
     return result;
 }
@@ -157,27 +157,27 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         return -EINVAL;
 
     /* regular file system fd */
-    if (fd->type == FT_REGULAR || fd->type == FT_DEVICE)
+    if (fd->fnode->type == FT_REGULAR || fd->fnode->type == FT_DEVICE)
     {
         switch (cmd)
         {
         case F_GETFL:
-            return fd->flags; /* return flags */
+            return fd->fnode->flags; /* return flags */
         case F_SETFL:
             {
                 int flags = (int)(rt_base_t)args;
                 int mask  = O_NONBLOCK | O_APPEND;
 
                 flags &= mask;
-                fd->flags &= ~mask;
-                fd->flags |= flags;
+                fd->fnode->flags &= ~mask;
+                fd->fnode->flags |= flags;
             }
             return 0;
         }
     }
 
-    if (fd->fops->ioctl != NULL)
-        return fd->fops->ioctl(fd, cmd, args);
+    if (fd->fnode->fops->ioctl != NULL)
+        return fd->fnode->fops->ioctl(fd, cmd, args);
 
     return -ENOSYS;
 }
@@ -199,11 +199,11 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fops->read == NULL)
+    if (fd->fnode->fops->read == NULL)
         return -ENOSYS;
 
-    if ((result = fd->fops->read(fd, buf, len)) < 0)
-        fd->flags |= DFS_F_EOF;
+    if ((result = fd->fnode->fops->read(fd, buf, len)) < 0)
+        fd->fnode->flags |= DFS_F_EOF;
 
     return result;
 }
@@ -220,11 +220,11 @@ int dfs_file_read(struct dfs_fd *fd, void *buf, size_t len)
 int dfs_file_getdents(struct dfs_fd *fd, struct dirent *dirp, size_t nbytes)
 {
     /* parameter check */
-    if (fd == NULL || fd->type != FT_DIRECTORY)
+    if (fd == NULL || fd->fnode->type != FT_DIRECTORY)
         return -EINVAL;
 
-    if (fd->fops->getdents != NULL)
-        return fd->fops->getdents(fd, dirp, nbytes);
+    if (fd->fnode->fops->getdents != NULL)
+        return fd->fnode->fops->getdents(fd, dirp, nbytes);
 
     return -ENOSYS;
 }
@@ -296,10 +296,10 @@ int dfs_file_write(struct dfs_fd *fd, const void *buf, size_t len)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fops->write == NULL)
+    if (fd->fnode->fops->write == NULL)
         return -ENOSYS;
 
-    return fd->fops->write(fd, buf, len);
+    return fd->fnode->fops->write(fd, buf, len);
 }
 
 /**
@@ -314,10 +314,10 @@ int dfs_file_flush(struct dfs_fd *fd)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fops->flush == NULL)
+    if (fd->fnode->fops->flush == NULL)
         return -ENOSYS;
 
-    return fd->fops->flush(fd);
+    return fd->fnode->fops->flush(fd);
 }
 
 /**
@@ -335,10 +335,10 @@ int dfs_file_lseek(struct dfs_fd *fd, off_t offset)
     if (fd == NULL)
         return -EINVAL;
 
-    if (fd->fops->lseek == NULL)
+    if (fd->fnode->fops->lseek == NULL)
         return -ENOSYS;
 
-    result = fd->fops->lseek(fd, offset);
+    result = fd->fnode->fops->lseek(fd, offset);
 
     /* update current position */
     if (result >= 0)
@@ -494,17 +494,17 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
     int result;
 
     /* fd is null or not a regular file system fd, or length is invalid */
-    if (fd == NULL || fd->type != FT_REGULAR || length < 0)
+    if (fd == NULL || fd->fnode->type != FT_REGULAR || length < 0)
         return -EINVAL;
 
-    if (fd->fops->ioctl == NULL)
+    if (fd->fnode->fops->ioctl == NULL)
         return -ENOSYS;
 
-    result = fd->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
+    result = fd->fnode->fops->ioctl(fd, RT_FIOFTRUNCATE, (void*)&length);
 
     /* update current size */
     if (result == 0)
-        fd->size = length;
+        fd->fnode->size = length;
 
     return result;
 }
@@ -512,7 +512,8 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
-static struct dfs_fd fd;
+static struct dfs_fnode fnode;
+static struct dfs_fd fd = {0, 0, 0, 0, &fnode};
 static struct dirent dirent;
 void ls(const char *pathname)
 {

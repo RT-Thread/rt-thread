@@ -214,10 +214,10 @@ static int console_fops_open(struct dfs_fd *fd)
     int ret;
     struct rt_device * device;
 
-    device = (struct rt_device *)fd->data;
+    device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
-    ret = rt_device_open(device, fd->flags);
+    ret = rt_device_open(device, fd->fnode->flags);
     return ret;
 }
 
@@ -226,7 +226,7 @@ static int console_fops_close(struct dfs_fd *fd)
     int ret;
     struct rt_device * device;
 
-    device = (struct rt_device *)fd->data;
+    device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
     ret = rt_device_close(device);
@@ -242,7 +242,7 @@ static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     struct rt_wqueue *wq;
     int wait_ret;
 
-    console = (struct rt_console_device *)fd->data;
+    console = (struct rt_console_device *)fd->fnode->data;
     RT_ASSERT(console != RT_NULL);
     RT_ASSERT(console->init_flag == CONSOLE_INIT_FLAG_INITED);
 
@@ -258,7 +258,7 @@ static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
         {
             break;
         }
-        if (fd->flags & O_NONBLOCK)
+        if (fd->fnode->flags & O_NONBLOCK)
         {
             break;
         }
@@ -281,7 +281,7 @@ static int console_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     int size;
     struct rt_device * device;
 
-    device = (struct rt_device *)fd->data;
+    device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
     size = rt_device_write(device, -1, buf, count);
     return size;
@@ -296,7 +296,7 @@ static int console_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
     struct rt_wqueue *wq;
     struct rt_lwp *lwp;
 
-    device = (struct rt_device *)fd->data;
+    device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
     console = (struct rt_console_device *)device;

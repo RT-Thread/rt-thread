@@ -215,8 +215,8 @@ static int dfs_jffs2_open(struct dfs_fd* file)
     struct dfs_filesystem *fs;
     struct cyg_mtab_entry * mte;
 
-    oflag = file->flags;
-    fs = (struct dfs_filesystem *)file->data;
+    oflag = file->fnode->flags;
+    fs = file->fnode->fs;
     RT_ASSERT(fs != RT_NULL);
 
     jffs2_file = rt_malloc(sizeof(cyg_file));
@@ -224,7 +224,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
         return -ENOMEM;
 
     /* just escape '/' provided by dfs code */
-    name = file->path;
+    name = file->fnode->path;
     if ((name[0] == '/') && (name[1] == 0))
         name = jffs2_root_path;
     else /* name[0] still will be '/' */
@@ -267,7 +267,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
         jffs2_file->f_offset = 2;
 #endif
         /* save this pointer, it will be used by dfs_jffs2_getdents*/
-        file->data = jffs2_file;
+        file->fnode->data = jffs2_file;
         return 0;
     }
     /* regular file operations */
@@ -292,17 +292,17 @@ static int dfs_jffs2_open(struct dfs_fd* file)
 
     /* save this pointer, it will be used when calling read(), write(),
     flush(), lessk(), and will be rt_free when calling close()*/
-    file->data = jffs2_file;
+    file->fnode->data = jffs2_file;
     file->pos = jffs2_file->f_offset;
-    file->size = 0;
-    jffs2_file_lseek(jffs2_file, (off_t *)(&(file->size)), SEEK_END);
+    file->fnode->size = 0;
+    jffs2_file_lseek(jffs2_file, (off_t *)(&(file->fnode->size)), SEEK_END);
     jffs2_file->f_offset = (off_t)file->pos;
     rt_mutex_release(&jffs2_lock);
 
     if (oflag & O_APPEND)
     {
-        file->pos = file->size;
-        jffs2_file->f_offset = file->size;
+        file->pos = file->fnode->size;
+        jffs2_file->f_offset = file->fnode->size;
     }
 
     return 0;
@@ -313,10 +313,10 @@ static int dfs_jffs2_close(struct dfs_fd* file)
     int result;
     cyg_file * jffs2_file;
 
-    RT_ASSERT(file->data != NULL);
-    jffs2_file = (cyg_file *)(file->data);
+    RT_ASSERT(file->fnode->data != NULL);
+    jffs2_file = (cyg_file *)(file->fnode->data);
 
-    if (file->flags & O_DIRECTORY) /* operations about dir */
+    if (file->fnode->flags & O_DIRECTORY) /* operations about dir */
     {
         rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
         result = jffs2_dir_colse(jffs2_file);
@@ -352,8 +352,8 @@ static int dfs_jffs2_read(struct dfs_fd* file, void* buf, size_t len)
     int char_read;
     int result;
 
-    RT_ASSERT(file->data != NULL);
-    jffs2_file = (cyg_file *)(file->data);
+    RT_ASSERT(file->fnode->data != NULL);
+    jffs2_file = (cyg_file *)(file->fnode->data);
     uio_s.uio_iov = &iovec;
     uio_s.uio_iov->iov_base = buf;
     uio_s.uio_iov->iov_len = len;
@@ -384,8 +384,8 @@ static int dfs_jffs2_write(struct dfs_fd* file,
     int char_write;
     int result;
 
-    RT_ASSERT(file->data != NULL);
-    jffs2_file = (cyg_file *)(file->data);
+    RT_ASSERT(file->fnode->data != NULL);
+    jffs2_file = (cyg_file *)(file->fnode->data);
     uio_s.uio_iov = &iovec;
     uio_s.uio_iov->iov_base = (void *)buf;
     uio_s.uio_iov->iov_len = len;
@@ -414,13 +414,13 @@ static int dfs_jffs2_flush(struct dfs_fd* file)
 
 /* fixme warning: the offset is rt_off_t, so maybe the size of a file is must <= 2G*/
 static int dfs_jffs2_lseek(struct dfs_fd* file,
-                    rt_off_t offset)
+                    off_t offset)
 {
     cyg_file * jffs2_file;
     int result;
 
-    RT_ASSERT(file->data != NULL);
-    jffs2_file = (cyg_file *)(file->data);
+    RT_ASSERT(file->fnode->data != NULL);
+    jffs2_file = (cyg_file *)(file->fnode->data);
 
     /* set offset as current offset */
     rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
@@ -451,8 +451,8 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
 #endif
     int result;
 
-    RT_ASSERT(file->data != RT_NULL);
-    jffs2_file = (cyg_file*)(file->data);
+    RT_ASSERT(file->fnode->data != RT_NULL);
+    jffs2_file = (cyg_file*)(file->fnode->data);
     mte = jffs2_file->f_mte;
 
     //set jffs2_d
@@ -494,15 +494,15 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
                 return -ENOMEM;
 
         /* make a right entry */
-        if ((file->path[0] == '/') )
+        if ((file->fnode->path[0] == '/') )
         {
-            if (file->path[1] == 0)
+            if (file->fnode->path[1] == 0)
                 strcpy(fullname, jffs2_d.d_name);
             else
-                rt_sprintf(fullname, "%s/%s", file->path+1, jffs2_d.d_name);
+                rt_sprintf(fullname, "%s/%s", file->fnode->path+1, jffs2_d.d_name);
         }
         else
-            rt_sprintf(fullname, "%s/%s", file->path, jffs2_d.d_name);
+            rt_sprintf(fullname, "%s/%s", file->fnode->path, jffs2_d.d_name);
         rt_mutex_take(&jffs2_lock, RT_WAITING_FOREVER);
         result = jffs2_porting_stat(mte, mte->root, fullname, (void *)&s);
         rt_mutex_release(&jffs2_lock);

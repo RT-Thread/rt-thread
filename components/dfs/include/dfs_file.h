@@ -36,9 +36,9 @@ struct dfs_file_ops
 
 /* file descriptor */
 #define DFS_FD_MAGIC     0xfdfd
-struct dfs_fd
+
+struct dfs_fnode
 {
-    uint16_t magic;              /* file descriptor magic number */
     uint16_t type;               /* Type (regular or socket) */
 
     char *path;                  /* Name (below mount point) */
@@ -49,9 +49,17 @@ struct dfs_fd
 
     uint32_t flags;              /* Descriptor flags */
     size_t   size;               /* Size in bytes */
-    off_t    pos;                /* Current file position */
-
     void *data;                  /* Specific file system data */
+};
+
+struct dfs_fd
+{
+    int idx;                    /* the idx in fdt */
+    uint16_t magic;              /* file descriptor magic number */
+    int ref_count;               /* Descriptor reference count */
+    off_t    pos;                /* Current file position */
+    struct dfs_fnode *fnode;     /* file node struct */
+    void *data;                  /* Specific fd data */
 };
 
 int dfs_file_open(struct dfs_fd *fd, const char *path, int flags);

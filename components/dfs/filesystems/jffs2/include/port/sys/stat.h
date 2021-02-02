@@ -82,11 +82,15 @@ typedef unsigned int mode_t;
 #endif
 */
 
+/*
 typedef unsigned short nlink_t;
 typedef long off_t;
+*/
 
+/*
 typedef unsigned short gid_t;
 typedef unsigned short uid_t;
+*/
 typedef int pid_t;
 
 //

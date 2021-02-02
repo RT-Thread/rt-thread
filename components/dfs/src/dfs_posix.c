@@ -41,13 +41,13 @@ int open(const char *file, int flags, ...)
 
         return -1;
     }
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
 
     result = dfs_file_open(d, file, flags);
     if (result < 0)
     {
         /* release the ref-count of fd */
-        dfs_fd_release(d);
+        fd_release(d);
 
         rt_set_errno(result);
 
@@ -71,7 +71,7 @@ int close(int fd)
     int result;
     struct dfs_fd *d;
 
-    d = fd_get(fd);
+    d = fd_get(fd, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -80,7 +80,6 @@ int close(int fd)
     }
 
     result = dfs_file_close(d);
-    fd_put(d);
 
     if (result < 0)
     {
@@ -89,7 +88,7 @@ int close(int fd)
         return -1;
     }
 
-    fd_put(d);
+    fd_release(d);
 
     return 0;
 }
@@ -116,7 +115,7 @@ int read(int fd, void *buf, size_t len)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -156,7 +155,7 @@ int write(int fd, const void *buf, size_t len)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -191,7 +190,7 @@ off_t lseek(int fd, off_t offset, int whence)
     int result;
     struct dfs_fd *d;
 
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -209,7 +208,7 @@ off_t lseek(int fd, off_t offset, int whence)
         break;
 
     case SEEK_END:
-        offset += d->size;
+        offset += d->fnode->size;
         break;
 
     default:
@@ -325,7 +324,7 @@ int fstat(int fildes, struct stat *buf)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = dfs_fd_get(fildes);
+    d = fd_get(fildes, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -338,13 +337,13 @@ int fstat(int fildes, struct stat *buf)
 
     buf->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                    S_IWUSR | S_IWGRP | S_IWOTH;
-    if (d->type == FT_DIRECTORY)
+    if (d->fnode->type == FT_DIRECTORY)
     {
         buf->st_mode &= ~S_IFREG;
         buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
-    buf->st_size    = d->size;
+    buf->st_size    = d->fnode->size;
     buf->st_mtime   = 0;
 
     return RT_EOK;
@@ -368,7 +367,7 @@ int fsync(int fildes)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = dfs_fd_get(fildes);
+    d = fd_get(fildes, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -399,7 +398,7 @@ int fcntl(int fildes, int cmd, ...)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = dfs_fd_get(fildes);
+    d = fd_get(fildes, 0);
     if (d)
     {
         void *arg;
@@ -464,7 +463,7 @@ int ftruncate(int fd, off_t length)
     int result;
     struct dfs_fd *d;
 
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -537,20 +536,20 @@ int mkdir(const char *path, mode_t mode)
         return -1;
     }
 
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
 
     result = dfs_file_open(d, path, O_DIRECTORY | O_CREAT);
 
     if (result < 0)
     {
-        dfs_fd_release(d);
+        fd_release(d);
         rt_set_errno(result);
 
         return -1;
     }
 
     dfs_file_close(d);
-    dfs_fd_release(d);
+    fd_release(d);
 
     return 0;
 }
@@ -607,7 +606,7 @@ DIR *opendir(const char *name)
 
         return NULL;
     }
-    d = dfs_fd_get(fd);
+    d = fd_get(fd, 0);
 
     result = dfs_file_open(d, name, O_RDONLY | O_DIRECTORY);
     if (result >= 0)
@@ -617,7 +616,7 @@ DIR *opendir(const char *name)
         if (t == NULL)
         {
             dfs_file_close(d);
-            dfs_fd_release(d);
+            fd_release(d);
         }
         else
         {
@@ -630,7 +629,7 @@ DIR *opendir(const char *name)
     }
 
     /* open failed */
-    dfs_fd_release(d);
+    fd_release(d);
     rt_set_errno(result);
 
     return NULL;
@@ -651,7 +650,7 @@ struct dirent *readdir(DIR *d)
     int result;
     struct dfs_fd *fd;
 
-    fd = dfs_fd_get(d->fd);
+    fd = fd_get(d->fd, 0);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -699,7 +698,7 @@ long telldir(DIR *d)
     struct dfs_fd *fd;
     long result;
 
-    fd = dfs_fd_get(d->fd);
+    fd = fd_get(d->fd, 0);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -724,7 +723,7 @@ void seekdir(DIR *d, off_t offset)
 {
     struct dfs_fd *fd;
 
-    fd = dfs_fd_get(d->fd);
+    fd = fd_get(d->fd, 0);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -748,7 +747,7 @@ void rewinddir(DIR *d)
 {
     struct dfs_fd *fd;
 
-    fd = dfs_fd_get(d->fd);
+    fd = fd_get(d->fd, 0);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -775,7 +774,7 @@ int closedir(DIR *d)
     int result;
     struct dfs_fd *fd;
 
-    fd = dfs_fd_get(d->fd);
+    fd = fd_get(d->fd, 0);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -784,7 +783,7 @@ int closedir(DIR *d)
     }
 
     result = dfs_file_close(fd);
-    dfs_fd_release(fd);
+    fd_release(fd);
 
     rt_free(d);
 

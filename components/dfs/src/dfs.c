@@ -142,7 +142,8 @@ void dfs_fd_unlock(void)
 
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
-    int idx;
+    int idx = 0;
+    struct dfs_fd *fd = NULL;
 
     /* find an empty fd entry */
     for (idx = startfd; idx < (int)fdt->maxfd; idx++)
@@ -156,15 +157,19 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     /* allocate a larger FD container */
     if (idx == fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
     {
-        int cnt, index;
-        struct dfs_fd **fds;
+        int cnt = 0;
+        int index = 0;
+        struct dfs_fd **fds = NULL;
 
         /* increase the number of FD with 4 step length */
         cnt = fdt->maxfd + 4;
         cnt = cnt > DFS_FD_MAX ? DFS_FD_MAX : cnt;
 
         fds = (struct dfs_fd **)rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
-        if (fds == NULL) goto __exit; /* return fdt->maxfd */
+        if (fds == NULL) /* return fdt->maxfd */
+        {
+            return fdt->maxfd;
+        }
 
         /* clean the new allocated fds */
         for (index = fdt->maxfd; index < cnt; index ++)
@@ -179,12 +184,27 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     /* allocate  'struct dfs_fd' */
     if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
     {
-        fdt->fds[idx] = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
-        if (fdt->fds[idx] == RT_NULL)
-            idx = fdt->maxfd;
+        struct dfs_fnode *fnode = rt_calloc(1, sizeof(struct dfs_fnode));
+
+        if (!fnode)
+        {
+            return fdt->maxfd;
+        }
+        fnode->ref_count = 1;
+
+        fd = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
+        if (!fd)
+        {
+            rt_free(fnode);
+            return fdt->maxfd;
+        }
+        fd->ref_count = 1;
+        fd->magic = DFS_FD_MAGIC;
+        fd->fnode = fnode;
+        fd->idx = idx;
+        fdt->fds[idx] = fd;
     }
 
-__exit:
     return idx;
 }
 
@@ -196,8 +216,7 @@ __exit:
  */
 int fdt_fd_new(struct dfs_fdtable *fdt)
 {
-    struct dfs_fd *d;
-    int idx;
+    int idx = 0;
 
     /* lock filesystem */
     dfs_fd_lock();
@@ -213,10 +232,6 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
         goto __result;
     }
 
-    d = fdt->fds[idx];
-    d->ref_count = 1;
-    d->magic = DFS_FD_MAGIC;
-
 __result:
     dfs_fd_unlock();
     return idx + DFS_FD_OFFSET;
@@ -224,7 +239,7 @@ __result:
 
 int fd_new(void)
 {
-    struct dfs_fdtable *fdt;
+    struct dfs_fdtable *fdt = NULL;
 
     fdt = dfs_fdtable_get();
     return fdt_fd_new(fdt);
@@ -270,12 +285,12 @@ struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr)
     return d;
 }
 
-struct dfs_fd *dfs_fd_get(int fd)
+struct dfs_fd *fd_get(int fd, int ref_inc_nr)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    return fdt_fd_get(fdt, fd, 0);
+    return fdt_fd_get(fdt, fd, ref_inc_nr);
 }
 
 /**
@@ -285,31 +300,39 @@ struct dfs_fd *dfs_fd_get(int fd)
  */
 void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
 {
+    int idx = -1;
+
     RT_ASSERT(fd != NULL);
+    RT_ASSERT(fdt != NULL);
 
     dfs_fd_lock();
 
-    fd->ref_count --;
+    idx = fd->idx;
+    /* check fd */
+    RT_ASSERT(fdt->fds[idx] == fd);
+    RT_ASSERT(fd->magic == DFS_FD_MAGIC);
+
+    fd->ref_count--;
 
     /* clear this fd entry */
     if (fd->ref_count == 0)
     {
-        int index;
-
-        for (index = 0; index < (int)fdt->maxfd; index ++)
+        struct dfs_fnode *fnode = fd->fnode;
+        if (fnode)
         {
-            if (fdt->fds[index] == fd)
+            fnode->ref_count--;
+            if (fnode->ref_count == 0)
             {
-                rt_free(fd);
-                fdt->fds[index] = 0;
-                break;
+                rt_free(fnode);
             }
         }
+        rt_free(fd);
+        fdt->fds[idx] = 0;
     }
     dfs_fd_unlock();
 }
 
-void dfs_fd_release(struct dfs_fd *fd)
+void fd_release(struct dfs_fd *fd)
 {
     struct dfs_fdtable *fdt;
 
@@ -359,9 +382,9 @@ int fd_is_open(const char *pathname)
         for (index = 0; index < fdt->maxfd; index++)
         {
             fd = fdt->fds[index];
-            if (fd == NULL || fd->fops == NULL || fd->path == NULL) continue;
+            if (fd == NULL || fd->fnode->fops == NULL || fd->fnode->path == NULL) continue;
 
-            if (fd->fs == fs && strcmp(fd->path, mountpath) == 0)
+            if (fd->fnode->fs == fs && strcmp(fd->fnode->path, mountpath) == 0)
             {
                 /* found file in file descriptor table */
                 rt_free(fullpath);
@@ -581,20 +604,20 @@ int list_fd(void)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
-        if (fd && fd->fops)
+        if (fd && fd->fnode->fops)
         {
             rt_kprintf("%2d ", index + DFS_FD_OFFSET);
-            if (fd->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
+            if (fd->fnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (fd->fnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (fd->fnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (fd->fnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (fd->fnode->type == FT_DEVICE)   rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%3d ", fd->ref_count);
+            rt_kprintf("%3d ", fd->fnode->ref_count);
             rt_kprintf("%04x  ", fd->magic);
-            if (fd->path)
+            if (fd->fnode->path)
             {
-                rt_kprintf("%s\n", fd->path);
+                rt_kprintf("%s\n", fd->fnode->path);
             }
             else
             {

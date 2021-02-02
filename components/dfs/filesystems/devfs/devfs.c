@@ -37,7 +37,7 @@ int dfs_device_fs_ioctl(struct dfs_fd *file, int cmd, void *args)
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->data;
+    dev_id = (rt_device_t)file->fnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* close device handler */
@@ -56,7 +56,7 @@ int dfs_device_fs_read(struct dfs_fd *file, void *buf, size_t count)
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->data;
+    dev_id = (rt_device_t)file->fnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* read device data */
@@ -74,7 +74,7 @@ int dfs_device_fs_write(struct dfs_fd *file, const void *buf, size_t count)
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->data;
+    dev_id = (rt_device_t)file->fnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* read device data */
@@ -91,11 +91,11 @@ int dfs_device_fs_close(struct dfs_fd *file)
 
     RT_ASSERT(file != RT_NULL);
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
     {
         struct device_dirent *root_dirent;
 
-        root_dirent = (struct device_dirent *)file->data;
+        root_dirent = (struct device_dirent *)file->fnode->data;
         RT_ASSERT(root_dirent != RT_NULL);
 
         /* release dirent */
@@ -104,14 +104,14 @@ int dfs_device_fs_close(struct dfs_fd *file)
     }
 
     /* get device handler */
-    dev_id = (rt_device_t)file->data;
+    dev_id = (rt_device_t)file->fnode->data;
     RT_ASSERT(dev_id != RT_NULL);
 
     /* close device handler */
     result = rt_device_close(dev_id);
     if (result == RT_EOK)
     {
-        file->data = RT_NULL;
+        file->fnode->data = RT_NULL;
 
         return RT_EOK;
     }
@@ -126,8 +126,8 @@ int dfs_device_fs_open(struct dfs_fd *file)
     rt_base_t level;
 
     /* open root directory */
-    if ((file->path[0] == '/') && (file->path[1] == '\0') &&
-        (file->flags & O_DIRECTORY))
+    if ((file->fnode->path[0] == '/') && (file->fnode->path[1] == '\0') &&
+        (file->fnode->flags & O_DIRECTORY))
     {
         struct rt_object *object;
         struct rt_list_node *node;
@@ -165,12 +165,12 @@ int dfs_device_fs_open(struct dfs_fd *file)
         rt_hw_interrupt_enable(level);
 
         /* set data */
-        file->data = root_dirent;
+        file->fnode->data = root_dirent;
 
         return RT_EOK;
     }
 
-    device = rt_device_find(&file->path[1]);
+    device = rt_device_find(&file->fnode->path[1]);
     if (device == RT_NULL)
         return -ENODEV;
 
@@ -178,16 +178,16 @@ int dfs_device_fs_open(struct dfs_fd *file)
     if (device->fops)
     {
         /* use device fops */
-        file->fops = device->fops;
-        file->data = (void *)device;
+        file->fnode->fops = device->fops;
+        file->fnode->data = (void *)device;
 
         /* use fops */
-        if (file->fops->open)
+        if (file->fnode->fops->open)
         {
-            result = file->fops->open(file);
+            result = file->fnode->fops->open(file);
             if (result == RT_EOK || result == -RT_ENOSYS)
             {
-                file->type = FT_DEVICE;
+                file->fnode->type = FT_DEVICE;
                 return 0;
             }
         }
@@ -198,13 +198,13 @@ int dfs_device_fs_open(struct dfs_fd *file)
         result = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
         if (result == RT_EOK || result == -RT_ENOSYS)
         {
-            file->data = device;
-            file->type = FT_DEVICE;
+            file->fnode->data = device;
+            file->fnode->type = FT_DEVICE;
             return RT_EOK;
         }
     }
 
-    file->data = RT_NULL;
+    file->fnode->data = RT_NULL;
     /* open device failed. */
     return -EIO;
 }
@@ -264,7 +264,7 @@ int dfs_device_fs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t co
     struct dirent *d;
     struct device_dirent *root_dirent;
 
-    root_dirent = (struct device_dirent *)file->data;
+    root_dirent = (struct device_dirent *)file->fnode->data;
     RT_ASSERT(root_dirent != RT_NULL);
 
     /* make integer count */

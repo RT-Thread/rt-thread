@@ -330,7 +330,7 @@ int dfs_elm_open(struct dfs_fd *file)
 
 #if (_VOLUMES > 1)
     int vol;
-    struct dfs_filesystem *fs = (struct dfs_filesystem *)file->data;
+    struct dfs_filesystem *fs = file->fnode->fs;
     extern int elm_get_vol(FATFS * fat);
 
     if (fs == NULL)
@@ -344,16 +344,16 @@ int dfs_elm_open(struct dfs_fd *file)
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
-    rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->path);
+    rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->fnode->path);
 #else
-    drivers_fn = file->path;
+    drivers_fn = file->fnode->path;
 #endif
 
-    if (file->flags & O_DIRECTORY)
+    if (file->fnode->flags & O_DIRECTORY)
     {
         DIR *dir;
 
-        if (file->flags & O_CREAT)
+        if (file->fnode->flags & O_CREAT)
         {
             result = f_mkdir(drivers_fn);
             if (result != FR_OK)
@@ -392,18 +392,18 @@ int dfs_elm_open(struct dfs_fd *file)
     {
         mode = FA_READ;
 
-        if (file->flags & O_WRONLY)
+        if (file->fnode->flags & O_WRONLY)
             mode |= FA_WRITE;
-        if ((file->flags & O_ACCMODE) & O_RDWR)
+        if ((file->fnode->flags & O_ACCMODE) & O_RDWR)
             mode |= FA_WRITE;
         /* Opens the file, if it is existing. If not, a new file is created. */
-        if (file->flags & O_CREAT)
+        if (file->fnode->flags & O_CREAT)
             mode |= FA_OPEN_ALWAYS;
         /* Creates a new file. If the file is existing, it is truncated and overwritten. */
-        if (file->flags & O_TRUNC)
+        if (file->fnode->flags & O_TRUNC)
             mode |= FA_CREATE_ALWAYS;
         /* Creates a new file. The function fails if the file is already existing. */
-        if (file->flags & O_EXCL)
+        if (file->fnode->flags & O_EXCL)
             mode |= FA_CREATE_NEW;
 
         /* allocate a fd */
@@ -423,10 +423,10 @@ int dfs_elm_open(struct dfs_fd *file)
         if (result == FR_OK)
         {
             file->pos  = fd->fptr;
-            file->size = f_size(fd);
+            file->fnode->size = f_size(fd);
             file->data = fd;
 
-            if (file->flags & O_APPEND)
+            if (file->fnode->flags & O_APPEND)
             {
                 /* seek to the end of file */
                 f_lseek(fd, f_size(fd));
@@ -449,7 +449,7 @@ int dfs_elm_close(struct dfs_fd *file)
     FRESULT result;
 
     result = FR_OK;
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
     {
         DIR *dir;
 
@@ -459,7 +459,7 @@ int dfs_elm_close(struct dfs_fd *file)
         /* release memory */
         rt_free(dir);
     }
-    else if (file->type == FT_REGULAR)
+    else if (file->fnode->type == FT_REGULAR)
     {
         FIL *fd;
         fd = (FIL *)(file->data);
@@ -514,7 +514,7 @@ int dfs_elm_read(struct dfs_fd *file, void *buf, size_t len)
     FRESULT result;
     UINT byte_read;
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
     {
         return -EISDIR;
     }
@@ -537,7 +537,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
     FRESULT result;
     UINT byte_write;
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
     {
         return -EISDIR;
     }
@@ -548,7 +548,7 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
     file->pos  = fd->fptr;
-    file->size = f_size(fd);
+    file->fnode->size = f_size(fd);
     if (result == FR_OK)
         return byte_write;
 
@@ -570,7 +570,7 @@ int dfs_elm_flush(struct dfs_fd *file)
 int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
 {
     FRESULT result = FR_OK;
-    if (file->type == FT_REGULAR)
+    if (file->fnode->type == FT_REGULAR)
     {
         FIL *fd;
 
@@ -586,7 +586,7 @@ int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
             return fd->fptr;
         }
     }
-    else if (file->type == FT_DIRECTORY)
+    else if (file->fnode->type == FT_DIRECTORY)
     {
         /* which is a directory */
         DIR *dir;

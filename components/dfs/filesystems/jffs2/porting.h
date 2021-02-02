@@ -22,9 +22,9 @@ struct jffs2_stat {
     unsigned short  st_uid;      /* User ID of the file owner */
     unsigned short  st_gid;      /* Group ID of the file's group */
     long  st_size;     /* File size (regular files only) */
-    long  st_atime;    /* Last access time */
-    long  st_mtime;    /* Last data modification time */
-    long  st_ctime;    /* Last file status change time */
+    struct timespec  st_atim;    /* Last access time */
+    struct timespec  st_mtim;    /* Last data modification time */
+    struct timespec  st_ctim;    /* Last file status change time */
 };
 
 struct jffs2_dirent
