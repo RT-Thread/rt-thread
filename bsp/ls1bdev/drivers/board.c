@@ -19,7 +19,7 @@
 #include <mips_fpu.h>
 
 #include "board.h"
-#include "uart.h"
+#include "drv_uart.h"
 #include "ls1b.h"
 
 #ifdef RT_USING_RTGUI
@@ -84,6 +84,6 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-
+    rt_kprintf("current sr: 0x%08x\n", read_c0_status());
 }
 /*@}*/
