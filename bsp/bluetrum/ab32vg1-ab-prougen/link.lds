@@ -61,7 +61,6 @@ SECTIONS
         *components.o (.text*)
         *idle.o (.text*)
         *object.o (.text*)
-        *scheduler.o (.text*)
     } > ram1 AT > flash
 
     .comm __comm_vma : {
