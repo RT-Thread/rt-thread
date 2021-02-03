@@ -184,23 +184,14 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     /* allocate  'struct dfs_fd' */
     if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
     {
-        struct dfs_fnode *fnode = rt_calloc(1, sizeof(struct dfs_fnode));
-
-        if (!fnode)
-        {
-            return fdt->maxfd;
-        }
-        fnode->ref_count = 1;
-
         fd = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
         if (!fd)
         {
-            rt_free(fnode);
             return fdt->maxfd;
         }
         fd->ref_count = 1;
         fd->magic = DFS_FD_MAGIC;
-        fd->fnode = fnode;
+        fd->fnode = NULL;
         fd->idx = idx;
         fdt->fds[idx] = fd;
     }
@@ -321,10 +312,6 @@ void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
         if (fnode)
         {
             fnode->ref_count--;
-            if (fnode->ref_count == 0)
-            {
-                rt_free(fnode);
-            }
         }
         rt_free(fd);
         fdt->fds[idx] = 0;

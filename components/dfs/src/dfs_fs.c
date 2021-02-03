@@ -272,9 +272,6 @@ int dfs_mount(const char   *device_name,
     if ((strcmp(fullpath, "/") != 0) && (strcmp(fullpath, "/dev") != 0))
     {
         struct dfs_fd fd;
-        struct dfs_fnode fnode;
-
-        fd.fnode = &fnode;
 
         if (dfs_file_open(&fd, fullpath, O_RDONLY | O_DIRECTORY) < 0)
         {

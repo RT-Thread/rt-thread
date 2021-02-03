@@ -35,6 +35,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
     struct dfs_filesystem *fs;
     char *fullpath;
     int result;
+    struct dfs_fnode *fnode = NULL;
 
     /* parameter check */
     if (fd == NULL)
@@ -57,6 +58,14 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 
         return -ENOENT;
     }
+
+    fnode = rt_calloc(1, sizeof(struct dfs_fnode));
+    if (!fnode)
+    {
+        return -ENOMEM;
+    }
+    fnode->ref_count = 1;
+    fd->fnode = fnode;
 
     LOG_D("open in filesystem:%s", fs->ops->name);
     fd->fnode->fs    = fs;             /* set file system */
@@ -89,6 +98,8 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         /* clear fd */
         rt_free(fd->fnode->path);
         fd->fnode->path = NULL;
+        rt_free(fd->fnode);
+        fd->fnode = NULL;
 
         return -ENOSYS;
     }
@@ -98,6 +109,8 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         /* clear fd */
         rt_free(fd->fnode->path);
         fd->fnode->path = NULL;
+        rt_free(fd->fnode);
+        fd->fnode = NULL;
 
         LOG_D("%s open failed", fullpath);
 
@@ -138,6 +151,8 @@ int dfs_file_close(struct dfs_fd *fd)
 
     rt_free(fd->fnode->path);
     fd->fnode->path = NULL;
+    rt_free(fd->fnode);
+    fd->fnode = NULL;
 
     return result;
 }
@@ -512,8 +527,7 @@ int dfs_file_ftruncate(struct dfs_fd *fd, off_t length)
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
-static struct dfs_fnode fnode;
-static struct dfs_fd fd = {0, 0, 0, 0, &fnode};
+static struct dfs_fd fd;
 static struct dirent dirent;
 void ls(const char *pathname)
 {
