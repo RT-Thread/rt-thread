@@ -192,6 +192,16 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
     #define RT_WEAK
     #define rt_inline                   static inline
     #define RTT_API
+#elif defined (__TASKING__)
+    #include <stdarg.h>
+    #define SECTION(x)
+    #define RT_UNUSED
+    #define RT_USED
+    #define PRAGMA(x)                   _Pragma(#x)
+    #define ALIGN(n)
+    #define RT_WEAK
+    #define rt_inline                   static inline
+    #define RTT_API
 #else
     #error not supported tool chain
 #endif

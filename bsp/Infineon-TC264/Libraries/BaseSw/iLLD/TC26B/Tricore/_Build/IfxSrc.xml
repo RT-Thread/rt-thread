@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iLLD:filelist driver="IfxCan" xmlns:iLLD="http://www.infineon.com/cms/xml/iLLD/1.0/EN">
+  <iLLD:class name="mchal"/> <!-- Derivative specific library -->
+  <iLLD:class name="srvsw"/> <!-- Service software library -->
+  <iLLD:file class="mchal">Src/Std/IfxSrc.c</iLLD:file>
+</iLLD:filelist>

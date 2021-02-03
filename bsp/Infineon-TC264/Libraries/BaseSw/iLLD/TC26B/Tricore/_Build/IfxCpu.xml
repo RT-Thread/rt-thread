@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iLLD:filelist driver="IfxCpu" xmlns:iLLD="http://www.infineon.com/cms/xml/iLLD/1.0/EN">
+  <iLLD:class name="mchal"/> <!-- Derivative specific library -->
+  <iLLD:class name="srvsw"/> <!-- Service software library -->
+  <iLLD:file class="mchal">Cpu/Std/IfxCpu.c</iLLD:file>
+  <iLLD:file class="mchal">Cpu/Irq/IfxCpu_Irq.c</iLLD:file>
+  <iLLD:file class="mchal">Cpu/Trap/IfxCpu_Trap.c</iLLD:file>
+  <iLLD:file class="mchal">_Impl/IfxCpu_cfg.c</iLLD:file>
+</iLLD:filelist>

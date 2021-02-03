@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iLLD:filelist driver="IfxGtm" xmlns:iLLD="http://www.infineon.com/cms/xml/iLLD/1.0/EN">
+  <iLLD:class name="mchal"/> <!-- Derivative specific library -->
+  <iLLD:class name="srvsw"/> <!-- Service software library -->
+  <iLLD:file class="mchal">Scu/Std/IfxScuCcu.c</iLLD:file>
+  <iLLD:file class="mchal">Scu/Std/IfxScuWdt.c</iLLD:file>
+  <iLLD:file class="mchal">Port/Std/IfxPort.c</iLLD:file>
+  <iLLD:file class="mchal">_Impl/IfxPort_cfg.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Tom/Timer/IfxGtm_Tom_Timer.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Tom/Pwm/IfxGtm_Tom_Pwm.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Tom/PwmHl/IfxGtm_Tom_PwmHl.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm_Atom.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm_Tim.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm_Cmu.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm_Dpll.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm_Tbu.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Std/IfxGtm_Tom.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Atom/Timer/IfxGtm_Atom_Timer.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Atom/Pwm/IfxGtm_Atom_Pwm.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Atom/PwmHl/IfxGtm_Atom_PwmHl.c</iLLD:file>
+  <iLLD:file class="mchal">Gtm/Tim/In/IfxGtm_Tim_In.c</iLLD:file>  
+  <iLLD:file class="mchal">Gtm/Trig/IfxGtm_Trig.c</iLLD:file>
+  <iLLD:file class="mchal">_PinMap/IfxGtm_PinMap.c</iLLD:file>
+  <iLLD:file class="srvsw">StdIf/IfxStdIf_PwmHl.c</iLLD:file>
+  <iLLD:file class="srvsw">StdIf/IfxStdIf_Timer.c</iLLD:file>
+</iLLD:filelist>

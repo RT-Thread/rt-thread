@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iLLD:filelist driver="IfxSent" xmlns:iLLD="http://www.infineon.com/cms/xml/iLLD/1.0/EN">
+  <iLLD:class name="mchal"/> <!-- Derivative specific library -->
+  <iLLD:class name="srvsw"/> <!-- Service software library -->
+  <iLLD:file class="mchal">Scu/Std/IfxScuCcu.c</iLLD:file>
+  <iLLD:file class="mchal">Scu/Std/IfxScuWdt.c</iLLD:file>
+  <iLLD:file class="mchal">Port/Std/IfxPort.c</iLLD:file>
+  <iLLD:file class="mchal">_Impl/IfxPort_cfg.c</iLLD:file>
+  <iLLD:file class="mchal">_Impl/IfxSent_cfg.c</iLLD:file>
+  <iLLD:file class="mchal">Sent/Std/IfxSent.c</iLLD:file>
+  <iLLD:file class="mchal">Sent/Sent/IfxSent_Sent.c</iLLD:file>
+  <iLLD:file class="mchal">_PinMap/IfxSent_PinMap.c</iLLD:file>
+</iLLD:filelist>

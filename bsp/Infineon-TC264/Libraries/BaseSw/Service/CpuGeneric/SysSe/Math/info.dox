@@ -1,0 +1,7 @@
+/**
+ * \defgroup library_srvsw_sysse_math Math
+ * \ingroup library_srvsw_sysse
+ *
+ * \defgroup library_srvsw_sysse_math_f32 Math 32bit floating point
+ * \ingroup library_srvsw_sysse_math
+ */

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iLLD:filelist driver="IfxAsclin" xmlns:iLLD="http://www.infineon.com/cms/xml/iLLD/1.0/EN">
+  <iLLD:class name="mchal"/> <!-- Derivative specific library -->
+  <iLLD:class name="srvsw"/> <!-- Service software library -->
+  <iLLD:file class="mchal">Scu/Std/IfxScuCcu.c</iLLD:file>
+  <iLLD:file class="mchal">Scu/Std/IfxScuWdt.c</iLLD:file>
+  <iLLD:file class="mchal">Port/Std/IfxPort.c</iLLD:file>
+  <iLLD:file class="mchal">_Impl/IfxPort_cfg.c</iLLD:file>
+  <iLLD:file class="mchal">_Impl/IfxAsclin_cfg.c</iLLD:file>
+  <iLLD:file class="mchal">Asclin/Std/IfxAsclin.c</iLLD:file>
+  <iLLD:file class="mchal">Asclin/Asc/IfxAsclin_Asc.c</iLLD:file>
+  <iLLD:file class="mchal">Asclin/Lin/IfxAsclin_Lin.c</iLLD:file>
+  <iLLD:file class="mchal">Asclin/Spi/IfxAsclin_Spi.c</iLLD:file>
+  <iLLD:file class="mchal">_PinMap/IfxAsclin_PinMap.c</iLLD:file>
+  <iLLD:file class="mchal">_Lib/DataHandling/Ifx_Fifo.c</iLLD:file>
+  <iLLD:file class="mchal">_Lib/DataHandling/Ifx_CircularBuffer.c</iLLD:file>
+  <iLLD:file class="mchal">_Lib/DataHandling/Ifx_CircularBuffer.asm.c</iLLD:file>
+</iLLD:filelist>

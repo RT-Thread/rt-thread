@@ -1,0 +1,6 @@
+/**
+ * \defgroup library_srvsw_if Standard interface (Obsolete)
+ *  Use \ref library_srvsw_stdif instead
+ * \ingroup library_srvsw
+ *
+ */

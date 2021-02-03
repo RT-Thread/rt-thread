@@ -1,0 +1,94 @@
+V1.0.0
+	初始版本
+	
+	
+V1.0.1
+	对总钻风摄像头的场中断进行修改，判断标志位为0才采集下一幅图像，避免出现访问冲突
+	修改SPI初始化中的错误，引用了固定的SPI2基地址
+	修复STM中无法使用STM1的问题
+	修复gtm pwm中最大占空比只有GTM_ATOM0_PWM_DUTY_MAX设置有效的问题
+	
+V1.0.2
+	修改模拟IIC默认延时时间为20 
+	添加 需要特别注意P20_2是不能用于输出的，仅仅只有输入的功能 注意事项
+	将摄像头采集DMA改为link传输，可以大大降低DMA中断次数
+	修改默认的软件IIC引脚定义
+	将6050等 需要用到软件IIC的模块，在初始化函数中默认调用模拟IIC初始化
+	添加小钻风驱动程序
+	
+V1.0.3
+	对spi、uart、pit中部分变量加入volatile修饰，避免出现问题
+	
+V1.0.4
+	默认勾选上生成HEX的功能
+	对Cpu1_Main.c中的core1_main函数默认添加 开启总中断的函数。
+	修复CPU1无法响应中断的问题
+	删除汇编中的包含路径信息
+	修复总钻风小分辨只采集一次的问题
+	添加RDA5807 FM模块驱动代码
+	修改LSL文件，方便通过#pragma 来指定变量或者程序放在指定RAM，具体如何使用请参考库例程Specifies_Variable_Or_Code_Location_Demo
+	//使用#pragma section all "cpu0_dsram" 和 #pragma section all restore可以将变量放在cpu0_dsram
+	//我们只需要将变量定义放在上面两句话中间即可，使用示例如下
+	#pragma section all "cpu0_dsram"
+	uint8 test_arry[5];	//将变量放在cpu0_dsram区域内
+	//如果将cpu0_dsram改为cpu1_dsram  则变量放在cpu1_dsram区域内
+	//我们建议程序由哪个CPU执行，则将所使用的变量放置在哪个区域内，默认不指定的情况下变量被放置在cpu1_dsram区域
+	#pragma section all restore
+
+	//使用#pragma section all "cpu0_psram" 和 #pragma section all restore可以将函数加载到cpu0_psram
+	//我们只需要将函数定义放在上面两句话中间即可，使用示例如下
+	#pragma section all "cpu0_psram"
+	void delay_tset(void)	//将函数加载到cpu0_psram区域内执行
+	{
+		int i;
+		i = 999;
+		while(i--);
+	}
+	//如果将cpu0_psram改为cpu1_psram  则函数加载到cpu1_psram区域内
+	//我们建议程序由哪个CPU执行，则将函数加载到在哪个区域内，默认不指定的情况下，程序都是从flash加载并执行
+	//通常我们都不需要将函数放在RAM运行，一般在周期执行的程序大小超过了cache后，会出现程序执行速度降低，这个时候我们就可以将部分代码放入RAM执行，可以提高运算速度
+	#pragma section all restore
+	
+V1.0.5
+	取消HEX输出
+	
+V1.0.6
+	增加ADC采样频率设置的宏定义，ADC_SAMPLE_FREQUENCY，最大允许设置为10Mhz，相比默认下的速度有较大的提升
+
+V1.0.7
+	修复使用systick_getval计时，当计时时间超过4秒左右会出现时间测量错误的问题。
+	对部分代码加入#pragma warning，避免提高优化等级时出现警告
+	修改1.8寸TFT屏幕初始化中关于屏幕方向选择部分的代码
+
+V1.0.8
+	修复CCU61 通道1中断设置错误的问题
+	修复CCU6在线调试的时候定时器不能自动停止，导致在线调试时持续进中断的问题
+	对CCU6增加pit_close与pit_start函数用于控制定时器的开始与停止
+	对CCU6增加pit_disable_interrupt与pit_enable_interrupt函数用于控制中断开关
+	
+V1.0.9
+	修改RDA5807驱动文件，主要保证上电后1S在操作FM模块
+	
+V1.1.0
+	对ISR文件内的中断函数全部添加enableInterrupts(); 以实现中断嵌套的功能
+	增加RDA5807获取RSSI功能函数
+	对DMA连接传输所用到的变量，根据ERU_DMA_INT_SERVICE来将变量放到对应的CPU中
+	
+V1.1.1
+	修复uart_getchar函数收到卡住的问题
+	
+V1.1.2
+	修复ATOM_PWM最大占空比设置异常的问题
+
+V1.1.3
+	修复SPI spi_mosi函数在接收数组为空的时候，出现异常
+	
+V1.1.4
+	在所有文件上面添加一个空注释避免在默认设置的情况下第一段注释被自动折叠起来
+    
+V1.1.5
+    DMA_LINK结构体linked_list成员取消对齐改为由定义的时候指定
+    dma_link_list结构体定义增加对齐
+    
+V1.1.6
+    将printf修改为通过串口输出
