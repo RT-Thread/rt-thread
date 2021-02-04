@@ -96,7 +96,13 @@ msh >
 - [学习路线 - RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 - [Microsemi Libero系列中文教程](https://blog.csdn.net/whik1194/article/details/102901710)
 
-### 8. 联系我
+### 8. 常见问题
+
+- [使用RTT-master源码编译smartfusion2的工程编译不通过](https://club.rt-thread.org/ask/question/430007.html)
+
+Keil 5环境下编译失败，提示`..\..\src\timer.c(534): error:  #28: expression must have a constant value`，编译配置勾选`C99 Mode`即可。
+
+### 9. 联系我
 
 - Github：[whik](https://github.com/whik)
 - E-Mail：wangchao149@foxmail.com
