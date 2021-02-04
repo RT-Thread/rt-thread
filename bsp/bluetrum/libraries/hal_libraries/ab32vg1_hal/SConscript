@@ -11,7 +11,6 @@ Import('rtconfig')
 PKGNAME = "ab32vg1_hal"
 VERSION = "v1.0.0"
 DEPENDS = [""]
-#DEPENDS = ["PKG_USING_RW007"]
 
 #---------------------------------------------------------------------------------
 # Compile the configuration 
@@ -35,6 +34,7 @@ DEPENDS = [""]
 #
 # LINKFLAGS: Link options
 #---------------------------------------------------------------------------------
+CWD              = GetCurrentDir()
 SOURCES          = Glob("./source/*.c")
 
 LOCAL_CPPPATH    = [] 
@@ -48,8 +48,8 @@ ASFLAGS          = ""
 CPPDEFINES       = []
 LOCAL_CPPDEFINES = []
 
-LIBS             = [] 
-LIBPATH          = [] 
+LIBS             = ['hal'] 
+LIBPATH          = [CWD]
 
 LINKFLAGS        = "" 
 
