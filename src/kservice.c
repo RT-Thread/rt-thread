@@ -123,7 +123,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return the address of source memory
  */
-void *rt_memset(void *s, int c, rt_ubase_t count)
+RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -207,7 +207,7 @@ RTM_EXPORT(rt_memset);
  *
  * @return the address of destination memory
  */
-void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
@@ -321,7 +321,7 @@ RTM_EXPORT(rt_memmove);
  *
  * @return the result
  */
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+RT_WEAK rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -1187,7 +1187,7 @@ void rt_kputs(const char *str)
  *
  * @param fmt the format
  */
-void rt_kprintf(const char *fmt, ...)
+RT_WEAK void rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;
