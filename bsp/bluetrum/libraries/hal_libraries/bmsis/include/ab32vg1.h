@@ -14,23 +14,23 @@
 /*!< Interrupt Number Definition */
 typedef enum
 {
-	IRQ_SW_VECTOR                   = 2,
-	IRQ_TMR0_VECTOR                 = 3,
-	IRQ_TMR1_VECTOR                 = 4,
-	IRQ_TMR2_4_5_VECTOR             = 5,	/*!< Timer 2, 4 and 5 Interrupt 		*/
-	IRQ_IRRX_VECTOR                 = 6,	/*!< Timer 3 and IR receiver Interrupt	*/
-	IRQ_USB_VECTOR                  = 7,
-	IRQ_SD_VECTOR                   = 8,
-	IRQ_AUBUF0_1_VECTOR				= 9,	/*!< Audio buffer 0 and 1 Interrupt		*/
-	IRQ_SDADC_VECTOR                = 10,
-	IRQ_AUDEC_VECTOR                = 11,   /*!< Audio codec, SBC encode and AEC FFT Interrupt */
-	IRQ_SRC_VECTOR             		= 12,	/*!< SRC, PLC and CVSD Interrupt 		*/
-	IRQ_FM_SPDIF_VECTOR             = 13,	/*!< FM TX, RX and SPDIF RX Interrupt 	*/
-	IRQ_UART0_2_VECTOR              = 14,	/*!< UART 0 to 2 Interrupt				*/
-	IRQ_HSUART_VECTOR               = 15,
-	IRQ_RTC_VECTOR					= 16,	/*!< RTC, LVD and WDT Interrupt			*/
-	IRQ_I2S_VECTOR                  = 17,
-	IRQ_TOTAL_NUM                   = 23,
+    IRQ_SW_VECTOR                   = 2,
+    IRQ_TMR0_VECTOR                 = 3,
+    IRQ_TMR1_VECTOR                 = 4,
+    IRQ_TMR2_4_5_VECTOR             = 5,	/*!< Timer 2, 4 and 5 Interrupt 		*/
+    IRQ_IRRX_VECTOR                 = 6,	/*!< Timer 3 and IR receiver Interrupt	*/
+    IRQ_USB_VECTOR                  = 7,
+    IRQ_SD_VECTOR                   = 8,
+    IRQ_AUBUF0_1_VECTOR             = 9,	/*!< Audio buffer 0 and 1 Interrupt		*/
+    IRQ_SDADC_VECTOR                = 10,
+    IRQ_AUDEC_VECTOR                = 11,   /*!< Audio codec, SBC encode and AEC FFT Interrupt */
+    IRQ_SRC_VECTOR                  = 12,	/*!< SRC, PLC and CVSD Interrupt 		*/
+    IRQ_FM_SPDIF_VECTOR             = 13,	/*!< FM TX, RX and SPDIF RX Interrupt 	*/
+    IRQ_UART0_2_VECTOR              = 14,	/*!< UART 0 to 2 Interrupt				*/
+    IRQ_HSUART_VECTOR               = 15,
+    IRQ_RTC_VECTOR                  = 16,	/*!< RTC, LVD and WDT Interrupt			*/
+    IRQ_I2S_VECTOR                  = 17,
+    IRQ_TOTAL_NUM                   = 23,
 } irq_type;
 #endif // __ASSEMBLER__
 

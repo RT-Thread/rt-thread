@@ -162,6 +162,22 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0"
+                default n
+        endif
+
 endmenu
 
 menu "Board extended module Drivers"
