@@ -98,7 +98,6 @@ SECTIONS
     } > heap
 
     .flash : {
-        
         . = ALIGN(4);
         __fsymtab_start = .;
         KEEP(*(FSymTab))
@@ -109,6 +108,7 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
 
+        . = ALIGN(4);
         *(.text*)
         *(.rodata*)
         *(.srodata*)
