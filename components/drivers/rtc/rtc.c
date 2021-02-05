@@ -64,7 +64,7 @@ rt_err_t set_date(rt_uint32_t year, rt_uint32_t month, rt_uint32_t day)
     tm_new.tm_mon  = month - 1; /* tm_mon: 0~11 */
     tm_new.tm_mday = day;
 
-    /* converts the UTC time into the calendar time. */
+    /* converts the local time into the calendar time. */
     now = mktime(&tm_new);
 
     device = rt_device_find("rtc");
