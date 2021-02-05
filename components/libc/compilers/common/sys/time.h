@@ -48,8 +48,8 @@ struct timezone {
   int tz_dsttime;       /* type of dst correction */
 };
 
-int gettimeofday(struct timeval *tp, void *ignore);
-struct tm *gmtime_r(const time_t *timep, struct tm *r);
+int gettimeofday(struct timeval *tp, struct timezone *tz);
+time_t timegm(struct tm * const t);
 
 #ifdef __cplusplus
 }
