@@ -22,7 +22,7 @@
 
 struct stm32_hw_spi_cs
 {
-    uint16_t Pin;
+    uint16_t pin;
 };
 
 struct stm32_qspi_bus

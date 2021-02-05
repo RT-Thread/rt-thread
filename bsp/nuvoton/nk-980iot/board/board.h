@@ -28,6 +28,12 @@
 #define BOARD_SDRAM_SIZE    0x04000000
 #define BOARD_HEAP_END      ((void*)BOARD_SDRAM_SIZE)
 
+#if defined(RT_USING_MTD_NAND)
+    #include <drivers/mtd_nand.h>
+    #define MTD_SPINAND_PARTITION_NUM 3
+    extern struct rt_mtd_nand_device mtd_partitions[MTD_SPINAND_PARTITION_NUM];
+#endif
+
 extern void rt_hw_board_init(void);
 extern void nu_clock_init(void);
 extern void nu_clock_deinit(void);
