@@ -37,7 +37,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
-#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40003
 #define ARCH_CPU_64BIT
 #define ARCH_MIPS64
@@ -82,6 +82,8 @@
 #define RT_DFS_ELM_WORD_ACCESS
 #define RT_DFS_ELM_USE_LFN_3
 #define RT_DFS_ELM_USE_LFN 3
+#define RT_DFS_ELM_LFN_UNICODE_0
+#define RT_DFS_ELM_LFN_UNICODE 0
 #define RT_DFS_ELM_MAX_LFN 255
 #define RT_DFS_ELM_DRIVES 9
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
@@ -114,6 +116,7 @@
 /* Socket abstraction layer */
 
 #define RT_USING_SAL
+#define SAL_INTERNET_CHECK
 
 /* protocol stack implement */
 
@@ -220,9 +223,6 @@
 /* system packages */
 
 
-/* Micrium: Micrium software products porting for RT-Thread */
-
-
 /* peripheral libraries and drivers */
 
 
@@ -231,9 +231,8 @@
 
 /* samples: kernel and components samples */
 
-
-/* games: games run on RT-Thread console */
-
 #define SOC_LS2K1000
+#define RT_USING_UART0
+#define RT_USING_UART4
 
 #endif

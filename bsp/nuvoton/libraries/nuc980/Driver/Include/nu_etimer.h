@@ -648,6 +648,42 @@ static __inline void ETIMER_ClearCaptureIntFlag(UINT timer)
 }
 
 /**
+* @brief This function gets the Timer capture falling edge flag.
+* @param[in] timer ETIMER number. Range from 0 ~ 5
+* @return None
+*/
+static __inline UINT8 ETIMER_GetCaptureFallingEdgeFlag(UINT timer)
+{
+    UINT ret;
+
+    if (timer == 0)
+    {
+        ret = inpw(REG_ETMR0_ISR);
+    }
+    else if (timer == 1)
+    {
+        ret = inpw(REG_ETMR1_ISR);
+    }
+    else if (timer == 2)
+    {
+        ret = inpw(REG_ETMR2_ISR);
+    }
+    else if (timer == 3)
+    {
+        ret = inpw(REG_ETMR3_ISR);
+    }
+    else if (timer == 4)
+    {
+        ret = inpw(REG_ETMR4_ISR);
+    }
+    else
+    {
+        ret = inpw(REG_ETMR5_ISR);
+    }
+    return (ret & (1 << 6)) >> 6;
+}
+
+/**
   * @brief This function indicates Timer has waked up system or not.
   * @param[in] timer ETIMER number. Range from 0 ~ 5
   * @return Timer has waked up system or not

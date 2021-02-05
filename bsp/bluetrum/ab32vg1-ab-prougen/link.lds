@@ -41,16 +41,6 @@ SECTIONS
         __rt_init_end = .;
 
         . = ALIGN(4);
-        __fsymtab_start = .;
-        KEEP(*(FSymTab))
-        __fsymtab_end = .;
-
-        . = ALIGN(4);
-        __vsymtab_start = .;
-        KEEP(*(VSymTab))
-        __vsymtab_end = .;
-
-        . = ALIGN(4);
         PROVIDE(__ctors_start__ = .);
         KEEP (*(SORT(.init_array.*)))
         KEEP (*(.init_array))
@@ -59,9 +49,6 @@ SECTIONS
         . = ALIGN(4);
         *components*drivers**.o (.text*)
         *components.o (.text*)
-        *idle.o (.text*)
-        *object.o (.text*)
-        *scheduler.o (.text*)
     } > ram1 AT > flash
 
     .comm __comm_vma : {
@@ -70,7 +57,9 @@ SECTIONS
         EXCLUDE_FILE(*components*finsh**.o *components*libc**.o *dfs*filesystems**.o  
         *romfs.o *lib_a**.o *divdi3.o *moddi3.o *divdf3.o *muldf3.o *eqtf2.o *getf2.o
         *letf2.o *multf3.o *subtf3.o *fixtfsi.o *floatsitf.o *extenddftf2.o
-        *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o) *(.text)
+        *trunctfdf2.o *_clzsi2.o *cp-demangle.o *unwind*.o
+        *fixdfsi.o *addsf3.o *divsf3.o *eqsf2.o *gesf2.o *float*.o
+        *lesf2.o *mulsf3.o *subsf3.o *fixsfsi.o *fixunssfsi.o) *(.text)
         *finsh*shell.o (.text*)
         *(.text.unlikely)
         *(.text.startup)
@@ -109,6 +98,17 @@ SECTIONS
     } > heap
 
     .flash : {
+        
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+
         *(.text*)
         *(.rodata*)
         *(.srodata*)
