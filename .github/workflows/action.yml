@@ -38,7 +38,6 @@ jobs:
          - {RTT_BSP: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm"}         
          - {RTT_BSP: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm"}
-         - {RTT_BSP: "gkipc", RTT_TOOL_CHAIN: "sourcery-arm"}
          - {RTT_BSP: "imx6sx/cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm"} 
          - {RTT_BSP: "imxrt/imxrt1052-atk-commander", RTT_TOOL_CHAIN: "sourcery-arm"}  
          - {RTT_BSP: "imxrt/imxrt1052-fire-pro", RTT_TOOL_CHAIN: "sourcery-arm"}
