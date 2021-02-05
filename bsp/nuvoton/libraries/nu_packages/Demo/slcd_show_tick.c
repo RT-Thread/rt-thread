@@ -19,6 +19,15 @@
 
 #include "slcd_rhe6616tp01.h"
 
+#if defined(RT_USING_NETDEV)
+    #if defined(RT_USING_SAL)
+        #include <arpa/inet.h>
+    #elif defined(RT_USING_LWIP)
+        #include <lwip/inet.h>
+    #endif /* RT_USING_SAL */
+    #include <netdev.h>
+#endif
+
 const uint32_t au32SLCDSymbols [] =
 {
     SYMBOL_NVT,
@@ -67,38 +76,70 @@ const uint32_t au32SLCDSymbols [] =
 };
 const int i32SLCDSymbolsSize  = sizeof(au32SLCDSymbols) / sizeof(au32SLCDSymbols[0]);
 
+
 void slcd_demo_hook(void)
 {
+    static uint32_t u32NextShowTime = 0;
+    static uint32_t u32ShownTime = 0;
     uint32_t u32CurTickCount = rt_tick_get();
+    uint8_t  au8Str[16];
 
-    /* ZONE_MAIN_DIGIT */
-    LCDLIB_PrintNumber(ZONE_MAIN_DIGIT, u32CurTickCount);
+    if (u32CurTickCount < u32NextShowTime)
+        return;
 
-    /* ZONE_PPM_DIGIT */
-    LCDLIB_PrintNumber(ZONE_PPM_DIGIT, u32CurTickCount);
+    u32NextShowTime = u32CurTickCount + 500;
+    u32ShownTime++;
 
-    /* ZONE_TEMP_DIGIT */
-    LCDLIB_PrintNumber(ZONE_TEMP_DIGIT, u32CurTickCount);
+    /* Show NuMicro Log. */
+    {
+        LCDLIB_SetSymbol(SYMBOL_NVT, 1);
+        LCDLIB_SetSymbol(SYMBOL_NUMICRO, 1);
+        LCDLIB_SetSymbol(SYMBOL_ARROW_UP, 1);
+        LCDLIB_SetSymbol(SYMBOL_ARROW_LEFT, 1);
+        LCDLIB_SetSymbol(SYMBOL_ARROW_DOWN, 1);
+        LCDLIB_SetSymbol(SYMBOL_ARROW_RIGHT, 1);
+        LCDLIB_SetSymbol(SYMBOL_CIRCLE_UP, 1);
+        LCDLIB_SetSymbol(SYMBOL_CIRCLE_LEFT, 1);
+        LCDLIB_SetSymbol(SYMBOL_CIRCLE_RIGHT,  1);
+    }
+    {
+        struct tm *g_pstm;
+        time_t now;
+        /* output current time */
+        now = time(RT_NULL);
+        g_pstm = localtime(&now);
+        rt_snprintf(au8Str, sizeof(au8Str), "%02d%02d", g_pstm->tm_hour, g_pstm->tm_min);
+        LCDLIB_Printf(ZONE_TIME_DIGIT, &au8Str[0]);
+        LCDLIB_SetSymbol(SYMBOL_TIME_DIG_COL1, u32ShownTime % 2);
 
-    /* ZONE_VER_DIGIT */
-    LCDLIB_PrintNumber(ZONE_VER_DIGIT, u32CurTickCount);
+        rt_snprintf(au8Str, sizeof(au8Str), "-%02d", g_pstm->tm_sec);
+        LCDLIB_Printf(ZONE_NUMICRO_DIGIT, &au8Str[0]);
+    }
+    /* Show RTT version. */
+    {
+        LCDLIB_SetSymbol(SYMBOL_VERSION, 1);
+        rt_snprintf(au8Str, sizeof(au8Str), "%d%02d%03d", RT_VERSION, RT_SUBVERSION, RT_REVISION);
+        LCDLIB_Printf(ZONE_VER_DIGIT, &au8Str[0]);
+        LCDLIB_SetSymbol(SYMBOL_VER_DIG_P1, 1);
+        LCDLIB_SetSymbol(SYMBOL_VER_DIG_P2, 1);
+    }
 
-    /* ZONE_TIME_DIGIT */
-    LCDLIB_PrintNumber(ZONE_TIME_DIGIT, u32CurTickCount);
-
-    /* ZONE_NUMICRO_DIGIT */
-    LCDLIB_PrintNumber(ZONE_NUMICRO_DIGIT, u32CurTickCount);
-
-    /* Travel all symbols */
-    LCDLIB_SetSymbol(au32SLCDSymbols[u32CurTickCount % i32SLCDSymbolsSize], (u32CurTickCount / i32SLCDSymbolsSize) % 2);
+#if defined(RT_USING_NETDEV)
+    /* Show Wi-Fi connective if leased an ip address. */
+    {
+        struct netdev *netdev = netdev_get_by_name("esp0");
+        LCDLIB_SetSymbol(SYMBOL_WIFI, netdev_is_dhcp_enabled(netdev));
+    }
+#endif
 
     /* Travel all dots */
-    LCDLIB_SetSymbol(SYMBOL_S(u32CurTickCount % 40 + 1), (u32CurTickCount / 40) % 2);
+    LCDLIB_SetSymbol(SYMBOL_S(u32ShownTime % 40 + 1), (u32ShownTime / 40) % 2);
 }
 
 static int slcd_demo_init(void)
 {
     rt_err_t err = rt_thread_idle_sethook(slcd_demo_hook);
+    uint8_t  au8Str[16];
 
     if (err != RT_EOK)
     {

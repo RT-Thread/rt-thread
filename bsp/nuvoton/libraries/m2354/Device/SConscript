@@ -1,0 +1,25 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+Nuvoton/M2354/Source/system_M2354.c
+""")
+
+# add for startup script 
+if rtconfig.CROSS_TOOL == 'gcc':
+    src = src + ['Nuvoton/M2354/Source/GCC/startup_M2354.S']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src = src + ['Nuvoton/M2354/Source/ARM/startup_M2354.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src = src + ['Nuvoton/M2354/Source/IAR/startup_M2354.s']
+
+path = [cwd + '/Nuvoton/M2354/Include',]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
