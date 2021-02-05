@@ -9,17 +9,15 @@
  */
 
 #include <board.h>
+#include <drivers/drv_comm.h>
 #include <drivers/adc.h>
+
+#define DBG_TAG             "drv.adc"
+#define DBG_LVL             DBG_INFO
+
 #include <rtdbg.h>
 
 #ifdef RT_USING_ADC
-
-//#define DRV_DEBUG
-#define LOG_TAG             "drv.adc"
-
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(x)    (sizeof(x) / sizeof(x[0]))
-#endif
 
 #define MAX_EXTERN_ADC_CHANNEL    16
 
