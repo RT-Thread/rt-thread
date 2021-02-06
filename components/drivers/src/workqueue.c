@@ -135,6 +135,8 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
             work->flags |= RT_WORK_STATE_SUBMITTING;
         }
         work->workqueue = queue;
+        /* insert delay work list */
+        rt_list_insert_after(queue->delayed_list.prev, &(work->list));
         rt_hw_interrupt_enable(level);
         rt_timer_start(&(work->timer));
         return RT_EOK;
@@ -175,6 +177,8 @@ static void _delayed_work_timeout_handler(void *parameter)
     level = rt_hw_interrupt_disable();
     rt_timer_detach(&(work->timer));
     work->flags &= ~RT_WORK_STATE_SUBMITTING;
+    /* remove delay list */
+    rt_list_remove(&(work->list));
     /* insert work queue */
     if (queue->work_current != work)
     {
@@ -205,6 +209,7 @@ struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_siz
     {
         /* initialize work list */
         rt_list_init(&(queue->work_list));
+        rt_list_init(&(queue->delayed_list));
         queue->work_current = RT_NULL;
         rt_sem_init(&(queue->sem), "wqueue", 0, RT_IPC_FLAG_FIFO);
 
@@ -302,14 +307,22 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
 rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
 {
     struct rt_list_node *node, *next;
+    struct rt_work *work;
+
     RT_ASSERT(queue != RT_NULL);
 
-    // TODO: cancel delay work
+    // cancel work
     rt_enter_critical();
-    for (node = queue->work_list.next; node != &(queue->work_list); node = next)
+    while (rt_list_isempty(&queue->work_list) != RT_FALSE)
     {
-        next = node->next;
-        rt_list_remove(node);
+        work = rt_list_first_entry(&queue->work_list, struct rt_work, list);
+        _workqueue_cancel_work(work);
+    }
+    // cancel delay work
+    while (rt_list_isempty(&queue->delayed_list) != RT_FALSE)
+    {
+        work = rt_list_first_entry(&queue->delayed_list, struct rt_work, list);
+        _workqueue_cancel_work(work);
     }
     rt_exit_critical();
 
