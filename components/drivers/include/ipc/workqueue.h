@@ -29,6 +29,7 @@ enum
 struct rt_workqueue
 {
     rt_list_t      work_list;
+    rt_list_t      delayed_list;
     struct rt_work *work_current; /* current work */
 
     struct rt_semaphore sem;
