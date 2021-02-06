@@ -58,15 +58,17 @@ static void _workqueue_thread_entry(void *parameter)
 
     while (1)
     {
+        level = rt_hw_interrupt_disable();
         if (rt_list_isempty(&(queue->work_list)))
         {
+            rt_hw_interrupt_enable(level);
             /* no software timer exist, suspend self. */
             rt_thread_suspend(rt_thread_self());
             rt_schedule();
+            continue;
         }
 
         /* we have work to do with. */
-        level = rt_hw_interrupt_disable();
         work = rt_list_entry(queue->work_list.next, struct rt_work, list);
         rt_list_remove(&(work->list));
         queue->work_current = work;
@@ -76,10 +78,8 @@ static void _workqueue_thread_entry(void *parameter)
 
         /* do work */
         work->work_func(work, work->work_data);
-        level = rt_hw_interrupt_disable();
         /* clean current work */
         queue->work_current = RT_NULL;
-        rt_hw_interrupt_enable(level);
 
         /* ack work completion */
         _workqueue_work_completion(queue);
