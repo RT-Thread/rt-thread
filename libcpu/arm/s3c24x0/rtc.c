@@ -12,7 +12,7 @@
  */
 
 #include <rtthread.h>
-#include <time.h>
+#include <sys/time.h>
 #include <s3c24x0.h>
 
 // #define RTC_DEBUG
@@ -132,17 +132,17 @@ static rt_err_t rtc_control(rt_device_t dev, int cmd, void *args)
 	time = (time_t *)args;
 	switch (cmd)
 	{
-	case RT_DEVICE_CTRL_RTC_GET_TIME:
-		/* read device */
-		rt_hw_rtc_get(&tm);
-		*((rt_time_t *)args) = mktime(&tm);
-		break;
+        case RT_DEVICE_CTRL_RTC_GET_TIME:
+            /* read device */
+            rt_hw_rtc_get(&tm);
+            *((rt_time_t *)args) = mktime(&tm);
+            break;
 
-	case RT_DEVICE_CTRL_RTC_SET_TIME:
-		tm_ptr = localtime(time);
-		/* write device */
-		rt_hw_rtc_set(tm_ptr);
-		break;
+        case RT_DEVICE_CTRL_RTC_SET_TIME:
+            tm_ptr = localtime(time);
+            /* write device */
+            rt_hw_rtc_set(tm_ptr);
+            break;
 	}
 
 	return RT_EOK;
