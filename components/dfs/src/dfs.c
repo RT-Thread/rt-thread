@@ -296,10 +296,15 @@ void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
 {
     int idx = -1;
 
-    RT_ASSERT(fd != NULL);
     RT_ASSERT(fdt != NULL);
 
     dfs_fd_lock();
+
+    if (fd == NULL)
+    {
+        dfs_fd_unlock();
+        return;
+    }
 
     idx = fd->idx;
     /* check fd */
@@ -328,6 +333,41 @@ void fd_release(struct dfs_fd *fd)
 
     fdt = dfs_fdtable_get();
     fdt_fd_release(fdt, fd);
+}
+
+int fd_dup(int oldfd)
+{
+    int newfd = -1;
+    struct dfs_fdtable *fdt = NULL;
+
+    dfs_fd_lock();
+    /* check old fd */
+    fdt = dfs_fdtable_get();
+    oldfd -= DFS_FD_OFFSET;
+    if ((oldfd < 0) || (oldfd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdt->fds[oldfd])
+    {
+        goto exit;
+    }
+    /* get a new fd */
+    newfd = fd_new();
+    if (newfd < 0)
+    {
+        goto exit;
+    }
+
+    newfd -= DFS_FD_OFFSET;
+    /* replace newfd ref */
+    rt_free(fdt->fds[newfd]);
+    fdt->fds[newfd] = fdt->fds[oldfd];
+    /* inc ref_count */
+    fdt->fds[newfd]->ref_count++;
+exit:
+    dfs_fd_unlock();
+    return (newfd == -1 ? newfd : newfd + DFS_FD_OFFSET);
 }
 
 void fd_init(struct dfs_fd *fd)

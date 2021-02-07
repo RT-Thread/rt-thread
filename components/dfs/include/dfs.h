@@ -105,6 +105,7 @@ int fdt_fd_new(struct dfs_fdtable *fdt);
 struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr);
 void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd);
 int fd_new(void);
+int fd_dup(int fd);
 struct dfs_fd *fd_get(int fd, int ref_inc_nr);
 void fd_release(struct dfs_fd *fd);
 
