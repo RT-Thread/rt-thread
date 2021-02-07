@@ -213,13 +213,13 @@ RT_WEAK clock_t clock(void)
 /* TODO: timezone */
 int gettimeofday(struct timeval *tp, struct timezone *tz)
 {
-    time_t time = time(NULL);
+    time_t t = time(RT_NULL);
     if (tp != RT_NULL)
     {
-        tp->tv_sec = time;
+        tp->tv_sec = t;
         tp->tv_usec = 0;
     }
-    return time;
+    return 0;
 }
 
 time_t timegm(struct tm * const t)
