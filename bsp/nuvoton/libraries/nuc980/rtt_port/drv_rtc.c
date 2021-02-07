@@ -233,7 +233,7 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
     case RT_DEVICE_CTRL_RTC_SET_TIME:
 
         time = (time_t *) args;
-        tm_in = localtime(time);
+        tm_in = gmtime(time);
 
         if (nu_rtc_is_date_valid(time) != RT_EOK)
             return -(RT_ERROR);

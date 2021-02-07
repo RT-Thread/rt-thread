@@ -194,7 +194,7 @@ static time_t raspi_get_timestamp(void)
 static int raspi_set_timestamp(time_t timestamp)
 {
     struct tm *tblock;
-    tblock = localtime(&timestamp);
+    tblock = gmtime(&timestamp);
     buf[0] = 0;
     buf[1] = tblock->tm_sec;
     buf[2] = tblock->tm_min;

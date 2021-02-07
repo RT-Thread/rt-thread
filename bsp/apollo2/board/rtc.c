@@ -85,7 +85,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
 
         case RT_DEVICE_CTRL_RTC_SET_TIME:
             time = (time_t *)args;
-            time_new = localtime(time);
+            time_new = gmtime(time);
 
             hal_time.ui32Hour = time_new->tm_hour;
             hal_time.ui32Minute = time_new->tm_min;
