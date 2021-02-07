@@ -42,7 +42,9 @@ struct dfs_fnode
     uint16_t type;               /* Type (regular or socket) */
 
     char *path;                  /* Name (below mount point) */
+    char *fullpath;              /* Full path is hash key */
     int ref_count;               /* Descriptor reference count */
+    rt_list_t list;              /* The node of fnode hash table */
 
     struct dfs_filesystem *fs;
     const struct dfs_file_ops *fops;
@@ -62,6 +64,8 @@ struct dfs_fd
     void *data;                  /* Specific fd data */
 };
 
+void dfs_fnode_mgr_init(void);
+int dfs_file_is_open(const char *pathname);
 int dfs_file_open(struct dfs_fd *fd, const char *path, int flags);
 int dfs_file_close(struct dfs_fd *fd);
 int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args);

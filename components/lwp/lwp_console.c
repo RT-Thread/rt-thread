@@ -45,8 +45,8 @@ rt_inline struct rt_wqueue *wait_queue_current_get(void)
 
 static void console_wakeup_check(struct rt_console_device *console)
 {
-    rt_size_t len;
-    struct rt_wqueue *wq;
+    rt_size_t len = 0;
+    struct rt_wqueue *wq = NULL;
 
     len = rt_ringbuffer_data_len(&console->input_rb);
     if (len)
@@ -58,9 +58,9 @@ static void console_wakeup_check(struct rt_console_device *console)
 
 static void console_rx_notify(struct rt_device *dev)
 {
-    struct rt_console_device *console;
-    rt_size_t len;
-    rt_uint8_t ch;
+    struct rt_console_device *console = NULL;
+    rt_size_t len = 0;
+    rt_uint8_t ch = 0;
 
     console = (struct rt_console_device *)dev;
     RT_ASSERT(console != RT_NULL);
@@ -95,7 +95,7 @@ static void console_rx_notify(struct rt_device *dev)
 
 void rt_console_set_foreground(struct rt_lwp *lwp)
 {
-    rt_base_t level;
+    rt_base_t level = 0;
 
     level = rt_hw_interrupt_disable();
     if (_console.init_flag != CONSOLE_INIT_FLAG_INITED)
@@ -111,8 +111,8 @@ exit:
 
 struct rt_lwp * rt_console_get_foreground(void)
 {
-    struct rt_lwp *lwp;
-    rt_base_t level;
+    struct rt_lwp *lwp = RT_NULL;
+    rt_base_t level = 0;
 
     level = rt_hw_interrupt_disable();
     lwp = _console.foreground;
@@ -135,9 +135,9 @@ static void iodev_close(struct rt_console_device *console)
 
 static rt_err_t iodev_open(struct rt_console_device *console)
 {
-    rt_err_t ret;
+    rt_err_t ret = RT_EOK;
     struct rt_device_notify rx_notify;
-    rt_uint16_t oflags;
+    rt_uint16_t oflags = 0;
 
     rt_device_control(console->iodev, RT_DEVICE_CTRL_CONSOLE_OFLAG, &oflags);
 
@@ -155,8 +155,8 @@ static rt_err_t iodev_open(struct rt_console_device *console)
 
 struct rt_device *rt_console_get_iodev(void)
 {
-    rt_base_t level;
-    struct rt_device *iodev;
+    rt_base_t level = 0;
+    struct rt_device *iodev = RT_NULL;
 
     level = rt_hw_interrupt_disable();
     iodev = _console.iodev;
@@ -166,9 +166,9 @@ struct rt_device *rt_console_get_iodev(void)
 
 struct rt_device *rt_console_set_iodev(struct rt_device *iodev)
 {
-    rt_base_t level;
-    struct rt_device *io_before;
-    struct rt_console_device *console;
+    rt_base_t level = 0;
+    struct rt_device *io_before = RT_NULL;
+    struct rt_console_device *console = RT_NULL;
 
     RT_ASSERT(iodev != RT_NULL);
 
@@ -211,36 +211,42 @@ exit:
 /* fops for console */
 static int console_fops_open(struct dfs_fd *fd)
 {
-    int ret;
-    struct rt_device * device;
+    int ret = 0;
+    struct rt_device *device = RT_NULL;
 
     device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
-    ret = rt_device_open(device, fd->fnode->flags);
+    if (fd->fnode->ref_count == 1)
+    {
+        ret = rt_device_open(device, fd->fnode->flags);
+    }
     return ret;
 }
 
 static int console_fops_close(struct dfs_fd *fd)
 {
-    int ret;
-    struct rt_device * device;
+    int ret = 0;
+    struct rt_device *device = RT_NULL;
 
     device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
 
-    ret = rt_device_close(device);
+    if (fd->fnode->ref_count == 1)
+    {
+        ret = rt_device_close(device);
+    }
     return ret;
 }
 
 static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 {
-    rt_base_t level;
+    rt_base_t level = 0;
     int size = 0;
-    struct rt_console_device *console;
-    struct rt_lwp *lwp;
-    struct rt_wqueue *wq;
-    int wait_ret;
+    struct rt_console_device *console = RT_NULL;
+    struct rt_lwp *lwp = RT_NULL;
+    struct rt_wqueue *wq = RT_NULL;
+    int wait_ret = 0;
 
     console = (struct rt_console_device *)fd->fnode->data;
     RT_ASSERT(console != RT_NULL);
@@ -278,8 +284,8 @@ static int console_fops_read(struct dfs_fd *fd, void *buf, size_t count)
 
 static int console_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 {
-    int size;
-    struct rt_device * device;
+    int size = 0;
+    struct rt_device *device = RT_NULL;
 
     device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
@@ -289,12 +295,12 @@ static int console_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
 
 static int console_fops_poll(struct dfs_fd *fd, struct rt_pollreq *req)
 {
-    rt_base_t level;
+    rt_base_t level = 0;
     int mask = POLLOUT;
-    struct rt_device * device;
-    struct rt_console_device *console;
-    struct rt_wqueue *wq;
-    struct rt_lwp *lwp;
+    struct rt_device *device = RT_NULL;
+    struct rt_console_device *console = RT_NULL;
+    struct rt_wqueue *wq = RT_NULL;
+    struct rt_lwp *lwp = RT_NULL;
 
     device = (struct rt_device *)fd->fnode->data;
     RT_ASSERT(device != RT_NULL);
@@ -343,9 +349,9 @@ const static struct dfs_file_ops _console_fops =
  */
 static rt_err_t rt_console_init(struct rt_device *dev)
 {
-    rt_base_t level;
-    rt_err_t result;
-    struct rt_console_device *console;
+    rt_base_t level = 0;
+    rt_err_t result = RT_EOK;
+    struct rt_console_device *console = RT_NULL;
 
     RT_ASSERT(dev != RT_NULL);
 
@@ -370,7 +376,7 @@ exit:
 static rt_err_t rt_console_open(struct rt_device *dev, rt_uint16_t oflag)
 {
     rt_err_t result = RT_EOK;
-    struct rt_console_device *console;
+    struct rt_console_device *console = RT_NULL;
 
     RT_ASSERT(dev != RT_NULL);
     console = (struct rt_console_device *)dev;
@@ -382,7 +388,7 @@ static rt_err_t rt_console_open(struct rt_device *dev, rt_uint16_t oflag)
 static rt_err_t rt_console_close(struct rt_device *dev)
 {
     rt_err_t result = RT_EOK;
-    struct rt_console_device *console;
+    struct rt_console_device *console = RT_NULL;
 
     console = (struct rt_console_device *)dev;
     RT_ASSERT(console != RT_NULL);
@@ -395,10 +401,10 @@ static rt_size_t rt_console_read(struct rt_device *dev,
         void             *buffer,
         rt_size_t         size)
 {
-    rt_base_t level;
+    rt_base_t level = 0;
     rt_size_t len = 0;
-    struct rt_lwp *lwp;
-    struct rt_console_device *console;
+    struct rt_lwp *lwp = RT_NULL;
+    struct rt_console_device *console = RT_NULL;
 
     console = (struct rt_console_device *)dev;
     RT_ASSERT(console != RT_NULL);
@@ -431,9 +437,9 @@ static rt_size_t rt_console_write(struct rt_device *dev,
         const void       *buffer,
         rt_size_t         size)
 {
-    rt_base_t level;
+    rt_base_t level = 0;
     rt_size_t len = 0;
-    struct rt_console_device *console;
+    struct rt_console_device *console = RT_NULL;
 
     console = (struct rt_console_device *)dev;
     RT_ASSERT(console != RT_NULL);
@@ -463,9 +469,9 @@ const static struct rt_device_ops console_ops =
  */
 rt_err_t rt_console_register(const char *name, struct rt_device *iodev)
 {
-    rt_base_t level;
-    rt_err_t ret;
-    struct rt_device *device;
+    rt_base_t level = 0;
+    rt_err_t ret = RT_EOK;
+    struct rt_device *device = RT_NULL;
     struct rt_console_device *console = &_console;
 
     level = rt_hw_interrupt_disable();

@@ -273,6 +273,7 @@ int dfs_mount(const char   *device_name,
     {
         struct dfs_fd fd;
 
+        fd_init(&fd);
         if (dfs_file_open(&fd, fullpath, O_RDONLY | O_DIRECTORY) < 0)
         {
             rt_free(fullpath);

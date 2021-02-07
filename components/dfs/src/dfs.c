@@ -56,6 +56,9 @@ int dfs_init(void)
         return 0;
     }
 
+    /* init fnode hash table */
+    dfs_fnode_mgr_init();
+
     /* clear filesystem operations table */
     memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
     /* clear filesystem table */
@@ -327,65 +330,17 @@ void fd_release(struct dfs_fd *fd)
     fdt_fd_release(fdt, fd);
 }
 
-/**
- * @ingroup Fd
- *
- * This function will return whether this file has been opend.
- *
- * @param pathname the file path name.
- *
- * @return 0 on file has been open successfully, -1 on open failed.
- */
-int fd_is_open(const char *pathname)
+void fd_init(struct dfs_fd *fd)
 {
-    char *fullpath;
-    unsigned int index;
-    struct dfs_filesystem *fs;
-    struct dfs_fd *fd;
-    struct dfs_fdtable *fdt;
-
-    fdt = dfs_fdtable_get();
-    fullpath = dfs_normalize_path(NULL, pathname);
-    if (fullpath != NULL)
+    if (fd)
     {
-        char *mountpath;
-        fs = dfs_filesystem_lookup(fullpath);
-        if (fs == NULL)
-        {
-            /* can't find mounted file system */
-            rt_free(fullpath);
-
-            return -1;
-        }
-
-        /* get file path name under mounted file system */
-        if (fs->path[0] == '/' && fs->path[1] == '\0')
-            mountpath = fullpath;
-        else
-            mountpath = fullpath + strlen(fs->path);
-
-        dfs_fd_lock();
-
-        for (index = 0; index < fdt->maxfd; index++)
-        {
-            fd = fdt->fds[index];
-            if (fd == NULL || fd->fnode->fops == NULL || fd->fnode->path == NULL) continue;
-
-            if (fd->fnode->fs == fs && strcmp(fd->fnode->path, mountpath) == 0)
-            {
-                /* found file in file descriptor table */
-                rt_free(fullpath);
-                dfs_fd_unlock();
-
-                return 0;
-            }
-        }
-        dfs_fd_unlock();
-
-        rt_free(fullpath);
+        fd->idx = -1;
+        fd->magic = DFS_FD_MAGIC;
+        fd->ref_count = 1;
+        fd->pos = 0;
+        fd->fnode = NULL;
+        fd->data = NULL;
     }
-
-    return -1;
 }
 
 /**

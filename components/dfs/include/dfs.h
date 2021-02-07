@@ -107,7 +107,8 @@ void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd);
 int fd_new(void);
 struct dfs_fd *fd_get(int fd, int ref_inc_nr);
 void fd_release(struct dfs_fd *fd);
-int fd_is_open(const char *pathname);
+
+void fd_init(struct dfs_fd *fd);
 
 struct dfs_fdtable *dfs_fdtable_get(void);
 struct dfs_fdtable *dfs_fdtable_get_global(void);
