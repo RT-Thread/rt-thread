@@ -2335,7 +2335,7 @@ int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
         rt_set_errno(ENOMEM);
         return -1;
     }
-    dfs_fd = fd_get(fd, 0);
+    dfs_fd = fd_get(fd);
     ret = dfs_file_getdents(dfs_fd, rtt_dirp, nbytes);
     if (ret)
     {

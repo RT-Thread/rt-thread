@@ -795,10 +795,10 @@ static struct dfs_fd *lwp_fd_get(int fdt_type, int fd)
     {
         fdt = dfs_fdtable_get();
     }
-    return fdt_fd_get(fdt, fd, 0);
+    return fdt_fd_get(fdt, fd);
 }
 
-static void lwp_fd_release(int fdt_type, struct dfs_fd *fd)
+static void lwp_fd_release(int fdt_type, int fd)
 {
     struct dfs_fdtable *fdt;
 
@@ -837,7 +837,7 @@ static void _chfd_free(int fd, int fdt_type)
     {
         return;
     }
-    lwp_fd_release(fdt_type, d);
+    lwp_fd_release(fdt_type, fd);
 }
 
 /* for fops */

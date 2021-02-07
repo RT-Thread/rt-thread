@@ -41,13 +41,13 @@ int open(const char *file, int flags, ...)
 
         return -1;
     }
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
 
     result = dfs_file_open(d, file, flags);
     if (result < 0)
     {
         /* release the ref-count of fd */
-        fd_release(d);
+        fd_release(fd);
 
         rt_set_errno(result);
 
@@ -71,7 +71,7 @@ int close(int fd)
     int result;
     struct dfs_fd *d;
 
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -88,7 +88,7 @@ int close(int fd)
         return -1;
     }
 
-    fd_release(d);
+    fd_release(fd);
 
     return 0;
 }
@@ -115,7 +115,7 @@ int read(int fd, void *buf, size_t len)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -155,7 +155,7 @@ int write(int fd, const void *buf, size_t len)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -190,7 +190,7 @@ off_t lseek(int fd, off_t offset, int whence)
     int result;
     struct dfs_fd *d;
 
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -324,7 +324,7 @@ int fstat(int fildes, struct stat *buf)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = fd_get(fildes, 0);
+    d = fd_get(fildes);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -367,7 +367,7 @@ int fsync(int fildes)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = fd_get(fildes, 0);
+    d = fd_get(fildes);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -398,7 +398,7 @@ int fcntl(int fildes, int cmd, ...)
     struct dfs_fd *d;
 
     /* get the fd */
-    d = fd_get(fildes, 0);
+    d = fd_get(fildes);
     if (d)
     {
         void *arg;
@@ -463,7 +463,7 @@ int ftruncate(int fd, off_t length)
     int result;
     struct dfs_fd *d;
 
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -536,20 +536,20 @@ int mkdir(const char *path, mode_t mode)
         return -1;
     }
 
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
 
     result = dfs_file_open(d, path, O_DIRECTORY | O_CREAT);
 
     if (result < 0)
     {
-        fd_release(d);
+        fd_release(fd);
         rt_set_errno(result);
 
         return -1;
     }
 
     dfs_file_close(d);
-    fd_release(d);
+    fd_release(fd);
 
     return 0;
 }
@@ -606,7 +606,7 @@ DIR *opendir(const char *name)
 
         return NULL;
     }
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
 
     result = dfs_file_open(d, name, O_RDONLY | O_DIRECTORY);
     if (result >= 0)
@@ -616,7 +616,7 @@ DIR *opendir(const char *name)
         if (t == NULL)
         {
             dfs_file_close(d);
-            fd_release(d);
+            fd_release(fd);
         }
         else
         {
@@ -629,7 +629,7 @@ DIR *opendir(const char *name)
     }
 
     /* open failed */
-    fd_release(d);
+    fd_release(fd);
     rt_set_errno(result);
 
     return NULL;
@@ -650,7 +650,7 @@ struct dirent *readdir(DIR *d)
     int result;
     struct dfs_fd *fd;
 
-    fd = fd_get(d->fd, 0);
+    fd = fd_get(d->fd);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -698,7 +698,7 @@ long telldir(DIR *d)
     struct dfs_fd *fd;
     long result;
 
-    fd = fd_get(d->fd, 0);
+    fd = fd_get(d->fd);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -723,7 +723,7 @@ void seekdir(DIR *d, off_t offset)
 {
     struct dfs_fd *fd;
 
-    fd = fd_get(d->fd, 0);
+    fd = fd_get(d->fd);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -747,7 +747,7 @@ void rewinddir(DIR *d)
 {
     struct dfs_fd *fd;
 
-    fd = fd_get(d->fd, 0);
+    fd = fd_get(d->fd);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -774,7 +774,7 @@ int closedir(DIR *d)
     int result;
     struct dfs_fd *fd;
 
-    fd = fd_get(d->fd, 0);
+    fd = fd_get(d->fd);
     if (fd == NULL)
     {
         rt_set_errno(-EBADF);
@@ -783,7 +783,7 @@ int closedir(DIR *d)
     }
 
     result = dfs_file_close(fd);
-    fd_release(fd);
+    fd_release(d->fd);
 
     rt_free(d);
 

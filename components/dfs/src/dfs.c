@@ -256,7 +256,7 @@ int fd_new(void)
  * pointer.
  */
 
-struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr)
+struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
 {
     struct dfs_fd *d;
 
@@ -273,19 +273,17 @@ struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr)
         return NULL;
     }
 
-    d->ref_count += ref_inc_nr;
-
     dfs_fd_unlock();
 
     return d;
 }
 
-struct dfs_fd *fd_get(int fd, int ref_inc_nr)
+struct dfs_fd *fd_get(int fd)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    return fdt_fd_get(fdt, fd, ref_inc_nr);
+    return fdt_fd_get(fdt, fd);
 }
 
 /**
@@ -293,55 +291,47 @@ struct dfs_fd *fd_get(int fd, int ref_inc_nr)
  *
  * This function will put the file descriptor.
  */
-void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
+void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
 {
-    int idx = 0;
-    struct dfs_fd *fd_iter = NULL;
+    struct dfs_fd *fd_slot = NULL;
 
     RT_ASSERT(fdt != NULL);
 
     dfs_fd_lock();
 
-    if (fd == NULL)
+    if ((fd < 0) || (fd >= fdt->maxfd))
     {
         dfs_fd_unlock();
         return;
     }
 
-    for (idx = 0; idx < fdt->maxfd; idx++)
-    {
-        fd_iter = fdt->fds[idx];
-        if (fd_iter == fd)
-        {
-            break;
-        }
-    }
-    if (idx == fdt->maxfd)
+    fd_slot = fdt->fds[fd];
+    if (fd_slot == NULL)
     {
         dfs_fd_unlock();
         return;
     }
+    fdt->fds[fd] = NULL;
 
     /* check fd */
-    RT_ASSERT(fd->magic == DFS_FD_MAGIC);
+    RT_ASSERT(fd_slot->magic == DFS_FD_MAGIC);
 
-    fd->ref_count--;
+    fd_slot->ref_count--;
 
     /* clear this fd entry */
-    if (fd->ref_count == 0)
+    if (fd_slot->ref_count == 0)
     {
-        struct dfs_fnode *fnode = fd->fnode;
+        struct dfs_fnode *fnode = fd_slot->fnode;
         if (fnode)
         {
             fnode->ref_count--;
         }
-        rt_free(fd);
-        fdt->fds[idx] = 0;
+        rt_free(fd_slot);
     }
     dfs_fd_unlock();
 }
 
-void fd_release(struct dfs_fd *fd)
+void fd_release(int fd)
 {
     struct dfs_fdtable *fdt;
 
@@ -370,6 +360,16 @@ int fd_dup(int oldfd)
     if (newfd >= fdt->maxfd)
     {
         goto exit;
+    }
+
+    if (fdt->fds[newfd])
+    {
+        ret = dfs_file_close(fdt->fds[newfd]);
+        if (ret < 0)
+        {
+            goto exit;
+        }
+        fd_release(newfd);
     }
 
     fdt->fds[newfd] = fdt->fds[oldfd];

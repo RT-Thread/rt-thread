@@ -128,7 +128,7 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 
     if (fd >= 0)
     {
-        struct dfs_fd *f = fd_get(fd, 0);
+        struct dfs_fd *f = fd_get(fd);
         mask = POLLNVAL;
 
         if (f)

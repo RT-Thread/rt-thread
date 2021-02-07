@@ -37,7 +37,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
             return -1;
         }
 
-        d = fd_get(fd, 0);
+        d = fd_get(fd);
         if(d)
         {
             /* this is a socket fd */
@@ -86,7 +86,7 @@ int shutdown(int s, int how)
         return -1;
     }
 
-    d = fd_get(s, 0);
+    d = fd_get(s);
     if (d == NULL)
     {
         rt_set_errno(-EBADF);
@@ -204,7 +204,7 @@ int socket(int domain, int type, int protocol)
 
         return -1;
     }
-    d = fd_get(fd, 0);
+    d = fd_get(fd);
 
     /* create socket  and then put it to the dfs_fd */
     socket = sal_socket(domain, type, protocol);
@@ -226,7 +226,7 @@ int socket(int domain, int type, int protocol)
     else
     {
         /* release fd */
-        fd_release(d);
+        fd_release(fd);
 
         rt_set_errno(-ENOMEM);
 
@@ -250,7 +250,7 @@ int closesocket(int s)
         return -1;
     }
 
-    d = fd_get(s, 0);
+    d = fd_get(s);
     if (d == RT_NULL)
     {
         rt_set_errno(-EBADF);
@@ -268,7 +268,7 @@ int closesocket(int s)
     }
 
     /* socket has been closed, delete it from file system fd */
-    fd_release(d);
+    fd_release(s);
 
     return error;
 }

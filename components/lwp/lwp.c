@@ -758,11 +758,11 @@ static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
     if (lwp_fdt->fds)
     {
         lwp_fdt->maxfd = 4;
-        d = fd_get(0, 0);
+        d = fd_get(0);
         fd_associate(lwp_fdt, 0, d);
-        d = fd_get(1, 0);
+        d = fd_get(1);
         fd_associate(lwp_fdt, 1, d);
-        d = fd_get(2, 0);
+        d = fd_get(2);
         fd_associate(lwp_fdt, 2, d);
     }
 

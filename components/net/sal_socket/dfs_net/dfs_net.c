@@ -23,7 +23,7 @@ int dfs_net_getsocket(int fd)
     int socket;
     struct dfs_fd *_dfs_fd;
 
-    _dfs_fd = fd_get(fd, 0);
+    _dfs_fd = fd_get(fd);
     if (_dfs_fd == NULL) return -1;
 
     if (_dfs_fd->fnode->type != FT_SOCKET) socket = -1;

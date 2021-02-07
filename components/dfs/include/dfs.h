@@ -102,13 +102,13 @@ void dfs_fd_unlock(void);
 
 /* FD APIs */
 int fdt_fd_new(struct dfs_fdtable *fdt);
-struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr);
-void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd);
+struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd);
+void fdt_fd_release(struct dfs_fdtable* fdt, int fd);
 int fd_new(void);
 int fd_dup(int fd);
 int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file);
-struct dfs_fd *fd_get(int fd, int ref_inc_nr);
-void fd_release(struct dfs_fd *fd);
+struct dfs_fd *fd_get(int fd);
+void fd_release(int fd);
 
 void fd_init(struct dfs_fd *fd);
 

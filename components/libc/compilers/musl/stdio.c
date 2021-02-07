@@ -52,9 +52,9 @@ int libc_stdio_set_console(const char* device_name, int mode)
         int fd = fileno(std_console);
 
         /* set fd (0, 1, 2) */
-        fd_associate(fdt, 0, fd_get(fd, 0));
-        fd_associate(fdt, 1, fd_get(fd, 0));
-        fd_associate(fdt, 2, fd_get(fd, 0));
+        fd_associate(fdt, 0, fd_get(fd));
+        fd_associate(fdt, 1, fd_get(fd));
+        fd_associate(fdt, 2, fd_get(fd));
         return fd;
     }
 
