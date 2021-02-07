@@ -63,6 +63,7 @@ rt_err_t rt_workqueue_dowork(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_submit_work(struct rt_workqueue *queue, struct rt_work *work, rt_tick_t time);
 rt_err_t rt_workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work);
 rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_work *work);
+rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 rt_err_t rt_work_submit(struct rt_work *work, rt_tick_t time);
