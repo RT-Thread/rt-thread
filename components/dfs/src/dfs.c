@@ -143,12 +143,11 @@ void dfs_fd_unlock(void)
     rt_mutex_release(&fdlock);
 }
 
-static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
+static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx = 0;
-    struct dfs_fd *fd = NULL;
 
-    /* find an empty fd entry */
+    /* find an empty fd slot */
     for (idx = startfd; idx < (int)fdt->maxfd; idx++)
     {
         if (fdt->fds[idx] == RT_NULL)
@@ -158,7 +157,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     }
 
     /* allocate a larger FD container */
-    if (idx == fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
+    if (idx >= fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
     {
         int cnt = 0;
         int index = 0;
@@ -183,6 +182,15 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
         fdt->fds   = fds;
         fdt->maxfd = cnt;
     }
+    return idx;
+}
+
+static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
+{
+    int idx = 0;
+    struct dfs_fd *fd = NULL;
+
+    idx = fd_slot_alloc(fdt, startfd);
 
     /* allocate  'struct dfs_fd' */
     if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
@@ -195,7 +203,6 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
         fd->ref_count = 1;
         fd->magic = DFS_FD_MAGIC;
         fd->fnode = NULL;
-        fd->idx = idx;
         fdt->fds[idx] = fd;
     }
 
@@ -216,19 +223,19 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     dfs_fd_lock();
 
     /* find an empty fd entry */
-    idx = fd_alloc(fdt, 0);
+    idx = fd_alloc(fdt, DFS_STDIO_OFFSET);
 
     /* can't find an empty fd entry */
     if (idx == fdt->maxfd)
     {
-        idx = -(1 + DFS_FD_OFFSET);
+        idx = -1;
         LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
         goto __result;
     }
 
 __result:
     dfs_fd_unlock();
-    return idx + DFS_FD_OFFSET;
+    return idx;
 }
 
 int fd_new(void)
@@ -253,12 +260,6 @@ struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd, int ref_inc_nr)
 {
     struct dfs_fd *d;
 
-#if defined(RT_USING_DFS_DEVFS) && defined(RT_USING_POSIX)
-    if ((0 <= fd) && (fd <= 2))
-        fd = libc_stdio_get_console();
-#endif
-
-    fd = fd - DFS_FD_OFFSET;
     if (fd < 0 || fd >= (int)fdt->maxfd)
         return NULL;
 
@@ -294,7 +295,8 @@ struct dfs_fd *fd_get(int fd, int ref_inc_nr)
  */
 void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
 {
-    int idx = -1;
+    int idx = 0;
+    struct dfs_fd *fd_iter = NULL;
 
     RT_ASSERT(fdt != NULL);
 
@@ -306,9 +308,21 @@ void fdt_fd_release(struct dfs_fdtable* fdt, struct dfs_fd *fd)
         return;
     }
 
-    idx = fd->idx;
+    for (idx = 0; idx < fdt->maxfd; idx++)
+    {
+        fd_iter = fdt->fds[idx];
+        if (fd_iter == fd)
+        {
+            break;
+        }
+    }
+    if (idx == fdt->maxfd)
+    {
+        dfs_fd_unlock();
+        return;
+    }
+
     /* check fd */
-    RT_ASSERT(fdt->fds[idx] == fd);
     RT_ASSERT(fd->magic == DFS_FD_MAGIC);
 
     fd->ref_count--;
@@ -343,7 +357,6 @@ int fd_dup(int oldfd)
     dfs_fd_lock();
     /* check old fd */
     fdt = dfs_fdtable_get();
-    oldfd -= DFS_FD_OFFSET;
     if ((oldfd < 0) || (oldfd >= fdt->maxfd))
     {
         goto exit;
@@ -353,28 +366,57 @@ int fd_dup(int oldfd)
         goto exit;
     }
     /* get a new fd */
-    newfd = fd_new();
-    if (newfd < 0)
+    newfd = fd_slot_alloc(fdt, DFS_STDIO_OFFSET);
+    if (newfd >= fdt->maxfd)
     {
         goto exit;
     }
 
-    newfd -= DFS_FD_OFFSET;
-    /* replace newfd ref */
-    rt_free(fdt->fds[newfd]);
     fdt->fds[newfd] = fdt->fds[oldfd];
     /* inc ref_count */
     fdt->fds[newfd]->ref_count++;
 exit:
     dfs_fd_unlock();
-    return (newfd == -1 ? newfd : newfd + DFS_FD_OFFSET);
+    return newfd;
+}
+
+int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file)
+{
+    int retfd = -1;
+
+    if (!file)
+    {
+        return retfd;
+    }
+    if (!fdt)
+    {
+        return retfd;
+    }
+
+    dfs_fd_lock();
+    /* check old fd */
+    if ((fd < 0) || (fd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+
+    if (fdt->fds[fd])
+    {
+        goto exit;
+    }
+    /* inc ref_count */
+    file->ref_count++;
+    fdt->fds[fd] = file;
+    retfd = fd;
+exit:
+    dfs_fd_unlock();
+    return retfd;
 }
 
 void fd_init(struct dfs_fd *fd)
 {
     if (fd)
     {
-        fd->idx = -1;
         fd->magic = DFS_FD_MAGIC;
         fd->ref_count = 1;
         fd->pos = 0;
@@ -588,7 +630,7 @@ int list_fd(void)
 
         if (fd && fd->fnode->fops)
         {
-            rt_kprintf("%2d ", index + DFS_FD_OFFSET);
+            rt_kprintf("%2d ", index);
             if (fd->fnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
             else if (fd->fnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
             else if (fd->fnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");

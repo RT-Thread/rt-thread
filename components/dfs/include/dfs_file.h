@@ -56,7 +56,6 @@ struct dfs_fnode
 
 struct dfs_fd
 {
-    int idx;                    /* the idx in fdt */
     uint16_t magic;              /* file descriptor magic number */
     int ref_count;               /* Descriptor reference count */
     off_t    pos;                /* Current file position */

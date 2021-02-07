@@ -12,6 +12,7 @@
 
 #include <rtthread.h>
 #include "libc.h"
+#include "dfs.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
 
@@ -45,7 +46,17 @@ int libc_stdio_set_console(const char* device_name, int mode)
         std_console = fp;
     }
 
-    if (std_console) return fileno(std_console);
+    if (std_console)
+    {
+        struct dfs_fdtable *fdt = dfs_fdtable_get();
+        int fd = fileno(std_console);
+
+        /* set fd (0, 1, 2) */
+        fd_associate(fdt, 0, fd_get(fd, 0));
+        fd_associate(fdt, 1, fd_get(fd, 0));
+        fd_associate(fdt, 2, fd_get(fd, 0));
+        return fd;
+    }
 
     return -1;
 }

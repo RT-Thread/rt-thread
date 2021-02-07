@@ -749,26 +749,22 @@ void lwp_cleanup(struct rt_thread *tid)
 
 static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
 {
-    int fd;
     struct dfs_fd *d;
     struct dfs_fdtable *lwp_fdt;
-    struct dfs_fdtable *fdt;
-
-    fd = libc_stdio_get_console();
-    fdt = dfs_fdtable_get();
-    d = fdt_fd_get(fdt, fd, 0); /* inc 0 ref count */
-
-    fd = fd - DFS_FD_OFFSET;
-    if (d == NULL)
-    {
-        return;
-    }
 
     lwp_fdt = &lwp->fdt;
-    lwp_fdt->fds = rt_malloc(sizeof(void *) * (fd + 1));
-    rt_memset(lwp_fdt->fds, 0, sizeof(void *) * (fd + 1));
-    lwp_fdt->fds[fd] = d;
-    lwp_fdt->maxfd = fd + 1;
+    /* init 4 fds */
+    lwp_fdt->fds = rt_calloc(4, sizeof(void *));
+    if (lwp_fdt->fds)
+    {
+        lwp_fdt->maxfd = 4;
+        d = fd_get(0, 0);
+        fd_associate(lwp_fdt, 0, d);
+        d = fd_get(1, 0);
+        fd_associate(lwp_fdt, 1, d);
+        d = fd_get(2, 0);
+        fd_associate(lwp_fdt, 2, d);
+    }
 
     return;
 }
