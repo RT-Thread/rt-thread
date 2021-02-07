@@ -11,7 +11,7 @@
 
 #include <rtdevice.h>
 #include <rtthread.h>
-#include <time.h>
+#include <sys/time.h>
 #include "wm_regs.h"
 #include "wm_irq.h"
 #include "tls_common.h"
@@ -42,7 +42,7 @@ static time_t wm_get_timestamp(void)
     tm_new.tm_min  = (ctrl1 & 0x00003f00) >>  8;
     tm_new.tm_sec  =  ctrl1 & 0x0000003f;
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int wm_set_timestamp(time_t timestamp)

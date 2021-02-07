@@ -14,6 +14,7 @@
 #if defined (BSP_USING_RTC)
 
 #include <rtdevice.h>
+#include <sys/time.h>
 #include <NuMicro.h>
 
 /* Private define ---------------------------------------------------------------*/
@@ -183,8 +184,8 @@ static rt_err_t nu_rtc_is_date_valid(const time_t *const t)
 
     if (!initialised)
     {
-        t_upper = mktime((struct tm *)&tm_upper);
-        t_lower = mktime((struct tm *)&tm_lower);
+        t_upper = timegm((struct tm *)&tm_upper);
+        t_lower = timegm((struct tm *)&tm_lower);
         initialised = RT_TRUE;
     }
 
@@ -225,7 +226,7 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args)
         tm_out.tm_hour = hw_time.u32Hour;
         tm_out.tm_min = hw_time.u32Minute;
         tm_out.tm_sec = hw_time.u32Second;
-        *time = mktime(&tm_out);
+        *time = timegm(&tm_out);
         break;
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:

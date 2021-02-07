@@ -14,7 +14,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <rtthread.h>
+#include <sys/time.h>
 #include "ls2k1000.h"
 
 #ifdef RT_USING_RTC
@@ -137,29 +137,29 @@ static rt_err_t rt_rtc_ioctl(rt_device_t dev, int cmd, void *args)
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_RTC_GET_TIME:
-        *t = mktime(&tmptime);
-        break;
-    case RT_DEVICE_CTRL_RTC_SET_TIME:
-        tmptime.tm_hour = time.tm_hour;
-        tmptime.tm_min  = time.tm_min;
-        tmptime.tm_sec  = time.tm_sec;
+        case RT_DEVICE_CTRL_RTC_GET_TIME:
+            *t = timegm(&tmptime);
+            break;
+        case RT_DEVICE_CTRL_RTC_SET_TIME:
+            tmptime.tm_hour = time.tm_hour;
+            tmptime.tm_min  = time.tm_min;
+            tmptime.tm_sec  = time.tm_sec;
 
-        tmptime.tm_year = time.tm_year;
-        tmptime.tm_mon  = time.tm_mon;
-        tmptime.tm_mday = time.tm_mday;
+            tmptime.tm_year = time.tm_year;
+            tmptime.tm_mon  = time.tm_mon;
+            tmptime.tm_mday = time.tm_mday;
 
-        rtctm = mkrtctime(&tmptime);
-        /* write to hw RTC */
-        hw_rtc->sys_toywrite0 = rtctm.sys_toyread0;
-        hw_rtc->sys_toywrite1 = rtctm.sys_toyread1;
-        break;
-    case RT_DEVICE_CTRL_RTC_GET_ALARM:
-        break;
-    case RT_DEVICE_CTRL_RTC_SET_ALARM:
-        break;
-    default:
-        break;
+            rtctm = mkrtctime(&tmptime);
+            /* write to hw RTC */
+            hw_rtc->sys_toywrite0 = rtctm.sys_toyread0;
+            hw_rtc->sys_toywrite1 = rtctm.sys_toyread1;
+            break;
+        case RT_DEVICE_CTRL_RTC_GET_ALARM:
+            break;
+        case RT_DEVICE_CTRL_RTC_SET_ALARM:
+            break;
+        default:
+            break;
     }
 
     return RT_EOK;

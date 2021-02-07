@@ -21,7 +21,7 @@
 #include "ffconf.h"
 #include "ff.h"
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 
 /* ELM FatFs provide a DIR struct */
 #define HAVE_DIR_STRUCTURE
@@ -800,7 +800,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             tm_file.tm_min  = min;         /* Minutes: 0-59 */
             tm_file.tm_sec  = sec;         /* Seconds: 0-59 */
 
-            st->st_mtime = mktime(&tm_file);
+            st->st_mtime = timegm(&tm_file);
         } /* get st_mtime. */
     }
 

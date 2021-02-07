@@ -8,8 +8,11 @@
  * 2020-10-30     CDT          first version
  */
  
-#include "board.h"
+#include <board.h>
 #include <rtdbg.h>
+#include <rtthread.h>
+#include <rtdevice.h>
+#include <sys/time.h>
 
 #ifdef BSP_USING_RTC
 
@@ -33,7 +36,7 @@ static time_t hc32_rtc_get_time_stamp(void)
     tm_new.tm_wday = stcRtcDate.u8Weekday;
 
     LOG_D("get rtc time.");
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)

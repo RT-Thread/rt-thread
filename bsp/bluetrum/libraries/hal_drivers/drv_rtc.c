@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include <time.h>
+#include <sys/time.h>
 
 #ifdef BSP_USING_ONCHIP_RTC
 
@@ -26,7 +27,7 @@ static struct rt_device rtc;
 uint8_t get_weekday(struct tm *const _tm)
 {
     uint8_t weekday;
-    time_t secs = mktime(_tm);
+    time_t secs = timegm(_tm);
 
     weekday = (secs / 86400 + 4) % 7;
     return weekday;
@@ -115,7 +116,7 @@ void hal_rtc_init(void)
     tm_new.tm_mday = 29;
     tm_new.tm_mon  = 1 - 1;
     tm_new.tm_year = 2021 - 1900;
-    sec = mktime(&tm_new);
+    sec = timegm(&tm_new);
 
     irtc_time_write(RTCCNT_CMD, sec);
 }

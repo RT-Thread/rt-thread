@@ -10,6 +10,8 @@
  *
  */
 #include <rtthread.h>
+#include <rtdevice.h>
+#include <sys/time.h>
 
 #ifdef BSP_USING_RTC
 
@@ -39,7 +41,7 @@ static time_t get_timestamp(void)
     tm_new.tm_mon  = rtcDate.month - 1;
     tm_new.tm_year = rtcDate.year - 1900;
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int set_timestamp(time_t timestamp)
