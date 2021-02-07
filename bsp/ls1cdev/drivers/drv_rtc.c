@@ -12,6 +12,7 @@
 #include "board.h"
 #include "drv_rtc.h"
 #include <rtdevice.h>
+#include <sys/time.h>
 
 #include "../libraries/ls1c_regs.h"
 #include "../libraries/ls1c_rtc.h"
@@ -44,7 +45,7 @@ static time_t get_timestamp(void)
     tm_new.tm_mon  = rtcDate.Month- 1; 
     tm_new.tm_year = rtcDate.Year + 2000 - 1900; 
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int set_timestamp(time_t timestamp)

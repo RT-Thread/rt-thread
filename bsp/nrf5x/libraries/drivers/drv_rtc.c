@@ -11,7 +11,7 @@
 #include "board.h"
 #include <rtthread.h>
 #include <rtdevice.h>
-
+#include <sys/time.h>
 #include <nrfx_rtc.h>
 #include <nrfx_clock.h>
 
@@ -118,7 +118,7 @@ static rt_err_t rt_hw_rtc_register(rt_device_t device, const char *name, rt_uint
 
     RT_ASSERT(device != RT_NULL);
 
-    init_time = mktime(&time_new);
+    init_time = timegm(&time_new);
     if (rt_rtc_config(device) != RT_EOK)
     {
         return -RT_ERROR;

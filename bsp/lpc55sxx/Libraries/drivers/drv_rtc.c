@@ -8,12 +8,13 @@
  * 2018-03-15     Liuguang     the first version.
  * 2019-07-19     Magicoe      The first version for LPC55S6x
  */
-
+ 
+#include <rtthread.h>
+#include <rtdevice.h>
+#include <sys/time.h>
 #include "drv_rtc.h" 
-
 #include "fsl_common.h" 
 #include "fsl_rtc.h"
-#include <time.h>
 
 #ifdef RT_USING_RTC
 
@@ -37,7 +38,7 @@ static time_t get_timestamp(void)
     tm_new.tm_mon  = rtcDate.month - 1; 
     tm_new.tm_year = rtcDate.year - 1900; 
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int set_timestamp(time_t timestamp)

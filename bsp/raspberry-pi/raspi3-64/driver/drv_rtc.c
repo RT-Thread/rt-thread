@@ -8,7 +8,9 @@
  * 2019-07-29     zdzn           first version
  */
 
-
+#include <rtthread.h>
+#include <rtdevice.h>
+#include <sys/time.h>
 #include "drv_rtc.h"
 
 #ifdef BSP_USING_RTC
@@ -33,7 +35,7 @@ static time_t raspi_get_timestamp(void)
     tm_new.tm_min  = ((buf[1] & 0x7F) / 16 + 0x30) + (buf[1] & 0x7F) % 16+ 0x30;
     tm_new.tm_sec  = ((buf[0] & 0x7F) / 16 + 0x30) + (buf[0] & 0x7F) % 16+ 0x30;
 
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static int raspi_set_timestamp(time_t timestamp)

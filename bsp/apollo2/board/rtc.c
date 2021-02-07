@@ -25,6 +25,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "am_mcu_apollo.h"
+#include <sys/time.h>
 
 #define XT              1
 #define LFRC            2
@@ -78,7 +79,7 @@ static rt_err_t rt_rtc_control(rt_device_t dev, int cmd, void *args)
             /* Seconds 0-59 : the 0-59 range */
             time_temp.tm_sec = hal_time.ui32Second;
 
-            *time = mktime(&time_temp);
+            *time = timegm(&time_temp);
 
             break;
 
