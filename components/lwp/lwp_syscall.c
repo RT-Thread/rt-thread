@@ -2349,7 +2349,7 @@ int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
         for (i = 0; i < cnt; i++)
         {
             dirp[i].d_ino = 0;
-            dirp[i].d_off = 0;
+            dirp[i].d_off = i*sizeof(struct libc_dirent);
             dirp[i].d_type = rtt_dirp[i].d_type;
             dirp[i].d_reclen = sizeof(struct libc_dirent);
             strcpy(dirp[i].d_name, rtt_dirp[i].d_name);
@@ -2412,15 +2412,11 @@ int sys_access(const char *filename, int mode)
     }
 
     lwp_get_from_user(kname, (void *)filename, len + 1);
-    ret = open(kname, mode, 0);
+    ret = access(kname, mode);
     kmem_put(kname);
 #else
-    ret = open(filename, mode, 0);
+    ret = access(filename, mode);
 #endif
-    if (ret >= 0)
-    {
-        close(ret);
-    }
 
     return (ret >= 0)? 0: ret;
 }
