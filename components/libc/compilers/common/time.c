@@ -8,6 +8,8 @@
  * 2019-08-21     zhangjun     copy from minilibc
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-05     Meco Man     add timegm()
+ * 2021-02-07     Meco Man     fixed gettimeofday() time()
+ * 2021-02-08     Meco Man     add settimeofday() stime()
  */
 
 #include <sys/time.h>
@@ -175,24 +177,15 @@ time_t time(time_t *t)
 #endif
 {
     time_t time_now = 0;
-
 #ifdef RT_USING_RTC
-    static rt_device_t device = RT_NULL;
-
-    /* optimization: find rtc device only first. */
-    if (device == RT_NULL)
-    {
-        device = rt_device_find("rtc");
-    }
+    rt_device_t device;
 
     /* read timestamp from RTC device. */
-    if (device != RT_NULL)
+    device = rt_device_find("rtc");
+    if (rt_device_open(device, 0) == RT_EOK)
     {
-        if (rt_device_open(device, 0) == RT_EOK)
-        {
-            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
-            rt_device_close(device);
-        }
+        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
+        rt_device_close(device);
     }
 #endif /* RT_USING_RTC */
 
@@ -210,15 +203,27 @@ RT_WEAK clock_t clock(void)
     return rt_tick_get();
 }
 
-/* TODO: timezone */
-int gettimeofday(struct timeval *tp, struct timezone *tz)
+int stime(const time_t *t)
 {
-    if (tp != RT_NULL)
+#ifdef RT_USING_RTC
+    rt_device_t device;
+
+    /* read timestamp from RTC device. */
+    device = rt_device_find("rtc");
+    if (rt_device_open(device, 0) == RT_EOK)
     {
-        tp->tv_sec = time(RT_NULL);
-        tp->tv_usec = 0;
+        rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, (void*)t);
+        rt_device_close(device);
+    }
+    else
+    {
+        return -1;
     }
     return 0;
+
+#else
+    return -1;
+#endif /* RT_USING_RTC */
 }
 
 time_t timegm(struct tm * const t)
@@ -293,4 +298,32 @@ time_t timegm(struct tm * const t)
     day *= i;
     i = 60;
     return ((day + t->tm_hour) * i + t->tm_min) * i + t->tm_sec;
+}
+
+/* TODO: timezone */
+int gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+    if (tv != RT_NULL)
+    {
+        tv->tv_sec = time(RT_NULL);
+        tv->tv_usec = 0;
+        return 0;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+/* TODO: timezone */
+int settimeofday(const struct timeval *tv, const struct timezone *tz)
+{
+    if (tv != RT_NULL)
+    {
+        return stime(&tv->tv_sec);
+    }
+    else
+    {
+        return -1;
+    }
 }
