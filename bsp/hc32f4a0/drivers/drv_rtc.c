@@ -45,7 +45,7 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     stc_rtc_date_t stcRtcDate = {0};
     struct tm *p_tm;
 
-    p_tm = localtime(&time_stamp);
+    p_tm = gmtime(&time_stamp);
     if (p_tm->tm_year < 100)
     {
         return -RT_ERROR;

@@ -52,7 +52,7 @@ static int wm_set_timestamp(time_t timestamp)
 
     struct tm *tblock;
 
-    tblock = localtime(&timestamp);
+    tblock = gmtime(&timestamp);
 
     ctrl2  = tls_reg_read32(HR_PMU_RTC_CTRL2);  /* disable */
     ctrl2 &= ~(1 << 16);
@@ -84,7 +84,7 @@ static int wm_alarm_set_timestamp(struct rt_rtc_wkalarm *wkalarm)
     time_t timestamp = 0;
 
     timestamp = wm_get_timestamp();
-    tblock = localtime(&timestamp);
+    tblock = gmtime(&timestamp);
 
     tls_irq_enable(PMU_RTC_INT);
 

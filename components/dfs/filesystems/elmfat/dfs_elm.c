@@ -956,7 +956,7 @@ DWORD get_fattime(void)
     /* lock scheduler. */
     rt_enter_critical();
     /* converts calendar time time into local time. */
-    p_tm = localtime(&now);
+    p_tm = gmtime(&now);
     /* copy the statically located variable */
     memcpy(&tm_now, p_tm, sizeof(struct tm));
     /* unlock scheduler. */

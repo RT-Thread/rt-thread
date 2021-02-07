@@ -97,7 +97,7 @@ static rt_err_t swm320_rtc_control(rt_device_t dev, int cmd, void *args)
     case RT_DEVICE_CTRL_RTC_SET_TIME:
         rt_enter_critical();
         /* converts calendar time time into local time. */
-        pNow = localtime((const time_t *)args);
+        pNow = gmtime((const time_t *)args);
         /* copy the statically located variable */
         memcpy(&time_temp, pNow, sizeof(struct tm));
         /* unlock scheduler. */

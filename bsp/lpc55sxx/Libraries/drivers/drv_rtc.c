@@ -46,7 +46,7 @@ static int set_timestamp(time_t timestamp)
     struct tm *p_tm;
     rtc_datetime_t rtcDate; 
     
-    p_tm = localtime(&timestamp);
+    p_tm = gmtime(&timestamp);
     
     rtcDate.second = p_tm->tm_sec ; 
     rtcDate.minute = p_tm->tm_min ; 

@@ -128,7 +128,7 @@ static rt_err_t rt_rtc_ioctl(rt_device_t dev, int cmd, void *args)
     hw_rtc = dev->user_data;
 
     t = (time_t *)args;
-    time = *localtime(t);
+    time = *gmtime(t);
 
     rtctm.sys_toyread0 = hw_rtc->sys_toyread0;
     rtctm.sys_toyread1 = hw_rtc->sys_toyread1;

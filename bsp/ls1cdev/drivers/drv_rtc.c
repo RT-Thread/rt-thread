@@ -53,7 +53,7 @@ static int set_timestamp(time_t timestamp)
     struct tm *p_tm;
     RTC_TimeTypeDef rtcDate; 
     
-    p_tm = localtime(&timestamp);
+    p_tm = gmtime(&timestamp);
     
     rtcDate.Seconds= p_tm->tm_sec ; 
     rtcDate.Minutes= p_tm->tm_min ; 
