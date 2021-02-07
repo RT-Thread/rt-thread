@@ -153,6 +153,7 @@
 #define RT_USING_POSIX_MMAP
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
+#define RT_USING_POSIX_CLOCKTIME
 
 /* Network */
 
@@ -278,12 +279,6 @@
 
 
 /* games: games run on RT-Thread console */
-
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
 
 #define SOC_VEXPRESS_A9
 #define RT_USING_UART0
