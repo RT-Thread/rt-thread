@@ -90,6 +90,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
+    rt_err_t err;
 
     level = rt_hw_interrupt_disable();
     /* remove list */
@@ -103,6 +104,11 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
             rt_list_insert_after(queue->work_list.prev, &(work->list));
             work->flags |= RT_WORK_STATE_PENDING;
             work->workqueue = queue;
+            err = RT_EOK;
+        }
+        else
+        {
+            err = -RT_EBUSY;
         }
 
         /* whether the workqueue is doing work */
@@ -118,7 +124,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         {
             rt_hw_interrupt_enable(level);
         }
-        return RT_EOK;
+        return err;
     }
     else if (ticks < RT_TICK_MAX / 2)
     {
