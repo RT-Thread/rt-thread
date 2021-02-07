@@ -213,22 +213,12 @@ RT_WEAK clock_t clock(void)
 /* TODO: timezone */
 int gettimeofday(struct timeval *tp, struct timezone *tz)
 {
-    time_t time = 0;
-#ifdef RT_USING_DEVICE
-    rt_device_t device;
-    device = rt_device_find("rtc");
-    RT_ASSERT(device != RT_NULL);
-    rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+    time_t time = time(NULL);
     if (tp != RT_NULL)
     {
         tp->tv_sec = time;
         tp->tv_usec = 0;
     }
-#else
-    tv->tv_sec = 0;
-    tv->tv_usec = 0;
-#endif
-
     return time;
 }
 
