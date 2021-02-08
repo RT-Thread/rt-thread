@@ -418,7 +418,7 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
     }
 
     ret = read(fd, kmem, nbyte);
-    if (ret)
+    if (ret > 0)
     {
         lwp_put_to_user(buf, kmem, ret);
     }
