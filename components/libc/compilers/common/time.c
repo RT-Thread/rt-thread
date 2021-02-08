@@ -8,7 +8,7 @@
  * 2019-08-21     zhangjun     copy from minilibc
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-05     Meco Man     add timegm()
- * 2021-02-07     Meco Man     fixed gettimeofday() time()
+ * 2021-02-07     Meco Man     fixed gettimeofday()
  * 2021-02-08     Meco Man     add settimeofday() stime()
  */
 
@@ -177,15 +177,24 @@ time_t time(time_t *t)
 #endif
 {
     time_t time_now = 0;
+
 #ifdef RT_USING_RTC
-    rt_device_t device;
+    static rt_device_t device = RT_NULL;
+
+    /* optimization: find rtc device only first. */
+    if (device == RT_NULL)
+    {
+        device = rt_device_find("rtc");
+    }
 
     /* read timestamp from RTC device. */
-    device = rt_device_find("rtc");
-    if (rt_device_open(device, 0) == RT_EOK)
+    if (device != RT_NULL)
     {
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
-        rt_device_close(device);
+        if (rt_device_open(device, 0) == RT_EOK)
+        {
+            rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time_now);
+            rt_device_close(device);
+        }
     }
 #endif /* RT_USING_RTC */
 
