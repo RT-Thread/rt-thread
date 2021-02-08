@@ -329,7 +329,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 {
     if (tv != RT_NULL)
     {
-        return stime(&tv->tv_sec);
+        return stime((const time_t *)&tv->tv_sec);
     }
     else
     {
