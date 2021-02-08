@@ -18,9 +18,6 @@
 #include <rtdevice.h>
 #endif
 
-
-#if !defined (__IAR_SYSTEMS_ICC__)
-
 /* seconds per day */
 #define SPD 24*60*60
 
@@ -154,8 +151,6 @@ char* ctime(const time_t *timep)
 {
     return asctime(localtime(timep));
 }
-
-#endif /* __IAR_SYSTEMS_ICC__ */
 
 /**
  * Returns the current time.
