@@ -112,9 +112,6 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
                 else
                 {
                     /* return file dirent */
-                    if (subpath != NULL)
-                        break; /* not the end of path */
-
                     return &dirent[index];
                 }
             }
