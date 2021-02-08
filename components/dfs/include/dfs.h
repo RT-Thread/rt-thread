@@ -31,8 +31,8 @@
 /*
  * skip stdin/stdout/stderr normally
  */
-#ifndef DFS_FD_OFFSET
-#define DFS_FD_OFFSET           3
+#ifndef DFS_STDIO_OFFSET
+#define DFS_STDIO_OFFSET           3
 #endif
 
 #ifndef DFS_PATH_MAX
@@ -103,11 +103,13 @@ void dfs_fd_unlock(void);
 /* FD APIs */
 int fdt_fd_new(struct dfs_fdtable *fdt);
 struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd);
-void fdt_fd_put(struct dfs_fdtable* fdt, struct dfs_fd *fd);
+void fdt_fd_release(struct dfs_fdtable* fdt, int fd);
 int fd_new(void);
+int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file);
 struct dfs_fd *fd_get(int fd);
-void fd_put(struct dfs_fd *fd);
-int fd_is_open(const char *pathname);
+void fd_release(int fd);
+
+void fd_init(struct dfs_fd *fd);
 
 struct dfs_fdtable *dfs_fdtable_get(void);
 struct dfs_fdtable *dfs_fdtable_get_global(void);

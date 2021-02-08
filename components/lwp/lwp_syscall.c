@@ -418,7 +418,7 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
     }
 
     ret = read(fd, kmem, nbyte);
-    if (ret)
+    if (ret > 0)
     {
         lwp_put_to_user(buf, kmem, ret);
     }
@@ -513,10 +513,6 @@ int sys_open(const char *name, int flag, ...)
 /* syscall: "close" ret: "int" args: "int" */
 int sys_close(int fd)
 {
-    if ((0 <= fd) && (fd <= DFS_FD_OFFSET))
-    {
-        return 0;
-    }
     return close(fd);
 }
 
@@ -2341,7 +2337,6 @@ int sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
     }
     dfs_fd = fd_get(fd);
     ret = dfs_file_getdents(dfs_fd, rtt_dirp, nbytes);
-    fd_put(dfs_fd);
     if (ret)
     {
         size_t i = 0;
@@ -2516,6 +2511,9 @@ int sys_clock_getres(clockid_t clk, struct timespec *ts)
 int sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
 int sys_pmutex(void *umutex, int op, void *arg);
 
+int sys_dup(int oldfd);
+int sys_dup2(int oldfd, int new);
+
 const static void* func_table[] =
 {
     (void*)sys_exit,            /* 01 */
@@ -2666,6 +2664,8 @@ const static void* func_table[] =
     (void *)sys_clone,           /* 130 */
     (void *)sys_futex,
     (void *)sys_pmutex,
+    (void *)sys_dup,
+    (void *)sys_dup2,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

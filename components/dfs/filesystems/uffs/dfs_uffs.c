@@ -281,14 +281,14 @@ static int dfs_uffs_open(struct dfs_fd *file)
     int oflag, mode;
     char *file_path;
 
-    oflag = file->flags;
+    oflag = file->fnode->flags;
     if (oflag & O_DIRECTORY)   /* operations about dir */
     {
         uffs_DIR *dir;
 
         if (oflag & O_CREAT)   /* create a dir*/
         {
-            if (uffs_mkdir(file->path) < 0)
+            if (uffs_mkdir(file->fnode->path) < 0)
                 return uffs_result_to_dfs(uffs_get_error());
         }
         /* open dir */
@@ -296,8 +296,8 @@ static int dfs_uffs_open(struct dfs_fd *file)
         if (file_path == RT_NULL)
             return -ENOMEM;
 
-        if (file->path[0] == '/' && !(file->path[1] == 0))
-            rt_snprintf(file_path, FILE_PATH_MAX, "%s/", file->path);
+        if (file->fnode->path[0] == '/' && !(file->fnode->path[1] == 0))
+            rt_snprintf(file_path, FILE_PATH_MAX, "%s/", file->fnode->path);
         else
         {
             file_path[0] = '/';
@@ -312,7 +312,7 @@ static int dfs_uffs_open(struct dfs_fd *file)
             return uffs_result_to_dfs(uffs_get_error());
         }
         /* save this pointer,will used by  dfs_uffs_getdents*/
-        file->data = dir;
+        file->fnode->data = dir;
         rt_free(file_path);
         return RT_EOK;
     }
@@ -330,7 +330,7 @@ static int dfs_uffs_open(struct dfs_fd *file)
     /* Creates a new file. The function fails if the file is already existing. */
     if (oflag & O_EXCL) mode |= UO_EXCL;
 
-    fd = uffs_open(file->path, mode);
+    fd = uffs_open(file->fnode->path, mode);
     if (fd < 0)
     {
         return uffs_result_to_dfs(uffs_get_error());
@@ -339,9 +339,9 @@ static int dfs_uffs_open(struct dfs_fd *file)
     /* save this pointer, it will be used when calling read(), write(),
      * flush(), seek(), and will be free when calling close()*/
 
-    file->data = (void *)fd;
+    file->fnode->data = (void *)fd;
     file->pos  = uffs_seek(fd, 0, USEEK_CUR);
-    file->size = uffs_seek(fd, 0, USEEK_END);
+    file->fnode->size = uffs_seek(fd, 0, USEEK_END);
     uffs_seek(fd, file->pos, USEEK_SET);
 
     if (oflag & O_APPEND)
@@ -356,17 +356,17 @@ static int dfs_uffs_close(struct dfs_fd *file)
     int oflag;
     int fd;
 
-    oflag = file->flags;
+    oflag = file->fnode->flags;
     if (oflag & O_DIRECTORY)
     {
         /* operations about dir */
-        if (uffs_closedir((uffs_DIR *)(file->data)) < 0)
+        if (uffs_closedir((uffs_DIR *)(file->fnode->data)) < 0)
             return uffs_result_to_dfs(uffs_get_error());
 
         return 0;
     }
     /* regular file operations */
-    fd = (int)(file->data);
+    fd = (int)(file->fnode->data);
 
     if (uffs_close(fd) == 0)
         return 0;
@@ -384,7 +384,7 @@ static int dfs_uffs_read(struct dfs_fd *file, void *buf, size_t len)
     int fd;
     int char_read;
 
-    fd = (int)(file->data);
+    fd = (int)(file->fnode->data);
     char_read = uffs_read(fd, buf, len);
     if (char_read < 0)
         return uffs_result_to_dfs(uffs_get_error());
@@ -401,7 +401,7 @@ static int dfs_uffs_write(struct dfs_fd *file,
     int fd;
     int char_write;
 
-    fd = (int)(file->data);
+    fd = (int)(file->fnode->data);
 
     char_write = uffs_write(fd, buf, len);
     if (char_write < 0)
@@ -417,7 +417,7 @@ static int dfs_uffs_flush(struct dfs_fd *file)
     int fd;
     int result;
 
-    fd = (int)(file->data);
+    fd = (int)(file->fnode->data);
 
     result = uffs_flush(fd);
     if (result < 0)
@@ -445,19 +445,19 @@ static int dfs_uffs_seek(struct dfs_fd *file,
     int result;
 
     /* set offset as current offset */
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
     {
-        uffs_rewinddir((uffs_DIR *)(file->data));
-        result = uffs_seekdir((uffs_DIR *)(file->data), offset / sizeof(struct dirent));
+        uffs_rewinddir((uffs_DIR *)(file->fnode->data));
+        result = uffs_seekdir((uffs_DIR *)(file->fnode->data), offset / sizeof(struct dirent));
         if (result >= 0)
         {
             file->pos = offset;
             return offset;
         }
     }
-    else if (file->type == FT_REGULAR)
+    else if (file->fnode->type == FT_REGULAR)
     {
-        result = uffs_seek((int)(file->data), offset, USEEK_SET);
+        result = uffs_seek((int)(file->fnode->data), offset, USEEK_SET);
         if (result >= 0)
             return offset;
     }
@@ -477,7 +477,7 @@ static int dfs_uffs_getdents(
     uffs_DIR *dir;
     struct uffs_dirent *uffs_d;
 
-    dir = (uffs_DIR *)(file->data);
+    dir = (uffs_DIR *)(file->fnode->data);
     RT_ASSERT(dir != RT_NULL);
 
     /* round count, count is always 1 */
@@ -504,8 +504,8 @@ static int dfs_uffs_getdents(
             return (uffs_result_to_dfs(uffs_get_error()));
         }
 
-        if (file->path[0] == '/' && !(file->path[1] == 0))
-            rt_snprintf(file_path, FILE_PATH_MAX, "%s/%s", file->path, uffs_d->d_name);
+        if (file->fnode->path[0] == '/' && !(file->fnode->path[1] == 0))
+            rt_snprintf(file_path, FILE_PATH_MAX, "%s/%s", file->fnode->path, uffs_d->d_name);
         else
             rt_strncpy(file_path, uffs_d->d_name, FILE_PATH_MAX);
 

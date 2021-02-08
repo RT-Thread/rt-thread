@@ -798,7 +798,7 @@ static struct dfs_fd *lwp_fd_get(int fdt_type, int fd)
     return fdt_fd_get(fdt, fd);
 }
 
-static void lwp_fd_put(int fdt_type, struct dfs_fd *fd)
+static void lwp_fd_release(int fdt_type, int fd)
 {
     struct dfs_fdtable *fdt;
 
@@ -810,7 +810,7 @@ static void lwp_fd_put(int fdt_type, struct dfs_fd *fd)
     {
         fdt = dfs_fdtable_get();
     }
-    fdt_fd_put(fdt, fd);
+    fdt_fd_release(fdt, fd);
 }
 
 static int _chfd_alloc(int fdt_type)
@@ -837,8 +837,7 @@ static void _chfd_free(int fd, int fdt_type)
     {
         return;
     }
-    lwp_fd_put(fdt_type, d);
-    lwp_fd_put(fdt_type, d);
+    lwp_fd_release(fdt_type, fd);
 }
 
 /* for fops */
@@ -847,7 +846,7 @@ static int channel_fops_poll(struct dfs_fd *file, struct rt_pollreq *req)
     int mask = POLLOUT;
     rt_channel_t ch;
 
-    ch = (rt_channel_t)file->data;
+    ch = (rt_channel_t)file->fnode->data;
     rt_poll_add(&(ch->reader_queue), req);
     if (ch->stat != RT_IPC_STAT_IDLE)
     {
@@ -866,7 +865,7 @@ static int channel_fops_close(struct dfs_fd *file)
     rt_base_t level;
 
     level = rt_hw_interrupt_disable();
-    ch = (rt_channel_t)file->data;
+    ch = (rt_channel_t)file->fnode->data;
     ch->ref--;
     if (ch->ref == 0)
     {
@@ -913,18 +912,17 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
 
         d = lwp_fd_get(fdt_type, fd);
 
-        d->type = FT_USER;
-        d->path = NULL;
+        d->fnode->type = FT_USER;
+        d->fnode->path = NULL;
 
-        d->fops = &channel_fops;
+        d->fnode->fops = &channel_fops;
 
-        d->flags = O_RDWR; /* set flags as read and write */
-        d->size = 0;
+        d->fnode->flags = O_RDWR; /* set flags as read and write */
+        d->fnode->size = 0;
         d->pos = 0;
 
         /* set socket to the data of dfs_fd */
-        d->data = (void *)ch;
-        lwp_fd_put(fdt_type, d);
+        d->fnode->data = (void *)ch;
     }
     else
     {
@@ -944,8 +942,7 @@ static rt_channel_t fd_2_channel(int fdt_type, int fd)
     {
         rt_channel_t ch;
 
-        ch = (rt_channel_t)d->data;
-        lwp_fd_put(fdt_type, d);
+        ch = (rt_channel_t)d->fnode->data;
         if (ch)
         {
             return ch;

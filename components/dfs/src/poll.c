@@ -134,23 +134,21 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
         if (f)
         {
             mask = POLLMASK_DEFAULT;
-            if (f->fops->poll)
+            if (f->fnode->fops->poll)
             {
                 req->_key = pollfd->events | POLLERR | POLLHUP;
 
-                mask = f->fops->poll(f, req);
+                mask = f->fnode->fops->poll(f, req);
 
                 /* dealwith the device return error -1*/
                 if (mask < 0)
                 {
-                    fd_put(f);
                     pollfd->revents = 0;
                     return mask;
                 }
             }
             /* Mask out unneeded events. */
             mask &= pollfd->events | POLLERR | POLLHUP;
-            fd_put(f);
         }
     }
     pollfd->revents = mask;

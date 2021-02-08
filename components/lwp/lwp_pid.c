@@ -41,25 +41,19 @@ int libc_stdio_get_console(void);
 
 static void __exit_files(struct rt_lwp *lwp)
 {
-    int consolefd;          /* the console fd, which must not be closed */
+    int fd = lwp->fdt.maxfd - 1;
 
-    consolefd = libc_stdio_get_console();
-    consolefd = consolefd - DFS_FD_OFFSET;
-
-    while (lwp->fdt.maxfd > 0)
+    while (fd >= 0)
     {
-        if (consolefd != lwp->fdt.maxfd - 1)  /* skip the console fd */
-        {
-            struct dfs_fd *d;
+        struct dfs_fd *d;
 
-            d = lwp->fdt.fds[lwp->fdt.maxfd - 1];
-            if (d)
-            {
-                dfs_file_close(d);
-                rt_free(d);
-            }
+        d = lwp->fdt.fds[fd];
+        if (d)
+        {
+            dfs_file_close(d);
+            fdt_fd_release(&lwp->fdt, fd);
         }
-        lwp->fdt.maxfd --;
+        fd--;
     }
 }
 

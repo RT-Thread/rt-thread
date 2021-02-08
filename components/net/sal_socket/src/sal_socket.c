@@ -1020,7 +1020,7 @@ int sal_poll(struct dfs_fd *file, struct rt_pollreq *req)
 {
     struct sal_socket *sock;
     struct sal_proto_family *pf;
-    int socket = (int) file->data;
+    int socket = (int) file->fnode->data;
 
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);

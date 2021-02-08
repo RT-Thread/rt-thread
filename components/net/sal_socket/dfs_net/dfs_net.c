@@ -21,42 +21,41 @@
 int dfs_net_getsocket(int fd)
 {
     int socket;
-    struct dfs_fd *_dfs_fd; 
+    struct dfs_fd *_dfs_fd;
 
     _dfs_fd = fd_get(fd);
     if (_dfs_fd == NULL) return -1;
 
-    if (_dfs_fd->type != FT_SOCKET) socket = -1;
-    else socket = (int)_dfs_fd->data;
+    if (_dfs_fd->fnode->type != FT_SOCKET) socket = -1;
+    else socket = (int)_dfs_fd->fnode->data;
 
-    fd_put(_dfs_fd); /* put this dfs fd */
     return socket;
 }
 
 static int dfs_net_ioctl(struct dfs_fd* file, int cmd, void* args)
 {
-    int socket = (int) file->data;
+    int socket = (int) file->fnode->data;
 
     return sal_ioctlsocket(socket, cmd, args);
 }
 
 static int dfs_net_read(struct dfs_fd* file, void *buf, size_t count)
 {
-    int socket = (int) file->data;
+    int socket = (int) file->fnode->data;
 
     return sal_recvfrom(socket, buf, count, 0, NULL, NULL);
 }
 
 static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
 {
-    int socket = (int) file->data;
+    int socket = (int) file->fnode->data;
 
     return sal_sendto(socket, buf, count, 0, NULL, 0);
 }
 
 static int dfs_net_close(struct dfs_fd* file)
 {
-    int socket = (int) file->data;
+    int socket = (int) file->fnode->data;
 
     return sal_closesocket(socket);
 }
@@ -68,7 +67,7 @@ static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
     return sal_poll(file, req);
 }
 
-const struct dfs_file_ops _net_fops = 
+const struct dfs_file_ops _net_fops =
 {
     NULL,    /* open     */
     dfs_net_close,

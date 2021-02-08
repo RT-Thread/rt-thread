@@ -559,12 +559,11 @@ int nfs_read(struct dfs_fd *file, void *buf, size_t count)
     nfs_file *fd;
     nfs_filesystem *nfs;
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-
-    RT_ASSERT(file->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
+    RT_ASSERT(file->fnode->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
@@ -629,11 +628,11 @@ int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
     nfs_file *fd;
     nfs_filesystem *nfs;
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-    RT_ASSERT(file->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
+    RT_ASSERT(file->fnode->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
@@ -676,11 +675,10 @@ int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
             file->pos = fd->offset;
             /* update file size */
             if (fd->size < fd->offset) fd->size = fd->offset;
-            file->size = fd->size;
+            file->fnode->size = fd->size;
         }
         xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
-    }
-    while (count > 0);
+    } while (count > 0);
 
     xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
 
@@ -692,11 +690,11 @@ int nfs_lseek(struct dfs_fd *file, off_t offset)
     nfs_file *fd;
     nfs_filesystem *nfs;
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-    RT_ASSERT(file->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
+    RT_ASSERT(file->fnode->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     fd = (nfs_file *)(nfs->data);
     RT_ASSERT(fd != NULL);
@@ -714,11 +712,11 @@ int nfs_lseek(struct dfs_fd *file, off_t offset)
 int nfs_close(struct dfs_fd *file)
 {
     nfs_filesystem *nfs;
-    RT_ASSERT(file->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
+    RT_ASSERT(file->fnode->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
 
-    if (file->type == FT_DIRECTORY)
+    if (file->fnode->type == FT_DIRECTORY)
     {
         struct nfs_dir *dir;
 
@@ -727,7 +725,7 @@ int nfs_close(struct dfs_fd *file)
         xdr_free((xdrproc_t)xdr_READDIR3res, (char *)&dir->res);
         rt_free(dir);
     }
-    else if (file->type == FT_REGULAR)
+    else if (file->fnode->type == FT_REGULAR)
     {
         struct nfs_file *fd;
 
@@ -744,23 +742,23 @@ int nfs_close(struct dfs_fd *file)
 int nfs_open(struct dfs_fd *file)
 {
     nfs_filesystem *nfs;
-    RT_ASSERT(file->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
+    RT_ASSERT(file->fnode->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = file->fnode->fs;
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     RT_ASSERT(nfs != NULL);
 
-    if (file->flags & O_DIRECTORY)
+    if (file->fnode->flags & O_DIRECTORY)
     {
         nfs_dir *dir;
 
-        if (file->flags & O_CREAT)
+        if (file->fnode->flags & O_CREAT)
         {
-            if (nfs_mkdir(nfs, file->path, 0755) < 0)
+            if (nfs_mkdir(nfs, file->fnode->path, 0755) < 0)
                 return -EAGAIN;
         }
 
         /* open directory */
-        dir = nfs_opendir(nfs, file->path);
+        dir = nfs_opendir(nfs, file->fnode->path);
         if (dir == NULL) return -ENOENT;
         nfs->data = dir;
     }
@@ -770,9 +768,9 @@ int nfs_open(struct dfs_fd *file)
         nfs_fh3 *handle;
 
         /* create file */
-        if (file->flags & O_CREAT)
+        if (file->fnode->flags & O_CREAT)
         {
-            if (nfs_create(nfs, file->path, 0664) < 0)
+            if (nfs_create(nfs, file->fnode->path, 0664) < 0)
                 return -EAGAIN;
         }
 
@@ -781,7 +779,7 @@ int nfs_open(struct dfs_fd *file)
         if (fp == NULL)
             return -ENOMEM;
 
-        handle = get_handle(nfs, file->path);
+        handle = get_handle(nfs, file->fnode->path);
         if (handle == NULL)
         {
             rt_free(fp);
@@ -798,14 +796,14 @@ int nfs_open(struct dfs_fd *file)
         xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);
         rt_free(handle);
 
-        if (file->flags & O_APPEND)
+        if (file->fnode->flags & O_APPEND)
         {
             fp->offset = fp->size;
         }
 
         /* set private file */
         nfs->data = fp;
-        file->size = fp->size;
+        file->fnode->size = fp->size;
     }
 
     return 0;
@@ -1085,9 +1083,8 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
     nfs_filesystem *nfs;
     char *name;
 
-
-    RT_ASSERT(file->data != NULL);
-    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->data));
+    RT_ASSERT(file->fnode->data != NULL);
+    struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
     dir = (nfs_dir *)(nfs->data);
     RT_ASSERT(dir != NULL);

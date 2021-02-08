@@ -97,9 +97,9 @@ struct uffs_stat {
     long		st_size;    /* total size, in bytes */
     int			st_blksize; /* blocksize for filesystem I/O */
     int			st_blocks;  /* number of blocks allocated */
-    unsigned int	st_atime;   /* time of last access */
-    unsigned int	st_mtime;   /* time of last modification */
-    unsigned int	st_ctime;   /* time of last status change */
+    struct timespec st_atim;   /* time of last access */
+    struct timespec st_mtim;   /* time of last modification */
+    struct timespec st_ctim;   /* time of last status change */
 };
 
 /* POSIX complaint file system APIs */

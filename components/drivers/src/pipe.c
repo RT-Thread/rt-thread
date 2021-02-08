@@ -23,7 +23,7 @@ static int pipe_fops_open(struct dfs_fd *fd)
     rt_device_t device;
     rt_pipe_t *pipe;
 
-    pipe = (rt_pipe_t *)fd->data;
+    pipe = (rt_pipe_t *)fd->fnode->data;
     if (!pipe) return -1;
 
     device = &(pipe->parent);
@@ -39,20 +39,20 @@ static int pipe_fops_open(struct dfs_fd *fd)
         }
     }
 
-    switch (fd->flags & O_ACCMODE)
+    switch (fd->fnode->flags & O_ACCMODE)
     {
     case O_RDONLY:
-        pipe->readers ++;
+        pipe->readers++;
         break;
     case O_WRONLY:
-        pipe->writers ++;
+        pipe->writers++;
         break;
     case O_RDWR:
-        pipe->readers ++;
-        pipe->writers ++;
+        pipe->readers++;
+        pipe->writers++;
         break;
     }
-    device->ref_count ++;
+    device->ref_count++;
 
 __exit:
     rt_mutex_release(&(pipe->lock));
@@ -65,23 +65,23 @@ static int pipe_fops_close(struct dfs_fd *fd)
     rt_device_t device;
     rt_pipe_t *pipe;
 
-    pipe = (rt_pipe_t *)fd->data;
+    pipe = (rt_pipe_t *)fd->fnode->data;
     if (!pipe) return -1;
 
     device = &(pipe->parent);
     rt_mutex_take(&(pipe->lock), RT_WAITING_FOREVER);
 
-    switch (fd->flags & O_ACCMODE)
+    switch (fd->fnode->flags & O_ACCMODE)
     {
     case O_RDONLY:
-        pipe->readers --;
+        pipe->readers--;
         break;
     case O_WRONLY:
-        pipe->writers --;
+        pipe->writers--;
         break;
     case O_RDWR:
-        pipe->readers --;
-        pipe->writers --;
+        pipe->readers--;
+        pipe->writers--;
         break;
     }
 
@@ -101,7 +101,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
             rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
-    device->ref_count --;
+    device->ref_count--;
 
     rt_mutex_release(&(pipe->lock));
 
@@ -119,7 +119,7 @@ static int pipe_fops_ioctl(struct dfs_fd *fd, int cmd, void *args)
     rt_pipe_t *pipe;
     int ret = 0;
 
-    pipe = (rt_pipe_t *)fd->data;
+    pipe = (rt_pipe_t *)fd->fnode->data;
 
     switch (cmd)
     {
@@ -142,7 +142,7 @@ static int pipe_fops_read(struct dfs_fd *fd, void *buf, size_t count)
     int len = 0;
     rt_pipe_t *pipe;
 
-    pipe = (rt_pipe_t *)fd->data;
+    pipe = (rt_pipe_t *)fd->fnode->data;
 
     /* no process has the pipe open for writing, return end-of-file */
     if (pipe->writers == 0)
@@ -165,7 +165,7 @@ static int pipe_fops_read(struct dfs_fd *fd, void *buf, size_t count)
         }
         else
         {
-            if (fd->flags & O_NONBLOCK)
+            if (fd->fnode->flags & O_NONBLOCK)
             {
                 len = -EAGAIN;
                 goto out;
@@ -194,7 +194,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
     int ret = 0;
     uint8_t *pbuf;
 
-    pipe = (rt_pipe_t *)fd->data;
+    pipe = (rt_pipe_t *)fd->fnode->data;
 
     if (pipe->readers == 0)
     {
@@ -228,7 +228,7 @@ static int pipe_fops_write(struct dfs_fd *fd, const void *buf, size_t count)
         }
         else
         {
-            if (fd->flags & O_NONBLOCK)
+            if (fd->fnode->flags & O_NONBLOCK)
             {
                 if (ret == 0)
                 {
@@ -261,12 +261,12 @@ static int pipe_fops_poll(struct dfs_fd *fd, rt_pollreq_t *req)
     int mask = 0;
     rt_pipe_t *pipe;
     int mode = 0;
-    pipe = (rt_pipe_t *)fd->data;
+    pipe = (rt_pipe_t *)fd->fnode->data;
 
     rt_poll_add(&(pipe->reader_queue), req);
     rt_poll_add(&(pipe->writer_queue), req);
 
-    switch (fd->flags & O_ACCMODE)
+    switch (fd->fnode->flags & O_ACCMODE)
     {
     case O_RDONLY:
         mode = 1;
@@ -564,7 +564,7 @@ int pipe(int fildes[2])
 int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
-    
+
     pipe = rt_pipe_create(path, PIPE_BUFSZ);
     if (pipe == RT_NULL)
     {

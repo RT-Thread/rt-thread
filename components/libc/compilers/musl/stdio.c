@@ -12,12 +12,14 @@
 
 #include <rtthread.h>
 #include "libc.h"
+#include "dfs.h"
 
 #define STDIO_DEVICE_NAME_MAX   32
 
 int	_EXFUN(fileno, (FILE *));
 
 static FILE* std_console = NULL;
+int sys_dup2(int oldfd, int new);
 
 int libc_stdio_set_console(const char* device_name, int mode)
 {
@@ -45,7 +47,16 @@ int libc_stdio_set_console(const char* device_name, int mode)
         std_console = fp;
     }
 
-    if (std_console) return fileno(std_console);
+    if (std_console)
+    {
+        int fd = fileno(std_console);
+
+        /* set fd (0, 1, 2) */
+        sys_dup2(fd, 0);
+        sys_dup2(fd, 1);
+        sys_dup2(fd, 2);
+        return fd;
+    }
 
     return -1;
 }

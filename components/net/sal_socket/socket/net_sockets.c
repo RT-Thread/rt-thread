@@ -41,20 +41,17 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         if(d)
         {
             /* this is a socket fd */
-            d->type = FT_SOCKET;
-            d->path = NULL;
+            d->fnode->type = FT_SOCKET;
+            d->fnode->path = NULL;
 
-            d->fops = dfs_net_get_fops();
+            d->fnode->fops = dfs_net_get_fops();
 
-            d->flags = O_RDWR; /* set flags as read and write */
-            d->size = 0;
+            d->fnode->flags = O_RDWR; /* set flags as read and write */
+            d->fnode->size = 0;
             d->pos = 0;
 
             /* set socket to the data of dfs_fd */
-            d->data = (void *) new_socket;
-
-            /* release the ref-count of fd */
-            fd_put(d);
+            d->fnode->data = (void *) new_socket;
 
             return fd;
         }
@@ -95,7 +92,7 @@ int shutdown(int s, int how)
         rt_set_errno(-EBADF);
         return -1;
     }
-    
+
     if (sal_shutdown(socket, how) == 0)
     {
         error = 0;
@@ -105,8 +102,6 @@ int shutdown(int s, int how)
         rt_set_errno(-ENOTSOCK);
         error = -1;
     }
-    
-    fd_put(d);
 
     return error;
 }
@@ -216,31 +211,27 @@ int socket(int domain, int type, int protocol)
     if (socket >= 0)
     {
         /* this is a socket fd */
-        d->type = FT_SOCKET;
-        d->path = NULL;
+        d->fnode->type = FT_SOCKET;
+        d->fnode->path = NULL;
 
-        d->fops = dfs_net_get_fops();
+        d->fnode->fops = dfs_net_get_fops();
 
-        d->flags = O_RDWR; /* set flags as read and write */
-        d->size = 0;
+        d->fnode->flags = O_RDWR; /* set flags as read and write */
+        d->fnode->size = 0;
         d->pos = 0;
 
         /* set socket to the data of dfs_fd */
-        d->data = (void *) socket;
+        d->fnode->data = (void *) socket;
     }
     else
     {
         /* release fd */
-        fd_put(d);
-        fd_put(d);
+        fd_release(fd);
 
         rt_set_errno(-ENOMEM);
 
         return -1;
     }
-
-    /* release the ref-count of fd */
-    fd_put(d);
 
     return fd;
 }
@@ -277,8 +268,7 @@ int closesocket(int s)
     }
 
     /* socket has been closed, delete it from file system fd */
-    fd_put(d);
-    fd_put(d);
+    fd_release(s);
 
     return error;
 }
