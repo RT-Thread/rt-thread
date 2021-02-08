@@ -899,33 +899,44 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
 {
     int fd;
     rt_channel_t ch = RT_NULL;
+    struct dfs_fd *d;
 
     fd = _chfd_alloc(fdt_type);     /* allocate an IPC channel descriptor */
     if (fd == -1)
     {
         goto quit;
     }
+    d = lwp_fd_get(fdt_type, fd);
+    d->fnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+    if (!d->fnode)
+    {
+        _chfd_free(fd, fdt_type);
+        fd = -1;
+        goto quit;
+    }
+
     ch = rt_raw_channel_open(name, flags);
     if (ch)
     {
-        struct dfs_fd *d;
-
-        d = lwp_fd_get(fdt_type, fd);
-
+        rt_memset(d->fnode, 0, sizeof(struct dfs_fnode));
+        rt_list_init(&d->fnode->list);
         d->fnode->type = FT_USER;
         d->fnode->path = NULL;
+        d->fnode->fullpath = NULL;
 
         d->fnode->fops = &channel_fops;
 
         d->fnode->flags = O_RDWR; /* set flags as read and write */
         d->fnode->size = 0;
         d->pos = 0;
+        d->fnode->ref_count = 1;
 
         /* set socket to the data of dfs_fd */
         d->fnode->data = (void *)ch;
     }
     else
     {
+        rt_free(d->fnode);
         _chfd_free(fd, fdt_type);
         fd = -1;
     }
@@ -954,14 +965,28 @@ static rt_channel_t fd_2_channel(int fdt_type, int fd)
 rt_err_t lwp_channel_close(int fdt_type, int fd)
 {
     rt_channel_t ch;
+    struct dfs_fd *d;
+
+    d = lwp_fd_get(fdt_type, fd);
+    if (!d)
+    {
+        return -RT_EIO;
+    }
+
+    if (!d->fnode)
+    {
+        return -RT_EIO;
+    }
 
     ch = fd_2_channel(fdt_type, fd);
-    if (ch)
+    rt_free(d->fnode);
+    if (!ch)
     {
-        _chfd_free(fd, fdt_type);
-        return rt_raw_channel_close(ch);
+        return -RT_EIO;
     }
-    return -RT_EIO;
+    _chfd_free(fd, fdt_type);
+
+    return rt_raw_channel_close(ch);
 }
 
 rt_err_t lwp_channel_send(int fdt_type, int fd, rt_channel_msg_t data)
