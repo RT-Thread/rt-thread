@@ -950,9 +950,7 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
             {
                 RT_ASSERT(RT_NULL != rx_fifo);
                 level = rt_hw_interrupt_disable();
-                rt_memset(rx_fifo->buffer, 0, serial->config.bufsz);
-                rx_fifo->put_index = 0;
-                rx_fifo->get_index = 0;
+                rx_fifo->get_index = rx_fifo->put_index;
                 rx_fifo->is_full = RT_FALSE;
                 rt_hw_interrupt_enable(level);
             }
