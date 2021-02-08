@@ -392,8 +392,12 @@ int fh_i2c_probe(void *priv_data)
 
     PRINT_I2C_DBG("%s start\n", __func__);
 
-    i2c_bus_dev = (struct rt_i2c_bus_device*)rt_malloc(sizeof(struct rt_i2c_bus_device));
-    rt_memset(i2c_bus_dev, 0, sizeof(struct rt_i2c_bus_device));
+    i2c_bus_dev = (struct rt_i2c_bus_device*)rt_calloc(1, sizeof(struct rt_i2c_bus_device));
+    if (RT_NULL == i2c_bus_dev)
+    {
+        return -RT_ENOMEM;
+    }
+
     i2c_bus_dev->ops = &fh_i2c_ops;
 
     rt_sprintf(i2c_dev_name, "%s%d", "i2c", i2c_obj->id);
@@ -406,8 +410,11 @@ int fh_i2c_probe(void *priv_data)
     }
 
     //priv struct init
-    i2c_drv = (struct i2c_driver*)rt_malloc(sizeof(struct i2c_driver));
-    rt_memset(i2c_drv, 0, sizeof(struct i2c_driver));
+    i2c_drv = (struct i2c_driver*)rt_calloc(1, sizeof(struct i2c_driver));
+    if (RT_NULL == i2c_drv)
+    {
+        return -RT_ENOMEM;
+    }
 
     i2c_drv->i2c_bus_dev = i2c_bus_dev;
     i2c_drv->priv = priv_data;
