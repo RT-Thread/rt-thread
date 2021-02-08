@@ -76,13 +76,12 @@ const uint32_t au32SLCDSymbols [] =
 };
 const int i32SLCDSymbolsSize  = sizeof(au32SLCDSymbols) / sizeof(au32SLCDSymbols[0]);
 
-
 void slcd_demo_hook(void)
 {
     static uint32_t u32NextShowTime = 0;
     static uint32_t u32ShownTime = 0;
     uint32_t u32CurTickCount = rt_tick_get();
-    uint8_t  au8Str[16];
+    char au8Str[16];
 
     if (u32CurTickCount < u32NextShowTime)
         return;
@@ -139,7 +138,6 @@ void slcd_demo_hook(void)
 static int slcd_demo_init(void)
 {
     rt_err_t err = rt_thread_idle_sethook(slcd_demo_hook);
-    uint8_t  au8Str[16];
 
     if (err != RT_EOK)
     {
