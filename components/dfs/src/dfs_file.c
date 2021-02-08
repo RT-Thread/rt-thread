@@ -771,8 +771,7 @@ void ls(const char *pathname)
                     rt_kprintf("BAD file: %s\n", dirent.d_name);
                 rt_free(fullpath);
             }
-        }
-        while (length > 0);
+        } while (length > 0);
 
         dfs_file_close(&fd);
     }
@@ -816,8 +815,7 @@ void cat(const char *filename)
             buffer[length] = '\0';
             rt_kprintf("%s", buffer);
         }
-    }
-    while (length > 0);
+    } while (length > 0);
 
     dfs_file_close(&fd);
 }
@@ -873,8 +871,7 @@ static void copyfile(const char *src, const char *dst)
                 break;
             }
         }
-    }
-    while (read_bytes > 0);
+    } while (read_bytes > 0);
 
     dfs_file_close(&src_fd);
     dfs_file_close(&fd);
@@ -939,8 +936,7 @@ static void copydir(const char *src, const char *dst)
             rt_free(src_entry_full);
             rt_free(dst_entry_full);
         }
-    }
-    while (length > 0);
+    } while (length > 0);
 
     dfs_file_close(&cpfd);
 }

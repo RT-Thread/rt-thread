@@ -241,7 +241,7 @@ static int dfs_jffs2_open(struct dfs_fd* file)
     }
     else /* name[0] still will be '/' */
     {
-        name ++;
+        name++;
     }
 
     result = _find_fs(&mte, fs->dev_id);
@@ -520,7 +520,7 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
                 return -ENOMEM;
 
         /* make a right entry */
-        if ((file->fnode->path[0] == '/') )
+        if (file->fnode->path[0] == '/')
         {
             if (file->fnode->path[1] == 0)
             {
@@ -557,7 +557,7 @@ static int dfs_jffs2_getdents(struct dfs_fd* file,
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
         rt_strncpy(d->d_name, jffs2_d.d_name, d->d_namlen + 1);
 
-        index ++;
+        index++;
         if (index * sizeof(struct dirent) >= count)
         {
             break;

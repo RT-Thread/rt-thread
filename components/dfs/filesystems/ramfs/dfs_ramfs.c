@@ -227,7 +227,7 @@ int dfs_ramfs_open(struct dfs_fd *file)
                 /* remove '/' separator */
                 name_ptr = file->fnode->path;
                 while (*name_ptr == '/' && *name_ptr)
-                    name_ptr ++;
+                    name_ptr++;
                 strncpy(dirent->name, name_ptr, RAMFS_NAME_MAX);
 
                 rt_list_init(&(dirent->list));

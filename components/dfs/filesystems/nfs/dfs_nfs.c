@@ -562,7 +562,6 @@ int nfs_read(struct dfs_fd *file, void *buf, size_t count)
     if (file->fnode->type == FT_DIRECTORY)
         return -EISDIR;
 
-
     RT_ASSERT(file->fnode->data != NULL);
     struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));
     nfs = (struct nfs_filesystem *)(dfs_nfs->data);
@@ -679,8 +678,7 @@ int nfs_write(struct dfs_fd *file, const void *buf, size_t count)
             file->fnode->size = fd->size;
         }
         xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
-    }
-    while (count > 0);
+    } while (count > 0);
 
     xdr_free((xdrproc_t)xdr_WRITE3res, (char *)&res);
 
@@ -1084,7 +1082,6 @@ int nfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_t count)
     struct dirent *d;
     nfs_filesystem *nfs;
     char *name;
-
 
     RT_ASSERT(file->fnode->data != NULL);
     struct dfs_filesystem *dfs_nfs  = ((struct dfs_filesystem *)(file->fnode->data));

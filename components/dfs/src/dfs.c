@@ -145,8 +145,8 @@ void dfs_fd_unlock(void)
 
 static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
 {
-    int nr = 0;
-    int index = 0;
+    int nr;
+    int index;
     struct dfs_fd **fds = NULL;
 
     if (fd < fdt->maxfd)
@@ -182,7 +182,7 @@ static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
 
 static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
-    int idx = 0;
+    int idx;
 
     /* find an empty fd slot */
     for (idx = startfd; idx < (int)fdt->maxfd; idx++)
@@ -207,7 +207,7 @@ static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 
 static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
-    int idx = 0;
+    int idx;
     struct dfs_fd *fd = NULL;
 
     idx = fd_slot_alloc(fdt, startfd);
@@ -238,7 +238,7 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
  */
 int fdt_fd_new(struct dfs_fdtable *fdt)
 {
-    int idx = 0;
+    int idx;
 
     /* lock filesystem */
     dfs_fd_lock();
@@ -250,10 +250,8 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     if (idx < 0)
     {
         LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
-        goto __result;
     }
 
-__result:
     dfs_fd_unlock();
     return idx;
 }
@@ -508,7 +506,7 @@ const char *dfs_subdir(const char *directory, const char *filename)
     dir = filename + strlen(directory);
     if ((*dir != '/') && (dir != filename))
     {
-        dir --;
+        dir--;
     }
 
     return dir;
@@ -573,14 +571,14 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         if (c == '.')
         {
-            if (!src[1]) src ++; /* '.' and ends */
+            if (!src[1]) src++; /* '.' and ends */
             else if (src[1] == '/')
             {
                 /* './' case */
                 src += 2;
 
                 while ((*src == '/') && (*src != '\0'))
-                    src ++;
+                    src++;
                 continue;
             }
             else if (src[1] == '.')
@@ -597,7 +595,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
                     src += 3;
 
                     while ((*src == '/') && (*src != '\0'))
-                        src ++;
+                        src++;
                     goto up_one;
                 }
             }
@@ -605,15 +603,15 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         /* copy up the next '/' and erase all '/' */
         while ((c = *src++) != '\0' && c != '/')
-            *dst ++ = c;
+            *dst++ = c;
 
         if (c == '/')
         {
-            *dst ++ = '/';
+            *dst++ = '/';
             while (c == '/')
                 c = *src++;
 
-            src --;
+            src--;
         }
         else if (!c)
             break;
@@ -621,20 +619,20 @@ char *dfs_normalize_path(const char *directory, const char *filename)
         continue;
 
 up_one:
-        dst --;
+        dst--;
         if (dst < dst0)
         {
             rt_free(fullpath);
             return NULL;
         }
         while (dst0 < dst && dst[-1] != '/')
-            dst --;
+            dst--;
     }
 
     *dst = '\0';
 
     /* remove '/' in the end of path if exist */
-    dst --;
+    dst--;
     if ((dst != fullpath) && (*dst == '/'))
         *dst = '\0';
 
@@ -689,7 +687,7 @@ int list_fd(void)
 
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
-    for (index = 0; index < (int)fd_table->maxfd; index ++)
+    for (index = 0; index < (int)fd_table->maxfd; index++)
     {
         struct dfs_fd *fd = fd_table->fds[index];
 
@@ -737,12 +735,12 @@ int mount(int argc, char *argv[])
         rt_kprintf("filesystem  device  mountpoint\n");
         rt_kprintf("----------  ------  ----------\n");
         for (iter = &filesystem_table[0];
-             iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
+                iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
         {
             if ((iter != NULL) && (iter->path != NULL))
             {
                 rt_kprintf("%-10s  %-6s  %-s\n",
-                           iter->ops->name, iter->dev_id->parent.name, iter->path);
+                        iter->ops->name, iter->dev_id->parent.name, iter->path);
             }
         }
         return 0;

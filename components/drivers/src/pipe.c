@@ -42,17 +42,17 @@ static int pipe_fops_open(struct dfs_fd *fd)
     switch (fd->fnode->flags & O_ACCMODE)
     {
     case O_RDONLY:
-        pipe->readers ++;
+        pipe->readers++;
         break;
     case O_WRONLY:
-        pipe->writers ++;
+        pipe->writers++;
         break;
     case O_RDWR:
-        pipe->readers ++;
-        pipe->writers ++;
+        pipe->readers++;
+        pipe->writers++;
         break;
     }
-    device->ref_count ++;
+    device->ref_count++;
 
 __exit:
     rt_mutex_release(&(pipe->lock));
@@ -74,14 +74,14 @@ static int pipe_fops_close(struct dfs_fd *fd)
     switch (fd->fnode->flags & O_ACCMODE)
     {
     case O_RDONLY:
-        pipe->readers --;
+        pipe->readers--;
         break;
     case O_WRONLY:
-        pipe->writers --;
+        pipe->writers--;
         break;
     case O_RDWR:
-        pipe->readers --;
-        pipe->writers --;
+        pipe->readers--;
+        pipe->writers--;
         break;
     }
 
@@ -101,7 +101,7 @@ static int pipe_fops_close(struct dfs_fd *fd)
             rt_ringbuffer_destroy(pipe->fifo);
         pipe->fifo = RT_NULL;
     }
-    device->ref_count --;
+    device->ref_count--;
 
     rt_mutex_release(&(pipe->lock));
 
@@ -564,7 +564,7 @@ int pipe(int fildes[2])
 int mkfifo(const char *path, mode_t mode)
 {
     rt_pipe_t *pipe;
-    
+
     pipe = rt_pipe_create(path, PIPE_BUFSZ);
     if (pipe == RT_NULL)
     {
