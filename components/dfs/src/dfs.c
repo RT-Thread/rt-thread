@@ -143,6 +143,43 @@ void dfs_fd_unlock(void)
     rt_mutex_release(&fdlock);
 }
 
+static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
+{
+    int nr = 0;
+    int index = 0;
+    struct dfs_fd **fds = NULL;
+
+    if (fd < fdt->maxfd)
+    {
+        return fd;
+    }
+    if (fd >= DFS_FD_MAX)
+    {
+        return -1;
+    }
+
+    nr = ((fd + 4) & ~3);
+    if (nr > DFS_FD_MAX)
+    {
+        nr = DFS_FD_MAX;
+    }
+    fds = (struct dfs_fd **)rt_realloc(fdt->fds, nr * sizeof(struct dfs_fd *));
+    if (!fds)
+    {
+        return -1;
+    }
+
+    /* clean the new allocated fds */
+    for (index = fdt->maxfd; index < nr; index++)
+    {
+        fds[index] = NULL;
+    }
+    fdt->fds   = fds;
+    fdt->maxfd = nr;
+
+    return fd;
+}
+
 static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx = 0;
@@ -151,36 +188,19 @@ static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
     for (idx = startfd; idx < (int)fdt->maxfd; idx++)
     {
         if (fdt->fds[idx] == RT_NULL)
-            break;
-        if (fdt->fds[idx]->ref_count == 0)
-            break;
+        {
+            return idx;
+        }
     }
 
-    /* allocate a larger FD container */
-    if (idx >= fdt->maxfd && fdt->maxfd < DFS_FD_MAX)
+    idx = fdt->maxfd;
+    if (idx < startfd)
     {
-        int cnt = 0;
-        int index = 0;
-        struct dfs_fd **fds = NULL;
-
-        /* increase the number of FD with 4 step length */
-        cnt = fdt->maxfd + 4;
-        cnt = cnt > DFS_FD_MAX ? DFS_FD_MAX : cnt;
-
-        fds = (struct dfs_fd **)rt_realloc(fdt->fds, cnt * sizeof(struct dfs_fd *));
-        if (fds == NULL) /* return fdt->maxfd */
-        {
-            return fdt->maxfd;
-        }
-
-        /* clean the new allocated fds */
-        for (index = fdt->maxfd; index < cnt; index ++)
-        {
-            fds[index] = NULL;
-        }
-
-        fdt->fds   = fds;
-        fdt->maxfd = cnt;
+        idx = startfd;
+    }
+    if (fd_slot_expand(fdt, idx) < 0)
+    {
+        return -1;
     }
     return idx;
 }
@@ -193,18 +213,19 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
     idx = fd_slot_alloc(fdt, startfd);
 
     /* allocate  'struct dfs_fd' */
-    if (idx < (int)fdt->maxfd && fdt->fds[idx] == RT_NULL)
+    if (idx < 0)
     {
-        fd = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
-        if (!fd)
-        {
-            return fdt->maxfd;
-        }
-        fd->ref_count = 1;
-        fd->magic = DFS_FD_MAGIC;
-        fd->fnode = NULL;
-        fdt->fds[idx] = fd;
+        return -1;
     }
+    fd = (struct dfs_fd *)rt_calloc(1, sizeof(struct dfs_fd));
+    if (!fd)
+    {
+        return -1;
+    }
+    fd->ref_count = 1;
+    fd->magic = DFS_FD_MAGIC;
+    fd->fnode = NULL;
+    fdt->fds[idx] = fd;
 
     return idx;
 }
@@ -226,9 +247,8 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     idx = fd_alloc(fdt, DFS_STDIO_OFFSET);
 
     /* can't find an empty fd entry */
-    if (idx == fdt->maxfd)
+    if (idx < 0)
     {
-        idx = -1;
         LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
         goto __result;
     }
@@ -261,7 +281,9 @@ struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
     struct dfs_fd *d;
 
     if (fd < 0 || fd >= (int)fdt->maxfd)
+    {
         return NULL;
+    }
 
     dfs_fd_lock();
     d = fdt->fds[fd];
@@ -339,7 +361,7 @@ void fd_release(int fd)
     fdt_fd_release(fdt, fd);
 }
 
-int fd_dup(int oldfd)
+int sys_dup(int oldfd)
 {
     int newfd = -1;
     struct dfs_fdtable *fdt = NULL;
@@ -357,8 +379,50 @@ int fd_dup(int oldfd)
     }
     /* get a new fd */
     newfd = fd_slot_alloc(fdt, DFS_STDIO_OFFSET);
+    if (newfd >= 0)
+    {
+        fdt->fds[newfd] = fdt->fds[oldfd];
+        /* inc ref_count */
+        fdt->fds[newfd]->ref_count++;
+    }
+exit:
+    dfs_fd_unlock();
+    return newfd;
+}
+
+int sys_dup2(int oldfd, int newfd)
+{
+    struct dfs_fdtable *fdt = NULL;
+    int ret = 0;
+    int retfd = -1;
+
+    dfs_fd_lock();
+    /* check old fd */
+    fdt = dfs_fdtable_get();
+    if ((oldfd < 0) || (oldfd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdt->fds[oldfd])
+    {
+        goto exit;
+    }
+    if (newfd < 0)
+    {
+        goto exit;
+    }
     if (newfd >= fdt->maxfd)
     {
+        newfd = fd_slot_expand(fdt, newfd);
+        if (newfd < 0)
+        {
+            goto exit;
+        }
+    }
+    if (fdt->fds[newfd] == fdt->fds[oldfd])
+    {
+        /* ok, return newfd */
+        retfd = newfd;
         goto exit;
     }
 
@@ -375,9 +439,10 @@ int fd_dup(int oldfd)
     fdt->fds[newfd] = fdt->fds[oldfd];
     /* inc ref_count */
     fdt->fds[newfd]->ref_count++;
+    retfd = newfd;
 exit:
     dfs_fd_unlock();
-    return newfd;
+    return retfd;
 }
 
 int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_fd *file)

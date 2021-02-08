@@ -342,7 +342,9 @@ int dfs_elm_open(struct dfs_fd *file)
         return -ENOENT;
     drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
+    {
         return -ENOMEM;
+    }
 
     rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->fnode->path);
 #else
@@ -393,18 +395,28 @@ int dfs_elm_open(struct dfs_fd *file)
         mode = FA_READ;
 
         if (file->fnode->flags & O_WRONLY)
+        {
             mode |= FA_WRITE;
+        }
         if ((file->fnode->flags & O_ACCMODE) & O_RDWR)
+        {
             mode |= FA_WRITE;
+        }
         /* Opens the file, if it is existing. If not, a new file is created. */
         if (file->fnode->flags & O_CREAT)
+        {
             mode |= FA_OPEN_ALWAYS;
+        }
         /* Creates a new file. If the file is existing, it is truncated and overwritten. */
         if (file->fnode->flags & O_TRUNC)
+        {
             mode |= FA_CREATE_ALWAYS;
+        }
         /* Creates a new file. The function fails if the file is already existing. */
         if (file->fnode->flags & O_EXCL)
+        {
             mode |= FA_CREATE_NEW;
+        }
 
         /* allocate a fd */
         fd = (FIL *)rt_malloc(sizeof(FIL));
@@ -451,7 +463,7 @@ int dfs_elm_close(struct dfs_fd *file)
     result = FR_OK;
     if (file->fnode->type == FT_DIRECTORY)
     {
-        DIR *dir;
+        DIR *dir = RT_NULL;
 
         dir = (DIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);
@@ -461,7 +473,7 @@ int dfs_elm_close(struct dfs_fd *file)
     }
     else if (file->fnode->type == FT_REGULAR)
     {
-        FIL *fd;
+        FIL *fd = RT_NULL;
         fd = (FIL *)(file->data);
         RT_ASSERT(fd != RT_NULL);
 
@@ -550,7 +562,9 @@ int dfs_elm_write(struct dfs_fd *file, const void *buf, size_t len)
     file->pos  = fd->fptr;
     file->fnode->size = f_size(fd);
     if (result == FR_OK)
+    {
         return byte_write;
+    }
 
     return elm_result_to_dfs(result);
 }
@@ -589,7 +603,7 @@ int dfs_elm_lseek(struct dfs_fd *file, off_t offset)
     else if (file->fnode->type == FT_DIRECTORY)
     {
         /* which is a directory */
-        DIR *dir;
+        DIR *dir = RT_NULL;
 
         dir = (DIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);

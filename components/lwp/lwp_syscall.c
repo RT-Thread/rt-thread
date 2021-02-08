@@ -2515,6 +2515,9 @@ int sys_clock_getres(clockid_t clk, struct timespec *ts)
 int sys_futex(int *uaddr, int op, int val, void *timeout, void *uaddr2, int val3);
 int sys_pmutex(void *umutex, int op, void *arg);
 
+int sys_dup(int oldfd);
+int sys_dup2(int oldfd, int new);
+
 const static void* func_table[] =
 {
     (void*)sys_exit,            /* 01 */
@@ -2665,6 +2668,8 @@ const static void* func_table[] =
     (void *)sys_clone,           /* 130 */
     (void *)sys_futex,
     (void *)sys_pmutex,
+    (void *)sys_dup,
+    (void *)sys_dup2,
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

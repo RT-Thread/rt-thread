@@ -129,7 +129,7 @@ static struct cromfs_avl_struct* cromfs_avl_find(avl_key_t key, struct cromfs_av
 
 static void cromfs_avl_rebalance(struct cromfs_avl_struct ***nodeplaces_ptr, int count)
 {
-    for ( ;count > 0; count--)
+    for (;count > 0; count--)
     {
         struct cromfs_avl_struct **nodeplace = *--nodeplaces_ptr;
         struct cromfs_avl_struct *node = *nodeplace;
@@ -144,7 +144,8 @@ static void cromfs_avl_rebalance(struct cromfs_avl_struct ***nodeplaces_ptr, int
             int heightleftright = heightof(nodeleftright);
             if (heightof(nodeleftleft) >= heightleftright)
             {
-                node->avl_left = nodeleftright; nodeleft->avl_right = node;
+                node->avl_left = nodeleftright;
+                nodeleft->avl_right = node;
                 nodeleft->avl_height = 1 + (node->avl_height = 1 + heightleftright);
                 *nodeplace = nodeleft;
             }
@@ -166,7 +167,8 @@ static void cromfs_avl_rebalance(struct cromfs_avl_struct ***nodeplaces_ptr, int
             int heightrightleft = heightof(noderightleft);
             if (heightof(noderightright) >= heightrightleft)
             {
-                node->avl_right = noderightleft; noderight->avl_left = node;
+                node->avl_right = noderightleft;
+                noderight->avl_left = node;
                 noderight->avl_height = 1 + (node->avl_height = 1 + heightrightleft);
                 *nodeplace = noderight;
             }
@@ -207,7 +209,8 @@ static void cromfs_avl_remove(struct cromfs_avl_struct *node_to_delete, struct c
         {
             return;
         }
-        *stack_ptr++ = nodeplace; stack_count++;
+        *stack_ptr++ = nodeplace;
+        stack_count++;
         if (key == node->avl_key)
         {
             break;
@@ -225,7 +228,8 @@ static void cromfs_avl_remove(struct cromfs_avl_struct *node_to_delete, struct c
     if (node_to_delete->avl_left == AVL_EMPTY)
     {
         *nodeplace_to_delete = node_to_delete->avl_right;
-        stack_ptr--; stack_count--;
+        stack_ptr--;
+        stack_count--;
     }
     else
     {
@@ -239,7 +243,8 @@ static void cromfs_avl_remove(struct cromfs_avl_struct *node_to_delete, struct c
             {
                 break;
             }
-            *stack_ptr++ = nodeplace; stack_count++;
+            *stack_ptr++ = nodeplace;
+            stack_count++;
             nodeplace = &node->avl_right;
         }
         *nodeplace = node->avl_left;
@@ -266,7 +271,8 @@ static void cromfs_avl_insert(struct cromfs_avl_struct *new_node, struct cromfs_
         {
             break;
         }
-        *stack_ptr++ = nodeplace; stack_count++;
+        *stack_ptr++ = nodeplace;
+        stack_count++;
         if (key < node->avl_key)
         {
             nodeplace = &node->avl_left;
@@ -589,12 +595,12 @@ static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, ui
         /* skip /// */
         while (*subpath_end && *subpath_end == '/')
         {
-            subpath_end ++;
+            subpath_end++;
         }
         subpath = subpath_end;
         while ((*subpath_end != '/') && *subpath_end)
         {
-            subpath_end ++;
+            subpath_end++;
         }
         if (*subpath == '\0')
         {
@@ -1087,7 +1093,7 @@ static int dfs_cromfs_getdents(struct dfs_fd *file, struct dirent *dirp, uint32_
         return -EINVAL;
     }
 
-    for (index = 0; index < count && file->pos < file->fnode->size; index ++)
+    for (index = 0; index < count && file->pos < file->fnode->size; index++)
     {
         uint32_t name_size = 0;
 

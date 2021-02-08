@@ -172,7 +172,9 @@ int dfs_device_fs_open(struct dfs_fd *file)
 
     device = rt_device_find(&file->fnode->path[1]);
     if (device == RT_NULL)
+    {
         return -ENODEV;
+    }
 
 #ifdef RT_USING_POSIX
     if (device->fops)

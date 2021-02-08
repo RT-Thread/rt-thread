@@ -19,6 +19,7 @@
 int	_EXFUN(fileno, (FILE *));
 
 static FILE* std_console = NULL;
+int sys_dup2(int oldfd, int new);
 
 int libc_stdio_set_console(const char* device_name, int mode)
 {
@@ -48,13 +49,12 @@ int libc_stdio_set_console(const char* device_name, int mode)
 
     if (std_console)
     {
-        struct dfs_fdtable *fdt = dfs_fdtable_get();
         int fd = fileno(std_console);
 
         /* set fd (0, 1, 2) */
-        fd_associate(fdt, 0, fd_get(fd));
-        fd_associate(fdt, 1, fd_get(fd));
-        fd_associate(fdt, 2, fd_get(fd));
+        sys_dup2(fd, 0);
+        sys_dup2(fd, 1);
+        sys_dup2(fd, 2);
         return fd;
     }
 
