@@ -585,6 +585,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
     register rt_base_t level;
     struct rt_thread *thread;
+    rt_tick_t cur_tick;
 
     RT_ASSERT(tick != RT_NULL);
 
@@ -596,15 +597,19 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    if (rt_tick_get() - *tick < inc_tick)
+    cur_tick = rt_tick_get();
+    if ((rt_int32_t)(cur_tick - *tick) < (rt_int32_t)inc_tick)
     {
-        *tick = *tick + inc_tick - rt_tick_get();
+        rt_tick_t left_tick;
+
+        *tick += inc_tick;
+        left_tick = *tick - cur_tick;
 
         /* suspend thread */
         rt_thread_suspend(thread);
 
         /* reset the timeout of thread timer and start it */
-        rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, tick);
+        rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &left_tick);
         rt_timer_start(&(thread->thread_timer));
 
         /* enable interrupt */
@@ -620,11 +625,9 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     }
     else
     {
+        *tick = cur_tick;
         rt_hw_interrupt_enable(level);
     }
-
-    /* get the wakeup tick */
-    *tick = rt_tick_get();
 
     return RT_EOK;
 }
