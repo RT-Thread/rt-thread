@@ -61,7 +61,7 @@ static int enable_log = 1;
 /* Endian mode. */
 #define USDHC_ENDIAN_MODE kUSDHC_EndianModeLittle
 
-ALIGN(USDHC_ADMA2_ADDR_ALIGN) uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS] SECTION("NonCacheable");
+ALIGN(USDHC_ADMA2_ADDR_ALIGN) uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS] RT_SECTION("NonCacheable");
 
 struct imxrt_mmcsd
 {
