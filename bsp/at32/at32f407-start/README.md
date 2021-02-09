@@ -46,8 +46,10 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PWM       | 支持     | TMR1/2                     |
 | HWTIMER   | 支持     | TMR3/4/5                   |
 | SDIO      | 支持     | SDIO1                      |
+| CAN       | 支持     | CAN1/2                     |
 | WDT       | 支持     |                            |
 | RTC       | 支持     |                            |
+| FLASH     | 支持     |                            |
 | ETH       | 支持     |                            |
 
 ### IO在板级支持包中的映射情况
@@ -89,6 +91,10 @@ AT32F407-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | PC3  | ADC1/2_IN13    |
 | PC4  | ADC1/2_IN14    |
 | PC5  | ADC1/2_IN15    |
+| PA11 | CAN1_RX        |
+| PA12 | CAN1_TX        |
+| PB5  | CAN2_RX        |
+| PB6  | CAN2_TX        |
 | PB11 | ETH_RMII_TX_EN |
 | PB12 | ETH_RMII_TX0   |
 | PB13 | ETH_RMII_TX1   |

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    at32_msp.c
   * @author  Artery Technology
-  * @version V1.0.0
-  * @date    2020-01-10
+  * @version V1.0.1
+  * @date    2021-02-09
   * @brief   Msp source file
   ******************************************************************************
   * @attention
@@ -256,3 +256,44 @@ void at32_msp_hwtmr_init(void *Instance)
 #endif
 }
 #endif
+
+#ifdef BSP_USING_CAN
+void at32_msp_can_init(void *Instance)
+{
+    GPIO_InitType GPIO_InitStruct;
+    CAN_Type *CANx = (CAN_Type *)Instance;
+
+    GPIO_StructInit(&GPIO_InitStruct);
+    GPIO_InitStruct.GPIO_MaxSpeed = GPIO_MaxSpeed_50MHz;
+#ifdef BSP_USING_CAN1
+    if(CAN1 == CANx)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_CAN1, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOA, ENABLE);
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_12;
+        GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_11;
+        GPIO_Init(GPIOA, &GPIO_InitStruct);
+    }
+#endif
+#ifdef BSP_USING_CAN2
+    if(CAN2 == CANx)
+    {
+        RCC_APB1PeriphClockCmd(RCC_APB1PERIPH_CAN2, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_AFIO, ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2PERIPH_GPIOB, ENABLE);
+        GPIO_PinsRemapConfig(AFIO_MAP6_CAN2_0001, ENABLE);
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_6;
+        GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+        GPIO_InitStruct.GPIO_Pins = GPIO_Pins_5;
+        GPIO_Init(GPIOB, &GPIO_InitStruct);
+    }
+#endif
+}
+#endif /* BSP_USING_CAN */
