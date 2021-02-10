@@ -3,7 +3,6 @@
 
 #include <rtthread.h>
 #include <rthw.h>
-#include "nrf.h"
 
 #define MCU_FLASH_SIZE MCU_FLASH_SIZE_KB*1024
 #define MCU_FLASH_END_ADDRESS        ((uint32_t)(MCU_FLASH_START_ADDRESS + MCU_FLASH_SIZE))
