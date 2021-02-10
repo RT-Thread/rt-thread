@@ -12,6 +12,7 @@
  * 2021-02-08     Meco Man     add settimeofday() stime()
  * 2021-02-10     Meco Man     add ctime_r() and re-implement ctime()
  * 2021-02-11     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
+ *                             add difftime()
  */
 
 #include <sys/time.h>
@@ -161,6 +162,11 @@ char *ctime_r (const time_t * tim_p, char * result)
 char* ctime(const time_t *tim_p)
 {
     return asctime (localtime (tim_p));
+}
+
+double difftime (time_t tim1, time_t tim2)
+{
+    return (double)(tim1 - tim2);
 }
 
 /**
