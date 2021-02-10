@@ -10,6 +10,7 @@
  * 2021-02-05     Meco Man     add timegm()
  * 2021-02-07     Meco Man     fixed gettimeofday()
  * 2021-02-08     Meco Man     add settimeofday() stime()
+ * 2021-02-10     Meco Man     add ctime_r() and re-implement ctime()
  */
 
 #include <sys/time.h>
@@ -149,9 +150,15 @@ char* asctime(const struct tm *timeptr)
     return asctime_r(timeptr, buf);
 }
 
-char* ctime(const time_t *timep)
+char *ctime_r (const time_t * tim_p, char * result)
 {
-    return asctime(localtime(timep));
+  struct tm tm;
+  return asctime_r (localtime_r (tim_p, &tm), result);
+}
+
+char* ctime(const time_t *tim_p)
+{
+    return asctime (localtime (tim_p));
 }
 
 /**
