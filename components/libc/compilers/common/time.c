@@ -11,6 +11,7 @@
  * 2021-02-07     Meco Man     fixed gettimeofday()
  * 2021-02-08     Meco Man     add settimeofday() stime()
  * 2021-02-10     Meco Man     add ctime_r() and re-implement ctime()
+ * 2021-02-11     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
  */
 
 #include <sys/time.h>
@@ -39,8 +40,9 @@ const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30),
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
-static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
-static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+
+ALIGN(4) static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
+ALIGN(4) static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 static int __isleap(int year)
 {
