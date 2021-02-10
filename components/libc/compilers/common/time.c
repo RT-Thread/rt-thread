@@ -88,6 +88,8 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
         ;
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
+
+    r->tm_isdst = 0;
     return r;
 }
 
@@ -103,8 +105,8 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     time_t local_tz;
     int utc_plus;
 
-    utc_plus =  3600 * 0; /* GTM: UTC+0 */
-    local_tz = *t + utc_plus;
+    utc_plus = 0; /* GTM: UTC+0 */
+    local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
 
