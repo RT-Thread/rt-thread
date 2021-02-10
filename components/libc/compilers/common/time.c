@@ -101,10 +101,10 @@ struct tm* gmtime(const time_t* t)
 struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
-    int utc;
+    int utc_plus;
 
-    utc =  3600 * 0; /* GTM: UTC+0 */
-    local_tz = *t + utc;
+    utc_plus =  3600 * 0; /* GTM: UTC+0 */
+    local_tz = *t + utc_plus;
     return gmtime_r(&local_tz, r);
 }
 
