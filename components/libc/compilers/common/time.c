@@ -155,8 +155,8 @@ char* asctime(const struct tm *timeptr)
 
 char *ctime_r (const time_t * tim_p, char * result)
 {
-  struct tm tm;
-  return asctime_r (localtime_r (tim_p, &tm), result);
+    struct tm tm;
+    return asctime_r (localtime_r (tim_p, &tm), result);
 }
 
 char* ctime(const time_t *tim_p)
