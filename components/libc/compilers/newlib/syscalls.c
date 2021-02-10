@@ -344,7 +344,7 @@ int flock(int fd, int operation)
 }
 
 /*
-These function will be implemented in the 'common/time.c' file
+These functions will be implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
 */
