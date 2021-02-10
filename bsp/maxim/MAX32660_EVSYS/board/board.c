@@ -10,11 +10,12 @@
  */
 #include <rtthread.h>
 #include <rthw.h>
-#include <nrfx_systick.h>
-
+#include <stdio.h>
 #include "board.h"
-#include "drv_uart.h"
-#include <nrfx_clock.h>
+#include "mxc_sys.h"
+#ifdef RT_USING_SERIAL
+#include "drv_usart.h"
+#endif
 
 /**
  * This is the timer interrupt service routine.
@@ -31,63 +32,49 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-static void clk_event_handler(nrfx_clock_evt_type_t event){}
-
 void SysTick_Configuration(void)
 {
-    nrfx_clock_init(clk_event_handler);
-    nrfx_clock_enable();
-    nrfx_clock_lfclk_start();
-    /* Set interrupt priority */
-    NVIC_SetPriority(SysTick_IRQn, 0xf);
+    uint32_t error;
+    error = SYS_SysTick_Config(SYS_SysTick_GetFreq()/RT_TICK_PER_SECOND, 1, MXC_TMR0);
 
-    /* Configure SysTick to interrupt at the requested rate. */
-    nrf_systick_load_set(SystemCoreClock / RT_TICK_PER_SECOND);
-    nrf_systick_val_clear();
-    nrf_systick_csr_set(NRF_SYSTICK_CSR_CLKSOURCE_CPU | NRF_SYSTICK_CSR_TICKINT_ENABLE
-                        | NRF_SYSTICK_CSR_ENABLE);
-
+    if (error != E_NO_ERROR) {
+        printf("ERROR: Ticks is not valid");
+    }
 }
+
+mxc_uart_regs_t *ConsoleUART = MXC_UART_GET_UART(1);
+
+const sys_cfg_uart_t console_uart_sys_cfg = {
+    MAP_A,
+    UART_FLOW_DISABLE,
+};
 
 
 void rt_hw_board_init(void)
 {
-    rt_hw_interrupt_enable(0);
+   // rt_hw_interrupt_enable(0);
     // sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
     /* Activate deep sleep mode */
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
     SysTick_Configuration();
 
 #if defined(RT_USING_HEAP)
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+    rt_system_heap_init((void *)(0x20000000+16*1024), (void *)(0x20000000+64*1024));
 #endif
-
+   
 #ifdef RT_USING_SERIAL
-    rt_hw_uart_init();
+    rt_hw_usart_init();
 #endif
-
+    
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-
+    
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
+    
 
-#ifdef BSP_USING_SOFTDEVICE
-    extern uint32_t  Image$$RW_IRAM1$$Base;
-    uint32_t const *const m_ram_start  = &Image$$RW_IRAM1$$Base;
-    if ((uint32_t)m_ram_start == 0x20000000)
-    {
-        rt_kprintf("\r\n using softdevice the RAM couldn't be %p,please use the templete from package\r\n", m_ram_start);
-        while (1);
-    }
-    else
-    {
-        rt_kprintf("\r\n using softdevice the RAM at %p\r\n", m_ram_start);
-    }
-#endif
 
 }
 

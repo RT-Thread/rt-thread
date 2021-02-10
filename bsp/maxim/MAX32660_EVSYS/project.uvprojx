@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>nRF52840_xxAA</Device>
-          <Vendor>Nordic Semiconductor</Vendor>
-          <PackID>NordicSemiconductor.nRF_DeviceFamilyPack.8.32.1</PackID>
-          <PackURL>http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x40000) IROM(0x00000000,0x100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Device>MAX32660</Device>
+          <Vendor>Maxim</Vendor>
+          <PackID>Maxim.MAX32660.1.2.0</PackID>
+          <PackURL>http://www.mxim.net/microcontroller/pack/</PackURL>
+          <Cpu>IRAM(0x20000000,0x00018000) IROM(0x00000000,0x00040000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC4000 -FN2 -FF0nrf52xxx -FS00 -FL0200000 -FF1nrf52xxx_uicr -FS110001000 -FL11000 -FP0($$Device:nRF52840_xxAA$Flash\nrf52xxx.flm) -FP1($$Device:nRF52840_xxAA$Flash\nrf52xxx_uicr.flm))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0MAX32660 -FS00 -FL040000 -FP0($$Device:MAX32660$Flash\MAX32660.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:nRF52840_xxAA$Device\Include\nrf.h</RegisterFile>
+          <RegisterFile>$$Device:MAX32660$Libraries\Device\Maxim\MAX32660\Include\max32660.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:nRF52840_xxAA$SVD\nrf52840.svd</SFDFile>
+          <SFDFile>$$Device:MAX32660$SVD\MAX32660\max32660.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -110,11 +110,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments>  -MPU</SimDllArguments>
+          <SimDllArguments> </SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -188,7 +188,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -245,12 +245,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x18000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x40000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -275,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x40000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -300,7 +300,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x18000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -315,7 +315,7 @@
             <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>1</OneElfS>
+            <OneElfS>0</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--reduce_paths</MiscControls>
-              <Define>NRF52840_XXAA, USE_APP_CONFIG, RT_USING_ARM_LIBC</Define>
+              <Define>USE_APP_CONFIG, RT_USING_ARM_LIBC, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\include;applications;.;board;..\libraries\drivers;packages\nrfx-v2.1.0;packages\nrfx-v2.1.0\drivers;packages\nrfx-v2.1.0\drivers\include;packages\nrfx-v2.1.0\mdk;packages\nrfx-v2.1.0\hal;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\cmsis\include</IncludePath>
+              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;.;..\..\..\include;..\..\..\components\libc\compilers\armlibc;..\..\..\components\libc\compilers\common;..\libraries\CMSIS;..\libraries\MAX32660PeriphDriver\Include;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -369,7 +369,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile></ScatterFile>
+            <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -380,81 +380,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Kernel</GroupName>
-          <Files>
-            <File>
-              <FileName>clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>components.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-            <File>
-              <FileName>idle.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\idle.c</FilePath>
-            </File>
-            <File>
-              <FileName>ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\ipc.c</FilePath>
-            </File>
-            <File>
-              <FileName>irq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\irq.c</FilePath>
-            </File>
-            <File>
-              <FileName>kservice.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\kservice.c</FilePath>
-            </File>
-            <File>
-              <FileName>mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mem.c</FilePath>
-            </File>
-            <File>
-              <FileName>mempool.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\mempool.c</FilePath>
-            </File>
-            <File>
-              <FileName>object.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\object.c</FilePath>
-            </File>
-            <File>
-              <FileName>scheduler.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\scheduler.c</FilePath>
-            </File>
-            <File>
-              <FileName>signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\signal.c</FilePath>
-            </File>
-            <File>
-              <FileName>thread.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\thread.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Applications</GroupName>
           <Files>
             <File>
@@ -462,215 +387,110 @@
               <FileType>1</FileType>
               <FilePath>applications\application.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers</GroupName>
-          <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>system_max32660.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
+              <FilePath>..\libraries\CMSIS\system_max32660.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_max32660.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\CMSIS\startup_max32660.s</FilePath>
+            </File>
+            <File>
+              <FileName>mxc_sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\mxc_sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>mxc_assert.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\mxc_assert.c</FilePath>
+            </File>
+            <File>
+              <FileName>mxc_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\mxc_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>mxc_lock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\mxc_lock.c</FilePath>
+            </File>
+            <File>
+              <FileName>mxc_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\mxc_pins.c</FilePath>
+            </File>
+            <File>
+              <FileName>nvic_table.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\nvic_table.c</FilePath>
+            </File>
+            <File>
+              <FileName>flc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\flc.c</FilePath>
+            </File>
+            <File>
+              <FileName>icc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\icc.c</FilePath>
+            </File>
+            <File>
+              <FileName>lp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\lp.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>tmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\tmr.c</FilePath>
+            </File>
+            <File>
+              <FileName>tmr_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\tmr_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\MAX32660PeriphDriver\Source\uart.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>.\applications\drv_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>nrfx</GroupName>
-          <Files>
-            <File>
-              <FileName>nrfx_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_comp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_comp.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_dppi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_dppi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_egu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_egu.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_gpiote.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_gpiote.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_i2s.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_i2s.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_ipc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_ipc.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_lpcomp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_lpcomp.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_nfct.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_nfct.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_nvmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_nvmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_pdm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_pdm.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_power.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_power.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_ppi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_ppi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_pwm.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_qdec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_qdec.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_qspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_qspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_rng.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_rng.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_saadc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_saadc.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_spim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_spim.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_spis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_spis.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_systick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_systick.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_temp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_temp.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_twi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_twi.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_twi_twim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_twi_twim.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_twim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_twim.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_twis.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_twis.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_uarte.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_uarte.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_usbd.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_usbreg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_usbreg.c</FilePath>
-            </File>
-            <File>
-              <FileName>nrfx_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\drivers\src\nrfx_wdt.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_nrf52840.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nrfx-v2.1.0\mdk\system_nrf52840.c</FilePath>
-            </File>
-            <File>
-              <FileName>arm_startup_nrf52840.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>packages\nrfx-v2.1.0\mdk\arm_startup_nrf52840.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>cpu</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
               <FileName>backtrace.c</FileName>
@@ -750,22 +570,82 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>finsh</GroupName>
+          <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>board\board.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Kernel</GroupName>
+          <Files>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\clock.c</FilePath>
             </File>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\src\components.c</FilePath>
             </File>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\src\device.c</FilePath>
+            </File>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\idle.c</FilePath>
+            </File>
+            <File>
+              <FileName>ipc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\ipc.c</FilePath>
+            </File>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\irq.c</FilePath>
+            </File>
+            <File>
+              <FileName>kservice.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\kservice.c</FilePath>
+            </File>
+            <File>
+              <FileName>mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>mempool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\mempool.c</FilePath>
+            </File>
+            <File>
+              <FileName>object.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\object.c</FilePath>
+            </File>
+            <File>
+              <FileName>scheduler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler.c</FilePath>
+            </File>
+            <File>
+              <FileName>thread.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\thread.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>
