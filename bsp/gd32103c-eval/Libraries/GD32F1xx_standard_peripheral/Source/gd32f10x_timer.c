@@ -45,14 +45,17 @@ static void TI4_Config(TIMER_TypeDef *TIMERx, uint16_t TIMER_ICPolarity, uint16_
 
 /**
   * @brief  Deinitialize the TIMER .
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @retval None
   */
 void TIMER_DeInit(TIMER_TypeDef *TIMERx)
 {
-    if (TIMERx == TIMER1) {
-        RCC->APB2RCR |= RCC_APB2PERIPH_TIMER1RST;
-        RCC->APB2RCR &= ~RCC_APB2PERIPH_TIMER1;
+    if (TIMERx == TIMER0) {
+        RCC->APB2RCR |= RCC_APB2PERIPH_TIMER0RST;
+        RCC->APB2RCR &= ~RCC_APB2PERIPH_TIMER0;
+    } else if (TIMERx == TIMER1) {
+        RCC->APB1RCR |= RCC_APB1PERIPH_TIMER1RST;
+        RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER1;
     } else if (TIMERx == TIMER2) {
         RCC->APB1RCR |= RCC_APB1PERIPH_TIMER2RST;
         RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER2;
@@ -69,8 +72,8 @@ void TIMER_DeInit(TIMER_TypeDef *TIMERx)
         RCC->APB1RCR |= RCC_APB1PERIPH_TIMER6RST;
         RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER6;
     } else if (TIMERx == TIMER7) {
-        RCC->APB1RCR |= RCC_APB1PERIPH_TIMER7RST;
-        RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER7;
+        RCC->APB2RCR |= RCC_APB2PERIPH_TIMER7RST;
+        RCC->APB2RCR &= ~RCC_APB2PERIPH_TIMER7;
     } else if (TIMERx == TIMER8) {
         RCC->APB2RCR |= RCC_APB2PERIPH_TIMER8RST;
         RCC->APB2RCR &= ~RCC_APB2PERIPH_TIMER8;
@@ -81,23 +84,20 @@ void TIMER_DeInit(TIMER_TypeDef *TIMERx)
         RCC->APB2RCR |= RCC_APB2PERIPH_TIMER10RST;
         RCC->APB2RCR &= ~RCC_APB2PERIPH_TIMER10;
     } else if (TIMERx == TIMER11) {
-        RCC->APB2RCR |= RCC_APB2PERIPH_TIMER11RST;
-        RCC->APB2RCR &= ~RCC_APB2PERIPH_TIMER11;
+        RCC->APB1RCR |= RCC_APB1PERIPH_TIMER11RST;
+        RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER11;
     } else if (TIMERx == TIMER12) {
         RCC->APB1RCR |= RCC_APB1PERIPH_TIMER12RST;
         RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER12;
     } else if (TIMERx == TIMER13) {
         RCC->APB1RCR |= RCC_APB1PERIPH_TIMER13RST;
         RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER13;
-    } else if (TIMERx == TIMER14) {
-        RCC->APB1RCR |= RCC_APB1PERIPH_TIMER14RST;
-        RCC->APB1RCR &= ~RCC_APB1PERIPH_TIMER14;
     }
 }
 
 /**
   * @brief  Initialize the specified Timer
-  * @param  TIMERx:  x ={ 1 -14 } .
+  * @param  TIMERx:  x ={ 0 -13 } .
   * @param  TIMER_Init: pointer to a TIMER_BaseInitPara structure.
   * @retval None
   */
@@ -107,15 +107,15 @@ void TIMER_BaseInit(TIMER_TypeDef *TIMERx, TIMER_BaseInitPara *TIMER_Init)
 
     tmpctlr1 = TIMERx->CTLR1;
 
-    if ((TIMERx == TIMER1) || (TIMERx == TIMER8) || (TIMERx == TIMER2) || (TIMERx == TIMER3) ||
-            (TIMERx == TIMER4) || (TIMERx == TIMER5) || (TIMERx == TIMER9) || (TIMERx == TIMER10)
-            || (TIMERx == TIMER11) || (TIMERx == TIMER12) || (TIMERx == TIMER13) || (TIMERx == TIMER14)) {
+    if ((TIMERx == TIMER0) || (TIMERx == TIMER7) || (TIMERx == TIMER1) || (TIMERx == TIMER2) ||
+            (TIMERx == TIMER3) || (TIMERx == TIMER4) || (TIMERx == TIMER8) || (TIMERx == TIMER9)
+            || (TIMERx == TIMER10) || (TIMERx == TIMER11) || (TIMERx == TIMER12) || (TIMERx == TIMER13)) {
         /* Configure the Counter Mode */
         tmpctlr1 &= (uint16_t)(~((uint16_t)(TIMER_CTLR1_DIR | TIMER_CTLR1_CAM)));
         tmpctlr1 |= (uint32_t)TIMER_Init->TIMER_CounterMode;
     }
 
-    if ((TIMERx != TIMER6) && (TIMERx != TIMER7)) {
+    if ((TIMERx != TIMER5) && (TIMERx != TIMER6)) {
         /* Configure the clock division */
         tmpctlr1 &= (uint16_t)(~((uint16_t)TIMER_CTLR1_CDIV));
         tmpctlr1 |= (uint32_t)TIMER_Init->TIMER_ClockDivision;
@@ -129,8 +129,8 @@ void TIMER_BaseInit(TIMER_TypeDef *TIMERx, TIMER_BaseInitPara *TIMER_Init)
     /* Configure the Prescaler value */
     TIMERx->PSC = TIMER_Init->TIMER_Prescaler;
 
-    if ((TIMERx == TIMER1)  ||
-            (TIMERx == TIMER8)) {
+    if ((TIMERx == TIMER0)  ||
+            (TIMERx == TIMER7)) {
         /* Configure the Repetition Counter value */
         TIMERx->CREP = TIMER_Init->TIMER_RepetitionCounter;
     }
@@ -156,7 +156,7 @@ void TIMER_BaseStructInit(TIMER_BaseInitPara *TIMER_Init)
 
 /**
   * @brief  Configure the TIMER Prescaler.
-  * @param  TIMERx:  x ={ 1-14 }
+  * @param  TIMERx:  x ={ 0-13 }
   * @param  Prescaler:  Prescaler value
   * @param  TIMER_PSCReloadMode:  Prescaler Reload mode
   *   This value will be :
@@ -203,7 +203,7 @@ void TIMER_CounterMode(TIMER_TypeDef *TIMERx, uint16_t TIMER_CounterMode)
 
 /**
   * @brief  Configure the TIMER Counter Register value
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  Counter: the Counter register new value.
   * @retval None
   */
@@ -214,7 +214,7 @@ void TIMER_SetCounter(TIMER_TypeDef *TIMERx, uint32_t Counter)
 
 /**
   * @brief  Configure the Autoreload value
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  AutoReloadValue:
   * @retval None
   */
@@ -225,7 +225,7 @@ void TIMER_SetAutoreload(TIMER_TypeDef *TIMERx, uint32_t AutoReloadValue)
 
 /**
   * @brief  Get the Counter value.
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @retval Counter Register value.
   */
 uint32_t TIMER_GetCounter(TIMER_TypeDef *TIMERx)
@@ -235,7 +235,7 @@ uint32_t TIMER_GetCounter(TIMER_TypeDef *TIMERx)
 
 /**
   * @brief  Get the Prescaler value.
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @retval Prescaler Register value
   */
 uint16_t TIMER_GetPrescaler(TIMER_TypeDef *TIMERx)
@@ -245,7 +245,7 @@ uint16_t TIMER_GetPrescaler(TIMER_TypeDef *TIMERx)
 
 /**
   * @brief  Configure the TIMERx Update event.
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  NewValue: new value of the TIMERx UPDIS bit
   *   This value will be :
   *     @arg ENABLE  : Update Enbale
@@ -263,7 +263,7 @@ void TIMER_UpdateDisableConfig(TIMER_TypeDef *TIMERx, TypeState NewValue)
 
 /**
   * @brief  Configure the TIMER Update Request source.
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_UpdateSrc: Configures the Update source.
   *   This value will be :
   *     @arg TIMER_UPDATE_SRC_GLOBAL    : Update generate by setting of UPG bit or the counter
@@ -282,7 +282,7 @@ void TIMER_UpdateRequestConfig(TIMER_TypeDef *TIMERx, uint16_t TIMER_UpdateSrc)
 
 /**
   * @brief  Configure the CARL Preload function
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  NewValue: the state of the Preload function on CARL.
   *   This value will be :
   *     @arg ENABLE
@@ -339,7 +339,7 @@ void TIMER_SetClockDivision(TIMER_TypeDef *TIMERx, uint16_t TIMER_CDIV)
 
 /**
   * @brief  ENABLE or DISABLE the TIMER.
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  NewValue: ENABLE or DISABLE.
   * @retval None
   */
@@ -443,7 +443,7 @@ void TIMER_OC1_Init(TIMER_TypeDef *TIMERx, TIMER_OCInitPara *TIMER_OCInit)
     /* Set the Output State */
     tmpche |= TIMER_OCInit->TIMER_OutputState;
 
-    if ((TIMERx == TIMER1) || (TIMERx == TIMER8)) {
+    if ((TIMERx == TIMER0) || (TIMERx == TIMER7)) {
         /* Reset the Output complementary Polarity */
         tmpche &= (uint16_t)(~((uint16_t)TIMER_CHE_CH1NP));
 
@@ -518,7 +518,7 @@ void TIMER_OC2_Init(TIMER_TypeDef *TIMERx, TIMER_OCInitPara *TIMER_OCInit)
     /* Set the Output State */
     tmpche |= (uint16_t)(TIMER_OCInit->TIMER_OutputState << 4);
 
-    if ((TIMERx == TIMER1) || (TIMERx == TIMER8)) {
+    if ((TIMERx == TIMER0) || (TIMERx == TIMER7)) {
         /* Reset the Output complementary Polarity */
         tmpche &= (uint16_t)(~((uint16_t)TIMER_CHE_CH2NP));
 
@@ -593,7 +593,7 @@ void TIMER_OC3_Init(TIMER_TypeDef *TIMERx, TIMER_OCInitPara *TIMER_OCInit)
     /* Set the Output State */
     tmpche |= (uint16_t)(TIMER_OCInit->TIMER_OutputState << 8);
 
-    if ((TIMERx == TIMER1) || (TIMERx == TIMER8)) {
+    if ((TIMERx == TIMER0) || (TIMERx == TIMER7)) {
         /* Reset the Output complementary Polarity */
         tmpche &= (uint16_t)(~((uint16_t)TIMER_CHE_CH3NP));
 
@@ -667,7 +667,7 @@ void TIMER_OC4_Init(TIMER_TypeDef *TIMERx, TIMER_OCInitPara *TIMER_OCInit)
     /* Set the Output State */
     tmpche |= (uint16_t)(TIMER_OCInit->TIMER_OutputState << 12);
 
-    if ((TIMERx == TIMER1) || (TIMERx == TIMER8)) {
+    if ((TIMERx == TIMER0) || (TIMERx == TIMER7)) {
         /* Reset the Ouput Compare IDLE State */
         tmpctlr2 &= (uint16_t)(~((uint16_t)TIMER_CTLR2_ISO4));
 
@@ -1646,7 +1646,7 @@ void TIMER_Set_IC4_Prescaler(TIMER_TypeDef *TIMERx, uint16_t TIMER_ICPSC)
 
 /**
   * @brief  Configure interrupts Enables
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_INT:  the interrupts sources to Configure.
   *   This value will be :
   *     @arg TIMER_INT_UPDATE  : update Interrupt
@@ -1671,7 +1671,7 @@ void TIMER_INTConfig(TIMER_TypeDef *TIMERx, uint16_t TIMER_INT, TypeState NewVal
 
 /**
   * @brief  Generate the software event
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_EventSrc:
   *   This value will be :
   *     @arg TIMER_EVENT_SRC_UPDATE  : update Event
@@ -1691,7 +1691,7 @@ void TIMER_GenerateEvent(TIMER_TypeDef *TIMERx, uint16_t TIMER_EventSrc)
 
 /**
   * @brief  Get current flag status
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_FLAG:
   *   This value will be :
   *     @arg TIMER_FLAG_UPDATE  : update Flag
@@ -1719,7 +1719,7 @@ TypeState TIMER_GetBitState(TIMER_TypeDef *TIMERx, uint16_t TIMER_FLAG)
 
 /**
   * @brief  Clear the flags
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_FLAG: the flag bit to clear.
   *   This value will be :
   *     @arg TIMER_FLAG_UPDATE  : update Flag
@@ -1743,7 +1743,7 @@ void TIMER_ClearBitState(TIMER_TypeDef *TIMERx, uint16_t TIMER_FLAG)
 
 /**
   * @brief  Get interrupt state
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_INT:
   *   This value will be :
   *     @arg TIMER_INT_UPDATE: update Interrupt
@@ -1772,7 +1772,7 @@ TypeState TIMER_GetIntBitState(TIMER_TypeDef *TIMERx, uint16_t TIMER_INT)
 
 /**
   * @brief  Clear the interrupt pending bits
-  * @param  TIMERx:  x ={ 1-14 } .
+  * @param  TIMERx:  x ={ 0-13 } .
   * @param  TIMER_INT:
   *   This value will be :
   *     @arg TIMER_INT_UPDATE: update Interrupt
