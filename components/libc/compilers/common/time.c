@@ -100,14 +100,12 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_isdst = 0;
     return r;
 }
-RTM_EXPORT(gmtime_r);
 
 struct tm* gmtime(const time_t* t)
 {
     static struct tm tmp;
     return gmtime_r(t, &tmp);
 }
-RTM_EXPORT(gmtime);
 
 /*TODO: timezone */
 struct tm* localtime_r(const time_t* t, struct tm* r)
@@ -119,21 +117,18 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
-RTM_EXPORT(localtime_r);
 
 struct tm* localtime(const time_t* t)
 {
     static struct tm tmp;
     return localtime_r(t, &tmp);
 }
-RTM_EXPORT(localtime);
 
 /* TODO: timezone */
 time_t mktime(struct tm * const t)
 {
     return timegm(t);
 }
-RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
@@ -155,33 +150,28 @@ char* asctime_r(const struct tm *t, char *buf)
     buf[24] = '\n';
     return buf;
 }
-RTM_EXPORT(asctime_r);
 
 char* asctime(const struct tm *timeptr)
 {
     static char buf[25];
     return asctime_r(timeptr, buf);
 }
-RTM_EXPORT(asctime);
 
 char *ctime_r (const time_t * tim_p, char * result)
 {
     struct tm tm;
     return asctime_r (localtime_r (tim_p, &tm), result);
 }
-RTM_EXPORT(ctime_r);
 
 char* ctime(const time_t *tim_p)
 {
     return asctime (localtime (tim_p));
 }
-RTM_EXPORT(ctime);
 
 double difftime (time_t tim1, time_t tim2)
 {
     return (double)(tim1 - tim2);
 }
-RTM_EXPORT(difftime);
 
 /**
  * Returns the current time.
@@ -229,13 +219,11 @@ RT_WEAK time_t time(time_t *t)
 
     return time_now;
 }
-RTM_EXPORT(time);
 
 RT_WEAK clock_t clock(void)
 {
     return rt_tick_get();
 }
-RTM_EXPORT(clock);
 
 int stime(const time_t *t)
 {
@@ -261,7 +249,6 @@ int stime(const time_t *t)
     return -1;
 #endif /* RT_USING_RTC */
 }
-RTM_EXPORT(stime);
 
 time_t timegm(struct tm * const t)
 {
@@ -336,7 +323,6 @@ time_t timegm(struct tm * const t)
     i = 60;
     return ((day + t->tm_hour) * i + t->tm_min) * i + t->tm_sec;
 }
-RTM_EXPORT(timegm);
 
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
@@ -355,7 +341,6 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         return -1;
     }
 }
-RTM_EXPORT(gettimeofday);
 
 /* TODO: timezone */
 int settimeofday(const struct timeval *tv, const struct timezone *tz)
@@ -370,7 +355,6 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
         return -1;
     }
 }
-RTM_EXPORT(settimeofday);
 
 #ifdef RT_USING_PTHREADS
 static struct timeval _timevalue;
