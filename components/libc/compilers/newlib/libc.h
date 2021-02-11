@@ -10,22 +10,9 @@
 #ifndef __RTT_LIBC_H__
 #define __RTT_LIBC_H__
 
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <sys/time.h>
-
 #ifndef _EXFUN
-#define _EXFUN(name, proto)		name proto
+#define _EXFUN(name, proto)     name proto
 #endif
-
-#define MILLISECOND_PER_SECOND  1000UL
-#define MICROSECOND_PER_SECOND  1000000UL
-#define NANOSECOND_PER_SECOND   1000000000UL
-
-#define MILLISECOND_PER_TICK    (MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
-#define MICROSECOND_PER_TICK    (MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
-#define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
 
 #ifdef __cplusplus
 extern "C" {
