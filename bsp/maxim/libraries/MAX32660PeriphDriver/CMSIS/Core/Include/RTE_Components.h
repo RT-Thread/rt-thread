@@ -19,6 +19,6 @@
 #define BOARD EvKit_V1 /* Target Board */
 #define RTE_USING_FINSH
 #define TARGET 32660   /* Target Device Part Number */
-               #define TARGET_REV 0x4131 /* Target Device Revision Number */
+#define TARGET_REV 0x4131 /* Target Device Revision Number */
 
 #endif /* RTE_COMPONENTS_H */

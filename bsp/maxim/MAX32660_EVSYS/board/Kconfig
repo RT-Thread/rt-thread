@@ -5,7 +5,10 @@ config SOC_MAX32660
     config SOC_MAX32660
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    
+    select BSP_USING_UART
+    select BSP_USING_UART1
+    default y
+        
 config SOC_MAXIM
     bool 
     config SOC_MAXIM
@@ -16,11 +19,35 @@ menu "On-chip Peripheral Drivers"
         bool "Enable GPIO"
         select RT_USING_PIN
         default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default n
+
+            config BSP_UART0_RX_USING_DMA
+                bool "Enable UART0 RX DMA"
+                depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                default n   
+                
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+
+            config BSP_UART1_RX_USING_DMA
+                bool "Enable UART1 RX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+        endif
     config BSP_USING_ON_CHIP_FLASH
         select PKG_USING_FAL
         bool "Enable on-chip FLASH"
         default n
-
+        
 endmenu
 
 

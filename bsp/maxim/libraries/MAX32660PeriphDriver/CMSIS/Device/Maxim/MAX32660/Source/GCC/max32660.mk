@@ -34,44 +34,50 @@
  #
  ###############################################################################
 
-################################################################################
-# This file can be included in a project makefile to build the library for the 
-# project.
-################################################################################
-
-ifeq "$(PERIPH_DRIVER_DIR)" ""
-$(error "PERIPH_DRIVER_DIR must be specified")
+ifeq "$(CMSIS_ROOT)" ""
+$(error CMSIS_ROOT must be specified)
 endif
 
-# Specify the build directory if not defined by the project
+# The build directory
 ifeq "$(BUILD_DIR)" ""
-PERIPH_DRIVER_BUILD_DIR=$(CURDIR)/build/PeriphDriver
-else
-PERIPH_DRIVER_BUILD_DIR=$(BUILD_DIR)/PeriphDriver
+BUILD_DIR=$(CURDIR)/build
 endif
 
-# Export paths needed by the peripheral driver makefile. Since the makefile to
-# build the library will execute in a different directory, paths must be
-# specified absolutely
-PERIPH_DRIVER_BUILD_DIR := ${abspath ${PERIPH_DRIVER_BUILD_DIR}}
-export TOOL_DIR := ${abspath ${TOOL_DIR}}
-export CMSIS_ROOT := ${abspath ${CMSIS_ROOT}}
+ifeq "$(STARTUPFILE)" ""
+STARTUPFILE=startup_max32660.S
+endif
 
-# Export other variables needed by the peripheral driver makefile
-export TARGET
-export COMPILER
-export TARGET_MAKEFILE
-export PROJ_CFLAGS
-export PROJ_LDFLAGS
-export MXC_OPTIMIZE_CFLAGS
+ifeq "$(LINKERFILE)" ""
+LINKERFILE=$(CMSIS_ROOT)/Device/Maxim/MAX32660/Source/GCC/max32660.ld
+endif
 
-# Add to library list
-LIBS += ${PERIPH_DRIVER_BUILD_DIR}/PeriphDriver.a
+ifeq "$(ENTRY)" ""
+ENTRY=Reset_Handler
+endif
 
-# Add to include directory list
-IPATH += ${PERIPH_DRIVER_DIR}/Include
+# Default TARGET_REVISION
+# "A1" in ASCII
+ifeq "$(TARGET_REV)" ""
+TARGET_REV=0x4131
+endif
 
-# Add rule to build the Driver Library
-${PERIPH_DRIVER_BUILD_DIR}/PeriphDriver.a: FORCE
-	$(MAKE) -C ${PERIPH_DRIVER_DIR} lib BUILD_DIR=${PERIPH_DRIVER_BUILD_DIR}
+# Add target specific CMSIS source files
+ifneq (${MAKECMDGOALS},lib)
+SRCS += ${STARTUPFILE}
+SRCS += heap.c
+SRCS += system_max32660.c
+endif
 
+# Add target specific CMSIS source directories
+VPATH+=$(CMSIS_ROOT)/Device/Maxim/MAX32660/Source/GCC
+VPATH+=$(CMSIS_ROOT)/Device/Maxim/MAX32660/Source
+
+# Add target specific CMSIS include directories
+IPATH+=$(CMSIS_ROOT)/Device/Maxim/MAX32660/Include
+IPATH+=$(CMSIS_ROOT)/Include
+
+# Add directory with linker include file
+LIBPATH+=$(CMSIS_ROOT)/Device/Maxim/MAX32660/Source/GCC
+
+# Include the rules and goals for building
+include $(CMSIS_ROOT)/Device/Maxim/MAX32660/Source/GCC/gcc.mk
