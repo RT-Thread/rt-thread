@@ -21,12 +21,14 @@ int isatty(int fd)
     struct termios ts;
     return(tcgetattr(fd,&ts) != -1);/*true if no error (is a tty)*/
 }
+RTM_EXPORT(isatty);
 #endif
 
 char *ttyname(int fd)
 {
     return "/dev/tty0"; /*TODO: need to add more specific*/
 }
+RTM_EXPORT(ttyname);
 
 unsigned int sleep(unsigned int seconds)
 {
@@ -38,6 +40,7 @@ unsigned int sleep(unsigned int seconds)
 
     return seconds - delta_tick/RT_TICK_PER_SECOND;
 }
+RTM_EXPORT(sleep);
 
 int usleep(useconds_t usec)
 {
@@ -45,3 +48,4 @@ int usleep(useconds_t usec)
     rt_hw_us_delay(usec % 1000u);
     return 0;
 }
+RTM_EXPORT(usleep);
