@@ -55,6 +55,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
 
 #ifdef RT_USING_PTHREADS
+#include <sys/types.h>
 /* posix clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
 #define MICROSECOND_PER_SECOND  1000000UL
