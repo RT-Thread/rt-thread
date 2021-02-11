@@ -15,19 +15,22 @@
 #include "rtdevice.h"
 #ifdef RT_USING_SERIAL
 
+//#define DRV_DEBUG
+//#define LOG_TAG             "drv.usart"
+//#include <drv_log.h>
+
 #define UART0_CONFIG                                                \
     {                                                               \
         .name = "uart0",                                            \
-        .Instance = MXC_UART_GET_UART(0),                                         \
-        .irq_type = MXC_UART_GET_IRQ(0),                                    \
+        .Instance = MXC_UART_GET_UART(0),                           \
+        .irq_type = MXC_UART_GET_IRQ(0),                            \
     }
-
 
 #define UART1_CONFIG                                                \
     {                                                               \
         .name = "uart1",                                            \
-        .Instance = MXC_UART_GET_UART(1),                                         \
-        .irq_type = MXC_UART_GET_IRQ(1),                                    \
+        .Instance = MXC_UART_GET_UART(1),                           \
+        .irq_type = MXC_UART_GET_IRQ(1),                            \
     }
 
 struct mcu_uart_config
@@ -48,10 +51,6 @@ struct mcu_uart
 
 
 
-
-//#define DRV_DEBUG
-//#define LOG_TAG             "drv.usart"
-//#include <drv_log.h>
 
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1)
 
@@ -92,7 +91,7 @@ void UART1_IRQHandler(void)
     uint32_t  intst = 0;
     intst = MXC_UART1->int_fl;
     MXC_UART1->int_fl = intst;
-    
+
     rt_interrupt_leave();
 }
 #endif
@@ -138,9 +137,10 @@ static rt_err_t mcu_configure(struct rt_serial_device *serial, struct serial_con
     mcu_cfg.pol = UART_FLOW_POL_EN;
 
     error = UART_Init(uart->handle, &mcu_cfg, &sys_uart_cfg);
-    if (error != E_NO_ERROR) {
+    if (error != E_NO_ERROR)
+    {
         rt_kprintf("Error initializing UART %d\n", error);
-        while(1) {}
+        while (1) {}
     }
     return RT_EOK;
 }
@@ -171,7 +171,7 @@ static rt_err_t mcu_control(struct rt_serial_device *serial, int cmd, void *arg)
         uart->handle->ctrl |=  0x05 << MXC_F_UART_CTRL_RX_TO_POS;
         uart->handle->int_en |= MXC_F_UART_INT_EN_RX_FIFO_THRESH | \
                                 MXC_F_UART_INT_EN_RX_TIMEOUT;
-    
+
         uart->handle->int_en |= MXC_F_UART_INT_EN_RX_FRAME_ERROR | \
                                 MXC_F_UART_INT_EN_RX_PARITY_ERROR | \
                                 MXC_F_UART_INT_EN_RX_OVERRUN ;
