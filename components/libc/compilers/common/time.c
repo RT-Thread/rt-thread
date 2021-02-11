@@ -14,6 +14,9 @@
  * 2021-02-11     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
  *                             add difftime()
  * 2021-02-12     Meco Man     add errno
+ * 2012-12-08     Bernard      <clock_time.c> fix the issue of _timevalue.tv_usec initialization,
+ *                             which found by Rob <rdent@iinet.net.au>
+ * 2021-02-12     Meco Man     move all of the functions located in <clock_time.c> to this file
  */
 
 #include <sys/time.h>
@@ -26,7 +29,7 @@
 #define SPD 24*60*60
 
 /* days per month -- nonleap! */
-const short __spm[13] =
+static const short __spm[13] =
 {
     0,
     (31),
@@ -97,12 +100,14 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_isdst = 0;
     return r;
 }
+RTM_EXPORT(gmtime_r);
 
 struct tm* gmtime(const time_t* t)
 {
     static struct tm tmp;
     return gmtime_r(t, &tmp);
 }
+RTM_EXPORT(gmtime);
 
 /*TODO: timezone */
 struct tm* localtime_r(const time_t* t, struct tm* r)
@@ -114,18 +119,21 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
     local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
+RTM_EXPORT(localtime_r);
 
 struct tm* localtime(const time_t* t)
 {
     static struct tm tmp;
     return localtime_r(t, &tmp);
 }
+RTM_EXPORT(localtime);
 
 /* TODO: timezone */
 time_t mktime(struct tm * const t)
 {
     return timegm(t);
 }
+RTM_EXPORT(mktime);
 
 char* asctime_r(const struct tm *t, char *buf)
 {
@@ -147,28 +155,33 @@ char* asctime_r(const struct tm *t, char *buf)
     buf[24] = '\n';
     return buf;
 }
+RTM_EXPORT(asctime_r);
 
 char* asctime(const struct tm *timeptr)
 {
     static char buf[25];
     return asctime_r(timeptr, buf);
 }
+RTM_EXPORT(asctime);
 
 char *ctime_r (const time_t * tim_p, char * result)
 {
     struct tm tm;
     return asctime_r (localtime_r (tim_p, &tm), result);
 }
+RTM_EXPORT(ctime_r);
 
 char* ctime(const time_t *tim_p)
 {
     return asctime (localtime (tim_p));
 }
+RTM_EXPORT(ctime);
 
 double difftime (time_t tim1, time_t tim2)
 {
     return (double)(tim1 - tim2);
 }
+RTM_EXPORT(difftime);
 
 /**
  * Returns the current time.
@@ -216,11 +229,13 @@ RT_WEAK time_t time(time_t *t)
 
     return time_now;
 }
+RTM_EXPORT(time);
 
 RT_WEAK clock_t clock(void)
 {
     return rt_tick_get();
 }
+RTM_EXPORT(clock);
 
 int stime(const time_t *t)
 {
@@ -246,6 +261,7 @@ int stime(const time_t *t)
     return -1;
 #endif /* RT_USING_RTC */
 }
+RTM_EXPORT(stime);
 
 time_t timegm(struct tm * const t)
 {
@@ -320,6 +336,7 @@ time_t timegm(struct tm * const t)
     i = 60;
     return ((day + t->tm_hour) * i + t->tm_min) * i + t->tm_sec;
 }
+RTM_EXPORT(timegm);
 
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
@@ -338,6 +355,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         return -1;
     }
 }
+RTM_EXPORT(gettimeofday);
 
 /* TODO: timezone */
 int settimeofday(const struct timeval *tv, const struct timezone *tz)
@@ -352,3 +370,146 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
         return -1;
     }
 }
+RTM_EXPORT(settimeofday);
+
+#ifdef RT_USING_PTHREADS
+static struct timeval _timevalue;
+static int clock_time_system_init()
+{
+    time_t time;
+    rt_tick_t tick;
+    rt_device_t device;
+
+    time = 0;
+    device = rt_device_find("rtc");
+    if (device != RT_NULL)
+    {
+        /* get realtime seconds */
+        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
+    }
+
+    /* get tick */
+    tick = rt_tick_get();
+
+    _timevalue.tv_usec = (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
+    _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
+
+    return 0;
+}
+INIT_COMPONENT_EXPORT(clock_time_system_init);
+
+int clock_getres(clockid_t clockid, struct timespec *res)
+{
+    int ret = 0;
+
+    if (res == RT_NULL)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    switch (clockid)
+    {
+    case CLOCK_REALTIME:
+        res->tv_sec = 0;
+        res->tv_nsec = NANOSECOND_PER_SECOND/RT_TICK_PER_SECOND;
+        break;
+
+#ifdef RT_USING_CPUTIME
+    case CLOCK_CPUTIME_ID:
+        res->tv_sec  = 0;
+        res->tv_nsec = clock_cpu_getres();
+        break;
+#endif
+
+    default:
+        ret = -1;
+        rt_set_errno(EINVAL);
+        break;
+    }
+
+    return ret;
+}
+RTM_EXPORT(clock_getres);
+
+int clock_gettime(clockid_t clockid, struct timespec *tp)
+{
+    int ret = 0;
+
+    if (tp == RT_NULL)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    switch (clockid)
+    {
+    case CLOCK_REALTIME:
+        {
+            /* get tick */
+            int tick = rt_tick_get();
+
+            tp->tv_sec  = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
+            tp->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
+        }
+        break;
+
+#ifdef RT_USING_CPUTIME
+    case CLOCK_CPUTIME_ID:
+        {
+            float unit = 0;
+            long long cpu_tick;
+
+            unit = clock_cpu_getres();
+            cpu_tick = clock_cpu_gettime();
+
+            tp->tv_sec  = ((int)(cpu_tick * unit)) / NANOSECOND_PER_SECOND;
+            tp->tv_nsec = ((int)(cpu_tick * unit)) % NANOSECOND_PER_SECOND;
+        }
+        break;
+#endif
+    default:
+        rt_set_errno(EINVAL);
+        ret = -1;
+    }
+
+    return ret;
+}
+RTM_EXPORT(clock_gettime);
+
+int clock_settime(clockid_t clockid, const struct timespec *tp)
+{
+    int second;
+    rt_tick_t tick;
+    rt_device_t device;
+
+    if ((clockid != CLOCK_REALTIME) || (tp == RT_NULL))
+    {
+        rt_set_errno(EINVAL);
+
+        return -1;
+    }
+
+    /* get second */
+    second = tp->tv_sec;
+    /* get tick */
+    tick = rt_tick_get();
+
+    /* update timevalue */
+    _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
+    _timevalue.tv_sec = second - tick/RT_TICK_PER_SECOND - 1;
+
+    /* update for RTC device */
+    device = rt_device_find("rtc");
+    if (device != RT_NULL)
+    {
+        /* set realtime seconds */
+        rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, &second);
+    }
+    else
+        return -1;
+
+    return 0;
+}
+RTM_EXPORT(clock_settime);
+#endif /*RT_USING_PTHREADS*/

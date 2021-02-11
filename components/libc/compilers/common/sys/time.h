@@ -10,6 +10,7 @@
 #ifndef _SYS_TIME_H_
 #define _SYS_TIME_H_
 
+#include <rtconfig.h>
 #include <time.h>
 
 #ifdef __cplusplus
@@ -52,6 +53,38 @@ int stime(const time_t *t);
 time_t timegm(struct tm * const t);
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
+
+#ifdef RT_USING_PTHREADS
+/* posix clock and timer */
+#define MILLISECOND_PER_SECOND  1000UL
+#define MICROSECOND_PER_SECOND  1000000UL
+#define NANOSECOND_PER_SECOND   1000000000UL
+
+#define MILLISECOND_PER_TICK    (MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
+#define MICROSECOND_PER_TICK    (MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
+#define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
+
+#ifndef CLOCK_REALTIME
+#define CLOCK_REALTIME      1
+#endif
+
+#define CLOCK_CPUTIME_ID    2
+
+#ifndef CLOCK_PROCESS_CPUTIME_ID
+#define CLOCK_PROCESS_CPUTIME_ID CLOCK_CPUTIME_ID
+#endif
+#ifndef CLOCK_THREAD_CPUTIME_ID
+#define CLOCK_THREAD_CPUTIME_ID  CLOCK_CPUTIME_ID
+#endif
+
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC     4
+#endif
+
+int clock_getres  (clockid_t clockid, struct timespec *res);
+int clock_gettime (clockid_t clockid, struct timespec *tp);
+int clock_settime (clockid_t clockid, const struct timespec *tp);
+#endif /*RT_USING_PTHREADS*/
 
 #ifdef __cplusplus
 }

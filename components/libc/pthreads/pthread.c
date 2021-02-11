@@ -13,6 +13,7 @@
 #include <rthw.h>
 #include <pthread.h>
 #include <sched.h>
+#include <sys/time.h>
 #include "pthread_internal.h"
 
 RT_DEFINE_SPINLOCK(pth_lock);
@@ -688,3 +689,35 @@ int pthread_cancel(pthread_t thread)
 }
 RTM_EXPORT(pthread_cancel);
 
+int clock_time_to_tick(const struct timespec *time)
+{
+    int tick;
+    int nsecond, second;
+    struct timespec tp;
+
+    RT_ASSERT(time != RT_NULL);
+
+    tick = RT_WAITING_FOREVER;
+    if (time != NULL)
+    {
+        /* get current tp */
+        clock_gettime(CLOCK_REALTIME, &tp);
+
+        if ((time->tv_nsec - tp.tv_nsec) < 0)
+        {
+            nsecond = NANOSECOND_PER_SECOND - (tp.tv_nsec - time->tv_nsec);
+            second  = time->tv_sec - tp.tv_sec - 1;
+        }
+        else
+        {
+            nsecond = time->tv_nsec - tp.tv_nsec;
+            second  = time->tv_sec - tp.tv_sec;
+        }
+
+        tick = second * RT_TICK_PER_SECOND + nsecond * RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND;
+        if (tick < 0) tick = 0;
+    }
+
+    return tick;
+}
+RTM_EXPORT(clock_time_to_tick);
