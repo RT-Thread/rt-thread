@@ -13,6 +13,7 @@
  * 2021-02-10     Meco Man     add ctime_r() and re-implement ctime()
  * 2021-02-11     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
  *                             add difftime()
+ * 2021-02-12     Meco Man     add errno
  */
 
 #include <sys/time.h>
@@ -208,6 +209,11 @@ RT_WEAK time_t time(time_t *t)
         *t = time_now;
     }
 
+    if(time_now == (time_t)-1)
+    {
+        errno = ENOSYS;
+    }
+
     return time_now;
 }
 
@@ -230,11 +236,13 @@ int stime(const time_t *t)
     }
     else
     {
+        errno = ENOSYS;
         return -1;
     }
     return 0;
 
 #else
+    errno = ENOSYS;
     return -1;
 #endif /* RT_USING_RTC */
 }
@@ -316,14 +324,17 @@ time_t timegm(struct tm * const t)
 /* TODO: timezone */
 int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
-    if (tv != RT_NULL)
+    time_t t = time(RT_NULL);
+
+    if (tv != RT_NULL && t != (time_t)-1)
     {
-        tv->tv_sec = time(RT_NULL);
+        tv->tv_sec = t;
         tv->tv_usec = 0;
         return 0;
     }
     else
     {
+        errno = ENOSYS;
         return -1;
     }
 }
@@ -337,6 +348,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     }
     else
     {
+        errno = ENOSYS;
         return -1;
     }
 }
