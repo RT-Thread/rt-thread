@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__RTTHREAD__</Define>
+              <Define>TARGET=32660, TARGET_REV=0x4131, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\HAL_Drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MAX32660PeriphDriverCMSIS\Device\Maxim\MAX32660\Include;..\libraries\MAX32660PeriphDriver\CMSIS\Core\Include;..\libraries\MAX32660PeriphDriver\Include</IncludePath>
+              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\HAL_Drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Include;..\libraries\MAX32660PeriphDriver\CMSIS\Core\Include;..\libraries\MAX32660PeriphDriver\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
