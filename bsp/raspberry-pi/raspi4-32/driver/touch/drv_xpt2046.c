@@ -19,7 +19,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-//XPT2049
+//XPT2046
 #define     READ_X                (0xD0)
 #define     READ_Y                (0x90)
 
@@ -218,7 +218,7 @@ static struct rt_touch_ops touch_ops =
     .touch_control = xpt2046_control,
 };
 
-static int hw_xpt2049_touch_init(void)
+static int hw_xpt2046_touch_init(void)
 {
     //touch sem
     rt_sem_init(&touch_ack, "touch_ack", 0, RT_IPC_FLAG_FIFO);
@@ -249,4 +249,4 @@ static int hw_xpt2049_touch_init(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(hw_xpt2049_touch_init);
+INIT_DEVICE_EXPORT(hw_xpt2046_touch_init);
