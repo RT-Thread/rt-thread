@@ -39,10 +39,6 @@ RTM_EXPORT(snprintf);
 
 RTM_EXPORT(fwrite);
 
-#include <time.h>
-RTM_EXPORT(localtime);
-RTM_EXPORT(time);
-
 #include <setjmp.h>
 RTM_EXPORT(longjmp);
 RTM_EXPORT(setjmp);
