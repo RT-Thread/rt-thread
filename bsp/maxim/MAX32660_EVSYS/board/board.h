@@ -4,10 +4,13 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#define MCU_FLASH_SIZE MCU_FLASH_SIZE_KB*1024
-#define MCU_FLASH_END_ADDRESS        ((uint32_t)(MCU_FLASH_START_ADDRESS + MCU_FLASH_SIZE))
-#define MCU_SRAM_SIZE MCU_SRAM_SIZE_KB*1024
-#define MCU_SRAM_END_ADDRESS        (MCU_SRAM_START_ADDRESS + MCU_SRAM_SIZE)
+#define MCU_FLASH_START_ADRESS       ((uint32_t)0x0)
+#define MCU_FLASH_SIZE_KB               (256)
+#define MCU_FLASH_END_ADDRESS        ((uint32_t)(MCU_FLASH_START_ADRESS + MCU_FLASH_SIZE*1024))
+
+#define MCU_SRAM_SIZE_KB               (96)
+#define MCU_SRAM_START              (0x20000000)
+#define MCU_SRAM_END                (MCU_SRAM_START + MCU_SRAM_SIZE_KB * 1024)
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
@@ -20,8 +23,7 @@ extern int __bss_end__;
 #define HEAP_BEGIN      ((void *)&__bss_end__)
 #endif
 
-#define HEAP_SIZE      16*1024
-#define HEAP_END       (HEAP_BEGIN + HEAP_SIZE)
+#define HEAP_END       MCU_SRAM_END
 
 void rt_hw_board_init(void);
 

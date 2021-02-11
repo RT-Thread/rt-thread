@@ -12,10 +12,6 @@
 #include "uart.h"
 #include "rtdevice.h"
 
-#define BUFF_SIZE           10
-uint8_t rxdata[BUFF_SIZE]={0};
-
-
 #define UART0_CONFIG                                                \
     {                                                               \
         .name = "uart0",                                            \
@@ -23,7 +19,7 @@ uint8_t rxdata[BUFF_SIZE]={0};
         .irq_type = MXC_UART_GET_IRQ(0),                                    \
     }
 
-    
+
 #define UART1_CONFIG                                                \
     {                                                               \
         .name = "uart1",                                            \
@@ -87,13 +83,13 @@ static struct mcu_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = 
 void UART1_IRQHandler(void)
 {
     rt_interrupt_enter();
-    
+
     rt_hw_serial_isr(&(uart_obj[UART1_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
-    /* leave interrupt */
+
     uint32_t  intst = 0;
     intst = MXC_UART1->int_fl;
     MXC_UART1->int_fl = intst;
-
+    
     rt_interrupt_leave();
 }
 #endif
@@ -101,16 +97,16 @@ void UART1_IRQHandler(void)
 #ifdef BSP_USING_UART0
 void UART0_IRQHandler(void)
 {
-    //UART_Handler(MXC_UART0);
     /* enter interrupt */
     rt_interrupt_enter();
-    
+
     rt_hw_serial_isr(&(uart_obj[UART0_INDEX].serial), RT_SERIAL_EVENT_RX_IND);
-    /* leave interrupt */
+    /* clear flags */
+
     uint32_t  intst = 0;
     intst = MXC_UART0->int_fl;
     MXC_UART0->int_fl = intst;
-    
+
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -119,11 +115,12 @@ void UART0_IRQHandler(void)
 
 static rt_err_t mcu_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    int error, i;
+    int error;
     struct mcu_uart *uart;
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
-    const sys_cfg_uart_t sys_uart_cfg = {
+    const sys_cfg_uart_t sys_uart_cfg =
+    {
         MAP_A,
         UART_FLOW_DISABLE,
     };
@@ -136,10 +133,12 @@ static rt_err_t mcu_configure(struct rt_serial_device *serial, struct serial_con
     mcu_cfg.size = UART_DATA_SIZE_8_BITS;
     mcu_cfg.flow = UART_FLOW_CTRL_EN;
     mcu_cfg.pol = UART_FLOW_POL_EN;
-    
-    error= UART_Init(uart->handle, &mcu_cfg, &sys_uart_cfg);
-    
-     
+
+    error = UART_Init(uart->handle, &mcu_cfg, &sys_uart_cfg);
+    if (error != E_NO_ERROR) {
+        rt_kprintf("Error initializing UART %d\n", error);
+        while(1) {}
+    }
     return RT_EOK;
 }
 
@@ -155,7 +154,6 @@ static rt_err_t mcu_control(struct rt_serial_device *serial, int cmd, void *arg)
     /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
         /* disable rx irq */
-      //  NVIC_DisableIRQ(uart->config->irq_type);
         NVIC_ClearPendingIRQ(uart->config->irq_type);
         NVIC_DisableIRQ(uart->config->irq_type);
         /* disable interrupt */
@@ -164,31 +162,23 @@ static rt_err_t mcu_control(struct rt_serial_device *serial, int cmd, void *arg)
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         /* enable rx irq */
-          NVIC_SetPriority(uart->config->irq_type, 1);
-          NVIC_EnableIRQ(uart->config->irq_type);
-    /* enable interrupt */
-          uart->handle->ctrl |=  0x05 << MXC_F_UART_CTRL_RX_TO_POS;
-          uart->handle->int_en |= MXC_F_UART_INT_EN_RX_FIFO_THRESH | MXC_F_UART_INT_EN_RX_TIMEOUT;
-#define UART_ER_IE (MXC_F_UART_INT_EN_RX_FRAME_ERROR | \
-                    MXC_F_UART_INT_EN_RX_PARITY_ERROR | \
-                    MXC_F_UART_INT_EN_RX_OVERRUN )
-              uart->handle->int_en |= UART_ER_IE;
+        NVIC_SetPriority(uart->config->irq_type, 1);
+        NVIC_EnableIRQ(uart->config->irq_type);
+        /* enable interrupt */
+        uart->handle->ctrl |=  0x05 << MXC_F_UART_CTRL_RX_TO_POS;
+        uart->handle->int_en |= MXC_F_UART_INT_EN_RX_FIFO_THRESH | \
+                                MXC_F_UART_INT_EN_RX_TIMEOUT;
     
-          uart->handle->thresh_ctrl=MXC_UART_FIFO_DEPTH<<
-                      MXC_F_UART_THRESH_CTRL_RX_FIFO_THRESH_POS;
-        break;
+        uart->handle->int_en |= MXC_F_UART_INT_EN_RX_FRAME_ERROR | \
+                                MXC_F_UART_INT_EN_RX_PARITY_ERROR | \
+                                MXC_F_UART_INT_EN_RX_OVERRUN ;
 
-#ifdef RT_SERIAL_USING_DMA
-    case RT_DEVICE_CTRL_CONFIG:
-        stm32_dma_config(serial, ctrl_arg);
+        uart->handle->thresh_ctrl = MXC_UART_FIFO_DEPTH <<
+                                    MXC_F_UART_THRESH_CTRL_RX_FIFO_THRESH_POS;
         break;
-#endif
 
     case RT_DEVICE_CTRL_CLOSE:
-//        if (HAL_UART_DeInit(&(uart->handle)) != HAL_OK )
-//        {
-//            RT_ASSERT(0)
-//        }
+        UART_Shutdown(uart->handle);
         break;
 
     }
@@ -214,17 +204,13 @@ static int mcu_getc(struct rt_serial_device *serial)
 
     ch = -1;
 
-    if(UART_NumReadAvail(uart->handle))
+    if (UART_NumReadAvail(uart->handle))
     {
-       ch = UART_ReadByte(uart->handle);
+        ch = UART_ReadByte(uart->handle);
     }
 
     return ch;
 }
-
-
-
-
 
 static const struct rt_uart_ops mcu_uart_ops =
 {
