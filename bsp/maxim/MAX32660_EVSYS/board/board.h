@@ -19,8 +19,8 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 #pragma section="CSTACK"
 #define HEAP_BEGIN      (__segment_end("CSTACK"))
 #else
-extern int __bss_end__;
-#define HEAP_BEGIN      ((void *)&__bss_end__)
+extern int _ebss;
+#define HEAP_BEGIN      ((void *)&_ebss)
 #endif
 
 #define HEAP_END       MCU_SRAM_END
