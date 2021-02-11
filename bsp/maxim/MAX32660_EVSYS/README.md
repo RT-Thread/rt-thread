@@ -12,7 +12,7 @@
 
 开发板datasheet： [MAX32660-EVSYS.pdf)](https://datasheets.maximintegrated.com/en/ds/MAX32660-EVSYS.pdf)
 
-支持IDE: keil， [eclipse](https://www.maximintegrated.com/en/design/software-description.html/swpart=SFW0001500A)
+支持IDE: [keil pack](http://www.mxim.net/microcontroller/pack/Maxim.MAX32660.1.2.0.pack)， [eclipse](https://www.maximintegrated.com/en/design/software-description.html/swpart=SFW0001500A)
 
 本文主要内容如下：
 
@@ -70,17 +70,17 @@ MAX32660-EVSYS开发板常用 **板载资源** 如下：
 
 本 BSP 目前对外设的支持情况如下：
 
-| **片上外设** | **支持情况** |   **备注**   |
-| :----------- | :----------: | :----------: |
-| GPIO         |              |              |
-| UART         |     支持     | UART0, UART1 |
-| PWM          |              |              |
-| SPI          |              |              |
-| RTC          |              |              |
-| I2S          |              |              |
-| I2C          |              |              |
-| TIMER        |              |              |
-| Watchdog     |              |              |
+| **片上外设** | **支持情况** |       **备注**        |
+| :----------- | :----------: | :-------------------: |
+| GPIO         |              |                       |
+| UART         |     支持     | UART0, UART1(console) |
+| PWM          |              |                       |
+| SPI          |              |                       |
+| RTC          |              |                       |
+| I2S          |              |                       |
+| I2C          |              |                       |
+| TIMER        |              |                       |
+| Watchdog     |              |                       |
 
 
 
