@@ -32,49 +32,36 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-void SysTick_Configuration(void)
+void rt_hw_systick_init(void)
 {
     uint32_t error;
-    error = SYS_SysTick_Config(SYS_SysTick_GetFreq()/RT_TICK_PER_SECOND, 1, MXC_TMR0);
+    error = SYS_SysTick_Config(SYS_SysTick_GetFreq() / RT_TICK_PER_SECOND, 1, MXC_TMR0);
 
-    if (error != E_NO_ERROR) {
+    if (error != E_NO_ERROR)
+    {
         printf("ERROR: Ticks is not valid");
     }
 }
 
-mxc_uart_regs_t *ConsoleUART = MXC_UART_GET_UART(1);
-
-const sys_cfg_uart_t console_uart_sys_cfg = {
-    MAP_A,
-    UART_FLOW_DISABLE,
-};
-
-
 void rt_hw_board_init(void)
 {
-   // rt_hw_interrupt_enable(0);
-    // sd_power_dcdc_mode_set(NRF_POWER_DCDC_ENABLE);
-    /* Activate deep sleep mode */
 
-    SysTick_Configuration();
+    rt_hw_systick_init();
 
 #if defined(RT_USING_HEAP)
-    rt_system_heap_init((void *)(0x20000000+16*1024), (void *)(0x20000000+64*1024));
+    rt_system_heap_init((void *)(HEAP_BEGIN), (void *)(HEAP_END));
 #endif
-   
+
 #ifdef RT_USING_SERIAL
     rt_hw_usart_init();
 #endif
-    
+
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-    
+
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
-    
-
-
 }
 
