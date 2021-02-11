@@ -8,6 +8,12 @@
  * 2019-08-21     zhangjun     copy from minilibc
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
  * 2021-02-05     Meco Man     add timegm()
+ * 2021-02-07     Meco Man     fixed gettimeofday()
+ * 2021-02-08     Meco Man     add settimeofday() stime()
+ * 2021-02-10     Meco Man     add ctime_r() and re-implement ctime()
+ * 2021-02-11     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
+ *                             add difftime()
+ * 2021-02-12     Meco Man     add errno
  */
 
 #include <sys/time.h>
@@ -15,9 +21,6 @@
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
 #endif
-
-
-#if !defined (__IAR_SYSTEMS_ICC__)
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -39,8 +42,9 @@ const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30),
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
-static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
-static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+
+ALIGN(4) static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
+ALIGN(4) static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 static int __isleap(int year)
 {
@@ -89,6 +93,8 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
         ;
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
+
+    r->tm_isdst = 0;
     return r;
 }
 
@@ -102,10 +108,10 @@ struct tm* gmtime(const time_t* t)
 struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
-    int timezone;
+    int utc_plus;
 
-    timezone = 0 * 3600 * 8; /* GTM: UTC+0 */
-    local_tz = *t + timezone;
+    utc_plus = 0; /* GTM: UTC+0 */
+    local_tz = *t + utc_plus * 3600;
     return gmtime_r(&local_tz, r);
 }
 
@@ -148,44 +154,45 @@ char* asctime(const struct tm *timeptr)
     return asctime_r(timeptr, buf);
 }
 
-char* ctime(const time_t *timep)
+char *ctime_r (const time_t * tim_p, char * result)
 {
-    return asctime(localtime(timep));
+    struct tm tm;
+    return asctime_r (localtime_r (tim_p, &tm), result);
 }
 
-#endif /* __IAR_SYSTEMS_ICC__ */
+char* ctime(const time_t *tim_p)
+{
+    return asctime (localtime (tim_p));
+}
+
+double difftime (time_t tim1, time_t tim2)
+{
+    return (double)(tim1 - tim2);
+}
 
 /**
  * Returns the current time.
  *
  * @param time_t * t the timestamp pointer, if not used, keep NULL.
  *
- * @return time_t return timestamp current.
+ * @return The value ((time_t)-1) is returned if the calendar time is not available. 
+ *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000 /* for IAR 6.2 later Compiler */
-#pragma module_name = "?time"
-#if _DLIB_TIME_USES_64
-time_t __time64(time_t *t) 
-#else
-time_t __time32(time_t *t) 
-#endif
-#else /* Keil & GCC */
-time_t time(time_t *t)
-#endif
+RT_WEAK time_t time(time_t *t)
 {
-    time_t time_now = 0;
+    time_t time_now = ((time_t)-1); /* default is not available */
 
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
 
-    /* optimization: find rtc device only first. */
+    /* optimization: find rtc device only first */
     if (device == RT_NULL)
     {
         device = rt_device_find("rtc");
     }
 
-    /* read timestamp from RTC device. */
+    /* read timestamp from RTC device */
     if (device != RT_NULL)
     {
         if (rt_device_open(device, 0) == RT_EOK)
@@ -202,6 +209,11 @@ time_t time(time_t *t)
         *t = time_now;
     }
 
+    if(time_now == (time_t)-1)
+    {
+        errno = ENOSYS;
+    }
+
     return time_now;
 }
 
@@ -210,26 +222,29 @@ RT_WEAK clock_t clock(void)
     return rt_tick_get();
 }
 
-/* TODO: timezone */
-int gettimeofday(struct timeval *tp, struct timezone *tz)
+int stime(const time_t *t)
 {
-    time_t time = 0;
-#ifdef RT_USING_DEVICE
+#ifdef RT_USING_RTC
     rt_device_t device;
-    device = rt_device_find("rtc");
-    RT_ASSERT(device != RT_NULL);
-    rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
-    if (tp != RT_NULL)
-    {
-        tp->tv_sec = time;
-        tp->tv_usec = 0;
-    }
-#else
-    tv->tv_sec = 0;
-    tv->tv_usec = 0;
-#endif
 
-    return time;
+    /* read timestamp from RTC device. */
+    device = rt_device_find("rtc");
+    if (rt_device_open(device, 0) == RT_EOK)
+    {
+        rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_TIME, (void*)t);
+        rt_device_close(device);
+    }
+    else
+    {
+        errno = ENOSYS;
+        return -1;
+    }
+    return 0;
+
+#else
+    errno = ENOSYS;
+    return -1;
+#endif /* RT_USING_RTC */
 }
 
 time_t timegm(struct tm * const t)
@@ -304,4 +319,36 @@ time_t timegm(struct tm * const t)
     day *= i;
     i = 60;
     return ((day + t->tm_hour) * i + t->tm_min) * i + t->tm_sec;
+}
+
+/* TODO: timezone */
+int gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+    time_t t = time(RT_NULL);
+
+    if (tv != RT_NULL && t != (time_t)-1)
+    {
+        tv->tv_sec = t;
+        tv->tv_usec = 0;
+        return 0;
+    }
+    else
+    {
+        errno = ENOSYS;
+        return -1;
+    }
+}
+
+/* TODO: timezone */
+int settimeofday(const struct timeval *tv, const struct timezone *tz)
+{
+    if (tv != RT_NULL)
+    {
+        return stime((const time_t *)&tv->tv_sec);
+    }
+    else
+    {
+        errno = ENOSYS;
+        return -1;
+    }
 }
