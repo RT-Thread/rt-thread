@@ -174,23 +174,24 @@ double difftime (time_t tim1, time_t tim2)
  *
  * @param time_t * t the timestamp pointer, if not used, keep NULL.
  *
- * @return time_t return timestamp current.
+ * @return The value ((time_t)-1) is returned if the calendar time is not available. 
+ *         If timer is not a NULL pointer, the return value is also stored in timer.
  *
  */
 RT_WEAK time_t time(time_t *t)
 {
-    time_t time_now = 0;
+    time_t time_now = ((time_t)-1); /* default is not available */
 
 #ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
 
-    /* optimization: find rtc device only first. */
+    /* optimization: find rtc device only first */
     if (device == RT_NULL)
     {
         device = rt_device_find("rtc");
     }
 
-    /* read timestamp from RTC device. */
+    /* read timestamp from RTC device */
     if (device != RT_NULL)
     {
         if (rt_device_open(device, 0) == RT_EOK)
