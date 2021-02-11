@@ -1,8 +1,3 @@
-/**
- * @file       mxc_config.h
- * @brief      Top-level include file for device configuration.
- */
- 
 /*******************************************************************************
  * Copyright (C) 2016 Maxim Integrated Products, Inc., All Rights Reserved.
  *
@@ -34,20 +29,44 @@
  * property whatsoever. Maxim Integrated Products, Inc. retains all
  * ownership rights.
  *
- * $Date: 2018-08-09 18:45:02 -0500 (Thu, 09 Aug 2018) $
- * $Revision: 36818 $
+ * $Date: 2018-12-18 15:37:22 -0600 (Tue, 18 Dec 2018) $
+ * $Revision: 40072 $
  *
  ******************************************************************************/
 
-#ifndef _MXC_CONFIG_H
-#define _MXC_CONFIG_H
+/**
+ * @file    mxc_device.h
+ * @brief   contains device and revision specific definitions
+ */
+ 
+#ifndef _MXC_DEVICE_H_
+#define _MXC_DEVICE_H_
 
-#if !defined __GNUC__
-#include "RTE_Components.h"
-#endif /* not __GNUC__ */
+#include "max32660.h"
 
-#include "mxc_device.h"
-#include "mxc_errors.h"
-#include "mxc_pins.h"
+#ifndef TARGET
+    #error TARGET NOT DEFINED
+#endif
 
-#endif /* _CONFIG_H */
+// Create a string definition for the TARGET
+#define STRING_ARG(arg) #arg
+#define STRING_NAME(name) STRING_ARG(name)
+#define TARGET_NAME STRING_NAME(TARGET)
+
+// Define which revisions of the IP we are using
+#ifndef TARGET_REV
+    #error TARGET_REV NOT DEFINED
+#endif
+
+#if(TARGET_REV == 0x4131) 
+    // A1
+    #define MXC_PBM_REV         0
+    #define MXC_TMR_REV         0
+    #define MXC_UART_REV        1
+#else
+
+#error TARGET_REV NOT SUPPORTED
+
+#endif  // if(TARGET_REV == ...) 
+
+#endif  /* _MXC_DEVICE_H_ */

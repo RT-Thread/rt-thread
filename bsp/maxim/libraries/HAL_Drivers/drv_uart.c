@@ -1,16 +1,19 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-02-08     Supperthomas first version
+ * 2021-02-11     supperthomas first version
+ *
  */
+
 
 #include "board.h"
 #include "uart.h"
 #include "rtdevice.h"
+#ifdef RT_USING_SERIAL
 
 #define UART0_CONFIG                                                \
     {                                                               \
@@ -44,7 +47,7 @@ struct mcu_uart
 };
 
 
-#ifdef RT_USING_SERIAL
+
 
 //#define DRV_DEBUG
 //#define LOG_TAG             "drv.usart"
