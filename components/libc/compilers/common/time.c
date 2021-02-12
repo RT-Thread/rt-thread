@@ -512,4 +512,38 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     return 0;
 }
 RTM_EXPORT(clock_settime);
+
+int clock_time_to_tick(const struct timespec *time)
+{
+    int tick;
+    int nsecond, second;
+    struct timespec tp;
+
+    RT_ASSERT(time != RT_NULL);
+
+    tick = RT_WAITING_FOREVER;
+    if (time != NULL)
+    {
+        /* get current tp */
+        clock_gettime(CLOCK_REALTIME, &tp);
+
+        if ((time->tv_nsec - tp.tv_nsec) < 0)
+        {
+            nsecond = NANOSECOND_PER_SECOND - (tp.tv_nsec - time->tv_nsec);
+            second  = time->tv_sec - tp.tv_sec - 1;
+        }
+        else
+        {
+            nsecond = time->tv_nsec - tp.tv_nsec;
+            second  = time->tv_sec - tp.tv_sec;
+        }
+
+        tick = second * RT_TICK_PER_SECOND + nsecond * RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND;
+        if (tick < 0) tick = 0;
+    }
+
+    return tick;
+}
+RTM_EXPORT(clock_time_to_tick);
+
 #endif /* RT_USING_POSIX */
