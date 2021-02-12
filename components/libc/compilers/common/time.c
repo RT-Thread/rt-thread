@@ -372,7 +372,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 }
 RTM_EXPORT(settimeofday);
 
-#ifdef RT_USING_PTHREADS
+#ifdef RT_USING_POSIX
 static struct timeval _timevalue;
 static int clock_time_system_init()
 {
@@ -512,4 +512,4 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     return 0;
 }
 RTM_EXPORT(clock_settime);
-#endif /*RT_USING_PTHREADS*/
+#endif /* RT_USING_POSIX */
