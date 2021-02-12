@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-09-07     Meco Man     combine gcc armcc iccarm
+ * 2021-02-12     Meco Man     move all definitions located in <clock_time.h> to this file
  */
 #ifndef _SYS_TIME_H_
 #define _SYS_TIME_H_
