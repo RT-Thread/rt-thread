@@ -54,7 +54,7 @@ time_t timegm(struct tm * const t);
 int gettimeofday(struct timeval *tv, struct timezone *tz);
 int settimeofday(const struct timeval *tv, const struct timezone *tz);
 
-#ifdef RT_USING_PTHREADS
+#ifdef RT_USING_POSIX
 #include <sys/types.h>
 /* posix clock and timer */
 #define MILLISECOND_PER_SECOND  1000UL
@@ -85,7 +85,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz);
 int clock_getres  (clockid_t clockid, struct timespec *res);
 int clock_gettime (clockid_t clockid, struct timespec *tp);
 int clock_settime (clockid_t clockid, const struct timespec *tp);
-#endif /*RT_USING_PTHREADS*/
+#endif /* RT_USING_POSIX */
 
 #ifdef __cplusplus
 }
