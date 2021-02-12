@@ -120,7 +120,7 @@
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
-//#define RT_USING_DFS
+#define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
