@@ -90,9 +90,9 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
 
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
-                const char __fsym_##cmd##_name[] SECTION(".rodata.name") = #cmd;    \
-                const char __fsym_##cmd##_desc[] SECTION(".rodata.name") = #desc;   \
-                RT_USED const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
+                const char __fsym_##cmd##_name[] RT_SECTION(".rodata.name") = #cmd;    \
+                const char __fsym_##cmd##_desc[] RT_SECTION(".rodata.name") = #desc;   \
+                RT_USED const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
                 {                           \
                     __fsym_##cmd##_name,    \
                     __fsym_##cmd##_desc,    \
@@ -100,9 +100,9 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
                 };
 
             #define FINSH_VAR_EXPORT(name, type, desc)                              \
-                const char __vsym_##name##_name[] SECTION(".rodata.name") = #name;  \
-                const char __vsym_##name##_desc[] SECTION(".rodata.name") = #desc;  \
-                RT_USED const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
+                const char __vsym_##name##_name[] RT_SECTION(".rodata.name") = #name;  \
+                const char __vsym_##name##_desc[] RT_SECTION(".rodata.name") = #desc;  \
+                RT_USED const struct finsh_sysvar __vsym_##name RT_SECTION("VSymTab")= \
                 {                           \
                     __vsym_##name##_name,   \
                     __vsym_##name##_desc,   \
@@ -155,7 +155,7 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
         #else
             #define FINSH_FUNCTION_EXPORT_CMD(name, cmd, desc)                      \
                 const char __fsym_##cmd##_name[] = #cmd;                            \
-                RT_USED const struct finsh_syscall __fsym_##cmd SECTION("FSymTab")= \
+                RT_USED const struct finsh_syscall __fsym_##cmd RT_SECTION("FSymTab")= \
                 {                                                                   \
                     __fsym_##cmd##_name,                                            \
                     (syscall_func)&name                                             \
@@ -163,7 +163,7 @@ struct finsh_syscall* finsh_syscall_lookup(const char* name);
 
             #define FINSH_VAR_EXPORT(name, type, desc)                              \
                 const char __vsym_##name##_name[] = #name;                          \
-                RT_USED const struct finsh_sysvar __vsym_##name SECTION("VSymTab")= \
+                RT_USED const struct finsh_sysvar __vsym_##name RT_SECTION("VSymTab")= \
                 {                                                                   \
                     __vsym_##name##_name,                                           \
                     type,                                                           \
