@@ -111,6 +111,8 @@
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_LIBC" description="Using C library" default="true" />
 #define RT_USING_LIBC
+// <bool name="RT_USING_POSIX" description="Using POSIX library" default="true" />
+#define RT_USING_POSIX
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // <bool name="RT_USING_CPLUSPLUS" description="Support C++ programming language" default="true" />
