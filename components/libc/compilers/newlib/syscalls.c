@@ -303,6 +303,8 @@ exit (int status)
         rt_thread_suspend(self);
         rt_schedule();
     }
+
+    while(1); /* noreturn */
 }
 
 void
@@ -334,6 +336,8 @@ void abort(void)
         rt_thread_suspend(self);
         rt_schedule();
     }
+
+    while(1); /* noreturn */
 }
 
 uid_t getuid(void)
