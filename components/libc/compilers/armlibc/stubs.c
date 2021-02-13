@@ -11,6 +11,7 @@
  *                             in msh.
  * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
  *                             RT_USING_DFS is not defined
+ * 2020-02-13     Meco Man     re-implement exit() and abort()
  */
 
 #include <string.h>
@@ -255,8 +256,23 @@ void _ttywrch(int ch)
 
 RT_WEAK void _sys_exit(int return_code)
 {
-    /* TODO: perhaps exit the thread which is invoking this function */
-    while (1);
+    rt_thread_t self = rt_thread_self();
+
+#ifdef RT_USING_MODULE
+    if (dlmodule_self())
+    {
+        dlmodule_exit(return_code);
+    }
+#endif
+
+    if (self != RT_NULL)
+    {
+        rt_kprintf("thread:%-8.*s exit:%d!\n", RT_NAME_MAX, self->name, return_code);
+        rt_thread_suspend(self);
+        rt_schedule();
+    }
+
+    while(1); /* noreturn */
 }
 
 /**
