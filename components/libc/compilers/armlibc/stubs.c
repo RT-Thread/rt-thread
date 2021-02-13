@@ -270,6 +270,8 @@ RT_WEAK void _sys_exit(int return_code)
         rt_thread_suspend(self);
         rt_schedule();
     }
+
+    while(1); /* noreturn */
 }
 
 /**
