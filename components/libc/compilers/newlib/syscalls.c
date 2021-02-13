@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
+ * 2020-02-13     Meco Man     re-implement exit() and abort()
  */
 
 #include <reent.h>
