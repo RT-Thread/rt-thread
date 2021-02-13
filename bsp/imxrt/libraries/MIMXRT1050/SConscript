@@ -34,6 +34,7 @@ if GetDepend(['BSP_USING_HWTIMER']) or GetDepend(['BSP_USING_PWM']):
 
 if GetDepend(['BSP_USING_PWM']):
     src += ['MIMXRT1052/drivers/fsl_pwm.c']
+    src += ['MIMXRT1052/drivers/fsl_qtmr.c']
 
 if GetDepend(['BSP_USING_RTC']):
     src += ['MIMXRT1052/drivers/fsl_snvs_hp.c']
