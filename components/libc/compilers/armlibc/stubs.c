@@ -11,6 +11,7 @@
  *                             in msh.
  * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
  *                             RT_USING_DFS is not defined
+ * 2020-02-13     Meco Man     re-implement exit() and abort()
  */
 
 #include <string.h>
