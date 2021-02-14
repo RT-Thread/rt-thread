@@ -12,6 +12,7 @@
  * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
  *                             RT_USING_DFS is not defined
  * 2020-02-13     Meco Man     re-implement exit() and abort()
+ * 2020-02-14     Meco Man     implement _sys_tmpnam()
  */
 
 #include <string.h>
@@ -234,7 +235,8 @@ int _sys_seek(FILEHANDLE fh, long pos)
  */
 int _sys_tmpnam(char *name, int fileno, unsigned maxlength)
 {
-    return -1;
+    rt_snprintf(name, maxlength, "tem%03d", fileno);
+    return 1;
 }
 
 char *_sys_command_string(char *cmd, int len)
