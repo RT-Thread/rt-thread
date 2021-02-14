@@ -5,6 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-02-14     Meco Man     fix bug #3183 - align days[] and months[] to 4 bytes
+ *                             beautify codes
  */
 #include <time.h>
 #include <rtthread.h>
