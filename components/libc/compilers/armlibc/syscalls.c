@@ -18,11 +18,11 @@
 #include <string.h>
 #include <rt_sys.h>
 
-#include "rtthread.h"
+#include <rtthread.h>
 #include "libc.h"
 
 #ifdef RT_USING_DFS
-#include "dfs_posix.h"
+#include <dfs_posix.h>
 #endif
 
 #ifdef __CLANG_ARM
