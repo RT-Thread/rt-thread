@@ -18,8 +18,6 @@ if GetDepend('RT_USING_POSIX') == False:
 
 if rtconfig.CROSS_TOOL == 'keil':
     CPPDEFINES = ['__CLK_TCK=RT_TICK_PER_SECOND']
-elif rtconfig.CROSS_TOOL == 'gcc':
-    CPPDEFINES = ['_CLOCKS_PER_SEC_=RT_TICK_PER_SECOND']
 else:
     CPPDEFINES = []
 
