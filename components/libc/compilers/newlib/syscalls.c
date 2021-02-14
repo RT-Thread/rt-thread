@@ -196,12 +196,9 @@ int
 _unlink_r(struct _reent *ptr, const char *file)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    return -1;
 #else
-    int rc;
-
-    rc = unlink(file);
-    return rc;
+    return unlink(file);
 #endif
 }
 

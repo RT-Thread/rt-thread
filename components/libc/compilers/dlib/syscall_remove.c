@@ -16,9 +16,9 @@
 #pragma module_name = "?remove"
 int remove(const char *val)
 {
-#ifdef RT_USING_DFS
-    dfs_file_unlink(val);
+#ifndef RT_USING_DFS
+    return -1;
+#else
+    return unlink(filename);
 #endif
-
-    return 0;
 }
