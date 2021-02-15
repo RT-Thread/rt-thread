@@ -19,6 +19,6 @@ int remove(const char *val)
 #ifndef RT_USING_DFS
     return -1;
 #else
-    return unlink(filename);
+    return unlink(val);
 #endif
 }
