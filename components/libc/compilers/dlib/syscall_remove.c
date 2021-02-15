@@ -9,7 +9,7 @@
  */
 #include <rtthread.h>
 #ifdef RT_USING_DFS
-#include <dfs_file.h>
+#include <dfs_posix.h>
 #endif
 #include <yfuns.h>
 
