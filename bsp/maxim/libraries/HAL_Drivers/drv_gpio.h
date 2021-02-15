@@ -9,15 +9,13 @@
  *
  */
 
-#include <rtthread.h>
+#ifndef __DRV_GPIO_H__
+#define __DRV_GPIO_H__
+
+#include <board.h>
 #include <rtdevice.h>
 
-int main(void)
-{
-    int count = 1;
-    while (count++)
-    {
-        rt_thread_mdelay(500);
-    }
-    return RT_EOK;
-}
+int rt_hw_pin_init(void);
+
+#endif /* __DRV_GPIO_H__ */
+
