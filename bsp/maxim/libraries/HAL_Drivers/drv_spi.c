@@ -178,6 +178,22 @@ static void spi_sample(int argc, char *argv[])
     struct rt_spi_device *spi_dev;
     char name[RT_NAME_MAX];
 
+
+    spi_dev = (struct rt_spi_device *)rt_device_find(SPI_DEVICE_NAME);
+    if (RT_NULL == spi_dev)
+    {
+        rt_hw_spi_device_attach(SPI_DEVICE_BUS, SPI_DEVICE_NAME, PIN_0);
+        spi_dev = (struct rt_spi_device *)rt_device_find(SPI_DEVICE_NAME);
+    }
+
+    struct rt_spi_configuration spi_cfg =
+    {
+        .mode = 0,
+        .data_width = 8,
+        .max_hz = 1000000,
+    };
+    rt_spi_configure(spi_dev, &spi_cfg);
+
     rt_kprintf("\n************** SPI Loopback Demo ****************\n");
     rt_kprintf("This example configures the SPI to send data between the MISO (P0.4) and\n");
     rt_kprintf("MOSI (P0.5) pins.  Connect these two pins together. \n");
@@ -211,21 +227,3 @@ static void spi_sample(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(spi_sample, spi sample);
-
-static int rt_hw_spi_sample_init(void)
-{
-
-    struct rt_spi_device *spi_dev;
-    rt_hw_spi_device_attach(SPI_DEVICE_BUS, SPI_DEVICE_NAME, PIN_0);
-    spi_dev = (struct rt_spi_device *)rt_device_find(SPI_DEVICE_NAME);
-    struct rt_spi_configuration spi_cfg =
-    {
-        .mode = 0,
-        .data_width = 8,
-        .max_hz = 1000000,
-    };
-    rt_spi_configure(spi_dev, &spi_cfg);
-
-    return RT_EOK;
-}
-INIT_COMPONENT_EXPORT(rt_hw_spi_sample_init);
