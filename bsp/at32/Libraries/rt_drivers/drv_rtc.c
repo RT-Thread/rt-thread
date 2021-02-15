@@ -10,6 +10,7 @@
 
 #include "board.h"
 #include <rtthread.h>
+#include <sys/time.h>
 
 #ifdef BSP_USING_RTC
 
@@ -42,7 +43,7 @@ static time_t get_rtc_timestamp(void)
     tm_new.tm_year = ERTC_DateStruct.ERTC_Year + 100;
 
     LOG_D("get rtc time.");
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 #else
     return RTC_GetCounter();
 #endif
@@ -56,7 +57,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
     struct tm *p_tm;
 
-    p_tm = localtime(&time_stamp);
+    p_tm = gmtime(&time_stamp);
     if (p_tm->tm_year < 100)
     {
         return -RT_ERROR;
