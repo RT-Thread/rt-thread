@@ -27,8 +27,8 @@ static struct mcu_drv_spi_config spi_config[] =
 #endif
 #ifdef BSP_USING_SPI1
     MCU_SPI1_CONFIG,
-#endif    
- 
+#endif
+
 };
 
 static struct mcu_drv_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])];
@@ -169,7 +169,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 #define SPI_DEVICE_BUS      "spi0"
 #define SPI_DEVICE_NAME     "spi01"
 
-#define TEST_LEN        10     
+#define TEST_LEN        10
 uint8_t rx_data[TEST_LEN];
 uint8_t tx_data[TEST_LEN];
 
@@ -177,7 +177,7 @@ static void spi_sample(int argc, char *argv[])
 {
     struct rt_spi_device *spi_dev;
     char name[RT_NAME_MAX];
-    
+
     rt_kprintf("\n************** SPI Loopback Demo ****************\n");
     rt_kprintf("This example configures the SPI to send data between the MISO (P0.4) and\n");
     rt_kprintf("MOSI (P0.5) pins.  Connect these two pins together. \n");

@@ -36,23 +36,19 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 #endif
 #ifdef BSP_USING_SPI1
 #ifdef BSP_USING_SPI1A  //The SPI1A is conflit with UART1 TX RX P0.10 P0.11
-#define MCU_SPI1_CONFIG         \
+#define MCU_SPI1_CONFIG          \
 {                                \
     .bus_name = "spi1",          \
-    .spi_instance = SPI1A            \
+    .spi_instance = SPI1A        \
 }
 #else
-#define MCU_SPI1_CONFIG         \
+#define MCU_SPI1_CONFIG          \
 {                                \
     .bus_name = "spi1",          \
-    .spi_instance = SPI1B            \
+    .spi_instance = SPI1B        \
 }
 #endif
-
-//TODO LIST SPI1A SPI1B
 #endif
-
-
 
 struct mcu_drv_spi_config
 {
