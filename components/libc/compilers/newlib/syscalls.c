@@ -286,30 +286,15 @@ _free_r (struct _reent *ptr, void *addr)
 void
 exit (int status)
 {
-    rt_thread_t self = rt_thread_self();
-
-#ifdef RT_USING_MODULE
-    if (dlmodule_self())
-    {
-        dlmodule_exit(status);
-    }
-#endif
-
-    if (self != RT_NULL)
-    {
-        rt_kprintf("thread:%-8.*s exit:%d!\n", RT_NAME_MAX, self->name, status);
-        rt_thread_suspend(self);
-        rt_schedule();
-    }
-
-    while(1); /* noreturn */
+    extern rt_inline void __exit__(int status);
+    __exit__(status);
 }
 
 void
 _system(const char *s)
 {
-    /* not support this call */
-    return;
+    extern rt_inline int __system__(const char *string);
+    __system__(string);
 }
 
 void __libc_init_array(void)
@@ -319,23 +304,8 @@ void __libc_init_array(void)
 
 void abort(void)
 {
-    rt_thread_t self = rt_thread_self();
-
-#ifdef RT_USING_MODULE
-    if (dlmodule_self())
-    {
-        dlmodule_exit(-1);
-    }
-#endif
-
-    if (self != RT_NULL)
-    {
-        rt_kprintf("thread:%-8.*s abort!\n", RT_NAME_MAX, self->name);
-        rt_thread_suspend(self);
-        rt_schedule();
-    }
-
-    while(1); /* noreturn */
+    extern rt_inline void __abort__(void);
+    __abort__();
 }
 
 uid_t getuid(void)
