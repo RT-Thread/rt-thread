@@ -286,15 +286,16 @@ _free_r (struct _reent *ptr, void *addr)
 void
 exit (int status)
 {
-    extern rt_inline void __exit__(int status);
+    extern void __exit__(int status);
     __exit__(status);
+    while(1);
 }
 
 void
 _system(const char *s)
 {
-    extern rt_inline int __system__(const char *string);
-    __system__(string);
+    extern int __system__(const char *string);
+    __system__(s);
 }
 
 void __libc_init_array(void)
@@ -304,8 +305,9 @@ void __libc_init_array(void)
 
 void abort(void)
 {
-    extern rt_inline void __abort__(void);
+    extern void __abort__(void);
     __abort__();
+    while(1);
 }
 
 uid_t getuid(void)

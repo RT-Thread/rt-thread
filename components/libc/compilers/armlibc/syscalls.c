@@ -258,8 +258,9 @@ void _ttywrch(int ch)
 
 RT_WEAK void _sys_exit(int return_code)
 {
-    extern rt_inline void __exit__(int status);
+    extern void __exit__(int status);
     __exit__(return_code);
+    while(1);
 }
 
 /**
@@ -305,7 +306,7 @@ int remove(const char *filename)
 #else
 int system(const char *string)
 {
-    extern rt_inline int __system__(const char *string);
+    extern int __system__(const char *string);
     return __system__(string);
 }
 #endif

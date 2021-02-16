@@ -11,12 +11,14 @@
 
 void exit (int status)
 {
-    extern rt_inline void __exit__(int status);
-    __exit__(return_code);
+    extern void __exit__(int status);
+    __exit__(status);
+    while(1);
 }
 
 void abort(void)
 {
-    extern rt_inline void __abort__(void);
+    extern void __abort__(void);
     __abort__();
+    while(1);
 }
