@@ -5,6 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-01-28     Bernard      first version
+ * 2021-02-08     Supperthomas first version
  */
 
+
+#ifndef __DRV_USART_H__
+#define __DRV_USART_H__
+
+int rt_hw_usart_init(void);
+
+#endif  /* __DRV_USART_H__ */
