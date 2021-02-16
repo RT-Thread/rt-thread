@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
+ * 2020-02-13     Meco Man     re-implement exit() and abort()
  */
 
 #include <reent.h>
@@ -196,12 +197,9 @@ int
 _unlink_r(struct _reent *ptr, const char *file)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    return -1;
 #else
-    int rc;
-
-    rc = unlink(file);
-    return rc;
+    return unlink(file);
 #endif
 }
 
@@ -288,6 +286,8 @@ _free_r (struct _reent *ptr, void *addr)
 void
 exit (int status)
 {
+    rt_thread_t self = rt_thread_self();
+
 #ifdef RT_USING_MODULE
     if (dlmodule_self())
     {
@@ -295,10 +295,14 @@ exit (int status)
     }
 #endif
 
-    rt_kprintf("thread:%s exit with %d\n", rt_thread_self()->name, status);
-    RT_ASSERT(0);
+    if (self != RT_NULL)
+    {
+        rt_kprintf("thread:%-8.*s exit:%d!\n", RT_NAME_MAX, self->name, status);
+        rt_thread_suspend(self);
+        rt_schedule();
+    }
 
-    while (1);
+    while(1); /* noreturn */
 }
 
 void
@@ -315,17 +319,23 @@ void __libc_init_array(void)
 
 void abort(void)
 {
-    if (rt_thread_self())
-    {
-        rt_thread_t self = rt_thread_self();
+    rt_thread_t self = rt_thread_self();
 
+#ifdef RT_USING_MODULE
+    if (dlmodule_self())
+    {
+        dlmodule_exit(-1);
+    }
+#endif
+
+    if (self != RT_NULL)
+    {
         rt_kprintf("thread:%-8.*s abort!\n", RT_NAME_MAX, self->name);
         rt_thread_suspend(self);
-
         rt_schedule();
     }
 
-    while (1);
+    while(1); /* noreturn */
 }
 
 uid_t getuid(void)

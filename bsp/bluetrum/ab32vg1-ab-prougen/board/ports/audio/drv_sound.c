@@ -43,18 +43,18 @@ void adpll_init(uint8_t out_spr)
     PLL1CON |= BIT(18);                             //pll1 sdm enable
 
     if (out_spr) {
-        CLKCON2  |= BIT(4) | BIT(7);                 //adpll_div = 10
+        CLKCON2  |= BIT(4) | BIT(7);                //adpll_div = 10
         PLL1DIV = (245.76 * 65536) / 26;            //245.76Mhz for 48K
         // sys.aupll_type = 1;
     } else {
-        CLKCON2  |= BIT(5) | BIT(7);                 //adpll_div = 11
+        CLKCON2  |= BIT(5) | BIT(7);                //adpll_div = 11
         PLL1DIV = (248.3712 * 65536) / 26;          //248.3712MHz for 44.1k
         // sys.aupll_type = 0;
     }
     hal_mdelay(1);
     PLL1CON |= BIT(20);                             //update pll1div
     PLL1CON |= BIT(6);                              //enable analog pll1
-    hal_mdelay(1);                                 //wait pll1 stable
+    hal_mdelay(1);                                  //wait pll1 stable
 }
 
 void dac_start(void)
@@ -453,7 +453,6 @@ static int rt_hw_sound_init(void)
         return -RT_ENOMEM;
     }
 
-    rt_memset(tx_fifo, 0, TX_FIFO_SIZE);
     snd_dev.tx_fifo = tx_fifo;
 
     /* 分配 DMA 搬运 buffer */ 
@@ -463,7 +462,6 @@ static int rt_hw_sound_init(void)
         return -RT_ENOMEM;
     }
 
-    rt_memset(rx_fifo, 0, TX_FIFO_SIZE);
     snd_dev.rx_fifo = rx_fifo;
 
     /* init default configuration */

@@ -109,7 +109,7 @@ void rt_hw_cpu_dump_page_table(rt_uint32_t *ptb)
 
 /* level1 page table, each entry for 1MB memory. */
 /* MMUTable is the name used by codes of Xilinx */
-volatile unsigned long MMUTable[4*1024] SECTION("mmu_tbl") __attribute__((aligned(16*1024)));
+volatile unsigned long MMUTable[4*1024] RT_SECTION("mmu_tbl") __attribute__((aligned(16*1024)));
 void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart,
                       rt_uint32_t vaddrEnd,
                       rt_uint32_t paddrStart,
