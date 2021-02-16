@@ -12,7 +12,7 @@
 
 #define  ABORT_STATUS   2
 
-rt_inline void __exit__(int status)
+void __exit__(int status)
 {
     rt_thread_t self = rt_thread_self();
 
@@ -27,7 +27,7 @@ rt_inline void __exit__(int status)
     {
         if(status == ABORT_STATUS) /* abort() */
         {
-            rt_kprintf("thread:%s abort!\n", RT_NAME_MAX, self->name, status);
+            rt_kprintf("thread:%s abort!\n", RT_NAME_MAX, self->name);
         }
         else /* exit() */
         {
@@ -36,16 +36,14 @@ rt_inline void __exit__(int status)
         rt_thread_suspend(self);
         rt_schedule();
     }
-
-    while(1); /* noreturn */
 }
 
-rt_inline void __abort__(void)
+void __abort__(void)
 {
     __exit__(ABORT_STATUS);
 }
 
-rt_inline int __system__(const char *string)
+int __system__(const char *string)
 {
     /* TODO */
     return 0;
