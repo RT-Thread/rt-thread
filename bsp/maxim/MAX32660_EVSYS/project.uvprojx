@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>TARGET=32660, TARGET_REV=0x4131, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\HAL_Drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Include;..\libraries\MAX32660PeriphDriver\CMSIS\Core\Include;..\libraries\MAX32660PeriphDriver\Include</IncludePath>
+              <IncludePath>applications;.;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\libraries\HAL_Drivers;..\..\..\components\finsh;.;..\..\..\include;..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Include;..\libraries\MAX32660PeriphDriver\CMSIS\Core\Include;..\libraries\MAX32660PeriphDriver\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -423,6 +423,11 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
+              <FileName>pin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
+            </File>
+            <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
@@ -476,6 +481,11 @@
               <FileName>startup_max32660.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\MAX32660PeriphDriver\CMSIS\Device\Maxim\MAX32660\Source\ARM\startup_max32660.s</FilePath>
+            </File>
+            <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
