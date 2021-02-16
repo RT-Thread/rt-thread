@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-#define  ABORT_STATUS   2
+#define  ABORT_STATUS   1
 
 void __exit__(int status)
 {
@@ -27,11 +27,11 @@ void __exit__(int status)
     {
         if(status == ABORT_STATUS) /* abort() */
         {
-            rt_kprintf("thread:%s abort!\n", RT_NAME_MAX, self->name);
+            rt_kprintf("thread:%s abort!\n", self->name);
         }
         else /* exit() */
         {
-            rt_kprintf("thread:%s exit:%d!\n", RT_NAME_MAX, self->name, status);
+            rt_kprintf("thread:%s exit:%d!\n", self->name, status);
         }
         rt_thread_suspend(self);
         rt_schedule();
