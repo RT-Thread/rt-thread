@@ -24,6 +24,10 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n 
+
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -154,6 +158,19 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_ADC2
                 bool "Enable ADC2"
+                default n
+        endif
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        default n
+        select RT_USING_CAN
+        if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "using CAN1"
+                default n
+            config BSP_USING_CAN2
+                bool "using CAN2"
                 default n
         endif
 
