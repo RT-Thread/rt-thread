@@ -133,3 +133,53 @@ nrf5x
 下面提供一种擦写softdevice的方法。在keil中选择softdevice Erase的FLASH算法，这个时候就烧写之前可以擦除之前的softdevice。
 
 ![image-20201017194935643](docs/images/softdevice_erase.png)
+
+
+
+### 2.如果在使用softdevice的时候，连上手机时候出现一些hardfault
+
+如下所示：
+
+```
+psr: 0x8100000f
+r00: 0x00000000
+r01: 0x200034e6
+r02: 0x00000000
+r03: 0x200034dc
+r04: 0x200034dc
+r05: 0x00000000
+r06: 0x200034e6
+r07: 0xdeadbeef
+r08: 0xdeadbeef
+r09: 0xdeadbeef
+r10: 0xdeadbeef
+r11: 0xdeadbeef
+r12: 0x00000000
+ lr: 0x000369af
+ pc: 0x00036972
+hard fault on handler
+
+```
+
+这个hardfault发生在SOFTDEVICE内部，由于代码不开源，这边尝试了修改如下函数，可以不触发hardfault。
+
+```
+rt_hw_interrupt_disable    PROC
+    EXPORT  rt_hw_interrupt_disable
+    ;MRS     r0, PRIMASK
+    ;CPSID   I
+    BX      LR
+    ENDP
+
+;/*
+; * void rt_hw_interrupt_enable(rt_base_t level);
+; */
+rt_hw_interrupt_enable    PROC
+    EXPORT  rt_hw_interrupt_enable
+    ;MSR     PRIMASK, r0
+    BX      LR
+    ENDP
+```
+
+
+
