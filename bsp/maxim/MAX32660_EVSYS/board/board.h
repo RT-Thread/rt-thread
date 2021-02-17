@@ -14,6 +14,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#include "mxc_config.h"
+#include "mxc_assert.h"
+
+
 #define MCU_FLASH_START_ADRESS       ((uint32_t)0x0)
 #define MCU_FLASH_SIZE_KB               (256)
 #define MCU_FLASH_END_ADDRESS        ((uint32_t)(MCU_FLASH_START_ADRESS + MCU_FLASH_SIZE*1024))

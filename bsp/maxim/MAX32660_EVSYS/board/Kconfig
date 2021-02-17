@@ -43,6 +43,25 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
+    config BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 bus [MISO P0.4;MOSI P0.5;SCL P0.6;SS P0.7]"
+                default y
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1 bus [MISO P0.0;MOSI P0.1;SCL P0.2;SS P0.3]"
+                default n
+            if BSP_USING_SPI1
+            config BSP_USING_SPI1A
+                bool "Use SPI1A. [MISO P0.10;MOSI P0.11;SCL P0.12;SS P0.13]"
+                default n
+            endif
+        endif
     config BSP_USING_ON_CHIP_FLASH
         select PKG_USING_FAL
         bool "Enable on-chip FLASH"

@@ -30,6 +30,9 @@ if GetDepend(['RT_USING_I2C']):
 
 if GetDepend(['RT_USING_SPI']):
     src += ['Source/spi.c']
+    src += ['Source/spi17y.c']
+    src += ['Source/spimss.c']
+
 
 if GetDepend(['RT_USING_RTC']):
     src += ['Source/rtc.c']
