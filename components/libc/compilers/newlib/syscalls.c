@@ -286,16 +286,16 @@ _free_r (struct _reent *ptr, void *addr)
 void
 exit (int status)
 {
-    extern void __exit__(int status);
-    __exit__(status);
+    extern void __rt_libc_exit(int status);
+    __rt_libc_exit(status);
     while(1);
 }
 
 void
 _system(const char *s)
 {
-    extern int __system__(const char *string);
-    __system__(s);
+    extern int __rt_libc_system(const char *string);
+    __rt_libc_system(s);
 }
 
 void __libc_init_array(void)
@@ -305,8 +305,8 @@ void __libc_init_array(void)
 
 void abort(void)
 {
-    extern void __abort__(void);
-    __abort__();
+    extern void __rt_libc_abort(void);
+    __rt_libc_abort();
     while(1);
 }
 

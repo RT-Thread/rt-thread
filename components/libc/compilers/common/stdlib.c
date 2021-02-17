@@ -9,10 +9,9 @@
  */
 
 #include <rtthread.h>
+#include <stdlib.h>
 
-#define  ABORT_STATUS   1
-
-void __exit__(int status)
+void __rt_libc_exit(int status)
 {
     rt_thread_t self = rt_thread_self();
 
@@ -25,7 +24,7 @@ void __exit__(int status)
 
     if (self != RT_NULL)
     {
-        if(status == ABORT_STATUS) /* abort() */
+        if(status == EXIT_FAILURE) /* abort() */
         {
             rt_kprintf("thread:%s abort!\n", self->name);
         }
@@ -38,12 +37,12 @@ void __exit__(int status)
     }
 }
 
-void __abort__(void)
+void __rt_libc_abort(void)
 {
-    __exit__(ABORT_STATUS);
+    __rt_libc_exit(EXIT_FAILURE);
 }
 
-int __system__(const char *string)
+int __rt_libc_system(const char *string)
 {
     /* TODO */
     return 0;
