@@ -11,14 +11,14 @@
 
 void exit (int status)
 {
-    extern void __exit__(int status);
-    __exit__(status);
+    extern void __rt_libc_exit(int status);
+    __rt_libc_exit(status);
     while(1);
 }
 
 void abort(void)
 {
-    extern void __abort__(void);
-    __abort__();
+    extern void __rt_libc_abort(void);
+    __rt_libc_abort();
     while(1);
 }
