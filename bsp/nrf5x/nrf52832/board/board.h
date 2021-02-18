@@ -17,11 +17,11 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 #pragma section="CSTACK"
 #define HEAP_BEGIN      (__segment_end("CSTACK"))
 #else
-extern int __bss_end;
-#define HEAP_BEGIN      ((void *)&__bss_end)
+extern int __bss_end__;
+#define HEAP_BEGIN      ((void *)&__bss_end__)
 #endif
 
-#define HEAP_END       (0x20000000 + 64*1024)
+#define HEAP_END       (MCU_SRAM_END_ADDRESS)
 
 void rt_hw_board_init(void);
 

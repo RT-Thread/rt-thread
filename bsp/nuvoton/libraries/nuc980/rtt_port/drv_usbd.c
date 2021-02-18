@@ -23,9 +23,9 @@
 #include "drv_sys.h"
 
 #define LOG_TAG         "drv.usbd"
-#define DBG_ENABLE
+//#define DBG_ENABLE
 #define DBG_SECTION_NAME "drv.usbd"
-#define DBG_LEVEL DBG_INFO
+//#define DBG_LEVEL   DBG_ERROR
 #define DBG_COLOR
 #include <rtdbg.h>
 
@@ -124,7 +124,8 @@ typedef struct _nu_usbd_t
     IRQn_Type irqn;
     E_SYS_IPRST rstidx;
     E_SYS_IPCLK clkidx;
-    uint8_t address_tmp;    /* Keep assigned address for flow control */
+    uint8_t address_tmp;      /* Keep assigned address for flow control */
+    uint8_t plugging_status;  /* For debounce, 0: Unplug, 1: plug-in */
 } nu_usbd_t;
 
 
@@ -149,6 +150,7 @@ static nu_usbd_t nu_usbd =
     .rstidx      = USBDRST,
     .clkidx      = USBDCKEN,
     .address_tmp = 0,
+    .plugging_status = 0,
 };
 
 static struct udcd _rt_obj_udc;
@@ -277,6 +279,27 @@ static void NU_SetupStageCallback(nu_usbd_t *nu_udc)
 
     rt_usbd_ep0_setup_handler(&_rt_obj_udc, (struct urequest *)&setup_packet);
 }
+
+__STATIC_INLINE void nu_udc_enable(void)
+{
+    USBD_ENABLE_USB();
+}
+
+__STATIC_INLINE void nu_udc_disable(void)
+{
+    int i;
+
+    USBD_ENABLE_CEP_INT(0);
+    USBD_CLR_CEP_INT_FLAG(0xffff);
+
+    USBD_SET_CEP_STATE(inpw(REG_USBD_CEPCTL)  | USB_CEPCTL_FLUSH);
+
+    for (i = 0; i < USBD_MAX_EP; i++)
+        USBD->EP[i].EPRSPCTL = USB_EP_RSPCTL_FLUSH | USB_EP_RSPCTL_TOGGLE;
+
+    USBD_DISABLE_USB();
+}
+
 
 static rt_err_t _ep_set_stall(rt_uint8_t address)
 {
@@ -543,6 +566,9 @@ static void nu_usbd_isr(int vector, void *param)
     int i;
     int IrqStAllEP;
 
+    /* Igrone event if role is USBH*/
+    if (nu_sys_usb0_role() != USB0_ID_DEVICE) return;
+
     IrqStL = USBD->GINTSTS & USBD->GINTEN;    /* get interrupt status */
 
     if (!IrqStL)    return;
@@ -635,17 +661,25 @@ static void nu_usbd_isr(int vector, void *param)
         {
             if (USBD_IS_ATTACHED())
             {
-                LOG_I("PLUG IN");
-                /* USB Plug In */
-                USBD_ENABLE_USB();
-                rt_usbd_connect_handler(&_rt_obj_udc);
+                if (!nu_usbd.plugging_status)
+                {
+                    LOG_I("PLUG IN");
+                    /* USB Plug In */
+                    nu_udc_enable();
+                    rt_usbd_connect_handler(&_rt_obj_udc);
+                    nu_usbd.plugging_status = 1;
+                }
             }
             else
             {
-                LOG_I("Un-Plug");
-                /* USB Un-plug */
-                USBD_DISABLE_USB();
-                rt_usbd_disconnect_handler(&_rt_obj_udc);
+                if (nu_usbd.plugging_status)
+                {
+                    LOG_I("Un-Plug");
+                    /* USB Un-plug */
+                    nu_udc_disable();
+                    rt_usbd_disconnect_handler(&_rt_obj_udc);
+                    nu_usbd.plugging_status = 0;
+                }
             }
             USBD_CLR_BUS_INT_FLAG(USBD_BUSINTSTS_VBUSDETIF_Msk);
         }
@@ -791,29 +825,15 @@ static void nu_usbd_isr(int vector, void *param)
 
 static rt_err_t _init(rt_device_t device)
 {
-#if !defined(BSP_USING_OTG)
-    uint32_t volatile i;
-
-    /* Initialize USB PHY */
-    SYS_UnlockReg();
-    SYS->USBPHY &= ~SYS_USBPHY_HSUSBROLE_Msk;    /* select USBD */
-
-    /* Enable USB PHY */
-    SYS->USBPHY = (SYS->USBPHY & ~(SYS_USBPHY_HSUSBROLE_Msk | SYS_USBPHY_HSUSBACT_Msk)) | SYS_USBPHY_HSUSBEN_Msk;
-
-    for (i = 0; i < 0x1000; i++)
-        __NOP();  // delay > 10 us
-
-    SYS->USBPHY |= SYS_USBPHY_HSUSBACT_Msk;
-    SYS_LockReg();
-#endif
-
     nu_sys_ipclk_enable(nu_usbd.clkidx);
 
     nu_sys_ip_reset(nu_usbd.rstidx);
 
+    nu_systick_udelay(1000);
+
     /* USBD Open */
-    USBD->PHYCTL |= (USBD_PHYCTL_PHYEN_Msk | USBD_PHYCTL_DPPUEN_Msk);
+    USBD_ENABLE_USB();
+
     while (1)
     {
         USBD->EP[EPA].EPMPS = 0x20ul;
@@ -842,7 +862,11 @@ static rt_err_t _init(rt_device_t device)
     rt_hw_interrupt_umask(nu_usbd.irqn);
 
     /* Start transaction */
-    USBD_Start();
+    USBD_CLR_SE0();
+
+    /* Get currect cable status */
+    nu_usbd.plugging_status = USBD_IS_ATTACHED() >> USBD_PHYCTL_VBUSDET_Pos;
+
     return RT_EOK;
 }
 

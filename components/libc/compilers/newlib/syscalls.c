@@ -5,7 +5,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
+ * 2020-02-13     Meco Man     re-implement exit() and abort()
  */
+
 #include <reent.h>
 #include <sys/errno.h>
 #include <sys/time.h>
@@ -190,24 +193,13 @@ _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 #endif
 }
 
-_CLOCK_T_
-_times_r(struct _reent *ptr, struct tms *ptms)
-{
-    /* return "not supported" */
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
 int
 _unlink_r(struct _reent *ptr, const char *file)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    return -1;
 #else
-    int rc;
-
-    rc = unlink(file);
-    return rc;
+    return unlink(file);
 #endif
 }
 
@@ -240,111 +232,6 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     rc = write(fd, buf, nbytes);
     return rc;
 #endif
-}
-#endif
-
-#ifdef RT_USING_PTHREADS
-
-#include <clock_time.h>
-/* POSIX timer provides clock_gettime function */
-#include <time.h>
-int
-_gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp)
-{
-    struct timespec tp;
-
-    if (clock_gettime(CLOCK_REALTIME, &tp) == 0)
-    {
-        if (__tp != RT_NULL)
-        {
-            __tp->tv_sec  = tp.tv_sec;
-            __tp->tv_usec = tp.tv_nsec / 1000UL;
-        }
-
-        return tp.tv_sec;
-    }
-
-    /* return "not supported" */
-    ptr->_errno = ENOTSUP;
-    return -1;
-}
-
-#else
-
-#define MILLISECOND_PER_SECOND  1000UL
-#define MICROSECOND_PER_SECOND  1000000UL
-#define NANOSECOND_PER_SECOND   1000000000UL
-
-#define MILLISECOND_PER_TICK    (MILLISECOND_PER_SECOND / RT_TICK_PER_SECOND)
-#define MICROSECOND_PER_TICK    (MICROSECOND_PER_SECOND / RT_TICK_PER_SECOND)
-#define NANOSECOND_PER_TICK     (NANOSECOND_PER_SECOND  / RT_TICK_PER_SECOND)
-
-struct timeval _timevalue = {0};
-#ifdef RT_USING_DEVICE
-static void libc_system_time_init(void)
-{
-    time_t time;
-    rt_tick_t tick;
-    rt_device_t device;
-
-    time = 0;
-    device = rt_device_find("rtc");
-    if (device != RT_NULL)
-    {
-        /* get realtime seconds */
-        rt_device_control(device, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
-    }
-
-    /* get tick */
-    tick = rt_tick_get();
-
-    _timevalue.tv_usec = MICROSECOND_PER_SECOND - (tick%RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK;
-    _timevalue.tv_sec = time - tick/RT_TICK_PER_SECOND - 1;
-}
-#endif
-
-int libc_get_time(struct timespec *time)
-{
-    rt_tick_t tick;
-    static rt_bool_t inited = 0;
-
-    RT_ASSERT(time != RT_NULL);
-
-    /* initialize system time */
-    if (inited == 0)
-    {
-        libc_system_time_init();
-        inited = 1;
-    }
-
-    /* get tick */
-    tick = rt_tick_get();
-
-    time->tv_sec = _timevalue.tv_sec + tick / RT_TICK_PER_SECOND;
-    time->tv_nsec = (_timevalue.tv_usec + (tick % RT_TICK_PER_SECOND) * MICROSECOND_PER_TICK) * 1000;
-
-    return 0;
-}
-
-int
-_gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp)
-{
-    struct timespec tp;
-
-    if (libc_get_time(&tp) == 0)
-    {
-        if (__tp != RT_NULL)
-        {
-            __tp->tv_sec  = tp.tv_sec;
-            __tp->tv_usec = tp.tv_nsec / 1000UL;
-        }
-
-        return tp.tv_sec;
-    }
-
-    /* return "not supported" */
-    ptr->_errno = ENOTSUP;
-    return -1;
 }
 #endif
 
@@ -399,24 +286,16 @@ _free_r (struct _reent *ptr, void *addr)
 void
 exit (int status)
 {
-#ifdef RT_USING_MODULE
-    if (dlmodule_self())
-    {
-        dlmodule_exit(status);
-    }
-#endif
-
-    rt_kprintf("thread:%s exit with %d\n", rt_thread_self()->name, status);
-    RT_ASSERT(0);
-
-    while (1);
+    extern void __rt_libc_exit(int status);
+    __rt_libc_exit(status);
+    while(1);
 }
 
 void
 _system(const char *s)
 {
-    /* not support this call */
-    return;
+    extern int __rt_libc_system(const char *string);
+    __rt_libc_system(s);
 }
 
 void __libc_init_array(void)
@@ -426,17 +305,9 @@ void __libc_init_array(void)
 
 void abort(void)
 {
-    if (rt_thread_self())
-    {
-        rt_thread_t self = rt_thread_self();
-
-        rt_kprintf("thread:%-8.*s abort!\n", RT_NAME_MAX, self->name);
-        rt_thread_suspend(self);
-
-        rt_schedule();
-    }
-
-    while (1);
+    extern void __rt_libc_abort(void);
+    __rt_libc_abort();
+    while(1);
 }
 
 uid_t getuid(void)
@@ -453,3 +324,9 @@ int flock(int fd, int operation)
 {
     return 0;
 }
+
+/*
+These functions will be implemented and replaced by the 'common/time.c' file
+int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
+_CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
+*/

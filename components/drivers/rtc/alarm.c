@@ -13,10 +13,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
-#ifndef _WIN32
 #include <sys/time.h>
-#endif
 
 #define RT_RTC_YEARS_MAX         137
 #ifdef RT_USING_SOFT_RTC
@@ -98,8 +95,8 @@ static void alarm_wakeup(struct rt_alarm *alarm, struct tm *now)
         {
         case RT_ALARM_ONESHOT:
         {
-            sec_alarm = mktime(&alarm->wktime);
-            sec_now = mktime(now);
+            sec_alarm = timegm(&alarm->wktime);
+            sec_now = timegm(now);
             if (((sec_now - sec_alarm) <= RT_ALARM_DELAY) && (sec_now >= sec_alarm))
             {
                 /* stop alarm */

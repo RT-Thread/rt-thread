@@ -27,11 +27,5 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
-#if GetDepend('RT_USING_RTGUI'):
-#    objs = objs + SConscript(RTT_ROOT + '/examples/gui/SConscript', variant_dir='build/examples/gui', duplicate=0)
-
-# libc testsuite 
-# objs = objs + SConscript(RTT_ROOT + '/examples/libc/SConscript', variant_dir='build/examples/libc', duplicate=0)
-
 # make a building
 DoBuilding(TARGET, objs)

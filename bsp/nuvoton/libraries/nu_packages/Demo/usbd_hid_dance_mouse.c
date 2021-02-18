@@ -35,15 +35,17 @@ static void usb_thread_entry(void *parameter)
 {
     int8_t i8MouseTable[] = { -16, -16, -16, 0, 16, 16, 16, 0};
     uint8_t u8MouseIdx = 0;
-    uint8_t u8MoveLen=0, u8MouseMode = 1;
+    uint8_t u8MoveLen = 0, u8MouseMode = 1;
     uint8_t pu8Buf[4];
     rt_err_t result = RT_EOK;
 
     rt_device_t device = (rt_device_t)parameter;
 
-    rt_sem_init(&tx_sem_complete, "tx_complete_sem_hid", 1, RT_IPC_FLAG_FIFO);
+    result = rt_sem_init(&tx_sem_complete, "tx_complete_sem_hid", 1, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
 
-    rt_device_set_tx_complete(device, event_hid_in);
+    result = rt_device_set_tx_complete(device, event_hid_in);
+    RT_ASSERT(result == RT_EOK);
 
     LOG_I("Ready.\n");
 
@@ -79,7 +81,7 @@ static void usb_thread_entry(void *parameter)
         {
             /* Wait it done. */
             result = rt_sem_take(&tx_sem_complete, RT_WAITING_FOREVER);
-            RT_ASSERT( result== RT_EOK );
+            RT_ASSERT(result == RT_EOK);
         }
 
     } // while(1)
@@ -96,10 +98,10 @@ static int dance_mouse_init(void)
     RT_ASSERT(ret == RT_EOK);
 
     ret = rt_thread_init(&usb_thread,
-                   "hidd",
-                   usb_thread_entry, device,
-                   usb_thread_stack, sizeof(usb_thread_stack),
-                   10, 20);
+                         "hidd",
+                         usb_thread_entry, device,
+                         usb_thread_stack, sizeof(usb_thread_stack),
+                         10, 20);
     RT_ASSERT(ret == RT_EOK);
 
     ret = rt_thread_startup(&usb_thread);

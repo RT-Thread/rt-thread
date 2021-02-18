@@ -61,7 +61,7 @@ static struct nu_spi nu_qspi_arr [] =
         .name = "qspi0",
         .spi_base = (SPI_T *)QSPI0,
 
-#if defined(BSP_USING_QSPI_PDMA)
+#if defined(BSP_USING_SPI_PDMA)
 #if defined(BSP_USING_QSPI0_PDMA)
         .pdma_perp_tx = PDMA_QSPI0_TX,
         .pdma_perp_rx = PDMA_QSPI0_RX,
@@ -77,7 +77,7 @@ static struct nu_spi nu_qspi_arr [] =
         .name = "qspi1",
         .spi_base = (SPI_T *)QSPI1,
 
-#if defined(BSP_USING_QSPI_PDMA)
+#if defined(BSP_USING_SPI_PDMA)
 #if defined(BSP_USING_QSPI1_PDMA)
         .pdma_perp_tx = PDMA_QSPI1_TX,
         .pdma_perp_rx = PDMA_QSPI1_RX,

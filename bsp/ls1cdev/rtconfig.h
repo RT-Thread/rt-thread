@@ -161,7 +161,7 @@
 
 /* samples: kernel and components samples */
 
-#define SOC_1C300
+#define SOC_LS1C300
 #define RT_LS1C_BAICAIBOARD
 #define RT_USING_SELF_BOOT
 #define RT_SELF_BOOT_DEBUG

@@ -81,6 +81,8 @@ static volatile int s_SHA_done;
 
 static rt_err_t nu_crypto_init(void)
 {
+    rt_err_t result;
+
     /* Enable Crypto engine interrupt */
     NVIC_EnableIRQ(CRPT_IRQn);
 
@@ -89,12 +91,19 @@ static rt_err_t nu_crypto_init(void)
     SHA_ENABLE_INT(CRPT);
 
     //init cipher mutex
-    rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&s_TDES_mutex, NU_HWCRYPTO_TDES_NAME, RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_AES_mutex, NU_HWCRYPTO_AES_NAME, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
+
+    result = rt_mutex_init(&s_TDES_mutex, NU_HWCRYPTO_TDES_NAME, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
+
+    result = rt_mutex_init(&s_SHA_mutex, NU_HWCRYPTO_SHA_NAME, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
+
 #if !defined(BSP_USING_TRNG)
     PRNG_ENABLE_INT(CRPT);
-    rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_FIFO);
+    result = rt_mutex_init(&s_PRNG_mutex, NU_HWCRYPTO_PRNG_NAME, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(result == RT_EOK);
 #endif
 
     return RT_EOK;
@@ -146,6 +155,8 @@ static rt_err_t nu_aes_crypt_run(
     uint32_t u32DataLen
 )
 {
+    rt_err_t result;
+
     uint32_t au32SwapKey[8];
     uint32_t au32SwapIV[4];
 
@@ -171,7 +182,8 @@ static rt_err_t nu_aes_crypt_run(
     au32SwapIV[2] = nu_get32_be(&pu8IV[8]);
     au32SwapIV[3] = nu_get32_be(&pu8IV[12]);
 
-    rt_mutex_take(&s_AES_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_AES_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     //Using Channel 0
     AES_Open(CRPT, 0, bEncrypt, u32OpMode, u32KeySize, AES_IN_OUT_SWAP);
@@ -186,7 +198,8 @@ static rt_err_t nu_aes_crypt_run(
     AES_Start(CRPT, 0, CRYPTO_DMA_ONE_SHOT);
     while (!s_AES_done) {};
 
-    rt_mutex_release(&s_AES_mutex);
+    result = rt_mutex_release(&s_AES_mutex);
+    RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;
 }
@@ -195,19 +208,26 @@ static rt_err_t nu_aes_crypt_run(
 //Using PRNG instead of TRNG
 static void nu_prng_open(uint32_t u32Seed)
 {
-    rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    rt_err_t result;
+
+    result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     //Open PRNG 64 bits. But always return 32 bits
     PRNG_Open(CRPT, PRNG_KEY_SIZE_64, PRNG_SEED_RELOAD, u32Seed);
 
-    rt_mutex_release(&s_PRNG_mutex);
+    result = rt_mutex_release(&s_PRNG_mutex);
+    RT_ASSERT(result == RT_EOK);
+
 }
 
 static rt_uint32_t nu_prng_run(void)
 {
+    rt_err_t result;
     uint32_t au32RNGValue[2];
 
-    rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_PRNG_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     s_PRNG_done = 0;
     PRNG_Start(CRPT);
@@ -215,7 +235,9 @@ static rt_uint32_t nu_prng_run(void)
 
     PRNG_Read(CRPT, au32RNGValue);
 
-    rt_mutex_release(&s_PRNG_mutex);
+    result = rt_mutex_release(&s_PRNG_mutex);
+    RT_ASSERT(result == RT_EOK);
+
     return au32RNGValue[0];
 }
 
@@ -356,6 +378,8 @@ static rt_err_t nu_des_crypt_run(
     uint32_t u32DataLen
 )
 {
+    rt_err_t result;
+
     uint32_t au32SwapKey[3][2];
     uint32_t au32SwapIV[2];
 
@@ -373,7 +397,8 @@ static rt_err_t nu_des_crypt_run(
     au32SwapIV[0] = nu_get32_be(&pu8IV[0]);
     au32SwapIV[1] = nu_get32_be(&pu8IV[4]);
 
-    rt_mutex_take(&s_TDES_mutex, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&s_TDES_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     //Using Channel 0
     TDES_Open(CRPT, 0, bEncrypt, (u32OpMode & CRPT_TDES_CTL_TMODE_Msk), u32KeySize, u32OpMode, TDES_IN_OUT_WHL_SWAP);
@@ -388,7 +413,8 @@ static rt_err_t nu_des_crypt_run(
     TDES_Start(CRPT, 0, CRYPTO_DMA_ONE_SHOT);
     while (!s_TDES_done) {};
 
-    rt_mutex_release(&s_TDES_mutex);
+    result = rt_mutex_release(&s_TDES_mutex);
+    RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;
 }
@@ -534,7 +560,10 @@ static rt_err_t nu_sha_hash_run(
     uint32_t u32DataLen
 )
 {
-    rt_mutex_take(&s_SHA_mutex, RT_WAITING_FOREVER);
+    rt_err_t result;
+
+    result = rt_mutex_take(&s_SHA_mutex, RT_WAITING_FOREVER);
+    RT_ASSERT(result == RT_EOK);
 
     uint8_t *pu8SrcAddr = (uint8_t *)pu8InData;
     uint32_t u32CopyLen = 0;
@@ -574,7 +603,10 @@ static rt_err_t nu_sha_hash_run(
             if (psSHACtx->pu8SHATempBuf == RT_NULL)
             {
                 LOG_E("fun[%s] memory allocate %d bytes failed!", __FUNCTION__, psSHACtx->u32BlockSize);
-                rt_mutex_release(&s_SHA_mutex);
+
+                result = rt_mutex_release(&s_SHA_mutex);
+                RT_ASSERT(result == RT_EOK);
+
                 return -RT_ENOMEM;
             }
 
@@ -602,7 +634,10 @@ static rt_err_t nu_sha_hash_run(
             if (psSHACtx->pu8SHATempBuf == RT_NULL)
             {
                 LOG_E("fun[%s] memory allocate %d bytes failed!", __FUNCTION__, psSHACtx->u32BlockSize);
-                rt_mutex_release(&s_SHA_mutex);
+
+                result = rt_mutex_release(&s_SHA_mutex);
+                RT_ASSERT(result == RT_EOK);
+
                 return -RT_ENOMEM;
             }
 
@@ -613,7 +648,8 @@ static rt_err_t nu_sha_hash_run(
         psSHACtx->u32SHATempBufLen += u32DataLen;
     }
 
-    rt_mutex_release(&s_SHA_mutex);
+    result = rt_mutex_release(&s_SHA_mutex);
+    RT_ASSERT(result == RT_EOK);
 
     return RT_EOK;
 }

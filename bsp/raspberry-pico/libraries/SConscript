@@ -55,19 +55,6 @@ pico-sdk/src/rp2_common/pico_standard_link/crt0.S
 generated/bs2_default_padded_checksummed.S
 """)
 
-# # starupt scripts for STM32F2xx
-# startup_scripts = 'startup_stm32f2xx.s'
-
-# # add for startup script
-# if rtconfig.CROSS_TOOL == 'gcc':
-#     src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F2xx/startup/gcc_ride7/' + startup_scripts]
-# elif rtconfig.CROSS_TOOL == 'keil':
-#     src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F2xx/startup/arm/' + startup_scripts]
-# elif rtconfig.CROSS_TOOL == 'iar':
-#     src = src + ['CMSIS/CM3/DeviceSupport/ST/STM32F2xx/startup/iar/' + startup_scripts]
-
-# /home/henson/Documents/rasp-pico/pico/pico-examples/build/generated/pico_base 
-
 path = [
     cwd + '/pico-sdk/src/common/pico_stdlib/include',
     cwd + '/pico-sdk/src/rp2_common/hardware_gpio/include',
@@ -105,14 +92,6 @@ path = [
     cwd + '/pico-sdk/src/rp2_common/pico_stdio_uart/include',
     cwd + '/generated/pico_base'
     ]
-
-# path += [cwd + '/CMSIS/CM3/CoreSupport',
-# cwd + '/CMSIS/Include']
-
-# if GetDepend('RT_USING_LWIP') == True:
-# 	src = src + ['STM32F2x7_ETH_Driver/src/stm32f2x7_eth.c']
-# 	path = path + [cwd + '/STM32F2x7_ETH_Driver/inc']
-
 
 CPPDEFINES = [
     'PICO_NO_BINARY_INFO',

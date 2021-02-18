@@ -6,10 +6,12 @@
  * Change Logs:
  * Date         Author        Notes
  * 2018-12-04   balanceTWK    first version
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14   Dozingfiretruck Porting for stm32wbxx
+ * 2021-02-05   Meco Man      fix the problem of mixing local time and UTC time
  */
 
 #include "board.h"
+#include <sys/time.h>
 
 #ifdef BSP_USING_ONCHIP_RTC
 
@@ -54,7 +56,7 @@ static time_t get_rtc_timestamp(void)
     tm_new.tm_year = RTC_DateStruct.Year + 100;
 
     LOG_D("get rtc time.");
-    return mktime(&tm_new);
+    return timegm(&tm_new);
 }
 
 static rt_err_t set_rtc_time_stamp(time_t time_stamp)
@@ -63,7 +65,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     RTC_DateTypeDef RTC_DateStruct = {0};
     struct tm *p_tm;
 
-    p_tm = localtime(&time_stamp);
+    p_tm = gmtime(&time_stamp);
     if (p_tm->tm_year < 100)
     {
         return -RT_ERROR;
@@ -102,7 +104,7 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 
 static void rt_rtc_init(void)
 {
-#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WB)
+#if !defined(SOC_SERIES_STM32H7) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32WB)
     __HAL_RCC_PWR_CLK_ENABLE();
 #endif
 
@@ -171,6 +173,10 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
 #endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
+#if defined(SOC_SERIES_STM32WL)
+    __HAL_RCC_RTCAPB_CLK_ENABLE();
+#endif
+
     /* Enable RTC Clock */
     __HAL_RCC_RTC_ENABLE();
 
@@ -197,7 +203,7 @@ static rt_err_t rt_rtc_config(struct rt_device *dev)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
 
         /* set the frequency division */
 #ifdef BSP_RTC_USING_LSI

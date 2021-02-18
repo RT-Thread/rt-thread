@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2019-03-08     obito0   first version
+ * 2019-03-08     obito0       first version
  */
 
 #include <rtthread.h>

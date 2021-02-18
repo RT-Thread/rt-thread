@@ -114,13 +114,6 @@ config SOC_SERIES_NUC980
                 help
                     Choose this option if you need TIMER function mode.
 
-                config BSP_USING_TPWM0
-                    select BSP_USING_TPWM
-                    select RT_USING_PWM
-                    bool "TIMER PWM"
-                help
-                    Choose this option if you need PWM function mode.
-
                 config BSP_USING_TIMER0_CAPTURE
                     select BSP_USING_TIMER_CAPTURE
                     select RT_USING_INPUT_CAPTURE
@@ -146,13 +139,6 @@ config SOC_SERIES_NUC980
                     help
                     Choose this option if you need TIMER function mode.
 
-                config BSP_USING_TPWM1
-                    select BSP_USING_TPWM
-                    select RT_USING_PWM
-                    bool "TIMER PWM"
-                help
-                    Choose this option if you need PWM function mode.
-
                 config BSP_USING_TIMER1_CAPTURE
                     select BSP_USING_TIMER_CAPTURE
                     select RT_USING_INPUT_CAPTURE
@@ -176,13 +162,6 @@ config SOC_SERIES_NUC980
                     bool "TIMER"
                 help
                     Choose this option if you need TIMER function mode.
-
-                config BSP_USING_TPWM2
-                    select BSP_USING_TPWM
-                    select RT_USING_PWM
-                    bool "TIMER PWM"
-                help
-                    Choose this option if you need PWM function mode.
 
                 config BSP_USING_TIMER2_CAPTURE
                     select BSP_USING_TIMER_CAPTURE
@@ -208,13 +187,6 @@ config SOC_SERIES_NUC980
                     help
                         Choose this option if you need TIMER function mode.
 
-                config BSP_USING_TPWM3
-                    select BSP_USING_TPWM
-                    select RT_USING_PWM
-                    bool "TIMER PWM"
-                    help
-                        Choose this option if you need PWM function mode.
-
                 config BSP_USING_TIMER3_CAPTURE
                     select BSP_USING_TIMER_CAPTURE
                     select RT_USING_INPUT_CAPTURE
@@ -238,13 +210,6 @@ config SOC_SERIES_NUC980
                     bool "TIMER"
                     help
                         Choose this option if you need TIMER function mode.
-
-                config BSP_USING_TPWM4
-                    select BSP_USING_TPWM
-                    select RT_USING_PWM
-                    bool "TIMER PWM"
-                    help
-                        Choose this option if you need PWM function mode.
 
                 config BSP_USING_TIMER4_CAPTURE
                     select BSP_USING_TIMER_CAPTURE
@@ -635,8 +600,3 @@ config SOC_SERIES_NUC980
         bool "Enable USB Host Controller(USBH)"
         select RT_USING_USB_HOST
         select RT_USBH_MSTORAGE
-
-    config BSP_USING_OTG
-        bool "Enable USB On-The-Go(OTG)"
-        select BSP_USING_USBH
-        select BSP_USING_USBD

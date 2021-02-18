@@ -232,7 +232,6 @@ static void link_monitor(void *param)
     nu_emac_t psNuEmac = (nu_emac_t)param;
     EMAC_T *EMAC = psNuEmac->memmgr.psEmac;
     uint32_t LinkStatus_Last = EMAC_LINK_DOWN;
-    rt_err_t result = RT_EOK;
 
     EMAC_PhyInit(EMAC);
 
@@ -274,9 +273,6 @@ static void link_monitor(void *param)
             else
             {
                 eth_device_linkchange(&psNuEmac->eth, RT_TRUE);
-
-                result = rt_sem_release(&psNuEmac->eth_sem);
-                RT_ASSERT(result == RT_EOK);
             }
             LinkStatus_Last = LinkStatus_Current;
 
@@ -317,7 +313,8 @@ static rt_err_t nu_emac_init(rt_device_t dev)
 
     snprintf(szTmp, sizeof(szTmp), "%sphy", psNuEmac->name);
 
-    rt_sem_init(&psNuEmac->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    ret = rt_sem_init(&psNuEmac->eth_sem, "eth_sem", 0, RT_IPC_FLAG_FIFO);
+    RT_ASSERT(ret == RT_EOK);
 
     EMAC_Reset(EMAC);
 
@@ -402,26 +399,21 @@ static rt_err_t nu_emac_tx(rt_device_t dev, struct pbuf *p)
     rt_uint32_t offset = 0;
     rt_uint8_t *buf;
 
-    if (psNuEmac->eth.link_status == RT_FALSE)
-    {
-        rt_kprintf("[%s]Stand here.\n", psNuEmac->name);
-        while (rt_sem_take(&psNuEmac->eth_sem, RT_WAITING_FOREVER) != RT_EOK);
-        rt_kprintf("[%s]Leave.\n", psNuEmac->name);
-    }
-
     buf = (rt_uint8_t *)EMAC_ClaimFreeTXBuf(&psNuEmac->memmgr);
-
     /* Get free TX buffer */
     if (buf == RT_NULL)
     {
-        rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
+        rt_err_t result;
+
+        result = rt_sem_control(&psNuEmac->eth_sem, RT_IPC_CMD_RESET, 0);
+        RT_ASSERT(result != RT_EOK);
 
         EMAC_CLEAR_INT_FLAG(EMAC, EMAC_INTSTS_TXCPIF_Msk);
         EMAC_ENABLE_INT(EMAC, EMAC_INTEN_TXCPIEN_Msk);
 
         do
         {
-            rt_sem_take(&psNuEmac->eth_sem, 1);
+            result = rt_sem_take(&psNuEmac->eth_sem, 10);
             buf = (rt_uint8_t *)EMAC_ClaimFreeTXBuf(&psNuEmac->memmgr);
         }
         while (buf == RT_NULL);

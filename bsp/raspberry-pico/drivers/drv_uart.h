@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
+ * Date           Author         Notes
+ * 2021-01-28     flybreak       first version
  */
 
 #ifndef __USART_H__

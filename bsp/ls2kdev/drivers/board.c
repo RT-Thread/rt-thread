@@ -90,7 +90,7 @@ void rt_hw_board_init(void)
     /* init hardware UART device */
     rt_hw_uart_init();
     /* set console device */
-    rt_console_set_device("uart0");
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
 #ifdef RT_USING_HEAP

@@ -287,6 +287,18 @@ void nu_sys_ipclk_disable(E_SYS_IPCLK eIPClkIdx)
     _nu_sys_ipclk(eIPClkIdx, 0);
 }
 
+E_SYS_USB0_ID nu_sys_usb0_role(void)
+{
+    /* Check Role on USB0 dual-role port. */
+    /*
+        [17] USB0_IDS
+           USB0_ID Status
+           0 = USB port 0 used as a USB device port.
+           1 = USB port 0 used as a USB host port.
+      */
+    return ((inpw(REG_SYS_MISCISR) & (1 << 17)) > 0) ? USB0_ID_HOST : USB0_ID_DEVICE;
+}
+
 #ifdef RT_USING_FINSH
 
 #include <finsh.h>
@@ -308,6 +320,32 @@ int cmd_shutdown(int argc, char **argv)
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_reset, __cmd_reset, restart the system.);
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_shutdown, __cmd_shutdown, shutdown the system.);
 
+int nu_clocks(int argc, char **argv)
+{
+    rt_kprintf("SYS_UPLL = %d MHz\n", sysGetClock(SYS_UPLL));
+    rt_kprintf("SYS_APLL = %d MHz\n", sysGetClock(SYS_APLL));
+    rt_kprintf("SYS_SYSTEM = %d MHz\n", sysGetClock(SYS_SYSTEM));
+    rt_kprintf("SYS_HCLK = %d MHz\n", sysGetClock(SYS_HCLK));
+    rt_kprintf("SYS_PCLK01 = %d MHz\n", sysGetClock(SYS_PCLK01));
+    rt_kprintf("SYS_PCLK2 = %d MHz\n", sysGetClock(SYS_PCLK2));
+    rt_kprintf("SYS_CPU = %d MHz\n", sysGetClock(SYS_CPU));
+
+    rt_kprintf("CLK_HCLKEN = %08X\n", inpw(REG_CLK_HCLKEN));
+    rt_kprintf("CLK_PCLKEN0 = %08X\n", inpw(REG_CLK_PCLKEN0));
+    rt_kprintf("CLK_PCLKEN1 = %08X\n", inpw(REG_CLK_PCLKEN1));
+
+    rt_kprintf("AIC_INTMSK0 = %08X\n", inpw(REG_AIC_INTMSK0));
+    rt_kprintf("AIC_INTMSK1 = %08X\n", inpw(REG_AIC_INTMSK1));
+
+    rt_kprintf("AIC_INTEN0 = %08X\n", inpw(REG_AIC_INTEN0));
+    rt_kprintf("AIC_INTEN1 = %08X\n", inpw(REG_AIC_INTEN1));
+
+    rt_kprintf("AIC_INTDIS0 = %08X\n", inpw(REG_AIC_INTDIS0));
+    rt_kprintf("AIC_INTDIS1 = %08X\n", inpw(REG_AIC_INTDIS1));
+
+    return 0;
+}
+MSH_CMD_EXPORT(nu_clocks, Get all system clocks);
 #endif
 
 #endif

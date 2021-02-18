@@ -572,7 +572,6 @@ static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
     struct rt_serial_device *serial = (struct rt_serial_device *)pvOwner;
     nu_uart_t puart = (nu_uart_t)serial;
     RT_ASSERT(serial != RT_NULL);
-    struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
 
     /* Get base address of uart register */
     UART_T *uart_base = puart->uart_base;
@@ -581,6 +580,9 @@ static void nu_pdma_uart_rx_cb(void *pvOwner, uint32_t u32Events)
 
     if (u32Events & (NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT))
     {
+#if defined(BSP_USING_MMU)
+        struct rt_serial_rx_fifo *rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+#endif
         if (u32Events & NU_PDMA_EVENT_TRANSFER_DONE)
         {
             transferred_rxbyte = puart->rxdma_trigger_len;

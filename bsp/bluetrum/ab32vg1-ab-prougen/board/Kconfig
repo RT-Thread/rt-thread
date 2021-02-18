@@ -65,6 +65,72 @@ menu "On-chip Peripheral Drivers"
                 default 15
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+        menuconfig BSP_USING_T3_PWM
+            bool "Enable Timer3 PWM"
+            default n
+            if BSP_USING_T3_PWM
+                config BSP_USING_T3_PWM0
+                    bool "Enable Timer3 PWM0 (PB0)(Confict with SD card)"
+                    default n
+            endif
+
+        menuconfig BSP_USING_T4_PWM
+            bool "Enable Timer4 PWM"
+            default n
+            if BSP_USING_T4_PWM
+                config BSP_USING_T4_PWM1
+                    bool "Enable Timer4 PWM1 (PA6)(Confit with uart0 rx)"
+                    default n
+            endif
+
+        menuconfig BSP_USING_T5_PWM
+            bool "Enable Timer5 PWM"
+            default n
+            if BSP_USING_T5_PWM
+                config BSP_USING_T5_PWM0
+                    bool "Enable Timer5 PWM2 (PE1)"
+                    default n
+            endif
+
+        menuconfig BSP_USING_LPWM0
+            bool "Enable LPWM0"
+            default n
+            if BSP_USING_LPWM0
+                comment "G1, G2 and G3 are mutually exclusive"
+                config BSP_USING_LPWM0_G1
+                    bool "Enable LPWM0 G1 (PE4)"
+                    default n
+            endif
+
+        menuconfig BSP_USING_LPWM1
+            bool "Enable LPWM1"
+            default n
+            if BSP_USING_LPWM1
+                comment "G1, G2 and G3 are mutually exclusive"
+                config BSP_USING_LPWM1_G3
+                    bool "Enable LPWM1 G3 (PA1)"
+                    default n
+            endif
+
+        menuconfig BSP_USING_LPWM2
+            bool "Enable LPWM2"
+            default n
+            if BSP_USING_LPWM2
+                comment "G1, G2 and G3 are mutually exclusive"
+                config BSP_USING_LPWM2_G2
+                    bool "Enable LPWM2 G2 (PE0)"
+                    default n
+                config BSP_USING_LPWM2_G3
+                    bool "Enable LPWM2 G3 (PA2)"
+                    default n
+            endif
+        endif
+
     config BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
@@ -93,6 +159,22 @@ menu "On-chip Peripheral Drivers"
                 
             config BSP_USING_TIM5
                 bool "Enable TIM5"
+                default n
+        endif
+
+    config BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        select RT_USING_LIBC
+        default n
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC0
+                bool "Enable ADC0"
                 default n
         endif
 

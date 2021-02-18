@@ -8,7 +8,7 @@
  * 2018-01-30     armink       the first version
  */
 
-#include <time.h>
+#include <sys/time.h>
 #include <string.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -126,7 +126,7 @@ int rt_soft_rtc_init(void)
 #endif
 
     init_tick = rt_tick_get();
-    init_time = mktime(&time_new);
+    init_time = timegm(&time_new);
 
     soft_rtc_dev.type    = RT_Device_Class_RTC;
 

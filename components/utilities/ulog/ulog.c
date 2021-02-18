@@ -32,7 +32,7 @@
 
 /* the number which is max stored line logs */
 #ifndef ULOG_ASYNC_OUTPUT_STORE_LINES
-#define ULOG_ASYNC_OUTPUT_STORE_LINES  (ULOG_ASYNC_OUTPUT_BUF_SIZE * 3 / 2 / ULOG_LINE_BUF_SIZE)
+#define ULOG_ASYNC_OUTPUT_STORE_LINES  (ULOG_ASYNC_OUTPUT_BUF_SIZE * 3 / 2 / 80)
 #endif
 
 #ifdef ULOG_USING_COLOR
@@ -92,6 +92,8 @@ struct rt_ulog
 #ifdef ULOG_USING_ASYNC_OUTPUT
     rt_bool_t async_enabled;
     rt_rbb_t async_rbb;
+    /* ringbuffer for log_raw function only */
+    struct rt_ringbuffer *async_rb;
     rt_thread_t async_th;
     struct rt_semaphore async_notice;
 #endif
@@ -429,37 +431,47 @@ void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is
 static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log_buf, rt_size_t log_len)
 {
 #ifdef ULOG_USING_ASYNC_OUTPUT
-    rt_rbb_blk_t log_blk;
-    ulog_frame_t log_frame;
 
-    /* allocate log frame */
-    log_blk = rt_rbb_blk_alloc(ulog.async_rbb, RT_ALIGN(sizeof(struct ulog_frame) + log_len, RT_ALIGN_SIZE));
-    if (log_blk)
+    if (is_raw == RT_FALSE)
     {
-        /* package the log frame */
-        log_frame = (ulog_frame_t) log_blk->buf;
-        log_frame->magic = ULOG_FRAME_MAGIC;
-        log_frame->is_raw = is_raw;
-        log_frame->level = level;
-        log_frame->log_len = log_len;
-        log_frame->tag = tag;
-        log_frame->log = (const char *)log_blk->buf + sizeof(struct ulog_frame);
-        /* copy log data */
-        rt_memcpy(log_blk->buf + sizeof(struct ulog_frame), log_buf, log_len);
-        /* put the block */
-        rt_rbb_blk_put(log_blk);
+        rt_rbb_blk_t log_blk;
+        ulog_frame_t log_frame;
+
+        /* allocate log frame */
+        log_blk = rt_rbb_blk_alloc(ulog.async_rbb, RT_ALIGN(sizeof(struct ulog_frame) + log_len, RT_ALIGN_SIZE));
+        if (log_blk)
+        {
+            /* package the log frame */
+            log_frame = (ulog_frame_t) log_blk->buf;
+            log_frame->magic = ULOG_FRAME_MAGIC;
+            log_frame->is_raw = is_raw;
+            log_frame->level = level;
+            log_frame->log_len = log_len;
+            log_frame->tag = tag;
+            log_frame->log = (const char *)log_blk->buf + sizeof(struct ulog_frame);
+            /* copy log data */
+            rt_memcpy(log_blk->buf + sizeof(struct ulog_frame), log_buf, log_len);
+            /* put the block */
+            rt_rbb_blk_put(log_blk);
+            /* send a notice */
+            rt_sem_release(&ulog.async_notice);
+        }
+        else
+        {
+            static rt_bool_t already_output = RT_FALSE;
+            if (already_output == RT_FALSE)
+            {
+                rt_kprintf("Warning: There is no enough buffer for saving async log,"
+                        " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
+                already_output = RT_TRUE;
+            }
+        }
+    }
+    else if (ulog.async_rb)
+    {
+        rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, log_len);
         /* send a notice */
         rt_sem_release(&ulog.async_notice);
-    }
-    else
-    {
-        static rt_bool_t already_output = RT_FALSE;
-        if (already_output == RT_FALSE)
-        {
-            rt_kprintf("Warning: There is no enough buffer for saving async log,"
-                    " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
-            already_output = RT_TRUE;
-        }
     }
 #else
     /* is in thread context */
@@ -600,6 +612,13 @@ void ulog_raw(const char *format, ...)
     int fmt_result;
 
     RT_ASSERT(ulog.init_ok);
+
+#ifdef ULOG_USING_ASYNC_OUTPUT
+    if (ulog.async_rb == NULL)
+    {
+        ulog.async_rb = rt_ringbuffer_create(ULOG_ASYNC_OUTPUT_BUF_SIZE);
+    }
+#endif
 
     /* get log buffer */
     log_buf = get_log_buf();
@@ -1181,7 +1200,7 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
 
     backend->support_color = support_color;
     backend->out_level = LOG_FILTER_LVL_ALL;
-    rt_memcpy(backend->name, name, RT_NAME_MAX);
+    rt_strncpy(backend->name, name, RT_NAME_MAX);
 
     level = rt_hw_interrupt_disable();
     rt_slist_append(&ulog.backend_list, &backend->list);
@@ -1235,6 +1254,18 @@ void ulog_async_output(void)
                     log_frame->log_len);
         }
         rt_rbb_blk_free(ulog.async_rbb, log_blk);
+    }
+    /* output the log_raw format log */
+    if (ulog.async_rb)
+    {
+        size_t log_len = rt_ringbuffer_data_len(ulog.async_rb);
+        char *log = rt_malloc(log_len);
+        if (log)
+        {
+            size_t len = rt_ringbuffer_get(ulog.async_rb, (rt_uint8_t *)log, log_len);
+            ulog_output_to_all_backend(LOG_LVL_DBG, NULL, RT_TRUE, log, len);
+            rt_free(log);
+        }
     }
 }
 
@@ -1390,6 +1421,8 @@ void ulog_deinit(void)
 #ifdef ULOG_USING_ASYNC_OUTPUT
     rt_rbb_destroy(ulog.async_rbb);
     rt_thread_delete(ulog.async_th);
+    if (ulog.async_rb)
+        rt_ringbuffer_destroy(ulog.async_rb);
 #endif
 
     ulog.init_ok = RT_FALSE;

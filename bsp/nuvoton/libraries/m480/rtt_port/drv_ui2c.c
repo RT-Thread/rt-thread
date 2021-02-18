@@ -22,6 +22,7 @@
 #define DBG_ENABLE
 #define DBG_SECTION_NAME LOG_TAG
 #define DBG_LEVEL        DBG_INFO
+#define DBG_COLOR
 #include <rtdbg.h>
 
 #define SLV_10BIT_ADDR (0x1E<<2)             //1111+0xx+r/w
@@ -382,4 +383,4 @@ int rt_hw_ui2c_init(void)
 
 INIT_DEVICE_EXPORT(rt_hw_ui2c_init);
 
-#endif //#if (defined(BSP_USING_UI2C) && defined(RT_USING_I2C))
+#endif //#if defined(BSP_USING_UI2C)

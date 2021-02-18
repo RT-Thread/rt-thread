@@ -22,7 +22,6 @@
 #define MAX_INTR            (GS232_NR_IRQS)
 
 static struct rt_irq_desc irq_handle_table[MAX_INTR];
-void rt_interrupt_dispatch(void *ptreg);
 void rt_hw_timer_handler();
 
 static struct gs232_intc_regs volatile *gs232_hw0_icregs
