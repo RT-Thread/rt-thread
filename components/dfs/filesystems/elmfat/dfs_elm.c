@@ -945,7 +945,7 @@ DWORD get_fattime(void)
 {
     DWORD fat_time = 0;
 
-#ifdef RT_USING_LIBC
+#ifdef RT_USING_RTC
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
