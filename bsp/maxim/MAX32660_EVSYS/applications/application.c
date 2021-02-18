@@ -11,22 +11,20 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "gpio.h"
 
-const gpio_cfg_t led_pin[] =
-{
-    {PORT_0, PIN_13, GPIO_FUNC_OUT, GPIO_PAD_NONE},
-};
+#define GPIO_LED_PIN  13
 
 int main(void)
 {
     int count = 1;
-    GPIO_Config(&led_pin[0]);
-    GPIO_OutSet(&led_pin[0]);
+    rt_pin_mode(GPIO_LED_PIN, PIN_MODE_OUTPUT);
     while (count++)
     {
+        rt_pin_write(GPIO_LED_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
-        GPIO_OutToggle(&led_pin[0]);
+
+        rt_pin_write(GPIO_LED_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
     }
     return RT_EOK;
 }
