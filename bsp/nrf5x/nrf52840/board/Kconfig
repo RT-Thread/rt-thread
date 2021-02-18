@@ -314,8 +314,8 @@ menu "On-chip Peripheral Drivers"
         endif
     config BSP_USING_SPI
         bool "Enable SPI"
-        select RT_USING_PIN
-        default y
+        select RT_USING_SPI  
+        default n
 
         if BSP_USING_SPI
             config NRFX_SPI_ENABLED
