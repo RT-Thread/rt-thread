@@ -21,8 +21,7 @@ extern int __bss_end__;
 #define HEAP_BEGIN      ((void *)&__bss_end__)
 #endif
 
-#define HEAP_SIZE      16*1024
-#define HEAP_END       (HEAP_BEGIN + HEAP_SIZE)
+#define HEAP_END       (MCU_SRAM_END_ADDRESS)
 
 void rt_hw_board_init(void);
 
