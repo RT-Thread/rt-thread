@@ -10,6 +10,7 @@
 ; * 2013-06-18     aozima       add restore MSP feature.
 ; * 2013-06-23     aozima       support lazy stack optimized.
 ; * 2018-07-24     aozima       enhancement hard fault exception handler.
+; * 2021-02-15     lizhirui     repair hard fault return bug
 ; */
 
 ;/**
@@ -234,11 +235,6 @@ MemManage_Handler
     STMFD   r0!, {lr}               ; push dummy for flag
     ENDIF
     STMFD   r0!, {lr}               ; push exec_return register
-
-    TST     lr, #0x04               ; if(!EXC_RETURN[2])
-    ITE     EQ
-    MSREQ   msp, r0                 ; [2]=0 ==> Z=1, update stack pointer to MSP.
-    MSRNE   psp, r0                 ; [2]=1 ==> Z=0, update stack pointer to PSP.
 
     PUSH    {lr}
     BL      rt_hw_hard_fault_exception
