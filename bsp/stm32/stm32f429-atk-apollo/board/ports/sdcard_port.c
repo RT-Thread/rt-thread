@@ -54,7 +54,7 @@ int stm32_sdcard_mount(void)
     else
     {
         LOG_E("create sd_mount thread err!");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return RT_EOK;
 }
