@@ -1,18 +1,14 @@
 /*
- * File      : trap.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  */
-
-#include <rtthread.h>
+ 
 #include <rthw.h>
+#include <rtthread.h>
 
 #include <bsp.h>
 
@@ -29,6 +25,7 @@ struct Pseudodesc idt_pd =
 extern rt_isr_handler_t isr_table[];
 extern rt_isr_handler_t trap_func[];
 extern rt_isr_handler_t hdinterrupt_func[];
+extern void rt_hw_interrupt_handle(int vector, void* param);
 
 /**
  * @addtogroup I386
@@ -41,7 +38,7 @@ extern rt_isr_handler_t hdinterrupt_func[];
  */
 void rt_hw_idt_init(void)
 {	
-	extern void Xdefault;
+	extern void Xdefault(void);
 	int i, j, func;
 
 	// install a default handler
@@ -92,7 +89,7 @@ void rt_hw_trap_irq(int trapno)
 			rt_kprintf("General protection interrupt\n");
 			RT_ASSERT(0);
 		case T_DEFAULT:
-			rt_hw_interrupt_handle(T_DEFAULT);
+			rt_hw_interrupt_handle(T_DEFAULT, RT_NULL);
 			return;
 	}
 
