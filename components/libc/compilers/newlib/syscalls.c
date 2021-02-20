@@ -283,8 +283,9 @@ _free_r (struct _reent *ptr, void *addr)
     rt_free (addr);
 }
 
-void
-exit (int status)
+/* for exit() and abort() */
+__attribute__ ((noreturn)) void
+_exit (int status)
 {
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(status);
@@ -301,13 +302,6 @@ _system(const char *s)
 void __libc_init_array(void)
 {
     /* we not use __libc init_aray to initialize C++ objects */
-}
-
-void abort(void)
-{
-    extern void __rt_libc_abort(void);
-    __rt_libc_abort();
-    while(1);
 }
 
 uid_t getuid(void)
