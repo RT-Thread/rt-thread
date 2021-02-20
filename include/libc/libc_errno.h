@@ -13,7 +13,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#if (defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION)/*GCC*/)) && (!defined(RT_USING_MINILIBC))
 /* use errno.h file in toolchains */
 #include <errno.h>
 #endif
@@ -45,7 +45,7 @@ defined in armcc/errno.h
 #define ERROR_BASE_NO    0
 #endif
 
-#if (!defined(RT_USING_NEWLIB) && !defined(_WIN32) && !(defined( __GNUC__ ) && !defined(__ARMCC_VERSION))) || defined(RT_USING_MINILIBC)
+#if (!defined(RT_USING_NEWLIB) && !defined(_WIN32) && !(defined( __GNUC__ ) && !defined(__ARMCC_VERSION)/*GCC*/)) || defined(RT_USING_MINILIBC)
 
 #define EPERM            (ERROR_BASE_NO + 1)
 #define ENOENT           (ERROR_BASE_NO + 2)

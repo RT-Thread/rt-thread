@@ -9,7 +9,7 @@
 
 #include <rtconfig.h>
 
-#if defined(RT_USING_NEWLIB) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#if (defined(RT_USING_NEWLIB) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION)/*GCC*/)) && (!defined(RT_USING_MINILIBC))
 /* use header file of newlib */
 #include <sys/stat.h>
 
@@ -42,6 +42,7 @@
 #define S_ISDIR(m)           (((m) & S_IFMT) == S_IFDIR)
 
 #else
+
 #define S_IFMT               00170000
 #define S_IFSOCK             0140000
 #define S_IFLNK              0120000

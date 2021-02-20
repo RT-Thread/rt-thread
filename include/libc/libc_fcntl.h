@@ -12,7 +12,7 @@
 #ifndef LIBC_FCNTL_H__
 #define LIBC_FCNTL_H__
 
-#if defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION))
+#if (defined(RT_USING_NEWLIB) || defined(_WIN32) || (defined( __GNUC__ ) && !defined(__ARMCC_VERSION)/*GCC*/)) && (!defined(RT_USING_MINILIBC))
 #include <fcntl.h>
 
 #ifndef O_NONBLOCK
@@ -43,6 +43,7 @@
 #endif
 
 #else
+
 #define O_RDONLY         00
 #define O_WRONLY         01
 #define O_RDWR           02
