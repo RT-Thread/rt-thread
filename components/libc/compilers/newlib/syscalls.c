@@ -283,6 +283,7 @@ _free_r (struct _reent *ptr, void *addr)
     rt_free (addr);
 }
 
+/* for exit() and abort() */
 __attribute__ ((noreturn)) void
 _exit (int status)
 {
