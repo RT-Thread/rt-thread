@@ -693,7 +693,7 @@ int rt_memheap_dump(struct rt_memheap *heap)
     return 0;
 }
 
-int memtrace(void)
+int memheaptrace(void)
 {
     int count = rt_object_get_length(RT_Object_Class_MemHeap);
     struct rt_memheap **heaps;
@@ -720,7 +720,7 @@ int memtrace(void)
 
     return 0;
 }
-MSH_CMD_EXPORT(memtrace, dump memory trace information);
+MSH_CMD_EXPORT(memheaptrace, dump memory trace information);
 #endif
 
 #ifdef RT_USING_MEMHEAP_AS_HEAP
