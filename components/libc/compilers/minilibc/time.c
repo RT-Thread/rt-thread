@@ -6,7 +6,6 @@
  * Change Logs:
  * Date           Author       Notes
  */
-#include <time.h>
 #include <rtthread.h>
 
 /* days per month -- nonleap! */
@@ -75,7 +74,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
 
-
+    r->tm_isdst = 0;
     return r;
 }
 
