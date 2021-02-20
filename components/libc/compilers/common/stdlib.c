@@ -9,7 +9,6 @@
  */
 
 #include <rtthread.h>
-#include <stdlib.h>
 
 void __rt_libc_exit(int status)
 {
@@ -24,22 +23,10 @@ void __rt_libc_exit(int status)
 
     if (self != RT_NULL)
     {
-        if(status == EXIT_FAILURE) /* abort() */
-        {
-            rt_kprintf("thread:%s abort!\n", self->name);
-        }
-        else /* exit() */
-        {
-            rt_kprintf("thread:%s exit:%d!\n", self->name, status);
-        }
+        rt_kprintf("thread:%s exit:%d!\n", self->name, status);
         rt_thread_suspend(self);
         rt_schedule();
     }
-}
-
-void __rt_libc_abort(void)
-{
-    __rt_libc_exit(EXIT_FAILURE);
 }
 
 int __rt_libc_system(const char *string)
