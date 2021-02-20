@@ -9,6 +9,8 @@ CPPPATH = [cwd]
 
 if GetDepend('RT_USING_LIBC'):
     src += Glob('*.c')
+elif GetDepend('RT_LIBC_USING_TIME'):
+        src += ['time.c']
 
 if GetDepend('RT_USING_POSIX') == False:
     SrcRemove(src, ['unistd.c'])
@@ -18,7 +20,7 @@ if rtconfig.CROSS_TOOL == 'keil':
 else:
     CPPDEFINES = []
 
-if not GetDepend('RT_USING_MINILIBC') and GetDepend('RT_USING_LIBC'):
+if not GetDepend('RT_USING_MINILIBC') and (GetDepend('RT_USING_LIBC') or GetDepend('RT_LIBC_USING_TIME')):
     group = DefineGroup('libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')
