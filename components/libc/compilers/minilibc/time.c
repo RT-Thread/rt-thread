@@ -10,7 +10,7 @@
 #include <rtthread.h>
 
 /* days per month -- nonleap! */
-const short __spm[13] =
+static const short __spm[13] =
 {   0,
     (31),
     (31 + 28),
@@ -25,9 +25,10 @@ const short __spm[13] =
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30),
     (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
+
 static long int timezone;
-static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
-static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
+ALIGN(4) static const char days[] = "Sun Mon Tue Wed Thu Fri Sat ";
+ALIGN(4) static const char months[] = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ";
 
 /* seconds per day */
 #define SPD 24*60*60
@@ -73,6 +74,8 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
         ;
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
+
+
     return r;
 }
 
@@ -224,16 +227,6 @@ int gettimeofday(struct timeval *tp, void *ignore)
 }
 #endif
 
-#ifndef _gettimeofday
-/* Dummy function when hardware do not have RTC */
-int _gettimeofday( struct timeval *tv, void *ignore)
-{
-    tv->tv_sec = 0;  // convert to seconds
-    tv->tv_usec = 0;  // get remaining microseconds
-    return 0;  // return non-zero for error
-}
-#endif
-
 /**
  * Returns the current time.
  *
@@ -242,13 +235,7 @@ int _gettimeofday( struct timeval *tv, void *ignore)
  * @return time_t return timestamp current.
  *
  */
-/* for IAR 6.2 later Compiler */
-#if defined (__IAR_SYSTEMS_ICC__) &&  (__VER__) >= 6020000
-#pragma module_name = "?time"
-time_t (__time32)(time_t *t) /* Only supports 32-bit timestamp */
-#else
 time_t time(time_t *t)
-#endif
 {
     time_t time_now = 0;
 
