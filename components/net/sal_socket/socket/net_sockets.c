@@ -205,15 +205,26 @@ int socket(int domain, int type, int protocol)
         return -1;
     }
     d = fd_get(fd);
+    d->fnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+    if (!d->fnode)
+    {
+        /* release fd */
+        fd_release(fd);
+        rt_set_errno(-ENOMEM);
+        return -1;
+    }
 
     /* create socket  and then put it to the dfs_fd */
     socket = sal_socket(domain, type, protocol);
     if (socket >= 0)
     {
+        rt_memset(d->fnode, 0, sizeof(struct dfs_fnode));
+        rt_list_init(&d->fnode->list);
         /* this is a socket fd */
         d->fnode->type = FT_SOCKET;
         d->fnode->path = NULL;
-
+        d->fnode->fullpath = NULL;
+        d->fnode->ref_count = 1;
         d->fnode->fops = dfs_net_get_fops();
 
         d->fnode->flags = O_RDWR; /* set flags as read and write */
@@ -227,9 +238,8 @@ int socket(int domain, int type, int protocol)
     {
         /* release fd */
         fd_release(fd);
-
         rt_set_errno(-ENOMEM);
-
+        rt_free(d->fnode);
         return -1;
     }
 
@@ -257,6 +267,12 @@ int closesocket(int s)
         return -1;
     }
 
+    if (!d->fnode)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
     if (sal_closesocket(socket) == 0)
     {
         error = 0;
@@ -269,6 +285,7 @@ int closesocket(int s)
 
     /* socket has been closed, delete it from file system fd */
     fd_release(s);
+    rt_free(d->fnode);
 
     return error;
 }
