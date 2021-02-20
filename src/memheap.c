@@ -553,7 +553,8 @@ void rt_memheap_free(void *ptr)
     /* check magic */
     if (header_ptr->magic != (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED))
     {
-        RT_DEBUG_LOG("bad magic:0x%08x @ memheap\n", header_ptr->magic);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("bad magic:0x%08x @ memheap\n",
+                                        header_ptr->magic));
     }
     RT_ASSERT(header_ptr->magic == (RT_MEMHEAP_MAGIC | RT_MEMHEAP_USED));
     /* check whether this block of memory has been over-written. */
@@ -774,7 +775,7 @@ void *rt_malloc(rt_size_t size)
 #ifdef RT_USING_MEMTRACE
     if (ptr == RT_NULL)
     {
-        RT_DEBUG_LOG("malloc[%d] => NULL", size);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc[%d] => NULL", size));
     }
     else
     {
@@ -784,7 +785,7 @@ void *rt_malloc(rt_size_t size)
         else
             rt_memheap_setname(item, "<null>");
 
-        RT_DEBUG_LOG("malloc => 0x%08x : %d", ptr, size);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("malloc => 0x%08x : %d", ptr, size));
     }
 #endif
 
@@ -839,7 +840,7 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
 #ifdef RT_USING_MEMTRACE
     if (new_ptr == RT_NULL)
     {
-        RT_DEBUG_LOG("realloc[%d] => NULL", newsize);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc[%d] => NULL", newsize));
     }
     else
     {
@@ -849,7 +850,8 @@ void *rt_realloc(void *rmem, rt_size_t newsize)
         else
             rt_memheap_setname(item, "<null>");
 
-        RT_DEBUG_LOG("realloc => 0x%08x : %d", new_ptr, newsize);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("realloc => 0x%08x : %d",
+                                        new_ptr, newsize));
     }
 #endif
 
@@ -873,11 +875,13 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
 #ifdef RT_USING_MEMTRACE
     if (ptr == RT_NULL)
     {
-        RT_DEBUG_LOG("calloc[%d x %d] => NULL", count, size);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc[%d x %d] => NULL",
+                                        count, size));
     }
     else
     {
-        RT_DEBUG_LOG("calloc => 0x%08x : %d", ptr, count * size);
+        RT_DEBUG_LOG(RT_DEBUG_MEMHEAP, ("calloc => 0x%08x : %d",
+                                        ptr, count * size));
     }
 #endif
 
