@@ -1,24 +1,43 @@
 /*
- * File      : stack.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2021/02/19     Bernard      Implement rt_hw_context_switch_interrupt in C
  */
  
+#include <rthw.h>
 #include <rtthread.h>
 
-#include <i386.h>
+volatile rt_ubase_t  rt_interrupt_from_thread = 0;
+volatile rt_ubase_t  rt_interrupt_to_thread = 0;
+volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
 
-/**
- * @addtogroup I386
- */
-/*@{*/
+rt_base_t rt_hw_interrupt_disable(void)
+{
+    rt_base_t level;
+
+    __asm__ __volatile__("pushfl ; popl %0 ; cli":"=g" (level): :"memory");
+    return level;
+}
+
+void rt_hw_interrupt_enable(rt_base_t level)
+{
+    __asm__ __volatile__("pushl %0 ; popfl": :"g" (level):"memory", "cc");
+}
+
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+{
+    if (rt_thread_switch_interrupt_flag == 0)
+        rt_interrupt_from_thread = from;
+
+    rt_interrupt_to_thread = to;
+    rt_thread_switch_interrupt_flag = 1;
+
+    return ;
+}
 
 /**
  * This function will initialize thread stack
@@ -56,4 +75,3 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 	/* return task's current stack address */
 	return (rt_uint8_t *)stk;
 }
-/*@}*/
