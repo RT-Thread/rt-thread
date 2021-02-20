@@ -2514,6 +2514,11 @@ int sys_pmutex(void *umutex, int op, void *arg);
 int sys_dup(int oldfd);
 int sys_dup2(int oldfd, int new);
 
+int sys_rename(const char *oldpath,const char *newpath)
+{
+    return rename(oldpath,newpath);
+}
+
 const static void* func_table[] =
 {
     (void*)sys_exit,            /* 01 */
@@ -2666,6 +2671,7 @@ const static void* func_table[] =
     (void *)sys_pmutex,
     (void *)sys_dup,
     (void *)sys_dup2,
+    (void *)sys_rename,			/* 135 */
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
