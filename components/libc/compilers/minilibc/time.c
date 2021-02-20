@@ -168,6 +168,16 @@ time_t mktime(struct tm * const t)
     return ((day + t->tm_hour) * i + t->tm_min) * i + t->tm_sec;
 }
 
+time_t timegm(struct tm * const t)
+{
+    return mktime(t);
+}
+
+struct tm* gmtime(const time_t* t)
+{
+    return localtime(t);
+}
+
 static void num2str(char *c, int i)
 {
     c[0] = i / 10 + '0';
