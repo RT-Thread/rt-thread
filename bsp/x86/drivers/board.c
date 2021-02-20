@@ -1,11 +1,7 @@
 /*
- * File      : board.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.fayfayspace.org/license/LICENSE.
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -13,27 +9,39 @@
  * 2006-10-10     Bernard      add hardware related of finsh
  */
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <rtthread.h>
 
 #include <bsp.h>
+
+extern unsigned char __bss_start[];
+extern unsigned char __bss_end[];
+extern void rt_hw_console_init(void);
 
 /**
  * @addtogroup QEMU
  */
 /*@{*/
-
 static void rt_timer_handler(int vector, void* param)
 {
-	rt_tick_increase();
+    rt_tick_increase();
 }
 
 #ifdef RT_USING_HOOK
 static void idle_hook(void)
 {
-	asm volatile("sti; hlt": : :"memory");
+    asm volatile("sti; hlt": : :"memory");
 }
 #endif
+
+/* clear .bss */
+void rt_hw_clear_bss(void)
+{
+    unsigned char *dst;
+    dst = __bss_start;
+    while (dst < __bss_end)
+        *dst++ = 0;
+}
 
 /**
  * This function will init QEMU
@@ -41,34 +49,41 @@ static void idle_hook(void)
  */
 void rt_hw_board_init(void)
 {
-	/* initialize 8253 clock to interrupt 1000 times/sec */
-	outb(TIMER_MODE, TIMER_SEL0|TIMER_RATEGEN|TIMER_16BIT);
-	outb(IO_TIMER1, TIMER_DIV(RT_TICK_PER_SECOND) % 256);
-	outb(IO_TIMER1, TIMER_DIV(RT_TICK_PER_SECOND) / 256);
+    /* clear .bss */
+    rt_hw_clear_bss();
 
-	/* install interrupt handler */
-	rt_hw_interrupt_install(INTTIMER0, rt_timer_handler, RT_NULL, "tick");
-	rt_hw_interrupt_umask(INTTIMER0);
+    /* init hardware interrupt */
+    rt_hw_interrupt_init();
+
+    /* init the console */
+    rt_hw_console_init();
+    rt_console_set_device("console");
+
+    /* initialize 8253 clock to interrupt 1000 times/sec */
+    outb(TIMER_MODE, TIMER_SEL0|TIMER_RATEGEN|TIMER_16BIT);
+    outb(IO_TIMER1, TIMER_DIV(RT_TICK_PER_SECOND) % 256);
+    outb(IO_TIMER1, TIMER_DIV(RT_TICK_PER_SECOND) / 256);
+
+    /* install interrupt handler */
+    rt_hw_interrupt_install(INTTIMER0, rt_timer_handler, RT_NULL, "tick");
+    rt_hw_interrupt_umask(INTTIMER0);
+
+    /* init memory system */
+#ifdef RT_USING_HEAP
+    /* RAM 16M */
+    rt_system_heap_init((void *)&__bss_end, (void *)(1024UL*1024*8));
+#endif
 
 #ifdef RT_USING_HOOK
-	rt_thread_idle_sethook(idle_hook);
+    rt_thread_idle_sethook(idle_hook);
 #endif
 }
 
-void restart(void)
+static int reboot(void)
 {
     outb(KBSTATP, 0xFE); /* pulse reset low */
-    while(1);
-}
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT(restart, reboot PC)
-
-void reboot(void)
-{
-    restart();
+    return 0;
 }
-FINSH_FUNCTION_EXPORT(reboot, reboot PC)
-#endif
+MSH_CMD_EXPORT(reboot, reboot system);
 /*@}*/

@@ -107,12 +107,14 @@
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_LIBC" description="Using C library" default="true" />
 #define RT_USING_LIBC
+// <bool name="RT_USING_POSIX" description="Using POSIX library" default="true" />
+#define RT_USING_POSIX
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
-// #define RT_USING_DFS
+#define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 // #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />
@@ -133,7 +135,7 @@
 // <bool name="RT_USING_DFS_UFFS" description="Using UFFS" default="false" />
 // #define RT_USING_DFS_UFFS
 // <bool name="RT_USING_DFS_DEVFS" description="Using devfs for device objects" default="true" />
-// #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_DEVFS
 // <bool name="RT_USING_DFS_NFS" description="Using NFS v3 client file system" default="false" />
 // #define RT_USING_DFS_NFS
 // <string name="RT_NFS_HOST_EXPORT" description="NFSv3 host export" default="192.168.1.5:/" />

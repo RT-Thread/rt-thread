@@ -1,11 +1,7 @@
 /*
- * File      : trapisr_gcc.S
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -22,6 +18,7 @@
 	.globl proc;\
 	.type proc,@function;\
 	proc:
+
 #define TRAPFNC(name,num)\
 	ENTRY(name)\
 	pushl $(num);\
@@ -29,6 +26,7 @@
 	.data;\
 	.long name;\
 	.text
+
 #define TRAPFNC_NOEC(name,num)\
 	ENTRY(name)\
 	pushl $0;\
@@ -54,17 +52,17 @@ TRAPFNC_NOEC(Xoflow,  4)
 TRAPFNC_NOEC(Xbound,  5)
 TRAPFNC_NOEC(Xillop,  6)
 TRAPFNC_NOEC(Xdevice, 7)
-TRAPFNC     	(Xdblflt, 8)
-TRAPFNC    	(Xtss,    9)
-TRAPFNC     	(Xsegnp,  10)
-TRAPFNC     	(Xstack,  11)
-TRAPFNC     	(Xgpflt,  12)
-TRAPFNC     	(Xpgflt,  13)
+TRAPFNC (Xdblflt, 8)
+TRAPFNC (Xtss,    9)
+TRAPFNC (Xsegnp,  10)
+TRAPFNC (Xstack,  11)
+TRAPFNC (Xgpflt,  12)
+TRAPFNC (Xpgflt,  13)
 TRAPFNC_NOEC(Xfperr,  14)
-TRAPFNC     	(Xalign,  15)
+TRAPFNC (Xalign,  15)
 
 /* default handler -- not for any specific trap */
-TRAPFNC     (Xdefault, 500)
+TRAPFNC (Xdefault, 500)
 
 .p2align 4,0x90
 .globl	_traps
