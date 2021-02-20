@@ -9,6 +9,8 @@
 #ifndef __STDIO_H__
 #define __STDIO_H__
 
+#include <sys/types.h>
+
 #define BUFSIZ 128
 #define EOF 	(-1)
 
