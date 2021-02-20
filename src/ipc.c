@@ -2203,7 +2203,7 @@ rt_err_t rt_mq_send_wait(rt_mq_t     mq,
     }
 
     /* message queue is full */
-    while ((msg = mq->msg_queue_free) == RT_NULL)
+    while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
         /* reset error number in thread */
         thread->error = RT_EOK;
