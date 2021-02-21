@@ -7,12 +7,13 @@
  * Date           Author       Notes
  * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
  * 2020-02-13     Meco Man     re-implement exit() and abort()
+ * 2020-02-21     Meco Man     improve and beautify syscalls
  */
 
 #include <reent.h>
-#include <sys/errno.h>
-#include <sys/time.h>
+#include <errno.h>
 #include <stdio.h>
+#include <sys/time.h>
 
 #include <rtthread.h>
 
@@ -38,7 +39,9 @@ int
 _close_r(struct _reent *ptr, int fd)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     return close(fd);
 #endif
@@ -85,11 +88,11 @@ _getpid_r(struct _reent *ptr)
 int
 _isatty_r(struct _reent *ptr, int fd)
 {
-    if (fd >=0 && fd < 3) return 1;
+    if (fd >=0 && fd < 3)
+        return 1;
 
-    /* return "not supported" */
-    ptr->_errno = ENOTSUP;
-    return -1;
+    ptr->_errno = ENOTTY ;
+    return 0;
 }
 
 int
@@ -112,7 +115,9 @@ _off_t
 _lseek_r(struct _reent *ptr, int fd, _off_t pos, int whence)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     _off_t rc;
 
@@ -125,7 +130,9 @@ int
 _mkdir_r(struct _reent *ptr, const char *name, int mode)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -138,7 +145,9 @@ int
 _open_r(struct _reent *ptr, const char *file, int flags, int mode)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -151,7 +160,9 @@ _ssize_t
 _read_r(struct _reent *ptr, int fd, void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     _ssize_t rc;
 
@@ -164,7 +175,9 @@ int
 _rename_r(struct _reent *ptr, const char *old, const char *new)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -184,7 +197,9 @@ int
 _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
 #ifndef RT_USING_DFS
-    return 0;
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
 #else
     int rc;
 
@@ -197,6 +212,8 @@ int
 _unlink_r(struct _reent *ptr, const char *file)
 {
 #ifndef RT_USING_DFS
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
     return -1;
 #else
     return unlink(file);
@@ -211,11 +228,11 @@ _wait_r(struct _reent *ptr, int *status)
     return -1;
 }
 
-#ifdef RT_USING_DEVICE
 _ssize_t
 _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifndef RT_USING_DFS
+#ifdef RT_USING_DEVICE
     if (fileno(stdout) == fd)
     {
         rt_device_t console;
@@ -225,7 +242,11 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     }
 
     return 0;
-
+#else
+    /* return "not supported" */
+    ptr->_errno = ENOTSUP;
+    return -1;
+#endif /*RT_USING_DEVICE*/
 #else
     _ssize_t rc;
 
@@ -233,7 +254,6 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     return rc;
 #endif
 }
-#endif
 
 /* Memory routine */
 void *
