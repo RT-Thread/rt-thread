@@ -8,6 +8,9 @@ group = []
 CPPPATH = [cwd]
 CPPDEFINES = ['RT_USING_NEWLIB']
 
+if GetDepend('RT_USING_MODULE') == False:
+    SrcRemove(src, ['libc_syms.c'])
+
 # link with libc and libm:
 # libm is a frequently used lib. Newlib is compiled with -ffunction-sections in
 # recent GCC tool chains. The linker would just link in the functions that have
