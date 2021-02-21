@@ -324,11 +324,6 @@ void __libc_init_array(void)
     /* we not use __libc init_aray to initialize C++ objects */
 }
 
-uid_t getuid(void)
-{
-    return 0;
-}
-
 mode_t umask(mode_t mask)
 {
     return 022;
