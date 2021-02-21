@@ -73,4 +73,7 @@ char *  ttyname     (int desc);
 unsigned int sleep(unsigned int seconds);
 int usleep(useconds_t usec);
 
+uid_t getuid(void);
+pid_t getpid(void);
+
 #endif /* _SYS_UNISTD_H */
