@@ -50,14 +50,38 @@ int usleep(useconds_t usec)
 }
 RTM_EXPORT(usleep);
 
+pid_t getpid(void)
+{
+    return 0;
+}
+RTM_EXPORT(getpid);
+
+pid_t getppid(void)
+{
+    return 0;
+}
+RTM_EXPORT(getppid);
+
 uid_t getuid(void)
 {
-    return -1;
+    return 0;
 }
 RTM_EXPORT(getuid);
 
-pid_t getpid(void)
+uid_t geteuid(void)
 {
-    return -1;
+    return 0;
 }
-RTM_EXPORT(getuid);
+RTM_EXPORT(geteuid);
+
+gid_t getgid(void)
+{
+    return 0;
+}
+RTM_EXPORT(getgid);
+
+gid_t getegid(void)
+{
+    return 0;
+}
+RTM_EXPORT(getegid);
