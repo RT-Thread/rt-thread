@@ -38,8 +38,7 @@ __errno ()
 int
 _getpid_r(struct _reent *ptr)
 {
-    extern pid_t __rt_libc_getpid(void);
-    return __rt_libc_getpid();
+    return 0;
 }
 
 int
