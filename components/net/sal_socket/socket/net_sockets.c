@@ -56,10 +56,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
             d->fnode->path = NULL;
             d->fnode->fullpath = NULL;
             d->fnode->ref_count = 1;
-
-
             d->fnode->fops = dfs_net_get_fops();
-
             d->fnode->flags = O_RDWR; /* set flags as read and write */
             d->fnode->size = 0;
             d->pos = 0;
