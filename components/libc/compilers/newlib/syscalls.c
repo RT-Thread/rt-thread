@@ -80,12 +80,6 @@ _fstat_r(struct _reent *ptr, int fd, struct stat *pstat)
 }
 
 int
-_getpid_r(struct _reent *ptr)
-{
-    return 0;
-}
-
-int
 _isatty_r(struct _reent *ptr, int fd)
 {
     if (fd >=0 && fd < 3)
@@ -335,7 +329,10 @@ int flock(int fd, int operation)
 }
 
 /*
-These functions will be implemented and replaced by the 'common/time.c' file
+These functions are implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
+
+These functions are implemented and replaced by the "common/unistd.c" file
+int _getpid_r(struct _reent *ptr);
 */
