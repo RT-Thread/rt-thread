@@ -61,9 +61,9 @@ static void _workqueue_thread_entry(void *parameter)
         level = rt_hw_interrupt_disable();
         if (rt_list_isempty(&(queue->work_list)))
         {
-            rt_hw_interrupt_enable(level);
             /* no software timer exist, suspend self. */
             rt_thread_suspend(rt_thread_self());
+            rt_hw_interrupt_enable(level);
             rt_schedule();
             continue;
         }
@@ -115,9 +115,9 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         if (queue->work_current == RT_NULL &&
             ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
         {
-            rt_hw_interrupt_enable(level);
             /* resume work thread */
             rt_thread_resume(queue->work_thread);
+            rt_hw_interrupt_enable(level);
             rt_schedule();
         }
         else
@@ -197,9 +197,9 @@ static void _delayed_work_timeout_handler(void *parameter)
     if (queue->work_current == RT_NULL &&
         ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
-        rt_hw_interrupt_enable(level);
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
+        rt_hw_interrupt_enable(level);
         rt_schedule();
     }
     else
@@ -277,9 +277,9 @@ rt_err_t rt_workqueue_critical_work(struct rt_workqueue *queue, struct rt_work *
     if (queue->work_current == RT_NULL &&
         ((queue->work_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_SUSPEND))
     {
-        rt_hw_interrupt_enable(level);
         /* resume work thread */
         rt_thread_resume(queue->work_thread);
+        rt_hw_interrupt_enable(level);
         rt_schedule();
     }
     else
@@ -321,14 +321,14 @@ rt_err_t rt_workqueue_cancel_all_work(struct rt_workqueue *queue)
 
     RT_ASSERT(queue != RT_NULL);
 
-    // cancel work
+    /* cancel work */
     rt_enter_critical();
     while (rt_list_isempty(&queue->work_list) == RT_FALSE)
     {
         work = rt_list_first_entry(&queue->work_list, struct rt_work, list);
         _workqueue_cancel_work(queue, work);
     }
-    // cancel delay work
+    /* cancel delay work */
     while (rt_list_isempty(&queue->delayed_list) == RT_FALSE)
     {
         work = rt_list_first_entry(&queue->delayed_list, struct rt_work, list);
