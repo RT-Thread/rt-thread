@@ -278,6 +278,7 @@ rt_err_t rt_workqueue_destroy(struct rt_workqueue *queue)
     RT_ASSERT(queue != RT_NULL);
 
     rt_thread_delete(queue->work_thread);
+    rt_sem_detach(&(queue->sem));
     RT_KERNEL_FREE(queue);
 
     return RT_EOK;
