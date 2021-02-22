@@ -236,10 +236,10 @@ int socket(int domain, int type, int protocol)
     }
     else
     {
+        rt_free(d->fnode);
         /* release fd */
         fd_release(fd);
         rt_set_errno(-ENOMEM);
-        rt_free(d->fnode);
         return -1;
     }
 
@@ -283,9 +283,9 @@ int closesocket(int s)
         error = -1;
     }
 
+    rt_free(d->fnode);
     /* socket has been closed, delete it from file system fd */
     fd_release(s);
-    rt_free(d->fnode);
 
     return error;
 }
