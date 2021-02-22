@@ -41,11 +41,22 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen)
         if(d)
         {
             /* this is a socket fd */
+            d->fnode = (struct dfs_fnode *)rt_malloc(sizeof(struct dfs_fnode));
+            if (!d->fnode)
+            {
+                /* release fd */
+                fd_release(fd);
+                rt_set_errno(-ENOMEM);
+                return -1;
+            }
+            rt_memset(d->fnode, 0, sizeof(struct dfs_fnode));
+            rt_list_init(&d->fnode->list);
+
             d->fnode->type = FT_SOCKET;
             d->fnode->path = NULL;
-
+            d->fnode->fullpath = NULL;
+            d->fnode->ref_count = 1;
             d->fnode->fops = dfs_net_get_fops();
-
             d->fnode->flags = O_RDWR; /* set flags as read and write */
             d->fnode->size = 0;
             d->pos = 0;
