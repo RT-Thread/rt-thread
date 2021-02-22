@@ -160,7 +160,7 @@ static rt_err_t imxrt_drv_pwm_init(PWM_Type *base, pwm_submodule_t pwm_submodule
     if (PWM_Init(base, pwm_submodule, &PwmConfig) == kStatus_Fail)
     {
         LOG_E("init pwm failed \n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     base->SM[fault_input].DISMAP[0] = 0x00;
@@ -183,28 +183,28 @@ static rt_err_t imxrt_pwm1_init(PWM_Type *base)
 #ifdef BSP_USING_PWM1_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM1_CH0 */
 
 #ifdef BSP_USING_PWM1_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM1_CH1 */
 
 #ifdef BSP_USING_PWM1_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM1_CH2 */
 
 #ifdef BSP_USING_PWM1_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM1_CH3 */
 
@@ -220,28 +220,28 @@ static rt_err_t imxrt_pwm2_init(PWM_Type *base)
 #ifdef BSP_USING_PWM2_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM2_CH0 */
 
 #ifdef BSP_USING_PWM2_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM2_CH1 */
 
 #ifdef BSP_USING_PWM2_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM2_CH2 */
 
 #ifdef BSP_USING_PWM2_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM2_CH3 */
 
@@ -257,28 +257,28 @@ static rt_err_t imxrt_pwm3_init(PWM_Type *base)
 #ifdef BSP_USING_PWM3_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM3_CH0 */
 
 #ifdef BSP_USING_PWM3_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM3_CH1 */
 
 #ifdef BSP_USING_PWM3_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM3_CH2 */
 
 #ifdef BSP_USING_PWM3_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM3_CH3 */
 
@@ -294,28 +294,28 @@ static rt_err_t imxrt_pwm4_init(PWM_Type *base)
 #ifdef BSP_USING_PWM4_CH0
     if (imxrt_drv_pwm_init(base, kPWM_Module_0, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM4_CH0 */
 
 #ifdef BSP_USING_PWM4_CH1
     if (imxrt_drv_pwm_init(base, kPWM_Module_1, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM4_CH1 */
 
 #ifdef BSP_USING_PWM4_CH2
     if (imxrt_drv_pwm_init(base, kPWM_Module_2, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /*BSP_USING_PWM4_CH2 */
 
 #ifdef BSP_USING_PWM4_CH3
     if (imxrt_drv_pwm_init(base, kPWM_Module_3, DEFAULT_PRE, DEFAULT_FRE, DEFAULT_DUTY) != RT_EOK)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif /* BSP_USING_PWM4_CH3 */
 
@@ -392,7 +392,7 @@ static rt_err_t imxrt_drv_qtmr_set(struct rt_device_pwm *device, struct rt_pwm_c
         if (kStatus_Success != QTMR_SetupPwm(base, configuration->channel, 1000000000 / configuration->period, duty, DEFAULT_POLARITY, clk_freq))
         {
             LOG_E(LOG_TAG" setup pwm failed \n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         if (timer_is_on)
         {
@@ -436,7 +436,7 @@ static rt_err_t imxrt_drv_qtmr_init(TMR_Type *base, qtmr_channel_selection_t cha
     if (kStatus_Success != QTMR_SetupPwm(base, channel, fre, duty, DEFAULT_POLARITY, qtmr_clock_freq))
     {
         LOG_E(LOG_TAG" setup pwm failed \n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
