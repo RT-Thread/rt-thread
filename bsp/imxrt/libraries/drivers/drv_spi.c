@@ -347,7 +347,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     if(RT_FALSE == spi->dma_flag)
     {
-#ifdef(BSP_USING_BLOCKING_SPI)
+#ifdef BSP_USING_BLOCKING_SPI
         status = LPSPI_MasterTransferBlocking(spi->base, &transfer);
 #else
         status = LPSPI_MasterTransferNonBlocking(spi->base, &spi->spi_normal, &transfer);
