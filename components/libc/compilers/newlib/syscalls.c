@@ -36,6 +36,13 @@ __errno ()
 #endif
 
 int
+_getpid_r(struct _reent *ptr)
+{
+    extern pid_t __rt_libc_getpid(void);
+    return __rt_libc_getpid();
+}
+
+int
 _close_r(struct _reent *ptr, int fd)
 {
 #ifndef RT_USING_DFS
@@ -332,7 +339,4 @@ int flock(int fd, int operation)
 These functions are implemented and replaced by the 'common/time.c' file
 int _gettimeofday_r(struct _reent *ptr, struct timeval *__tp, void *__tzp);
 _CLOCK_T_  _times_r(struct _reent *ptr, struct tms *ptms);
-
-These functions are implemented and replaced by the "common/unistd.c" file
-int _getpid_r(struct _reent *ptr);
 */
