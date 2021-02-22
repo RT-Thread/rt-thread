@@ -32,14 +32,6 @@ ALIGN(RT_ALIGN_SIZE)
 static char finsh_thread_stack[FINSH_THREAD_STACK_SIZE];
 struct finsh_shell* shell;
 
-#if !defined (RT_USING_NEWLIB) && !defined (RT_USING_MINILIBC)
-int strcmp (const char *s1, const char *s2)
-{
-	while (*s1 && *s1 == *s2) s1++, s2++;
-
-	return (*s1 - *s2);
-}
-
 #ifdef RT_USING_HEAP
 char *strdup(const char *s)
 {
