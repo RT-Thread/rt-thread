@@ -23,7 +23,9 @@ void rt_page_init(rt_region_t reg);
 
 void *rt_pages_alloc(uint32_t size_bits);
 
-void rt_pages_free(void *addr, uint32_t size_bits);
+void rt_page_ref_inc(void *addr, uint32_t size_bits);
+
+int rt_pages_free(void *addr, uint32_t size_bits);
 
 void rt_pageinfo_dump(void);
 
