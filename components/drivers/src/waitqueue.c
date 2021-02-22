@@ -121,7 +121,7 @@ int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)
     level = rt_hw_interrupt_disable();
 
 __exit_wakeup:
-    queue->flag = 0;
+    queue->flag = RT_WQ_FLAG_CLEAN;
     rt_hw_interrupt_enable(level);
 
     rt_wqueue_remove(&__wait);
