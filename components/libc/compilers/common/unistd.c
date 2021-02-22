@@ -50,13 +50,7 @@ int usleep(useconds_t usec)
 }
 RTM_EXPORT(usleep);
 
-pid_t
-#if defined (RT_USING_NEWLIB)
-__rt_libc_getpid
-#else
-getpid
-#endif
-(void)
+pid_t getpid(void)
 {
     /*TODO*/
     return 0;
