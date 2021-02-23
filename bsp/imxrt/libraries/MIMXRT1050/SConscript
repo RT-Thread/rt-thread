@@ -78,6 +78,12 @@ if GetDepend(['BSP_USING_DMA']):
     src += ['MIMXRT1052/drivers/fsl_lpuart_edma.c']
     src += ['MIMXRT1052/drivers/fsl_lpspi_edma.c']
     
+if GetDepend(['BSP_USING_PULSE_ENCODER']):
+    src += ['MIMXRT1052/drivers/fsl_enc.c']
+
+#Adding this as XBAR is used in pin mux
+src += ['MIMXRT1052/drivers/fsl_xbara.c']
+src += ['MIMXRT1052/drivers/fsl_xbarb.c']
 
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
