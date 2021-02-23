@@ -13,6 +13,7 @@
 #include <drivers/usb_host.h>
 
 static rt_list_t _driver_list;
+static rt_bool_t _driver_list_created = RT_FALSE;
 
 /**
  * This function will initilize the usb class driver related data structure,
@@ -22,8 +23,11 @@ static rt_list_t _driver_list;
  */
 rt_err_t rt_usbh_class_driver_init(void)
 {
-    rt_list_init(&_driver_list);
-
+    if (_driver_list_created == RT_FALSE)
+    {
+        rt_list_init(&_driver_list);
+        _driver_list_created = RT_TRUE;
+    }
     return RT_EOK;    
 }
 
@@ -39,8 +43,11 @@ rt_err_t rt_usbh_class_driver_register(ucd_t drv)
 {
     if (drv == RT_NULL) return -RT_ERROR;
 
-    /* insert class driver into driver list */
-    rt_list_insert_after(&_driver_list, &(drv->list));
+    if (rt_usbh_class_driver_find(drv->class_code, drv->subclass_code) == RT_NULL)
+    {
+        /* insert class driver into driver list */
+        rt_list_insert_after(&_driver_list, &(drv->list));
+    }
     
     return RT_EOK;    
 }
