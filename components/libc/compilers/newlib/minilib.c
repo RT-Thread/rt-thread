@@ -16,16 +16,3 @@ void * _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
     /* no use this routine to get memory */
     return RT_NULL;
 }
-
-#ifdef RT_USING_HEAP
-char *strdup(const char *s)
-{
-    size_t len = strlen(s) + 1;
-    char *tmp = (char *)rt_malloc(len);
-
-    if(!tmp) return NULL;
-
-    rt_memcpy(tmp, s, len);
-    return tmp;
-}
-#endif /*RT_USING_HEAP*/
