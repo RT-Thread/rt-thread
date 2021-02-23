@@ -341,7 +341,7 @@ rt_err_t stm32_qspi_bus_attach_device(const char *bus_name, const char *device_n
     qspi_device->exit_qspi_mode = exit_qspi_mode;
     qspi_device->config.qspi_dl_width = data_line_width;
 
-    cs_pin->Pin = pin;
+    cs_pin->pin = pin;
 #ifdef BSP_QSPI_USING_SOFTCS
     rt_pin_mode(pin, PIN_MODE_OUTPUT);
     rt_pin_write(pin, 1);
