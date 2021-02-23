@@ -22,15 +22,15 @@
  * 
  * @return none.
  */
-rt_err_t rt_usb_host_init(const char *name)
+rt_err_t rt_usb_host_init(void)
 {
     ucd_t drv;
     rt_device_t uhc;    
 
-    uhc = rt_device_find(name);
+    uhc = rt_device_find(USB_HOST_CONTROLLER_NAME);
     if(uhc == RT_NULL)
     {
-        rt_kprintf("can't find usb host controller %s\n", name);
+        rt_kprintf("can't find usb host controller %s\n", USB_HOST_CONTROLLER_NAME);
         return -RT_ERROR;
     }
 
@@ -44,16 +44,6 @@ rt_err_t rt_usb_host_init(const char *name)
     /* register mass storage class driver */
     drv = rt_usbh_class_driver_storage();
     rt_usbh_class_driver_register(drv);
-#endif
-#ifdef RT_USBH_HID
-    /* register mass storage class driver */
-    drv = rt_usbh_class_driver_hid();
-    rt_usbh_class_driver_register(drv);
-#ifdef RT_USBH_HID_MOUSE
-    uprotocal_t protocal;
-    protocal = rt_usbh_hid_protocal_mouse();
-    rt_usbh_hid_protocal_register(protocal);
-#endif
 #endif
 
     /* register hub class driver */
