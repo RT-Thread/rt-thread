@@ -1133,10 +1133,6 @@ rt_err_t sys_timer_control(rt_timer_t timer, int cmd, void *arg)
     return rt_timer_control(timer, cmd, arg);
 }
 
-#ifdef RT_USING_USERSPACE
-void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size);
-#endif
-
 rt_thread_t sys_thread_create(void *arg[])
 {
     rt_base_t level = 0;
@@ -1148,7 +1144,7 @@ rt_thread_t sys_thread_create(void *arg[])
     lwp = rt_thread_self()->lwp;
     lwp_ref_inc(lwp);
 #ifdef RT_USING_USERSPACE
-    user_stack  = lwp_map_user(lwp, 0, (size_t)arg[3]);
+    user_stack  = lwp_map_user(lwp, 0, (size_t)arg[3], 0);
 #else
     user_stack  = (void *)RT_KERNEL_MALLOC((uint32_t)arg[3]);
 #endif

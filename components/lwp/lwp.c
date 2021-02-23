@@ -140,7 +140,7 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
         return RT_NULL;
 
     /* args = (int*)lwp_map_user(lwp, 0, size); */
-    args = (int *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE), size);
+    args = (int *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE), size, 0);
     if (args == RT_NULL)
         return RT_NULL;
 
@@ -406,7 +406,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         if (process_header_size > ARCH_PAGE_SIZE)
             return -RT_ERROR;
 #ifdef RT_USING_USERSPACE
-        va = (uint8_t *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE * 2), process_header_size);
+        va = (uint8_t *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE * 2), process_header_size, 0);
         if (!va)
             return -RT_ERROR;
         pa = rt_hw_mmu_v2p(m_info, va);
@@ -478,11 +478,11 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                         result = -RT_ERROR;
                         goto _exit;
                     }
-                    va = lwp_map_user(lwp, (void *)pheader.p_vaddr, pheader.p_memsz);
+                    va = lwp_map_user(lwp, (void *)pheader.p_vaddr, pheader.p_memsz, 1);
                 }
                 else
                 {
-                    va = lwp_map_user(lwp, 0, pheader.p_memsz);
+                    va = lwp_map_user(lwp, 0, pheader.p_memsz, 0);
                 }
                 if (va)
                 {

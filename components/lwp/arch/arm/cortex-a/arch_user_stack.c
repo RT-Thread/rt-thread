@@ -27,7 +27,7 @@ int arch_expand_user_stack(void *addr)
     stack_addr &= ~ARCH_PAGE_MASK;
     if ((stack_addr >= (size_t)USER_STACK_VSTART) && (stack_addr < (size_t)USER_STACK_VEND))
     {
-        void *map = lwp_map_user(lwp_self(), (void*)stack_addr, ARCH_PAGE_SIZE);
+        void *map = lwp_map_user(lwp_self(), (void*)stack_addr, ARCH_PAGE_SIZE, 0);
 
         if (map || lwp_user_accessable(addr, 1))
         {

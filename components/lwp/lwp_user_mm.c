@@ -116,26 +116,35 @@ void lwp_unmap_user_space(struct rt_lwp *lwp)
     while ((node = lwp_map_find_first(lwp->map_area)) != 0)
     {
         struct rt_mm_area_struct *ma = (struct rt_mm_area_struct*)node->data;
+        int pa_need_free = 0;
 
         RT_ASSERT(ma->type < MM_AREA_TYPE_UNKNOW);
-        unmap_range(lwp, (void*)ma->addr, ma->size, (int)(ma->type == MM_AREA_TYPE_AUTO));
+
+        if ((ma->type == MM_AREA_TYPE_DATA) || (ma->type == MM_AREA_TYPE_TEXT))
+        {
+            pa_need_free = 1;
+        }
+        unmap_range(lwp, (void *)ma->addr, ma->size, pa_need_free);
         lwp_map_area_remove(&lwp->map_area, ma->addr);
     }
     rt_pages_free(m_info->vtable, 2);
 }
 
-static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
+static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
 {
     void *va = RT_NULL;
     int ret = 0;
     rt_mmu_info *m_info = &lwp->mmu_info;
+    int area_type;
 
     va = rt_hw_mmu_map_auto(m_info, map_va, map_size, MMU_MAP_U_RWCB);
     if (!va)
     {
         return 0;
     }
-    ret = lwp_map_area_insert(&lwp->map_area, (size_t)va, map_size, MM_AREA_TYPE_AUTO);
+
+    area_type = text ? MM_AREA_TYPE_TEXT : MM_AREA_TYPE_DATA;
+    ret = lwp_map_area_insert(&lwp->map_area, (size_t)va, map_size, area_type);
     if (ret != 0)
     {
         unmap_range(lwp, va, map_size, 1);
@@ -149,6 +158,7 @@ int lwp_unmap_user(struct rt_lwp *lwp, void *va)
     rt_base_t level = 0;
     struct lwp_avl_struct *ma_avl_node = RT_NULL;
     struct rt_mm_area_struct *ma = RT_NULL;
+    int pa_need_free = 0;
 
     level = rt_hw_interrupt_disable();
     ma_avl_node = lwp_map_find(lwp->map_area, (size_t)va);
@@ -158,8 +168,13 @@ int lwp_unmap_user(struct rt_lwp *lwp, void *va)
         return -1;
     }
     ma = (struct rt_mm_area_struct *)ma_avl_node->data;
+
     RT_ASSERT(ma->type < MM_AREA_TYPE_UNKNOW);
-    unmap_range(lwp, (void *)ma->addr, ma->size, (int)(ma->type == MM_AREA_TYPE_AUTO));
+    if ((ma->type == MM_AREA_TYPE_DATA) || (ma->type == MM_AREA_TYPE_TEXT))
+    {
+        pa_need_free = 1;
+    }
+    unmap_range(lwp, (void *)ma->addr, ma->size, pa_need_free);
     lwp_map_area_remove(&lwp->map_area, (size_t)va);
     rt_hw_interrupt_enable(level);
     return 0;
@@ -175,7 +190,7 @@ int lwp_unmap_user_type(struct rt_lwp *lwp, void *va)
     return lwp_unmap_user(lwp, va);
 }
 
-void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
+void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
 {
     rt_base_t level = 0;
     void *ret = RT_NULL;
@@ -191,7 +206,7 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
     map_va = (void*)((size_t)map_va & ~ARCH_PAGE_MASK);
 
     level = rt_hw_interrupt_disable();
-    ret = _lwp_map_user(lwp, map_va, map_size);
+    ret = _lwp_map_user(lwp, map_va, map_size, text);
     rt_hw_interrupt_enable(level);
     if (ret)
     {
@@ -282,7 +297,7 @@ int lwp_brk(void *addr)
         void *va;
 
         size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) & ~ARCH_PAGE_MASK;
-        va = lwp_map_user(lwp, (void*)lwp->end_heap, size);
+        va = lwp_map_user(lwp, (void*)lwp->end_heap, size, 0);
         if (va)
         {
             lwp->end_heap += size;
@@ -308,7 +323,7 @@ void* lwp_mmap2(void *addr, size_t length, int prot,
     if (fd == -1)
     {
         lwp = rt_thread_self()->lwp;
-        ret = lwp_map_user(lwp, addr, length);
+        ret = lwp_map_user(lwp, addr, length, 0);
         if (!ret)
         {
             ret = (void*)-1;
