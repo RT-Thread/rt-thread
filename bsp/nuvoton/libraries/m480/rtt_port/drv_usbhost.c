@@ -844,7 +844,7 @@ int nu_usbh_register(void)
     RT_ASSERT(res == RT_EOK);
 
     /*initialize the usb host function */
-    res = rt_usb_host_init("usbh");
+    res = rt_usb_host_init();
     RT_ASSERT(res == RT_EOK);
 
 #if defined(RT_USING_PM)

@@ -241,7 +241,7 @@ int stm_usbh_register(void)
         return -RT_ERROR;
     }
 
-    rt_usb_host_init("usbh");
+    rt_usb_host_init();
 
     return RT_EOK;
 }
