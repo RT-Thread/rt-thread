@@ -130,7 +130,7 @@ void rt_init_thread_entry(void* parameter)
 #endif
 
 #ifdef RT_USING_USB_HOST
-	rt_usb_host_init("usbh");
+	rt_usb_host_init();
 #endif
 
 #ifdef  RT_USING_FINSH
