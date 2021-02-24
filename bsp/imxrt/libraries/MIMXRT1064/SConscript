@@ -74,6 +74,9 @@ if GetDepend(['RT_SERIAL_USING_DMA']):
     src += ['MIMXRT1064/drivers/fsl_lpuart_edma.c']
     src += ['MIMXRT1064/drivers/fsl_lpspi_edma.c']
 
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+if rtconfig.CROSS_TOOL == 'gcc':
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, ASFLAGS = '$ASFLAGS -D __STARTUP_CLEAR_BSS')
+else:
+    group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')

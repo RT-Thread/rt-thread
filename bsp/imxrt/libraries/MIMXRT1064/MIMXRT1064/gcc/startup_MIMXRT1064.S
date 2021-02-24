@@ -366,6 +366,7 @@ Reset_Handler:
     blt    .LC4
 #endif /* __STARTUP_INITIALIZE_NONCACHEDATA */
 
+#ifdef __STARTUP_CLEAR_BSS
 /*     This part of work usually is done in C library startup code. Otherwise,
  *     define this macro to enable it in this startup.
  *
@@ -383,6 +384,7 @@ Reset_Handler:
     itt    lt
     strlt   r0, [r1], #4
     blt    .LC5
+#endif /* __STARTUP_CLEAR_BSS */
 
     cpsie   i               /* Unmask interrupts */
 #ifndef __START
