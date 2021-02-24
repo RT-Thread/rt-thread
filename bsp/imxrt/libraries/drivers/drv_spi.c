@@ -64,6 +64,8 @@ struct imxrt_spi
     char *bus_name;
     LPSPI_Type *base;
     struct rt_spi_bus spi_bus;
+    rt_sem_t xfer_sem;
+    lpspi_master_handle_t spi_normal;
     struct dma_config *dma;
     rt_uint8_t dma_flag;
 };
@@ -159,9 +161,18 @@ static void spi_get_dma_config(void)
 #endif
 }
 
+void normal_xfer_callback(LPSPI_Type *base, lpspi_master_handle_t *handle, status_t status, void *userData)
+{
+    /* xfer complete callback */
+    struct imxrt_spi *spi = (struct imxrt_spi *)userData;
+    rt_sem_release(spi->xfer_sem);
+}
+
 void edma_xfer_callback(LPSPI_Type *base, lpspi_master_edma_handle_t *handle, status_t status, void *userData)
 {
     /* xfer complete callback */
+    struct imxrt_spi *spi = (struct imxrt_spi *)userData;
+    rt_sem_release(spi->xfer_sem);
 }
 
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin)
@@ -215,6 +226,17 @@ static uint32_t imxrt_get_lpspi_freq(void)
     freq /= (CLOCK_GetDiv(kCLOCK_LpspiDiv) + 1U); 
 
     return freq;
+}
+
+static void lpspi_normal_config(struct imxrt_spi *spi)
+{
+    RT_ASSERT(spi != RT_NULL);
+
+    LPSPI_MasterTransferCreateHandle(spi->base,
+                                    &spi->spi_normal,
+                                    normal_xfer_callback,
+                                    spi);
+    LOG_D(LOG_TAG" %s normal config done\n", spi->bus_name);
 }
 
 static void lpspi_dma_config(struct imxrt_spi *spi)
@@ -325,12 +347,17 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
 
     if(RT_FALSE == spi->dma_flag)
     {
+#ifdef BSP_USING_BLOCKING_SPI
         status = LPSPI_MasterTransferBlocking(spi->base, &transfer);
+#else
+        status = LPSPI_MasterTransferNonBlocking(spi->base, &spi->spi_normal, &transfer);
+#endif
     }
     else
     {
         status = LPSPI_MasterTransferEDMA(spi->base,&spi->dma->spi_edma,&transfer);
     }
+    rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
 
     if(message->cs_release)
     {
@@ -369,6 +396,13 @@ int rt_hw_spi_bus_init(void)
         {
             lpspi_dma_config(&lpspis[i]);
         }
+        else
+        {
+            lpspi_normal_config(&lpspis[i]);
+        }
+        char sem_name[RT_NAME_MAX];
+        rt_sprintf(sem_name, "%s_s", lpspis[i].bus_name);
+        lpspis[i].xfer_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
     }
 
     return ret; 
