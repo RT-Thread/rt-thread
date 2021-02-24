@@ -8,6 +8,7 @@
  * 2021-02-11     Meco Man     remove _gettimeofday_r() and _times_r()
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-21     Meco Man     improve and beautify syscalls
+ * 2020-02-24     Meco Man     fix bug of _isatty_r()
  */
 
 #include <reent.h>
@@ -89,12 +90,14 @@ int
 _isatty_r(struct _reent *ptr, int fd)
 {
     if (fd >=0 && fd < 3)
+    {
         return 1;
-
-    ptr->_errno = ENOTTY ;
-    return 0;
+    }
+    else
+    {
+        return 0;
+    }
 }
-
 int
 _kill_r(struct _reent *ptr, int pid, int sig)
 {
