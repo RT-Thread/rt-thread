@@ -45,6 +45,7 @@ struct netdev *netdev_default;
 int netdev_register(struct netdev *netdev, const char *name, void *user_data)
 {
     rt_base_t level;
+    uint8_t name_len;
     uint16_t flags_mask;
     int index;
 
@@ -77,8 +78,21 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     netdev->status_callback = RT_NULL;
     netdev->addr_callback = RT_NULL;
 
+    if(rt_strlen(name) > RT_NAME_MAX)
+    {
+        char netdev_name[RT_NAME_MAX + 1] = {0};
+
+        name_len =  RT_NAME_MAX;
+        rt_strncpy(netdev_name, name, name_len);
+        LOG_E("netdev name[%s] length is so long that have been cut into [%s].", name, netdev_name);
+    }
+    else
+    {
+        name_len = rt_strlen(name);
+    }
+
     /* fill network interface device */
-    rt_strncpy(netdev->name, name, RT_NAME_MAX);
+    rt_strncpy(netdev->name, name, name_len);
     netdev->user_data = user_data;
 
     /* initialize current network interface device single list */
@@ -260,7 +274,7 @@ struct netdev *netdev_get_by_name(const char *name)
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
-        if (netdev && (rt_strncmp(netdev->name, name, RT_NAME_MAX) == 0))
+        if (netdev && (rt_strncmp(netdev->name, name, rt_strlen(netdev->name) < RT_NAME_MAX ? rt_strlen(netdev->name) : RT_NAME_MAX) == 0))
         {
             rt_hw_interrupt_enable(level);
             return netdev;
