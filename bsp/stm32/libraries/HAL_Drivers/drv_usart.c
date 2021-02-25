@@ -114,7 +114,10 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
     switch (cfg->data_bits)
     {
     case DATA_BITS_8:
-        uart->handle.Init.WordLength = UART_WORDLENGTH_8B;
+        if (cfg->parity == PARITY_ODD || cfg->parity == PARITY_EVEN)
+            uart->handle.Init.WordLength = UART_WORDLENGTH_9B;
+        else
+            uart->handle.Init.WordLength = UART_WORDLENGTH_8B;
         break;
     case DATA_BITS_9:
         uart->handle.Init.WordLength = UART_WORDLENGTH_9B;
