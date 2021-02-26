@@ -37,32 +37,6 @@ struct stm32_dac
 
 static struct stm32_dac stm32_dac_obj[sizeof(dac_config) / sizeof(dac_config[0])];
 
-static rt_err_t stm32_dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
-{
-    DAC_HandleTypeDef *stm32_dac_handler;
-    RT_ASSERT(device != RT_NULL);
-    stm32_dac_handler = device->parent.user_data;
-
-#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
-        HAL_DAC_Start(stm32_dac_handler, channel);
-#endif
-    
-    return RT_EOK;
-}
-
-static rt_err_t stm32_dac_disabled(struct rt_dac_device *device, rt_uint32_t channel)
-{
-    DAC_HandleTypeDef *stm32_dac_handler;
-    RT_ASSERT(device != RT_NULL);
-    stm32_dac_handler = device->parent.user_data;
-    
-#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
-    HAL_DAC_Stop(stm32_dac_handler, channel);
-#endif
-    
-    return RT_EOK;
-}
-
 static rt_uint32_t stm32_dac_get_channel(rt_uint32_t channel)
 {
     rt_uint32_t stm32_channel = 0;
@@ -81,6 +55,54 @@ static rt_uint32_t stm32_dac_get_channel(rt_uint32_t channel)
     }
 
     return stm32_channel;
+}
+
+static rt_err_t stm32_dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
+{
+    uint32_t dac_channel;
+    DAC_HandleTypeDef *stm32_dac_handler;
+    RT_ASSERT(device != RT_NULL);
+    stm32_dac_handler = device->parent.user_data;
+
+#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
+    if ((channel <= 2) && (channel > 0))
+    {
+        /* set stm32 dac channel */
+        dac_channel =  stm32_dac_get_channel(channel);
+    }
+    else
+    {
+      LOG_E("dac channel must be 1 or 2.");  
+      return -RT_ERROR;
+    }
+    HAL_DAC_Start(stm32_dac_handler, dac_channel);
+#endif
+    
+    return RT_EOK;
+}
+
+static rt_err_t stm32_dac_disabled(struct rt_dac_device *device, rt_uint32_t channel)
+{
+    uint32_t dac_channel;
+    DAC_HandleTypeDef *stm32_dac_handler;
+    RT_ASSERT(device != RT_NULL);
+    stm32_dac_handler = device->parent.user_data;
+    
+#if defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F4)
+    if ((channel <= 2) && (channel > 0))
+    {
+        /* set stm32 dac channel */
+        dac_channel =  stm32_dac_get_channel(channel);
+    }
+    else
+    {
+      LOG_E("dac channel must be 1 or 2.");  
+      return -RT_ERROR;
+    }
+    HAL_DAC_Stop(stm32_dac_handler, dac_channel);
+#endif
+    
+    return RT_EOK;
 }
 
 static rt_err_t stm32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
