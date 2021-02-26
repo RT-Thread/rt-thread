@@ -233,7 +233,7 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
 
-    rt_object_detach((rt_object_t)timer);
+    rt_object_detach(&(timer->parent));
 
     return RT_EOK;
 }
