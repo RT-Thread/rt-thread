@@ -8,8 +8,8 @@
  * 2011-12-12     Yi Qiu      first version
  */
 
-#ifndef __HID_H__
-#define __HID_H__
+#ifndef __ADK_H__
+#define __ADK_H__
 
 #include <rtthread.h>
 

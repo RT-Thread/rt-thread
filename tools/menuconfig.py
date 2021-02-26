@@ -27,6 +27,8 @@ import os
 import re
 import sys
 import shutil
+import hashlib
+import operator
 
 # make rtconfig.h from .config
 
@@ -96,6 +98,14 @@ def mk_rtconfig(filename):
     rtconfig.write('\n')
     rtconfig.write('#endif\n')
     rtconfig.close()
+
+
+def get_file_md5(file):
+    MD5 = hashlib.new('md5')
+    with open(file, 'r') as fp:
+        MD5.update(fp.read().encode('utf8'))
+        fp_md5 = MD5.hexdigest()
+        return fp_md5
 
 def config():
     mk_rtconfig('.config')
@@ -219,22 +229,22 @@ def menuconfig(RTT_ROOT):
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
-
-    if os.path.isfile(fn):
-        mtime = os.path.getmtime(fn)
-    else:
-        mtime = -1
+    fn_old = '.config.old'
 
     kconfig_cmd = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends', 'kconfig-mconf')
     os.system(kconfig_cmd + ' Kconfig')
 
     if os.path.isfile(fn):
-        mtime2 = os.path.getmtime(fn)
+        if os.path.isfile(fn_old):
+            diff_eq = operator.eq(get_file_md5(fn), get_file_md5(fn_old))
+        else:
+            diff_eq = False
     else:
-        mtime2 = -1
+        sys.exit(-1)
 
     # make rtconfig.h
-    if mtime != mtime2:
+    if diff_eq == False:
+        shutil.copyfile(fn, fn_old)
         mk_rtconfig(fn)
 
 # guiconfig for windows and linux
@@ -249,22 +259,22 @@ def guiconfig(RTT_ROOT):
     os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
     fn = '.config'
-
-    if os.path.isfile(fn):
-        mtime = os.path.getmtime(fn)
-    else:
-        mtime = -1
+    fn_old = '.config.old'
 
     sys.argv = ['guiconfig', 'Kconfig'];
     pyguiconfig._main()
 
     if os.path.isfile(fn):
-        mtime2 = os.path.getmtime(fn)
+        if os.path.isfile(fn_old):
+            diff_eq = operator.eq(get_file_md5(fn), get_file_md5(fn_old))
+        else:
+            diff_eq = False
     else:
-        mtime2 = -1
+        sys.exit(-1)
 
     # make rtconfig.h
-    if mtime != mtime2:
+    if diff_eq == False:
+        shutil.copyfile(fn, fn_old)
         mk_rtconfig(fn)
 
 

@@ -129,7 +129,7 @@ const char *dfs_filesystem_get_mounted_path(struct rt_device *device)
     for (iter = &filesystem_table[0];
             iter < &filesystem_table[DFS_FILESYSTEMS_MAX]; iter++)
     {
-        /* fint the mounted device */
+        /* find the mounted device */
         if (iter->ops == NULL) continue;
         else if (iter->dev_id == device)
         {
@@ -321,7 +321,7 @@ int dfs_mount(const char   *device_name,
         if (rt_device_open(fs->dev_id,
                            RT_DEVICE_OFLAG_RDWR) != RT_EOK)
         {
-            /* The underlaying device has error, clear the entry. */
+            /* The underlying device has error, clear the entry. */
             dfs_lock();
             memset(fs, 0, sizeof(struct dfs_filesystem));
 

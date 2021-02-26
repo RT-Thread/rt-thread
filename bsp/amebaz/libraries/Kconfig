@@ -1,7 +1,7 @@
 menu "External Libraries"
 
     config RT_USING_SMARTCONFIG_LIB
-        bool "Using RT-Thrad SmartConfig Library"
+        bool "Using RT-Thread SmartConfig Library"
         default n
 
 endmenu

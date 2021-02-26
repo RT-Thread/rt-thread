@@ -48,7 +48,7 @@ struct rt_inputcapture_ops
     rt_err_t (*get_pulsewidth)(struct rt_inputcapture_device *inputcapture, rt_uint32_t *pulsewidth_us);
 };
 
-void rt_hw_capture_isr(struct rt_inputcapture_device *inputcapture, rt_bool_t level);
+void rt_hw_inputcapture_isr(struct rt_inputcapture_device *inputcapture, rt_bool_t level);
 
 rt_err_t rt_device_inputcapture_register(struct rt_inputcapture_device *inputcapture,
                                          const char                    *name,

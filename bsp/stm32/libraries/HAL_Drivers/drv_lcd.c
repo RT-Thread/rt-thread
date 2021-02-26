@@ -255,6 +255,11 @@ void turn_on_lcd_backlight(void)
     rt_pin_write(LCD_DISP_GPIO_NUM, PIN_HIGH);
     rt_pin_write(LCD_BL_GPIO_NUM, PIN_HIGH);
 }
+#else
+void turn_on_lcd_backlight(void)
+{
+    
+}
 #endif
 
 #ifdef RT_USING_DEVICE_OPS
@@ -333,7 +338,7 @@ int drv_lcd_hw_init(void)
 __exit:
     if (result != RT_EOK)
     {
-        rt_sem_delete(&_lcd.lcd_lock);
+        rt_sem_detach(&_lcd.lcd_lock);
 
         if (_lcd.lcd_info.framebuffer)
         {

@@ -186,6 +186,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
             result = file->fops->open(file);
             if (result == RT_EOK || result == -RT_ENOSYS)
             {
+                file->type = FT_DEVICE;
                 return 0;
             }
         }
@@ -197,6 +198,7 @@ int dfs_device_fs_open(struct dfs_fd *file)
         if (result == RT_EOK || result == -RT_ENOSYS)
         {
             file->data = device;
+            file->type = FT_DEVICE;
             return RT_EOK;
         }
     }
@@ -324,7 +326,7 @@ static const struct dfs_filesystem_ops _device_fs =
 
 int devfs_init(void)
 {
-    /* register rom file system */
+    /* register device file system */
     dfs_register(&_device_fs);
 
     return 0;

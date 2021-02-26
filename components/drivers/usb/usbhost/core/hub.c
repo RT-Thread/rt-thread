@@ -417,8 +417,13 @@ static rt_err_t rt_usbh_hub_port_change(uhub_t hub)
         
         if(reconnect)
         {            
-            if(hub->child[i] != RT_NULL && hub->child[i]->status != DEV_STATUS_IDLE) 
+            if(hub->child[i] != RT_NULL && hub->child[i]->status != DEV_STATUS_IDLE)
+            { 
                 rt_usbh_detach_instance(hub->child[i]);
+
+                /* Child device have been detach. Set hub->child[i] to NULL. */
+                hub->child[i] = RT_NULL;
+            }
             
             ret = rt_usbh_hub_port_debounce(hub, i + 1);
             if(ret != RT_EOK) continue;
@@ -508,6 +513,7 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
 
     /* create a hub instance */
     hub = rt_malloc(sizeof(struct uhub));
+    RT_ASSERT(hub != RT_NULL);
     rt_memset(hub, 0, sizeof(struct uhub));
     
     /* make interface instance's user data point to hub instance */
@@ -531,7 +537,12 @@ static rt_err_t rt_usbh_hub_enable(void *arg)
     }    
 
     /* get hub ports number */
-    hub->num_ports = hub->hub_desc.num_ports;
+    /* If hub device supported ports over USB_HUB_PORT_NUM(Ex: 8 port hub). Set hub->num_ports to USB_HUB_PORT_NUM */
+    if(hub->hub_desc.num_ports > USB_HUB_PORT_NUM)
+        hub->num_ports = USB_HUB_PORT_NUM;
+    else
+        hub->num_ports = hub->hub_desc.num_ports;
+
     hub->hcd = device->hcd;
     hub->self = device;
 
@@ -606,7 +617,6 @@ static rt_err_t rt_usbh_hub_disable(void* arg)
     }
     
     if(hub != RT_NULL) rt_free(hub);
-    if(intf != RT_NULL) rt_free(intf);
 
     return RT_EOK;
 }

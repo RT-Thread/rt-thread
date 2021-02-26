@@ -126,8 +126,8 @@ rt_err_t rt_memheap_detach(struct rt_memheap *heap)
     RT_ASSERT(heap);
     RT_ASSERT(rt_object_get_type(&heap->parent) == RT_Object_Class_MemHeap);
     RT_ASSERT(rt_object_is_systemobject(&heap->parent));
-
-    rt_object_detach(&(heap->lock.parent.parent));
+    
+    rt_sem_detach(&heap->lock);
     rt_object_detach(&(heap->parent));
 
     /* Return a successful completion. */
@@ -711,6 +711,20 @@ void *rt_calloc(rt_size_t count, rt_size_t size)
     return ptr;
 }
 RTM_EXPORT(rt_calloc);
+
+void rt_memory_info(rt_uint32_t *total,
+                    rt_uint32_t *used,
+                    rt_uint32_t *max_used)
+{
+    if (total != RT_NULL)
+        *total = _heap.pool_size;
+
+    if (used  != RT_NULL)
+        *used = _heap.pool_size - _heap.available_size;
+
+    if (max_used != RT_NULL)
+        *max_used = _heap.max_used_size;
+}
 
 #endif
 

@@ -9,6 +9,8 @@
  * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
  * 2014-08-03     bernard      If using msh, use system() implementation
  *                             in msh.
+ * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when 
+ *                             RT_USING_DFS is not defined
  */
 
 #include <string.h>
@@ -265,16 +267,16 @@ RT_WEAK void _sys_exit(int return_code)
  */
 long _sys_flen(FILEHANDLE fh)
 {
+#ifdef RT_USING_DFS
     struct stat stat;
-    
+
     if (fh < STDERR)
         return -1;
 
-#ifndef RT_USING_DFS
-    return -1;
-#else
     fstat(fh, &stat);
     return stat.st_size;
+#else
+    return -1;
 #endif
 }
 

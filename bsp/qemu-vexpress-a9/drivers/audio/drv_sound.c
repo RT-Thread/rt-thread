@@ -227,13 +227,13 @@ static rt_err_t sound_init(struct rt_audio_device *audio)
 
     aaci_pl041_init();
 
-    _cfg.itype = PL041_CHANNLE_LEFT_ADC | PL041_CHANNLE_RIGHT_ADC;
-    _cfg.otype = PL041_CHANNLE_LEFT_DAC | PL041_CHANNLE_RIGHT_DAC;
+    _cfg.itype = PL041_CHANNEL_LEFT_ADC | PL041_CHANNEL_RIGHT_ADC;
+    _cfg.otype = PL041_CHANNEL_LEFT_DAC | PL041_CHANNEL_RIGHT_DAC;
     _cfg.vol   = snd_dev->volume;
     _cfg.rate  = snd_dev->replay_config.samplerate;
 
     ac97_reset();
-    aaci_pl041_channle_cfg(0, &_cfg);
+    aaci_pl041_channel_cfg(0, &_cfg);
     aaci_pl041_irq_register(0, rt_hw_aaci_isr, RT_NULL);
 
     return result;
@@ -246,7 +246,7 @@ static rt_err_t sound_start(struct rt_audio_device *audio, int stream)
     if (stream == AUDIO_STREAM_REPLAY)
     {
         LOG_D("open sound device");
-        aaci_pl041_channle_enable(0);
+        aaci_pl041_channel_enable(0);
         aaci_pl041_irq_enable(0, AACI_IE_UR | AACI_IE_TX | AACI_IE_TXC);
     }
 
@@ -263,7 +263,7 @@ static rt_err_t sound_stop(struct rt_audio_device *audio, int stream)
         rt_thread_mdelay(100);
         /* disable irq and channels 0 */
         aaci_pl041_irq_disable(0, AACI_IE_UR | AACI_IE_TX | AACI_IE_TXC);
-        aaci_pl041_channle_disable(0);
+        aaci_pl041_channel_disable(0);
         LOG_D("close sound device");
     }
 
@@ -295,7 +295,7 @@ static rt_size_t sound_transmit(struct rt_audio_device *audio, const void *write
     RT_ASSERT(audio != RT_NULL);
 
     /* write data to channel_0 fifo */
-    aaci_pl041_channle_write(0, (rt_uint16_t *)writeBuf, size >> 1);
+    aaci_pl041_channel_write(0, (rt_uint16_t *)writeBuf, size >> 1);
 
     return size;
 }
