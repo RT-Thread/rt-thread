@@ -11,6 +11,6 @@ path = [cwd + '/inc'
 
 CPPDEFINES = ['NV32', 'KEIL']
 
-group = DefineGroup('Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

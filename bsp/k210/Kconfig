@@ -21,6 +21,7 @@ source "$PKGS_DIR/Kconfig"
 config BOARD_K210_EVB
     bool
     select ARCH_RISCV64
+    select ARCH_RISCV_FPU_S
     select PKG_USING_KENDRYTE_SDK
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN

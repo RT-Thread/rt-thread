@@ -14,6 +14,28 @@ if GetDepend(['RT_USING_PIN']):
 if GetDepend(['RT_USING_SERIAL']):
     src += ['drv_usart.c']
 
+if GetDepend(['RT_USING_I2C']):
+    src += ['drv_i2c.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend(['RT_USING_HWTIMER']):
+    src += ['drv_hwtimer.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['drv_adc.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['drv_wdt.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['drv_rtc.c']
+
+if GetDepend(['RT_USING_PWM']):
+    src += ['drv_pwm.c']
+
+
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)

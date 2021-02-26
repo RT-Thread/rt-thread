@@ -33,7 +33,7 @@ if GetDepend(['RT_USING_I2C']):
 
 if GetDepend(['RT_USING_SPI']):
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_spi.c']
-    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_spi_ex.c'] 
+    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_spi_ex.c']
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_spi.c']
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
@@ -50,11 +50,16 @@ if GetDepend(['RT_USING_WDT']):
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_iwdg.c']
     src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_wwdg.c']
 
-path = [cwd + '/STM32G0xx_HAL_Driver/Inc', 
+if GetDepend(['RT_USING_RTC']):
+    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rtc.c']
+    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_hal_rtc_ex.c']
+    src += ['STM32G0xx_HAL_Driver/Src/stm32g0xx_ll_rtc.c']
+
+path = [cwd + '/STM32G0xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32G0xx/Include',
     cwd + '/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
-group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -45,5 +45,11 @@ extern int heap_end;
 
 void rt_hw_board_init(void);
 
+#ifdef BSP_USING_ETH
+void imxrt_enet_pins_init(void);
+void imxrt_enet_phy_reset_by_gpio(void);
+
+#endif
+
 #endif
 

@@ -34,8 +34,11 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
     case RT_SENSOR_CLASS_MAG:
         LOG_I("num:%3d, x:%5d, y:%5d, z:%5d mGauss, timestamp:%5d", num, sensor_data->data.mag.x, sensor_data->data.mag.y, sensor_data->data.mag.z, sensor_data->timestamp);
         break;
+    case RT_SENSOR_CLASS_GNSS:
+        LOG_I("num:%3d, lon:%5d, lat:%5d, timestamp:%5d", num, sensor_data->data.coord.longitude, sensor_data->data.coord.latitude, sensor_data->timestamp);
+        break;
     case RT_SENSOR_CLASS_TEMP:
-        LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, sensor_data->data.temp % 10, sensor_data->timestamp);
+        LOG_I("num:%3d, temp:%3d.%d C, timestamp:%5d", num, sensor_data->data.temp / 10, (rt_uint32_t)sensor_data->data.temp % 10, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HUMI:
         LOG_I("num:%3d, humi:%3d.%d%%, timestamp:%5d", num, sensor_data->data.humi / 10, sensor_data->data.humi % 10, sensor_data->timestamp);
@@ -47,6 +50,7 @@ static void sensor_show_data(rt_size_t num, rt_sensor_t sensor, struct rt_sensor
         LOG_I("num:%3d, light:%5d lux, timestamp:%5d", num, sensor_data->data.light, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_PROXIMITY:
+    case RT_SENSOR_CLASS_TOF:
         LOG_I("num:%3d, distance:%5d, timestamp:%5d", num, sensor_data->data.proximity, sensor_data->timestamp);
         break;
     case RT_SENSOR_CLASS_HR:
@@ -226,6 +230,7 @@ static void sensor_polling(int argc, char **argv)
     rt_sensor_t sensor;
     struct rt_sensor_data data;
     rt_size_t res, i;
+    rt_int32_t delay;
 
     dev = rt_device_find(argv[1]);
     if (dev == RT_NULL)
@@ -237,6 +242,7 @@ static void sensor_polling(int argc, char **argv)
         num = atoi(argv[2]);
 
     sensor = (rt_sensor_t)dev;
+    delay  = sensor->info.period_min > 100 ? sensor->info.period_min : 100;
 
     if (rt_device_open(dev, RT_DEVICE_FLAG_RDWR) != RT_EOK)
     {
@@ -256,7 +262,7 @@ static void sensor_polling(int argc, char **argv)
         {
             sensor_show_data(i, sensor, &data);
         }
-        rt_thread_mdelay(100);
+        rt_thread_mdelay(delay);
     }
     rt_device_close(dev);
 }
@@ -268,7 +274,9 @@ static void sensor(int argc, char **argv)
 {
     static rt_device_t dev = RT_NULL;
     struct rt_sensor_data data;
+    rt_sensor_t sensor;
     rt_size_t res, i;
+    rt_int32_t delay;
 
     /* If the number of arguments less than 2 */
     if (argc < 2)
@@ -335,6 +343,12 @@ static void sensor(int argc, char **argv)
             case RT_SENSOR_VENDOR_PLANTOWER:
                 rt_kprintf("vendor    :Plantower\n");
                 break;
+            case RT_SENSOR_VENDOR_AMS:
+                rt_kprintf("vendor    :AMS\n");
+                break;
+            case RT_SENSOR_VENDOR_MAXIM:
+                rt_kprintf("vendor    :Maxim Integrated\n");
+                break;
         }
         rt_kprintf("model     :%s\n", info.model);
         switch (info.unit)
@@ -381,6 +395,12 @@ static void sensor(int argc, char **argv)
             case RT_SENSOR_UNIT_MN:
                 rt_kprintf("unit      :mN\n");
                 break;
+            case RT_SENSOR_UNIT_PPM:
+                rt_kprintf("unit      :ppm\n");
+                break;
+            case RT_SENSOR_UNIT_PPB:
+                rt_kprintf("unit      :ppb\n");
+                break;
         }
         rt_kprintf("range_max :%d\n", info.range_max);
         rt_kprintf("range_min :%d\n", info.range_min);
@@ -401,6 +421,9 @@ static void sensor(int argc, char **argv)
             num = atoi(argv[2]);
         }
 
+        sensor = (rt_sensor_t)dev;
+        delay  = sensor->info.period_min > 100 ? sensor->info.period_min : 100;
+
         for (i = 0; i < num; i++)
         {
             res = rt_device_read(dev, 0, &data, 1);
@@ -410,9 +433,9 @@ static void sensor(int argc, char **argv)
             }
             else
             {
-                sensor_show_data(i, (rt_sensor_t)dev, &data);
+                sensor_show_data(i, sensor, &data);
             }
-            rt_thread_mdelay(100);
+            rt_thread_mdelay(delay);
         }
     }
     else if (argc == 3)

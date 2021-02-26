@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#define AT_SW_VERSION                  "1.3.0"
+#define AT_SW_VERSION                  "1.3.1"
 
 #define AT_CMD_NAME_LEN                16
 #define AT_END_MARK_LEN                4
@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #define AT_CMD_EXPORT(_name_, _args_expr_, _test_, _query_, _setup_, _exec_)   \
-    RT_USED static const struct at_cmd __at_cmd_##_test_##_query_##_setup_##_exec_ SECTION("RtAtCmdTab") = \
+    RT_USED static const struct at_cmd __at_cmd_##_test_##_query_##_setup_##_exec_ RT_SECTION("RtAtCmdTab") = \
     {                                                                          \
         _name_,                                                                \
         _args_expr_,                                                           \

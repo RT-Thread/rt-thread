@@ -111,6 +111,8 @@
 // <section name="LIBC" description="C Runtime library setting" default="always" >
 // <bool name="RT_USING_LIBC" description="Using C library" default="true" />
 #define RT_USING_LIBC
+// <bool name="RT_USING_POSIX" description="Using POSIX library" default="true" />
+#define RT_USING_POSIX
 // <bool name="RT_USING_PTHREADS" description="Using POSIX threads library" default="true" />
 #define RT_USING_PTHREADS
 // <bool name="RT_USING_CPLUSPLUS" description="Support C++ programming language" default="true" />
@@ -118,7 +120,7 @@
 // </section>
 
 // <section name="RT_USING_DFS" description="Device file system" default="true" >
-//#define RT_USING_DFS
+#define RT_USING_DFS
 // <bool name="DFS_USING_WORKDIR" description="Using working directory" default="true" />
 #define DFS_USING_WORKDIR
 // <integer name="DFS_FILESYSTEMS_MAX" description="The maximal number of mounted file system" default="4" />

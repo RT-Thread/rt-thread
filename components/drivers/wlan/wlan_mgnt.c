@@ -713,7 +713,7 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
     }
     COMPLETE_UNLOCK();
 #ifdef RT_WLAN_WORK_THREAD_ENABLE
-    rt_wlan_send_to_thread(user_event, RT_NULL, 0);
+    rt_wlan_send_to_thread(user_event, user_buff.data, user_buff.len);
 #else
     {
         void *user_parameter;

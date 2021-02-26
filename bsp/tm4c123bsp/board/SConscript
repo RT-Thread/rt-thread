@@ -1,0 +1,33 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+tm4c123_config.c
+''')
+
+path =  [cwd]
+#path += [cwd + '/CubeMX_Config/Inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/TivaWare_C_series/tm4c123_driverlib/startup/gcc/startup_gcc.c']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/TivaWare_C_series/tm4c123_driverlib/startup/arm/startup_rvmdk.S']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/TivaWare_C_series/tm4c123_driverlib/startup/iar/startup_rvmdk.S']
+
+
+CPPDEFINES = ['PART_TM4C123GH6PM']
+CPPDEFINES += ['TARGET_IS_TM4C123_RB1']
+if rtconfig.CROSS_TOOL == 'keil':
+    CPPDEFINES += ['rvmdk']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

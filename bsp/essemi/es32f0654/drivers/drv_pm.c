@@ -9,6 +9,7 @@
  * 2019-11-01     wangyq        adapt to the new power management interface
  */
 
+#include <rthw.h>
 #include <board.h>
 #include <rtdevice.h>
 #include <ald_cmu.h>
@@ -21,6 +22,21 @@ static void uart_console_reconfig(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
     rt_device_control(rt_console_get_device(), RT_DEVICE_CTRL_CONFIG, &config);
+}
+
+static void delay(void)
+{
+    long i;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    i = 0;
+    do{
+        i++;
+    }
+    while (i < 10000); 
+    
+    rt_hw_interrupt_enable(level);
 }
 
 /**
@@ -42,21 +58,25 @@ static void sleep(struct rt_pm *pm, uint8_t mode)
     case PM_SLEEP_MODE_LIGHT:
         /* Enter SLEEP Mode, Main regulator is ON */
         ald_pmu_stop1_enter();
+        delay();
         break;
 
     case PM_SLEEP_MODE_DEEP:
         /* Enter STOP 2 mode  */
         ald_pmu_stop2_enter();
+        delay();
         break;
 
     case PM_SLEEP_MODE_STANDBY:
         /* Enter STANDBY mode */
         ald_pmu_stop2_enter();
+        delay();
         break;
 
     case PM_SLEEP_MODE_SHUTDOWN:
         /* Enter SHUTDOWNN mode */
         ald_pmu_stop2_enter();
+        delay();
         break;
 
     default:

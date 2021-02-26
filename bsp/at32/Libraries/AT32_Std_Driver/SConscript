@@ -41,6 +41,6 @@ path = [
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER']
 
-group = DefineGroup('AT32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -170,22 +170,22 @@ do {							\
   * @brief CMU state structure definition
   */
 typedef	enum {
-	CMU_CLOCK_HRC  = 0x1,	/**< HRC */
-	CMU_CLOCK_LRC  = 0x2,	/**< LRC */
-	CMU_CLOCK_LOSC = 0x3,	/**< LOSC */
-	CMU_CLOCK_PLL1 = 0x4,	/**< PLL1 */
-	CMU_CLOCK_HOSC = 0x5,	/**< HOSC */
+	CMU_CLOCK_HRC  = 0x1U,	/**< HRC */
+	CMU_CLOCK_LRC  = 0x2U,	/**< LRC */
+	CMU_CLOCK_LOSC = 0x3U,	/**< LOSC */
+	CMU_CLOCK_PLL1 = 0x4U,	/**< PLL1 */
+	CMU_CLOCK_HOSC = 0x5U,	/**< HOSC */
 } cmu_clock_t;
 
 /**
   * @brief PLL1 output clock
   */
 typedef enum {
-	CMU_PLL1_OUTPUT_36M = 0x0,	/**< x9  (36MHz) */
-	CMU_PLL1_OUTPUT_48M = 0x1,	/**< x12 (48MHz) */
+	CMU_PLL1_OUTPUT_36M = 0x0U,	/**< x9  (36MHz) */
+	CMU_PLL1_OUTPUT_48M = 0x1U,	/**< x12 (48MHz) */
 #if defined(ES32F36xx) || defined(ES32F39xx)
-	CMU_PLL1_OUTPUT_72M = 0x2,	/**< x18 (72MHz) */
-	CMU_PLL1_OUTPUT_96M = 0x3,	/**< x24 (96MHz) */
+	CMU_PLL1_OUTPUT_72M = 0x2U,	/**< x18 (72MHz) */
+	CMU_PLL1_OUTPUT_96M = 0x3U,	/**< x24 (96MHz) */
 #endif
 } cmu_pll1_output_t;
 
@@ -193,200 +193,217 @@ typedef enum {
   * @brief PLL1 referance clock
   */
 typedef enum {
-	CMU_PLL1_INPUT_HRC_6  = 0x0,	/**< HRC  / 6 */
-	CMU_PLL1_INPUT_PLL2   = 0x1,	/**< PLL2 */
-	CMU_PLL1_INPUT_HOSC   = 0x2,	/**< HOSC / 1 */
-	CMU_PLL1_INPUT_HOSC_2 = 0x3,	/**< HOSC / 2 */
-	CMU_PLL1_INPUT_HOSC_3 = 0x4,	/**< HOSC / 3 */
-	CMU_PLL1_INPUT_HOSC_4 = 0x5,	/**< HOSC / 4 */
-	CMU_PLL1_INPUT_HOSC_5 = 0x6,	/**< HOSC / 5 */
-	CMU_PLL1_INPUT_HOSC_6 = 0x7,	/**< HOSC / 6 */
+	CMU_PLL1_INPUT_HRC_6  = 0x0U,	/**< HRC  / 6 */
+	CMU_PLL1_INPUT_PLL2   = 0x1U,	/**< PLL2 */
+	CMU_PLL1_INPUT_HOSC   = 0x2U,	/**< HOSC / 1 */
+	CMU_PLL1_INPUT_HOSC_2 = 0x3U,	/**< HOSC / 2 */
+	CMU_PLL1_INPUT_HOSC_3 = 0x4U,	/**< HOSC / 3 */
+	CMU_PLL1_INPUT_HOSC_4 = 0x5U,	/**< HOSC / 4 */
+	CMU_PLL1_INPUT_HOSC_5 = 0x6U,	/**< HOSC / 5 */
+	CMU_PLL1_INPUT_HOSC_6 = 0x7U,	/**< HOSC / 6 */
 } cmu_pll1_input_t;
 
 /**
   * @brief HOSC range
   */
 typedef enum {
-	CMU_HOSC_2M  = 0x0,	/**< 0~2MHz */
-	CMU_HOSC_4M  = 0x1,	/**< 2~4MHz */
-	CMU_HOSC_8M  = 0x2,	/**< 4~8MHz */
-	CMU_HOSC_16M = 0x3,	/**< 8~16MHz */
-	CMU_HOSC_24M = 0x4,	/**< 16~24MHz */
+	CMU_HOSC_2M  = 0x0U,	/**< 0~2MHz */
+	CMU_HOSC_4M  = 0x1U,	/**< 2~4MHz */
+	CMU_HOSC_8M  = 0x2U,	/**< 4~8MHz */
+	CMU_HOSC_16M = 0x3U,	/**< 8~16MHz */
+	CMU_HOSC_24M = 0x4U,	/**< 16~24MHz */
 } cmu_hosc_range_t;
 
 /**
-  * @brief Auto-calibrate input
+  * @brief Safe clock source type
   */
 typedef enum {
-	CMU_AUTO_CALIB_INPUT_LOSE = 0x0,	/**< LOSC */
-	CMU_AUTO_CALIB_INPUT_HOSE = 0x1,	/**< HOSC */
-} cmu_auto_calib_input_t;
-
-/**
-  * @brief Auto-calibrate output
-  */
-typedef enum {
-	CMU_AUTO_CALIB_OUTPUT_24M = 0x0,	/**< 2MHz */
-	CMU_AUTO_CALIB_OUTPUT_2M  = 0x1,	/**< 2MHz */
-} cmu_auto_calib_output_t;
+	CMU_SAFE_CLK_HOSC = 0x0U,	/**< HOSC */
+	CMU_SAFE_CLK_LOSC = 0x1U,	/**< LOSC */
+	CMU_SAFE_CLK_PLL  = 0x2U,	/**< PLL */
+} cmu_clock_safe_type_t;
 
 /**
   * @brief Frequency division select bit
   */
 typedef enum {
-	CMU_DIV_1    = 0x0,		/**< Division by 1 */
-	CMU_DIV_2    = 0x1,		/**< Division by 2 */
-	CMU_DIV_4    = 0x2,		/**< Division by 4 */
-	CMU_DIV_8    = 0x3,		/**< Division by 8 */
-	CMU_DIV_16   = 0x4,		/**< Division by 16 */
-	CMU_DIV_32   = 0x5,		/**< Division by 32 */
-	CMU_DIV_64   = 0x6,		/**< Division by 64 */
-	CMU_DIV_128  = 0x7,		/**< Division by 128 */
-	CMU_DIV_256  = 0x8,		/**< Division by 256 */
-	CMU_DIV_512  = 0x9,		/**< Division by 512 */
-	CMU_DIV_1024 = 0xA,		/**< Division by 1024 */
-	CMU_DIV_2048 = 0xB,		/**< Division by 2048 */
-	CMU_DIV_4096 = 0xC,		/**< Division by 4096 */
+	CMU_DIV_1    = 0x0U,	/**< Division by 1 */
+	CMU_DIV_2    = 0x1U,	/**< Division by 2 */
+	CMU_DIV_4    = 0x2U,	/**< Division by 4 */
+	CMU_DIV_8    = 0x3U,	/**< Division by 8 */
+	CMU_DIV_16   = 0x4U,	/**< Division by 16 */
+	CMU_DIV_32   = 0x5U,	/**< Division by 32 */
+	CMU_DIV_64   = 0x6U,	/**< Division by 64 */
+	CMU_DIV_128  = 0x7U,	/**< Division by 128 */
+	CMU_DIV_256  = 0x8U,	/**< Division by 256 */
+	CMU_DIV_512  = 0x9U,	/**< Division by 512 */
+	CMU_DIV_1024 = 0xAU,	/**< Division by 1024 */
+	CMU_DIV_2048 = 0xBU,	/**< Division by 2048 */
+	CMU_DIV_4096 = 0xCU,	/**< Division by 4096 */
 } cmu_div_t;
 
 /**
   * @brief Bus type
   */
 typedef enum {
-	CMU_HCLK_1 = 0x0,		/**< AHB1 bus */
-	CMU_HCLK_2 = 0x1,		/**< AHB2 bus */
-	CMU_SYS    = 0x2,		/**< SYS bus */
-	CMU_PCLK_1 = 0x3,		/**< APB1 bus */
-	CMU_PCLK_2 = 0x4,		/**< APB2 bus */
+	CMU_HCLK_1 = 0x0U,	/**< AHB1 bus */
+	CMU_HCLK_2 = 0x1U,	/**< AHB2 bus */
+	CMU_SYS    = 0x2U,	/**< SYS bus */
+	CMU_PCLK_1 = 0x3U,	/**< APB1 bus */
+	CMU_PCLK_2 = 0x4U,	/**< APB2 bus */
 } cmu_bus_t;
 
 /**
   * @brief Output high clock select
   */
 typedef enum {
-	CMU_OUTPUT_HIGH_SEL_HOSC   = 0x0,	/**< Select HOSC */
-	CMU_OUTPUT_HIGH_SEL_LOSC   = 0x1,	/**< Select LOSC */
-	CMU_OUTPUT_HIGH_SEL_HRC    = 0x2,	/**< Select HRC */
-	CMU_OUTPUT_HIGH_SEL_LRC    = 0x3,	/**< Select LRC */
-	CMU_OUTPUT_HIGH_SEL_HOSM   = 0x4,	/**< Select HOSM */
-	CMU_OUTPUT_HIGH_SEL_PLL1   = 0x5,	/**< Select PLL1 */
-	CMU_OUTPUT_HIGH_SEL_PLL2   = 0x6,	/**< Select PLL2 */
-	CMU_OUTPUT_HIGH_SEL_SYSCLK = 0x7,	/**< Select SYSCLK */
+	CMU_OUTPUT_HIGH_SEL_HOSC   = 0x0U,	/**< Select HOSC */
+	CMU_OUTPUT_HIGH_SEL_LOSC   = 0x1U,	/**< Select LOSC */
+	CMU_OUTPUT_HIGH_SEL_HRC    = 0x2U,	/**< Select HRC */
+	CMU_OUTPUT_HIGH_SEL_LRC    = 0x3U,	/**< Select LRC */
+	CMU_OUTPUT_HIGH_SEL_HOSM   = 0x4U,	/**< Select HOSM */
+	CMU_OUTPUT_HIGH_SEL_PLL1   = 0x5U,	/**< Select PLL1 */
+	CMU_OUTPUT_HIGH_SEL_PLL2   = 0x6U,	/**< Select PLL2 */
+	CMU_OUTPUT_HIGH_SEL_SYSCLK = 0x7U,	/**< Select SYSCLK */
 } cmu_output_high_sel_t;
 
 /**
   * @brief Output frequency division
   */
 typedef enum {
-	CMU_OUTPUT_DIV_1   = 0x0,	/**< Division by 1 */
-	CMU_OUTPUT_DIV_2   = 0x1,	/**< Division by 2 */
-	CMU_OUTPUT_DIV_4   = 0x2,	/**< Division by 4 */
-	CMU_OUTPUT_DIV_8   = 0x3,	/**< Division by 8 */
-	CMU_OUTPUT_DIV_16  = 0x4,	/**< Division by 16 */
-	CMU_OUTPUT_DIV_32  = 0x5,	/**< Division by 32 */
-	CMU_OUTPUT_DIV_64  = 0x6,	/**< Division by 64 */
-	CMU_OUTPUT_DIV_128 = 0x7,	/**< Division by 128 */
+	CMU_OUTPUT_DIV_1   = 0x0U,	/**< Division by 1 */
+	CMU_OUTPUT_DIV_2   = 0x1U,	/**< Division by 2 */
+	CMU_OUTPUT_DIV_4   = 0x2U,	/**< Division by 4 */
+	CMU_OUTPUT_DIV_8   = 0x3U,	/**< Division by 8 */
+	CMU_OUTPUT_DIV_16  = 0x4U,	/**< Division by 16 */
+	CMU_OUTPUT_DIV_32  = 0x5U,	/**< Division by 32 */
+	CMU_OUTPUT_DIV_64  = 0x6U,	/**< Division by 64 */
+	CMU_OUTPUT_DIV_128 = 0x7U,	/**< Division by 128 */
 } cmu_output_high_div_t;
 
 /**
   * @brief Output low clock select
   */
 typedef enum {
-	CMU_OUTPUT_LOW_SEL_LOSC = 0x0,	/**< Select LOSC */
-	CMU_OUTPUT_LOW_SEL_LRC  = 0x1,	/**< Select LRC */
-	CMU_OUTPUT_LOW_SEL_LOSM = 0x2,	/**< Select LOSM */
-	CMU_OUTPUT_LOW_SEL_BUZZ = 0x3,	/**< Select BUZZ */
-	CMU_OUTPUT_LOW_SEL_ULRC = 0x4,	/**< Select ULRC */
+	CMU_OUTPUT_LOW_SEL_LOSC = 0x0U,	/**< Select LOSC */
+	CMU_OUTPUT_LOW_SEL_LRC  = 0x1U,	/**< Select LRC */
+	CMU_OUTPUT_LOW_SEL_LOSM = 0x2U,	/**< Select LOSM */
+	CMU_OUTPUT_LOW_SEL_BUZZ = 0x3U,	/**< Select BUZZ */
+	CMU_OUTPUT_LOW_SEL_ULRC = 0x4U,	/**< Select ULRC */
 } cmu_output_low_sel_t;
 
 /**
   * @brief BUZZ frequency division
   */
 typedef enum {
-	CMU_BUZZ_DIV_2   = 0x0,		/**< Division by 2 */
-	CMU_BUZZ_DIV_4   = 0x1,		/**< Division by 4 */
-	CMU_BUZZ_DIV_8   = 0x2,		/**< Division by 8 */
-	CMU_BUZZ_DIV_16  = 0x3,		/**< Division by 16 */
-	CMU_BUZZ_DIV_32  = 0x4,		/**< Division by 32 */
-	CMU_BUZZ_DIV_64  = 0x5,		/**< Division by 64 */
-	CMU_BUZZ_DIV_128 = 0x6,		/**< Division by 128 */
-	CMU_BUZZ_DIV_256 = 0x7,		/**< Division by 256 */
+	CMU_BUZZ_DIV_2   = 0x0U,	/**< Division by 2 */
+	CMU_BUZZ_DIV_4   = 0x1U,	/**< Division by 4 */
+	CMU_BUZZ_DIV_8   = 0x2U,	/**< Division by 8 */
+	CMU_BUZZ_DIV_16  = 0x3U,	/**< Division by 16 */
+	CMU_BUZZ_DIV_32  = 0x4U,	/**< Division by 32 */
+	CMU_BUZZ_DIV_64  = 0x5U,	/**< Division by 64 */
+	CMU_BUZZ_DIV_128 = 0x6U,	/**< Division by 128 */
+	CMU_BUZZ_DIV_256 = 0x7U,	/**< Division by 256 */
 } cmu_buzz_div_t;
 
 /**
   * @brief Low power peripheral clock select
   */
 typedef enum {
-	CMU_LP_PERH_CLOCK_SEL_PCLK2   = 0x0,	/**< Select PCLK2 */
-	CMU_LP_PERH_CLOCK_SEL_PLL1    = 0x1,	/**< Select PLL1 */
-	CMU_LP_PERH_CLOCK_SEL_PLL2    = 0x2,	/**< Select PLL2 */
-	CMU_LP_PERH_CLOCK_SEL_HRC     = 0x3,	/**< Select HRC */
-	CMU_LP_PERH_CLOCK_SEL_HOSC    = 0x4,	/**< Select HOSC */
-	CMU_LP_PERH_CLOCK_SEL_LRC     = 0x5,	/**< Select LRC */
-	CMU_LP_PERH_CLOCK_SEL_LOSC    = 0x6,	/**< Select LOSC */
-	CMU_LP_PERH_CLOCK_SEL_ULRC    = 0x7,	/**< Select ULRC */
-	CMU_LP_PERH_CLOCK_SEL_HRC_1M  = 0x8,	/**< Select HRC down to 1MHz */
-	CMU_LP_PERH_CLOCK_SEL_HOSC_1M = 0x9,	/**< Select HOSC down to 1MHz  */
-	CMU_LP_PERH_CLOCK_SEL_LOSM    = 0xA,	/**< Select LOSM */
-	CMU_LP_PERH_CLOCK_SEL_HOSM    = 0xB,	/**< Select HOSM */
+	CMU_LP_PERH_CLOCK_SEL_PCLK2   = 0x0U,	/**< Select PCLK2 */
+	CMU_LP_PERH_CLOCK_SEL_PLL1    = 0x1U,	/**< Select PLL1 */
+	CMU_LP_PERH_CLOCK_SEL_PLL2    = 0x2U,	/**< Select PLL2 */
+	CMU_LP_PERH_CLOCK_SEL_HRC     = 0x3U,	/**< Select HRC */
+	CMU_LP_PERH_CLOCK_SEL_HOSC    = 0x4U,	/**< Select HOSC */
+	CMU_LP_PERH_CLOCK_SEL_LRC     = 0x5U,	/**< Select LRC */
+	CMU_LP_PERH_CLOCK_SEL_LOSC    = 0x6U,	/**< Select LOSC */
+	CMU_LP_PERH_CLOCK_SEL_ULRC    = 0x7U,	/**< Select ULRC */
+	CMU_LP_PERH_CLOCK_SEL_HRC_1M  = 0x8U,	/**< Select HRC down to 1MHz */
+	CMU_LP_PERH_CLOCK_SEL_HOSC_1M = 0x9U,	/**< Select HOSC down to 1MHz  */
+	CMU_LP_PERH_CLOCK_SEL_LOSM    = 0xAU,	/**< Select LOSM */
+	CMU_LP_PERH_CLOCK_SEL_HOSM    = 0xBU,	/**< Select HOSM */
 } cmu_lp_perh_clock_sel_t;
 
 /**
   * @brief LCD clock select
   */
 typedef enum {
-	CMU_LCD_SEL_LOSM    = 0x0,	/**< Select LOSM */
-	CMU_LCD_SEL_LOSC    = 0x1,	/**< Select LOSC */
-	CMU_LCD_SEL_LRC     = 0x2,	/**< Select LRC */
-	CMU_LCD_SEL_ULRC    = 0x3,	/**< Select ULRC */
-	CMU_LCD_SEL_HRC_1M  = 0x4,	/**< Select HRC down to 1MHz */
-	CMU_LCD_SEL_HOSC_1M = 0x5,	/**< Select HOSC down to 1MHz */
+	CMU_LCD_SEL_LOSM    = 0x0U,	/**< Select LOSM */
+	CMU_LCD_SEL_LOSC    = 0x1U,	/**< Select LOSC */
+	CMU_LCD_SEL_LRC     = 0x2U,	/**< Select LRC */
+	CMU_LCD_SEL_ULRC    = 0x3U,	/**< Select ULRC */
+	CMU_LCD_SEL_HRC_1M  = 0x4U,	/**< Select HRC down to 1MHz */
+	CMU_LCD_SEL_HOSC_1M = 0x5U,	/**< Select HOSC down to 1MHz */
 } cmu_lcd_clock_sel_t;
 
 /**
   * @brief QSPI clock select
   */
 typedef enum {
-	CMU_QSPI_CLOCK_SEL_PCLK1 = 0x0,	/**< Select PCLK1 */
-	CMU_QSPI_CLOCK_SEL_HCLK2 = 0x1,	/**< Select HCLK2 */
-	CMU_QSPI_CLOCK_SEL_HRC   = 0x2,	/**< Select HRC */
-	CMU_QSPI_CLOCK_SEL_HOSC  = 0x3,	/**< Select HOSC */
-	CMU_QSPI_CLOCK_SEL_PLL1  = 0x4,	/**< Select PLL1 */
-	CMU_QSPI_CLOCK_SEL_HOSM  = 0x5,	/**< Select HOSC security management */
+	CMU_QSPI_CLOCK_SEL_PCLK1 = 0x0U,	/**< Select PCLK1 */
+	CMU_QSPI_CLOCK_SEL_HCLK2 = 0x1U,	/**< Select HCLK2 */
+	CMU_QSPI_CLOCK_SEL_HRC   = 0x2U,	/**< Select HRC */
+	CMU_QSPI_CLOCK_SEL_HOSC  = 0x3U,	/**< Select HOSC */
+	CMU_QSPI_CLOCK_SEL_PLL1  = 0x4U,	/**< Select PLL1 */
+	CMU_QSPI_CLOCK_SEL_HOSM  = 0x5U,	/**< Select HOSC security management */
 } cmu_qspi_clock_sel_t;
 
 /**
   * @brief USB clock select
   */
 typedef enum {
-	CMU_USB_CLOCK_SEL_HOSC  = 0x0,	/**< Select HOSC */
-	CMU_USB_CLOCK_SEL_HRC   = 0x1,	/**< Select HRC */
-	CMU_USB_CLOCK_SEL_PCLK1 = 0x2,	/**< Select PCLK1 */
-	CMU_USB_CLOCK_SEL_PLL1  = 0x3,	/**< Select PLL1 */
-	CMU_USB_CLOCK_SEL_HOSM  = 0x4,	/**< Select HOSC security management */
+	CMU_USB_CLOCK_SEL_HOSC  = 0x0U,	/**< Select HOSC */
+	CMU_USB_CLOCK_SEL_HRC   = 0x1U,	/**< Select HRC */
+	CMU_USB_CLOCK_SEL_PCLK1 = 0x2U,	/**< Select PCLK1 */
+	CMU_USB_CLOCK_SEL_PLL1  = 0x3U,	/**< Select PLL1 */
+	CMU_USB_CLOCK_SEL_HOSM  = 0x4U,	/**< Select HOSC security management */
 } cmu_usb_clock_sel_t;
 
 /**
   * @brief USB clock division
   */
 typedef enum {
-	CMU_USB_DIV_1    = 0x0,		/**< Division by 1 */
-	CMU_USB_DIV_2    = 0x1,		/**< Division by 2 */
-	CMU_USB_DIV_4    = 0x2,		/**< Division by 4 */
-	CMU_USB_DIV_8    = 0x3,		/**< Division by 8 */
-	CMU_USB_DIV_16   = 0x4,		/**< Division by 16 */
-	CMU_USB_DIV_32   = 0x5,		/**< Division by 32 */
-	CMU_USB_DIV_64   = 0x6,		/**< Division by 64 */
-	CMU_USB_DIV_128  = 0x7,		/**< Division by 128 */
-	CMU_USB_DIV_256  = 0x8,		/**< Division by 256 */
-	CMU_USB_DIV_512  = 0x9,		/**< Division by 512 */
-	CMU_USB_DIV_1024 = 0xA,		/**< Division by 1024 */
-	CMU_USB_DIV_2048 = 0xB,		/**< Division by 2048 */
-	CMU_USB_DIV_4096 = 0xC,		/**< Division by 4096 */
+	CMU_USB_DIV_1    = 0x0U,	/**< Division by 1 */
+	CMU_USB_DIV_2    = 0x1U,	/**< Division by 2 */
+	CMU_USB_DIV_4    = 0x2U,	/**< Division by 4 */
+	CMU_USB_DIV_8    = 0x3U,	/**< Division by 8 */
+	CMU_USB_DIV_16   = 0x4U,	/**< Division by 16 */
+	CMU_USB_DIV_32   = 0x5U,	/**< Division by 32 */
+	CMU_USB_DIV_64   = 0x6U,	/**< Division by 64 */
+	CMU_USB_DIV_128  = 0x7U,	/**< Division by 128 */
+	CMU_USB_DIV_256  = 0x8U,	/**< Division by 256 */
+	CMU_USB_DIV_512  = 0x9U,	/**< Division by 512 */
+	CMU_USB_DIV_1024 = 0xAU,	/**< Division by 1024 */
+	CMU_USB_DIV_2048 = 0xBU,	/**< Division by 2048 */
+	CMU_USB_DIV_4096 = 0xCU,	/**< Division by 4096 */
 } cmu_usb_div_t;
 
 /**
   * @brief Peripheral clock enable/disable
+  * @verbatim
+      In this module, for the convenience of code maintenance,
+      TIMERx is used to indicate the sequence of the timer peripheral.
+      Different product series TIMERx represent different meanings:
+      1. For ES32F36xx series:
+      TIMER0 ----> AD16C4T0
+      TIMER1 ----> AD16C4T1
+      TIMER2 ----> GP32C4T0
+      TIMER3 ----> GP32C4T1
+      TIMER4 ----> BS16T0
+      TIMER5 ----> BS16T1
+      TIMER6 ----> GP16C4T0
+      TIMER7 ----> GP16C4T1
+
+      2. For ES32F393x/ES32F336x/ES32F392x series:
+      TIMER0 ----> GP16C4T0
+      TIMER1 ----> GP16C4T1
+      TIMER2 ----> GP32C4T0
+      TIMER3 ----> GP32C4T1
+      TIMER4 ----> BS16T0
+      TIMER5 ----> BS16T1
+      TIMER6 ----> GP16C4T2
+      TIMER7 ----> GP16C4T3
+    @endverbatim
   */
 typedef enum {
 	CMU_PERH_GPIO    = (1U << 0),			/**< GPIO */
@@ -400,14 +417,14 @@ typedef enum {
 	CMU_PERH_DMA     = (1U << 8),			/**< DMA */
 	CMU_PERH_USB     = (1U << 10),			/**< USB */
 	CMU_PERH_ECC     = (1U << 11),			/**< ECC */
-	CMU_PERH_TIM0    = (1U << 0)  | (1U << 27),	/**< TIM0 */
-	CMU_PERH_TIM1    = (1U << 1)  | (1U << 27),	/**< TIM1 */
-	CMU_PERH_TIM2    = (1U << 2)  | (1U << 27),	/**< TIM2 */
-	CMU_PERH_TIM3    = (1U << 3)  | (1U << 27),	/**< TIM3 */
-	CMU_PERH_TIM4    = (1U << 4)  | (1U << 27),	/**< TIM4 */
-	CMU_PERH_TIM5    = (1U << 5)  | (1U << 27),	/**< TIM5 */
-	CMU_PERH_TIM6    = (1U << 6)  | (1U << 27),	/**< TIM6 */
-	CMU_PERH_TIM7    = (1U << 7)  | (1U << 27),	/**< TIM7 */
+	CMU_PERH_TIMER0  = (1U << 0)  | (1U << 27),	/**< TIMER0 */
+	CMU_PERH_TIMER1  = (1U << 1)  | (1U << 27),	/**< TIMER1 */
+	CMU_PERH_TIMER2  = (1U << 2)  | (1U << 27),	/**< TIMER2 */
+	CMU_PERH_TIMER3  = (1U << 3)  | (1U << 27),	/**< TIMER3 */
+	CMU_PERH_TIMER4  = (1U << 4)  | (1U << 27),	/**< TIMER4 */
+	CMU_PERH_TIMER5  = (1U << 5)  | (1U << 27),	/**< TIMER5 */
+	CMU_PERH_TIMER6  = (1U << 6)  | (1U << 27),	/**< TIMER6 */
+	CMU_PERH_TIMER7  = (1U << 7)  | (1U << 27),	/**< TIMER7 */
 	CMU_PERH_UART0   = (1U << 8)  | (1U << 27),	/**< UART0 */
 	CMU_PERH_UART1   = (1U << 9)  | (1U << 27),	/**< UART1 */
 	CMU_PERH_UART2   = (1U << 10) | (1U << 27),	/**< UART2 */
@@ -429,27 +446,26 @@ typedef enum {
 	CMU_PERH_ACMP1   = (1U << 7)  | (1U << 28),	/**< ACMP1 */
 	CMU_PERH_OPAMP   = (1U << 8)  | (1U << 28),	/**< OPAMP */
 	CMU_PERH_DAC0    = (1U << 9)  | (1U << 28),	/**< DAC0 */
-	CMU_PERH_ACMP2   = (1U << 11)  | (1U << 28),	/**< ACMP2 */
+	CMU_PERH_ACMP2   = (1U << 11) | (1U << 28),	/**< ACMP2 */
 	CMU_PERH_WWDT    = (1U << 12) | (1U << 28),	/**< WWDT */
 	CMU_PERH_LCD     = (1U << 13) | (1U << 28),	/**< LCD */
 	CMU_PERH_IWDT    = (1U << 14) | (1U << 28),	/**< IWDT */
 	CMU_PERH_RTC     = (1U << 15) | (1U << 28),	/**< RTC */
 	CMU_PERH_TSENSE  = (1U << 16) | (1U << 28),	/**< TSENSE */
 	CMU_PERH_BKPC    = (1U << 17) | (1U << 28),	/**< BKPC */
-	CMU_PERH_BKRPAM  = (1U << 18) | (1U << 28),	/**< BKPRAM */
 	CMU_PERH_DBGC    = (1U << 19) | (1U << 28),	/**< DBGC */
-	CMU_PERH_ALL     = (0x7FFFFFFF),		/**< ALL */
+	CMU_PERH_ALL     = (0x7FFFFFFFU),		/**< ALL */
 } cmu_perh_t;
 
 /**
   * @brief CMU interrupt type
   */
 typedef enum {
-	CMU_LOSC_STOP    = 0x0,	/**< LOSC STOP INTERRUPT */
-	CMU_HOSC_STOP    = 0x1,	/**< HOSC STOP INTERRUPT */
-	CMU_PLL1_UNLOCK  = 0x2,	/**< PLL1 UNLOCK INTERRUPT */
-	CMU_LOSC_START   = 0x3,	/**< LOSC START INTERRUPT */
-	CMU_HOSC_START   = 0x4,	/**< HOSC START INTERRUPT */
+	CMU_LOSC_STOP    = 0x0U,	/**< LOSC STOP INTERRUPT */
+	CMU_HOSC_STOP    = 0x1U,	/**< HOSC STOP INTERRUPT */
+	CMU_PLL1_UNLOCK  = 0x2U,	/**< PLL1 UNLOCK INTERRUPT */
+	CMU_LOSC_START   = 0x3U,	/**< LOSC START INTERRUPT */
+	CMU_HOSC_START   = 0x4U,	/**< HOSC START INTERRUPT */
 } cmu_security_t;
 
 /**
@@ -475,13 +491,13 @@ typedef enum {
   * @brief Stop1 clock select type
   */
 typedef enum {
-	CMU_STOP1_CLOCK_LRC     = 0x0,	/**< LRC */
-	CMU_STOP1_CLOCK_HRC_24M = 0x1,	/**< HRC 24MHz */
-	CMU_STOP1_CLOCK_HRC_2M  = 0x2,	/**< HRC 2MHz */
-	CMU_STOP1_CLOCK_HRC_1M  = 0x3,	/**< HRC divides to 1MHz */
-	CMU_STOP1_CLOCK_HOSC    = 0x4,	/**< HOSC */
-	CMU_STOP1_CLOCK_HOSC_1M = 0x5,	/**< HOSC divides to 1MHz */
-	CMU_STOP1_CLOCK_HOSCM   = 0x6,	/**< HOSC security management */
+	CMU_STOP1_CLOCK_LRC     = 0x0U,	/**< LRC */
+	CMU_STOP1_CLOCK_HRC_24M = 0x1U,	/**< HRC 24MHz */
+	CMU_STOP1_CLOCK_HRC_2M  = 0x2U,	/**< HRC 2MHz */
+	CMU_STOP1_CLOCK_HRC_1M  = 0x3U,	/**< HRC divides to 1MHz */
+	CMU_STOP1_CLOCK_HOSC    = 0x4U,	/**< HOSC */
+	CMU_STOP1_CLOCK_HOSC_1M = 0x5U,	/**< HOSC divides to 1MHz */
+	CMU_STOP1_CLOCK_HOSCM   = 0x6U,	/**< HOSC security management */
 } cmu_stop1_clock_t;
 
 /**
@@ -497,10 +513,16 @@ typedef enum {
                                  ((x) == CMU_CLOCK_LOSC) || \
                                  ((x) == CMU_CLOCK_PLL1) || \
                                  ((x) == CMU_CLOCK_HOSC))
+#if defined(ES32F36xx) || defined(ES32F39xx)
 #define IS_CMU_PLL1_OUTPUT(x)	(((x) == CMU_PLL1_OUTPUT_36M) || \
                                  ((x) == CMU_PLL1_OUTPUT_48M) || \
                                  ((x) == CMU_PLL1_OUTPUT_72M) || \
                                  ((x) == CMU_PLL1_OUTPUT_96M))
+#endif
+#ifdef ES32F336x
+#define IS_CMU_PLL1_OUTPUT(x)	(((x) == CMU_PLL1_OUTPUT_36M) || \
+                                 ((x) == CMU_PLL1_OUTPUT_48M))
+#endif
 #define IS_CMU_PLL1_INPUT(x)	(((x) == CMU_PLL1_INPUT_HRC_6)  || \
                                  ((x) == CMU_PLL1_INPUT_PLL2)   || \
                                  ((x) == CMU_PLL1_INPUT_HOSC)   || \
@@ -553,10 +575,9 @@ typedef enum {
                                          ((x) == CMU_OUTPUT_LOW_SEL_LOSM) || \
                                          ((x) == CMU_OUTPUT_LOW_SEL_BUZZ) || \
                                          ((x) == CMU_OUTPUT_LOW_SEL_ULRC))
-#define IS_CMU_AUTO_CALIB_INPUT(x)	(((x) == CMU_AUTO_CALIB_INPUT_LOSE) || \
-                                         ((x) == CMU_AUTO_CALIB_INPUT_HOSE))
-#define IS_CMU_AUTO_CALIB_OUTPUT(x)	(((x) == CMU_AUTO_CALIB_OUTPUT_24M) || \
-                                         ((x) == CMU_AUTO_CALIB_OUTPUT_2M))
+#define IS_CMU_SAFE_CLOCK_TYPE(x)	(((x) == CMU_SAFE_CLK_HOSC) || \
+                                         ((x) == CMU_SAFE_CLK_LOSC) || \
+                                         ((x) == CMU_SAFE_CLK_PLL))
 #define IS_CMU_BUZZ_DIV(x)	(((x) == CMU_BUZZ_DIV_2)   || \
                                  ((x) == CMU_BUZZ_DIV_4)   || \
                                  ((x) == CMU_BUZZ_DIV_8)   || \
@@ -618,14 +639,14 @@ typedef enum {
 				 ((x) == CMU_PERH_DMA)     || \
 				 ((x) == CMU_PERH_USB)     || \
 				 ((x) == CMU_PERH_ECC)     || \
-                                 ((x) == CMU_PERH_TIM0)    || \
-                                 ((x) == CMU_PERH_TIM1)    || \
-                                 ((x) == CMU_PERH_TIM2)    || \
-                                 ((x) == CMU_PERH_TIM3)    || \
-                                 ((x) == CMU_PERH_TIM4)    || \
-                                 ((x) == CMU_PERH_TIM5)    || \
-                                 ((x) == CMU_PERH_TIM6)    || \
-                                 ((x) == CMU_PERH_TIM7)    || \
+                                 ((x) == CMU_PERH_TIMER0)  || \
+                                 ((x) == CMU_PERH_TIMER1)  || \
+                                 ((x) == CMU_PERH_TIMER2)  || \
+                                 ((x) == CMU_PERH_TIMER3)  || \
+                                 ((x) == CMU_PERH_TIMER4)  || \
+                                 ((x) == CMU_PERH_TIMER5)  || \
+                                 ((x) == CMU_PERH_TIMER6)  || \
+                                 ((x) == CMU_PERH_TIMER7)  || \
                                  ((x) == CMU_PERH_UART0)   || \
                                  ((x) == CMU_PERH_UART1)   || \
                                  ((x) == CMU_PERH_UART2)   || \
@@ -654,7 +675,6 @@ typedef enum {
                                  ((x) == CMU_PERH_RTC)     || \
                                  ((x) == CMU_PERH_TSENSE)  || \
                                  ((x) == CMU_PERH_BKPC)    || \
-                                 ((x) == CMU_PERH_BKRPAM ) || \
                                  ((x) == CMU_PERH_DBGC)    || \
                                  ((x) == CMU_PERH_ALL))
 #define IS_CMU_CLOCK_STATE(x)	(((x) == CMU_CLOCK_STATE_HOSCACT) || \
@@ -702,6 +722,7 @@ uint32_t ald_cmu_get_clock(void);
 /* BUS division control */
 void ald_cmu_div_config(cmu_bus_t bus, cmu_div_t div);
 uint32_t ald_cmu_get_hclk1_clock(void);
+uint32_t ald_cmu_get_hclk2_clock(void);
 uint32_t ald_cmu_get_sys_clock(void);
 uint32_t ald_cmu_get_pclk1_clock(void);
 uint32_t ald_cmu_get_pclk2_clock(void);
@@ -716,6 +737,7 @@ uint32_t ald_cmu_get_pclk2_clock(void);
 void ald_cmu_hosc_safe_config(cmu_hosc_range_t clock, type_func_t status);
 void ald_cmu_losc_safe_config(type_func_t status);
 void ald_cmu_pll_safe_config(type_func_t status);
+uint32_t ald_cmu_current_clock_source_get(cmu_clock_safe_type_t type);
 flag_status_t ald_cmu_get_clock_state(cmu_clock_state_t sr);
 void ald_cmu_irq_handler(void);
 void ald_cmu_irq_cbk(cmu_security_t se);

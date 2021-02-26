@@ -7,7 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_ALIGN_SIZE 4
+#define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 100
@@ -39,7 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 
 /* RT-Thread Components */
 
@@ -76,7 +76,16 @@
 #define RT_PIPE_BUFSZ 512
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CAN
+#define RT_USING_HWTIMER
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
+#define RT_USING_PWM
+#define RT_USING_PM
+#define RT_USING_RTC
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -161,6 +170,9 @@
 /* I2C Drivers */
 
 
+/* CAN Drivers */
+
+
 /* PWM Drivers */
 
 
@@ -180,6 +192,8 @@
 
 
 /* Offboard Peripheral Drivers */
+
+/* Peripheral Drivers test example */
 
 
 #endif

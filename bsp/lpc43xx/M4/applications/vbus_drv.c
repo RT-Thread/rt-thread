@@ -14,7 +14,7 @@
 #include <vbus.h>
 #include <board.h>
 
-struct rt_vbus_ring rt_vbus_rings[2] SECTION("vbus_ring");
+struct rt_vbus_ring rt_vbus_rings[2] RT_SECTION("vbus_ring");
 
 int rt_vbus_do_init(void)
 {

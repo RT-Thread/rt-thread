@@ -481,16 +481,16 @@ void ald_usb_host_ep_data_toggle(uint32_t ep_idx, bool toggle, uint32_t flags)
 	}
 
 	if (ep_idx == USB_EP_0) {
-		USB0->CSR0H = ((USB0->CSR0H  & ~(USB_CSRH0_DTWE | USB_CSRH0_DT)) |
+		USB0->CSR0H = (uint8_t)((USB0->CSR0H  & ~(USB_CSRH0_DTWE | USB_CSRH0_DT)) |
 						(tmp | USB_CSRH0_DTWE));
 	}
 	else if (flags == USB_EP_HOST_IN) {
-		USB0->CSR[ep_idx - 1].RXxCSRH = ((USB0->CSR[ep_idx - 1].RXxCSRH &
+		USB0->CSR[ep_idx - 1].RXxCSRH = (uint8_t)((USB0->CSR[ep_idx - 1].RXxCSRH &
 							~(USB_RXCSRH1_DTWE | USB_RXCSRH1_DT)) |
 							(tmp | USB_RXCSRH1_DTWE));
 	}
 	else {
-		USB0->CSR[ep_idx - 1].TXxCSRH = ((USB0->CSR[ep_idx - 1].TXxCSRH &
+		USB0->CSR[ep_idx - 1].TXxCSRH = (uint8_t)((USB0->CSR[ep_idx - 1].TXxCSRH &
 							~(USB_TXCSRH1_DTWE | USB_TXCSRH1_DT)) |
 							(tmp | USB_TXCSRH1_DTWE));
 	}
@@ -1184,7 +1184,7 @@ void ald_usb_dma_channel_start(uint8_t ch)
   */
 void ald_usb_dma_channel_stop(uint8_t ch)
 {
-	USB0->DMA_CH[ch].DMA_CNTL &= ~0x1;
+	USB0->DMA_CH[ch].DMA_CNTL &= (uint32_t)(~0x1);
 	return;
 }
 

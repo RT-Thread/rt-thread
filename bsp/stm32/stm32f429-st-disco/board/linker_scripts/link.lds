@@ -1,5 +1,5 @@
 /*
- * linker script for STM32F4xx with GNU ld
+ * linker script for STM32F429xx with GNU ld
  * bernard.xiong 2009-10-14
  */
 
@@ -7,7 +7,7 @@
 MEMORY
 {
     ROM (rx) : ORIGIN = 0x08000000, LENGTH = 2048k /* 2048KB flash */
-    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  320k /* 320K sram */
+    RAM (rw) : ORIGIN = 0x20000000, LENGTH =  192k /* 192K sram */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x200;

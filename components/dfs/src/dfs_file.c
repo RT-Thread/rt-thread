@@ -157,7 +157,7 @@ int dfs_file_ioctl(struct dfs_fd *fd, int cmd, void *args)
         return -EINVAL;
 
     /* regular file system fd */
-    if (fd->type == FT_REGULAR)
+    if (fd->type == FT_REGULAR || fd->type == FT_DEVICE)
     {
         switch (cmd)
         {

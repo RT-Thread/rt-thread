@@ -15,6 +15,6 @@ if rtconfig.DEVICE_SERIES == 'SAMD20':
 elif rtconfig.DEVICE_SERIES == 'SAMD21':
 	path += [cwd + '/../asflib_config', cwd + '/../asflib_config/clock_samd21_r21_da_ha1']
 
-group = DefineGroup('Board', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

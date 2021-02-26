@@ -6,6 +6,7 @@
  * Change Logs:
  * Date             Author          Notes
  * 2020-05-22       Sherman         first version
+ * 2020-11-02       xckhmf          fixed bug
  */
 
 #include <stdint.h>
@@ -19,6 +20,7 @@
 
 #ifdef BSP_USING_SPI
 
+#if defined(BSP_USING_SPI0) || defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2)
 static struct nrfx_drv_spi_config spi_config[] =
 {
 #ifdef BSP_USING_SPI0
@@ -117,12 +119,12 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
 
     nrfx_spi_t spi = spi_bus_obj[index].spi;
     nrfx_spi_config_t config = NRFX_SPI_DEFAULT_CONFIG(bsp_spi_pin[index].sck_pin, 
-        bsp_spi_pin[index].mosi_pin, bsp_spi_pin[index].miso_pin, bsp_spi_pin[index].ss_pin);
+        bsp_spi_pin[index].mosi_pin, bsp_spi_pin[index].miso_pin, NRFX_SPI_PIN_NOT_USED);
 
     /* spi config ss pin */
-    if(device->user_data != RT_NULL)
+    if(device->parent.user_data != RT_NULL)
     {
-        config.ss_pin = (rt_uint8_t)device->user_data;
+        nrf_gpio_cfg_output((uint32_t)device->parent.user_data);
     }
     /* spi config bit order */
     if(configuration->mode & RT_SPI_MSB)
@@ -198,32 +200,43 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     RT_ASSERT(device->bus->parent.user_data != RT_NULL);
 
     rt_uint8_t index = spi_index_find(device->bus);
+    nrfx_err_t nrf_ret;
     RT_ASSERT(index != 0xFF);
 
     nrfx_spi_t * p_instance =  &spi_bus_obj[index].spi;
     nrfx_spi_xfer_desc_t p_xfer_desc;
+
+    if(message->cs_take == 1)
+    {
+        nrf_gpio_pin_clear((uint32_t)device->parent.user_data);
+    }
+    p_xfer_desc.p_rx_buffer = message->recv_buf;
+    p_xfer_desc.rx_length = message->length;  
+    p_xfer_desc.p_tx_buffer = message->send_buf;
+    p_xfer_desc.tx_length = message->length ;
     if(message->send_buf == RT_NULL)
     {
-        p_xfer_desc.p_rx_buffer = message->recv_buf;
-        p_xfer_desc.rx_length = message->length;
-
-        p_xfer_desc.p_tx_buffer = RT_NULL;
         p_xfer_desc.tx_length = 0;
+    }
+    if(message->recv_buf == RT_NULL)
+    {
+        p_xfer_desc.rx_length = 0;          
+    }
+
+    nrf_ret = nrfx_spi_xfer(p_instance, &p_xfer_desc, 0);
+    if(message->cs_release == 1)
+    {
+        nrf_gpio_pin_set((uint32_t)device->parent.user_data);
+    }
+    
+    if( NRFX_SUCCESS != nrf_ret)
+    {
+        return 0;
     }
     else
     {
-        p_xfer_desc.p_tx_buffer = message->send_buf;
-        p_xfer_desc.tx_length = message->length ;
-
-        p_xfer_desc.p_rx_buffer = RT_NULL;
-        p_xfer_desc.rx_length = 0;
+        return message->length;        
     }
-
-    nrfx_err_t nrf_ret = nrfx_spi_xfer(p_instance, &p_xfer_desc, 0);
-    if( NRFX_SUCCESS == nrf_ret)
-        return message->length; 
-    else
-        return 0;
 }
 
 /* spi bus callback function  */
@@ -260,6 +273,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);
+    RT_ASSERT(ss_pin != RT_NULL);
 
     rt_err_t result;
     struct rt_spi_device *spi_device;
@@ -267,8 +281,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
     /* initialize the cs pin */
-    spi_device->user_data = (void*)ss_pin;
-    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, RT_NULL);
+    result = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void*)ss_pin);
     if (result != RT_EOK)
     {
         LOG_E("%s attach to %s faild, %d", device_name, bus_name, result);
@@ -278,4 +291,5 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     return result;
 }
 
+#endif /* BSP_USING_SPI0 || BSP_USING_SPI1 || BSP_USING_SPI2 */
 #endif /*BSP_USING_SPI*/

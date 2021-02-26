@@ -121,31 +121,7 @@ reset:
 
     /* init cpu  */
     bl  cpu_init_crit
-    
-    /* todo:copyself to link address */
-    
-    /* Copy vector to the correct address */
-    ldr r0, =system_vectors
-    mrc p15, 0, r2, c1, c0, 0
-    ands r2, r2, #(1 << 13)
-    ldreq r1, =0x00000000
-    ldrne r1, =0xffff0000
-    ldmia r0!, {r2-r8, r10}
-    stmia r1!, {r2-r8, r10}
-    ldmia r0!, {r2-r8, r10}
-    stmia r1!, {r2-r8, r10}
 
-    /* turn off the watchdog */
-    ldr r0, =0x01C20CB8
-    mov     r1, #0x0
-    str     r1, [r0]
-
-    /* mask all IRQs source */
-    ldr r1, =0xffffffff
-    ldr r0, =0x01C20430
-    str r1, [r0], #0x04
-    str r1, [r0]
-    
     /* Call low level init function */
     ldr     sp, =svc_stack_start
     ldr     r0, =rt_low_level_init

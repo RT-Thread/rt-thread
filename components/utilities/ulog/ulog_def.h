@@ -201,6 +201,7 @@ struct ulog_backend
 {
     char name[RT_NAME_MAX];
     rt_bool_t support_color;
+    rt_uint32_t out_level;
     void (*init)  (struct ulog_backend *backend);
     void (*output)(struct ulog_backend *backend, rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log, size_t len);
     void (*flush) (struct ulog_backend *backend);

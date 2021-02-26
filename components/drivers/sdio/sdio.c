@@ -250,7 +250,10 @@ rt_int32_t sdio_io_rw_extended_block(struct rt_sdio_function *func,
     rt_int32_t  ret;
     rt_uint32_t left_size;
     rt_uint32_t max_blks, blks;
-    
+
+    RT_ASSERT(func != RT_NULL);
+    RT_ASSERT(func->card != RT_NULL);
+
     left_size = len;
 
     /* Do the bulk of the transfer using block mode (if supported). */
@@ -575,22 +578,26 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
             if (tpl_link < 4)
             {
                 LOG_D("bad CISTPL_MANFID length");
-                break;
-            }
-            if (func->num != 0)
-            {
-                func->manufacturer = curr->data[0];
-                func->manufacturer |= curr->data[1] << 8;
-                func->product = curr->data[2];
-                func->product |= curr->data[3] << 8;
             }
             else
             {
-                card->cis.manufacturer = curr->data[0];
-                card->cis.manufacturer |= curr->data[1] << 8;
-                card->cis.product = curr->data[2];
-                card->cis.product |= curr->data[3] << 8;
+                if (func->num != 0)
+                {
+                    func->manufacturer = curr->data[0];
+                    func->manufacturer |= curr->data[1] << 8;
+                    func->product = curr->data[2];
+                    func->product |= curr->data[3] << 8;
+                }
+                else
+                {
+                    card->cis.manufacturer = curr->data[0];
+                    card->cis.manufacturer |= curr->data[1] << 8;
+                    card->cis.product = curr->data[2];
+                    card->cis.product |= curr->data[3] << 8;
+                }
             }
+
+            rt_free(curr);
             break;
         case CISTPL_FUNCE:
             if (func->num != 0)
@@ -892,9 +899,9 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
     if (card->flags & CARD_FLAG_HIGHSPEED) 
     {
-        mmcsd_set_clock(host, 50000000);
-    } 
-    else 
+        mmcsd_set_clock(host, card->host->freq_max > 50000000 ? 50000000 : card->host->freq_max);
+    }
+    else
     {
         mmcsd_set_clock(host, card->cis.max_tran_speed);
     }
@@ -930,9 +937,6 @@ err3:
                 sdio_free_cis(host->card->sdio_function[i]);
                 rt_free(host->card->sdio_function[i]);
                 host->card->sdio_function[i] = RT_NULL;
-                rt_free(host->card);
-                host->card = RT_NULL;
-                break;
             }
         }
     }

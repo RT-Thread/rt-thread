@@ -13,6 +13,7 @@
 #include <rthw.h>
 #include <pthread.h>
 #include <sched.h>
+#include <sys/time.h>
 #include "pthread_internal.h"
 
 RT_DEFINE_SPINLOCK(pth_lock);
@@ -687,4 +688,3 @@ int pthread_cancel(pthread_t thread)
     return 0;
 }
 RTM_EXPORT(pthread_cancel);
-

@@ -66,68 +66,68 @@
   * @brief GPIO mode
   */
 typedef enum {
-	GPIO_MODE_CLOSE  = 0x0,	/**< Digital close  Analog open */
-	GPIO_MODE_INPUT  = 0x1,	/**< Input */
-	GPIO_MODE_OUTPUT = 0x2,	/**< Output */
+	GPIO_MODE_CLOSE  = 0x0U,	/**< Digital close  Analog open */
+	GPIO_MODE_INPUT  = 0x1U,	/**< Input */
+	GPIO_MODE_OUTPUT = 0x2U,	/**< Output */
 } gpio_mode_t;
 
 /**
   * @brief GPIO open-drain or push-pull
   */
 typedef enum {
-	GPIO_PUSH_PULL   = 0x0,	/**< Push-Pull */
-	GPIO_OPEN_DRAIN  = 0x2,	/**< Open-Drain */
-	GPIO_OPEN_SOURCE = 0x3,	/**< Open-Source */
+	GPIO_PUSH_PULL   = 0x0U,	/**< Push-Pull */
+	GPIO_OPEN_DRAIN  = 0x2U,	/**< Open-Drain. Can't output high level */
+	GPIO_OPEN_SOURCE = 0x3U,	/**< Open-Source. Can't output low level */
 } gpio_odos_t;
 
 /**
   * @brief GPIO push-up or push-down
   */
 typedef enum {
-	GPIO_FLOATING     = 0x0,/**< Floating */
-	GPIO_PUSH_UP      = 0x1,/**< Push-Up */
-	GPIO_PUSH_DOWN    = 0x2,/**< Push-Down */
-	GPIO_PUSH_UP_DOWN = 0x3,/**< Push-Up and Push-Down */
+	GPIO_FLOATING     = 0x0U,	/**< Floating */
+	GPIO_PUSH_UP      = 0x1U,	/**< Push-Up */
+	GPIO_PUSH_DOWN    = 0x2U,	/**< Push-Down */
+	GPIO_PUSH_UP_DOWN = 0x3U,	/**< Push-Up and Push-Down */
 } gpio_push_t;
 
 /**
   * @brief GPIO output drive
   */
 typedef enum {
-	GPIO_OUT_DRIVE_0_1 = 0x0,	/**< 0.1mA */
-	GPIO_OUT_DRIVE_1   = 0x1,	/**< 1mA */
-	GPIO_OUT_DRIVE_6   = 0x2,	/**< 6mA */
-	GPIO_OUT_DRIVE_20  = 0x3,	/**< 20mA */
+	GPIO_OUT_DRIVE_0_1 = 0x0U,	/**< 0.1mA */
+	GPIO_OUT_DRIVE_1   = 0x1U,	/**< 1mA */
+	GPIO_OUT_DRIVE_6   = 0x2U,	/**< 6mA */
+	GPIO_OUT_DRIVE_20  = 0x3U,	/**< 20mA */
 } gpio_out_drive_t;
 
 /**
   * @brief GPIO filter
   */
 typedef enum {
-	GPIO_FILTER_DISABLE = 0x0,	/**< Disable filter */
-	GPIO_FILTER_ENABLE  = 0x1,	/**< Enable filter */
+	GPIO_FILTER_DISABLE = 0x0U,	/**< Disable filter */
+	GPIO_FILTER_ENABLE  = 0x1U,	/**< Enable filter */
 } gpio_filter_t;
 
 /**
   * @brief GPIO type
   */
 typedef enum {
-	GPIO_TYPE_CMOS = 0x0,	/**< CMOS Type */
-	GPIO_TYPE_TTL  = 0x1,	/**< TTL Type */
+	GPIO_TYPE_CMOS = 0x0U,	/**< CMOS Type */
+	GPIO_TYPE_TTL  = 0x1U,	/**< TTL Type */
 } gpio_type_t;
 
 /**
   * @brief GPIO functions
   */
 typedef enum {
-	GPIO_FUNC_0 = 0,	/**< function #0 */
-	GPIO_FUNC_1 = 1,	/**< function #1 */
-	GPIO_FUNC_2 = 2,	/**< function #2 */
-	GPIO_FUNC_3 = 3,	/**< function #3 */
-	GPIO_FUNC_4 = 4,	/**< function #4 */
-	GPIO_FUNC_5 = 5,	/**< function #5 */
-	GPIO_FUNC_6 = 6,	/**< function #6 */
-	GPIO_FUNC_7 = 7,	/**< function #7 */
+	GPIO_FUNC_0 = 0U,	/**< function #0 */
+	GPIO_FUNC_1 = 1U,	/**< function #1 */
+	GPIO_FUNC_2 = 2U,	/**< function #2 */
+	GPIO_FUNC_3 = 3U,	/**< function #3 */
+	GPIO_FUNC_4 = 4U,	/**< function #4 */
+	GPIO_FUNC_5 = 5U,	/**< function #5 */
+	GPIO_FUNC_6 = 6U,	/**< function #6 */
+	GPIO_FUNC_7 = 7U,	/**< function #7 */
 } gpio_func_t;
 
 
@@ -157,17 +157,17 @@ typedef struct {
   * @brief EXTI trigger style
   */
 typedef enum {
-	EXTI_TRIGGER_RISING_EDGE   = 0,	/**< Rising edge trigger */
-	EXTI_TRIGGER_TRAILING_EDGE = 1,	/**< Trailing edge trigger */
-	EXTI_TRIGGER_BOTH_EDGE     = 2,	/**< Rising and trailing edge trigger */
+	EXTI_TRIGGER_RISING_EDGE   = 0U,	/**< Rising edge trigger */
+	EXTI_TRIGGER_TRAILING_EDGE = 1U,	/**< Trailing edge trigger */
+	EXTI_TRIGGER_BOTH_EDGE     = 2U,	/**< Rising and trailing edge trigger */
 } exti_trigger_style_t;
 
 /**
   * @brief EXTI filter clock select
   */
 typedef enum {
-	EXTI_FILTER_CLOCK_10K = 0,	/**< cks = 10KHz */
-	EXTI_FILTER_CLOCK_32K = 1,	/**< cks = 32KHz */
+	EXTI_FILTER_CLOCK_10K = 0U,	/**< cks = 10KHz */
+	EXTI_FILTER_CLOCK_32K = 1U,	/**< cks = 32KHz */
 } exti_filter_clock_t;
 
 /**
@@ -186,8 +186,8 @@ typedef struct {
   * @defgroup GPIO_Private_Macros GPIO Private Macros
   * @{
   */
-#define PIN_MASK	0xFFFF
-#define UNLOCK_KEY	0x55AA
+#define PIN_MASK	0xFFFFU
+#define UNLOCK_KEY	0x55AAU
 
 #define IS_GPIO_PIN(x)	((((x) & (uint16_t)0x00) == 0) && ((x) != (uint16_t)0x0))
 #define IS_GPIO_PORT(GPIOx)	((GPIOx == GPIOA) || \

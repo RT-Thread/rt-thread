@@ -587,7 +587,8 @@ const static struct rt_pin_ops imxrt_pin_ops =
     imxrt_pin_read,
     imxrt_pin_attach_irq,
     imxrt_pin_detach_irq,
-    imxrt_pin_irq_enable
+    imxrt_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

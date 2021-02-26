@@ -101,6 +101,11 @@ int msh_exec_script(const char *cmd_line, int size)
         int length;
 
         line_buf = (char *) rt_malloc(RT_CONSOLEBUF_SIZE);
+        if (line_buf == RT_NULL) 
+        {
+            close(fd);
+            return -RT_ENOMEM;
+        }
 
         /* read line by line and then exec it */
         do
@@ -260,22 +265,131 @@ int cmd_cat(int argc, char **argv)
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_cat, __cmd_cat, Concatenate FILE(s));
 
+static void directory_delete_for_msh(const char *pathname, char f, char v)
+{
+    DIR *dir = NULL;
+    struct dirent *dirent = NULL;
+    char *full_path;
+
+    if (pathname == RT_NULL)
+        return;
+
+    full_path = (char *)rt_malloc(DFS_PATH_MAX);
+    if (full_path == RT_NULL)
+        return;
+
+    dir = opendir(pathname);
+    if (dir == RT_NULL)
+    {
+        if (f == 0)
+        {
+            rt_kprintf("cannot remove '%s'\n", pathname);
+        }
+        rt_free(full_path);
+        return;
+    }
+
+    while (1)
+    {
+        dirent = readdir(dir);
+        if (dirent == RT_NULL)
+            break;
+        if (rt_strcmp(".", dirent->d_name) != 0 &&
+            rt_strcmp("..", dirent->d_name) != 0)
+        {
+            rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
+            if (dirent->d_type == DT_REG)
+            {
+                if (unlink(full_path) != 0)
+                {
+                    if (f == 0)
+                        rt_kprintf("cannot remove '%s'\n", full_path);
+                }
+                else if (v)
+                {
+                    rt_kprintf("removed '%s'\n", full_path);
+                }
+            }
+            else if (dirent->d_type == DT_DIR)
+            {
+                directory_delete_for_msh(full_path, f, v);
+            }
+        }
+    }
+    closedir(dir);
+    rt_free(full_path);
+    if (unlink(pathname) != 0)
+    {
+        if (f == 0)
+            rt_kprintf("cannot remove '%s'\n", pathname);
+    }
+    else if (v)
+    {
+        rt_kprintf("removed directory '%s'\n", pathname);
+    }
+}
+
 int cmd_rm(int argc, char **argv)
 {
-    int index;
+    int index, n;
+    char f = 0, r = 0, v = 0;
 
     if (argc == 1)
     {
-        rt_kprintf("Usage: rm FILE...\n");
+        rt_kprintf("Usage: rm option(s) FILE...\n");
         rt_kprintf("Remove (unlink) the FILE(s).\n");
         return 0;
     }
 
-    for (index = 1; index < argc; index ++)
+    if (argv[1][0] == '-')
     {
-        unlink(argv[index]);
+        for (n = 0; argv[1][n]; n++)
+        {
+            switch (argv[1][n])
+            {
+                case 'f': f = 1; break;
+                case 'r': r = 1; break;
+                case 'v': v = 1; break;
+                case '-': break;
+                default:
+                    rt_kprintf("Error: Bad option: %c\n", argv[1][n]);
+                    return 0;
+            }
+        }
+        argc -= 1;
+        argv = argv + 1;
     }
 
+    for (index = 1; index < argc; index ++)
+    {
+        struct stat s;
+        if (stat (argv[index], &s) == 0)
+        {
+            if (s.st_mode & S_IFDIR)
+            {
+                if (r == 0)
+                    rt_kprintf("cannot remove '%s': Is a directory\n", argv[index]);
+                else
+                    directory_delete_for_msh(argv[index], f, v);
+            }
+            else if (s.st_mode & S_IFREG)
+            {
+                if (unlink(argv[index]) != 0)
+                {
+                    if (f == 0)
+                        rt_kprintf("cannot remove '%s'\n", argv[index]);
+                }
+                else if (v)
+                {
+                    rt_kprintf("removed '%s'\n", argv[index]);
+                }
+            }
+        }
+        else if (f == 0)
+        {
+            rt_kprintf("cannot remove '%s': No such file or directory\n", argv[index]);
+        }
+    }
     return 0;
 }
 FINSH_FUNCTION_EXPORT_ALIAS(cmd_rm, __cmd_rm, Remove(unlink) the FILE(s).);

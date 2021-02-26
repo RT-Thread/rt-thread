@@ -97,10 +97,10 @@
   * @brief EBI Access Mode
   */
 typedef enum {
-	EBI_ACCESS_MODE_A = 0x0,           /**< EBI access mode A */
-	EBI_ACCESS_MODE_B = (0x1U << 28),  /**< EBI access mode B */
-	EBI_ACCESS_MODE_C = (0x2U << 28),  /**< EBI access mode C */
-	EBI_ACCESS_MODE_D = (0x3U << 28),  /**< EBI access mode D */
+	EBI_ACCESS_MODE_A = 0x0U,		/**< EBI access mode A */
+	EBI_ACCESS_MODE_B = (0x1U << 28),	/**< EBI access mode B */
+	EBI_ACCESS_MODE_C = (0x2U << 28),	/**< EBI access mode C */
+	EBI_ACCESS_MODE_D = (0x3U << 28),	/**< EBI access mode D */
 } ebi_access_mode_t;
 
 /**
@@ -120,36 +120,36 @@ typedef struct {
   * @brief EBI_Wait_feature EBI Wait feature
   */
 typedef enum {
-	EBI_NAND_WAIT_FEATURE_DISABLE = 0x0,          /**< NAND wait feature disable */
-	EBI_NAND_WAIT_FEATURE_ENABLE  = (0x1U << 1),  /**< NAND wait feature enable */
+	EBI_NAND_WAIT_FEATURE_DISABLE = 0x0U,		/**< NAND wait feature disable */
+	EBI_NAND_WAIT_FEATURE_ENABLE  = (0x1U << 1),	/**< NAND wait feature enable */
 } ebi_nand_wait_feature_t;
 
 /** 
   * @brief EBI NAND Data Width
   */
 typedef enum {
-	EBI_NAND_MEM_BUS_WIDTH_8  = 0x0,          /**< NAND mem bus width 8-bits */
-	EBI_NAND_MEM_BUS_WIDTH_16 = (0x3U << 4),  /**< NAND mem bus width 16-bits */
+	EBI_NAND_MEM_BUS_WIDTH_8  = 0x0U,		/**< NAND mem bus width 8-bits */
+	EBI_NAND_MEM_BUS_WIDTH_16 = (0x3U << 4),	/**< NAND mem bus width 16-bits */
 } ebi_nand_mem_bus_width_t;
 
 /** 
   * @brief EBI NAND ECC STATE
   */
 typedef enum {
-	EBI_NAND_ECC_DISABLE = 0,            /**< NAND ecc disable */
-	EBI_NAND_ECC_ENABLE  = (0x1U << 6),  /**< NAND ecc enable */
+	EBI_NAND_ECC_DISABLE = 0U,		/**< NAND ecc disable */
+	EBI_NAND_ECC_ENABLE  = (0x1U << 6),	/**< NAND ecc enable */
 } ebi_nand_ecc_t;
 
 /** 
   * @brief EBI ECC Page Size
   */
 typedef enum {
-	EBI_NAND_ECC_PAGE_SIZE_256BYTE  = 0,             /**< NAND ecc page size 256 bytes */
-	EBI_NAND_ECC_PAGE_SIZE_512BYTE  = (0x1U << 17),  /**< NAND ecc page size 512 bytes */
-	EBI_NAND_ECC_PAGE_SIZE_1024BYTE = (0x2U << 17),  /**< NAND ecc page size 1024 bytes */
-	EBI_NAND_ECC_PAGE_SIZE_2048BYTE = (0x3U << 17),  /**< NAND ecc page size 2048 bytes */
-	EBI_NAND_ECC_PAGE_SIZE_4096BYTE = (0x4U << 17),  /**< NAND ecc page size 4096 bytes */
-	EBI_NAND_ECC_PAGE_SIZE_8192BYTE = (0x5U << 17),  /**< NAND ecc page size 8192 bytes */
+	EBI_NAND_ECC_PAGE_SIZE_256BYTE  = 0U,		/**< NAND ecc page size 256 bytes */
+	EBI_NAND_ECC_PAGE_SIZE_512BYTE  = (0x1U << 17),	/**< NAND ecc page size 512 bytes */
+	EBI_NAND_ECC_PAGE_SIZE_1024BYTE = (0x2U << 17),	/**< NAND ecc page size 1024 bytes */
+	EBI_NAND_ECC_PAGE_SIZE_2048BYTE = (0x3U << 17),	/**< NAND ecc page size 2048 bytes */
+	EBI_NAND_ECC_PAGE_SIZE_4096BYTE = (0x4U << 17),	/**< NAND ecc page size 4096 bytes */
+	EBI_NAND_ECC_PAGE_SIZE_8192BYTE = (0x5U << 17),	/**< NAND ecc page size 8192 bytes */
 } ebi_md_ecc_page_size_t;
 
 /**
@@ -179,191 +179,191 @@ typedef struct {
   * @brief EBI Data Address Bus Multiplexing
   */
 typedef enum {
-	EBI_DATA_ADDRESS_MUX_DISABLE = 0x0,          /**< Data address mux disable */
-	EBI_DATA_ADDRESS_MUX_ENABLE  = (0x1U << 1),  /**< Data address mux enable */
+	EBI_DATA_ADDRESS_MUX_DISABLE = 0x0U,		/**< Data address mux disable */
+	EBI_DATA_ADDRESS_MUX_ENABLE  = (0x1U << 1),	/**< Data address mux enable */
 } ebi_data_address_mux_t;
 
 /** 
   * @brief EBI NOR/SRAM Bank
   */
 typedef enum {
-	EBI_NORSRAM_BANK1 = 0x0,   /**< Norsram bank 1 */
-	EBI_NORSRAM_BANK2 = 0x2,   /**< Norsram bank 2 */
-	EBI_NORSRAM_BANK3 = 0x4,   /**< Norsram bank 3 */
-	EBI_NORSRAM_BANK4 = 0x6,   /**< Norsram bank 4 */
+	EBI_NORSRAM_BANK1 = 0x0U,	/**< Norsram bank 1 */
+	EBI_NORSRAM_BANK2 = 0x2U,	/**< Norsram bank 2 */
+	EBI_NORSRAM_BANK3 = 0x4U,	/**< Norsram bank 3 */
+	EBI_NORSRAM_BANK4 = 0x6U,	/**< Norsram bank 4 */
 } ebi_norsram_bank_t;
 
 /** 
   * @brief EBI Memory Type
   */
 typedef enum {
-	EBI_MEMORY_TYPE_SRAM  = 0x0,          /**< Memory tyepe SRAM */
-	EBI_MEMORY_TYPE_PSRAM = (0x1U << 2),  /**< Memory tyepe PSRAM */
-	EBI_MEMORY_TYPE_NOR   = (0x2U << 2),  /**< Memory tyepe NOR */
+	EBI_MEMORY_TYPE_SRAM  = 0x0U,		/**< Memory tyepe SRAM */
+	EBI_MEMORY_TYPE_PSRAM = (0x1U << 2),	/**< Memory tyepe PSRAM */
+	EBI_MEMORY_TYPE_NOR   = (0x2U << 2),	/**< Memory tyepe NOR */
 } ebi_memory_type_t;
 
 /** 
   * @brief EBI NOR/SRAM Data Width
   */
 typedef enum {
-	EBI_NORSRAM_MEM_BUS_WIDTH_8  = 0x0,          /**< Norsram Memory width 8-bits */
-	EBI_NORSRAM_MEM_BUS_WIDTH_16 = (0x1U << 4),  /**< Norsram Memory width 16-bits */
-	EBI_NORSRAM_MEM_BUS_WIDTH_32 = (0x2U << 4),  /**< Norsram Memory width 32-bits */
+	EBI_NORSRAM_MEM_BUS_WIDTH_8  = 0x0U,		/**< Norsram Memory width 8-bits */
+	EBI_NORSRAM_MEM_BUS_WIDTH_16 = (0x1U << 4),	/**< Norsram Memory width 16-bits */
+	EBI_NORSRAM_MEM_BUS_WIDTH_32 = (0x2U << 4),	/**< Norsram Memory width 32-bits */
 } ebi_norsram_mem_bus_width_t;
 
 /** 
   * @brief  EBI NOR/SRAM Flash Access
   */
 typedef enum {
-	EBI_NORSRAM_FLASH_ACCESS_DISABLE = 0x0,          /**< Norsram flash access disable */
-	EBI_NORSRAM_FLASH_ACCESS_ENABLE  = (0x1U << 6),  /**< Norsram flash access enable */
+	EBI_NORSRAM_FLASH_ACCESS_DISABLE = 0x0U,	/**< Norsram flash access disable */
+	EBI_NORSRAM_FLASH_ACCESS_ENABLE  = (0x1U << 6),	/**< Norsram flash access enable */
 } ebi_norsram_flash_access_t;
 
 /** 
   * @brief EBI Burst Access Mode
   */
 typedef enum {
-	EBI_BURST_ACCESS_MODE_DISABLE = 0x0,          /**< Burst access disable */
-	EBI_BURST_ACCESS_MODE_ENABLE  = (0x1U << 8),  /**< Burst access enable */	
+	EBI_BURST_ACCESS_MODE_DISABLE = 0x0U,		/**< Burst access disable */
+	EBI_BURST_ACCESS_MODE_ENABLE  = (0x1U << 8),	/**< Burst access enable */	
 } ebi_burst_access_mode_t;
 
 /** 
   * @brief EBI Wait Signal Polarity
   */
 typedef enum {
-	EBI_WAIT_SIGNAL_POLARITY_LOW  = 0x0,          /**< Wait signal polarity low */
-	EBI_WAIT_SIGNAL_POLARITY_HIGH = (0x1U << 9),  /**< Wait signal polarity high */
+	EBI_WAIT_SIGNAL_POLARITY_LOW  = 0x0U,		/**< Wait signal polarity low */
+	EBI_WAIT_SIGNAL_POLARITY_HIGH = (0x1U << 9),	/**< Wait signal polarity high */
 } ebi_wait_signal_polarity_t;
 
 /** 
   * @brief EBI Wrap Mode
   */
 typedef enum {
-	EBI_WRAP_MODE_DISABLE = 0x0,           /**< Wrap mode disable */
-	EBI_WRAP_MODE_ENABLE  = (0x1U << 10),  /**< Wrap mode enable */
+	EBI_WRAP_MODE_DISABLE = 0x0U,		/**< Wrap mode disable */
+	EBI_WRAP_MODE_ENABLE  = (0x1U << 10),	/**< Wrap mode enable */
 } ebi_wrap_mode_t;
 
 /** 
   * @brief EBI Wait Timing
   */
 typedef enum {
-	EBI_WAIT_TIMING_BEFORE_WS = 0x0,           /**< Wait timing before ws */
-	EBI_WAIT_TIMING_DURING_WS = (0x1U << 11),  /**< Wait timing during ws */
+	EBI_WAIT_TIMING_BEFORE_WS = 0x0U,		/**< Wait timing before ws */
+	EBI_WAIT_TIMING_DURING_WS = (0x1U << 11),	/**< Wait timing during ws */
 } ebi_wait_timing_t;
 
 /** 
   * @brief EBI Write Operation State
   */
 typedef enum {
-	EBI_WRITE_OPERATION_DISABLE = 0x0,            /**< Write operation disable */
-	EBI_WRITE_OPERATION_ENABLE  = (0x1U << 12),   /**< Write operation enable */
+	EBI_WRITE_OPERATION_DISABLE = 0x0U,		/**< Write operation disable */
+	EBI_WRITE_OPERATION_ENABLE  = (0x1U << 12),	/**< Write operation enable */
 } ebi_write_operation_t;
 
 /** 
   * @brief EBI Wait Signal
   */
 typedef enum {
-	EBI_WAIT_SIGNAL_DISABLE	= 0x0,           /**< Wait signal disable */
-	EBI_WAIT_SIGNAL_ENABLE	= (0x1U << 13),  /**< Wait signal enable */
+	EBI_WAIT_SIGNAL_DISABLE	= 0x0U,		/**< Wait signal disable */
+	EBI_WAIT_SIGNAL_ENABLE	= (0x1U << 13),	/**< Wait signal enable */
 } ebi_wait_signal_t;
 
 /** 
   * @brief EBI Extended Mode
   */
 typedef enum {
-	EBI_EXTENDED_MODE_DISABLE = 0x0,           /**< EBI extended mode disable */
-	EBI_EXTENDED_MODE_ENABLE  = (0x1U << 14),  /**< EBI extended mode enable */
+	EBI_EXTENDED_MODE_DISABLE = 0x0U,		/**< EBI extended mode disable */
+	EBI_EXTENDED_MODE_ENABLE  = (0x1U << 14),	/**< EBI extended mode enable */
 } ebi_extended_mode_t;
 
 /** 
   * @brief EBI Asynchronous Wait
   */
 typedef enum {
-	EBI_ASYNCHRONOUS_WAIT_DISABLE = 0x0,           /**< Asynchronous wait disable */
-	EBI_ASYNCHRONOUS_WAIT_ENABLE  = (0x1U << 15),  /**< Asynchronous wait enable */
+	EBI_ASYNCHRONOUS_WAIT_DISABLE = 0x0U,		/**< Asynchronous wait disable */
+	EBI_ASYNCHRONOUS_WAIT_ENABLE  = (0x1U << 15),	/**< Asynchronous wait enable */
 } ebi_asynchronous_wait_t;
 
 /** 
   * @brief EBI Write Burst
   */
 typedef enum {
-	EBI_WRITE_BURST_DISABLE = 0x0,           /**<  Write burst disable */
-	EBI_WRITE_BURST_ENABLE  = (0x1U << 19),  /**<  Write burst enable */
+	EBI_WRITE_BURST_DISABLE = 0x0U,		/**<  Write burst disable */
+	EBI_WRITE_BURST_ENABLE  = (0x1U << 19),	/**<  Write burst enable */
 } ebi_write_burst_t;
 
 /** 
   * @brief  EBI PCR Memory Type
   */
 typedef enum {
-	EBI_PCTRLR_MEMORY_TYPE_None = 0x0,          /**<  PCR memory type none */
-	EBI_PCTRLR_MEMORY_TYPE_NAND = (0x1U << 3),  /**<  PCR memory type nand */
+	EBI_PCTRLR_MEMORY_TYPE_None = 0x0U,		/**<  PCR memory type none */
+	EBI_PCTRLR_MEMORY_TYPE_NAND = (0x1U << 3),	/**<  PCR memory type nand */
 } ebi_pctrlr_memory_type_t;
 
 /** 
   * @brief EBI Interrupt definition
   */
 typedef enum {
-	EBI_IT_RISING_EDGE  = (1U << 3),  /**<  Rising edge trigger interrupt */
-	EBI_IT_LEVEL        = (1U << 4),  /**<  Level trigger interrupt */
-	EBI_IT_FALLING_EDGE = (1U << 5),  /**<  Falling edge trigger interrupt */
+	EBI_IT_RISING_EDGE  = (1U << 3),	/**<  Rising edge trigger interrupt */
+	EBI_IT_LEVEL        = (1U << 4),	/**<  Level trigger interrupt */
+	EBI_IT_FALLING_EDGE = (1U << 5),	/**<  Falling edge trigger interrupt */
 } ebi_it_t;
 
 /** 
   * @brief EBI Flag definition
   */
 typedef enum {
-	EBI_FLAG_RISING_EDGE  = (1U << 0),  /**<  Rising edge flag */
-	EBI_FLAG_LEVEL        = (1U << 1),  /**<  Level flag */
-	EBI_FLAG_FALLING_EDGE = (1U << 2),  /**<  Falling edge flag */
-	EBI_FLAG_FEMPT        = (1U << 6),  /**<  Rising edge trigger interrupt */
+	EBI_FLAG_RISING_EDGE  = (1U << 0),	/**<  Rising edge flag */
+	EBI_FLAG_LEVEL        = (1U << 1),	/**<  Level flag */
+	EBI_FLAG_FALLING_EDGE = (1U << 2),	/**<  Falling edge flag */
+	EBI_FLAG_FEMPT        = (1U << 6),	/**<  Rising edge trigger interrupt */
 } ebi_flag_t;
 
 /** 
   * @brief EBI LCD_Horizontal Synch Polarity definition 
   */
 typedef enum {
-	EBI_LCD_HSYNCPOL_LOW  = 0x0,           /**<  Horizontal synch polarity low */
-	EBI_LCD_HSYNCPOL_HIGH = (0x1U << 29),  /**<  Horizontal synch polarity high */
+	EBI_LCD_HSYNCPOL_LOW  = 0x0U,		/**<  Horizontal synch polarity low */
+	EBI_LCD_HSYNCPOL_HIGH = (0x1U << 29),	/**<  Horizontal synch polarity high */
 } ebi_lcd_hsyncpol_t;
 
 /** 
   * @brief EBI LCD Vertical Synch Polarity definition 
   */
 typedef enum {
-	EBI_LCD_VSYNCPOL_LOW  = 0x0,           /**<  Vertical synch polarity low */
-	EBI_LCD_VSYNCPOL_HIGH = (0x1U << 28),  /**<  Vertical synch polarity high */
+	EBI_LCD_VSYNCPOL_LOW  = 0x0U,		/**<  Vertical synch polarity low */
+	EBI_LCD_VSYNCPOL_HIGH = (0x1U << 28),	/**<  Vertical synch polarity high */
 } ebi_lcd_vsyncpol_t;
 
 /** 
   * @brief EBI LCD Data Enable Polarity definition 
   */
 typedef enum {
-	EBI_LCD_DENPOL_LOW  = 0x0,           /**<  LCD data enable polarity low */
-	EBI_LCD_DENPOL_HIGH = (0x1U << 27),  /**<  LCD data enable polarity high */
+	EBI_LCD_DENPOL_LOW  = 0x0U,		/**<  LCD data enable polarity low */
+	EBI_LCD_DENPOL_HIGH = (0x1U << 27),	/**<  LCD data enable polarity high */
 } ebi_lcd_denpol_t;
 
 /** 
   * @brief EBI LCD Enable definition
   */
 typedef enum {
-	EBI_LCD_LCDEN_DISABLE = 0x0,           /**<  LCD disable */
-	EBI_LCD_LCDEN_ENABLE  = (0x1U << 26),  /**<  LCD data enable polarity low */
+	EBI_LCD_LCDEN_DISABLE = 0x0U,		/**<  LCD disable */
+	EBI_LCD_LCDEN_ENABLE  = (0x1U << 26),	/**<  LCD data enable polarity low */
 } ebi_lcd_lcden_t;
 
 /** 
   * @brief EBI LCD Init Enable definition 
   */
 typedef enum {
-	EBI_LCD_LCDINT_DISABLE = 0x0,          /**<  LCD init disable */
-	EBI_LCD_LCDINT_ENABLE  = (0x1 << 25),  /**<  LCD init enable */
+	EBI_LCD_LCDINT_DISABLE = 0x0U,		/**<  LCD init disable */
+	EBI_LCD_LCDINT_ENABLE  = (0x1 << 25),	/**<  LCD init enable */
 } ebi_lcd_lcdint_t;
 
 /** 
   * @brief EBI LCD Data Clock definition
   */
 typedef enum {
-	EBI_LCD_DCLKPOL_FALLING = 0x0,           /**<  LCD data clock falling edge */
-	EBI_LCD_DCLKPOL_RISING  = (0x1U << 24),  /**<  LCD data clock rising edge */
+	EBI_LCD_DCLKPOL_FALLING = 0x0U,		/**<  LCD data clock falling edge */
+	EBI_LCD_DCLKPOL_RISING  = (0x1U << 24),	/**<  LCD data clock rising edge */
 } ebi_lcd_dclkpol_t;
 
 /**

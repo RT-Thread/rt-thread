@@ -59,6 +59,10 @@ if GetDepend(['RT_USING_ADC']):
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_adc.c']
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_adc_ex.c']
 
+if GetDepend(['RT_USING_DAC']):
+    src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dac.c']
+    src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dac_ex.c']
+
 if GetDepend(['RT_USING_RTC']):
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rtc.c']
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rtc_ex.c']
@@ -113,6 +117,6 @@ path = [cwd + '/STM32L4xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
-group = DefineGroup('STM32_HAL', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

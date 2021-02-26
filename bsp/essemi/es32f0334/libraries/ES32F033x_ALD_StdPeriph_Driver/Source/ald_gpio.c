@@ -168,77 +168,76 @@
   */
 void ald_gpio_init(GPIO_TypeDef *GPIOx, uint16_t pin, gpio_init_t *init)
 {
-    uint32_t i, pos, mask, tmp;
+	uint32_t i, pos, mask, tmp;
 
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
-    assert_param(IS_GPIO_MODE(init->mode));
-    assert_param(IS_GPIO_ODOS(init->odos));
-    assert_param(IS_GPIO_PUPD(init->pupd));
-    assert_param(IS_GPIO_ODRV(init->odrv));
-    assert_param(IS_GPIO_FLT(init->flt));
-    assert_param(IS_GPIO_TYPE(init->type));
-    assert_param(IS_GPIO_FUNC(init->func));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_MODE(init->mode));
+	assert_param(IS_GPIO_ODOS(init->odos));
+	assert_param(IS_GPIO_PUPD(init->pupd));
+	assert_param(IS_GPIO_ODRV(init->odrv));
+	assert_param(IS_GPIO_FLT(init->flt));
+	assert_param(IS_GPIO_TYPE(init->type));
+	assert_param(IS_GPIO_FUNC(init->func));
 
-    for (i = 0; i < 16; ++i)
-    {
-        if (((pin >> i) & 0x1) == 0)
-            continue;
+	for (i = 0; i < 16; ++i) {
+		if (((pin >> i) & 0x1) == 0)
+			continue;
 
-        /* Get position and 2-bits mask */
-        pos  = i << 1;
-        mask = 0x3 << pos;
+		/* Get position and 2-bits mask */
+		pos  = i << 1;
+		mask = 0x3 << pos;
 
-        /* Set PIN mode */
-        tmp  = READ_REG(GPIOx->MODE);
-        tmp &= ~mask;
-        tmp |= (init->mode << pos);
-        WRITE_REG(GPIOx->MODE, tmp);
+		/* Set PIN mode */
+		tmp  = READ_REG(GPIOx->MODE);
+		tmp &= ~mask;
+		tmp |= (init->mode << pos);
+		WRITE_REG(GPIOx->MODE, tmp);
 
-        /* Set PIN open-drain or push-pull */
-        tmp  = READ_REG(GPIOx->ODOS);
-        tmp &= ~mask;
-        tmp |= (init->odos << pos);
-        WRITE_REG(GPIOx->ODOS, tmp);
+		/* Set PIN open-drain or push-pull */
+		tmp  = READ_REG(GPIOx->ODOS);
+		tmp &= ~mask;
+		tmp |= (init->odos << pos);
+		WRITE_REG(GPIOx->ODOS, tmp);
 
-        /* Set PIN push-up or/and push-down */
-        tmp  = READ_REG(GPIOx->PUPD);
-        tmp &= ~mask;
-        tmp |= (init->pupd << pos);
-        WRITE_REG(GPIOx->PUPD, tmp);
+		/* Set PIN push-up or/and push-down */
+		tmp  = READ_REG(GPIOx->PUPD);
+		tmp &= ~mask;
+		tmp |= (init->pupd << pos);
+		WRITE_REG(GPIOx->PUPD, tmp);
 
-        /* Set PIN output driver */
-        tmp  = READ_REG(GPIOx->ODRV);
-        tmp &= ~mask;
-        tmp |= (init->odrv << pos);
-        WRITE_REG(GPIOx->ODRV, tmp);
+		/* Set PIN output driver */
+		tmp  = READ_REG(GPIOx->ODRV);
+		tmp &= ~mask;
+		tmp |= (init->odrv << pos);
+		WRITE_REG(GPIOx->ODRV, tmp);
 
-        /* Get position and 1-bit mask */
-        pos  = i;
-        mask = 0x1 << pos;
+		/* Get position and 1-bit mask */
+		pos  = i;
+		mask = 0x1 << pos;
 
-        /* Set PIN filter enable or disable */
-        tmp  = READ_REG(GPIOx->FLT);
-        tmp &= ~mask;
-        tmp |= (init->flt << pos);
-        WRITE_REG(GPIOx->FLT, tmp);
+		/* Set PIN filter enable or disable */
+		tmp  = READ_REG(GPIOx->FLT);
+		tmp &= ~mask;
+		tmp |= (init->flt << pos);
+		WRITE_REG(GPIOx->FLT, tmp);
 
-        /* Set PIN type ttl or smit */
-        tmp  = READ_REG(GPIOx->TYPE);
-        tmp &= ~mask;
-        tmp |= (init->type << pos);
-        WRITE_REG(GPIOx->TYPE, tmp);
+		/* Set PIN type ttl or smit */
+		tmp  = READ_REG(GPIOx->TYPE);
+		tmp &= ~mask;
+		tmp |= (init->type << pos);
+		WRITE_REG(GPIOx->TYPE, tmp);
 
-        /* Configure PIN function */
-        pos  = i < 8 ? (i << 2) : ((i - 8) << 2);
-        mask = 0xF << pos;
-        tmp  = i < 8 ? READ_REG(GPIOx->FUNC0) : READ_REG(GPIOx->FUNC1);
-        tmp &= ~mask;
-        tmp |= (init->func << pos);
-        i < 8 ? WRITE_REG(GPIOx->FUNC0, tmp) : WRITE_REG(GPIOx->FUNC1, tmp);
-    }
+		/* Configure PIN function */
+		pos  = i < 8 ? (i << 2) : ((i - 8) << 2);
+		mask = 0xF << pos;
+		tmp  = i < 8 ? READ_REG(GPIOx->FUNC0) : READ_REG(GPIOx->FUNC1);
+		tmp &= ~mask;
+		tmp |= (init->func << pos);
+		i < 8 ? WRITE_REG(GPIOx->FUNC0, tmp) : WRITE_REG(GPIOx->FUNC1, tmp);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -249,19 +248,19 @@ void ald_gpio_init(GPIO_TypeDef *GPIOx, uint16_t pin, gpio_init_t *init)
   */
 void ald_gpio_init_default(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
-    gpio_init_t init;
+	gpio_init_t init;
 
-    /* Fill GPIO_init_t structure with default parameter */
-    init.mode = GPIO_MODE_OUTPUT;
-    init.odos = GPIO_PUSH_PULL;
-    init.pupd = GPIO_PUSH_UP;
-    init.odrv = GPIO_OUT_DRIVE_NORMAL;
-    init.flt  = GPIO_FILTER_DISABLE;
-    init.type = GPIO_TYPE_CMOS;
-    init.func = GPIO_FUNC_1;
+	/* Fill GPIO_init_t structure with default parameter */
+	init.mode = GPIO_MODE_OUTPUT;
+	init.odos = GPIO_PUSH_PULL;
+	init.pupd = GPIO_PUSH_UP;
+	init.odrv = GPIO_OUT_DRIVE_NORMAL;
+	init.flt  = GPIO_FILTER_DISABLE;
+	init.type = GPIO_TYPE_CMOS;
+	init.func = GPIO_FUNC_1;
 
-    ald_gpio_init(GPIOx, pin, &init);
-    return;
+	ald_gpio_init(GPIOx, pin, &init);
+	return;
 }
 
 /**
@@ -271,10 +270,10 @@ void ald_gpio_init_default(GPIO_TypeDef *GPIOx, uint16_t pin)
   */
 void ald_gpio_func_default(GPIO_TypeDef *GPIOx)
 {
-    WRITE_REG(GPIOx->FUNC0, 0x00);
-    WRITE_REG(GPIOx->FUNC1, 0x00);
+	WRITE_REG(GPIOx->FUNC0, 0x00);
+	WRITE_REG(GPIOx->FUNC1, 0x00);
 
-    return;
+	return;
 }
 
 /**
@@ -288,67 +287,62 @@ void ald_gpio_func_default(GPIO_TypeDef *GPIOx)
   */
 void ald_gpio_exti_init(GPIO_TypeDef *GPIOx, uint16_t pin, exti_init_t *init)
 {
-    uint8_t i;
-    uint8_t port;
+	uint8_t i;
+	uint8_t port;
 
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
-    assert_param(IS_FUNC_STATE(init->filter));
-    assert_param(IS_EXTI_FLTCKS_TYPE(init->cks));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_FUNC_STATE(init->filter));
+	assert_param(IS_EXTI_FLTCKS_TYPE(init->cks));
 
-    /* Get GPIO port */
-    if (GPIOx == GPIOA)
-        port = 0x0;
-    else if (GPIOx == GPIOB)
-        port = 0x1;
-    else if (GPIOx == GPIOC)
-        port = 2;
-    else if (GPIOx == GPIOD)
-        port = 3;
-    else if (GPIOx == GPIOE)
-        port = 4;
-    else if (GPIOx == GPIOF)
-        port = 5;
-    else if (GPIOx == GPIOG)
-        port = 6;
-    else if (GPIOx == GPIOH)
-        port = 7;
-    else
-        port = 0;
+	/* Get GPIO port */
+	if (GPIOx == GPIOA)
+		port = 0x0;
+	else if (GPIOx == GPIOB)
+		port = 0x1;
+	else if (GPIOx == GPIOC)
+		port = 2;
+	else if (GPIOx == GPIOD)
+		port = 3;
+	else if (GPIOx == GPIOE)
+		port = 4;
+	else if (GPIOx == GPIOF)
+		port = 5;
+	else if (GPIOx == GPIOG)
+		port = 6;
+	else if (GPIOx == GPIOH)
+		port = 7;
+	else
+		port = 0;
 
-    /* Get Pin index */
-    for (i = 0; i < 16; ++i)
-    {
-        if (((pin >> i) & 0x1) == 0x1)
-            break;
-    }
+	/* Get Pin index */
+	for (i = 0; i < 16; ++i) {
+		if (((pin >> i) & 0x1) == 0x1)
+			break;
+	}
 
-    /* Select external interrupt line */
-    if (i <= 7)
-    {
-        EXTI->EXTIPSR0 &= ~(0x7 << (i * 4));
-        EXTI->EXTIPSR0 |= (port << (i * 4));
-    }
-    else
-    {
-        i -= 8;
-        EXTI->EXTIPSR1 &= ~(0x7 << (i * 4));
-        EXTI->EXTIPSR1 |= (port << (i * 4));
-    }
+	/* Select external interrupt line */
+	if (i <= 7) {
+		EXTI->EXTIPSR0 &= ~(0x7U << (i * 4));
+		EXTI->EXTIPSR0 |= (port << (i * 4));
+	}
+	else {
+		i -= 8;
+		EXTI->EXTIPSR1 &= ~(0x7U << (i * 4));
+		EXTI->EXTIPSR1 |= (port << (i * 4));
+	}
 
-    /* Configure filter parameter */
-    if (init->filter == ENABLE)
-    {
-        SET_BIT(EXTI->EXTIFLTCR, pin);
-        MODIFY_REG(EXTI->EXTIFLTCR, GPIO_EXTIFLTCR_FLTCKS_MSK, init->cks << GPIO_EXTIFLTCR_FLTCKS_POSS);
-        MODIFY_REG(EXTI->EXTIFLTCR, GPIO_EXTIFLTCR_FLTSEL_MSK, init->filter_time << GPIO_EXTIFLTCR_FLTSEL_POSS);
-    }
-    else
-    {
-        CLEAR_BIT(EXTI->EXTIFLTCR, pin);
-    }
+	/* Configure filter parameter */
+	if (init->filter == ENABLE) {
+		SET_BIT(EXTI->EXTIFLTCR, pin);
+		MODIFY_REG(EXTI->EXTIFLTCR, GPIO_EXTIFLTCR_FLTCKS_MSK, init->cks << GPIO_EXTIFLTCR_FLTCKS_POSS);
+		MODIFY_REG(EXTI->EXTIFLTCR, GPIO_EXTIFLTCR_FLTSEL_MSK, init->filter_time << GPIO_EXTIFLTCR_FLTSEL_POSS);
+	}
+	else {
+		CLEAR_BIT(EXTI->EXTIFLTCR, pin);
+	}
 
-    return;
+	return;
 }
 /**
   * @}
@@ -373,19 +367,16 @@ void ald_gpio_exti_init(GPIO_TypeDef *GPIOx, uint16_t pin, exti_init_t *init)
   * @param  GPIOx: Where x can be (A--H) to select the GPIO peripheral.
   * @param  pin: Specifies the pin to read.
   * @retval The input pin value
-  *         - BIT_SET
-  *         - BIT_RESET
   */
 uint8_t ald_gpio_read_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
 
-    if (READ_BIT(GPIOx->DIN, pin))
-        return BIT_SET;
-
-    else
-        return BIT_RESET;
+	if (READ_BIT(GPIOx->DIN, pin))
+		return 1;
+	else
+		return 0;
 }
 
 /**
@@ -397,15 +388,15 @@ uint8_t ald_gpio_read_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
   */
 void ald_gpio_write_pin(GPIO_TypeDef *GPIOx, uint16_t pin, uint8_t val)
 {
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
 
-    if ((val & (0x01)) == 0x00)
-        CLEAR_BIT(GPIOx->DOUT, pin);
-    else
-        SET_BIT(GPIOx->DOUT, pin);
+	if ((val & (0x01)) == 0x00)
+		CLEAR_BIT(GPIOx->DOUT, pin);
+	else
+		SET_BIT(GPIOx->DOUT, pin);
 
-    return;
+	return;
 }
 
 /**
@@ -416,11 +407,11 @@ void ald_gpio_write_pin(GPIO_TypeDef *GPIOx, uint16_t pin, uint8_t val)
   */
 void ald_gpio_toggle_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
 
-    WRITE_REG(GPIOx->BIR, pin);
-    return;
+	WRITE_REG(GPIOx->BIR, pin);
+	return;
 }
 
 /**
@@ -431,42 +422,39 @@ void ald_gpio_toggle_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
   */
 void ald_gpio_toggle_dir(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
-    uint32_t i, pos, mask, tmp, value;
+	uint32_t i, pos, mask, tmp, value;
 
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
 
-    for (i = 0; i < 16; ++i)
-    {
-        if (((pin >> i) & 0x1) == 0)
-            continue;
+	for (i = 0; i < 16; ++i) {
+		if (((pin >> i) & 0x1) == 0)
+			continue;
 
-        /* Get position and 2-bits mask */
-        pos  = i << 1;
-        mask = 0x3 << pos;
+		/* Get position and 2-bits mask */
+		pos  = i << 1;
+		mask = 0x3 << pos;
 
-        /* Get the new direction */
-        tmp = READ_REG(GPIOx->MODE);
-        value = (tmp >> pos) & 0x3;
+		/* Get the new direction */
+		tmp = READ_REG(GPIOx->MODE);
+		value = (tmp >> pos) & 0x3;
 
-        if ((value == 2) || (value == 3))
-            value = 1;
-        else if (value == 1)
-        {
-            value = 2;
-        }
-        else
-        {
-            continue; /* do nothing */
-        }
+		if ((value == 2) || (value == 3))
+			value = 1;
+		else if (value == 1) {
+			value = 2;
+		}
+		else {
+			continue; /* do nothing */
+		}
 
-        /* Set PIN mode */
-        tmp &= ~mask;
-        tmp |= (value << pos);
-        WRITE_REG(GPIOx->MODE, tmp);
-    }
+		/* Set PIN mode */
+		tmp &= ~mask;
+		tmp |= (value << pos);
+		WRITE_REG(GPIOx->MODE, tmp);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -479,13 +467,13 @@ void ald_gpio_toggle_dir(GPIO_TypeDef *GPIOx, uint16_t pin)
   */
 void ald_gpio_lock_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
 {
-    assert_param(IS_GPIO_PORT(GPIOx));
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PIN(pin));
 
-    MODIFY_REG(GPIOx->LOCK, GPIO_LOCK_KEY_MSK, UNLOCK_KEY << GPIO_LOCK_KEY_POSS);
-    WRITE_REG(GPIOx->LOCK, pin);
+	MODIFY_REG(GPIOx->LOCK, GPIO_LOCK_KEY_MSK, UNLOCK_KEY << GPIO_LOCK_KEY_POSS);
+	WRITE_REG(GPIOx->LOCK, pin);
 
-    return;
+	return;
 }
 
 /**
@@ -495,9 +483,9 @@ void ald_gpio_lock_pin(GPIO_TypeDef *GPIOx, uint16_t pin)
   */
 uint16_t ald_gpio_read_port(GPIO_TypeDef *GPIOx)
 {
-    assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PORT(GPIOx));
 
-    return READ_REG(GPIOx->DIN);
+	return READ_REG(GPIOx->DIN);
 }
 
 /**
@@ -508,10 +496,10 @@ uint16_t ald_gpio_read_port(GPIO_TypeDef *GPIOx)
   */
 void ald_gpio_write_port(GPIO_TypeDef *GPIOx, uint16_t val)
 {
-    assert_param(IS_GPIO_PORT(GPIOx));
+	assert_param(IS_GPIO_PORT(GPIOx));
 
-    WRITE_REG(GPIOx->DOUT, val);
-    return;
+	WRITE_REG(GPIOx->DOUT, val);
+	return;
 }
 
 
@@ -545,57 +533,47 @@ void ald_gpio_write_port(GPIO_TypeDef *GPIOx, uint16_t val)
   */
 void ald_gpio_exti_interrupt_config(uint16_t pin, exti_trigger_style_t style, type_func_t status)
 {
-    assert_param(IS_GPIO_PIN(pin));
-    assert_param(IS_TRIGGER_STYLE(style));
-    assert_param(IS_FUNC_STATE(status));
+	assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_TRIGGER_STYLE(style));
+	assert_param(IS_FUNC_STATE(status));
 
-    if (status == ENABLE)
-    {
-        if (style == EXTI_TRIGGER_RISING_EDGE)
-        {
-            SET_BIT(EXTI->EXTIRER, pin);
-        }
-        else if (style == EXTI_TRIGGER_TRAILING_EDGE)
-        {
-            SET_BIT(EXTI->EXTIFER, pin);
-        }
-        else if (style == EXTI_TRIGGER_BOTH_EDGE)
-        {
-            SET_BIT(EXTI->EXTIRER, pin);
-            SET_BIT(EXTI->EXTIFER, pin);
-        }
-        else
-        {
-            ; /* do nothing */
-        }
+	if (status == ENABLE) {
+		if (style == EXTI_TRIGGER_RISING_EDGE) {
+			SET_BIT(EXTI->EXTIRER, pin);
+		}
+		else if (style == EXTI_TRIGGER_TRAILING_EDGE) {
+			SET_BIT(EXTI->EXTIFER, pin);
+		}
+		else if (style == EXTI_TRIGGER_BOTH_EDGE) {
+			SET_BIT(EXTI->EXTIRER, pin);
+			SET_BIT(EXTI->EXTIFER, pin);
+		}
+		else {
+			; /* do nothing */
+		}
 
-        WRITE_REG(EXTI->EXTICFR, 0xffff);
-        SET_BIT(EXTI->EXTIEN, pin);
-    }
-    else
-    {
-        if (style == EXTI_TRIGGER_RISING_EDGE)
-        {
-            CLEAR_BIT(EXTI->EXTIRER, pin);
-        }
-        else if (style == EXTI_TRIGGER_TRAILING_EDGE)
-        {
-            CLEAR_BIT(EXTI->EXTIFER, pin);
-        }
-        else if (style == EXTI_TRIGGER_BOTH_EDGE)
-        {
-            CLEAR_BIT(EXTI->EXTIRER, pin);
-            CLEAR_BIT(EXTI->EXTIFER, pin);
-        }
-        else
-        {
-            ; /* do nothing */
-        }
+		WRITE_REG(EXTI->EXTICFR, 0xffff);
+		SET_BIT(EXTI->EXTIEN, pin);
+	}
+	else {
+		if (style == EXTI_TRIGGER_RISING_EDGE) {
+			CLEAR_BIT(EXTI->EXTIRER, pin);
+		}
+		else if (style == EXTI_TRIGGER_TRAILING_EDGE) {
+			CLEAR_BIT(EXTI->EXTIFER, pin);
+		}
+		else if (style == EXTI_TRIGGER_BOTH_EDGE) {
+			CLEAR_BIT(EXTI->EXTIRER, pin);
+			CLEAR_BIT(EXTI->EXTIFER, pin);
+		}
+		else {
+			; /* do nothing */
+		}
 
-        CLEAR_BIT(EXTI->EXTIEN, pin);
-    }
+		CLEAR_BIT(EXTI->EXTIEN, pin);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -607,12 +585,12 @@ void ald_gpio_exti_interrupt_config(uint16_t pin, exti_trigger_style_t style, ty
   */
 flag_status_t ald_gpio_exti_get_flag_status(uint16_t pin)
 {
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PIN(pin));
 
-    if (READ_BIT(EXTI->EXTIFLAG, pin))
-        return SET;
+	if (READ_BIT(EXTI->EXTIFLAG, pin))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -622,10 +600,10 @@ flag_status_t ald_gpio_exti_get_flag_status(uint16_t pin)
   */
 void ald_gpio_exti_clear_flag_status(uint16_t pin)
 {
-    assert_param(IS_GPIO_PIN(pin));
+	assert_param(IS_GPIO_PIN(pin));
 
-    WRITE_REG(EXTI->EXTICFR, pin);
-    return;
+	WRITE_REG(EXTI->EXTICFR, pin);
+	return;
 }
 /**
   * @}

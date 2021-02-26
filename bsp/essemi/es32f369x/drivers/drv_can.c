@@ -252,7 +252,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     RT_ASSERT(IS_CAN_DATA_LEN(pmsg->len));
 
     if ((state == CAN_STATE_READY) ||
-            (state == CAN_STATE_BUSY_RX))
+            (state == CAN_STATE_BUSY_RX0))
     {
         /*check select mailbox  is empty */
         switch (1 << box_num)
@@ -611,7 +611,6 @@ int rt_hw_can_init(void)
     filter.mode = CAN_FILTER_MODE_MASK;
     filter.scale = CAN_FILTER_SCALE_32;
     filter.active = ENABLE;
-    filter.bank_number = 14;
 
     can.FilterConfig = filter;
     can.device.config = config;

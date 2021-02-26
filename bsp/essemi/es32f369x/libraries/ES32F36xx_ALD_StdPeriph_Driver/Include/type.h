@@ -35,35 +35,35 @@ extern "C" {
 #define __isr__
 
 typedef enum {
-	RESET = 0x0,
-	SET   = 0x1,
+	RESET = 0x0U,
+	SET   = 0x1U,
 } flag_status_t, it_status_t;
 
 typedef enum {
-	BIT_RESET = 0x0,
-	BIT_SET   = 0x1,
+	BIT_RESET = 0x0U,
+	BIT_SET   = 0x1U,
 } bit_status_t;
 
 typedef enum {
-	DISABLE = 0x0,
-	ENABLE  = 0x1,
+	DISABLE = 0x0U,
+	ENABLE  = 0x1U,
 } type_func_t;
 #define IS_FUNC_STATE(x)	(((x) == DISABLE) || ((x) == ENABLE))
 
 typedef enum {
-	FALSE = 0x0,
-	TRUE  = 0x1,
+	FALSE = 0x0U,
+	TRUE  = 0x1U,
 } type_bool_t;
 
 typedef enum {
-	UNLOCK = 0x0,
-	LOCK   = 0x1,
+	UNLOCK = 0x0U,
+	LOCK   = 0x1U,
 } lock_state_t;
 #define IS_LOCK_STATE(x)	(((x) == UNLOCK) || ((x) == LOCK))
 
 
 #define BIT(x)			((1U << (x)))
-#define BITS(s, e)		((0xffffffff << (s)) & (0xffffffff >> (31 - (e))))
+#define BITS(s, e)		((0xffffffffU << (s)) & (0xffffffffU >> (31 - (e))))
 #define SET_BIT(reg, bit)	((reg) |= (bit))
 #define CLEAR_BIT(reg, bit)	((reg) &= ~(bit))
 #define READ_BIT(reg, bit)	((reg) & (bit))

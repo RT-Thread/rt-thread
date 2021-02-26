@@ -17,7 +17,7 @@
 #define __ALD_ADC_H__
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 #include "utils.h"
@@ -40,368 +40,342 @@ extern "C" {
 /**
   * @brief ADC  State structures definition
   */
-typedef enum
-{
-    ADC_STATE_RESET         = 0x0,    	/**< ADC not yet initialized or disabled */
-    ADC_STATE_READY         = 0x1,    	/**< ADC peripheral ready for use */
-    ADC_STATE_BUSY_INTERNAL = 0x2,    	/**< ADC is busy to internal process */
-    ADC_STATE_TIMEOUT       = 0x4,    	/**< TimeOut occurrence */
-    ADC_STATE_ERROR         = 0x10,   	/**< Internal error occurrence */
-    ADC_STATE_NM_BUSY       = 0x100,  	/**< Conversion on group normal is ongoing or can occur */
-    ADC_STATE_NM_EOC        = 0x200,  	/**< Conversion data available on group normal */
-    ADC_STATE_IST_BUSY      = 0x1000, 	/**< Conversion on group insert is ongoing or can occur */
-    ADC_STATE_IST_EOC       = 0x2000, 	/**< Conversion data available on group insert */
-    ADC_STATE_AWD           = 0x10000,	/**< Out-of-window occurrence of analog watchdog */
+typedef enum {
+	ADC_STATE_RESET    = 0x0U,	/**< ADC not yet initialized or disabled */
+	ADC_STATE_READY    = 0x1U,	/**< ADC peripheral ready for use */
+	ADC_STATE_BUSY     = 0x2U,	/**< ADC is busy to internal process */
+	ADC_STATE_TIMEOUT  = 0x4U,	/**< TimeOut occurrence */
+	ADC_STATE_ERROR    = 0x8U,	/**< Internal error occurrence */
+	ADC_STATE_BUSY_N   = 0x10U,	/**< Normal channel busy */
+	ADC_STATE_BUSY_I   = 0x20U,	/**< Insert channel busy */
+	ADC_STATE_BUSY_WDG = 0x40U,	/**< Insert channel busy */
 } adc_state_t;
 
 /**
   *@brief ADC Error Code
   */
-typedef enum
-{
-    ADC_ERROR_NONE     = 0x0,	/**< No error */
-    ADC_ERROR_INTERNAL = 0x1,	/**< ADC IP internal error*/
-    ADC_ERROR_OVR      = 0x2,	/**< Overrun error */
-    ADC_ERROR_DMA      = 0x4, 	/**< DMA transfer error */
+typedef enum {
+	ADC_ERROR_NONE     = 0x0U,	/**< No error */
+	ADC_ERROR_INTERNAL = 0x1U,	/**< ADC IP internal error*/
+	ADC_ERROR_OVR      = 0x2U,	/**< Overrun error */
+	ADC_ERROR_DMA      = 0x4U, 	/**< DMA transfer error */
 } adc_error_t;
 
 /**
   *@brief ADC data alignment
   */
-typedef enum
-{
-    ADC_DATAALIGN_RIGHT = 0x0,	/**< ADC data alignment right */
-    ADC_DATAALIGN_LEFT  = 0x1,	/**< ADC data alignment left */
+typedef enum {
+	ADC_DATAALIGN_RIGHT = 0x0U,	/**< ADC data alignment right */
+	ADC_DATAALIGN_LEFT  = 0x1U,	/**< ADC data alignment left */
 } adc_align_t;
 
 /**
   *@brief ADC config  hannal trigger the EOC IT mode
   */
-typedef enum
-{
-    ADC_NCHESEL_MODE_ALL = 0x0,	/**< ADC set RCHE after convert sequence finish */
-    ADC_NCHESEL_MODE_ONE = 0x1,	/**< ADC set RCHE after one convert finish */
+typedef enum {
+	ADC_NCHESEL_MODE_ALL = 0x0U,	/**< ADC set RCHE after convert sequence finish */
+	ADC_NCHESEL_MODE_ONE = 0x1U,	/**< ADC set RCHE after one convert finish */
 } adc_nchesel_t;
 
 /**
   *@brief  ADC channels
   */
-typedef enum
-{
-    ADC_CHANNEL_0  = 0x0, 	/**< ADC channel 0 */
-    ADC_CHANNEL_1  = 0x1, 	/**< ADC channel 1 */
-    ADC_CHANNEL_2  = 0x2, 	/**< ADC channel 2 */
-    ADC_CHANNEL_3  = 0x3, 	/**< ADC channel 3 */
-    ADC_CHANNEL_4  = 0x4, 	/**< ADC channel 4 */
-    ADC_CHANNEL_5  = 0x5, 	/**< ADC channel 5 */
-    ADC_CHANNEL_6  = 0x6, 	/**< ADC channel 6 */
-    ADC_CHANNEL_7  = 0x7, 	/**< ADC channel 7 */
-    ADC_CHANNEL_8  = 0x8, 	/**< ADC channel 8 */
-    ADC_CHANNEL_9  = 0x9, 	/**< ADC channel 9 */
-    ADC_CHANNEL_10 = 0xA, 	/**< ADC channel 10 */
-    ADC_CHANNEL_11 = 0xB, 	/**< ADC channel 11 */
-    ADC_CHANNEL_12 = 0xC, 	/**< ADC channel 12 */
-    ADC_CHANNEL_13 = 0xD, 	/**< ADC channel 13 */
-    ADC_CHANNEL_14 = 0xE, 	/**< ADC channel 14 */
-    ADC_CHANNEL_15 = 0xF, 	/**< ADC channel 15 */
-    ADC_CHANNEL_16 = 0x10,	/**< ADC channel 16 */
-    ADC_CHANNEL_17 = 0x11,	/**< ADC channel 17 */
-    ADC_CHANNEL_18 = 0x12,	/**< ADC channel 18 */
-    ADC_CHANNEL_19 = 0x13,	/**< ADC channel 19 */
+typedef enum {
+	ADC_CHANNEL_0  = 0x0U, 	/**< ADC channel 0 */
+	ADC_CHANNEL_1  = 0x1U, 	/**< ADC channel 1 */
+	ADC_CHANNEL_2  = 0x2U, 	/**< ADC channel 2 */
+	ADC_CHANNEL_3  = 0x3U, 	/**< ADC channel 3 */
+	ADC_CHANNEL_4  = 0x4U, 	/**< ADC channel 4 */
+	ADC_CHANNEL_5  = 0x5U, 	/**< ADC channel 5 */
+	ADC_CHANNEL_6  = 0x6U, 	/**< ADC channel 6 */
+	ADC_CHANNEL_7  = 0x7U, 	/**< ADC channel 7 */
+	ADC_CHANNEL_8  = 0x8U, 	/**< ADC channel 8 */
+	ADC_CHANNEL_9  = 0x9U, 	/**< ADC channel 9 */
+	ADC_CHANNEL_10 = 0xAU, 	/**< ADC channel 10 */
+	ADC_CHANNEL_11 = 0xBU, 	/**< ADC channel 11 */
+	ADC_CHANNEL_12 = 0xCU, 	/**< ADC channel 12 */
+	ADC_CHANNEL_13 = 0xDU, 	/**< ADC channel 13 */
+	ADC_CHANNEL_14 = 0xEU, 	/**< ADC channel 14 */
+	ADC_CHANNEL_15 = 0xFU, 	/**< ADC channel 15 */
+	ADC_CHANNEL_16 = 0x10U,	/**< ADC channel 16 */
+	ADC_CHANNEL_17 = 0x11U,	/**< ADC channel 17 */
+	ADC_CHANNEL_18 = 0x12U,	/**< ADC channel 18 */
+	ADC_CHANNEL_19 = 0x13U,	/**< ADC channel 19 */
 } adc_channel_t;
 
 /**
   *@brief  ADC sampling times
   */
-typedef enum
-{
-    ADC_SAMPLETIME_1  = 0x0,	/**< ADC sampling times 1 clk */
-    ADC_SAMPLETIME_2  = 0x1,	/**< ADC sampling times 2 clk */
-    ADC_SAMPLETIME_4  = 0x2,	/**< ADC sampling times 4 clk */
-    ADC_SAMPLETIME_15 = 0x3,	/**< ADC sampling times 15 clk */
+typedef enum {
+	ADC_SAMPLETIME_1  = 0x0U,	/**< ADC sampling times 1 clk */
+	ADC_SAMPLETIME_2  = 0x1U,	/**< ADC sampling times 2 clk */
+	ADC_SAMPLETIME_4  = 0x2U,	/**< ADC sampling times 4 clk */
+	ADC_SAMPLETIME_15 = 0x3U,	/**< ADC sampling times 15 clk */
 } adc_samp_t;
 
 /**
-  *@brief   ADC rank into normal group
+  *@brief   ADC index channel in normal group
   */
-typedef enum
-{
-    ADC_NCH_RANK_1  = 0x1, 	/**< ADC normal channel rank 1 */
-    ADC_NCH_RANK_2  = 0x2, 	/**< ADC normal channel rank 2 */
-    ADC_NCH_RANK_3  = 0x3, 	/**< ADC normal channel rank 3 */
-    ADC_NCH_RANK_4  = 0x4, 	/**< ADC normal channel rank 4 */
-    ADC_NCH_RANK_5  = 0x5, 	/**< ADC normal channel rank 5 */
-    ADC_NCH_RANK_6  = 0x6, 	/**< ADC normal channel rank 6 */
-    ADC_NCH_RANK_7  = 0x7, 	/**< ADC normal channel rank 7 */
-    ADC_NCH_RANK_8  = 0x8, 	/**< ADC normal channel rank 8 */
-    ADC_NCH_RANK_9  = 0x9, 	/**< ADC normal channel rank 9 */
-    ADC_NCH_RANK_10 = 0xA, 	/**< ADC normal channel rank 10 */
-    ADC_NCH_RANK_11 = 0xB, 	/**< ADC normal channel rank 11 */
-    ADC_NCH_RANK_12 = 0xC, 	/**< ADC normal channel rank 12 */
-    ADC_NCH_RANK_13 = 0xD, 	/**< ADC normal channel rank 13 */
-    ADC_NCH_RANK_14 = 0xE, 	/**< ADC normal channel rank 14 */
-    ADC_NCH_RANK_15 = 0xF, 	/**< ADC normal channel rank 15 */
-    ADC_NCH_RANK_16 = 0x10,	/**< ADC normal channel rank 16 */
-} adc_nch_rank_t;
+typedef enum {
+	ADC_NCH_IDX_1  = 0x1U, 	/**< ADC normal channel index 1 */
+	ADC_NCH_IDX_2  = 0x2U, 	/**< ADC normal channel index 2 */
+	ADC_NCH_IDX_3  = 0x3U, 	/**< ADC normal channel index 3 */
+	ADC_NCH_IDX_4  = 0x4U, 	/**< ADC normal channel index 4 */
+	ADC_NCH_IDX_5  = 0x5U, 	/**< ADC normal channel index 5 */
+	ADC_NCH_IDX_6  = 0x6U, 	/**< ADC normal channel index 6 */
+	ADC_NCH_IDX_7  = 0x7U, 	/**< ADC normal channel index 7 */
+	ADC_NCH_IDX_8  = 0x8U, 	/**< ADC normal channel index 8 */
+	ADC_NCH_IDX_9  = 0x9U, 	/**< ADC normal channel index 9 */
+	ADC_NCH_IDX_10 = 0xAU, 	/**< ADC normal channel index 10 */
+	ADC_NCH_IDX_11 = 0xBU, 	/**< ADC normal channel index 11 */
+	ADC_NCH_IDX_12 = 0xCU, 	/**< ADC normal channel index 12 */
+	ADC_NCH_IDX_13 = 0xDU, 	/**< ADC normal channel index 13 */
+	ADC_NCH_IDX_14 = 0xEU, 	/**< ADC normal channel index 14 */
+	ADC_NCH_IDX_15 = 0xFU, 	/**< ADC normal channel index 15 */
+	ADC_NCH_IDX_16 = 0x10U,	/**< ADC normal channel index 16 */
+} adc_nch_idx_t;
 
 /**
-  * @brief ADC rank into insert group
+  * @brief ADC index channel in insert group
   */
-typedef enum
-{
-    ADC_ICH_RANK_1 = 0x1,	/**< ADC insert channel rank 1 */
-    ADC_ICH_RANK_2 = 0x2,	/**< ADC insert channel rank 2 */
-    ADC_ICH_RANK_3 = 0x3,	/**< ADC insert channel rank 3 */
-    ADC_ICH_RANK_4 = 0x4,	/**< ADC insert channel rank 4 */
-} adc_ich_rank_t;
+typedef enum {
+	ADC_ICH_IDX_1 = 0x1U,	/**< ADC insert channel index 1 */
+	ADC_ICH_IDX_2 = 0x2U,	/**< ADC insert channel index 2 */
+	ADC_ICH_IDX_3 = 0x3U,	/**< ADC insert channel index 3 */
+	ADC_ICH_IDX_4 = 0x4U,	/**< ADC insert channel index 4 */
+} adc_ich_idx_t;
 
 /**
   * @brief ADC analog watchdog mode
   */
-typedef enum
-{
-    ADC_ANAWTD_NONE       = 0x0,     	/**< No watch dog */
-    ADC_ANAWTD_SING_NM    = 0x800200,	/**< One normal channel watch dog */
-    ADC_ANAWTD_SING_IST   = 0x400200,	/**< One inset channel Injec watch dog */
-    ADC_ANAWTD_SING_NMIST = 0xC00200,	/**< One normal and inset channel watch dog */
-    ADC_ANAWTD_ALL_NM     = 0x800000,	/**< All normal channel watch dog */
-    ADC_ANAWTD_ALL_IST    = 0x400000,	/**< All inset channel watch dog */
-    ADC_ANAWTD_ALL_NMIST  = 0xC00000,	/**< All normal and inset channel watch dog */
-} adc_ana_wtd_t;
+typedef enum {
+	ADC_ANAWTD_NONE       = 0x0U,     	/**< No watch dog */
+	ADC_ANAWTD_SING_NM    = 0x800200U,	/**< One normal channel watch dog */
+	ADC_ANAWTD_SING_IST   = 0x400200U,	/**< One insert channel watch dog */
+	ADC_ANAWTD_SING_NMIST = 0xC00200U,	/**< One normal and insert channel watch dog */
+	ADC_ANAWTD_ALL_NM     = 0x800000U,	/**< All normal channel watch dog */
+	ADC_ANAWTD_ALL_IST    = 0x400000U,	/**< All insert channel watch dog */
+	ADC_ANAWTD_ALL_NMIST  = 0xC00000U,	/**< All normal and insert channel watch dog */
+} adc_ana_wdg_t;
 
 /**
   * @brief ADC Event type
   */
-typedef enum
-{
-    ADC_AWD_EVENT = (1U << 0),	/**< ADC analog watch dog event */
+typedef enum {
+	ADC_AWD_EVENT = (1U << 0),	/**< ADC analog watch dog event */
 } adc_event_type_t;
 
 /**
   * @brief ADC interrupts definition
   */
-typedef enum
-{
-    ADC_IT_NCH  = (1U << 5), 	/**< ADC it normal */
-    ADC_IT_AWD = (1U << 6), 	/**< ADC it awd */
-    ADC_IT_ICH  = (1U << 7), 	/**< ADC it insert */
-    ADC_IT_OVR = (1U << 26),	/**< ADC it overring */
+typedef enum {
+	ADC_IT_NCH = (1U << 5), 	/**< ADC it normal */
+	ADC_IT_AWD = (1U << 6), 	/**< ADC it awd */
+	ADC_IT_ICH = (1U << 7), 	/**< ADC it insert */
+	ADC_IT_OVR = (1U << 26),	/**< ADC it overring */
 } adc_it_t;
 
 /**
   * @brief ADC flags definition
   */
-typedef enum
-{
-    ADC_FLAG_AWD  = (1U << 0),	/**<ADC flag awd */
-    ADC_FLAG_NCH  = (1U << 1),	/**<ADC flag normal mode */
-    ADC_FLAG_ICH  = (1U << 2),	/**<ADC flag inset mode */
-    ADC_FLAG_OVR  = (1U << 3),	/**<ADC flag ovr */
-    ADC_FLAG_NCHS = (1U << 8),	/**<ADC flag normal start */
-    ADC_FLAG_ICHS = (1U << 9),	/**<ADC flag inset start */
+typedef enum {
+	ADC_FLAG_AWD  = (1U << 0),	/**<ADC flag awd */
+	ADC_FLAG_NCH  = (1U << 1),	/**<ADC flag normal mode */
+	ADC_FLAG_ICH  = (1U << 2),	/**<ADC flag insert mode */
+	ADC_FLAG_OVR  = (1U << 3),	/**<ADC flag ovr */
+	ADC_FLAG_NCHS = (1U << 8),	/**<ADC flag normal start */
+	ADC_FLAG_ICHS = (1U << 9),	/**<ADC flag insert start */
 } adc_flag_t;
 
 /**
   * @brief ADC CLD DIV definition
   */
-typedef enum
-{
-    ADC_CKDIV_1   = 0x0,	/**< ADC CLK DIV 1 */
-    ADC_CKDIV_2   = 0x1,	/**< ADC CLK DIV 2 */
-    ADC_CKDIV_4   = 0x2,	/**< ADC CLK DIV 4 */
-    ADC_CKDIV_8   = 0x3,	/**< ADC CLK DIV 8 */
-    ADC_CKDIV_16  = 0x4,	/**< ADC CLK DIV 16 */
-    ADC_CKDIV_32  = 0x5,	/**< ADC CLK DIV 32 */
-    ADC_CKDIV_64  = 0x6,	/**< ADC CLK DIV 64 */
-    ADC_CKDIV_128 = 0x7,	/**< ADC CLK DIV 128 */
+typedef enum {
+	ADC_CKDIV_1   = 0x0U,	/**< ADC CLK DIV 1 */
+	ADC_CKDIV_2   = 0x1U,	/**< ADC CLK DIV 2 */
+	ADC_CKDIV_4   = 0x2U,	/**< ADC CLK DIV 4 */
+	ADC_CKDIV_8   = 0x3U,	/**< ADC CLK DIV 8 */
+	ADC_CKDIV_16  = 0x4U,	/**< ADC CLK DIV 16 */
+	ADC_CKDIV_32  = 0x5U,	/**< ADC CLK DIV 32 */
+	ADC_CKDIV_64  = 0x6U,	/**< ADC CLK DIV 64 */
+	ADC_CKDIV_128 = 0x7U,	/**< ADC CLK DIV 128 */
 } adc_clk_div_t;
 
 /**
   * @brief ADC negative reference voltage definition
   */
-typedef enum
-{
-    ADC_NEG_REF_VSS   = 0x0,	/**< ADC negative regerence voltage vss */
-    ADC_NEG_REF_VREFN = 0x1,	/**< ADC negative regerence voltage vrefn */
+typedef enum {
+	ADC_NEG_REF_VSS   = 0x0U,	/**< ADC negative regerence voltage vss */
+	ADC_NEG_REF_VREFN = 0x1U,	/**< ADC negative regerence voltage vrefn */
 } adc_neg_ref_t;
 
 /**
   * @brief ADC positive reference voltage definition
   */
-typedef enum
-{
-    ADC_POS_REF_VDD        = 0x0,	/**< ADC posotove reference is VDD */
-    ADC_POS_REF_VREEFP     = 0x2,	/**< ADC posotove reference is VREEFP */
-    ADC_POS_REF_VREEFP_BUF = 0x3,	/**< ADC posotove reference is VREEFP BUFFER */
+typedef enum {
+	ADC_POS_REF_VDD        = 0x0U,	/**< ADC posotove reference is VDD */
+	ADC_POS_REF_VREEFP     = 0x2U,	/**< ADC posotove reference is VREEFP */
+	ADC_POS_REF_VREEFP_BUF = 0x3U,	/**< ADC posotove reference is VREEFP BUFFER */
 } adc_pos_ref_t;
 
 /**
   * @brief ADC numbers of normal conversion channals
   */
-typedef enum
-{
-    ADC_NCH_LEN_1  = 0x0,	/**< ADC length of normal conversion 1 */
-    ADC_NCH_LEN_2  = 0x1,	/**< ADC length of normal conversion 2 */
-    ADC_NCH_LEN_3  = 0x2,	/**< ADC length of normal conversion 3 */
-    ADC_NCH_LEN_4  = 0x3,	/**< ADC length of normal conversion 4 */
-    ADC_NCH_LEN_5  = 0x4,	/**< ADC length of normal conversion 5 */
-    ADC_NCH_LEN_6  = 0x5,	/**< ADC length of normal conversion 6 */
-    ADC_NCH_LEN_7  = 0x6,	/**< ADC length of normal conversion 7 */
-    ADC_NCH_LEN_8  = 0x7,	/**< ADC length of normal conversion 8 */
-    ADC_NCH_LEN_9  = 0x8,	/**< ADC length of normal conversion 9 */
-    ADC_NCH_LEN_10 = 0x9,	/**< ADC length of normal conversion 10 */
-    ADC_NCH_LEN_11 = 0xA,	/**< ADC length of normal conversion 11 */
-    ADC_NCH_LEN_12 = 0xB,	/**< ADC length of normal conversion 12 */
-    ADC_NCH_LEN_13 = 0xC,	/**< ADC length of normal conversion 13 */
-    ADC_NCH_LEN_14 = 0xD,	/**< ADC length of normal conversion 14 */
-    ADC_NCH_LEN_15 = 0xE,	/**< ADC length of normal conversion 15 */
-    ADC_NCH_LEN_16 = 0xF,	/**< ADC length of normal conversion 16 */
-} adc_nch_len_t;
+typedef enum {
+	ADC_NCH_NR_1  = 0x0U,	/**< ADC number of normal conversion 1 */
+	ADC_NCH_NR_2  = 0x1U,	/**< ADC number of normal conversion 2 */
+	ADC_NCH_NR_3  = 0x2U,	/**< ADC number of normal conversion 3 */
+	ADC_NCH_NR_4  = 0x3U,	/**< ADC number of normal conversion 4 */
+	ADC_NCH_NR_5  = 0x4U,	/**< ADC number of normal conversion 5 */
+	ADC_NCH_NR_6  = 0x5U,	/**< ADC number of normal conversion 6 */
+	ADC_NCH_NR_7  = 0x6U,	/**< ADC number of normal conversion 7 */
+	ADC_NCH_NR_8  = 0x7U,	/**< ADC number of normal conversion 8 */
+	ADC_NCH_NR_9  = 0x8U,	/**< ADC number of normal conversion 9 */
+	ADC_NCH_NR_10 = 0x9U,	/**< ADC number of normal conversion 10 */
+	ADC_NCH_NR_11 = 0xAU,	/**< ADC number of normal conversion 11 */
+	ADC_NCH_NR_12 = 0xBU,	/**< ADC number of normal conversion 12 */
+	ADC_NCH_NR_13 = 0xCU,	/**< ADC number of normal conversion 13 */
+	ADC_NCH_NR_14 = 0xDU,	/**< ADC number of normal conversion 14 */
+	ADC_NCH_NR_15 = 0xEU,	/**< ADC number of normal conversion 15 */
+	ADC_NCH_NR_16 = 0xFU,	/**< ADC number of normal conversion 16 */
+} adc_nch_nr_t;
 
 /**
   * @brief ADC numbers of insert conversion channals
   */
-typedef enum
-{
-    ADC_ICH_LEN_1 = 0x0,	/**< ADC number of insert conversion 1 */
-    ADC_ICH_LEN_2 = 0x1,	/**< ADC number of insert conversion 2 */
-    ADC_ICH_LEN_3 = 0x2,	/**< ADC number of insert conversion 3 */
-    ADC_ICH_LEN_4 = 0x3,	/**< ADC number of insert conversion 4 */
-} adc_ich_len_t;
+typedef enum {
+	ADC_ICH_NR_1 = 0x0U,	/**< ADC number of insert conversion 1 */
+	ADC_ICH_NR_2 = 0x1U,	/**< ADC number of insert conversion 2 */
+	ADC_ICH_NR_3 = 0x2U,	/**< ADC number of insert conversion 3 */
+	ADC_ICH_NR_4 = 0x3U,	/**< ADC number of insert conversion 4 */
+} adc_ich_nr_t;
+
 /**
   * @brief ADC discontinuous mode choose
   */
-typedef enum
-{
-    ADC_ALL_DISABLE = 0x0,	/**< ADC discontinuous mode all disable */
-    ADC_NCH_DISC_EN = 0x1,	/**< ADC normal channel discontinuous mode enable */
-    ADC_ICH_DISC_EN = 0x2,	/**< ADC insert channel discontinuous mode enable */
+typedef enum {
+	ADC_ALL_DISABLE = 0x0U,	/**< ADC discontinuous mode all disable */
+	ADC_NCH_DISC_EN = 0x1U,	/**< ADC normal channel discontinuous mode enable */
+	ADC_ICH_DISC_EN = 0x2U,	/**< ADC insert channel discontinuous mode enable */
 } adc_disc_mode_t;
+
 /**
   * @brief ADC numbers of channals in discontinuous conversion mode
   */
-typedef enum
-{
-    ADC_DISC_NBR_1 = 0x0,	/**< ADC number of discontinuous conversion 1 */
-    ADC_DISC_NBR_2 = 0x1,	/**< ADC number of discontinuous conversion 2 */
-    ADC_DISC_NBR_3 = 0x2,	/**< ADC number of discontinuous conversion 3 */
-    ADC_DISC_NBR_4 = 0x3,	/**< ADC number of discontinuous conversion 4 */
-    ADC_DISC_NBR_5 = 0x4,	/**< ADC number of discontinuous conversion 5 */
-    ADC_DISC_NBR_6 = 0x5,	/**< ADC number of discontinuous conversion 6 */
-    ADC_DISC_NBR_7 = 0x6,	/**< ADC number of discontinuous conversion 7 */
-    ADC_DISC_NBR_8 = 0x7,	/**< ADC number of discontinuous conversion 8 */
-} adc_disc_nbr_t;
+typedef enum {
+	ADC_DISC_NR_1 = 0x0U,	/**< ADC number of discontinuous conversion 1 */
+	ADC_DISC_NR_2 = 0x1U,	/**< ADC number of discontinuous conversion 2 */
+	ADC_DISC_NR_3 = 0x2U,	/**< ADC number of discontinuous conversion 3 */
+	ADC_DISC_NR_4 = 0x3U,	/**< ADC number of discontinuous conversion 4 */
+	ADC_DISC_NR_5 = 0x4U,	/**< ADC number of discontinuous conversion 5 */
+	ADC_DISC_NR_6 = 0x5U,	/**< ADC number of discontinuous conversion 6 */
+	ADC_DISC_NR_7 = 0x6U,	/**< ADC number of discontinuous conversion 7 */
+	ADC_DISC_NR_8 = 0x7U,	/**< ADC number of discontinuous conversion 8 */
+} adc_disc_nr_t;
 
 /**
   * @brief ADC resolution of conversion
   */
-typedef enum
-{
-    ADC_CONV_RES_6  = 0x0,	/**< ADC resolution of conversion 6 */
-    ADC_CONV_RES_8  = 0x1,	/**< ADC resolution of conversion 8 */
-    ADC_CONV_RES_10 = 0x2,	/**< ADC resolution of conversion 10 */
-    ADC_CONV_RES_12 = 0x3,	/**< ADC resolution of conversion 12 */
-} adc_conv_res_t;
+typedef enum {
+	ADC_CONV_BIT_6  = 0x0U,	/**< ADC resolution of conversion 6 */
+	ADC_CONV_BIT_8  = 0x1U,	/**< ADC resolution of conversion 8 */
+	ADC_CONV_BIT_10 = 0x2U,	/**< ADC resolution of conversion 10 */
+	ADC_CONV_BIT_12 = 0x3U,	/**< ADC resolution of conversion 12 */
+} adc_conv_bit_t;
 
 /**
   * @brief  Structure definition of ADC and normal group initialization
   */
-typedef struct
-{
-    adc_align_t data_align;		/**< Specifies ADC data alignment */
-    type_func_t scan_mode;         	/**< Choose scan mode enable or not */
-    type_func_t cont_mode;       	/**< Choose continuous mode enable or not */
-    adc_nch_len_t nch_len;  	/**< Length of normal ranks will be converted */
-    adc_disc_mode_t disc_mode;    	/**< Discontinuous mode enable or not */
-    adc_disc_nbr_t disc_nbr;	/**< Number of discontinuous conversions channel */
-    adc_conv_res_t conv_res;   	/**< The precision of conversion */
-    adc_clk_div_t clk_div;		/**< ADCCLK divider */
-    adc_nchesel_t nche_sel;		/**< Trigger the NCHE FALG mode */
-    adc_neg_ref_t neg_ref;    	/**< The negative reference voltage*/
-    adc_pos_ref_t pos_ref;    	/**< The positive reference voltage*/
+typedef struct {
+	adc_align_t align;		/**< Specifies ADC data alignment */
+	type_func_t scan;         	/**< Choose scan mode enable or not */
+	type_func_t cont;       	/**< Choose continuous mode enable or not */
+	adc_nch_nr_t nch_nr;  		/**< Length of normal ranks will be converted */
+	adc_disc_mode_t disc;    	/**< Discontinuous mode enable or not */
+	adc_disc_nr_t disc_nr;		/**< Number of discontinuous conversions channel */
+	adc_conv_bit_t data_bit;	/**< The precision of conversion */
+	adc_clk_div_t div;		/**< ADCCLK divider */
+	adc_nchesel_t nche_sel;		/**< Trigger the NCHE FALG mode */
+	adc_neg_ref_t n_ref;    	/**< The negative reference voltage*/
+	adc_pos_ref_t p_ref;    	/**< The positive reference voltage*/
 } adc_init_t;
 
 /**
   * @brief  Structure definition of ADC channel for normal group
   */
-typedef struct
-{
-    adc_channel_t channel;        	/**< The channel to configure into ADC normal group */
-    adc_nch_rank_t rank;       	/**< The rank in the normal group sequencer */
-    adc_samp_t samp_time;		/**< Sampling time value to be set */
+typedef struct {
+	adc_channel_t ch;	/**< The channel to configure into ADC normal group */
+	adc_nch_idx_t idx;	/**< The rank in the normal group sequencer */
+	adc_samp_t samp;	/**< Sampling time value to be set */
 } adc_nch_conf_t;
 
 /**
   * @brief  ADC Configuration analog watchdog definition
   */
-typedef struct
-{
-    adc_ana_wtd_t watchdog_mode;		/**< Configures the ADC analog watchdog mode*/
-    adc_channel_t channel;			/**< Selects which ADC channel to monitor by analog watchdog */
-    type_func_t it_mode;             	/**< Whether the analog watchdog is configured in interrupt */
-    uint32_t high_threshold;     	 	/**< The ADC analog watchdog High threshold value. */
-    uint32_t low_threshold;      	 	/**< The ADC analog watchdog Low threshold value. */
+typedef struct {
+	adc_ana_wdg_t mode;	/**< Configures the ADC analog watchdog mode*/
+	adc_channel_t ch;	/**< Selects which ADC channel to monitor by analog watchdog */
+	type_func_t interrupt;	/**< Whether the analog watchdog is configured in interrupt */
+	uint32_t high_thrd;	/**< The ADC analog watchdog High threshold value. */
+	uint32_t low_thrd;	/**< The ADC analog watchdog Low threshold value. */
 } adc_analog_wdg_conf_t;
 
 /**
   * @brief  ADC Configuration insert Channel structure definition
   */
-typedef struct
-{
-    adc_channel_t channel;	/**< Selection of ADC channel to configure */
-    adc_ich_rank_t rank;	/**< Rank in the insert group sequencer */
-    adc_samp_t samp_time;	/**< Sampling time value for selected channel */
-    uint32_t offset;	/**< The offset about converted data */
-    adc_ich_len_t ich_len;	/**< The number of insert ranks */
-    type_func_t auto_inj;	/**< insert sequence's auto function */
+typedef struct {
+	adc_channel_t ch;	/**< Selection of ADC channel to configure */
+	adc_ich_idx_t idx;	/**< Rank in the insert group sequencer */
+	adc_samp_t samp;	/**< Sampling time value for selected channel */
+	uint32_t offset;	/**< The offset about converted data */
+	adc_ich_nr_t nr;	/**< The number of insert ranks */
+	type_func_t auto_m;	/**< insert sequence's auto function */
 } adc_ich_conf_t;
 
 /**
   * @brief  ADC handle Structure definition
   */
-typedef struct adc_handle_s
-{
-    ADC_TypeDef *perh;			/**< Register base address */
-    adc_init_t init;			/**< ADC required parameters */
+typedef struct adc_handle_s {
+	ADC_TypeDef *perh;	/**< Register base address */
+	adc_init_t init;	/**< ADC required parameters */
 #ifdef ALD_DMA
-    dma_handle_t hdma;			/**< Pointer DMA Handler */
-    pis_handle_t hpis;			/**< Pointer PIS Handler for connect adc and dma */
+	dma_handle_t hdma;	/**< Pointer DMA Handler */
+	pis_handle_t hpis;	/**< Pointer PIS Handler for connect adc and dma */
 #endif
-    uint32_t vdd_value;			/**< ADC vdd reference voltage value,unit:mV */
-    lock_state_t lock;			/**< ADC locking object */
-    adc_state_t state;			/**< ADC communication state  */
-    adc_error_t error_code;			/**< ADC Error code */
+	uint32_t vdd_value;	/**< ADC vdd reference voltage value,unit:mV */ 
+	lock_state_t lock;	/**< ADC locking object */
+	adc_state_t state;	/**< ADC communication state  */
+	adc_error_t error_code;	/**< ADC Error code */
 
-    void (*adc_reg_cplt_cbk)(struct adc_handle_s *arg);  	/**< Regluar Conversion complete callback */
-    void (*adc_inj_cplt_cbk)(struct adc_handle_s *arg);  	/**< insert Conversion complete callback */
-    void (*adc_out_of_win_cbk)(struct adc_handle_s *arg);	/**< Level out of window callback */
-    void (*adc_error_cbk)(struct adc_handle_s *arg);      	/**< adc error callback */
-    void (*adc_ovr_cbk)(struct adc_handle_s *arg);	      	/**< adc ovr callback */
+	void (*normal_cplt_cbk)( struct adc_handle_s *arg);  	/**< Regluar Conversion complete callback */
+	void (*insert_cplt_cbk)( struct adc_handle_s *arg);  	/**< insert Conversion complete callback */
+	void (*wdg_cbk)( struct adc_handle_s *arg);		/**< Level out of window callback */
+	void (*error_cbk)(struct adc_handle_s *arg);      	/**< adc error callback */
+	void (*ovr_cbk)(struct adc_handle_s *arg);	      	/**< adc ovr callback */
 } adc_handle_t;
 
 /**
   * @brief Timer trigger adc config structure definition
   */
-typedef struct
-{
-    uint32_t time;						/**< Timer period time uint: us */
-    uint16_t size;						/**< Adc convert times */
-    uint16_t *buf;						/**< Convert data buffer */
-    adc_neg_ref_t n_ref;					/**< The negative reference voltage for adc*/
-    adc_pos_ref_t p_ref;					/**< The positive reference voltage for adc*/
-    adc_channel_t adc_ch;					/**< Adc channel */
-    uint8_t dma_ch;						/**< Dma channel */
-    TIMER_TypeDef *p_timer;					/**< Adc peripheral */
-    ADC_TypeDef *p_adc;					/**< Dma peripheral */
-    void (*adc_cplt_cbk)(struct adc_handle_s *arg);	/**< Conversion complete callback */
+typedef struct {
+	uint32_t time;		/**< Timer period time uint: us */	
+	uint16_t size;		/**< Adc convert times */	
+	uint16_t *buf;		/**< Convert data buffer */	
+	adc_neg_ref_t n_ref;	/**< The negative reference voltage for adc*/
+	adc_pos_ref_t p_ref;	/**< The positive reference voltage for adc*/
+	adc_channel_t adc_ch;	/**< Adc channel */	
+	uint8_t dma_ch;		/**< Dma channel */	
+	TIMER_TypeDef *p_timer;	/**< Timer peripheral */	
+	ADC_TypeDef *p_adc;	/**< Adc peripheral */	
+	void (*cplt_cbk)( struct adc_handle_s *arg);	/**< Conversion complete callback */
 
-    /* private variable */
-    lock_state_t lock;		/**< Locking object */
-    pis_handle_t lh_pis;		/**< Handle of PIS module */
-    dma_handle_t lh_dma;		/**< Handle of DMA module */
-    timer_handle_t lh_timer;	/**< Handle of TIMER module */
-    adc_handle_t lh_adc;		/**< Handle of ADC module */
-    adc_nch_conf_t lnm_config;	/**< Struct for chanel configure */
+	/* private variable */
+	lock_state_t lock;	/**< Locking object */
+	pis_handle_t h_pis;	/**< Handle of PIS module */
+	dma_handle_t h_dma;	/**< Handle of DMA module */
+	timer_handle_t h_timer;	/**< Handle of TIMER module */
+	adc_handle_t h_adc;	/**< Handle of ADC module */
+	adc_nch_conf_t config;	/**< Struct for channel configure */
 } adc_timer_config_t;
 /**
   * @}
@@ -410,13 +384,17 @@ typedef struct
 /** @defgroup ADC_Public_Macros ADC Public Macros
   * @{
   */
-#define ADC_ENABLE(handle) 			(SET_BIT((handle)->perh->CON1, ADC_CON1_ADCEN_MSK))
-#define ADC_DISABLE(handle) 			(CLEAR_BIT((handle)->perh->CON1, ADC_CON1_ADCEN_MSK))
-#define ADC_NH_TRIG_BY_SOFT(handle)		(SET_BIT((handle)->perh->CON1, ADC_CON1_NCHTRG_MSK))
-#define ADC_IH_TRIG_BY_SOFT(handle)		(SET_BIT((handle)->perh->CON1, ADC_CON1_ICHTRG_MSK))
-#define ADC_RESET_HANDLE_STATE(handle)		((handle)->state = ADC_STATE_RESET)
-#define ADC_VREF_OUT_ENABLE(handle)		(SET_BIT((handle)->perh->CCR, ADC_CCR_VREFOEN_MSK))
-#define ADC_VREF_OUT_DISABLE(handle)		(CLEAR_BIT((handle)->perh->CCR, ADC_CCR_VREFOEN_MSK))
+#define ADC_ENABLE(handle) 		(SET_BIT((handle)->perh->CON1, ADC_CON1_ADCEN_MSK))
+#define ADC_DISABLE(handle) 		(CLEAR_BIT((handle)->perh->CON1, ADC_CON1_ADCEN_MSK))
+#define ADC_NH_TRIG_BY_SOFT(handle)	(SET_BIT((handle)->perh->CON1, ADC_CON1_NCHTRG_MSK))
+#define ADC_IH_TRIG_BY_SOFT(handle)	(SET_BIT((handle)->perh->CON1, ADC_CON1_ICHTRG_MSK))
+#define ADC_RESET_HANDLE_STATE(handle)	((handle)->state = ADC_STATE_RESET)
+#define ADC_VREF_OUT_ENABLE(handle)	(SET_BIT((handle)->perh->CCR, ADC_CCR_VREFOEN_MSK))
+#define ADC_VREF_OUT_DISABLE(handle)	(CLEAR_BIT((handle)->perh->CCR, ADC_CCR_VREFOEN_MSK))
+#define ADC_SPEED_HIGH_ENABLE(handle)	(SET_BIT((handle)->perh->CCR, ADC_CCR_PWRMODSEL_MSK))
+#define ADC_SPEED_HIGH_DISABLE(handle)	(CLEAR_BIT((handle)->perh->CCR, ADC_CCR_PWRMODSEL_MSK))
+#define ADC_CALIBRATE_ENABLE(handle)	(SET_BIT((handle)->perh->CCR, ADC_CCR_TRMEN_MSK))
+#define ADC_CALIBRATE_DISABLE(handle)	(CLEAR_BIT((handle)->perh->CCR, ADC_CCR_TRMEN_MSK))
 /**
   * @}
   */
@@ -424,68 +402,65 @@ typedef struct
 /** @defgroup ADC_Private_Macros ADC Private Macros
   * @{
   */
-#define IS_ADC_ICH_RANK_TYPE(x)			((x) <= ADC_ICH_RANK_4)
-#define IS_ADC_NCH_RANK_TYPE(x)			((x) <= ADC_NCH_RANK_16)
+#define IS_ADC_ICH_IDX_TYPE(x)			((x) <= ADC_ICH_IDX_4)
+#define IS_ADC_NCH_IDX_TYPE(x)			((x) <= ADC_NCH_IDX_16)
 #define IS_ADC_SAMPLING_TIMES_TYPE(x)		(((x) == ADC_SAMPLETIME_1) || \
-        ((x) == ADC_SAMPLETIME_2) || \
-        ((x) == ADC_SAMPLETIME_4) || \
-        ((x) == ADC_SAMPLETIME_15))
+                                                 ((x) == ADC_SAMPLETIME_2) || \
+					         ((x) == ADC_SAMPLETIME_4) || \
+					         ((x) == ADC_SAMPLETIME_15))
 #define IS_ADC_CHANNELS_TYPE(x)			((x) <= ADC_CHANNEL_19)
-#define IS_ADC_SCAN_MODE_TYPE(x)		(((x) == DISABLE) || \
-        ((x) == ENABLE))
 #define IS_ADC_DATA_ALIGN_TYPE(x)		(((x) == ADC_DATAALIGN_RIGHT) || \
-        ((x) == ADC_DATAALIGN_LEFT))
+                                                 ((x) == ADC_DATAALIGN_LEFT))
 #define IS_ADC_ANALOG_WTD_MODE_TYPE(x)  	(((x) == ADC_ANAWTD_NONE)       || \
-        ((x) == ADC_ANAWTD_SING_NM)    || \
-        ((x) == ADC_ANAWTD_SING_IST)   || \
-        ((x) == ADC_ANAWTD_SING_NMIST) || \
-        ((x) == ADC_ANAWTD_ALL_NM)     || \
-        ((x) == ADC_ANAWTD_ALL_IST)    || \
-        ((x) == ADC_ANAWTD_ALL_NMIST))
+						 ((x) == ADC_ANAWTD_SING_NM)    || \
+						 ((x) == ADC_ANAWTD_SING_IST)   || \
+						 ((x) == ADC_ANAWTD_SING_NMIST) || \
+						 ((x) == ADC_ANAWTD_ALL_NM)     || \
+						 ((x) == ADC_ANAWTD_ALL_IST)    || \
+						 ((x) == ADC_ANAWTD_ALL_NMIST))
 #define IS_ADC_IT_TYPE(x)			(((x) == ADC_IT_NCH) || \
-                                     ((x) == ADC_IT_AWD) || \
-                                     ((x) == ADC_IT_ICH) ||  \
-                                     ((x) == ADC_IT_OVR ))
+						 ((x) == ADC_IT_AWD) || \
+						 ((x) == ADC_IT_ICH) ||  \
+						 ((x) == ADC_IT_OVR ))
 #define IS_ADC_FLAGS_TYPE(x)			(((x) == ADC_FLAG_AWD)  || \
-        ((x) == ADC_FLAG_NCH)  || \
-        ((x) == ADC_FLAG_ICH)  || \
-        ((x) == ADC_FLAG_OVR)  || \
-        ((x) == ADC_FLAG_NCHS) || \
-        ((x) == ADC_FLAG_ICHS))
+						 ((x) == ADC_FLAG_NCH)  || \
+						 ((x) == ADC_FLAG_ICH)  || \
+						 ((x) == ADC_FLAG_OVR)  || \
+						 ((x) == ADC_FLAG_NCHS) || \
+						 ((x) == ADC_FLAG_ICHS))
 #define IS_ADC_CLK_DIV_TYPE(x)			(((x) == ADC_CKDIV_1)   || \
-        ((x) == ADC_CKDIV_2)   || \
-        ((x) == ADC_CKDIV_4)   || \
-        ((x) == ADC_CKDIV_8)   || \
-        ((x) == ADC_CKDIV_16)  || \
-        ((x) == ADC_CKDIV_32)  || \
-        ((x) == ADC_CKDIV_64)  || \
-        ((x) == ADC_CKDIV_128))
+						 ((x) == ADC_CKDIV_2)   || \
+						 ((x) == ADC_CKDIV_4)   || \
+						 ((x) == ADC_CKDIV_8)   || \
+						 ((x) == ADC_CKDIV_16)  || \
+						 ((x) == ADC_CKDIV_32)  || \
+						 ((x) == ADC_CKDIV_64)  || \
+						 ((x) == ADC_CKDIV_128))
 #define IS_ADC_NEG_REF_VOLTAGE_TYPE(x)		(((x) == ADC_NEG_REF_VSS ) || \
-        ((x) == ADC_NEG_REF_VREFN ))
+                                                 ((x) == ADC_NEG_REF_VREFN ))
 #define IS_POS_REF_VOLTAGE_TYPE(x)		(((x) == ADC_POS_REF_VDD)    || \
-        ((x) == ADC_POS_REF_VREEFP) || \
-        ((x) == ADC_POS_REF_VREEFP_BUF))
-#define IS_ADC_NCH_LEN_TYPE(x)			((x) <= ADC_NCH_LEN_16)
-#define IS_ADC_NBR_OF_IST_TYPE(x)		((x) <= ADC_ICH_LEN_4)
+						 ((x) == ADC_POS_REF_VREEFP) || \
+						 ((x) == ADC_POS_REF_VREEFP_BUF))
+#define IS_ADC_NCH_NR_TYPE(x)			((x) <= ADC_NCH_NR_16)
+#define IS_ADC_ICH_NR_TYPE(x)			((x) <= ADC_ICH_NR_4)
 #define IS_ADC_DISC_MODE_TYPE(x)		(((x) == ADC_ALL_DISABLE) || \
-        ((x) == ADC_NCH_DISC_EN) || \
-        ((x) == ADC_ICH_DISC_EN))
-#define IS_ADC_DISC_NBR_TYPE(x)			((x) <= ADC_DISC_NBR_8)
-#define IS_ADC_CONV_RES_TYPE(x)			(((x) == ADC_CONV_RES_12) || \
-        ((x) == ADC_CONV_RES_6)  || \
-        ((x) == ADC_CONV_RES_8)  || \
-        ((x) == ADC_CONV_RES_10))
+						 ((x) == ADC_NCH_DISC_EN) || \
+						 ((x) == ADC_ICH_DISC_EN))
+#define IS_ADC_DISC_NR_TYPE(x)			((x) <= ADC_DISC_NR_8)
+#define IS_ADC_CONV_BIT_TYPE(x)			(((x) == ADC_CONV_BIT_12) || \
+                                                 ((x) == ADC_CONV_BIT_6)  || \
+						 ((x) == ADC_CONV_BIT_8)  || \
+						 ((x) == ADC_CONV_BIT_10))
 #define IS_ADC_TRIG_MODE_TYPE(x)		(((x) == ADC_TRIG_SOFT) || \
-        ((x) == ADC_TRIG_PIS)  || \
-        ((x) == ADC_TRIG_PIS_SOFT))
-#define IS_ADC_TYPE(x) 				(((x) == ADC0) || \
-                                     ((x) == ADC1))
+                                                 ((x) == ADC_TRIG_PIS)  || \
+                                                 ((x) == ADC_TRIG_PIS_SOFT))
+#define IS_ADC_TYPE(x) 				(((x) == ADC0))
 #define IS_ADC_NCHESEL_MODE_TYPE(x)		(((x) == ADC_NCHESEL_MODE_ALL) || \
-        ((x) == ADC_NCHESEL_MODE_ONE))
+						 ((x) == ADC_NCHESEL_MODE_ONE))
 #define IS_ADC_EVENT_TYPE(x)			((x) == ADC_AWD_EVENT)
-#define IS_ADC_IST_OFFSET_TYPE(x)		((x) <= 0xfff)
-#define IS_HTR_TYPE(x)				((x) <= 0xfff)
-#define IS_LTR_TYPE(x)				((x) <= 0xfff)
+#define IS_ADC_IST_OFFSET_TYPE(x)		((x) <= 0xFFF)
+#define IS_HTR_TYPE(x)				((x) <= 0xFFF)
+#define IS_LTR_TYPE(x)				((x) <= 0xFFF)
 /**
   * @}
   */
@@ -514,7 +489,7 @@ ald_status_t ald_adc_normal_start_by_it(adc_handle_t *hperh);
 ald_status_t ald_adc_normal_stop_by_it(adc_handle_t *hperh);
 #ifdef ALD_DMA
 ald_status_t ald_adc_start_by_dma(adc_handle_t *hperh, uint16_t *buf, uint16_t size, uint8_t channel);
-ald_status_t ald_adc_stop_by_dma(adc_handle_t *hperh);
+ald_status_t ald_adc_stop_by_dma(adc_handle_t *hperh, uint8_t channel);
 ald_status_t ald_adc_timer_trigger_adc_by_dma(adc_timer_config_t *config);
 #endif
 uint32_t ald_adc_normal_get_value(adc_handle_t *hperh);
@@ -524,7 +499,7 @@ ald_status_t ald_adc_insert_stop(adc_handle_t *hperh);
 ald_status_t ald_adc_insert_poll_for_conversion(adc_handle_t *hperh, uint32_t timeout);
 ald_status_t ald_adc_insert_start_by_it(adc_handle_t *hperh);
 ald_status_t ald_adc_insert_stop_by_it(adc_handle_t *hperh);
-uint32_t ald_adc_insert_get_value(adc_handle_t *hperh, adc_ich_rank_t ih_rank);
+uint32_t ald_adc_insert_get_value(adc_handle_t *hperh, adc_ich_idx_t ih_rank);
 void ald_adc_irq_handler(adc_handle_t *hperh);
 /**
   * @}
@@ -565,8 +540,7 @@ uint32_t ald_adc_get_error(adc_handle_t *hperh);
   * @}
   */
 #ifdef __cplusplus
-extern "C"
-}
+ extern "C" }
 #endif
 
-#endif /* __ALD_ADC_H */
+#endif /* __ALD_ADC_H__ */

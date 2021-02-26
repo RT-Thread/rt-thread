@@ -21,7 +21,7 @@
 #include "ffconf.h"
 #include "ff.h"
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 
 /* ELM FatFs provide a DIR struct */
 #define HAVE_DIR_STRUCTURE
@@ -800,7 +800,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             tm_file.tm_min  = min;         /* Minutes: 0-59 */
             tm_file.tm_sec  = sec;         /* Seconds: 0-59 */
 
-            st->st_mtime = mktime(&tm_file);
+            st->st_mtime = timegm(&tm_file);
         } /* get st_mtime. */
     }
 
@@ -945,7 +945,7 @@ DWORD get_fattime(void)
 {
     DWORD fat_time = 0;
 
-#ifdef RT_USING_LIBC
+#ifdef RT_LIBC_USING_TIME
     time_t now;
     struct tm *p_tm;
     struct tm tm_now;
@@ -956,7 +956,7 @@ DWORD get_fattime(void)
     /* lock scheduler. */
     rt_enter_critical();
     /* converts calendar time time into local time. */
-    p_tm = localtime(&now);
+    p_tm = gmtime(&now);
     /* copy the statically located variable */
     memcpy(&tm_now, p_tm, sizeof(struct tm));
     /* unlock scheduler. */

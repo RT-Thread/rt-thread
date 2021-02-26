@@ -8,6 +8,6 @@ path = [cwd]
 libcwd = str(Dir('#'))
 libinspath = libcwd + '/libraries/lib'
 
-group = DefineGroup('gnu_c', src, depend = [''], CPPPATH = path, LIBINSPATH = libinspath)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, LIBINSPATH = libinspath)
 
 Return('group')

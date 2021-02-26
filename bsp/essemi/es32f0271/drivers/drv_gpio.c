@@ -450,6 +450,7 @@ const static struct rt_pin_ops _es32f0_pin_ops =
     es32f0_pin_attach_irq,
     es32f0_pin_detach_irq,
     es32f0_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

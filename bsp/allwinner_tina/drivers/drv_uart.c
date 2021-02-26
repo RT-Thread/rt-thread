@@ -120,8 +120,8 @@ int rt_hw_uart_init(void)
         uart->irqno        = UART1_INTERRUPT; // IRQ_UART1;
         uart->gpio_rx_port = GPIO_PORT_A;
         uart->gpio_tx_port = GPIO_PORT_A;
-        uart->gpio_rx_pin  = GPIO_PIN_3;
-        uart->gpio_tx_pin  = GPIO_PIN_2;
+        uart->gpio_rx_pin  = GPIO_PIN_2;
+        uart->gpio_tx_pin  = GPIO_PIN_3;
         uart->gpio_rx_fun  = IO_FUN_4;
         uart->gpio_tx_fun  = IO_FUN_4;
 

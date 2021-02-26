@@ -100,7 +100,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  * this function will reset CPU
  *
  */
-void rt_hw_cpu_reset()
+RT_WEAK void rt_hw_cpu_reset()
 {
 }
 
@@ -108,7 +108,7 @@ void rt_hw_cpu_reset()
  * this function will shutdown CPU
  *
  */
-void rt_hw_cpu_shutdown()
+RT_WEAK void rt_hw_cpu_shutdown()
 {
 	rt_kprintf("shutdown...\n");
 

@@ -16,7 +16,7 @@ try:
 except :
     pass
 
-group = DefineGroup('pthreads', src, 
+group = DefineGroup('libc', src, 
     depend = ['RT_USING_PTHREADS', 'RT_USING_LIBC'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -18,7 +18,7 @@
 #define __ALD_SPI_H__
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 #include "utils.h"
@@ -39,97 +39,88 @@ extern "C" {
 /**
   * @brief clock phase
   */
-typedef enum
-{
-    SPI_CPHA_FIRST  = 0,	/**< Transiting data in the first edge */
-    SPI_CPHA_SECOND = 1,	/**< Transiting data in the seconde edge */
+typedef enum {
+	SPI_CPHA_FIRST  = 0U,	/**< Transiting data in the first edge */
+	SPI_CPHA_SECOND = 1U,	/**< Transiting data in the seconde edge */
 } spi_cpha_t;
 
 /**
   * @brief clock polarity
   */
-typedef enum
-{
-    SPI_CPOL_LOW  = 0,	/**< Polarity hold low when spi-bus is idle */
-    SPI_CPOL_HIGH = 1,	/**< Polarity hold high when spi-bus is idle */
+typedef enum {
+	SPI_CPOL_LOW  = 0U,	/**< Polarity hold low when spi-bus is idle */
+	SPI_CPOL_HIGH = 1U,	/**< Polarity hold high when spi-bus is idle */
 } spi_cpol_t;
 
 /**
   * @brief master selection
   */
-typedef enum
-{
-    SPI_MODE_SLAVER = 0,	/**< Slave mode */
-    SPI_MODE_MASTER = 1,	/**< Master mode */
+typedef enum {
+	SPI_MODE_SLAVER = 0U,	/**< Slave mode */
+	SPI_MODE_MASTER = 1U,	/**< Master mode */
 } spi_mode_t;
 
 /**
   * @brief baud rate control
   */
-typedef enum
-{
-    SPI_BAUD_2   = 0,	/**< fpclk/2 */
-    SPI_BAUD_4   = 1,	/**< fpclk/4 */
-    SPI_BAUD_8   = 2,	/**< fpclk/8 */
-    SPI_BAUD_16  = 3,	/**< fpclk/16 */
-    SPI_BAUD_32  = 4,	/**< fpclk/32 */
-    SPI_BAUD_64  = 5,	/**< fpclk/64 */
-    SPI_BAUD_128 = 6,	/**< fpclk/128 */
-    SPI_BAUD_256 = 7,	/**< fpclk/256 */
+typedef enum {
+	SPI_BAUD_2   = 0U,	/**< fpclk/2 */
+	SPI_BAUD_4   = 1U,	/**< fpclk/4 */
+	SPI_BAUD_8   = 2U,	/**< fpclk/8 */
+	SPI_BAUD_16  = 3U,	/**< fpclk/16 */
+	SPI_BAUD_32  = 4U,	/**< fpclk/32 */
+	SPI_BAUD_64  = 5U,	/**< fpclk/64 */
+	SPI_BAUD_128 = 6U,	/**< fpclk/128 */
+	SPI_BAUD_256 = 7U,	/**< fpclk/256 */
 } spi_baud_t;
 
 /**
   * @brief frame format
   */
-typedef enum
-{
-    SPI_FIRSTBIT_MSB = 0,	/**< MSB transmitted first */
-    SPI_FIRSTBIT_LSB = 1,	/**< LSB transmitted first */
+typedef enum {
+	SPI_FIRSTBIT_MSB = 0U,	/**< MSB transmitted first */
+	SPI_FIRSTBIT_LSB = 1U,	/**< LSB transmitted first */
 } spi_firstbit_t;
 
 /**
   * @brief data frame format
   */
-typedef enum
-{
-    SPI_DATA_SIZE_8  = 0,	/**< 8-bit data frame format is selected for transmission/reception */
-    SPI_DATA_SIZE_16 = 1,	/**< 16-bit data frame format is selected for transmission/reception */
+typedef enum {
+	SPI_DATA_SIZE_8  = 0U,	/**< 8-bit data frame format is selected for transmission/reception */
+	SPI_DATA_SIZE_16 = 1U,	/**< 16-bit data frame format is selected for transmission/reception */
 } spi_datasize_t;
 
 /**
   * @brief interrupt control
   */
-typedef enum
-{
-    SPI_IT_ERR   = (1U << 5),	/**< error interrupt */
-    SPI_IT_RXBNE = (1U << 6),	/**< rx buffer not empty interrupt */
-    SPI_IT_TXBE  = (1U << 7),	/**< tx buffer empty interrupt */
+typedef enum {
+	SPI_IT_ERR   = (1U << 5),	/**< error interrupt */
+	SPI_IT_RXBNE = (1U << 6),	/**< rx buffer not empty interrupt */
+	SPI_IT_TXBE  = (1U << 7),	/**< tx buffer empty interrupt */
 } spi_it_t;
 
 /**
   * @brief interrupt flag
   */
-typedef enum
-{
-    SPI_IF_RXBNE  = (1U << 0),	/**< receive buffer not empty */
-    SPI_IF_TXBE   = (1U << 1),	/**< transmit buffer empty */
-    SPI_IF_CRCERR = (1U << 4),	/**< crc error flag */
-    SPI_IF_MODF   = (1U << 5),	/**< mode fault */
-    SPI_IF_OVE    = (1U << 6),	/**< overrun flag */
-    SPI_IF_BUSY   = (1U << 7),	/**< busy flag */
+typedef enum {
+	SPI_IF_RXBNE  = (1U << 0),	/**< receive buffer not empty */
+	SPI_IF_TXBE   = (1U << 1),	/**< transmit buffer empty */
+	SPI_IF_CRCERR = (1U << 4),	/**< crc error flag */
+	SPI_IF_MODF   = (1U << 5),	/**< mode fault */
+	SPI_IF_OVE    = (1U << 6),	/**< overrun flag */
+	SPI_IF_BUSY   = (1U << 7),	/**< busy flag */
 } spi_flag_t;
 
 /**
   * @brief SPI error status
   */
-typedef enum
-{
-    SPI_ERROR_NONE = 0,	/**< none */
-    SPI_ERROR_MODF = 1,	/**< mode fault */
-    SPI_ERROR_CRC  = 2,	/**< crc error */
-    SPI_ERROR_OVE  = 4,	/**< overrun error */
-    SPI_ERROR_DMA  = 8,	/**< dma error  */
-    SPI_ERROR_FLAG = 0x10,	/**< interrupt flag error */
+typedef enum {
+	SPI_ERROR_NONE = 0U,	/**< none */
+	SPI_ERROR_MODF = 1U,	/**< mode fault */
+	SPI_ERROR_CRC  = 2U,	/**< crc error */
+	SPI_ERROR_OVE  = 4U,	/**< overrun error */
+	SPI_ERROR_DMA  = 8U,	/**< dma error  */
+	SPI_ERROR_FLAG = 0x10U,	/**< interrupt flag error */
 } spi_error_t;
 
 
@@ -137,104 +128,97 @@ typedef enum
 /**
   * @brief SPI state structures definition
   */
-typedef enum
-{
-    SPI_STATE_RESET      = 0x00,	/**< Peripheral is not initialized */
-    SPI_STATE_READY      = 0x01,	/**< Peripheral Initialized and ready for use */
-    SPI_STATE_BUSY       = 0x02,	/**< an internal process is ongoing */
-    SPI_STATE_BUSY_TX    = 0x11,	/**< transmit is ongoing */
-    SPI_STATE_BUSY_RX    = 0x21,	/**< receive is ongoing */
-    SPI_STATE_BUSY_TX_RX = 0x31,	/**< transmit and receive are ongoing */
-    SPI_STATE_TIMEOUT    = 0x03,	/**< Timeout state */
-    SPI_STATE_ERROR      = 0x04,	/**< Error */
+typedef enum {
+	SPI_STATE_RESET      = 0x00U,	/**< Peripheral is not initialized */
+	SPI_STATE_READY      = 0x01U,	/**< Peripheral Initialized and ready for use */
+	SPI_STATE_BUSY       = 0x02U,	/**< an internal process is ongoing */
+	SPI_STATE_BUSY_TX    = 0x11U,	/**< transmit is ongoing */
+	SPI_STATE_BUSY_RX    = 0x21U,	/**< receive is ongoing */
+	SPI_STATE_BUSY_TX_RX = 0x31U,	/**< transmit and receive are ongoing */
+	SPI_STATE_TIMEOUT    = 0x03U,	/**< Timeout state */
+	SPI_STATE_ERROR      = 0x04U,	/**< Error */
 } spi_state_t;
 
 /**
   * @brief SPI status definition
   */
-typedef enum
-{
-    SPI_STATUS_RXBNE   = (1U << 0),		/**< Receive not empty status */
-    SPI_STATUS_TXBE    = (1U << 1),		/**< Transmit empty status */
-    SPI_STATUS_CRCERR  = (1U << 4),		/**< CRC error status */
-    SPI_STATUS_MODEERR = (1U << 5),		/**< Mode error status */
-    SPI_STATUS_OVERR   = (1U << 6),		/**< Overflow status */
-    SPI_STATUS_BUSY    = (1U << 7),		/**< Busy status */
+typedef enum {
+	SPI_STATUS_RXBNE   = (1U << 0),		/**< Receive not empty status */
+	SPI_STATUS_TXBE    = (1U << 1),		/**< Transmit empty status */
+	SPI_STATUS_CRCERR  = (1U << 4),		/**< CRC error status */
+	SPI_STATUS_MODEERR = (1U << 5),		/**< Mode error status */
+	SPI_STATUS_OVERR   = (1U << 6),		/**< Overflow status */
+	SPI_STATUS_BUSY    = (1U << 7),		/**< Busy status */
 
 } spi_status_t;
 
 /**
   * @brief SPI direction definition
   */
-typedef enum
-{
-    SPI_DIRECTION_2LINES        = 0,	/**< 2 lines */
-    SPI_DIRECTION_2LINES_RXONLY = 1,	/**< 2 lines only rx */
-    SPI_DIRECTION_1LINE         = 2,	/**< 1 line */
-    SPI_DIRECTION_1LINE_RX      = 3,	/**< 1 line only rx */
+typedef enum {
+	SPI_DIRECTION_2LINES        = 0U,	/**< 2 lines */
+	SPI_DIRECTION_2LINES_RXONLY = 1U,	/**< 2 lines only rx */
+	SPI_DIRECTION_1LINE         = 2U,	/**< 1 line */
+	SPI_DIRECTION_1LINE_RX      = 3U,	/**< 1 line only rx */
 } spi_direction_t;
 
 /**
   * @brief SPI dma request definition
   */
-typedef enum
-{
-    SPI_DMA_REQ_TX = 0,	/**< TX dma request */
-    SPI_DMA_REQ_RX = 1,	/**< RX dma request */
+typedef enum {
+	SPI_DMA_REQ_TX = 0U,	/**< TX dma request */
+	SPI_DMA_REQ_RX = 1U,	/**< RX dma request */
 } spi_dma_req_t;
 
 /**
   * @brief SPI TXE/RXNE status definition
   */
-typedef enum
-{
-    SPI_SR_TXBE       = 0,	/**< SR.TXE set */
-    SPI_SR_RXBNE      = 1,	/**< SR.RXNE set */
-    SPI_SR_TXBE_RXBNE = 2,	/**< SR.TXE and SR.RXNE set */
+typedef enum {
+	SPI_SR_TXBE       = 0U,	/**< SR.TXE set */
+	SPI_SR_RXBNE      = 1U,	/**< SR.RXNE set */
+	SPI_SR_TXBE_RXBNE = 2U,	/**< SR.TXE and SR.RXNE set */
 } spi_sr_status_t;
 
 /**
   * @brief SPI init structure definition
   */
-typedef struct
-{
-    spi_mode_t mode;		/**< SPI mode */
-    spi_direction_t dir;		/**< SPI direction */
-    spi_datasize_t data_size;	/**< SPI data size */
-    spi_baud_t baud;			/**< SPI baudrate prescaler */
-    spi_cpha_t phase;		/**< SPI clock phase */
-    spi_cpol_t polarity;		/**< SPI clock polarity */
-    spi_firstbit_t first_bit;	/**< SPI first bit */
-    type_func_t ss_en;		/**< SPI ssm enable or disable */
-    type_func_t crc_calc;		/**< SPI crc calculation */
-    uint16_t crc_poly;		/**< SPI crc polynomial */
+typedef struct {
+	spi_mode_t mode;		/**< SPI mode */
+	spi_direction_t dir;		/**< SPI direction */
+	spi_datasize_t data_size;	/**< SPI data size */
+	spi_baud_t baud;			/**< SPI baudrate prescaler */
+	spi_cpha_t phase;		/**< SPI clock phase */
+	spi_cpol_t polarity;		/**< SPI clock polarity */
+	spi_firstbit_t first_bit;	/**< SPI first bit */
+	type_func_t ss_en;		/**< SPI ssm enable or disable */
+	type_func_t crc_calc;		/**< SPI crc calculation */
+	uint16_t crc_poly;		/**< SPI crc polynomial */
 } spi_init_t;
 
 /**
   * @brief  SPI handle structure definition
   */
-typedef struct spi_handle_s
-{
-    SPI_TypeDef *perh;	/**< SPI registers base address */
-    spi_init_t init;	/**< SPI communication parameters */
-    uint8_t *tx_buf;	/**< Pointer to SPI Tx transfer buffer */
-    uint16_t tx_size;	/**< SPI Tx transfer size */
-    uint16_t tx_count;	/**< SPI Tx transfer counter */
-    uint8_t *rx_buf;	/**< Pointer to SPI Rx transfer buffer */
-    uint16_t rx_size;	/**< SPI Rx Transfer size */
-    uint16_t rx_count;	/**< SPI Rx Transfer Counter */
+typedef struct spi_handle_s {
+	SPI_TypeDef *perh;	/**< SPI registers base address */
+	spi_init_t init;	/**< SPI communication parameters */
+	uint8_t *tx_buf;	/**< Pointer to SPI Tx transfer buffer */
+	uint16_t tx_size;	/**< SPI Tx transfer size */
+	uint16_t tx_count;	/**< SPI Tx transfer counter */
+	uint8_t *rx_buf;	/**< Pointer to SPI Rx transfer buffer */
+	uint16_t rx_size;	/**< SPI Rx Transfer size */
+	uint16_t rx_count;	/**< SPI Rx Transfer Counter */
 #ifdef ALD_DMA
-    dma_handle_t hdmatx;	/**< SPI Tx DMA handle parameters */
-    dma_handle_t hdmarx;	/**< SPI Rx DMA handle parameters */
+	dma_handle_t hdmatx;	/**< SPI Tx DMA handle parameters */
+	dma_handle_t hdmarx;	/**< SPI Rx DMA handle parameters */
 #endif
-    lock_state_t lock;	/**< Locking object */
-    spi_state_t state;	/**< SPI communication state */
-    uint32_t err_code;	/**< SPI error code */
+	lock_state_t lock;	/**< Locking object */
+	spi_state_t state;	/**< SPI communication state */
+	uint32_t err_code;	/**< SPI error code */
 
-    void (*tx_cplt_cbk)(struct spi_handle_s *arg);		/**< Tx completed callback */
-    void (*rx_cplt_cbk)(struct spi_handle_s *arg);		/**< Rx completed callback */
-    void (*tx_rx_cplt_cbk)(struct spi_handle_s *arg);	/**< Tx & Rx completed callback */
-    void (*err_cbk)(struct spi_handle_s *arg);		/**< error callback */
+	void (*tx_cplt_cbk)(struct spi_handle_s *arg);		/**< Tx completed callback */
+	void (*rx_cplt_cbk)(struct spi_handle_s *arg);		/**< Rx completed callback */
+	void (*tx_rx_cplt_cbk)(struct spi_handle_s *arg);	/**< Tx & Rx completed callback */
+	void (*err_cbk)(struct spi_handle_s *arg);		/**< error callback */
 } spi_handle_t;
 /**
   * @}
@@ -247,10 +231,10 @@ typedef struct spi_handle_s
 #define SPI_ENABLE(x)			((x)->perh->CON1 |= (1 << SPI_CON1_SPIEN_POS))
 #define SPI_DISABLE(x)			((x)->perh->CON1 &= ~(1 << SPI_CON1_SPIEN_POS))
 #define SPI_CRC_RESET(x)					\
-    do {								\
-        CLEAR_BIT((x)->perh->CON1, SPI_CON1_CRCEN_MSK);		\
-        SET_BIT((x)->perh->CON1, SPI_CON1_CRCEN_MSK);		\
-    } while (0)
+do {								\
+	CLEAR_BIT((x)->perh->CON1, SPI_CON1_CRCEN_MSK);		\
+	SET_BIT((x)->perh->CON1, SPI_CON1_CRCEN_MSK);		\
+} while (0)
 #define SPI_CRCNEXT_ENABLE(x)	(SET_BIT((x)->perh->CON1, SPI_CON1_NXTCRC_MSK))
 #define SPI_CRCNEXT_DISABLE(x)	(CLEAR_BIT((x)->perh->CON1, SPI_CON1_NXTCRC_MSK))
 #define SPI_RXONLY_ENABLE(x)	(SET_BIT((x)->perh->CON1, SPI_CON1_RXO_MSK))
@@ -268,9 +252,12 @@ typedef struct spi_handle_s
 /** @defgroup SPI_Private_Macros   SPI Private Macros
   * @{
   */
-#define IS_SPI(x)	(((x) == SPI0) || \
-                     ((x) == SPI1) || \
-                     ((x) == SPI2))
+#if defined(ES32F065x) || defined(ES32F033x)
+#define IS_SPI(x)	(((x) == SPI0) || ((x) == SPI1))
+#endif
+#if defined(ES32F093x)
+#define IS_SPI(x)	(((x) == SPI0) || ((x) == SPI1) || ((x) == SPI2))
+#endif
 #define IS_SPI_CPHA(x)	(((x) == SPI_CPHA_FIRST) || \
                          ((x) == SPI_CPHA_SECOND))
 #define IS_SPI_CPOL(x)	(((x) == SPI_CPOL_LOW) || \
@@ -286,20 +273,22 @@ typedef struct spi_handle_s
                          ((x) == SPI_BAUD_128) || \
                          ((x) == SPI_BAUD_256))
 #define IS_SPI_DATASIZE(x)	(((x) == SPI_DATA_SIZE_8) || \
-                             ((x) == SPI_DATA_SIZE_16))
+                                 ((x) == SPI_DATA_SIZE_16))
+#define IS_SPI_FIRSTBIT(x)	(((x) == SPI_FIRSTBIT_MSB) || \
+                                 ((x) == SPI_FIRSTBIT_LSB))
 #define IS_SPI_BIDOE(x)		(((x) == SPI_BID_RX) || \
-                             ((x) == SPI_BID_TX))
+                                 ((x) == SPI_BID_TX))
 #define IS_SPI_BIDMODE(x)	(((x) == SPI_BIDMODE_DUAL) || \
-                             ((x) == SPI_BIDMODE_SOLE))
+                                 ((x) == SPI_BIDMODE_SOLE))
 #define IS_SPI_DIRECTION(x)	(((x) == SPI_DIRECTION_2LINES)         || \
-                             ((x) == SPI_DIRECTION_2LINES_RXONLY)  || \
-                             ((x) == SPI_DIRECTION_1LINE)          || \
-                             ((x) == SPI_DIRECTION_1LINE_RX))
+                                 ((x) == SPI_DIRECTION_2LINES_RXONLY)  || \
+                                 ((x) == SPI_DIRECTION_1LINE)          || \
+				 ((x) == SPI_DIRECTION_1LINE_RX))
 #define IS_SPI_DMA_REQ(x)	(((x) == SPI_DMA_REQ_TX) || \
-                             ((x) == SPI_DMA_REQ_RX))
+                                 ((x) == SPI_DMA_REQ_RX))
 #define IS_SPI_SR_STATUS(x)	(((x) == SPI_SR_TXBE)  || \
-                             ((x) == SPI_SR_RXBNE) || \
-                             ((x) == SPI_SR_TXBE_RXBNE))
+                                 ((x) == SPI_SR_RXBNE) || \
+                                 ((x) == SPI_SR_TXBE_RXBNE))
 #define IS_SPI_IT(x)	(((x) == SPI_IT_ERR)   || \
                          ((x) == SPI_IT_RXBNE) || \
                          ((x) == SPI_IT_TXBE))
@@ -310,11 +299,11 @@ typedef struct spi_handle_s
                          ((x) == SPI_IF_OVE)    || \
                          ((x) == SPI_IF_BUSY))
 #define IS_SPI_STATUS(x)	(((x) == SPI_STATUS_RXBNE) || \
-                             ((x) == SPI_STATUS_TXBE)  || \
-                             ((x) == SPI_STATUS_CRCERR) || \
-                             ((x) == SPI_STATUS_MODEERR) || \
-                             ((x) == SPI_STATUS_OVERR)   || \
-                             ((x) == SPI_STATUS_BUSY))
+				 ((x) == SPI_STATUS_TXBE)  || \
+				 ((x) == SPI_STATUS_CRCERR) || \
+				 ((x) == SPI_STATUS_MODEERR) || \
+				 ((x) == SPI_STATUS_OVERR)   || \
+				 ((x) == SPI_STATUS_BUSY))
 /**
   * @}
   */

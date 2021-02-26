@@ -9,6 +9,6 @@ src = Glob('src/*.c')
 
 path = [cwd + '/inc']
 
-group = DefineGroup('StdPeriph_Driver', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')

@@ -76,6 +76,8 @@ ald_status_t ald_trng_init(trng_handle_t *hperh)
 	assert_param(IS_TRNG_DATA_WIDTH(hperh->init.data_width));
 	assert_param(IS_TRNG_SEED_TYPE(hperh->init.seed_type));
 	assert_param(IS_TRNG_ADJC(hperh->init.adjc));
+	assert_param(IS_FUNC_STATE(hperh->init.posten));
+	assert_param(IS_TRNG_T_START(hperh->init.t_start));
 
 	__LOCK(hperh);
 	trng_reset(hperh);

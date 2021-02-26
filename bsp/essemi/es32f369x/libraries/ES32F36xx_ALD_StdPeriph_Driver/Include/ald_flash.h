@@ -79,19 +79,19 @@ do {							\
   * @{
   */
 typedef enum {
-	FLASH_CMD_AE          = 0x000051AE,	/**< Program area erase all */
-	FLASH_CMD_PE          = 0x00005EA1,	/**< Page erase  */
-	FLASH_CMD_WP          = 0x00005DA2,	/**< Word program */
-	FLASH_CMD_WP_FAST     = 0x00005CA3, 	/**< Flash quickly program */
-	FLASH_CMD_DATAPE      = 0x00005BA4,	/**< Data flash page page erase */
-	FLASH_CMD_DATAWP      = 0x00005AA5,	/**< Data flash word program */
-	FLASH_CMD_DATAWP_FAST = 0x000059A6,	/**< Data flash quickly program */
-	FLASH_CMD_NP_AE       = 0x000050AF,	/**< No-private area erase all */
+	FLASH_CMD_AE          = 0x000051AEU,	/**< Program area erase all */
+	FLASH_CMD_PE          = 0x00005EA1U,	/**< Page erase  */
+	FLASH_CMD_WP          = 0x00005DA2U,	/**< Word program */
+	FLASH_CMD_WP_FAST     = 0x00005CA3U, 	/**< Flash quickly program */
+	FLASH_CMD_DATAPE      = 0x00005BA4U,	/**< Data flash page page erase */
+	FLASH_CMD_DATAWP      = 0x00005AA5U,	/**< Data flash word program */
+	FLASH_CMD_DATAWP_FAST = 0x000059A6U,	/**< Data flash quickly program */
+	FLASH_CMD_NP_AE       = 0x000050AFU,	/**< No-private area erase all */
 } flash_cmd_type;
 
 typedef enum {
-	OP_FLASH = 0,	/**< Operate Pragram area */
-	OP_INFO  = 1,	/**< Operate info area */
+	OP_FLASH = 0U,	/**< Operate Pragram area */
+	OP_INFO  = 1U,	/**< Operate info area */
 } op_cmd_type;
 
 /**

@@ -496,6 +496,7 @@ const static struct rt_pin_ops _at32_pin_ops =
     at32_pin_attach_irq,
     at32_pin_dettach_irq,
     at32_pin_irq_enable,
+    RT_NULL,
 };
 
 rt_inline void pin_irq_hdr(int irqno)

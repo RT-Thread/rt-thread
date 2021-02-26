@@ -165,7 +165,10 @@ static rt_err_t _uart_ctrl(struct rt_serial_device *serial, int cmd, void *arg)
 
     return RT_EOK;
 }
-
+RT_WEAK int uart_putc_hook(rt_uint8_t *ch)
+{
+    return -1;
+}
 static int _uart_putc(struct rt_serial_device *serial, char c)
 {
     drv_uart_cfg_t *instance = NULL;
@@ -180,12 +183,18 @@ static int _uart_putc(struct rt_serial_device *serial, char c)
     nrf_uart_event_clear(instance->uart.p_reg, NRF_UART_EVENT_TXDRDY);
     nrf_uart_task_trigger(instance->uart.p_reg, NRF_UART_TASK_STARTTX);
     nrf_uart_txd_set(instance->uart.p_reg, (uint8_t)c);
+    uart_putc_hook((rt_uint8_t *)&c);
     while (!nrf_uart_event_check(instance->uart.p_reg, NRF_UART_EVENT_TXDRDY))
     {
         //wait for TXD send
     }    
     return rtn;
 }
+
+RT_WEAK int uart_getc_hook(rt_uint8_t *ch)
+{
+    return -1;
+};
 
 static int _uart_getc(struct rt_serial_device *serial)
 {
@@ -202,7 +211,22 @@ static int _uart_getc(struct rt_serial_device *serial)
         ch = instance->rx_byte;
         instance->rx_length--;
     }
-    return ch;
+
+    if (-1 != ch)
+    {
+        return ch;
+    }
+    else
+    {
+        if (-1 == uart_getc_hook((rt_uint8_t *)&ch))
+        {
+            return -1;
+        }
+        else
+        {
+            return ch;
+        }
+    }
 }
 
 static struct rt_uart_ops _uart_ops = {

@@ -38,35 +38,35 @@ extern "C" {
   * @brief RMU BOR fliter
   */
 typedef enum {
-	RMU_BORFLT_1 = 0x1,	/**< 1 cycle  */
-	RMU_BORFLT_2 = 0x2,	/**< 2 cycles */
-	RMU_BORFLT_3 = 0x3,	/**< 3 cycles */
-	RMU_BORFLT_4 = 0x4,	/**< 4 cycles */
-	RMU_BORFLT_5 = 0x5,	/**< 5 cycles */
-	RMU_BORFLT_6 = 0x6,	/**< 6 cycles */
-	RMU_BORFLT_7 = 0x7,	/**< 7 cycles */
+	RMU_BORFLT_1 = 0x1U,	/**< 1 cycle  */
+	RMU_BORFLT_2 = 0x2U,	/**< 2 cycles */
+	RMU_BORFLT_3 = 0x3U,	/**< 3 cycles */
+	RMU_BORFLT_4 = 0x4U,	/**< 4 cycles */
+	RMU_BORFLT_5 = 0x5U,	/**< 5 cycles */
+	RMU_BORFLT_6 = 0x6U,	/**< 6 cycles */
+	RMU_BORFLT_7 = 0x7U,	/**< 7 cycles */
 } rmu_bor_filter_t;
 
 /**
   * @brief RMU BOR voltage
   */
 typedef enum {
-	RMU_VOL_NONE = 0x0,	/**< Disable */
-	RMU_VOL_2_0  = 0x1,	/**< 2.0V */
-	RMU_VOL_2_2  = 0x2,	/**< 2.2V */
-	RMU_VOL_2_4  = 0x3,	/**< 2.4V */
-	RMU_VOL_2_6  = 0x4,	/**< 2.6V */
-	RMU_VOL_2_8  = 0x5,	/**< 2.8V */
-	RMU_VOL_3_0  = 0x6,	/**< 3.0V */
-	RMU_VOL_3_2  = 0x7,	/**< 3.2V */
-	RMU_VOL_3_4  = 0x8,	/**< 3.4V */
-	RMU_VOL_3_6  = 0x9,	/**< 3.6V */
-	RMU_VOL_3_8  = 0xA,	/**< 3.8V */
-	RMU_VOL_4_0  = 0xB,	/**< 4.0V */
-	RMU_VOL_4_2  = 0xC,	/**< 4.2V */
-	RMU_VOL_4_4  = 0xD,	/**< 4.4V */
-	RMU_VOL_4_6  = 0xE,	/**< 4.6V */
-	RMU_VOL_4_8  = 0xF,	/**< 4.8V */
+	RMU_VOL_NONE = 0x0U,	/**< Disable */
+	RMU_VOL_2_0  = 0x1U,	/**< 2.0V */
+	RMU_VOL_2_2  = 0x2U,	/**< 2.2V */
+	RMU_VOL_2_4  = 0x3U,	/**< 2.4V */
+	RMU_VOL_2_6  = 0x4U,	/**< 2.6V */
+	RMU_VOL_2_8  = 0x5U,	/**< 2.8V */
+	RMU_VOL_3_0  = 0x6U,	/**< 3.0V */
+	RMU_VOL_3_2  = 0x7U,	/**< 3.2V */
+	RMU_VOL_3_4  = 0x8U,	/**< 3.4V */
+	RMU_VOL_3_6  = 0x9U,	/**< 3.6V */
+	RMU_VOL_3_8  = 0xAU,	/**< 3.8V */
+	RMU_VOL_4_0  = 0xBU,	/**< 4.0V */
+	RMU_VOL_4_2  = 0xCU,	/**< 4.2V */
+	RMU_VOL_4_4  = 0xDU,	/**< 4.4V */
+	RMU_VOL_4_6  = 0xEU,	/**< 4.6V */
+	RMU_VOL_4_8  = 0xFU,	/**< 4.8V */
 } rmu_bor_vol_t;
 
 /**
@@ -85,10 +85,35 @@ typedef enum {
 	RMU_RST_CPU    = (1U << 9),	/**< CPU */
 	RMU_RST_CFG    = (1U << 10),	/**< CFG */
 	RMU_RST_CFGERR = (1U << 16),	/**< CFG Error */
+	RMU_RST_ALL    = (0xFFFFFU),	/**< ALL */
 } rmu_state_t;
 
 /**
   * @brief RMU periperal select bit
+  * @verbatim
+      In this module, for the convenience of code maintenance,
+      TIMERx is used to indicate the sequence of the timer peripheral.
+      Different product series TIMERx represent different meanings:
+      1. For ES32F36xx series:
+      TIMER0 ----> AD16C4T0
+      TIMER1 ----> AD16C4T1
+      TIMER2 ----> GP32C4T0
+      TIMER3 ----> GP32C4T1
+      TIMER4 ----> BS16T0
+      TIMER5 ----> BS16T1
+      TIMER6 ----> GP16C4T0
+      TIMER7 ----> GP16C4T1
+     
+      2. For ES32F393x/ES32F336x/ES32F392x series:
+      TIMER0 ----> GP16C4T0
+      TIMER1 ----> GP16C4T1
+      TIMER2 ----> GP32C4T0
+      TIMER3 ----> GP32C4T1
+      TIMER4 ----> BS16T0
+      TIMER5 ----> BS16T1
+      TIMER6 ----> GP16C4T2
+      TIMER7 ----> GP16C4T3
+    @endverbatim
   */
 typedef enum {
 	RMU_PERH_GPIO    = (1U << 0),			/**< AHB1: GPIO */
@@ -182,7 +207,8 @@ typedef enum {
                                  ((x) == RMU_RST_MCU)    || \
                                  ((x) == RMU_RST_CPU)    || \
                                  ((x) == RMU_RST_CFG)    || \
-                                 ((x) == RMU_RST_CFGERR))
+                                 ((x) == RMU_RST_CFGERR)    || \
+                                 ((x) == RMU_RST_ALL))
 #define IS_RMU_STATE_CLEAR(x)	(((x) == RMU_RST_POR)    || \
                                  ((x) == RMU_RST_WAKEUP) || \
                                  ((x) == RMU_RST_BOR)    || \
@@ -193,7 +219,8 @@ typedef enum {
                                  ((x) == RMU_RST_CHIP)   || \
                                  ((x) == RMU_RST_MCU)    || \
                                  ((x) == RMU_RST_CPU)    || \
-                                 ((x) == RMU_RST_CFG))
+                                 ((x) == RMU_RST_CFG)    || \
+                                 ((x) == RMU_RST_ALL))
 #define IS_RMU_PERH(x)		(((x) == RMU_PERH_GPIO)    || \
                                  ((x) == RMU_PERH_CRC)     || \
                                  ((x) == RMU_PERH_CALC)    || \
@@ -250,7 +277,7 @@ typedef enum {
   * @{
   */
 void ald_rmu_bor_config(rmu_bor_filter_t flt, rmu_bor_vol_t vol, type_func_t state);
-flag_status_t ald_rmu_get_reset_status(rmu_state_t state);
+uint32_t ald_rmu_get_reset_status(rmu_state_t state);
 void ald_rmu_clear_reset_status(rmu_state_t state);
 void ald_rmu_reset_periperal(rmu_peripheral_t perh);
 /**

@@ -45,11 +45,29 @@ if rtconfig.PLATFORM == 'iar':
 Export('RTT_ROOT')
 Export('rtconfig')
 
+SDK_ROOT = os.path.abspath('./')
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
+else:
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+
+SDK_LIB = libraries_path_prefix
+Export('SDK_LIB')
+
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs = objs + SConscript('../libraries/drivers/SConscript')
-objs = objs + SConscript('../libraries/MIMXRT1064/SConscript')
+imxrt_library = 'MIMXRT1064'
+rtconfig.BSP_LIBRARY_TYPE = imxrt_library
+
+# include libraries
+objs.extend(SConscript(os.path.join(libraries_path_prefix, imxrt_library, 'SConscript')))
+
+# include drivers
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+
+# include peripherals
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'peripherals', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

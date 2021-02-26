@@ -21,7 +21,7 @@ elif rtconfig.CROSS_TOOL == 'keil':
 
 CPPDEFINES = ['CPU_MK64FN1M0VLL12']
 
-group = DefineGroup('Device', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 #CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -18,7 +18,7 @@
 #define __UTILS_H__
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 #include <stdlib.h>
@@ -46,23 +46,21 @@ extern uint32_t __systick_interval;
 /**
   * @brief  ALD Status structures definition
   */
-typedef enum
-{
-    OK      = 0x0,
-    ERROR   = 0x1,
-    BUSY    = 0x2,
-    TIMEOUT = 0x3
+typedef enum {
+	OK      = 0x0U,	/**< Status: OK */
+	ERROR   = 0x1U,	/**< Status: ERROR */
+	BUSY    = 0x2U,	/**< Status: BUSY */
+	TIMEOUT = 0x3U,	/**< Status: TIMEOUT */
 } ald_status_t;
 
 /**
   * @brief  SysTick interval definition
   */
-typedef enum
-{
-    SYSTICK_INTERVAL_1MS    = 1000,	/**< Interval is 1ms */
-    SYSTICK_INTERVAL_10MS   = 100,	/**< Interval is 10ms */
-    SYSTICK_INTERVAL_100MS  = 10,	/**< Interval is 100ms */
-    SYSTICK_INTERVAL_1000MS = 1,	/**< Interval is 1s */
+typedef enum {
+	SYSTICK_INTERVAL_1MS    = 1000U,	/**< Interval is 1ms */
+	SYSTICK_INTERVAL_10MS   = 100U,		/**< Interval is 10ms */
+	SYSTICK_INTERVAL_100MS  = 10U,		/**< Interval is 100ms */
+	SYSTICK_INTERVAL_1000MS = 1U,		/**< Interval is 1s */
 } systick_interval_t;
 /**
   * @}
@@ -71,25 +69,24 @@ typedef enum
 /** @defgroup ALD_Public_Macros Public Macros
   * @{
   */
-#define ALD_MAX_DELAY	0xFFFFFFFF
-
+#define ALD_MAX_DELAY	0xFFFFFFFFU
 #define IS_BIT_SET(reg, bit)	(((reg) & (bit)) != RESET)
 #define IS_BIT_CLR(reg, bit)	(((reg) & (bit)) == RESET)
 #define RESET_HANDLE_STATE(x)	((x)->state = 0)
 #define __LOCK(x)				\
-    do {					\
-        if ((x)->lock == LOCK) {	\
-            return BUSY;		\
-        }				\
-        else {				\
-            (x)->lock = LOCK;	\
-        }				\
-    } while (0)
+	do {					\
+		if ((x)->lock == LOCK) {	\
+			return BUSY;		\
+		}				\
+		else {				\
+			(x)->lock = LOCK;	\
+		}				\
+	} while (0)
 
 #define __UNLOCK(x)				\
-    do {					\
-        (x)->lock = UNLOCK;		\
-    } while (0)
+	do {					\
+		(x)->lock = UNLOCK;		\
+	} while (0)
 
 /**
   * @}
@@ -98,6 +95,10 @@ typedef enum
 /** @defgroup ALD_Private_Macros Private Macros
   * @{
   */
+#define MCU_UID0_ADDR	0x000403E0U
+#define MCU_UID1_ADDR	0x000403E8U
+#define MCU_UID2_ADDR	0x000403F0U
+#define MCU_CHIPID_ADDR	0x000403F8U
 #define IS_PRIO(x)	((x) < 4)
 #define IS_SYSTICK_INTERVAL(x)	(((x) == SYSTICK_INTERVAL_1MS)   || \
                                  ((x) == SYSTICK_INTERVAL_10MS)  || \
@@ -140,7 +141,8 @@ ald_status_t ald_wait_flag(uint32_t *reg, uint32_t bit, flag_status_t status, ui
 void ald_mcu_irq_config(IRQn_Type irq, uint8_t prio, type_func_t status);
 uint32_t ald_mcu_get_tick(void);
 uint32_t ald_mcu_get_cpu_id(void);
-
+void ald_mcu_get_uid(uint8_t *buf);
+uint32_t ald_mcu_get_chipid(void);
 /**
   * @}
   */

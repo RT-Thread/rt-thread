@@ -105,18 +105,18 @@ typedef struct
 #define NAND_WRITE_TIMEOUT         1000U
 #define CMD_AREA                   (1U<<16U)	/* A16 = CLE high */
 #define ADDR_AREA                  (1U<<17U)	/* A17 = ALE high */
-#define NAND_CMD_AREA_A            ((uint8_t)0x00)
-#define NAND_CMD_AREA_B            ((uint8_t)0x01)
-#define NAND_CMD_AREA_C            ((uint8_t)0x50)
-#define NAND_CMD_AREA_TRUE1        ((uint8_t)0x30)
-#define NAND_CMD_WRITE0            ((uint8_t)0x80)
-#define NAND_CMD_WRITE_TRUE1       ((uint8_t)0x10)
-#define NAND_CMD_ERASE0            ((uint8_t)0x60)
-#define NAND_CMD_ERASE1            ((uint8_t)0xD0)
-#define NAND_CMD_READID            ((uint8_t)0x90)
-#define NAND_CMD_STATUS            ((uint8_t)0x70)
-#define NAND_CMD_LOCK_STATUS       ((uint8_t)0x7A)
-#define NAND_CMD_RESET             ((uint8_t)0xFF)
+#define NAND_CMD_AREA_A            ((uint8_t)0x00U)
+#define NAND_CMD_AREA_B            ((uint8_t)0x01U)
+#define NAND_CMD_AREA_C            ((uint8_t)0x50U)
+#define NAND_CMD_AREA_TRUE1        ((uint8_t)0x30U)
+#define NAND_CMD_WRITE0            ((uint8_t)0x80U)
+#define NAND_CMD_WRITE_TRUE1       ((uint8_t)0x10U)
+#define NAND_CMD_ERASE0            ((uint8_t)0x60U)
+#define NAND_CMD_ERASE1            ((uint8_t)0xD0U)
+#define NAND_CMD_READID            ((uint8_t)0x90U)
+#define NAND_CMD_STATUS            ((uint8_t)0x70U)
+#define NAND_CMD_LOCK_STATUS       ((uint8_t)0x7AU)
+#define NAND_CMD_RESET             ((uint8_t)0xFFU)
 /* NAND memory status */
 #define NAND_VALID_ADDRESS         0x00000100U
 #define NAND_INVALID_ADDRESS       0x00000200U

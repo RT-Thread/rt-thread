@@ -89,7 +89,7 @@ static void usage(void)
     rt_kprintf("  -h           Specify host address\n");
     rt_kprintf("  -p           Specify the host port number\n");
     rt_kprintf("  --cnt        Specify the send data count\n");
-    rt_kprintf("  --stop       Stop tcpclient program\n");
+    rt_kprintf("  --stop       Stop udpclient program\n");
     rt_kprintf("  --help       Print help information\n");
 }
 
@@ -117,8 +117,8 @@ static void udpclient_test(int argc, char** argv)
         {
             if (started)
             {
-                LOG_I("The tcpclient has started!");
-                LOG_I("Please stop tcpclient firstly, by: tcpclient --stop");
+                LOG_I("The udpclient has started!");
+                LOG_I("Please stop udpclient firstly, by: udpclient --stop");
                 return;
             }
 

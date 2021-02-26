@@ -19,6 +19,7 @@ semaphore_priority.c
 semaphore_buffer_worker.c
 semaphore_producer_consumer.c
 mutex_simple.c
+mutex_priority.c
 event_simple.c
 mbox_simple.c
 mbox_send_wait.c
@@ -34,7 +35,7 @@ memp_simple.c
 tc_sample.c
 """)
 
-group = DefineGroup('examples', src,
+group = DefineGroup('Examples', src,
                     depend = ['RT_USING_TC'],
                     CPPPATH=[GetCurrentDir()])
 

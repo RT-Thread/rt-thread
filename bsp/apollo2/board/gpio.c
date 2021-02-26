@@ -212,6 +212,7 @@ const static struct rt_pin_ops am_pin_ops =
     am_pin_attach_irq,
     am_pin_dettach_irq,
     am_pin_irq_enable,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

@@ -1,11 +1,7 @@
 /*
- * File      : bsp.h
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://openlab.rt-thread.com/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -60,86 +56,86 @@ extern "C" {
 #define T_DEVICE	 		7		/* device not available */
 #define T_DBLFLT	 		8		/* double fault */
 /* 9 is reserved */
-#define T_TSS				10		/* invalid task switch segment */
-#define T_SEGNP				11		/* segment not present */
-#define T_STACK	 			12		/* stack exception */
-#define T_GPFLT				13		/* genernal protection fault */
-#define T_PGFLT				14		/* page fault */
+#define T_TSS			10		/* invalid task switch segment */
+#define T_SEGNP			11		/* segment not present */
+#define T_STACK	 		12		/* stack exception */
+#define T_GPFLT			13		/* genernal protection fault */
+#define T_PGFLT			14		/* page fault */
 /* 15 is reserved */
-#define T_FPERR	 			16		/* floating point error */
-#define T_ALIGN				17		/* aligment check */
-#define T_MCHK				18		/* machine check */
-#define T_DEFAULT			500		/* catchall */
+#define T_FPERR	 		16		/* floating point error */
+#define T_ALIGN			17		/* aligment check */
+#define T_MCHK			18		/* machine check */
+#define T_DEFAULT		500		/* catchall */
 
-#define INTTIMER0			0
-#define INTKEYBOARD			1
-#define INTUART0_RX			4
-#define	CLOCK_IRQ	0
+#define INTTIMER0		0
+#define INTKEYBOARD		1
+#define INTUART0_RX		4
+#define	CLOCK_IRQ		0
 #define	KEYBOARD_IRQ	1
-#define	CASCADE_IRQ	2	/* cascade enable for 2nd AT controller */
-#define	ETHER_IRQ	3	/* default ethernet interrupt vector */
+#define	CASCADE_IRQ		2	/* cascade enable for 2nd AT controller */
+#define	ETHER_IRQ		3	/* default ethernet interrupt vector */
 #define	SECONDARY_IRQ	3	/* RS232 interrupt vector for port 2 */
-#define	RS232_IRQ	4	/* RS232 interrupt vector for port 1 */
-#define	XT_WINI_IRQ	5	/* xt winchester */
-#define	FLOPPY_IRQ	6	/* floppy disk */
-#define	PRINTER_IRQ	7
-#define	AT_WINI_IRQ	14	/* at winchester */
+#define	RS232_IRQ		4	/* RS232 interrupt vector for port 1 */
+#define	XT_WINI_IRQ		5	/* xt winchester */
+#define	FLOPPY_IRQ		6	/* floppy disk */
+#define	PRINTER_IRQ		7
+#define	AT_WINI_IRQ		14	/* at winchester */
 /* I/O Addresses of the two 8259A programmable interrupt controllers */
-#define IO_PIC1 			0x20 	/* Master(IRQs 0-7) */
-#define IO_PIC2 			0xa0	/* Slave(IRQs 8-15) */
-#define IRQ_SLAVE 			0x2		/* IRQ at which slave connects to master */
-#define IRQ_OFFSET 			0x20	/* IRQ 0 corresponds to int IRQ_OFFSET */
+#define IO_PIC1 		0x20 	/* Master(IRQs 0-7) */
+#define IO_PIC2 		0xa0	/* Slave(IRQs 8-15) */
+#define IRQ_SLAVE 		0x2		/* IRQ at which slave connects to master */
+#define IRQ_OFFSET 		0x20	/* IRQ 0 corresponds to int IRQ_OFFSET */
 
-#define MAX_HANDLERS		16		/*max number of isr handler*/
+#define MAX_HANDLERS	16		/*max number of isr handler*/
 
 /*******************************************************************/
 /* CRT Register */
 /*******************************************************************/
-#define MONO_BASE			0x3b4
-#define MONO_BUF			0xb0000
-#define CGA_BASE			0x3d4
-#define CGA_BUF				0xb8000
+#define MONO_BASE		0x3b4
+#define MONO_BUF		0xb0000
+#define CGA_BASE		0x3d4
+#define CGA_BUF			0xb8000
 
-#define CRT_ROWS			25
-#define CRT_COLS			80
-#define CRT_SIZE				(CRT_ROWS * CRT_COLS)
+#define CRT_ROWS		25
+#define CRT_COLS		80
+#define CRT_SIZE		(CRT_ROWS * CRT_COLS)
 
 /*******************************************************************/
 /* Keyboard Register */
 /*******************************************************************/
-#define	KBSTATP				0x64	/* kbd controller status port(I) */
-#define	KBS_DIB				0x01	/* kbd data in buffer */
-#define	KBDATAP				0x60	/* kbd data port(I) */
+#define	KBSTATP			0x64	/* kbd controller status port(I) */
+#define	KBS_DIB			0x01	/* kbd data in buffer */
+#define	KBDATAP			0x60	/* kbd data port(I) */
 /* AT keyboard */
 /* 8042 ports */
-#define	KB_DATA		0x60	/* I/O port for keyboard data
-					Read : Read Output Buffer 
-					Write: Write Input Buffer(8042 Data&8048 Command) */
-#define	KB_CMD		0x64	/* I/O port for keyboard command
-					Read : Read Status Register
-					Write: Write Input Buffer(8042 Command) */
-#define	LED_CODE	0xED
-#define	KB_ACK		0xFA
+#define	KB_DATA			0x60	/* I/O port for keyboard data
+                                 * Read : Read Output Buffer 
+                                 * Write: Write Input Buffer(8042 Data&8048 Command) */
+#define	KB_CMD			0x64	/* I/O port for keyboard command
+                                 * Read : Read Status Register
+                                 * Write: Write Input Buffer(8042 Command) */
+#define	LED_CODE		0xED
+#define	KB_ACK			0xFA
 
 /*******************************************************************/
 /* Serial Register */
 /*******************************************************************/
 /*Serial I/O code */
-#define COM1				0x3F8
-#define COMSTATUS			5
-#define COMDATA				0x01
-#define COMREAD				0
-#define COMWRITE			0
+#define COM1			0x3F8
+#define COMSTATUS		5
+#define COMDATA			0x01
+#define COMREAD			0
+#define COMWRITE		0
 
 /* Bits definition of the Line Status Register (LSR)*/
-#define DR					0x01	/* Data Ready */
-#define OE					0x02	/* Overrun Error */
-#define PE					0x04	/* Parity Error */
-#define FE					0x08	/* Framing Error */
-#define BI					0x10	/* Break Interrupt */
-#define THRE				0x20	/* Transmitter Holding Register Empty */
-#define TEMT				0x40	/* Transmitter Empty */
-#define ERFIFO				0x80	/* Error receive Fifo */
+#define DR				0x01	/* Data Ready */
+#define OE				0x02	/* Overrun Error */
+#define PE				0x04	/* Parity Error */
+#define FE				0x08	/* Framing Error */
+#define BI				0x10	/* Break Interrupt */
+#define THRE			0x20	/* Transmitter Holding Register Empty */
+#define TEMT			0x40	/* Transmitter Empty */
+#define ERFIFO			0x80	/* Error receive Fifo */
 
 #ifdef __cplusplus
 }

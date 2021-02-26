@@ -38,93 +38,85 @@ extern "C" {
 /**
   * @brief Data width
   */
-typedef enum
-{
-    TRNG_DSEL_1B  = 0x0,	/**< 1-bit */
-    TRNG_DSEL_8B  = 0x1,	/**< 8-bit */
-    TRNG_DSEL_16B = 0x2,	/**< 16-bit */
-    TRNG_DSEL_32B = 0x3,	/**< 32-bit */
+typedef enum {
+	TRNG_DSEL_1B  = 0x0U,	/**< 1-bit */
+	TRNG_DSEL_8B  = 0x1U,	/**< 8-bit */
+	TRNG_DSEL_16B = 0x2U,	/**< 16-bit */
+	TRNG_DSEL_32B = 0x3U,	/**< 32-bit */
 } trng_data_width_t;
 
 /**
   * @brief seed type
   */
-typedef enum
-{
-    TRNG_SEED_TYPE_0    = 0x0,	/**< Using 0 as seed */
-    TRNG_SEED_TYPE_1    = 0x1,	/**< Using 1 as seed */
-    TRNG_SEED_TYPE_LAST = 0x2,	/**< Using last seed */
-    TRNG_SEED_TYPE_SEED = 0x3,	/**< Using value of register */
+typedef enum {
+	TRNG_SEED_TYPE_0    = 0x0U,	/**< Using 0 as seed */
+	TRNG_SEED_TYPE_1    = 0x1U,	/**< Using 1 as seed */
+	TRNG_SEED_TYPE_LAST = 0x2U,	/**< Using last seed */
+	TRNG_SEED_TYPE_SEED = 0x3U,	/**< Using value of register */
 } trng_seed_type_t;
 
 /**
   * @brief TRNG init structure definition
   */
-typedef struct
-{
-    trng_data_width_t data_width;	/**< The width of data */
-    trng_seed_type_t seed_type;	/**< The seed type */
-    uint32_t seed;			/**< The value of seed */
-    uint16_t t_start;		/**< T(start) = T(hclk) * (t_start + 1), T(start) > 1ms */
-    uint8_t adjc;			/**< Adjust parameter */
-    type_func_t posten;		/**< Data back handle function  */
+typedef struct {
+	trng_data_width_t data_width;	/**< The width of data */
+	trng_seed_type_t seed_type;	/**< The seed type */
+	uint32_t seed;			/**< The value of seed */
+	uint16_t t_start;		/**< T(start) = T(trng) * 2 ^ (t_start + 1), T(start) > 1ms */
+	uint8_t adjc;			/**< Adjust parameter */
+	type_func_t posten;		/**< Data back handle function  */
 } trng_init_t;
 
 /**
   * @brief TRNG state structures definition
   */
-typedef enum
-{
-    TRNG_STATE_RESET = 0x0,	/**< Peripheral is not initialized */
-    TRNG_STATE_READY = 0x1,	/**< Peripheral Initialized and ready for use */
-    TRNG_STATE_BUSY  = 0x2,	/**< An internal process is ongoing */
-    TRNG_STATE_ERROR = 0x4,	/**< Error */
+typedef enum {
+	TRNG_STATE_RESET = 0x0U,	/**< Peripheral is not initialized */
+	TRNG_STATE_READY = 0x1U,	/**< Peripheral Initialized and ready for use */
+	TRNG_STATE_BUSY  = 0x2U,	/**< An internal process is ongoing */
+	TRNG_STATE_ERROR = 0x4U,	/**< Error */
 } trng_state_t;
 
 /**
   * @brief State type
   */
-typedef enum
-{
-    TRNG_STATUS_START = (1U << 0),	/**< Start state */
-    TRNG_STATUS_DAVLD = (1U << 1),	/**< Data valid state */
-    TRNG_STATUS_SERR  = (1U << 2),	/**< Error state */
+typedef enum {
+	TRNG_STATUS_START = (1U << 0),	/**< Start state */
+	TRNG_STATUS_DAVLD = (1U << 1),	/**< Data valid state */
+	TRNG_STATUS_SERR  = (1U << 2),	/**< Error state */
 } trng_status_t;
 
 /**
   * @brief Interrupt type
   */
-typedef enum
-{
-    TRNG_IT_START = (1U << 0),	/**< Start */
-    TRNG_IT_DAVLD = (1U << 1),	/**< Data valid */
-    TRNG_IT_SERR  = (1U << 2),	/**< Error */
+typedef enum {
+	TRNG_IT_START = (1U << 0),	/**< Start */
+	TRNG_IT_DAVLD = (1U << 1),	/**< Data valid */
+	TRNG_IT_SERR  = (1U << 2),	/**< Error */
 } trng_it_t;
 
 /**
   * @brief Interrupt flag type
   */
-typedef enum
-{
-    TRNG_IF_START = (1U << 0),	/**< Start */
-    TRNG_IF_DAVLD = (1U << 1),	/**< Data valid */
-    TRNG_IF_SERR  = (1U << 2),	/**< Error */
+typedef enum {
+	TRNG_IF_START = (1U << 0),	/**< Start */
+	TRNG_IF_DAVLD = (1U << 1),	/**< Data valid */
+	TRNG_IF_SERR  = (1U << 2),	/**< Error */
 } trng_flag_t;
 
 /**
   * @brief  TRNG Handle Structure definition
   */
-typedef struct trng_handle_s
-{
-    TRNG_TypeDef *perh;	/**< Register base address */
-    trng_init_t init;	/**< TRNG required parameters */
-    uint32_t data;		/**< result data */
-    lock_state_t lock; 	/**< Locking object */
-    trng_state_t state;	/**< TRNG operation state */
+typedef struct trng_handle_s {
+	TRNG_TypeDef *perh;	/**< Register base address */
+	trng_init_t init;	/**< TRNG required parameters */
+	uint32_t data;		/**< result data */
+	lock_state_t lock; 	/**< Locking object */
+	trng_state_t state;	/**< TRNG operation state */
 
-    void (*trng_cplt_cbk)(struct trng_handle_s *arg); /**< Trng completed callback */
-    void (*err_cplt_cbk)(struct trng_handle_s *arg);  /**< Trng error callback */
-    void (*init_cplt_cbk)(struct trng_handle_s *arg); /**< Trng init completed callback */
+	void (*trng_cplt_cbk)(struct trng_handle_s *arg); /**< Trng completed callback */
+	void (*err_cplt_cbk)(struct trng_handle_s *arg);  /**< Trng error callback */
+	void (*init_cplt_cbk)(struct trng_handle_s *arg); /**< Trng init completed callback */
 } trng_handle_t;
 /**
   * @}
@@ -154,15 +146,16 @@ typedef struct trng_handle_s
                                  ((x) == TRNG_SEED_TYPE_LAST) || \
                                  ((x) == TRNG_SEED_TYPE_SEED))
 #define IS_TRNG_STATUS(x)	(((x) == TRNG_STATUS_START)  || \
-                             ((x) == TRNG_STATUS_DAVLD)  || \
-                             ((x) == TRNG_STATUS_SERR))
-#define IS_TRNG_IT(x)	(((x) == TRNG_IT_START)  || \
-                         ((x) == TRNG_IT_DAVLD)  || \
-                         ((x) == TRNG_IT_SERR))
-#define IS_TRNG_FLAG(x)	(((x) == TRNG_IF_START)  || \
-                         ((x) == TRNG_IF_DAVLD)  || \
-                         ((x) == TRNG_IF_SERR))
-#define IS_TRNG_ADJC(x)	((x) < 4)
+                                 ((x) == TRNG_STATUS_DAVLD)  || \
+                                 ((x) == TRNG_STATUS_SERR))
+#define IS_TRNG_IT(x)		(((x) == TRNG_IT_START)  || \
+                                 ((x) == TRNG_IT_DAVLD)  || \
+                                 ((x) == TRNG_IT_SERR))
+#define IS_TRNG_FLAG(x)		(((x) == TRNG_IF_START)  || \
+                                 ((x) == TRNG_IF_DAVLD)  || \
+                                 ((x) == TRNG_IF_SERR))
+#define IS_TRNG_ADJC(x)		((x) < 4)
+#define IS_TRNG_T_START(x)	((x) < 8)
 /**
   * @}
   */

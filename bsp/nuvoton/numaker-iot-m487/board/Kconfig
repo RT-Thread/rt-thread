@@ -1,0 +1,133 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        source "$BSP_DIR/../libraries/m480/rtt_port/Kconfig"
+    endmenu
+
+    menu "On-board Peripheral Drivers"
+
+        config BSP_USING_NULINKME
+            bool "Enable UART0 for RTT Console(uart0)"
+            select BSP_USING_UART
+            select BSP_USING_UART0
+            default y
+
+        config BOARD_USING_IP101GR
+            bool "Enable ethernet phy supporting(over emac/mdio)"
+            select BSP_USING_EMAC
+            default n
+
+        config BOARD_USING_ESP8266
+            bool "ESP8266 Wi-Fi module supporting(over uart1)"
+            select BSP_USING_UART
+            select BSP_USING_UART1
+            select BSP_USING_UART1_RX_DMA
+            select BSP_USING_UART1_TX_DMA
+            select PKG_USING_AT_DEVICE
+            select AT_DEVICE_USING_ESP8266
+            select AT_DEVICE_ESP8266_INIT_ASYN
+            default n
+
+        config BOARD_USING_BMX055
+            bool "BMX055 9-axis sensor(over i2c2)"
+            select NU_PKG_USING_BMX055
+            select BSP_USING_I2C2
+            default n
+
+        config BOARD_USING_NAU88L25
+            bool "NAU88L25 Audio Codec supporting(over i2s, i2c2)"
+            select NU_PKG_USING_NAU88L25
+            select BSP_USING_I2C2
+            select BSP_USING_I2S
+            select BSP_USING_I2S0
+            default n
+
+        config BOARD_USING_STORAGE_SDCARD
+            bool "SDCARD supporting(over sdh0)"
+            select BSP_USING_SDH
+            select BSP_USING_SDH0
+            default n
+
+        config BOARD_USING_STORAGE_SPIFLASH
+            bool "SPIFLASH supporting(over qspi0)"
+            select BSP_USING_QSPI
+            select BSP_USING_QSPI0
+            default y
+
+        choice
+            prompt "Select FS/HS USB Ports"
+ 
+            config BOARD_USING_HSUSBD
+                select BSP_USING_HSUSBD
+                bool "Enable HSUSBD(over USB2.0)"
+                help
+                    Choose this option if you need HSUSBD function mode.
+
+            config BOARD_USING_HSUSBD_USBH
+                select BSP_USING_USBH
+                select BSP_USING_HSUSBD
+                bool "Enable HSUSBD(over USB2.0) and USBH(over USB1.1)"
+                help
+                    Choose this option if you need HSUSBD and USBH function mode at the same time.
+
+            config BOARD_USING_HSUSBH
+                select BSP_USING_HSUSBH
+                bool "Enable HSUSBH(over USB2.0)"
+                help
+                    Choose this option if you need HSUSBH function mode.
+
+            config BOARD_USING_HSUSBH_USBD
+                select BSP_USING_HSUSBH
+                select BSP_USING_USBD
+                bool "Enable HSUSBH(over USB2.0) and USBD(over USB1.1)"
+                help
+                    Choose this option if you need HSUSBH and USBD function mode at the same time.
+
+            config BOARD_USING_HSOTG
+                select BSP_USING_HSOTG
+                bool "Enable HSOTG(over USB2.0)"
+                help
+                    Choose this option if you need HSOTG function mode.
+
+        endchoice
+
+    endmenu
+
+    menu "Board extended module drivers"
+
+        config BOARD_USING_MAX31875
+            bool "MAX31875 Temperature sensor(over i2c1)"
+            select NU_PKG_USING_MAX31875
+            select BSP_USING_I2C1
+            default n
+
+        config BOARD_USING_LCD_ILI9341
+            bool "LCD ILI9341 (over spi2)"
+            select NU_PKG_USING_ILI9341
+            select NU_PKG_USING_ILI9341_SPI
+            select BSP_USING_SPI2
+            default n
+
+        if BOARD_USING_LCD_ILI9341
+
+            config BOARD_USING_ILI9341_PIN_BACKLIGHT
+            int "Specify the pin index of backlight pin index"
+                range 0 127
+                default 69
+
+            config BOARD_USING_ILI9341_PIN_RESET
+            int "Specify the pin index of reset pin index"
+                range 0 127
+                default 19
+
+            config BOARD_USING_ILI9341_PIN_DC
+            int "Specify the pin index of data&command switching"
+                range 0 127
+                default 18
+
+        endif
+
+    endmenu
+
+
+endmenu

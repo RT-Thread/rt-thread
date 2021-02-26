@@ -8,6 +8,6 @@ src = Glob('src/*.c')
 
 CPPPATH = [cwd + '/include']
 
-group = DefineGroup('netdev', src, depend = ['RT_USING_NETDEV'], CPPPATH = CPPPATH)
+group = DefineGroup('SAL', src, depend = ['RT_USING_NETDEV'], CPPPATH = CPPPATH)
 
 Return('group')

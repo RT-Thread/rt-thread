@@ -43,6 +43,6 @@ path = [cwd + '/include',
     cwd + '/common/wdt'
 ]
 
-group = DefineGroup('libraries', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')

@@ -206,7 +206,7 @@ static void uart_get_dma_config(void)
     uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART2_TX_USING_DMA
-    static struct dma_tx_config uart2_dma_tx = {.request = kDmaRequestMuxLPUART4Tx, .channel = BSP_LPUART2_TX_DMA_CHANNEL};
+    static struct dma_tx_config uart2_dma_tx = {.request = kDmaRequestMuxLPUART2Tx, .channel = BSP_LPUART2_TX_DMA_CHANNEL};
     uarts[LPUART2_INDEX].dma_tx = &uart2_dma_tx;
     uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif

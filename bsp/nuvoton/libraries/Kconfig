@@ -1,0 +1,2 @@
+config SOC_FAMILY_NUMICRO
+    bool

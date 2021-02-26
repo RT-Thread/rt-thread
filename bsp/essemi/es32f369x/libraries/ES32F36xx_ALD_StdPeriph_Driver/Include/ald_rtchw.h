@@ -39,8 +39,8 @@ extern "C" {
   * @brief Hardware calibration algorithm
   */
 typedef enum {
-	RTC_CALI_MODE_NORMAL = 0,	/**< Normal mode */
-	RTC_CALI_MODE_SLEEP  = 1,	/**< Low power mode */
+	RTC_CALI_MODE_NORMAL = 0U,	/**< Normal mode */
+	RTC_CALI_MODE_SLEEP  = 1U,	/**< Low power mode */
 } rtc_hw_cali_mode_t;
 
 /**
@@ -111,16 +111,16 @@ typedef struct {
   * @{
   */
 #ifndef RTC_LOCK
-#define RTC_LOCK()	(WRITE_REG(RTC->WPR, 0x0))
-#define RTC_UNLOCK()	(WRITE_REG(RTC->WPR, 0x55AAAA55))
+#define RTC_LOCK()	(WRITE_REG(RTC->WPR, 0x0U))
+#define RTC_UNLOCK()	(WRITE_REG(RTC->WPR, 0x55AAAA55U))
 #endif
 
 #ifndef TSENSE_LOCK
-#define TSENSE_LOCK()	(WRITE_REG(TSENSE->WPR, 0x0))
-#define TSENSE_UNLOCK()	(WRITE_REG(TSENSE->WPR, 0xA55A9669))
+#define TSENSE_LOCK()	(WRITE_REG(TSENSE->WPR, 0x0U))
+#define TSENSE_UNLOCK()	(WRITE_REG(TSENSE->WPR, 0xA55A9669U))
 #endif
 
-#define RTCINFO	((RTCINFO_TypeDef *)0x81000)
+#define RTCINFO	((RTCINFO_TypeDef *)0x81000U)
 /**
   * @}
   */

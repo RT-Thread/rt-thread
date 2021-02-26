@@ -1,109 +1,93 @@
-# STM32H747-ST-DISCOVERY 开发板 BSP 说明
+# STM32H747-ST-DISCOVERY BSP (Board Support Package) Execution Instruction
 
-## 简介
+[中文页](README_zh.md) |
 
-本文档为 [SummerGift](https://github.com/SummerLife) 为 STM32H747-ST-DISCOVERY 开发板提供的 BSP (板级支持包) 说明。
+## Introduction
 
-主要内容如下：
+This document records the execution instruction of the BSP (board support package) provided by the RT-Thread development team for the STM32H747-ST-DISCOVERY development board.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The document is covered in three parts:
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+- STM32H747-ST-DISCOVERY Board Resources Introduction
+- Quickly Get Started
+- Advanced Features
 
-## 开发板介绍
+By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
-STM32H747I-DISCO 是 ST 推出的一款基于 ARM Cortex-M7 内核的开发板，最高主频为 480Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32H747 的芯片性能。
+## Board Resources Introduction
 
-开发板外观如下图所示：
-
-![board](figures/board.png)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32H747，主频 480MHz，2MB FLASH ，1MB RAM
-- 常用接口：USB 转串口、以太网接口、arduino 接口等
-- 调试接口，标准 JTAG/SWD
-
-开发板更多详细信息请参考 ST 官方介绍页面 [STM32H747I-DISCO](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-discovery-kits/stm32h747i-disco.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| USB 转串口        |     支持     ||
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | |
-| UART              |     支持     |   UART1                                  |
+The STM32H747-ST-DISCOVERY is a development board that contains a ARM Cortex-M7. The maximum main frequency is 480 MHz, and it has a wealth of on-board resources that can take full advantage of the STM32H747's chip performance.
 
 
-## 使用说明
 
-使用说明分为如下两个章节：
+[![board](https://github.com/RT-Thread/rt-thread/raw/master/bsp/stm32/stm32h747-st-discovery/figures/board.png)](https://github.com/RT-Thread/rt-thread/blob/master/bsp/stm32/stm32h747-st-discovery/figures/board.png)
 
-- 快速上手
+The mainly-used resources of this board are shown as follows:
 
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+- MCU: STM32H747
+- Main Frequency 480MHz
+- Memory: 2MB FLASH, 1MB RAM
+- Common-used peripherals: USB、Ethernet、arduino API etc.
+- Debug interface: Standard JTAG/SWD.
 
-- 进阶使用
+For more details about this board, please refer to the ST official documentation [STM32H747I-DISCO](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-discovery-kits/stm32h747i-disco.html)。
 
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+## Peripheral Condition
 
+Each peripheral supporting condition for this BSP is as follows:
 
-### 快速上手
+| **On-board Peripheral** | **Support** | **Remark** |
+| ----------------------- | ----------- | ---------- |
+| USB                     | Support     |            |
+| **On-chip Peripheral**  | **Support** | **Remark** |
+| GPIO                    | Support     |            |
+| UART                    | Support     | UART1      |
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Execution Instruction
 
-#### 硬件连接
+### Quickly Get Started
 
-使用数据线连接开发板到 PC，打开电源开关。
+This BSP provides MDK 5 and IAR projects for developers and it supports the GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-#### 编译下载
+#### **Hardware Connection**
 
-双击 project.uvprojx 文件，打开 MDK5 （MDK 需要 5.29 版本以上才支持 ST-LINK V3）工程，编译并下载程序到开发板。
+Use a USB cable to connect the development board to the PC and turn on the power switch.
 
-> 工程默认配置使用 ST_LINK 仿真器下载程序，在通过 ST_LINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+#### **Compile and Download**
 
-#### 运行结果
+Double-click the project.uvprojx file, to open the MDK 5 project (MDK requires to download V 5.29 and above to support ST-LINK V3), compile and download the project to the board.
 
-下载程序成功之后，系统会自动运行，LED 闪烁。
+> By default, the project uses the ST_LINK simulator to download the program, when the ST_LINK connects the board, clicking the download button can download the program to the board.
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+### **Running Results**
 
-```bash
+Once the project is successfully downloaded, the system runs automatically, and LED will flash.
+
+Connect the serial port of the board to PC, communicate with it via a serial terminal tool (115200-8-1-N). Restart the board and the startup information of RT-Thread will be observed:
+
+```
  \ | /
 - RT -     Thread Operating System
  / | \     4.0.3 build Feb 24 2020
  2006 - 2020 Copyright by rt-thread team
 msh >
 ```
-### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口 1 的功能，如果需使用更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
+### **Advanced Features**
 
-1. 在 bsp 下打开 env 工具。
+This BSP only enables GPIO and serial port 1 by default. If you need more advanced features, you need to configure the BSP with [RT-Thread ENV tools](https://www.rt-thread.io/download.html?download=Env) , as follows:
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+1. Open the env tool under BSP.
+2. Enter menuconfig command to configure the project, then save and exit.
+3. Enter pkgs --update command to update the package.
+4. Enter scons --target=mdk4/mdk5/iar command to regenerate the project.
 
-3. 输入`pkgs --update`命令更新软件包。
+Learn how to use RT-Thread Env, click [Here](https://github.com/RT-Thread/rtthread-manual-doc/blob/master/env/env.md).
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+## **Notes**
 
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
+- Debug serial port has the mapping description for serial port 1.
 
-## 注意事项
+  PA9 ------> USART1_TX
 
-- 调试串口为串口 1 映射说明
-
-    PA9     ------> USART1_TX
-
-    PA10   ------> USART1_RX 
-
-## 联系人信息
-
-维护人:
-
--  [SummerGift](https://github.com/SummerLife)
+  PA10 ------> USART1_RX

@@ -63,7 +63,7 @@ rt_uint8_t _irq_stack_start[1024];
 rt_uint8_t _fiq_stack_start[1024];
 rt_uint8_t _undefined_stack_start[512];
 rt_uint8_t _abort_stack_start[512];
-rt_uint8_t _svc_stack_start[4096] SECTION(".nobss");
+rt_uint8_t _svc_stack_start[4096] RT_SECTION(".nobss");
 extern unsigned char __bss_start;
 extern unsigned char __bss_end;
 
@@ -92,12 +92,6 @@ void rtthread_startup(void)
 
 	/* show version */
 	rt_show_version();
-
-	/* initialize tick */
-	rt_system_tick_init();
-
-	/* initialize kernel object */
-	rt_system_object_init();
 
 	/* initialize timer system */
 	rt_system_timer_init();

@@ -59,6 +59,19 @@ static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
     {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ  | CAN_BS2_7TQ | 150)},
     {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_10TQ  | CAN_BS2_7TQ | 300)}
 };
+#elif defined (SOC_SERIES_STM32L4)/* APB1 80MHz(max) */
+static const struct stm32_baud_rate_tab can_baud_rate_tab[] =
+{
+    {CAN1MBaud, (CAN_SJW_2TQ | CAN_BS1_5TQ  | CAN_BS2_2TQ | 10)},
+    {CAN800kBaud, (CAN_SJW_2TQ | CAN_BS1_14TQ  | CAN_BS2_5TQ | 5)},
+    {CAN500kBaud, (CAN_SJW_2TQ | CAN_BS1_7TQ  | CAN_BS2_2TQ | 16)},
+    {CAN250kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 20)},
+    {CAN125kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 40)},
+    {CAN100kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 50)},
+    {CAN50kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 100)},
+    {CAN20kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 250)},
+    {CAN10kBaud, (CAN_SJW_2TQ | CAN_BS1_13TQ  | CAN_BS2_2TQ | 500)}
+};
 #endif
 
 #ifdef BSP_USING_CAN1

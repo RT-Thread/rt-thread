@@ -211,8 +211,8 @@
 #endif
 
 /* SECTION: Runtime library */
-// #define RT_USING_NOLIBC
 // #define RT_USING_NEWLIB
+#define RT_LIBC_USING_TIME
 
 /* SECTION: Console options */
 #define RT_USING_CONSOLE

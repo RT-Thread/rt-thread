@@ -21,12 +21,6 @@
  * - show version
  * rt_show_version();
  *
- * - initialize system tick
- * rt_system_tick_init();
- *
- * - initialize kernel object [deprecated]
- * rt_system_object_init();
- *
  * - initialize timer system
  * rt_system_timer_init();
  *

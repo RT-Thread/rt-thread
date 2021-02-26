@@ -5,9 +5,13 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2020-12-16     Meco Man     add usleep
  */
 #ifndef _SYS_UNISTD_H
 #define _SYS_UNISTD_H
+
+#include <rtconfig.h>
+#include "types.h"
 
 #ifdef RT_USING_DFS
 
@@ -35,5 +39,19 @@
 #define	_FNOCTTY	0x8000	/* don't assign a ctty on this open */
 
 #endif
+
+
+int     isatty      (int fd);
+char *  ttyname     (int desc);
+
+unsigned int sleep(unsigned int seconds);
+int usleep(useconds_t usec);
+
+pid_t getpid(void);
+pid_t getppid(void);
+uid_t getuid(void);
+uid_t geteuid(void);
+gid_t getgid(void);
+gid_t getegid(void);
 
 #endif /* _SYS_UNISTD_H */

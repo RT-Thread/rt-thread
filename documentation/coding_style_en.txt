@@ -42,21 +42,15 @@ In every header file, there should be copyright information and Change Log
 record like this:
 
     /*
-     * File      : rtthread.h
-     * This file is part of RT-Thread RTOS
-     * COPYRIGHT (C) 2006, RT-Thread Development Team
-     *
-     * The license and distribution terms for this file may be
-     * found in the file LICENSE in this distribution or at
-     * http://www.rt-thread.org/license/LICENSE.
-     *
-     * Change Logs:
-     * Date           Author       Notes
-     * 2006-03-18     Bernard      the first version
-     * 2006-04-26     Bernard      add semaphore APIs
-     * ...
+    * Copyright (c) 2006-2020, RT-Thread Development Team
+    *
+    * SPDX-License-Identifier: Apache-2.0
+    *
+    * Change Logs:
+    * Date           Author       Notes
+    * 2006-03-18     Bernard      the first version
+    * 2006-04-26     Bernard      add semaphore APIs
     */
-
 
 5. Structure Defines
 

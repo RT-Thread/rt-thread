@@ -52,12 +52,6 @@ void rtthread_startup(void)
     /* init board */
     rt_hw_board_init();
 
-    /* init tick */
-    rt_system_tick_init();
-
-    /* init kernel object */
-    rt_system_object_init();
-
     rt_show_version();
 
     /* init timer system */

@@ -17,6 +17,10 @@ if GetDepend(['BSP_USING_QSPI_FLASH']):
     src += Glob('ports/drv_qspi_flash.c')
 if GetDepend(['BSP_USING_SDMMC']):
     src += Glob('ports/drv_sdio.c')
+if GetDepend(['BSP_USING_DCMI']):
+    src += Glob('ports/drv_dcmi.c')
+if GetDepend(['BSP_USING_OV2640']):
+    src += Glob('ports/drv_ov2640.c')
 
 path = [cwd]
 path += [cwd + '/CubeMX_Config/Inc']

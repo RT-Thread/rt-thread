@@ -74,10 +74,13 @@ struct rt_pin_ops
                       rt_uint32_t mode, void (*hdr)(void *args), void *args);
     rt_err_t (*pin_detach_irq)(struct rt_device *device, rt_int32_t pin);
     rt_err_t (*pin_irq_enable)(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled);
+    rt_base_t (*pin_get)(const char *name);
 };
 
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data);
 
+/* Get pin number by name,such as PA.0,P0.12 */
+rt_base_t rt_pin_get(const char *name);
 void rt_pin_mode(rt_base_t pin, rt_base_t mode);
 void rt_pin_write(rt_base_t pin, rt_base_t value);
 int  rt_pin_read(rt_base_t pin);

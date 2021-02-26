@@ -32,31 +32,31 @@ void writespeed(const char* filename, int total_length, int block_size)
         return;
     }
 
-	/* prepare write data */
-	for (index = 0; index < block_size; index++)
-	{
-		buff_ptr[index] = index;
-	}
-	index = 0;
+    /* prepare write data */
+    for (index = 0; index < block_size; index++)
+    {
+        buff_ptr[index] = index;
+    }
+    index = 0;
 
-	/* get the beginning tick */
+    /* get the beginning tick */
     tick = rt_tick_get();
-	while (index < total_length / block_size)
-	{
-		length = write(fd, buff_ptr, block_size);
-		if (length != block_size)
-		{
-			rt_kprintf("write failed\n");
-			break;
-		}
+    while (index < total_length / block_size)
+    {
+        length = write(fd, buff_ptr, block_size);
+        if (length != block_size)
+        {
+            rt_kprintf("write failed\n");
+            break;
+        }
 
-		index ++;
-	}
+        index ++;
+    }
     tick = rt_tick_get() - tick;
 
-	/* close file and release memory */
+    /* close file and release memory */
     close(fd);
-	rt_free(buff_ptr);
+    rt_free(buff_ptr);
 
     /* calculate write speed */
     rt_kprintf("File write speed: %d byte/s\n", total_length / tick * RT_TICK_PER_SECOND);

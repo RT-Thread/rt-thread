@@ -84,30 +84,29 @@ static uint8_t write_buf[FLASH_PAGE_SIZE];
   */
 static type_bool_t page_have_writen(uint32_t begin_addr, uint32_t end_addr)
 {
-    uint8_t *addr_to_read;
-    uint8_t value;
-    uint32_t index;
+	uint8_t* addr_to_read;
+	uint8_t value;
+	uint32_t index;
 
-    /* Check the parameters */
-    assert_param(IS_FLASH_ADDRESS(begin_addr));
-    assert_param(IS_FLASH_ADDRESS(end_addr));
+	/* Check the parameters */
+	assert_param(IS_FLASH_ADDRESS(begin_addr));
+	assert_param(IS_FLASH_ADDRESS(end_addr));
 
-    addr_to_read = (uint8_t *)begin_addr;
-    index        = begin_addr;
-    value        = 0xFF;
+	addr_to_read = (uint8_t *)begin_addr;
+	index        = begin_addr;
+	value        = 0xFF;
 
-    if (begin_addr > end_addr)
-        return FALSE;
+	if (begin_addr > end_addr)
+		return FALSE;
 
-    while (index++ <= end_addr)
-    {
-        value = *addr_to_read++;
+	while (index++ <= end_addr) {
+		value = *addr_to_read++;
 
-        if (value != 0xFF)
-            break;
-    }
+		if (value != 0xFF)
+			break;
+	}
 
-    return value == 0xFF ? FALSE : TRUE;
+	return value == 0xFF ? FALSE : TRUE;
 }
 /**
   * @}
@@ -134,24 +133,23 @@ static type_bool_t page_have_writen(uint32_t begin_addr, uint32_t end_addr)
   */
 ald_status_t ald_flash_read(uint32_t *ram_addr, uint32_t addr, uint16_t len)
 {
-    uint32_t i;
-    uint32_t temp;
+	uint32_t i;
+	uint32_t temp;
 
-    assert_param(IS_4BYTES_ALIGN(ram_addr));
-    assert_param(IS_FLASH_ADDRESS(addr));
-    assert_param(IS_FLASH_ADDRESS(addr + len - 1));
+	assert_param(IS_4BYTES_ALIGN(ram_addr));
+	assert_param(IS_FLASH_ADDRESS(addr));
+	assert_param(IS_FLASH_ADDRESS(addr + len - 1));
 
-    temp = (uint32_t)ram_addr;
+	temp = (uint32_t)ram_addr;
 
-    if (((temp & 0x3) != 0) || (((addr) & 0x3) != 0))
-        return ERROR;
+	if (((temp & 0x3) != 0) || (((addr) & 0x3) != 0))
+		return ERROR;
 
-    for (i = 0; i < len; i++)
-    {
-        ram_addr[i] = ((uint32_t *)addr)[i];
-    }
+	for (i = 0; i < len; i++) {
+		ram_addr[i] = ((uint32_t *)addr)[i];
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -164,92 +162,84 @@ ald_status_t ald_flash_read(uint32_t *ram_addr, uint32_t addr, uint16_t len)
 
 ald_status_t ald_flash_write(uint32_t addr, uint8_t *buf, uint16_t len)
 {
-    uint32_t index = 0;
-    uint32_t para = 0;
-    uint32_t index2 = 0;
-    uint32_t start_write_addr;
-    uint32_t end_write_addr;
-    uint32_t start_word_addr;
-    uint32_t end_word_addr;
-    uint16_t len_to_write;
-    uint32_t len_index;
-    type_bool_t need_erase_page;
+	uint32_t index = 0;
+	uint32_t para = 0;
+	uint32_t index2 = 0;
+	uint32_t start_write_addr;
+	uint32_t end_write_addr;
+	uint32_t start_word_addr;
+	uint32_t end_word_addr;
+	uint16_t len_to_write;
+	uint32_t len_index;
+	type_bool_t need_erase_page;
 
-    assert_param(IS_FLASH_ADDRESS(addr));
-    assert_param(IS_FLASH_ADDRESS(addr + len - 1));
+	assert_param(IS_FLASH_ADDRESS(addr));
+	assert_param(IS_FLASH_ADDRESS(addr + len - 1));
 
-    len_to_write = len;
+	len_to_write = len;
 
-    __disable_irq();
+	__disable_irq();
+	while (len_to_write > 0) {
+		need_erase_page = FALSE;
 
-    while (len_to_write > 0)
-    {
-        need_erase_page = FALSE;
+		for (index = 0; index < FLASH_PAGE_SIZE; index++)
+			write_buf[index] = 0xFF;
 
-        for (index = 0; index < FLASH_PAGE_SIZE; index++)
-            write_buf[index] = 0xFF;
+		start_write_addr = addr + (len - len_to_write);
+		end_write_addr   = addr + len - 1;
+		end_write_addr   = FLASH_PAGE_ADDR(start_write_addr) == FLASH_PAGE_ADDR(end_write_addr)
+		                   ? end_write_addr : FLASH_PAGEEND_ADDR(start_write_addr);
+		need_erase_page  = page_have_writen(FLASH_WORD_ADDR(start_write_addr),
+		                                    FLASH_WORDEND_ADDR(end_write_addr));
 
-        start_write_addr = addr + (len - len_to_write);
-        end_write_addr   = addr + len - 1;
-        end_write_addr   = FLASH_PAGE_ADDR(start_write_addr) == FLASH_PAGE_ADDR(end_write_addr)
-                           ? end_write_addr : FLASH_PAGEEND_ADDR(start_write_addr);
-        need_erase_page  = page_have_writen(FLASH_WORD_ADDR(start_write_addr),
-                                            FLASH_WORDEND_ADDR(end_write_addr));
+		if (need_erase_page) {
+			if (ERROR == ald_flash_read((uint32_t *)write_buf, FLASH_PAGE_ADDR(start_write_addr),
+                                 		  FLASH_PAGE_SIZE >> 2)) {
+				__enable_irq();
+				return ERROR;
+			}
 
-        if (need_erase_page)
-        {
-            if (ERROR == ald_flash_read((uint32_t *)write_buf, FLASH_PAGE_ADDR(start_write_addr),
-                                        FLASH_PAGE_SIZE >> 2))
-            {
-                __enable_irq();
-                return ERROR;
-            }
+			if (ERROR == flash_page_erase(FLASH_PAGE_ADDR(start_write_addr))) {
+				__enable_irq();
+				return ERROR;
+			}
 
-            if (ERROR == flash_page_erase(FLASH_PAGE_ADDR(start_write_addr)))
-            {
-                __enable_irq();
-                return ERROR;
-            }
+			para   = end_write_addr & (FLASH_PAGE_SIZE - 1);
+			index  = start_write_addr & (FLASH_PAGE_SIZE - 1);
+			index2 = len - len_to_write;
 
-            para   = end_write_addr & (FLASH_PAGE_SIZE - 1);
-            index  = start_write_addr & (FLASH_PAGE_SIZE - 1);
-            index2 = len - len_to_write;
+			while (index <= para)
+				write_buf[index++] = buf[index2++];
 
-            while (index <= para)
-                write_buf[index++] = buf[index2++];
+			index2     = 0;
+			index      = FLASH_PAGE_ADDR(start_write_addr);
+			len_index  = FLASH_PAGE_SIZE;
+		}
+		else {
+			para   = end_write_addr & (FLASH_PAGE_SIZE - 1);
+			index  = start_write_addr & (FLASH_PAGE_SIZE - 1);
+			index2 = len - len_to_write;
 
-            index2     = 0;
-            index      = FLASH_PAGE_ADDR(start_write_addr);
-            para       = FLASH_PAGE_ADDR(start_write_addr) + FLASH_PAGE_SIZE;
-            len_index  = FLASH_PAGE_SIZE;
-        }
-        else
-        {
-            para   = end_write_addr & (FLASH_PAGE_SIZE - 1);
-            index  = start_write_addr & (FLASH_PAGE_SIZE - 1);
-            index2 = len - len_to_write;
+			while (index <= para)
+				write_buf[index++] = buf[index2++];
 
-            while (index <= para)
-                write_buf[index++] = buf[index2++];
+			start_word_addr = FLASH_WORD_ADDR(start_write_addr);
+			end_word_addr   = FLASH_WORDEND_ADDR(end_write_addr);
+			index2          = (FLASH_WORD_ADDR(start_word_addr) - FLASH_PAGE_ADDR(start_word_addr));
+			index           = start_word_addr;
+			len_index       = end_word_addr - start_word_addr + 1;
+		}
 
-            start_word_addr = FLASH_WORD_ADDR(start_write_addr);
-            end_word_addr   = FLASH_WORDEND_ADDR(end_write_addr);
-            index2          = (FLASH_WORD_ADDR(start_word_addr) - FLASH_PAGE_ADDR(start_word_addr));
-            index           = start_word_addr;
-            len_index       = end_word_addr - start_word_addr + 1;
-        }
+		if (ERROR == flash_word_program(index, (uint32_t *)(write_buf + index2), (len_index >> 3), FLASH_FIFO)) {
+			__enable_irq();
+			return ERROR;
+		}
 
-        if (ERROR == flash_word_program(index, (uint32_t *)(write_buf + index2), (len_index >> 3), FLASH_FIFO))
-        {
-            __enable_irq();
-            return ERROR;
-        }
+		len_to_write = len_to_write - (end_write_addr - start_write_addr + 1);
+	}
 
-        len_to_write = len_to_write - (end_write_addr - start_write_addr + 1);
-    }
-
-    __enable_irq();
-    return OK;
+	__enable_irq();
+	return OK;
 }
 
 /**
@@ -260,81 +250,69 @@ ald_status_t ald_flash_write(uint32_t addr, uint8_t *buf, uint16_t len)
   */
 ald_status_t ald_flash_erase(uint32_t addr, uint16_t len)
 {
-    int32_t	index;
-    int32_t para;
-    int32_t start_erase_addr;
-    int32_t end_erase_addr;
-    uint16_t len_not_erase;
-    uint32_t len_index;
-    type_bool_t page_need_save;
+	uint32_t index;
+	int32_t para;
+	int32_t start_erase_addr;
+	int32_t end_erase_addr;
+	uint16_t len_not_erase;
+	uint32_t len_index;
+	type_bool_t page_need_save;
 
-    assert_param(IS_FLASH_ADDRESS(addr));
-    assert_param(IS_FLASH_ADDRESS(addr + len - 1));
+	assert_param(IS_FLASH_ADDRESS(addr));
+	assert_param(IS_FLASH_ADDRESS(addr + len - 1));
 
-    len_not_erase = len;
+	len_not_erase = len;
 
-    __disable_irq();
+	__disable_irq();
+	while (len_not_erase > 0) {
+		page_need_save = FALSE;
 
-    while (len_not_erase > 0)
-    {
-        page_need_save = FALSE;
+		start_erase_addr = addr + len - len_not_erase;
+		end_erase_addr   = addr + len - 1;
+		end_erase_addr   = (FLASH_PAGE_ADDR(start_erase_addr) == FLASH_PAGE_ADDR(end_erase_addr))
+		                    ? end_erase_addr : FLASH_PAGEEND_ADDR(start_erase_addr);
 
-        start_erase_addr = addr + len - len_not_erase;
-        end_erase_addr   = addr + len - 1;
-        end_erase_addr   = (FLASH_PAGE_ADDR(start_erase_addr) == FLASH_PAGE_ADDR(end_erase_addr))
-                           ? end_erase_addr : FLASH_PAGEEND_ADDR(start_erase_addr);
+		if (start_erase_addr != FLASH_PAGE_ADDR(start_erase_addr)) {
+			if (page_have_writen(FLASH_PAGE_ADDR(start_erase_addr), (start_erase_addr - 1)))
+				page_need_save = TRUE;
+		}
+		if (end_erase_addr != FLASH_PAGEEND_ADDR(end_erase_addr)) {
+			if (page_have_writen((end_erase_addr + 1), FLASH_PAGEEND_ADDR(end_erase_addr)))
+				page_need_save = TRUE;
+		}
 
-        if (start_erase_addr != FLASH_PAGE_ADDR(start_erase_addr))
-        {
-            if (page_have_writen(FLASH_PAGE_ADDR(start_erase_addr), (start_erase_addr - 1)))
-                page_need_save = TRUE;
-        }
+		if (page_need_save) {
+			if (ERROR == ald_flash_read((uint32_t *)write_buf, FLASH_PAGE_ADDR(start_erase_addr),
+			                                                     FLASH_PAGE_SIZE >> 2)) {
+				__enable_irq();
+				return ERROR;
+			}
+		}
 
-        if (end_erase_addr != FLASH_PAGEEND_ADDR(end_erase_addr))
-        {
-            if (page_have_writen((end_erase_addr + 1), FLASH_PAGEEND_ADDR(end_erase_addr)))
-                page_need_save = TRUE;
-        }
+		if (ERROR == flash_page_erase(FLASH_PAGE_ADDR(start_erase_addr))) {
+			__enable_irq();
+			return ERROR;
+		}
 
-        if (page_need_save)
-        {
-            if (ERROR == ald_flash_read((uint32_t *)write_buf, FLASH_PAGE_ADDR(start_erase_addr),
-                                        FLASH_PAGE_SIZE >> 2))
-            {
-                __enable_irq();
-                return ERROR;
-            }
-        }
+		if (page_need_save) {
+			para  = end_erase_addr & (FLASH_PAGE_SIZE - 1);
+			index = start_erase_addr & (FLASH_PAGE_SIZE - 1);
 
-        if (ERROR == flash_page_erase(FLASH_PAGE_ADDR(start_erase_addr)))
-        {
-            __enable_irq();
-            return ERROR;
-        }
+			while (index <= para)
+				write_buf[index++] = 0xFF;
 
-        if (page_need_save)
-        {
-            para  = end_erase_addr & (FLASH_PAGE_SIZE - 1);
-            index = start_erase_addr & (FLASH_PAGE_SIZE - 1);
+			index     = FLASH_PAGE_ADDR(start_erase_addr);
+			len_index = FLASH_PAGE_SIZE;
+			if (ERROR == flash_word_program(index, (uint32_t *)write_buf, (len_index >> 3), FLASH_FIFO)) {
+				__enable_irq();
+				return ERROR;
+			}
+		}
+		len_not_erase = len_not_erase - (end_erase_addr - start_erase_addr + 1);
+	}
 
-            while (index <= para)
-                write_buf[index++] = 0xFF;
-
-            index     = FLASH_PAGE_ADDR(start_erase_addr);
-            len_index = FLASH_PAGE_SIZE;
-
-            if (ERROR == flash_word_program(index, (uint32_t *)write_buf, (len_index >> 3), FLASH_FIFO))
-            {
-                __enable_irq();
-                return ERROR;
-            }
-        }
-
-        len_not_erase = len_not_erase - (end_erase_addr - start_erase_addr + 1);
-    }
-
-    __enable_irq();
-    return OK;
+	__enable_irq();
+	return OK;
 }
 /**
   * @}

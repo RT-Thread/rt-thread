@@ -1,116 +1,99 @@
-# NUCLEO32-L412 开发板 BSP 说明
+# STM32L412-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为ST官方 NUCLEO32-L412 开发板的 BSP (板级支持包) 说明。
+## MCU: STM32L412RB @80MHz, 128KB FLASH,  40KB RAM
 
-主要内容如下：
+The STM32L412xx devices are ultra-low-power microcontrollers based on the high-performance Arm® Cortex®-M4 32-bit RISC core operating at a frequency of up to 80 MHz. The Cortex-M4 core features a Floating point unit (FPU) single precision that supports all Arm® single-precision data-processing instructions and data types. It also implements a full set of DSP instructions and a memory protection unit (MPU) which enhances application security.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The STM32L412xx devices embed high-speed memories (Flash memory up to 128 Kbyte,40 Kbyte of SRAM), a Quad SPI Flash memories interface (available on all packages) and an extensive range of enhanced I/Os and peripherals connected to two APB buses, two AHB buses and a 32-bit multi-AHB bus matrix.
+The STM32L412xx devices embed several protection mechanisms for embedded Flash memory and SRAM: readout protection, write protection, proprietary code readout protection and Firewall.
+The devices offer two fast 12-bit ADC (5 Msps), two comparators, one operational amplifier, a low-power RTC, one general-purpose 32-bit timer, one 16-bit PWM timer dedicated to motor control, four general-purpose 16-bit timers, and two 16-bit low-power timers.
+In addition, up to 12 capacitive sensing channels are available.
+They also feature standard and advanced communication interfaces, namely three I2Cs, two SPIs, three USARTs and one Low-Power UART, one USB full-speed device crystal less.
+The STM32L412xx operates in the -40 to +85 °C (+105 °C junction) and -40 to +125 °C (+130 °C junction) temperature ranges from a 1.71 to 3.6 V VDD power supply when using internal LDO regulator and a 1.00 to 1.32V VDD12 power supply when using external SMPS supply. A comprehensive set of power-saving modes makes possible the design of low-power applications.
+Some independent power supplies are supported: analog independent supply input for ADC, OPAMP and comparator. A VBAT input makes it possible to backup the RTC and backup registers. Dedicated VDD12 power supplies can be used to bypass the internal LDO regulator when connected to an external SMPS.
+The STM32L412xx family offers six packages from 32 to 64-pin packages.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+#### KEY FEATURES
 
-## 开发板介绍
+- Ultra-low-power with FlexPowerControl
+  - 1.71 V to 3.6 V power supply
+  - -40 °C to 85/125 °C temperature range
+  - 300 nA in VBAT mode: supply for RTC and 32x32-bit backup registers
+  - 16 nA Shutdown mode (4 wakeup pins)
+  - 32 nA Standby mode (4 wakeup pins)
+  - 245 nA Standby mode with RTC
+  - 0.7 µA Stop 2 mode, 0.95 µA with RTC
+  - 79 µA/MHz run mode (LDO Mode)
+  - 28 μA/MHz run mode (@3.3 V SMPS Mode)
+  - Batch acquisition mode (BAM)
+  - 4 µs wakeup from Stop mode
+  - Brown out reset (BOR)
+  - Interconnect matrix
+- Core: Arm® 32-bit Cortex®-M4 CPU with FPU, Adaptive real-time accelerator (ART Accelerator™) allowing 0-wait-state execution from Flash memory, frequency up to 80 MHz, MPU, 100DMIPS and DSP instructions
+- Performance benchmark
+  - 1.25 DMIPS/MHz (Drystone 2.1)
+  - 273.55 CoreMark® (3.42 CoreMark/MHz @ 80 MHz)
+- Energy benchmark
+  - 442 ULPMark-CP®
+  - 165 ULPMark-PP®
+- Clock Sources
+  - 4 to 48 MHz crystal oscillator
+  - 32 kHz crystal oscillator for RTC (LSE)
+  - Internal 16 MHz factory-trimmed RC (±1%)
+  - Internal low-power 32 kHz RC (±5%)
+  - Internal multispeed 100 kHz to 48 MHz oscillator, auto-trimmed by LSE (better than ±0.25 % accuracy)
+  - Internal 48 MHz with clock recovery
+  - PLL for system clock
+- Up to 52 fast I/Os, most 5 V-tolerant
+- RTC with HW calendar, alarms and calibration
+- Up to 12 capacitive sensing channels: support touchkey, linear and rotary touch sensors
+- 10x timers: 1x 16-bit advanced motor-control, 1x 32-bit and 2x 16-bit general purpose, 1x 16-bit basic, 2x low-power 16-bit timers (available in Stop mode), 2x watchdogs, SysTick timer
 
-对于 NUCLEO32-L412，内核是 Cortex-M4，绿色的 Nucleo 标志显示了这款芯片是低功耗系列，板载 ST-LINK/V2-1 调试器/编程器，迷你尺寸，mirco USB 接口，可数的外设，Arduino™ nano 兼容的接口。
-
-开发板外观如下图所示：
-
-![board](figures/board.jpg)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32L412RBT6P，主频 80MHz，128KB FLASH ，40KB RAM。
-- 常用外设
-  - LED：4个，LD1（COM 双色），LD2（5V_USB 红色），LD3（5V_PWR 绿色），LD4（USER 绿色）
-  - 按键：2个，用户按键（B1），复位按键（B2）
-- 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口。
-- 调试接口：板载 ST-LINK/V2-1 调试器。
-
-开发板更多详细信息请参考【STMicroelectronics】 [NUCLEO-L412RB-P](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-l412rb-p.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**      | **支持情况** | **备注**                              |
-| :----------------- | :----------: | :------------------------------------- |
-| 板载 ST-LINK 转串口 |     支持     | UART2                            |
-| **片上外设**      | **支持情况** | **备注**                              |
-| GPIO              |     支持     | PA0, PA1... PC15 ---> PIN: 0, 1...47 |
-| UART              |     支持     | UART2                           |
-| SPI               |   暂不支持   | SPI1 即将支持                            |
-| I2C               |   暂不支持   | 软件 I2C 即将支持                      |
-| RTC               |   支持      | 支持外部晶振和内部低速时钟 |
-| PWM               |   暂不支持   | 即将支持                              |
-| USB Device        |   暂不支持   | 即将支持                             |
-| IWG               |   支持      | 独立看门狗，未开启窗口模式              |
-| **扩展模块**      | **支持情况** | **备注**                              |
+- Memories
+  - 128 KB single bank Flash, proprietary code readout protection
+  - 40 KB of SRAM including 8 KB with hardware parity check
+  - Quad SPI memory interface with XIP capability
+- Rich analog peripherals (independent supply)
+  - 2x 12-bit ADC 5 Msps, up to 16-bit with hardware oversampling, 200 µA/Msps
+  - 2x operational amplifiers with built-in PGA
+  - 1x ultra-low-power comparator
+  - Accurate 2.5 V or 2.048 V reference voltage buffered output
+- 12x communication interfaces
+  - USB 2.0 full-speed crystal less solution with LPM and BCD
+  - 3x I2C FM+(1 Mbit/s), SMBus/PMBus
+  - 3x USARTs (ISO 7816, LIN, IrDA, modem)
+  - 1x LPUART (Stop 2 wake-up)
+  - 2x SPIs (and 1x Quad SPI)
+  - IRTIM (Infrared interface)
+- 14-channel DMA controller
+- True random number generator
+- CRC calculation unit, 96-bit unique ID
+- Development support: serial wire debug (SWD), JTAG, Embedded Trace Macrocell™
+- All packages are ECOPACK2 compliant
 
 
-## 使用说明
 
-使用说明分为如下两个章节：
+## Read more
 
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32L412RB ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32l412rb.html#documentation) |          STM32L412RB datasheet and other resources           |
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Maintained By
 
-#### 硬件连接
+[luhuadong](https://github.com/luhuadong), luhuadong@163.com
 
-使用数据线连接开发板到 PC，打开电源开关。
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Translated By
 
-> 工程默认配置使用 ST-LINK 仿真器下载程序，在通过 microUSB 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+Meco Man @ RT-Thread Community
 
-#### 运行结果
-
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD1 和 LD2 常亮、黄色色 LD3 会周期性闪烁。
-
-USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
-
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.3 build Apr 24 2020
- 2006 - 2020 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
-
-此 BSP 默认只开启了 GPIO 和 串口2 的功能，如果需使用更多高级功能，需要利用 ENV 工具对 BSP 进行配置，步骤如下：
-
-1. 在 bsp 下打开 env 工具。
-
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-
-3. 输入`pkgs --update`命令更新软件包。
-
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-- 开机时如果不能打印 RT-Thread 版本信息，请将BSP中串口 GPIO 速率调低
-- 开机时如果不能打印 RT-Thread 版本信息，请重新选择 PC 端串口调试软件的串口号
-
-## 联系人信息
-
-维护人:
-
--  [luhuadong](https://github.com/luhuadong), 邮箱：<luhuadong@163.com>
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf

@@ -5,11 +5,10 @@ cwd_path = os.getcwd()
 sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 
 # BSP dist function
-def dist_do_building(BSP_ROOT):
+def dist_do_building(BSP_ROOT, dist_dir):
     from mkdist import bsp_copy_files
     import rtconfig
 
-    dist_dir  = os.path.join(BSP_ROOT, 'dist', os.path.basename(BSP_ROOT))
     library_dir  = os.path.join(dist_dir, 'libraries')
 
     print("=> copy nuclei bsp library")
