@@ -39,6 +39,6 @@ src	+= ['wdog/gd_wdog.c']
 
 path = [cwd, cwd + '/../inc']
 
-group = DefineGroup('gd', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
 
 Return('group')

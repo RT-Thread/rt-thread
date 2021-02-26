@@ -63,6 +63,14 @@ SECTIONS
         _etext = .;
     }
 
+    __exidx_start = .;
+    .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) }
+    __exidx_end = .;
+
+    __rodata_start = .;
+    .rodata   : { *(.rodata) *(.rodata.*) }
+    __rodata_end = .;
+
     .eh_frame_hdr :
     {
          *(.eh_frame_hdr)

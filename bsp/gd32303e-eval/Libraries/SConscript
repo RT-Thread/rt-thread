@@ -28,6 +28,6 @@ if GetDepend(['RT_USING_BSP_USB']):
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'GD32F30X_HD']
 
-group = DefineGroup('GD32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

@@ -88,7 +88,7 @@ int isprint(unsigned char ch)
 
 #if defined(RT_USING_DFS) && defined(DFS_USING_WORKDIR)
 #include <dfs_posix.h>
-const char* finsh_get_prompt()
+const char* finsh_get_prompt(void)
 {
 	#define _PROMPT "finsh "
 	static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = {_PROMPT};

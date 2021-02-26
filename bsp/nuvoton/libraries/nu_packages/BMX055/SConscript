@@ -1,0 +1,16 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+group = []
+if GetDepend('NU_PKG_USING_BMX055'):
+    src = Split("""
+    libraries/BMA2x2_driver/bma2x2.c
+    libraries/BMG160_driver/bmg160.c
+    libraries/BMM050_driver/bmm050.c
+    sensor_bmx055.c
+    """)
+    CPPPATH = [cwd, cwd+'/libraries/BMA2x2_driver/', cwd+'/libraries/BMG160_driver/', cwd+'/libraries/BMM050_driver/']
+    group = DefineGroup('nu_pkgs_bmx055', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

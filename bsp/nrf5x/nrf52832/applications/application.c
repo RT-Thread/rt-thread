@@ -1,48 +1,32 @@
 /*
- * File      : application.c
- * This file is part of RT-Thread RTOS
- * COPYRIGHT (C) 2015, RT-Thread Development Team
+ * Copyright (c) 2006-2020, RT-Thread Development Team
  *
- * The license and distribution terms for this file may be
- * found in the file LICENSE in this distribution or at
- * http://www.rt-thread.org/license/LICENSE
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2015-03-01     Yangfs       the first version
- * 2015-03-27     Bernard      code cleanup.
+ * 2020-04-29     supperthomas first version
+ *
  */
-
-/**
- * @addtogroup NRF52832
- */
-/*@{*/
 
 #include <rtthread.h>
+#include <rtdevice.h>
+#define DK_BOARD_LED_1  17
+#define DK_BOARD_LED_2  18
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#include <shell.h>
-#endif
-
-void rt_init_thread_entry(void* parameter)
+int main(void)
 {
-    extern rt_err_t ble_init(void);
-
-    ble_init();
+    int count = 1; 
+    rt_pin_mode(DK_BOARD_LED_1, PIN_MODE_OUTPUT);
+    
+    while (count++)
+    {    
+        rt_pin_write(DK_BOARD_LED_1, PIN_HIGH);
+        rt_thread_mdelay(500);
+        
+        rt_pin_write(DK_BOARD_LED_1, PIN_LOW);
+        rt_thread_mdelay(500);                    
+    }
+    return RT_EOK;
 }
 
-int rt_application_init(void)
-{
-    rt_thread_t tid;
-
-    tid = rt_thread_create("init", rt_init_thread_entry, RT_NULL, 1024,
-                            RT_THREAD_PRIORITY_MAX / 3, 20);
-    if (tid != RT_NULL)
-        rt_thread_startup(tid);
-
-    return 0;
-}
-
-
-/*@}*/

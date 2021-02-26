@@ -62,7 +62,7 @@ extern "C"{
 #define UFFS_LAYOUT_UFFS	0	//!< do layout by dev->attr information
 #define UFFS_LAYOUT_FLASH	1	//!< flash driver do the layout
 
-#define UFFS_SPARE_LAYOUT_SIZE	6	//!< maximum spare layout array size, 2 segments
+#define UFFS_SPARE_LAYOUT_SIZE	16	//!< maximum spare layout array size, 2 segments
 
 /** flash operation return code */
 #define UFFS_FLASH_NO_ERR		0		//!< no error

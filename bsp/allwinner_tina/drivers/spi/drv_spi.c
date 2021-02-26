@@ -483,7 +483,7 @@ static rt_err_t configure(struct rt_spi_device *device,
         SPI_SetFirstTransmitBit(spi, SPI_TCTRL_FBS_LSB);
     }
 
-    switch (configuration->mode)
+    switch (configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
         SPI_SetSclkMode(spi, SPI_SCLK_Mode0);

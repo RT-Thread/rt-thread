@@ -122,7 +122,8 @@ const static struct rt_pin_ops _ls1c_pin_ops =
 
     ls1c_pin_attach_irq,
     ls1c_pin_detach_irq,
-    ls1c_pin_irq_enable
+    ls1c_pin_irq_enable,
+    RT_NULL,
 };
 
 

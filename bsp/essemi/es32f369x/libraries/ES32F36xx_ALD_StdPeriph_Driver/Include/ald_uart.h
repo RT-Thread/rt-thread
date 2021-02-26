@@ -41,8 +41,8 @@ extern "C" {
 #define UART_RX_DISABLE(hperh)		(CLEAR_BIT((hperh)->perh->LCON, UART_LCON_RXEN_MSK))
 #define UART_TX_ENABLE(hperh)		(SET_BIT((hperh)->perh->LCON, UART_LCON_TXEN_MSK))
 #define UART_TX_DISABLE(hperh)		(CLEAR_BIT((hperh)->perh->LCON, UART_LCON_TXEN_MSK))
-#define UART_RX_TIMEOUT_ENABLE(hperh)	(SET_BIT((hperh)->perh->LCON, UART_LCON_RTOEN_MSK))
-#define UART_RX_TIMEOUT_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->LCON, UART_LCON_RTOEN_MSK))
+#define UART_RX_TIMEOUT_ENABLE(hperh)	(SET_BIT((hperh)->perh->RTOR, UART_RTOR_RTOEN_MSK))
+#define UART_RX_TIMEOUT_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->RTOR, UART_RTOR_RTOEN_MSK))
 #define UART_MSB_FIRST_ENABLE(hperh)	(SET_BIT((hperh)->perh->LCON, UART_LCON_MSB_MSK))
 #define UART_MSB_FIRST_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->LCON, UART_LCON_MSB_MSK))
 #define UART_DATA_INV_ENABLE(hperh)	(SET_BIT((hperh)->perh->LCON, UART_LCON_DATAINV_MSK))
@@ -57,8 +57,8 @@ extern "C" {
 #define UART_HDSEL_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->MCON, UART_MCON_HDEN_MSK))
 #define UART_FIFO_TX_RESET(hperh)	(SET_BIT((hperh)->perh->FCON, UART_FCON_TFRST_MSK))
 #define UART_FIFO_RX_RESET(hperh)	(SET_BIT((hperh)->perh->FCON, UART_FCON_RFRST_MSK))
-#define UART_LPBMOD_ENABLE(hperh)	(SET_BIT((hperh)->perh->MCON, UART_MCON_LBEN_MSK))
-#define UART_LPBMOD_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->MCON, UART_MCON_LBEN_MSK))
+#define UART_LPBMOD_ENABLE(hperh)	(SET_BIT((hperh)->perh->MCON, UART_MCON_LPBKEN_MSK))
+#define UART_LPBMOD_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->MCON, UART_MCON_LPBKEN_MSK))
 #define UART_AUTOBR_ENABLE(hperh)	(SET_BIT((hperh)->perh->MCON, UART_MCON_ABREN_MSK))
 #define UART_AUTOBR_DISABLE(hperh)	(CLEAR_BIT((hperh)->perh->MCON, UART_MCON_ABREN_MSK))
 #define UART_AUTOBR_REPT(hperh)		(SET_BIT((hperh)->perh->MCON, UART_MCON_ABRREPT_MSK))
@@ -81,75 +81,75 @@ extern "C" {
   * @brief UART word length
   */
 typedef enum {
-	UART_WORD_LENGTH_8B = 0x0,	/**< 8-bits */
-	UART_WORD_LENGTH_7B = 0x1,	/**< 7-bits */
-	UART_WORD_LENGTH_6B = 0x2,	/**< 6-bits */
-	UART_WORD_LENGTH_5B = 0x3,	/**< 5-bits */
+	UART_WORD_LENGTH_8B = 0x0U,	/**< 8-bits */
+	UART_WORD_LENGTH_7B = 0x1U,	/**< 7-bits */
+	UART_WORD_LENGTH_6B = 0x2U,	/**< 6-bits */
+	UART_WORD_LENGTH_5B = 0x3U,	/**< 5-bits */
 } uart_word_length_t;
 
 /**
   * @brief UART stop bits
   */
 typedef enum {
-	UART_STOP_BITS_1   = 0x0,	/**< 1-bits */
-	UART_STOP_BITS_2   = 0x1,	/**< 2-bits */
-	UART_STOP_BITS_0_5 = 0x0,	/**< 0.5-bits, using smartcard mode */
-	UART_STOP_BITS_1_5 = 0x1,	/**< 1.5-bits, using smartcard mode */
+	UART_STOP_BITS_1   = 0x0U,	/**< 1-bits */
+	UART_STOP_BITS_2   = 0x1U,	/**< 2-bits */
+	UART_STOP_BITS_0_5 = 0x0U,	/**< 0.5-bits, using smartcard mode */
+	UART_STOP_BITS_1_5 = 0x1U,	/**< 1.5-bits, using smartcard mode */
 } uart_stop_bits_t;
 
 /**
   * @brief UART parity
   */
 typedef enum {
-	UART_PARITY_NONE = 0x0,		/**< Not parity */
-	UART_PARITY_ODD  = 0x1,		/**< Odd parity */
-	UART_PARITY_EVEN = 0x3,		/**< Even parity */
+	UART_PARITY_NONE = 0x0U,	/**< Not parity */
+	UART_PARITY_ODD  = 0x1U,	/**< Odd parity */
+	UART_PARITY_EVEN = 0x3U,	/**< Even parity */
 } uart_parity_t;
 
 /**
   * @brief UART mode
   */
 typedef enum {
-	UART_MODE_UART  = 0x0,	/**< UART */
-	UART_MODE_LIN   = 0x1,	/**< LIN */
-	UART_MODE_IrDA  = 0x2,	/**< IrDA */
-	UART_MODE_RS485 = 0x3,	/**< RS485 */
-	UART_MODE_HDSEL = 0x4,	/**< Single-wire half-duplex */
-	UART_MODE_SCARD = 0x5,	/**< Smart card */
+	UART_MODE_UART  = 0x0U,	/**< UART */
+	UART_MODE_LIN   = 0x1U,	/**< LIN */
+	UART_MODE_IrDA  = 0x2U,	/**< IrDA */
+	UART_MODE_RS485 = 0x3U,	/**< RS485 */
+	UART_MODE_HDSEL = 0x4U,	/**< Single-wire half-duplex */
+	UART_MODE_SCARD = 0x5U,	/**< Smart card */
 } uart_mode_t;
 
 /**
   * @brief UART hardware flow control
   */
 typedef enum {
-	UART_HW_FLOW_CTL_DISABLE = 0x0,	/**< Auto-flow-control disable */
-	UART_HW_FLOW_CTL_ENABLE  = 0x1,	/**< Auto-flow-control enable */
+	UART_HW_FLOW_CTL_DISABLE = 0x0U,	/**< Auto-flow-control disable */
+	UART_HW_FLOW_CTL_ENABLE  = 0x1U,	/**< Auto-flow-control enable */
 } uart_hw_flow_ctl_t;
 
 /**
   * @brief ALD UART state
   */
 typedef enum {
-	UART_STATE_RESET      = 0x00,	/**< Peripheral is not initialized */
-	UART_STATE_READY      = 0x01,	/**< Peripheral Initialized and ready for use */
-	UART_STATE_BUSY       = 0x02,	/**< an internal process is ongoing */
-	UART_STATE_BUSY_TX    = 0x11,	/**< Data Transmission process is ongoing */
-	UART_STATE_BUSY_RX    = 0x21,	/**< Data Reception process is ongoing */
-	UART_STATE_BUSY_TX_RX = 0x31,	/**< Data Transmission Reception process is ongoing */
-	UART_STATE_TIMEOUT    = 0x03,	/**< Timeout state */
-	UART_STATE_ERROR      = 0x04,	/**< Error */
+	UART_STATE_RESET      = 0x00U,	/**< Peripheral is not initialized */
+	UART_STATE_READY      = 0x01U,	/**< Peripheral Initialized and ready for use */
+	UART_STATE_BUSY       = 0x02U,	/**< an internal process is ongoing */
+	UART_STATE_BUSY_TX    = 0x11U,	/**< Data Transmission process is ongoing */
+	UART_STATE_BUSY_RX    = 0x21U,	/**< Data Reception process is ongoing */
+	UART_STATE_BUSY_TX_RX = 0x31U,	/**< Data Transmission Reception process is ongoing */
+	UART_STATE_TIMEOUT    = 0x03U,	/**< Timeout state */
+	UART_STATE_ERROR      = 0x04U,	/**< Error */
 } uart_state_t;
 
 /**
   * @brief UART error codes
   */
 typedef enum {
-	UART_ERROR_NONE = ((uint32_t)0x00),	/**< No error */
-	UART_ERROR_PE   = ((uint32_t)0x01),	/**< Parity error */
-	UART_ERROR_NE   = ((uint32_t)0x02),	/**< Noise error */
-	UART_ERROR_FE   = ((uint32_t)0x04),	/**< frame error */
-	UART_ERROR_ORE  = ((uint32_t)0x08),	/**< Overrun error */
-	UART_ERROR_DMA  = ((uint32_t)0x10),	/**< DMA transfer error */
+	UART_ERROR_NONE = ((uint32_t)0x00U),	/**< No error */
+	UART_ERROR_PE   = ((uint32_t)0x01U),	/**< Parity error */
+	UART_ERROR_NE   = ((uint32_t)0x02U),	/**< Noise error */
+	UART_ERROR_FE   = ((uint32_t)0x04U),	/**< frame error */
+	UART_ERROR_ORE  = ((uint32_t)0x08U),	/**< Overrun error */
+	UART_ERROR_DMA  = ((uint32_t)0x10U),	/**< DMA transfer error */
 } uart_error_t;
 
 /**
@@ -203,24 +203,24 @@ typedef struct {
   * @brief Smart_card clock division
   */
 typedef enum {
-	SCARD_CLOCK_DIV1 = 0x0,	/**< No prescaler is used */
-	SCARD_CLOCK_DIV2 = 0x1,	/** Clock is divided by 2 */
-	SCARD_CLOCK_DIV4 = 0x2,	/** Clock is divided by 4 */
-	SCARD_CLOCK_DIV6 = 0x3,	/** Clock is divided by 6 */
+	SCARD_CLOCK_DIV1 = 0x0U,	/**< No prescaler is used */
+	SCARD_CLOCK_DIV2 = 0x1U,	/** Clock is divided by 2 */
+	SCARD_CLOCK_DIV4 = 0x2U,	/** Clock is divided by 4 */
+	SCARD_CLOCK_DIV6 = 0x3U,	/** Clock is divided by 6 */
 } scard_clk_div_t;
 
 /**
   * @brief Smart_card Rx/Tx handle retry time
   */
 typedef enum {
-	SCARD_RETRY_CNT0 = 0x0, /**< retry time 0 */
-	SCARD_RETRY_CNT1 = 0x1, /**< retry time 1 */
-	SCARD_RETRY_CNT2 = 0x2, /**< retry time 2 */
-	SCARD_RETRY_CNT3 = 0x3, /**< retry time 3 */
-	SCARD_RETRY_CNT4 = 0x4, /**< retry time 4 */
-	SCARD_RETRY_CNT5 = 0x5, /**< retry time 5 */
-	SCARD_RETRY_CNT6 = 0x6, /**< retry time 6 */
-	SCARD_RETRY_CNT7 = 0x7  /**< retry time 7 */
+	SCARD_RETRY_CNT0 = 0x0U,	/**< retry time 0 */
+	SCARD_RETRY_CNT1 = 0x1U,	/**< retry time 1 */
+	SCARD_RETRY_CNT2 = 0x2U,	/**< retry time 2 */
+	SCARD_RETRY_CNT3 = 0x3U,	/**< retry time 3 */
+	SCARD_RETRY_CNT4 = 0x4U,	/**< retry time 4 */
+	SCARD_RETRY_CNT5 = 0x5U,	/**< retry time 5 */
+	SCARD_RETRY_CNT6 = 0x6U,	/**< retry time 6 */
+	SCARD_RETRY_CNT7 = 0x7U,	/**< retry time 7 */
 } scard_retry_t;
 
 /**
@@ -238,45 +238,45 @@ typedef struct {
   * @brief LIN detection break length
   */
 typedef enum {
-	LIN_BREAK_LEN_10B = 0x0,	/**< 10-bit break */
-	LIN_BREAK_LEN_11B = 0x1,	/**< 11-bit break */
+	LIN_BREAK_LEN_10B = 0x0U,	/**< 10-bit break */
+	LIN_BREAK_LEN_11B = 0x1U,	/**< 11-bit break */
 } uart_lin_break_len_t;
 
 /**
   * @brief UART TXFIFO size
   */
 typedef enum {
-	UART_TXFIFO_EMPTY = 0x0,	/**< Empty */
-	UART_TXFIFO_2BYTE = 0x1,	/**< 2-Bytes */
-	UART_TXFIFO_4BYTE = 0x2,	/**< 4-Bytes */
-	UART_TXFIFO_8BYTE = 0x3,	/**< 8-Bytes */
+	UART_TXFIFO_EMPTY = 0x0U,	/**< Empty */
+	UART_TXFIFO_2BYTE = 0x1U,	/**< 2-Bytes */
+	UART_TXFIFO_4BYTE = 0x2U,	/**< 4-Bytes */
+	UART_TXFIFO_8BYTE = 0x3U,	/**< 8-Bytes */
 } uart_txfifo_t;
 
 /**
   * @brief UART RXFIFO size
   */
 typedef enum {
-	UART_RXFIFO_1BYTE  = 0x0,	/**< 1-Byte */
-	UART_RXFIFO_4BYTE  = 0x1,	/**< 4-Bytes */
-	UART_RXFIFO_8BYTE  = 0x2,	/**< 8-Bytes */
-	UART_RXFIFO_14BYTE = 0x3,	/**< 14-Bytes */
+	UART_RXFIFO_1BYTE  = 0x0U,	/**< 1-Byte */
+	UART_RXFIFO_4BYTE  = 0x1U,	/**< 4-Bytes */
+	UART_RXFIFO_8BYTE  = 0x2U,	/**< 8-Bytes */
+	UART_RXFIFO_14BYTE = 0x3U,	/**< 14-Bytes */
 } uart_rxfifo_t;
 
 /**
   * @brief UART auto-baud mode
   */
 typedef enum {
-	UART_ABRMOD_1_TO_0 = 0x0,	/**< Detect bit0:1, bit1:0 */
-	UART_ABRMOD_1      = 0x1,	/**< Detect bit0:1 */
-	UART_ABRMOD_0_TO_1 = 0x2,	/**< Detect bit0:0, bit1:1 */
+	UART_ABRMOD_1_TO_0 = 0x0U,	/**< Detect bit0:1, bit1:0 */
+	UART_ABRMOD_1      = 0x1U,	/**< Detect bit0:1 */
+	UART_ABRMOD_0_TO_1 = 0x2U,	/**< Detect bit0:0, bit1:1 */
 } uart_auto_baud_mode_t;
 
 /**
   * @brief UART DMA Requests
   */
 typedef enum {
-	UART_DMA_REQ_TX = 0x0,	/**< TX dma */
-	UART_DMA_REQ_RX = 0x1,	/**< RX dma */
+	UART_DMA_REQ_TX = 0x0U,	/**< TX dma */
+	UART_DMA_REQ_RX = 0x1U,	/**< RX dma */
 } uart_dma_req_t;
 
 /**
@@ -317,7 +317,7 @@ typedef enum {
 	UART_IT_RFFULL  = (1U << 11),	/**< Receive FIFO full */
 	UART_IT_RFOERR  = (1U << 12),	/**< Receive FIFO overrun */
 	UART_IT_RFUERR  = (1U << 13),	/**< Reveive FIFO underrun */
-	UART_IT_TSEMPTY = (1U << 14),	/**< Transmit shift register empty */
+	UART_IT_TBC     = (1U << 14),	/**< Transmit shift register empty */
 	UART_IT_TFTH    = (1U << 15),	/**< Transmit FIFO trigger threshold */
 	UART_IT_TFEMPTY = (1U << 16),	/**< Transmit FIFO empty */
 	UART_IT_TFOVER  = (1U << 18),	/**< Transmit FIFO overrun */
@@ -423,7 +423,7 @@ typedef enum {
                                  ((x) == UART_IT_RFFULL)  || \
                                  ((x) == UART_IT_RFOERR)  || \
                                  ((x) == UART_IT_RFUERR)  || \
-                                 ((x) == UART_IT_TSEMPTY) || \
+                                 ((x) == UART_IT_TBC) || \
                                  ((x) == UART_IT_TFTH)    || \
                                  ((x) == UART_IT_TFEMPTY) || \
                                  ((x) == UART_IT_TFOVER))
@@ -483,7 +483,7 @@ ald_status_t ald_uart_send_n_lock(uart_handle_t *hperh, uint8_t *buf, uint16_t s
 ald_status_t ald_uart_recv_n_lock(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout);
 ald_status_t ald_uart_send_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size);
 ald_status_t ald_uart_recv_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size);
-ald_status_t ald_uart_recv_frame_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t t_out);
+ald_status_t ald_uart_recv_frame_by_it(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t t_out);
 #ifdef ALD_DMA
 ald_status_t ald_uart_send_by_dma(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel);
 ald_status_t ald_uart_recv_by_dma(uart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel);
@@ -492,6 +492,7 @@ ald_status_t ald_uart_dma_resume(uart_handle_t *hperh);
 ald_status_t ald_uart_dma_stop(uart_handle_t *hperh);
 #endif
 void ald_uart_irq_handler(uart_handle_t *hperh);
+void ald_uart_irq_handler_fast(uart_handle_t *hperh);
 /**
   * @}
   */
@@ -502,8 +503,8 @@ void ald_uart_irq_handler(uart_handle_t *hperh);
 /* Peripheral Control functions */
 void ald_uart_interrupt_config(uart_handle_t *hperh, uart_it_t it, type_func_t state);
 void ald_uart_dma_req_config(uart_handle_t *hperh, uart_dma_req_t req, type_func_t state);
-void ald_uart_tx_fifo_config(uart_handle_t *hperh, uart_txfifo_t config, uint8_t level);
-void ald_uart_rx_fifo_config(uart_handle_t *hperh, uart_rxfifo_t config, uint8_t level);
+void ald_uart_tx_fifo_config(uart_handle_t *hperh, uart_txfifo_t config);
+void ald_uart_rx_fifo_config(uart_handle_t *hperh, uart_rxfifo_t config);
 void uart_lin_break_detect_irq(uart_handle_t *hperh, type_func_t status);
 void ald_uart_lin_send_break(uart_handle_t *hperh);
 void ald_uart_lin_detect_break_len_config(uart_handle_t *hperh, uart_lin_break_len_t len);

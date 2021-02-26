@@ -74,7 +74,7 @@ volatile uart_t* const  _uart[3] =
     (volatile uart_t*)UART3_BASE_ADDR
 };
 
-void uart_init(uart_device_number_t channel)
+void _uart_init(uart_device_number_t channel)
 {
     sysctl_clock_enable(SYSCTL_CLOCK_UART1 + channel);
     sysctl_reset(SYSCTL_RESET_UART1 + channel);
@@ -142,7 +142,7 @@ int rt_hw_uart_init(void)
         uart->hw_base   = UART1_BASE_ADDR;
         uart->irqno     = IRQN_UART1_INTERRUPT;
 
-        uart_init(UART_DEVICE_1);
+        _uart_init(UART_DEVICE_1);
 
         rt_hw_serial_register(serial,
                               "uart1",
@@ -166,7 +166,7 @@ int rt_hw_uart_init(void)
         uart->hw_base   = UART2_BASE_ADDR;
         uart->irqno     = IRQN_UART2_INTERRUPT;
 
-        uart_init(UART_DEVICE_2);
+        _uart_init(UART_DEVICE_2);
 
         rt_hw_serial_register(serial,
                               "uart2",
@@ -190,7 +190,7 @@ int rt_hw_uart_init(void)
         uart->hw_base   = UART3_BASE_ADDR;
         uart->irqno     = IRQN_UART3_INTERRUPT;
 
-        uart_init(UART_DEVICE_3);
+        _uart_init(UART_DEVICE_3);
 
         rt_hw_serial_register(serial,
                               "uart3",

@@ -1,104 +1,88 @@
-# STM32F410-Nucleo-64 开发板 BSP 说明
+# STM32F410-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为 RT-Thread 开发团队为 STM32F410-Nucleo-64 开发板提供的 BSP (板级支持包) 说明。
+## MCU: STM32F410RB @100MHz, 128KB FLASH,  32KB RAM
 
-主要内容如下：
+The STM32F410x8/B devices are based on the high-performance ARM®Cortex® -M4 32-bit RISC core operating at a frequency of up to 100 MHz. Their Cortex®-M4 core features a Floating point unit (FPU) single precision which supports all ARM single-precision data-processing instructions and data types. It also implements a full set of DSP instructions and a memory protection unit (MPU) which enhances application security.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The STM32F410x8/B belong to the STM32 Dynamic Efficiency™ product line (with products combining power efficiency, performance and integration) while adding a new innovative feature called Batch Acquisition Mode (BAM) allowing to save even more power consumption during data batching.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+The STM32F410x8/B incorporate high-speed embedded memories (up to 128 Kbytes of Flash memory, 32 Kbytes of SRAM), and an extensive range of enhanced I/Os and peripherals connected to two APB buses, one AHB bus and a 32-bit multi-AHB bus matrix.
 
-## 开发板介绍
+All devices offer one 12-bit ADC, one 12-bit DAC, a low-power RTC, three general-purpose 16-bit timers, one PWM timer for motor control, one general-purpose 32-bit timers and one 16-bit low-power timer. They also feature standard and advanced communication interfaces.
 
-探索者 STM32F410-Nucleo-64 是意法半导体推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 84Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F410RB 的芯片性能。
+#### KEY FEATURES
 
-开发板外观如下图所示：
+- Dynamic Efficiency Line with BAM (Batch Acquisition Mode)
+- Core: ARM®32-bit Cortex®-M4 CPU with FPU, Adaptive real-time accelerator (ART Accelerator™) allowing 0-wait state execution from Flash memory, frequency up to 100 MHz, memory protection unit, 125 DMIPS/1.25 DMIPS/MHz (Dhrystone 2.1), and DSP instructions
+- Memories
+  - Up to 128 Kbytes of Flash memory
+  - 512 bytes of OTP memory
+  - 32 Kbytes of SRAM
+- Clock, reset and supply management
+  - 1.7 V to 3.6 V application supply and I/Os
+  - POR, PDR, PVD and BOR
+  - 4-to-26 MHz crystal oscillator
+  - Internal 16 MHz factory-trimmed RC
+  - 32 kHz oscillator for RTC with calibration
+  - Internal 32 kHz RC with calibration
+- Power consumption
+  - Run: 89 μA/MHz (peripheral off)
+  - Stop (Flash in Stop mode, fast wakeup time): 40 μA Typ @ 25 °C; 49 μA max @25 °C
+  - Stop (Flash in Deep power down mode, fast wakeup time): down to 6 μA @ 25 °C; 14 μA max @25 °C
+  - Standby: 2.4 μA @25 °C / 1.7 V without RTC; 12 μA @85 °C @1.7 V
+  - VBATsupply for RTC: 1 μA @25 °C
+- 1×12-bit, 2.4 MSPS ADC: up to 16 channels
+- 1×12-bit D/A converter
+- General-purpose DMA: 16-stream DMA controllers with FIFOs and burst support
+- Up to 9 timers
+  - One 16-bit advanced motor-control timer
+  - One low-power timer (available in Stop mode)
+  - Three 16-bit general purpose timers
+  - One 32-bit timer up to 100 MHz with up to four IC/OC/PWM or pulse counter and quadrature (incremental) encoder input
+  - Two watchdog timers (independent window)
+  - SysTick timer
 
-![board](figures/board.png)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32F410RBT6，主频 84MHz，128KB FLASH ，32KB RAM。
-- 常用外设
-  - LED：3 个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
-  - 按键，2 个，USER and RESET 。
-- 调试接口，板载 ST-LINK/V2-1 调试器。
-
-开发板更多详细信息请参考意法半导体 [STM32F410-Nucleo-64 开发板介绍](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-mpu-eval-tools/stm32-mcu-mpu-eval-tools/stm32-nucleo-boards/nucleo-f410rb.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **片上外设** | **支持情况** |               **备注**                |
-| :------------ | :----------: | :-----------------------------------: |
-| GPIO         |     支持     | PA0, PA1... ---> PIN: 0, 1...63 |
-| UART         |     支持     |              UART2             |
-
-## 使用说明
-
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+- Debug mode
+  - Serial wire debug (SWD) & JTAG interfaces
+  - Cortex®-M4 Embedded Trace Macrocell™
+- Up to 50 I/O ports with interrupt capability
+  - Up to 45 fast I/Os up to 100 MHz
+  - Up to 49 5 V-tolerant I/Os
+- Up to 9 communication interfaces
+  - Up to 3x I2C interfaces (SMBus/PMBus) including 1x I2C Fast-mode at 1 MHz
+  - Up to 3 USARTs (2 x 12.5 Mbit/s, 1 x 6.25 Mbit/s), ISO 7816 interface, LIN, IrDA, modem control)
+  - Up to 3 SPI/I2Ss (up to 50 Mbit/s SPI or I2S audio protocol)
+- True random number generator
+- CRC calculation unit
+- 96-bit unique ID
+- RTC: subsecond accuracy, hardware calendar
+- All packages are ECOPACK®2
 
 
-### 快速上手
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Read more
 
-#### 硬件连接
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32F410RB ST Official Website](https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32f4-series/stm32f410/stm32f410rb.html#documentation) |          STM32F410RB datasheet and other resources           |
 
-使用 Type-A to Mini-B 线连接开发板和 PC 供电，红色 LED LD3 (PWR) 和 LD1 (COM) 会点亮。
 
-#### 编译下载
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+## Maintained By
 
-> 工程默认配置使用 ST-LINK 下载程序，点击下载按钮即可下载程序到开发板。
+[tanglj86](https://github.com/tanglj86/rt-thread)  
 
-#### 运行结果
+tanglj86@gmail.com
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD3 和 LD1 常亮、绿色 LD2 会周期性闪烁。
 
-USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     4.0.3 build Mar  7 2020
- 2006 - 2020 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
+## Translated By
 
-此 BSP 默认只开启了 GPIO 和 串口 2 的功能，更多高级功能需要利用 ENV 工具对 BSP 进行配置，步骤如下：
+Meco Man @ RT-Thread Community
 
-1. 在 BSP 下打开 env 工具。
-
-2. 输入 `menuconfig` 命令配置工程，配置好之后保存退出。
-
-3. 输入 `pkgs --update` 命令更新软件包。
-
-4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
-
-## 注意事项
-
-暂无
-
-## 联系人信息
-
-维护人:
-
-- [tanglj86](https://github.com/tanglj86/rt-thread) ，邮箱：<tanglj86@gmail.com>
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf

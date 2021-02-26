@@ -123,7 +123,7 @@ RTM_EXPORT(_rt_errno);
  *
  * @return the address of source memory
  */
-void *rt_memset(void *s, int c, rt_ubase_t count)
+RT_WEAK void *rt_memset(void *s, int c, rt_ubase_t count)
 {
 #ifdef RT_USING_TINY_SIZE
     char *xs = (char *)s;
@@ -207,7 +207,7 @@ RTM_EXPORT(rt_memset);
  *
  * @return the address of destination memory
  */
-void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 {
 #ifdef RT_USING_TINY_SIZE
     char *tmp = (char *)dst, *s = (char *)src;
@@ -321,7 +321,7 @@ RTM_EXPORT(rt_memmove);
  *
  * @return the result
  */
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
+RT_WEAK rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count)
 {
     const unsigned char *su1, *su2;
     int res = 0;
@@ -456,7 +456,10 @@ RTM_EXPORT(rt_strncmp);
 rt_int32_t rt_strcmp(const char *cs, const char *ct)
 {
     while (*cs && *cs == *ct)
-        cs++, ct++;
+    {        
+        cs++;
+        ct++;
+    }
 
     return (*cs - *ct);
 }
@@ -538,12 +541,12 @@ void rt_show_version(void)
     rt_kprintf("- RT -     Thread Operating System\n");
     rt_kprintf(" / | \\     %d.%d.%d build %s\n",
                RT_VERSION, RT_SUBVERSION, RT_REVISION, __DATE__);
-    rt_kprintf(" 2006 - 2020 Copyright by rt-thread team\n");
+    rt_kprintf(" 2006 - 2021 Copyright by rt-thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
 /* private function */
-#define isdigit(c)  ((unsigned)((c) - '0') < 10)
+#define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
 #ifdef RT_PRINTF_LONGLONG
 rt_inline int divide(long long *n, int base)
@@ -588,7 +591,7 @@ rt_inline int divide(long *n, int base)
 rt_inline int skip_atoi(const char **s)
 {
     register int i = 0;
-    while (isdigit(**s))
+    while (_ISDIGIT(**s))
         i = i * 10 + *((*s)++) - '0';
 
     return i;
@@ -834,7 +837,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
 
         /* get field width */
         field_width = -1;
-        if (isdigit(*fmt)) field_width = skip_atoi(&fmt);
+        if (_ISDIGIT(*fmt)) field_width = skip_atoi(&fmt);
         else if (*fmt == '*')
         {
             ++ fmt;
@@ -853,7 +856,7 @@ rt_int32_t rt_vsnprintf(char       *buf,
         if (*fmt == '.')
         {
             ++ fmt;
-            if (isdigit(*fmt)) precision = skip_atoi(&fmt);
+            if (_ISDIGIT(*fmt)) precision = skip_atoi(&fmt);
             else if (*fmt == '*')
             {
                 ++ fmt;
@@ -1113,7 +1116,7 @@ RTM_EXPORT(rt_console_get_device);
  *
  * @param name the name of new console device
  *
- * @return the old console device handler
+ * @return the old console device handler on successful, or RT_NULL on failure.
  */
 rt_device_t rt_console_set_device(const char *name)
 {
@@ -1124,6 +1127,10 @@ rt_device_t rt_console_set_device(const char *name)
 
     /* find new console device */
     new_device = rt_device_find(name);
+    
+    /* check whether it's a same device */
+    if (new_device == old_device) return RT_NULL;
+    
     if (new_device != RT_NULL)
     {
         if (_console_device != RT_NULL)
@@ -1180,7 +1187,7 @@ void rt_kputs(const char *str)
  *
  * @param fmt the format
  */
-void rt_kprintf(const char *fmt, ...)
+RT_WEAK void rt_kprintf(const char *fmt, ...)
 {
     va_list args;
     rt_size_t length;

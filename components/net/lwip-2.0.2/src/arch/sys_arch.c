@@ -32,6 +32,7 @@
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 
 #include "lwip/sys.h"
 #include "lwip/opt.h"
@@ -460,7 +461,7 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 {
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    rt_mb_send_wait(*mbox, (rt_uint32_t)msg, RT_WAITING_FOREVER);
+    rt_mb_send_wait(*mbox, (rt_ubase_t)msg, RT_WAITING_FOREVER);
 
     return;
 }
@@ -472,7 +473,7 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
  */
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
-    if (rt_mb_send(*mbox, (rt_uint32_t)msg) == RT_EOK)
+    if (rt_mb_send(*mbox, (rt_ubase_t)msg) == RT_EOK)
         return ERR_OK;
 
     return ERR_MEM;
@@ -627,7 +628,7 @@ u32_t sys_jiffies(void)
 
 u32_t sys_now(void)
 {
-    return rt_tick_get() * (1000 / RT_TICK_PER_SECOND);
+    return rt_tick_get_millisecond();
 }
 
 

@@ -17,9 +17,6 @@
 #pragma warning(disable:4267)   /* to ignore: warning C4267: conversion from 'size_t' to 'rt_size_t', possible loss of data */
 #pragma warning(disable:4244)   /* to ignore: warning C4244: '=' : conversion from '__w64 int' to 'rt_size_t', possible loss of data */
 
-#elif defined(__GNUC__)
-#define RT_USING_NOLIBC
-
 #endif /* end of _MSC_VER */
 
 #endif

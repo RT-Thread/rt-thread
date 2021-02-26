@@ -78,10 +78,10 @@ static void __spi_send_by_it(spi_handle_t *hperh);
 static void __spi_recv_by_it(spi_handle_t *hperh);
 static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status);
 #ifdef ALD_DMA
-    static void spi_dma_send_cplt(void *arg);
-    static void spi_dma_recv_cplt(void *arg);
-    static void spi_dma_send_recv_cplt(void *arg);
-    static void spi_dma_error(void *arg);
+static void spi_dma_send_cplt(void *arg);
+static void spi_dma_recv_cplt(void *arg);
+static void spi_dma_send_recv_cplt(void *arg);
+static void spi_dma_error(void *arg);
 #endif
 /**
   * @}
@@ -131,14 +131,14 @@ static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status);
   */
 void ald_spi_reset(spi_handle_t *hperh)
 {
-    hperh->perh->CON1    = 0x0;
-    hperh->perh->CON2    = 0x0;
-    hperh->perh->CRCPOLY = 0x00000007;
+	hperh->perh->CON1    = 0x0;
+	hperh->perh->CON2    = 0x0;
+	hperh->perh->CRCPOLY = 0x00000007;
 
-    SPI_RESET_HANDLE_STATE(hperh);
-    __UNLOCK(hperh);
+	SPI_RESET_HANDLE_STATE(hperh);
+	__UNLOCK(hperh);
 
-    return;
+	return;
 }
 
 /**
@@ -150,62 +150,59 @@ void ald_spi_reset(spi_handle_t *hperh)
   */
 ald_status_t ald_spi_init(spi_handle_t *hperh)
 {
-    uint32_t tmp = 0;
+	uint32_t tmp = 0;
 
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_MODE(hperh->init.mode));
-    assert_param(IS_SPI_DIRECTION(hperh->init.dir));
-    assert_param(IS_SPI_BAUD(hperh->init.baud));
-    assert_param(IS_FUNC_STATE(hperh->init.first_bit));
-    assert_param(IS_FUNC_STATE(hperh->init.ss_en));
-    assert_param(IS_FUNC_STATE(hperh->init.crc_calc));
-    assert_param(IS_SPI_DATASIZE(hperh->init.data_size));
-    assert_param(IS_SPI_CPHA(hperh->init.phase));
-    assert_param(IS_SPI_CPOL(hperh->init.polarity));
+	if (hperh == NULL)
+		return ERROR;
 
-    if (hperh == NULL)
-        return ERROR;
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_MODE(hperh->init.mode));
+	assert_param(IS_SPI_DIRECTION(hperh->init.dir));
+	assert_param(IS_SPI_BAUD(hperh->init.baud));
+	assert_param(IS_SPI_FIRSTBIT(hperh->init.first_bit));
+	assert_param(IS_FUNC_STATE(hperh->init.ss_en));
+	assert_param(IS_FUNC_STATE(hperh->init.crc_calc));
+	assert_param(IS_SPI_DATASIZE(hperh->init.data_size));
+	assert_param(IS_SPI_CPHA(hperh->init.phase));
+	assert_param(IS_SPI_CPOL(hperh->init.polarity));
 
-    ald_spi_reset(hperh);
+	ald_spi_reset(hperh);
 
-    tmp = hperh->perh->CON1;
+	tmp = hperh->perh->CON1;
 
-    if (hperh->init.mode == SPI_MODE_MASTER)
-        tmp |= 1 << SPI_CON1_SSOUT_POS;
+	if (hperh->init.mode == SPI_MODE_MASTER)
+		tmp |= 1 << SPI_CON1_SSOUT_POS;
 
-    tmp |= ((hperh->init.phase << SPI_CON1_CPHA_POS) | (hperh->init.polarity << SPI_CON1_CPOL_POS) |
-            (hperh->init.baud << SPI_CON1_BAUD_POSS) | (hperh->init.data_size << SPI_CON1_FLEN_POS) |
-            (hperh->init.mode << SPI_CON1_MSTREN_POS) | (hperh->init.ss_en << SPI_CON1_SSEN_POS) |
-            (hperh->init.first_bit << SPI_CON1_LSBFST_POS));
+	tmp |= ((hperh->init.phase << SPI_CON1_CPHA_POS) | (hperh->init.polarity << SPI_CON1_CPOL_POS) |
+	        (hperh->init.baud << SPI_CON1_BAUD_POSS) | (hperh->init.data_size << SPI_CON1_FLEN_POS) |
+		(hperh->init.mode << SPI_CON1_MSTREN_POS) | (hperh->init.ss_en << SPI_CON1_SSEN_POS) |
+		(hperh->init.first_bit << SPI_CON1_LSBFST_POS));
 
-    hperh->perh->CON1 = tmp;
+	hperh->perh->CON1 = tmp;
 
-    if (hperh->init.dir == SPI_DIRECTION_2LINES)
-    {
-        CLEAR_BIT(hperh->perh->CON1, SPI_CON1_BIDEN_MSK);
-        CLEAR_BIT(hperh->perh->CON1, SPI_CON1_RXO_MSK);
-    }
-    else if (hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY)
-    {
-        CLEAR_BIT(hperh->perh->CON1, SPI_CON1_BIDEN_MSK);
-        SET_BIT(hperh->perh->CON1, SPI_CON1_RXO_MSK);
-    }
-    else
-    {
-        SET_BIT(hperh->perh->CON1, SPI_CON1_BIDEN_MSK);
-    }
+	if (hperh->init.dir == SPI_DIRECTION_2LINES) {
+		CLEAR_BIT(hperh->perh->CON1, SPI_CON1_BIDEN_MSK);
+		CLEAR_BIT(hperh->perh->CON1, SPI_CON1_RXO_MSK);
+	}
+	else if (hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) {
+		CLEAR_BIT(hperh->perh->CON1, SPI_CON1_BIDEN_MSK);
+		SET_BIT(hperh->perh->CON1, SPI_CON1_RXO_MSK);
+	}
+	else {
+		SET_BIT(hperh->perh->CON1, SPI_CON1_BIDEN_MSK);
+	}
 
-    /* configure CRC */
-    hperh->perh->CON1   |= (hperh->init.crc_calc << SPI_CON1_CRCEN_POS);
-    hperh->perh->CRCPOLY = hperh->init.crc_poly;
+	/* configure CRC */
+	hperh->perh->CON1   |= (hperh->init.crc_calc << SPI_CON1_CRCEN_POS);
+	hperh->perh->CRCPOLY = hperh->init.crc_poly;
 
-    hperh->err_code = SPI_ERROR_NONE;
-    hperh->state    = SPI_STATE_READY;
+	hperh->err_code = SPI_ERROR_NONE;
+	hperh->state    = SPI_STATE_READY;
 
-    if (hperh->init.dir == SPI_DIRECTION_2LINES)
-        SPI_ENABLE(hperh);
+	if (hperh->init.dir == SPI_DIRECTION_2LINES)
+		SPI_ENABLE(hperh);
 
-    return OK;
+	return OK;
 }
 /**
   * @}
@@ -253,20 +250,16 @@ ald_status_t ald_spi_init(spi_handle_t *hperh)
   */
 int32_t ald_spi_send_byte_fast(spi_handle_t *hperh, uint8_t data)
 {
-    uint16_t cnt = 2000, temp;
+	uint16_t cnt = 2000, temp;
 
-    hperh->perh->DATA = data;
+	hperh->perh->DATA = data;
+	while (((hperh->perh->STAT & (1 << SPI_STAT_TXBE_POS)) == 0) && (--cnt));
+	cnt = 2000;
+	while ((hperh->perh->STAT & (1 << SPI_STAT_RXBNE_POS)) == 0 && (--cnt));
+	temp = hperh->perh->DATA;
+	UNUSED(temp);
 
-    while (((hperh->perh->STAT & (1 << SPI_STAT_TXBE_POS)) == 0) && (--cnt));
-
-    cnt = 2000;
-
-    while ((hperh->perh->STAT & (1 << SPI_STAT_RXBNE_POS)) == 0 && (--cnt));
-
-    temp = hperh->perh->DATA;
-    UNUSED(temp);
-
-    return cnt == 0 ? -1 : 0;
+	return cnt == 0 ? -1 : 0;
 }
 
 /**
@@ -279,13 +272,12 @@ int32_t ald_spi_send_byte_fast(spi_handle_t *hperh, uint8_t data)
   */
 int32_t ald_spi_send_byte_fast_1line(spi_handle_t *hperh, uint8_t data)
 {
-    uint16_t cnt = 2000;
+	uint16_t cnt = 2000;
 
-    hperh->perh->DATA = data;
+	hperh->perh->DATA = data;
+	while (((hperh->perh->STAT & (1 << SPI_STAT_TXBE_POS)) == 0) && (--cnt));
 
-    while (((hperh->perh->STAT & (1 << SPI_STAT_TXBE_POS)) == 0) && (--cnt));
-
-    return cnt == 0 ? -1 : 0;
+	return cnt == 0 ? -1 : 0;
 }
 
 /**
@@ -295,20 +287,16 @@ int32_t ald_spi_send_byte_fast_1line(spi_handle_t *hperh, uint8_t data)
   */
 uint8_t ald_spi_recv_byte_fast(spi_handle_t *hperh)
 {
-    uint16_t cnt = 2000;
+	uint16_t cnt = 2000;
 
-    if (hperh->init.mode == SPI_MODE_MASTER)
-    {
-        hperh->perh->DATA = 0xFF;
+	if (hperh->init.mode == SPI_MODE_MASTER) {
+		hperh->perh->DATA = 0xFF;
+		while (((hperh->perh->STAT & (1 << SPI_STAT_TXBE_POS)) == 0) && (--cnt));
+	}
 
-        while (((hperh->perh->STAT & (1 << SPI_STAT_TXBE_POS)) == 0) && (--cnt));
-    }
-
-    cnt = 2000;
-
-    while (((hperh->perh->STAT & (1 << SPI_STAT_RXBNE_POS)) == 0) && (--cnt));
-
-    return (uint8_t)hperh->perh->DATA;
+	cnt = 2000;
+	while (((hperh->perh->STAT & (1 << SPI_STAT_RXBNE_POS)) == 0) && (--cnt));
+	return (uint8_t)hperh->perh->DATA;
 }
 
 /**
@@ -321,98 +309,87 @@ uint8_t ald_spi_recv_byte_fast(spi_handle_t *hperh)
   */
 ald_status_t ald_spi_send(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (buf == NULL || size == 0)
+		return ERROR;
 
-    if (buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
 
-    __LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_TX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    hperh->state    = SPI_STATE_BUSY_TX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->rx_buf   = NULL;
+	hperh->rx_size  = 0;
+	hperh->rx_count = 0;
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->rx_buf   = NULL;
-    hperh->rx_size  = 0;
-    hperh->rx_count = 0;
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
+	if (hperh->init.dir == SPI_DIRECTION_1LINE)
+		SPI_1LINE_TX(hperh);
+	if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
+		SPI_ENABLE(hperh);
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	if ((hperh->init.mode == SPI_MODE_SLAVER) || (hperh->tx_count == 1)) {
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			hperh->perh->DATA = *hperh->tx_buf;
+			++hperh->tx_buf;
+			--hperh->tx_count;
+		}
+		else {
+			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
+			hperh->tx_buf += 2;
+			--hperh->tx_count;
+		}
+	}
 
-    if (hperh->init.dir == SPI_DIRECTION_1LINE)
-        SPI_1LINE_TX(hperh);
+	while (hperh->tx_count > 0) {
+		if (spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-    if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
-        SPI_ENABLE(hperh);
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    if ((hperh->init.mode == SPI_MODE_SLAVER) || (hperh->tx_count == 1))
-    {
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            hperh->perh->DATA = *hperh->tx_buf;
-            ++hperh->tx_buf;
-            --hperh->tx_count;
-        }
-        else
-        {
-            hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-            hperh->tx_buf += 2;
-            --hperh->tx_count;
-        }
-    }
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			hperh->perh->DATA = *hperh->tx_buf;
+			++hperh->tx_buf;
+			--hperh->tx_count;
+		}
+		else {
+			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
+			hperh->tx_buf += 2;
+			--hperh->tx_count;
+		}
+	}
 
-    while (hperh->tx_count > 0)
-    {
-        if (spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+	if (hperh->init.crc_calc)
+		SPI_CRCNEXT_ENABLE(hperh);
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+ 	if ((spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK)
+			|| (spi_wait_flag(hperh, SPI_IF_BUSY, RESET, timeout) != OK)) {
+ 		if (hperh->init.crc_calc)
+ 			SPI_CRC_RESET(hperh);
 
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            hperh->perh->DATA = *hperh->tx_buf;
-            ++hperh->tx_buf;
-            --hperh->tx_count;
-        }
-        else
-        {
-            hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-            hperh->tx_buf += 2;
-            --hperh->tx_count;
-        }
-    }
+ 		hperh->state = SPI_STATE_READY;
+ 		__UNLOCK(hperh);
+ 		return TIMEOUT;
+ 	}
 
-    if (hperh->init.crc_calc)
-        SPI_CRCNEXT_ENABLE(hperh);
+	if (hperh->init.dir == SPI_DIRECTION_2LINES)
+		ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
 
-    if ((spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK)
-            || (spi_wait_flag(hperh, SPI_IF_BUSY, RESET, timeout) != OK))
-    {
-        if (hperh->init.crc_calc)
-            SPI_CRC_RESET(hperh);
+	hperh->state = SPI_STATE_READY;
+	__UNLOCK(hperh);
 
-        hperh->state = SPI_STATE_READY;
-        __UNLOCK(hperh);
-        return TIMEOUT;
-    }
-
-    if (hperh->init.dir == SPI_DIRECTION_2LINES)
-        ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
-
-    hperh->state = SPI_STATE_READY;
-    __UNLOCK(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -425,124 +402,111 @@ ald_status_t ald_spi_send(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint
   */
 ald_status_t ald_spi_recv(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    uint16_t temp;
-    assert_param(IS_SPI(hperh->perh));
+	uint16_t temp;
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (buf == NULL || size == 0)
+		return ERROR;
 
-    if (buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_RX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_RX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->tx_buf   = NULL;
+	hperh->tx_size  = 0;
+	hperh->tx_count = 0;
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->tx_buf   = NULL;
-    hperh->tx_size  = 0;
-    hperh->tx_count = 0;
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
+	if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
+		SPI_1LINE_RX(hperh);
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	if ((hperh->init.mode == SPI_MODE_MASTER) && (hperh->init.dir == SPI_DIRECTION_2LINES)) {
+		__UNLOCK(hperh);
+		hperh->state = SPI_STATE_READY;
+		return ald_spi_send_recv(hperh, buf, buf, size, timeout);
+	}
 
-    if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
-        SPI_1LINE_RX(hperh);
+	if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
+		SPI_ENABLE(hperh);
 
-    if ((hperh->init.mode == SPI_MODE_MASTER) && (hperh->init.dir == SPI_DIRECTION_2LINES))
-    {
-        __UNLOCK(hperh);
-        hperh->state = SPI_STATE_READY;
-        return ald_spi_send_recv(hperh, buf, buf, size, timeout);
-    }
+	while (hperh->rx_count > 1) {
+		if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-    if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
-        SPI_ENABLE(hperh);
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    while (hperh->rx_count > 1)
-    {
-        if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			*hperh->rx_buf = hperh->perh->DATA;
+			++hperh->rx_buf;
+			--hperh->rx_count;
+		}
+		else {
+			*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
+			hperh->rx_buf += 2;
+			--hperh->rx_count;
+		}
+	}
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+	if (hperh->init.crc_calc)
+		SPI_CRCNEXT_ENABLE(hperh);
 
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            *hperh->rx_buf = hperh->perh->DATA;
-            ++hperh->rx_buf;
-            --hperh->rx_count;
-        }
-        else
-        {
-            *(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-            hperh->rx_buf += 2;
-            --hperh->rx_count;
-        }
-    }
+	if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK) {
+		if (hperh->init.crc_calc)
+			SPI_CRC_RESET(hperh);
 
-    if (hperh->init.crc_calc)
-        SPI_CRCNEXT_ENABLE(hperh);
+		hperh->state = SPI_STATE_READY;
+		__UNLOCK(hperh);
+		return TIMEOUT;
+	}
 
-    if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK)
-    {
-        if (hperh->init.crc_calc)
-            SPI_CRC_RESET(hperh);
+	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+		*hperh->rx_buf = hperh->perh->DATA;
+		++hperh->rx_buf;
+		--hperh->rx_count;
+	}
+	else {
+		*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
+		hperh->rx_buf += 2;
+		--hperh->rx_count;
+	}
 
-        hperh->state = SPI_STATE_READY;
-        __UNLOCK(hperh);
-        return TIMEOUT;
-    }
+	if (hperh->init.crc_calc) {
+		if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-    if (hperh->init.data_size == SPI_DATA_SIZE_8)
-    {
-        *hperh->rx_buf = hperh->perh->DATA;
-        ++hperh->rx_buf;
-        --hperh->rx_count;
-    }
-    else
-    {
-        *(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-        hperh->rx_buf += 2;
-        --hperh->rx_count;
-    }
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    if (hperh->init.crc_calc)
-    {
-        if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		temp = hperh->perh->DATA;
+		UNUSED(temp);
+	}
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+	if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)) {
+		hperh->err_code |= SPI_ERROR_CRC;
+		SPI_CRC_RESET(hperh);
+		ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+		hperh->state = SPI_STATE_READY;
+		__UNLOCK(hperh);
+		return ERROR;
+	}
 
-        temp = hperh->perh->DATA;
-        UNUSED(temp);
-    }
+	hperh->state = SPI_STATE_READY;
+	__UNLOCK(hperh);
 
-    if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET))
-    {
-        hperh->err_code |= SPI_ERROR_CRC;
-        SPI_CRC_RESET(hperh);
-        ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-        hperh->state = SPI_STATE_READY;
-        __UNLOCK(hperh);
-        return ERROR;
-    }
-
-    hperh->state = SPI_STATE_READY;
-    __UNLOCK(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -556,199 +520,175 @@ ald_status_t ald_spi_recv(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint
   */
 ald_status_t ald_spi_send_recv(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size, uint32_t timeout)
 {
-    uint16_t temp;
+	uint16_t temp;
 
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (hperh->init.dir != SPI_DIRECTION_2LINES)
+		return ERROR;
+	if (tx_buf == NULL || rx_buf == NULL || size == 0)
+		return ERROR;
 
-    if (hperh->init.dir != SPI_DIRECTION_2LINES)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_TX_RX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    if (tx_buf == NULL || rx_buf == NULL || size == 0)
-        return ERROR;
+	hperh->tx_buf   = tx_buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->rx_buf   = rx_buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_TX_RX;
-    hperh->err_code = SPI_ERROR_NONE;
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
 
-    hperh->tx_buf   = tx_buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->rx_buf   = rx_buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
+	if ((hperh->init.mode == SPI_MODE_SLAVER) || ((hperh->init.mode == SPI_MODE_SLAVER) && (hperh->tx_size == 1))) {
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			hperh->perh->DATA = *hperh->tx_buf;
+			++hperh->tx_buf;
+			--hperh->tx_count;
+		}
+		else {
+			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
+			hperh->tx_buf += 2;
+			--hperh->tx_count;
+		}
+	}
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	if (hperh->tx_count == 0) {
+		if (hperh->init.crc_calc)
+			SPI_CRCNEXT_ENABLE(hperh);
 
-    if ((hperh->init.mode == SPI_MODE_SLAVER) || ((hperh->init.mode == SPI_MODE_SLAVER) && (hperh->tx_size == 1)))
-    {
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            hperh->perh->DATA = *hperh->tx_buf;
-            ++hperh->tx_buf;
-            --hperh->tx_count;
-        }
-        else
-        {
-            hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-            hperh->tx_buf += 2;
-            --hperh->tx_count;
-        }
-    }
+		if (spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-    if (hperh->tx_buf == 0)
-    {
-        if (hperh->init.crc_calc)
-            SPI_CRCNEXT_ENABLE(hperh);
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-        if (spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			*hperh->rx_buf = hperh->perh->DATA;
+			++hperh->rx_buf;
+			--hperh->rx_count;
+		}
+		else {
+			(*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
+			hperh->rx_buf += 2;
+			--hperh->rx_count;
+		}
+	}
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+	while (hperh->tx_count > 0) {
+		if (spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            *hperh->rx_buf = hperh->perh->DATA;
-            ++hperh->rx_buf;
-            --hperh->rx_count;
-        }
-        else
-        {
-            (*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
-            hperh->rx_buf += 2;
-            --hperh->rx_count;
-        }
-    }
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    while (hperh->tx_count > 0)
-    {
-        if (spi_wait_flag(hperh, SPI_IF_TXBE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			hperh->perh->DATA = *hperh->tx_buf;
+			++hperh->tx_buf;
+			--hperh->tx_count;
+		}
+		else {
+			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
+			hperh->tx_buf += 2;
+			--hperh->tx_count;
+		}
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+		if ((hperh->tx_count == 0) && (hperh->init.crc_calc))
+			SPI_CRCNEXT_ENABLE(hperh);
 
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            hperh->perh->DATA = *hperh->tx_buf;
-            ++hperh->tx_buf;
-            --hperh->tx_count;
-        }
-        else
-        {
-            hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-            hperh->tx_buf += 2;
-            --hperh->tx_count;
-        }
+		if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-        if ((hperh->tx_count == 0) && (hperh->init.crc_calc))
-            SPI_CRCNEXT_ENABLE(hperh);
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-        if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			*hperh->rx_buf = hperh->perh->DATA;
+			++hperh->rx_buf;
+			--hperh->rx_count;
+		}
+		else {
+			(*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+			hperh->rx_buf += 2;
+			--hperh->rx_count;
+		}
+	}
 
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            *hperh->rx_buf = hperh->perh->DATA;
-            ++hperh->rx_buf;
-            --hperh->rx_count;
-        }
-        else
-        {
-            (*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
+	if (hperh->init.mode == SPI_MODE_SLAVER) {
+		if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+			SPI_CRC_RESET(hperh);
 
-            hperh->rx_buf += 2;
-            --hperh->rx_count;
-        }
-    }
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    if (hperh->init.mode == SPI_MODE_SLAVER)
-    {
-        if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			*hperh->rx_buf = hperh->perh->DATA;
+			++hperh->rx_buf;
+			--hperh->rx_count;
+		}
+		else {
+			(*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+			hperh->rx_buf += 2;
+			--hperh->rx_count;
+		}
+	}
 
-        if (hperh->init.data_size == SPI_DATA_SIZE_8)
-        {
-            *hperh->rx_buf = hperh->perh->DATA;
-            ++hperh->rx_buf;
-            --hperh->rx_count;
-        }
-        else
-        {
-            (*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
+	if (hperh->init.crc_calc) {
+		if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK) {
+			if (hperh->init.crc_calc)
+				SPI_CRC_RESET(hperh);
 
-            hperh->rx_buf += 2;
-            --hperh->rx_count;
-        }
-    }
+			hperh->state = SPI_STATE_READY;
+			__UNLOCK(hperh);
+			return TIMEOUT;
+		}
 
-    if (hperh->init.crc_calc)
-    {
-        if (spi_wait_flag(hperh, SPI_IF_RXBNE, SET, timeout) != OK)
-        {
-            if (hperh->init.crc_calc)
-                SPI_CRC_RESET(hperh);
+		temp = hperh->perh->DATA;
+		UNUSED(temp);
+	}
 
-            hperh->state = SPI_STATE_READY;
-            __UNLOCK(hperh);
-            return TIMEOUT;
-        }
+	if ((spi_wait_flag(hperh, SPI_IF_BUSY, RESET, timeout) != OK)) {
+		if (hperh->init.crc_calc)
+			SPI_CRC_RESET(hperh);
 
-        temp = hperh->perh->DATA;
-        UNUSED(temp);
-    }
+		hperh->state = SPI_STATE_READY;
+		__UNLOCK(hperh);
+		return TIMEOUT;
+	}
 
-    if ((spi_wait_flag(hperh, SPI_IF_BUSY, RESET, timeout) != OK))
-    {
-        if (hperh->init.crc_calc)
-            SPI_CRC_RESET(hperh);
+	if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)) {
+		hperh->err_code |= SPI_ERROR_CRC;
+		SPI_CRC_RESET(hperh);
+		ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+		hperh->state = SPI_STATE_READY;
+		__UNLOCK(hperh);
 
-        hperh->state = SPI_STATE_READY;
-        __UNLOCK(hperh);
-        return TIMEOUT;
-    }
+		return ERROR;
+	}
 
-    if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET))
-    {
-        hperh->err_code |= SPI_ERROR_CRC;
-        SPI_CRC_RESET(hperh);
-        ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-        hperh->state = SPI_STATE_READY;
-        __UNLOCK(hperh);
+	hperh->state = SPI_STATE_READY;
+	__UNLOCK(hperh);
 
-        return ERROR;
-    }
-
-    hperh->state = SPI_STATE_READY;
-    __UNLOCK(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -760,46 +700,43 @@ ald_status_t ald_spi_send_recv(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx
   */
 ald_status_t ald_spi_send_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (buf == NULL || size == 0)
+		return ERROR;
 
-    if (buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_TX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_TX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->rx_buf   = NULL;
+	hperh->rx_size  = 0;
+	hperh->rx_count = 0;
+	__UNLOCK(hperh);
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->rx_buf   = NULL;
-    hperh->rx_size  = 0;
-    hperh->rx_count = 0;
-    __UNLOCK(hperh);
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	if (hperh->init.dir == SPI_DIRECTION_1LINE)
+		SPI_1LINE_TX(hperh);
 
-    if (hperh->init.dir == SPI_DIRECTION_1LINE)
-        SPI_1LINE_TX(hperh);
+	if (hperh->init.dir == SPI_DIRECTION_2LINES) {
+		ald_spi_interrupt_config(hperh, SPI_IT_TXBE, ENABLE);
+	}
+	else {
+		ald_spi_interrupt_config(hperh, SPI_IT_TXBE, ENABLE);
+		ald_spi_interrupt_config(hperh, SPI_IT_ERR, ENABLE);
+	}
 
-    if (hperh->init.dir == SPI_DIRECTION_2LINES)
-    {
-        ald_spi_interrupt_config(hperh, SPI_IT_TXBE, ENABLE);
-    }
-    else
-    {
-        ald_spi_interrupt_config(hperh, SPI_IT_TXBE, ENABLE);
-        ald_spi_interrupt_config(hperh, SPI_IT_ERR, ENABLE);
-    }
+	if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
+		SPI_ENABLE(hperh);
 
-    if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
-        SPI_ENABLE(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -811,42 +748,40 @@ ald_status_t ald_spi_send_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size
   */
 ald_status_t ald_spi_recv_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (buf == NULL || size == 0)
+		return ERROR;
+	if ((hperh->init.dir == SPI_DIRECTION_2LINES) && (hperh->init.mode == SPI_MODE_MASTER))
+		return ERROR;	/* Please call ald_spi_send_recv_by_it() */
 
-    if (buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_RX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    if ((hperh->init.dir == SPI_DIRECTION_2LINES) && (hperh->init.mode == SPI_MODE_MASTER))
-        return ERROR;	/* Please call ald_spi_send_recv_by_it() */
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->tx_buf   = NULL;
+	hperh->tx_size  = 0;
+	hperh->tx_count = 0;
+	__UNLOCK(hperh);
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_RX;
-    hperh->err_code = SPI_ERROR_NONE;
+	if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
+		SPI_1LINE_RX(hperh);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->tx_buf   = NULL;
-    hperh->tx_size  = 0;
-    hperh->tx_count = 0;
-    __UNLOCK(hperh);
+	if (hperh->init.crc_calc == ENABLE)
+		SPI_CRC_RESET(hperh);
 
-    if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
-        SPI_1LINE_RX(hperh);
+	ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, ENABLE);
+	ald_spi_interrupt_config(hperh, SPI_IT_ERR, ENABLE);
 
-    if (hperh->init.crc_calc == ENABLE)
-        SPI_CRC_RESET(hperh);
+	if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
+		SPI_ENABLE(hperh);
 
-    ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, ENABLE);
-    ald_spi_interrupt_config(hperh, SPI_IT_ERR, ENABLE);
-
-    if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
-        SPI_ENABLE(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -860,34 +795,33 @@ ald_status_t ald_spi_recv_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size
   */
 ald_status_t ald_spi_send_recv_by_it(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (tx_buf == NULL || rx_buf == NULL || size == 0)
+		return ERROR;
 
-    if (tx_buf == NULL || rx_buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_TX_RX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_TX_RX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->tx_buf   = tx_buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->rx_buf   = rx_buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	__UNLOCK(hperh);
 
-    hperh->tx_buf   = tx_buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->rx_buf   = rx_buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    __UNLOCK(hperh);
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, ENABLE);
+	ald_spi_interrupt_config(hperh, SPI_IT_TXBE, ENABLE);
+ 	ald_spi_interrupt_config(hperh, SPI_IT_ERR, ENABLE);
 
-    ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, ENABLE);
-    ald_spi_interrupt_config(hperh, SPI_IT_TXBE, ENABLE);
-    ald_spi_interrupt_config(hperh, SPI_IT_ERR, ENABLE);
-
-    return OK;
+	return OK;
 }
 
 #ifdef ALD_DMA
@@ -901,59 +835,57 @@ ald_status_t ald_spi_send_recv_by_it(spi_handle_t *hperh, uint8_t *tx_buf, uint8
   */
 ald_status_t ald_spi_send_by_dma(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (buf == NULL || size == 0)
+		return ERROR;
 
-    if (buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_TX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_TX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->rx_buf   = NULL;
+	hperh->rx_size  = 0;
+	hperh->rx_count = 0;
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->rx_buf   = NULL;
-    hperh->rx_size  = 0;
-    hperh->rx_count = 0;
+	if (hperh->init.dir == SPI_DIRECTION_1LINE)
+		SPI_1LINE_TX(hperh);
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
 
-    if (hperh->init.dir == SPI_DIRECTION_1LINE)
-        SPI_1LINE_TX(hperh);
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.cplt_cbk = spi_dma_send_cplt;
+	hperh->hdmatx.err_arg  = (void *)hperh;
+	hperh->hdmatx.err_cbk  = spi_dma_error;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	/* Configure SPI DMA transmit */
+	ald_dma_config_struct(&(hperh->hdmatx.config));
+	hperh->hdmatx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmatx.config.src        = (void *)buf;
+	hperh->hdmatx.config.dst        = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size       = size;
+	hperh->hdmatx.config.src_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;
+	hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
+	hperh->hdmatx.config.channel    = channel;
+	ald_dma_config_basic(&(hperh->hdmatx));
 
-    hperh->hdmatx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.cplt_cbk = spi_dma_send_cplt;
-    hperh->hdmatx.err_arg  = (void *)hperh;
-    hperh->hdmatx.err_cbk  = spi_dma_error;
+	__UNLOCK(hperh);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, ENABLE);
 
-    /* Configure SPI DMA transmit */
-    ald_dma_config_struct(&(hperh->hdmatx.config));
-    hperh->hdmatx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
-    hperh->hdmatx.config.src        = (void *)buf;
-    hperh->hdmatx.config.dst        = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size       = size;
-    hperh->hdmatx.config.src_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;
-    hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-    hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
-    hperh->hdmatx.config.channel    = channel;
-    ald_dma_config_basic(&(hperh->hdmatx));
+	if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
+		SPI_ENABLE(hperh);
 
-    __UNLOCK(hperh);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, ENABLE);
-
-    if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
-        SPI_ENABLE(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -966,65 +898,61 @@ ald_status_t ald_spi_send_by_dma(spi_handle_t *hperh, uint8_t *buf, uint16_t siz
   */
 ald_status_t ald_spi_recv_by_dma(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY)
+		return BUSY;
+	if (buf == NULL || size == 0)
+		return ERROR;
 
-    if (buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_RX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_RX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->tx_buf   = NULL;
+	hperh->tx_size  = 0;
+	hperh->tx_count = 0;
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->tx_buf   = NULL;
-    hperh->tx_size  = 0;
-    hperh->tx_count = 0;
+	if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
+		SPI_1LINE_RX(hperh);
+	if ((hperh->init.dir == SPI_DIRECTION_2LINES) && (hperh->init.mode == SPI_MODE_MASTER)) {
+		__UNLOCK(hperh);
+		return ERROR;	/* Please use ald_spi_send_recv_by_dma() */
+	}
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
 
-    if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
-        SPI_1LINE_RX(hperh);
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    if ((hperh->init.dir == SPI_DIRECTION_2LINES) && (hperh->init.mode == SPI_MODE_MASTER))
-    {
-        __UNLOCK(hperh);
-        return ERROR;	/* Please use ald_spi_send_recv_by_dma() */
-    }
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.cplt_cbk = spi_dma_recv_cplt;
+	hperh->hdmarx.err_arg  = (void *)hperh;
+	hperh->hdmarx.err_cbk  = spi_dma_error;
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	/* Configure DMA Receive */
+	ald_dma_config_struct(&(hperh->hdmarx.config));
+	hperh->hdmarx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmarx.config.src        = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst        = (void *)buf;
+	hperh->hdmarx.config.size       = size;
+	hperh->hdmarx.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;;
+	hperh->hdmarx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmarx.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
+	hperh->hdmarx.config.channel    = channel;
+	ald_dma_config_basic(&(hperh->hdmarx));
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	__UNLOCK(hperh);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, ENABLE);
 
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmarx.cplt_cbk = spi_dma_recv_cplt;
-    hperh->hdmarx.err_arg  = (void *)hperh;
-    hperh->hdmarx.err_cbk  = spi_dma_error;
+	if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
+		SPI_ENABLE(hperh);
 
-    /* Configure DMA Receive */
-    ald_dma_config_struct(&(hperh->hdmarx.config));
-    hperh->hdmarx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
-    hperh->hdmarx.config.src        = (void *)&hperh->perh->DATA;
-    hperh->hdmarx.config.dst        = (void *)buf;
-    hperh->hdmarx.config.size       = size;
-    hperh->hdmarx.config.src_inc    = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;;
-    hperh->hdmarx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-    hperh->hdmarx.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
-    hperh->hdmarx.config.channel    = channel;
-    ald_dma_config_basic(&(hperh->hdmarx));
-
-    __UNLOCK(hperh);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, ENABLE);
-
-    if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
-        SPI_ENABLE(hperh);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -1039,74 +967,72 @@ ald_status_t ald_spi_recv_by_dma(spi_handle_t *hperh, uint8_t *buf, uint16_t siz
   */
 ald_status_t ald_spi_send_recv_by_dma(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size, uint8_t tx_channel, uint8_t rx_channel)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    if (hperh->state != SPI_STATE_READY && hperh->state != SPI_STATE_BUSY_RX)
-        return BUSY;
+	if (hperh->state != SPI_STATE_READY && hperh->state != SPI_STATE_BUSY_RX)
+		return BUSY;
+	if (tx_buf == NULL || rx_buf == NULL || size == 0)
+		return ERROR;
 
-    if (tx_buf == NULL || rx_buf == NULL || size == 0)
-        return ERROR;
+	__LOCK(hperh);
+	hperh->state    = SPI_STATE_BUSY_RX;
+	hperh->err_code = SPI_ERROR_NONE;
 
-    __LOCK(hperh);
-    hperh->state    = SPI_STATE_BUSY_RX;
-    hperh->err_code = SPI_ERROR_NONE;
+	hperh->tx_buf   = tx_buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->rx_buf   = rx_buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
 
-    hperh->tx_buf   = tx_buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->rx_buf   = rx_buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	hperh->hdmatx.cplt_arg = NULL;
+	hperh->hdmatx.cplt_cbk = NULL;
+	hperh->hdmatx.err_arg  = (void *)hperh;
+	hperh->hdmatx.err_cbk  = spi_dma_error;
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.cplt_cbk = spi_dma_send_recv_cplt;
+	hperh->hdmarx.err_arg  = (void *)hperh;
+	hperh->hdmarx.err_cbk  = spi_dma_error;
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
 
-    hperh->hdmatx.cplt_arg = NULL;
-    hperh->hdmatx.cplt_cbk = NULL;
-    hperh->hdmatx.err_arg  = (void *)hperh;
-    hperh->hdmatx.err_cbk  = spi_dma_error;
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmarx.cplt_cbk = spi_dma_send_recv_cplt;
-    hperh->hdmarx.err_arg  = (void *)hperh;
-    hperh->hdmarx.err_cbk  = spi_dma_error;
+	/* Configure SPI DMA transmit */
+	ald_dma_config_struct(&(hperh->hdmatx.config));
+	hperh->hdmatx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmatx.config.src        = (void *)tx_buf;
+	hperh->hdmatx.config.dst        = (void *)&hperh->perh->DATA;
+	hperh->hdmatx.config.size       = size;
+	hperh->hdmatx.config.src_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;
+	hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
+	hperh->hdmatx.config.channel    = tx_channel;
+	ald_dma_config_basic(&(hperh->hdmatx));
 
-    if (hperh->init.crc_calc)
-        SPI_CRC_RESET(hperh);
+	/* Configure DMA Receive */
+	ald_dma_config_struct(&(hperh->hdmarx.config));
+	hperh->hdmarx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
+	hperh->hdmarx.config.src        = (void *)&hperh->perh->DATA;
+	hperh->hdmarx.config.dst        = (void *)rx_buf;
+	hperh->hdmarx.config.size       = size;
+	hperh->hdmarx.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;;
+	hperh->hdmarx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
+	hperh->hdmarx.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
+	hperh->hdmarx.config.channel    = rx_channel;
+	ald_dma_config_basic(&(hperh->hdmarx));
 
-    /* Configure SPI DMA transmit */
-    ald_dma_config_struct(&(hperh->hdmatx.config));
-    hperh->hdmatx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
-    hperh->hdmatx.config.src        = (void *)tx_buf;
-    hperh->hdmatx.config.dst        = (void *)&hperh->perh->DATA;
-    hperh->hdmatx.config.size       = size;
-    hperh->hdmatx.config.src_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;
-    hperh->hdmatx.config.dst_inc    = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-    hperh->hdmatx.config.msigsel    = DMA_MSIGSEL_SPI_TXEMPTY;
-    hperh->hdmatx.config.channel    = tx_channel;
-    ald_dma_config_basic(&(hperh->hdmatx));
+	__UNLOCK(hperh);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, ENABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, ENABLE);
 
-    /* Configure DMA Receive */
-    ald_dma_config_struct(&(hperh->hdmarx.config));
-    hperh->hdmarx.config.data_width = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_SIZE_BYTE : DMA_DATA_SIZE_HALFWORD;
-    hperh->hdmarx.config.src        = (void *)&hperh->perh->DATA;
-    hperh->hdmarx.config.dst        = (void *)rx_buf;
-    hperh->hdmarx.config.size       = size;
-    hperh->hdmarx.config.src_inc    = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc    = hperh->init.data_size == SPI_DATA_SIZE_8 ? DMA_DATA_INC_BYTE : DMA_DATA_INC_HALFWORD;;
-    hperh->hdmarx.config.msel       = hperh->perh == SPI0 ? DMA_MSEL_SPI0 : (hperh->perh == SPI1 ? DMA_MSEL_SPI1 : DMA_MSEL_SPI2);
-    hperh->hdmarx.config.msigsel    = DMA_MSIGSEL_SPI_RNR;
-    hperh->hdmarx.config.channel    = rx_channel;
-    ald_dma_config_basic(&(hperh->hdmarx));
-
-    __UNLOCK(hperh);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, ENABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, ENABLE);
-
-    return OK;
+	return OK;
 }
 
 /**
@@ -1116,14 +1042,14 @@ ald_status_t ald_spi_send_recv_by_dma(spi_handle_t *hperh, uint8_t *tx_buf, uint
   */
 ald_status_t ald_spi_dma_pause(spi_handle_t *hperh)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    __LOCK(hperh);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
-    __UNLOCK(hperh);
+	__LOCK(hperh);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1133,14 +1059,14 @@ ald_status_t ald_spi_dma_pause(spi_handle_t *hperh)
   */
 ald_status_t ald_spi_dma_resume(spi_handle_t *hperh)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    __LOCK(hperh);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, ENABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, ENABLE);
-    __UNLOCK(hperh);
+	__LOCK(hperh);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, ENABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, ENABLE);
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1150,15 +1076,15 @@ ald_status_t ald_spi_dma_resume(spi_handle_t *hperh)
   */
 ald_status_t ald_spi_dma_stop(spi_handle_t *hperh)
 {
-    assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI(hperh->perh));
 
-    __LOCK(hperh);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
-    __UNLOCK(hperh);
+	__LOCK(hperh);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
+	__UNLOCK(hperh);
 
-    hperh->state = SPI_STATE_READY;
-    return OK;
+	hperh->state = SPI_STATE_READY;
+	return OK;
 }
 #endif
 /**
@@ -1193,66 +1119,65 @@ ald_status_t ald_spi_dma_stop(spi_handle_t *hperh)
   */
 void ald_spi_irq_handler(spi_handle_t *hperh)
 {
-    if ((hperh->state == SPI_STATE_BUSY_RX) || (hperh->state == SPI_STATE_BUSY_TX))
-    {
-        if ((ald_spi_get_it_status(hperh, SPI_IT_RXBNE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_RXBNE) != RESET))
-            __spi_recv_by_it(hperh);
+	if ((hperh->state == SPI_STATE_BUSY_RX) || (hperh->state == SPI_STATE_BUSY_TX)) {
+		if ((ald_spi_get_it_status(hperh, SPI_IT_RXBNE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_RXBNE) != RESET))
+			__spi_recv_by_it(hperh);
 
-        if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET))
-            __spi_send_by_it(hperh);
-    }
+		if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET))
+			__spi_send_by_it(hperh);
+	}
 
-    else if (hperh->state == SPI_STATE_BUSY_TX_RX)
-    {
-        if (hperh->tx_size == hperh->tx_count)
-        {
-            if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET))
-                __spi_send_recv_by_it(hperh, SPI_SR_TXBE);
-        }
-        else
-        {
-            if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET)
-                    && (ald_spi_get_it_status(hperh, SPI_IT_RXBNE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_RXBNE) != RESET))
-                __spi_send_recv_by_it(hperh, SPI_SR_TXBE_RXBNE);
-        }
-    }
+	else if (hperh->state == SPI_STATE_BUSY_TX_RX) {
+		if (hperh->tx_size == hperh->tx_count) {
+			if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET))
+				__spi_send_recv_by_it(hperh, SPI_SR_TXBE);
+		}
+		else {
+			if (hperh->init.mode == SPI_MODE_MASTER) {
+				if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET)
+				&& (ald_spi_get_it_status(hperh, SPI_IT_RXBNE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_RXBNE) != RESET))
+					__spi_send_recv_by_it(hperh, SPI_SR_TXBE_RXBNE);
+			}
+			else {
+				if ((ald_spi_get_it_status(hperh, SPI_IT_RXBNE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_RXBNE) != RESET))
+					__spi_send_recv_by_it(hperh, SPI_SR_RXBNE);
 
-    if ((ald_spi_get_it_status(hperh, SPI_IT_ERR) != RESET))
-    {
-        if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)
-        {
-            hperh->err_code |= SPI_ERROR_CRC;
-            ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-        }
+				if ((ald_spi_get_it_status(hperh, SPI_IT_TXBE) != RESET) && (ald_spi_get_flag_status(hperh, SPI_IF_TXBE) != RESET))
+					__spi_send_recv_by_it(hperh, SPI_SR_TXBE);
+			}
 
-        if (ald_spi_get_flag_status(hperh, SPI_IF_MODF) != RESET)
-        {
-            hperh->err_code |= SPI_ERROR_MODF;
-            ald_spi_clear_flag_status(hperh, SPI_IF_MODF);
-        }
 
-        if (ald_spi_get_flag_status(hperh, SPI_IF_OVE) != RESET)
-        {
-            if (hperh->state != SPI_STATE_BUSY_TX)
-            {
-                hperh->err_code |= SPI_ERROR_OVE;
-                ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
-            }
-        }
+		}
+	}
 
-        if (hperh->err_code != SPI_ERROR_NONE)
-        {
-            ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
-            ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
-            ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
-            hperh->state = SPI_STATE_READY;
+	if ((ald_spi_get_it_status(hperh, SPI_IT_ERR) != RESET)) {
+		if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET) {
+			hperh->err_code |= SPI_ERROR_CRC;
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+		}
+		if (ald_spi_get_flag_status(hperh, SPI_IF_MODF) != RESET) {
+			hperh->err_code |= SPI_ERROR_MODF;
+			ald_spi_clear_flag_status(hperh, SPI_IF_MODF);
+		}
+		if (ald_spi_get_flag_status(hperh, SPI_IF_OVE) != RESET) {
+			if ((hperh->state != SPI_STATE_BUSY_TX) && (hperh->state != SPI_STATE_READY)) {
+				hperh->err_code |= SPI_ERROR_OVE;
+				ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
+			}
+		}
 
-            if (hperh->err_cbk)
-                hperh->err_cbk(hperh);
-        }
-    }
+		if (hperh->err_code != SPI_ERROR_NONE) {
+ 			ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
+ 			ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
+ 			ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
+			hperh->state = SPI_STATE_READY;
 
-    return;
+			if (hperh->err_cbk)
+				hperh->err_cbk(hperh);
+		}
+	}
+
+	return;
 }
 
 /**
@@ -1267,16 +1192,16 @@ void ald_spi_irq_handler(spi_handle_t *hperh)
   */
 void ald_spi_interrupt_config(spi_handle_t *hperh, spi_it_t it, type_func_t state)
 {
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_IT(it));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_IT(it));
+	assert_param(IS_FUNC_STATE(state));
 
-    if (state == ENABLE)
-        hperh->perh->CON2 |= (uint32_t)it;
-    else
-        hperh->perh->CON2 &= ~((uint32_t)it);
+	if (state == ENABLE)
+		hperh->perh->CON2 |= (uint32_t)it;
+	else
+		hperh->perh->CON2 &= ~((uint32_t)it);
 
-    return;
+	return;
 }
 
 /**
@@ -1288,15 +1213,15 @@ void ald_spi_interrupt_config(spi_handle_t *hperh, spi_it_t it, type_func_t stat
   */
 void ald_spi_speed_config(spi_handle_t *hperh, spi_baud_t speed)
 {
-    uint32_t tmp = 0;
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_BAUD(speed));
+	uint32_t tmp = 0;
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_BAUD(speed));
 
-    tmp = hperh->perh->CON1;
-    tmp &= ~(0x7 << SPI_CON1_BAUD_POSS);
-    tmp |= (speed << SPI_CON1_BAUD_POSS);
-    hperh->perh->CON1 = tmp;
-    return;
+	tmp = hperh->perh->CON1;
+	tmp &= ~(0x7U << SPI_CON1_BAUD_POSS);
+	tmp |= (speed << SPI_CON1_BAUD_POSS);
+	hperh->perh->CON1 = tmp;
+	return;
 }
 
 /**
@@ -1311,26 +1236,24 @@ void ald_spi_speed_config(spi_handle_t *hperh, spi_baud_t speed)
   */
 void ald_spi_dma_req_config(spi_handle_t *hperh, spi_dma_req_t req, type_func_t state)
 {
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_DMA_REQ(req));
-    assert_param(IS_FUNC_STATE(state));
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_DMA_REQ(req));
+	assert_param(IS_FUNC_STATE(state));
 
-    if (state == ENABLE)
-    {
-        if (req == SPI_DMA_REQ_TX)
-            SET_BIT(hperh->perh->CON2, SPI_CON2_TXDMA_MSK);
-        else
-            SET_BIT(hperh->perh->CON2, SPI_CON2_RXDMA_MSK);
-    }
-    else
-    {
-        if (req == SPI_DMA_REQ_TX)
-            CLEAR_BIT(hperh->perh->CON2, SPI_CON2_TXDMA_MSK);
-        else
-            CLEAR_BIT(hperh->perh->CON2, SPI_CON2_RXDMA_MSK);
-    }
+	if (state == ENABLE) {
+		if (req == SPI_DMA_REQ_TX)
+			SET_BIT(hperh->perh->CON2, SPI_CON2_TXDMA_MSK);
+		else
+			SET_BIT(hperh->perh->CON2, SPI_CON2_RXDMA_MSK);
+	}
+	else {
+		if (req == SPI_DMA_REQ_TX)
+			CLEAR_BIT(hperh->perh->CON2, SPI_CON2_TXDMA_MSK);
+		else
+			CLEAR_BIT(hperh->perh->CON2, SPI_CON2_RXDMA_MSK);
+	}
 
-    return;
+	return;
 }
 
 /** @brief  Check whether the specified SPI state flag is set or not.
@@ -1343,13 +1266,13 @@ void ald_spi_dma_req_config(spi_handle_t *hperh, spi_dma_req_t req, type_func_t 
   */
 flag_status_t spi_get_status(spi_handle_t *hperh, spi_status_t status)
 {
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_STATUS(status));
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_STATUS(status));
 
-    if (hperh->perh->STAT & status)
-        return SET;
+	if (hperh->perh->STAT & status)
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -1363,13 +1286,13 @@ flag_status_t spi_get_status(spi_handle_t *hperh, spi_status_t status)
   */
 it_status_t ald_spi_get_it_status(spi_handle_t *hperh, spi_it_t it)
 {
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_IT(it));
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_IT(it));
 
-    if (hperh->perh->CON2 & it)
-        return SET;
+	if (hperh->perh->CON2 & it)
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /** @brief  Check whether the specified SPI flag is set or not.
@@ -1382,13 +1305,13 @@ it_status_t ald_spi_get_it_status(spi_handle_t *hperh, spi_it_t it)
   */
 flag_status_t ald_spi_get_flag_status(spi_handle_t *hperh, spi_flag_t flag)
 {
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_IF(flag));
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_IF(flag));
 
-    if (hperh->perh->STAT & flag)
-        return SET;
+	if (hperh->perh->STAT & flag)
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /** @brief  Clear the specified SPI pending flags.
@@ -1399,34 +1322,29 @@ flag_status_t ald_spi_get_flag_status(spi_handle_t *hperh, spi_flag_t flag)
   */
 void ald_spi_clear_flag_status(spi_handle_t *hperh, spi_flag_t flag)
 {
-    uint32_t temp;
+	uint32_t temp;
 
-    assert_param(IS_SPI(hperh->perh));
-    assert_param(IS_SPI_IF(flag));
+	assert_param(IS_SPI(hperh->perh));
+	assert_param(IS_SPI_IF(flag));
 
-    if (flag == SPI_IF_CRCERR)
-    {
-        SET_BIT(hperh->perh->STAT, SPI_STAT_CRCERR_MSK);
-        return;
-    }
+	if (flag == SPI_IF_CRCERR) {
+		SET_BIT(hperh->perh->STAT, SPI_STAT_CRCERR_MSK);
+		return;
+	}
+	if (flag == SPI_IF_OVE) {
+		temp = hperh->perh->DATA;
+		temp = hperh->perh->STAT;
+		UNUSED(temp);
+		return;
+	}
+	if (flag == SPI_IF_MODF) {
+		temp = hperh->perh->STAT;
+		UNUSED(temp);
+		hperh->perh->CON1 = hperh->perh->CON1;
+		return;
+	}
 
-    if (flag == SPI_IF_OVE)
-    {
-        temp = hperh->perh->DATA;
-        temp = hperh->perh->STAT;
-        UNUSED(temp);
-        return;
-    }
-
-    if (flag == SPI_IF_MODF)
-    {
-        temp = hperh->perh->STAT;
-        UNUSED(temp);
-        hperh->perh->CON1 = hperh->perh->CON1;
-        return;
-    }
-
-    return;
+	return;
 }
 
 /**
@@ -1439,22 +1357,20 @@ void ald_spi_clear_flag_status(spi_handle_t *hperh, spi_flag_t flag)
   */
 static ald_status_t spi_wait_flag(spi_handle_t *hperh, spi_flag_t flag, flag_status_t status, uint32_t timeout)
 {
-    uint32_t tick = ald_get_tick();
+	uint32_t tick = ald_get_tick();
 
-    assert_param(timeout > 0);
+	assert_param(timeout > 0);
 
-    while ((ald_spi_get_flag_status(hperh, flag)) != status)
-    {
-        if (((ald_get_tick()) - tick) > timeout)
-        {
-            ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
-            ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
-            ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
-            return TIMEOUT;
-        }
-    }
+	while ((ald_spi_get_flag_status(hperh, flag)) != status) {
+		if (((ald_get_tick()) - tick) > timeout) {
+			ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
+			ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
+			ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
+			return TIMEOUT;
+		}
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -1467,18 +1383,18 @@ static ald_status_t spi_wait_flag(spi_handle_t *hperh, spi_flag_t flag, flag_sta
   */
 static ald_status_t spi_wait_flag_irq(spi_handle_t *hperh, spi_flag_t flag, flag_status_t status, uint32_t timeout)
 {
-    assert_param(timeout > 0);
+	assert_param(timeout > 0);
 
-    while (((ald_spi_get_flag_status(hperh, flag)) != status) && (--timeout));
+	while (((ald_spi_get_flag_status(hperh, flag)) != status) && (--timeout));
 
-    if (timeout)
-        return OK;
+	if (timeout)
+		return OK;
 
-    ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
-    ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
-    ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
+	ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
+	ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
+	ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
 
-    return TIMEOUT;
+	return TIMEOUT;
 }
 
 /**
@@ -1508,8 +1424,8 @@ static ald_status_t spi_wait_flag_irq(spi_handle_t *hperh, spi_flag_t flag, flag
   */
 spi_state_t ald_spi_get_state(spi_handle_t *hperh)
 {
-    assert_param(IS_SPI(hperh->perh));
-    return hperh->state;
+	assert_param(IS_SPI(hperh->perh));
+	return hperh->state;
 }
 
 /**
@@ -1519,8 +1435,8 @@ spi_state_t ald_spi_get_state(spi_handle_t *hperh)
   */
 uint32_t ald_spi_get_error(spi_handle_t *hperh)
 {
-    assert_param(IS_SPI(hperh->perh));
-    return hperh->err_code;
+	assert_param(IS_SPI(hperh->perh));
+	return hperh->err_code;
 }
 /**
   * @}
@@ -1542,48 +1458,43 @@ uint32_t ald_spi_get_error(spi_handle_t *hperh)
   */
 static void __spi_send_by_it(spi_handle_t *hperh)
 {
-    if (hperh->tx_count == 0)
-    {
-        ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
-        hperh->state = SPI_STATE_READY;
+	if (hperh->tx_count == 0) {
+		ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
+		ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
+		hperh->state = SPI_STATE_READY;
 
-        if (hperh->init.dir == SPI_DIRECTION_2LINES)
-            ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
+		if (hperh->init.dir == SPI_DIRECTION_2LINES)
+			ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
 
-        if ((spi_wait_flag_irq(hperh, SPI_IF_BUSY, RESET, 5000)) != OK)
-        {
-            if (hperh->err_cbk)
-                hperh->err_cbk(hperh);
+		if ((spi_wait_flag_irq(hperh, SPI_IF_BUSY, RESET, 5000)) != OK) {
+			if (hperh->err_cbk)
+				hperh->err_cbk(hperh);
 
-            return;
-        }
+			return;
+		}
 
-        if (hperh->tx_cplt_cbk)
-            hperh->tx_cplt_cbk(hperh);
+		if (hperh->tx_cplt_cbk)
+			hperh->tx_cplt_cbk(hperh);
 
-        return;
-    }
+		return;
+	}
 
-    if (hperh->init.data_size == SPI_DATA_SIZE_8)
-    {
-        hperh->perh->DATA = *hperh->tx_buf;
-        ++hperh->tx_buf;
-    }
-    else
-    {
-        hperh->perh->DATA    = *(uint16_t *)hperh->tx_buf;
-        hperh->tx_buf       += 2;
-    }
+	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+		hperh->perh->DATA = *hperh->tx_buf;
+		++hperh->tx_buf;
+	}
+	else {
+		hperh->perh->DATA    = *(uint16_t *)hperh->tx_buf;
+		hperh->tx_buf       += 2;
+	}
+	--hperh->tx_count;
 
-    --hperh->tx_count;
+	if (hperh->tx_count == 0) {
+		if (hperh->init.crc_calc)
+			SPI_CRCNEXT_ENABLE(hperh);
+	}
 
-    if (hperh->tx_count == 0)
-    {
-        if (hperh->init.crc_calc)
-            SPI_CRCNEXT_ENABLE(hperh);
-    }
-
-    return;
+	return;
 }
 
 /**
@@ -1593,51 +1504,45 @@ static void __spi_send_by_it(spi_handle_t *hperh)
   */
 static void __spi_recv_by_it(spi_handle_t *hperh)
 {
-    uint16_t temp;
+	uint16_t temp;
+	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+		*hperh->rx_buf = hperh->perh->DATA;
+		++hperh->rx_buf;
+	}
+	else {
+		*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
+		hperh->rx_buf             += 2;
+	}
+	--hperh->rx_count;
 
-    if (hperh->init.data_size == SPI_DATA_SIZE_8)
-    {
-        *hperh->rx_buf = hperh->perh->DATA;
-        ++hperh->rx_buf;
-    }
-    else
-    {
-        *(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-        hperh->rx_buf             += 2;
-    }
+	if ((hperh->rx_count == 1) && (hperh->init.crc_calc))
+		SPI_CRCNEXT_ENABLE(hperh);
 
-    --hperh->rx_count;
+	if (hperh->rx_count == 0) {
+		ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
+		ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
+		hperh->state = SPI_STATE_READY;
 
-    if ((hperh->rx_count == 1) && (hperh->init.crc_calc))
-        SPI_CRCNEXT_ENABLE(hperh);
+		if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)) {
+			hperh->err_code |= SPI_ERROR_CRC;
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
 
-    if (hperh->rx_count == 0)
-    {
-        ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
-        hperh->state = SPI_STATE_READY;
+			if (hperh->err_cbk)
+				hperh->err_cbk(hperh);
 
-        if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET))
-        {
-            hperh->err_code |= SPI_ERROR_CRC;
-            ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+			return;
+		}
 
-            if (hperh->err_cbk)
-                hperh->err_cbk(hperh);
+		if (hperh->init.crc_calc) {
+			temp = hperh->perh->DATA;
+			UNUSED(temp);
+		}
 
-            return;
-        }
+		if (hperh->rx_cplt_cbk)
+			hperh->rx_cplt_cbk(hperh);
+	}
 
-        if (hperh->init.crc_calc)
-        {
-            temp = hperh->perh->DATA;
-            UNUSED(temp);
-        }
-
-        if (hperh->rx_cplt_cbk)
-            hperh->rx_cplt_cbk(hperh);
-    }
-
-    return;
+	return;
 }
 
 /**
@@ -1648,98 +1553,81 @@ static void __spi_recv_by_it(spi_handle_t *hperh)
   */
 static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status)
 {
-    assert_param(IS_SPI_SR_STATUS(status));
+	assert_param(IS_SPI_SR_STATUS(status));
 
-    if (hperh->rx_count != 0)
-    {
-        if ((status == SPI_SR_RXBNE) || (status == SPI_SR_TXBE_RXBNE))
-        {
-            if (hperh->init.data_size == SPI_DATA_SIZE_8)
-            {
-                *hperh->rx_buf = hperh->perh->DATA;
-                ++hperh->rx_buf;
-            }
-            else
-            {
-                *(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-                hperh->rx_buf += 2;
-            }
+	if (hperh->rx_count != 0) {
+		if ((status == SPI_SR_RXBNE) || (status == SPI_SR_TXBE_RXBNE)) {
+			if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+				*hperh->rx_buf = hperh->perh->DATA;
+				++hperh->rx_buf;
+			}
+			else {
+				*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
+				hperh->rx_buf += 2;
+			}
 
-            --hperh->rx_count;
-        }
-    }
+			--hperh->rx_count;
+		}
+	}
 
-    if (hperh->tx_count != 0)
-    {
-        if ((status == SPI_SR_TXBE) || (status == SPI_SR_TXBE_RXBNE))
-        {
-            if (hperh->tx_count == 1)
-            {
-                if (hperh->init.data_size == SPI_DATA_SIZE_8)
-                {
-                    hperh->perh->DATA = *hperh->tx_buf;
-                    ++hperh->tx_buf;
-                }
-                else
-                {
-                    hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
-                    hperh->tx_buf       += 2;
-                }
+	if (hperh->tx_count != 0) {
+		if ((status == SPI_SR_TXBE) || (status == SPI_SR_TXBE_RXBNE)) {
+			if (hperh->tx_count == 1) {
+				if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+					hperh->perh->DATA = *hperh->tx_buf;
+					++hperh->tx_buf;
+				}
+				else {
+					hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+					hperh->tx_buf       += 2;
+				}
 
-                --hperh->tx_count;
+				--hperh->tx_count;
 
-                if (hperh->init.crc_calc)
-                    SPI_CRCNEXT_ENABLE(hperh);
-            }
-            else
-            {
-                if (hperh->init.data_size == SPI_DATA_SIZE_8)
-                {
-                    hperh->perh->DATA = *hperh->tx_buf;
-                    ++hperh->tx_buf;
-                }
-                else
-                {
-                    hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
-                    hperh->tx_buf       += 2;
-                }
+				if (hperh->init.crc_calc)
+					SPI_CRCNEXT_ENABLE(hperh);
+			}
+			else {
+				if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+					hperh->perh->DATA = *hperh->tx_buf;
+					++hperh->tx_buf;
+				}
+				else {
+					hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+					hperh->tx_buf       += 2;
+				}
 
-                if (--hperh->tx_count == 0)
-                {
-                    if (hperh->init.crc_calc)
-                        SPI_CRCNEXT_ENABLE(hperh);
+				if (--hperh->tx_count == 0) {
+					if (hperh->init.crc_calc)
+						SPI_CRCNEXT_ENABLE(hperh);
+					ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
+				}
+			}
+		}
+	}
 
-                    ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
-                }
-            }
-        }
-    }
+	if (hperh->rx_count == 0) {
+		ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
+		ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
+		ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
+		hperh->state = SPI_STATE_READY;
 
-    if (hperh->rx_count == 0)
-    {
-        ald_spi_interrupt_config(hperh, SPI_IT_TXBE, DISABLE);
-        ald_spi_interrupt_config(hperh, SPI_IT_RXBNE, DISABLE);
-        ald_spi_interrupt_config(hperh, SPI_IT_ERR, DISABLE);
-        hperh->state = SPI_STATE_READY;
+		if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)) {
+			hperh->err_code |= SPI_ERROR_CRC;
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
 
-        if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET))
-        {
-            hperh->err_code |= SPI_ERROR_CRC;
-            ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+			if (hperh->err_cbk)
+				hperh->err_cbk(hperh);
 
-            if (hperh->err_cbk)
-                hperh->err_cbk(hperh);
+			return;
+		}
 
-            return;
-        }
+		if (hperh->tx_rx_cplt_cbk)
+			hperh->tx_rx_cplt_cbk(hperh);
+	}
 
-        if (hperh->tx_rx_cplt_cbk)
-            hperh->tx_rx_cplt_cbk(hperh);
-    }
-
-    return;
+	return;
 }
-
 
 #ifdef ALD_DMA
 /**
@@ -1749,33 +1637,31 @@ static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status)
   */
 static void spi_dma_send_cplt(void *arg)
 {
-    uint16_t delay;
-    spi_handle_t *hperh = (spi_handle_t *)arg;
+	uint16_t delay;
+	spi_handle_t *hperh = (spi_handle_t *)arg;
 
-    hperh->tx_count = 0;
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
-    hperh->state = SPI_STATE_READY;
+	hperh->tx_count = 0;
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
+	hperh->state = SPI_STATE_READY;
 
-    if (hperh->init.dir == SPI_DIRECTION_2LINES)
-        ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
+	if (hperh->init.dir == SPI_DIRECTION_2LINES)
+		ald_spi_clear_flag_status(hperh, SPI_IF_OVE);
 
-    if ((spi_wait_flag_irq(hperh, SPI_IF_BUSY, RESET, 5000)) != OK)
-        hperh->err_code |= SPI_ERROR_FLAG;
+	if ((spi_wait_flag_irq(hperh, SPI_IF_BUSY, RESET, 5000)) != OK)
+		hperh->err_code |= SPI_ERROR_FLAG;
 
-    for (delay = 0; delay < 3000; delay++);
+	for (delay = 0; delay < 3000; delay++);
 
-    if (hperh->err_code == SPI_ERROR_NONE)
-    {
-        if (hperh->tx_cplt_cbk)
-            hperh->tx_cplt_cbk(hperh);
-    }
-    else
-    {
-        if (hperh->err_cbk)
-            hperh->err_cbk(hperh);
-    }
+	if (hperh->err_code == SPI_ERROR_NONE) {
+		if (hperh->tx_cplt_cbk)
+			hperh->tx_cplt_cbk(hperh);
+	}
+	else {
+		if (hperh->err_cbk)
+			hperh->err_cbk(hperh);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -1785,42 +1671,38 @@ static void spi_dma_send_cplt(void *arg)
   */
 static void spi_dma_recv_cplt(void *arg)
 {
-    uint32_t tmp;
-    spi_handle_t *hperh = (spi_handle_t *)arg;
+	uint32_t tmp;
+	spi_handle_t *hperh = (spi_handle_t *)arg;
 
-    hperh->rx_count = 0;
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
-    hperh->state = SPI_STATE_READY;
+	hperh->rx_count = 0;
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
+	hperh->state = SPI_STATE_READY;
 
-    if (hperh->init.crc_calc)
-    {
-        if ((spi_wait_flag_irq(hperh, SPI_IF_RXBNE, SET, 5000)) != OK)
-            hperh->err_code |= SPI_ERROR_FLAG;
+	if (hperh->init.crc_calc) {
+		if ((spi_wait_flag_irq(hperh, SPI_IF_RXBNE, SET, 5000)) != OK)
+			hperh->err_code |= SPI_ERROR_FLAG;
 
-        tmp = hperh->perh->DATA;
-        UNUSED(tmp);
+		tmp = hperh->perh->DATA;
+		UNUSED(tmp);
 
-        if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) == SET)
-        {
-            SET_BIT(hperh->err_code, SPI_ERROR_CRC);
-            SPI_CRC_RESET(hperh);
-            ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-        }
-    }
+		if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) == SET) {
+			SET_BIT(hperh->err_code, SPI_ERROR_CRC);
+			SPI_CRC_RESET(hperh);
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+		}
+	}
 
-    if (hperh->err_code == SPI_ERROR_NONE)
-    {
-        if (hperh->rx_cplt_cbk)
-            hperh->rx_cplt_cbk(hperh);
-    }
-    else
-    {
-        if (hperh->err_cbk)
-            hperh->err_cbk(hperh);
-    }
+	if (hperh->err_code == SPI_ERROR_NONE) {
+		if (hperh->rx_cplt_cbk)
+			hperh->rx_cplt_cbk(hperh);
+	}
+	else {
+		if (hperh->err_cbk)
+			hperh->err_cbk(hperh);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -1830,48 +1712,44 @@ static void spi_dma_recv_cplt(void *arg)
   */
 static void spi_dma_send_recv_cplt(void *arg)
 {
-    uint32_t tmp;
-    uint16_t delay;
-    spi_handle_t *hperh = (spi_handle_t *)arg;
+	uint32_t tmp;
+	uint16_t delay;
+	spi_handle_t *hperh = (spi_handle_t *)arg;
 
-    if (hperh->init.crc_calc)
-    {
-        if ((spi_wait_flag_irq(hperh, SPI_IF_RXBNE, SET, 5000)) != OK)
-            hperh->err_code |= SPI_ERROR_FLAG;
+	if (hperh->init.crc_calc) {
+		if ((spi_wait_flag_irq(hperh, SPI_IF_RXBNE, SET, 5000)) != OK)
+			hperh->err_code |= SPI_ERROR_FLAG;
 
-        tmp = hperh->perh->DATA;
-        UNUSED(tmp);
+		tmp = hperh->perh->DATA;
+		UNUSED(tmp);
 
-        if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) == SET)
-        {
-            SET_BIT(hperh->err_code, SPI_ERROR_CRC);
-            ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-        }
-    }
+		if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) == SET) {
+			SET_BIT(hperh->err_code, SPI_ERROR_CRC);
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+		}
+	}
 
-    if ((spi_wait_flag_irq(hperh, SPI_IF_BUSY, RESET, 5000)) != OK)
-        hperh->err_code |= SPI_ERROR_FLAG;
+	if ((spi_wait_flag_irq(hperh, SPI_IF_BUSY, RESET, 5000)) != OK)
+		hperh->err_code |= SPI_ERROR_FLAG;
 
-    for (delay = 0; delay < 3000; delay++);
+	for (delay = 0; delay < 3000; delay++);
 
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
-    hperh->tx_count = 0;
-    hperh->rx_count = 0;
-    hperh->state    = SPI_STATE_READY;
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
+	hperh->tx_count = 0;
+	hperh->rx_count = 0;
+	hperh->state    = SPI_STATE_READY;
 
-    if (hperh->err_code == SPI_ERROR_NONE)
-    {
-        if (hperh->tx_rx_cplt_cbk)
-            hperh->tx_rx_cplt_cbk(hperh);
-    }
-    else
-    {
-        if (hperh->err_cbk)
-            hperh->err_cbk(hperh);
-    }
+	if (hperh->err_code == SPI_ERROR_NONE) {
+		if (hperh->tx_rx_cplt_cbk)
+			hperh->tx_rx_cplt_cbk(hperh);
+	}
+	else {
+		if (hperh->err_cbk)
+			hperh->err_cbk(hperh);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -1882,20 +1760,20 @@ static void spi_dma_send_recv_cplt(void *arg)
   */
 static void spi_dma_error(void *arg)
 {
-    spi_handle_t *hperh = (spi_handle_t *)arg;
+	spi_handle_t *hperh = (spi_handle_t *)arg;
 
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
-    ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
-    SET_BIT(hperh->err_code, SPI_ERROR_DMA);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
+	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_RX, DISABLE);
+	SET_BIT(hperh->err_code, SPI_ERROR_DMA);
 
-    hperh->tx_count = 0;
-    hperh->rx_count = 0;
-    hperh->state    = SPI_STATE_READY;
+ 	hperh->tx_count = 0;
+ 	hperh->rx_count = 0;
+	hperh->state    = SPI_STATE_READY;
 
-    if (hperh->err_cbk)
-        hperh->err_cbk(hperh);
+	if (hperh->err_cbk)
+		hperh->err_cbk(hperh);
 
-    return;
+	return;
 }
 #endif /* ALD_DMA */
 /**

@@ -22,6 +22,6 @@ path = [cwd + '/CMSIS/Include',
         cwd + '/nrf51822/Include']
 
 CPPDEFINES = ['USE_STDPERIPH_DRIVER', 'NRF51']
-group = DefineGroup('Startup Code', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

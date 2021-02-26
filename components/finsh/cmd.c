@@ -821,6 +821,7 @@ static char *const device_type_str[] =
     "Miscellaneous Device",
     "Sensor Device",
     "Touch Device",
+    "Phy Device",
     "Unknown"
 };
 

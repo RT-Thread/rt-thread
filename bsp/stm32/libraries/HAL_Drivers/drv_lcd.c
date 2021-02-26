@@ -338,7 +338,7 @@ int drv_lcd_hw_init(void)
 __exit:
     if (result != RT_EOK)
     {
-        rt_sem_delete(&_lcd.lcd_lock);
+        rt_sem_detach(&_lcd.lcd_lock);
 
         if (_lcd.lcd_info.framebuffer)
         {

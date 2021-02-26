@@ -6,10 +6,13 @@
  * Change Logs:
  * Date           Author       Notes
  * 2016/5/20      bernard      the first version
+ * 2020/1/7       redoc        add include
  */
 
 #ifndef SPI_FLASH_H__
 #define SPI_FLASH_H__
+
+#include <rtdevice.h>
 
 struct spi_flash_device
 {

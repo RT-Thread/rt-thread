@@ -39,7 +39,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x40002
+#define RT_VER_NUM 0x40003
 
 /* RT-Thread Components */
 
@@ -77,8 +77,15 @@
 #define RT_USING_SERIAL
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
+#define RT_USING_HWTIMER
 #define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
+#define RT_USING_PWM
+#define RT_USING_PM
+#define RT_USING_RTC
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -166,9 +173,26 @@
 /* CAN Drivers */
 
 
+/* ADC Drivers */
+
+
+/* RTC Drivers */
+
+
+/* HWtimer Drivers */
+
+
+/* PWM Drivers */
+
+
+/* PM Drivers */
+
+
 /* Onboard Peripheral Drivers */
 
 /* Offboard Peripheral Drivers */
+
+/* Peripheral Drivers test example */
 
 
 #endif

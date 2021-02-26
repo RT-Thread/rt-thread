@@ -40,38 +40,38 @@
   * @brief CRC mode
   */
 typedef enum {
-	CRC_MODE_CCITT = 0,	/**< Ccitt */
-	CRC_MODE_8     = 1,	/**< Crc8 */
-	CRC_MODE_16    = 2,	/**< Crc16 */
-	CRC_MODE_32    = 3,	/**< Crc32 */
+	CRC_MODE_CCITT = 0U,	/**< Ccitt */
+	CRC_MODE_8     = 1U,	/**< Crc8 */
+	CRC_MODE_16    = 2U,	/**< Crc16 */
+	CRC_MODE_32    = 3U,	/**< Crc32 */
 } crc_mode_t;
 
 /**
   * @brief CRC input length
   */
 typedef enum {
-	CRC_LEN_AUTO    = 0,	/**< Auto */
-	CRC_DATASIZE_8  = 1,	/**< Byte */
-	CRC_DATASIZE_16 = 2,	/**< Half word */
-	CRC_DATASIZE_32 = 3,	/**< Word */
+	CRC_LEN_AUTO    = 0U,	/**< Auto */
+	CRC_DATASIZE_8  = 1U,	/**< Byte */
+	CRC_DATASIZE_16 = 2U,	/**< Half word */
+	CRC_DATASIZE_32 = 3U,	/**< Word */
 } crc_datasize_t;
 
 /**
   * @brief CRC whether write error or no
   */
 typedef enum {
-	CRC_WERR_NO  = 0,	/**< No error */
-	CRC_WERR_ERR = 1,	/**< Error */
+	CRC_WERR_NO  = 0U,	/**< No error */
+	CRC_WERR_ERR = 1U,	/**< Error */
 } crc_werr_t;
 
 /**
   * @brief CRC state structures definition
   */
 typedef enum {
-	CRC_STATE_RESET = 0x0,	/**< Peripheral is not initialized */
-	CRC_STATE_READY = 0x1,	/**< Peripheral Initialized and ready for use */
-	CRC_STATE_BUSY  = 0x2,	/**< An internal process is ongoing */
-	CRC_STATE_ERROR = 0x4,	/**< Error */
+	CRC_STATE_RESET = 0x0U,	/**< Peripheral is not initialized */
+	CRC_STATE_READY = 0x1U,	/**< Peripheral Initialized and ready for use */
+	CRC_STATE_BUSY  = 0x2U,	/**< An internal process is ongoing */
+	CRC_STATE_ERROR = 0x4U,	/**< Error */
 } crc_state_t;
 
 /**

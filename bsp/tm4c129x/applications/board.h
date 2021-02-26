@@ -33,7 +33,7 @@ extern int Image$$RW_IRAM$$ZI$$Limit;
 extern int _ebss;
 #define HEAP_BEGIN  ((void *)&_ebss)
 #endif
-#define HEAP_END    (0x20000000 + 256*1024)
+#define HEAP_END    ((void *)(0x20000000 + 256*1024))
 
 #define FINSH_DEVICE_NAME   RT_CONSOLE_DEVICE_NAME
 void rt_hw_board_init(void);

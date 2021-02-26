@@ -21,6 +21,6 @@ if rtconfig.PLATFORM == 'cl':
 if rtconfig.PLATFORM == 'mingw':
 	src = Glob('*.c')
 
-group = DefineGroup('platform', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Platform', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

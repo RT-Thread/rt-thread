@@ -13,8 +13,6 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
-#include <rtservice.h>
 #include <rtdevice.h>
 #include <drivers/serial.h>
 #include "drivers/usb_device.h"
@@ -589,8 +587,9 @@ ufunction_t rt_usbd_function_cdc_create(udevice_t device)
     
     /* create a cdc function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
-    //not support HS
-    //rt_usbd_device_set_qualifier(device, &dev_qualifier);
+    
+    /* support HS */
+    rt_usbd_device_set_qualifier(device, &dev_qualifier);
     
     /* allocate memory for cdc vcom data */
     data = (struct vcom*)rt_malloc(sizeof(struct vcom));

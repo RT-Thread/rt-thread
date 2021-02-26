@@ -36,10 +36,10 @@ extern "C" {
   * @defgroup IAP_Private_Macros IAP Private Macros
   * @{
   */
-#define IAP_WSP_ADDR	0x10000000
-#define IAP_PE_ADDR	0x10000004
-#define IAP_WP_ADDR	0x10000008
-#define IAP_DWP_ADDR	0x1000000c
+#define IAP_WSP_ADDR	0x10000000U
+#define IAP_PE_ADDR	0x10000004U
+#define IAP_WP_ADDR	0x10000008U
+#define IAP_DWP_ADDR	0x1000000cU
 /**
   * @}
   */

@@ -29,6 +29,11 @@
 
 /* GPIO */
 #define GPIO_BASE                   (PER_BASE + GPIO_BASE_OFFSET)
+#define GPIO_IRQ_NUM                (3)   //40 pin mode
+#define IRQ_GPIO0                   (96 + 49) //bank0 (0 to 27)
+#define IRQ_GPIO1                   (96 + 50) //bank1 (28 to 45)
+#define IRQ_GPIO2                   (96 + 51) //bank2 (46 to 57)
+#define IRQ_GPIO3                   (96 + 52) //bank3
 
 /* Timer (ARM side) */
 #define ARM_TIMER_IRQ       (64)
@@ -56,6 +61,18 @@
 #define AUX_BASE                    (PER_BASE + AUX_BASE_OFFSET)
 #define IRQ_PL011                   (96 + 57)
 
+/* SPI */
+#define SPI_0_BASE_OFFSET     (0x00204000)
+#define SPI_3_BASE_OFFSET     (0x00204600)
+#define SPI_4_BASE_OFFSET     (0x00204800)
+#define SPI_5_BASE_OFFSET     (0x00204A00)
+#define SPI_6_BASE_OFFSET     (0x00204C00)
+
+#define SPI_0_BASE            (PER_BASE + SPI_0_BASE_OFFSET)
+#define SPI_3_BASE            (PER_BASE + SPI_3_BASE_OFFSET)
+#define SPI_4_BASE            (PER_BASE + SPI_4_BASE_OFFSET)
+#define SPI_5_BASE            (PER_BASE + SPI_5_BASE_OFFSET)
+#define SPI_6_BASE            (PER_BASE + SPI_6_BASE_OFFSET)
 /* Peripheral IRQ OR-ing */
 #define PACTL_CS                    HWREG32((PER_BASE + PACTL_CS_OFFSET))
 typedef enum {
@@ -101,6 +118,58 @@ typedef enum {
 #define GIC_IRQ_START   0
 
 #define GIC_ACK_INTID_MASK  0x000003ff
+
+//watchdog
+#define PM_RSTC         HWREG32(PER_BASE + 0x0010001c)
+#define PM_RSTS         HWREG32(PER_BASE + 0x00100020)
+#define PM_WDOG         HWREG32(PER_BASE + 0x00100024)
+
+#define PM_PASSWORD                 (0x5A000000)
+#define PM_WDOG_TIME_SET            (0x000fffff)
+#define PM_RSTS_HADWRH_SET          (0x00000040)
+#define PM_RSTC_WRCFG_FULL_RESET    (0x00000020)
+#define PM_RSTC_WRCFG_CLR           (0xffffffcf)
+#define PM_RSTC_RESET               (0x00000102)
+
+//timer
+#define ST_BASE_OFFSET     (0x003000)
+#define STIMER_BASE  (PER_BASE  + ST_BASE_OFFSET)
+#define STIMER_CS    __REG32(STIMER_BASE + 0x0000)
+#define STIMER_CLO   __REG32(STIMER_BASE + 0x0004)
+#define STIMER_CHI   __REG32(STIMER_BASE + 0x0008)
+#define STIMER_C0    __REG32(STIMER_BASE + 0x000C)
+#define STIMER_C1    __REG32(STIMER_BASE + 0x0010)
+#define STIMER_C2    __REG32(STIMER_BASE + 0x0014)
+#define STIMER_C3    __REG32(STIMER_BASE + 0x0018)
+
+#define DELAY_MICROS(micros) \
+    do{ \
+ rt_uint32_t compare = STIMER_CLO + micros * 25; \
+ while (STIMER_CLO < compare); \
+    } while (0) \
+
+//External Mass Media Controller (SD Card)
+#define MMC0_BASE_ADDR		(PER_BASE+0x300000)   
+#define MMC2_BASE_ADDR		(PER_BASE+0x340000)
+
+#define ETH_IRQ                 (160+29)
+
+//I2C
+#define BSC0_BASE_OFFSET            (0x205000)
+#define BSC1_BASE_OFFSET            (0x804000)
+#define BSC3_BASE_OFFSET            (0x205600)
+#define BSC4_BASE_OFFSET            (0x205800)
+#define BSC5_BASE_OFFSET            (0x205A80)
+#define BSC6_BASE_OFFSET            (0x205C00)
+
+//BSC2 and BSC7 masters are dedicated for use by the 
+//HDMI interfaces and should not be accessed byuser programs.
+#define BSC0_BASE                   (PER_BASE + BSC0_BASE_OFFSET)
+#define BSC1_BASE                   (PER_BASE + BSC1_BASE_OFFSET)
+#define BSC3_BASE                   (PER_BASE + BSC3_BASE_OFFSET)
+#define BSC4_BASE                   (PER_BASE + BSC4_BASE_OFFSET)
+#define BSC5_BASE                   (PER_BASE + BSC5_BASE_OFFSET)
+#define BSC6_BASE                   (PER_BASE + BSC6_BASE_OFFSET)
 
 /* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_dist_base(void)

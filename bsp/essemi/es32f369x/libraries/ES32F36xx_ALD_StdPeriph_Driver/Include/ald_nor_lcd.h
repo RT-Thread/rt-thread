@@ -37,23 +37,23 @@
   */
 
 /* NOR device IDs addresses */
-#define MC_ADDRESS               ((uint16_t)0x0000)
-#define DEVICE_CODE1_ADDR        ((uint16_t)0x0001)
-#define DEVICE_CODE2_ADDR        ((uint16_t)0x000E)
-#define DEVICE_CODE3_ADDR        ((uint16_t)0x000F)
+#define MC_ADDRESS               ((uint16_t)0x0000U)
+#define DEVICE_CODE1_ADDR        ((uint16_t)0x0001U)
+#define DEVICE_CODE2_ADDR        ((uint16_t)0x000EU)
+#define DEVICE_CODE3_ADDR        ((uint16_t)0x000FU)
 
 /* NOR CFI IDs addresses */
-#define CFI1_ADDRESS             ((uint16_t)0x10)
-#define CFI2_ADDRESS             ((uint16_t)0x11)
-#define CFI3_ADDRESS             ((uint16_t)0x12)
-#define CFI4_ADDRESS             ((uint16_t)0x13)
+#define CFI1_ADDRESS             ((uint16_t)0x10U)
+#define CFI2_ADDRESS             ((uint16_t)0x11U)
+#define CFI3_ADDRESS             ((uint16_t)0x12U)
+#define CFI4_ADDRESS             ((uint16_t)0x13U)
 
 /* NOR operation wait timeout */
-#define NOR_TMEOUT               ((uint16_t)0xFFFF)
+#define NOR_TMEOUT               ((uint16_t)0xFFFFU)
 
 /* NOR memory data width */
-#define NOR_MEMORY_8B            ((uint8_t)0x0)
-#define NOR_MEMORY_16B           ((uint8_t)0x1)
+#define NOR_MEMORY_8B            ((uint8_t)0x0U)
+#define NOR_MEMORY_16B           ((uint8_t)0x1U)
 
 /* NOR memory device read/write start address */
 #define NOR_MEMORY_ADRESS1       EBI_BANK1_1
@@ -61,29 +61,29 @@
 #define NOR_MEMORY_ADRESS3       EBI_BANK1_3
 #define NOR_MEMORY_ADRESS4       EBI_BANK1_4
 
-#define NOR_CMD_ADDRESS_FIRST                 (uint16_t)0x0555
-#define NOR_CMD_ADDRESS_FIRST_CFI             (uint16_t)0x0055
-#define NOR_CMD_ADDRESS_SECOND                (uint16_t)0x02AA
-#define NOR_CMD_ADDRESS_THIRD                 (uint16_t)0x0555
-#define NOR_CMD_ADDRESS_FOURTH                (uint16_t)0x0555
-#define NOR_CMD_ADDRESS_FIFTH                 (uint16_t)0x02AA
-#define NOR_CMD_ADDRESS_SIXTH                 (uint16_t)0x0555
+#define NOR_CMD_ADDRESS_FIRST                 (uint16_t)0x0555U
+#define NOR_CMD_ADDRESS_FIRST_CFI             (uint16_t)0x0055U
+#define NOR_CMD_ADDRESS_SECOND                (uint16_t)0x02AAU
+#define NOR_CMD_ADDRESS_THIRD                 (uint16_t)0x0555U
+#define NOR_CMD_ADDRESS_FOURTH                (uint16_t)0x0555U
+#define NOR_CMD_ADDRESS_FIFTH                 (uint16_t)0x02AAU
+#define NOR_CMD_ADDRESS_SIXTH                 (uint16_t)0x0555U
 
-#define NOR_CMD_DATA_READ_RESET               (uint16_t)0x00F0
-#define NOR_CMD_DATA_FIRST                    (uint16_t)0x00AA
-#define NOR_CMD_DATA_SECOND                   (uint16_t)0x0055
-#define NOR_CMD_DATA_AUTO_SELECT              (uint16_t)0x0090
-#define NOR_CMD_DATA_PROGRAM                  (uint16_t)0x00A0
-#define NOR_CMD_DATA_CHIP_BLOCK_ERASE_THIRD   (uint16_t)0x0080
-#define NOR_CMD_DATA_CHIP_BLOCK_ERASE_FOURTH  (uint16_t)0x00AA
-#define NOR_CMD_DATA_CHIP_BLOCK_ERASE_FIFTH   (uint16_t)0x0055
-#define NOR_CMD_DATA_CHIP_ERASE               (uint16_t)0x0010
-#define NOR_CMD_DATA_CFI                      (uint16_t)0x0098
-#define NOR_CMD_DATA_BUFFER_AND_PROG          (uint8_t)0x25
-#define NOR_CMD_DATA_BUFFER_AND_PROG_CONFIRM  (uint8_t)0x29
-#define NOR_CMD_DATA_BLOCK_ERASE              (uint8_t)0x30
-#define NOR_MASK_STATUS_DQ5                   (uint16_t)0x0020
-#define NOR_MASK_STATUS_DQ6                   (uint16_t)0x0040
+#define NOR_CMD_DATA_READ_RESET               (uint16_t)0x00F0U
+#define NOR_CMD_DATA_FIRST                    (uint16_t)0x00AAU
+#define NOR_CMD_DATA_SECOND                   (uint16_t)0x0055U
+#define NOR_CMD_DATA_AUTO_SELECT              (uint16_t)0x0090U
+#define NOR_CMD_DATA_PROGRAM                  (uint16_t)0x00A0U
+#define NOR_CMD_DATA_CHIP_BLOCK_ERASE_THIRD   (uint16_t)0x0080U
+#define NOR_CMD_DATA_CHIP_BLOCK_ERASE_FOURTH  (uint16_t)0x00AAU
+#define NOR_CMD_DATA_CHIP_BLOCK_ERASE_FIFTH   (uint16_t)0x0055U
+#define NOR_CMD_DATA_CHIP_ERASE               (uint16_t)0x0010U
+#define NOR_CMD_DATA_CFI                      (uint16_t)0x0098U
+#define NOR_CMD_DATA_BUFFER_AND_PROG          (uint8_t)0x25U
+#define NOR_CMD_DATA_BUFFER_AND_PROG_CONFIRM  (uint8_t)0x29U
+#define NOR_CMD_DATA_BLOCK_ERASE              (uint8_t)0x30U
+#define NOR_MASK_STATUS_DQ5                   (uint16_t)0x0020U
+#define NOR_MASK_STATUS_DQ6                   (uint16_t)0x0040U
 /**
   * @}
   */
@@ -118,10 +118,10 @@ typedef enum {
   * @brief  EBI NOR Status typedef
   */
 typedef enum {
-	ALD_NOR_STATUS_SUCCESS = 0,   /**< NOR status success */
-	ALD_NOR_STATUS_ONGOING,       /**< NOR status ongoing */
-	ALD_NOR_STATUS_ERROR,         /**< NOR status error */
-	ALD_NOR_STATUS_TIMEOUT,       /**< NOR status timeout */
+	ALD_NOR_STATUS_SUCCESS = 0U,	/**< NOR status success */
+	ALD_NOR_STATUS_ONGOING,		/**< NOR status ongoing */
+	ALD_NOR_STATUS_ERROR,		/**< NOR status error */
+	ALD_NOR_STATUS_TIMEOUT,		/**< NOR status timeout */
 } nor_status_t;
 
 /**

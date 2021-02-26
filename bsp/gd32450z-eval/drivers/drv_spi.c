@@ -130,7 +130,7 @@ static rt_err_t configure(struct rt_spi_device* device,
         }
     } /* baudrate */
     
-    switch(configuration->mode)
+    switch(configuration->mode & RT_SPI_MODE_3)
     {
     case RT_SPI_MODE_0:
         spi_init_struct.clock_polarity_phase = SPI_CK_PL_LOW_PH_1EDGE;

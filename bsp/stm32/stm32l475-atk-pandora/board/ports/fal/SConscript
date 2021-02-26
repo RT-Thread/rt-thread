@@ -15,6 +15,6 @@ if rtconfig.CROSS_TOOL == 'gcc':
 elif rtconfig.CROSS_TOOL == 'keil':
     LOCAL_CCFLAGS += ' --c99'
 
-group = DefineGroup('fal', src, depend = ['PKG_USING_FAL'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
+group = DefineGroup('FAL', src, depend = ['PKG_USING_FAL'], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')

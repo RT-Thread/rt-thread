@@ -7,6 +7,9 @@
  * 2015-01-07     Grissiom     init commit
  */
 
+#ifndef __VBUS_HW_H__
+#define __VBUS_HW_H__
+
 #include <rtthread.h>
 #include <board.h>
 
@@ -32,3 +35,5 @@ rt_inline void rt_vbus_smp_mb(void)
 {
     __DSB();
 }
+
+#endif /* __VBUS_HW_H__ */

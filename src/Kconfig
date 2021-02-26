@@ -270,6 +270,18 @@ menu "Memory Management"
         config RT_USING_MEMHEAP_AS_HEAP
             bool "Use all of memheap objects as heap"
         endif
+
+        config RT_USING_USERHEAP
+            bool "Use user heap"
+            help
+                If this option is selected, please implement these functions:
+                    rt_malloc(), rt_malloc_sethook()
+                    rt_free(),   rt_free_sethook()
+                    rt_calloc(), rt_realloc()
+                    rt_system_heap_init()
+
+                And if FinSH is used at the same time, please implement list_mem()
+
     endchoice
 
     if RT_USING_SMALL_MEM
@@ -294,7 +306,7 @@ menu "Memory Management"
         default y if RT_USING_SMALL_MEM
         default y if RT_USING_SLAB
         default y if RT_USING_MEMHEAP_AS_HEAP
-
+        default y if RT_USING_USERHEAP
 endmenu
 
 menu "Kernel Device Object"

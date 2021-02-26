@@ -131,7 +131,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
 	
     /* connect port to USARTx_Rx */
     gpio_af_set(uart->rx_port, uart->rx_af, uart->rx_pin);
-    gpio_mode_set(uart->rx_port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, uart->rx_pin);
+    gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_NONE, uart->rx_pin);
     gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, uart->rx_pin);
 	
     NVIC_SetPriority(uart->irqn, 0);

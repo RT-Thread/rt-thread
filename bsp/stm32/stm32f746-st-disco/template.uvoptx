@@ -78,78 +78,6 @@
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
       <CpuCode>18</CpuCode>
-      <Books>
-        <Book>
-          <Number>0</Number>
-          <Title>BSP User Manual (STM32F746G-Discovery)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\BSP\STM32746G-Discovery\STM32746G-Discovery_BSP_User_Manual.chm</Path>
-        </Book>
-        <Book>
-          <Number>1</Number>
-          <Title>BSP User Manual (STM32756G-EVAL)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\Drivers\BSP\STM32756G_EVAL\STM32756G_EVAL_BSP_User_Manual.chm</Path>
-        </Book>
-        <Book>
-          <Number>2</Number>
-          <Title>User Manual (STM32756G-EVAL)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32756G_EVAL\Documentation\DM00188617.pdf</Path>
-        </Book>
-        <Book>
-          <Number>3</Number>
-          <Title>STM32F756G-Eval Quick Start Guide (STM32756G-EVAL)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32756G_EVAL\Documentation\STM32F756G-EVAL_QSG.pdf</Path>
-        </Book>
-        <Book>
-          <Number>4</Number>
-          <Title>Bill of Materials (STM32756G-EVAL)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32756G_EVAL\Documentation\stm327x6g-eval_bom.zip</Path>
-        </Book>
-        <Book>
-          <Number>5</Number>
-          <Title>Gerber Files (STM32756G-EVAL)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32756G_EVAL\Documentation\stm327x6g-eval_gerber.zip</Path>
-        </Book>
-        <Book>
-          <Number>6</Number>
-          <Title>Schematics (STM32756G-EVAL)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32756G_EVAL\Documentation\stm327x6g-eval_sch.zip</Path>
-        </Book>
-        <Book>
-          <Number>7</Number>
-          <Title>STM32F746G-Discovery Quick Start Guide (STM32F746G-Discovery)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32F746G_Discovery\Documentation\32F746GDISCOVERY_QSG.pdf</Path>
-        </Book>
-        <Book>
-          <Number>8</Number>
-          <Title>User Manual (STM32F746G-Discovery)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32F746G_Discovery\Documentation\DM00190424.pdf</Path>
-        </Book>
-        <Book>
-          <Number>9</Number>
-          <Title>Bill of Materials (STM32F746G-Discovery)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32F746G_Discovery\Documentation\stm32f746g-disco_bom.zip</Path>
-        </Book>
-        <Book>
-          <Number>10</Number>
-          <Title>Gerber Files (STM32F746G-Discovery)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32F746G_Discovery\Documentation\stm32f746g-disco_gerber.zip</Path>
-        </Book>
-        <Book>
-          <Number>11</Number>
-          <Title>Schematics (STM32F746G-Discovery)</Title>
-          <Path>D:\Keil_v5\ARM\PACK\Keil\STM32F7xx_DFP\2.9.0\MDK\Boards\ST\STM32F746G_Discovery\Documentation\stm32f746g-disco_sch.zip</Path>
-        </Book>
-        <Book>
-          <Number>12</Number>
-          <Title>STM32F746G_Discovery Web Page (STM32F746G-Discovery)</Title>
-          <Path>http://www.st.com/en/evaluation-tools/32f746gdiscovery.html</Path>
-        </Book>
-        <Book>
-          <Number>13</Number>
-          <Title>STM32756G_EVAL Evaluation Board Web Page (STM32756G-EVAL)</Title>
-          <Path>http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/LN1199/PF261640</Path>
-        </Book>
-      </Books>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -173,7 +101,9 @@
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
         <bEvRecOn>1</bEvRecOn>
-        <nTsel>5</nTsel>
+        <bSchkAxf>0</bSchkAxf>
+        <bTchkAxf>0</bTchkAxf>
+        <nTsel>6</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -200,7 +130,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>JL2CM3</Key>
-          <Name>-U59400616 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -TO18 -TC10000000 -TP21 -TDS8001 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F7x_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F767BGTx$CMSIS\Flash\STM32F7x_1024.FLM)</Name>
+          <Name>-U59400616 -O78 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -TO18 -TC10000000 -TP21 -TDS8001 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32F7x_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32F746NGHx$CMSIS\Flash\STM32F7x_1024.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
@@ -236,13 +166,19 @@
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
       <bLintAuto>0</bLintAuto>
-      <Lin2Executable></Lin2Executable>
-      <Lin2ConfigFile></Lin2ConfigFile>
-      <bLin2Auto>0</bLin2Auto>
       <bAutoGenD>0</bAutoGenD>
-      <bAuto2GenD>0</bAuto2GenD>
+      <LntExFlags>0</LntExFlags>
+      <pMisraName></pMisraName>
+      <pszMrule></pszMrule>
+      <pSingCmds></pSingCmds>
+      <pMultCmds></pMultCmds>
+      <pMisraNamep></pMisraNamep>
+      <pszMrulep></pszMrulep>
+      <pSingCmdsp></pSingCmdsp>
+      <pMultCmdsp></pMultCmdsp>
       <DebugDescription>
         <Enable>1</Enable>
+        <EnableFlashSeq>0</EnableFlashSeq>
         <EnableLog>0</EnableLog>
         <Protocol>2</Protocol>
         <DbgClock>10000000</DbgClock>

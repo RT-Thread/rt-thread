@@ -196,13 +196,12 @@ void ald_timer_base_stop_by_it(timer_handle_t *hperh)
 /**
   * @brief  Starts the TIMER Base generation in DMA mode.
   * @param  hperh: TIMER handle
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The source Buffer address.
   * @param  len: The length of buffer to be transferred from memory to TIMER peripheral
   * @param  dma_ch: Channel of DMA.
   * @retval Status, see @ref ald_status_t.
 */
-ald_status_t ald_timer_base_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_base_start_by_dma(timer_handle_t *hperh, 
                                   uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
 	assert_param(IS_TIMER_INSTANCE(hperh->perh));
@@ -216,26 +215,26 @@ ald_status_t ald_timer_base_start_by_dma(timer_handle_t *hperh, dma_handle_t *hd
 
 	hperh->state   = TIMER_STATE_BUSY;
 
-	if (hdma->perh == NULL)
-		hdma->perh = DMA0;
+	if (hperh->hdma1.perh == NULL)
+		hperh->hdma1.perh = DMA0;
 
-	hdma->cplt_cbk = timer_dma_period_elapse_cplt;
-	hdma->cplt_arg = (void *)hperh;
-	hdma->err_cbk  = timer_dma_error;
-	hdma->err_arg  = (void *)hperh;
+	hperh->hdma1.cplt_cbk = timer_dma_period_elapse_cplt;
+	hperh->hdma1.cplt_arg = (void *)hperh;
+	hperh->hdma1.err_cbk  = timer_dma_error;
+	hperh->hdma1.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hdma->config);
-	hdma->config.src        = (void *)buf;
-	hdma->config.dst        = (void *)&hperh->perh->AR;
-	hdma->config.size       = len;
-	hdma->config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hdma->config.src_inc    = DMA_DATA_INC_HALFWORD;
-	hdma->config.dst_inc    = DMA_DATA_INC_NONE;
-	hdma->config.msigsel    = DMA_MSIGSEL_TIMER_UPDATE;
-	hdma->config.channel    = dma_ch;
+	ald_dma_config_struct(&hperh->hdma1.config);
+	hperh->hdma1.config.src        = (void *)buf;
+	hperh->hdma1.config.dst        = (void *)&hperh->perh->AR;
+	hperh->hdma1.config.size       = len;
+	hperh->hdma1.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdma1.config.src_inc    = DMA_DATA_INC_HALFWORD;
+	hperh->hdma1.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdma1.config.msigsel    = DMA_MSIGSEL_TIMER_UPDATE;
+	hperh->hdma1.config.channel    = dma_ch;
 
-	timer_dma_msel(hperh->perh, &hdma->config);
-	ald_dma_config_basic(hdma);
+	timer_dma_msel(hperh->perh, &hperh->hdma1.config);
+	ald_dma_config_basic(&hperh->hdma1);
 	ald_timer_dma_req_config(hperh, TIMER_DMA_UPDATE, ENABLE);
 	TIMER_ENABLE(hperh);
 
@@ -447,14 +446,13 @@ void ald_timer_oc_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   *		@arg TIMER_CHANNEL_2: TIMER Channel 2 selected
   *		@arg TIMER_CHANNEL_3: TIMER Channel 3 selected
   *		@arg TIMER_CHANNEL_4: TIMER Channel 4 selected
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The source Buffer address.
   * @param  len: The length of buffer to be transferred from memory to TIMER peripheral
   * @param  dma_ch: Channel of DMA.
   * @retval Status, see @ref ald_status_t.
   */
 ald_status_t ald_timer_oc_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                      dma_handle_t *hdma, uint16_t *buf, uint32_t len, uint8_t dma_ch)
+                      uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
 	assert_param(IS_TIMER_CCX_INSTANCE(hperh->perh, ch));
 
@@ -467,54 +465,54 @@ ald_status_t ald_timer_oc_start_by_dma(timer_handle_t *hperh, timer_channel_t ch
 
 	hperh->state   = TIMER_STATE_BUSY;
 
-	if (hdma->perh == NULL)
-		hdma->perh = DMA0;
+	if (hperh->hdma1.perh == NULL)
+		hperh->hdma1.perh = DMA0;
 
-	hdma->cplt_cbk = timer_dma_oc_cplt;
-	hdma->cplt_arg = (void *)hperh;
-	hdma->err_cbk  = timer_dma_error;
-	hdma->err_arg  = (void *)hperh;
+	hperh->hdma1.cplt_cbk = timer_dma_oc_cplt;
+	hperh->hdma1.cplt_arg = (void *)hperh;
+	hperh->hdma1.err_cbk  = timer_dma_error;
+	hperh->hdma1.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hdma->config);
-	hdma->config.src        = (void *)buf;
-	hdma->config.size       = len;
-	hdma->config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hdma->config.src_inc    = DMA_DATA_INC_HALFWORD;
-	hdma->config.dst_inc    = DMA_DATA_INC_NONE;
-	hdma->config.channel    = dma_ch;
+	ald_dma_config_struct(&hperh->hdma1.config);
+	hperh->hdma1.config.src        = (void *)buf;
+	hperh->hdma1.config.size       = len;
+	hperh->hdma1.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdma1.config.src_inc    = DMA_DATA_INC_HALFWORD;
+	hperh->hdma1.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdma1.config.channel    = dma_ch;
 
 
-	timer_dma_msel(hperh->perh, &hdma->config);
+	timer_dma_msel(hperh->perh, &hperh->hdma1.config);
 
 	switch (ch) {
 	case TIMER_CHANNEL_1:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL1;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH1;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL1;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH1;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC1, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_1;
 		break;
 
 	case TIMER_CHANNEL_2:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL2;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH2;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL2;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH2;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC2, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_2;
 		break;
 
 	case TIMER_CHANNEL_3:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL3;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH3;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL3;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH3;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC3, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_3;
 		break;
 
 	case TIMER_CHANNEL_4:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL4;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH4;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL4;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH4;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC4, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_4;
 		break;
@@ -691,16 +689,15 @@ void ald_timer_pwm_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   *		@arg TIMER_CHANNEL_2: TIMER Channel 2 selected
   *		@arg TIMER_CHANNEL_3: TIMER Channel 3 selected
   *		@arg TIMER_CHANNEL_4: TIMER Channel 4 selected
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The source Buffer address.
   * @param  len: The length of buffer to be transferred from memory to TIMER peripheral
   * @param  dma_ch: Channel of DMA.
   * @retval Status, see @ref ald_status_t.
   */
 ald_status_t ald_timer_pwm_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                      dma_handle_t *hdma, uint16_t *buf, uint32_t len, uint8_t dma_ch)
+                      uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
-	return ald_timer_oc_start_by_dma(hperh, ch, hdma, buf, len, dma_ch);
+	return ald_timer_oc_start_by_dma(hperh, ch, buf, len, dma_ch);
 }
 
 /**
@@ -728,8 +725,12 @@ void ald_timer_pwm_stop_by_dma(timer_handle_t *hperh, timer_channel_t ch)
   */
 void ald_timer_pwm_set_freq(timer_handle_t *hperh, uint16_t freq)
 {
-	uint32_t _arr = ald_cmu_get_pclk1_clock() / (hperh->init.prescaler + 1) / freq - 1;
+	uint32_t _arr;
 
+	if (freq == 0)
+		return;
+
+	_arr = ald_cmu_get_pclk1_clock() / (hperh->init.prescaler + 1) / freq - 1;
 	WRITE_REG(hperh->perh->AR, _arr);
 	hperh->init.period   = _arr;
 }
@@ -966,14 +967,13 @@ void ald_timer_ic_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   *		@arg TIMER_CHANNEL_2: TIMER Channel 2 selected
   *		@arg TIMER_CHANNEL_3: TIMER Channel 3 selected
   *		@arg TIMER_CHANNEL_4: TIMER Channel 4 selected
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The destination Buffer address.
   * @param  len: The length of buffer to be transferred TIMER peripheral to memory
   * @param  dma_ch: Channel of DMA.
   * @retval Status, see @ref ald_status_t.
   */
 ald_status_t ald_timer_ic_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                      dma_handle_t *hdma, uint16_t *buf, uint32_t len, uint8_t dma_ch)
+                     uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
 	assert_param(IS_TIMER_CCX_INSTANCE(hperh->perh, ch));
 
@@ -986,53 +986,53 @@ ald_status_t ald_timer_ic_start_by_dma(timer_handle_t *hperh, timer_channel_t ch
 
 	hperh->state   = TIMER_STATE_BUSY;
 
-	if (hdma->perh == NULL)
-		hdma->perh = DMA0;
+	if (hperh->perh == NULL)
+		hperh->hdma1.perh = DMA0;
 
-	hdma->cplt_cbk = timer_dma_capture_cplt;
-	hdma->cplt_arg = (void *)hperh;
-	hdma->err_cbk  = timer_dma_error;
-	hdma->err_arg  = (void *)hperh;
+	hperh->hdma1.cplt_cbk = timer_dma_capture_cplt;
+	hperh->hdma1.cplt_arg = (void *)hperh;
+	hperh->hdma1.err_cbk  = timer_dma_error;
+	hperh->hdma1.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hdma->config);
-	hdma->config.dst        = (void *)buf;
-	hdma->config.size       = len;
-	hdma->config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hdma->config.src_inc    = DMA_DATA_INC_NONE;
-	hdma->config.dst_inc    = DMA_DATA_INC_HALFWORD;
-	hdma->config.channel    = dma_ch;
+	ald_dma_config_struct(&hperh->hdma1.config);
+	hperh->hdma1.config.dst        = (void *)buf;
+	hperh->hdma1.config.size       = len;
+	hperh->hdma1.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdma1.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdma1.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+	hperh->hdma1.config.channel    = dma_ch;
 
-	timer_dma_msel(hperh->perh, &hdma->config);
+	timer_dma_msel(hperh->perh, &hperh->hdma1.config);
 
 	switch (ch) {
 	case TIMER_CHANNEL_1:
-		hdma->config.src     = (void *)&hperh->perh->CCVAL1;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH1;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL1;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH1;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC1, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_1;
 		break;
 
 	case TIMER_CHANNEL_2:
-		hdma->config.src     = (void *)&hperh->perh->CCVAL2;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH2;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL2;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH2;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC2, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_2;
 		break;
 
 	case TIMER_CHANNEL_3:
-		hdma->config.src     = (void *)&hperh->perh->CCVAL3;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH3;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL3;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH3;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC3, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_3;
 		break;
 
 	case TIMER_CHANNEL_4:
-		hdma->config.src     = (void *)&hperh->perh->CCVAL4;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH4;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL4;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH4;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC4, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_4;
 		break;
@@ -1447,8 +1447,6 @@ void ald_timer_encoder_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   *            @arg TIMER_CHANNEL_1: TIMER Channel 1 selected
   *            @arg TIMER_CHANNEL_2: TIMER Channel 2 selected
   *            @arg TIMER_CHANNEL_ALL: TIMER Channel 1 and TIMER Channel 2 are selected
-  * @param  hdma1: Pointer to dma_handle_t.
-  * @param  hdma2: Pointer to dma_handle_t.
   * @param  buf1: The destination Buffer address. Reading data from CCR1.
   * @param  buf2: The destination Buffer address. Reading data from CCR2.
   * @param  len: The length of buffer to be transferred TIMER peripheral to memory
@@ -1457,8 +1455,8 @@ void ald_timer_encoder_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   * @retval Status, see @ref ald_status_t.
   */
 ald_status_t ald_timer_encoder_start_by_dma(timer_handle_t *hperh, timer_channel_t ch,
-                           dma_handle_t *hdma1, dma_handle_t *hdma2, uint16_t *buf1,
-			   uint16_t *buf2, uint32_t len, uint8_t dma_ch1, uint8_t dma_ch2)
+                           uint16_t *buf1, uint16_t *buf2, uint32_t len, 
+			   uint8_t dma_ch1, uint8_t dma_ch2)
 {
 	assert_param(IS_TIMER_CC2_INSTANCE(hperh->perh));
 
@@ -1469,67 +1467,67 @@ ald_status_t ald_timer_encoder_start_by_dma(timer_handle_t *hperh, timer_channel
 			return ERROR;
 	}
 
-	if (hdma1->perh == NULL)
-		hdma1->perh = DMA0;
-	if (hdma2->perh == NULL)
-		hdma2->perh = DMA0;
+	if (hperh->hdma1.perh == NULL)
+		hperh->hdma1.perh = DMA0;
+	if (hperh->hdma2.perh == NULL)
+		hperh->hdma2.perh = DMA0;
 
 	hperh->state    = TIMER_STATE_BUSY;
-	hdma1->cplt_cbk = timer_dma_capture_cplt;
-	hdma1->cplt_arg = (void *)hperh;
-	hdma1->err_cbk  = timer_dma_error;
-	hdma1->err_arg  = (void *)hperh;
+	hperh->hdma1.cplt_cbk = timer_dma_capture_cplt;
+	hperh->hdma1.cplt_arg = (void *)hperh;
+	hperh->hdma1.err_cbk  = timer_dma_error;
+	hperh->hdma1.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hdma1->config);
-	hdma1->config.size       = len;
-	hdma1->config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hdma1->config.src_inc    = DMA_DATA_INC_NONE;
-	hdma1->config.dst_inc    = DMA_DATA_INC_HALFWORD;
+	ald_dma_config_struct(&hperh->hdma1.config);
+	hperh->hdma1.config.size       = len;
+	hperh->hdma1.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdma1.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdma1.config.dst_inc    = DMA_DATA_INC_HALFWORD;
 
-	timer_dma_msel(hperh->perh, &hdma1->config);
+	timer_dma_msel(hperh->perh, &hperh->hdma1.config);
 
 	switch (ch) {
 	case TIMER_CHANNEL_1:
-		hdma1->config.src     = (void *)&hperh->perh->CCVAL1;
-		hdma1->config.dst     = (void *)buf1;
-		hdma1->config.msigsel = DMA_MSIGSEL_TIMER_CH1;
-		hdma1->config.channel = dma_ch1;
-		ald_dma_config_basic(hdma1);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL1;
+		hperh->hdma1.config.dst     = (void *)buf1;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH1;
+		hperh->hdma1.config.channel = dma_ch1;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC1, ENABLE);
 		timer_ccx_channel_cmd(hperh->perh, TIMER_CHANNEL_1, ENABLE);
 		TIMER_ENABLE(hperh);
 		break;
 
 	case TIMER_CHANNEL_2:
-		hdma1->config.src     = (void *)&hperh->perh->CCVAL2;
-		hdma1->config.dst     = (void *)buf2;
-		hdma1->config.msigsel = DMA_MSIGSEL_TIMER_CH2;
-		hdma1->config.channel = dma_ch2;
-		ald_dma_config_basic(hdma1);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL2;
+		hperh->hdma1.config.dst     = (void *)buf2;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH2;
+		hperh->hdma1.config.channel = dma_ch2;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC2, ENABLE);
 		timer_ccx_channel_cmd(hperh->perh, TIMER_CHANNEL_2, ENABLE);
 		TIMER_ENABLE(hperh);
 		break;
 
 	default:
-		hdma2->cplt_cbk = timer_dma_capture_cplt;
-		hdma2->cplt_arg = (void *)hperh;
-		hdma2->err_cbk  = timer_dma_error;
-		hdma2->err_arg  = (void *)hperh;
-		memcpy(&hdma2->config, &hdma1->config, sizeof(dma_config_t));
+		hperh->hdma2.cplt_cbk = timer_dma_capture_cplt;
+		hperh->hdma2.cplt_arg = (void *)hperh;
+		hperh->hdma2.err_cbk  = timer_dma_error;
+		hperh->hdma2.err_arg  = (void *)hperh;
+		memcpy(&hperh->hdma2.config, &hperh->hdma1.config, sizeof(dma_config_t));
 
-		hdma1->config.src     = (void *)&hperh->perh->CCVAL1;
-		hdma1->config.dst     = (void *)buf1;
-		hdma1->config.msigsel = DMA_MSIGSEL_TIMER_CH1;
-		hdma1->config.channel = dma_ch1;
-		ald_dma_config_basic(hdma1);
+		hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL1;
+		hperh->hdma1.config.dst     = (void *)buf1;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH1;
+		hperh->hdma1.config.channel = dma_ch1;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC1, ENABLE);
 
-		hdma2->config.src     = (void *)&hperh->perh->CCVAL2;
-		hdma2->config.dst     = (void *)buf2;
-		hdma2->config.msigsel = DMA_MSIGSEL_TIMER_CH2;
-		hdma2->config.channel = dma_ch2;
-		ald_dma_config_basic(hdma2);
+		hperh->hdma2.config.src     = (void *)&hperh->perh->CCVAL2;
+		hperh->hdma2.config.dst     = (void *)buf2;
+		hperh->hdma2.config.msigsel = DMA_MSIGSEL_TIMER_CH2;
+		hperh->hdma2.config.channel = dma_ch2;
+		ald_dma_config_basic(&hperh->hdma2);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC2, ENABLE);
 
 		timer_ccx_channel_cmd(hperh->perh, TIMER_CHANNEL_1, ENABLE);
@@ -1708,13 +1706,12 @@ void ald_timer_hall_sensor_stop_by_it(timer_handle_t *hperh)
 /**
   * @brief  Starts the TIMER hall sensor interface in DMA mode.
   * @param  hperh: TIMER handle
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The destination Buffer address. Reading data from CCR1.
   * @param  len: The length of buffer to be transferred TIMER peripheral to memory
   * @param  dma_ch: Channel of DMA.
   * @retval Status, see @ref ald_status_t.
   */
-ald_status_t ald_timer_hall_sensor_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_hall_sensor_start_by_dma(timer_handle_t *hperh, 
 		                       uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
 	assert_param(IS_TIMER_XOR_INSTANCE(hperh->perh));
@@ -1726,28 +1723,28 @@ ald_status_t ald_timer_hall_sensor_start_by_dma(timer_handle_t *hperh, dma_handl
 			return ERROR;
 	}
 
-	if (hdma->perh == NULL)
-		hdma->perh = DMA0;
+	if (hperh->hdma1.perh == NULL)
+		hperh->hdma1.perh = DMA0;
 
 	hperh->state   = TIMER_STATE_BUSY;
-	hdma->cplt_cbk = timer_dma_capture_cplt;
-	hdma->cplt_arg = (void *)hperh;
-	hdma->err_cbk  = timer_dma_error;
-	hdma->err_arg  = (void *)hperh;
+	hperh->hdma1.cplt_cbk = timer_dma_capture_cplt;
+	hperh->hdma1.cplt_arg = (void *)hperh;
+	hperh->hdma1.err_cbk  = timer_dma_error;
+	hperh->hdma1.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hdma->config);
-	hdma->config.size       = len;
-	hdma->config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hdma->config.src_inc    = DMA_DATA_INC_NONE;
-	hdma->config.dst_inc    = DMA_DATA_INC_HALFWORD;
+	ald_dma_config_struct(&hperh->hdma1.config);
+	hperh->hdma1.config.size       = len;
+	hperh->hdma1.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdma1.config.src_inc    = DMA_DATA_INC_NONE;
+	hperh->hdma1.config.dst_inc    = DMA_DATA_INC_HALFWORD;
 
-	timer_dma_msel(hperh->perh, &hdma->config);
+	timer_dma_msel(hperh->perh, &hperh->hdma1.config);
 
-	hdma->config.src     = (void *)&hperh->perh->CCVAL1;
-	hdma->config.dst     = (void *)buf;
-	hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH1;
-	hdma->config.channel = dma_ch;
-	ald_dma_config_basic(hdma);
+	hperh->hdma1.config.src     = (void *)&hperh->perh->CCVAL1;
+	hperh->hdma1.config.dst     = (void *)buf;
+	hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH1;
+	hperh->hdma1.config.channel = dma_ch;
+	ald_dma_config_basic(&hperh->hdma1);
 	ald_timer_dma_req_config(hperh, TIMER_DMA_CC1, ENABLE);
 	timer_ccx_channel_cmd(hperh->perh, TIMER_CHANNEL_1, ENABLE);
 	TIMER_ENABLE(hperh);
@@ -1929,13 +1926,12 @@ void ald_timer_ocn_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   *            @arg TIMER_CHANNEL_1: TIMER Channel 1 selected
   *            @arg TIMER_CHANNEL_2: TIMER Channel 2 selected
   *            @arg TIMER_CHANNEL_3: TIMER Channel 3 selected
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The destination Buffer address. Reading data from CCRx.
   * @param  len: The length of buffer to be transferred TIMER peripheral to memory
   * @param  dma_ch: Channel of DMA.
   * @retval None
   */
-ald_status_t ald_timer_ocn_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_ocn_start_by_dma(timer_handle_t *hperh,
 		          timer_channel_t ch, uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
 	assert_param(IS_TIMER_CCXN_INSTANCE(hperh->perh, ch));
@@ -1949,44 +1945,44 @@ ald_status_t ald_timer_ocn_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdm
 
 	hperh->state   = TIMER_STATE_BUSY;
 
-	if (hdma->perh == NULL)
-		hdma->perh = DMA0;
+	if (hperh->hdma1.perh == NULL)
+		hperh->hdma1.perh = DMA0;
 
-	hdma->cplt_cbk = timer_dma_oc_cplt;
-	hdma->cplt_arg = (void *)hperh;
-	hdma->err_cbk  = timer_dma_error;
-	hdma->err_arg  = (void *)hperh;
+	hperh->hdma1.cplt_cbk = timer_dma_oc_cplt;
+	hperh->hdma1.cplt_arg = (void *)hperh;
+	hperh->hdma1.err_cbk  = timer_dma_error;
+	hperh->hdma1.err_arg  = (void *)hperh;
 
-	ald_dma_config_struct(&hdma->config);
-	hdma->config.src        = (void *)buf;
-	hdma->config.size       = len;
-	hdma->config.data_width = DMA_DATA_SIZE_HALFWORD;
-	hdma->config.src_inc    = DMA_DATA_INC_HALFWORD;
-	hdma->config.dst_inc    = DMA_DATA_INC_NONE;
-	hdma->config.channel    = dma_ch;
-	hdma->config.msel       = DMA_MSEL_TIMER0;
+	ald_dma_config_struct(&hperh->hdma1.config);
+	hperh->hdma1.config.src        = (void *)buf;
+	hperh->hdma1.config.size       = len;
+	hperh->hdma1.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	hperh->hdma1.config.src_inc    = DMA_DATA_INC_HALFWORD;
+	hperh->hdma1.config.dst_inc    = DMA_DATA_INC_NONE;
+	hperh->hdma1.config.channel    = dma_ch;
+	hperh->hdma1.config.msel       = DMA_MSEL_TIMER0;
 
 	switch (ch) {
 	case TIMER_CHANNEL_1:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL1;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH1;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL1;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH1;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC1, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_1;
 		break;
 
 	case TIMER_CHANNEL_2:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL2;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH2;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL2;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH2;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC2, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_2;
 		break;
 
 	case TIMER_CHANNEL_3:
-		hdma->config.dst     = (void *)&hperh->perh->CCVAL3;
-		hdma->config.msigsel = DMA_MSIGSEL_TIMER_CH3;
-		ald_dma_config_basic(hdma);
+		hperh->hdma1.config.dst     = (void *)&hperh->perh->CCVAL3;
+		hperh->hdma1.config.msigsel = DMA_MSIGSEL_TIMER_CH3;
+		ald_dma_config_basic(&hperh->hdma1);
 		ald_timer_dma_req_config(hperh, TIMER_DMA_CC3, ENABLE);
 		hperh->ch = TIMER_ACTIVE_CHANNEL_3;
 		break;
@@ -2136,16 +2132,15 @@ void ald_timer_pwmn_stop_by_it(timer_handle_t *hperh, timer_channel_t ch)
   *            @arg TIMER_CHANNEL_1: TIMER Channel 1 selected
   *            @arg TIMER_CHANNEL_2: TIMER Channel 2 selected
   *            @arg TIMER_CHANNEL_3: TIMER Channel 3 selected
-  * @param  hdma: Pointer to dma_handle_t.
   * @param  buf: The destination Buffer address. Reading data from CCRx.
   * @param  len: The length of buffer to be transferred TIMER peripheral to memory
   * @param  dma_ch: Channel of DMA.
   * @retval None
   */
-ald_status_t ald_timer_pwmn_start_by_dma(timer_handle_t *hperh, dma_handle_t *hdma,
+ald_status_t ald_timer_pwmn_start_by_dma(timer_handle_t *hperh, 
 		          timer_channel_t ch, uint16_t *buf, uint32_t len, uint8_t dma_ch)
 {
-	return ald_timer_ocn_start_by_dma(hperh, hdma, ch, buf, len, dma_ch);
+	return ald_timer_ocn_start_by_dma(hperh, ch, buf, len, dma_ch);
 }
 
 /**
@@ -2726,6 +2721,7 @@ uint32_t ald_timer_read_capture_value(timer_handle_t *hperh, timer_channel_t ch)
 		tmp = hperh->perh->CCVAL4;
 		break;
 	default:
+		tmp = hperh->perh->CCVAL1;
 		break;
 	}
 

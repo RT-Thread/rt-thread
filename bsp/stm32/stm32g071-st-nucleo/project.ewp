@@ -225,6 +225,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32G071xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -361,7 +362,6 @@
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
@@ -1277,6 +1277,7 @@
           <name>CCDefines</name>
           <state />
           <state>STM32G071xx</state>
+          <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
         </option>
         <option>
@@ -1413,7 +1414,6 @@
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Include</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common</state>
           <state>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Include</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
@@ -2105,79 +2105,13 @@
     </settings>
   </configuration>
   <group>
-    <name>Kernel</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
-    </file>
-  </group>
-  <group>
     <name>Applications</name>
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
   <group>
-    <name>Drivers</name>
-    <file>
-      <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32g0xx_hal_msp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\iar\startup_stm32g071xx.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
-    </file>
-  </group>
-  <group>
-    <name>cpu</name>
+    <name>CPU</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\backtrace.c</name>
     </file>
@@ -2225,6 +2159,27 @@
     </file>
   </group>
   <group>
+    <name>Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\board\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\board\CubeMX_Config\Src\stm32g0xx_hal_msp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\iar\startup_stm32g071xx.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
+    </file>
+  </group>
+  <group>
     <name>finsh</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
@@ -2267,10 +2222,52 @@
     </file>
   </group>
   <group>
-    <name>libc</name>
+    <name>Kernel</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
   </group>
   <group>
-    <name>STM32_HAL</name>
+    <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32G0xx_HAL\CMSIS\Device\ST\STM32G0xx\Source\Templates\system_stm32g0xx.c</name>
     </file>

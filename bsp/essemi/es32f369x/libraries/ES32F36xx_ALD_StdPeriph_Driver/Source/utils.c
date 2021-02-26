@@ -14,6 +14,7 @@
   *********************************************************************************
   */
 
+#include <string.h>
 #include "utils.h"
 #include "ald_dma.h"
 #include "ald_cmu.h"
@@ -184,9 +185,12 @@ void ald_systick_interval_select(systick_interval_t value)
       (+) Waiting for flag
       (+) Configure the interrupt
       (+) Provide system tick value
-      (+) Get CPU ID
       (+) Initialize core timestamp
       (+) Get core timestamp
+      (+) Get CPU ID
+      (+) Get UID
+      (+) Get CHIPID
+
     @endverbatim
   * @{
   */
@@ -313,6 +317,22 @@ uint32_t ald_get_ald_version(void)
 }
 
 /**
+  * @brief  Configure the flash wait period.
+  * @param  cycle: The period.
+  * @retval None
+  */
+void ald_flash_wait_config(uint8_t cycle)
+{
+	uint32_t tmp;
+
+	tmp = MSC->MEMWAIT;
+	MODIFY_REG(tmp, MSC_MEMWAIT_FLASH_W_MSK, (0x30U | cycle) << MSC_MEMWAIT_FLASH_W_POSS);
+	MSC->MEMWAIT = tmp;
+
+	return;
+}
+
+/**
   * @brief  Waiting the specified bit in the register change to SET/RESET.
   * @param  reg: The register address.
   * @param  bit: The specified bit.
@@ -381,15 +401,6 @@ void ald_mcu_irq_config(IRQn_Type irq, uint8_t preempt_prio, uint8_t sub_prio, t
 }
 
 /**
-  * @brief  Get the CPU ID.
-  * @retval CPU ID.
-  */
-uint32_t ald_mcu_get_cpu_id(void)
-{
-	return SCB->CPUID;
-}
-
-/**
   * @brief  Initialize core timestamp.
   * @retval None
   */
@@ -411,6 +422,37 @@ uint32_t ald_mcu_get_timestamp(void)
 	return (uint32_t)DWT_CYCCNT;
 }
 
+/**
+  * @brief  Get the CPU ID.
+  * @retval CPU ID.
+  */
+uint32_t ald_mcu_get_cpu_id(void)
+{
+	return SCB->CPUID;
+}
+
+/**
+  * @brief  Get the UID.
+  * @param  buf: Pointer to UID, len: 12Bytes(96-bits)
+  * @retval None
+  */
+void ald_mcu_get_uid(uint8_t *buf)
+{
+	memcpy(&buf[0], (void *)MCU_UID0_ADDR, 4);
+	memcpy(&buf[4], (void *)MCU_UID1_ADDR, 4);
+	memcpy(&buf[8], (void *)MCU_UID2_ADDR, 4);
+
+	return;
+}
+
+/**
+  * @brief  Get the CHIPID
+  * @retval CHPID
+  */
+uint32_t ald_mcu_get_chipid(void)
+{
+	return (uint32_t)*(uint32_t *)MCU_CHIPID_ADDR;
+}
 /**
   * @}
   */

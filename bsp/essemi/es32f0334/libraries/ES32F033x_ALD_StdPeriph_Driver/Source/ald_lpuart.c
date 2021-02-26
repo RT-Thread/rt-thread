@@ -118,11 +118,11 @@
   */
 static void lpuart_dma_send_cplt(void *arg)
 {
-    lpuart_handle_t *hperh = (lpuart_handle_t *)arg;
+	lpuart_handle_t *hperh = (lpuart_handle_t *)arg;
 
-    hperh->tx_count = 0;
-    ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
-    ald_lpuart_interrupt_config(hperh, LPUART_IT_TC, ENABLE);
+	hperh->tx_count = 0;
+	ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
+	ald_lpuart_interrupt_config(hperh, LPUART_IT_TC, ENABLE);
 }
 
 /**
@@ -133,14 +133,14 @@ static void lpuart_dma_send_cplt(void *arg)
   */
 static void lpuart_dma_recv_cplt(void *arg)
 {
-    lpuart_handle_t *hperh = (lpuart_handle_t *)arg;
+	lpuart_handle_t *hperh = (lpuart_handle_t *)arg;
 
-    hperh->rx_count = 0;
-    ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
-    CLEAR_BIT(hperh->state, LPUART_STATE_RX_MASK);
+	hperh->rx_count = 0;
+	ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
+	CLEAR_BIT(hperh->state, LPUART_STATE_RX_MASK);
 
-    if (hperh->rx_cplt_cbk)
-        hperh->rx_cplt_cbk(hperh);
+	if (hperh->rx_cplt_cbk)
+		hperh->rx_cplt_cbk(hperh);
 }
 
 /**
@@ -151,15 +151,15 @@ static void lpuart_dma_recv_cplt(void *arg)
   */
 static void lpuart_dma_error(void *arg)
 {
-    lpuart_handle_t *hperh = (lpuart_handle_t *)arg;
+	lpuart_handle_t *hperh = (lpuart_handle_t *)arg;
 
-    hperh->rx_count  = 0;
-    hperh->tx_count  = 0;
-    hperh->state     = LPUART_STATE_READY;
-    hperh->err_code |= LPUART_ERROR_DMA;
+	hperh->rx_count  = 0;
+	hperh->tx_count  = 0;
+	hperh->state     = LPUART_STATE_READY;
+	hperh->err_code |= LPUART_ERROR_DMA;
 
-    if (hperh->error_cbk)
-        hperh->error_cbk(hperh);
+	if (hperh->error_cbk)
+		hperh->error_cbk(hperh);
 }
 #endif
 
@@ -174,21 +174,20 @@ static void lpuart_dma_error(void *arg)
   */
 static ald_status_t lpuart_wait_flag(lpuart_handle_t *hperh, lpuart_status_t flag, flag_status_t status, uint32_t timeout)
 {
-    uint32_t tick;
+	uint32_t tick;
 
-    if (timeout == 0)
-        return OK;
+	if (timeout == 0)
+		return OK;
 
-    tick = ald_get_tick();
+	tick = ald_get_tick();
 
-    /* Waiting for flag */
-    while ((ald_lpuart_get_status(hperh, flag)) != status)
-    {
-        if (((ald_get_tick()) - tick) > timeout)
-            return TIMEOUT;
-    }
+	/* Waiting for flag */
+	while ((ald_lpuart_get_status(hperh, flag)) != status) {
+		if (((ald_get_tick()) - tick) > timeout)
+			return TIMEOUT;
+	}
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -199,18 +198,17 @@ static ald_status_t lpuart_wait_flag(lpuart_handle_t *hperh, lpuart_status_t fla
   */
 static ald_status_t __lpuart_send_by_it(lpuart_handle_t *hperh)
 {
-    if ((hperh->state & LPUART_STATE_TX_MASK) == 0x0)
-        return BUSY;
+	if ((hperh->state & LPUART_STATE_TX_MASK) == 0x0)
+		return BUSY;
 
-    WRITE_REG(hperh->perh->TXDR, *hperh->tx_buf++);
+	WRITE_REG(hperh->perh->TXDR, *hperh->tx_buf++);
 
-    if (--hperh->tx_count == 0)
-    {
-        ald_lpuart_interrupt_config(hperh, LPUART_IT_TBEMP, DISABLE);
-        ald_lpuart_interrupt_config(hperh, LPUART_IT_TC, ENABLE);
-    }
+	if (--hperh->tx_count == 0) {
+		ald_lpuart_interrupt_config(hperh, LPUART_IT_TBEMP, DISABLE);
+		ald_lpuart_interrupt_config(hperh, LPUART_IT_TC, ENABLE);
+	}
 
-    return OK;
+	return OK;
 }
 
 
@@ -222,13 +220,13 @@ static ald_status_t __lpuart_send_by_it(lpuart_handle_t *hperh)
   */
 static ald_status_t __lpuart_end_send_by_it(lpuart_handle_t *hperh)
 {
-    ald_lpuart_interrupt_config(hperh, LPUART_IT_TC, DISABLE);
-    CLEAR_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	ald_lpuart_interrupt_config(hperh, LPUART_IT_TC, DISABLE);
+	CLEAR_BIT(hperh->state, LPUART_STATE_TX_MASK);
 
-    if (hperh->tx_cplt_cbk)
-        hperh->tx_cplt_cbk(hperh);
+	if (hperh->tx_cplt_cbk)
+		hperh->tx_cplt_cbk(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -239,39 +237,35 @@ static ald_status_t __lpuart_end_send_by_it(lpuart_handle_t *hperh)
   */
 static ald_status_t __lpuart_recv_by_it(lpuart_handle_t *hperh)
 {
-    uint8_t tmp;
-    uint16_t i;
+	uint32_t tmp;
+	uint16_t i;
 
-    if ((hperh->state & LPUART_STATE_RX_MASK) == 0x0)
-        return BUSY;
+	if ((hperh->state & LPUART_STATE_RX_MASK) == 0x0)
+		return BUSY;
 
-    do
-    {
-        i   = 10000;
-        tmp = hperh->perh->STAT & LPUART_STAT_RXPTR_MSK;
-        *hperh->rx_buf++ = (uint8_t)(hperh->perh->RXDR & 0xFF);
-        --hperh->rx_count;
+	do {
+		i   = 10000;
+		tmp = hperh->perh->STAT & LPUART_STAT_RXPTR_MSK;
+		*hperh->rx_buf++ = (uint8_t)(hperh->perh->RXDR & 0xFF);
+		--hperh->rx_count;
 
-        while (((hperh->perh->STAT & LPUART_STAT_RXPTR_MSK) != tmp - 1) && (i--));
-    }
-    while (hperh->perh->STAT & LPUART_STAT_RXPTR_MSK);
+		while (((hperh->perh->STAT & LPUART_STAT_RXPTR_MSK) != (uint32_t)(tmp - 1)) && (i--));
+	} while (hperh->perh->STAT & LPUART_STAT_RXPTR_MSK);
 
-    if (hperh->rx_count == 0)
-    {
-        ald_lpuart_interrupt_config(hperh, LPUART_IT_RBR, DISABLE);
-        CLEAR_BIT(hperh->state, LPUART_STATE_RX_MASK);
+	if (hperh->rx_count == 0) {
+		ald_lpuart_interrupt_config(hperh, LPUART_IT_RBR, DISABLE);
+		CLEAR_BIT(hperh->state, LPUART_STATE_RX_MASK);
 
-        if (hperh->state == LPUART_STATE_READY)
-        {
-            ald_lpuart_interrupt_config(hperh, LPUART_IT_PERR, DISABLE);
-            ald_lpuart_interrupt_config(hperh, LPUART_IT_FERR, DISABLE);
-        }
+		if (hperh->state == LPUART_STATE_READY) {
+			ald_lpuart_interrupt_config(hperh, LPUART_IT_PERR, DISABLE);
+			ald_lpuart_interrupt_config(hperh, LPUART_IT_FERR, DISABLE);
+		}
 
-        if (hperh->rx_cplt_cbk)
-            hperh->rx_cplt_cbk(hperh);
-    }
+		if (hperh->rx_cplt_cbk)
+			hperh->rx_cplt_cbk(hperh);
+	}
 
-    return OK;
+	return OK;
 }
 /**
   * @}
@@ -317,16 +311,16 @@ static ald_status_t __lpuart_recv_by_it(lpuart_handle_t *hperh)
   */
 void ald_lpuart_reset(lpuart_handle_t *hperh)
 {
-    WRITE_REG(hperh->perh->CON0, 0x3000);
-    WRITE_REG(hperh->perh->CON1, 0x4);
-    WRITE_REG(hperh->perh->CLKDIV, 0x0);
-    WRITE_REG(hperh->perh->FIFOCON, 0x0);
-    WRITE_REG(hperh->perh->IER, 0x0);
-    hperh->err_code = LPUART_ERROR_NONE;
-    hperh->state    = LPUART_STATE_RESET;
+	WRITE_REG(hperh->perh->CON0, 0x3000);
+	WRITE_REG(hperh->perh->CON1, 0x4);
+	WRITE_REG(hperh->perh->CLKDIV, 0x0);
+	WRITE_REG(hperh->perh->FIFOCON, 0x0);
+	WRITE_REG(hperh->perh->IER, 0x0);
+	hperh->err_code = LPUART_ERROR_NONE;
+	hperh->state    = LPUART_STATE_RESET;
 
-    __UNLOCK(hperh);
-    return;
+	__UNLOCK(hperh);
+	return;
 }
 
 /**
@@ -338,54 +332,54 @@ void ald_lpuart_reset(lpuart_handle_t *hperh)
   */
 void ald_lpuart_init(lpuart_handle_t *hperh)
 {
-    uint32_t tmp;
+	uint32_t tmp;
 
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_BAUDRATE(hperh->init.baud));
-    assert_param(IS_LPUART_WORD_LENGTH(hperh->init.word_length));
-    assert_param(IS_LPUART_STOPBITS(hperh->init.stop_bits));
-    assert_param(IS_LPUART_PARITY(hperh->init.parity));
-    assert_param(IS_LPUART_MODE(hperh->init.mode));
-    assert_param(IS_LPUART_HARDWARE_FLOW_CONTROL(hperh->init.fctl));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_BAUDRATE(hperh->init.baud));
+	assert_param(IS_LPUART_WORD_LENGTH(hperh->init.word_length));
+	assert_param(IS_LPUART_STOPBITS(hperh->init.stop_bits));
+	assert_param(IS_LPUART_PARITY(hperh->init.parity));
+	assert_param(IS_LPUART_MODE(hperh->init.mode));
+	assert_param(IS_LPUART_HARDWARE_FLOW_CONTROL(hperh->init.fctl));
 
-    if ((hperh->init.clock != CMU_LP_PERH_CLOCK_SEL_LOSC)
-            && (hperh->init.clock != CMU_LP_PERH_CLOCK_SEL_LRC))
-        hperh->init.clock = CMU_LP_PERH_CLOCK_SEL_LRC;
+	if ((hperh->init.clock != CMU_LP_PERH_CLOCK_SEL_LOSC)
+			&& (hperh->init.clock != CMU_LP_PERH_CLOCK_SEL_LRC))
+		hperh->init.clock = CMU_LP_PERH_CLOCK_SEL_LRC;
 
-    ald_cmu_lpuart0_clock_select(hperh->init.clock);
-    ald_lpuart_reset(hperh);
-    LPUART_UPDATE_DISABLE(hperh);
+	ald_cmu_lpuart0_clock_select(hperh->init.clock);
+	ald_lpuart_reset(hperh);
+	LPUART_UPDATE_DISABLE(hperh);
 
-    tmp = READ_REG(hperh->perh->CON0);
-    MODIFY_REG(tmp, LPUART_CON0_DATLENTH_MSK, hperh->init.word_length << LPUART_CON0_DATLENTH_POSS);
-    MODIFY_REG(tmp, LPUART_CON0_STPLENTH_MSK, hperh->init.stop_bits << LPUART_CON0_STPLENTH_POS);
+	tmp = READ_REG(hperh->perh->CON0);
+	MODIFY_REG(tmp, LPUART_CON0_DATLENTH_MSK, hperh->init.word_length << LPUART_CON0_DATLENTH_POSS);
+	MODIFY_REG(tmp, LPUART_CON0_STPLENTH_MSK, hperh->init.stop_bits << LPUART_CON0_STPLENTH_POS);
 
-    if (hperh->init.parity == LPUART_PARITY_NONE)
-        CLEAR_BIT(tmp, LPUART_CON0_PARCHKE_MSK);
-    else
-        SET_BIT(tmp, LPUART_CON0_PARCHKE_MSK);
+	if (hperh->init.parity == LPUART_PARITY_NONE)
+		CLEAR_BIT(tmp, LPUART_CON0_PARCHKE_MSK);
+	else
+		SET_BIT(tmp, LPUART_CON0_PARCHKE_MSK);
 
-    if (hperh->init.parity == LPUART_PARITY_EVEN)
-        SET_BIT(tmp, LPUART_CON0_EVENPARSEL_MSK);
-    else
-        CLEAR_BIT(tmp, LPUART_CON0_EVENPARSEL_MSK);
+	if (hperh->init.parity == LPUART_PARITY_EVEN)
+		SET_BIT(tmp, LPUART_CON0_EVENPARSEL_MSK);
+	else
+		CLEAR_BIT(tmp, LPUART_CON0_EVENPARSEL_MSK);
 
-    MODIFY_REG(tmp, LPUART_CON0_ATRTSE_MSK, (hperh->init.fctl & 1) << LPUART_CON0_ATRTSE_POS);
-    MODIFY_REG(tmp, LPUART_CON0_ATCTSE_MSK, ((hperh->init.fctl >> 1) & 1) << LPUART_CON0_ATCTSE_POS);
-    WRITE_REG(hperh->perh->CON0, tmp);
-    WRITE_REG(hperh->perh->CLKDIV, (32768 << 8) / hperh->init.baud);
+	MODIFY_REG(tmp, LPUART_CON0_ATRTSE_MSK, (hperh->init.fctl & 1) << LPUART_CON0_ATRTSE_POS);
+	MODIFY_REG(tmp, LPUART_CON0_ATCTSE_MSK, ((hperh->init.fctl >> 1) & 1) << LPUART_CON0_ATCTSE_POS);
+	WRITE_REG(hperh->perh->CON0, tmp);
+	WRITE_REG(hperh->perh->CLKDIV, (32768 << 8) / hperh->init.baud);
 
-    if (hperh->init.mode == LPUART_MODE_IrDA)
-        CLEAR_BIT(hperh->perh->CON1, LPUART_CON1_IRRXINV_MSK);
+	if (hperh->init.mode == LPUART_MODE_IrDA)
+		CLEAR_BIT(hperh->perh->CON1, LPUART_CON1_IRRXINV_MSK);
 
-    MODIFY_REG(hperh->perh->CON0, LPUART_CON0_MODESEL_MSK, hperh->init.mode << LPUART_CON0_MODESEL_POSS);
-    LPUART_UPDATE_ENABLE(hperh);
+	MODIFY_REG(hperh->perh->CON0, LPUART_CON0_MODESEL_MSK, hperh->init.mode << LPUART_CON0_MODESEL_POSS);
+	LPUART_UPDATE_ENABLE(hperh);
 
-    while (hperh->perh->SYNCSTAT & 0xF)
-        ;
+	while (hperh->perh->SYNCSTAT & 0xF)
+		;
 
-    hperh->state = LPUART_STATE_READY;
-    return;
+	hperh->state = LPUART_STATE_READY;
+	return;
 }
 
 /**
@@ -398,23 +392,23 @@ void ald_lpuart_init(lpuart_handle_t *hperh)
   */
 void ald_lpuart_rs485_config(lpuart_handle_t *hperh, lpuart_rs485_config_t *config)
 {
-    uint32_t tmp;
+	uint32_t tmp;
 
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_FUNC_STATE(config->RS485_NMM));
-    assert_param(IS_FUNC_STATE(config->RS485_AAD));
-    assert_param(IS_FUNC_STATE(config->RS485_AUD));
-    assert_param(IS_FUNC_STATE(config->RS485_ADD_DET));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_FUNC_STATE(config->RS485_NMM));
+	assert_param(IS_FUNC_STATE(config->RS485_AAD));
+	assert_param(IS_FUNC_STATE(config->RS485_AUD));
+	assert_param(IS_FUNC_STATE(config->RS485_ADD_DET));
 
-    tmp = READ_REG(hperh->perh->CON1);
-    MODIFY_REG(tmp, LPUART_CON1_NMPMOD_MSK, config->RS485_NMM << LPUART_CON1_NMPMOD_POS);
-    MODIFY_REG(tmp, LPUART_CON1_ATADETE_MSK, config->RS485_AAD << LPUART_CON1_ATADETE_POS);
-    MODIFY_REG(tmp, LPUART_CON1_ATDIRM_MSK, config->RS485_AUD << LPUART_CON1_ATDIRM_POS);
-    MODIFY_REG(tmp, LPUART_CON1_ADETE_MSK, config->RS485_ADD_DET << LPUART_CON1_ADETE_POS);
-    MODIFY_REG(tmp, LPUART_CON1_ADDCMP_MSK, config->RS485_ADDCMP << LPUART_CON1_ADDCMP_POSS);
-    WRITE_REG(hperh->perh->CON1, tmp);
+	tmp = READ_REG(hperh->perh->CON1);
+	MODIFY_REG(tmp, LPUART_CON1_NMPMOD_MSK, config->RS485_NMM << LPUART_CON1_NMPMOD_POS);
+	MODIFY_REG(tmp, LPUART_CON1_ATADETE_MSK, config->RS485_AAD << LPUART_CON1_ATADETE_POS);
+	MODIFY_REG(tmp, LPUART_CON1_ATDIRM_MSK, config->RS485_AUD << LPUART_CON1_ATDIRM_POS);
+	MODIFY_REG(tmp, LPUART_CON1_ADETE_MSK, config->RS485_ADD_DET << LPUART_CON1_ADETE_POS);
+	MODIFY_REG(tmp, LPUART_CON1_ADDCMP_MSK, config->RS485_ADDCMP << LPUART_CON1_ADDCMP_POSS);
+	WRITE_REG(hperh->perh->CON1, tmp);
 
-    return;
+	return;
 }
 
 /**
@@ -480,49 +474,45 @@ void ald_lpuart_rs485_config(lpuart_handle_t *hperh, lpuart_rs485_config_t *conf
   */
 ald_status_t ald_lpuart_send(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	if ((buf == NULL) || (size == 0))
+		return  ERROR;
 
-    __LOCK(hperh);
-    hperh->err_code = LPUART_ERROR_NONE;
-    SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	__LOCK(hperh);
+	hperh->err_code = LPUART_ERROR_NONE;
+	SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
 
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
 
-    while (hperh->tx_count-- > 0)
-    {
-        if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, SET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = LPUART_STATE_READY;
-            return TIMEOUT;
-        }
+	while (hperh->tx_count-- > 0) {
+		if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, SET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = LPUART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        WRITE_REG(hperh->perh->TXDR, *buf++);
+		WRITE_REG(hperh->perh->TXDR, *buf++);
 
-        if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, RESET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = LPUART_STATE_READY;
-            return TIMEOUT;
-        }
-    }
+		if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, RESET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = LPUART_STATE_READY;
+			return TIMEOUT;
+		}
+	}
 
-    if (lpuart_wait_flag(hperh, LPUART_STAT_TXIDLE, SET, timeout) != OK)
-    {
-        __UNLOCK(hperh);
-        hperh->state = LPUART_STATE_READY;
-        return TIMEOUT;
-    }
+	if (lpuart_wait_flag(hperh, LPUART_STAT_TXIDLE, SET, timeout) != OK) {
+		__UNLOCK(hperh);
+		hperh->state = LPUART_STATE_READY;
+		return TIMEOUT;
+	}
 
-    CLEAR_BIT(hperh->state, LPUART_STATE_TX_MASK);
-    __UNLOCK(hperh);
+	CLEAR_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -536,37 +526,35 @@ ald_status_t ald_lpuart_send(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size
   */
 ald_status_t ald_lpuart_recv(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return  ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return  ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->err_code = LPUART_ERROR_NONE;
-    SET_BIT(hperh->state, LPUART_STATE_RX_MASK);
+	hperh->err_code = LPUART_ERROR_NONE;
+	SET_BIT(hperh->state, LPUART_STATE_RX_MASK);
 
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
 
-    /* Check the remain data to be received */
-    while (hperh->rx_count-- > 0)
-    {
-        if (lpuart_wait_flag(hperh, LPUART_STAT_RXEMP, RESET, timeout) != OK)
-        {
-            __UNLOCK(hperh);
-            hperh->state = LPUART_STATE_READY;
-            return TIMEOUT;
-        }
+	/* Check the remain data to be received */
+	while (hperh->rx_count-- > 0) {
+		if (lpuart_wait_flag(hperh, LPUART_STAT_RXEMP, RESET, timeout) != OK) {
+			__UNLOCK(hperh);
+			hperh->state = LPUART_STATE_READY;
+			return TIMEOUT;
+		}
 
-        *buf++ = (uint8_t)(hperh->perh->RXDR & 0xFF);
-    }
+		*buf++ = (uint8_t)(hperh->perh->RXDR & 0xFF);
+	}
 
-    CLEAR_BIT(hperh->state, LPUART_STATE_RX_MASK);
-    __UNLOCK(hperh);
+	CLEAR_BIT(hperh->state, LPUART_STATE_RX_MASK);
+	__UNLOCK(hperh);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -579,24 +567,24 @@ ald_status_t ald_lpuart_recv(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size
   */
 ald_status_t ald_lpuart_send_by_it(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = LPUART_ERROR_NONE;
-    SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = LPUART_ERROR_NONE;
+	SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
 
-    __UNLOCK(hperh);
-    ald_lpuart_interrupt_config(hperh, LPUART_IT_TBEMP, ENABLE);
+	__UNLOCK(hperh);
+	ald_lpuart_interrupt_config(hperh, LPUART_IT_TBEMP, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -609,27 +597,27 @@ ald_status_t ald_lpuart_send_by_it(lpuart_handle_t *hperh, uint8_t *buf, uint16_
   */
 ald_status_t ald_lpuart_recv_by_it(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size)
 {
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->rx_count = size;
-    hperh->err_code = LPUART_ERROR_NONE;
-    SET_BIT(hperh->state, LPUART_STATE_RX_MASK);
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->rx_count = size;
+	hperh->err_code = LPUART_ERROR_NONE;
+	SET_BIT(hperh->state, LPUART_STATE_RX_MASK);
 
-    __UNLOCK(hperh);
+	__UNLOCK(hperh);
 
-    ald_lpuart_interrupt_config(hperh, LPUART_IT_PERR, ENABLE);
-    ald_lpuart_interrupt_config(hperh, LPUART_IT_FERR, ENABLE);
-    ald_lpuart_interrupt_config(hperh, LPUART_IT_RBR, ENABLE);
+	ald_lpuart_interrupt_config(hperh, LPUART_IT_PERR, ENABLE);
+	ald_lpuart_interrupt_config(hperh, LPUART_IT_FERR, ENABLE);
+	ald_lpuart_interrupt_config(hperh, LPUART_IT_RBR, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 #ifdef ALD_DMA
@@ -644,51 +632,50 @@ ald_status_t ald_lpuart_recv_by_it(lpuart_handle_t *hperh, uint8_t *buf, uint16_
   */
 ald_status_t ald_lpuart_send_by_dma(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->tx_buf   = buf;
-    hperh->tx_size  = size;
-    hperh->tx_count = size;
-    hperh->err_code = LPUART_ERROR_NONE;
-    SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	hperh->tx_buf   = buf;
+	hperh->tx_size  = size;
+	hperh->tx_count = size;
+	hperh->err_code = LPUART_ERROR_NONE;
+	SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
 
-    if (hperh->hdmatx.perh == NULL)
-        hperh->hdmatx.perh = DMA0;
+	if (hperh->hdmatx.perh == NULL)
+		hperh->hdmatx.perh = DMA0;
 
-    /* Set the dma parameters */
-    hperh->hdmatx.cplt_cbk = lpuart_dma_send_cplt;
-    hperh->hdmatx.cplt_arg = (void *)hperh;
-    hperh->hdmatx.err_cbk  = lpuart_dma_error;
-    hperh->hdmatx.err_arg  = (void *)hperh;
+	/* Set the dma parameters */
+	hperh->hdmatx.cplt_cbk = lpuart_dma_send_cplt;
+	hperh->hdmatx.cplt_arg = (void *)hperh;
+	hperh->hdmatx.err_cbk  = lpuart_dma_error;
+	hperh->hdmatx.err_arg  = (void *)hperh;
 
-    ald_dma_config_struct(&hperh->hdmatx.config);
-    hperh->hdmatx.config.src     = (void *)buf;
-    hperh->hdmatx.config.dst     = (void *)&hperh->perh->TXDR;
-    hperh->hdmatx.config.size    = size;
-    hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
-    hperh->hdmatx.config.msel    = DMA_MSEL_LPUART0;
-    hperh->hdmatx.config.msigsel = DMA_MSIGSEL_LPUART_TXEMPTY;
-    hperh->hdmatx.config.channel = channel;
+	ald_dma_config_struct(&hperh->hdmatx.config);
+	hperh->hdmatx.config.src     = (void *)buf;
+	hperh->hdmatx.config.dst     = (void *)&hperh->perh->TXDR;
+	hperh->hdmatx.config.size    = size;
+	hperh->hdmatx.config.src_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmatx.config.dst_inc = DMA_DATA_INC_NONE;
+	hperh->hdmatx.config.msel    = DMA_MSEL_LPUART0;
+	hperh->hdmatx.config.msigsel = DMA_MSIGSEL_LPUART_TXEMPTY;
+	hperh->hdmatx.config.channel = channel;
 
-    if (hperh->init.mode == LPUART_MODE_RS485)
-    {
-        hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	if (hperh->init.mode == LPUART_MODE_RS485) {
+		hperh->hdmatx.config.src_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmatx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    ald_dma_config_basic(&hperh->hdmatx);
-    ald_lpuart_clear_flag_status(hperh, LPUART_IF_TC);
-    __UNLOCK(hperh);
-    ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, ENABLE);
+	ald_dma_config_basic(&hperh->hdmatx);
+	ald_lpuart_clear_flag_status(hperh, LPUART_IF_TC);
+	__UNLOCK(hperh);
+	ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -702,49 +689,48 @@ ald_status_t ald_lpuart_send_by_dma(lpuart_handle_t *hperh, uint8_t *buf, uint16
   */
 ald_status_t ald_lpuart_recv_by_dma(lpuart_handle_t *hperh, uint8_t *buf, uint16_t size, uint8_t channel)
 {
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_TX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_TX))
+		return BUSY;
 
-    if ((buf == NULL) || (size == 0))
-        return ERROR;
+	if ((buf == NULL ) || (size == 0))
+		return ERROR;
 
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    hperh->rx_buf   = buf;
-    hperh->rx_size  = size;
-    hperh->err_code = LPUART_ERROR_NONE;
-    SET_BIT(hperh->state, LPUART_STATE_RX_MASK);
+	hperh->rx_buf   = buf;
+	hperh->rx_size  = size;
+	hperh->err_code = LPUART_ERROR_NONE;
+	SET_BIT(hperh->state, LPUART_STATE_RX_MASK);
 
-    if (hperh->hdmarx.perh == NULL)
-        hperh->hdmarx.perh = DMA0;
+	if (hperh->hdmarx.perh == NULL)
+		hperh->hdmarx.perh = DMA0;
 
-    /* Set the dma parameters */
-    hperh->hdmarx.cplt_cbk = lpuart_dma_recv_cplt;
-    hperh->hdmarx.cplt_arg = (void *)hperh;
-    hperh->hdmarx.err_cbk  = lpuart_dma_error;
-    hperh->hdmarx.err_arg  = (void *)hperh;
+	/* Set the dma parameters */
+	hperh->hdmarx.cplt_cbk = lpuart_dma_recv_cplt;
+	hperh->hdmarx.cplt_arg = (void *)hperh;
+	hperh->hdmarx.err_cbk  = lpuart_dma_error;
+	hperh->hdmarx.err_arg  = (void *)hperh;
 
-    ald_dma_config_struct(&hperh->hdmarx.config);
-    hperh->hdmarx.config.src     = (void *)&hperh->perh->RXDR;
-    hperh->hdmarx.config.dst     = (void *)buf;
-    hperh->hdmarx.config.size    = size;
-    hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
-    hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
-    hperh->hdmarx.config.msel    = DMA_MSEL_LPUART0;
-    hperh->hdmarx.config.msigsel = DMA_MSIGSEL_LPUART_RNR;
-    hperh->hdmarx.config.channel = channel;
+	ald_dma_config_struct(&hperh->hdmarx.config);
+	hperh->hdmarx.config.src     = (void *)&hperh->perh->RXDR;
+	hperh->hdmarx.config.dst     = (void *)buf;
+	hperh->hdmarx.config.size    = size;
+	hperh->hdmarx.config.src_inc = DMA_DATA_INC_NONE;
+	hperh->hdmarx.config.dst_inc = DMA_DATA_INC_BYTE;
+	hperh->hdmarx.config.msel    = DMA_MSEL_LPUART0;
+	hperh->hdmarx.config.msigsel = DMA_MSIGSEL_LPUART_RNR;
+	hperh->hdmarx.config.channel = channel;
 
-    if (hperh->init.mode == LPUART_MODE_RS485)
-    {
-        hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
-        hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
-    }
+	if (hperh->init.mode == LPUART_MODE_RS485) {
+		hperh->hdmarx.config.dst_inc    = DMA_DATA_INC_HALFWORD;
+		hperh->hdmarx.config.data_width = DMA_DATA_SIZE_HALFWORD;
+	}
 
-    ald_dma_config_basic(&hperh->hdmarx);
-    __UNLOCK(hperh);
-    ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, ENABLE);
+	ald_dma_config_basic(&hperh->hdmarx);
+	__UNLOCK(hperh);
+	ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, ENABLE);
 
-    return OK;
+	return OK;
 }
 
 /**
@@ -755,29 +741,25 @@ ald_status_t ald_lpuart_recv_by_dma(lpuart_handle_t *hperh, uint8_t *buf, uint16
   */
 ald_status_t ald_lpuart_dma_pause(lpuart_handle_t *hperh)
 {
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    if (hperh->state == LPUART_STATE_BUSY_TX)
-    {
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
-    }
-    else if (hperh->state == LPUART_STATE_BUSY_RX)
-    {
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
-    }
-    else if (hperh->state == LPUART_STATE_BUSY_TX_RX)
-    {
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
-    }
-    else
-    {
-        __UNLOCK(hperh);
-        return ERROR;
-    }
+	if (hperh->state == LPUART_STATE_BUSY_TX) {
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
+	}
+	else if (hperh->state == LPUART_STATE_BUSY_RX) {
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
+	}
+	else if (hperh->state == LPUART_STATE_BUSY_TX_RX) {
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
+	}
+	else {
+		__UNLOCK(hperh);
+		return ERROR;
+	}
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -788,31 +770,27 @@ ald_status_t ald_lpuart_dma_pause(lpuart_handle_t *hperh)
   */
 ald_status_t ald_lpuart_dma_resume(lpuart_handle_t *hperh)
 {
-    __LOCK(hperh);
+	__LOCK(hperh);
 
-    if (hperh->state == LPUART_STATE_BUSY_TX)
-    {
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, ENABLE);
-    }
-    else if (hperh->state == LPUART_STATE_BUSY_RX)
-    {
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_RXOV);
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, ENABLE);
-    }
-    else if (hperh->state == LPUART_STATE_BUSY_TX_RX)
-    {
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_RXOV);
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, ENABLE);
-        ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, ENABLE);
-    }
-    else
-    {
-        __UNLOCK(hperh);
-        return ERROR;
-    }
+	if (hperh->state == LPUART_STATE_BUSY_TX) {
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, ENABLE);
+	}
+	else if (hperh->state == LPUART_STATE_BUSY_RX) {
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_RXOV);
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, ENABLE);
+	}
+	else if (hperh->state == LPUART_STATE_BUSY_TX_RX) {
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_RXOV);
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, ENABLE);
+		ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, ENABLE);
+	}
+	else {
+		__UNLOCK(hperh);
+		return ERROR;
+	}
 
-    __UNLOCK(hperh);
-    return OK;
+	__UNLOCK(hperh);
+	return OK;
 }
 
 /**
@@ -823,11 +801,11 @@ ald_status_t ald_lpuart_dma_resume(lpuart_handle_t *hperh)
   */
 ald_status_t ald_lpuart_dma_stop(lpuart_handle_t *hperh)
 {
-    ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
-    ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
+	ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_TX, DISABLE);
+	ald_lpuart_dma_req_config(hperh, LPUART_DMA_REQ_RX, DISABLE);
 
-    hperh->state = LPUART_STATE_READY;
-    return OK;
+	hperh->state = LPUART_STATE_READY;
+	return OK;
 }
 #endif
 
@@ -839,76 +817,67 @@ ald_status_t ald_lpuart_dma_stop(lpuart_handle_t *hperh)
   */
 void ald_lpuart_irq_handler(lpuart_handle_t *hperh)
 {
-    uint32_t flag;
-    uint32_t source;
+	uint32_t flag;
+	uint32_t source;
 
-    /* Handle CTS wakeup */
-    flag = ald_lpuart_get_flag_status(hperh, LPUART_IF_CTSWK);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_CTSWK);
+	/* Handle CTS wakeup */
+	flag = ald_lpuart_get_flag_status(hperh, LPUART_IF_CTSWK);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_CTSWK);
+	if ((flag != RESET) && (source != RESET))
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_CTSWK);
 
-    if ((flag != RESET) && (source != RESET))
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_CTSWK);
+	/* Handle DATA wakeup */
+	flag = ald_lpuart_get_flag_status(hperh, LPUART_IF_DATWK);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_DATWK);
+	if ((flag != RESET) && (source != RESET))
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_DATWK);
 
-    /* Handle DATA wakeup */
-    flag = ald_lpuart_get_flag_status(hperh, LPUART_IF_DATWK);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_DATWK);
+	/* Handle parity error */
+	flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_PERR);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_PERR);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= LPUART_ERROR_PE;
 
-    if ((flag != RESET) && (source != RESET))
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_DATWK);
+	/* Handle frame error */
+	flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_FERR);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_FERR);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= LPUART_ERROR_FE;
 
-    /* Handle parity error */
-    flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_PERR);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_PERR);
+	/* Handle overflow error */
+	flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_RXOV);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_RXOV);
+	if ((flag != RESET) && (source != RESET))
+		hperh->err_code |= LPUART_ERROR_ORE;
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= LPUART_ERROR_PE;
+	/* Receive */
+	flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_RBR);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_RBR);
+	if ((flag != RESET) && (source != RESET))
+		__lpuart_recv_by_it(hperh);
 
-    /* Handle frame error */
-    flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_FERR);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_FERR);
+	/* Transmite */
+	flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_TBEMP);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_TBEMP);
+	if ((flag != RESET) && (source != RESET))
+		__lpuart_send_by_it(hperh);
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= LPUART_ERROR_FE;
+	/* End Transmite */
+	flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_TC);
+	source = ald_lpuart_get_it_status(hperh, LPUART_IT_TC);
+	if ((flag != RESET) && (source != RESET))
+		__lpuart_end_send_by_it(hperh);
 
-    /* Handle overflow error */
-    flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_RXOV);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_RXOV);
+	/* Handle error state */
+	if (hperh->err_code != LPUART_ERROR_NONE) {
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_PERR);
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_FERR);
+		ald_lpuart_clear_flag_status(hperh, LPUART_IF_RXOV);
+		hperh->state = LPUART_STATE_READY;
 
-    if ((flag != RESET) && (source != RESET))
-        hperh->err_code |= LPUART_ERROR_ORE;
-
-    /* Receive */
-    flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_RBR);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_RBR);
-
-    if ((flag != RESET) && (source != RESET))
-        __lpuart_recv_by_it(hperh);
-
-    /* Transmite */
-    flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_TBEMP);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_TBEMP);
-
-    if ((flag != RESET) && (source != RESET))
-        __lpuart_send_by_it(hperh);
-
-    /* End Transmite */
-    flag   = ald_lpuart_get_flag_status(hperh, LPUART_IF_TC);
-    source = ald_lpuart_get_it_status(hperh, LPUART_IT_TC);
-
-    if ((flag != RESET) && (source != RESET))
-        __lpuart_end_send_by_it(hperh);
-
-    /* Handle error state */
-    if (hperh->err_code != LPUART_ERROR_NONE)
-    {
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_PERR);
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_FERR);
-        ald_lpuart_clear_flag_status(hperh, LPUART_IF_RXOV);
-        hperh->state = LPUART_STATE_READY;
-
-        if (hperh->error_cbk)
-            hperh->error_cbk(hperh);
-    }
+		if (hperh->error_cbk)
+			hperh->error_cbk(hperh);
+	}
 }
 /**
   * @}
@@ -950,16 +919,16 @@ void ald_lpuart_irq_handler(lpuart_handle_t *hperh)
   */
 void ald_lpuart_interrupt_config(lpuart_handle_t *hperh, lpuart_it_t it, type_func_t status)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_IT(it));
-    assert_param(IS_FUNC_STATE(status));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_IT(it));
+	assert_param(IS_FUNC_STATE(status));
 
-    if (status == ENABLE)
-        SET_BIT(hperh->perh->IER, it);
-    else
-        CLEAR_BIT(hperh->perh->IER, it);
+	if (status == ENABLE)
+		SET_BIT(hperh->perh->IER, it);
+	else
+		CLEAR_BIT(hperh->perh->IER, it);
 
-    return;
+	return;
 }
 
 /**
@@ -971,10 +940,10 @@ void ald_lpuart_interrupt_config(lpuart_handle_t *hperh, lpuart_it_t it, type_fu
   */
 void ald_lpuart_tx_interval_config(lpuart_handle_t *hperh, uint8_t val)
 {
-    assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART(hperh->perh));
 
-    MODIFY_REG(hperh->perh->CON0, LPUART_CON0_INTERVAL_MSK, val << LPUART_CON0_INTERVAL_POSS);
-    return;
+	MODIFY_REG(hperh->perh->CON0, LPUART_CON0_INTERVAL_MSK, val << LPUART_CON0_INTERVAL_POSS);
+	return;
 }
 
 /**
@@ -992,26 +961,24 @@ void ald_lpuart_tx_interval_config(lpuart_handle_t *hperh, uint8_t val)
   */
 void ald_lpuart_dma_req_config(lpuart_handle_t *hperh, lpuart_dma_req_t req, type_func_t status)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_DMAREQ(req));
-    assert_param(IS_FUNC_STATE(status));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_DMAREQ(req));
+	assert_param(IS_FUNC_STATE(status));
 
-    if (req == LPUART_DMA_REQ_TX)
-    {
-        if (status == ENABLE)
-            SET_BIT(hperh->perh->CON0, LPUART_CON0_TXDMAE_MSK);
-        else
-            CLEAR_BIT(hperh->perh->CON0, LPUART_CON0_TXDMAE_MSK);
-    }
-    else
-    {
-        if (status == ENABLE)
-            SET_BIT(hperh->perh->CON0, LPUART_CON0_RXDMAE_MSK);
-        else
-            CLEAR_BIT(hperh->perh->CON0, LPUART_CON0_RXDMAE_MSK);
-    }
+	if (req == LPUART_DMA_REQ_TX) {
+		if (status == ENABLE)
+			SET_BIT(hperh->perh->CON0, LPUART_CON0_TXDMAE_MSK);
+		else
+			CLEAR_BIT(hperh->perh->CON0, LPUART_CON0_TXDMAE_MSK);
+	}
+	else {
+		if (status == ENABLE)
+			SET_BIT(hperh->perh->CON0, LPUART_CON0_RXDMAE_MSK);
+		else
+			CLEAR_BIT(hperh->perh->CON0, LPUART_CON0_RXDMAE_MSK);
+	}
 
-    return;
+	return;
 }
 
 /**
@@ -1023,11 +990,11 @@ void ald_lpuart_dma_req_config(lpuart_handle_t *hperh, lpuart_dma_req_t req, typ
   */
 void ald_lpuart_rx_fifo_it_config(lpuart_handle_t *hperh, lpuart_rxfifo_t config)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_RXFIFO(config));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_RXFIFO(config));
 
-    MODIFY_REG(hperh->perh->FIFOCON, LPUART_FIFOCON_RXTRGLVL_MSK, config << LPUART_FIFOCON_RXTRGLVL_POSS);
-    return;
+	MODIFY_REG(hperh->perh->FIFOCON, LPUART_FIFOCON_RXTRGLVL_MSK, config << LPUART_FIFOCON_RXTRGLVL_POSS);
+	return;
 }
 
 /**
@@ -1039,11 +1006,11 @@ void ald_lpuart_rx_fifo_it_config(lpuart_handle_t *hperh, lpuart_rxfifo_t config
   */
 void ald_lpuart_rx_fifo_rts_config(lpuart_handle_t *hperh, lpuart_rxfifo_t config)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_RXFIFO(config));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_RXFIFO(config));
 
-    MODIFY_REG(hperh->perh->FIFOCON, LPUART_FIFOCON_RTSTRGLVL_MSK, config << LPUART_FIFOCON_RTSTRGLVL_POSS);
-    return;
+	MODIFY_REG(hperh->perh->FIFOCON, LPUART_FIFOCON_RTSTRGLVL_MSK, config << LPUART_FIFOCON_RTSTRGLVL_POSS);
+	return;
 }
 
 /**
@@ -1056,35 +1023,32 @@ void ald_lpuart_rx_fifo_rts_config(lpuart_handle_t *hperh, lpuart_rxfifo_t confi
   */
 ald_status_t ald_lpuart_rs485_send_addr(lpuart_handle_t *hperh, uint16_t addr, uint32_t timeout)
 {
-    assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART(hperh->perh));
 
-    if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
-        return BUSY;
+	if ((hperh->state != LPUART_STATE_READY) && (hperh->state != LPUART_STATE_BUSY_RX))
+		return BUSY;
 
-    SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	SET_BIT(hperh->state, LPUART_STATE_TX_MASK);
 
-    if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, SET, timeout) != OK)
-    {
-        hperh->state = LPUART_STATE_READY;
-        return TIMEOUT;
-    }
+	if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, SET, timeout) != OK) {
+		hperh->state = LPUART_STATE_READY;
+		return TIMEOUT;
+	}
 
-    WRITE_REG(hperh->perh->TXDR, addr | 0x100);
+	WRITE_REG(hperh->perh->TXDR, addr | 0x100);
 
-    if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, RESET, timeout) != OK)
-    {
-        hperh->state = LPUART_STATE_READY;
-        return TIMEOUT;
-    }
+	if (lpuart_wait_flag(hperh, LPUART_STAT_TXEMP, RESET, timeout) != OK) {
+		hperh->state = LPUART_STATE_READY;
+		return TIMEOUT;
+	}
 
-    if (lpuart_wait_flag(hperh, LPUART_STAT_TXIDLE, SET, timeout) != OK)
-    {
-        hperh->state = LPUART_STATE_READY;
-        return TIMEOUT;
-    }
+	if (lpuart_wait_flag(hperh, LPUART_STAT_TXIDLE, SET, timeout) != OK) {
+		hperh->state = LPUART_STATE_READY;
+		return TIMEOUT;
+	}
 
-    CLEAR_BIT(hperh->state, LPUART_STATE_TX_MASK);
-    return OK;
+	CLEAR_BIT(hperh->state, LPUART_STATE_TX_MASK);
+	return OK;
 }
 
 /**
@@ -1099,13 +1063,13 @@ ald_status_t ald_lpuart_rs485_send_addr(lpuart_handle_t *hperh, uint16_t addr, u
   */
 flag_status_t ald_lpuart_get_status(lpuart_handle_t *hperh, lpuart_status_t flag)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_STAT(flag));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_STAT(flag));
 
-    if (READ_BIT(hperh->perh->STAT, flag))
-        return SET;
+	if (READ_BIT(hperh->perh->STAT, flag))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -1120,13 +1084,13 @@ flag_status_t ald_lpuart_get_status(lpuart_handle_t *hperh, lpuart_status_t flag
   */
 flag_status_t ald_lpuart_get_flag_status(lpuart_handle_t *hperh, lpuart_flag_t flag)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_IF(flag));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_IF(flag));
 
-    if (READ_BIT(hperh->perh->IFLAG, flag))
-        return SET;
+	if (READ_BIT(hperh->perh->IFLAG, flag))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 
 /**
@@ -1139,11 +1103,11 @@ flag_status_t ald_lpuart_get_flag_status(lpuart_handle_t *hperh, lpuart_flag_t f
   */
 void ald_lpuart_clear_flag_status(lpuart_handle_t *hperh, lpuart_flag_t flag)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_IF(flag));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_IF(flag));
 
-    WRITE_REG(hperh->perh->IFC, flag);
-    return;
+	WRITE_REG(hperh->perh->IFC, flag);
+	return;
 }
 
 /**
@@ -1158,13 +1122,13 @@ void ald_lpuart_clear_flag_status(lpuart_handle_t *hperh, lpuart_flag_t flag)
   */
 it_status_t ald_lpuart_get_it_status(lpuart_handle_t *hperh, lpuart_it_t it)
 {
-    assert_param(IS_LPUART(hperh->perh));
-    assert_param(IS_LPUART_IT(it));
+	assert_param(IS_LPUART(hperh->perh));
+	assert_param(IS_LPUART_IT(it));
 
-    if (READ_BIT(hperh->perh->IER, it))
-        return SET;
+	if (READ_BIT(hperh->perh->IER, it))
+		return SET;
 
-    return RESET;
+	return RESET;
 }
 /**
   * @}
@@ -1196,7 +1160,7 @@ it_status_t ald_lpuart_get_it_status(lpuart_handle_t *hperh, lpuart_it_t it)
   */
 lpuart_state_t ald_lpuart_get_state(lpuart_handle_t *hperh)
 {
-    return hperh->state;
+	return hperh->state;
 }
 
 /**
@@ -1207,7 +1171,7 @@ lpuart_state_t ald_lpuart_get_state(lpuart_handle_t *hperh)
   */
 uint32_t ald_lpuart_get_error(lpuart_handle_t *hperh)
 {
-    return hperh->err_code;
+	return hperh->err_code;
 }
 
 /**

@@ -18,7 +18,7 @@
 #define __ALD_SMARTCARD_H__
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 #include "utils.h"
@@ -41,52 +41,50 @@ extern "C" {
 /**
   * @brief SMARTCARD error codes
   */
-typedef enum
-{
-    SMARTCARD_ERROR_NONE = ((uint32_t)0x00),	/**< No error */
-    SMARTCARD_ERROR_PE   = ((uint32_t)0x01),	/**< Parity error */
-    SMARTCARD_ERROR_NE   = ((uint32_t)0x02),	/**< Noise error */
-    SMARTCARD_ERROR_FE   = ((uint32_t)0x04),	/**< frame error */
-    SMARTCARD_ERROR_ORE  = ((uint32_t)0x08),	/**< Overrun error */
-    SMARTCARD_ERROR_DMA  = ((uint32_t)0x10),	/**< DMA transfer error */
+typedef enum {
+	SMARTCARD_ERROR_NONE = ((uint32_t)0x00U),	/**< No error */
+	SMARTCARD_ERROR_PE   = ((uint32_t)0x01U),	/**< Parity error */
+	SMARTCARD_ERROR_NE   = ((uint32_t)0x02U),	/**< Noise error */
+	SMARTCARD_ERROR_FE   = ((uint32_t)0x04U),	/**< frame error */
+	SMARTCARD_ERROR_ORE  = ((uint32_t)0x08U),	/**< Overrun error */
+	SMARTCARD_ERROR_DMA  = ((uint32_t)0x10U),	/**< DMA transfer error */
 } smartcard_error_t;
 
 /**
   * @brief SMARTCARD Prescaler
   */
-typedef enum
-{
-    SMARTCARD_PRESCALER_SYSCLK_DIV2  = ((uint32_t)0x1),	/**< SYSCLK divided by 2 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV4  = ((uint32_t)0x2),	/**< SYSCLK divided by 4 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV6  = ((uint32_t)0x3),	/**< SYSCLK divided by 6 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV8  = ((uint32_t)0x4),	/**< SYSCLK divided by 8 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV10 = ((uint32_t)0x5),	/**< SYSCLK divided by 10 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV12 = ((uint32_t)0x6),	/**< SYSCLK divided by 12 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV14 = ((uint32_t)0x7),	/**< SYSCLK divided by 14 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV16 = ((uint32_t)0x8),	/**< SYSCLK divided by 16 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV18 = ((uint32_t)0x9),	/**< SYSCLK divided by 18 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV20 = ((uint32_t)0xA),	/**< SYSCLK divided by 20 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV22 = ((uint32_t)0xB),	/**< SYSCLK divided by 22 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV24 = ((uint32_t)0xC),	/**< SYSCLK divided by 24 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV26 = ((uint32_t)0xD),	/**< SYSCLK divided by 26 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV28 = ((uint32_t)0xE),	/**< SYSCLK divided by 28 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV30 = ((uint32_t)0xF),	/**< SYSCLK divided by 30 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV32 = ((uint32_t)0x10),	/**< SYSCLK divided by 32 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV34 = ((uint32_t)0x11),	/**< SYSCLK divided by 34 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV36 = ((uint32_t)0x12),	/**< SYSCLK divided by 36 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV38 = ((uint32_t)0x13),	/**< SYSCLK divided by 38 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV40 = ((uint32_t)0x14),	/**< SYSCLK divided by 40 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV42 = ((uint32_t)0x15),	/**< SYSCLK divided by 42 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV44 = ((uint32_t)0x16),	/**< SYSCLK divided by 44 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV46 = ((uint32_t)0x17),	/**< SYSCLK divided by 46 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV48 = ((uint32_t)0x18),	/**< SYSCLK divided by 48 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV50 = ((uint32_t)0x19),	/**< SYSCLK divided by 50 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV52 = ((uint32_t)0x1A),	/**< SYSCLK divided by 52 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV54 = ((uint32_t)0x1B),	/**< SYSCLK divided by 54 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV56 = ((uint32_t)0x1C),	/**< SYSCLK divided by 56 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV58 = ((uint32_t)0x1D),	/**< SYSCLK divided by 58 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV60 = ((uint32_t)0x1E),	/**< SYSCLK divided by 60 */
-    SMARTCARD_PRESCALER_SYSCLK_DIV62 = ((uint32_t)0x1F),	/**< SYSCLK divided by 62 */
+typedef enum {
+	SMARTCARD_PRESCALER_SYSCLK_DIV2  = ((uint32_t)0x1U),	/**< SYSCLK divided by 2 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV4  = ((uint32_t)0x2U),	/**< SYSCLK divided by 4 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV6  = ((uint32_t)0x3U),	/**< SYSCLK divided by 6 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV8  = ((uint32_t)0x4U),	/**< SYSCLK divided by 8 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV10 = ((uint32_t)0x5U),	/**< SYSCLK divided by 10 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV12 = ((uint32_t)0x6U),	/**< SYSCLK divided by 12 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV14 = ((uint32_t)0x7U),	/**< SYSCLK divided by 14 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV16 = ((uint32_t)0x8U),	/**< SYSCLK divided by 16 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV18 = ((uint32_t)0x9U),	/**< SYSCLK divided by 18 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV20 = ((uint32_t)0xAU),	/**< SYSCLK divided by 20 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV22 = ((uint32_t)0xBU),	/**< SYSCLK divided by 22 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV24 = ((uint32_t)0xCU),	/**< SYSCLK divided by 24 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV26 = ((uint32_t)0xDU),	/**< SYSCLK divided by 26 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV28 = ((uint32_t)0xEU),	/**< SYSCLK divided by 28 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV30 = ((uint32_t)0xFU),	/**< SYSCLK divided by 30 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV32 = ((uint32_t)0x10U),	/**< SYSCLK divided by 32 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV34 = ((uint32_t)0x11U),	/**< SYSCLK divided by 34 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV36 = ((uint32_t)0x12U),	/**< SYSCLK divided by 36 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV38 = ((uint32_t)0x13U),	/**< SYSCLK divided by 38 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV40 = ((uint32_t)0x14U),	/**< SYSCLK divided by 40 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV42 = ((uint32_t)0x15U),	/**< SYSCLK divided by 42 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV44 = ((uint32_t)0x16U),	/**< SYSCLK divided by 44 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV46 = ((uint32_t)0x17U),	/**< SYSCLK divided by 46 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV48 = ((uint32_t)0x18U),	/**< SYSCLK divided by 48 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV50 = ((uint32_t)0x19U),	/**< SYSCLK divided by 50 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV52 = ((uint32_t)0x1AU),	/**< SYSCLK divided by 52 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV54 = ((uint32_t)0x1BU),	/**< SYSCLK divided by 54 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV56 = ((uint32_t)0x1CU),	/**< SYSCLK divided by 56 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV58 = ((uint32_t)0x1DU),	/**< SYSCLK divided by 58 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV60 = ((uint32_t)0x1EU),	/**< SYSCLK divided by 60 */
+	SMARTCARD_PRESCALER_SYSCLK_DIV62 = ((uint32_t)0x1FU),	/**< SYSCLK divided by 62 */
 } smartcard_prescaler_t;
 
 /**
@@ -100,69 +98,66 @@ typedef enum
 /**
   * @brief SMARTCARD Init Structure definition
   */
-typedef struct
-{
-    uint32_t baud;			/**< This member configures the SmartCard communication baud rate. */
-    usart_word_length_t word_length;/**< Specifies the number of data bits transmitted or received in a frame. */
-    usart_stop_bits_t stop_bits;	/**< Specifies the number of stop bits transmitted. */
-    usart_parity_t parity;		/**< Specifies the parity mode.
+typedef struct {
+	uint32_t baud;			/**< This member configures the SmartCard communication baud rate. */
+	usart_word_length_t word_length;/**< Specifies the number of data bits transmitted or received in a frame. */
+	usart_stop_bits_t stop_bits;	/**< Specifies the number of stop bits transmitted. */
+	usart_parity_t parity;		/**< Specifies the parity mode.
 						@note When parity is enabled, the computed parity is inserted
                                                       at the MSB position of the transmitted data (9th bit when
                                                       the word length is set to 9 data bits; 8th bit when the
                                                       word length is set to 8 data bits).*/
-    usart_mode_t mode;		/**< Specifies whether the Receive or Transmit mode is enabled or disabled. */
-    usart_cpol_t polarity;		/**< Specifies the steady state of the serial clock. */
-    usart_cpha_t phase;		/**< Specifies the clock transition on which the bit capture is made.*/
-    usart_last_bit_t last_bit;	/**< Specifies whether the clock pulse corresponding to the last transmitted
+	usart_mode_t mode;		/**< Specifies whether the Receive or Transmit mode is enabled or disabled. */
+	usart_cpol_t polarity;		/**< Specifies the steady state of the serial clock. */
+	usart_cpha_t phase;		/**< Specifies the clock transition on which the bit capture is made.*/
+	usart_last_bit_t last_bit;	/**< Specifies whether the clock pulse corresponding to the last transmitted
 					     data bit (MSB) has to be output on the SCLK pin in synchronous mode.
                                              This parameter can be a value of @ref usart_last_bit_t */
-    smartcard_prescaler_t prescaler;/**< Specifies the SmartCard Prescaler value used for dividing the system clock
+	smartcard_prescaler_t prescaler;/**< Specifies the SmartCard Prescaler value used for dividing the system clock
 					     to provide the smartcard clock. The value given in the register (5 significant bits)
 					     is multiplied by 2 to give the division factor of the source clock frequency. */
-    uint32_t guard_time;		/**< Specifies the SmartCard Guard Time value in terms of number of baud clocks */
-    type_func_t nack;		/**< Specifies the SmartCard NACK Transmission state. */
+	uint32_t guard_time;		/**< Specifies the SmartCard Guard Time value in terms of number of baud clocks */
+	type_func_t nack;		/**< Specifies the SmartCard NACK Transmission state. */
 } smartcard_init_t;
 
 /**
   * @brief ALD state structures definition
   */
-typedef enum
-{
-    SMARTCARD_STATE_RESET      = 0x00,	/**< Peripheral is not yet Initialized */
-    SMARTCARD_STATE_READY      = 0x01,	/**< Peripheral Initialized and ready for use */
-    SMARTCARD_STATE_BUSY       = 0x02,	/**< an internal process is ongoing */
-    SMARTCARD_STATE_BUSY_TX    = 0x11,	/**< Data Transmission process is ongoing */
-    SMARTCARD_STATE_BUSY_RX    = 0x21,	/**< Data Reception process is ongoing */
-    SMARTCARD_STATE_BUSY_TX_RX = 0x31,	/**< Data Transmission and Reception process is ongoing */
-    SMARTCARD_STATE_TIMEOUT    = 0x03,	/**< Timeout state */
-    SMARTCARD_STATE_ERROR      = 0x04	/**< Error */
+typedef enum {
+	SMARTCARD_STATE_RESET      = 0x00U,	/**< Peripheral is not yet Initialized */
+	SMARTCARD_STATE_READY      = 0x01U,	/**< Peripheral Initialized and ready for use */
+	SMARTCARD_STATE_BUSY       = 0x02U,	/**< an internal process is ongoing */
+	SMARTCARD_STATE_BUSY_TX    = 0x11U,	/**< Data Transmission process is ongoing */
+	SMARTCARD_STATE_BUSY_RX    = 0x21U,	/**< Data Reception process is ongoing */
+	SMARTCARD_STATE_BUSY_TX_RX = 0x31U,	/**< Data Transmission and Reception process is ongoing */
+	SMARTCARD_STATE_TIMEOUT    = 0x03U,	/**< Timeout state */
+	SMARTCARD_STATE_ERROR      = 0x04U,	/**< Error */
 } smartcard_state_t;
 
 
 /**
   * @brief  SMARTCARD handle structure definition
   */
-typedef struct smartcard_handle_s
-{
-    USART_TypeDef *perh;		/**< USART registers base address */
-    smartcard_init_t init;		/**< SmartCard communication parameters */
-    uint8_t *tx_buf;		/**< Pointer to SmartCard Tx transfer Buffer */
-    uint16_t tx_size;		/**< SmartCard Tx Transfer size */
-    uint16_t tx_count;		/**< SmartCard Tx Transfer Counter */
-    uint8_t *rx_buf;		/**< Pointer to SmartCard Rx transfer Buffer */
-    uint16_t rx_size;		/**< SmartCard Rx Transfer size */
-    uint16_t rx_count;		/**< SmartCard Rx Transfer Counter */
+typedef struct smartcard_handle_s {
+	USART_TypeDef *perh;		/**< USART registers base address */
+	smartcard_init_t init;		/**< SmartCard communication parameters */
+	uint8_t *tx_buf;		/**< Pointer to SmartCard Tx transfer Buffer */
+	uint16_t tx_size;		/**< SmartCard Tx Transfer size */
+	uint16_t tx_count;		/**< SmartCard Tx Transfer Counter */
+	uint8_t *rx_buf;		/**< Pointer to SmartCard Rx transfer Buffer */
+	uint16_t rx_size;		/**< SmartCard Rx Transfer size */
+	uint16_t rx_count;		/**< SmartCard Rx Transfer Counter */
 #ifdef ALD_DMA
-    dma_handle_t hdmatx;		/**< SmartCard Tx DMA Handle parameters */
-    dma_handle_t hdmarx;		/**< SmartCard Rx DMA Handle parameters */
+	dma_handle_t hdmatx;		/**< SmartCard Tx DMA Handle parameters */
+	dma_handle_t hdmarx;		/**< SmartCard Rx DMA Handle parameters */
 #endif
-    lock_state_t lock;		/**< Locking object */
-    smartcard_state_t state;	/**< SmartCard communication state */
-    uint32_t  err_code;		/**< SmartCard Error code */
+	lock_state_t lock;		/**< Locking object */
+	smartcard_state_t state;	/**< SmartCard communication state */
+	uint32_t  err_code;		/**< SmartCard Error code */
 
-    void (*tx_cplt_cbk)(struct smartcard_handle_s *arg);	/**< Tx completed callback */
-    void (*rx_cplt_cbk)(struct smartcard_handle_s *arg);	/**< Rx completed callback */
-    void (*error_cbk)(struct smartcard_handle_s *arg);	/**< error callback */
+	void (*tx_cplt_cbk)(struct smartcard_handle_s *arg);	/**< Tx completed callback */
+	void (*rx_cplt_cbk)(struct smartcard_handle_s *arg);	/**< Rx completed callback */
+	void (*error_cbk)(struct smartcard_handle_s *arg);	/**< error callback */
 } smartcard_handle_t;
 
 /**
@@ -214,7 +209,7 @@ typedef struct smartcard_handle_s
   */
 
 #define IS_SMARTCARD_PRESCALER(x)   (((x) >= SMARTCARD_PRESCALER_SYSCLK_DIV2) && \
-                                     ((x) <= SMARTCARD_PRESCALER_SYSCLK_DIV62))
+				     ((x) <= SMARTCARD_PRESCALER_SYSCLK_DIV62))
 /**
   * @}
   */

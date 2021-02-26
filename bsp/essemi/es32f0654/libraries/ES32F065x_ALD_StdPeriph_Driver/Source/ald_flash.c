@@ -27,9 +27,9 @@
 #ifdef ALD_FLASH
 
 #if defined ( __ICCARM__ )
-    #define __RAMFUNC       __ramfunc
+#define __RAMFUNC       __ramfunc
 #else
-    #define __RAMFUNC
+#define __RAMFUNC
 #endif
 
 /** @defgroup Flash_Private_Variables Flash Private Variables
@@ -51,23 +51,22 @@ static op_cmd_type OP_CMD = OP_FLASH;
   */
 __RAMFUNC static ald_status_t flash_unlock(void)
 {
-    uint16_t i;
-    uint16_t op_cmd = OP_CMD;
+	uint16_t i;
+	uint16_t op_cmd = OP_CMD;
 
-    if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_BUSY_MSK))
-        return ERROR;
+	if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_BUSY_MSK))
+		return ERROR;
 
-    FLASH_REG_UNLOCK();
-    FLASH_IAP_ENABLE();
-    FLASH_REQ();
+	FLASH_REG_UNLOCK();
+	FLASH_IAP_ENABLE();
+	FLASH_REQ();
 
-    for (i = 0; i < 0xFFFF; i++)
-    {
-        if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_FLASHACK_MSK))
-            break;
-    }
+	for (i = 0; i < 0xFFFF; i++) {
+		if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_FLASHACK_MSK))
+			break;
+	}
 
-    return i == 0xFFFF ? ERROR : OK;
+	return i == 0xFFFF ? ERROR : OK;
 }
 
 /**
@@ -76,19 +75,18 @@ __RAMFUNC static ald_status_t flash_unlock(void)
   */
 __RAMFUNC static ald_status_t flash_lock(void)
 {
-    uint16_t i;
-    uint16_t op_cmd = OP_CMD;
+	uint16_t i;
+	uint16_t op_cmd = OP_CMD;
 
-    FLASH_REG_UNLOCK();
-    WRITE_REG(MSC->FLASHCR, 0x0);
+	FLASH_REG_UNLOCK();
+	WRITE_REG(MSC->FLASHCR, 0x0);
 
-    for (i = 0; i < 0xFFFF; i++)
-    {
-        if (!(READ_BIT(MSC->FLASHSR, MSC_FLASHSR_FLASHACK_MSK)))
-            break;
-    }
+	for (i = 0; i < 0xFFFF; i++) {
+		if (!(READ_BIT(MSC->FLASHSR, MSC_FLASHSR_FLASHACK_MSK)))
+			break;
+	}
 
-    return i == 0xFFFF ? ERROR : OK;
+	return i == 0xFFFF ? ERROR : OK;
 }
 
 /**
@@ -98,50 +96,44 @@ __RAMFUNC static ald_status_t flash_lock(void)
   */
 __RAMFUNC ald_status_t flash_page_erase(uint32_t addr)
 {
-    uint32_t i;
-    uint16_t op_cmd = OP_CMD;
+	uint32_t i;
+	uint16_t op_cmd = OP_CMD;
 
-    if (flash_unlock() != OK)
-        goto end;
+	if (flash_unlock() != OK)
+		goto end;
 
-    if (op_cmd == OP_FLASH)
-    {
-        CLEAR_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
-        MODIFY_REG(MSC->FLASHADDR, MSC_FLASHADDR_ADDR_MSK, FLASH_PAGE_ADDR(addr) << MSC_FLASHADDR_ADDR_POSS);
-    }
-    else
-    {
-        SET_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
-        MODIFY_REG(MSC->FLASHADDR, MSC_FLASHADDR_ADDR_MSK, INFO_PAGE_ADDR(addr) << MSC_FLASHADDR_ADDR_POSS);
-    }
+	if (op_cmd == OP_FLASH) {
+		CLEAR_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
+		MODIFY_REG(MSC->FLASHADDR, MSC_FLASHADDR_ADDR_MSK, FLASH_PAGE_ADDR(addr) << MSC_FLASHADDR_ADDR_POSS);
+	}
+	else {
+		SET_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
+		MODIFY_REG(MSC->FLASHADDR, MSC_FLASHADDR_ADDR_MSK, INFO_PAGE_ADDR(addr) << MSC_FLASHADDR_ADDR_POSS);
+	}
 
-    WRITE_REG(MSC->FLASHCMD, FLASH_CMD_PE);
+	WRITE_REG(MSC->FLASHCMD, FLASH_CMD_PE);
 
-    for (i = 0; i < 0xFFFF; i++)
-    {
-        if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_BUSY_MSK))
-            continue;
+	for (i = 0; i < 0xFFFF; i++) {
+		if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_BUSY_MSK))
+			continue;
+		if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_ADDR_OV_MSK))
+			goto end;
+		if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_WRP_FLAG_MSK))
+			goto end;
+		if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_SERA_MSK))
+			break;
+	}
 
-        if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_ADDR_OV_MSK))
-            goto end;
+	if (i == 0xFFFF)
+		goto end;
 
-        if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_WRP_FLAG_MSK))
-            goto end;
+	if (flash_lock() == ERROR)
+		goto end;
 
-        if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_SERA_MSK))
-            break;
-    }
-
-    if (i == 0xFFFF)
-        goto end;
-
-    if (flash_lock() == ERROR)
-        goto end;
-
-    return OK;
+	return OK;
 end:
-    flash_lock();
-    return ERROR;
+	flash_lock();
+	return ERROR;
 }
 
 /**
@@ -154,58 +146,52 @@ end:
   */
 __RAMFUNC ald_status_t flash_word_program(uint32_t addr, uint32_t *data, uint32_t len, uint32_t fifo)
 {
-    uint16_t i;
-    uint16_t prog_len;
-    uint32_t *p_data = data;
-    uint16_t op_cmd = OP_CMD;
+	uint16_t i = 0;
+	uint16_t prog_len;
+	uint32_t *p_data = data;
+	uint16_t op_cmd = OP_CMD;
 
-    if (flash_unlock() != OK)
-        goto end;
+	if (flash_unlock() != OK)
+		goto end;
 
-    if (op_cmd == OP_FLASH)
-        CLEAR_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
-    else
-        SET_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
+	if (op_cmd == OP_FLASH)
+		CLEAR_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
+	else
+		SET_BIT(MSC->FLASHADDR, MSC_FLASHADDR_IFREN_MSK);
 
-    MODIFY_REG(MSC->FLASHADDR, MSC_FLASHADDR_ADDR_MSK, addr << MSC_FLASHADDR_ADDR_POSS);
-    MODIFY_REG(MSC->FLASHCR, MSC_FLASHCR_FIFOEN_MSK, fifo << MSC_FLASHCR_FIFOEN_POS);
+	MODIFY_REG(MSC->FLASHADDR, MSC_FLASHADDR_ADDR_MSK, addr << MSC_FLASHADDR_ADDR_POSS);
+	MODIFY_REG(MSC->FLASHCR, MSC_FLASHCR_FIFOEN_MSK, fifo << MSC_FLASHCR_FIFOEN_POS);
 
-    for (prog_len = 0; prog_len < len; prog_len++)
-    {
-        if (fifo)
-        {
-            WRITE_REG(MSC->FLASHFIFO, p_data[0]);
-            WRITE_REG(MSC->FLASHFIFO, p_data[1]);
-        }
-        else
-        {
-            WRITE_REG(MSC->FLASHDL, p_data[0]);
-            WRITE_REG(MSC->FLASHDH, p_data[1]);
-            WRITE_REG(MSC->FLASHCMD, FLASH_CMD_WP);
-        }
+	for (prog_len = 0; prog_len < len; prog_len++) {
+		if (fifo) {
+			WRITE_REG(MSC->FLASHFIFO, p_data[0]);
+			WRITE_REG(MSC->FLASHFIFO, p_data[1]);
+		}
+		else {
+			WRITE_REG(MSC->FLASHDL, p_data[0]);
+			WRITE_REG(MSC->FLASHDH, p_data[1]);
+			WRITE_REG(MSC->FLASHCMD, FLASH_CMD_WP);
+		}
 
-        p_data += 2;
+		p_data += 2;
 
-        for (i = 0; i < 0xFFFF; i++)
-        {
-            if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_BUSY_MSK))
-                continue;
+		for (i = 0; i < 0xFFFF; i++) {
+			if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_BUSY_MSK))
+				continue;
+			if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_PROG_MSK))
+				break;
+		}
+	}
+	if (i == 0xFFFF)
+		goto end;
 
-            if (READ_BIT(MSC->FLASHSR, MSC_FLASHSR_PROG_MSK))
-                break;
-        }
-    }
+	if (flash_lock() == ERROR)
+		goto end;
 
-    if (i == 0xFFFF)
-        goto end;
-
-    if (flash_lock() == ERROR)
-        goto end;
-
-    return OK;
+	return OK;
 end:
-    flash_lock();
-    return ERROR;
+	flash_lock();
+	return ERROR;
 }
 /**
   * @}

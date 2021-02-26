@@ -114,7 +114,7 @@ if BSP_USING_LCD
         int "CS pin number of 8080 interface"
         default 6
     config BSP_LCD_WR_PIN
-        int "DC pin number of 8080 interface"
+        int "WR pin number of 8080 interface"
         default 7
     config BSP_LCD_DC_PIN
         int "DC pin number of 8080 interface"

@@ -1,105 +1,82 @@
-# STM32F411-Nucleo-64 开发板 BSP 说明
+# STM32F411-Nucleo BSP Introduction
 
-## 简介
+[中文](README_zh.md) 
 
-本文档为 RT-Thread 开发团队为 STM32F411-Nucleo-64 开发板提供的 BSP (板级支持包) 说明。
+## MCU: STM32F411RE @100MHz, 512KB FLASH,  128KB RAM
 
-主要内容如下：
+The STM32F411xC/xE devices are based on the high-performance Arm® Cortex® -M4 32-bit RISC core operating at a frequency of up to 100 MHz. The Cortex®-M4 core features a Floating point unit (FPU) single precision which supports all Arm single-precision data-processing instructions and data types. It also implements a full set of DSP instructions and a memory protection unit (MPU) which enhances application security.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+The STM32F411xC/xE belongs to the STM32 Dynamic Efficiency™ product line (with products combining power efficiency, performance and integration) while adding a new innovative feature called Batch Acquisition Mode (BAM) allowing to save even more power consumption during data batching.
+The STM32F411xC/xE incorporate high-speed embedded memories (up to 512 Kbytes of Flash memory, 128 Kbytes of SRAM), and an extensive range of enhanced I/Os and peripherals connected to two APB buses, two AHB bus and a 32-bit multi-AHB bus matrix.
+All devices offer one 12-bit ADC, a low-power RTC, six general-purpose 16-bit timers including one PWM timer for motor control, two general-purpose 32-bit timers. They also feature standard and advanced communication interfaces.
+The STM32F411xC/xE operate in the - 40 to + 125 °C temperature range from a 1.7 (PDR OFF) to 3.6 V power supply. A comprehensive set of power-saving mode allows the design of low-power applications.
+These features make the STM32F411xC/xE microcontrollers suitable for a wide range of applications.
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+#### KEY FEATURES
 
-## 开发板介绍
+- Dynamic Efficiency Line with BAM (Batch Acquisition Mode)
+  - 1.7 V to 3.6 V power supply
+  - 40°C to 85/105/125 °C temperature range
+- Core: Arm® 32-bit Cortex®-M4 CPU with FPU, Adaptive real-time accelerator (ART Accelerator™) allowing 0-wait state execution from Flash memory, frequency up to 100 MHz, memory protection unit, 125 DMIPS/1.25 DMIPS/MHz (Dhrystone 2.1), and DSP instructions
+- Memories
+  - Up to 512 Kbytes of Flash memory
+  - 128 Kbytes of SRAM
+- Clock, reset and supply management
+  - 1.7 V to 3.6 V application supply and I/Os
+  - POR, PDR, PVD and BOR
+  - 4-to-26 MHz crystal oscillator
+  - Internal 16 MHz factory-trimmed RC
+  - 32 kHz oscillator for RTC with calibration
+  - Internal 32 kHz RC with calibration
+- Power consumption
+  - Run: 100 μA/MHz (peripheral off)
+  - Stop (Flash in Stop mode, fast wakeup time): 42 μA Typ @ 25C; 65 μA max @25 °C
+  - Stop (Flash in Deep power down mode, slow wakeup time): down to 9 μA @ 25 °C; 28 μA max @25 °C
+  - Standby: 1.8 μA @25 °C / 1.7 V without RTC; 11 μA @85 °C @1.7 V
+  - VBAT supply for RTC: 1 μA @25 °C
+- 1×12-bit, 2.4 MSPS A/D converter: up to 16 channels
+- General-purpose DMA: 16-stream DMA controllers with FIFOs and burst support
+- Up to 11 timers: up to six 16-bit, two 32-bit timers up to 100 MHz, each with up to four IC/OC/PWM or pulse counter and quadrature (incremental) encoder input, two watchdog timers (independent and window) and a SysTick timer
+- Debug mode
+  - Serial wire debug (SWD) & JTAG interfaces
+  - Cortex®-M4 Embedded Trace Macrocell™
+- Up to 81 I/O ports with interrupt capability
+  - Up to 78 fast I/Os up to 100 MHz
+  - Up to 77 5 V-tolerant I/Os
+- Up to 13 communication interfaces
+  - Up to 3 x I2C interfaces (SMBus/PMBus)
+  - Up to 3 USARTs (2 x 12.5 Mbit/s, 1 x 6.25 Mbit/s), ISO 7816 interface, LIN, IrDA, modem control)
+  - Up to 5 SPI/I2Ss (up to 50 Mbit/s, SPI or I2S audio protocol), SPI2 and SPI3 with muxed full-duplex I2S to achieve audio class accuracy via internal audio PLL or external clock
+  - SDIO interface (SD/MMC/eMMC)
+  - Advanced connectivity: USB 2.0 full-speed device/host/OTG controller with on-chip PHY
+- CRC calculation unit
+- 96-bit unique ID
+- RTC: subsecond accuracy, hardware calendar
+- All packages (WLCSP49, LQFP64/100, UFQFPN48, UFBGA100) are ECOPACK®2
 
-探索者 STM32F411-Nucleo-64 是意法半导体推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 100Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F411RE 的芯片性能。
-
-开发板外观如下图所示：
-
-![board](figures/board.png)
-
-该开发板常用 ** 板载资源 ** 如下：
-
-- MCU：STM32F407ZGT6，主频 100MHz，512KB FLASH ，128KB RAM。
-- 常用外设
-  - LED：3 个，USB communication (LD1), user LED (LD2), power LED (LD3) 。
-  - 按键，2 个，USER and RESET 。
-- 常用接口：USB 支持 3 种不同接口：虚拟 COM 端口、大容量存储和调试端口。
-- 调试接口，板载 ST-LINK/V2-1 调试器。
-
-开发板更多详细信息请参考意法半导体 [STM32F411-Nucleo-64 开发板介绍](https://www.st.com/en/evaluation-tools/nucleo-f411re.html)。
-
-## 外设支持
-
-本 BSP 目前对外设的支持情况如下：
-
-| **片上外设** | **支持情况** |               **备注**                |
-| :------------ | :----------: | :-----------------------------------: |
-| GPIO         |     支持     | PA0, PA1... PH1 ---> PIN: 0, 1...63 |
-| UART         |     支持     |              UART2             |
-
-## 使用说明
-
-使用说明分为如下两个章节：
-
-- 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-
-- 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
 
 
-### 快速上手
+## Read more
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+|                          Documents                           |                         Description                          |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [STM32_Nucleo-64_BSP_Introduction](../docs/STM32_Nucleo-64_BSP_Introduction.md) | How to run RT-Thread on STM32 Nucleo-64 boards (**Must-Read**) |
+| [STM32F411RE ST Official Website](https://www.st.com/en/microcontrollers-microprocessors/stm32f411re.html#documentation) |          STM32F411RE datasheet and other resources           |
 
-#### 硬件连接
 
-使用 Type-A to Mini-B 线连接开发板和 PC 供电，红色 LED LD3 (PWR) 和 LD1 (COM) 会点亮。
 
-#### 编译下载
+## Maintained By
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+[misonyo](https://github.com/misonyo)
 
-> 工程默认配置使用 ST-LINK 下载程序，点击下载按钮即可下载程序到开发板。
+misonyo@foxmail.com
 
-#### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LD3 和 LD1 常亮、绿色 LD2 会周期性闪烁。
 
-USB 虚拟 COM 端口默认连接串口 2，在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+## Translated By
 
-```bash
- \ | /
-- RT -     Thread Operating System
- / | \     3.1.1 build Nov 19 2018
- 2006 - 2018 Copyright by rt-thread team
-msh >
-```
-### 进阶使用
+Meco Man @ RT-Thread Community
 
-此 BSP 默认只开启了 GPIO 和 串口 2 的功能，更多高级功能需要利用 ENV 工具对 BSP 进行配置，步骤如下：
-
-1. 在 BSP 下打开 env 工具。
-
-2. 输入 `menuconfig` 命令配置工程，配置好之后保存退出。
-
-3. 输入 `pkgs --update` 命令更新软件包。
-
-4. 输入 `scons --target=mdk4/mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32 系列 BSP 外设驱动使用教程. md)。
-
-## 注意事项
-
-暂无
-
-## 联系人信息
-
-维护人:
-
-- [misonyo](https://github.com/misonyo) ，邮箱：<misonyo@foxmail.com>
+> jiantingman@foxmail.com 
+>
+> https://github.com/mysterywolf

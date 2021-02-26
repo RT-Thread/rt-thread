@@ -73,7 +73,6 @@
   * @{
   */
 
-static ald_status_t spi_wait_status(spi_handle_t *hperh, spi_status_t state, flag_status_t status, uint32_t timeout);
 static void __spi_send_by_it(spi_handle_t *hperh);
 static void __spi_recv_by_it(spi_handle_t *hperh);
 static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status);
@@ -152,6 +151,9 @@ ald_status_t ald_spi_init(spi_handle_t *hperh)
 {
 	uint32_t tmp = 0;
 
+	if (hperh == NULL)
+		return ERROR;
+
 	assert_param(IS_SPI(hperh->perh));
 	assert_param(IS_SPI_MODE(hperh->init.mode));
 	assert_param(IS_SPI_DIRECTION(hperh->init.dir));
@@ -164,11 +166,7 @@ ald_status_t ald_spi_init(spi_handle_t *hperh)
 	assert_param(IS_SPI_CPOL(hperh->init.polarity));
 	assert_param(IS_SPI_FRAME(hperh->init.frame));
 
-	if (hperh == NULL)
-		return ERROR;
-
 	ald_spi_reset(hperh);
-
 	tmp = hperh->perh->CON1;
 
 	if (hperh->init.mode == SPI_MODE_MASTER)
@@ -207,9 +205,7 @@ ald_status_t ald_spi_init(spi_handle_t *hperh)
 	hperh->err_code = SPI_ERROR_NONE;
 	hperh->state    = SPI_STATE_READY;
 
-	if (hperh->init.dir == SPI_DIRECTION_2LINES)
-		SPI_ENABLE(hperh);
-
+	SPI_ENABLE(hperh);
 	return OK;
 }
 
@@ -233,7 +229,272 @@ ald_status_t spi_fifo_threshold_config(spi_handle_t *hperh, uint8_t threshold)
   * @}
   */
 
-/** @defgroup SPI_Public_Functions_Group2 IO operation functions
+/** @defgroup SPI_Public_Functions_Group2 IO fast functions
+  * @brief SPI Transmit and Receive functions
+  *
+  * @verbatim
+  ==============================================================================
+                      ##### IO fast functions #####
+ ===============================================================================
+    This subsection provides a set of functions allowing to manage the SPI
+    data transfers fast.
+
+  * @endverbatim
+  * @{
+  */
+
+/**
+  * @brief  Transmit one byte fast in blocking mode.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  data: Data to be sent
+  * @retval status:
+  *           -  0 Success
+  *           - -1 Failed
+  */
+int32_t ald_spi_send_byte_fast(spi_handle_t *hperh, uint8_t data)
+{
+	uint16_t cnt = 5000, temp;
+
+	while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+	hperh->perh->DATA = data;
+	while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
+
+	cnt = 5000;
+	while (((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) && (--cnt));
+	temp = hperh->perh->DATA;
+	UNUSED(temp);
+
+	return cnt == 0 ? -1 : 0;
+}
+
+/**
+  * @brief  Transmit one byte fast in blocking mode(1line).
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  data: Data to be sent
+  * @retval status:
+  *           -  0 Success
+  *           - -1 Failed
+  */
+int32_t ald_spi_send_byte_fast_1line(spi_handle_t *hperh, uint8_t data)
+{
+	uint16_t cnt = 5000;
+
+	while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+	hperh->perh->DATA = data;
+	while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
+
+	return cnt == 0 ? -1 : 0;
+}
+
+/**
+  * @brief  Receive one byte fast in blocking mode.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  status: Status, success[0]/failed[-1]
+  * @retval Data.
+  */
+uint8_t ald_spi_recv_byte_fast(spi_handle_t *hperh, int *status)
+{
+	uint16_t cnt = 5000;
+
+	if (hperh->init.mode == SPI_MODE_MASTER) {
+		hperh->perh->DATA = 0xFF;
+		while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
+	}
+
+	cnt = 5000;
+	while (((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) && (--cnt));
+	*status = cnt == 0 ? - 1 : 0;
+
+	return (uint8_t)hperh->perh->DATA;
+}
+
+/**
+  * @brief  Transmit some bytes fast in blocking mode.
+  * @note   Bit width is 8-bits. Supports mode: Master/Slave.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  buf: Data to be sent.
+  * @param  size: Length of data.
+  * @param  timeout: Timeout between two bytes.
+  * @retval status: OK/TIMEOUT
+  */
+ald_status_t ald_spi_send_bytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout)
+{
+	uint32_t tick;
+	uint16_t i, tmp = 0;
+
+	while (size--) {
+		while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+		hperh->perh->DATA = *buf++;
+		tick = ald_get_tick();
+
+		while ((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) {
+			if (((ald_get_tick()) - tick) > timeout)
+				return TIMEOUT;
+		}
+	}
+
+	for (i = 0; i < 16; ++i) {
+		if ((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK)
+			tmp = hperh->perh->DATA;
+		else
+			break;
+	}
+
+	UNUSED(tmp);
+	return OK;
+}
+
+/**
+  * @brief  Receive some bytes fast in blocking mode.
+  * @note   Bit width is 8-bits. Supports mode: Master.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  buf: Data to be received.
+  * @param  size: Length of data.
+  * @retval status: OK/TIMEOUT
+  */
+ald_status_t ald_spi_master_recv_bytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size)
+{
+	uint16_t cnt = 8000;
+
+	while (size--) {
+		hperh->perh->DATA = 0xFF;
+		cnt = 8000;
+		while (((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) && (--cnt));
+
+		if (cnt)
+			*buf++ = (uint8_t)hperh->perh->DATA;
+		else
+			return TIMEOUT;
+	}
+
+	return OK;
+}
+
+/**
+  * @brief  Receive some bytes fast in blocking mode.
+  * @note   Bit width is 8-bits. Supports mode: Slave.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  buf: Data to be received.
+  * @param  size: Length of data.
+  * @param  timeout: Timeout between two bytes.
+  * @retval status: OK/TIMEOUT
+  */
+ald_status_t ald_spi_slave_recv_bytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout)
+{
+	uint32_t tick;
+
+	while (size--) {
+		tick = ald_get_tick();
+
+		while ((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) {
+			if (((ald_get_tick()) - tick) > timeout)
+				return TIMEOUT;
+		}
+
+		*buf++ = (uint8_t)hperh->perh->DATA;
+	}
+
+	return OK;
+}
+
+/**
+  * @brief  Transmit some double-bytes fast in blocking mode.
+  * @note   Bit width is 16-bits. Supports mode: Master/Slave.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  buf: Data to be sent.
+  * @param  size: Length of data. Unit is double-bytes.
+  * @param  timeout: Timeout between two dbytes.
+  * @retval status: OK/TIMEOUT
+  */
+ald_status_t ald_spi_send_dbytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout)
+{
+	uint32_t tick;
+	uint16_t i, tmp = 0;
+
+	while (size--) {
+		while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+		hperh->perh->DATA = (*(uint16_t *)buf);
+		buf += 2;
+		tick = ald_get_tick();
+
+		while ((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) {
+			if (((ald_get_tick()) - tick) > timeout)
+				return TIMEOUT;
+		}
+	}
+
+	for (i = 0; i < 16; ++i) {
+		if ((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK)
+			tmp = hperh->perh->DATA;
+		else
+			break;
+	}
+
+	UNUSED(tmp);
+	return OK;
+}
+
+/**
+  * @brief  Receive some double-bytes fast in blocking mode.
+  * @note   Bit width is 16-bits. Supports mode: Master.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  buf: Data to be received.
+  * @param  size: Length of data. Unit is double-bytes.
+  * @retval status: OK/TIMEOUT
+  */
+ald_status_t ald_spi_master_recv_dbytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size)
+{
+	uint16_t cnt = 8000;
+
+	while (size--) {
+		hperh->perh->DATA = 0xFFFF;
+		cnt = 8000;
+		while (((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) && (--cnt));
+
+		if (cnt) {
+			*(uint16_t *)buf = (uint16_t)hperh->perh->DATA;
+			buf += 2;
+		}
+		else {
+			return TIMEOUT;
+		}
+	}
+
+	return OK;
+}
+
+/**
+  * @brief  Receive some double-bytes fast in blocking mode.
+  * @note   Bit width is 16-bits. Supports mode: Slave.
+  * @param  hperh: Pointer to a spi_handle_t structure.
+  * @param  buf: Data to be received.
+  * @param  size: Length of data. Unit is double-bytes.
+  * @param  timeout: Timeout between two dbytes.
+  * @retval status: OK/TIMEOUT
+  */
+ald_status_t ald_spi_slave_recv_dbytes_fast(spi_handle_t *hperh, uint8_t *buf, uint32_t size, uint32_t timeout)
+{
+	uint32_t tick;
+
+	while (size--) {
+		tick = ald_get_tick();
+
+		while ((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) {
+			if (((ald_get_tick()) - tick) > timeout)
+				return TIMEOUT;
+		}
+
+		*(uint16_t *)buf = (uint16_t)hperh->perh->DATA;
+		buf += 2;
+	}
+
+	return OK;
+}
+/**
+  * @}
+  */
+
+/** @defgroup SPI_Public_Functions_Group3 IO operation functions
   * @brief SPI Transmit and Receive functions
   *
   * @verbatim
@@ -264,70 +525,6 @@ ald_status_t spi_fifo_threshold_config(spi_handle_t *hperh, uint8_t threshold)
   * @endverbatim
   * @{
   */
-
-/**
-  * @brief  Transmit one byte fast in blocking mode.
-  * @param  hperh: Pointer to a spi_handle_t structure.
-  * @param  data: Data to be sent
-  * @retval status:
-  *           -  0 Success
-  *           - -1 Failed
-  */
-int32_t ald_spi_send_byte_fast(spi_handle_t *hperh, uint8_t data)
-{
-	uint16_t cnt = 5000, temp;
-
-	hperh->perh->DATA = data;
-	while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
-
-	cnt = 5000;
-	while (((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) && (--cnt));
-	temp = hperh->perh->DATA;
-	UNUSED(temp);
-
-	return cnt == 0 ? -1 : 0;
-}
-
-/**
-  * @brief  Transmit one byte fast in blocking mode(1line).
-  * @param  hperh: Pointer to a spi_handle_t structure.
-  * @param  data: Data to be sent
-  * @retval status:
-  *           -  0 Success
-  *           - -1 Failed
-  */
-int32_t ald_spi_send_byte_fast_1line(spi_handle_t *hperh, uint8_t data)
-{
-	uint16_t cnt = 5000;
-
-	hperh->perh->DATA = data;
-	while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
-
-	return cnt == 0 ? -1 : 0;
-}
-
-/**
-  * @brief  Receive one byte fast in blocking mode.
-  * @param  hperh: Pointer to a spi_handle_t structure.
-  * @param  status: Status, success[0]/failed[-1]
-  * @retval Data.
-  */
-uint8_t ald_spi_recv_byte_fast(spi_handle_t *hperh, int *status)
-{
-	uint16_t cnt = 5000;
-
-	if (hperh->init.mode == SPI_MODE_MASTER) {
-		hperh->perh->DATA = 0xFF;
-		while (((hperh->perh->STAT & SPI_STAT_TXE_MSK) == 0) && (--cnt));
-	}
-
-	cnt = 5000;
-	while (((hperh->perh->STAT & SPI_STAT_RXE_MSK) == SPI_STAT_RXE_MSK) && (--cnt));
-	*status = cnt == 0 ? - 1 : 0;
-
-	return (uint8_t)hperh->perh->DATA;
-}
-
 /**
   * @brief  Transmit an amount of data in blocking mode.
   * @param  hperh: Pointer to a spi_handle_t structure.
@@ -338,6 +535,9 @@ uint8_t ald_spi_recv_byte_fast(spi_handle_t *hperh, int *status)
   */
 ald_status_t ald_spi_send(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
+	uint32_t tick;
+	uint16_t temp;
+
 	assert_param(IS_SPI(hperh->perh));
 
 	if (hperh->state != SPI_STATE_READY)
@@ -345,77 +545,86 @@ ald_status_t ald_spi_send(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
-
-	hperh->state    = SPI_STATE_BUSY_TX;
-	hperh->err_code = SPI_ERROR_NONE;
-
-	hperh->tx_buf   = buf;
-	hperh->tx_size  = size;
-	hperh->tx_count = size;
-	hperh->rx_buf   = NULL;
-	hperh->rx_size  = 0;
-	hperh->rx_count = 0;
+	hperh->state = SPI_STATE_BUSY_TX;
 
 	if (hperh->init.crc_calc)
 		SPI_CRC_RESET(hperh);
-	if (hperh->init.dir == SPI_DIRECTION_1LINE)
-		SPI_1LINE_TX(hperh);
-	if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
-		SPI_ENABLE(hperh);
 
-	if ((hperh->init.mode == SPI_MODE_SLAVER) || (hperh->tx_count == 1)) {
-		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
-			++hperh->tx_buf;
-			--hperh->tx_count;
-		}
-		else {
-			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-			hperh->tx_buf += 2;
-			--hperh->tx_count;
-		}
-	}
+	while (size > 1) {
+		tick = ald_get_tick();
 
-	while (hperh->tx_count > 0) {
-		if (spi_wait_status(hperh, SPI_STATUS_TXE, SET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
+		while ((hperh->perh->STAT & SPI_STATUS_TXE) == RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
 		}
 
 		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
-			++hperh->tx_buf;
-			--hperh->tx_count;
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *buf;
+			++buf;
 		}
 		else {
-			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-			hperh->tx_buf += 2;
-			--hperh->tx_count;
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = (*(uint16_t *)buf);
+			buf += 2;
 		}
+
+		--size;
 	}
 
-	if (hperh->init.crc_calc)
+	tick = ald_get_tick();
+
+	while ((hperh->perh->STAT & SPI_STATUS_TXE) == RESET) {
+		if (((ald_get_tick()) - tick) > timeout)
+			goto timeout;
+	}
+
+	if (hperh->init.crc_calc) {
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *buf;
+		}
+		else {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = (*(uint16_t *)buf);
+		}
+
 		SPI_CRCNEXT_ENABLE(hperh);
+	}
+	else {
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *buf;
+		}
+		else {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = (*(uint16_t *)buf);
+		}
+	}
 
- 	if ((spi_wait_status(hperh, SPI_STATUS_TXE, SET, timeout) != OK)
-			|| (spi_wait_status(hperh, SPI_STATUS_BUSY, RESET, timeout) != OK)) {
- 		if (hperh->init.crc_calc)
- 			SPI_CRC_RESET(hperh);
+	while ((hperh->perh->STAT & SPI_STATUS_TXE) == RESET) {
+		if (((ald_get_tick()) - tick) > timeout)
+			goto timeout;
+	}
 
- 		hperh->state = SPI_STATE_READY;
- 		__UNLOCK(hperh);
- 		return TIMEOUT;
- 	}
+	while ((hperh->perh->STAT & SPI_STATUS_BUSY) != RESET) {
+		if (((ald_get_tick()) - tick) > timeout)
+			goto timeout;
+	}
+
+	while ((spi_get_status(hperh, SPI_STATUS_RXE)) == RESET) {
+		temp = hperh->perh->DATA;
+		UNUSED(temp);
+	}
 
 	hperh->state = SPI_STATE_READY;
-	__UNLOCK(hperh);
-
 	return OK;
+timeout:
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
+
+	hperh->state = SPI_STATE_READY;
+	return TIMEOUT;
 }
 
 /**
@@ -428,7 +637,9 @@ ald_status_t ald_spi_send(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint
   */
 ald_status_t ald_spi_recv(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint32_t timeout)
 {
+	uint32_t tick;
 	uint16_t temp;
+
 	assert_param(IS_SPI(hperh->perh));
 
 	if (hperh->state != SPI_STATE_READY)
@@ -436,122 +647,65 @@ ald_status_t ald_spi_recv(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint
 	if (buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
+	if (hperh->init.mode == SPI_MODE_MASTER)
+		return ald_spi_send_recv(hperh, buf, buf, size, timeout);
+
 	hperh->state    = SPI_STATE_BUSY_RX;
 	hperh->err_code = SPI_ERROR_NONE;
 
-	hperh->rx_buf   = buf;
-	hperh->rx_size  = size;
-	hperh->rx_count = size;
-	hperh->tx_buf   = NULL;
-	hperh->tx_size  = 0;
-	hperh->tx_count = 0;
-
 	if (hperh->init.crc_calc)
 		SPI_CRC_RESET(hperh);
-	if (hperh->init.dir == SPI_DIRECTION_1LINE_RX)
-		SPI_1LINE_RX(hperh);
 
-	if ((hperh->init.mode == SPI_MODE_MASTER) && (hperh->init.dir == SPI_DIRECTION_2LINES)) {
-		__UNLOCK(hperh);
-		hperh->state = SPI_STATE_READY;
-		return ald_spi_send_recv(hperh, buf, buf, size, timeout);
-	}
+	while (size > 0) {
+		tick = ald_get_tick();
 
-	if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
-		SPI_ENABLE(hperh);
-
-	if (hperh->rx_count > 0) {
-		if (hperh->init.data_size <= SPI_DATA_SIZE_8) {
-			*((uint8_t *)&(hperh->perh->DATA)) = 0xB1;
-		}
-		else {
-			*((uint16_t *)&(hperh->perh->DATA)) = 0xB2B1;
-		}
-	}
-	while (hperh->rx_count > 0) {
-		if (hperh->rx_count > 1) {
-			if (hperh->init.data_size <= SPI_DATA_SIZE_8) {
-				*((uint8_t *)&(hperh->perh->DATA)) = 0xB1;
-			}
-			else {
-				*((uint16_t *)&(hperh->perh->DATA)) = 0xB2B1;
-			}
-		}
-
-		if (spi_wait_status(hperh, SPI_STATUS_RXE, RESET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-
-		if ((hperh->init.crc_calc == ENABLE) && (READ_BIT(hperh->perh->CON1, SPI_CON1_NXTCRC_MSK) == 0)) {
-			ald_spi_interrupt_config(hperh, SPI_IT_CRCERR, ENABLE);
-			SET_BIT(hperh->perh->CON1, SPI_CON1_NXTCRC_MSK);
+		while ((hperh->perh->STAT & SPI_STATUS_RXE) != RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
 		}
 
 		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*hperh->rx_buf = hperh->perh->DATA;
-			++hperh->rx_buf;
-			--hperh->rx_count;
+			*buf = hperh->perh->DATA;
+			++buf;
 		}
 		else {
-			*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-			hperh->rx_buf += 2;
-			--hperh->rx_count;
+			*(uint16_t *)buf = hperh->perh->DATA;
+			buf += 2;
 		}
-	}
 
-	if (spi_wait_status(hperh, SPI_STATUS_RXE, SET, timeout) != OK) {
-		if (hperh->init.crc_calc)
-			SPI_CRC_RESET(hperh);
-
-		hperh->state = SPI_STATE_READY;
-		__UNLOCK(hperh);
-		return TIMEOUT;
-	}
-
-	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-		*hperh->rx_buf = hperh->perh->DATA;
-		++hperh->rx_buf;
-		--hperh->rx_count;
-	}
-	else {
-		*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-		hperh->rx_buf += 2;
-		--hperh->rx_count;
+		--size;
 	}
 
 	if (hperh->init.crc_calc) {
-		if (spi_wait_status(hperh, SPI_STATUS_RXTH, RESET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
+		tick = ald_get_tick();
 
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
+		while ((hperh->perh->STAT & SPI_STATUS_RXTH) != RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
 		}
 
 		temp = hperh->perh->DATA;
 		UNUSED(temp);
-	}
 
-	if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)) {
-		hperh->err_code |= SPI_ERROR_CRC;
-		SPI_CRC_RESET(hperh);
-		ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-		hperh->state = SPI_STATE_READY;
-		__UNLOCK(hperh);
-		return ERROR;
+		if ((hperh->perh->RIF & SPI_IF_CRCERR) != RESET) {
+			hperh->err_code |= SPI_ERROR_CRC;
+			SPI_CRC_RESET(hperh);
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+			hperh->state = SPI_STATE_READY;
+
+			return ERROR;
+		}
 	}
 
 	hperh->state = SPI_STATE_READY;
-	__UNLOCK(hperh);
-
 	return OK;
+
+timeout:
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
+
+	hperh->state = SPI_STATE_READY;
+	return TIMEOUT;
 }
 
 /**
@@ -565,6 +719,7 @@ ald_status_t ald_spi_recv(spi_handle_t *hperh, uint8_t *buf, uint16_t size, uint
   */
 ald_status_t ald_spi_send_recv(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx_buf, uint16_t size, uint32_t timeout)
 {
+	uint32_t tick;
 	uint16_t temp;
 
 	assert_param(IS_SPI(hperh->perh));
@@ -576,185 +731,133 @@ ald_status_t ald_spi_send_recv(spi_handle_t *hperh, uint8_t *tx_buf, uint8_t *rx
 	if (tx_buf == NULL || rx_buf == NULL || size == 0)
 		return ERROR;
 
-	__LOCK(hperh);
 	hperh->state    = SPI_STATE_BUSY_TX_RX;
 	hperh->err_code = SPI_ERROR_NONE;
-
-	hperh->tx_buf   = tx_buf;
-	hperh->tx_size  = size;
-	hperh->tx_count = size;
-	hperh->rx_buf   = rx_buf;
-	hperh->rx_size  = size;
-	hperh->rx_count = size;
 
 	if (hperh->init.crc_calc)
 		SPI_CRC_RESET(hperh);
 
-	if (hperh->init.mode == SPI_MODE_SLAVER) {
-		if (spi_wait_status(hperh, SPI_STATUS_TXE, SET, timeout) != OK) {
-			SPI_DISABLE(hperh);
+	while (size > 1) {
+		tick = ald_get_tick();
 
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
+		while ((hperh->perh->STAT & SPI_STATUS_TXE) == RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
 		}
 
-		if (hperh->init.data_size <= SPI_DATA_SIZE_8) {
-			*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
-			++hperh->tx_buf;
-			--hperh->tx_count;
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *tx_buf;
+			++tx_buf;
 		}
 		else {
-			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-			hperh->tx_buf += 2;
-			--hperh->tx_count;
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = (*(uint16_t *)tx_buf);
+			tx_buf += 2;
 		}
+
+		tick = ald_get_tick();
+
+		while ((hperh->perh->STAT & SPI_STATUS_RXE) != RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
+		}
+
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			*rx_buf = (uint8_t)hperh->perh->DATA;
+			++rx_buf;
+		}
+		else {
+			(*(uint16_t *)rx_buf) = hperh->perh->DATA;
+			rx_buf += 2;
+		}
+
+		--size;
 	}
 
-	if (hperh->tx_buf == 0) {
-		if (hperh->init.crc_calc)
+	tick = ald_get_tick();
+
+	while ((hperh->perh->STAT & SPI_STATUS_TXE) == RESET) {
+		if (((ald_get_tick()) - tick) > timeout)
+			goto timeout;
+	}
+
+	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+		if (hperh->init.crc_calc) {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *tx_buf;
 			SPI_CRCNEXT_ENABLE(hperh);
-
-		if (spi_wait_status(hperh, SPI_STATUS_RXE, RESET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-
-		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*hperh->rx_buf = hperh->perh->DATA;
-			++hperh->rx_buf;
-			--hperh->rx_count;
 		}
 		else {
-			(*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
-			hperh->rx_buf += 2;
-			--hperh->rx_count;
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *tx_buf;
+		}
+	}
+	else {
+		if (hperh->init.crc_calc) {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = (*(uint16_t *)tx_buf);
+			SPI_CRCNEXT_ENABLE(hperh);
+		}
+		else {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = (*(uint16_t *)tx_buf);
 		}
 	}
 
-	while (hperh->tx_count > 0) {
-		if (spi_wait_status(hperh, SPI_STATUS_TXE, SET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
+	tick = ald_get_tick();
 
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-
-		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
-			++hperh->tx_buf;
-			--hperh->tx_count;
-		}
-		else {
-			hperh->perh->DATA = (*(uint16_t *)hperh->tx_buf);
-			hperh->tx_buf += 2;
-			--hperh->tx_count;
-		}
-
-		if (spi_wait_status(hperh, SPI_STATUS_RXE, RESET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-
-		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*hperh->rx_buf = hperh->perh->DATA;
-			++hperh->rx_buf;
-			--hperh->rx_count;
-		}
-		else {
-			(*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
-
-			hperh->rx_buf += 2;
-			--hperh->rx_count;
-		}
+	while ((hperh->perh->STAT & SPI_STATUS_RXE) != RESET) {
+		if (((ald_get_tick()) - tick) > timeout)
+			goto timeout;
 	}
 
-	if (hperh->init.mode == SPI_MODE_SLAVER) {
-		if (spi_wait_status(hperh, SPI_STATUS_RXE, RESET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-			SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
-		}
-
-		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-			*hperh->rx_buf = hperh->perh->DATA;
-			++hperh->rx_buf;
-			--hperh->rx_count;
-		}
-		else {
-			(*(uint16_t *)hperh->rx_buf) = hperh->perh->DATA;
-
-			hperh->rx_buf += 2;
-			--hperh->rx_count;
-		}
-	}
+	if (hperh->init.data_size == SPI_DATA_SIZE_8)
+		*rx_buf = (uint8_t)hperh->perh->DATA;
+	else
+		(*(uint16_t *)rx_buf) = hperh->perh->DATA;
 
 	if (hperh->init.crc_calc) {
-		SPI_CRCNEXT_ENABLE(hperh);
+		tick = ald_get_tick();
 
-		if (spi_wait_status(hperh, SPI_STATUS_TXE, SET, timeout) != OK) {
-			SPI_DISABLE(hperh);
-
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
-
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
+		while ((hperh->perh->STAT & SPI_STATUS_TXE) == RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
 		}
 
-		if (spi_wait_status(hperh, SPI_STATUS_RXE, RESET, timeout) != OK) {
-			if (hperh->init.crc_calc)
-				SPI_CRC_RESET(hperh);
+		tick = ald_get_tick();
 
-			hperh->state = SPI_STATE_READY;
-			__UNLOCK(hperh);
-			return TIMEOUT;
+		while ((hperh->perh->STAT & SPI_STATUS_RXE) != RESET) {
+			if (((ald_get_tick()) - tick) > timeout)
+				goto timeout;
 		}
 
 		temp = hperh->perh->DATA;
 		UNUSED(temp);
-	}
 
-	if ((spi_wait_status(hperh, SPI_STATUS_BUSY, RESET, timeout) != OK)) {
-		if (hperh->init.crc_calc)
+		if (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET) {
+			hperh->err_code |= SPI_ERROR_CRC;
 			SPI_CRC_RESET(hperh);
+			ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
+			hperh->state = SPI_STATE_READY;
 
-		hperh->state = SPI_STATE_READY;
-		__UNLOCK(hperh);
-		return TIMEOUT;
+			return ERROR;
+		}
 	}
 
-	if ((hperh->init.crc_calc) && (ald_spi_get_flag_status(hperh, SPI_IF_CRCERR) != RESET)) {
-		hperh->err_code |= SPI_ERROR_CRC;
-		SPI_CRC_RESET(hperh);
-		ald_spi_clear_flag_status(hperh, SPI_IF_CRCERR);
-		hperh->state = SPI_STATE_READY;
-		__UNLOCK(hperh);
-
-		return ERROR;
+	while ((hperh->perh->STAT & SPI_STATUS_BUSY) != RESET) {
+		if (((ald_get_tick()) - tick) > timeout)
+			goto timeout;
 	}
 
 	hperh->state = SPI_STATE_READY;
-	__UNLOCK(hperh);
-
 	return OK;
+timeout:
+	if (hperh->init.crc_calc)
+		SPI_CRC_RESET(hperh);
+
+	hperh->state = SPI_STATE_READY;
+	return TIMEOUT;
 }
 
 /**
@@ -787,12 +890,6 @@ ald_status_t ald_spi_send_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size
 
 	if (hperh->init.crc_calc)
 		SPI_CRC_RESET(hperh);
-
-	if (hperh->init.dir == SPI_DIRECTION_1LINE)
-		SPI_1LINE_TX(hperh);
-
-	if (READ_BIT(hperh->perh->CON1, SPI_CON1_SPIEN_MSK) == 0)
-		SPI_ENABLE(hperh);
 
 	ald_spi_interrupt_config(hperh, SPI_IT_TXE, ENABLE);
 
@@ -840,14 +937,11 @@ ald_status_t ald_spi_recv_by_it(spi_handle_t *hperh, uint8_t *buf, uint16_t size
 	ald_spi_interrupt_config(hperh, SPI_IT_RXTH, ENABLE);
 	ald_spi_interrupt_config(hperh, SPI_IT_MODF, ENABLE);
 
-	if ((hperh->init.dir == SPI_DIRECTION_2LINES_RXONLY) || (hperh->init.dir == SPI_DIRECTION_1LINE_RX))
-		SPI_ENABLE(hperh);
-
 	if (hperh->init.data_size <= SPI_DATA_SIZE_8) {
-		*((uint8_t *)&(hperh->perh->DATA)) = 0xB1;
+		*((uint8_t *)&(hperh->perh->DATA)) = 0xFF;
 	}
 	else {
-		*((uint16_t *)&(hperh->perh->DATA)) = 0xB2B1;
+		*((uint16_t *)&(hperh->perh->DATA)) = 0xFFFF;
 	}
 
 	return OK;
@@ -1181,7 +1275,7 @@ ald_status_t ald_spi_dma_stop(spi_handle_t *hperh)
   * @}
   */
 
-/** @defgroup SPI_Public_Functions_Group3 Control functions
+/** @defgroup SPI_Public_Functions_Group4 Control functions
   * @brief SPI Control functions
   *
   * @verbatim
@@ -1305,7 +1399,7 @@ void ald_spi_speed_config(spi_handle_t *hperh, spi_baud_t speed)
 	assert_param(IS_SPI_BAUD(speed));
 
 	tmp = hperh->perh->CON1;
-	tmp &= ~(0x7 << SPI_CON1_BAUD_POSS);
+	tmp &= ~(0x7U << SPI_CON1_BAUD_POSS);
 	tmp |= (speed << SPI_CON1_BAUD_POSS);
 	hperh->perh->CON1 = tmp;
 	return;
@@ -1360,32 +1454,6 @@ flag_status_t spi_get_status(spi_handle_t *hperh, spi_status_t status)
 		return SET;
 
 	return RESET;
-}
-
-/**
-  * @brief  This function handles SPI communication timeout.
-  * @param  hperh: Pointer to a spi_handle_t structure.
-  * @param  state: specifies the SPI flag to check.
-  * @param  status: The new Flag status (SET or RESET).
-  * @param  timeout: Timeout duration
-  * @retval Status, see @ref ald_status_t.
-  */
-static ald_status_t spi_wait_status(spi_handle_t *hperh, spi_status_t state, flag_status_t status, uint32_t timeout)
-{
-	uint32_t tick = ald_get_tick();
-
-	assert_param(timeout > 0);
-
-	while ((spi_get_status(hperh, state)) != status) {
-		if (((ald_get_tick()) - tick) > timeout) {
-			ald_spi_interrupt_config(hperh, SPI_IT_TXE, DISABLE);
-			ald_spi_interrupt_config(hperh, SPI_IT_RXTH, DISABLE);
-			ald_spi_interrupt_config(hperh, SPI_IT_MODF, DISABLE);
-			return TIMEOUT;
-		}
-	}
-
-	return OK;
 }
 
 /**
@@ -1472,8 +1540,6 @@ static ald_status_t spi_wait_flag_irq(spi_handle_t *hperh, spi_flag_t flag, flag
 
 static ald_status_t spi_wait_bsy_flag(spi_handle_t *hperh, flag_status_t status, uint32_t timeout)
 {
-	uint32_t tick = ald_get_tick();
-
 	assert_param(timeout > 0);
 
 	while ((READ_BIT(hperh->perh->STAT, SPI_STAT_BUSY_MSK)) && (--timeout));
@@ -1493,7 +1559,7 @@ static ald_status_t spi_wait_bsy_flag(spi_handle_t *hperh, flag_status_t status,
   * @}
   */
 
-/** @defgroup SPI_Public_Functions_Group4 Peripheral State and Errors functions
+/** @defgroup SPI_Public_Functions_Group5 Peripheral State and Errors functions
   *  @brief   SPI State and Errors functions
   *
   * @verbatim
@@ -1550,6 +1616,8 @@ uint32_t ald_spi_get_error(spi_handle_t *hperh)
   */
 static void __spi_send_by_it(spi_handle_t *hperh)
 {
+	uint16_t temp;
+
 	if (hperh->tx_count == 0) {
 		ald_spi_interrupt_config(hperh, SPI_IT_TXE, DISABLE);
 		hperh->state = SPI_STATE_READY;
@@ -1565,6 +1633,11 @@ static void __spi_send_by_it(spi_handle_t *hperh)
 			return;
 		}
 
+		while ((spi_get_status(hperh, SPI_STATUS_RXE)) == RESET) {
+			temp = hperh->perh->DATA;
+			UNUSED(temp);
+		}
+
 		if (hperh->tx_cplt_cbk)
 			hperh->tx_cplt_cbk(hperh);
 
@@ -1573,21 +1646,48 @@ static void __spi_send_by_it(spi_handle_t *hperh)
 
 	ald_spi_clear_flag_status(hperh, SPI_IF_TXE);
 
-	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-		*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
-		++hperh->tx_buf;
+	if (hperh->tx_count == 1) {
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			if (hperh->init.crc_calc) {
+				while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+				hperh->perh->DATA = *hperh->tx_buf;
+				SPI_CRCNEXT_ENABLE(hperh);
+			}
+			else {
+				while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+				hperh->perh->DATA = *hperh->tx_buf;
+			}
+
+			++hperh->tx_buf;
+		}
+		else {
+			if (hperh->init.crc_calc) {
+				while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+				hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+				SPI_CRCNEXT_ENABLE(hperh);
+			}
+			else {
+				while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+				hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+			}
+
+			hperh->tx_buf += 2;
+		}
 	}
 	else {
-		hperh->perh->DATA    = *(uint16_t *)hperh->tx_buf;
-		hperh->tx_buf       += 2;
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *hperh->tx_buf;
+			++hperh->tx_buf;
+		}
+		else {
+			while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+			hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+			hperh->tx_buf    += 2;
+		}
 	}
+
 	--hperh->tx_count;
-
-	if (hperh->tx_count == 0) {
-		if (hperh->init.crc_calc)
-			SPI_CRCNEXT_ENABLE(hperh);
-	}
-
 	return;
 }
 
@@ -1599,17 +1699,21 @@ static void __spi_send_by_it(spi_handle_t *hperh)
 static void __spi_recv_by_it(spi_handle_t *hperh)
 {
 	uint16_t temp;
-	if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-		*hperh->rx_buf = hperh->perh->DATA;
-		++hperh->rx_buf;
-	}
-	else {
-		*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
-		hperh->rx_buf             += 2;
+
+	while (READ_BITS(hperh->perh->STAT, SPI_STAT_RXFLV_MSK, SPI_STAT_RXFLV_POSS)) {
+		if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+			*hperh->rx_buf = hperh->perh->DATA;
+			++hperh->rx_buf;
+		}
+		else {
+			*(uint16_t *)hperh->rx_buf = hperh->perh->DATA;
+			hperh->rx_buf += 2;
+		}
+
+		--hperh->rx_count;
 	}
 
 	ald_spi_clear_flag_status(hperh, SPI_IF_RXTH);
-	--hperh->rx_count;
 
 	if (hperh->rx_count == 0) {
 		ald_spi_interrupt_config(hperh, SPI_IT_RXTH, DISABLE);
@@ -1635,10 +1739,10 @@ static void __spi_recv_by_it(spi_handle_t *hperh)
 	}
 
 	if (hperh->init.data_size <= SPI_DATA_SIZE_8) {
-		*((uint8_t *)&(hperh->perh->DATA)) = 0xB1;
+		hperh->perh->DATA = 0xff;
 	}
 	else {
-		*((uint16_t *)&(hperh->perh->DATA)) = 0xB2B1;
+		hperh->perh->DATA = 0xffff;
 	}
 
 	return;
@@ -1666,9 +1770,6 @@ static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status)
 				}
 				--hperh->rx_count;
 			}
-
-			if ((hperh->rx_count == 0xffff) && (hperh->init.crc_calc == ENABLE))
-				hperh->rx_count = 0;
 		}
 	}
 
@@ -1677,34 +1778,47 @@ static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status)
 			ald_spi_clear_flag_status(hperh, SPI_IF_TXE);
 			if (hperh->tx_count == 1) {
 				if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-					*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
+					if (hperh->init.crc_calc) {
+						while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+						hperh->perh->DATA = *hperh->tx_buf;
+						SPI_CRCNEXT_ENABLE(hperh);
+					}
+					else {
+						while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+						hperh->perh->DATA = *hperh->tx_buf;
+					}
+
 					++hperh->tx_buf;
 				}
 				else {
+					if (hperh->init.crc_calc) {
+						while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+						hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+						SPI_CRCNEXT_ENABLE(hperh);
+					}
+					else {
+						while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+						hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
+					}
+
+					hperh->tx_buf += 2;
+				}
+
+				--hperh->tx_count;
+			}
+			else {
+				if (hperh->init.data_size == SPI_DATA_SIZE_8) {
+					while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
+					hperh->perh->DATA = *hperh->tx_buf;
+					++hperh->tx_buf;
+				}
+				else {
+					while(hperh->perh->STAT & SPI_STAT_TXF_MSK);
 					hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
 					hperh->tx_buf    += 2;
 				}
 
 				--hperh->tx_count;
-
-				if (hperh->init.crc_calc)
-					SPI_CRCNEXT_ENABLE(hperh);
-			}
-			else {
-				if (hperh->init.data_size == SPI_DATA_SIZE_8) {
-					*((volatile uint8_t *)hperh->perh + 0x0c) = *hperh->tx_buf;
-					++hperh->tx_buf;
-				}
-				else {
-					hperh->perh->DATA = *(uint16_t *)hperh->tx_buf;
-					hperh->tx_buf    += 2;
-				}
-
-				if (--hperh->tx_count == 0) {
-					if (hperh->init.crc_calc)
-						SPI_CRCNEXT_ENABLE(hperh);
-					ald_spi_interrupt_config(hperh, SPI_IT_TXE, DISABLE);
-				}
 			}
 		}
 	}
@@ -1732,7 +1846,6 @@ static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status)
 	return;
 }
 
-
 #ifdef ALD_DMA
 /**
   * @brief  DMA SPI transmit process complete callback.
@@ -1741,12 +1854,17 @@ static void __spi_send_recv_by_it(spi_handle_t *hperh, spi_sr_status_t status)
   */
 static void spi_dma_send_cplt(void *arg)
 {
-	uint16_t delay;
+	uint16_t delay, temp;
 	spi_handle_t *hperh = (spi_handle_t *)arg;
 
 	hperh->tx_count = 0;
 	ald_spi_dma_req_config(hperh, SPI_DMA_REQ_TX, DISABLE);
 	hperh->state = SPI_STATE_READY;
+
+	while ((spi_get_status(hperh, SPI_STATUS_RXE)) == RESET) {
+		temp = hperh->perh->DATA;
+		UNUSED(temp);
+	}
 
 	if (hperh->init.dir == SPI_DIRECTION_2LINES)
 		ald_spi_clear_flag_status(hperh, SPI_IF_TXOV);

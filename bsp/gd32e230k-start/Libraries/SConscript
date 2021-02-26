@@ -22,6 +22,6 @@ path = [
 
 CPPDEFINES = ['GD32E230']
 
-group = DefineGroup('GD32_Lib', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

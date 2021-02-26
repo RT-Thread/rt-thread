@@ -11,6 +11,9 @@ if GetDepend(['RT_USING_PIN']):
 if GetDepend(['RT_USING_ADC']):
     src = src + ['adc.c']
     
+if GetDepend(['RT_USING_DAC']):
+    src = src + ['dac.c']
+
 if GetDepend(['RT_USING_PWM']):
     src = src + ['rt_drv_pwm.c']
     

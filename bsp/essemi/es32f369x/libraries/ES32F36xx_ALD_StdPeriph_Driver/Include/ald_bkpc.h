@@ -35,8 +35,8 @@ extern "C" {
 /** @defgroup BKPC_Public_Macros BKPC Public Macros
   * @{
   */
-#define BKPC_LOCK()		(WRITE_REG(BKPC->PROT, 0))
-#define BKPC_UNLOCK()		(WRITE_REG(BKPC->PROT, 0x9669AA55))
+#define BKPC_LOCK()		(WRITE_REG(BKPC->PROT, 0U))
+#define BKPC_UNLOCK()		(WRITE_REG(BKPC->PROT, 0x9669AA55U))
 #define BKPC_LRC_ENABLE()			\
 do {						\
 	BKPC_UNLOCK();				\
@@ -99,32 +99,33 @@ do {							\
   * @brief BKPC preipheral clock select.
   */
 typedef enum {
-	BKPC_PREH_CLK_LOSM    = 0x0,	/**< LOSM */
-	BKPC_PREH_CLK_LRC     = 0x1,	/**< LRC */
-	BKPC_PREH_CLK_HRC_1M  = 0x2,	/**< HRC down to 1MHz */
-	BKPC_PREH_CLK_HOSC_1M = 0x3,	/**< HOSC down to 1MHz */
+	BKPC_PREH_CLK_LOSM    = 0x0U,	/**< LOSM */
+	BKPC_PREH_CLK_LRC     = 0x1U,	/**< LRC */
+	BKPC_PREH_CLK_HRC_1M  = 0x2U,	/**< HRC down to 1MHz */
+	BKPC_PREH_CLK_HOSC_1M = 0x3U,	/**< HOSC down to 1MHz */
 } bkpc_preh_clk_t;
 
 /**
   * @brief Standby wakeup port select
   */
 typedef enum {
-	PMU_STANDBY_PORT_SEL_PA0 = 0x0,	/**< PA0 */
-	PMU_STANDBY_PORT_SEL_PA1 = 0x1,	/**< PA1 */
-	PMU_STANDBY_PORT_SEL_PA2 = 0x2,	/**< PA2 */
-	PMU_STANDBY_PORT_SEL_PA3 = 0x3,	/**< PA3 */
-	PMU_STANDBY_PORT_SEL_PA4 = 0x4,	/**< PA4 */
-	PMU_STANDBY_PORT_SEL_PA5 = 0x5,	/**< PA5 */
-	PMU_STANDBY_PORT_SEL_PA6 = 0x6,	/**< PA6 */
-	PMU_STANDBY_PORT_SEL_PA7 = 0x7,	/**< PA7 */
+	PMU_STANDBY_PORT_SEL_PA0  = 0x0U,	/**< Wakeup by PA0 */
+	PMU_STANDBY_PORT_SEL_PA1  = 0x1U,	/**< Wakeup by PA1 */
+	PMU_STANDBY_PORT_SEL_PA2  = 0x2U,	/**< Wakeup by PA2 */
+	PMU_STANDBY_PORT_SEL_PA3  = 0x3U,	/**< Wakeup by PA3 */
+	PMU_STANDBY_PORT_SEL_PA4  = 0x4U,	/**< Wakeup by PA4 */
+	PMU_STANDBY_PORT_SEL_PA5  = 0x5U,	/**< Wakeup by PA5 */
+	PMU_STANDBY_PORT_SEL_PA6  = 0x6U,	/**< Wakeup by PA6 */
+	PMU_STANDBY_PORT_SEL_PA7  = 0x7U,	/**< Wakeup by PA7 */
+	PMU_STANDBY_PORT_SEL_NONE = 0xFU,	/**< Wakeup by other source */
 } bkpc_wakeup_port_t;
 
 /**
   * @brief Standby wakeup level
   */
 typedef enum {
-	PMU_STANDBY_LEVEL_HIGH = 0x0,	/**< PA0 */
-	PMU_STANDBY_LEVEL_LOW  = 0x1,	/**< PA1 */
+	PMU_STANDBY_LEVEL_HIGH = 0x0U,	/**< High level */
+	PMU_STANDBY_LEVEL_LOW  = 0x1U,	/**< Low level */
 } bkpc_wakeup_level_t;
 
 /**
@@ -142,7 +143,8 @@ typedef enum {
                                  ((x) == PMU_STANDBY_PORT_SEL_PA4) || \
                                  ((x) == PMU_STANDBY_PORT_SEL_PA5) || \
                                  ((x) == PMU_STANDBY_PORT_SEL_PA6) || \
-                                 ((x) == PMU_STANDBY_PORT_SEL_PA7))
+                                 ((x) == PMU_STANDBY_PORT_SEL_PA7) || \
+                                 ((x) == PMU_STANDBY_PORT_SEL_NONE))
 #define IS_BKPC_WAKEUP_LEVEL(x)	(((x) == PMU_STANDBY_LEVEL_HIGH) || \
                                  ((x) == PMU_STANDBY_LEVEL_LOW))
 #define IS_BKPC_PREH_CLOCK(x)	(((x) == BKPC_PREH_CLK_LOSM) || \

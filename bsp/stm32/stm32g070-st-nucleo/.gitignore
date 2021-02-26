@@ -1,0 +1,7 @@
+settings
+build
+
+*.uvguix.*
+*.uvoptx
+settings/*
+build/*

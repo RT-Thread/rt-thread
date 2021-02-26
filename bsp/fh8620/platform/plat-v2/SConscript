@@ -8,6 +8,6 @@ src = Glob('*.c')
 
 path = [cwd, cwd + '/..']
 
-group = DefineGroup('Platform', src, depend = ['CONFIG_PLAT_V2'], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = ['CONFIG_PLAT_V2'], CPPPATH = path)
 
 Return('group')

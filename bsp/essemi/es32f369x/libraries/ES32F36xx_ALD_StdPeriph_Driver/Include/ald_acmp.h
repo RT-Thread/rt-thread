@@ -63,95 +63,95 @@ typedef enum {
   * @brief ACMP positive input
   */
 typedef enum {
-	ACMP_POS_CH0 = 0x0,	/**< Channel 0 as positive input */
-	ACMP_POS_CH1 = 0x1,	/**< Channel 1 as positive input */
-	ACMP_POS_CH2 = 0x2,	/**< Channel 2 as positive input */
-	ACMP_POS_CH3 = 0x3,	/**< Channel 3 as positive input */
-	ACMP_POS_CH4 = 0x4,	/**< Channel 4 as positive input */
-	ACMP_POS_CH5 = 0x5,	/**< Channel 5 as positive input */
-	ACMP_POS_CH6 = 0x6,	/**< Channel 6 as positive input */
-	ACMP_POS_CH7 = 0x7,	/**< Channel 7 as positive input */
+	ACMP_POS_CH0 = 0x0U,	/**< Channel 0 as positive input */
+	ACMP_POS_CH1 = 0x1U,	/**< Channel 1 as positive input */
+	ACMP_POS_CH2 = 0x2U,	/**< Channel 2 as positive input */
+	ACMP_POS_CH3 = 0x3U,	/**< Channel 3 as positive input */
+	ACMP_POS_CH4 = 0x4U,	/**< Channel 4 as positive input */
+	ACMP_POS_CH5 = 0x5U,	/**< Channel 5 as positive input */
+	ACMP_POS_CH6 = 0x6U,	/**< Channel 6 as positive input */
+	ACMP_POS_CH7 = 0x7U,	/**< Channel 7 as positive input */
 } acmp_pos_input_t;
 
 /**
   * @brief ACMP negative input
   */
 typedef enum {
-	ACMP_NEG_CH0  = 0x0, 	/**< Channel 0 as negative input */
-	ACMP_NEG_CH1  = 0x1, 	/**< Channel 1 as negative input */
-	ACMP_NEG_CH2  = 0x2, 	/**< Channel 2 as negative input */
-	ACMP_NEG_CH3  = 0x3, 	/**< Channel 3 as negative input */
-	ACMP_NEG_CH4  = 0x4, 	/**< Channel 4 as negative input */
-	ACMP_NEG_CH5  = 0x5, 	/**< Channel 5 as negative input */
-	ACMP_NEG_CH6  = 0x6, 	/**< Channel 6 as negative input */
-	ACMP_NEG_CH7  = 0x7, 	/**< Channel 7 as negative input */
-	ACMP_NEG_1V25 = 0x8, 	/**< 1.25v as negative input */
-	ACMP_NEG_2V5  = 0x9, 	/**< 2.5v as negative input */
-	ACMP_NEG_VDD  = 0xA,	/**< VDD as negative input */
+	ACMP_NEG_CH0  = 0x0U, 	/**< Channel 0 as negative input */
+	ACMP_NEG_CH1  = 0x1U, 	/**< Channel 1 as negative input */
+	ACMP_NEG_CH2  = 0x2U, 	/**< Channel 2 as negative input */
+	ACMP_NEG_CH3  = 0x3U, 	/**< Channel 3 as negative input */
+	ACMP_NEG_CH4  = 0x4U, 	/**< Channel 4 as negative input */
+	ACMP_NEG_CH5  = 0x5U, 	/**< Channel 5 as negative input */
+	ACMP_NEG_CH6  = 0x6U, 	/**< Channel 6 as negative input */
+	ACMP_NEG_CH7  = 0x7U, 	/**< Channel 7 as negative input */
+	ACMP_NEG_1V25 = 0x8U, 	/**< 1.25v as negative input */
+	ACMP_NEG_2V5  = 0x9U, 	/**< 2.5v as negative input */
+	ACMP_NEG_VDD  = 0xAU,	/**< VDD as negative input */
 } acmp_neg_input_t;
 
 /**
   * @brief ACMP mode
   */
 typedef enum {
-	ACMP_ULTRA_LOW_POWER = 0x0,	/**< Ultra low power mode */
-	ACMP_LOW_POWER       = 0x1,	/**< Low power mode */
-	ACMP_MIDDLE_POWER    = 0x2,	/**< Middle power mode */
-	ACMP_HIGH_POWER      = 0x3,	/**< High power mode */
+	ACMP_ULTRA_LOW_POWER = 0x0U,	/**< Ultra low power mode */
+	ACMP_LOW_POWER       = 0x1U,	/**< Low power mode */
+	ACMP_MIDDLE_POWER    = 0x2U,	/**< Middle power mode */
+	ACMP_HIGH_POWER      = 0x3U,	/**< High power mode */
 } acmp_mode_t;
 
 /**
   * @brief ACMP warm-up time
   */
 typedef enum {
-	ACMP_4_PCLK   = 0x0,	/**< 4 hfperclk cycles */
-	ACMP_8_PCLK   = 0x1,	/**< 4 hfperclk cycles */
-	ACMP_16_PCLK  = 0x2,	/**< 4 hfperclk cycles */
-	ACMP_32_PCLK  = 0x3,	/**< 4 hfperclk cycles */
-	ACMP_64_PCLK  = 0x4,	/**< 4 hfperclk cycles */
-	ACMP_128_PCLK = 0x5,	/**< 4 hfperclk cycles */
-	ACMP_256_PCLK = 0x6,	/**< 4 hfperclk cycles */
-	ACMP_512_PCLK = 0x7,	/**< 4 hfperclk cycles */
+	ACMP_4_PCLK   = 0x0U,	/**< 4 hfperclk cycles */
+	ACMP_8_PCLK   = 0x1U,	/**< 4 hfperclk cycles */
+	ACMP_16_PCLK  = 0x2U,	/**< 4 hfperclk cycles */
+	ACMP_32_PCLK  = 0x3U,	/**< 4 hfperclk cycles */
+	ACMP_64_PCLK  = 0x4U,	/**< 4 hfperclk cycles */
+	ACMP_128_PCLK = 0x5U,	/**< 4 hfperclk cycles */
+	ACMP_256_PCLK = 0x6U,	/**< 4 hfperclk cycles */
+	ACMP_512_PCLK = 0x7U,	/**< 4 hfperclk cycles */
 } acmp_warm_time_t;
 
 /**
   * @brief ACMP hysteresis level
   */
 typedef enum {
-	ACMP_HYST_0  = 0x0,	/**< No hysteresis */
-	ACMP_HYST_15 = 0x1,	/**< 15mV hysteresis */
-	ACMP_HYST_22 = 0x2,	/**< 22mV hysteresis */
-	ACMP_HYST_29 = 0x3,	/**< 29mV hysteresis */
-	ACMP_HYST_36 = 0x4,	/**< 36mV hysteresis */
-	ACMP_HYST_43 = 0x5,	/**< 43mV hysteresis */
-	ACMP_HYST_50 = 0x6,	/**< 50mV hysteresis */
-	ACMP_HYST_57 = 0x7,	/**< 57mV hysteresis */
+	ACMP_HYST_0  = 0x0U,	/**< No hysteresis */
+	ACMP_HYST_15 = 0x1U,	/**< 15mV hysteresis */
+	ACMP_HYST_22 = 0x2U,	/**< 22mV hysteresis */
+	ACMP_HYST_29 = 0x3U,	/**< 29mV hysteresis */
+	ACMP_HYST_36 = 0x4U,	/**< 36mV hysteresis */
+	ACMP_HYST_43 = 0x5U,	/**< 43mV hysteresis */
+	ACMP_HYST_50 = 0x6U,	/**< 50mV hysteresis */
+	ACMP_HYST_57 = 0x7U,	/**< 57mV hysteresis */
 } acmp_hystsel_t;
 
 /**
   * @brief ACMP inactive state
   */
 typedef enum {
-	ACMP_INACTVAL_LOW  = 0x0,	/**< The inactive value is 0 */
-	ACMP_INACTVAL_HIGH = 0x1,	/**< The inactive value is 1 */
+	ACMP_INACTVAL_LOW  = 0x0U,	/**< The inactive value is 0 */
+	ACMP_INACTVAL_HIGH = 0x1U,	/**< The inactive value is 1 */
 } acmp_inactval_t;
 
 /**
   * @brief which edges set up interrupt
   */
 typedef enum {
-	ACMP_EDGE_NONE = 0x0,	/**< Disable EDGE interrupt */
-	ACMP_EDGE_FALL = 0x1,	/**< Falling edges set EDGE interrupt */
-	ACMP_EDGE_RISE = 0x2,	/**< rise edges set EDGE interrupt */
-	ACMP_EDGE_ALL  = 0x3,	/**< Falling edges and rise edges set EDGE interrupt */
+	ACMP_EDGE_NONE = 0x0U,	/**< Disable EDGE interrupt */
+	ACMP_EDGE_FALL = 0x1U,	/**< Falling edges set EDGE interrupt */
+	ACMP_EDGE_RISE = 0x2U,	/**< rise edges set EDGE interrupt */
+	ACMP_EDGE_ALL  = 0x3U,	/**< Falling edges and rise edges set EDGE interrupt */
 } acmp_edge_t;
 
 /**
   * @brief ACMP output function
   */
 typedef enum {
-	ACMP_OUT_DISABLE = 0x0,	/**< Disable acmp output */
-	ACMP_OUT_ENABLE  = 0x1,	/**< Enable acmp output */
+	ACMP_OUT_DISABLE = 0x0U,	/**< Disable acmp output */
+	ACMP_OUT_ENABLE  = 0x1U,	/**< Enable acmp output */
 } acmp_out_func_t;
 
 /**

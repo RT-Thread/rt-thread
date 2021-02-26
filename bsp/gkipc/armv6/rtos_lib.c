@@ -1095,13 +1095,8 @@ U32 RTOS_InitKernel(U32 Heap_size)
     /* show version */
     //rt_show_version();
 
-    /* initialize tick */
-    //rt_system_tick_init();
     RTOS_HwTickInit();
     //rt_kprintf("set tick\n");
-
-    /* initialize kernel object */
-    rt_system_object_init();
 
     /* initialize timer system */
     rt_system_timer_init();

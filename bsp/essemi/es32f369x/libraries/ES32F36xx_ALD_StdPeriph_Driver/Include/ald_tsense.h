@@ -35,8 +35,8 @@ extern "C" {
 /** @defgroup TSENSE_Public_Macros TSENSE Public Macros
   * @{
   */
-#define TSENSE_LOCK()		(WRITE_REG(TSENSE->WPR, 0x0))
-#define TSENSE_UNLOCK()		(WRITE_REG(TSENSE->WPR, 0xA55A9669))
+#define TSENSE_LOCK()		(WRITE_REG(TSENSE->WPR, 0x0U))
+#define TSENSE_UNLOCK()		(WRITE_REG(TSENSE->WPR, 0xA55A9669U))
 #define TSENSE_ENABLE()					\
 do {							\
 	TSENSE_UNLOCK();				\
@@ -114,30 +114,30 @@ do {							\
   * @brief Temperature update time
   */
 typedef enum {
-	TSENSE_UPDATE_CYCLE_3 = 0x3,	/**< 3 Cycles */
-	TSENSE_UPDATE_CYCLE_4 = 0x4,	/**< 4 Cycles */
-	TSENSE_UPDATE_CYCLE_5 = 0x5,	/**< 5 Cycles */
-	TSENSE_UPDATE_CYCLE_6 = 0x6,	/**< 6 Cycles */
-	TSENSE_UPDATE_CYCLE_7 = 0x7,	/**< 7 Cycles */
+	TSENSE_UPDATE_CYCLE_3 = 0x3U,	/**< 3 Cycles */
+	TSENSE_UPDATE_CYCLE_4 = 0x4U,	/**< 4 Cycles */
+	TSENSE_UPDATE_CYCLE_5 = 0x5U,	/**< 5 Cycles */
+	TSENSE_UPDATE_CYCLE_6 = 0x6U,	/**< 6 Cycles */
+	TSENSE_UPDATE_CYCLE_7 = 0x7U,	/**< 7 Cycles */
 } tsense_update_cycle_t;
 
 /**
   * @brief Temperature output mode
   */
 typedef enum {
-	TSENSE_OUTPUT_MODE_200  = 0x0,	/**< 200 cycles update one temperature */
-	TSENSE_OUTPUT_MODE_400  = 0x1,	/**< 400 cycles update one temperature */
-	TSENSE_OUTPUT_MODE_800  = 0x2,	/**< 800 cycles update one temperature */
-	TSENSE_OUTPUT_MODE_1600 = 0x3,	/**< 1600 cycles update one temperature */
-	TSENSE_OUTPUT_MODE_3200 = 0x4,	/**< 3200 cycles update one temperature */
+	TSENSE_OUTPUT_MODE_200  = 0x0U,	/**< 200 cycles update one temperature */
+	TSENSE_OUTPUT_MODE_400  = 0x1U,	/**< 400 cycles update one temperature */
+	TSENSE_OUTPUT_MODE_800  = 0x2U,	/**< 800 cycles update one temperature */
+	TSENSE_OUTPUT_MODE_1600 = 0x3U,	/**< 1600 cycles update one temperature */
+	TSENSE_OUTPUT_MODE_3200 = 0x4U,	/**< 3200 cycles update one temperature */
 } tsense_output_mode_t;
 
 /**
   * @brief Source select
   */
 typedef enum {
-	TSENSE_SOURCE_LOSC        = 0x0,	/**< LOSC */
-	TSENSE_SOURCE_LRC         = 0x1,	/**< LRC */
+	TSENSE_SOURCE_LOSC        = 0x0U,	/**< LOSC */
+	TSENSE_SOURCE_LRC         = 0x1U,	/**< LRC */
 } tsense_source_sel_t;
 
 

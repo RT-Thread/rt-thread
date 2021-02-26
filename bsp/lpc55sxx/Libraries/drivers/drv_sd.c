@@ -52,8 +52,19 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 {
     rt_uint8_t status = kStatus_Success;
     struct mci_device *mci = (struct mci_device *)dev;
+    int ret;
 
-    rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    ret = rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
 
     {
         /* non-aligned. */
@@ -66,7 +77,7 @@ static rt_size_t rt_mci_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_siz
 
         for(i=0; i<size; i++)
         {
-            status=SD_ReadBlocks(&mci->card, sdio_buffer, sector_adr, 1);
+            status = SD_ReadBlocks(&mci->card, sdio_buffer, sector_adr, 1);
 
             memcpy(copy_buffer, sdio_buffer, mci->card.blockSize);
             sector_adr ++;
@@ -85,8 +96,19 @@ static rt_size_t rt_mci_write(rt_device_t dev, rt_off_t pos, const void *buffer,
 {
     rt_uint8_t status = kStatus_Success;
     struct mci_device *mci = (struct mci_device *)dev;
+    int ret;
 
-    rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    ret = rt_mutex_take(&mci->lock, RT_WAITING_FOREVER);
+    if (ret == -RT_ETIMEOUT)
+    {
+        rt_kprintf("Take mutex time out.\n");
+        return ret;
+    }
+    else if (ret == -RT_ERROR)
+    {
+        rt_kprintf("Take mutex error.\n");
+        return ret;
+    }
 
     {
         /* non-aligned. */
