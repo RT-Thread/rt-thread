@@ -382,19 +382,8 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* change stat */
     thread->stat = RT_THREAD_CLOSE;
 
-    if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
-    {
-        rt_object_detach((rt_object_t)thread);
-    }
-    else
-    {
-        /* disable interrupt */
-        lock = rt_hw_interrupt_disable();
-        /* insert to defunct thread list */
-        rt_list_insert_after(&rt_thread_defunct, &(thread->tlist));
-        /* enable interrupt */
-        rt_hw_interrupt_enable(lock);
-    }
+    /* detach thread object */
+    rt_object_detach((rt_object_t)thread);
 
     return RT_EOK;
 }
