@@ -80,10 +80,6 @@
 /* Using QEMU or SkyEye*/
 /* #define RT_USING_EMULATOR */
 
-/* SECTION: a mini libc */
-/* Using mini libc library*/
-/* #define RT_USING_MINILIBC */
-
 /* SECTION: C++ support */
 /* Using C++ support*/
 /* #define RT_USING_CPLUSPLUS */
