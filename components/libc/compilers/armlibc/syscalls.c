@@ -13,6 +13,7 @@
  *                             RT_USING_DFS is not defined
  * 2020-02-13     Meco Man     re-implement exit() and abort()
  * 2020-02-14     Meco Man     implement _sys_tmpnam()
+ * 2020-02-25     Meco Man     add multithreaded protection
  */
 
 #include <string.h>
@@ -40,6 +41,36 @@ __asm(".global __use_no_semihosting\n\t");
 const char __stdin_name[]  = "STDIN";
 const char __stdout_name[] = "STDOUT";
 const char __stderr_name[] = "STDERR";
+
+#ifdef RT_USING_HEAP
+int _mutex_initialize(rt_mutex_t *m)
+{
+    *m = rt_mutex_create("_mutex_", RT_IPC_FLAG_PRIO);
+    if(*m == RT_NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+void _mutex_acquire(rt_mutex_t *m)
+{
+    rt_mutex_take(*m, RT_WAITING_FOREVER);
+}
+
+void _mutex_release(rt_mutex_t *m)
+{
+    rt_mutex_release(*m);
+}
+
+void _mutex_free(rt_mutex_t *m)
+{
+    rt_mutex_delete(*m);
+}
+#endif
 
 /**
  * required by fopen() and freopen().
