@@ -134,7 +134,7 @@ static void _pages_ref_inc(struct page *p, uint32_t size_bits)
     }
     idx = idx & ~((1UL << size_bits) - 1);
 
-    page_head= page_start + idx;
+    page_head = page_start + idx;
     page_head->ref_cnt++;
 }
 

@@ -100,6 +100,9 @@ void dfs_unlock(void);
 void dfs_fd_lock(void);
 void dfs_fd_unlock(void);
 
+void dfs_fm_lock(void);
+void dfs_fm_unlock(void);
+
 /* FD APIs */
 int fdt_fd_new(struct dfs_fdtable *fdt);
 struct dfs_fd *fdt_fd_get(struct dfs_fdtable* fdt, int fd);

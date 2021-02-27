@@ -487,7 +487,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 #ifdef RT_USING_LWP
     {
         struct rt_lwp *lwp = lwp_self();
-        if (lwp)
+        if (lwp && type != RT_Object_Class_Thread)
         {
             /* insert object into lwP object list */
             rt_list_insert_after(&(lwp->object_list), &(object->lwp_obj_list));

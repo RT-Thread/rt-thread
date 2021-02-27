@@ -176,19 +176,34 @@ struct lwp_avl_struct *lwp_avl_find(avl_key_t key, struct lwp_avl_struct *ptree)
     return ptree;
 }
 
-void lwp_avl_traversal(struct lwp_avl_struct *ptree, void (*fun)(struct lwp_avl_struct *, void *), void *arg)
+int lwp_avl_traversal(struct lwp_avl_struct *ptree, int (*fun)(struct lwp_avl_struct *, void *), void *arg)
 {
+    int ret;
+
     if (!ptree)
     {
-        return;
+        return 0;
     }
     if (ptree->avl_left)
     {
-        lwp_avl_traversal(ptree->avl_left, fun, arg);
+        ret = lwp_avl_traversal(ptree->avl_left, fun, arg);
+        if (ret != 0)
+        {
+            return ret;
+        }
     }
-    (*fun)(ptree, arg);
+    ret = (*fun)(ptree, arg);
+    if (ret != 0)
+    {
+        return ret;
+    }
     if (ptree->avl_right)
     {
-        lwp_avl_traversal(ptree->avl_right, fun, arg);
+        ret = lwp_avl_traversal(ptree->avl_right, fun, arg);
+        if (ret != 0)
+        {
+            return ret;
+        }
     }
+    return ret;
 }

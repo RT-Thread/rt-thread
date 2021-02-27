@@ -91,6 +91,13 @@ lwp_set_thread_context:
     ldr r0, [sp]
     mov pc, lr
 
+.global lwp_get_user_sp
+lwp_get_user_sp:
+    cps #Mode_SYS
+    mov r0, sp
+    cps #Mode_SVC
+    mov pc, lr
+
 /*
  * void SVC_Handler(void);
  */

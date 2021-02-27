@@ -75,7 +75,7 @@ static int _lwp_shmget(size_t key, size_t size, int create)
     node_key = lwp_avl_find(key, shm_tree_key);
     if (node_key)
     {
-        return (struct lwp_shm_struct*)node_key->data - _shm_ary;   /* the index */
+        return (struct lwp_shm_struct *)node_key->data - _shm_ary;   /* the index */
     }
 
     /* If there doesn't exist such an item and we're allowed to create one ... */
@@ -101,7 +101,7 @@ static int _lwp_shmget(size_t key, size_t size, int create)
         {
             goto err;
         }
-        page_addr_p = (void*)((char*)page_addr + PV_OFFSET);    /* physical address */
+        page_addr_p = (void *)((char *)page_addr + PV_OFFSET);    /* physical address */
 
         /* initialize the shared memory structure */
         p = _shm_ary + id;
@@ -117,11 +117,11 @@ static int _lwp_shmget(size_t key, size_t size, int create)
             goto err;
         }
         node_key->avl_key = p->key;
-        node_key->data = (void*)p;
+        node_key->data = (void *)p;
         lwp_avl_insert(node_key, &shm_tree_key);
         node_pa = node_key + 1;
         node_pa->avl_key = p->addr;
-        node_pa->data = (void*)p;
+        node_pa->data = (void *)p;
         lwp_avl_insert(node_pa, &shm_tree_pa);
     }
     return id;
@@ -172,7 +172,7 @@ static struct lwp_avl_struct *shm_id_to_node(int id)
     {
         return RT_NULL;
     }
-    if (node_key->data != (void*)p)
+    if (node_key->data != (void *)p)
     {
         return RT_NULL;
     }
@@ -192,13 +192,13 @@ static int _lwp_shmrm(int id)
     {
         return -1;
     }
-    p = (struct lwp_shm_struct*)node_key->data;
+    p = (struct lwp_shm_struct *)node_key->data;
     if (p->ref)
     {
         return 0;
     }
     bit = rt_page_bits(p->size);
-    rt_pages_free((void*)((char*)p->addr - PV_OFFSET), bit);
+    rt_pages_free((void *)((char *)p->addr - PV_OFFSET), bit);
     lwp_avl_remove(node_key, &shm_tree_key);
     node_pa = node_key + 1;
     lwp_avl_remove(node_pa, &shm_tree_pa);
@@ -237,15 +237,15 @@ static void *_lwp_shmat(int id, void *shm_vaddr)
     {
         return RT_NULL;
     }
-    p = (struct lwp_shm_struct*)node_key->data; /* p = _shm_ary[id]; */
+    p = (struct lwp_shm_struct *)node_key->data; /* p = _shm_ary[id]; */
 
     /* map the shared memory into the address space of the current thread */
-    lwp = (struct rt_lwp *)rt_thread_self()->lwp;
+    lwp = lwp_self();
     if (!lwp)
     {
         return RT_NULL;
     }
-    va = lwp_map_user_type(lwp, shm_vaddr, (void*)p->addr, p->size, 1, MM_AREA_TYPE_SHM);
+    va = lwp_map_user_type(lwp, shm_vaddr, (void *)p->addr, p->size, 1, MM_AREA_TYPE_SHM);
     if (va)
     {
         p->ref++;
@@ -269,37 +269,92 @@ void *lwp_shmat(int id, void *shm_vaddr)
     return ret;
 }
 
-/* Unmap the shared memory from the address space of the current thread. */
-int _lwp_shmdt(void *shm_vaddr)
+static struct lwp_shm_struct *_lwp_shm_struct_get(struct rt_lwp *lwp, void *shm_vaddr)
 {
-    struct rt_lwp *lwp = RT_NULL;
     void *pa = RT_NULL;
     struct lwp_avl_struct *node_pa = RT_NULL;
-    struct lwp_shm_struct* p = RT_NULL;
 
-    lwp = (struct rt_lwp*)rt_thread_self()->lwp;
     if (!lwp)
     {
-        return -1;
+        return RT_NULL;
     }
     pa = rt_hw_mmu_v2p(&lwp->mmu_info, shm_vaddr);  /* physical memory */
 
     node_pa = lwp_avl_find((size_t)pa, shm_tree_pa);
     if (!node_pa)
     {
-        return -1;
+        return RT_NULL;
     }
-    p = (struct lwp_shm_struct*)node_pa->data;
-    if (!p->ref)
+    return (struct lwp_shm_struct *)node_pa->data;
+}
+
+static int _lwp_shm_ref_inc(struct rt_lwp *lwp, void *shm_vaddr)
+{
+    struct lwp_shm_struct* p = _lwp_shm_struct_get(lwp, shm_vaddr);
+
+    if (p)
+    {
+        p->ref++;
+        return p->ref;
+    }
+    return -1;
+}
+
+int lwp_shm_ref_inc(struct rt_lwp *lwp, void *shm_vaddr)
+{
+    int ret = 0;
+    rt_base_t level = 0;
+
+    level = rt_hw_interrupt_disable();
+    ret = _lwp_shm_ref_inc(lwp, shm_vaddr);
+    rt_hw_interrupt_enable(level);
+
+    return ret;
+}
+
+static int _lwp_shm_ref_dec(struct rt_lwp *lwp, void *shm_vaddr)
+{
+    struct lwp_shm_struct* p = _lwp_shm_struct_get(lwp, shm_vaddr);
+
+    if (p && (p->ref > 0))
+    {
+        p->ref--;
+        return p->ref;
+    }
+    return -1;
+}
+
+int lwp_shm_ref_dec(struct rt_lwp *lwp, void *shm_vaddr)
+{
+    int ret = 0;
+    rt_base_t level = 0;
+
+    level = rt_hw_interrupt_disable();
+    ret = _lwp_shm_ref_dec(lwp, shm_vaddr);
+    rt_hw_interrupt_enable(level);
+
+    return ret;
+}
+
+/* Unmap the shared memory from the address space of the current thread. */
+int _lwp_shmdt(void *shm_vaddr)
+{
+    struct rt_lwp *lwp = RT_NULL;
+    int ret = 0;
+
+    lwp = lwp_self();
+    if (!lwp)
     {
         return -1;
     }
-    p->ref--;
-
-    lwp_unmap_user_phy(lwp, shm_vaddr);
-    return 0;
+    ret = _lwp_shm_ref_dec(lwp, shm_vaddr);
+    if (ret >= 0)
+    {
+        lwp_unmap_user_phy(lwp, shm_vaddr);
+        return 0;
+    }
+    return -1;
 }
-
 /* A wrapping function: detach the mapped shared memory. */
 int lwp_shmdt(void *shm_vaddr)
 {
@@ -325,9 +380,9 @@ void *_lwp_shminfo(int id)
     {
         return RT_NULL;
     }
-    p = (struct lwp_shm_struct*)node_key->data; /* p = _shm_ary[id]; */
+    p = (struct lwp_shm_struct *)node_key->data; /* p = _shm_ary[id]; */
 
-    return (void*)((char*)p->addr - PV_OFFSET);     /* get the virtual address */
+    return (void *)((char *)p->addr - PV_OFFSET);     /* get the virtual address */
 }
 
 /* A wrapping function: get the virtual address of a shared memory. */
@@ -343,13 +398,14 @@ void *lwp_shminfo(int id)
 }
 
 #ifdef RT_USING_FINSH
-static void _shm_info(struct lwp_avl_struct* node_key, void *data)
+static int _shm_info(struct lwp_avl_struct* node_key, void *data)
 {
     int id = 0;
-    struct lwp_shm_struct* p = (struct lwp_shm_struct*)node_key->data;
+    struct lwp_shm_struct* p = (struct lwp_shm_struct *)node_key->data;
 
     id = p - _shm_ary;
     rt_kprintf("0x%08x 0x%08x 0x%08x %8d\n", p->key, p->addr, p->size, id);
+    return 0;
 }
 
 void list_shm(void)

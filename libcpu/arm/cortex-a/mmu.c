@@ -298,7 +298,7 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
         }
 
 #ifndef RT_USING_USERSPACE
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
+        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
         *ref_cnt = 1;
 #endif
 
@@ -455,7 +455,7 @@ static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages
                 rt_hw_cpu_dcache_clean(mmu_l1, 4);
             }
 #else
-            ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
+            ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
             (*ref_cnt)--;
             if (!*ref_cnt)
             {
@@ -523,7 +523,7 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
         }
 
 #ifndef RT_USING_USERSPACE
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
+        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
         (*ref_cnt)++;
 #endif
 
