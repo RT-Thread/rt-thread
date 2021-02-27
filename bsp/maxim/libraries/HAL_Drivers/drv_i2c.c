@@ -15,9 +15,6 @@
 #include <rtthread.h>
 #include "board.h"
 
-#define RT_USING_I2C
-#define BSP_USING_I2C0
-
 #ifdef RT_USING_I2C
 
 #if !defined(BSP_USING_I2C0) && !defined(BSP_USING_I2C1)
