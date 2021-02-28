@@ -189,13 +189,6 @@ _rename_r(struct _reent *ptr, const char *old, const char *new)
 #endif
 }
 
-void *
-_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
-{
-    /* no use this routine to get memory */
-    return RT_NULL;
-}
-
 int
 _stat_r(struct _reent *ptr, const char *file, struct stat *pstat)
 {
@@ -258,7 +251,7 @@ _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 #endif
 }
 
-/* Memory routine */
+#ifdef RT_USING_HEAP /* Memory routine */
 void *
 _malloc_r (struct _reent *ptr, size_t size)
 {
@@ -305,6 +298,15 @@ _free_r (struct _reent *ptr, void *addr)
 {
     rt_free (addr);
 }
+
+#else
+void *
+_sbrk_r(struct _reent *ptr, ptrdiff_t incr)
+{
+    /* no use this routine to get memory */
+    return RT_NULL;
+}
+#endif /*RT_USING_HEAP*/
 
 /* for exit() and abort() */
 __attribute__ ((noreturn)) void
