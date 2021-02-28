@@ -303,7 +303,6 @@ _free_r (struct _reent *ptr, void *addr)
 void *
 _sbrk_r(struct _reent *ptr, ptrdiff_t incr)
 {
-    /* no use this routine to get memory */
     return RT_NULL;
 }
 #endif /*RT_USING_HEAP*/
