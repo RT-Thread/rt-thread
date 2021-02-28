@@ -36,7 +36,7 @@ struct lwp_avl_struct
 void lwp_avl_remove(struct lwp_avl_struct * node_to_delete, struct lwp_avl_struct ** ptree);
 void lwp_avl_insert (struct lwp_avl_struct * new_node, struct lwp_avl_struct ** ptree);
 struct lwp_avl_struct* lwp_avl_find(avl_key_t key, struct lwp_avl_struct* ptree);
-void lwp_avl_traversal(struct lwp_avl_struct* ptree, void (*fun)(struct lwp_avl_struct*, void *), void *arg);
+int lwp_avl_traversal(struct lwp_avl_struct* ptree, int (*fun)(struct lwp_avl_struct*, void *), void *arg);
 
 #ifdef __cplusplus
 }

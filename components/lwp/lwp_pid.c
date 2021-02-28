@@ -30,12 +30,17 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#define PID_CT_ASSERT(name, x) \
+    struct assert_##name {char ary[2 * (x) - 1];}
+
+PID_CT_ASSERT(pid_max_nr, RT_LWP_MAX_NR > 1);
+
 struct rt_pid_struct
 {
     struct rt_lwp* pidmap[RT_LWP_MAX_NR];
     pid_t last_pid;
 };
-static struct rt_pid_struct pid_struct = {0};
+static struct rt_pid_struct pid_struct = {{0}, 1};
 
 int libc_stdio_get_console(void);
 
@@ -64,8 +69,9 @@ struct rt_lwp* lwp_new(void)
     struct rt_lwp* lwp = RT_NULL;
 
     level = rt_hw_interrupt_disable();
+
     /* first scan */
-    for (i=pid_struct.last_pid; i<RT_LWP_MAX_NR; i++)
+    for (i = pid_struct.last_pid; i < RT_LWP_MAX_NR; i++)
     {
         if (!pid_struct.pidmap[i])
         {
@@ -76,7 +82,8 @@ struct rt_lwp* lwp_new(void)
     /* if first scan failed, scan the pidmap start with 0 */
     if (i >= RT_LWP_MAX_NR)
     {
-        for (i=0; i<pid_struct.last_pid; i++)
+        /* 0 is reserved */
+        for (i = 1; i < pid_struct.last_pid; i++)
         {
             if (!pid_struct.pidmap[i])
             {
@@ -92,7 +99,12 @@ struct rt_lwp* lwp_new(void)
         pid_struct.last_pid = 0;
         goto out;
     }
-    pid_struct.last_pid = (i + 1)%RT_LWP_MAX_NR;
+    pid_struct.last_pid = (i + 1) % RT_LWP_MAX_NR;
+    if (pid_struct.last_pid == 0)
+    {
+        /* 0 is reserved */
+        pid_struct.last_pid++;
+    }
     lwp = (struct rt_lwp *)rt_malloc(sizeof(struct rt_lwp));
     if (lwp == RT_NULL)
     {
@@ -131,11 +143,7 @@ static void lwp_user_obj_free(struct rt_lwp *lwp)
         {
         case RT_Object_Class_Thread:
         {
-            rt_thread_t tid = (rt_thread_t)object;
-            if (tid->stat != RT_THREAD_CLOSE)
-            {
-                rt_thread_delete(tid);
-            }
+            RT_ASSERT(0);
             break;
         }
         case RT_Object_Class_Semaphore:
@@ -268,7 +276,7 @@ void lwp_free(struct rt_lwp* lwp)
             {
                 thread = rt_list_entry(lwp->wait_list.next, struct rt_thread, tlist);
                 thread->error = RT_EOK;
-                thread->msg_ret = (void*)lwp->lwp_ret;
+                thread->msg_ret = (void *)lwp->lwp_ret;
                 rt_thread_resume(thread);
             }
         }
@@ -320,11 +328,19 @@ void lwp_ref_dec(struct rt_lwp *lwp)
 
 struct rt_lwp* lwp_from_pid(pid_t pid)
 {
+    if ((pid <= 0) || (pid >= RT_LWP_MAX_NR))
+    {
+        return NULL;
+    }
     return pid_struct.pidmap[pid];
 }
 
 pid_t lwp_to_pid(struct rt_lwp* lwp)
 {
+    if (!lwp)
+    {
+        return -1;
+    }
     return lwp->pid;
 }
 
@@ -333,7 +349,7 @@ char* lwp_pid2name(int32_t pid)
     struct rt_lwp* lwp;
     char* process_name = RT_NULL;
 
-    lwp = pid_struct.pidmap[pid];
+    lwp = lwp_from_pid(pid);
     if (lwp)
     {
         process_name = strrchr(lwp->cmd, '/');
@@ -349,8 +365,9 @@ int32_t lwp_name2pid(const char* name)
     char* process_name = RT_NULL;
     struct rt_lwp* lwp = RT_NULL;
 
-    for (pid=0; pid<RT_LWP_MAX_NR; pid++)
+    for (pid = 1; pid < RT_LWP_MAX_NR; pid++)
     {
+        /* 0 is reserved */
         if (pid_struct.pidmap[pid])
         {
             lwp = pid_struct.pidmap[pid];
@@ -389,7 +406,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
         goto quit;
     }
 
-    lwp_self = (struct rt_lwp*)rt_thread_self()->lwp;
+    lwp_self = (struct rt_lwp *)rt_thread_self()->lwp;
     if (!lwp_self)
     {
         goto quit;
@@ -521,7 +538,7 @@ long list_process(void)
     if (count > 0)
     {
         /* get thread pointers */
-        threads = (struct rt_thread **)rt_calloc(count, sizeof(struct rt_thread*));
+        threads = (struct rt_thread **)rt_calloc(count, sizeof(struct rt_thread *));
         if (threads)
         {
             index = rt_object_get_pointers(RT_Object_Class_Thread, (rt_object_t *)threads, count);
@@ -555,7 +572,7 @@ long list_process(void)
         }
     }
 
-    for (index=0; index<RT_LWP_MAX_NR; index++)
+    for (index = 0; index < RT_LWP_MAX_NR; index++)
     {
         if (pid_struct.pidmap[index])
         {
@@ -676,7 +693,7 @@ void lwp_request_thread_exit(rt_thread_t thread_to_exit)
     {
         goto finish;
     }
-    if ((struct rt_lwp*)thread_to_exit->lwp != lwp)
+    if ((struct rt_lwp *)thread_to_exit->lwp != lwp)
     {
         goto finish;
     }

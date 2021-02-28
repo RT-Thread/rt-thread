@@ -25,7 +25,7 @@ int lwp_user_space_init(struct rt_lwp *lwp);
 void lwp_unmap_user_space(struct rt_lwp *lwp);
 
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
-void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size);
+void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text);
 
 void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t map_size, int cached);
 int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va);

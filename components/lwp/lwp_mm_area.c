@@ -39,7 +39,7 @@ int lwp_map_area_insert(struct lwp_avl_struct **avl_tree, size_t addr, size_t si
     memset(node, 0, sizeof(struct lwp_avl_struct));
 
     node->avl_key = ma->addr;
-    node->data = (void*)ma;
+    node->data = (void *)ma;
     lwp_avl_insert(node, avl_tree);
     return 0;
 }
@@ -70,7 +70,7 @@ struct lwp_avl_struct* lwp_map_find(struct lwp_avl_struct* ptree, size_t addr)
         }
         if ((size_t)node->avl_key <= addr)
         {
-            struct rt_mm_area_struct *ma = (struct rt_mm_area_struct*)node->data;
+            struct rt_mm_area_struct *ma = (struct rt_mm_area_struct *)node->data;
             if ((ma->addr <= addr) && (addr < ma->addr + ma->size))
             {
                 /* find area */
@@ -103,13 +103,14 @@ struct lwp_avl_struct* lwp_map_find_first(struct lwp_avl_struct* ptree)
     return ptree;
 }
 
-static void top_mem_fun(struct lwp_avl_struct* ptree, void *arg)
+int top_mem_fun(struct lwp_avl_struct* ptree, void *arg)
 {
-    size_t *vs = (size_t*)arg;
+    size_t *vs = (size_t *)arg;
     struct rt_mm_area_struct *ma;
 
-    ma = (struct rt_mm_area_struct*)ptree->data;
+    ma = (struct rt_mm_area_struct *)ptree->data;
     *vs += ma->size;
+    return 0;
 }
 
 size_t lwp_vmem_count(struct lwp_avl_struct *ptree)

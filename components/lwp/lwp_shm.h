@@ -21,6 +21,8 @@ int lwp_shmrm(int id);
 void* lwp_shmat(int id, void* shm_vaddr);
 int lwp_shmdt(void* shm_vaddr);
 void *lwp_shminfo(int id);
+int lwp_shm_ref_inc(struct rt_lwp *lwp, void *shm_vaddr);
+int lwp_shm_ref_dec(struct rt_lwp *lwp, void *shm_vaddr);
 
 #ifdef __cplusplus
 }

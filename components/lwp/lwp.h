@@ -58,8 +58,7 @@ struct rt_lwp
 #endif
 
     uint8_t lwp_type;
-    uint8_t heap_cnt;
-    uint8_t reserv[2];
+    uint8_t reserv[3];
 
     struct rt_lwp *parent;
     struct rt_lwp *first_child;

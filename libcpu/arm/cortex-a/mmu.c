@@ -248,7 +248,9 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
     size_t l1_off;
     size_t *mmu_l1, *mmu_l2;
     size_t sections;
+#ifndef RT_USING_USERSPACE
     size_t *ref_cnt;
+#endif
 
     /* for kernel ioremap */
     if ((size_t)v_address < KERNEL_VADDR_START)
@@ -295,8 +297,10 @@ int rt_hw_mmu_ioremap_init(rt_mmu_info *mmu_info, void* v_address, size_t size)
             return -1;
         }
 
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
+#ifndef RT_USING_USERSPACE
+        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
         *ref_cnt = 1;
+#endif
 
         loop_va += ARCH_SECTION_SIZE;
     }
@@ -409,7 +413,9 @@ static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages
     size_t loop_va = (size_t)v_addr & ~ARCH_PAGE_MASK;
     size_t l1_off, l2_off;
     size_t *mmu_l1, *mmu_l2;
+#ifndef RT_USING_USERSPACE
     size_t *ref_cnt;
+#endif
 
     if (!mmu_info)
     {
@@ -442,20 +448,24 @@ static void __rt_hw_mmu_unmap(rt_mmu_info *mmu_info, void* v_addr, size_t npages
             /* cache maintain */
             rt_hw_cpu_dcache_clean(mmu_l2 + l2_off, 4);
 
-            ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
+#ifdef RT_USING_USERSPACE
+            if (rt_pages_free(mmu_l2, 0))
+            {
+                *mmu_l1 = 0;
+                rt_hw_cpu_dcache_clean(mmu_l1, 4);
+            }
+#else
+            ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
             (*ref_cnt)--;
             if (!*ref_cnt)
             {
-#ifdef RT_USING_USERSPACE
-                rt_pages_free(mmu_l2, 0);
-#else
                 rt_free_align(mmu_l2);
-#endif
                 *mmu_l1 = 0;
 
                 /* cache maintain */
                 rt_hw_cpu_dcache_clean(mmu_l1, 4);
             }
+#endif
         }
         loop_va += ARCH_PAGE_SIZE;
     }
@@ -467,7 +477,9 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
     size_t loop_pa = (size_t)p_addr & ~ARCH_PAGE_MASK;
     size_t l1_off, l2_off;
     size_t *mmu_l1, *mmu_l2;
+#ifndef RT_USING_USERSPACE
     size_t *ref_cnt;
+#endif
 
     if (!mmu_info)
     {
@@ -483,6 +495,7 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
         if (*mmu_l1 & ARCH_MMU_USED_MASK)
         {
             mmu_l2 = (size_t *)((*mmu_l1 & ~ARCH_PAGE_TBL_MASK) - mmu_info->pv_off);
+            rt_page_ref_inc(mmu_l2, 0);
         }
         else
         {
@@ -509,8 +522,10 @@ static int __rt_hw_mmu_map(rt_mmu_info *mmu_info, void* v_addr, void* p_addr, si
             }
         }
 
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
+#ifndef RT_USING_USERSPACE
+        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE / ARCH_PAGE_SIZE);
         (*ref_cnt)++;
+#endif
 
         *(mmu_l2 + l2_off) = (loop_pa | attr);
         /* cache maintain */
@@ -605,7 +620,6 @@ static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npag
     size_t loop_pa;
     size_t l1_off, l2_off;
     size_t *mmu_l1, *mmu_l2;
-    size_t *ref_cnt;
 
     if (!mmu_info)
     {
@@ -625,6 +639,7 @@ static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npag
         if (*mmu_l1 & ARCH_MMU_USED_MASK)
         {
             mmu_l2 = (size_t *)((*mmu_l1 & ~ARCH_PAGE_TBL_MASK) - mmu_info->pv_off);
+            rt_page_ref_inc(mmu_l2, 0);
         }
         else
         {
@@ -643,9 +658,6 @@ static int __rt_hw_mmu_map_auto(rt_mmu_info *mmu_info, void* v_addr, size_t npag
             else
                 goto err;
         }
-
-        ref_cnt = mmu_l2 + (ARCH_SECTION_SIZE/ARCH_PAGE_SIZE);
-        (*ref_cnt)++;
 
         loop_pa += mmu_info->pv_off;
         *(mmu_l2 + l2_off) = (loop_pa | attr);

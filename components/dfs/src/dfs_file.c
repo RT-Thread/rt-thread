@@ -25,6 +25,16 @@ struct dfs_fnode_mgr
 
 static struct dfs_fnode_mgr dfs_fm;
 
+void dfs_fm_lock(void)
+{
+    rt_mutex_take(&dfs_fm.lock, RT_WAITING_FOREVER);
+}
+
+void dfs_fm_unlock(void)
+{
+    rt_mutex_release(&dfs_fm.lock);
+}
+
 void dfs_fnode_mgr_init(void)
 {
     int i = 0;
@@ -97,13 +107,13 @@ int dfs_file_is_open(const char *pathname)
 
     fullpath = dfs_normalize_path(NULL, pathname);
 
-    rt_mutex_take(&dfs_fm.lock, RT_WAITING_FOREVER);
+    dfs_fm_lock();
     fnode = dfs_fnode_find(fullpath, NULL);
     if (fnode)
     {
         ret = 1;
     }
-    rt_mutex_release(&dfs_fm.lock);
+    dfs_fm_unlock();
 
     rt_free(fullpath);
     return ret;
@@ -140,7 +150,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
 
     LOG_D("open file:%s", fullpath);
 
-    rt_mutex_take(&dfs_fm.lock, RT_WAITING_FOREVER);
+    dfs_fm_lock();
     /* fnode find */
     fnode = dfs_fnode_find(fullpath, &hash_head);
     if (fnode)
@@ -148,7 +158,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fnode->ref_count++;
         fd->pos   = 0;
         fd->fnode = fnode;
-        rt_mutex_release(&dfs_fm.lock);
+        dfs_fm_unlock();
     }
     else
     {
@@ -156,7 +166,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fs = dfs_filesystem_lookup(fullpath);
         if (fs == NULL)
         {
-            rt_mutex_release(&dfs_fm.lock);
+            dfs_fm_unlock();
             rt_free(fullpath); /* release path */
             return -ENOENT;
         }
@@ -164,7 +174,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fnode = rt_calloc(1, sizeof(struct dfs_fnode));
         if (!fnode)
         {
-            rt_mutex_release(&dfs_fm.lock);
+            dfs_fm_unlock();
             rt_free(fullpath); /* release path */
             return -ENOMEM;
         }
@@ -195,7 +205,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         /* specific file system open routine */
         if (fnode->fops->open == NULL)
         {
-            rt_mutex_release(&dfs_fm.lock);
+            dfs_fm_unlock();
             /* clear fd */
             if (fnode->path != fnode->fullpath)
             {
@@ -229,9 +239,9 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
             rt_free(fnode->path);
             fd->fnode = NULL;
             rt_free(fnode);
-            rt_mutex_release(&dfs_fm.lock);
         }
 
+        dfs_fm_unlock();
         LOG_D("%s open failed", fullpath);
 
         return result;
@@ -243,7 +253,7 @@ int dfs_file_open(struct dfs_fd *fd, const char *path, int flags)
         fnode->type = FT_DIRECTORY;
         fnode->flags |= DFS_F_DIRECTORY;
     }
-    rt_mutex_release(&dfs_fm.lock);
+    dfs_fm_unlock();
 
     LOG_D("open successful");
     return 0;
@@ -268,12 +278,12 @@ int dfs_file_close(struct dfs_fd *fd)
 
     if (fd->ref_count == 1)
     {
-        rt_mutex_take(&dfs_fm.lock, RT_WAITING_FOREVER);
+        dfs_fm_lock();
         fnode = fd->fnode;
 
         if (fnode->ref_count <= 0)
         {
-            rt_mutex_release(&dfs_fm.lock);
+            dfs_fm_unlock();
             return -ENXIO;
         }
 
@@ -285,7 +295,7 @@ int dfs_file_close(struct dfs_fd *fd)
         /* close fd error, return */
         if (result < 0)
         {
-            rt_mutex_release(&dfs_fm.lock);
+            dfs_fm_unlock();
             return result;
         }
 
@@ -301,8 +311,8 @@ int dfs_file_close(struct dfs_fd *fd)
             }
             rt_free(fnode->path);
             rt_free(fnode);
-            rt_mutex_release(&dfs_fm.lock);
         }
+        dfs_fm_unlock();
     }
 
     return result;

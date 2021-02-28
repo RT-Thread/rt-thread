@@ -38,8 +38,8 @@ void lwp_mmu_switch(struct rt_thread *thread)
 
     if (thread->lwp)
     {
-        l = (struct rt_lwp*)thread->lwp;
-        new_mmu_table = (void*)((char*)l->mmu_info.vtable + l->mmu_info.pv_off);
+        l = (struct rt_lwp *)thread->lwp;
+        new_mmu_table = (void *)((char *)l->mmu_info.vtable + l->mmu_info.pv_off);
 #ifdef LWP_DEBUG
         {
             int i = 0;
@@ -49,7 +49,7 @@ void lwp_mmu_switch(struct rt_thread *thread)
             for (i = 0; i < 0x1000; i++)
             {
                 rt_kprintf("0x%08x ", *p++);
-                if (( i & 0xf) == 0xf)
+                if ((i & 0xf) == 0xf)
                 {
                     rt_kprintf("\n");
                 }
@@ -94,7 +94,7 @@ static void unmap_range(struct rt_lwp *lwp, void *addr, size_t size, int pa_need
     void *va = RT_NULL, *pa = RT_NULL;
     int i = 0;
 
-    for (va = addr, i = 0; i < size; va = (void*)((char*)va + ARCH_PAGE_SIZE), i += ARCH_PAGE_SIZE)
+    for (va = addr, i = 0; i < size; va = (void *)((char *)va + ARCH_PAGE_SIZE), i += ARCH_PAGE_SIZE)
     {
         pa = rt_hw_mmu_v2p(&lwp->mmu_info, va);
         if (pa)
@@ -102,7 +102,7 @@ static void unmap_range(struct rt_lwp *lwp, void *addr, size_t size, int pa_need
             rt_hw_mmu_unmap(&lwp->mmu_info, va, ARCH_PAGE_SIZE);
             if (pa_need_free)
             {
-                rt_pages_free((void*)((char*)pa - PV_OFFSET), 0);
+                rt_pages_free((void *)((char *)pa - PV_OFFSET), 0);
             }
         }
     }
@@ -110,32 +110,47 @@ static void unmap_range(struct rt_lwp *lwp, void *addr, size_t size, int pa_need
 
 void lwp_unmap_user_space(struct rt_lwp *lwp)
 {
-    struct lwp_avl_struct* node = RT_NULL;
+    struct lwp_avl_struct *node = RT_NULL;
     rt_mmu_info *m_info = &lwp->mmu_info;
 
     while ((node = lwp_map_find_first(lwp->map_area)) != 0)
     {
-        struct rt_mm_area_struct *ma = (struct rt_mm_area_struct*)node->data;
+        struct rt_mm_area_struct *ma = (struct rt_mm_area_struct *)node->data;
+        int pa_need_free = 0;
 
         RT_ASSERT(ma->type < MM_AREA_TYPE_UNKNOW);
-        unmap_range(lwp, (void*)ma->addr, ma->size, (int)(ma->type == MM_AREA_TYPE_AUTO));
+
+        switch (ma->type)
+        {
+            case MM_AREA_TYPE_DATA:
+            case MM_AREA_TYPE_TEXT:
+                pa_need_free = 1;
+                break;
+            case MM_AREA_TYPE_SHM:
+                lwp_shm_ref_dec(lwp, (void *)ma->addr);
+                break;
+        }
+        unmap_range(lwp, (void *)ma->addr, ma->size, pa_need_free);
         lwp_map_area_remove(&lwp->map_area, ma->addr);
     }
     rt_pages_free(m_info->vtable, 2);
 }
 
-static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
+static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
 {
     void *va = RT_NULL;
     int ret = 0;
     rt_mmu_info *m_info = &lwp->mmu_info;
+    int area_type;
 
     va = rt_hw_mmu_map_auto(m_info, map_va, map_size, MMU_MAP_U_RWCB);
     if (!va)
     {
         return 0;
     }
-    ret = lwp_map_area_insert(&lwp->map_area, (size_t)va, map_size, MM_AREA_TYPE_AUTO);
+
+    area_type = text ? MM_AREA_TYPE_TEXT : MM_AREA_TYPE_DATA;
+    ret = lwp_map_area_insert(&lwp->map_area, (size_t)va, map_size, area_type);
     if (ret != 0)
     {
         unmap_range(lwp, va, map_size, 1);
@@ -149,6 +164,7 @@ int lwp_unmap_user(struct rt_lwp *lwp, void *va)
     rt_base_t level = 0;
     struct lwp_avl_struct *ma_avl_node = RT_NULL;
     struct rt_mm_area_struct *ma = RT_NULL;
+    int pa_need_free = 0;
 
     level = rt_hw_interrupt_disable();
     ma_avl_node = lwp_map_find(lwp->map_area, (size_t)va);
@@ -158,10 +174,79 @@ int lwp_unmap_user(struct rt_lwp *lwp, void *va)
         return -1;
     }
     ma = (struct rt_mm_area_struct *)ma_avl_node->data;
+
     RT_ASSERT(ma->type < MM_AREA_TYPE_UNKNOW);
-    unmap_range(lwp, (void *)ma->addr, ma->size, (int)(ma->type == MM_AREA_TYPE_AUTO));
+    if ((ma->type == MM_AREA_TYPE_DATA) || (ma->type == MM_AREA_TYPE_TEXT))
+    {
+        pa_need_free = 1;
+    }
+    unmap_range(lwp, (void *)ma->addr, ma->size, pa_need_free);
     lwp_map_area_remove(&lwp->map_area, (size_t)va);
     rt_hw_interrupt_enable(level);
+    return 0;
+}
+
+int lwp_dup_user(struct lwp_avl_struct *ptree, void *arg)
+{
+    struct rt_lwp *self_lwp = lwp_self();
+    struct rt_lwp *new_lwp = (struct rt_lwp *)arg;
+    struct rt_mm_area_struct *ma = (struct rt_mm_area_struct *)ptree->data;
+    void *pa = RT_NULL;
+    void *va = RT_NULL;
+
+    switch (ma->type)
+    {
+        case MM_AREA_TYPE_PHY:
+            pa = rt_hw_mmu_v2p(&self_lwp->mmu_info, (void *)ma->addr);
+            va = lwp_map_user_type(new_lwp, (void *)ma->addr, pa, ma->size, 0, MM_AREA_TYPE_PHY);
+            break;
+        case MM_AREA_TYPE_PHY_CACHED:
+            pa = rt_hw_mmu_v2p(&self_lwp->mmu_info, (void *)ma->addr);
+            va = lwp_map_user_type(new_lwp, (void *)ma->addr, pa, ma->size, 0, MM_AREA_TYPE_PHY_CACHED);
+            break;
+        case MM_AREA_TYPE_SHM:
+            va = (void *)ma->addr;
+            if (lwp_shm_ref_inc(self_lwp, va) > 0)
+            {
+                pa = rt_hw_mmu_v2p(&self_lwp->mmu_info, va);
+                va = lwp_map_user_type(new_lwp, va, pa, ma->size, 1, MM_AREA_TYPE_SHM);
+            }
+            break;
+        case MM_AREA_TYPE_DATA:
+            va = lwp_map_user(new_lwp, (void *)ma->addr, ma->size, 0);
+            if (va == (void *)ma->addr)
+            {
+                lwp_data_put(&new_lwp->mmu_info, va, va, ma->size);
+            }
+            break;
+        case MM_AREA_TYPE_TEXT:
+            {
+                char *addr = (char *)ma->addr;
+                size_t size = ma->size;
+
+                while (size)
+                {
+                    pa = rt_hw_mmu_v2p(&self_lwp->mmu_info, (void *)addr);
+                    rt_page_ref_inc((char *)pa - self_lwp->mmu_info.pv_off, 0);
+                    va = lwp_map_user_type(new_lwp, addr, pa, ARCH_PAGE_SIZE, 1, MM_AREA_TYPE_TEXT);
+                    if (va != addr)
+                    {
+                        return -1;
+                    }
+                    addr += ARCH_PAGE_SIZE;
+                    size -= ARCH_PAGE_SIZE;
+                }
+                va = (void *)ma->addr;
+            }
+            break;
+        default:
+            RT_ASSERT(0);
+            break;
+    }
+    if (va != (void *)ma->addr)
+    {
+        return -1;
+    }
     return 0;
 }
 
@@ -175,7 +260,7 @@ int lwp_unmap_user_type(struct rt_lwp *lwp, void *va)
     return lwp_unmap_user(lwp, va);
 }
 
-void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
+void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, int text)
 {
     rt_base_t level = 0;
     void *ret = RT_NULL;
@@ -188,14 +273,14 @@ void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size)
     offset = (size_t)map_va & ARCH_PAGE_MASK;
     map_size += (offset + ARCH_PAGE_SIZE - 1);
     map_size &= ~ARCH_PAGE_MASK;
-    map_va = (void*)((size_t)map_va & ~ARCH_PAGE_MASK);
+    map_va = (void *)((size_t)map_va & ~ARCH_PAGE_MASK);
 
     level = rt_hw_interrupt_disable();
-    ret = _lwp_map_user(lwp, map_va, map_size);
+    ret = _lwp_map_user(lwp, map_va, map_size, text);
     rt_hw_interrupt_enable(level);
     if (ret)
     {
-        ret = (void*)((char*)ret + offset);
+        ret = (void *)((char *)ret + offset);
     }
     return ret;
 }
@@ -210,6 +295,10 @@ static void *_lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa, 
     if (cached)
     {
         attr = MMU_MAP_U_RWCB;
+        if (type == MM_AREA_TYPE_PHY)
+        {
+            type = MM_AREA_TYPE_PHY_CACHED;
+        }
     }
     else
     {
@@ -246,14 +335,14 @@ void *lwp_map_user_type(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t m
     offset = (size_t)map_pa & ARCH_PAGE_MASK;
     map_size += (offset + ARCH_PAGE_SIZE - 1);
     map_size &= ~ARCH_PAGE_MASK;
-    map_pa = (void*)((size_t)map_pa & ~ARCH_PAGE_MASK);
+    map_pa = (void *)((size_t)map_pa & ~ARCH_PAGE_MASK);
 
     level = rt_hw_interrupt_disable();
     ret = _lwp_map_user_type(lwp, map_va, map_pa, map_size, cached, type);
     rt_hw_interrupt_enable(level);
     if (ret)
     {
-        ret = (void*)((char*)ret + offset);
+        ret = (void *)((char *)ret + offset);
     }
     return ret;
 }
@@ -282,7 +371,7 @@ int lwp_brk(void *addr)
         void *va;
 
         size = (((size_t)addr - lwp->end_heap) + ARCH_PAGE_SIZE - 1) & ~ARCH_PAGE_MASK;
-        va = lwp_map_user(lwp, (void*)lwp->end_heap, size);
+        va = lwp_map_user(lwp, (void *)lwp->end_heap, size, 0);
         if (va)
         {
             lwp->end_heap += size;
@@ -301,17 +390,17 @@ void* lwp_mmap2(void *addr, size_t length, int prot,
         int flags, int fd, off_t pgoffset)
 {
     rt_base_t level = 0;
-    void *ret = (void*)-1;
+    void *ret = (void *)-1;
     struct rt_lwp *lwp = RT_NULL;
 
     level = rt_hw_interrupt_disable();
     if (fd == -1)
     {
         lwp = rt_thread_self()->lwp;
-        ret = lwp_map_user(lwp, addr, length);
+        ret = lwp_map_user(lwp, addr, length, 0);
         if (!ret)
         {
-            ret = (void*)-1;
+            ret = (void *)-1;
         }
     }
     rt_hw_interrupt_enable(level);
@@ -337,11 +426,11 @@ size_t lwp_get_from_user(void *dst, void *src, size_t size)
     rt_mmu_info *m_info = RT_NULL;
 
     /* check src */
-    if (src >= (void*)KERNEL_VADDR_START)
+    if (src >= (void *)KERNEL_VADDR_START)
     {
         return 0;
     }
-    if ((void*)((char*)src + size) > (void*)KERNEL_VADDR_START)
+    if ((void *)((char *)src + size) > (void *)KERNEL_VADDR_START)
     {
         return 0;
     }
@@ -362,11 +451,11 @@ size_t lwp_put_to_user(void *dst, void *src, size_t size)
     rt_mmu_info *m_info = RT_NULL;
 
     /* check dst */
-    if (dst >= (void*)KERNEL_VADDR_START)
+    if (dst >= (void *)KERNEL_VADDR_START)
     {
         return 0;
     }
-    if ((void*)((char*)dst + size) > (void*)KERNEL_VADDR_START)
+    if ((void *)((char *)dst + size) > (void *)KERNEL_VADDR_START)
     {
         return 0;
     }
@@ -396,8 +485,8 @@ int lwp_user_accessable(void *addr, size_t size)
         return 0;
     }
     addr_start = addr;
-    addr_end = (void*)((char*)addr + size);
-    if (addr_start >= (void*)KERNEL_VADDR_START)
+    addr_end = (void *)((char *)addr + size);
+    if (addr_start >= (void *)KERNEL_VADDR_START)
     {
         return 0;
     }
@@ -407,10 +496,10 @@ int lwp_user_accessable(void *addr, size_t size)
     }
 
     mmu_info = &lwp->mmu_info;
-    next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
+    next_page = (void *)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
-        size_t len = (char*)next_page - (char*)addr_start;
+        size_t len = (char *)next_page - (char *)addr_start;
 
         if (size < len)
         {
@@ -421,9 +510,9 @@ int lwp_user_accessable(void *addr, size_t size)
         {
             return 0;
         }
-        addr_start = (void*)((char*)addr_start + len);
+        addr_start = (void *)((char *)addr_start + len);
         size -= len;
-        next_page = (void*)((char*)next_page + ARCH_PAGE_SIZE);
+        next_page = (void *)((char *)next_page + ARCH_PAGE_SIZE);
     } while (addr_start < addr_end);
     return 1;
 }
@@ -441,11 +530,11 @@ size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
     }
     tmp_dst = dst;
     addr_start = src;
-    addr_end = (void*)((char*)src + size);
-    next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
+    addr_end = (void *)((char *)src + size);
+    next_page = (void *)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
-        size_t len = (char*)next_page - (char*)addr_start;
+        size_t len = (char *)next_page - (char *)addr_start;
 
         if (size < len)
         {
@@ -456,12 +545,12 @@ size_t lwp_data_get(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
         {
             break;
         }
-        tmp_src = (void*)((char*)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
+        tmp_src = (void *)((char *)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
         rt_memcpy(tmp_dst, tmp_src, len);
-        tmp_dst = (void*)((char*)tmp_dst + len);
-        addr_start = (void*)((char*)addr_start + len);
+        tmp_dst = (void *)((char *)tmp_dst + len);
+        addr_start = (void *)((char *)addr_start + len);
         size -= len;
-        next_page = (void*)((char*)next_page + ARCH_PAGE_SIZE);
+        next_page = (void *)((char *)next_page + ARCH_PAGE_SIZE);
         copy_len += len;
     } while (addr_start < addr_end);
     return copy_len;
@@ -480,11 +569,11 @@ size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
     }
     tmp_src = src;
     addr_start = dst;
-    addr_end = (void*)((char*)dst + size);
-    next_page = (void*)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
+    addr_end = (void *)((char *)dst + size);
+    next_page = (void *)(((size_t)addr_start + ARCH_PAGE_SIZE) & ~(ARCH_PAGE_SIZE - 1));
     do
     {
-        size_t len = (char*)next_page - (char*)addr_start;
+        size_t len = (char *)next_page - (char *)addr_start;
 
         if (size < len)
         {
@@ -495,12 +584,12 @@ size_t lwp_data_put(rt_mmu_info *mmu_info, void *dst, void *src, size_t size)
         {
             break;
         }
-        tmp_dst = (void*)((char*)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
+        tmp_dst = (void *)((char *)rt_hw_mmu_v2p(mmu_info, addr_start) - PV_OFFSET);
         rt_memcpy(tmp_dst, tmp_src, len);
-        tmp_src = (void*)((char*)tmp_src + len);
-        addr_start = (void*)((char*)addr_start + len);
+        tmp_src = (void *)((char *)tmp_src + len);
+        addr_start = (void *)((char *)addr_start + len);
         size -= len;
-        next_page = (void*)((char*)next_page + ARCH_PAGE_SIZE);
+        next_page = (void *)((char *)next_page + ARCH_PAGE_SIZE);
         copy_len += len;
     } while (addr_start < addr_end);
     return copy_len;
@@ -511,7 +600,7 @@ void lwp_data_cache_flush(rt_mmu_info *mmu_info, void *vaddr, size_t size)
     void *paddr = RT_NULL;
 
     paddr = rt_hw_mmu_v2p(mmu_info, vaddr);
-    paddr = (void*)((char*)paddr - PV_OFFSET);
+    paddr = (void *)((char *)paddr - PV_OFFSET);
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, paddr, size);
 }

@@ -25,9 +25,10 @@
 
 struct page
 {
-    struct page *next;  // same level next
-    struct page *pre;   // same level pre
-    uint32_t size_bits; // if is ARCH_ADDRESS_WIDTH_BITS, means not free
+    struct page *next;  /* same level next */
+    struct page *pre;   /* same level pre  */
+    uint32_t size_bits; /* if is ARCH_ADDRESS_WIDTH_BITS, means not free */
+    int ref_cnt;        /* page group ref count */
 };
 
 static struct page* page_start;
@@ -120,11 +121,36 @@ static void page_insert(struct page *p, uint32_t size_bits)
     p->size_bits = size_bits;
 }
 
-static void _pages_free(struct page *p, uint32_t size_bits)
+static void _pages_ref_inc(struct page *p, uint32_t size_bits)
+{
+    struct page *page_head;
+    int idx;
+
+    /* find page group head */
+    idx = p - page_start;
+    if (idx < 0 || idx >= page_nr)
+    {
+        return;
+    }
+    idx = idx & ~((1UL << size_bits) - 1);
+
+    page_head = page_start + idx;
+    page_head->ref_cnt++;
+}
+
+static int _pages_free(struct page *p, uint32_t size_bits)
 {
     uint32_t level = size_bits;
     uint32_t high = ARCH_ADDRESS_WIDTH_BITS - size_bits - 1;
     struct page *buddy;
+
+    RT_ASSERT(p->ref_cnt > 0);
+
+    p->ref_cnt--;
+    if (p->ref_cnt != 0)
+    {
+        return 0;
+    }
 
     while (level < high)
     {
@@ -141,6 +167,7 @@ static void _pages_free(struct page *p, uint32_t size_bits)
         }
     }
     page_insert(p, level);
+    return 1;
 }
 
 static struct page *_pages_alloc(uint32_t size_bits)
@@ -178,7 +205,19 @@ static struct page *_pages_alloc(uint32_t size_bits)
             level--;
         }
     }
+    p->ref_cnt = 1;
     return p;
+}
+
+void rt_page_ref_inc(void *addr, uint32_t size_bits)
+{
+    struct page *p;
+    rt_base_t level;
+
+    p = addr_to_page(addr);
+    level = rt_hw_interrupt_disable();
+    _pages_ref_inc(p, size_bits);
+    rt_hw_interrupt_enable(level);
 }
 
 void *rt_pages_alloc(uint32_t size_bits)
@@ -192,18 +231,20 @@ void *rt_pages_alloc(uint32_t size_bits)
     return page_to_addr(p);
 }
 
-void rt_pages_free(void *addr, uint32_t size_bits)
+int rt_pages_free(void *addr, uint32_t size_bits)
 {
     struct page *p;
+    int real_free = 0;
 
     p = addr_to_page(addr);
     if (p)
     {
         rt_base_t level;
         level = rt_hw_interrupt_disable();
-        _pages_free(p, size_bits);
+        real_free = _pages_free(p, size_bits);
         rt_hw_interrupt_enable(level);
     }
+    return real_free;
 }
 
 void rt_pageinfo_dump(void)
@@ -258,8 +299,6 @@ void rt_page_get_info(size_t *total_nr, size_t *free_nr)
 
 void rt_page_init(rt_region_t reg)
 {
-    uint32_t align_bits;
-    uint32_t size_bits;
     int i;
 
     LOG_D("split 0x%08x 0x%08x\n", reg.start, reg.end);
@@ -270,9 +309,9 @@ void rt_page_init(rt_region_t reg)
     reg.end &= ~ARCH_PAGE_MASK;
 
     {
-        int nr = ARCH_PAGE_SIZE/sizeof(struct page);
+        int nr = ARCH_PAGE_SIZE / sizeof(struct page);
         int total = (reg.end - reg.start) >> ARCH_PAGE_SHIFT;
-        int mnr = (total + nr)/(nr + 1);
+        int mnr = (total + nr) / (nr + 1);
 
         LOG_D("nr = 0x%08x\n", nr);
         LOG_D("total = 0x%08x\n", total);
@@ -286,30 +325,23 @@ void rt_page_init(rt_region_t reg)
 
     LOG_D("align 0x%08x 0x%08x\n", reg.start, reg.end);
 
-    /* init page struct */
-    for (i = 0; i < page_nr; i++)
-    {
-        page_start[i].size_bits = ARCH_ADDRESS_WIDTH_BITS;
-    }
-
     /* init free list */
     for (i = 0; i < ARCH_PAGE_LIST_SIZE; i++)
     {
         page_list[i] = 0;
     }
 
-    while (reg.start != reg.end)
+    /* init page struct */
+    for (i = 0; i < page_nr; i++)
     {
-        size_bits = ARCH_ADDRESS_WIDTH_BITS - 1 - __builtin_clz(reg.end - reg.start);
-        align_bits = __builtin_ctz(reg.start);
-        if (align_bits < size_bits)
-        {
-            size_bits = align_bits;
-        }
+        page_start[i].size_bits = ARCH_ADDRESS_WIDTH_BITS;
+        page_start[i].ref_cnt = 1;
+    }
 
-        _pages_free(addr_to_page((void*)reg.start), size_bits - ARCH_PAGE_SHIFT);
-
-        reg.start += (1U << size_bits);
+    /* add to free list */
+    for (i = 0; i < page_nr; i++)
+    {
+        _pages_free(page_start + i, 0);
     }
 }
 #endif

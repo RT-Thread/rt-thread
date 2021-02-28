@@ -139,8 +139,8 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
     if (size > ARCH_PAGE_SIZE)
         return RT_NULL;
 
-    /* args = (int*)lwp_map_user(lwp, 0, size); */
-    args = (int *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE), size);
+    /* args = (int *)lwp_map_user(lwp, 0, size); */
+    args = (int *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE), size, 0);
     if (args == RT_NULL)
         return RT_NULL;
 
@@ -404,17 +404,23 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
         off = eheader.e_phoff;
         process_header_size = eheader.e_phnum * sizeof pheader;
         if (process_header_size > ARCH_PAGE_SIZE)
+        {
             return -RT_ERROR;
+        }
 #ifdef RT_USING_USERSPACE
-        va = (uint8_t *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE * 2), process_header_size);
+        va = (uint8_t *)lwp_map_user(lwp, (void *)(KERNEL_VADDR_START - ARCH_PAGE_SIZE * 2), process_header_size, 0);
         if (!va)
+        {
             return -RT_ERROR;
+        }
         pa = rt_hw_mmu_v2p(m_info, va);
-        process_header = (uint8_t*)pa - PV_OFFSET;
+        process_header = (uint8_t *)pa - PV_OFFSET;
 #else
         process_header = (uint8_t *)rt_malloc(process_header_size);
         if (!process_header)
+        {
             return -RT_ERROR;
+        }
 #endif
         check_off(off, len);
         lseek(fd, off, SEEK_SET);
@@ -478,11 +484,11 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                         result = -RT_ERROR;
                         goto _exit;
                     }
-                    va = lwp_map_user(lwp, (void *)pheader.p_vaddr, pheader.p_memsz);
+                    va = lwp_map_user(lwp, (void *)pheader.p_vaddr, pheader.p_memsz, 1);
                 }
                 else
                 {
-                    va = lwp_map_user(lwp, 0, pheader.p_memsz);
+                    va = lwp_map_user(lwp, 0, pheader.p_memsz, 0);
                 }
                 if (va)
                 {
@@ -523,14 +529,14 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                     while (size)
                     {
                         pa = rt_hw_mmu_v2p(m_info, va);
-                        va_self = (void*)((char*)pa - PV_OFFSET);
+                        va_self = (void *)((char *)pa - PV_OFFSET);
                         LOG_D("va_self = %p pa = %p", va_self, pa);
                         tmp_len = (size < ARCH_PAGE_SIZE) ? size : ARCH_PAGE_SIZE;
                         tmp_len = load_fread(va_self, 1, tmp_len, fd);
                         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, va_self, tmp_len);
                         read_len += tmp_len;
                         size -= tmp_len;
-                        va = (void*)((char*)va + ARCH_PAGE_SIZE);
+                        va = (void *)((char *)va + ARCH_PAGE_SIZE);
                     }
                 }
 #else
@@ -541,7 +547,7 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
             if (pheader.p_filesz < pheader.p_memsz)
             {
 #ifdef RT_USING_USERSPACE
-                void *va = (void*)((char*)lwp->text_entry + pheader.p_filesz);
+                void *va = (void *)((char *)lwp->text_entry + pheader.p_filesz);
                 void *va_self;
                 void *pa;
                 uint32_t size = pheader.p_memsz - pheader.p_filesz;
@@ -554,12 +560,12 @@ static int load_elf(int fd, int len, struct rt_lwp *lwp, uint8_t *load_addr, str
                 {
                     size_s = (size < ARCH_PAGE_SIZE - off) ? size : ARCH_PAGE_SIZE - off;
                     pa = rt_hw_mmu_v2p(m_info, va);
-                    va_self = (void*)((char*)pa - PV_OFFSET);
-                    memset((void*)((char*)va_self + off), 0, size_s);
-                    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void*)((char*)va_self + off), size_s);
+                    va_self = (void *)((char *)pa - PV_OFFSET);
+                    memset((void *)((char *)va_self + off), 0, size_s);
+                    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)((char *)va_self + off), size_s);
                     off = 0;
                     size -= size_s;
-                    va = (void*)((char*)va + ARCH_PAGE_SIZE);
+                    va = (void *)((char *)va + ARCH_PAGE_SIZE);
                 }
 #else
                 memset((uint8_t *)lwp->text_entry + pheader.p_filesz, 0, (size_t)(pheader.p_memsz - pheader.p_filesz));
@@ -874,19 +880,20 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
                                1024 * 4, 25, 200);
         if (thread != RT_NULL)
         {
-            struct rt_lwp *lwp_self;
+            struct rt_lwp *self_lwp;
 
             thread->tid = tid;
             lwp_tid_set_thread(tid, thread);
-            LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_uint32_t)thread->stack_addr, (rt_uint32_t)thread->stack_addr + thread->stack_size);
+            LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_uint32_t)thread->stack_addr,
+                    (rt_uint32_t)thread->stack_addr + thread->stack_size);
             level = rt_hw_interrupt_disable();
-            lwp_self = (struct rt_lwp *)rt_thread_self()->lwp;
-            if (lwp_self)
+            self_lwp = lwp_self();
+            if (self_lwp)
             {
                 /* lwp add to children link */
-                lwp->sibling = lwp_self->first_child;
-                lwp_self->first_child = lwp;
-                lwp->parent = lwp_self;
+                lwp->sibling = self_lwp->first_child;
+                self_lwp->first_child = lwp;
+                lwp->parent = self_lwp;
             }
             thread->lwp = lwp;
             rt_list_insert_after(&lwp->t_grp, &thread->sibling);
@@ -898,7 +905,7 @@ pid_t lwp_execve(char *filename, int argc, char **argv, char **envp)
             }
 #endif
 
-            if ((rt_console_get_foreground() == lwp_self) && !bg)
+            if ((rt_console_get_foreground() == self_lwp) && !bg)
             {
                 rt_console_set_foreground(lwp);
             }
