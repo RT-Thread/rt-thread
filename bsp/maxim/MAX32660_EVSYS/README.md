@@ -78,7 +78,7 @@ MAX32660-EVSYS开发板常用 **板载资源** 如下：
 | SPI          |     支持     |      SPI0, SPI1       |
 | RTC          |              |                       |
 | I2S          |              |                       |
-| I2C          |              |                       |
+| I2C          |     支持     |      I2C0, I2C1       |
 | TIMER        |              |                       |
 | Watchdog     |              |                       |
 
