@@ -95,6 +95,9 @@ __weak void SystemCoreClockUpdate(void)
 __weak int PreInit(void)
 {
     /* Do nothing */
+#if defined ( __CC_ARM )
+    SystemInit();
+#endif
     return 0;
 }
 
@@ -145,23 +148,23 @@ __weak void SystemInit(void)
     Board_Init();
 }
 
-#if defined ( __CC_ARM )
-/* Global variable initialization does not occur until post scatterload in Keil tools.*/
+//#if defined ( __CC_ARM )
+///* Global variable initialization does not occur until post scatterload in Keil tools.*/
 
-/* External function called after our post scatterload function implementation. */
-extern void $Super$$__main_after_scatterload(void);
+///* External function called after our post scatterload function implementation. */
+//extern void $Super$$__main_after_scatterload(void);
 
-/**
- * @brief   Initialization function for SystemCoreClock and Board_Init.
- * @details $Sub$$__main_after_scatterload is called during system startup in the Keil
- *          toolset. Global variable and static variable space must be set up by the compiler
- *          prior to using these memory spaces. Setting up the SystemCoreClock and Board_Init
- *          require global memory for variable storage and are called from this function in
- *          the Keil tool chain.
- */
-void $Sub$$__main_after_scatterload(void)
-{
-    SystemInit();
-    $Super$$__main_after_scatterload();
-}
-#endif /* __CC_ARM */
+///**
+// * @brief   Initialization function for SystemCoreClock and Board_Init.
+// * @details $Sub$$__main_after_scatterload is called during system startup in the Keil
+// *          toolset. Global variable and static variable space must be set up by the compiler
+// *          prior to using these memory spaces. Setting up the SystemCoreClock and Board_Init
+// *          require global memory for variable storage and are called from this function in
+// *          the Keil tool chain.
+// */
+//void $Sub$$__main_after_scatterload(void)
+//{
+//    SystemInit();
+//    $Super$$__main_after_scatterload();
+//}
+//#endif /* __CC_ARM */

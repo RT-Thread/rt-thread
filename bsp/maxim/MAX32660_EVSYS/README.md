@@ -92,11 +92,39 @@ MAX32660-EVSYS开发板常用 **板载资源** 如下：
 
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+4. 输入`scons --target=mdk5/vsc命令重新生成工程。
 
 ## 注意事项
 
-目前仅支持keil5环境
+目前支持keil和GCC环境
+
+
+
+## FAQ
+
+###  GCC环境如何调试使用
+
+第一步，需要配置arm-none-eabi-gcc路径到系統环境变量中去或者在rtconfig.py中EXEC_PATH  修改路径
+
+第二步，添加openocd的路径，如果你安装了eclipse，添加以下路径到系统环境变量中
+
+`C:\Maxim\Toolchain\bin`
+
+完成这两部就可以用vscode打开bsp目录了。
+
+快捷键ctrl+shift+b可以执行scons编译命令
+
+快捷键F5可以进入调试命令
+
+如果需要调试之前执行build命令，在luanch.json里面打开注释
+
+```
+            //"preLaunchTask": "build"
+```
+
+
+
+
 
 ## 联系人信息
 
