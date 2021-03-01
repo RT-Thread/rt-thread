@@ -17,7 +17,7 @@
  * 2013-06-24     Bernard      remove rt_kprintf if RT_USING_CONSOLE is not defined.
  * 2013-09-24     aozima       make sure the device is in STREAM mode when used by rt_kprintf.
  * 2015-07-06     Bernard      Add rt_assert_handler routine.
- * 2021-02-28     Meco Man     add RT_KERVICE_USING_STDLIB
+ * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  */
 
 #include <rtthread.h>
@@ -281,7 +281,7 @@ RT_WEAK void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
 }
 RTM_EXPORT(rt_memcpy);
 
-#ifndef RT_KERVICE_USING_STDLIB
+#ifndef RT_KSERVICE_USING_STDLIB
 
 /**
  * This function will move memory content from source address to destination
@@ -509,7 +509,7 @@ rt_size_t rt_strlen(const char *s)
 }
 RTM_EXPORT(rt_strlen);
 
-#endif /*RT_KERVICE_USING_STDLIB*/
+#endif /*RT_KSERVICE_USING_STDLIB*/
 
 #ifdef RT_USING_HEAP
 /**

@@ -14,7 +14,7 @@
  * 2013-06-24     Bernard      add rt_kprintf re-define when not use RT_USING_CONSOLE.
  * 2016-08-09     ArdaFu       add new thread and interrupt hook.
  * 2018-11-22     Jesven       add all cpu's lock and ipi handler
- * 2021-02-28     Meco Man     add RT_KERVICE_USING_STDLIB
+ * 2021-02-28     Meco Man     add RT_KSERVICE_USING_STDLIB
  */
 
 #ifndef __RT_THREAD_H__
@@ -544,7 +544,7 @@ int __rt_ffs(int value);
 void *rt_memset(void *src, int c, rt_ubase_t n);
 void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
 
-#ifndef RT_KERVICE_USING_STDLIB
+#ifndef RT_KSERVICE_USING_STDLIB
 void *rt_memmove(void *dest, const void *src, rt_ubase_t n);
 rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_ubase_t count);
 char *rt_strstr(const char *str1, const char *str2);
@@ -565,7 +565,7 @@ rt_size_t rt_strlen(const char *src);
 #define rt_strcmp(cs, ct)           strcmp(cs, ct)
 #define rt_strnlen(s, maxlen)       strnlen(s, maxlen)
 #define rt_strlen(src)              strlen(src)
-#endif /*RT_KERVICE_USING_STDLIB*/
+#endif /*RT_KSERVICE_USING_STDLIB*/
 
 char *rt_strdup(const char *s);
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
