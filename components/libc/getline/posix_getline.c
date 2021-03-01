@@ -5,9 +5,8 @@
  * https://man7.org/linux/man-pages/man3/getline.3.html
  * Authors:
  *     https://github.com/ivanrad/getline
- *     https://github.com/mysterywolf/getline/
  * 
- * Meco Man    2020-09-03    First Version
+ * Meco Man    2020-09-03    porting to RT-Thread
  */
 
 #include "posix_getline.h"

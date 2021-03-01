@@ -17,7 +17,6 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [stm32f103-fire-arbitrary](stm32f103-fire-arbitrary/)  | 野火 F103 霸道开发板     |
 | [stm32f103-gizwits-gokitv21](stm32f103-gizwits-gokitv21) | GoKit V2.1开发板 |
 | [stm32f103-hw100k-ibox](stm32f103-hw100k-ibox) |  硬件十万个为什么 STM32F103 iBox 开发板 |
-| [stm32f103-mini-system](stm32f103-mini-system)        | STM32F103C8T6最小系统板  |
 | [stm32f103-onenet-nbiot](stm32f103-onenet-nbiot) | STM32F103 OneNET NB-IoT 开发板 |
 | [stm32f103-yf-ufun](stm32f103-yf-ufun) | STM32F103 yf-ufun 开发板 |
 | [stm32f107-uc-eval](stm32f107-uc-eval) | uC/Eval STM32F107 评估板（中国版） |
