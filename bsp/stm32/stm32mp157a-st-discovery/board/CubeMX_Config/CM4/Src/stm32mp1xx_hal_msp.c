@@ -1003,7 +1003,66 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
 
   /* USER CODE END SDMMC1_MspInit 1 */
   }
+  if(hsd->Instance==SDMMC2)
+  {
+  /* USER CODE BEGIN SDMMC2_MspInit 0 */
+    if (IS_ENGINEERING_BOOT_MODE())
+    {
+        /** Initializes the peripherals clock 
+        */
+        PeriphClkInit.Sdmmc12ClockSelection = RCC_SDMMC12CLKSOURCE_PLL4;
+        PeriphClkInit.PeriphClockSelection  = RCC_PERIPHCLK_SDMMC12;
+        if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+        {
+            Error_Handler();
+        }
+    }
+  /* USER CODE END SDMMC2_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_SDMMC2_CLK_ENABLE();
+  
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+    __HAL_RCC_GPIOG_CLK_ENABLE();
+    /**SDMMC2 GPIO Configuration    
+    PB14     ------> SDMMC2_D0
+    PB15     ------> SDMMC2_D1
+    PB3     ------> SDMMC2_D2
+    PB4     ------> SDMMC2_D3
+    PE3     ------> SDMMC2_CK
+    PG6     ------> SDMMC2_CMD 
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_14|GPIO_PIN_15;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_SDIO2;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+    GPIO_InitStruct.Pin = GPIO_PIN_3;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF9_SDIO2;
+    HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF10_SDIO2;
+    HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+    __HAL_RCC_SDMMC2_FORCE_RESET();
+    __HAL_RCC_SDMMC2_RELEASE_RESET();
+  
+    /* SDMMC2 interrupt Init */
+    HAL_NVIC_SetPriority(SDMMC2_IRQn, 2, 0);
+    HAL_NVIC_EnableIRQ(SDMMC2_IRQn);
+  /* USER CODE BEGIN SDMMC2_MspInit 1 */
+
+  /* USER CODE END SDMMC2_MspInit 1 */
+  }
 }
 
 /**
@@ -1312,6 +1371,65 @@ void HAL_CRYP_MspDeInit(CRYP_HandleTypeDef* hcryp)
 
 }
 #endif
+
+/**
+* @brief RTC MSP Initialization
+* This function configures the hardware resources used in this example
+* @param hrtc: RTC handle pointer
+* @retval None
+*/
+void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  if(hrtc->Instance==RTC)
+  {
+  /* USER CODE BEGIN SDMMC1_MspInit 0 */
+    if (IS_ENGINEERING_BOOT_MODE())
+    {
+        /** Initializes the peripherals clock 
+        */
+        PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+        PeriphClkInit.PeriphClockSelection  = RCC_PERIPHCLK_RTC;
+        if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+        {
+            Error_Handler();
+        }
+    }
+  /* USER CODE BEGIN RTC_MspInit 0 */
+
+  /* USER CODE END RTC_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_RTC_ENABLE();
+
+  /* USER CODE BEGIN RTC_MspInit 1 */
+
+  /* USER CODE END RTC_MspInit 1 */
+  }
+
+}
+
+/**
+* @brief RTC MSP De-Initialization
+* This function freeze the hardware resources used in this example
+* @param hrtc: RTC handle pointer
+* @retval None
+*/
+void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
+{
+  if(hrtc->Instance==RTC)
+  {
+  /* USER CODE BEGIN RTC_MspDeInit 0 */
+
+  /* USER CODE END RTC_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_RTC_DISABLE();
+
+  /* USER CODE BEGIN RTC_MspDeInit 1 */
+
+  /* USER CODE END RTC_MspDeInit 1 */
+  }
+
+}
 /**
   * @brief  This function is executed in case of error occurrence.
   * @retval None
