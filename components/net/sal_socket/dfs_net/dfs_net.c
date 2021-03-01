@@ -55,9 +55,15 @@ static int dfs_net_write(struct dfs_fd *file, const void *buf, size_t count)
 
 static int dfs_net_close(struct dfs_fd* file)
 {
-    int socket = (int) file->fnode->data;
+    int socket;
+    int ret = 0;
 
-    return sal_closesocket(socket);
+    if (file->fnode->ref_count == 1)
+    {
+        socket = (int) file->fnode->data;
+        ret = sal_closesocket(socket);
+    }
+    return ret;
 }
 
 static int dfs_net_poll(struct dfs_fd *file, struct rt_pollreq *req)
