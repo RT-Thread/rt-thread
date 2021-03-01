@@ -358,8 +358,6 @@ RTM_EXPORT(rt_thread_startup);
  */
 rt_err_t rt_thread_detach(rt_thread_t thread)
 {
-    rt_base_t lock;
-
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);

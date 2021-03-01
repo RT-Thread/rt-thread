@@ -40,7 +40,7 @@ void rt_hw_systick_init(void)
 
     if (error != E_NO_ERROR)
     {
-        printf("ERROR: Ticks is not valid");
+        rt_kprintf("ERROR: Ticks is not valid");
     }
 }
 
