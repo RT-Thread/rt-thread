@@ -19,11 +19,12 @@
 #include <drivers/mmcsd_core.h>
 #include <drivers/sdio.h>
 
-#define SDIO_BUFF_SIZE       4096
-#define SDIO_ALIGN_LEN       32
+#ifndef SDIO1_BASE_ADDRESS
+#define SDIO1_BASE_ADDRESS    (SDMMC1)
+#endif
 
-#ifndef SDIO_BASE_ADDRESS
-#define SDIO_BASE_ADDRESS    (SDMMC1)
+#ifndef SDIO2_BASE_ADDRESS
+#define SDIO2_BASE_ADDRESS    (SDMMC2)
 #endif
 
 #ifndef SDIO_CLOCK_FREQ
@@ -39,7 +40,7 @@
 #endif
 
 #ifndef SDIO_MAX_FREQ
-#define SDIO_MAX_FREQ        (50 * 1000 * 1000)
+#define SDIO_MAX_FREQ        (25 * 1000 * 1000)
 #endif
 
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
@@ -102,6 +103,7 @@ struct stm32_sdio_des
 {
     struct stm32_sdio *hw_sdio;
     sdio_clk_get clk_get;
+    SD_HandleTypeDef hsd;
 };
 
 /* stm32 sdio dirver class */

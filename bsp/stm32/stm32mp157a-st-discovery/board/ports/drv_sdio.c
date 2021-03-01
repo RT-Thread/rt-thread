@@ -10,11 +10,17 @@
 
 #include "board.h"
 #include "drv_sdio.h"
+
+#ifdef BSP_USING_SDIO1
 #include <dfs_fs.h>
+#endif
 
 #ifdef BSP_USING_SDMMC
 
-//#define DRV_DEBUG
+#ifdef BSP_USING_SDIO2
+#define DRV_DEBUG
+#endif
+
 #define DBG_TAG              "drv.sdio"
 #ifdef DRV_DEBUG
 #define DBG_LVL               DBG_LOG
@@ -23,8 +29,9 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
-static SD_HandleTypeDef hsd;
-static struct rt_mmcsd_host *host;
+static struct rt_mmcsd_host *host1;
+static struct rt_mmcsd_host *host2;
+
 #define SDIO_TX_RX_COMPLETE_TIMEOUT_LOOPS    (100000)
 
 #define RTHW_SDIO_LOCK(_sdio)   rt_mutex_take(&_sdio->mutex, RT_WAITING_FOREVER)
@@ -47,13 +54,14 @@ struct rthw_sdio
 };
 
 /* SYSRAM SDMMC1/2 accesses */
+#define SDCARD_ADDR          0x2FFC0000
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((at(0x2FFC0000)));
+__attribute__((at(SDCARD_ADDR))) static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
+#elif defined ( __GNUC__ )
+static rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((section(".SdCardSection")));
 #elif defined(__ICCARM__)
-#pragma location=0x2FFC0000
-rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
-#elif defined(__GNUC__)
-rt_uint8_t cache_buf[SDIO_BUFF_SIZE] __attribute__((at(0x2FFC0000)));
+#pragma location = SDCARD_ADDR 
+__no_init static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
 #endif
 
 /**
@@ -461,10 +469,20 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 
     rt_memcpy(&sdio->sdio_des, sdio_des, sizeof(struct stm32_sdio_des));
 
-    sdio->sdio_des.hw_sdio = (struct stm32_sdio *)SDIO_BASE_ADDRESS;
+    if(sdio_des->hsd.Instance == SDMMC1)
+    {
+        sdio->sdio_des.hw_sdio = (struct stm32_sdio *)SDIO1_BASE_ADDRESS;
+        rt_event_init(&sdio->event, "sdio1", RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&sdio->mutex, "sdio1", RT_IPC_FLAG_FIFO);
+    }
 
-    rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    if(sdio_des->hsd.Instance == SDMMC2)
+    {
+        sdio->sdio_des.hw_sdio = (struct stm32_sdio *)SDIO2_BASE_ADDRESS;
+        rt_event_init(&sdio->event, "sdio2", RT_IPC_FLAG_FIFO);
+        rt_mutex_init(&sdio->mutex, "sdio2", RT_IPC_FLAG_FIFO);
+    }
+
     /* set host default attributes */
     host->ops = &ops;
     host->freq_min = 400 * 1000;
@@ -503,29 +521,83 @@ void SDMMC1_IRQHandler(void)
 {
     rt_interrupt_enter();
     /* Process All SDIO Interrupt Sources */
-    rthw_sdio_irq_process(host);
+    rthw_sdio_irq_process(host1);
     
     rt_interrupt_leave();
 }
 
+void SDMMC2_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    /* Process All SDIO Interrupt Sources */
+    rthw_sdio_irq_process(host2);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+#ifdef BSP_USING_SDIO2
+static RTC_HandleTypeDef hrtc;
+static void MX_RTC_Init(void)
+{
+    hrtc.Instance = RTC;
+    hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+    hrtc.Init.AsynchPrediv = 127;
+    hrtc.Init.SynchPrediv = 255;
+    hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+    hrtc.Instance->CFGR = 0x02 << 1;
+    if (HAL_RTC_Init(&hrtc) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+static int LBEE5KL1DX_init(void)
+{
+#define LBEE5KL1DX_WL_REG_ON GET_PIN(H, 4)
+
+    /* enable the WLAN REG pin */
+    rt_pin_mode(LBEE5KL1DX_WL_REG_ON, PIN_MODE_OUTPUT);
+    rt_pin_write(LBEE5KL1DX_WL_REG_ON, PIN_HIGH);
+
+    return 0;
+}
+#endif
+
 int rt_hw_sdio_init(void)
 {
-    struct stm32_sdio_des sdio_des;
-    
-    hsd.Instance = SDMMC1;
-    HAL_SD_MspInit(&hsd);
+#ifdef BSP_USING_SDIO1
+    struct stm32_sdio_des sdio_des1;
+    sdio_des1.hsd.Instance = SDMMC1;
+    HAL_SD_MspInit(&sdio_des1.hsd);
 
-    host = sdio_host_create(&sdio_des);
-    if (host == RT_NULL)
+    host1 = sdio_host_create(&sdio_des1);
+    if (host1 == RT_NULL)
     {
         LOG_E("host create fail");
         return RT_NULL;
     }
+#endif
     
+#ifdef BSP_USING_SDIO2
+    MX_RTC_Init();
+    LBEE5KL1DX_init();
+
+    struct stm32_sdio_des sdio_des2;
+    sdio_des2.hsd.Instance = SDMMC2;
+    HAL_SD_MspInit(&sdio_des2.hsd);
+
+    host2 = sdio_host_create(&sdio_des2);
+    if (host2 == RT_NULL)
+    {
+        LOG_E("host2 create fail");
+        return RT_NULL;
+    }    
+#endif
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdio_init);
 
+#ifdef BSP_USING_SDIO1
 int mnt_init(void)
 {
     rt_device_t sd = RT_NULL;
@@ -551,5 +623,7 @@ int mnt_init(void)
     return RT_EOK;
 }
 INIT_ENV_EXPORT(mnt_init);
+
+#endif /* BSP_USING_SDIO1 */
 
 #endif /* BSP_USING_SDMMC */
