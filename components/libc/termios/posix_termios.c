@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2017/08/30      Bernard      The first version
+ * 2017/08/30     Bernard      The first version
  */
 #include <stdlib.h>
 #include <string.h>
@@ -109,13 +109,6 @@ int tcflow(int fd, int action)
 int tcdrain(int fd)
 {
     return 0;
-}
-
-int isatty (int  fd)
-{
-    struct termios term;
-
-    return tcgetattr (fd, &term) == 0;
 }
 
 #if defined(_GNU_SOURCE) || defined(_BSD_SOURCE)

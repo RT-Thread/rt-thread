@@ -14,7 +14,7 @@
 /* RT-Thread Device Interface */
 
 /*
- * This function initializes serial
+ * This function initializes watchdog
  */
 static rt_err_t rt_watchdog_init(struct rt_device *dev)
 {

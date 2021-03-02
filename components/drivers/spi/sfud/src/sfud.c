@@ -897,7 +897,7 @@ static sfud_err set_write_enabled(const sfud_flash *flash, bool enabled) {
         if (enabled && (register_status & SFUD_STATUS_REGISTER_WEL) == 0) {
             SFUD_INFO("Error: Can't enable write status.");
             return SFUD_ERR_WRITE;
-        } else if (!enabled && (register_status & SFUD_STATUS_REGISTER_WEL) == 1) {
+        } else if (!enabled && (register_status & SFUD_STATUS_REGISTER_WEL) != 0) {
             SFUD_INFO("Error: Can't disable write status.");
             return SFUD_ERR_WRITE;
         }

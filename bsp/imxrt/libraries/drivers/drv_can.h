@@ -8,9 +8,9 @@
  * 2019-06-28     misonyo     the first version.
  */
  
-#ifndef DRV_SPI_H__
-#define DRV_SPI_H__
+#ifndef DRV_CAN_H__
+#define DRV_CAN_H__
 
 int rt_hw_can_init(void);
 
-#endif /* DRV_SPI_H__ */
+#endif /* DRV_CAN_H__ */

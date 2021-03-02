@@ -460,8 +460,6 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
                     rt_device_register(&blk_dev->dev, "sd0",
                         RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE | RT_DEVICE_FLAG_STANDALONE);
                     rt_list_insert_after(&blk_devices, &blk_dev->list);
-    
-                    break;
                 }
                 else
                 {

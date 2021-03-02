@@ -12,6 +12,7 @@
 #define __UTEST_H__
 
 #include <rtthread.h>
+#include <stdint.h>
 #include "utest_log.h"
 #include "utest_assert.h"
 

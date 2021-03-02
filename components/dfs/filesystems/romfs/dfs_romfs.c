@@ -62,7 +62,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
         return root_dirent;
     }
 
-    /* goto root directy entries */
+    /* goto root directory entries */
     dirent = (struct romfs_dirent *)root_dirent->data;
     dirent_size = root_dirent->size;
 

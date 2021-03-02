@@ -41,6 +41,13 @@ struct sal_socket_table
     struct sal_socket **sockets;
 };
 
+/* record the netdev and res table*/
+struct sal_netdev_res_table
+{
+    struct addrinfo *res;
+    struct netdev *netdev;
+};
+
 #ifdef SAL_USING_TLS
 /* The global TLS protocol options */
 static struct sal_proto_tls *proto_tls;
@@ -50,6 +57,7 @@ static struct sal_proto_tls *proto_tls;
 static struct sal_socket_table socket_table;
 static struct rt_mutex sal_core_lock;
 static rt_bool_t init_ok = RT_FALSE;
+static struct sal_netdev_res_table sal_dev_res_tbl[SAL_SOCKETS_NUM];
 
 #define IS_SOCKET_PROTO_TLS(sock)                (((sock)->protocol == PROTOCOL_TLS) || \
                                                  ((sock)->protocol == PROTOCOL_DTLS))
@@ -90,6 +98,11 @@ do {                                                                            
     ((pf) = (struct sal_proto_family *) (netdev)->sal_user_data) != RT_NULL &&    \
     (pf)->netdb_ops->ops)                                                         \
 
+#define SAL_NETDBOPS_VALID(netdev, pf, ops)                                \
+    ((netdev) &&                                                                 \
+    ((pf) = (struct sal_proto_family *) (netdev)->sal_user_data) != RT_NULL &&    \
+    (pf)->netdb_ops->ops)                                                         \
+
 /**
  * SAL (Socket Abstraction Layer) initialize.
  *
@@ -115,6 +128,9 @@ int sal_init(void)
         LOG_E("No memory for socket table.\n");
         return -1;
     }
+
+    /*init the dev_res table */
+    rt_memset(sal_dev_res_tbl,  0, sizeof(sal_dev_res_tbl));
 
     /* create sal socket lock */
     rt_mutex_init(&sal_core_lock, "sal_lock", RT_IPC_FLAG_FIFO);
@@ -309,12 +325,13 @@ struct sal_socket *sal_get_socket(int socket)
 {
     struct sal_socket_table *st = &socket_table;
 
+    socket = socket - SAL_SOCKET_OFFSET;
+
     if (socket < 0 || socket >= (int) st->max_socket)
     {
         return RT_NULL;
     }
 
-    socket = socket - SAL_SOCKET_OFFSET;
     /* check socket structure valid or not */
     RT_ASSERT(st->sockets[socket]->magic == SAL_SOCKET_MAGIC);
 
@@ -564,6 +581,9 @@ int sal_accept(int socket, struct sockaddr *addr, socklen_t *addrlen)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
+    /* check the network interface is up status */
+    SAL_NETDEV_IS_UP(sock->netdev);
+
     /* check the network interface socket operations */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, accept);
 
@@ -679,7 +699,7 @@ int sal_shutdown(int socket, int how)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* shutdown operation not nead to check network interface status */
+    /* shutdown operation not need to check network interface status */
     /* check the network interface socket opreation */
     SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, shutdown);
 
@@ -924,6 +944,7 @@ int sal_socket(int domain, int type, int protocol)
     sock = sal_get_socket(socket);
     if (sock == RT_NULL)
     {
+        socket_delete(socket);
         return -1;
     }
 
@@ -956,7 +977,7 @@ int sal_socket(int domain, int type, int protocol)
         sock->user_data = (void *) proto_socket;
         return sock->socket;
     }
-
+    socket_delete(socket);
     return -1;
 }
 
@@ -969,9 +990,9 @@ int sal_closesocket(int socket)
     /* get the socket object by socket descriptor */
     SAL_SOCKET_OBJ_GET(sock, socket);
 
-    /* clsoesocket operation not nead to vaild network interface status */
+    /* clsoesocket operation not need to vaild network interface status */
     /* valid the network interface socket opreation */
-    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, socket);
+    SAL_NETDEV_SOCKETOPS_VALID(sock->netdev, pf, closesocket);
 
     if (pf->skt_ops->closesocket((int) sock->user_data) == 0)
     {
@@ -1082,10 +1103,12 @@ int sal_getaddrinfo(const char *nodename,
 {
     struct netdev *netdev = netdev_default;
     struct sal_proto_family *pf;
+    int     ret = 0;
+    rt_uint32_t i = 0;
 
     if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, getaddrinfo))
     {
-        return pf->netdb_ops->getaddrinfo(nodename, servname, hints, res);
+        ret = pf->netdb_ops->getaddrinfo(nodename, servname, hints, res);
     }
     else
     {
@@ -1093,30 +1116,56 @@ int sal_getaddrinfo(const char *nodename,
         netdev = netdev_get_first_by_flags(NETDEV_FLAG_UP);
         if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, getaddrinfo))
         {
-            return pf->netdb_ops->getaddrinfo(nodename, servname, hints, res);
+            ret = pf->netdb_ops->getaddrinfo(nodename, servname, hints, res);
+        }
+        else
+        {
+            ret = -1;
         }
     }
 
-    return -1;
+    if(ret == RT_EOK)
+    {
+        /*record the netdev and res*/
+        for(i = 0; i < SAL_SOCKETS_NUM; i++)
+        {
+            if(sal_dev_res_tbl[i].res == RT_NULL)
+            {
+                sal_dev_res_tbl[i].res = *res;
+                sal_dev_res_tbl[i].netdev = netdev;
+                break;
+            }
+        }
+
+        RT_ASSERT((i < SAL_SOCKETS_NUM));
+
+    }
+
+    return ret;
 }
 
 void sal_freeaddrinfo(struct addrinfo *ai)
 {
-    struct netdev *netdev = netdev_default;
-    struct sal_proto_family *pf;
+    struct netdev *netdev = RT_NULL;
+    struct sal_proto_family *pf = RT_NULL;
+    rt_uint32_t  i = 0;
 
-    if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, freeaddrinfo))
+    /*when use the multi netdev, it must free the ai use the getaddrinfo netdev */
+    for(i = 0; i < SAL_SOCKETS_NUM; i++)
+    {
+        if(sal_dev_res_tbl[i].res == ai)
+        {
+            netdev = sal_dev_res_tbl[i].netdev;
+            sal_dev_res_tbl[i].res = RT_NULL;
+            sal_dev_res_tbl[i].netdev = RT_NULL;
+            break;
+        }
+    }
+    RT_ASSERT((i < SAL_SOCKETS_NUM));
+
+    if (SAL_NETDBOPS_VALID(netdev, pf, freeaddrinfo))
     {
         pf->netdb_ops->freeaddrinfo(ai);
-    }
-    else
-    {
-        /* get the first network interface device with up status */
-        netdev = netdev_get_first_by_flags(NETDEV_FLAG_UP);
-        if (SAL_NETDEV_NETDBOPS_VALID(netdev, pf, freeaddrinfo))
-        {
-            pf->netdb_ops->freeaddrinfo(ai);
-        }
     }
 }
 

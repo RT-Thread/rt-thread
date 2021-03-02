@@ -153,7 +153,8 @@ struct rt_pin_ops _wm_pin_ops =
     wm_pin_read,
     wm_pin_attach_irq,
     wm_pin_detach_irq,
-    wm_pin_irq_enable
+    wm_pin_irq_enable,
+    RT_NULL,
 };
 
 int wm_hw_pin_init(void)

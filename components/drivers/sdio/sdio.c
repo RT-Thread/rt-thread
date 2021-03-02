@@ -892,9 +892,9 @@ static rt_int32_t sdio_init_card(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
     if (card->flags & CARD_FLAG_HIGHSPEED) 
     {
-        mmcsd_set_clock(host, 50000000);
-    } 
-    else 
+        mmcsd_set_clock(host, card->host->freq_max > 50000000 ? 50000000 : card->host->freq_max);
+    }
+    else
     {
         mmcsd_set_clock(host, card->cis.max_tran_speed);
     }

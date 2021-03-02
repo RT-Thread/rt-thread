@@ -424,6 +424,6 @@ int rt_work_sys_workqueue_init(void)
     return RT_EOK;
 }
 
-INIT_DEVICE_EXPORT(rt_work_sys_workqueue_init);
+INIT_PREV_EXPORT(rt_work_sys_workqueue_init);
 #endif
 #endif

@@ -1,3 +1,83 @@
+# RT-Thread v3.1.5 Change Log
+
+Change log since v3.1.4
+
+## Kernel
+
+* Fix the issue when block = NULL in rt_mp_free;
+* Fix the software issue when the system timer thread is pending
+* Fix the timer/software timer handling issue if the timeout function starts/stops/deletes this timer.
+* Fix an issue with rt_timer_start being broken and destroying the timer list
+* Fix bug of rt_memheap_detach
+* Fix the bug that the linked list is still mounted when the single timer is not modified
+* Fix the delay_until issue
+* Add mb mq value overflow-check code
+* Fix the rt_event_recv function, if the event met without blocking, assigning thread->event_set/event_info will goes well
+* Add the definition of the maximum value of ipc type
+* Fix the delay_until issue
+* fixed __rt_ffs bug on account of armclang LTO.
+* fixed rt_timer_list_next_timeout multi-task safe
+* fix the software issue when the system timer thread pending.
+* Fix the timer/software timer handling issue if the timeout function starts/stops/deletes this timer.
+* The cleanup operation is executed before the current thread exits
+* Modify cleanup to resolve the issue of unable to free memory and communication between threads
+* Fix double release for thread
+* Fix thread control bug about `RT_THREAD_CTRL_CLOSE` command
+* Fix the issue of critical protection when `rt_thread_delete` change the status of thread;
+* Fix bug in rt_realloc of mem.c, which may cause memory leak
+* Use object_find to implement thread_find/device_find
+
+## Components
+
+* Change rt_data_queue_peak to rt_data_queue_peek.
+* Add rt_data_queue_deinit and fix bug of dataqueue
+* Solve the issue that the do_pollfd function processing the underlying network device returns error -1
+* Fix the issue that when the network card device calls to close dhcp, the bottom layer no need to call the dhcp_stop function to close dhcp
+* Modify the spelling error of the macro definition, modify the printing error when printing the IMEI number
+* Fix the issue that the server closed the connection when web socket requests the data that comes back from the server, and the socket status is incorrectly judged at that point
+* Fix the issue of incorrect sal_getaddrinfo release when sal socket supports multiple network cards
+
+* Adjust where the AT socket callback function
+* Fix at_client, avoid creating the same client repeatedly and prevent working exceptions and memory leaks.
+* Fix the bug that rx_notice out of sync when the data is received after last rt_device_read() is zero
+* Change the header file included in some libc files from <rtthread.h> to <rtconfig.h> to narrow the scope of inclusion to prevent recursive compilation
+* [jffs2] modify the error check of rt_event_recv()
+* [audio] Fix compile warning, undefine var, and fixed re-include of audio
+* [serial] Fix the crash caused when the serial port receiving buffer is full and ULOG_USING_ISR_LOG is not turned on
+* [spi] Fix "response+1" causing hard fault of unaligned access to SPI memory of STM32 HAL library
+* [hwtimer] When getting the timer count, prevent overflow update due to the interruption
+* [dirver/i2c] i2c driver supports bus lock, STOP control
+* [usb] Fix bug in device descriptor that MAC OS enumeration failed
+* Fix the bug that USB cannot recognize composite device normally
+* Fix USB host core bugs
+  * Limit >4 USB ports hubs
+  * Double free intf
+  * dname buffer size is too small
+  * Reset child pointer after detaching instance
+
+## BSP and CPU porting
+
+* Add license info and code cleanup for vexpress-a9 BSP
+* Fix spelling mistakes of code
+* [allwinner_tina]Fix spi driver bug
+* Optimize BSP dist handle process
+* fixed a bug that caused system crash by changing the run_mode in low power mode
+* drv_flash_f7.c supports single bank mode
+* Optimize the pin-index algorithm for stm32
+* Fix the clock configuration issue of STM32 hardware timer
+* Adjust the interrupt priority configuration of some peripherals of the STM32 series BSP
+* Fix stm32 f1 series rtc bug
+* Fix PWM timer init about pwm
+
+## Tools
+
+* Fixed python 2.x `cmp`
+* Rename GCC_VERSION to GCC_VERSION_STR
+* Optimize project group sort by name
+* Improve the logic of generating `rtconfig.h` files in scons with command `scons --menuconfig`
+* Fixed an issue that *.s src files couldn't be compiled
+* Fixed c99/siginfo_t issue caused by gcc_version
+
 # RT-Thread v3.1.4 Change Log
 
 Change log since v3.1.3

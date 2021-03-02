@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <rthw.h>
 
 rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 {
@@ -144,19 +145,25 @@ static rt_size_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buff
     rt_hwtimer_t *timer;
     rt_hwtimerval_t tv;
     rt_uint32_t cnt;
+    rt_base_t level;
+    rt_int32_t overflow;
     float t;
 
     timer = (rt_hwtimer_t *)dev;
     if (timer->ops->count_get == RT_NULL)
         return 0;
 
+    level = rt_hw_interrupt_disable();
     cnt = timer->ops->count_get(timer);
+    overflow = timer->overflow;
+    rt_hw_interrupt_enable(level);
+
     if (timer->info->cntmode == HWTIMER_CNTMODE_DW)
     {
         cnt = (timer->freq * timer->period_sec) - cnt;
     }
 
-    t = timer->overflow * timer->period_sec + cnt/(float)timer->freq;
+    t = overflow * timer->period_sec + cnt/(float)timer->freq;
     tv.sec = t;
     tv.usec = (t - tv.sec) * 1000000;
     size = size > sizeof(tv)? sizeof(tv) : size;
@@ -255,6 +262,7 @@ static rt_err_t rt_hwtimer_control(struct rt_device *dev, int cmd, void *args)
 
         *((struct rt_hwtimer_info*)args) = *timer->info;
     }
+    break;
     case HWTIMER_CTRL_MODE_SET:
     {
         rt_hwtimer_mode_t *m;

@@ -19,7 +19,7 @@
 
 /*
 * Emac driver uses CubeMX tool to generate emac and phy's configuration,
-* the configuration files can be found in CubeMX_Config floder.
+* the configuration files can be found in CubeMX_Config folder.
 */
 
 /* debug option */
@@ -248,7 +248,7 @@ rt_err_t rt_stm32_eth_tx(rt_device_t dev, struct pbuf *p)
 
     /* Prepare transmit descriptors to give to DMA */
     /* TODO Optimize data send speed*/
-    LOG_D("transmit frame lenth :%d", framelength);
+    LOG_D("transmit frame length :%d", framelength);
 
     /* wait for unlocked */
     while (EthHandle.Lock == HAL_LOCKED);
@@ -411,11 +411,11 @@ static void phy_linkchange()
 
     if (status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
     {
-        rt_uint32_t SR;
+        rt_uint32_t SR = 0;
 
         phy_speed_new |= PHY_LINK;
 
-        SR = HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
+        HAL_ETH_ReadPHYRegister(&EthHandle, PHY_Status_REG, (uint32_t *)&SR);
         LOG_D("phy control status reg is 0x%X", SR);
 
         if (PHY_Status_SPEED_100M(SR))

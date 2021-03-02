@@ -14,7 +14,9 @@
 #include "dlmodule.h"
 #include "dlelf.h"
 
+#if defined(RT_USING_POSIX)
 #include <dfs_posix.h>
+#endif
 
 #define DBG_TAG    "DLMD"
 #define DBG_LVL    DBG_INFO
@@ -122,7 +124,7 @@ static void _dlmodule_exit(void)
                 rt_thread_t thread = (rt_thread_t)object;
 
                 /* stop timer and suspend thread*/
-                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE ||
+                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
                     (thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
                 {
                     rt_timer_stop(&(thread->thread_timer));
@@ -419,11 +421,14 @@ struct rt_dlmodule *rt_module_self(void)
 
 struct rt_dlmodule* dlmodule_load(const char* filename)
 {
-    int fd, length = 0;
+#if defined(RT_USING_POSIX)
+    int fd = -1, length = 0;
+#endif
     rt_err_t ret = RT_EOK;
     rt_uint8_t *module_ptr = RT_NULL;
     struct rt_dlmodule *module = RT_NULL;
 
+#if defined(RT_USING_POSIX)
     fd = open(filename, O_RDONLY, 0);
     if (fd >= 0)
     {
@@ -446,6 +451,9 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     {
         goto __exit;
     }
+#endif
+
+    if (!module_ptr) goto __exit;
 
     /* check ELF header */
     if (rt_memcmp(elf_module->e_ident, RTMMAG, SELFMAG) != 0 &&
@@ -512,7 +520,9 @@ struct rt_dlmodule* dlmodule_load(const char* filename)
     return module;
 
 __exit:
+#if defined(RT_USING_POSIX)
     if (fd >= 0) close(fd);
+#endif
     if (module_ptr) rt_free(module_ptr);
     if (module) dlmodule_destroy(module);
 

@@ -292,11 +292,11 @@ static uffs_FlashOps g_my_nand_ops = {
 	nand_init_flash,	// InitFlash()
 	nand_release_flash,	// ReleaseFlash()
 	nand_read_page,		// ReadPage()
-	NULL,				// ReadPageWithLayout
+	NULL,			// ReadPageWithLayout
 	nand_write_page,	// WritePage()
-	NULL,				// WirtePageWithLayout
-	NULL,				// IsBadBlock(), let UFFS take care of it.
-	NULL,				// MarkBadBlock(), let UFFS take care of it.
+	NULL,			// WritePageWithLayout
+	NULL,			// IsBadBlock(), let UFFS take care of it.
+	NULL,			// MarkBadBlock(), let UFFS take care of it.
 	nand_erase_block,	// EraseBlock()
 };
 

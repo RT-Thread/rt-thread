@@ -564,7 +564,7 @@ netdev_inet_ntop(int af, const void *src, char *dst, int32_t size)
     }
     switch (af)
     {
-#if NTEDEV_IPV4
+#if NETDEV_IPV4
     case AF_INET:
         return netdev_ip4addr_ntoa_r((const ip4_addr_t *)src, dst, size_int);
 #endif
