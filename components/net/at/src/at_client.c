@@ -436,13 +436,13 @@ static rt_err_t at_client_getchar(at_client_t client, char *ch, rt_int32_t timeo
 
     while (rt_device_read(client->device, 0, ch, 1) == 0)
     {
-        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
-
         result = rt_sem_take(client->rx_notice, rt_tick_from_millisecond(timeout));
         if (result != RT_EOK)
         {
             return result;
         }
+
+        rt_sem_control(client->rx_notice, RT_IPC_CMD_RESET, RT_NULL);
     }
 
     return RT_EOK;
